@@ -1,0 +1,145 @@
+import {
+  BibliographyItem,
+  Citation,
+  CitationItem,
+} from '@manuscripts/manuscripts-json-schema'
+import { sanitize } from 'dompurify'
+import { NodeView } from 'prosemirror-view'
+import React from 'react'
+import { EditorProps } from '../components/Editor'
+import { INSERT, modelsKey, UPDATE } from '../plugins/models'
+import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
+import { Build, buildEmbeddedCitationItem } from '../transformer/builders'
+import { NodeViewCreator } from '../types'
+
+class CitationView implements NodeView {
+  public dom: HTMLElement
+
+  private readonly props: EditorProps
+  private node: ManuscriptNode
+  private readonly view: ManuscriptEditorView
+
+  constructor(
+    props: EditorProps,
+    node: ManuscriptNode,
+    view: ManuscriptEditorView
+  ) {
+    this.props = props
+    this.node = node
+    this.view = view
+
+    this.initialise()
+  }
+
+  public update(newNode: ManuscriptNode) {
+    if (!newNode.sameMarkup(this.node)) return false
+    this.node = newNode
+    this.updateContents()
+    this.props.popper.update()
+    return true
+  }
+
+  public stopEvent(event: Event) {
+    // https://discuss.prosemirror.net/t/draggable-and-nodeviews/955/13
+    return event.type !== 'mousedown' && !event.type.startsWith('drag')
+  }
+
+  public ignoreMutation() {
+    return true
+  }
+
+  public selectNode() {
+    const {
+      CitationEditor,
+      filterLibraryItems,
+      getLibraryItem,
+      projectID,
+      renderReactComponent,
+    } = this.props
+
+    const citation = this.getCitation()
+
+    const items = citation.embeddedCitationItems.map(
+      (citationItem: CitationItem) =>
+        getLibraryItem(citationItem.bibliographyItem)
+    )
+
+    const container = document.createElement('div')
+    container.className = 'citation-editor'
+
+    renderReactComponent(
+      <CitationEditor
+        items={items}
+        filterLibraryItems={filterLibraryItems}
+        selectedText={this.node.attrs.selectedText}
+        handleSelect={this.handleSelect}
+        projectID={projectID}
+      />,
+      container
+    )
+
+    this.props.popper.show(this.dom, container, 'top')
+  }
+
+  public deselectNode() {
+    this.props.popper.destroy()
+  }
+
+  private initialise() {
+    this.createDOM()
+    this.updateContents()
+  }
+
+  private handleSelect = async (
+    bibliographyItem: Build<BibliographyItem>,
+    source?: string
+  ) => {
+    // TODO: reuse if already in library
+
+    const citation = this.getCitation()
+
+    citation.embeddedCitationItems.push(
+      buildEmbeddedCitationItem(bibliographyItem._id)
+    )
+
+    if (source) {
+      // add the database item here so it's ready in time
+      this.props.addLibraryItem(bibliographyItem as BibliographyItem)
+    }
+
+    this.view.dispatch(
+      this.view.state.tr.setMeta(modelsKey, {
+        [INSERT]: source ? [bibliographyItem] : [],
+        [UPDATE]: [citation],
+      })
+    )
+  }
+
+  private getCitation = () => {
+    const citation = this.props.getModel<Citation>(this.node.attrs.rid)
+
+    if (!citation) {
+      throw new Error('Citation not found')
+    }
+
+    return citation
+  }
+
+  private createDOM() {
+    this.dom = document.createElement('span')
+    this.dom.className = 'citation'
+    // dom.id = node.attrs.id
+    this.dom.setAttribute('data-reference-id', this.node.attrs.rid)
+    this.dom.setAttribute('spellcheck', 'false')
+    // dom.setAttribute('data-citation-items', node.attrs.citationItems.join('|'))
+  }
+
+  private updateContents() {
+    this.dom.innerHTML = sanitize(this.node.attrs.contents) // TODO: whitelist
+  }
+}
+
+const citationView = (props: EditorProps): NodeViewCreator => (node, view) =>
+  new CitationView(props, node, view)
+
+export default citationView
