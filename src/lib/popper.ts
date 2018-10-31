@@ -1,5 +1,4 @@
 import Popper from 'popper.js'
-import '../styles/popper.css'
 
 export class PopperManager {
   protected activePopper?: Popper

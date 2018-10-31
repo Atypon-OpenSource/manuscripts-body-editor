@@ -25,7 +25,6 @@ import {
   ManuscriptNode,
   ManuscriptSchema,
 } from '../schema/types'
-import '../styles/Editor.css'
 import { Build } from '../transformer/builders'
 import { ChangeReceiver } from '../types'
 import views from '../views'

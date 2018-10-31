@@ -4,18 +4,23 @@
   "version": "0.0.2",
   "repository": "https://gitlab.com/mpapp-private/manuscripts-manuscript-editor",
   "license": "Apache-2.0",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "dist/es/index.js",
+  "module": "dist/es/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "styles"
   ],
   "keywords": [
     "react",
     "prosemirror"
   ],
   "scripts": {
-    "build": "rimraf dist && rollup -c",
+    "build:cjs": "tsc --project tsconfig.cjs.json --outDir dist/cjs",
+    "build:es": "tsc --project tsconfig.json --outDir dist/es",
+    "build": "rimraf dist && yarn build:es && yarn build:cjs",
+    "dev": "yarn build:es --watch",
     "typecheck": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
     "prepublishOnly": "yarn typecheck && yarn lint && yarn build",
@@ -112,11 +117,6 @@
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "rimraf": "^2.6.2",
-    "rollup": "^0.66.6",
-    "rollup-plugin-css-only": "^0.4.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-resolve": "latest",
-    "rollup-plugin-typescript2": "^0.17.1",
     "rxdb": "git+https://gitlab.com/mpapp-public/rxdb.git#master",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
