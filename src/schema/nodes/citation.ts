@@ -18,6 +18,7 @@ export const citation: NodeSpec = {
   attrs: {
     rid: { default: '' },
     contents: { default: '' },
+    selectedText: { default: '' },
   },
   parseDOM: [
     {
