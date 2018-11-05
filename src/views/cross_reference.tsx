@@ -109,7 +109,8 @@ class CrossReference implements NodeView {
         .setNodeMarkup(this.getPos(), undefined, {
           ...this.node.attrs,
           rid: auxiliaryObjectReference._id,
-        }).setSelection(this.view.state.selection)
+        })
+        .setSelection(this.view.state.selection)
     )
   }
 

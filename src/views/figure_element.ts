@@ -193,7 +193,8 @@ class FigureElement extends Block {
         .setNodeMarkup(this.getPos(), undefined, {
           ...this.node.attrs,
           containedObjectIDs,
-        }).setSelection(this.view.state.selection)
+        })
+        .setSelection(this.view.state.selection)
     )
   }
 }
