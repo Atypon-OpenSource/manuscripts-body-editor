@@ -55,10 +55,12 @@ export const getModelData = <T extends Model>(model: Model): T => {
 
 export const getImageAttachment = async (doc: RxDocument<Model>) => {
   const attachment = await doc.getAttachment('image')
+  if (!attachment) return undefined
 
-  return attachment
-    ? window.URL.createObjectURL(attachment.getData())
-    : undefined
+  const data = await attachment.getData()
+  if (!data) return undefined
+
+  return window.URL.createObjectURL(data)
 }
 
 export const parseContents = (contents: string, options?: ParseOptions) => {

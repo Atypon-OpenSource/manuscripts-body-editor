@@ -5,13 +5,6 @@ import { buildFigure } from '../transformer/builders'
 import { NodeViewCreator } from '../types'
 import Block from './block'
 
-// ToolbarIconFigure
-const placeholder = `<svg width="19" height="16">
-  <path d="M6.5.5h6A3.5 3.5 0 0 1 16 4v8a3.5 3.5 0 0 1-3.5 3.5h-6A3.5 3.5 0 0 1 3 12V4A3.5 3.5 0 0 1 6.5.5zm0 1.5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-6zm.75 3a.75.75 0 0 1 .75.75v5.5a.75.75 0 1 1-1.5 0v-5.5A.75.75 0 0 1 7.25 5zm3 2a.75.75 0 0 1 .75.75v3.5a.75.75 0 1 1-1.5 0v-3.5a.75.75 0 0 1 .75-.75z" fill="#80BE86" fill-rule="evenodd"/>
-</svg>`
-
-// TODO: double-click to select in caption
-
 class FigureElement extends Block {
   private container: HTMLElement
   private element: HTMLElement
@@ -92,27 +85,34 @@ class FigureElement extends Block {
 
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < columns; column++) {
-        const img = document.createElement('img')
-        img.className = 'figure'
-
-        const image = objects[index]
-
-        if (image) {
-          img.src = image.src
-        } else {
-          img.innerHTML = placeholder
-          img.classList.add('placeholder')
-        }
-
         const input = document.createElement('input')
         input.accept = 'image/*'
         input.type = 'file'
+        input.addEventListener<'change'>('change', this.handleImage(index))
 
-        input.addEventListener('change', this.handleImage(index))
+        const image = objects[index]
 
-        img.addEventListener('click', () => {
+        const img = image
+          ? this.createFigureImage(image.src)
+          : this.createFigurePlaceholder()
+
+        img.addEventListener<'click'>('click', () => {
           input.click()
         })
+
+        img.addEventListener<'mouseenter'>('mouseenter', () => {
+          img.classList.toggle('over', true)
+        })
+
+        img.addEventListener<'mouseleave'>('mouseleave', () => {
+          img.classList.toggle('over', false)
+        })
+
+        img.addEventListener<'dragover'>('dragover', event => {
+          event.preventDefault()
+        })
+
+        img.addEventListener<'drop'>('drop', this.handleDrop(index))
 
         // TODO: should "figure" be a node?
         const figureContainer = document.createElement('div')
@@ -136,16 +136,48 @@ class FigureElement extends Block {
     this.dom.classList.toggle('suppress-caption', suppressCaption)
   }
 
-  private handleImage(index: number): EventListener {
-    return event => {
+  private handleImage(index: number) {
+    return (event: Event) => {
       const input = event.target as HTMLInputElement
 
-      if (!input.files) return
-
-      Array.from(input.files).forEach((file, fileIndex) => {
-        this.addImage(file, index + fileIndex)
-      })
+      if (input.files) {
+        Array.from(input.files).forEach((file, fileIndex) => {
+          this.addImage(file, index + fileIndex)
+        })
+      }
     }
+  }
+
+  private handleDrop(index: number) {
+    return (event: DragEvent) => {
+      event.preventDefault()
+
+      if (event.dataTransfer && event.dataTransfer.files) {
+        Array.from(event.dataTransfer.files).forEach((file, fileIndex) => {
+          this.addImage(file, index + fileIndex)
+        })
+      }
+    }
+  }
+
+  private createFigureImage(src: string) {
+    const element = document.createElement('img')
+    element.classList.add('figure')
+    element.src = src
+
+    return element
+  }
+
+  private createFigurePlaceholder() {
+    const element = document.createElement('div')
+    element.classList.add('figure')
+    element.classList.add('placeholder')
+
+    const instructions = document.createElement('div')
+    instructions.textContent = 'Click or drop an image here'
+    element.appendChild(instructions)
+
+    return element
   }
 
   private addImage(file: File, index: number) {

@@ -132,8 +132,21 @@
 }
 
 .ProseMirror .figure.placeholder {
-  filter: grayscale(100%);
-  image-rendering: pixelated;
+  align-items: center;
+  border-radius: 16px;
+  border: 3px dashed #ccc;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  font-family: "IBM Plex Serif", sans-serif;
+  font-size: 16px;
+  justify-content: center;
+  padding: 64px 32px;
+  font-style: italic;
+}
+
+.ProseMirror .figure.placeholder.over {
+  border-color: #7fb5d5;
 }
 
 .ProseMirror figcaption {
@@ -283,6 +296,10 @@
   color: #65cfff;
   transition: 0.2s all;
   fill: white;
+}
+
+.ProseMirror .edit-block {
+  margin-top: 5px;
 }
 
 .ProseMirror .add-block:hover {
