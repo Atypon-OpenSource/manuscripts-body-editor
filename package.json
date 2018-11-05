@@ -22,6 +22,7 @@
     "build:types": "tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir dist/types",
     "build": "npm-run-all clean --parallel build:*",
     "clean": "rimraf dist",
+    "dev": "npm-run-all --parallel \"build:es --watch\" \"build:types --watch\"",
     "typecheck": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
     "prepublishOnly": "yarn typecheck && yarn lint && yarn build",
