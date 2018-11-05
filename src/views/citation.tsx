@@ -4,10 +4,11 @@ import {
   CitationItem,
 } from '@manuscripts/manuscripts-json-schema'
 import { sanitize } from 'dompurify'
+import { TextSelection } from 'prosemirror-state'
 import { NodeView } from 'prosemirror-view'
 import React from 'react'
 import { EditorProps } from '../components/Editor'
-import { INSERT, modelsKey, UPDATE } from '../plugins/models'
+import { INSERT, modelsKey, REMOVE, UPDATE } from '../plugins/models'
 import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { Build, buildEmbeddedCitationItem } from '../transformer/builders'
 import { NodeViewCreator } from '../types'
@@ -72,6 +73,7 @@ class CitationView implements NodeView {
         items={items}
         filterLibraryItems={filterLibraryItems}
         selectedText={this.node.attrs.selectedText}
+        handleRemove={this.handleRemove}
         handleSelect={this.handleSelect}
         projectID={projectID}
       />,
@@ -85,9 +87,28 @@ class CitationView implements NodeView {
     this.props.popper.destroy()
   }
 
+  public destroy() {
+    this.props.popper.destroy()
+  }
+
   private initialise() {
     this.createDOM()
     this.updateContents()
+  }
+
+  private handleRemove = async (id: string) => {
+    const citation = this.getCitation()
+
+    citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
+      item => item.bibliographyItem !== id
+    )
+
+    this.view.dispatch(
+      this.view.state.tr.setMeta(modelsKey, {
+        [REMOVE]: [id],
+        [UPDATE]: [citation],
+      })
+    )
   }
 
   private handleSelect = async (
@@ -107,12 +128,18 @@ class CitationView implements NodeView {
       this.props.addLibraryItem(bibliographyItem as BibliographyItem)
     }
 
+    const { state } = this.view
+
+    const tr = state.tr.setMeta(modelsKey, {
+      [INSERT]: source ? [bibliographyItem] : [],
+      [UPDATE]: [citation],
+    })
+
     this.view.dispatch(
-      this.view.state.tr.setMeta(modelsKey, {
-        [INSERT]: source ? [bibliographyItem] : [],
-        [UPDATE]: [citation],
-      })
+      tr.setSelection(TextSelection.near(tr.doc.resolve(state.selection.to)))
     )
+
+    this.props.popper.destroy()
   }
 
   private getCitation = () => {

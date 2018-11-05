@@ -231,6 +231,9 @@ export class Editor extends React.PureComponent<EditorProps> {
 
             // tr = tr.replaceWith(pos, pos + node.nodeSize, newNode)
 
+            // TODO: map selection through changes?
+            // tr = tr.setSelection(state.selection).setMeta('addToHistory', false)
+
             tr = tr.setMeta('addToHistory', false)
 
             this.dispatchTransaction(tr, true)

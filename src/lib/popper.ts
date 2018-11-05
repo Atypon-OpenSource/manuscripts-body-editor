@@ -2,7 +2,7 @@ import Popper from 'popper.js'
 
 export class PopperManager {
   protected activePopper?: Popper
-  protected container?: HTMLElement
+  protected container?: HTMLDivElement
 
   public show(
     target: Element,
@@ -41,6 +41,9 @@ export class PopperManager {
         placement,
         removeOnDestroy: true,
         modifiers,
+        onCreate: () => {
+          this.focusInput(this.container!)
+        },
       })
     })
   }
@@ -55,6 +58,14 @@ export class PopperManager {
   public update() {
     if (this.activePopper) {
       this.activePopper.update()
+    }
+  }
+
+  private focusInput(container: HTMLDivElement) {
+    const element = container.querySelector('input') as HTMLDivElement | null
+
+    if (element) {
+      element.focus()
     }
   }
 }

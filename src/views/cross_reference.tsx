@@ -67,6 +67,10 @@ class CrossReference implements NodeView {
     this.props.popper.show(this.dom, container, 'right')
   }
 
+  public destroy() {
+    this.props.popper.destroy()
+  }
+
   public deselectNode() {
     this.props.popper.destroy()
   }
@@ -105,7 +109,7 @@ class CrossReference implements NodeView {
         .setNodeMarkup(this.getPos(), undefined, {
           ...this.node.attrs,
           rid: auxiliaryObjectReference._id,
-        })
+        }).setSelection(this.view.state.selection)
     )
   }
 
