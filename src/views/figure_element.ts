@@ -38,7 +38,11 @@ class FigureElement extends Block {
   }
 
   public stopEvent(event: Event) {
-    return event.type !== 'mousedown'
+    return (
+      event.type !== 'mousedown' &&
+      !event.type.startsWith('drop') &&
+      !event.type.startsWith('drag')
+    )
   }
 
   public ignoreMutation() {
@@ -105,6 +109,14 @@ class FigureElement extends Block {
         })
 
         img.addEventListener<'mouseleave'>('mouseleave', () => {
+          img.classList.toggle('over', false)
+        })
+
+        img.addEventListener<'dragenter'>('dragenter', () => {
+          img.classList.toggle('over', true)
+        })
+
+        img.addEventListener<'dragleave'>('dragleave', () => {
           img.classList.toggle('over', false)
         })
 
