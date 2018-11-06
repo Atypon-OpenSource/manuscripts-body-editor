@@ -57,7 +57,7 @@ const createDropdownWidget = (
   contents: Fragment | undefined,
   inlineContents: Fragment | undefined,
   handleAccept: () => Promise<void>,
-  handleReject: () => Promise<void>
+  handleRevert: () => Promise<void>
 ) => {
   const popper = document.createElement('div')
   popper.className = 'conflict-dropdown'
@@ -65,7 +65,7 @@ const createDropdownWidget = (
   if (inlineContents) {
     const rejectContainer = document.createElement('div')
     rejectContainer.className = 'conflict-option'
-    rejectContainer.addEventListener('click', handleReject)
+    rejectContainer.addEventListener('click', handleRevert)
 
     const label = document.createElement('div')
     label.className = 'conflict-option-label'
@@ -81,6 +81,7 @@ const createDropdownWidget = (
     popper.appendChild(rejectContainer)
   }
 
+  // Revert to local version
   if (contents) {
     const acceptContainer = document.createElement('div')
     acceptContainer.className = 'conflict-option'
@@ -179,10 +180,8 @@ const createDecorationsForConflict = (
     const fromPos = documentPosition + change.pos[0]
     const toPos = documentPosition + change.pos[1]
 
-    const handleReject = (view: EditorView) => async () => {
+    const handleRevert = (view: EditorView) => async () => {
       popperManager.destroy()
-
-      await applyLocalStep(conflict, isFinalConflict)
 
       const tr = view.state.tr
 
@@ -194,6 +193,8 @@ const createDecorationsForConflict = (
         step.to += documentPosition
         tr.step(step)
       })
+
+      await applyLocalStep(conflict, isFinalConflict)
 
       view.dispatch(tr)
     }
@@ -241,7 +242,7 @@ const createDecorationsForConflict = (
             change.insertion,
             slice.content,
             handleAccept(view),
-            handleReject(view)
+            handleRevert(view)
           )
         },
         {
