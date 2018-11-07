@@ -17,6 +17,7 @@ import persist from './persist'
 import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
+import syncErrors from './sync-errors'
 
 export default (props: EditorProps) => [
   rules,
@@ -26,6 +27,7 @@ export default (props: EditorProps) => [
   history(),
   models(props), // NOTE: this should come first
   conflicts(props),
+  syncErrors(),
   elements(),
   persist(),
   sections(),
