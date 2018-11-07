@@ -3,13 +3,12 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import styled from 'styled-components'
 import { ManuscriptEditorState } from '../../schema/types'
+import { LevelSelector } from './LevelSelector'
 import { ToolbarItem, ToolbarItemContainer } from './ToolbarItemContainer'
 
 const ToolbarContainer = styled.div`
   margin: 6px;
   display: flex;
-  align-items: baseline;
-  //justify-content: center;
   flex-wrap: wrap;
 `
 
@@ -63,6 +62,12 @@ export interface ToolbarButton {
 
 export const Toolbar: React.SFC<ToolbarProps> = ({ toolbar, view }) => (
   <ToolbarContainer>
+    {view && (
+      <ToolbarGroup>
+        <LevelSelector view={view} />
+      </ToolbarGroup>
+    )}
+
     {Object.entries(toolbar).map(([groupKey, toolbarGroup]) => (
       <ToolbarGroup key={groupKey} className={'toolbar-group'}>
         {Object.entries(toolbarGroup).map(([itemKey, item]) => (
