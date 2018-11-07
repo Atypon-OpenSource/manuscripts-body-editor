@@ -14,8 +14,6 @@ export interface PouchSyncErrorInfo {
 }
 
 export enum SyncErrorType {
-  ConnectionFailure = 'ConnectionFailure',
-  Conflict = 'Conflict',
   SchemaViolation = 'SchemaViolation',
   Unknown = 'Unknown',
 }
