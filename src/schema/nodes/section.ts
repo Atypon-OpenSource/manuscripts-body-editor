@@ -12,7 +12,7 @@ export interface SectionNode extends ManuscriptNode {
 
 export const section: NodeSpec = {
   // NOTE: the schema needs paragraphs to be the default type, so they must explicitly come first
-  content: 'section_title (paragraph | element)+ footnotes_element? section*',
+  content: 'section_title (paragraph | element)* footnotes_element? section*',
   attrs: {
     id: { default: '' },
     titleSuppressed: { default: false },
