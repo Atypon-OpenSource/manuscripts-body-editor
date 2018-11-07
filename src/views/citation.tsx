@@ -105,7 +105,6 @@ class CitationView implements NodeView {
 
     this.view.dispatch(
       this.view.state.tr.setMeta(modelsKey, {
-        [REMOVE]: [id],
         [UPDATE]: [citation],
       })
     )
