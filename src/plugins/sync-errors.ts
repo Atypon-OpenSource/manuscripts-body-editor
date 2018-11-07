@@ -32,45 +32,53 @@ export default () => {
       apply: (tr, pluginState, oldState, newState): SyncErrorsPluginState => {
         const errorsDoc: SyncErrors = tr.getMeta(syncErrorsKey)
 
-        if (!errorsDoc) {
-          return pluginState
-        }
-
-        if (pluginState.errors && errorsDoc._rev === pluginState.errors._rev) {
-          return pluginState
-        }
-
-        const { _id, _rev, ...errors } = errorsDoc
-
-        const decorations: Decoration[] = []
-
-        newState.doc.descendants((node: ManuscriptNode, pos: number) => {
-          if (!(node.attrs && node.attrs.id && node.attrs.id in errors)) {
-            return
+        // New errors
+        if (errorsDoc) {
+          if (
+            pluginState.errors &&
+            errorsDoc._rev === pluginState.errors._rev
+          ) {
+            return pluginState
           }
 
-          const error = errors[node.attrs.id]
+          const { _id, _rev, ...errors } = errorsDoc
 
-          if (isVisibleElement(node.attrs.id)) {
-            // TODO: should this be a widget?
-            const attentionWidget = Decoration.widget(
-              pos,
-              (view: EditorView) => {
-                const attentionIcon = document.createElement('span')
-                attentionIcon.innerHTML = attentionIconHtml()
-                attentionIcon.className = 'attention-icon'
+          const decorations: Decoration[] = []
 
-                return attentionIcon
-              }
-            )
+          newState.doc.descendants((node: ManuscriptNode, pos: number) => {
+            if (!(node.attrs && node.attrs.id && node.attrs.id in errors)) {
+              return
+            }
 
-            decorations.push(attentionWidget)
+            const error = errors[node.attrs.id]
+
+            if (isVisibleElement(node.attrs.id)) {
+              // TODO: should this be a widget?
+              const attentionWidget = Decoration.widget(
+                pos,
+                (view: EditorView) => {
+                  const attentionIcon = document.createElement('span')
+                  attentionIcon.innerHTML = attentionIconHtml()
+                  attentionIcon.className = 'attention-icon'
+
+                  return attentionIcon
+                }
+              )
+
+              decorations.push(attentionWidget)
+            }
+          })
+
+          return {
+            decorations: DecorationSet.create(newState.doc, decorations),
+            errors: errorsDoc,
           }
-        })
+        }
 
+        // Document changed, map any existing decorations through transaction
         return {
-          decorations: DecorationSet.create(newState.doc, decorations),
-          errors: errorsDoc,
+          decorations: pluginState.decorations.map(tr.mapping, tr.doc),
+          errors: pluginState.errors,
         }
       },
     },
