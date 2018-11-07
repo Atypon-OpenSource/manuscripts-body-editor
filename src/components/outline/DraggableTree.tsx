@@ -72,6 +72,7 @@ export interface TreeItem {
 }
 
 interface Props {
+  depth?: number
   tree: TreeItem
   view: ManuscriptEditorView
 }
@@ -135,6 +136,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
   public render(): React.ReactNode {
     const {
+      depth = 0,
       tree,
       canDrop,
       connectDragSource,
@@ -156,6 +158,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
       <div>
         <Outline style={this.outlineStyles(isDragging)}>
           <OutlineDropPreview
+            depth={depth}
             style={this.topPreviewStyles(mightDrop, dragPosition)}
           />
 
@@ -163,6 +166,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
             <div>
               <OutlineItem
                 isSelected={isSelected}
+                depth={depth}
                 onContextMenu={this.handleContextMenu}
               >
                 {items.length ? (
@@ -205,12 +209,14 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   key={subtree.node.attrs.id}
                   tree={subtree}
                   view={view}
+                  depth={depth + 1}
                 />
               ))}
             </div>
           ) : null}
 
           <OutlineDropPreview
+            depth={depth}
             style={this.bottomPreviewStyles(mightDrop, dragPosition)}
           />
         </Outline>

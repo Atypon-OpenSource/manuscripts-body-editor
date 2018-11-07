@@ -13,6 +13,7 @@ export const OutlineItemIcon = styled.span`
 
 export const OutlineItem = styled.div<{
   isSelected: boolean
+  depth: number
 }>`
   display: flex;
   align-items: center;
@@ -22,15 +23,15 @@ export const OutlineItem = styled.div<{
   cursor: pointer;
   color: #444;
   background: ${props => (props.isSelected ? '#E4EEF7' : 'transparent')};
+  padding-right: 20px;
+  padding-left: ${props => 20 + props.depth * 20}px;
+  margin-left: -20px;
+  margin-right: -20px;
 `
 
 export const Outline = styled.div`
   font-size: 16px;
   position: relative;
-
-  & > div > div > div {
-    padding-left: 18px;
-  }
 
   & .outline-text-doc {
     font-size: 18px;
@@ -62,12 +63,13 @@ export const OutlineItemNoArrow = styled.span`
   flex-shrink: 0;
 `
 
-export const OutlineDropPreview = styled.div`
+export const OutlineDropPreview = styled.div<{ depth: number }>`
   width: 100%;
   background: #65a3ff;
   height: 1px;
   position: absolute;
-  margin-left: 30px;
+  margin-left: ${props => 30 + props.depth * 20}px;
+  z-index: 2;
 
   &:before {
     content: '';
