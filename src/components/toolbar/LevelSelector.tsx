@@ -363,9 +363,13 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
   }
 }
 
-const OptionContainer = styled.div`
+const OptionContainer = styled.div<{ isSelected: boolean }>`
   display: flex;
   align-items: center;
+
+  & svg path {
+    fill: ${props => (props.isSelected ? '#fff' : '#7fb5d5')};
+  }
 `
 
 const OptionIcon = styled.span`
@@ -379,6 +383,12 @@ const OptionIcon = styled.span`
 
 const OptionLabel = styled.span`
   flex: 1;
+`
+
+const StyledSelect = styled(Select)`
+  & > div:hover {
+    border-color: #7fb5d5;
+  }
 `
 
 interface Option {
@@ -405,7 +415,7 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
   const selected = options.find(option => !option.action)
 
   return (
-    <Select
+    <StyledSelect
       isDisabled={options.length <= 1}
       isSearchable={false}
       options={options}
@@ -418,6 +428,7 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
 
           style.display = 'flex'
           style.fontSize = 15
+          style.cursor = 'pointer'
           style.paddingLeft = 8 + (data.depth - 1) * 16
 
           if (data.nodeType === nodes.section) {
@@ -425,11 +436,17 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
             style.fontWeight = 600
           }
 
+          if (props.isSelected) {
+            style.backgroundColor = '#7fb5d5'
+          }
+
           return (
             <OptionContainer
+              ref={props.innerRef}
               {...props.innerProps}
               style={style}
               depth={data.value}
+              isSelected={props.isSelected}
             >
               <OptionIcon>{nodeTypeIcon(data.nodeType)}</OptionIcon>
               <OptionLabel>{data.label}</OptionLabel>
@@ -453,6 +470,7 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
           borderWidth: 1,
           borderStyle: 'solid',
           borderColor: '#d6d6d6',
+          boxShadow: 'none',
           fontSize: '14px',
           minHeight: 0,
           padding: 0,
@@ -478,6 +496,10 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
         valueContainer: (styles): CSSProperties => ({
           ...styles,
           padding: '1px 8px',
+        }),
+        container: (styles): CSSProperties => ({
+          ...styles,
+          border: 'none',
         }),
       }}
     />
