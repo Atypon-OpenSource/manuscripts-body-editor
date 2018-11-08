@@ -20,7 +20,11 @@ interface SyncErrorsPluginState {
 // Object mapping the node where we should display the error, to a list of
 // componentIDs which have errors
 interface NodeErrors {
-  [componentID: string]: SyncError[]
+  [componentID: string]: {
+    syncErrors: SyncError[]
+    pos: number
+    nodeSize: number
+  }
 }
 
 const findTopLevelContainingNode = (
@@ -32,13 +36,21 @@ const findTopLevelContainingNode = (
   }
 
   if (predicate(startNode)) {
-    return startNode.attrs.id
+    return {
+      id: startNode.attrs.id,
+      pos: pos.pos,
+      nodeSize: startNode.nodeSize,
+    }
   }
 
   const result = findParentNodeClosestToPos(pos, predicate)
 
   if (result) {
-    return result.node.attrs.id
+    return {
+      id: result.node.attrs.id,
+      pos: result.pos,
+      nodeSize: result.node.nodeSize,
+    }
   } else {
     throw new Error('Unable to locate top level containing node')
   }
@@ -70,48 +82,46 @@ export default () => {
 
           const nodeErrors: NodeErrors = {}
 
-          newState.doc.descendants(
-            (node: ManuscriptNode, pos: number, _parent: ManuscriptNode) => {
-              if (!(node.attrs && node.attrs.id && node.attrs.id in errors)) {
-                return
-              }
+          newState.doc.descendants((node: ManuscriptNode, pos: number) => {
+            if (!(node.attrs && node.attrs.id && node.attrs.id in errors)) {
+              return
+            }
 
-              const error = errors[node.attrs.id]
+            const error = errors[node.attrs.id]
 
-              const id = findTopLevelContainingNode(
-                newState.doc.resolve(pos),
-                node
-              )
+            const {
+              id,
+              pos: topPos,
+              nodeSize: topSize,
+            } = findTopLevelContainingNode(newState.doc.resolve(pos), node)
 
-              const existingErrors = nodeErrors[id]
+            const existingErrors = nodeErrors[id]
 
-              if (existingErrors) {
-                existingErrors.push(error)
-              } else {
-                nodeErrors[id] = [error]
+            if (existingErrors) {
+              existingErrors.syncErrors.push(error)
+            } else {
+              nodeErrors[id] = {
+                syncErrors: [error],
+                pos: topPos,
+                nodeSize: topSize,
               }
             }
-          )
+          })
 
           console.log('nodeErrors', nodeErrors)
 
-          const decorations: Decoration[] = []
-
-          // if (isVisibleElement(node.attrs.id)) {
-          //   // TODO: should this be a widget?
-          //   const attentionWidget = Decoration.widget(
-          //     pos,
-          //     (view: EditorView) => {
-          //       const attentionIcon = document.createElement('span')
-          //       attentionIcon.innerHTML = attentionIconHtml()
-          //       attentionIcon.className = 'attention-icon'
-
-          //       return attentionIcon
-          //     }
-          //   )
-
-          //   decorations.push(attentionWidget)
-          // }
+          const decorations = Object.values(nodeErrors).map(
+            ({ pos, nodeSize, syncErrors }) => {
+              return Decoration.node(
+                pos,
+                pos + nodeSize,
+                {},
+                {
+                  syncErrors,
+                }
+              )
+            }
+          )
 
           return {
             decorations: DecorationSet.create(newState.doc, decorations),

@@ -275,10 +275,15 @@
 }
 
 .ProseMirror .action-button {
+  display: none;
   border: none;
   background: none;
   font-size: inherit;
   cursor: pointer;
+}
+
+.ProseMirror .has-sync-error .action-button {
+  display: initial;
 }
 
 .ProseMirror .block-gutter {

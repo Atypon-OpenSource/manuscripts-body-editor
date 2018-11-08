@@ -1,3 +1,4 @@
+import { Decoration } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
@@ -19,7 +20,11 @@ class ListingElement extends Block {
     this.initialise()
   }
 
-  public update(newNode: ManuscriptNode) {
+  public update(newNode: ManuscriptNode, decorations?: Decoration[]) {
+    if (decorations) {
+      this.handleDecorations(decorations)
+    }
+
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
     this.node = newNode

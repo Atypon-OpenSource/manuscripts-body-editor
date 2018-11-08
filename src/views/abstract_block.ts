@@ -1,6 +1,7 @@
-import { NodeView } from 'prosemirror-view'
+import { Decoration, NodeView } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
+import { attentionIconHtml } from '../lib/sync-errors'
 import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { buildComment } from '../transformer/builders'
 
@@ -35,8 +36,11 @@ abstract class AbstractBlock implements NodeView {
     this.getPos = getPos
   }
 
-  public update(newNode: ManuscriptNode): boolean {
+  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
     if (!newNode.sameMarkup(this.node)) return false
+    if (decorations) {
+      this.handleDecorations(decorations)
+    }
     this.node = newNode
     this.updateContents()
     return true
@@ -78,6 +82,13 @@ abstract class AbstractBlock implements NodeView {
     this.dom.appendChild(this.contentDOM)
   }
 
+  protected handleDecorations(decorations: Decoration[]) {
+    const hasSyncErrors = decorations.some(
+      decoration => decoration.spec.syncErrors
+    )
+    this.dom.classList.toggle('has-sync-error', hasSyncErrors)
+  }
+
   private createDOM() {
     this.dom = document.createElement('div')
     this.dom.classList.add('block-container')
@@ -100,25 +111,34 @@ abstract class AbstractBlock implements NodeView {
     gutter.setAttribute('contenteditable', 'false')
     gutter.classList.add('action-gutter')
 
-    // if (this.props.hasSyncError(this.node.attrs.id)) {
-    //   gutter.appendChild(this.createSyncButton())
-    // }
-
-    // gutter.appendChild(this.createCommentButton())
+    gutter.appendChild(this.createSyncWarningButton())
 
     this.dom.appendChild(gutter)
   }
 
-  private createCommentButton = () => {
-    const commentButton = document.createElement('button')
-    commentButton.classList.add('action-button')
-    commentButton.textContent = '💬'
-    commentButton.addEventListener('click', async () => {
-      await this.createComment(this.node.attrs.id)
+  private createSyncWarningButton = () => {
+    const warningButton = document.createElement('button')
+    warningButton.classList.add('action-button')
+    warningButton.classList.add('has-sync-error')
+
+    warningButton.innerHTML = attentionIconHtml()
+    warningButton.addEventListener('click', () => {
+      console.log('Retry')
     })
 
-    return commentButton
+    return warningButton
   }
+
+  // private createCommentButton = () => {
+  //   const commentButton = document.createElement('button')
+  //   commentButton.classList.add('action-button')
+  //   commentButton.textContent = '💬'
+  //   commentButton.addEventListener('click', async () => {
+  //     await this.createComment(this.node.attrs.id)
+  //   })
+
+  //   return commentButton
+  // }
 
   private createAddButton = (after: boolean) => {
     const button = document.createElement('a')
