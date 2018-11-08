@@ -1,6 +1,5 @@
 import { EditorProps } from '../components/Editor'
 import { placeholderContent } from '../lib/placeholder'
-import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
 import Block from './block'
 
@@ -9,17 +8,6 @@ class PlaceholderElement extends Block {
 
   protected get elementType() {
     return 'div'
-  }
-
-  public constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-  ) {
-    super(props, node, view, getPos)
-
-    this.initialise()
   }
 
   protected createElement() {

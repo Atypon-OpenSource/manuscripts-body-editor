@@ -1,22 +1,11 @@
 import { EditorProps } from '../components/Editor'
-import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
+import { ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
 import Block from './block'
 
 class ListingElement extends Block {
   protected get elementType() {
     return 'figure'
-  }
-
-  public constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-  ) {
-    super(props, node, view, getPos)
-
-    this.initialise()
   }
 
   public update(newNode: ManuscriptNode) {
