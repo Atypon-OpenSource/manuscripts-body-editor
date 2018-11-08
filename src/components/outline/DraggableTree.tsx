@@ -15,7 +15,11 @@ import {
 import { findDOMNode } from 'react-dom'
 import { ContextMenu } from '../../lib/context-menu'
 import { withDragDropContext } from '../../lib/dnd'
-import { ManuscriptEditorView, ManuscriptNode } from '../../schema/types'
+import {
+  ManuscriptEditorView,
+  ManuscriptNode,
+  ManuscriptNodeType,
+} from '../../schema/types'
 import { Selected } from '../../transformer/models'
 import { nodeTitle, nodeTitlePlaceholder } from '../../transformer/node-title'
 import { nodeTypeIcon } from '../../transformer/node-type-icons'
@@ -82,7 +86,13 @@ interface State {
   dragPosition: DropSide
 }
 
-const excludeTypes = ['table']
+const isExcluded = (nodeType: ManuscriptNodeType) => {
+  const { nodes } = nodeType.schema
+
+  const excludedTypes = [nodes.table]
+
+  return excludedTypes.includes(nodeType)
+}
 
 interface TreeBuilderOptions {
   node: ManuscriptNode
@@ -111,7 +121,7 @@ export const buildTree: TreeBuilder = ({
     if (
       (!childNode.isAtom || isElementNode(childNode)) &&
       childNode.attrs.id &&
-      !excludeTypes.includes(childNode.type.name)
+      !isExcluded(childNode.type)
     ) {
       items.push(
         buildTree({

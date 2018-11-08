@@ -6,7 +6,11 @@ import {
   isAtStartOfTextBlock,
   isTextSelection,
 } from '../commands'
-import { ManuscriptEditorState, ManuscriptEditorView } from '../schema/types'
+import {
+  ManuscriptEditorState,
+  ManuscriptEditorView,
+  ManuscriptSchema,
+} from '../schema/types'
 import { EditorAction } from '../types'
 
 type Dispatch = (transaction: Transaction) => void
@@ -16,20 +20,23 @@ const insertParagraph = (
   state: ManuscriptEditorState,
   $anchor: ResolvedPos
 ) => {
+  const {
+    tr,
+    schema: { nodes },
+  } = state
+
   const offset = $anchor.nodeAfter ? $anchor.nodeAfter.nodeSize : 0
   const pos = $anchor.pos + offset + 1
-  const nextNode = state.doc.resolve(pos).nodeAfter
-
-  let tr = state.tr
+  const nextNode = tr.doc.resolve(pos).nodeAfter
 
   if (
     !nextNode ||
-    (nextNode.type !== state.schema.nodes.paragraph || nextNode.nodeSize > 2)
+    (nextNode.type !== nodes.paragraph || nextNode.nodeSize > 2)
   ) {
-    tr = tr.insert(pos, state.schema.nodes.paragraph.create())
+    tr.insert(pos, nodes.paragraph.create())
   }
 
-  tr = tr.setSelection(TextSelection.create(tr.doc, pos + 1)).scrollIntoView()
+  tr.setSelection(TextSelection.create(tr.doc, pos + 1)).scrollIntoView()
 
   dispatch(tr)
 }
@@ -40,20 +47,23 @@ const enterNextBlock = (
   $anchor: ResolvedPos,
   create?: boolean
 ) => {
-  let tr = state.tr
+  const {
+    schema: { nodes },
+    tr,
+  } = state
 
   const pos = $anchor.after($anchor.depth - 1)
 
   let selection = Selection.findFrom(tr.doc.resolve(pos), 1, true)
 
   if (!selection && create) {
-    tr.insert(pos, state.schema.nodes.paragraph.create())
+    tr.insert(pos, nodes.paragraph.create())
     selection = Selection.findFrom(tr.doc.resolve(pos), 1, true)
   }
 
   if (!selection) return false
 
-  tr = tr.setSelection(selection).scrollIntoView()
+  tr.setSelection(selection).scrollIntoView()
 
   dispatch(tr)
 
@@ -65,15 +75,15 @@ const enterPreviousBlock = (
   state: ManuscriptEditorState,
   $anchor: ResolvedPos
 ) => {
+  const { tr } = state
+
   const offset = $anchor.nodeBefore ? $anchor.nodeBefore.nodeSize : 0
-  const $pos = state.doc.resolve($anchor.pos - offset - 1)
+  const $pos = tr.doc.resolve($anchor.pos - offset - 1)
   const previous = Selection.findFrom($pos, -1, true)
 
   if (!previous) return false
 
-  const tr = state.tr
-    .setSelection(TextSelection.create(state.tr.doc, previous.from))
-    .scrollIntoView()
+  tr.setSelection(TextSelection.create(tr.doc, previous.from)).scrollIntoView()
 
   dispatch(tr)
 
@@ -81,7 +91,9 @@ const enterPreviousBlock = (
 }
 
 const exitBlock = (direction: number): EditorAction => (state, dispatch) => {
-  const { $anchor } = state.selection
+  const {
+    selection: { $anchor },
+  } = state
 
   if (dispatch) {
     return direction === 1
@@ -92,7 +104,10 @@ const exitBlock = (direction: number): EditorAction => (state, dispatch) => {
 }
 
 const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
-  const { selection } = state
+  const {
+    selection,
+    schema: { nodes },
+  } = state
 
   if (!isTextSelection(selection)) return false
 
@@ -100,7 +115,7 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
 
   if (!$cursor) return false
 
-  if ($cursor.parent.type.name !== 'section_title') {
+  if ($cursor.parent.type !== nodes.section_title) {
     return false
   }
 
@@ -116,9 +131,12 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
 }
 
 const leaveFigcaption: EditorAction = (state, dispatch) => {
-  const { $anchor } = state.selection
+  const {
+    selection: { $anchor },
+    schema: { nodes },
+  } = state
 
-  if ($anchor.parent.type.name !== 'figcaption') return false
+  if ($anchor.parent.type !== nodes.figcaption) return false
 
   if (dispatch) {
     enterNextBlock(dispatch, state, $anchor, true)
@@ -133,7 +151,10 @@ const protectSectionTitle: EditorAction = (
   dispatch?: Dispatch,
   view?: ManuscriptEditorView
 ) => {
-  const { selection } = state
+  const {
+    selection,
+    schema: { nodes },
+  } = state
 
   if (!isTextSelection(selection)) return false
 
@@ -142,7 +163,7 @@ const protectSectionTitle: EditorAction = (
   if (!$cursor) return false
 
   return (
-    $cursor.parent.type === state.schema.nodes.section_title &&
+    $cursor.parent.type === nodes.section_title &&
     isAtStartOfTextBlock(state, $cursor, view)
   )
 }
