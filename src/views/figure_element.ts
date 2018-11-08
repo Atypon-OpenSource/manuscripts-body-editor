@@ -1,6 +1,6 @@
 import { EditorProps } from '../components/Editor'
 import { INSERT, modelsKey } from '../plugins/models'
-import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
+import { ManuscriptNode } from '../schema/types'
 import { buildFigure } from '../transformer/builders'
 import { NodeViewCreator } from '../types'
 import Block from './block'
@@ -8,17 +8,6 @@ import Block from './block'
 class FigureElement extends Block {
   private container: HTMLElement
   private element: HTMLElement
-
-  public constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-  ) {
-    super(props, node, view, getPos)
-
-    this.initialise()
-  }
 
   // TODO: does this need to be different?
   public update(newNode: ManuscriptNode) {

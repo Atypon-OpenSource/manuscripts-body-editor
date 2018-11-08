@@ -1,22 +1,11 @@
 import { sanitize } from 'dompurify'
 import { EditorProps } from '../components/Editor'
-import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
+import { ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
-import AbstractBlock from './abstract_block'
+import Block from './block'
 
-class TOCElement extends AbstractBlock {
+class TOCElement extends Block {
   private element: HTMLElement
-
-  public constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-  ) {
-    super(props, node, view, getPos)
-
-    this.initialise()
-  }
 
   public update(newNode: ManuscriptNode) {
     if (newNode.attrs.id !== this.node.attrs.id) return false
