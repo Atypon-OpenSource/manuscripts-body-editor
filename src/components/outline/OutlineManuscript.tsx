@@ -31,7 +31,7 @@ export const OutlineManuscript: React.SFC<Props> = ({
   manuscript,
 }) => (
   <Outline>
-    <OutlineItem isSelected={false}>
+    <OutlineItem isSelected={false} depth={0}>
       <OutlineItemLink
         to={`/projects/${project._id}/manuscripts/${manuscript._id}`}
       >

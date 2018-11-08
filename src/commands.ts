@@ -1,4 +1,4 @@
-import { MarkType, NodeType, ResolvedPos } from 'prosemirror-model'
+import { MarkType, ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { getChildOfType } from './lib/utils'
 import { INSERT, modelsKey } from './plugins/models'
@@ -35,7 +35,7 @@ export const isNodeSelection = (
   selection: Selection
 ): selection is ManuscriptNodeSelection => selection instanceof NodeSelection
 
-export const blockActive = (type: NodeType) => (
+export const blockActive = (type: ManuscriptNodeType) => (
   state: ManuscriptEditorState
 ) => {
   const { selection } = state
@@ -91,7 +91,7 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
 }
 
 export const createSelection = (
-  nodeType: NodeType,
+  nodeType: ManuscriptNodeType,
   position: number,
   doc: ManuscriptNode
 ) => {

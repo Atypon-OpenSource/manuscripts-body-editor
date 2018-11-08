@@ -44,7 +44,9 @@ abstract class AbstractBlock implements NodeView {
 
   protected initialise() {
     this.createDOM()
+    this.createGutter()
     this.createElement()
+    this.createActionGutter()
     this.updateContents()
   }
 
@@ -80,15 +82,42 @@ abstract class AbstractBlock implements NodeView {
     this.dom = document.createElement('div')
     this.dom.classList.add('block-container')
     this.dom.classList.add(`block-${this.node.type.name}`)
+  }
 
+  private createGutter() {
     const gutter = document.createElement('div')
     gutter.setAttribute('contenteditable', 'false')
-    gutter.className = 'block-gutter'
+    gutter.classList.add('block-gutter')
     gutter.appendChild(this.createAddButton(false))
     gutter.appendChild(this.createEditButton())
     gutter.appendChild(this.createSpacer())
     gutter.appendChild(this.createAddButton(true))
     this.dom.appendChild(gutter)
+  }
+
+  private createActionGutter() {
+    const gutter = document.createElement('div')
+    gutter.setAttribute('contenteditable', 'false')
+    gutter.classList.add('action-gutter')
+
+    // if (this.props.hasSyncError(this.node.attrs.id)) {
+    //   gutter.appendChild(this.createSyncButton())
+    // }
+
+    // gutter.appendChild(this.createCommentButton())
+
+    this.dom.appendChild(gutter)
+  }
+
+  private createCommentButton = () => {
+    const commentButton = document.createElement('button')
+    commentButton.classList.add('action-button')
+    commentButton.textContent = '💬'
+    commentButton.addEventListener('click', async () => {
+      await this.createComment(this.node.attrs.id)
+    })
+
+    return commentButton
   }
 
   private createAddButton = (after: boolean) => {

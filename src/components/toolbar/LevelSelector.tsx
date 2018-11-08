@@ -213,10 +213,11 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
       offset += precedingSection.nodeSize
     }
 
-    const sectionTitle = nodes.section_title.create(
-      {},
-      view.state.schema.text(paragraph.textContent)
-    )
+    const textContent = paragraph.textContent
+
+    const sectionTitle: SectionTitleNode = textContent
+      ? nodes.section_title.create({}, view.state.schema.text(textContent))
+      : nodes.section_title.create()
 
     items.push(
       // add a new section with the paragraph contents as the title and an empty paragraph

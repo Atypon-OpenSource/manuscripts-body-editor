@@ -1,7 +1,7 @@
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import { parse as parseTitle } from '@manuscripts/title-editor'
 import { History } from 'history'
-import { toggleMark } from 'prosemirror-commands'
+import { toggleMark, wrapIn } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -164,8 +164,8 @@ export const menus = (props: MenusProps): MenuItem[] => [
       {
         label: 'Paragraph',
         // active: blockActive(schema.nodes.paragraph),
-        enable: wrapInList(schema.nodes.paragraph),
-        run: wrapInList(schema.nodes.paragraph),
+        enable: canInsert(schema.nodes.paragraph),
+        run: insertBlock(schema.nodes.paragraph),
       },
       {
         role: 'separator',

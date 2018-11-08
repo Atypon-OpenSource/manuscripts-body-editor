@@ -1,6 +1,5 @@
-import { NodeType } from 'prosemirror-model'
 import { findParentNode } from 'prosemirror-utils'
-import { ManuscriptNode } from '../schema/types'
+import { ManuscriptNode, ManuscriptNodeType } from '../schema/types'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -31,7 +30,9 @@ export const getMatchingChild = (
 
 export const getChildOfType = (
   parent: ManuscriptNode,
-  nodeType: NodeType
+  nodeType: ManuscriptNodeType
 ): boolean => !!getMatchingChild(parent, node => node.type === nodeType)
 
 export const findParentNodeWithId = findParentNode(node => 'id' in node.attrs)
+
+export const findParentNodeWithIdValue = findParentNode(node => node.attrs.id)

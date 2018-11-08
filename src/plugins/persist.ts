@@ -16,6 +16,10 @@ export default () => {
       // TODO: keep track of changed nodes that haven't been saved yet?
       // TODO: call insertComponent directly?
 
+      const { nodes } = newState.schema
+
+      const listNodeTypes = [nodes.bullet_list, nodes.ordered_list]
+
       const ids = new Set()
 
       // for each node in the doc
@@ -49,6 +53,11 @@ export default () => {
 
           // remember that something changed
           updated++
+        }
+
+        // don't descend into lists
+        if (listNodeTypes.includes(node.type)) {
+          return false
         }
       })
 

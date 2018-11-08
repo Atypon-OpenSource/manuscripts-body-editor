@@ -1,12 +1,25 @@
 import { NodeType } from 'prosemirror-model'
 import { iterateChildren } from '../lib/utils'
-import { ManuscriptNode } from '../schema/types'
+import { ManuscriptNode, ManuscriptNodeType } from '../schema/types'
 import { nodeNames } from './node-names'
 
-const getTextOfNodeType = (node: ManuscriptNode, nodeType: NodeType) => {
-  for (const child of iterateChildren(node)) {
+const textSnippet = (node: ManuscriptNode, max: number = 100) => {
+  let text = ''
+
+  node.forEach(child => {
+    text += child.isText ? child.text : ' '
+  })
+
+  return text.substr(0, max)
+}
+
+const snippetOfNodeType = (
+  node: ManuscriptNode,
+  nodeType: ManuscriptNodeType
+) => {
+  for (const child of iterateChildren(node, true)) {
     if (child.type === nodeType) {
-      return child.textContent
+      return textSnippet(child)
     }
   }
 
@@ -18,19 +31,23 @@ export const nodeTitle = (node: ManuscriptNode) => {
 
   switch (node.type) {
     case nodes.section:
-      return getTextOfNodeType(node, nodes.section_title)
+      return snippetOfNodeType(node, nodes.section_title)
 
     case nodes.bibliography_section:
-      return getTextOfNodeType(node, nodes.section_title)
+      return snippetOfNodeType(node, nodes.section_title)
+
+    case nodes.ordered_list:
+    case nodes.bullet_list:
+      return snippetOfNodeType(node, nodes.paragraph)
 
     case nodes.figure_element:
     case nodes.table_element:
     case nodes.equation_element:
     case nodes.listing_element:
-      return getTextOfNodeType(node, nodes.figcaption)
+      return snippetOfNodeType(node, nodes.figcaption)
 
     default:
-      return node.textContent
+      return textSnippet(node)
   }
 }
 

@@ -1,6 +1,11 @@
-import { Fragment, NodeType, Slice } from 'prosemirror-model'
+import { Fragment, Slice } from 'prosemirror-model'
 import { createBlock } from '../commands'
-import { ManuscriptEditorView, ManuscriptNode, Nodes } from '../schema/types'
+import {
+  ManuscriptEditorView,
+  ManuscriptNode,
+  ManuscriptNodeType,
+  Nodes,
+} from '../schema/types'
 import { nodeNames } from '../transformer/node-names'
 import { PopperManager } from './popper'
 
@@ -61,6 +66,8 @@ export class ContextMenu {
 
     const insertableTypes = this.insertableTypes(after, insertPos, endPos)
 
+    const { nodes } = this.view.state.schema
+
     if (this.showMenuSection(insertableTypes, ['section', 'subsection'])) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -74,7 +81,7 @@ export class ContextMenu {
           if (insertableTypes.section) {
             section.appendChild(
               this.createMenuItem(itemLabel, () => {
-                this.addBlock('section', after, insertPos)
+                this.addBlock(nodes.section, after, insertPos)
                 popper.destroy()
               })
             )
@@ -87,7 +94,7 @@ export class ContextMenu {
 
             section.appendChild(
               this.createMenuItem(subItemLabel, () => {
-                this.addBlock('section', after, endPos)
+                this.addBlock(nodes.section, after, endPos)
                 popper.destroy()
               })
             )
@@ -105,10 +112,10 @@ export class ContextMenu {
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (insertableTypes.paragraph) {
+          if (insertableTypes.paragraphElement) {
             section.appendChild(
               this.createMenuItem('Paragraph', () => {
-                this.addBlock('paragraph', after)
+                this.addBlock(nodes.paragraph, after)
                 popper.destroy()
               })
             )
@@ -117,7 +124,7 @@ export class ContextMenu {
           if (insertableTypes.orderedList) {
             section.appendChild(
               this.createMenuItem('Numbered List', () => {
-                this.addBlock('ordered_list', after)
+                this.addBlock(nodes.ordered_list, after)
                 popper.destroy()
               })
             )
@@ -126,7 +133,7 @@ export class ContextMenu {
           if (insertableTypes.bulletList) {
             section.appendChild(
               this.createMenuItem('Bullet list', () => {
-                this.addBlock('bullet_list', after)
+                this.addBlock(nodes.bullet_list, after)
                 popper.destroy()
               })
             )
@@ -148,7 +155,7 @@ export class ContextMenu {
           if (insertableTypes.figureElement) {
             section.appendChild(
               this.createMenuItem('Figure Panel', () => {
-                this.addBlock('figure_element', after)
+                this.addBlock(nodes.figure_element, after)
                 popper.destroy()
               })
             )
@@ -157,7 +164,7 @@ export class ContextMenu {
           if (insertableTypes.tableElement) {
             section.appendChild(
               this.createMenuItem('Table', () => {
-                this.addBlock('table_element', after)
+                this.addBlock(nodes.table_element, after)
                 popper.destroy()
               })
             )
@@ -166,7 +173,7 @@ export class ContextMenu {
           if (insertableTypes.equationElement) {
             section.appendChild(
               this.createMenuItem('Equation', () => {
-                this.addBlock('equation_element', after)
+                this.addBlock(nodes.equation_element, after)
                 popper.destroy()
               })
             )
@@ -175,7 +182,7 @@ export class ContextMenu {
           if (insertableTypes.listingElement) {
             section.appendChild(
               this.createMenuItem('Listing', () => {
-                this.addBlock('listing_element', after)
+                this.addBlock(nodes.listing_element, after)
                 popper.destroy()
               })
             )
@@ -196,22 +203,24 @@ export class ContextMenu {
     const $pos = this.resolvePos()
     const nodeType = this.node.type
 
+    const { nodes } = this.view.state.schema
+
     if (this.isListType(nodeType.name)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (nodeType === this.view.state.schema.nodes.bullet_list) {
+          if (nodeType === nodes.bullet_list) {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType('ordered_list')
+                this.changeNodeType(nodes.ordered_list)
                 popper.destroy()
               })
             )
           }
 
-          if (nodeType === this.view.state.schema.nodes.ordered_list) {
+          if (nodeType === nodes.ordered_list) {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
-                this.changeNodeType('bullet_list')
+                this.changeNodeType(nodes.bullet_list)
                 popper.destroy()
               })
             )
@@ -255,10 +264,7 @@ export class ContextMenu {
       )
     }
 
-    if (
-      nodeType === this.view.state.schema.nodes.paragraph &&
-      $pos.parent.type === this.view.state.schema.nodes.section
-    ) {
+    if (nodeType === nodes.paragraph && $pos.parent.type === nodes.section) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
@@ -292,19 +298,25 @@ export class ContextMenu {
     this.addPopperEventListeners()
   }
 
-  private addBlock = (type: Nodes, after: boolean, position?: number) => {
+  private addBlock = (
+    nodeType: ManuscriptNodeType,
+    after: boolean,
+    position?: number
+  ) => {
     const { state, dispatch } = this.view
 
     if (position === undefined) {
       position = after ? this.getPos() + this.node.nodeSize : this.getPos()
     }
 
-    const nodeType = state.schema.nodes[type]
-
     createBlock(nodeType, position, state, dispatch)
   }
 
-  private canAddBlock = (type: Nodes, after: boolean, position?: number) => {
+  private canAddBlock = (
+    nodeType: ManuscriptNodeType,
+    after: boolean,
+    position?: number
+  ) => {
     const { state } = this.view
 
     if (position === undefined) {
@@ -314,8 +326,6 @@ export class ContextMenu {
     const $position = this.view.state.doc.resolve(position)
 
     const index = $position.index()
-
-    const nodeType = state.schema.nodes[type]
 
     return $position.parent.canReplaceWith(index, index, nodeType)
   }
@@ -344,26 +354,28 @@ export class ContextMenu {
     after: boolean,
     insertPos: number,
     endPos: number
-  ) => ({
-    section: this.canAddBlock('section', after, insertPos),
-    subsection: this.canAddBlock('section', after, endPos),
-    paragraph: this.canAddBlock('paragraph', after),
-    orderedList: this.canAddBlock('ordered_list', after),
-    bulletList: this.canAddBlock('bullet_list', after),
-    figureElement: this.canAddBlock('figure_element', after),
-    tableElement: this.canAddBlock('table_element', after),
-    equationElement: this.canAddBlock('equation_element', after),
-    listingElement: this.canAddBlock('listing_element', after),
-  })
+  ) => {
+    const { nodes } = this.view.state.schema
+
+    return {
+      section: this.canAddBlock(nodes.section, after, insertPos),
+      subsection: this.canAddBlock(nodes.section, after, endPos),
+      paragraphElement: this.canAddBlock(nodes.paragraph, after),
+      orderedList: this.canAddBlock(nodes.ordered_list, after),
+      bulletList: this.canAddBlock(nodes.bullet_list, after),
+      figureElement: this.canAddBlock(nodes.figure_element, after),
+      tableElement: this.canAddBlock(nodes.table_element, after),
+      equationElement: this.canAddBlock(nodes.equation_element, after),
+      listingElement: this.canAddBlock(nodes.listing_element, after),
+    }
+  }
 
   private showMenuSection = (
     insertableTypes: { [key: string]: boolean },
     types: string[]
   ) => types.some(type => insertableTypes[type])
 
-  private changeNodeType = (type: string) => {
-    const nodeType = this.view.state.schema.nodes[type]
-
+  private changeNodeType = (nodeType: ManuscriptNodeType) => {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
         id: this.node.attrs.id,
@@ -373,7 +385,7 @@ export class ContextMenu {
     popper.destroy()
   }
 
-  private deleteNode = (nodeType: NodeType) => {
+  private deleteNode = (nodeType: ManuscriptNodeType) => {
     switch (nodeType.name) {
       case 'section_title': {
         const $pos = this.resolvePos()
