@@ -1,9 +1,10 @@
-import { Fragment, Slice } from 'prosemirror-model'
+import { Fragment } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
 import styled from 'styled-components'
-import { findParentNodeWithId } from '../../lib/utils'
+import { generateNodeID } from '../..'
+import { findParentNodeWithIdValue } from '../../lib/utils'
 import { isSectionNode, SectionNode } from '../../schema/nodes/section'
 import { SectionTitleNode } from '../../schema/nodes/section_title'
 import { ManuscriptEditorView, ManuscriptNodeType } from '../../schema/types'
@@ -27,7 +28,8 @@ const buildOption = (
   nodeType: ManuscriptNodeType,
   value: number,
   depth: number,
-  action?: () => void
+  action?: () => void,
+  isDisabled: boolean = false
 ): Option => ({
   value,
   depth,
@@ -35,15 +37,20 @@ const buildOption = (
   label: titleCase(optionName(nodeType, value)),
   nodeType,
   action,
+  isDisabled,
 })
 
 const buildOptions = (view: ManuscriptEditorView): Option[] => {
   const {
     state: {
+      doc,
       selection: { $from, $to },
-      schema: { nodes },
+      schema,
+      tr,
     },
   } = view
+
+  const { nodes } = schema
 
   const options: Option[] = []
 
@@ -51,40 +58,57 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
     return options
   }
 
-  // move paragraph to title of new subsection
+  const parentNodeWithIdValue = findParentNodeWithIdValue(view.state.selection)
+
+  if (!parentNodeWithIdValue) {
+    return options
+  }
+
+  // move paragraph to title of new subsection, along with subsequent content
   const moveParagraphToNewSubsection = () => {
-    const textContent = $from.parent.textContent
+    const paragraph = $from.node($from.depth)
+    const beforeParagraph = $from.before($from.depth)
+    const afterParagraph = $from.after($from.depth)
+    const $afterParagraph = doc.resolve(afterParagraph)
+    const afterParagraphOffset = $afterParagraph.parentOffset
+
+    const sectionDepth = $from.depth - 1
+    const parentSection = $from.node(sectionDepth)
+    const endIndex = $from.indexAfter(sectionDepth)
+    const sectionEnd = $from.end(sectionDepth)
+
+    const textContent = paragraph.textContent
 
     const sectionTitle: SectionTitleNode = textContent
-      ? nodes.section_title.create({}, view.state.schema.text(textContent))
+      ? nodes.section_title.create({}, schema.text(textContent))
       : nodes.section_title.create()
 
-    const slice = new Slice(
-      Fragment.from([nodes.section.create({}, [sectionTitle])]),
-      0,
-      0
+    let sectionContent = Fragment.from(sectionTitle)
+
+    if (endIndex < parentSection.childCount) {
+      sectionContent = sectionContent.append(
+        parentSection.content.cut(afterParagraphOffset)
+      )
+    }
+
+    const newSection = nodes.section.create(
+      {
+        id: generateNodeID(nodes.section),
+      },
+      sectionContent
     )
 
-    const beforeParagraph = $from.before()
-    const afterParagraph = $from.after()
+    tr.replaceWith(beforeParagraph, sectionEnd, newSection)
 
-    const tr = view.state.tr.replaceRange(
-      beforeParagraph,
-      afterParagraph,
-      slice
+    const anchor = beforeParagraph + 2
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
     view.focus()
 
-    // select title of created section
-    view.dispatch(
-      tr.setSelection(
-        TextSelection.between(
-          tr.doc.resolve(beforeParagraph + 1),
-          tr.doc.resolve(beforeParagraph + 1 + sectionTitle.nodeSize)
-        )
-      )
-    )
+    view.dispatch(tr)
   }
 
   // append the section to the preceding section as a subsection
@@ -102,28 +126,23 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     const previousSection = parentSection.child(startIndex - 1)
 
-    const fragment = previousSection.content.append(Fragment.from(section))
-
-    const slice = new Slice(fragment, 0, 0)
-
     const beforePreviousSection = beforeSection - previousSection.nodeSize
 
-    const tr = view.state.tr.replace(beforePreviousSection, afterSection, slice)
+    tr.replaceWith(
+      beforePreviousSection,
+      afterSection,
+      previousSection.content.append(Fragment.from(section))
+    )
+
+    const anchor = beforeSection + 1
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
+    )
 
     view.focus()
 
-    view.dispatch(
-      tr.setSelection(
-        TextSelection.between(
-          tr.doc.resolve(beforePreviousSection + previousSection.nodeSize),
-          tr.doc.resolve(
-            beforePreviousSection +
-              previousSection.nodeSize +
-              sectionTitle.nodeSize
-          )
-        )
-      )
-    )
+    view.dispatch(tr)
   }
 
   // move the section up the tree
@@ -134,7 +153,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
     const beforeSection = $from.before(sectionDepth)
     const sectionTitle = $from.node($from.depth)
 
-    const $beforeSection = view.state.tr.doc.resolve(beforeSection)
+    const $beforeSection = doc.resolve(beforeSection)
     const beforeSectionOffset = $beforeSection.parentOffset
     const afterSectionOffset = beforeSectionOffset + section.nodeSize
 
@@ -166,32 +185,25 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
       items.push(parentSection.copy(fragment))
     }
 
-    const slice = new Slice(Fragment.from(items), 0, 0)
+    tr.replaceWith(beforeParentSection, afterParentSection, items)
 
-    const tr = view.state.tr.replaceRange(
-      beforeParentSection,
-      afterParentSection,
-      slice
+    const anchor = beforeParentSection + offset + 2
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
     view.focus()
 
-    view.dispatch(
-      tr.setSelection(
-        TextSelection.between(
-          tr.doc.resolve(beforeParentSection + offset),
-          tr.doc.resolve(parentSectionStart + offset + sectionTitle.nodeSize)
-        )
-      )
-    )
+    view.dispatch(tr)
   }
 
-  // move paragraph to title of new section at this position
+  // move paragraph to title of new section at this position, along with the rest of the section
   // TODO: target depth
   const promoteParagraphToSection = (target: number) => () => {
     const paragraph = $from.node($from.depth)
     const beforeParagraph = $from.before($from.depth)
-    const $beforeParagraph = view.state.tr.doc.resolve(beforeParagraph)
+    const $beforeParagraph = doc.resolve(beforeParagraph)
     const beforeParagraphOffset = $beforeParagraph.parentOffset
     const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize
 
@@ -201,7 +213,6 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
     const endIndex = $from.indexAfter(sectionDepth)
     const beforeParentSection = $from.before(sectionDepth)
     const afterParentSection = $from.after(sectionDepth)
-    const parentSectionStart = $from.start(sectionDepth)
 
     const items = []
     let offset = 0
@@ -216,61 +227,146 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
     const textContent = paragraph.textContent
 
     const sectionTitle: SectionTitleNode = textContent
-      ? nodes.section_title.create({}, view.state.schema.text(textContent))
+      ? nodes.section_title.create({}, schema.text(textContent))
       : nodes.section_title.create()
 
-    items.push(
-      // add a new section with the paragraph contents as the title and an empty paragraph
-      parentSection.copy(Fragment.fromArray([sectionTitle, paragraph.copy()]))
-    )
+    let sectionContent = Fragment.from(sectionTitle)
 
-    // add another section with the rest of the original section
     if (endIndex < parentSection.childCount) {
-      const fragment = Fragment.from(nodes.section_title.create()).append(
+      sectionContent = sectionContent.append(
         parentSection.content.cut(afterParagraphOffset)
       )
-
-      items.push(parentSection.copy(fragment))
+    } else {
+      sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
     }
 
-    const slice = new Slice(Fragment.from(items), 0, 0)
+    items.push(parentSection.copy(sectionContent))
 
-    const tr = view.state.tr.replaceRange(
-      beforeParentSection,
-      afterParentSection,
-      slice
+    tr.replaceWith(beforeParentSection, afterParentSection, items)
+
+    const anchor = beforeParentSection + offset + 2
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
     view.focus()
 
-    view.dispatch(
-      tr.setSelection(
-        TextSelection.between(
-          tr.doc.resolve(beforeParentSection + offset),
-          tr.doc.resolve(parentSectionStart + offset + sectionTitle.nodeSize)
-        )
-      )
-    )
+    view.dispatch(tr)
   }
 
-  switch ($from.parent.type) {
-    case nodes.section_title: {
+  const demoteSectionToParagraph = () => {
+    const sectionTitle = $from.node($from.depth)
+    const afterSectionTitle = $from.after($from.depth)
+    const $afterSectionTitle = doc.resolve(afterSectionTitle)
+    const afterSectionTitleOffset = $afterSectionTitle.parentOffset
+
+    const sectionDepth = $from.depth - 1
+    const section = $from.node(sectionDepth)
+    const beforeSection = $from.before(sectionDepth)
+    const afterSection = $from.after(sectionDepth)
+
+    const $beforeSection = doc.resolve(beforeSection)
+    const previousNode = $beforeSection.nodeBefore
+    const paragraph = nodes.paragraph.create(
+      {
+        id: generateNodeID(nodes.paragraph),
+      },
+      sectionTitle.content
+    )
+
+    let anchor
+
+    if (previousNode && isSectionNode(previousNode)) {
+      tr.replaceWith(
+        beforeSection - previousNode.nodeSize,
+        afterSection,
+        previousNode.copy(
+          Fragment.from(previousNode.content)
+            .append(Fragment.from(paragraph))
+            .append(section.content.cut(afterSectionTitleOffset))
+        )
+      )
+
+      anchor = beforeSection
+    } else {
+      tr.replaceWith(
+        beforeSection,
+        afterSection,
+        Fragment.from(paragraph).append(
+          section.content.cut(afterSectionTitleOffset)
+        )
+      )
+
+      anchor = beforeSection + 1
+    }
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
+    )
+
+    view.focus()
+
+    view.dispatch(tr)
+  }
+
+  const convertParagraphToList = (nodeType: ManuscriptNodeType) => () => {
+    const paragraph = $from.node($from.depth)
+    const beforeParagraph = $from.before($from.depth)
+    const afterParagraph = $from.after($from.depth)
+
+    const list = nodeType.create(
+      {
+        id: generateNodeID(nodeType),
+      },
+      nodes.list_item.create(
+        {},
+        schema.nodes.paragraph.create({}, paragraph.content)
+      )
+    )
+
+    tr.replaceWith(beforeParagraph, afterParagraph, list)
+
+    const anchor = beforeParagraph + 3
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
+    )
+
+    view.focus()
+
+    view.dispatch(tr)
+  }
+
+  switch (parentNodeWithIdValue.node.type) {
+    case nodes.section: {
       const sectionDepth = $from.depth - 1
+      const parentSectionDepth = sectionDepth - 1
+      const minimumDepth = Math.max(1, parentSectionDepth)
 
-      let parentSectionDepth = 0
+      const beforeSection = $from.before(sectionDepth)
+      const $beforeSection = doc.resolve(beforeSection)
+      const sectionOffset = $beforeSection.parentOffset
 
-      for (
-        let depth = Math.max(1, sectionDepth - 1);
-        depth < sectionDepth;
-        depth++
-      ) {
+      if (sectionDepth > 1 || sectionOffset > 1) {
+        options.push(
+          buildOption(nodes.paragraph, -1, 1, demoteSectionToParagraph)
+        )
+      }
+
+      for (let depth = 1; depth < sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNode(node)) {
           options.push(
-            buildOption(nodes.section, depth, depth, promoteSection(depth))
+            buildOption(
+              nodes.section,
+              depth,
+              depth,
+              promoteSection(depth),
+              depth < minimumDepth
+            )
           )
-          parentSectionDepth = depth
         }
       }
 
@@ -285,7 +381,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
       const parentSection = $from.node(parentSectionDepth)
 
       const beforeSectionPos = $from.before(parentSectionDepth + 1)
-      const $beforeSectionPos = view.state.tr.doc.resolve(beforeSectionPos)
+      const $beforeSectionPos = doc.resolve(beforeSectionPos)
 
       const precedingSections: SectionNode[] = []
 
@@ -312,14 +408,29 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     case nodes.paragraph: {
       const sectionDepth = $from.depth - 1
+      const minimumDepth = Math.max(1, sectionDepth)
 
       let parentSectionDepth = 0
 
-      for (
-        let depth = Math.max(1, sectionDepth);
-        depth <= sectionDepth;
-        depth++
-      ) {
+      options.push(
+        buildOption(
+          nodes.ordered_list,
+          -3,
+          1,
+          convertParagraphToList(nodes.ordered_list)
+        )
+      )
+
+      options.push(
+        buildOption(
+          nodes.bullet_list,
+          -2,
+          1,
+          convertParagraphToList(nodes.bullet_list)
+        )
+      )
+
+      for (let depth = 1; depth <= sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNode(node)) {
@@ -328,7 +439,8 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
               nodes.section,
               depth,
               depth,
-              promoteParagraphToSection(depth)
+              promoteParagraphToSection(depth),
+              depth < minimumDepth
             )
           )
 
@@ -351,13 +463,13 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
     }
 
     default: {
-      const parentNodeWithId = findParentNodeWithId(view.state.selection)
-
-      if (parentNodeWithId) {
-        options.push(
-          buildOption(parentNodeWithId.node.type, -1, parentNodeWithId.depth)
+      options.push(
+        buildOption(
+          parentNodeWithIdValue.node.type,
+          -1,
+          parentNodeWithIdValue.depth
         )
-      }
+      )
 
       return options
     }
@@ -399,6 +511,7 @@ interface Option {
   depth: number
   label: string
   action?: () => void
+  isDisabled: boolean
 }
 
 interface Props {
@@ -439,6 +552,10 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
 
           if (props.isSelected) {
             style.backgroundColor = '#7fb5d5'
+          }
+
+          if (props.isDisabled) {
+            style.opacity = 0.4
           }
 
           return (
