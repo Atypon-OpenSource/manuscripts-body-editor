@@ -21,9 +21,8 @@ const orderedList = (props: EditorProps): NodeViewCreator => (
   }
 
   const dom = document.createElement('ol')
-  dom.id = node.attrs.id
 
-  if (node.attrs.order !== 1) {
+  if (node.attrs.order !== undefined && node.attrs.order !== 1) {
     dom.setAttribute('start', node.attrs.order)
   }
 

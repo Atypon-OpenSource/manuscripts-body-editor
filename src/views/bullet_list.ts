@@ -21,7 +21,6 @@ const bulletList = (props: EditorProps): NodeViewCreator => (
   }
 
   const dom = document.createElement('ul')
-  dom.id = node.attrs.id
 
   return {
     dom,

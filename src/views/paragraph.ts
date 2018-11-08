@@ -22,7 +22,6 @@ const paragraph = (props: EditorProps): NodeViewCreator => (
   }
 
   const dom = document.createElement('p')
-  dom.id = node.attrs.id
 
   return {
     dom,
