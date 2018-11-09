@@ -198,11 +198,11 @@ export class Editor extends React.PureComponent<EditorProps> {
         // TODO: add to a waitlist if child nodes aren't in the map yet?
         // TODO: make sure there aren't any local edits since saving?
         state.doc.descendants((node, pos) => {
-          let tr = state.tr
+          const tr = state.tr
 
           if (node.attrs.id === id) {
             // TODO: only do this if attributes changed?
-            tr = tr.setNodeMarkup(pos, undefined, newNode.attrs) // TODO: merge attrs?
+            tr.setNodeMarkup(pos, undefined, newNode.attrs) // TODO: merge attrs?
 
             // from https://prosemirror.net/examples/footnote/
             const start = newNode.content.findDiffStart(node.content)
@@ -221,7 +221,7 @@ export class Editor extends React.PureComponent<EditorProps> {
                   newNodeDiffEnd += overlap
                 }
 
-                tr = state.tr.replace(
+                tr.replace(
                   pos + start + 1,
                   pos + nodeDiffEnd + 1,
                   newNode.slice(start, newNodeDiffEnd)
@@ -229,15 +229,12 @@ export class Editor extends React.PureComponent<EditorProps> {
               }
             }
 
-            // tr = tr.replaceWith(pos, pos + node.nodeSize, newNode)
-
             // TODO: map selection through changes?
-            // tr = tr.setSelection(state.selection).setMeta('addToHistory', false)
+            // tr.setSelection(state.selection)
 
-            tr = tr.setMeta('addToHistory', false)
+            tr.setMeta('addToHistory', false)
 
             this.dispatchTransaction(tr, true)
-            // this.view.dispatch(tr)
 
             return false
           }
@@ -252,7 +249,6 @@ export class Editor extends React.PureComponent<EditorProps> {
               .setMeta('addToHistory', false)
 
             this.dispatchTransaction(tr, true)
-            // this.view.dispatch(tr)
 
             return false
           }
