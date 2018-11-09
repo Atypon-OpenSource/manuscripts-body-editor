@@ -264,7 +264,7 @@ const encoders: NodeEncoderMap = {
   }),
   footnotes_element: (node): Partial<FootnotesElement> => ({
     contents: contents(node),
-    // elementType: 'div',
+    // elementType: 'div', // TODO: https://gitlab.com/mpapp-private/manuscripts-json-schema/issues/47
   }),
   inline_equation: (node, parent): Partial<InlineMathFragment> => ({
     containingObject: parent.attrs.id,
@@ -309,7 +309,7 @@ const encoders: NodeEncoderMap = {
   }),
   toc_element: (node): Partial<TocElement> => ({
     contents: htmlContents(node),
-    // elementType: 'div',
+    // elementType: 'div', // TODO: https://gitlab.com/mpapp-private/manuscripts-json-schema/issues/47
   }),
   toc_section: (node, parent, path, priority): Partial<Section> => ({
     priority: priority.value++,
