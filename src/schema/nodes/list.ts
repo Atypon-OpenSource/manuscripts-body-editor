@@ -2,7 +2,6 @@ import { NodeSpec } from 'prosemirror-model'
 import { buildElementClass } from '../../lib/attributes'
 import { LIST_ELEMENT } from '../../transformer/object-types'
 import { ManuscriptNode } from '../types'
-import { SectionNode } from './section'
 
 export interface BulletListNode extends ManuscriptNode {
   attrs: {

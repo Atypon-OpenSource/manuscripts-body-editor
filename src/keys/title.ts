@@ -6,11 +6,7 @@ import {
   isAtStartOfTextBlock,
   isTextSelection,
 } from '../commands'
-import {
-  ManuscriptEditorState,
-  ManuscriptEditorView,
-  ManuscriptSchema,
-} from '../schema/types'
+import { ManuscriptEditorState, ManuscriptEditorView } from '../schema/types'
 import { EditorAction } from '../types'
 
 type Dispatch = (transaction: Transaction) => void
