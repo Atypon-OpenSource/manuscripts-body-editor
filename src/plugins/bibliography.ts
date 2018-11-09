@@ -170,10 +170,10 @@ export default (props: Props) => {
         .rebuildProcessorState(citations)
         .map(item => item[2]) // id, noteIndex, output
 
-      let tr = newState.tr
+      const tr = newState.tr
 
       citationNodes.forEach(([node, pos], index) => {
-        tr = tr.setNodeMarkup(pos, undefined, {
+        tr.setNodeMarkup(pos, undefined, {
           ...node.attrs,
           contents: generatedCitations[index],
         })
@@ -187,7 +187,7 @@ export default (props: Props) => {
           citations
         )
       ) {
-        tr = tr.insert(tr.doc.content.size, createBibliographySection(newState))
+        tr.insert(tr.doc.content.size, createBibliographySection(newState))
       }
 
       // generate the bibliography
@@ -213,7 +213,7 @@ export default (props: Props) => {
                   node.attrs.placeholder
                 }"></div>`
 
-            tr = tr.setNodeMarkup(pos, undefined, {
+            tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
               contents,
             })

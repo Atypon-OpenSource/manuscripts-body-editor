@@ -237,6 +237,7 @@ const encoders: NodeEncoderMap = {
   listing_element: (node): Partial<ListingElement> => ({
     containedObjectID: attributeOfNodeType(node, 'listing', 'id'),
     caption: inlineContentsOfNodeType(node, node.type.schema.nodes.figcaption),
+    elementType: 'figure',
     suppressCaption: node.attrs.suppressCaption === true ? undefined : false,
   }),
   equation: (node): Partial<Equation> => ({
@@ -247,11 +248,13 @@ const encoders: NodeEncoderMap = {
   equation_element: (node): Partial<EquationElement> => ({
     containedObjectID: attributeOfNodeType(node, 'equation', 'id'),
     caption: inlineContentsOfNodeType(node, node.type.schema.nodes.figcaption),
+    elementType: 'p',
     suppressCaption: Boolean(node.attrs.suppressCaption) || undefined,
   }),
   figure_element: (node): Partial<FigureElement> => ({
     containedObjectIDs: node.attrs.containedObjectIDs,
     caption: inlineContentsOfNodeType(node, node.type.schema.nodes.figcaption),
+    elementType: 'figure',
     suppressCaption: Boolean(node.attrs.suppressCaption) || undefined,
     figureStyle: node.attrs.figureStyle || undefined,
   }),
@@ -261,6 +264,7 @@ const encoders: NodeEncoderMap = {
   }),
   footnotes_element: (node): Partial<FootnotesElement> => ({
     contents: contents(node),
+    // elementType: 'div', // TODO: https://gitlab.com/mpapp-private/manuscripts-json-schema/issues/47
   }),
   inline_equation: (node, parent): Partial<InlineMathFragment> => ({
     containingObject: parent.attrs.id,
@@ -296,6 +300,7 @@ const encoders: NodeEncoderMap = {
   table_element: (node): Partial<TableElement> => ({
     containedObjectID: attributeOfNodeType(node, 'table', 'id'),
     caption: inlineContentsOfNodeType(node, node.type.schema.nodes.figcaption),
+    elementType: 'table',
     paragraphStyle: node.attrs.paragraphStyle || undefined,
     suppressCaption: Boolean(node.attrs.suppressCaption) || undefined,
     suppressFooter: Boolean(node.attrs.suppressFooter) || undefined,
@@ -304,6 +309,7 @@ const encoders: NodeEncoderMap = {
   }),
   toc_element: (node): Partial<TocElement> => ({
     contents: htmlContents(node),
+    // elementType: 'div', // TODO: https://gitlab.com/mpapp-private/manuscripts-json-schema/issues/47
   }),
   toc_section: (node, parent, path, priority): Partial<Section> => ({
     priority: priority.value++,

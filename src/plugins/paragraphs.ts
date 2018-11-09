@@ -7,7 +7,7 @@ export default () => {
     appendTransaction: (transactions, oldState, newState) => {
       let updated = 0
 
-      let tr = newState.tr
+      const tr = newState.tr
 
       if (!transactions.some(transaction => transaction.docChanged)) return null
 
@@ -26,7 +26,7 @@ export default () => {
           const nextNode = parent.child(index + 1)
 
           if (isParagraphNode(nextNode) && nextNode.childCount === 0) {
-            tr = tr.join(nodePos + 2)
+            tr.join(nodePos + 2)
             updated++
           }
         }

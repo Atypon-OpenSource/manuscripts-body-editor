@@ -134,7 +134,7 @@ export default (props: Props) => {
 
       let updated = 0
 
-      let tr = newState.tr
+      const tr = newState.tr
 
       newState.doc.descendants((node, pos) => {
         if (node.type === newState.schema.nodes.cross_reference) {
@@ -153,7 +153,7 @@ export default (props: Props) => {
             )
 
             if (target && target.label && target.label !== node.attrs.label) {
-              tr = tr.setNodeMarkup(pos, undefined, {
+              tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 label: target.label,
               })

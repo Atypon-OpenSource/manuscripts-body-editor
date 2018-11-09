@@ -7,7 +7,7 @@ export default () => {
     appendTransaction: (transactions, oldState, newState) => {
       let updated = 0
 
-      let tr = newState.tr
+      const tr = newState.tr
 
       // if (!transactions.some(tr => tr.docChanged)) return null
 
@@ -18,7 +18,7 @@ export default () => {
         if (node.childCount === 1) {
           const title = node.child(0)
           const paragraph = newState.schema.nodes.paragraph.create()
-          tr = tr.insert(pos + 1 + title.nodeSize, paragraph)
+          tr.insert(pos + 1 + title.nodeSize, paragraph)
           updated++
         }
       })

@@ -8,7 +8,7 @@ export default () => {
       let updated = 0
 
       // get the transaction from the new state
-      let tr = newState.tr
+      const tr = newState.tr
 
       // only scan if nodes have changed
       if (!transactions.some(transaction => transaction.docChanged)) return null
@@ -34,7 +34,7 @@ export default () => {
           if (ids.has(id)) {
             // give the duplicate node a new id
             // TODO: maybe change the other node's ID?
-            tr = tr.setNodeMarkup(pos, undefined, {
+            tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
               id: generateNodeID(node.type),
             })
@@ -46,7 +46,7 @@ export default () => {
           }
         } else {
           // set the id on the node at this position
-          tr = tr.setNodeMarkup(pos, undefined, {
+          tr.setNodeMarkup(pos, undefined, {
             ...node.attrs,
             id: generateNodeID(node.type),
           })

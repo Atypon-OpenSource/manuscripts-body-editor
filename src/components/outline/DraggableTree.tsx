@@ -388,12 +388,11 @@ const dropTargetSpec: DropTargetSpec<Props & ConnectedProps> = {
 
     let sourcePos = source.pos - 1
 
-    let tr = props.view.state.tr.insert(insertPos, source.node)
+    const tr = props.view.state.tr.insert(insertPos, source.node)
 
     sourcePos = tr.mapping.map(sourcePos)
 
-    // tr = tr.replaceWith(sourcePos, sourcePos + source.node.nodeSize, [])
-    tr = tr.delete(sourcePos, sourcePos + source.node.nodeSize)
+    tr.delete(sourcePos, sourcePos + source.node.nodeSize)
 
     props.view.dispatch(tr)
   },

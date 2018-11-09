@@ -112,14 +112,14 @@ export const createBlock = (
     ? createAndFillTableElement(state)
     : nodeType.createAndFill()) as ManuscriptNode
 
-  let tr = state.tr.insert(position, node)
-
-  const selection = createSelection(nodeType, position, tr.doc)
-
-  tr = tr.setSelection(selection).scrollIntoView()
+  const tr = state.tr.insert(position, node)
 
   if (dispatch) {
-    dispatch(tr)
+    dispatch(
+      tr
+        .setSelection(createSelection(nodeType, position, tr.doc))
+        .scrollIntoView()
+    )
   }
 }
 
