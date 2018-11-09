@@ -167,10 +167,10 @@ export class Editor extends React.PureComponent<EditorProps> {
           )
         }
 
-        switch (newNode.type.name) {
+        switch (newNode.type) {
           // TODO: can anything else be inserted by itself?
           // TODO: subsections! need to use the path
-          case 'section':
+          case state.schema.nodes.section:
             // +1 for manuscript
             const sectionIndex = newNode.attrs.priority + 1
 
