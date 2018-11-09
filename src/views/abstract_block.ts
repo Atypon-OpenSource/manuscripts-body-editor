@@ -4,6 +4,7 @@ import { ContextMenu } from '../lib/context-menu'
 import { attentionIconHtml, SyncError } from '../lib/sync-errors'
 import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { buildComment } from '../transformer/builders'
+import { nodeNames } from '../transformer/node-names'
 
 abstract class AbstractBlock implements NodeView {
   protected get elementType() {
@@ -124,7 +125,9 @@ abstract class AbstractBlock implements NodeView {
     const warningButton = document.createElement('button')
     warningButton.classList.add('action-button')
     warningButton.classList.add('has-sync-error')
-    warningButton.title = 'Element failed to sync'
+    const humanReadableType = nodeNames.get(this.node.type) || 'Element'
+    warningButton.title = `This ${humanReadableType} failed to synchronize.\n
+Please contact support@manuscriptsapp.com if it fails to save after retrying.`
 
     warningButton.innerHTML = attentionIconHtml()
     warningButton.addEventListener('click', () => {
