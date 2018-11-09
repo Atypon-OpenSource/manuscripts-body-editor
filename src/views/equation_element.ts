@@ -1,3 +1,4 @@
+import { Decoration } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
@@ -8,7 +9,8 @@ class EquationElement extends Block {
     return 'figure'
   }
 
-  public update(newNode: ManuscriptNode) {
+  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
+    this.handleDecorations(decorations)
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
     this.node = newNode

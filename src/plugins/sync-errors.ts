@@ -108,8 +108,6 @@ export default () => {
             }
           })
 
-          console.log('nodeErrors', nodeErrors)
-
           const decorations = Object.values(nodeErrors).map(
             ({ pos, nodeSize, syncErrors }) => {
               return Decoration.node(

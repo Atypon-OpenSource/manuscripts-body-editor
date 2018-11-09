@@ -1,7 +1,7 @@
 import { Decoration, NodeView } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
-import { attentionIconHtml } from '../lib/sync-errors'
+import { attentionIconHtml, SyncError } from '../lib/sync-errors'
 import { ManuscriptEditorView, ManuscriptNode } from '../schema/types'
 import { buildComment } from '../transformer/builders'
 
@@ -13,6 +13,7 @@ abstract class AbstractBlock implements NodeView {
   public dom: HTMLElement
   public contentDOM: HTMLElement
 
+  protected syncErrors: SyncError[]
   protected readonly props: EditorProps
   protected readonly getPos: () => number
   protected node: ManuscriptNode
@@ -37,10 +38,8 @@ abstract class AbstractBlock implements NodeView {
   }
 
   public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
+    this.handleDecorations(decorations)
     if (!newNode.sameMarkup(this.node)) return false
-    if (decorations) {
-      this.handleDecorations(decorations)
-    }
     this.node = newNode
     this.updateContents()
     return true
@@ -82,11 +81,16 @@ abstract class AbstractBlock implements NodeView {
     this.dom.appendChild(this.contentDOM)
   }
 
-  protected handleDecorations(decorations: Decoration[]) {
-    const hasSyncErrors = decorations.some(
-      decoration => decoration.spec.syncErrors
-    )
-    this.dom.classList.toggle('has-sync-error', hasSyncErrors)
+  protected handleDecorations(decorations?: Decoration[]) {
+    if (decorations) {
+      const syncErrorDecoration = decorations.find(
+        decoration => decoration.spec.syncErrors
+      )
+      this.syncErrors = syncErrorDecoration
+        ? syncErrorDecoration.spec.syncErrors
+        : []
+      this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
+    }
   }
 
   private createDOM() {
@@ -123,7 +127,9 @@ abstract class AbstractBlock implements NodeView {
 
     warningButton.innerHTML = attentionIconHtml()
     warningButton.addEventListener('click', () => {
-      console.log('Retry')
+      this.props.retrySync(this.syncErrors.map(error => error._id)).catch(e => {
+        throw e
+      })
     })
 
     return warningButton

@@ -1,4 +1,5 @@
 import { sanitize } from 'dompurify'
+import { Decoration } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { ManuscriptNode } from '../schema/types'
 import { NodeViewCreator } from '../types'
@@ -7,7 +8,8 @@ import Block from './block'
 class BibliographyElement extends Block {
   private element: HTMLElement
 
-  public update(newNode: ManuscriptNode) {
+  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
+    this.handleDecorations(decorations)
     if (newNode.attrs.id !== this.node.attrs.id) return false
     if (newNode.type.name !== this.node.type.name) return false
     this.node = newNode

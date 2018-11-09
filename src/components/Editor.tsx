@@ -61,6 +61,7 @@ export interface EditorProps {
   history: History
   handleSectionChange: (section: string) => void
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  retrySync: (componentIDs: string[]) => Promise<void>
   CitationEditor: React.ComponentType<any> // tslint:disable-line:no-any
   importFile: (file: File) => Promise<Model[]>
   openFilePicker: () => Promise<File>

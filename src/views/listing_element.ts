@@ -10,9 +10,7 @@ class ListingElement extends Block {
   }
 
   public update(newNode: ManuscriptNode, decorations?: Decoration[]) {
-    if (decorations) {
-      this.handleDecorations(decorations)
-    }
+    this.handleDecorations(decorations)
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
     this.node = newNode
