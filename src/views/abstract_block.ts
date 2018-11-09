@@ -124,6 +124,7 @@ abstract class AbstractBlock implements NodeView {
     const warningButton = document.createElement('button')
     warningButton.classList.add('action-button')
     warningButton.classList.add('has-sync-error')
+    warningButton.title = 'Element failed to sync'
 
     warningButton.innerHTML = attentionIconHtml()
     warningButton.addEventListener('click', () => {
