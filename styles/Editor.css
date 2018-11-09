@@ -284,6 +284,7 @@
 
 .ProseMirror .has-sync-error .action-button {
   display: initial;
+  outline: 0;
 }
 
 .ProseMirror .block-gutter {
