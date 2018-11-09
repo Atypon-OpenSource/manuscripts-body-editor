@@ -2,6 +2,7 @@ import { NodeSpec } from 'prosemirror-model'
 import { buildElementClass } from '../../lib/attributes'
 import { LIST_ELEMENT } from '../../transformer/object-types'
 import { ManuscriptNode } from '../types'
+import { SectionNode } from './section'
 
 export interface BulletListNode extends ManuscriptNode {
   attrs: {
@@ -120,4 +121,12 @@ export const listItem: NodeSpec = {
 
     return ['li', attrs, 0]
   },
+}
+
+export type ListNode = BulletListNode | OrderedListNode
+
+export const isListNode = (node: ManuscriptNode): node is ListNode => {
+  const { nodes } = node.type.schema
+
+  return node.type === nodes.bullet_list || node.type === nodes.ordered_list
 }

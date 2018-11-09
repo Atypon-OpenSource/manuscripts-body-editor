@@ -1,15 +1,17 @@
-import { Fragment } from 'prosemirror-model'
+import { Fragment, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
 import styled from 'styled-components'
-import { generateNodeID } from '../..'
+import { generateNodeID, ManuscriptEditorState, ManuscriptNode } from '../..'
 import { findParentNodeWithIdValue } from '../../lib/utils'
+import { isListNode } from '../../schema/nodes/list'
 import { isSectionNode, SectionNode } from '../../schema/nodes/section'
 import { SectionTitleNode } from '../../schema/nodes/section_title'
 import { ManuscriptEditorView, ManuscriptNodeType } from '../../schema/types'
 import { nodeNames } from '../../transformer/node-names'
 import { nodeTypeIcon } from '../../transformer/node-type-icons'
+import { isElementNode } from '../../transformer/node-types'
 
 const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
   switch (nodeType) {
@@ -24,23 +26,66 @@ const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
 const titleCase = (text: string) =>
   text.replace(/\b([a-z])/g, match => match.toUpperCase())
 
-const buildOption = (
-  nodeType: ManuscriptNodeType,
-  value: number,
-  depth: number,
-  action?: () => void,
-  isDisabled: boolean = false
-): Option => ({
-  value,
-  depth,
-  icon: nodeTypeIcon(nodeType),
-  label: titleCase(optionName(nodeType, value)),
-  nodeType,
-  action,
-  isDisabled,
+interface Option {
+  action?: () => void
+  depth: number
+  icon: JSX.Element | null
+  isDisabled: boolean
+  isSelected: boolean
+  label: string
+  nodeType: ManuscriptNodeType
+  value: number
+}
+
+interface OptionProps {
+  action?: () => void
+  depth: number
+  isDisabled?: boolean
+  isSelected?: boolean
+  nodeType: ManuscriptNodeType
+  value: number
+}
+
+const findListParent = ($from: ResolvedPos): ManuscriptNode | undefined => {
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const node = $from.node(depth)
+
+    if (isListNode(node)) {
+      return node
+    }
+  }
+}
+
+const findClosestParentElement = (
+  $from: ResolvedPos
+): ManuscriptNode | undefined => {
+  const listParent = findListParent($from)
+
+  if (listParent) {
+    return listParent
+  }
+
+  for (let depth = $from.depth; depth > 0; depth--) {
+    const node = $from.node(depth)
+
+    if (isSectionNode(node) || isElementNode(node)) {
+      return node
+    }
+  }
+}
+
+const buildOption = (props: OptionProps): Option => ({
+  ...props,
+  icon: nodeTypeIcon(props.nodeType),
+  label: titleCase(optionName(props.nodeType, props.value)),
+  isDisabled: Boolean(props.isDisabled),
+  isSelected: Boolean(props.isSelected),
 })
 
-const buildOptions = (view: ManuscriptEditorView): Option[] => {
+type GroupedOptions = Array<{ options: Option[] }>
+type Options = GroupedOptions | Option[]
+
+const buildOptions = (view: ManuscriptEditorView): Options => {
   const {
     state: {
       doc,
@@ -52,16 +97,14 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
   const { nodes } = schema
 
-  const options: Option[] = []
-
   if (!$from.sameParent($to)) {
-    return options
+    return []
   }
 
-  const parentNodeWithIdValue = findParentNodeWithIdValue(view.state.selection)
+  const parentElement = findClosestParentElement($from)
 
-  if (!parentNodeWithIdValue) {
-    return options
+  if (!parentElement) {
+    return []
   }
 
   // move paragraph to title of new subsection, along with subsequent content
@@ -108,7 +151,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
   // append the section to the preceding section as a subsection
@@ -142,7 +185,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
   // move the section up the tree
@@ -195,7 +238,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
   // move paragraph to title of new section at this position, along with the rest of the section
@@ -252,7 +295,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
   const demoteSectionToParagraph = () => {
@@ -307,7 +350,7 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
   const convertParagraphToList = (nodeType: ManuscriptNodeType) => () => {
@@ -335,10 +378,10 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
     view.focus()
 
-    view.dispatch(tr)
+    view.dispatch(tr.scrollIntoView())
   }
 
-  switch (parentNodeWithIdValue.node.type) {
+  switch (parentElement.type) {
     case nodes.section: {
       const sectionDepth = $from.depth - 1
       const parentSectionDepth = sectionDepth - 1
@@ -348,34 +391,54 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
       const $beforeSection = doc.resolve(beforeSection)
       const sectionOffset = $beforeSection.parentOffset
 
-      if (sectionDepth > 1 || sectionOffset > 1) {
-        options.push(
-          buildOption(nodes.paragraph, -1, 1, demoteSectionToParagraph)
-        )
-      }
+      const typeOptions: Option[] = [
+        buildOption({
+          nodeType: nodes.paragraph,
+          value: -4,
+          depth: 1,
+          action: demoteSectionToParagraph,
+          isDisabled: sectionDepth <= 1 && sectionOffset <= 1,
+        }),
+        buildOption({
+          nodeType: nodes.ordered_list,
+          value: -3,
+          depth: 1,
+          isDisabled: true,
+        }),
+        buildOption({
+          nodeType: nodes.bullet_list,
+          value: -2,
+          depth: 1,
+          isDisabled: true,
+        }),
+      ]
+
+      const sectionOptions: Option[] = []
 
       for (let depth = 1; depth < sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNode(node)) {
-          options.push(
-            buildOption(
-              nodes.section,
+          sectionOptions.push(
+            buildOption({
+              nodeType: nodes.section,
+              value: depth,
               depth,
-              depth,
-              promoteSection(depth),
-              depth < minimumDepth
-            )
+              action: promoteSection(depth),
+              isDisabled: depth < minimumDepth,
+            })
           )
         }
       }
 
-      options.push(
-        buildOption(
-          nodes.section,
-          parentSectionDepth + 1,
-          parentSectionDepth + 1
-        )
+      sectionOptions.push(
+        buildOption({
+          nodeType: nodes.section,
+          value: parentSectionDepth + 1,
+          depth: parentSectionDepth + 1,
+          isDisabled: true,
+          isSelected: true,
+        })
       )
 
       const parentSection = $from.node(parentSectionDepth)
@@ -393,17 +456,17 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
       })
 
       if (precedingSections.length > 0) {
-        options.push(
-          buildOption(
-            nodes.section,
-            parentSectionDepth + 2,
-            parentSectionDepth + 2,
-            moveSectionToSubsection
-          )
+        sectionOptions.push(
+          buildOption({
+            nodeType: nodes.section,
+            value: parentSectionDepth + 2,
+            depth: parentSectionDepth + 2,
+            action: moveSectionToSubsection,
+          })
         )
       }
 
-      return options
+      return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
     case nodes.paragraph: {
@@ -412,66 +475,70 @@ const buildOptions = (view: ManuscriptEditorView): Option[] => {
 
       let parentSectionDepth = 0
 
-      options.push(
-        buildOption(
-          nodes.ordered_list,
-          -3,
-          1,
-          convertParagraphToList(nodes.ordered_list)
-        )
-      )
+      const typeOptions: Option[] = [
+        buildOption({
+          nodeType: nodes.paragraph,
+          value: -4,
+          depth: 1,
+          isDisabled: true,
+          isSelected: true,
+        }),
+        buildOption({
+          nodeType: nodes.ordered_list,
+          value: -3,
+          depth: 1,
+          action: convertParagraphToList(nodes.ordered_list),
+        }),
+        buildOption({
+          nodeType: nodes.bullet_list,
+          value: -2,
+          depth: 1,
+          action: convertParagraphToList(nodes.bullet_list),
+        }),
+      ]
 
-      options.push(
-        buildOption(
-          nodes.bullet_list,
-          -2,
-          1,
-          convertParagraphToList(nodes.bullet_list)
-        )
-      )
+      const sectionOptions: Option[] = []
 
       for (let depth = 1; depth <= sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNode(node)) {
-          options.push(
-            buildOption(
-              nodes.section,
+          sectionOptions.push(
+            buildOption({
+              nodeType: nodes.section,
+              value: depth,
               depth,
-              depth,
-              promoteParagraphToSection(depth),
-              depth < minimumDepth
-            )
+              action: promoteParagraphToSection(depth),
+              isDisabled: depth < minimumDepth,
+            })
           )
 
           parentSectionDepth = depth
         }
       }
 
-      options.push(buildOption(nodes.paragraph, -1, parentSectionDepth + 1))
-
-      options.push(
-        buildOption(
-          nodes.section,
-          parentSectionDepth + 1,
-          parentSectionDepth + 1,
-          moveParagraphToNewSubsection
-        )
+      sectionOptions.push(
+        buildOption({
+          nodeType: nodes.section,
+          value: parentSectionDepth + 1,
+          depth: parentSectionDepth + 1,
+          action: moveParagraphToNewSubsection,
+        })
       )
 
-      return options
+      return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
     default: {
-      options.push(
-        buildOption(
-          parentNodeWithIdValue.node.type,
-          -1,
-          parentNodeWithIdValue.depth
-        )
-      )
-
-      return options
+      return [
+        buildOption({
+          nodeType: parentElement.type,
+          value: -3,
+          depth: 1,
+          isDisabled: true,
+          isSelected: true,
+        }),
+      ]
     }
   }
 }
@@ -498,20 +565,26 @@ const OptionLabel = styled.span`
   flex: 1;
 `
 
+const Group = styled.div`
+  &:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+  }
+`
+
 const StyledSelect = styled(Select)`
   & > div:hover {
     border-color: #7fb5d5;
   }
 `
 
-interface Option {
-  nodeType: ManuscriptNodeType
-  icon: JSX.Element | null
-  value: number
-  depth: number
-  label: string
-  action?: () => void
-  isDisabled: boolean
+const findSelectedOption = (options: GroupedOptions): Option | undefined => {
+  for (const group of options) {
+    for (const option of group.options) {
+      if (option.isSelected) {
+        return option
+      }
+    }
+  }
 }
 
 interface Props {
@@ -526,15 +599,24 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
   } = view
 
   const options = buildOptions(view)
-  const selected = options.find(option => !option.action)
 
   return (
     <StyledSelect
       isDisabled={options.length <= 1}
       isSearchable={false}
       options={options}
-      value={selected}
+      value={
+        options.length === 1
+          ? options[0]
+          : findSelectedOption(options as GroupedOptions)
+      }
       components={{
+        Group: (props: any) => (
+          <Group ref={props.innerRef} {...props.innerProps}>
+            {props.children}
+          </Group>
+        ),
+        GroupHeading: () => null,
         Option: (props: any) => {
           const data = props.data as Option
 
@@ -552,9 +634,12 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
 
           if (props.isSelected) {
             style.backgroundColor = '#7fb5d5'
+            style.color = '#fff'
+          } else {
+            style.color = '#333'
           }
 
-          if (props.isDisabled) {
+          if (props.isDisabled && !props.isSelected) {
             style.opacity = 0.4
           }
 
