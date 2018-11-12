@@ -13,6 +13,7 @@ import {
   Keyword,
   Manuscript,
   Project,
+  UserProfileAffiliation,
 } from '@manuscripts/manuscripts-json-schema'
 import { generateID } from './id'
 import {
@@ -38,6 +39,7 @@ import {
   KEYWORD,
   MANUSCRIPT,
   PROJECT,
+  USER_PROFILE_AFFILIATION,
 } from './object-types'
 
 export const DEFAULT_BUNDLE = 'MPBundle:www-zotero-org-styles-nature'
@@ -172,6 +174,16 @@ export const buildAffiliation = (
 ): Build<Affiliation> => ({
   _id: generateID(AFFILIATION),
   objectType: AFFILIATION,
+  institution,
+  priority,
+})
+
+export const buildUserProfileAffiliation = (
+  institution: string,
+  priority: number = 0
+): Build<UserProfileAffiliation> => ({
+  _id: generateID(USER_PROFILE_AFFILIATION),
+  objectType: USER_PROFILE_AFFILIATION,
   institution,
   priority,
 })

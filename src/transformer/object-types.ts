@@ -40,6 +40,7 @@ export const TABLE_ELEMENT = 'MPTableElement'
 export const TOC_ELEMENT = 'MPTOCElement'
 export const TOC_SECTION = 'MPSection'
 export const USER_PROFILE = 'MPUserProfile'
+export const USER_PROFILE_AFFILIATION = 'MPUserProfileAffiliation'
 
 // TODO: from schema
 export type ObjectType =
@@ -78,6 +79,7 @@ export type ObjectType =
   | 'MPTOCElement'
   | 'MPSection'
   | 'MPUserProfile'
+  | 'MPUserProfileAffiliation'
 
 export const elementObjects = [
   BIBLIOGRAPHY_ELEMENT,
