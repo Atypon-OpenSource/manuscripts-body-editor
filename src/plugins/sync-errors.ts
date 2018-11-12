@@ -1,8 +1,8 @@
 import { ResolvedPos } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { findParentNodeClosestToPos } from 'prosemirror-utils'
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
-import { attentionIconHtml, SyncError, SyncErrors } from '../lib/sync-errors'
+import { Decoration, DecorationSet } from 'prosemirror-view'
+import { SyncError, SyncErrors } from '../lib/sync-errors'
 import {
   ManuscriptEditorState,
   ManuscriptNode,
