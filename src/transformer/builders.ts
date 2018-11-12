@@ -13,6 +13,7 @@ import {
   Keyword,
   Manuscript,
   Project,
+  UserProfileAffiliation,
 } from '@manuscripts/manuscripts-json-schema'
 import { generateID } from './id'
 import {
@@ -180,7 +181,7 @@ export const buildAffiliation = (
 export const buildUserProfileAffiliation = (
   institution: string,
   priority: number = 0
-): Build<Affiliation> => ({
+): Build<UserProfileAffiliation> => ({
   _id: generateID(USER_PROFILE_AFFILIATION),
   objectType: USER_PROFILE_AFFILIATION,
   institution,
