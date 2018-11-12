@@ -125,8 +125,8 @@ abstract class AbstractBlock implements NodeView {
     const warningButton = document.createElement('button')
     warningButton.classList.add('action-button')
     warningButton.classList.add('has-sync-error')
-    const humanReadableType = nodeNames.get(this.node.type) || 'Element'
-    warningButton.title = `This ${humanReadableType} failed to synchronize.\n
+    const humanReadableType = nodeNames.get(this.node.type) || 'element'
+    warningButton.title = `This ${humanReadableType.toLowerCase()} failed to synchronize.\n
 Please contact support@manuscriptsapp.com if it fails to save after retrying.`
 
     warningButton.innerHTML = attentionIconHtml()
