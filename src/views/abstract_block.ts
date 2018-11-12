@@ -39,8 +39,8 @@ abstract class AbstractBlock implements NodeView {
   }
 
   public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    this.handleDecorations(decorations)
     if (!newNode.sameMarkup(this.node)) return false
+    this.handleDecorations(decorations)
     this.node = newNode
     this.updateContents()
     return true

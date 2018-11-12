@@ -1,3 +1,4 @@
+import { Decoration } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
 import { INSERT, modelsKey } from '../plugins/models'
 import { ManuscriptNode } from '../schema/types'
@@ -10,9 +11,10 @@ class FigureElement extends Block {
   private element: HTMLElement
 
   // TODO: does this need to be different?
-  public update(newNode: ManuscriptNode) {
+  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
+    this.handleDecorations(decorations)
     this.node = newNode
     this.updateContents()
     return true

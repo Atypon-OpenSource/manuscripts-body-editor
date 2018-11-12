@@ -10,9 +10,9 @@ class EquationElement extends Block {
   }
 
   public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    this.handleDecorations(decorations)
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
+    this.handleDecorations(decorations)
     this.node = newNode
     this.updateContents()
     return true
