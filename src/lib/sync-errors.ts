@@ -22,7 +22,6 @@ export interface SyncError {
   _id: string
   type: SyncErrorType
   message?: string
-  internalMessage?: string
 }
 
 export type SyncErrors = {
