@@ -4,7 +4,6 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
-  Nodes,
 } from '../schema/types'
 import { nodeNames } from '../transformer/node-names'
 import { PopperManager } from './popper'
@@ -317,13 +316,15 @@ export class ContextMenu {
     after: boolean,
     position?: number
   ) => {
-    const { state } = this.view
+    const {
+      state: { doc },
+    } = this.view
 
     if (position === undefined) {
       position = after ? this.getPos() + this.node.nodeSize : this.getPos()
     }
 
-    const $position = this.view.state.doc.resolve(position)
+    const $position = doc.resolve(position)
 
     const index = $position.index()
 

@@ -1,7 +1,7 @@
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import { parse as parseTitle } from '@manuscripts/title-editor'
 import { History } from 'history'
-import { toggleMark, wrapIn } from 'prosemirror-commands'
+import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { wrapInList } from 'prosemirror-schema-list'
 import {

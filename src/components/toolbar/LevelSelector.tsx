@@ -3,8 +3,7 @@ import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
 import styled from 'styled-components'
-import { generateNodeID, ManuscriptEditorState, ManuscriptNode } from '../..'
-import { findParentNodeWithIdValue } from '../../lib/utils'
+import { generateNodeID, ManuscriptNode } from '../..'
 import { isListNode } from '../../schema/nodes/list'
 import { isSectionNode, SectionNode } from '../../schema/nodes/section'
 import { SectionTitleNode } from '../../schema/nodes/section_title'
@@ -206,7 +205,6 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
     const endIndex = $from.indexAfter(parentSectionDepth)
     const beforeParentSection = $from.before(parentSectionDepth)
     const afterParentSection = $from.after(parentSectionDepth)
-    const parentSectionStart = $from.start(parentSectionDepth)
 
     const items = []
 
