@@ -38,6 +38,7 @@ import {
   KEYWORD,
   MANUSCRIPT,
   PROJECT,
+  USER_PROFILE_AFFILIATION,
 } from './object-types'
 
 export const DEFAULT_BUNDLE = 'MPBundle:www-zotero-org-styles-nature'
@@ -172,6 +173,16 @@ export const buildAffiliation = (
 ): Build<Affiliation> => ({
   _id: generateID(AFFILIATION),
   objectType: AFFILIATION,
+  institution,
+  priority,
+})
+
+export const buildUserProfileAffiliation = (
+  institution: string,
+  priority: number = 0
+): Build<Affiliation> => ({
+  _id: generateID(USER_PROFILE_AFFILIATION),
+  objectType: USER_PROFILE_AFFILIATION,
   institution,
   priority,
 })
