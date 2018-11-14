@@ -25,7 +25,6 @@
     "dev": "npm-run-all --parallel \"build:es --watch\" \"build:types --watch\"",
     "typecheck": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
-    "prepublishOnly": "yarn build",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preversion": "yarn typecheck && yarn lint",
     "test": "jest"
