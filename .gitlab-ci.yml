@@ -2,8 +2,8 @@ before_script:
   - npm config set //atypon-npm-registry.herokuapp.com/:_authToken ${ATYPON_REGISTRY_NPM_TOKEN}
 
 stages:
-- build
-- deploy
+  - build
+  - deploy
 
 build:
   stage: build
@@ -15,6 +15,9 @@ build:
     - yarn run build
   tags:
     - nodejs-8
+  artifacts:
+    paths:
+      - dist/
 
 publish:
   stage: deploy
@@ -22,7 +25,6 @@ publish:
     refs:
       - master
   script:
-    - yarn install --frozen-lockfile --non-interactive
-    - if [ $(./bin/pkg-version-exists.js) == "false" ]; then yarn publish; fi
+    - bin/publish
   tags:
     - nodejs-8
