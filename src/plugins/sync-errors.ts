@@ -52,7 +52,8 @@ const findTopLevelContainingNode = (
       nodeSize: result.node.nodeSize,
     }
   } else {
-    throw new Error('Unable to locate top level containing node')
+    // throw new Error('Unable to locate top level containing node')
+    return null
   }
 }
 
@@ -89,21 +90,24 @@ export default () => {
 
             const error = errors[node.attrs.id]
 
-            const {
-              id,
-              pos: topPos,
-              nodeSize: topSize,
-            } = findTopLevelContainingNode(newState.doc.resolve(pos), node)
+            const topLevelNode = findTopLevelContainingNode(
+              newState.doc.resolve(pos),
+              node
+            )
 
-            const existingErrors = nodeErrors[id]
+            if (topLevelNode) {
+              const { id, pos: topPos, nodeSize: topSize } = topLevelNode
 
-            if (existingErrors) {
-              existingErrors.syncErrors.push(error)
-            } else {
-              nodeErrors[id] = {
-                syncErrors: [error],
-                pos: topPos,
-                nodeSize: topSize,
+              const existingErrors = nodeErrors[id]
+
+              if (existingErrors) {
+                existingErrors.syncErrors.push(error)
+              } else {
+                nodeErrors[id] = {
+                  syncErrors: [error],
+                  pos: topPos,
+                  nodeSize: topSize,
+                }
               }
             }
           })
