@@ -1,4 +1,8 @@
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  Manuscript,
+  Model,
+  Project,
+} from '@manuscripts/manuscripts-json-schema'
 import { parse as parseTitle } from '@manuscripts/title-editor'
 import { History } from 'history'
 import { toggleMark } from 'prosemirror-commands'
@@ -29,6 +33,7 @@ import icons from './icons'
 import { schema } from './schema'
 
 export interface MenusProps {
+  project: Project
   manuscript: Manuscript
   addManuscript?: () => void
   deleteManuscript: (id: string) => Promise<void>
@@ -58,6 +63,14 @@ const deleteManuscriptLabel = (title: string) => {
 }
 
 const confirmDeleteManuscriptMessage = (title: string) => {
+  const node = parseTitle(title)
+
+  return `Are you sure you wish to delete the project with title "${
+    node.textContent
+  }"?`
+}
+
+const confirmDeleteProjectMessage = (title: string) => {
   const node = parseTitle(title)
 
   return `Are you sure you wish to delete the manuscript with title "${
@@ -119,7 +132,11 @@ export const menus = (props: MenusProps): MenuItem[] => [
       {
         label: 'Delete Project',
         run: () =>
-          confirm('Are you sure you wish to delete this project?') &&
+          confirm(
+            props.project.title
+              ? confirmDeleteProjectMessage(props.project.title)
+              : 'Are you sure you wish to delete this untitled project?'
+          ) &&
           props
             .deleteModel(props.manuscript.containerID)
             .then(() => props.history.push('/')),
