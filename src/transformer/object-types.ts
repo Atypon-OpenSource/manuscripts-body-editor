@@ -1,5 +1,6 @@
 import {
   Figure,
+  manuscriptIDTypes,
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
@@ -111,7 +112,7 @@ export const isManuscriptModel = (model: Model): model is ManuscriptModel => {
     throw new Error('Model must have objectType')
   }
 
-  return manuscriptObjects.includes(model.objectType)
+  return manuscriptIDTypes.has(model.objectType)
 }
 
 export const isFigure = (model: Model): model is Figure =>
