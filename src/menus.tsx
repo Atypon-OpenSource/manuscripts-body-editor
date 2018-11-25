@@ -65,7 +65,7 @@ const deleteManuscriptLabel = (title: string) => {
 const confirmDeleteManuscriptMessage = (title: string) => {
   const node = parseTitle(title)
 
-  return `Are you sure you wish to delete the project with title "${
+  return `Are you sure you wish to delete the manuscript with title "${
     node.textContent
   }"?`
 }
@@ -73,7 +73,7 @@ const confirmDeleteManuscriptMessage = (title: string) => {
 const confirmDeleteProjectMessage = (title: string) => {
   const node = parseTitle(title)
 
-  return `Are you sure you wish to delete the manuscript with title "${
+  return `Are you sure you wish to delete the project with title "${
     node.textContent
   }"?`
 }
