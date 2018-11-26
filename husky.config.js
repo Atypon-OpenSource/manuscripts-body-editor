@@ -1,5 +1,5 @@
 module.exports = {
   "hooks": {
-    "pre-push": "yarn typecheck && yarn lint"
+    "pre-push": "npm-run-all --parallel typecheck lint"
   }
 }
