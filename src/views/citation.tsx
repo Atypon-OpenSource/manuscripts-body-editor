@@ -74,13 +74,14 @@ class CitationView implements NodeView {
         filterLibraryItems={filterLibraryItems}
         selectedText={this.node.attrs.selectedText}
         handleRemove={this.handleRemove}
-        handleSelect={this.handleSelect}
+        handleCite={this.handleCite}
         projectID={projectID}
+        scheduleUpdate={this.props.popper.update}
       />,
       container
     )
 
-    this.props.popper.show(this.dom, container, 'top')
+    this.props.popper.show(this.dom, container, 'right')
   }
 
   public deselectNode() {
@@ -110,27 +111,27 @@ class CitationView implements NodeView {
     )
   }
 
-  private handleSelect = async (
-    bibliographyItem: Build<BibliographyItem>,
-    source?: string
-  ) => {
+  private handleCite = async (items: Array<Build<BibliographyItem>>) => {
     // TODO: reuse if already in library
+
+    const { state } = this.view
+    const { getLibraryItem } = this.props
 
     const citation = this.getCitation()
 
-    citation.embeddedCitationItems.push(
-      buildEmbeddedCitationItem(bibliographyItem._id)
-    )
-
-    if (source) {
-      // add the database item here so it's ready in time
-      this.props.addLibraryItem(bibliographyItem as BibliographyItem)
+    for (const item of items) {
+      citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))
     }
 
-    const { state } = this.view
+    const newItems = items.filter(item => !getLibraryItem(item._id))
+
+    for (const item of newItems) {
+      // add the database item here so it's ready in time
+      this.props.addLibraryItem(item as BibliographyItem)
+    }
 
     const tr = state.tr.setMeta(modelsKey, {
-      [INSERT]: source ? [bibliographyItem] : [],
+      [INSERT]: newItems,
       [UPDATE]: [citation],
     })
 

@@ -13,7 +13,10 @@ const search = (query: string, rows: number) =>
         })
     )
     .then(response => response.json())
-    .then(data => data.message.items)
+    .then(({ message: { items, 'total-results': total } }) => ({
+      items,
+      total,
+    }))
 
 const fetch = (item: BibliographyItem) =>
   window

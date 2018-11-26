@@ -18,12 +18,13 @@ const search = (query: string, rows: number) =>
         })
     )
     .then(response => response.json())
-    .then(data =>
-      data.data.map((item: DataCiteItem) => ({
+    .then(({ data, total }) => ({
+      items: data.map((item: DataCiteItem) => ({
         ...item.attributes,
         DOI: item.attributes.doi,
-      }))
-    )
+      })),
+      total,
+    }))
 
 const fetch = (item: BibliographyItem) =>
   window
