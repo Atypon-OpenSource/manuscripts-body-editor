@@ -1,6 +1,7 @@
 import {
   ellipsis,
   emDash,
+  InputRule,
   inputRules,
   smartQuotes,
   textblockTypeInputRule,
@@ -37,6 +38,19 @@ export default inputRules({
       new RegExp('^(#{1,6})\\s$'),
       schema.nodes.heading,
       match => ({ level: match[1].length })
+    ),
+
+    // uniprot
+    new InputRule(
+      /\b([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})\b/,
+      (state, match, start, end) =>
+        state.tr.replaceWith(
+          start - 1,
+          end,
+          schema.nodes.uniprot.create({
+            accession: match[0],
+          })
+        )
     ),
   ],
 })

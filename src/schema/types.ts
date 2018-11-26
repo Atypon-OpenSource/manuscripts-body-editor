@@ -60,6 +60,7 @@ export type Nodes =
   | 'thead_row'
   | 'toc_element'
   | 'toc_section'
+  | 'uniprot'
 
 export type ManuscriptSchema = Schema<Nodes, Marks>
 

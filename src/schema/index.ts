@@ -45,6 +45,7 @@ import { tableElement } from './nodes/table_element'
 import { text } from './nodes/text'
 import { tocElement } from './nodes/toc_element'
 import { tocSection } from './nodes/toc_section'
+import { uniprot } from './nodes/uniprot'
 import { Marks, Nodes } from './types'
 
 export const schema = new Schema<Nodes, Marks>({
@@ -95,5 +96,6 @@ export const schema = new Schema<Nodes, Marks>({
     thead_row: tableHeaderRow,
     toc_element: tocElement,
     toc_section: tocSection,
+    uniprot,
   },
 })

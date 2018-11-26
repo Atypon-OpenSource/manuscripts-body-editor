@@ -473,3 +473,8 @@
 .ProseMirror .placeholder-item-link {
   color: inherit;
 }
+
+.ProseMirror .uniprot {
+  color: forestgreen;
+  cursor: pointer;
+}
