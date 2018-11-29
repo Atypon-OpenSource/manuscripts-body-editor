@@ -23,7 +23,7 @@
     "lint": "tslint --project tsconfig.json",
     "prebuild": "rimraf dist",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "preversion": "yarn typecheck && yarn lint",
+    "preversion": "npm-run-all --parallel typecheck lint",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "version": "yarn build"
