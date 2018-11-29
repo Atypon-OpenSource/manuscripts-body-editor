@@ -184,6 +184,26 @@ export class Editor extends React.PureComponent<EditorProps> {
 
             // TODO: insert at the end if no matching index? Should already be ok because of bibliography section?
             break
+          default:
+            // if an element arrives after the section update (which referenced this new element)
+            // find the placeholder element and replace
+            const {
+              schema: { nodes },
+              tr,
+            } = state
+            state.doc.descendants((node, pos) => {
+              if (
+                node.attrs.id === id &&
+                (node.type === nodes.placeholder_element ||
+                  node.type === nodes.placeholder)
+              ) {
+                tr.replaceWith(pos, pos + node.nodeSize, newNode)
+                tr.setMeta('addToHistory', false)
+                this.dispatchTransaction(tr, true)
+                return false
+              }
+            })
+            break
         }
         break
 
