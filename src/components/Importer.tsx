@@ -18,7 +18,7 @@ const ModalBody = styled.div<{ status: string }>`
   color: ${props => (props.status === 'error' ? '#f00' : '#444')};
 `
 
-const ModalActions = styled.div`
+const ModalFooter = styled.div`
   padding: 16px;
   display: flex;
   justify-content: flex-end;
@@ -96,15 +96,14 @@ export class Importer extends React.Component<Props, State> {
 
   public render() {
     const { error, status, canCancel } = this.state
-    const { handleComplete } = this.props
 
     if (error) {
       return (
         <Modal>
           <ModalBody status={'error'}>{error.message}</ModalBody>
-          <ModalActions>
-            <ModalAction onClick={handleComplete}>OK</ModalAction>
-          </ModalActions>
+          <ModalFooter>
+            <ModalAction onClick={this.props.handleComplete}>OK</ModalAction>
+          </ModalFooter>
         </Modal>
       )
     }
@@ -112,12 +111,21 @@ export class Importer extends React.Component<Props, State> {
     return (
       <Modal>
         <ModalBody>{status}</ModalBody>
-        <ModalActions>
+        <ModalFooter>
           {canCancel && (
-            <ModalAction onClick={handleComplete}>Cancel</ModalAction>
+            <ModalAction onClick={this.handleCancel}>Cancel</ModalAction>
           )}
-        </ModalActions>
+        </ModalFooter>
       </Modal>
+    )
+  }
+
+  private handleCancel = () => {
+    this.setState(
+      {
+        cancelled: true,
+      },
+      this.props.handleComplete
     )
   }
 }
