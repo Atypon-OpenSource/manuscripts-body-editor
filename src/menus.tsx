@@ -1,8 +1,4 @@
-import {
-  Manuscript,
-  Model,
-  Project,
-} from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Project } from '@manuscripts/manuscripts-json-schema'
 import { parse as parseTitle } from '@manuscripts/title-editor'
 import { History } from 'history'
 import { toggleMark } from 'prosemirror-commands'
@@ -28,7 +24,6 @@ import {
   insertInlineEquation,
   markActive,
 } from './commands'
-import { Importer } from './components/Importer'
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
 import { schema } from './schema'
@@ -38,18 +33,10 @@ export interface MenusProps {
   manuscript: Manuscript
   addManuscript?: () => void
   deleteManuscript: (id: string) => Promise<void>
-  importManuscript: (models: Model[]) => Promise<void>
-  exportManuscript: (format: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   history: History
-  importFile: (file: File) => Promise<Model[]>
-  openFilePicker: () => Promise<File>
-  addModal: (
-    modal: React.FunctionComponent<{
-      handleClose: () => void
-    }>
-  ) => string
-  closeModal: (id: string) => void
+  openExporter: (format: string) => void
+  openImporter: () => void
 }
 
 const truncateText = (text: string, maxLength: number) =>
@@ -110,31 +97,22 @@ export const menus = (props: MenusProps): MenuItem[] => [
       },
       {
         label: 'Import…',
-        run: async () => {
-          const modalID = props.addModal(() => (
-            <Importer
-              openFilePicker={props.openFilePicker}
-              importFile={props.importFile}
-              importManuscript={props.importManuscript}
-              handleComplete={() => props.closeModal(modalID)}
-            />
-          ))
-        },
+        run: props.openImporter,
       },
       {
         label: 'Export as…',
         submenu: [
           {
             label: 'Markdown',
-            run: () => props.exportManuscript('.md'),
+            run: () => props.openExporter('.md'),
           },
           {
             label: 'Microsoft Word',
-            run: () => props.exportManuscript('.docx'),
+            run: () => props.openExporter('.docx'),
           },
           {
             label: 'PDF',
-            run: () => props.exportManuscript('.pdf'),
+            run: () => props.openExporter('.pdf'),
           },
         ],
       },

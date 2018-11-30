@@ -47,8 +47,6 @@ export interface EditorProps {
   saveManuscript?: (manuscript: Partial<Manuscript>) => Promise<void>
   addManuscript?: () => Promise<void>
   deleteManuscript: (id: string) => Promise<void>
-  importManuscript: (models: Model[]) => Promise<void>
-  exportManuscript: (format: string) => Promise<void>
   locale: string
   onChange?: (state: ManuscriptEditorState, docChanged: boolean) => void
   subscribe?: (receive: ChangeReceiver) => void
@@ -63,8 +61,6 @@ export interface EditorProps {
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   CitationEditor: React.ComponentType<any> // tslint:disable-line:no-any
-  importFile: (file: File) => Promise<Model[]>
-  openFilePicker: () => Promise<File>
 }
 
 export class Editor extends React.PureComponent<EditorProps> {
