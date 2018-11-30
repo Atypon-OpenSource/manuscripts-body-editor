@@ -28,6 +28,7 @@ import {
   insertInlineEquation,
   markActive,
 } from './commands'
+import { Importer } from './components/Importer'
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
 import { schema } from './schema'
@@ -43,6 +44,12 @@ export interface MenusProps {
   history: History
   importFile: (file: File) => Promise<Model[]>
   openFilePicker: () => Promise<File>
+  addModal: (
+    modal: React.FunctionComponent<{
+      handleClose: () => void
+    }>
+  ) => string
+  closeModal: (id: string) => void
 }
 
 const truncateText = (text: string, maxLength: number) =>
@@ -103,11 +110,16 @@ export const menus = (props: MenusProps): MenuItem[] => [
       },
       {
         label: 'Import…',
-        run: () =>
-          props
-            .openFilePicker()
-            .then(props.importFile)
-            .then(props.importManuscript),
+        run: async () => {
+          const modalID = props.addModal(() => (
+            <Importer
+              openFilePicker={props.openFilePicker}
+              importFile={props.importFile}
+              importManuscript={props.importManuscript}
+              handleComplete={() => props.closeModal(modalID)}
+            />
+          ))
+        },
       },
       {
         label: 'Export as…',
