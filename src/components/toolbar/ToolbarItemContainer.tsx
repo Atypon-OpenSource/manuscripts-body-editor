@@ -42,14 +42,17 @@ interface Props {
   view: EditorView
 }
 
-export const ToolbarItemContainer: React.SFC<Props> = ({ view, item }) => (
+export const ToolbarItemContainer: React.FunctionComponent<Props> = ({
+  view,
+  item,
+}) => (
   <ToolbarItem>
     <StyledButton
       type={'button'}
       title={item.title}
       data-active={item.active && item.active(view.state)}
       disabled={item.enable && !item.enable(view.state)}
-      onMouseDown={event => {
+      onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         item.run(view.state, view.dispatch)
       }}

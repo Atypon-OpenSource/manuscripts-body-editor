@@ -60,7 +60,10 @@ export interface ToolbarButton {
   enable?: (state: ManuscriptEditorState) => boolean
 }
 
-export const Toolbar: React.SFC<ToolbarProps> = ({ toolbar, view }) => (
+export const Toolbar: React.FunctionComponent<ToolbarProps> = ({
+  toolbar,
+  view,
+}) => (
   <ToolbarContainer>
     {view && (
       <ToolbarGroup>

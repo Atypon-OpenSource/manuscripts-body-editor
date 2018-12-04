@@ -88,7 +88,7 @@ interface ShortcutProps {
   accelerator: string
 }
 
-const Shortcut: React.SFC<ShortcutProps> = ({ accelerator }) => (
+const Shortcut: React.FunctionComponent<ShortcutProps> = ({ accelerator }) => (
   <ShortcutContainer>{accelerator}</ShortcutContainer>
 )
 
@@ -130,7 +130,7 @@ export class MenuItemContainer extends React.Component<
       return (
         <Container
           className={classNameFromState(item, view.state)}
-          onMouseDown={event => {
+          onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
             event.preventDefault()
 
             if (item.run) {

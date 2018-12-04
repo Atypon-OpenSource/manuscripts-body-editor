@@ -13,7 +13,7 @@ interface Props {
   doc: ManuscriptNode | null
 }
 
-const ManuscriptOutline: React.SFC<Props> = ({
+const ManuscriptOutline: React.FunctionComponent<Props> = ({
   doc,
   manuscript,
   selected,

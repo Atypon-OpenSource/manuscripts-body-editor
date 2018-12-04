@@ -26,7 +26,7 @@ const titleText = (value: string) => {
   return node.textContent
 }
 
-export const OutlineManuscript: React.SFC<Props> = ({
+export const OutlineManuscript: React.FunctionComponent<Props> = ({
   project,
   manuscript,
 }) => (

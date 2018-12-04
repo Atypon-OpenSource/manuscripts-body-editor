@@ -34,7 +34,7 @@ interface Props {
   handleSelect: (id: string) => void
 }
 
-export const CrossReferenceItems: React.SFC<Props> = ({
+export const CrossReferenceItems: React.FunctionComponent<Props> = ({
   handleSelect,
   referencedObject,
   targets,

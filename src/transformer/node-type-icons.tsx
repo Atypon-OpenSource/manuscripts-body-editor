@@ -16,7 +16,7 @@ const { nodes } = schema
 
 const icons: Map<
   ManuscriptNodeType,
-  React.SFC<React.SVGAttributes<SVGElement>>
+  React.FunctionComponent<React.SVGAttributes<SVGElement>>
 > = new Map([
   [nodes.bibliography_element, SectionIcon],
   [nodes.bullet_list, BulletListIcon],

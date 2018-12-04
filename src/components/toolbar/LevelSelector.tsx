@@ -589,7 +589,7 @@ interface Props {
   view: ManuscriptEditorView
 }
 
-export const LevelSelector: React.SFC<Props> = ({ view }) => {
+export const LevelSelector: React.FunctionComponent<Props> = ({ view }) => {
   const {
     state: {
       schema: { nodes },
@@ -655,17 +655,13 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
           )
         },
       }}
-      onChange={value => {
-        if (!value) return
-
-        const selectedValue = value as Option
-
-        if (selectedValue.action) {
-          selectedValue.action()
+      onChange={(value: Option | null) => {
+        if (value && value.action) {
+          value.action()
         }
       }}
       styles={{
-        control: (styles): CSSProperties => ({
+        control: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           backgroundColor: '#fff',
           borderWidth: 1,
@@ -682,23 +678,23 @@ export const LevelSelector: React.SFC<Props> = ({ view }) => {
         indicatorSeparator: (): CSSProperties => ({
           display: 'none',
         }),
-        dropdownIndicator: (styles): CSSProperties => ({
+        dropdownIndicator: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           padding: '0 4px',
         }),
-        menu: (styles): CSSProperties => ({
+        menu: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           width: 'auto',
         }),
-        singleValue: (styles): CSSProperties => ({
+        singleValue: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           padding: 0,
         }),
-        valueContainer: (styles): CSSProperties => ({
+        valueContainer: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           padding: '1px 8px',
         }),
-        container: (styles): CSSProperties => ({
+        container: (styles: CSSProperties): CSSProperties => ({
           ...styles,
           border: 'none',
         }),

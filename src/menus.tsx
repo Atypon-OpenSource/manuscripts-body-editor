@@ -1,8 +1,4 @@
-import {
-  Manuscript,
-  Model,
-  Project,
-} from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Project } from '@manuscripts/manuscripts-json-schema'
 import { parse as parseTitle } from '@manuscripts/title-editor'
 import { History } from 'history'
 import { toggleMark } from 'prosemirror-commands'
@@ -37,12 +33,10 @@ export interface MenusProps {
   manuscript: Manuscript
   addManuscript?: () => void
   deleteManuscript: (id: string) => Promise<void>
-  importManuscript: (models: Model[]) => Promise<void>
-  exportManuscript: (format: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   history: History
-  importFile: (file: File) => Promise<Model[]>
-  openFilePicker: () => Promise<File>
+  openExporter: (format: string) => void
+  openImporter: () => void
 }
 
 const truncateText = (text: string, maxLength: number) =>
@@ -103,26 +97,22 @@ export const menus = (props: MenusProps): MenuItem[] => [
       },
       {
         label: 'Import…',
-        run: () =>
-          props
-            .openFilePicker()
-            .then(props.importFile)
-            .then(props.importManuscript),
+        run: props.openImporter,
       },
       {
         label: 'Export as…',
         submenu: [
           {
             label: 'Markdown',
-            run: () => props.exportManuscript('.md'),
+            run: () => props.openExporter('.md'),
           },
           {
             label: 'Microsoft Word',
-            run: () => props.exportManuscript('.docx'),
+            run: () => props.openExporter('.docx'),
           },
           {
             label: 'PDF',
-            run: () => props.exportManuscript('.pdf'),
+            run: () => props.openExporter('.pdf'),
           },
         ],
       },

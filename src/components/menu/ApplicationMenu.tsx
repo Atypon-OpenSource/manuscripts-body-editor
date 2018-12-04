@@ -93,7 +93,7 @@ export class ApplicationMenu extends React.Component<Props, State> {
                   <MenuHeading
                     // @ts-ignore: styled
                     ref={ref}
-                    onMouseDown={event => {
+                    onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
                       event.preventDefault()
                       this.setActiveMenu(activeMenu !== null ? null : index)
                     }}
