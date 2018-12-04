@@ -253,7 +253,7 @@ export class ContextMenu {
               : `Hide ${option.label}`
 
             section.appendChild(
-              this.createMenuItem(label, async () => {
+              this.createMenuItem(label, () => {
                 this.toggleNodeAttr(option)
                 popper.destroy()
               })

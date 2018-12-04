@@ -25,7 +25,7 @@ class InlineFootnote implements NodeView {
     return true
   }
 
-  public async selectNode() {
+  public selectNode() {
     // TODO: select and scroll to the footnote without changing the URL?
     this.props.history.push('#' + this.node.attrs.rid)
   }

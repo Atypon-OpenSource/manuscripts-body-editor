@@ -97,7 +97,7 @@ class CitationView implements NodeView {
     this.updateContents()
   }
 
-  private handleRemove = async (id: string) => {
+  private handleRemove = (id: string) => {
     const citation = this.getCitation()
 
     citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
@@ -111,7 +111,7 @@ class CitationView implements NodeView {
     )
   }
 
-  private handleCite = async (items: Array<Build<BibliographyItem>>) => {
+  private handleCite = (items: Array<Build<BibliographyItem>>) => {
     // TODO: reuse if already in library
 
     const { state } = this.view
