@@ -30,6 +30,7 @@ import objects from './objects'
 import paragraphs from './paragraphs'
 import persist from './persist'
 import placeholder from './placeholder'
+import requirements from './requirements'
 import sections from './sections'
 import styles from './styles'
 
@@ -49,6 +50,7 @@ export default (props: EditorProps) => [
   objects(props),
   paragraphs(),
   placeholder(),
+  requirements(props),
   tableEditing(),
 ]
 
