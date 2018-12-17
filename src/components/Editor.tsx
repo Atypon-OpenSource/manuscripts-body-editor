@@ -81,6 +81,8 @@ export class Editor extends React.PureComponent<EditorProps> {
         schema,
         plugins: plugins(this.props),
       }),
+      scrollThreshold: 100,
+      scrollMargin: 100,
       dispatchTransaction: this.dispatchTransaction,
       nodeViews: views(this.props),
       attributes: this.props.attributes,
