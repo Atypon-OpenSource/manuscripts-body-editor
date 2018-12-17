@@ -28,12 +28,20 @@ export const paragraph: NodeSpec = {
       getAttrs: p => {
         const dom = p as HTMLParagraphElement
 
-        return {
-          id: dom.getAttribute('id'),
-          placeholder: dom.getAttribute('data-placeholder-text'),
-          // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/75
-          // tight: dom.parentNode && dom.parentNode.nodeName === 'LI',
+        const attrs: Partial<Attrs> = {
+          id: dom.getAttribute('id') || undefined,
         }
+
+        const placeholder = dom.getAttribute('data-placeholder-text')
+
+        if (placeholder) {
+          attrs.placeholder = placeholder
+        }
+
+        // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/75
+        // attrs.tight = dom.parentNode && dom.parentNode.nodeName === 'LI',
+
+        return attrs
       },
     },
   ],

@@ -45,7 +45,6 @@ export interface EditorProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getManuscript: () => Manuscript
   saveManuscript?: (manuscript: Partial<Manuscript>) => Promise<void>
-  addManuscript?: () => Promise<void>
   deleteManuscript: (id: string) => Promise<void>
   locale: string
   onChange?: (state: ManuscriptEditorState, docChanged: boolean) => void

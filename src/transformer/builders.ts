@@ -12,7 +12,9 @@ import {
   InlineMathFragment,
   Keyword,
   Manuscript,
+  ParagraphElement,
   Project,
+  Section,
   UserProfileAffiliation,
 } from '@manuscripts/manuscripts-json-schema'
 import { generateID } from './id'
@@ -38,7 +40,9 @@ import {
   INLINE_MATH_FRAGMENT,
   KEYWORD,
   MANUSCRIPT,
+  PARAGRAPH,
   PROJECT,
+  SECTION,
   USER_PROFILE_AFFILIATION,
 } from './object-types'
 
@@ -219,5 +223,26 @@ export const buildFootnote = (
   _id: generateID(FOOTNOTE),
   objectType: FOOTNOTE,
   containingObject,
+  contents,
+})
+
+export const buildSection = (
+  priority: number = 0,
+  path: string[] = []
+): Build<Section> => {
+  const id = generateID(SECTION)
+
+  return {
+    _id: id,
+    objectType: SECTION,
+    priority,
+    path: path.concat(id),
+  }
+}
+
+export const buildParagraph = (contents: string): Build<ParagraphElement> => ({
+  _id: generateID(PARAGRAPH),
+  objectType: PARAGRAPH,
+  elementType: 'p',
   contents,
 })

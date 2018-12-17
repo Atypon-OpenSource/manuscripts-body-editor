@@ -114,6 +114,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:77786D47-6060-4FBC-BC13-5FA754968D6A",
         "titleSuppressed": false,
       },
@@ -264,6 +265,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:F8EE617B-484B-4CF2-F1CA-014F5307D5CF",
         "titleSuppressed": true,
       },
@@ -1402,6 +1404,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:77786D47-6060-4FBC-BC13-5FA754968D6A",
         "titleSuppressed": false,
       },
@@ -1518,6 +1521,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:F8EE617B-484B-4CF2-F1CA-014F5307D5CF",
         "titleSuppressed": true,
       },
@@ -2526,6 +2530,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:77786D47-6060-4FBC-BC13-5FA754968D6A",
         "titleSuppressed": false,
       },
@@ -2676,6 +2681,7 @@ Object {
     },
     Object {
       "attrs": Object {
+        "category": "",
         "id": "MPSection:F8EE617B-484B-4CF2-F1CA-014F5307D5CF",
         "titleSuppressed": true,
       },

@@ -4,6 +4,7 @@
   font-family: "IBM Plex Serif", "Georgia", Times, serif;
   background: #fff;
   color: #353535;
+  margin-bottom: 100px;
 }
 
 .ProseMirror:focus {
@@ -197,6 +198,12 @@
 
 .ProseMirror section > section > section > section h1 {
   font-size: 100%;
+}
+
+.ProseMirror .placeholder-text {
+  color: #a6a6a6;
+  font-style: italic;
+  margin: 0;
 }
 
 .ProseMirror .empty-node::before {

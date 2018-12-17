@@ -59,12 +59,6 @@ abstract class AbstractBlock implements NodeView {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-
-      const { placeholder } = this.node.attrs
-
-      if (placeholder) {
-        this.contentDOM.setAttribute('data-placeholder', placeholder)
-      }
     }
   }
 

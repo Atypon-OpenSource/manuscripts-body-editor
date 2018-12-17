@@ -15,6 +15,7 @@ export const section: NodeSpec = {
   content: 'section_title (paragraph | element)* footnotes_element? section*',
   attrs: {
     id: { default: '' },
+    category: { default: '' },
     titleSuppressed: { default: false },
   },
   group: 'block sections',

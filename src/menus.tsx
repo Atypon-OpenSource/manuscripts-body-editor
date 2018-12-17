@@ -31,7 +31,8 @@ import { schema } from './schema'
 export interface MenusProps {
   project: Project
   manuscript: Manuscript
-  addManuscript?: () => void
+  openTemplateSelector: () => void
+  addManuscript: () => void
   deleteManuscript: (id: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   history: History
@@ -81,6 +82,7 @@ export const menus = (props: MenusProps): MenuItem[] => [
         submenu: [
           {
             label: 'Manuscript with Template…',
+            run: props.openTemplateSelector,
           },
           {
             label: 'Manuscript',

@@ -25,6 +25,7 @@ import { ManuscriptNode, ManuscriptNodeType } from '../schema/types'
 import { PlaceholderElement } from './models'
 import { nodeTypesMap } from './node-types'
 import { CITATION_ITEM } from './object-types'
+import { buildSectionCategory } from './section-category'
 import { xmlSerializer } from './serializer'
 
 const serializer = DOMSerializer.fromSchema(schema)
@@ -207,6 +208,7 @@ const encoders: NodeEncoderMap = {
     contents: contents(node),
   }),
   bibliography_section: (node, parent, path, priority): Partial<Section> => ({
+    category: buildSectionCategory(node),
     priority: priority.value++,
     title: inlineContentsOfNodeType(node, node.type.schema.nodes.section_title),
     path: path.concat([node.attrs.id]),
@@ -281,11 +283,13 @@ const encoders: NodeEncoderMap = {
     elementType: 'p',
     contents: contents(node), // TODO: can't serialize citations?
     paragraphStyle: node.attrs.paragraphStyle || undefined,
+    placeholderInnerHTML: node.attrs.placeholder || undefined,
   }),
   placeholder_element: (): Partial<PlaceholderElement> => ({
     elementType: 'p',
   }),
   section: (node, parent, path, priority): Partial<Section> => ({
+    category: buildSectionCategory(node),
     priority: priority.value++,
     title: inlineContentsOfNodeType(node, node.type.schema.nodes.section_title),
     path: path.concat([node.attrs.id]),
@@ -312,6 +316,7 @@ const encoders: NodeEncoderMap = {
     // elementType: 'div', // TODO: https://gitlab.com/mpapp-private/manuscripts-json-schema/issues/47
   }),
   toc_section: (node, parent, path, priority): Partial<Section> => ({
+    category: buildSectionCategory(node),
     priority: priority.value++,
     title: inlineContentsOfNodeType(node, node.type.schema.nodes.section_title),
     path: path.concat([node.attrs.id]),
@@ -319,6 +324,16 @@ const encoders: NodeEncoderMap = {
       .map(childNode => childNode.attrs.id)
       .filter(id => id),
   }),
+}
+
+const removeEmpty = (data: Partial<Model>) => {
+  for (const [key, value] of Object.entries(data)) {
+    if (value === undefined || value === '') {
+      delete (data as { [key: string]: string })[key]
+    }
+  }
+
+  return data
 }
 
 const modelData = (
@@ -331,7 +346,9 @@ const modelData = (
 
   if (!encoder) throw new Error(`Unhandled model: ${node.type.name}`)
 
-  return encoder(node, parent, path, priority)
+  const data = encoder(node, parent, path, priority)
+
+  return removeEmpty(data)
 }
 
 export const modelFromNode = (

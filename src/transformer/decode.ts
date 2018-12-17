@@ -39,6 +39,7 @@ import { ManuscriptNode } from '../schema/types'
 import { generateNodeID } from './id'
 import { PlaceholderElement, UserProfileWithAvatar } from './models'
 import * as ObjectTypes from './object-types'
+import { chooseSectionNodeType, guessSectionCategory } from './section-category'
 import { timestamp } from './timestamp'
 
 const parser = DOMParser.fromSchema(schema)
@@ -302,15 +303,18 @@ export class Decoder {
         : schema.nodes.section_title.create()
 
       const nestedSections = getSections(this.modelMap)
-        .filter(section => section.path.length > 1)
-        .filter(item => item.path[item.path.length - 2] === model._id)
+        .filter(section => section.path && section.path.length > 1)
+        .filter(section => section.path[section.path.length - 2] === model._id)
         .map(this.creators[ObjectTypes.SECTION]) as SectionNode[]
 
-      const sectionNodeType = this.chooseSectionNodeType(elements)
+      const sectionCategory = model.category || guessSectionCategory(elements)
+
+      const sectionNodeType = chooseSectionNodeType(sectionCategory)
 
       const sectionNode = sectionNodeType.createAndFill(
         {
           id: model._id,
+          category: sectionCategory,
           titleSuppressed: model.titleSuppressed,
         },
         [sectionTitleNode].concat(elementNodes).concat(nestedSections)
@@ -399,20 +403,5 @@ export class Decoder {
     }
 
     return schema.nodes.manuscript.create({}, rootSectionNodes)
-  }
-
-  private chooseSectionNodeType = (elements: Model[]) => {
-    if (!elements.length) return schema.nodes.section
-
-    switch (elements[0].objectType) {
-      case ObjectTypes.BIBLIOGRAPHY_ELEMENT:
-        return schema.nodes.bibliography_section
-
-      case ObjectTypes.TOC_ELEMENT:
-        return schema.nodes.toc_section
-
-      default:
-        return schema.nodes.section
-    }
   }
 }

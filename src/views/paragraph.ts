@@ -1,8 +1,11 @@
 import { EditorProps } from '../components/Editor'
+import { ParagraphNode } from '../schema/nodes/paragraph'
 import { NodeViewCreator } from '../types'
 import Block from './block'
 
 class Paragraph extends Block {
+  protected node: ParagraphNode
+
   protected get elementType() {
     return 'p'
   }
