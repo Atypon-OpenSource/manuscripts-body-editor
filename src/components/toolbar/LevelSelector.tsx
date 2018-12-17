@@ -570,6 +570,8 @@ const Group = styled.div`
 `
 
 const StyledSelect = styled(Select)`
+  z-index: 3;
+
   & > div:hover {
     border-color: #7fb5d5;
   }
