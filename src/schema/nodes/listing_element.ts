@@ -3,6 +3,7 @@ import { ManuscriptNode } from '../types'
 
 interface Attrs {
   id: string
+  containedFigureID: string
   suppressCaption: boolean
 }
 
@@ -14,6 +15,7 @@ export const listingElement: NodeSpec = {
   content: '(listing | placeholder) figcaption',
   attrs: {
     id: { default: '' },
+    containedFigureID: { default: '' },
     suppressCaption: { default: true },
   },
   group: 'block element',

@@ -114,6 +114,11 @@
   border-color: blue;
 }
 
+.ProseMirror .listing-panel {
+  display: flex;
+  justify-content: center;
+}
+
 .ProseMirror .figure-panel {
   display: flex;
   justify-content: center;

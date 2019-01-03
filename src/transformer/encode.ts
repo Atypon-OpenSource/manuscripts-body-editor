@@ -238,6 +238,8 @@ const encoders: NodeEncoderMap = {
   }),
   listing_element: (node): Partial<ListingElement> => ({
     containedObjectID: attributeOfNodeType(node, 'listing', 'id'),
+    containedFigureID: node.attrs.containedFigureID || undefined,
+    // containedTableID: attributeOfNodeType(node, 'table', 'id'),
     caption: inlineContentsOfNodeType(node, node.type.schema.nodes.figcaption),
     elementType: 'figure',
     suppressCaption: node.attrs.suppressCaption === true ? undefined : false,

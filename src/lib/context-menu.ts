@@ -1,11 +1,14 @@
 import { Fragment, Slice } from 'prosemirror-model'
 import { createBlock } from '../commands'
+import { INSERT, modelsKey } from '../plugins/models'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
 } from '../schema/types'
+import { buildFigure } from '../transformer/builders'
 import { nodeNames } from '../transformer/node-names'
+import { generatedImageURI } from './image-uri'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -263,6 +266,19 @@ export class ContextMenu {
       )
     }
 
+    if (nodeType === nodes.listing_element) {
+      menu.appendChild(
+        this.createMenuSection((section: HTMLElement) => {
+          section.appendChild(
+            this.createMenuItem(`Execute Code → Image`, async () => {
+              await this.executeListing()
+              popper.destroy()
+            })
+          )
+        })
+      )
+    }
+
     if (nodeType === nodes.paragraph && $pos.parent.type === nodes.section) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -444,6 +460,38 @@ export class ContextMenu {
     )
 
     this.view.dispatch(tr.replaceRange(from, to, slice))
+  }
+
+  private executeListing = async () => {
+    // const { nodes } = this.view.state.schema
+
+    // const listingNode = getMatchingChild(
+    //   this.node,
+    //   node => node.type === nodes.listing
+    // )!
+
+    // const { contents } = listingNode.attrs
+
+    // TODO: POST contents to Jupyter server
+    // Response is Blob
+
+    const image = await fetch(generatedImageURI).then(response =>
+      response.blob()
+    )
+
+    // create figure from result
+    const figure = buildFigure(image)
+
+    this.view.dispatch(
+      this.view.state.tr
+        .setMeta(modelsKey, {
+          [INSERT]: [figure],
+        })
+        .setNodeMarkup(this.getPos(), undefined, {
+          ...this.node.attrs,
+          containedFigureID: figure._id,
+        })
+    )
   }
 
   private toggleNodeAttr = (option: SuppressOption) => {
