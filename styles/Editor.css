@@ -353,6 +353,36 @@
   line-height: 1em;
 }
 
+.ProseMirror .has-figure:not(.expanded) pre {
+  display: none;
+}
+
+.ProseMirror .listing-element-content {
+  margin: 0 30px;
+}
+
+.ProseMirror .expander {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: absolute;
+  left: 24px;
+  transform: rotate(180deg);
+  display: none;
+}
+
+.ProseMirror .has-figure .expander {
+  display: inline-block;
+}
+
+.ProseMirror .expander:focus {
+  outline: none;
+}
+
+.ProseMirror .expanded .expander {
+  transform: rotate(0deg)
+}
+
 .ProseMirror .equation,
 .ProseMirror .listing {
   display: flex;
