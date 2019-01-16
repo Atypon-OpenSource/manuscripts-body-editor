@@ -41,7 +41,7 @@ export const OutlineManuscript: React.FunctionComponent<Props> = ({
           <OutlineIconManuscript />
         </OutlineItemIcon>
 
-        <OutlineItemLinkText className={'outline-text-doc'}>
+        <OutlineItemLinkText className={'outline-text-title'}>
           {manuscript.title ? (
             titleText(manuscript.title)
           ) : (

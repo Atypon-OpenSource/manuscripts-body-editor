@@ -33,7 +33,7 @@ export const Outline = styled.div`
   font-size: 16px;
   position: relative;
 
-  & .outline-text-doc {
+  & .outline-text-title {
     font-size: 18px;
   }
 `

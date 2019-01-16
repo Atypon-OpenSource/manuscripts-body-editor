@@ -38,6 +38,7 @@ export interface MenusProps {
   history: History
   openExporter: (format: string) => void
   openImporter: () => void
+  openRenameProject: (project: Project) => void
 }
 
 const truncateText = (text: string, maxLength: number) =>
@@ -143,6 +144,13 @@ export const menus = (props: MenusProps): MenuItem[] => [
               ? confirmDeleteManuscriptMessage(props.manuscript.title)
               : `Are you sure you wish to delete this untitled manuscript?`
           ) && props.deleteManuscript(props.manuscript._id),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        label: 'Rename Project',
+        run: () => props.openRenameProject(props.project),
       },
     ],
   },

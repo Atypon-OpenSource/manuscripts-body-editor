@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/manuscript-editor",
   "description": "React components for editing and viewing manuscripts",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "repository": "https://gitlab.com/mpapp-private/manuscripts-manuscript-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
