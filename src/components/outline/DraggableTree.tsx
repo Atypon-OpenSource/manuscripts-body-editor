@@ -139,9 +139,13 @@ export const buildTree: TreeBuilder = ({
 }
 
 class Tree extends React.Component<Props & ConnectedProps, State> {
-  public state: State = {
-    open: true,
-    dragPosition: null,
+  public constructor(props: Props & ConnectedProps) {
+    super(props)
+
+    this.state = {
+      open: !props.depth,
+      dragPosition: null,
+    }
   }
 
   public render(): React.ReactNode {
