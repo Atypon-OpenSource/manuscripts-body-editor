@@ -9,8 +9,8 @@ import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 interface Props {
   manuscript: Manuscript
   selected: Selected | null
-  view: ManuscriptEditorView | null
-  doc: ManuscriptNode | null
+  view?: ManuscriptEditorView
+  doc?: ManuscriptNode
 }
 
 const ManuscriptOutline: React.FunctionComponent<Props> = ({
