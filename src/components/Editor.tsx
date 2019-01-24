@@ -91,7 +91,9 @@ export class Editor extends React.PureComponent<EditorProps> {
   }
 
   public componentDidMount() {
-    this.editorRef.current!.appendChild(this.view.dom)
+    if (this.editorRef.current) {
+      this.editorRef.current.appendChild(this.view.dom)
+    }
 
     if (this.props.subscribe) {
       this.props.subscribe(this.receive)
