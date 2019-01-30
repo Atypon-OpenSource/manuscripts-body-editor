@@ -206,9 +206,9 @@ export default (props: Props) => {
         tr.doc.descendants((node, pos) => {
           if (node.type.name === 'bibliography_element') {
             const contents = generatedBibliographyItems.length
-              ? `<div class="csl-bib-body">${generatedBibliographyItems.join(
-                  '\n'
-                )}</div>`
+              ? `<div class="csl-bib-body" id="${
+                  node.attrs.id
+                }">${generatedBibliographyItems.join('\n')}</div>`
               : `<div class="csl-bib-body empty-node" data-placeholder="${
                   node.attrs.placeholder
                 }"></div>`

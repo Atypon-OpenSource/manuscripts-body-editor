@@ -14,7 +14,7 @@ const search = (query: string, rows: number) =>
     )
     .then(response => response.json())
     .then(({ message: { items, 'total-results': total } }) => ({
-      items,
+      items: items.map(convertDataToBibliographyItem),
       total,
     }))
 
