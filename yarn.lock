@@ -5015,10 +5015,10 @@ math-sign-x@^3.0.0:
     is-nan-x "^1.0.1"
     to-number-x "^2.0.0"
 
-mathjax3@^3.0.0-beta.2:
-  version "3.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/mathjax3/-/mathjax3-3.0.0-beta.2.tgz#edf3b03f75728274b44f131bd68f94435888c148"
-  integrity sha512-xBr1MxP2JKQxGmrCafxVmEb5akQOB7mHQ44rHD5FrpCTpdb4x7xsxwIoGblleel5gOFRJSAwpRe08Azyx1VQgQ==
+mathjax3@3.0.0-beta.3:
+  version "3.0.0-beta.3"
+  resolved "https://registry.npmjs.org/mathjax3/-/mathjax3-3.0.0-beta.3.tgz#c3072a59304b4b612aa9516eb672b07000c9a3d5"
+  integrity sha512-MgXK56KOLk5b8/Y01RXB/C0+QgC2Kc+SJmKBilP+Jwxout/4SdV8AjsPp+WMzlotnAacQWFpn24CPdLkdej9AA==
   dependencies:
     esm "^3.0.34"
 

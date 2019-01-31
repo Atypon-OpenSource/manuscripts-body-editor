@@ -17,8 +17,10 @@ class GenericMathItem<N, T, D> extends AbstractMathItem<N, T, D> {}
 
 const InputJax = new TeX({})
 const OutputJax = new SVG()
-
-const doc = new GenericMathDocument(document, browserAdaptor(), { OutputJax })
+const doc = new GenericMathDocument(document, browserAdaptor(), {
+  InputJax,
+  OutputJax,
+})
 document.head.appendChild(OutputJax.styleSheet(doc) as Node)
 
 export const typeset = (math: string, display: boolean) => {

@@ -6,9 +6,9 @@ exports[`mathjax generate: mathjax 1`] = `
   jax="SVG"
 >
   <svg
-    height="3.134ex"
-    style="vertical-align: -0.88ex;"
-    viewBox="0 -996.5 7273.5 1385.3"
+    height="2.739ex"
+    style="vertical-align: -0.667ex;"
+    viewBox="0 -915.5 7273.5 1210.5"
     width="16.456ex"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -149,9 +149,9 @@ exports[`mathjax generate: mathjax-display 1`] = `
   jax="SVG"
 >
   <svg
-    height="3.634ex"
-    style="vertical-align: -1.255ex;"
-    viewBox="0 -1051.8 7661.5 1606.3"
+    height="3.167ex"
+    style="vertical-align: -1.018ex;"
+    viewBox="0 -950 7661.5 1400"
     width="17.334ex"
     xmlns="http://www.w3.org/2000/svg"
   >
