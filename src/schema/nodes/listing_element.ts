@@ -3,7 +3,10 @@ import { ManuscriptNode } from '../types'
 
 interface Attrs {
   id: string
+  containedFigureID: string
+  containedObjectID: string
   suppressCaption: boolean
+  isExpanded: boolean
 }
 
 export interface ListingElementNode extends ManuscriptNode {
@@ -14,7 +17,10 @@ export const listingElement: NodeSpec = {
   content: '(listing | placeholder) figcaption',
   attrs: {
     id: { default: '' },
+    containedFigureID: { default: '' },
+    containedObjectID: { default: '' },
     suppressCaption: { default: true },
+    isExpanded: { default: false },
   },
   group: 'block element',
   parseDOM: [

@@ -61,6 +61,12 @@ export class PopperManager {
     }
   }
 
+  public scheduleUpdate() {
+    if (this.activePopper) {
+      this.activePopper.scheduleUpdate()
+    }
+  }
+
   private focusInput(container: HTMLDivElement) {
     const element = container.querySelector('input') as HTMLDivElement | null
 

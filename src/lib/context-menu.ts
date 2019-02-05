@@ -1,5 +1,6 @@
 import { Fragment, Slice } from 'prosemirror-model'
 import { createBlock } from '../commands'
+import { getMatchingChild } from '../lib/utils'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -21,6 +22,8 @@ export const sectionLevel = (depth: number) => {
 
 interface Actions {
   createComment?: (id: string) => Promise<void>
+  attachToListing?: (id: string) => Promise<{}>
+  executeListing?: (id: string, contents: string) => Promise<void>
 }
 
 interface SuppressOption {
@@ -263,6 +266,26 @@ export class ContextMenu {
       )
     }
 
+    if (nodeType === nodes.listing_element) {
+      menu.appendChild(
+        this.createMenuSection((section: HTMLElement) => {
+          section.appendChild(
+            this.createMenuItem(`Execute`, async () => {
+              await this.executeListing()
+              popper.destroy()
+            })
+          )
+
+          section.appendChild(
+            this.createMenuItem(`Attach data`, async () => {
+              await this.addListingAttachment()
+              popper.destroy()
+            })
+          )
+        })
+      )
+    }
+
     if (nodeType === nodes.paragraph && $pos.parent.type === nodes.section) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -444,6 +467,32 @@ export class ContextMenu {
     )
 
     this.view.dispatch(tr.replaceRange(from, to, slice))
+  }
+
+  private addListingAttachment = async () => {
+    const { nodes } = this.view.state.schema
+
+    const listingNode = getMatchingChild(
+      this.node,
+      node => node.type === nodes.listing
+    )!
+
+    const { id } = listingNode.attrs
+
+    await this.actions.attachToListing!(id)
+  }
+
+  private executeListing = async () => {
+    const { nodes } = this.view.state.schema
+
+    const listingNode = getMatchingChild(
+      this.node,
+      node => node.type === nodes.listing
+    )!
+
+    const { id, contents } = listingNode.attrs
+
+    await this.actions.executeListing!(id, contents)
   }
 
   private toggleNodeAttr = (option: SuppressOption) => {

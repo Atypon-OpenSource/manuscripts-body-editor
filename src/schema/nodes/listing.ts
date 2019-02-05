@@ -7,6 +7,7 @@ interface Attrs {
   contents: string
   language: string
   languageKey: string
+  isExpanded: boolean
 }
 
 export interface ListingNode extends ManuscriptNode {
@@ -19,6 +20,7 @@ export const listing: NodeSpec = {
     contents: { default: '' },
     language: { default: '' },
     languageKey: { default: '' },
+    isExpanded: { default: false },
     // placeholder: { default: 'Click to edit listing' },
   },
   group: 'block',

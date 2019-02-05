@@ -160,15 +160,15 @@ export const buildKeyword = (name: string): Build<Keyword> => ({
   name,
 })
 
-export const buildFigure = (file: File): Build<Figure & ModelAttachment> => ({
+export const buildFigure = (blob: Blob): Build<Figure & ModelAttachment> => ({
   _id: generateID(FIGURE),
   objectType: FIGURE,
-  contentType: file.type,
-  src: window.URL.createObjectURL(file),
+  contentType: blob.type,
+  src: window.URL.createObjectURL(blob),
   attachment: {
     id: 'image',
-    type: file.type,
-    data: file,
+    type: blob.type,
+    data: blob,
   },
 })
 

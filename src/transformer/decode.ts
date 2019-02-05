@@ -252,6 +252,7 @@ export class Decoder {
       return schema.nodes.listing_element.createChecked(
         {
           id: model._id,
+          containedFigureID: model.containedFigureID,
           suppressCaption: model.suppressCaption,
         },
         [listing, figcaption]

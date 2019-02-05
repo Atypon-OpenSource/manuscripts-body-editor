@@ -112,6 +112,8 @@ export const createBlock = (
     ? createAndFillTableElement(state)
     : nodeType.createAndFill()) as ManuscriptNode
 
+  console.log('createBlock', node)
+
   const tr = state.tr.insert(position, node)
 
   if (dispatch) {

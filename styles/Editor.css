@@ -114,6 +114,11 @@
   border-color: blue;
 }
 
+.ProseMirror .listing-panel {
+  display: flex;
+  justify-content: center;
+}
+
 .ProseMirror .figure-panel {
   display: flex;
   justify-content: center;
@@ -289,6 +294,15 @@
   cursor: pointer;
 }
 
+.ProseMirror .listing-button {
+  display: initial;
+  border: none;
+  background: none;
+  font-size: inherit;
+  cursor: pointer;
+  outline: 0;
+}
+
 .ProseMirror .has-sync-error .action-button {
   display: initial;
   outline: 0;
@@ -331,6 +345,14 @@
 .ProseMirror .add-block:hover {
   background-color: #65cfff;
   color: #fff;
+}
+
+.ProseMirror .listing-block-attach {
+  margin-top: 5px;
+}
+
+.ProseMirror .listing-block-execute {
+  margin-top: 5px;
 }
 
 .ProseMirror .edit-block:hover {
@@ -479,4 +501,55 @@
 
 .ProseMirror .placeholder-item-link {
   color: inherit;
+}
+
+.CodeMirror {
+  min-width: 700px;
+  max-width: 700px;
+  height: auto;
+  min-height: 2em;
+  border: 1px solid #ccc;
+}
+
+.CodeMirror-scroll {
+  max-height: 400px;
+}
+
+.ProseMirror .CodeMirror pre {
+  cursor: text;
+}
+
+.ProseMirror .has-figure:not(.expanded) .listing {
+  display: none;
+}
+
+.ProseMirror .listing-element-content {
+  margin: 0 30px;
+}
+
+.ProseMirror .expander {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: absolute;
+  left: 24px;
+  transform: rotate(180deg);
+  display: none;
+}
+
+.ProseMirror .has-figure .expander {
+  display: inline-block;
+}
+
+.ProseMirror .expander:focus {
+  outline: none;
+}
+
+.ProseMirror .expanded .expander {
+  transform: rotate(0deg)
+}
+
+.ProseMirror .figure-image-listing {
+  max-width: 70%;
+  height: auto;
 }
