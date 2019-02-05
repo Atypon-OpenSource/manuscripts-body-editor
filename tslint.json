@@ -7,12 +7,7 @@
   ],
   "rulesDirectory": ["tslint-plugin-prettier"],
   "rules": {
-    "prettier": [true, {
-      "semi": false,
-      "singleQuote": true,
-      "trailingComma": "es5",
-      "printWidth": 80
-    }],
+    "prettier": true,
     "interface-name": [true, "never-prefix"],
     "jsx-no-lambda": false,
     "no-implicit-dependencies": [true, "dev"],
