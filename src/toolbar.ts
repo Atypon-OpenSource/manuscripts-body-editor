@@ -7,10 +7,12 @@ import {
   insertInlineCitation,
   markActive,
 } from './commands'
+import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
 import icons from './icons'
 import { schema } from './schema'
+import { ManuscriptSchema } from './schema/types'
 
-export const toolbar = {
+export const toolbar: ToolbarConfig<ManuscriptSchema> = {
   style: {
     bold: {
       title: 'Toggle bold',

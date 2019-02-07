@@ -18,12 +18,11 @@ export {
   DebouncedManuscriptOutlineContainer,
 } from './components/outline/ManuscriptOutline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
-export { Toolbar } from './components/toolbar/Toolbar'
+export { ManuscriptToolbar } from './components/toolbar/ManuscriptToolbar'
 export { Editor } from './components/Editor'
 export { debounceRender } from './components/DebounceRender'
 export { schema } from './schema'
 export { menus } from './menus'
-export { toolbar } from './toolbar'
 export { ChangeReceiver } from './types'
 export { conflictsKey } from './plugins/conflicts'
 export { syncErrorsKey } from './plugins/sync-errors'

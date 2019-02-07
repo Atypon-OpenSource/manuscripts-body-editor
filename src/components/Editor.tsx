@@ -275,10 +275,6 @@ export class Editor extends React.PureComponent<EditorProps> {
         })
         break
     }
-
-    // TODO: find the updated node and replace it
-    // TODO: find the deleted node and delete it
-    // TODO: add an added component
   }
 
   private handleHistoryChange = () => {

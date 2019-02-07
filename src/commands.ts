@@ -27,7 +27,7 @@ export const markActive = (type: MarkType) => (
   const { from, $from, to, empty } = state.selection
 
   return empty
-    ? type.isInSet(state.storedMarks || $from.marks())
+    ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
     : state.doc.rangeHasMark(from, to, type)
 }
 

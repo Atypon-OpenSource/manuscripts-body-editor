@@ -657,6 +657,7 @@ export const LevelSelector: React.FunctionComponent<Props> = ({ view }) => {
           )
         },
       }}
+      // @ts-ignore (styled-components)
       onChange={(value: Option | null) => {
         if (value && value.action) {
           value.action()

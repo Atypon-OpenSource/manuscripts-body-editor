@@ -104,7 +104,7 @@ export const listItem: NodeSpec = {
         const dom = p as HTMLLIElement
 
         return {
-          placeholder: dom.getAttribute('data-placeholder-text'),
+          placeholder: dom.getAttribute('data-placeholder-text') || '',
         }
       },
     },
