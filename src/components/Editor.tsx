@@ -20,7 +20,6 @@ import { PopperManager } from '../lib/popper'
 import plugins from '../plugins'
 import { schema } from '../schema'
 import {
-  ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptSchema,
@@ -47,7 +46,6 @@ export interface EditorProps {
   saveManuscript?: (manuscript: Partial<Manuscript>) => Promise<void>
   deleteManuscript: (id: string) => Promise<void>
   locale: string
-  onChange?: (state: ManuscriptEditorState, docChanged: boolean) => void
   subscribe?: (receive: ChangeReceiver) => void
   modelMap: Map<string, Model>
   popper: PopperManager
@@ -56,9 +54,9 @@ export interface EditorProps {
   projectID: string
   getCurrentUser: () => UserProfile
   history: History
-  handleSectionChange: (section: string) => void
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
   retrySync: (componentIDs: string[]) => Promise<void>
+  handleStateChange?: (view: ManuscriptEditorView, docChanged: boolean) => void
   CitationEditor: React.ComponentType<any> // tslint:disable-line:no-any
 }
 
@@ -87,6 +85,15 @@ export class Editor extends React.PureComponent<EditorProps> {
       nodeViews: views(this.props),
       attributes: this.props.attributes,
       transformPasted,
+      handleDOMEvents: {
+        focus: () => {
+          if (this.props.handleStateChange) {
+            this.props.handleStateChange(this.view, false)
+          }
+
+          return false
+        },
+      },
     })
   }
 
@@ -99,8 +106,8 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.props.subscribe(this.receive)
     }
 
-    if (this.props.onChange) {
-      this.props.onChange(this.view.state, false)
+    if (this.props.handleStateChange) {
+      this.props.handleStateChange(this.view, false)
     }
 
     if (this.props.setView) {
@@ -142,8 +149,11 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.view.updateState(state)
 
     if (!external) {
-      if (this.props.onChange) {
-        this.props.onChange(state, transactions.some(tr => tr.docChanged))
+      if (this.props.handleStateChange) {
+        this.props.handleStateChange(
+          this.view,
+          transactions.some(tr => tr.docChanged)
+        )
       }
     }
   }

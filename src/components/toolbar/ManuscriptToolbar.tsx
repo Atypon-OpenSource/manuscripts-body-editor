@@ -83,13 +83,13 @@ export interface ToolbarConfig<S extends Schema> {
   }
 }
 
-interface ToolbarProps<S extends Schema> {
+interface Props {
   view: EditorView
 }
 
-const Toolbar = <S extends Schema>(): React.FunctionComponent<
-  ToolbarProps<S>
-> => ({ view }) => (
+const Toolbar = <S extends Schema>(): React.FunctionComponent<Props> => ({
+  view,
+}) => (
   <ToolbarContainer>
     {view && (
       <ToolbarGroup>
