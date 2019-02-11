@@ -1,5 +1,6 @@
 import {
   Fragment,
+  Mark as ProsemirrorMark,
   Node as ProsemirrorNode,
   NodeType,
   Schema,
@@ -66,6 +67,7 @@ export type ManuscriptSchema = Schema<Nodes, Marks>
 export type ManuscriptEditorState = EditorState<ManuscriptSchema>
 export type ManuscriptEditorView = EditorView<ManuscriptSchema>
 export type ManuscriptFragment = Fragment<ManuscriptSchema>
+export type ManuscriptMark = ProsemirrorMark<ManuscriptSchema>
 export type ManuscriptNode = ProsemirrorNode<ManuscriptSchema>
 export type ManuscriptNodeSelection = NodeSelection<ManuscriptSchema>
 export type ManuscriptTextSelection = TextSelection<ManuscriptSchema>

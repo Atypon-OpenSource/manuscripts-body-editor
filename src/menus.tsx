@@ -27,6 +27,7 @@ import {
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
 import { schema } from './schema'
+import { serializeToJATS } from './transformer/jats'
 
 export interface MenusProps {
   project: Project
@@ -116,6 +117,10 @@ export const menus = (props: MenusProps): MenuItem[] => [
           {
             label: 'PDF',
             run: () => props.openExporter('.pdf'),
+          },
+          {
+            label: 'JATS',
+            run: state => serializeToJATS(state.doc.content, props.manuscript),
           },
         ],
       },
