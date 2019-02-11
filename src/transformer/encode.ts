@@ -30,6 +30,8 @@ import { xmlSerializer } from './serializer'
 
 const serializer = DOMSerializer.fromSchema(schema)
 
+const numericEntities = (html: string) => html.replace(/&nbsp;/g, '&#160;')
+
 const contents = (node: ManuscriptNode): string => {
   const output = serializer.serializeNode(node) as HTMLElement
 
@@ -39,11 +41,11 @@ const contents = (node: ManuscriptNode): string => {
 const htmlContents = (node: ManuscriptNode): string => {
   const output = serializer.serializeNode(node) as HTMLElement
 
-  return output.outerHTML
+  return numericEntities(output.outerHTML)
 }
 
 export const inlineContents = (node: ManuscriptNode): string =>
-  (serializer.serializeNode(node) as HTMLElement).innerHTML
+  numericEntities((serializer.serializeNode(node) as HTMLElement).innerHTML)
 
 const listContents = (node: ManuscriptNode): string => {
   const output = serializer.serializeNode(node) as HTMLElement
