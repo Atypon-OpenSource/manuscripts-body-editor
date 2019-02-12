@@ -1,12 +1,6 @@
-import {
-  Contributor,
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { Contributor, Manuscript } from '@manuscripts/manuscripts-json-schema'
 import { DOMOutputSpec, DOMSerializer } from 'prosemirror-model'
 import {
-  Decoder,
   ManuscriptFragment,
   ManuscriptMark,
   ManuscriptNode,
@@ -139,15 +133,6 @@ const marks = (): MarkSpecs => ({
   underline: () => ['underline'],
 })
 
-const download = (blob: Blob, filename: string) => {
-  const url = window.URL.createObjectURL(blob)
-
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-}
-
 const buildFront = (
   document: Document,
   manuscript: Manuscript,
@@ -267,7 +252,7 @@ const buildBack = (document: Document) => {
 export const serializeToJATS = (
   fragment: ManuscriptFragment,
   manuscript: Manuscript,
-  contributors: Contributor[]
+  contributors?: Contributor[]
 ) => {
   // const document = new XMLDocument()
   const document = new Document()
@@ -286,41 +271,13 @@ export const serializeToJATS = (
   const back = buildBack(document)
   article.appendChild(back)
 
-  const output = [
+  const xml = xmlSerializer.serializeToString(article)
+
+  const parts = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.1 20151215//EN" "http://jats.nlm.nih.gov/publishing/1.1/JATS-journalpublishing1.dtd">',
-    xmlSerializer.serializeToString(article),
-  ].join('\n')
+    xml,
+  ]
 
-  download(new Blob([output]), 'manuscript.xml')
-}
-
-const hasObjectType = <T extends Model>(objectType: string) => (
-  model: Model
-): model is T => model.objectType === objectType
-
-export const exportToJATS = (projectBundle: { data: Model[] }) => {
-  const manuscript = projectBundle.data.find(
-    hasObjectType<Manuscript>(ObjectTypes.Manuscript)
-  )
-
-  if (!manuscript) {
-    throw new Error('Manuscript not found')
-  }
-
-  const contributors = projectBundle.data.filter(
-    hasObjectType<Contributor>(ObjectTypes.Contributor)
-  )
-
-  const modelMap: Map<string, Model> = new Map()
-
-  for (const component of projectBundle.data) {
-    modelMap.set(component._id, component)
-  }
-
-  const decoder = new Decoder(modelMap)
-
-  const doc = decoder.createArticleNode()
-
-  return serializeToJATS(doc.content, manuscript, contributors)
+  return parts.join('\n')
 }
