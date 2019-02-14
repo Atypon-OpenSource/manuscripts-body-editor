@@ -1,5 +1,5 @@
+import { schema } from '@manuscripts/manuscript-transform'
 import { Slice } from 'prosemirror-model'
-import { schema } from '../../schema'
 import { transformPasted } from '../paste'
 
 test('transformPasted handler', () => {

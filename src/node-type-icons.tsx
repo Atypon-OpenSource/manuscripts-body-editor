@@ -1,3 +1,19 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import ListingIcon from '@manuscripts/assets/react/OutlineIconCodeSnippet'
 import EquationIcon from '@manuscripts/assets/react/OutlineIconEquation'
 import FigureIcon from '@manuscripts/assets/react/OutlineIconFigure'
@@ -7,10 +23,10 @@ import ParagraphIcon from '@manuscripts/assets/react/OutlineIconParagraph'
 import SectionIcon from '@manuscripts/assets/react/OutlineIconSection'
 import TableIcon from '@manuscripts/assets/react/OutlineIconTable'
 import BulletListIcon from '@manuscripts/assets/react/OutlineIconUnorderedList'
+import { ManuscriptNodeType, schema } from '@manuscripts/manuscript-transform'
 import { schema as titleSchema } from '@manuscripts/title-editor'
+import { NodeType } from 'prosemirror-model'
 import React from 'react'
-import { schema } from '../schema'
-import { ManuscriptNodeType } from '../schema/types'
 
 const { nodes } = schema
 
@@ -29,12 +45,12 @@ const icons: Map<
   [nodes.table_element, TableIcon],
 ])
 
-export const nodeTypeIcon = (nodeType: ManuscriptNodeType) => {
+export const nodeTypeIcon = (nodeType: NodeType) => {
   if (nodeType === titleSchema.nodes.title) {
     return <ManuscriptIcon />
   }
 
-  const Icon = icons.get(nodeType)
+  const Icon = icons.get(nodeType as ManuscriptNodeType)
 
   return Icon ? <Icon /> : null
 }

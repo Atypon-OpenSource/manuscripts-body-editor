@@ -1,16 +1,37 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {
+  generateNodeID,
+  isElementNode,
+  isListNode,
+  isSectionNode,
+  ManuscriptEditorView,
+  ManuscriptNode,
+  ManuscriptNodeType,
+  nodeNames,
+  SectionNode,
+  SectionTitleNode,
+} from '@manuscripts/manuscript-transform'
 import { Fragment, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
 import styled from 'styled-components'
-import { generateNodeID, ManuscriptNode } from '../..'
-import { isListNode } from '../../schema/nodes/list'
-import { isSectionNode, SectionNode } from '../../schema/nodes/section'
-import { SectionTitleNode } from '../../schema/nodes/section_title'
-import { ManuscriptEditorView, ManuscriptNodeType } from '../../schema/types'
-import { nodeNames } from '../../transformer/node-names'
-import { nodeTypeIcon } from '../../transformer/node-type-icons'
-import { isElementNode } from '../../transformer/node-types'
+import { nodeTypeIcon } from '../../node-type-icons'
 
 const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
   switch (nodeType) {
@@ -84,6 +105,7 @@ const buildOption = (props: OptionProps): Option => ({
 type GroupedOptions = Array<{ options: Option[] }>
 type Options = GroupedOptions | Option[]
 
+// tslint:disable:cyclomatic-complexity
 const buildOptions = (view: ManuscriptEditorView): Options => {
   const {
     state: {
@@ -611,12 +633,14 @@ export const LevelSelector: React.FunctionComponent<Props> = ({ view }) => {
           : findSelectedOption(options as GroupedOptions)
       }
       components={{
+        // tslint:disable-next-line:no-any
         Group: (props: any) => (
           <Group ref={props.innerRef} {...props.innerProps}>
             {props.children}
           </Group>
         ),
         GroupHeading: () => null,
+        // tslint:disable-next-line:no-any
         Option: (props: any) => {
           const data = props.data as Option
 

@@ -1,27 +1,42 @@
-import { MarkType, ResolvedPos } from 'prosemirror-model'
-import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
-import { getChildOfType } from './lib/utils'
-import { INSERT, modelsKey } from './plugins/models'
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
+  buildCitation,
+  buildFootnote,
+  buildInlineMathFragment,
+  isElementNode,
   ManuscriptEditorState,
   ManuscriptEditorView,
+  ManuscriptMarkType,
   ManuscriptNode,
   ManuscriptNodeSelection,
   ManuscriptNodeType,
   ManuscriptTextSelection,
   ManuscriptTransaction,
-} from './schema/types'
-import {
-  buildCitation,
-  buildFootnote,
-  buildInlineMathFragment,
-} from './transformer/builders'
-import { isElementNode } from './transformer/node-types'
+} from '@manuscripts/manuscript-transform'
+import { ResolvedPos } from 'prosemirror-model'
+import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+import { getChildOfType } from './lib/utils'
+import { INSERT, modelsKey } from './plugins/models'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
-export const markActive = (type: MarkType) => (
+export const markActive = (type: ManuscriptMarkType) => (
   state: ManuscriptEditorState
 ): boolean => {
   const { from, $from, to, empty } = state.selection
@@ -108,11 +123,12 @@ export const createBlock = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const node = (nodeType === state.schema.nodes.table_element
-    ? createAndFillTableElement(state)
-    : nodeType.createAndFill()) as ManuscriptNode
+  const node =
+    nodeType === state.schema.nodes.table_element
+      ? createAndFillTableElement(state)
+      : nodeType.createAndFill()
 
-  const tr = state.tr.insert(position, node)
+  const tr = state.tr.insert(position, node!)
 
   if (dispatch) {
     dispatch(
@@ -252,11 +268,11 @@ export const insertBibliographySection = (
       {},
       state.schema.text('Bibliography')
     ),
-  ]) as ManuscriptNode
+  ])
 
   if (dispatch) {
     dispatch(
-      state.tr.insert(state.tr.doc.content.size, section).scrollIntoView()
+      state.tr.insert(state.tr.doc.content.size, section!).scrollIntoView()
     )
   }
 

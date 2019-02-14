@@ -1,10 +1,31 @@
-import { Model, ParagraphElement } from '@manuscripts/manuscripts-json-schema'
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {
+  ManuscriptNode,
+  modelFromNode,
+} from '@manuscripts/manuscript-transform'
+import {
+  Model,
+  ObjectTypes,
+  ParagraphElement,
+} from '@manuscripts/manuscripts-json-schema'
 import { Step } from 'prosemirror-transform'
 import { RxCollection } from 'rxdb'
 import RxDB from 'rxdb/plugins/core'
-import { ManuscriptNode } from '../schema/types'
-import { modelFromNode } from '../transformer/encode'
-import { PARAGRAPH } from '../transformer/object-types'
 
 interface PouchOpenRevsDoc {
   _revisions: {
@@ -314,7 +335,7 @@ const getConflict = async (
       // TODO: the way we delete branches leaves a branch which look like
       // { missing: '7-afa5b13585694860948f440182b847af' }
       // we need to filter these out
-      return docs.filter(x => x.ok).map(x => x.ok!)
+      return docs.filter(x => x.ok).map(x => x.ok)
     })
 
   if (filteredDocs.length === 1) {
@@ -334,8 +355,20 @@ const getConflict = async (
   // therefore this is the local document
   const [doc1, doc2] = filteredDocs
 
+  if (!doc1) {
+    throw new Error('Unable to find current revision')
+  }
+
   const [local, remote] =
     doc1._rev === conflictingRev.rev ? [doc1, doc2] : [doc2, doc1]
+
+  if (!local) {
+    throw new Error('Unable to find local revision')
+  }
+
+  if (!remote) {
+    throw new Error('Unable to find remote revision')
+  }
 
   // TODO: make this efficient
   const ancestorRev = remote._revisions.ids.find((rev: string) => {
@@ -359,14 +392,16 @@ const getConflict = async (
 }
 
 // For now we only really support MPParagraphElements
-const supportedObjectTypes = new Set([PARAGRAPH])
+const supportedObjectTypes = new Set<ObjectTypes>([
+  ObjectTypes.ParagraphElement,
+])
 
 export const supportedConflictType = (conflict: Conflict) => {
   if (!conflict.local.objectType) {
     return false
   }
 
-  return supportedObjectTypes.has(conflict.local.objectType)
+  return supportedObjectTypes.has(conflict.local.objectType as ObjectTypes)
 }
 
 /**
@@ -420,7 +455,7 @@ export const applyLocalStep = (
 }
 
 const isParagraphElement = (model: Model): model is ParagraphElement =>
-  model.objectType === PARAGRAPH
+  model.objectType === ObjectTypes.ParagraphElement
 
 export const applyRemoteStep = (
   collection: RxCollection<Model>

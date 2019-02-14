@@ -1,6 +1,6 @@
+import { Decoder } from '@manuscripts/manuscript-transform'
 import { ParagraphElement } from '@manuscripts/manuscripts-json-schema'
 import { ReplaceStep } from 'prosemirror-transform'
-import { Decoder } from '../../transformer/decode'
 import * as Conflicts from '../conflicts'
 import * as Merge from '../merge'
 

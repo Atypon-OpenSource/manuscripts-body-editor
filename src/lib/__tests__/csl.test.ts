@@ -1,9 +1,11 @@
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
 import {
   convertBibliographyItemToData,
   convertDataToBibliographyItem,
-} from '../../transformer/csl'
-import { BIBLIOGRAPHIC_NAME } from '../../transformer/object-types'
+} from '../../csl'
 
 describe('CSL <=> bibliography model transforms', () => {
   it('should convert data from CSL to bibliography items', () => {
@@ -21,7 +23,7 @@ describe('CSL <=> bibliography model transforms', () => {
     expect(bibItem.type).toMatch('article')
     // tslint:disable-next-line:no-any
     expect((bibItem.illustrator as any)[0].objectType).toMatch(
-      BIBLIOGRAPHIC_NAME
+      ObjectTypes.BibliographicName
     )
   })
 

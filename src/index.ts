@@ -1,18 +1,24 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 export * from './lib/conflicts'
 export * from './lib/merge'
 export * from './lib/sync-errors'
 export * from './lib/utils'
-export * from './schema/types'
-export * from './transformer/builders'
-export * from './transformer/decode'
-export * from './transformer/encode'
-export * from './transformer/id'
-export * from './transformer/csl'
-export * from './transformer/models'
-export * from './transformer/object-types'
-export * from './transformer/document-object-types'
 export * from './commands'
-export { timestamp } from './transformer/timestamp'
 export { ApplicationMenu } from './components/menu/ApplicationMenu'
 export {
   DebouncedManuscriptOutlineContainer,
@@ -21,7 +27,7 @@ export { OutlineManuscript } from './components/outline/OutlineManuscript'
 export { ManuscriptToolbar } from './components/toolbar/ManuscriptToolbar'
 export { Editor } from './components/Editor'
 export { debounceRender } from './components/DebounceRender'
-export { schema } from './schema'
+export * from './csl'
 export { menus } from './menus'
 export { ChangeReceiver } from './types'
 export { conflictsKey } from './plugins/conflicts'
