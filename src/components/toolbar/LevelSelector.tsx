@@ -402,7 +402,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
   }
 
   switch (parentElement.type) {
-    case nodes.section: {
+    case parentElement.type.schema.nodes.section: {
       const sectionDepth = $from.depth - 1
       const parentSectionDepth = sectionDepth - 1
       const minimumDepth = Math.max(1, parentSectionDepth)
@@ -489,7 +489,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
-    case nodes.paragraph: {
+    case parentElement.type.schema.nodes.paragraph: {
       const sectionDepth = $from.depth - 1
       const minimumDepth = Math.max(1, sectionDepth)
 
