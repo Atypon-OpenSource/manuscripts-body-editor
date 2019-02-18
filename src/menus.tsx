@@ -127,16 +127,20 @@ export const menus = (props: MenusProps): MenuItem[] => [
         label: 'Export as…',
         submenu: [
           {
-            label: 'Markdown',
-            run: () => props.openExporter('.md'),
+            label: 'PDF',
+            run: () => props.openExporter('.pdf'),
           },
           {
             label: 'Microsoft Word',
             run: () => props.openExporter('.docx'),
           },
           {
-            label: 'PDF',
-            run: () => props.openExporter('.pdf'),
+            label: 'Markdown',
+            run: () => props.openExporter('.md'),
+          },
+          {
+            label: 'LaTeX',
+            run: () => props.openExporter('.tex'),
           },
           {
             label: 'JATS XML',
