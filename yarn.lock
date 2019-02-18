@@ -788,10 +788,10 @@
   resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fexamples/-/examples-0.0.2.tgz#bc7354d1dc704bf03c4b9d4e0f4c1054c70bbc73"
   integrity sha512-kctNmYWfzk0M3Rxe5+UNdnMYM5pGL1ZFwE0+izMfpVegm3744Sbeg/0JUXrHXvaHIwT8JOzdOCi6WO6oBlejlA==
 
-"@manuscripts/manuscript-transform@^0.1.2":
-  version "0.1.2"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.1.2.tgz#257391d3d860fdf45508167acb31424f0161fbcb"
-  integrity sha512-eG1/uj29DoIPf5Ll2Q1enIuZmvQz6xeIAb0MsJq5Kt/H7cUt8Kzpy0S1q+bcS9+him44hyqE7AIXFgzXnDSj9g==
+"@manuscripts/manuscript-transform@^0.2.0":
+  version "0.2.0"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.2.0.tgz#d76227293df42cf5ae954880e4a69fdacf0d9de5"
+  integrity sha512-46TAVxnc7D/rSNEvtaq+Im+cvmVelUQzAKom2Fv0JxaL/JmlJi3t5zankEoOlKHKszU1Kd6gNgYUIbLeIKEKiA==
   dependencies:
     prosemirror-model "^1.7.0"
     uuid "^3.3.2"

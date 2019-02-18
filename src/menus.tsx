@@ -138,6 +138,10 @@ export const menus = (props: MenusProps): MenuItem[] => [
             label: 'PDF',
             run: () => props.openExporter('.pdf'),
           },
+          {
+            label: 'JATS XML',
+            run: () => props.openExporter('.xml'),
+          },
         ],
       },
       {
