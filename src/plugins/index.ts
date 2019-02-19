@@ -15,7 +15,7 @@
  */
 
 import { dropCursor } from 'prosemirror-dropcursor'
-import { gapCursor } from 'prosemirror-gapcursor'
+// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
@@ -39,7 +39,7 @@ export default (props: EditorProps) => [
   rules,
   ...keys,
   dropCursor(),
-  gapCursor(),
+  // gapCursor(),
   history(),
   models(props), // NOTE: this should come first
   conflicts(props),
