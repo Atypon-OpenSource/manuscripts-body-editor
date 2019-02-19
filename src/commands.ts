@@ -288,7 +288,15 @@ export const ifInTableBody = (
   const $head = state.selection.$head
 
   for (let d = $head.depth; d > 0; d--) {
-    if ($head.node(d).type === state.schema.nodes.tbody_row) {
+    const node = $head.node(d)
+
+    if (node.type === state.schema.nodes.table_row) {
+      const table = $head.node(d - 1)
+
+      if (table.firstChild === node || table.lastChild === node) {
+        return false
+      }
+
       return command(state)
     }
   }
