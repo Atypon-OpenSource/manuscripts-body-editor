@@ -233,31 +233,31 @@
   line-height: 1.2;
 }
 
-.ProseMirror .thead {
+.ProseMirror tr:first-of-type {
   counter-reset: header_counter;
 }
 
-.ProseMirror .thead td {
+.ProseMirror tr:first-of-type td {
   counter-increment: header_counter;
 }
 
-.ProseMirror .tfoot {
+.ProseMirror tr:last-of-type {
   counter-reset: footer_counter;
 }
 
-.ProseMirror .tfoot td {
+.ProseMirror tr:last-of-type td {
   counter-increment: footer_counter;
 }
 
-.ProseMirror .thead td.empty-node::before {
-  content: "Header " counter(header_counter);
-}
-
-.ProseMirror .tbody td.empty-node::before {
+.ProseMirror td.empty-node::before {
   content: "Data";
 }
 
-.ProseMirror .tfoot td.empty-node::before {
+.ProseMirror .block-table_element:not(.suppress-header) tr:first-of-type td.empty-node::before {
+  content: "Header " counter(header_counter);
+}
+
+.ProseMirror .block-table_element:not(.suppress-footer) tr:last-of-type td.empty-node::before {
   content: "Footer " counter(footer_counter);
 }
 
