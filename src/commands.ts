@@ -447,23 +447,14 @@ export const selectAllIsolating = (
  */
 export const createAndFillTableElement = (state: ManuscriptEditorState) =>
   state.schema.nodes.table_element.create({}, [
-    state.schema.nodes.table.create({}, [
-      state.schema.nodes.thead_row.create({}, [
-        state.schema.nodes.table_cell.create(),
-        state.schema.nodes.table_cell.create(),
-      ]),
-      state.schema.nodes.tbody_row.create({}, [
-        state.schema.nodes.table_cell.create(),
-        state.schema.nodes.table_cell.create(),
-      ]),
-      state.schema.nodes.tbody_row.create({}, [
-        state.schema.nodes.table_cell.create(),
-        state.schema.nodes.table_cell.create(),
-      ]),
-      state.schema.nodes.tfoot_row.create({}, [
-        state.schema.nodes.table_cell.create(),
-        state.schema.nodes.table_cell.create(),
-      ]),
-    ]),
+    state.schema.nodes.table.create(
+      {},
+      Array.from([1, 2, 3, 4], () =>
+        state.schema.nodes.table_row.create({}, [
+          state.schema.nodes.table_cell.create(),
+          state.schema.nodes.table_cell.create(),
+        ])
+      )
+    ),
     state.schema.nodes.figcaption.create(),
   ])

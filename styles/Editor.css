@@ -58,8 +58,8 @@
   cursor: default;
 }
 
-.ProseMirror .suppress-footer .tfoot,
-.ProseMirror .suppress-header .thead {
+.ProseMirror .suppress-footer tr:last-of-type,
+.ProseMirror .suppress-header tr:first-of-type {
   display: none;
 }
 
@@ -67,7 +67,7 @@
   padding: 10px;
 }
 
-.ProseMirror .thead td {
+.ProseMirror tr:first-of-type td {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   background: #eee;
@@ -75,12 +75,20 @@
   font-weight: bold;
 }
 
-.ProseMirror .tfoot td {
+.ProseMirror tr:last-of-type td {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
 }
 
-.ProseMirror .tbody tr td:not(:last-child) {
+.ProseMirror .suppress-header tr:nth-of-type(2) td {
+  border-top: 1px solid #000;
+}
+
+.ProseMirror .suppress-footer tr:nth-last-of-type(2) td {
+  border-bottom: 1px solid #000;
+}
+
+.ProseMirror tr:not(:first-of-type):not(:last-of-type) td:not(:last-child) {
   border-right: 1px solid #000;
 }
 
