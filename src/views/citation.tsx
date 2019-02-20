@@ -39,15 +39,18 @@ class CitationView implements NodeView {
   private readonly props: EditorProps
   private node: ManuscriptNode
   private readonly view: ManuscriptEditorView
+  private readonly getPos: () => number
 
   constructor(
     props: EditorProps,
     node: ManuscriptNode,
-    view: ManuscriptEditorView
+    view: ManuscriptEditorView,
+    getPos: () => number
   ) {
     this.props = props
     this.node = node
     this.view = view
+    this.getPos = getPos
 
     this.initialise()
   }
@@ -93,6 +96,7 @@ class CitationView implements NodeView {
         items={items}
         filterLibraryItems={filterLibraryItems}
         selectedText={this.node.attrs.selectedText}
+        handleCancel={this.handleCancel}
         handleRemove={this.handleRemove}
         handleCite={this.handleCite}
         projectID={projectID}
@@ -115,6 +119,18 @@ class CitationView implements NodeView {
   private initialise() {
     this.createDOM()
     this.updateContents()
+  }
+
+  private handleCancel = () => {
+    const { state } = this.view
+
+    const pos = this.getPos()
+
+    this.view.dispatch(
+      state.tr
+        .delete(pos, pos + this.node.nodeSize)
+        .setSelection(TextSelection.create(state.tr.doc, pos))
+    )
   }
 
   private handleRemove = (id: string) => {
@@ -186,7 +202,10 @@ class CitationView implements NodeView {
   }
 }
 
-const citationView = (props: EditorProps): NodeViewCreator => (node, view) =>
-  new CitationView(props, node, view)
+const citationView = (props: EditorProps): NodeViewCreator => (
+  node,
+  view,
+  getPos
+) => new CitationView(props, node, view, getPos)
 
 export default citationView
