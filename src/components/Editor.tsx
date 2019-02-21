@@ -96,7 +96,13 @@ export class Editor extends React.PureComponent<EditorProps> {
         plugins: plugins(this.props),
       }),
       scrollThreshold: 100,
-      scrollMargin: 100,
+      // @ts-ignore (types)
+      scrollMargin: {
+        top: 100,
+        bottom: 100,
+        left: 0,
+        right: 0,
+      },
       dispatchTransaction: this.dispatchTransaction,
       nodeViews: views(this.props),
       attributes: this.props.attributes,
