@@ -5,7 +5,7 @@ import {
   Session,
 } from '@jupyterlab/services'
 import { base64StringToBlob, blobToBase64String } from 'blob-util'
-import SparkMD5 from 'spark-md5'
+import { sha256 } from 'crypto-hash'
 
 const ensureDirectoryExists = async (
   contentsManager: ContentsManager,
@@ -176,23 +176,21 @@ const executionHash = (
   attachments: ListingAttachment[],
   code: string,
   kernelName: string = KERNELS.python
-): string => {
-  const hash = new SparkMD5()
+): Promise<string> => {
+  let msg = ''
 
-  hash.append(listingID)
+  msg += listingID
 
-  hash.append(code)
+  msg += code
 
-  hash.append(kernelName)
+  msg += kernelName
 
   // add attachment info
-  hash.append(
-    attachments.reduce((acc, { name, md5 }) => {
-      return acc + name + md5
-    }, '')
-  )
+  msg += attachments.reduce((acc, { name, md5 }) => {
+    return acc + name + md5
+  }, '')
 
-  return hash.end()
+  return sha256(msg)
 }
 
 interface ExecuteResult {
@@ -203,13 +201,13 @@ interface ExecuteResult {
 // TODO: use a data structure that drops things after a while
 const existingOperations: Map<string, Promise<ExecuteResult>> = new Map([])
 
-export const executeKernel = (
+export const executeKernel = async (
   listingID: string,
   attachments: ListingAttachment[],
   code: string,
   kernelName: string = KERNELS.python
 ): Promise<ExecuteResult> => {
-  const hash = executionHash(listingID, attachments, code, kernelName)
+  const hash = await executionHash(listingID, attachments, code, kernelName)
 
   if (existingOperations.has(hash)) {
     return existingOperations.get(hash)!
