@@ -12,7 +12,7 @@
 }
 
 .ProseMirror .ProseMirror-selectednode {
-  outline: 2px dashed cornflowerblue;
+  outline: none;
 }
 
 .ProseMirror hr {

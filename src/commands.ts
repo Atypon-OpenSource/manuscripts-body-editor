@@ -15,6 +15,7 @@
  */
 
 import {
+  BibliographySectionNode,
   buildCitation,
   buildFootnote,
   buildInlineMathFragment,
@@ -155,8 +156,10 @@ export const insertBlock = (nodeType: ManuscriptNodeType) => (
 export const insertBreak: EditorAction = (state, dispatch) => {
   const br = state.schema.nodes.hard_break.create()
 
+  const tr = state.tr.replaceSelectionWith(br)
+
   if (dispatch) {
-    dispatch(state.tr.replaceSelectionWith(br).scrollIntoView())
+    dispatch(tr.scrollIntoView())
   }
 
   return true
@@ -182,7 +185,9 @@ export const insertInlineCitation = (
     .insert(pos, node)
 
   if (dispatch) {
-    dispatch(tr.setSelection(NodeSelection.create(tr.doc, pos)))
+    dispatch(
+      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
+    )
   }
 
   return true
@@ -201,7 +206,9 @@ export const insertCrossReference = (
   const tr = state.tr.insert(pos, node)
 
   if (dispatch) {
-    dispatch(tr.setSelection(NodeSelection.create(tr.doc, pos)))
+    dispatch(
+      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
+    )
   }
 
   return true
@@ -224,7 +231,9 @@ export const insertInlineEquation = (
 
   if (dispatch) {
     dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, state.tr.selection.from))
+      tr
+        .setSelection(NodeSelection.create(tr.doc, state.tr.selection.from))
+        .scrollIntoView()
     )
   }
 
@@ -249,7 +258,9 @@ export const insertInlineFootnote = (
     .insert(pos, node)
 
   if (dispatch) {
-    dispatch(tr.setSelection(NodeSelection.create(tr.doc, pos)))
+    dispatch(
+      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
+    )
   }
 
   return true
@@ -268,11 +279,15 @@ export const insertBibliographySection = (
       {},
       state.schema.text('Bibliography')
     ),
-  ])
+  ]) as BibliographySectionNode
+
+  const pos = state.tr.doc.content.size
+
+  const tr = state.tr.insert(pos, section)
 
   if (dispatch) {
     dispatch(
-      state.tr.insert(state.tr.doc.content.size, section!).scrollIntoView()
+      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
     )
   }
 
