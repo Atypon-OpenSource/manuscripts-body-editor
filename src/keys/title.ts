@@ -46,7 +46,8 @@ const insertParagraph = (
 
   if (
     !nextNode ||
-    (nextNode.type !== nodes.paragraph || nextNode.nodeSize > 2)
+    (nextNode.type !== nextNode.type.schema.nodes.paragraph ||
+      nextNode.nodeSize > 2)
   ) {
     tr.insert(pos, nodes.paragraph.create())
   }
@@ -119,10 +120,7 @@ const exitBlock = (direction: number): EditorAction => (state, dispatch) => {
 }
 
 const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
-  const {
-    selection,
-    schema: { nodes },
-  } = state
+  const { selection } = state
 
   if (!isTextSelection(selection)) return false
 
@@ -130,7 +128,7 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
 
   if (!$cursor) return false
 
-  if ($cursor.parent.type !== nodes.section_title) {
+  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
     return false
   }
 
@@ -148,10 +146,11 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
 const leaveFigcaption: EditorAction = (state, dispatch) => {
   const {
     selection: { $anchor },
-    schema: { nodes },
   } = state
 
-  if ($anchor.parent.type !== nodes.figcaption) return false
+  if ($anchor.parent.type !== $anchor.parent.type.schema.nodes.figcaption) {
+    return false
+  }
 
   if (dispatch) {
     enterNextBlock(dispatch, state, $anchor, true)
@@ -166,10 +165,7 @@ const protectSectionTitle: EditorAction = (
   dispatch?: Dispatch,
   view?: ManuscriptEditorView
 ) => {
-  const {
-    selection,
-    schema: { nodes },
-  } = state
+  const { selection } = state
 
   if (!isTextSelection(selection)) return false
 
@@ -178,7 +174,7 @@ const protectSectionTitle: EditorAction = (
   if (!$cursor) return false
 
   return (
-    $cursor.parent.type === nodes.section_title &&
+    $cursor.parent.type === $cursor.parent.type.schema.nodes.section_title &&
     isAtStartOfTextBlock(state, $cursor, view)
   )
 }

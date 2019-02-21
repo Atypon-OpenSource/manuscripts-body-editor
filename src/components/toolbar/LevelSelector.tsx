@@ -66,19 +66,27 @@ interface OptionProps {
   value: number
 }
 
-const findListParent = ($from: ResolvedPos): ManuscriptNode | undefined => {
+interface NodeWithPosition {
+  node: ManuscriptNode
+  pos: number
+}
+
+const findListParent = ($from: ResolvedPos): NodeWithPosition | undefined => {
   for (let depth = $from.depth; depth > 0; depth--) {
     const node = $from.node(depth)
 
     if (isListNode(node)) {
-      return node
+      return {
+        node,
+        pos: $from.before(depth),
+      }
     }
   }
 }
 
 const findClosestParentElement = (
   $from: ResolvedPos
-): ManuscriptNode | undefined => {
+): NodeWithPosition | undefined => {
   const listParent = findListParent($from)
 
   if (listParent) {
@@ -89,7 +97,10 @@ const findClosestParentElement = (
     const node = $from.node(depth)
 
     if (isSectionNode(node) || isElementNode(node)) {
-      return node
+      return {
+        node,
+        pos: $from.before(depth),
+      }
     }
   }
 }
@@ -401,8 +412,21 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
     view.dispatch(tr.scrollIntoView())
   }
 
-  switch (parentElement.type) {
-    case parentElement.type.schema.nodes.section: {
+  const convertListType = (
+    nodeType: ManuscriptNodeType,
+    list: NodeWithPosition
+  ) => () => {
+    tr.setNodeMarkup(list.pos, nodeType, list.node.attrs)
+
+    view.focus()
+
+    view.dispatch(tr.scrollIntoView())
+  }
+
+  const parentElementType = parentElement.node.type
+
+  switch (parentElementType) {
+    case parentElementType.schema.nodes.section: {
       const sectionDepth = $from.depth - 1
       const parentSectionDepth = sectionDepth - 1
       const minimumDepth = Math.max(1, parentSectionDepth)
@@ -489,7 +513,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
-    case parentElement.type.schema.nodes.paragraph: {
+    case parentElementType.schema.nodes.paragraph: {
       const sectionDepth = $from.depth - 1
       const minimumDepth = Math.max(1, sectionDepth)
 
@@ -549,10 +573,62 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
+    case parentElementType.schema.nodes.bullet_list: {
+      return [
+        {
+          options: [
+            buildOption({
+              nodeType: parentElementType,
+              value: -4,
+              depth: 1,
+              isDisabled: true,
+              isSelected: true,
+            }),
+          ],
+        },
+        {
+          options: [
+            buildOption({
+              nodeType: nodes.ordered_list,
+              value: -3,
+              depth: 1,
+              action: convertListType(nodes.ordered_list, parentElement),
+            }),
+          ],
+        },
+      ]
+    }
+
+    case parentElementType.schema.nodes.ordered_list: {
+      return [
+        {
+          options: [
+            buildOption({
+              nodeType: parentElementType,
+              value: -4,
+              depth: 1,
+              isDisabled: true,
+              isSelected: true,
+            }),
+          ],
+        },
+        {
+          options: [
+            buildOption({
+              nodeType: nodes.bullet_list,
+              value: -3,
+              depth: 1,
+              action: convertListType(nodes.bullet_list, parentElement),
+            }),
+          ],
+        },
+      ]
+    }
+
     default: {
       return [
         buildOption({
-          nodeType: parentElement.type,
+          nodeType: parentElementType,
           value: -3,
           depth: 1,
           isDisabled: true,
@@ -650,6 +726,7 @@ export const LevelSelector: React.FunctionComponent<Props> = ({ view }) => {
           style.fontSize = 15
           style.cursor = 'pointer'
           style.paddingLeft = 8 + (data.depth - 1) * 16
+          style.minWidth = 200
 
           if (data.nodeType === nodes.section) {
             style.fontSize = Math.max(14, 23 - 3 * (data.value - 1))
