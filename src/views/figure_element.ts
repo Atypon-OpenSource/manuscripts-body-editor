@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import { buildFigure, ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import {
+  FigureLayout,
+  FigureStyle,
+  Model,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
+import * as CSS from 'csstype'
 import { Decoration } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
-import { INSERT, modelsKey } from '../plugins/models'
 import { NodeViewCreator } from '../types'
 import Block from './block'
 
 class FigureElement extends Block {
-  private container: HTMLElement
-  private element: HTMLElement
+  protected get elementType() {
+    return 'figure'
+  }
 
   // TODO: does this need to be different?
   public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
@@ -55,166 +62,194 @@ class FigureElement extends Block {
     return true
   }
 
-  protected get elementType() {
-    return 'figure'
-  }
-
   // TODO: load/subscribe to the figure style object from the database and use it here?
   protected createElement() {
-    this.element = document.createElement(this.elementType)
-    this.element.className = 'block'
-    this.element.setAttribute('id', this.node.attrs.id)
-    this.element.setAttribute('data-figure-style', this.node.attrs.figureStyle)
+    // figure group
+    this.contentDOM = document.createElement(this.elementType)
+    this.contentDOM.className = 'block'
+    this.contentDOM.classList.add('figure-block')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.setAttribute(
+      'data-figure-style',
+      this.node.attrs.figureStyle
+    )
 
-    this.container = document.createElement('div')
-    this.container.className = 'figure-panel'
-    this.container.contentEditable = 'false'
-    this.element.appendChild(this.container)
+    const style = this.figureStyle
 
-    this.contentDOM = document.createElement('div') // TODO: figcaption?
-    this.element.appendChild(this.contentDOM)
+    if (style) {
+      if (style.captionPosition === 'above') {
+        this.contentDOM.classList.add('caption-above')
+      }
+    }
 
-    this.dom.appendChild(this.element)
+    this.applyStyles(this.contentDOM, this.buildElementStyles(style))
+    this.applyStyles(this.contentDOM, this.buildPanelStyles(style)) // TODO: move this inside
+
+    this.dom.appendChild(this.contentDOM)
   }
 
   protected updateContents() {
-    const {
-      rows,
-      columns,
-      containedObjectIDs,
-      suppressCaption,
-    } = this.node.attrs
-
-    const objects = containedObjectIDs.map(this.props.getModel)
-
-    while (this.container.hasChildNodes()) {
-      this.container.removeChild(this.container.firstChild as Node)
-    }
-
-    let index = 0
-
-    for (let row = 0; row < rows; row++) {
-      for (let column = 0; column < columns; column++) {
-        const input = document.createElement('input')
-        input.accept = 'image/*'
-        input.type = 'file'
-        input.addEventListener<'change'>('change', this.handleImage(index))
-
-        const image = objects[index]
-
-        const img = image
-          ? this.createFigureImage(image.src)
-          : this.createFigurePlaceholder()
-
-        img.addEventListener<'click'>('click', () => {
-          input.click()
-        })
-
-        img.addEventListener<'mouseenter'>('mouseenter', () => {
-          img.classList.toggle('over', true)
-        })
-
-        img.addEventListener<'mouseleave'>('mouseleave', () => {
-          img.classList.toggle('over', false)
-        })
-
-        img.addEventListener<'dragenter'>('dragenter', () => {
-          img.classList.toggle('over', true)
-        })
-
-        img.addEventListener<'dragleave'>('dragleave', () => {
-          img.classList.toggle('over', false)
-        })
-
-        img.addEventListener<'dragover'>('dragover', event => {
-          event.preventDefault()
-        })
-
-        img.addEventListener<'drop'>('drop', this.handleDrop(index))
-
-        // TODO: should "figure" be a node?
-        const figureContainer = document.createElement('div')
-        figureContainer.appendChild(img)
-
-        if (image && image.title) {
-          // TODO: depends on figure layout
-          const title = document.createElement('div')
-          title.textContent = image.title // TODO: can this be HTML?
-          figureContainer.appendChild(title) // TODO: add label
-        }
-
-        // TODO: a popup editor for figure contents and metadata?
-
-        this.container.appendChild(figureContainer)
-
-        index++
-      }
-    }
+    const { suppressCaption } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
+
+    const layout = this.figureLayout
+
+    const singleFigure = !layout || layout.rows * layout.columns === 1
+
+    this.dom.classList.toggle('single-figure', singleFigure)
+
+    // TODO: apply styles to figures
+    // const figureStyles = this.getFigureStyles()
+    // this.applyStyles(figureContainer, figureStyles)
   }
 
-  private handleImage(index: number) {
-    return (event: Event) => {
-      const input = event.target as HTMLInputElement
+  private getDefaultModel<T extends Model>(objectType: ObjectTypes) {
+    return this.props.getModel<T>(`${objectType}:default`)
+  }
 
-      if (input.files) {
-        Array.from(input.files).forEach((file, fileIndex) => {
-          this.addImage(file, index + fileIndex)
-        })
+  private get defaultFigureLayout() {
+    return this.getDefaultModel<FigureLayout>(ObjectTypes.FigureLayout)
+  }
+
+  private get figureLayout() {
+    const { figureLayout } = this.node.attrs
+
+    if (figureLayout) {
+      const model = this.props.getModel<FigureLayout>(figureLayout)
+
+      if (model) {
+        return this.mergePrototypeChain(model)
       }
     }
+
+    return this.defaultFigureLayout
   }
 
-  private handleDrop(index: number) {
-    return (event: DragEvent) => {
-      event.preventDefault()
+  private get defaultFigureStyle() {
+    return this.getDefaultModel<FigureStyle>(ObjectTypes.FigureStyle)
+  }
 
-      if (event.dataTransfer && event.dataTransfer.files) {
-        Array.from(event.dataTransfer.files).forEach((file, fileIndex) => {
-          this.addImage(file, index + fileIndex)
-        })
+  private get figureStyle() {
+    const { figureStyle } = this.node.attrs
+
+    if (figureStyle) {
+      const model = this.props.getModel<FigureStyle>(figureStyle)
+
+      if (model) {
+        return this.mergePrototypeChain(model)
       }
     }
+
+    return this.defaultFigureStyle
   }
 
-  private createFigureImage(src: string) {
-    const element = document.createElement('img')
-    element.classList.add('figure')
-    element.src = src
+  private mergePrototypeChain<T extends Model>(model: T) {
+    let modelWithPrototype = model as T & { prototype: string }
 
-    return element
+    let output: T = modelWithPrototype
+
+    while (modelWithPrototype.prototype) {
+      const parentModel = this.props.getModel<T>(
+        modelWithPrototype.prototype
+      ) as T & { prototype: string }
+
+      if (!parentModel) {
+        break
+      }
+
+      // avoid accidental loops
+      if (parentModel.prototype === modelWithPrototype.prototype) {
+        break
+      }
+
+      output = {
+        ...parentModel,
+        ...output,
+      }
+
+      modelWithPrototype = parentModel
+    }
+
+    return output
   }
 
-  private createFigurePlaceholder() {
-    const element = document.createElement('div')
-    element.classList.add('figure')
-    element.classList.add('placeholder')
+  private buildPanelStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+    const output: CSS.PropertiesHyphen = {}
 
-    const instructions = document.createElement('div')
-    instructions.textContent = 'Click or drop an image here'
-    element.appendChild(instructions)
+    const layout = this.figureLayout
 
-    return element
+    if (layout) {
+      if (layout.columns) {
+        output['grid-template-columns'] = `repeat(${layout.columns}, 1fr)`
+      }
+
+      if (layout.rows) {
+        output['grid-template-rows'] = `repeat(${
+          layout.rows
+        }, minmax(min-content, max-content)) [caption] auto`
+      }
+    }
+
+    if (style) {
+      // output.textAlign = style.alignment
+      if (style.innerSpacing) {
+        output['column-gap'] = style.innerSpacing + 'px'
+        output['row-gap'] = style.innerSpacing + 'px'
+      }
+    }
+
+    return output
   }
 
-  private addImage(file: File, index: number) {
-    const figure = buildFigure(file)
+  private buildElementStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+    const output: CSS.PropertiesHyphen = {}
 
-    // IMPORTANT: the array must be cloned here, not modified
-    const containedObjectIDs = [...this.node.attrs.containedObjectIDs]
-    containedObjectIDs[index] = figure._id
+    if (style) {
+      if (style.outerSpacing) {
+        output.padding = style.outerSpacing + 'px'
+      }
 
-    this.view.dispatch(
-      this.view.state.tr
-        .setMeta(modelsKey, { [INSERT]: [figure] })
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          containedObjectIDs,
-        })
-        .setSelection(this.view.state.selection)
-    )
+      if (style.outerBorder) {
+        if (style.outerBorder.style) {
+          output['border-style'] = style.outerBorder.style // TODO: MPBorder?
+        }
+
+        output['border-width'] = style.outerBorder.width + 'px'
+
+        if (style.outerBorder.color) {
+          output['border-color'] = style.outerBorder.color // TODO: MPColor?
+        }
+      }
+    }
+
+    // TODO: resolve Colors and Styles
+
+    return output
   }
+
+  // private buildFigureStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+  //   const output: CSS.PropertiesHyphen = {
+  //     // minWidth: 0,
+  //     // minHeight: 0,
+  //     'justify-self': 'center',
+  //     height: '100%',
+  //     // maxWidth: '100%',
+  //   }
+  //
+  //   if (style) {
+  //     if (style.innerBorder) {
+  //       output['border-style'] = style.innerBorder.style
+  //       output['border-width'] = style.innerBorder.width + 'px'
+  //
+  //       if (style.innerBorder.color) {
+  //         output['border-color'] = style.innerBorder.color // TODO: MPColor?
+  //       }
+  //     }
+  //   }
+  //
+  //   return output
+  // }
 }
 
 const figureElement = (props: EditorProps): NodeViewCreator => (

@@ -22,15 +22,14 @@ export default () => {
   return new Plugin<ManuscriptSchema>({
     props: {
       decorations: state => {
+        const { section } = state.schema.nodes
+
         const decorations: Decoration[] = []
 
         // TODO: only calculate these when something changes
 
         state.doc.descendants((node, pos, parent) => {
-          if (
-            parent.type === state.schema.nodes.section &&
-            node.type !== state.schema.nodes.section
-          ) {
+          if (parent.type === section && node.type !== section) {
             decorations.push(
               Decoration.node(
                 pos,

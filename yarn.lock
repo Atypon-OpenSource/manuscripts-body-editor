@@ -788,10 +788,10 @@
   resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fexamples/-/examples-0.0.2.tgz#bc7354d1dc704bf03c4b9d4e0f4c1054c70bbc73"
   integrity sha512-kctNmYWfzk0M3Rxe5+UNdnMYM5pGL1ZFwE0+izMfpVegm3744Sbeg/0JUXrHXvaHIwT8JOzdOCi6WO6oBlejlA==
 
-"@manuscripts/manuscript-transform@^0.3.0":
-  version "0.3.0"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.3.0.tgz#bdba2a05f4edd13042fa5c8b337685bb54ea6942"
-  integrity sha512-QTVMBHhOpt573p9boDsqyjEPvFUFMvLnb/yltzSqO8DdRvisC0RUgAa2IZvNJD7a2yEY6uw8zy4aUELNcA46pw==
+"@manuscripts/manuscript-transform@^0.4.0":
+  version "0.4.0"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.4.0.tgz#00dbacfe892d9596ff6c91f774a3e6ea3cf76e16"
+  integrity sha512-NawbkrcSEfYsQboLqi/HdVzv101vlUXcBuKG8HEYB98M/qLcYyXC7hNuV+P17gG6YyGiS1vIUkUJmMpbQD4YEA==
   dependencies:
     prosemirror-model "^1.7.0"
     uuid "^3.3.2"
@@ -2406,7 +2406,7 @@ cssstyle@^1.0.0, cssstyle@^1.1.1:
   dependencies:
     cssom "0.3.x"
 
-csstype@^2.2.0, csstype@^2.5.2:
+csstype@^2.2.0, csstype@^2.5.2, csstype@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/csstype/-/csstype-2.6.2.tgz#3043d5e065454579afc7478a18de41909c8a2f01"
   integrity sha512-Rl7PvTae0pflc1YtxtKbiSqq20Ts6vpIYOD5WBafl4y123DyHUeLrRdQP66sQW8/6gmX8jrYJLXwNeMqYVJcow==

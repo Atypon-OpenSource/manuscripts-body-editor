@@ -20,10 +20,11 @@ import {
   ManuscriptNode,
   nodeNames,
 } from '@manuscripts/manuscript-transform'
+import { Properties } from 'csstype'
 import { Decoration, NodeView } from 'prosemirror-view'
+import { attentionIconHtml, SyncError } from '..'
 import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
-import { attentionIconHtml, SyncError } from '../lib/sync-errors'
 
 abstract class AbstractBlock implements NodeView {
   protected get elementType() {
@@ -105,6 +106,12 @@ abstract class AbstractBlock implements NodeView {
         : []
       this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
     }
+  }
+
+  protected applyStyles(node: HTMLElement, styles: Properties) {
+    Object.entries(styles).forEach(([key, value]) => {
+      node.style.setProperty(key, value)
+    })
   }
 
   private createDOM() {

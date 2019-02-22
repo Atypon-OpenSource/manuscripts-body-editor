@@ -1,4 +1,8 @@
 {
   "extends": "./tslint.json",
-  "defaultSeverity": "warning"
+  "defaultSeverity": "warning",
+  "rules": {
+    "no-debugger": false,
+    "no-console": false
+  }
 }

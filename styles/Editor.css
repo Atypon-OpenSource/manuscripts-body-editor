@@ -112,32 +112,34 @@
   color: inherit;
 }
 
-.ProseMirror figure {
+.ProseMirror .figure-block {
   margin: 40px 0;
   padding: 10px;
-  border: 5px solid transparent;
+  display: grid;
+  grid-gap: 20px 40px;
 }
 
-.ProseMirror figure.ProseMirror-selectednode {
-  border-color: blue;
-}
-
-.ProseMirror .figure-panel {
+.ProseMirror .figure-block figure {
+  margin: 0;
   display: flex;
-  justify-content: center;
-  /* TODO: from figure layout */
-  /*display: grid;*/
-  /*grid-template-columns: repeat(1, 1fr);*/
-  /*grid-template-columns: repeat(2, 1fr);*/
-  /*grid-template-rows: repeat(3, 200px);*/
-  grid-gap: 20px;
-  grid-auto-rows: 200px;
-  grid-auto-columns: 200px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-.ProseMirror .figure {
-  max-width: 100%;
-  justify-self: center;
+.ProseMirror .figure-block > figcaption {
+  grid-row: caption;
+  grid-column-start: 1;
+  grid-column-end: -1;
+  margin-top: 0;
+}
+
+.ProseMirror .figure-block.caption-above > figcaption {
+  grid-row: 1;
+}
+
+.ProseMirror .single-figure .figure-caption {
+  display: none;
 }
 
 .ProseMirror .figure.placeholder {
@@ -150,12 +152,19 @@
   font-family: "IBM Plex Serif", sans-serif;
   font-size: 16px;
   justify-content: center;
+  text-align: center;
   padding: 64px 32px;
   font-style: italic;
+  min-height: 100px;
 }
 
 .ProseMirror .figure.placeholder.over {
   border-color: #7fb5d5;
+}
+
+.ProseMirror .figure-image {
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .ProseMirror figcaption {

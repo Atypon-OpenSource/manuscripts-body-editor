@@ -21,6 +21,7 @@ import citation from './citation'
 import crossReference from './cross_reference'
 import equation from './equation'
 import equationElement from './equation_element'
+import figure from './figure'
 import figureElement from './figure_element'
 import inlineEquation from './inline_equation'
 import inlineFootnote from './inline_footnote'
@@ -41,6 +42,7 @@ export default (props: EditorProps) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
+  figure: figure(props),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),

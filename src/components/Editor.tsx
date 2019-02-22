@@ -37,6 +37,7 @@ import {
 import { EditorView } from 'prosemirror-view'
 import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
+import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { ApplyLocalStep, ApplyRemoteStep } from '../lib/conflicts'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
@@ -52,6 +53,12 @@ export interface EditorProps {
   editable?: boolean
   getModel: <T extends Model>(id: string) => T | undefined
   saveModel: <T extends Model>(model: Build<T>) => Promise<T>
+  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
+  putAttachment: (
+    id: string,
+    attachment: RxAttachmentCreator
+  ) => Promise<RxAttachment<Model>>
+  removeAttachment: (id: string, attachmentID: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   applyLocalStep: ApplyLocalStep
   applyRemoteStep: ApplyRemoteStep
