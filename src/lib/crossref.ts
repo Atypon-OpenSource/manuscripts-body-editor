@@ -36,11 +36,11 @@ const search = (query: string, rows: number) =>
 
 const fetch = (item: BibliographyItem) =>
   window
-    .fetch('https://data.crossref.org/' + encodeURIComponent(item.DOI!), {
-      headers: {
-        accept: 'application/vnd.citationstyles.csl+json',
-      },
-    })
+    .fetch(
+      `https://api.crossref.org/works/${encodeURIComponent(
+        item.DOI!
+      )}/transform/application/vnd.citationstyles.csl+json`
+    )
     .then(response => response.json())
     .then(convertDataToBibliographyItem)
 
