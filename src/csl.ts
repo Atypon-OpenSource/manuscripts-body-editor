@@ -188,8 +188,10 @@ export class CitationManager {
     }
 
     const cslIdentifier = basename(bundle.csl.cslIdentifier, '.csl')
+    const citationStyleDoc = await this.fetchCitationStyle(cslIdentifier)
 
-    const citationStyleData = await this.fetchStyle(cslIdentifier)
+    const serializer = new XMLSerializer()
+    const citationStyleData = serializer.serializeToString(citationStyleDoc)
 
     const citationLocales = await this.fetchCitationLocales(
       citationStyleData,
@@ -230,15 +232,23 @@ export class CitationManager {
   }
 
   public fetchBundles = async (): Promise<Bundle[]> =>
-    this.fetchJSON('shared/bundles.json')
+    this.fetchJSON('shared/bundles.json') as Promise<Bundle[]>
 
   public fetchLocales = (): Promise<Locales> =>
-    this.fetchJSON('csl/locales/locales.json')
+    this.fetchJSON('csl/locales/locales.json') as Promise<Locales>
 
   private buildURL = (path: string) => this.baseURL + '/' + path
 
+  private async fetchDocument(path: string) {
+    const response = await axios.get<Document>(this.buildURL(path), {
+      responseType: 'document',
+    })
+
+    return response.data
+  }
+
   private async fetchText(path: string) {
-    const response = await axios.get(this.buildURL(path), {
+    const response = await axios.get<string>(this.buildURL(path), {
       responseType: 'text',
     })
 
@@ -246,7 +256,7 @@ export class CitationManager {
   }
 
   private async fetchJSON(path: string) {
-    const response = await axios.get(this.buildURL(path))
+    const response = await axios.get<object>(this.buildURL(path))
 
     return response.data
   }
@@ -256,7 +266,7 @@ export class CitationManager {
   }
 
   private fetchStyle(id: string) {
-    return this.fetchText(`csl/styles/${id}.csl`)
+    return this.fetchDocument(`csl/styles/${id}.csl`)
   }
 
   private async fetchCitationLocales(
@@ -278,5 +288,56 @@ export class CitationManager {
     )
 
     return locales
+  }
+
+  private namespaceResolver(ns: string) {
+    return ns === 'csl' ? 'http://purl.org/net/xbiblio/csl' : null
+  }
+
+  private async fetchCitationStyle(id: string) {
+    const doc = await this.fetchStyle(id)
+
+    const parentURLNode = this.selectParentURL(doc)
+    const parentURL = parentURLNode.stringValue
+
+    if (!parentURL || !parentURL.startsWith('http://www.zotero.org/styles/')) {
+      return doc
+    }
+
+    const parentDoc = await this.fetchStyle(basename(parentURL))
+
+    if (!parentDoc) {
+      return doc
+    }
+
+    const locales = this.selectLocaleNodes(doc)
+
+    if (!locales.snapshotLength) {
+      return parentDoc
+    }
+
+    // TODO: merge locales
+
+    return parentDoc
+  }
+
+  private selectParentURL(doc: Document) {
+    return document.evaluate(
+      'string(/csl:style/csl:info/csl:link[@rel="independent-parent"]/@href)',
+      doc,
+      this.namespaceResolver,
+      XPathResult.STRING_TYPE,
+      null
+    )
+  }
+
+  private selectLocaleNodes(doc: Document) {
+    return document.evaluate(
+      '/csl:style/csl:locale',
+      doc,
+      this.namespaceResolver,
+      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+      null
+    )
   }
 }
