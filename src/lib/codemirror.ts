@@ -16,6 +16,7 @@
 
 import CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
+import './codemirror-modes'
 
 type CreateEditor = (value: string, mode: string) => Promise<CodeMirror.Editor>
 
@@ -24,15 +25,16 @@ export interface CodeMirrorCreator {
 }
 
 export const createEditor: CreateEditor = async (value, mode) => {
-  await import(`codemirror/mode/${mode}/${mode}.js`)
-  // TODO: tell webpack to only match js files in this path
-
-  // tslint:disable-next-line:no-empty
-  return CodeMirror(() => {}, {
-    autofocus: true,
-    lineNumbers: true,
-    lineWrapping: true,
-    mode,
-    value,
-  })
+  return CodeMirror(
+    () => {
+      // no-op
+    },
+    {
+      autofocus: true,
+      lineNumbers: true,
+      lineWrapping: true,
+      mode,
+      value,
+    }
+  )
 }
