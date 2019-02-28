@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-export * from './lib/conflicts'
-export * from './lib/merge'
-export * from './lib/sync-errors'
 export * from './lib/utils'
 export * from './commands'
 export { ApplicationMenu } from './components/menu/ApplicationMenu'
@@ -30,8 +27,6 @@ export { debounceRender } from './components/DebounceRender'
 export * from './csl'
 export { menus } from './menus'
 export { ChangeReceiver } from './types'
-export { conflictsKey } from './plugins/conflicts'
-export { syncErrorsKey } from './plugins/sync-errors'
 export { PopperManager } from './lib/popper'
 export { crossref } from './lib/crossref'
 export { datacite } from './lib/datacite'

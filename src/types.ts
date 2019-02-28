@@ -41,3 +41,7 @@ export type ChangeReceiver = (
   id: string,
   data?: ManuscriptNode | null
 ) => void
+
+export interface SyncError {
+  _id: string
+}

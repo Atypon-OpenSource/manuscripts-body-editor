@@ -24,7 +24,6 @@ import { EditorProps } from '../components/Editor'
 import keys from '../keys'
 import rules from '../rules'
 import bibliography from './bibliography'
-import conflicts from './conflicts'
 import elements from './elements'
 import models from './models'
 import objects from './objects'
@@ -33,7 +32,6 @@ import persist from './persist'
 import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
-import syncErrors from './sync-errors'
 
 export default (props: EditorProps) => [
   rules,
@@ -42,8 +40,7 @@ export default (props: EditorProps) => [
   // gapCursor(),
   history(),
   models(props), // NOTE: this should come first
-  conflicts(props),
-  syncErrors(),
+  ...props.plugins, // TODO: should these run after persist?
   elements(),
   persist(),
   sections(),

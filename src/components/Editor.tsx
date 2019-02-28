@@ -31,6 +31,7 @@ import { History, UnregisterCallback } from 'history'
 import {
   EditorState,
   NodeSelection,
+  Plugin,
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
@@ -38,7 +39,6 @@ import { EditorView } from 'prosemirror-view'
 import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
 import { RxAttachment, RxAttachmentCreator } from 'rxdb'
-import { ApplyLocalStep, ApplyRemoteStep } from '../lib/conflicts'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from '../plugins'
@@ -48,6 +48,7 @@ import views from '../views'
 export interface EditorProps {
   attributes?: { [key: string]: string }
   autoFocus?: boolean
+  plugins: Array<Plugin<ManuscriptSchema>>
   getCitationProcessor: () => Citeproc.Processor
   doc: ManuscriptNode
   editable?: boolean
@@ -60,8 +61,6 @@ export interface EditorProps {
   ) => Promise<RxAttachment<Model>>
   removeAttachment: (id: string, attachmentID: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
-  applyLocalStep: ApplyLocalStep
-  applyRemoteStep: ApplyRemoteStep
   addLibraryItem: (item: BibliographyItem) => void
   filterLibraryItems: (query: string) => BibliographyItem[]
   getLibraryItem: (id: string) => BibliographyItem | undefined
