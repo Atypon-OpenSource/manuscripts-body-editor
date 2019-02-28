@@ -322,7 +322,7 @@ export class CitationManager {
   }
 
   private selectParentURL(doc: Document) {
-    return document.evaluate(
+    return doc.evaluate(
       'string(/csl:style/csl:info/csl:link[@rel="independent-parent"]/@href)',
       doc,
       this.namespaceResolver,
@@ -332,7 +332,7 @@ export class CitationManager {
   }
 
   private selectLocaleNodes(doc: Document) {
-    return document.evaluate(
+    return doc.evaluate(
       '/csl:style/csl:locale',
       doc,
       this.namespaceResolver,
