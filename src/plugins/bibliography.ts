@@ -237,7 +237,7 @@ export default (props: Props) => {
         })
       }
 
-      return tr.setSelection(newState.selection).setMeta('addToHistory', false)
+      return tr.setSelection(newState.selection)
     },
   })
 }
