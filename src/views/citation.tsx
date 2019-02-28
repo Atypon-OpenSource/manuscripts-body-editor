@@ -171,6 +171,8 @@ class CitationView implements NodeView {
       [UPDATE]: [citation],
     })
 
+    this.view.focus()
+
     this.view.dispatch(
       tr.setSelection(TextSelection.near(tr.doc.resolve(state.selection.to)))
     )
