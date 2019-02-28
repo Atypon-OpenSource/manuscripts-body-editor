@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { stringify } from 'qs'
 import { convertDataToBibliographyItem } from '../csl'
 
@@ -42,11 +41,11 @@ const search = (query: string, rows: number) =>
       total,
     }))
 
-const fetch = (item: BibliographyItem) =>
+const fetch = (doi: string) =>
   window
-    .fetch('https://data.datacite.org/' + encodeURIComponent(item.DOI!), {
+    .fetch('https://data.datacite.org/' + encodeURIComponent(doi), {
       headers: {
-        accept: 'application/vnd.citationstyles.csl+json',
+        Accept: 'application/vnd.citationstyles.csl+json',
       },
     })
     .then(response => response.json())

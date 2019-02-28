@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { stringify } from 'qs'
 import { convertDataToBibliographyItem } from '../csl'
 
-const search = (query: string, rows: number) =>
+const search = (query: string, rows: number, mailto: string) =>
   window
     .fetch(
       'https://api.crossref.org/works?' +
@@ -26,6 +25,7 @@ const search = (query: string, rows: number) =>
           filter: 'type:journal-article',
           query,
           rows,
+          mailto,
         })
     )
     .then(response => response.json())
@@ -34,12 +34,15 @@ const search = (query: string, rows: number) =>
       total,
     }))
 
-const fetch = (item: BibliographyItem) =>
+const fetch = (doi: string, mailto: string) =>
   window
     .fetch(
       `https://api.crossref.org/works/${encodeURIComponent(
-        item.DOI!
-      )}/transform/application/vnd.citationstyles.csl+json`
+        doi
+      )}/transform/application/vnd.citationstyles.csl+json?` +
+        stringify({
+          mailto,
+        })
     )
     .then(response => response.json())
     .then(convertDataToBibliographyItem)
