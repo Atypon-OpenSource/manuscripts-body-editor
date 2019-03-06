@@ -27,7 +27,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { History, UnregisterCallback } from 'history'
+import { History, LocationListener, UnregisterCallback } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -41,6 +41,7 @@ import React from 'react'
 import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
+import '../lib/smooth-scroll'
 import plugins from '../plugins'
 import { ChangeReceiver } from '../types'
 import views from '../views'
@@ -149,7 +150,7 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.view.focus()
     }
 
-    this.handleHistoryChange()
+    this.handleHistoryChange(this.props.history.location, 'PUSH')
 
     this.unregisterHistoryListener = this.props.history.listen(
       this.handleHistoryChange
@@ -315,7 +316,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     }
   }
 
-  private handleHistoryChange = () => {
+  private handleHistoryChange: LocationListener = location => {
     this.focusNodeWithId(location.hash.substring(1))
   }
 
@@ -338,7 +339,7 @@ export class Editor extends React.PureComponent<EditorProps> {
 
         if (dom.node instanceof Element) {
           dom.node.scrollIntoView({
-            // behavior: 'smooth',
+            behavior: 'smooth',
             block: 'start',
             inline: 'nearest',
           })
