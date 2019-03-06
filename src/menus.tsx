@@ -146,6 +146,10 @@ export const menus = (props: MenusProps): MenuItem[] => [
             label: 'JATS XML',
             run: () => props.openExporter('.xml'),
           },
+          {
+            label: 'Manuscripts Archive',
+            run: () => props.openExporter('.manuproj'),
+          },
         ],
       },
       {
