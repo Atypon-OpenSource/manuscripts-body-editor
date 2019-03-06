@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { stringify } from 'qs'
 import { convertDataToBibliographyItem } from '../csl'
 
-const search = async (query: string, rows: number, mailto: string) => {
+interface SearchResults {
+  items: BibliographyItem[]
+  total: number
+}
+
+const search = async (
+  query: string,
+  rows: number,
+  mailto: string
+): Promise<SearchResults> => {
   // if the query is just a DOI, fetch that single record
   if (query.trim().match(/^10\.\S+\/\S+$/)) {
     return searchByDOI(query.trim(), mailto)
@@ -47,7 +57,10 @@ const search = async (query: string, rows: number, mailto: string) => {
   }
 }
 
-const searchByDOI = async (doi: string, mailto: string) => {
+const searchByDOI = async (
+  doi: string,
+  mailto: string
+): Promise<SearchResults> => {
   const response = await window.fetch(
     `https://api.crossref.org/works/${encodeURIComponent(doi)}?` +
       stringify({
@@ -62,11 +75,13 @@ const searchByDOI = async (doi: string, mailto: string) => {
     throw new Error('There was a problem searching for this DOI.')
   }
 
-  const { message: item } = await response.json()
+  const { message } = await response.json()
+
+  const item = convertDataToBibliographyItem(message) as BibliographyItem
 
   return {
     items: [item],
-    'total-results': 1,
+    total: 1,
   }
 }
 
