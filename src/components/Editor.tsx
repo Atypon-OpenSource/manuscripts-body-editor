@@ -338,7 +338,7 @@ export class Editor extends React.PureComponent<EditorProps> {
 
         if (dom.node instanceof Element) {
           dom.node.scrollIntoView({
-            behavior: 'smooth',
+            // behavior: 'smooth',
             block: 'start',
             inline: 'nearest',
           })
