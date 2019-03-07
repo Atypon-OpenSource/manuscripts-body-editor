@@ -27,6 +27,7 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
+import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { getChildOfType } from '..'
@@ -35,14 +36,14 @@ type NodesWithPositions = Array<[CitationNode, number]>
 
 interface PluginState {
   citationNodes: NodesWithPositions
-  citations: Citeproc.CitationByIndex
+  citations: CiteProc.Citation[]
 }
 
 const needsBibliographySection = (
   hadBibliographySection: boolean,
   hasBibliographySection: boolean,
-  oldCitations: Citeproc.CitationByIndex,
-  citations: Citeproc.CitationByIndex
+  oldCitations: CiteProc.Citation[],
+  citations: CiteProc.Citation[]
 ) => {
   if (hasBibliographySection) return false // not if already exists
   if (hadBibliographySection) return false // not if being deleted
@@ -54,8 +55,8 @@ const needsBibliographySection = (
 const needsUpdate = (
   hadBibliographySection: boolean,
   hasBibliographySection: boolean,
-  oldCitations: Citeproc.CitationByIndex,
-  citations: Citeproc.CitationByIndex
+  oldCitations: CiteProc.Citation[],
+  citations: CiteProc.Citation[]
 ) =>
   hadBibliographySection !== hasBibliographySection ||
   !isEqual(citations, oldCitations)
@@ -72,7 +73,7 @@ const createBibliographySection = (state: ManuscriptEditorState) =>
 export const bibliographyKey = new PluginKey('bibliography')
 
 interface Props {
-  getCitationProcessor: () => Citeproc.Processor
+  getCitationProcessor: () => CiteProc.Engine
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
@@ -104,7 +105,7 @@ export default (props: Props) => {
 
   const buildCitations = (
     citationNodes: NodesWithPositions
-  ): Citeproc.CitationByIndex =>
+  ): CiteProc.Citation[] =>
     citationNodes
       .map(([node]) => props.getModel<Citation>(node.attrs.rid)!)
       .map((citation: Citation) => ({
@@ -210,10 +211,7 @@ export default (props: Props) => {
       const bibliography = citationProcessor.makeBibliography()
 
       if (bibliography) {
-        const [
-          bibmeta,
-          generatedBibliographyItems,
-        ] = bibliography as Citeproc.Bibliography
+        const [bibmeta, generatedBibliographyItems] = bibliography
 
         if (bibmeta.bibliography_errors.length) {
           console.warn(bibmeta.bibliography_errors) // tslint:disable-line:no-console

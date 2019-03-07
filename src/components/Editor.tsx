@@ -27,6 +27,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
+import CiteProc from 'citeproc'
 import { History, LocationListener, UnregisterCallback } from 'history'
 import {
   EditorState,
@@ -50,7 +51,7 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   autoFocus?: boolean
   plugins: Array<Plugin<ManuscriptSchema>>
-  getCitationProcessor: () => Citeproc.Processor
+  getCitationProcessor: () => CiteProc.Engine
   doc: ManuscriptNode
   editable?: boolean
   getModel: <T extends Model>(id: string) => T | undefined

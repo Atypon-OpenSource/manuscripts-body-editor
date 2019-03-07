@@ -17,6 +17,7 @@
 import {
   buildBibliographicDate,
   buildBibliographicName,
+  CSL,
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographicDate,
@@ -25,14 +26,14 @@ import {
   Bundle,
 } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
-import CSL from 'citeproc'
+import CiteProc from 'citeproc'
 import { basename } from 'path'
 
 interface Locales {
   'language-names': { [key: string]: string[] }
 }
 
-const contributorFields = [
+const roleFields: Array<keyof CSL.RoleFields> = [
   'author',
   'collection-editor',
   'composer',
@@ -48,7 +49,7 @@ const contributorFields = [
   'translator',
 ]
 
-const dateFields = [
+const dateFields: Array<keyof CSL.DateFields> = [
   'accessed',
   'container',
   'event-date',
@@ -57,7 +58,7 @@ const dateFields = [
   'submitted',
 ]
 
-const standardFields = [
+const standardFields: Array<keyof CSL.StandardFields> = [
   'abstract',
   'annote',
   'archive',
@@ -119,50 +120,53 @@ const standardFields = [
 ]
 
 export const convertDataToBibliographyItem = (
-  data: CSL.Data
-): Partial<BibliographyItem> =>
-  Object.entries(data).reduce(
-    (output, [key, item]) => {
-      if (standardFields.includes(key)) {
-        output[key] = item as string
-      } else if (contributorFields.includes(key)) {
-        output[key] = (item as CSL.Person[]).map(
-          (value: Partial<BibliographicName>) => buildBibliographicName(value)
-        ) as BibliographicName[]
-      } else if (dateFields.includes(key)) {
-        output[key] = buildBibliographicDate(
-          item as CSL.StructuredDate
-        ) as BibliographicDate
-      }
+  data: CSL.Item
+): Partial<BibliographyItem> => {
+  // const output: { [key in keyof BibliographyItem]: BibliographyItem[key] } = {}
 
-      return output
-    },
-    {} as Partial<BibliographyItem & { [key: string]: any }> // tslint:disable-line
-  )
+  // tslint:disable-next-line:no-any
+  const output: { [key: string]: any } = {}
+
+  for (const [key, item] of Object.entries(data)) {
+    if (key === 'circa') {
+      output[key] = Boolean(item)
+    } else if (standardFields.includes(key as keyof CSL.StandardFields)) {
+      output[key] = item
+    } else if (roleFields.includes(key as keyof CSL.RoleFields)) {
+      output[key] = (item as CSL.Name[]).map(value =>
+        buildBibliographicName(value)
+      )
+    } else if (dateFields.includes(key as keyof CSL.DateFields)) {
+      output[key] = buildBibliographicDate(item as CSL.Date)
+    }
+  }
+
+  return output
+}
 
 export const convertBibliographyItemToData = (
   bibliographyItem: BibliographyItem
-): CSL.Data =>
+): CSL.Item =>
   Object.entries(bibliographyItem).reduce(
     (output, [key, item]) => {
-      if (standardFields.includes(key as CSL.StandardFieldKey)) {
+      if (standardFields.includes(key as keyof CSL.StandardFields)) {
         output[key] = item as string
-      } else if (contributorFields.includes(key as CSL.PersonFieldKey)) {
+      } else if (roleFields.includes(key as keyof CSL.RoleFields)) {
         output[key] = (item as BibliographicName[]).map(name => {
           const { _id, objectType, ...rest } = name
           return rest
-        }) as CSL.Person[]
-      } else if (dateFields.includes(key as CSL.DateFieldKey)) {
+        }) as CSL.Name[]
+      } else if (dateFields.includes(key as keyof CSL.DateFields)) {
         const { _id, objectType, ...rest } = item as BibliographicDate
-        output[key] = rest as CSL.StructuredDate
+        output[key] = rest as CSL.Date
       }
 
       return output
     },
     {
       id: bibliographyItem._id,
-      type: 'article-journal', // TODO: more types
-    } as CSL.Data // tslint:disable-line
+      type: bibliographyItem.type || 'article-journal',
+    } as CSL.Item & {[key: string]: any} // tslint:disable-line
   )
 
 export class CitationManager {
@@ -198,7 +202,7 @@ export class CitationManager {
       primaryLanguageCode
     )
 
-    return new CSL.Engine(
+    return new CiteProc.Engine(
       {
         retrieveItem: (id: string) => {
           const item = getLibraryItem(id)
@@ -209,9 +213,7 @@ export class CitationManager {
 
           return convertBibliographyItemToData(item)
         },
-        retrieveLocale: localeName => citationLocales.get(localeName)!,
-        // embedBibliographyEntry: '',
-        // wrapCitationEntry: '',
+        retrieveLocale: (id: string) => citationLocales.get(id)!,
       },
       citationStyleData,
       primaryLanguageCode,
@@ -275,7 +277,7 @@ export class CitationManager {
   ) {
     const locales: Map<string, string> = new Map()
 
-    const localeNames = CSL.getLocaleNames(
+    const localeNames = CiteProc.getLocaleNames(
       citationStyleData,
       primaryLanguageCode
     )
