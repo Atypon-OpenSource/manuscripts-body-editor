@@ -191,6 +191,8 @@ export class Editor extends React.PureComponent<EditorProps> {
     }
   }
 
+  // TODO: refactor this into sync-client methods
+  // tslint:disable-next-line:cyclomatic-complexity
   private receive: ChangeReceiver = (op, id, newNode) => {
     const { state } = this.view
 
