@@ -31,6 +31,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 import { History, LocationListener, UnregisterCallback } from 'history'
+import applyDevTools from 'prosemirror-dev-tools'
 import {
   EditorState,
   NodeSelection,
@@ -128,6 +129,8 @@ export class Editor extends React.PureComponent<EditorProps> {
         },
       },
     })
+
+    applyDevTools(this.view)
   }
 
   public componentDidMount() {

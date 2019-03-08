@@ -731,6 +731,13 @@
   resolved "https://registry.npmjs.org/@emotion/hash/-/hash-0.6.6.tgz#62266c5f0eac6941fece302abad69f2ee7e25e44"
   integrity sha512-ojhgxzUHZ7am3D2jHkMzPpsBAiB005GF5YU4ea+8DNPybMk01JJUM9V9YRlF/GE95tcOm8DxQvWA2jq19bGalQ==
 
+"@emotion/is-prop-valid@^0.6.1":
+  version "0.6.8"
+  resolved "https://registry.npmjs.org/@emotion/is-prop-valid/-/is-prop-valid-0.6.8.tgz#68ad02831da41213a2089d2cab4e8ac8b30cbd85"
+  integrity sha512-IMSL7ekYhmFlILXcouA6ket3vV7u9BqStlXzbKOF9HBtpUPMMlHU+bBxrLOa2NvleVwNIxeq/zL8LafLbeUXcA==
+  dependencies:
+    "@emotion/memoize" "^0.6.6"
+
 "@emotion/is-prop-valid@^0.7.3":
   version "0.7.3"
   resolved "https://registry.npmjs.org/@emotion/is-prop-valid/-/is-prop-valid-0.7.3.tgz#a6bf4fa5387cbba59d44e698a4680f481a8da6cc"
@@ -1661,7 +1668,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+babel-runtime@^6.22.0, babel-runtime@^6.26.0, babel-runtime@^6.6.1:
   version "6.26.0"
   resolved "https://registry.npmjs.org/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
@@ -1714,6 +1721,11 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
+
+base16@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/base16/-/base16-1.0.0.tgz#e297f60d7ec1014a7a971a39ebc8a98c0b681e70"
+  integrity sha1-4pf2DX7BAUp6lxo568ipjAtoHnA=
 
 base62@0.1.1:
   version "0.1.1"
@@ -2179,6 +2191,16 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
+concat-stream@^1.4.7:
+  version "1.6.2"
+  resolved "https://registry.npmjs.org/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
+  integrity sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==
+  dependencies:
+    buffer-from "^1.0.0"
+    inherits "^2.0.3"
+    readable-stream "^2.2.2"
+    typedarray "^0.0.6"
+
 config-chain@^1.1.12:
   version "1.1.12"
   resolved "https://registry.npmjs.org/config-chain/-/config-chain-1.1.12.tgz#0fde8d091200eb5e808caf25fe618c02f48e4efa"
@@ -2314,6 +2336,13 @@ couchdb-resp-completer@4.1.0:
     is-empty "^1.2.0"
     pouchdb-plugin-error "4.1.0"
 
+create-emotion-styled@^9.2.8:
+  version "9.2.8"
+  resolved "https://registry.npmjs.org/create-emotion-styled/-/create-emotion-styled-9.2.8.tgz#c0050e768ba439609bec108600467adf2de67cc3"
+  integrity sha512-2LrNM5MREWzI5hZK+LyiBHglwE18WE3AEbBQgpHQ1+zmyLSm/dJsUZBeFAwuIMb+TjNZP0KsMZlV776ufOtFdg==
+  dependencies:
+    "@emotion/is-prop-valid" "^0.6.1"
+
 create-emotion@^9.2.12:
   version "9.2.12"
   resolved "https://registry.npmjs.org/create-emotion/-/create-emotion-9.2.12.tgz#0fc8e7f92c4f8bb924b0fef6781f66b1d07cb26f"
@@ -2334,6 +2363,11 @@ create-react-context@<=0.2.2:
   dependencies:
     fbjs "^0.8.0"
     gud "^1.0.0"
+
+create-react-context@^0.1.5:
+  version "0.1.6"
+  resolved "https://registry.npmjs.org/create-react-context/-/create-react-context-0.1.6.tgz#0f425931d907741127acc6e31acb4f9015dd9fdc"
+  integrity sha512-eCnYYEUEc5i32LHwpE/W7NlddOB9oHwsPaWtWzYtflNkkwa3IfindIcoXdVWs12zCbwaMCavKNu84EXogVIWHw==
 
 crel@^3.0.0:
   version "3.1.0"
@@ -2605,6 +2639,11 @@ detective@^4.3.1:
     acorn "^5.2.1"
     defined "^1.0.0"
 
+diff-match-patch@^1.0.0:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/diff-match-patch/-/diff-match-patch-1.0.4.tgz#6ac4b55237463761c4daf0dc603eb869124744b1"
+  integrity sha512-Uv3SW8bmH9nAtHKaKSanOQmj2DnlH65fUpcrMdfdaOxUG02QQ4YGZ8AE7kKOMisF7UqvOlGKVYWRvezdncW9lg==
+
 diff-sequences@^24.0.0:
   version "24.0.0"
   resolved "https://registry.npmjs.org/diff-sequences/-/diff-sequences-24.0.0.tgz#cdf8e27ed20d8b8d3caccb4e0c0d8fe31a173013"
@@ -2723,7 +2762,7 @@ electron-to-chromium@^1.3.103:
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.113.tgz#b1ccf619df7295aea17bc6951dc689632629e4a9"
   integrity sha512-De+lPAxEcpxvqPTyZAXELNpRZXABRxf+uL/rSykstQhzj/B0l1150G/ExIIxKc16lI89Hgz81J0BHAcbTqK49g==
 
-emotion@^9.1.2:
+emotion@^9.1.2, emotion@^9.2.5:
   version "9.2.12"
   resolved "https://registry.npmjs.org/emotion/-/emotion-9.2.12.tgz#53925aaa005614e65c6e43db8243c843574d1ea9"
   integrity sha512-hcx7jppaI8VoXxIWEhxpDW7I+B4kq9RNzQLmsrF6LY8BGKqe2N+gFAQr0EfuFucFlPs2A9HM4+xNj4NeqEWIOQ==
@@ -2878,6 +2917,11 @@ es6-denodeify@^0.1.1:
   version "0.1.5"
   resolved "https://registry.npmjs.org/es6-denodeify/-/es6-denodeify-0.1.5.tgz#31d4d5fe9c5503e125460439310e16a2a3f39c1f"
   integrity sha1-MdTV/pxVA+ElRgQ5MQ4WoqPznB8=
+
+es6-object-assign@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
+  integrity sha1-wsNYJlYkfDnqEHyx5mUrb58kUjw=
 
 escape-html@~1.0.3:
   version "1.0.3"
@@ -3752,6 +3796,13 @@ html-encoding-sniffer@^1.0.2:
   dependencies:
     whatwg-encoding "^1.0.1"
 
+html@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/html/-/html-1.0.0.tgz#a544fa9ea5492bfb3a2cca8210a10be7b5af1f61"
+  integrity sha1-pUT6nqVJK/s6LMqCEKEL57WvH2E=
+  dependencies:
+    concat-stream "^1.4.7"
+
 htmlparser2@^3.9.1:
   version "3.10.1"
   resolved "https://registry.npmjs.org/htmlparser2/-/htmlparser2-3.10.1.tgz#bd679dc3f59897b6a34bb10749c855bb53a9392f"
@@ -3838,6 +3889,11 @@ iconv-lite@0.4.24, iconv-lite@^0.4.4, iconv-lite@^0.4.5, iconv-lite@~0.4.13:
   integrity sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
+
+ie-array-find-polyfill@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/ie-array-find-polyfill/-/ie-array-find-polyfill-1.1.0.tgz#5078e533f026831da22bd7476513d9460d65a142"
+  integrity sha1-UHjlM/Amgx2iK9dHZRPZRg1loUI=
 
 ignore-walk@^3.0.1:
   version "3.0.1"
@@ -5332,6 +5388,14 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
+jsondiffpatch@^0.3.11:
+  version "0.3.11"
+  resolved "https://registry.npmjs.org/jsondiffpatch/-/jsondiffpatch-0.3.11.tgz#43f9443a0d081b5f79d413fe20f302079e493201"
+  integrity sha512-Xi3Iygdt/BGhml6bdUFhgDki1TgOsp3hG3iiH3KtzP+CahtGcdPfKRLlnZbSw+3b1umZkhmKrqXUgUcKenyhtA==
+  dependencies:
+    chalk "^2.3.0"
+    diff-match-patch "^1.0.0"
+
 jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.npmjs.org/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
@@ -5521,6 +5585,18 @@ lodash._getnative@^3.0.0:
   resolved "https://registry.npmjs.org/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
   integrity sha1-VwvH3t5G1hzc3mh9ZdPuy6o6r/U=
 
+lodash.curry@^4.0.1:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/lodash.curry/-/lodash.curry-4.1.1.tgz#248e36072ede906501d75966200a86dab8b23170"
+  integrity sha1-JI42By7ekGUB11lmIAqG2riyMXA=
+
+lodash.debounce@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-3.1.1.tgz#812211c378a94cc29d5aa4e3346cf0bfce3a7df5"
+  integrity sha1-gSIRw3ipTMKdWqTjNGzwv846ffU=
+  dependencies:
+    lodash._getnative "^3.0.0"
+
 lodash.escape@^4.0.1:
   version "4.0.1"
   resolved "https://registry.npmjs.org/lodash.escape/-/lodash.escape-4.0.1.tgz#c9044690c21e04294beaa517712fded1fa88de98"
@@ -5530,6 +5606,11 @@ lodash.flattendeep@^4.4.0:
   version "4.4.0"
   resolved "https://registry.npmjs.org/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
   integrity sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
+
+lodash.flow@^3.3.0:
+  version "3.5.0"
+  resolved "https://registry.npmjs.org/lodash.flow/-/lodash.flow-3.5.0.tgz#87bf40292b8cf83e4e8ce1a3ae4209e20071675a"
+  integrity sha1-h79AKSuM+D5OjOGjrkIJ4gBxZ1o=
 
 lodash.get@^4.4.2:
   version "4.4.2"
@@ -7137,6 +7218,24 @@ prosemirror-commands@^1.0.0, prosemirror-commands@^1.0.4, prosemirror-commands@^
     prosemirror-state "^1.0.0"
     prosemirror-transform "^1.0.0"
 
+prosemirror-dev-tools@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/prosemirror-dev-tools/-/prosemirror-dev-tools-2.1.1.tgz#0c4304b05b437608b3666b72fdb4b21e24fa29fc"
+  integrity sha512-d9MG4PF82meg5Ru64ox6WCKPkQNsiZEaG5xR5a+l88RJ0VRButMZq5JzPh28vUlTBq+TXnpdTJRlPQIgTOtpqg==
+  dependencies:
+    emotion "^9.2.5"
+    es6-object-assign "^1.1.0"
+    html "^1.0.0"
+    ie-array-find-polyfill "^1.1.0"
+    jsondiffpatch "^0.3.11"
+    prop-types "^15.6.2"
+    prosemirror-model ">=1.0.0"
+    prosemirror-state ">=1.0.0"
+    react-dock "^0.2.4"
+    react-emotion "^9.2.5"
+    react-json-tree "^0.11.0"
+    unstated "^2.1.1"
+
 prosemirror-dropcursor@^1.0.0, prosemirror-dropcursor@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/prosemirror-dropcursor/-/prosemirror-dropcursor-1.1.1.tgz#c60ed1ed6c58804a06a75db06a0d993b087b7622"
@@ -7206,7 +7305,7 @@ prosemirror-menu@^1.0.0:
     prosemirror-history "^1.0.0"
     prosemirror-state "^1.0.0"
 
-prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.1, prosemirror-model@^1.6.2, prosemirror-model@^1.7.0:
+prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.1, prosemirror-model@^1.6.2, prosemirror-model@^1.7.0:
   version "1.7.0"
   resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.7.0.tgz#1fde0fd7cb2f9ead0be1581ad9f04593002a65aa"
   integrity sha512-/6ul6guiqyAl5I+0qbnL7SlmuX0DEfYqjvzeLUVEnb7nwF/vmKZuWqbjEG2tqi/9SSudvd3UxQTBDHvxy9hQwA==
@@ -7228,7 +7327,7 @@ prosemirror-schema-list@^1.0.0, prosemirror-schema-list@^1.0.1, prosemirror-sche
     prosemirror-model "^1.0.0"
     prosemirror-transform "^1.0.0"
 
-prosemirror-state@^1.0.0, prosemirror-state@^1.2.2:
+prosemirror-state@>=1.0.0, prosemirror-state@^1.0.0, prosemirror-state@^1.2.2:
   version "1.2.2"
   resolved "https://registry.npmjs.org/prosemirror-state/-/prosemirror-state-1.2.2.tgz#8df26d95fd6fd327c0f9984a760e84d863204154"
   integrity sha512-j8aC/kf9BJSCQau485I/9pj39XQoce+TqH5xzekT7WWFARTsRYFLJtiXBcCKakv1VSeev+sC3bJP0pLfz7Ft8g==
@@ -7322,6 +7421,11 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
+
+pure-color@^1.2.0:
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/pure-color/-/pure-color-1.3.0.tgz#1fe064fb0ac851f0de61320a8bf796836422f33e"
+  integrity sha1-H+Bk+wrIUfDeYTIKi/eWg2Qi8z4=
 
 q@^1.1.2:
   version "1.5.1"
@@ -7429,6 +7533,16 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-base16-styling@^0.5.1:
+  version "0.5.3"
+  resolved "https://registry.npmjs.org/react-base16-styling/-/react-base16-styling-0.5.3.tgz#3858f24e9c4dd8cbd3f702f3f74d581ca2917269"
+  integrity sha1-OFjyTpxN2MvT9wLz901YHKKRcmk=
+  dependencies:
+    base16 "^1.0.0"
+    lodash.curry "^4.0.1"
+    lodash.flow "^3.3.0"
+    pure-color "^1.2.0"
+
 react-dnd-html5-backend@^7.0.2:
   version "7.0.2"
   resolved "https://registry.npmjs.org/react-dnd-html5-backend/-/react-dnd-html5-backend-7.0.2.tgz#f74181ca0ff05be13eb6094629c5ad560f558a7e"
@@ -7449,6 +7563,14 @@ react-dnd@^7.0.2:
     recompose "^0.30.0"
     shallowequal "^1.1.0"
 
+react-dock@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.npmjs.org/react-dock/-/react-dock-0.2.4.tgz#e727dc7550b3b73116635dcb9c0e04d0b7afe17c"
+  integrity sha1-5yfcdVCztzEWY13LnA4E0Lev4Xw=
+  dependencies:
+    lodash.debounce "^3.1.1"
+    prop-types "^15.5.8"
+
 react-dom@^16.6.3:
   version "16.8.2"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.8.2.tgz#7c8a69545dd554d45d66442230ba04a6a0a3c3d3"
@@ -7458,6 +7580,14 @@ react-dom@^16.6.3:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.13.2"
+
+react-emotion@^9.2.5:
+  version "9.2.12"
+  resolved "https://registry.npmjs.org/react-emotion/-/react-emotion-9.2.12.tgz#74d1494f89e22d0b9442e92a33ca052461955c83"
+  integrity sha512-qt7XbxnEKX5sZ73rERJ92JMbEOoyOwG3BuCRFRkXrsJhEe+rFBRTljRw7yOLHZUCQC4GBObZhjXIduQ8S0ZpYw==
+  dependencies:
+    babel-plugin-emotion "^9.2.11"
+    create-emotion-styled "^9.2.8"
 
 react-input-autosize@^2.2.1:
   version "2.2.1"
@@ -7470,6 +7600,15 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.2:
   version "16.8.2"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.8.2.tgz#09891d324cad1cb0c1f2d91f70a71a4bee34df0f"
   integrity sha512-D+NxhSR2HUCjYky1q1DwpNUD44cDpUXzSmmFyC3ug1bClcU/iDNy0YNn1iwme28fn+NFhpA13IndOd42CrFb+Q==
+
+react-json-tree@^0.11.0:
+  version "0.11.2"
+  resolved "https://registry.npmjs.org/react-json-tree/-/react-json-tree-0.11.2.tgz#af70199fcbc265699ade2aec492465c51608f95e"
+  integrity sha512-aYhUPj1y5jR3ZQ+G3N7aL8FbTyO03iLwnVvvEikLcNFqNTyabdljo9xDftZndUBFyyyL0aK3qGO9+8EilILHUw==
+  dependencies:
+    babel-runtime "^6.6.1"
+    prop-types "^15.5.8"
+    react-base16-styling "^0.5.1"
 
 react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -7619,7 +7758,7 @@ read-pkg@^4.0.1:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@^2.0.1, readable-stream@^2.0.6:
+readable-stream@^2.0.1, readable-stream@^2.0.6, readable-stream@^2.2.2:
   version "2.3.6"
   resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
   integrity sha512-tQtKA9WIAhBF3+VLAseyMqZeBjW0AHJoxOtYqSUZNJxauErmLbVm2FW1y+J/YA9dUrAC39ITejlZWhVIwawkKw==
@@ -8928,6 +9067,11 @@ typed-styles@^0.0.7:
   resolved "https://registry.npmjs.org/typed-styles/-/typed-styles-0.0.7.tgz#93392a008794c4595119ff62dde6809dbc40a3d9"
   integrity sha512-pzP0PWoZUhsECYjABgCGQlRGL1n7tOHsgwYv3oIiEpJwGhFTuty/YNeduxQYzXXa3Ge5BdT6sHYIQYpl4uJ+5Q==
 
+typedarray@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+  integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
 typescript@^3.3.3:
   version "3.3.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-3.3.3.tgz#f1657fc7daa27e1a8930758ace9ae8da31403221"
@@ -9015,6 +9159,13 @@ unset-value@^1.0.0:
   dependencies:
     has-value "^0.3.1"
     isobject "^3.0.0"
+
+unstated@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/unstated/-/unstated-2.1.1.tgz#36b124dfb2e7a12d39d0bb9c46dfb6e51276e3a2"
+  integrity sha512-fORlTWMZxq7NuMJDxyIrrYIZKN7wEWYQ9SiaJfIRcSpsowr6Ph/JIfK2tgtXLW614JfPG/t5q9eEIhXRCf55xg==
+  dependencies:
+    create-react-context "^0.1.5"
 
 uri-js@^4.2.2:
   version "4.2.2"
