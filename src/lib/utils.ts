@@ -47,6 +47,17 @@ export const getMatchingChild = (
   }
 }
 
+export const getMatchingDescendant = (
+  parent: ManuscriptNode,
+  matcher: (node: ManuscriptNode) => boolean
+): ManuscriptNode | undefined => {
+  for (const node of iterateChildren(parent, true)) {
+    if (matcher(node)) {
+      return node
+    }
+  }
+}
+
 export const getChildOfType = (
   parent: ManuscriptNode,
   nodeType: ManuscriptNodeType

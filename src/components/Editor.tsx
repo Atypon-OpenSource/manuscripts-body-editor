@@ -20,11 +20,13 @@ import {
   ManuscriptNode,
   ManuscriptSchema,
   schema,
+  SectionNode,
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
   Model,
+  Section,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
@@ -43,6 +45,7 @@ import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import '../lib/smooth-scroll'
+import { getMatchingDescendant } from '../lib/utils'
 import plugins from '../plugins'
 import { ChangeReceiver } from '../types'
 import views from '../views'
@@ -208,13 +211,20 @@ export class Editor extends React.PureComponent<EditorProps> {
         }
 
         switch (newNode.type) {
-          // TODO: can anything else be inserted by itself?
-          // TODO: subsections! need to use the path
           case state.schema.nodes.section:
-            // +1 for manuscript
-            const sectionIndex = newNode.attrs.priority + 1
+            const sectionIndex = newNode.attrs.priority
 
-            state.doc.forEach((node, offset, index) => {
+            const parentNode = this.chooseSectionParent(
+              newNode as SectionNode,
+              state.doc
+            )
+
+            if (!parentNode) {
+              // TODO: warn about unpositioned section?
+              return
+            }
+
+            parentNode.forEach((node, offset, index) => {
               if (index === sectionIndex) {
                 this.dispatchTransaction(state.tr.insert(offset, newNode), true)
                 return false
@@ -254,6 +264,8 @@ export class Editor extends React.PureComponent<EditorProps> {
             true
           )
         }
+
+        // TODO: handle section path/priority changes
 
         // TODO: add to a waitlist if child nodes aren't in the map yet?
         // TODO: make sure there aren't any local edits since saving?
@@ -315,6 +327,21 @@ export class Editor extends React.PureComponent<EditorProps> {
         })
         break
     }
+  }
+
+  private chooseSectionParent = (
+    newNode: SectionNode,
+    rootNode: ManuscriptNode
+  ) => {
+    const model = this.props.getModel<Section>(newNode.attrs.id)!
+
+    if (model.path.length === 1) {
+      return rootNode
+    }
+
+    const parentID = model.path[model.path.length - 2]
+
+    return getMatchingDescendant(rootNode, node => node.attrs.id === parentID)
   }
 
   private handleHistoryChange: LocationListener = location => {
