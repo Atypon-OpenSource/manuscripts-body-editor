@@ -23,6 +23,7 @@ import {
   nodeTitlePlaceholder,
   Selected,
 } from '@manuscripts/manuscript-transform'
+import { withDragDropContext } from '@manuscripts/style-guide'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import * as React from 'react'
 import {
@@ -39,7 +40,6 @@ import {
 } from 'react-dnd'
 import { findDOMNode } from 'react-dom'
 import { ContextMenu } from '../../lib/context-menu'
-import { withDragDropContext } from '../../lib/dnd'
 import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,

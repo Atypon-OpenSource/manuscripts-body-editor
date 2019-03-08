@@ -827,6 +827,18 @@
     prosemirror-view "^1.5.3"
     rfc6902 "^3.0.1"
 
+"@manuscripts/style-guide@^0.3.2":
+  version "0.3.2"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fstyle-guide/-/style-guide-0.3.2.tgz#65252ff4c1bf009a1ba07e666ea5dff34c0a9994"
+  integrity sha512-/Ir7cvZ9aa2yRbOlHGjt4PeeXBAfTMCZfRL3Uq8nKyswEjIaj6gUGMp2aDejBTOOKz8tIlikhzQKoiTRKb2J+A==
+  dependencies:
+    "@manuscripts/assets" "^0.3.0"
+    lodash-es "^4.17.11"
+    react-dnd "^7.0.2"
+    react-dnd-html5-backend "^7.0.2"
+    react-modal "^3.8.1"
+    react-select "^2.1.0"
+
 "@manuscripts/title-editor@^0.3.0":
   version "0.3.0"
   resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2ftitle-editor/-/title-editor-0.3.0.tgz#f6a8eb04ec48c7d2c61b2c51cd040b2c6df8eae3"
@@ -7476,7 +7488,7 @@ react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.2, react-lifecycles
   resolved "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-modal@^3.6.1:
+react-modal@^3.6.1, react-modal@^3.8.1:
   version "3.8.1"
   resolved "https://registry.npmjs.org/react-modal/-/react-modal-3.8.1.tgz#7300f94a6f92a2e17994de0be6ccb61734464c9e"
   integrity sha512-aLKeZM9pgXpIKVwopRHMuvqKWiBajkqisDA8UzocdCF6S4fyKVfLWmZR5G1Q0ODBxxxxf2XIwiCP8G/11GJAuw==
