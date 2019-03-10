@@ -54,7 +54,7 @@ export interface MenusProps {
   openTemplateSelector: () => void
   addManuscript: () => void
   deleteManuscript: (id: string) => Promise<void>
-  deleteModel: (id: string) => Promise<string>
+  deleteModel: (id: string) => Promise<void>
   getModelMap: () => Map<string, Model>
   history: History
   openExporter: (format: string) => void

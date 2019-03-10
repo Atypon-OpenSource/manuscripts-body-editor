@@ -26,7 +26,7 @@ export const REMOVE = 'REMOVE'
 
 interface Props {
   saveModel: <T extends Model>(model: Build<T>) => Promise<T>
-  deleteModel: (id: string) => Promise<string>
+  deleteModel: (id: string) => Promise<void>
 }
 
 export default (props: Props) => {
