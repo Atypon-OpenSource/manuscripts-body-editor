@@ -62,7 +62,7 @@ export interface EditorProps {
     attachment: RxAttachmentCreator
   ) => Promise<RxAttachment<Model>>
   removeAttachment: (id: string, attachmentID: string) => Promise<void>
-  deleteModel: (id: string) => Promise<void>
+  deleteModel: (id: string) => Promise<string>
   addLibraryItem: (item: BibliographyItem) => void
   filterLibraryItems: (query: string) => BibliographyItem[]
   getLibraryItem: (id: string) => BibliographyItem | undefined
