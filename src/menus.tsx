@@ -15,13 +15,6 @@
  */
 
 import { schema } from '@manuscripts/manuscript-transform'
-import {
-  Manuscript,
-  Model,
-  Project,
-} from '@manuscripts/manuscripts-json-schema'
-import { parse as parseTitle } from '@manuscripts/title-editor'
-import { History } from 'history'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { wrapInList } from 'prosemirror-schema-list'
@@ -33,7 +26,6 @@ import {
   deleteColumn,
   deleteRow,
 } from 'prosemirror-tables'
-import React from 'react'
 import {
   blockActive,
   canInsert,
@@ -47,161 +39,8 @@ import {
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
-import { RecentProject } from './types'
 
-export interface MenusProps {
-  project: Project
-  manuscript: Manuscript
-  getRecentProjects: () => RecentProject[]
-  openTemplateSelector: () => void
-  addManuscript: () => void
-  deleteManuscript: (id: string) => Promise<void>
-  deleteModel: (id: string) => Promise<string>
-  getModelMap: () => Map<string, Model>
-  history: History
-  openExporter: (format: string) => void
-  openImporter: () => void
-  openRenameProject: (project: Project) => void
-}
-
-const truncateText = (text: string, maxLength: number) =>
-  text.length > maxLength ? text.substring(0, maxLength) + '…' : text
-
-const deleteManuscriptLabel = (title: string) => {
-  const node = parseTitle(title)
-
-  return (
-    <span>
-      Delete “
-      <abbr style={{ textDecoration: 'none' }} title={node.textContent}>
-        {truncateText(node.textContent, 15)}
-      </abbr>
-      ”
-    </span>
-  )
-}
-
-const confirmDeleteManuscriptMessage = (title: string) => {
-  const node = parseTitle(title)
-
-  return `Are you sure you wish to delete the manuscript with title "${
-    node.textContent
-  }"?`
-}
-
-const confirmDeleteProjectMessage = (title: string) => {
-  const node = parseTitle(title)
-
-  return `Are you sure you wish to delete the project with title "${
-    node.textContent
-  }"?`
-}
-
-export const menus = (props: MenusProps): MenuItem[] => [
-  {
-    label: 'Project',
-    submenu: [
-      {
-        label: 'New',
-        submenu: [
-          {
-            label: 'Manuscript with Template…',
-            run: props.openTemplateSelector,
-          },
-          {
-            label: 'Manuscript',
-            run: props.addManuscript,
-          },
-        ],
-      },
-      {
-        label: 'Open Recent',
-        enable: () => !!props.getRecentProjects().length,
-        submenu: props
-          .getRecentProjects()
-          .map(({ projectID, manuscriptID, projectTitle, sectionID }) => ({
-            label: projectTitle || 'Untitled Project',
-            run: () =>
-              sectionID
-                ? props.history.push(
-                    `/projects/${projectID}/manuscripts/${manuscriptID}#${sectionID}`
-                  )
-                : props.history.push(
-                    `/projects/${projectID}/manuscripts/${manuscriptID}`
-                  ),
-          })),
-      },
-      {
-        role: 'separator',
-      },
-      {
-        label: 'Import…',
-        run: props.openImporter,
-      },
-      {
-        label: 'Export as…',
-        submenu: [
-          {
-            label: 'PDF',
-            run: () => props.openExporter('.pdf'),
-          },
-          {
-            label: 'Microsoft Word',
-            run: () => props.openExporter('.docx'),
-          },
-          {
-            label: 'Markdown',
-            run: () => props.openExporter('.md'),
-          },
-          {
-            label: 'LaTeX',
-            run: () => props.openExporter('.tex'),
-          },
-          {
-            label: 'JATS XML',
-            run: () => props.openExporter('.xml'),
-          },
-          {
-            label: 'Manuscripts Archive',
-            run: () => props.openExporter('.manuproj'),
-          },
-        ],
-      },
-      {
-        role: 'separator',
-      },
-      {
-        label: 'Delete Project',
-        run: () =>
-          confirm(
-            props.project.title
-              ? confirmDeleteProjectMessage(props.project.title)
-              : 'Are you sure you wish to delete this untitled project?'
-          ) &&
-          props
-            .deleteModel(props.manuscript.containerID)
-            .then(() => props.history.push('/')),
-      },
-      {
-        label: props.manuscript.title
-          ? deleteManuscriptLabel(props.manuscript.title)
-          : 'Delete Untitled Manuscript',
-        run: () =>
-          confirm(
-            props.manuscript.title
-              ? confirmDeleteManuscriptMessage(props.manuscript.title)
-              : `Are you sure you wish to delete this untitled manuscript?`
-          ) && props.deleteManuscript(props.manuscript._id),
-      },
-      {
-        role: 'separator',
-      },
-      {
-        label: 'Rename Project',
-        run: () => props.openRenameProject(props.project),
-      },
-    ],
-  },
+export const menus: MenuItem[] = [
   {
     label: 'Edit',
     submenu: [

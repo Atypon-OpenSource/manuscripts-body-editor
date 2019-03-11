@@ -45,10 +45,3 @@ export type ChangeReceiver = (
 export interface SyncError {
   _id: string
 }
-
-export interface RecentProject {
-  projectID: string
-  manuscriptID: string
-  projectTitle?: string
-  sectionID?: string
-}
