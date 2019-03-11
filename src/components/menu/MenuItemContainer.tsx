@@ -217,13 +217,17 @@ export class MenuItemContainer extends React.Component<
   }
 
   private openMenu = () => {
-    window.clearTimeout(this.menuTimeout)
+    const { item, view } = this.props
 
-    this.menuTimeout = window.setTimeout(() => {
-      this.setState({
-        isOpen: true,
-      })
-    }, 100)
+    if (!item.enable || item.enable(view.state)) {
+      window.clearTimeout(this.menuTimeout)
+
+      this.menuTimeout = window.setTimeout(() => {
+        this.setState({
+          isOpen: true,
+        })
+      }, 100)
+    }
   }
 
   private closeMenu = () => {

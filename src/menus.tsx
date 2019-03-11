@@ -47,10 +47,12 @@ import {
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
+import { RecentProject } from './types'
 
 export interface MenusProps {
   project: Project
   manuscript: Manuscript
+  getRecentProjects: () => RecentProject[]
   openTemplateSelector: () => void
   addManuscript: () => void
   deleteManuscript: (id: string) => Promise<void>
@@ -114,7 +116,20 @@ export const menus = (props: MenusProps): MenuItem[] => [
       },
       {
         label: 'Open Recent',
-        submenu: [], // TODO
+        enable: () => !!props.getRecentProjects().length,
+        submenu: props
+          .getRecentProjects()
+          .map(({ projectID, manuscriptID, projectTitle, sectionID }) => ({
+            label: projectTitle || 'Untitled Project',
+            run: () =>
+              sectionID
+                ? props.history.push(
+                    `/projects/${projectID}/manuscripts/${manuscriptID}#${sectionID}`
+                  )
+                : props.history.push(
+                    `/projects/${projectID}/manuscripts/${manuscriptID}`
+                  ),
+          })),
       },
       {
         role: 'separator',
