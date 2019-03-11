@@ -21,7 +21,7 @@ import {
 import React from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
-import { MenuItem } from './ApplicationMenu'
+import { MenuItem, Separator } from './ApplicationMenu'
 
 export const Text = styled.div`
   flex: 1;
@@ -112,7 +112,7 @@ const Shortcut: React.FunctionComponent<ShortcutProps> = ({ accelerator }) => (
 )
 
 interface MenuItemProps {
-  item: MenuItem
+  item: MenuItem | Separator
   view: ManuscriptEditorView
   closeMenu: () => void
 }
@@ -127,6 +127,9 @@ const classNameFromState = (item: MenuItem, state: ManuscriptEditorState) =>
 
 const activeContent = (item: MenuItem, state: ManuscriptEditorState) =>
   item.active && item.active(state) ? '✓' : ''
+
+const isSeparator = (item: MenuItem | Separator): item is Separator =>
+  item.role === 'separator'
 
 export class MenuItemContainer extends React.Component<
   MenuItemProps,
@@ -143,7 +146,7 @@ export class MenuItemContainer extends React.Component<
     const { item, view, closeMenu } = this.props
     const { isOpen } = this.state
 
-    if (item.role === 'separator') return <Separator />
+    if (isSeparator(item)) return <Separator />
 
     if (!item.submenu) {
       return (
@@ -162,7 +165,7 @@ export class MenuItemContainer extends React.Component<
         >
           <Active>{activeContent(item, view.state)}</Active>
           {item.icon && <Icon>{item.icon}</Icon>}
-          <Text>{item.label}</Text>
+          <Text>{item.label(view.state)}</Text>
           {item.accelerator && <Shortcut accelerator={item.accelerator} />}
         </Container>
       )
@@ -176,12 +179,16 @@ export class MenuItemContainer extends React.Component<
               <Container
                 // @ts-ignore: styled
                 ref={ref}
-                onMouseEnter={this.openMenu}
+                onMouseEnter={() => {
+                  if (!item.enable || item.enable(view.state)) {
+                    this.openMenu()
+                  }
+                }}
                 className={classNameFromState(item, view.state)}
               >
                 <Active>{activeContent(item, view.state)}</Active>
                 {item.icon && <Icon>{item.icon}</Icon>}
-                <Text>{item.label}</Text>
+                <Text>{item.label(view.state)}</Text>
                 {item.submenu && <Arrow>▶</Arrow>}
                 {item.accelerator && (
                   <Shortcut accelerator={item.accelerator} />
@@ -217,12 +224,6 @@ export class MenuItemContainer extends React.Component<
   }
 
   private openMenu = () => {
-    const { item, view } = this.props
-
-    if (item.enable && !item.enable(view.state)) {
-      return
-    }
-
     window.clearTimeout(this.menuTimeout)
 
     this.menuTimeout = window.setTimeout(() => {

@@ -32,7 +32,7 @@ const ApplicationMenuContainer = styled.div`
   font-size: 14px;
 `
 
-const MenuHeading = styled.div`
+const MenuHeading = styled.div<{ isOpen: boolean }>`
   display: inline-flex;
   padding: 4px 8px;
   cursor: pointer;
@@ -40,19 +40,50 @@ const MenuHeading = styled.div`
   border-bottom: none;
 `
 
-const MenuContainer = styled.div`
-  & ${MenuHeading}:hover {
-    background: #eee;
+const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
+  & ${MenuHeading} {
+    color: ${props => {
+      if (!props.isEnabled) {
+        return '#aaa'
+      }
+
+      return 'inherit'
+    }};
   }
 
-  &.active ${MenuHeading}:hover, &.active ${MenuHeading}.open {
-    background: #7fb5d5;
-    color: white;
+  & ${MenuHeading}:hover {
+    background: ${props => {
+      if (!props.isEnabled) {
+        return 'inherit'
+      }
+
+      if (props.isActive) {
+        return '#7fb5d5'
+      }
+
+      return '#eee'
+    }};
+
+    color: ${props => {
+      if (!props.isEnabled) {
+        return '#aaa'
+      }
+
+      if (props.isActive) {
+        return '#fff'
+      }
+
+      return 'inherit'
+    }};
   }
 `
 
+export interface Separator {
+  role: 'separator'
+}
+
 export interface MenuItem {
-  label?: React.ReactNode
+  label: (state: ManuscriptEditorState) => React.ReactNode
   role?: string
   type?: string
   accelerator?: string
@@ -60,7 +91,7 @@ export interface MenuItem {
   active?: (state: ManuscriptEditorState) => boolean
   enable?: (state: ManuscriptEditorState) => boolean
   run?: (state: ManuscriptEditorState, dispatch: Dispatch) => void
-  submenu?: MenuItem[]
+  submenu?: Array<MenuItem | Separator>
 }
 
 type Dispatch = (tr: Transaction) => void
@@ -78,7 +109,8 @@ export class ApplicationMenu extends React.Component<Props, State> {
   public state: Readonly<State> = {
     activeMenu: null,
   }
-  private containerRef: React.RefObject<HTMLDivElement>
+
+  private readonly containerRef: React.RefObject<HTMLDivElement>
 
   public constructor(props: Props) {
     super(props)
@@ -99,62 +131,64 @@ export class ApplicationMenu extends React.Component<Props, State> {
     const { activeMenu } = this.state
 
     return (
-      // @ts-ignore: styled
       <ApplicationMenuContainer ref={this.containerRef}>
-        {menus.map((menu, index) => (
-          <MenuContainer
-            key={`menu-${index}`}
-            className={activeMenu === index ? 'active' : ''}
-          >
-            <Manager>
-              <Reference>
-                {({ ref }) => (
-                  <MenuHeading
-                    // @ts-ignore: styled
-                    ref={ref}
-                    onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
-                      event.preventDefault()
-                      this.setActiveMenu(activeMenu !== null ? null : index)
-                    }}
-                    onMouseEnter={() => {
-                      if (activeMenu !== null) {
-                        this.setActiveMenu(index)
-                      }
-                    }}
-                    className={activeMenu === index ? 'open' : ''}
-                  >
-                    <Text>{menu.label}</Text>
-                  </MenuHeading>
-                )}
-              </Reference>
+        {menus.map((menu, index) => {
+          const isEnabled = !menu.enable || menu.enable(view.state)
 
-              {activeMenu === index && (
-                <Popper placement="bottom-start">
-                  {({ ref, style, placement }) => (
-                    <MenuList
-                      // @ts-ignore: styled
+          return (
+            <MenuContainer
+              key={`menu-${index}`}
+              isActive={activeMenu === index}
+              isEnabled={isEnabled}
+            >
+              <Manager>
+                <Reference>
+                  {({ ref }) => (
+                    <MenuHeading
                       ref={ref}
-                      style={style}
-                      data-placement={placement}
+                      onMouseDown={event => {
+                        event.preventDefault()
+                        this.setActiveMenu(activeMenu !== null ? null : index)
+                      }}
+                      onMouseEnter={() => {
+                        if (activeMenu !== null) {
+                          this.setActiveMenu(index)
+                        }
+                      }}
+                      isOpen={activeMenu === index}
                     >
-                      {menu.submenu &&
-                        menu.submenu.map((submenu, submenuIndex) => (
-                          <MenuItemContainer
-                            key={`menu-${submenuIndex}`}
-                            item={submenu}
-                            view={view}
-                            closeMenu={() => {
-                              this.setActiveMenu(null)
-                            }}
-                          />
-                        ))}
-                    </MenuList>
+                      <Text>{menu.label(view.state)}</Text>
+                    </MenuHeading>
                   )}
-                </Popper>
-              )}
-            </Manager>
-          </MenuContainer>
-        ))}
+                </Reference>
+
+                {isEnabled && activeMenu === index && (
+                  <Popper placement="bottom-start">
+                    {({ ref, style, placement }) => (
+                      <MenuList
+                        ref={ref}
+                        style={style}
+                        data-placement={placement}
+                      >
+                        {menu.submenu &&
+                          menu.submenu.map((submenu, submenuIndex) => (
+                            <MenuItemContainer
+                              key={`menu-${submenuIndex}`}
+                              item={submenu}
+                              view={view}
+                              closeMenu={() => {
+                                this.setActiveMenu(null)
+                              }}
+                            />
+                          ))}
+                      </MenuList>
+                    )}
+                  </Popper>
+                )}
+              </Manager>
+            </MenuContainer>
+          )
+        })}
       </ApplicationMenuContainer>
     )
   }

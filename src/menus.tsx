@@ -39,14 +39,18 @@ import {
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
 import icons from './icons'
+import {
+  deleteClosestParentElement,
+  findClosestParentElementNodeName,
+} from './lib/hierarchy'
 
 export const menus: MenuItem[] = [
   {
-    label: 'Edit',
+    label: () => 'Edit',
     submenu: [
       {
         role: 'undo',
-        label: 'Undo',
+        label: () => 'Undo',
         accelerator: '⌘Z',
         // icon: icons.undo,
         enable: undo,
@@ -54,19 +58,32 @@ export const menus: MenuItem[] = [
       },
       {
         role: 'redo',
-        label: 'Redo',
+        label: () => 'Redo',
         // icon: icons.redo,
         accelerator: '⇧⌘Z',
         enable: redo,
         run: redo,
       },
+      {
+        role: 'separator',
+      },
+      {
+        label: state => {
+          const nodeName = findClosestParentElementNodeName(state)
+
+          return `Delete ${nodeName}`
+        },
+        accelerator: '⌫',
+        enable: state => Boolean(state.selection),
+        run: deleteClosestParentElement,
+      },
     ],
   },
   {
-    label: 'Insert',
+    label: () => 'Insert',
     submenu: [
       {
-        label: 'Paragraph',
+        label: () => 'Paragraph',
         // active: blockActive(schema.nodes.paragraph),
         enable: canInsert(schema.nodes.paragraph),
         run: insertBlock(schema.nodes.paragraph),
@@ -75,7 +92,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Numbered List',
+        label: () => 'Numbered List',
         accelerator: '⌃⌘O',
         icon: icons.ordered_list,
         // active: blockActive(schema.nodes.ordered_list),
@@ -83,7 +100,7 @@ export const menus: MenuItem[] = [
         run: wrapInList(schema.nodes.ordered_list),
       },
       {
-        label: 'Bullet List',
+        label: () => 'Bullet List',
         accelerator: '⌃⌘U',
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.bullet_list),
@@ -94,7 +111,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Figure Panel',
+        label: () => 'Figure Panel',
         accelerator: '⌃⌘P',
         icon: icons.figure_element,
         // active: blockActive(schema.nodes.figure_element),
@@ -102,7 +119,7 @@ export const menus: MenuItem[] = [
         run: insertBlock(schema.nodes.figure_element),
       },
       {
-        label: 'Table',
+        label: () => 'Table',
         accelerator: '⌃⌘T',
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.table_element),
@@ -110,7 +127,7 @@ export const menus: MenuItem[] = [
         run: insertBlock(schema.nodes.table_element),
       },
       {
-        label: 'Listing',
+        label: () => 'Listing',
         accelerator: '⌃⌘L',
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.listing_element),
@@ -121,7 +138,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Equation',
+        label: () => 'Equation',
         accelerator: '⌃⌘E',
         icon: icons.equation_element,
         // active: blockActive(schema.nodes.equation_element),
@@ -129,7 +146,7 @@ export const menus: MenuItem[] = [
         run: insertBlock(schema.nodes.equation_element),
       },
       {
-        label: 'Inline Equation',
+        label: () => 'Inline Equation',
         accelerator: '⌃⌥⌘E',
         icon: icons.inline_equation,
         // active: blockActive(schema.nodes.inline_equation),
@@ -140,14 +157,14 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Citation',
+        label: () => 'Citation',
         accelerator: '⌃⌘C',
         icon: icons.citation,
         enable: canInsert(schema.nodes.citation),
         run: insertInlineCitation,
       },
       {
-        label: 'Cross-reference',
+        label: () => 'Cross-reference',
         accelerator: '⌃⌘R',
         icon: icons.citation,
         enable: canInsert(schema.nodes.cross_reference),
@@ -164,17 +181,17 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Bibliography',
+        label: () => 'Bibliography',
         enable: insertBibliographySection,
         run: insertBibliographySection,
       },
     ],
   },
   {
-    label: 'Format',
+    label: () => 'Format',
     submenu: [
       {
-        label: 'Bold',
+        label: () => 'Bold',
         accelerator: '⌘B',
         icon: icons.bold,
         active: markActive(schema.marks.bold),
@@ -182,7 +199,7 @@ export const menus: MenuItem[] = [
         run: toggleMark(schema.marks.bold),
       },
       {
-        label: 'Italic',
+        label: () => 'Italic',
         accelerator: '⌘I',
         icon: icons.italic,
         active: markActive(schema.marks.italic),
@@ -190,7 +207,7 @@ export const menus: MenuItem[] = [
         run: toggleMark(schema.marks.italic),
       },
       {
-        label: 'Underline',
+        label: () => 'Underline',
         accelerator: '⌘U',
         icon: icons.underline,
         active: markActive(schema.marks.underline),
@@ -201,7 +218,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Superscript',
+        label: () => 'Superscript',
         accelerator: '⌥⌘=',
         icon: icons.superscript,
         active: markActive(schema.marks.superscript),
@@ -209,7 +226,7 @@ export const menus: MenuItem[] = [
         run: toggleMark(schema.marks.superscript),
       },
       {
-        label: 'Subscript',
+        label: () => 'Subscript',
         accelerator: '⌥⌘-',
         icon: icons.subscript,
         active: markActive(schema.marks.subscript),
@@ -220,21 +237,21 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
-        label: 'Table',
+        label: () => 'Table',
         enable: blockActive(schema.nodes.table),
         submenu: [
           {
-            label: 'Add Row Above',
+            label: () => 'Add Row Above',
             enable: ifInTableBody(addRowBefore),
             run: addRowBefore,
           },
           {
-            label: 'Add Row Below',
+            label: () => 'Add Row Below',
             enable: ifInTableBody(addRowAfter),
             run: addRowAfter,
           },
           {
-            label: 'Delete Row',
+            label: () => 'Delete Row',
             enable: ifInTableBody(deleteRow),
             run: deleteRow,
           },
@@ -242,17 +259,17 @@ export const menus: MenuItem[] = [
             role: 'separator',
           },
           {
-            label: 'Add Column Before',
+            label: () => 'Add Column Before',
             enable: addColumnBefore,
             run: addColumnBefore,
           },
           {
-            label: 'Add Column After',
+            label: () => 'Add Column After',
             enable: addColumnAfter,
             run: addColumnAfter,
           },
           {
-            label: 'Delete Column',
+            label: () => 'Delete Column',
             enable: deleteColumn,
             run: deleteColumn,
           },

@@ -16,8 +16,6 @@
 
 import {
   generateNodeID,
-  isElementNode,
-  isListNode,
   isSectionNode,
   ManuscriptEditorView,
   ManuscriptNode,
@@ -26,11 +24,12 @@ import {
   SectionNode,
   SectionTitleNode,
 } from '@manuscripts/manuscript-transform'
-import { Fragment, ResolvedPos } from 'prosemirror-model'
+import { Fragment } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
 import styled from 'styled-components'
+import { findClosestParentElement } from '../../lib/hierarchy'
 import { nodeTypeIcon } from '../../node-type-icons'
 
 const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
@@ -68,41 +67,8 @@ interface OptionProps {
 
 interface NodeWithPosition {
   node: ManuscriptNode
-  pos: number
-}
-
-const findListParent = ($from: ResolvedPos): NodeWithPosition | undefined => {
-  for (let depth = $from.depth; depth > 0; depth--) {
-    const node = $from.node(depth)
-
-    if (isListNode(node)) {
-      return {
-        node,
-        pos: $from.before(depth),
-      }
-    }
-  }
-}
-
-const findClosestParentElement = (
-  $from: ResolvedPos
-): NodeWithPosition | undefined => {
-  const listParent = findListParent($from)
-
-  if (listParent) {
-    return listParent
-  }
-
-  for (let depth = $from.depth; depth > 0; depth--) {
-    const node = $from.node(depth)
-
-    if (isSectionNode(node) || isElementNode(node)) {
-      return {
-        node,
-        pos: $from.before(depth),
-      }
-    }
-  }
+  before: number
+  after: number
 }
 
 const buildOption = (props: OptionProps): Option => ({
@@ -416,7 +382,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
     nodeType: ManuscriptNodeType,
     list: NodeWithPosition
   ) => () => {
-    tr.setNodeMarkup(list.pos, nodeType, list.node.attrs)
+    tr.setNodeMarkup(list.before + 1, nodeType, list.node.attrs)
 
     view.focus()
 

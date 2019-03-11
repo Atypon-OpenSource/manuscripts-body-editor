@@ -16,7 +16,7 @@
 
 export * from './lib/utils'
 export * from './commands'
-export { ApplicationMenu } from './components/menu/ApplicationMenu'
+export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
 export {
   DebouncedManuscriptOutlineContainer,
 } from './components/outline/ManuscriptOutline'
