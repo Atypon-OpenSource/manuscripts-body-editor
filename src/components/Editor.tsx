@@ -121,6 +121,8 @@ export class Editor extends React.PureComponent<EditorProps> {
             this.props.handleStateChange(this.view, false)
           }
 
+          this.view.focus()
+
           return false
         },
       },
