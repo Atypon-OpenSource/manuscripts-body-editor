@@ -51,16 +51,20 @@ export const menus: MenuItem[] = [
       {
         role: 'undo',
         label: () => 'Undo',
-        accelerator: '⌘Z',
-        // icon: icons.undo,
+        accelerator: {
+          mac: 'CommandOrControl+Z',
+          pc: 'CommandOrControl+Z',
+        },
         enable: undo,
         run: undo,
       },
       {
         role: 'redo',
         label: () => 'Redo',
-        // icon: icons.redo,
-        accelerator: '⇧⌘Z',
+        accelerator: {
+          mac: 'Shift+CommandOrControl+Z',
+          pc: 'Control+Y',
+        },
         enable: redo,
         run: redo,
       },
@@ -68,12 +72,12 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        role: 'delete',
         label: state => {
           const nodeName = findClosestParentElementNodeName(state)
 
           return `Delete ${nodeName}`
         },
-        accelerator: '⌫',
         enable: state => Boolean(state.selection),
         run: deleteClosestParentElement,
       },
@@ -93,7 +97,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Numbered List',
-        accelerator: '⌃⌘O',
+        accelerator: {
+          mac: 'Option+CommandOrControl+O',
+          pc: 'CommandOrControl+Option+O',
+        },
         icon: icons.ordered_list,
         // active: blockActive(schema.nodes.ordered_list),
         enable: wrapInList(schema.nodes.ordered_list),
@@ -101,7 +108,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Bullet List',
-        accelerator: '⌃⌘U',
+        accelerator: {
+          mac: 'Option+CommandOrControl+K',
+          pc: 'CommandOrControl+Option+K',
+        },
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.bullet_list),
         enable: wrapInList(schema.nodes.bullet_list),
@@ -112,7 +122,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Figure Panel',
-        accelerator: '⌃⌘P',
+        accelerator: {
+          mac: 'Option+CommandOrControl+P',
+          pc: 'CommandOrControl+Option+P',
+        },
         icon: icons.figure_element,
         // active: blockActive(schema.nodes.figure_element),
         enable: canInsert(schema.nodes.figure_element),
@@ -120,7 +133,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Table',
-        accelerator: '⌃⌘T',
+        accelerator: {
+          mac: 'Option+CommandOrControl+T',
+          pc: 'CommandOrControl+Option+T',
+        },
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.table_element),
         enable: canInsert(schema.nodes.table_element),
@@ -128,7 +144,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Listing',
-        accelerator: '⌃⌘L',
+        accelerator: {
+          mac: 'Option+CommandOrControl+L',
+          pc: 'CommandOrControl+Option+L',
+        },
         icon: icons.bullet_list,
         // active: blockActive(schema.nodes.listing_element),
         enable: canInsert(schema.nodes.listing_element),
@@ -139,7 +158,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Equation',
-        accelerator: '⌃⌘E',
+        accelerator: {
+          mac: 'Option+CommandOrControl+E',
+          pc: 'CommandOrControl+Option+E',
+        },
         icon: icons.equation_element,
         // active: blockActive(schema.nodes.equation_element),
         enable: canInsert(schema.nodes.equation_element),
@@ -147,7 +169,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Inline Equation',
-        accelerator: '⌃⌥⌘E',
+        accelerator: {
+          mac: 'Shift+Option+CommandOrControl+E',
+          pc: 'Shift+CommandOrControl+Option+E',
+        },
         icon: icons.inline_equation,
         // active: blockActive(schema.nodes.inline_equation),
         enable: canInsert(schema.nodes.inline_equation),
@@ -158,21 +183,30 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Citation',
-        accelerator: '⌃⌘C',
+        accelerator: {
+          mac: 'Option+CommandOrControl+C',
+          pc: 'CommandOrControl+Option+C',
+        },
         icon: icons.citation,
         enable: canInsert(schema.nodes.citation),
         run: insertInlineCitation,
       },
       {
         label: () => 'Cross-reference',
-        accelerator: '⌃⌘R',
+        accelerator: {
+          mac: 'Option+CommandOrControl+R',
+          pc: 'CommandOrControl+Option+R',
+        },
         icon: icons.citation,
         enable: canInsert(schema.nodes.cross_reference),
         run: insertCrossReference,
       },
       // {
       //   label: 'Footnote',
-      //   // accelerator: '⌃⌥⌘F',
+      //   accelerator: {
+      //     mac: 'Option+CommandOrControl+F',
+      //     pc: 'CommandOrControl+Option+F',
+      //   },
       //   // icon: icons.footnote,
       //   enable: canInsert(schema.nodes.inline_footnote),
       //   run: insertInlineFootnote,
@@ -192,7 +226,10 @@ export const menus: MenuItem[] = [
     submenu: [
       {
         label: () => 'Bold',
-        accelerator: '⌘B',
+        accelerator: {
+          mac: 'CommandOrControl+B',
+          pc: 'CommandOrControl+B',
+        },
         icon: icons.bold,
         active: markActive(schema.marks.bold),
         enable: toggleMark(schema.marks.bold),
@@ -200,7 +237,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Italic',
-        accelerator: '⌘I',
+        accelerator: {
+          mac: 'CommandOrControl+I',
+          pc: 'CommandOrControl+I',
+        },
         icon: icons.italic,
         active: markActive(schema.marks.italic),
         enable: toggleMark(schema.marks.italic),
@@ -208,7 +248,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Underline',
-        accelerator: '⌘U',
+        accelerator: {
+          mac: 'CommandOrControl+U',
+          pc: 'CommandOrControl+U',
+        },
         icon: icons.underline,
         active: markActive(schema.marks.underline),
         enable: toggleMark(schema.marks.underline),
@@ -219,7 +262,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Superscript',
-        accelerator: '⌥⌘=',
+        accelerator: {
+          mac: 'Option+CommandOrControl+=',
+          pc: 'CommandOrControl+Option+=',
+        },
         icon: icons.superscript,
         active: markActive(schema.marks.superscript),
         enable: toggleMark(schema.marks.superscript),
@@ -227,7 +273,10 @@ export const menus: MenuItem[] = [
       },
       {
         label: () => 'Subscript',
-        accelerator: '⌥⌘-',
+        accelerator: {
+          mac: 'Option+CommandOrControl+-',
+          pc: 'CommandOrControl+Option+-',
+        },
         icon: icons.subscript,
         active: markActive(schema.marks.subscript),
         enable: toggleMark(schema.marks.subscript),

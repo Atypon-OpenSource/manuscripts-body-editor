@@ -82,11 +82,16 @@ export interface Separator {
   role: 'separator'
 }
 
+export interface Accelerator {
+  mac: string
+  pc: string
+}
+
 export interface MenuItem {
   label: (state: ManuscriptEditorState) => React.ReactNode
   role?: string
   type?: string
-  accelerator?: string
+  accelerator?: Accelerator
   icon?: React.ReactNode
   active?: (state: ManuscriptEditorState) => boolean
   enable?: (state: ManuscriptEditorState) => boolean

@@ -22,6 +22,7 @@ import React from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
 import { MenuItem, Separator } from './ApplicationMenu'
+import { Shortcut, ShortcutContainer } from './Shortcut'
 
 export const Text = styled.div`
   flex: 1;
@@ -74,14 +75,6 @@ const Arrow = styled.div`
   color: #444;
 `
 
-const ShortcutContainer = styled.div`
-  display: inline-flex;
-  color: #777;
-  margin-left: 16px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-`
-
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -102,14 +95,6 @@ const Container = styled.div`
     opacity: 0.4;
   }
 `
-
-interface ShortcutProps {
-  accelerator: string
-}
-
-const Shortcut: React.FunctionComponent<ShortcutProps> = ({ accelerator }) => (
-  <ShortcutContainer>{accelerator}</ShortcutContainer>
-)
 
 interface MenuItemProps {
   item: MenuItem | Separator
