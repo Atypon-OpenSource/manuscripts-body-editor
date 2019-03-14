@@ -106,7 +106,20 @@ class Equation implements NodeView {
       this.view.dispatch(tr)
     })
 
-    this.props.popper.show(this.dom, input.getWrapperElement(), 'bottom')
+    const wrapper = document.createElement('div')
+    wrapper.appendChild(input.getWrapperElement())
+    wrapper.className = 'equation-editor'
+
+    const infoLink = document.createElement('a')
+    infoLink.target = '_blank'
+    infoLink.textContent = '?'
+    infoLink.title = ''
+    infoLink.href = 'https://en.wikibooks.org/wiki/LaTeX/Mathematics#Symbols'
+    infoLink.className = 'equation-editor-info'
+
+    wrapper.appendChild(infoLink)
+
+    this.props.popper.show(this.dom, wrapper, 'bottom')
 
     window.requestAnimationFrame(() => {
       input.refresh()
