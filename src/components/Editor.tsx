@@ -91,6 +91,8 @@ export class Editor extends React.PureComponent<EditorProps> {
 
   private unregisterHistoryListener?: UnregisterCallback
 
+  private isMouseDown: boolean = false
+
   constructor(props: EditorProps) {
     super(props)
 
@@ -121,8 +123,18 @@ export class Editor extends React.PureComponent<EditorProps> {
             this.props.handleStateChange(this.view, false)
           }
 
-          this.view.focus()
+          if (!this.isMouseDown) {
+            this.view.focus()
+          }
 
+          return false
+        },
+        mousedown: () => {
+          this.isMouseDown = true
+          return false
+        },
+        mouseup: () => {
+          this.isMouseDown = false
           return false
         },
       },
