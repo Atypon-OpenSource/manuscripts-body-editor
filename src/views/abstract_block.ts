@@ -150,15 +150,40 @@ abstract class AbstractBlock implements NodeView {
     const warningButton = document.createElement('button')
     warningButton.classList.add('action-button')
     warningButton.classList.add('has-sync-error')
-    const humanReadableType = nodeNames.get(this.node.type) || 'element'
-    warningButton.title = `This ${humanReadableType.toLowerCase()} failed to synchronize.\n
-Please contact support@manuscriptsapp.com if it fails to save after retrying.`
-
     warningButton.innerHTML = this.icons.attention
-    warningButton.addEventListener('click', () => {
-      this.props.retrySync(this.syncErrors.map(error => error._id)).catch(e => {
-        throw e
-      })
+
+    warningButton.addEventListener('click', async () => {
+      const errors = this.syncErrors.map(error => error._id)
+
+      await this.props.retrySync(errors)
+    })
+
+    warningButton.addEventListener('mouseenter', () => {
+      const warning = document.createElement('div')
+      warning.className = 'sync-warning'
+
+      warning.appendChild(
+        (() => {
+          const node = document.createElement('p')
+          const humanReadableType = nodeNames.get(this.node.type) || 'element'
+          node.textContent = `This ${humanReadableType.toLowerCase()} failed to be saved.`
+          return node
+        })()
+      )
+
+      warning.appendChild(
+        (() => {
+          const node = document.createElement('p')
+          node.textContent = `Please click to retry, and contact support@manuscriptsapp.com if the failure continues.`
+          return node
+        })()
+      )
+
+      this.props.popper.show(warningButton, warning, 'left')
+    })
+
+    warningButton.addEventListener('mouseleave', () => {
+      this.props.popper.destroy()
     })
 
     return warningButton
