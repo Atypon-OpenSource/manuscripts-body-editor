@@ -382,7 +382,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
     nodeType: ManuscriptNodeType,
     list: NodeWithPosition
   ) => () => {
-    tr.setNodeMarkup(list.before + 1, nodeType, list.node.attrs)
+    tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
 
     view.focus()
 
