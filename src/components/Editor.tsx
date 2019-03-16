@@ -51,7 +51,7 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   autoFocus?: boolean
   plugins: Array<Plugin<ManuscriptSchema>>
-  getCitationProcessor: () => CiteProc.Engine
+  getCitationProcessor: () => CiteProc.Engine | undefined
   doc: ManuscriptNode
   editable?: boolean
   getModel: <T extends Model>(id: string) => T | undefined

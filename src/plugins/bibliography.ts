@@ -73,7 +73,7 @@ const createBibliographySection = (state: ManuscriptEditorState) =>
 export const bibliographyKey = new PluginKey('bibliography')
 
 interface Props {
-  getCitationProcessor: () => CiteProc.Engine
+  getCitationProcessor: () => CiteProc.Engine | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
@@ -145,6 +145,12 @@ export default (props: Props) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
+      const citationProcessor = props.getCitationProcessor()
+
+      if (!citationProcessor) {
+        return null
+      }
+
       // TODO: use setMeta to notify of updates when the doc hasn't changed?
       // if (!transactions.some(transaction => transaction.docChanged)) {
       //   return null
@@ -180,8 +186,6 @@ export default (props: Props) => {
       }
 
       // TODO: move this into a web worker and/or make it asynchronous?
-
-      const citationProcessor = props.getCitationProcessor()
 
       const generatedCitations = citationProcessor
         .rebuildProcessorState(citations)
