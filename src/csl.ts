@@ -179,23 +179,21 @@ export class CitationManager {
   public createProcessor = async (
     bundleID: string,
     primaryLanguageCode: string,
-    getLibraryItem: (id: string) => BibliographyItem | undefined
+    getLibraryItem: (id: string) => BibliographyItem | undefined,
+    bundle?: Bundle,
+    citationStyleData?: string
   ) => {
-    const bundle = await this.fetchBundle(bundleID)
+    if (!bundle) {
+      bundle = await this.fetchBundle(bundleID)
+    }
 
     if (!bundle) {
       throw new Error('Bundle not found')
     }
 
-    if (!bundle.csl || !bundle.csl.cslIdentifier) {
-      throw new Error('No CSL identifier')
+    if (!citationStyleData) {
+      citationStyleData = await this.fetchCitationStyleString(bundle)
     }
-
-    const cslIdentifier = basename(bundle.csl.cslIdentifier, '.csl')
-    const citationStyleDoc = await this.fetchCitationStyle(cslIdentifier)
-
-    const serializer = new XMLSerializer()
-    const citationStyleData = serializer.serializeToString(citationStyleDoc)
 
     const citationLocales = await this.fetchCitationLocales(
       citationStyleData,
@@ -239,61 +237,16 @@ export class CitationManager {
   public fetchLocales = (): Promise<Locales> =>
     this.fetchJSON('csl/locales/locales.json') as Promise<Locales>
 
-  private buildURL = (path: string) => this.baseURL + '/' + path
+  public async fetchCitationStyleString(bundle: Bundle): Promise<string> {
+    if (!bundle.csl || !bundle.csl.cslIdentifier) {
+      throw new Error('No CSL identifier')
+    }
 
-  private async fetchDocument(path: string) {
-    const response = await axios.get<Document>(this.buildURL(path), {
-      responseType: 'document',
-    })
+    const cslIdentifier = basename(bundle.csl.cslIdentifier, '.csl')
+    const citationStyleDoc = await this.fetchCitationStyle(cslIdentifier)
 
-    return response.data
-  }
-
-  private async fetchText(path: string) {
-    const response = await axios.get<string>(this.buildURL(path), {
-      responseType: 'text',
-    })
-
-    return response.data
-  }
-
-  private async fetchJSON(path: string) {
-    const response = await axios.get<object>(this.buildURL(path))
-
-    return response.data
-  }
-
-  private fetchLocale(id: string) {
-    return this.fetchText(`csl/locales/locales-${id}.xml`)
-  }
-
-  private fetchStyle(id: string) {
-    return this.fetchDocument(`csl/styles/${id}.csl`)
-  }
-
-  private async fetchCitationLocales(
-    citationStyleData: string,
-    primaryLanguageCode: string
-  ) {
-    const locales: Map<string, string> = new Map()
-
-    const localeNames = CiteProc.getLocaleNames(
-      citationStyleData,
-      primaryLanguageCode
-    )
-
-    await Promise.all(
-      localeNames.map(async localeName => {
-        const data = await this.fetchLocale(localeName)
-        locales.set(localeName, data)
-      })
-    )
-
-    return locales
-  }
-
-  private namespaceResolver(ns: string) {
-    return ns === 'csl' ? 'http://purl.org/net/xbiblio/csl' : null
+    const serializer = new XMLSerializer()
+    return serializer.serializeToString(citationStyleDoc)
   }
 
   private async fetchCitationStyle(id: string) {
@@ -321,6 +274,65 @@ export class CitationManager {
     // TODO: merge locales
 
     return parentDoc
+  }
+
+  private buildURL = (path: string) => this.baseURL + '/' + path
+
+  private async fetchDocument(path: string) {
+    const response = await axios.get<Document>(this.buildURL(path), {
+      responseType: 'document',
+    })
+
+    return response.data
+  }
+
+  private async fetchText(path: string) {
+    const response = await axios.get<string>(this.buildURL(path), {
+      responseType: 'text',
+    })
+
+    return response.data
+  }
+
+  private async fetchJSON(path: string) {
+    const response = await axios.get<object>(this.buildURL(path))
+
+    return response.data
+  }
+
+  private fetchLocale(id: string) {
+    // TODO: verify that the response is actually a CSL locale
+    return this.fetchText(`csl/locales/locales-${id}.xml`)
+  }
+
+  private fetchStyle(id: string) {
+    // TODO: verify that the response is actually a CSL style
+    return this.fetchDocument(`csl/styles/${id}.csl`)
+  }
+
+  private async fetchCitationLocales(
+    citationStyleData: string,
+    primaryLanguageCode: string
+  ) {
+    const locales: Map<string, string> = new Map()
+
+    const localeNames = CiteProc.getLocaleNames(
+      citationStyleData,
+      primaryLanguageCode
+    )
+
+    await Promise.all(
+      localeNames.map(async localeName => {
+        const data = await this.fetchLocale(localeName)
+        locales.set(localeName, data)
+      })
+    )
+
+    return locales
+  }
+
+  private namespaceResolver(ns: string) {
+    return ns === 'csl' ? 'http://purl.org/net/xbiblio/csl' : null
   }
 
   private selectParentURL(doc: Document) {
