@@ -27,6 +27,7 @@ import {
   OutlineItemLink,
   OutlineItemLinkText,
   OutlineItemPlaceholder,
+  StyledTriangleCollapsed,
 } from './Outline'
 
 interface Props {
@@ -51,7 +52,9 @@ export const OutlineManuscript: React.FunctionComponent<Props> = ({
       <OutlineItemLink
         to={`/projects/${project._id}/manuscripts/${manuscript._id}`}
       >
-        <OutlineItemArrow>▶</OutlineItemArrow>
+        <OutlineItemArrow>
+          <StyledTriangleCollapsed />
+        </OutlineItemArrow>
 
         <OutlineItemIcon>
           <OutlineIconManuscript />

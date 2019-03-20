@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   isElementNode,
   ManuscriptEditorView,
@@ -51,6 +50,8 @@ import {
   OutlineItemLinkText,
   OutlineItemNoArrow,
   OutlineItemPlaceholder,
+  StyledTriangleCollapsed,
+  StyledTriangleExpanded,
 } from './Outline'
 
 export type DropSide = 'before' | 'after' | null
@@ -202,7 +203,11 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
               >
                 {items.length ? (
                   <OutlineItemArrow onClick={this.toggle}>
-                    {open ? '▼' : '▶'}
+                    {open ? (
+                      <StyledTriangleExpanded />
+                    ) : (
+                      <StyledTriangleCollapsed />
+                    )}
                   </OutlineItemArrow>
                 ) : (
                   <OutlineItemNoArrow />

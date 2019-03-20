@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -70,9 +71,12 @@ const Active = styled.div`
   align-items: center;
 `
 
-const Arrow = styled.div`
+const Arrow = styled(TriangleCollapsed)`
   margin-left: 8px;
-  color: #444;
+
+  & use[fill='#949494'] {
+    fill: #444;
+  }
 `
 
 const Container = styled.div`
@@ -87,7 +91,11 @@ const Container = styled.div`
     color: white;
   }
 
-  &:hover ${Arrow}, &:hover ${ShortcutContainer} {
+  &:hover ${Arrow} use[fill='#949494'] {
+    fill: white;
+  }
+
+  &:hover ${ShortcutContainer} {
     color: white;
   }
 
@@ -174,7 +182,7 @@ export class MenuItemContainer extends React.Component<
                 <Active>{activeContent(item, view.state)}</Active>
                 {item.icon && <Icon>{item.icon}</Icon>}
                 <Text>{item.label(view.state)}</Text>
-                {item.submenu && <Arrow>▶</Arrow>}
+                {item.submenu && <Arrow />}
                 {item.accelerator && (
                   <Shortcut accelerator={item.accelerator} />
                 )}
