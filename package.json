@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@manuscripts/assets": "^0.3.7",
-    "@manuscripts/manuscript-transform": "^0.6.3",
+    "@manuscripts/manuscript-transform": "^0.6.4",
     "@manuscripts/manuscripts-json-schema": "^1.7.3",
     "@manuscripts/title-editor": "^0.3.0",
     "axios": "^0.18.0",
