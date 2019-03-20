@@ -199,6 +199,7 @@ class FigureBlock implements NodeView {
         .setNodeMarkup(this.getPos(), undefined, {
           ...this.node.attrs,
           src,
+          contentType: file.type,
         })
         .setSelection(this.view.state.selection)
     )
