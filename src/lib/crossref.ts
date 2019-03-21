@@ -23,6 +23,9 @@ interface SearchResults {
   total: number
 }
 
+// TODO: restore request URLs once this Crossref API issue is fixed:
+// https://github.com/CrossRef/rest-api-doc/issues/413
+
 const search = async (
   query: string,
   rows: number,
@@ -33,13 +36,22 @@ const search = async (
     return searchByDOI(query.trim(), mailto)
   }
 
+  // const response = await window.fetch(
+  //   'https://api.crossref.org/works?' +
+  //   stringify({
+  //     filter: 'type:journal-article',
+  //     query,
+  //     rows,
+  //     mailto,
+  //   })
+  // )
+
   const response = await window.fetch(
-    'https://api.crossref.org/works?' +
+    `https://api.crossref.org/works?mailto=${mailto}&` +
       stringify({
         filter: 'type:journal-article',
         query,
         rows,
-        mailto,
       })
   )
 
@@ -61,11 +73,15 @@ const searchByDOI = async (
   doi: string,
   mailto: string
 ): Promise<SearchResults> => {
+  // const response = await window.fetch(
+  //   `https://api.crossref.org/works/${encodeURIComponent(doi)}?` +
+  //     stringify({
+  //       mailto,
+  //     })
+  // )
+
   const response = await window.fetch(
-    `https://api.crossref.org/works/${encodeURIComponent(doi)}?` +
-      stringify({
-        mailto,
-      })
+    `https://api.crossref.org/works/${encodeURIComponent(doi)}?mailto=${mailto}`
   )
 
   if (!response.ok) {
@@ -86,13 +102,18 @@ const searchByDOI = async (
 }
 
 const fetch = async (doi: string, mailto: string) => {
+  // NOTE: avoiding https://api.crossref.org/works/{doi}/transform/application/vnd.citationstyles.csl+json as it's undocumented and could disappear.
+
+  // NOTE: Using data.crossref.org rather than doi.org to avoid the redirect.
+  // This is safe as it's only resolving Crossref DOIs.
+
   const response = await window.fetch(
-    `https://api.crossref.org/works/${encodeURIComponent(
-      doi
-    )}/transform/application/vnd.citationstyles.csl+json?` +
-      stringify({
-        mailto,
-      })
+    `https://data.crossref.org/${encodeURIComponent(doi)}`,
+    {
+      headers: {
+        accept: 'application/vnd.citationstyles.csl+json',
+      },
+    }
   )
 
   if (!response.ok) {
