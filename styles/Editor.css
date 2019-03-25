@@ -321,7 +321,6 @@
 
 .ProseMirror .block-gutter {
   position: relative;
-  cursor: ns-resize;
   opacity: 0;
   display: flex;
   flex-direction: column;
@@ -343,23 +342,30 @@
   justify-content: center;
   /*z-index: 2;*/
   border-radius: 50%;
-  cursor: context-menu;
+  cursor: pointer;
   color: #65cfff;
   transition: 0.2s all;
-  fill: white;
+  background: white;
+  border: 1px solid transparent;
+  user-select: none;
 }
 
 .ProseMirror .edit-block {
   margin-top: 5px;
 }
 
+.ProseMirror .add-block img,
+.ProseMirror .edit-block img
+{
+  cursor: inherit;
+}
+
 .ProseMirror .add-block:hover {
-  background-color: #65cfff;
-  color: #fff;
+  border-color: #65cfff;
 }
 
 .ProseMirror .edit-block:hover {
-  fill: #65cfff;
+  background: #65cfff;
 }
 
 .ProseMirror .block-gutter-spacer {
