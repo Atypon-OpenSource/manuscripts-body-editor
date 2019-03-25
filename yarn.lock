@@ -789,9 +789,9 @@
   integrity sha512-IAj8+PCscmqU1XEXtbBbEYYnL9sbU57t+2JvuI5EJY+v3JURWczZi5Gx+fNXaHLV4znkmcNEtO57V19pC1ll3Q==
 
 "@manuscripts/manuscript-transform@^0.6.4":
-  version "0.6.4"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.6.4.tgz#998298281d2b4db4e21f789b360682e905da84d2"
-  integrity sha512-+S6F1Y4v5e1hrFTneETJPH53ikPnl+QWd7mhc5qgno7VANZCBrkIT9GkEkbbmvoDF1ilonCrExpqq0+leWP4Wg==
+  version "0.6.5"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.6.5.tgz#2df23e7cf329f9c1cfccc73309dae49461d5ddd6"
+  integrity sha512-2MaoSYjJsIa81JGhNBH+qGo+pA9tqVMj4CvKP5suiMkSOzlfl41OfG8xBx3hs4EKzTRkz7PE75TpLzRiqwEGow==
   dependencies:
     prosemirror-model "^1.7.0"
     uuid "^3.3.2"
@@ -9061,9 +9061,9 @@ w3c-keyname@^1.1.8:
   integrity sha512-2HAdug8GTiu3b4NYhssdtY8PXRue3ICnh1IlxvZYl+hiINRq0GfNWei3XOPDg8L0PsxbmYjWVLuLj6BMRR/9vA==
 
 w3c-xmlserializer@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-1.0.1.tgz#054cdcd359dc5d1f3ec9be4e272c756af4b21d39"
-  integrity sha512-XZGI1OH/OLQr/NaJhhPmzhngwcAnZDLytsvXnRmlYeRkmbb0I7sqFFA22erq4WQR0sUu17ZSQOAV9mFwCqKRNg==
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-1.1.2.tgz#30485ca7d70a6fd052420a3d12fd90e6339ce794"
+  integrity sha512-p10l/ayESzrBMYWRID6xbuCKh2Fp77+sA0doRuGn4tTIMrrZVeqfpKjXHY+oDh3K4nLdPgNwMTVP6Vp4pvqbNg==
   dependencies:
     domexception "^1.0.1"
     webidl-conversions "^4.0.2"
