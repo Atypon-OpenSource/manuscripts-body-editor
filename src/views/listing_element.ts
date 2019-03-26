@@ -34,10 +34,6 @@ class ListingElement extends Block {
     return true
   }
 
-  public deselectNode() {
-    this.props.popper.destroy()
-  }
-
   protected updateContents() {
     const { suppressCaption } = this.node.attrs
 

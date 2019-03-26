@@ -120,7 +120,7 @@ export default (props: Props) => {
         manuscript: props.getManuscript(), // for comparison
       }))
 
-  return new Plugin<ManuscriptSchema>({
+  return new Plugin<PluginState, ManuscriptSchema>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {

@@ -21,7 +21,7 @@ import {
 import { Plugin } from 'prosemirror-state'
 
 export default () => {
-  return new Plugin<ManuscriptSchema>({
+  return new Plugin<{}, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
       let updated = 0
 

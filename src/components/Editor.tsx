@@ -55,7 +55,7 @@ export interface EditorProps {
   doc: ManuscriptNode
   editable?: boolean
   getModel: <T extends Model>(id: string) => T | undefined
-  saveModel: <T extends Model>(model: Build<T>) => Promise<T>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
   putAttachment: (
     id: string,
@@ -82,6 +82,10 @@ export interface EditorProps {
   retrySync: (componentIDs: string[]) => Promise<void>
   handleStateChange?: (view: ManuscriptEditorView, docChanged: boolean) => void
   CitationEditor: React.ComponentType<any> // tslint:disable-line:no-any
+  jupyterConfig: {
+    url: string
+    token: string
+  }
 }
 
 export class Editor extends React.PureComponent<EditorProps> {

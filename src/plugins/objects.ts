@@ -33,7 +33,9 @@ export interface Target {
   caption: string
 }
 
-export const objectsKey = new PluginKey('objects')
+export const objectsKey = new PluginKey<Map<string, Target>, ManuscriptSchema>(
+  'objects'
+)
 
 // TODO: labels for "figure" (parts of a figure panel)
 
@@ -104,7 +106,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return new Plugin<ManuscriptSchema>({
+  return new Plugin<Map<string, Target>, ManuscriptSchema>({
     key: objectsKey,
 
     state: {
@@ -118,7 +120,7 @@ export default (props: Props) => {
     },
     props: {
       decorations: state => {
-        const targets = objectsKey.getState(state)
+        const targets: Map<string, Target> = objectsKey.getState(state)
 
         const decorations: Decoration[] = []
 
@@ -146,7 +148,7 @@ export default (props: Props) => {
       },
     },
     appendTransaction: (transactions, oldState, newState) => {
-      const targets = objectsKey.getState(newState)
+      const targets: Map<string, Target> = objectsKey.getState(newState)
 
       let updated = 0
 

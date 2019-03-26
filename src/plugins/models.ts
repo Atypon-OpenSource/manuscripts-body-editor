@@ -30,12 +30,12 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return new Plugin<ManuscriptSchema>({
+  return new Plugin<{}, ManuscriptSchema>({
     key: modelsKey,
 
     state: {
       init: () => {
-        return null
+        return {}
       },
       apply: (transaction, pluginState) => {
         const meta = transaction.getMeta(modelsKey)

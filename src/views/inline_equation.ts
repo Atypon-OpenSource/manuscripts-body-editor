@@ -77,10 +77,14 @@ class InlineEquation implements NodeView {
     const { createEditor } = await this.imports.codemirror
     const { typeset } = await this.imports.mathjax
 
-    const input = await createEditor(
-      this.node.attrs.TeXRepresentation || '',
-      'stex'
-    )
+    const placeholder = 'Enter LaTeX equation, e.g. "E=mc^2"'
+
+    const input = await createEditor({
+      value: this.node.attrs.TeXRepresentation || '',
+      mode: 'stex',
+      placeholder,
+      autofocus: true,
+    })
 
     input.on('changes', async () => {
       const TeXRepresentation = input.getValue()

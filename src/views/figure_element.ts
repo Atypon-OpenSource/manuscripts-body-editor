@@ -64,9 +64,12 @@ class FigureElement extends Block {
 
   // TODO: load/subscribe to the figure style object from the database and use it here?
   protected createElement() {
+    const container = document.createElement('figure-container')
+    container.className = 'block'
+    this.dom.appendChild(container)
+
     // figure group
     this.contentDOM = document.createElement(this.elementType)
-    this.contentDOM.className = 'block'
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.contentDOM.setAttribute(
@@ -85,7 +88,7 @@ class FigureElement extends Block {
     this.applyStyles(this.contentDOM, this.buildElementStyles(style))
     this.applyStyles(this.contentDOM, this.buildPanelStyles(style)) // TODO: move this inside
 
-    this.dom.appendChild(this.contentDOM)
+    container.appendChild(this.contentDOM)
   }
 
   protected updateContents() {
@@ -187,7 +190,7 @@ class FigureElement extends Block {
       if (layout.rows) {
         output['grid-template-rows'] = `repeat(${
           layout.rows
-        }, minmax(min-content, max-content)) [caption] auto`
+        }, minmax(min-content, max-content)) [caption] [listing] auto`
       }
     }
 

@@ -22,7 +22,7 @@ import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 export default () =>
-  new Plugin<ManuscriptSchema>({
+  new Plugin<{}, ManuscriptSchema>({
     props: {
       decorations: state => {
         const decorations: Decoration[] = []

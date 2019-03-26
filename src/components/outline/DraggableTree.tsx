@@ -424,7 +424,7 @@ const dropTargetSpec: DropTargetSpec<Props & ConnectedProps> = {
   },
 }
 
-const dragSourceCollector: DragSourceCollector<ConnectedDragSourceProps> = (
+const dragSourceCollector: DragSourceCollector<ConnectedDragSourceProps, {}> = (
   connect,
   monitor
 ) => ({
@@ -435,7 +435,7 @@ const dragSourceCollector: DragSourceCollector<ConnectedDragSourceProps> = (
   item: monitor.getItem(),
 })
 
-const dropTargetCollector: DropTargetCollector<ConnectedDropTargetProps> = (
+const dropTargetCollector: DropTargetCollector<ConnectedDropTargetProps, {}> = (
   connect,
   monitor
 ) => ({

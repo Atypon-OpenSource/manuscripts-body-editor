@@ -134,3 +134,78 @@ import 'codemirror/mode/yacas/yacas'
 import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter'
 import 'codemirror/mode/yaml/yaml'
 import 'codemirror/mode/z80/z80'
+
+// TODO: combine the labels, options and groups into a single object?
+
+export const codemirrorModeLabels = {
+  clojure: 'Clojure',
+  cobol: 'COBOL',
+  css: 'CSS',
+  go: 'Go',
+  javascript: 'JavaScript',
+  json: 'JSON',
+  jsonld: 'JSON-LD',
+  jsx: 'JSX',
+  julia: 'Julia',
+  python: 'Python',
+  r: 'R',
+  ruby: 'Ruby',
+  rust: 'Rust',
+  shell: 'Shell',
+  sparql: 'SPARQL',
+  sql: 'SQL',
+  swift: 'Swift',
+  turtle: 'Turtle',
+  twig: 'Twig',
+  typescript: 'TypeScript',
+  xml: 'XML',
+  yaml: 'YAML',
+}
+
+export type CodemirrorMode = keyof typeof codemirrorModeLabels
+
+interface ModeDescription {
+  name: string
+  [key: string]: any // tslint:disable-line:no-any
+}
+
+export const codemirrorModeOptions: {
+  [key in CodemirrorMode]?: ModeDescription
+} = {
+  typescript: {
+    name: 'javascript',
+    typescript: true,
+  },
+  json: {
+    name: 'javascript',
+    json: true,
+  },
+  jsonld: {
+    name: 'javascript',
+    jsonld: true,
+  },
+}
+
+interface Groups {
+  [key: string]: CodemirrorMode[]
+}
+
+export const codemirrorModeGroups: Groups = {
+  Language: [
+    'clojure',
+    'cobol',
+    'go',
+    'javascript',
+    'julia',
+    'python',
+    'r',
+    'ruby',
+    'rust',
+    'swift',
+    'typescript',
+  ],
+  Data: ['json', 'jsonld', 'turtle', 'xml', 'yaml'],
+  Markup: ['jsx', 'twig'],
+  Query: ['sql', 'sparql'],
+  Other: ['css', 'shell'],
+}

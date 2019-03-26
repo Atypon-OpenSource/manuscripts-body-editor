@@ -17,26 +17,24 @@
 import CodeMirror from 'codemirror'
 import 'codemirror/addon/display/placeholder'
 import 'codemirror/lib/codemirror.css'
-import './codemirror-modes'
 
-type CreateEditor = (value: string, mode: string) => Promise<CodeMirror.Editor>
+type CreateEditor = (
+  options: CodeMirror.EditorConfiguration
+) => Promise<CodeMirror.Editor>
 
 export interface CodeMirrorCreator {
   createEditor: CreateEditor
 }
 
-export const createEditor: CreateEditor = async (value, mode) => {
+export const createEditor: CreateEditor = async options => {
   return CodeMirror(
     () => {
       // no-op
     },
     {
-      autofocus: true,
+      ...options,
       lineNumbers: true,
       lineWrapping: true,
-      placeholder: 'Enter LaTeX equation, e.g. "a^2 = \\sqrt{b^2 + c^2}"',
-      mode,
-      value,
     }
   )
 }

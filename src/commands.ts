@@ -480,4 +480,5 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
       )
     ),
     state.schema.nodes.figcaption.create(),
+    state.schema.nodes.listing.create(),
   ])

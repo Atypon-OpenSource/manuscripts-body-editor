@@ -62,7 +62,7 @@ export default (props: Props) => {
     return styles.map(style => style.join(':')).join(';')
   }
 
-  return new Plugin<ManuscriptSchema>({
+  return new Plugin<{}, ManuscriptSchema>({
     props: {
       decorations: state => {
         const decorations: Decoration[] = []

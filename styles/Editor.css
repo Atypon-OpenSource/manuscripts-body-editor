@@ -112,11 +112,26 @@
   color: inherit;
 }
 
-.ProseMirror .figure-block {
+.ProseMirror .figure-container {
   margin: 40px 0;
   padding: 10px;
+}
+
+.ProseMirror .figure-block {
   display: grid;
   grid-gap: 20px 40px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding-top: 24px;
+}
+
+.ProseMirror .block:focus-within .figure-block,
+.ProseMirror .block:hover .figure-block {
+  border-color: #eee;
+}
+
+.ProseMirror .figure-block .expanded-listing .executable-attachments {
+  display: block;
 }
 
 .ProseMirror .figure-block figure {
@@ -125,6 +140,16 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+}
+
+.ProseMirror .figure-block > .listing {
+  /*grid-row: listing;*/
+  grid-column-start: 1;
+  grid-column-end: -1;
+  /*margin-top: 0;*/
+  padding: 0;
+  min-height: 0;
+  overflow: visible;
 }
 
 .ProseMirror .figure-block > figcaption {
@@ -183,6 +208,181 @@
   font-weight: bold;
   margin-right: 5px;
   white-space: nowrap;
+}
+
+.ProseMirror .executable-container {
+  width: 100%;
+  position: relative;
+  padding: 0 24px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ProseMirror .executable-body {
+  display: none;
+}
+
+.ProseMirror .expanded-listing .executable-body {
+  display: flex;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.ProseMirror .executable-main {
+  flex: 1;
+}
+
+.ProseMirror .executable-actions {
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+}
+
+.ProseMirror .executable-action {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  background: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  width: 28px;
+  padding: 0;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.ProseMirror .executable-action:hover {
+  border-color: #7fb5d5;
+}
+
+.ProseMirror .executable-executing .execute-listing {
+  border: none;
+}
+
+.ProseMirror .executable-executing .execute-listing:before {
+  position: absolute;
+  content: '';
+  height: 100%;
+  width: 100%;
+  border: 2px dashed #7fb5d5;
+  top: -2px;
+  left: -2px;
+  border-radius: inherit;
+  animation: executable-action-spin 10s linear infinite;
+}
+
+@keyframes executable-action-spin {
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+.ProseMirror .executable-outputs {
+  font-size: 90%;
+  font-family: Monaco, monospace;
+  margin-top: 16px;
+  white-space: normal;
+  background: black;
+  color: #41FF00;
+  border-radius: 4px;
+  overflow:auto;
+}
+
+.ProseMirror .executable-output {
+  margin: 0 16px;
+}
+
+.ProseMirror .executable-output:first-of-type {
+  margin-top: 8px;
+}
+
+.ProseMirror .executable-output:last-of-type {
+  margin-bottom: 8px;
+}
+
+.ProseMirror .executable-outputs .executable-output-error {
+  color: red;
+}
+
+.ProseMirror .executable-attachments {
+  font-size: 90%;
+  font-family: Barlow, sans-serif;
+  margin-top: 16px;
+  display: none;
+}
+
+.ProseMirror .executable-attachment {
+  border: 1px solid #eee;
+  padding: 4px 12px;
+  margin-bottom: 4px;
+}
+
+.ProseMirror .executable-attachment-type {
+  font-size: 80%;
+  color: #777;
+}
+
+.ProseMirror .toggle-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 2px;
+  background: transparent;
+  width: 100%;
+}
+
+.ProseMirror .block:focus-within .expanded-listing .toggle-container::after,
+.ProseMirror .block:hover .expanded-listing .toggle-container::after {
+  content: '';
+  position: absolute;
+  border-bottom: 1px solid #eee;
+  bottom: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.ProseMirror .figure-block .executable-has-contents .toggle-container,
+.ProseMirror .figure-block .expanded-listing .toggle-container,
+.ProseMirror .block:focus-within .toggle-container,
+.ProseMirror .block:hover .toggle-container {
+  display: flex;
+}
+
+.ProseMirror .toggle-listing {
+  border: none;
+  font-size: 12px;
+  color: inherit;
+  font-family: Barlow, sans-serif;
+  z-index: 1;
+  cursor: pointer;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.ProseMirror .toggle-icon {
+  margin-right: 4px;
+}
+
+.ProseMirror .CodeMirror {
+  min-width: 500px;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+.ProseMirror .CodeMirror-scroll {
+  max-height: 400px;
+  min-height: 4em;
+  width: 100%;
+}
+
+.ProseMirror .CodeMirror-placeholder {
+  color: #999;
 }
 
 .ProseMirror header {
@@ -270,6 +470,11 @@
   content: "Footer " counter(footer_counter);
 }
 
+/* TODO: UI for code -> table */
+.ProseMirror .block-table_element .listing {
+  display: none;
+}
+
 .ProseMirror code {
   border-radius: 3px;
   font-size: 0.9em;
@@ -349,8 +554,7 @@
   flex: 1;
 }
 
-.ProseMirror .equation,
-.ProseMirror .listing {
+.ProseMirror .equation{
   position: relative;
   cursor: context-menu;
   line-height: 1em;
