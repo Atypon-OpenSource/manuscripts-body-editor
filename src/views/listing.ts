@@ -316,9 +316,6 @@ class Listing implements NodeView {
     const { languageKey } = this.node.attrs
 
     const languageSelector = document.createElement('select')
-    languageSelector.addEventListener('mousedown', event => {
-      event.stopPropagation()
-    })
 
     const { kernels } = await import('../lib/jupyter')
 

@@ -112,6 +112,11 @@
   color: inherit;
 }
 
+.ProseMirror .citation.ProseMirror-selectednode,
+.ProseMirror .cross-reference.ProseMirror-selectednode {
+  background-color: #8dadfb;
+}
+
 .ProseMirror .figure-container {
   margin: 40px 0;
   padding: 10px;

@@ -72,7 +72,7 @@ class CitationView implements NodeView {
     return true
   }
 
-  public selectNode() {
+  public showPopper() {
     const {
       CitationEditor,
       filterLibraryItems,
@@ -108,7 +108,12 @@ class CitationView implements NodeView {
     this.props.popper.show(this.dom, container, 'right')
   }
 
+  public selectNode() {
+    this.dom.classList.add('ProseMirror-selectednode')
+  }
+
   public deselectNode() {
+    this.dom.classList.remove('ProseMirror-selectednode')
     this.props.popper.destroy()
   }
 
@@ -197,6 +202,10 @@ class CitationView implements NodeView {
     this.dom.setAttribute('data-reference-id', this.node.attrs.rid)
     this.dom.setAttribute('spellcheck', 'false')
     // dom.setAttribute('data-citation-items', node.attrs.citationItems.join('|'))
+
+    this.dom.addEventListener('click', () => {
+      this.showPopper()
+    })
   }
 
   private updateContents() {
