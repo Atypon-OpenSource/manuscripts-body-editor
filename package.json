@@ -78,7 +78,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
-    "@manuscripts/style-guide": "^0.4.2",
+    "@manuscripts/style-guide": "^0.6.0",
     "@manuscripts/tslint-config": "^0.1.0",
     "@types/codemirror": "^0.0.72",
     "@types/crypto-hash": "^1.0.0",
@@ -134,7 +134,7 @@
     "typescript": "3.3.*"
   },
   "peerDependencies": {
-    "@manuscripts/style-guide": "^0.4.2",
+    "@manuscripts/style-guide": "^0.6.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "rxdb": "git+https://gitlab.com/mpapp-public/rxdb.git#master",
