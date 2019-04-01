@@ -165,7 +165,7 @@ export const insertBreak: EditorAction = (state, dispatch) => {
   return true
 }
 
-const selectedText = () => window.getSelection().toString()
+const selectedText = (): string => (window.getSelection() || '').toString()
 
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
@@ -246,7 +246,7 @@ export const insertInlineFootnote = (
 ) => {
   const footnote = buildFootnote(
     state.selection.$anchor.parent.attrs.id,
-    window.getSelection().toString()
+    (window.getSelection() || '').toString()
   )
 
   const node = state.schema.nodes.inline_footnote.create()
