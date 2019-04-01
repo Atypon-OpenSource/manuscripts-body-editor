@@ -22,7 +22,6 @@ import {
   nodeTitlePlaceholder,
   Selected,
 } from '@manuscripts/manuscript-transform'
-import { withDragDropContext } from '@manuscripts/style-guide'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import * as React from 'react'
 import {
@@ -462,4 +461,4 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
 
 const DraggableTree = dragSource(dropTarget(Tree))
 
-export default withDragDropContext(DraggableTree)
+export default DraggableTree
