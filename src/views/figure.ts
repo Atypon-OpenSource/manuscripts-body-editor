@@ -67,11 +67,8 @@ class FigureBlock implements NodeView {
   }
 
   public stopEvent(event: Event) {
-    return (
-      event.type !== 'mousedown' &&
-      !event.type.startsWith('drop') &&
-      !event.type.startsWith('drag')
-    )
+    // only pass through mousedown
+    return event.type !== 'mousedown'
   }
 
   public ignoreMutation() {
@@ -94,6 +91,7 @@ class FigureBlock implements NodeView {
 
     this.contentDOM = document.createElement('div') // TODO: figcaption?
     this.contentDOM.className = 'figure-caption'
+    this.contentDOM.setAttribute('tabindex', '1337') // allow focus in this node
     this.dom.appendChild(this.contentDOM)
   }
 
@@ -112,7 +110,7 @@ class FigureBlock implements NodeView {
       const input = document.createElement('input')
       input.accept = 'image/*'
       input.type = 'file'
-      input.addEventListener<'change'>('change', async event => {
+      input.addEventListener('change', async event => {
         const target = event.target as HTMLInputElement
 
         if (target.files && target.files.length) {
@@ -120,49 +118,53 @@ class FigureBlock implements NodeView {
         }
       })
 
-      img.addEventListener<'click'>('click', () => {
+      img.addEventListener('click', () => {
         input.click()
       })
 
-      img.addEventListener<'mouseenter'>('mouseenter', () => {
+      img.addEventListener('mouseenter', () => {
         img.classList.toggle('over', true)
       })
 
-      img.addEventListener<'mouseleave'>('mouseleave', () => {
+      img.addEventListener('mouseleave', () => {
         img.classList.toggle('over', false)
       })
 
-      img.addEventListener<'dragenter'>('dragenter', () => {
-        img.classList.toggle('over', true)
-      })
-
-      img.addEventListener<'dragleave'>('dragleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener<'dragover'>('dragover', event => {
+      img.addEventListener('dragenter', event => {
         event.preventDefault()
+        img.classList.toggle('over', true)
       })
 
-      // img.addEventListener<'drop'>('drop', this.handleDrop(index))
+      img.addEventListener('dragleave', () => {
+        img.classList.toggle('over', false)
+      })
+
+      img.addEventListener('dragover', event => {
+        if (event.dataTransfer && event.dataTransfer.items) {
+          for (const item of event.dataTransfer.items) {
+            if (item.kind === 'file' && item.type.startsWith('image/')) {
+              event.preventDefault()
+              event.dataTransfer.dropEffect = 'copy'
+            }
+          }
+        }
+      })
+
+      img.addEventListener('drop', event => {
+        if (event.dataTransfer && event.dataTransfer.files) {
+          event.preventDefault()
+
+          this.updateFigure(event.dataTransfer.files[0]).catch(error => {
+            console.error(error) // tslint:disable-line:no-console
+          })
+        }
+      })
 
       // TODO: a popup editor for figure contents and metadata?
     }
 
     this.container.appendChild(img)
   }
-
-  // private handleDrop(index: number) {
-  //   return (event: DragEvent) => {
-  //     event.preventDefault()
-  //
-  //     if (event.dataTransfer && event.dataTransfer.files) {
-  //       Array.from(event.dataTransfer.files).forEach((file, fileIndex) => {
-  //         this.addImage(file, index + fileIndex)
-  //       })
-  //     }
-  //   }
-  // }
 
   private createFigureImage(src: string) {
     const element = document.createElement('img')
@@ -179,6 +181,7 @@ class FigureBlock implements NodeView {
 
     const instructions = document.createElement('div')
     instructions.textContent = 'Click to select an image file'
+    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
     element.appendChild(instructions)
 
     return element

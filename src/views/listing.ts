@@ -167,7 +167,7 @@ class Listing implements NodeView {
     this.setParentFigureElement()
 
     if (this.parentFigureElement) {
-      this.dom.setAttribute('tabindex', '9999') // allow focus in this node
+      this.dom.setAttribute('tabindex', '1337') // allow focus in this node
 
       const executableContainer = document.createElement('div')
       executableContainer.className = 'executable-container'
@@ -322,6 +322,10 @@ class Listing implements NodeView {
     const { languageKey } = this.node.attrs
 
     const languageSelector = document.createElement('select')
+
+    languageSelector.addEventListener('mousedown', event => {
+      event.stopPropagation()
+    })
 
     if (!this.props.permissions.write) {
       languageSelector.setAttribute('disabled', 'disabled')
@@ -652,7 +656,7 @@ class Listing implements NodeView {
       input.type = 'file'
       input.multiple = true
 
-      input.addEventListener<'change'>('change', async event => {
+      input.addEventListener('change', async event => {
         const target = event.target as HTMLInputElement
 
         if (!target.files) {
