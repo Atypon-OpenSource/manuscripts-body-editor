@@ -119,9 +119,11 @@ class Listing implements NodeView {
       }
     }
 
-    this.dom.classList.toggle('expanded-listing', isExpanded)
-    this.dom.classList.toggle('executable-executing', isExecuting)
-    this.dom.classList.toggle('executable-has-contents', Boolean(contents))
+    if (this.parentFigureElement) {
+      this.dom.classList.toggle('expanded-listing', isExpanded)
+      this.dom.classList.toggle('executable-executing', isExecuting)
+      this.dom.classList.toggle('executable-has-contents', Boolean(contents))
+    }
   }
 
   protected async updateAttachmentsNode() {
@@ -165,6 +167,8 @@ class Listing implements NodeView {
     this.setParentFigureElement()
 
     if (this.parentFigureElement) {
+      this.dom.setAttribute('tabindex', '9999') // allow focus in this node
+
       const executableContainer = document.createElement('div')
       executableContainer.className = 'executable-container'
       this.dom.appendChild(executableContainer)
