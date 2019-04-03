@@ -731,3 +731,7 @@
 .ProseMirror .sync-warning-button:focus {
   filter: brightness(80%);
 }
+
+.ProseMirror [tabindex]:focus {
+  outline: none;
+}
