@@ -133,19 +133,14 @@ export class Editor extends React.PureComponent<EditorProps> {
 
           return false
         },
-        mousedown: () => {
-          this.isMouseDown = true
-          return false
-        },
-        mouseup: () => {
-          this.isMouseDown = false
-          return false
-        },
       },
     })
   }
 
   public componentDidMount() {
+    window.addEventListener('mousedown', this.handleMouseDown)
+    window.addEventListener('mouseup', this.handleMouseUp)
+
     if (this.editorRef.current) {
       this.editorRef.current.appendChild(this.view.dom)
     }
@@ -177,6 +172,9 @@ export class Editor extends React.PureComponent<EditorProps> {
   }
 
   public componentWillUnmount() {
+    window.removeEventListener('mousedown', this.handleMouseDown)
+    window.removeEventListener('mouseup', this.handleMouseUp)
+
     if (this.unregisterHistoryListener) {
       this.unregisterHistoryListener()
     }
@@ -184,6 +182,14 @@ export class Editor extends React.PureComponent<EditorProps> {
 
   public render() {
     return <div ref={this.editorRef} />
+  }
+
+  private handleMouseDown = () => {
+    this.isMouseDown = true
+  }
+
+  private handleMouseUp = () => {
+    this.isMouseDown = false
   }
 
   private dispatchTransaction = (
