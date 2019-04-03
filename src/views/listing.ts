@@ -218,18 +218,20 @@ class Listing implements NodeView {
 </svg>`
       actionsContainer.appendChild(executeButton)
 
-      const attachButton = document.createElement('button')
-      attachButton.classList.add('attach-listing')
-      attachButton.classList.add('executable-action')
-      attachButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24">
+      if (this.props.permissions.write) {
+        const attachButton = document.createElement('button')
+        attachButton.classList.add('attach-listing')
+        attachButton.classList.add('executable-action')
+        attachButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24">
   <path d="M19.098 11.84l-8.517 7.942c-1.165 1.087-3.33 2.278-5.696-.26-2.366-2.537-1.084-4.773.032-5.814l10.377-9.676c.915-.854 2.739-1.431 4.08.006 1.34 1.437.647 3.001-.113 3.71l-9.737 9.08c-1.127 1.05-1.664 1.31-2.41.51-.746-.8-.678-1.436.977-2.995.92-.859 3.125-2.96 6.613-6.305" stroke-width="1.2" stroke="#2A6F9D" fill="none" fill-rule="evenodd" stroke-linecap="round"/>
 </svg>`
-      attachButton.addEventListener('mousedown', async event => {
-        event.preventDefault()
-        await this.attachListingData()
-        await this.updateAttachmentsNode()
-      })
-      actionsContainer.appendChild(attachButton)
+        attachButton.addEventListener('mousedown', async event => {
+          event.preventDefault()
+          await this.attachListingData()
+          await this.updateAttachmentsNode()
+        })
+        actionsContainer.appendChild(attachButton)
+      }
 
       const executableMain = document.createElement('div')
       executableMain.className = 'executable-main'
@@ -320,6 +322,10 @@ class Listing implements NodeView {
     const { languageKey } = this.node.attrs
 
     const languageSelector = document.createElement('select')
+
+    if (!this.props.permissions.write) {
+      languageSelector.setAttribute('disabled', 'disabled')
+    }
 
     const { kernels } = await import('../lib/jupyter')
 

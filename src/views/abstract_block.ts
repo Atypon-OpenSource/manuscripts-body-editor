@@ -129,10 +129,14 @@ abstract class AbstractBlock implements NodeView {
     const gutter = document.createElement('div')
     gutter.setAttribute('contenteditable', 'false')
     gutter.classList.add('block-gutter')
-    gutter.appendChild(this.createAddButton(false))
-    gutter.appendChild(this.createEditButton())
-    gutter.appendChild(this.createSpacer())
-    gutter.appendChild(this.createAddButton(true))
+
+    if (this.props.permissions.write) {
+      gutter.appendChild(this.createAddButton(false))
+      gutter.appendChild(this.createEditButton())
+      gutter.appendChild(this.createSpacer())
+      gutter.appendChild(this.createAddButton(true))
+    }
+
     this.dom.appendChild(gutter)
   }
 
@@ -141,7 +145,9 @@ abstract class AbstractBlock implements NodeView {
     gutter.setAttribute('contenteditable', 'false')
     gutter.classList.add('action-gutter')
 
-    gutter.appendChild(this.createSyncWarningButton())
+    if (this.props.permissions.write) {
+      gutter.appendChild(this.createSyncWarningButton())
+    }
 
     this.dom.appendChild(gutter)
   }

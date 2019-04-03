@@ -104,48 +104,50 @@ class FigureBlock implements NodeView {
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const input = document.createElement('input')
-    input.accept = 'image/*'
-    input.type = 'file'
-    input.addEventListener<'change'>('change', async event => {
-      const target = event.target as HTMLInputElement
-
-      if (target.files && target.files.length) {
-        await this.updateFigure(target.files[0])
-      }
-    })
-
     const img = src
       ? this.createFigureImage(src)
       : this.createFigurePlaceholder()
 
-    img.addEventListener<'click'>('click', () => {
-      input.click()
-    })
+    if (this.props.permissions.write) {
+      const input = document.createElement('input')
+      input.accept = 'image/*'
+      input.type = 'file'
+      input.addEventListener<'change'>('change', async event => {
+        const target = event.target as HTMLInputElement
 
-    img.addEventListener<'mouseenter'>('mouseenter', () => {
-      img.classList.toggle('over', true)
-    })
+        if (target.files && target.files.length) {
+          await this.updateFigure(target.files[0])
+        }
+      })
 
-    img.addEventListener<'mouseleave'>('mouseleave', () => {
-      img.classList.toggle('over', false)
-    })
+      img.addEventListener<'click'>('click', () => {
+        input.click()
+      })
 
-    img.addEventListener<'dragenter'>('dragenter', () => {
-      img.classList.toggle('over', true)
-    })
+      img.addEventListener<'mouseenter'>('mouseenter', () => {
+        img.classList.toggle('over', true)
+      })
 
-    img.addEventListener<'dragleave'>('dragleave', () => {
-      img.classList.toggle('over', false)
-    })
+      img.addEventListener<'mouseleave'>('mouseleave', () => {
+        img.classList.toggle('over', false)
+      })
 
-    img.addEventListener<'dragover'>('dragover', event => {
-      event.preventDefault()
-    })
+      img.addEventListener<'dragenter'>('dragenter', () => {
+        img.classList.toggle('over', true)
+      })
 
-    // img.addEventListener<'drop'>('drop', this.handleDrop(index))
+      img.addEventListener<'dragleave'>('dragleave', () => {
+        img.classList.toggle('over', false)
+      })
 
-    // TODO: a popup editor for figure contents and metadata?
+      img.addEventListener<'dragover'>('dragover', event => {
+        event.preventDefault()
+      })
+
+      // img.addEventListener<'drop'>('drop', this.handleDrop(index))
+
+      // TODO: a popup editor for figure contents and metadata?
+    }
 
     this.container.appendChild(img)
   }

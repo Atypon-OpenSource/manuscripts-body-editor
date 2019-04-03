@@ -86,6 +86,9 @@ export interface EditorProps {
     url: string
     token: string
   }
+  permissions: {
+    write: boolean
+  }
 }
 
 export class Editor extends React.PureComponent<EditorProps> {
@@ -103,7 +106,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.editorRef = React.createRef()
 
     this.view = new EditorView(undefined, {
-      editable: () => Boolean(this.props.editable),
+      editable: () => this.props.permissions.write,
       state: EditorState.create<ManuscriptSchema>({
         doc: this.props.doc,
         schema,
