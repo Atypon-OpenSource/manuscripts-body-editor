@@ -360,6 +360,7 @@
 
 .ProseMirror .toggle-listing {
   border: none;
+  background: #fff;
   font-size: 12px;
   color: inherit;
   font-family: Barlow, sans-serif;
