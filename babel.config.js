@@ -15,7 +15,7 @@ module.exports = {
     '@babel/proposal-class-properties',
     '@babel/proposal-object-rest-spread',
     '@babel/proposal-unicode-property-regex',
-    'syntax-dynamic-import',
+    '@babel/syntax-dynamic-import',
   ],
   presets: [
     '@babel/preset-env',
