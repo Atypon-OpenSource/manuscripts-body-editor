@@ -34,7 +34,7 @@
   "dependencies": {
     "@jupyterlab/services": "^3.2.1",
     "@manuscripts/assets": "^0.3.7",
-    "@manuscripts/manuscript-transform": "^0.8.1",
+    "@manuscripts/manuscript-transform": "^0.9.1",
     "@manuscripts/manuscripts-json-schema": "^1.7.3",
     "@manuscripts/title-editor": "^0.3.0",
     "axios": "^0.18.0",
