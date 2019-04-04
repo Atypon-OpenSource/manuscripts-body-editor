@@ -109,6 +109,7 @@ class CitationView implements NodeView {
   }
 
   public selectNode() {
+    this.showPopper()
     this.dom.classList.add('ProseMirror-selectednode')
   }
 
@@ -203,9 +204,9 @@ class CitationView implements NodeView {
     this.dom.setAttribute('spellcheck', 'false')
     // dom.setAttribute('data-citation-items', node.attrs.citationItems.join('|'))
 
-    this.dom.addEventListener('click', () => {
-      this.showPopper()
-    })
+    // this.dom.addEventListener('click', () => {
+    //   this.showPopper()
+    // })
   }
 
   private updateContents() {

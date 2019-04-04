@@ -83,7 +83,7 @@ export default (props: Props) => {
   const buildCitationNodes = (
     state: ManuscriptEditorState
   ): NodesWithPositions => {
-    let citationNodes: NodesWithPositions = []
+    const citationNodes: NodesWithPositions = []
 
     state.doc.descendants((node, pos) => {
       if (isCitationNode(node)) {
@@ -93,12 +93,6 @@ export default (props: Props) => {
 
     // TODO: handle missing objects?
     // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395
-    citationNodes = citationNodes.filter(
-      ([node]) =>
-        node.attrs.rid &&
-        node.attrs.rid !== 'null' &&
-        props.getModel<Citation>(node.attrs.rid)
-    )
 
     return citationNodes
   }
@@ -194,9 +188,15 @@ export default (props: Props) => {
       const tr = newState.tr
 
       citationNodes.forEach(([node, pos], index) => {
+        let contents = generatedCitations[index]
+
+        if (contents === '[NO_PRINTED_FORM]') {
+          contents = ''
+        }
+
         tr.setNodeMarkup(pos, undefined, {
           ...node.attrs,
-          contents: generatedCitations[index],
+          contents,
         })
       })
 
