@@ -294,6 +294,7 @@
   color: #41FF00;
   border-radius: 4px;
   overflow:auto;
+  max-height: 15em;
 }
 
 .ProseMirror .executable-output {

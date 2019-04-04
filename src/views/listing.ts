@@ -477,6 +477,8 @@ class Listing implements NodeView {
       item.className = `executable-output executable-output-${output.type}`
       this.outputNode.appendChild(item)
     }
+
+    this.outputNode.scrollTop = this.outputNode.scrollHeight
   }
 
   private executeListing: EventListener = async event => {
