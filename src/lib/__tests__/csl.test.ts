@@ -1,3 +1,20 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { CSL } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   ObjectTypes,
@@ -9,14 +26,12 @@ import {
 
 describe('CSL <=> bibliography model transforms', () => {
   it('should convert data from CSL to bibliography items', () => {
-    const illustrator: CSL.Person = { family: 'Derp' }
-    const date: CSL.LiteralDate = { literal: 'yesterday' }
-    const data: CSL.Data = {
+    const data: CSL.Item = {
       id: 'foo',
       type: 'article',
       DOI: 'foo',
-      illustrator: [illustrator],
-      accessed: date,
+      illustrator: [{ family: 'Derp' }],
+      accessed: { literal: 'yesterday' },
     }
     const bibItem = convertDataToBibliographyItem(data)
     expect(bibItem.DOI).toMatch(data.DOI!)

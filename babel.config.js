@@ -7,6 +7,7 @@ module.exports = {
     },
     test: {
       plugins: [
+        'dynamic-import-node',
         'transform-es2015-modules-commonjs',
       ],
     },
@@ -18,8 +19,8 @@ module.exports = {
     '@babel/syntax-dynamic-import',
   ],
   presets: [
-    '@babel/preset-env',
-    '@babel/preset-react',
-    '@babel/preset-typescript',
+    '@babel/env',
+    '@babel/react',
+    '@babel/typescript',
   ],
 }

@@ -22,10 +22,6 @@ type CreateEditor = (
   options: CodeMirror.EditorConfiguration
 ) => Promise<CodeMirror.Editor>
 
-export interface CodeMirrorCreator {
-  createEditor: CreateEditor
-}
-
 export const createEditor: CreateEditor = async options => {
   return CodeMirror(
     () => {

@@ -25,13 +25,7 @@ import CodeMirror from 'codemirror'
 import prettyBytes from 'pretty-bytes'
 import { NodeView } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
-import { CodeMirrorCreator } from '../lib/codemirror'
-import {
-  CodemirrorMode,
-  codemirrorModeGroups,
-  codemirrorModeLabels,
-  codemirrorModeOptions,
-} from '../lib/codemirror-modes'
+import { CodemirrorMode } from '../lib/codemirror-modes'
 import { NodeViewCreator } from '../types'
 
 interface Output {
@@ -61,10 +55,6 @@ class Listing implements NodeView {
   private node: ManuscriptNode
   private readonly view: ManuscriptEditorView
 
-  private readonly imports: {
-    codemirror: Promise<CodeMirrorCreator>
-  }
-
   constructor(
     props: EditorProps,
     node: ManuscriptNode,
@@ -77,10 +67,6 @@ class Listing implements NodeView {
     this.view = view
     this.getPos = getPos
     // this.decorations = decorations
-
-    this.imports = {
-      codemirror: import(/* webpackChunkName: "codemirror" */ '../lib/codemirror'),
-    }
 
     this.createDOM()
     this.updateContents()
@@ -333,6 +319,12 @@ class Listing implements NodeView {
 
     const { kernels } = await import('../lib/jupyter')
 
+    const {
+      codemirrorModeGroups,
+      codemirrorModeLabels,
+      codemirrorModeOptions,
+    } = await import('../lib/codemirror-modes')
+
     if (this.parentFigureElement) {
       const textOption = document.createElement('option')
       textOption.textContent = 'Select a language…'
@@ -399,7 +391,9 @@ class Listing implements NodeView {
   private async createEditor(defaultPlaceholder: string = '<Listing>') {
     const { contents, languageKey, placeholder } = this.node.attrs
 
-    const { createEditor } = await this.imports.codemirror
+    const { createEditor } = await import('../lib/codemirror')
+
+    const { codemirrorModeOptions } = await import('../lib/codemirror-modes')
 
     this.editor = await createEditor({
       value: contents,

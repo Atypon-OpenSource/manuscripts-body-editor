@@ -26,7 +26,6 @@ import {
   Bundle,
 } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
-import CiteProc from 'citeproc'
 import { basename } from 'path'
 
 interface Locales {
@@ -200,6 +199,8 @@ export class CitationManager {
       primaryLanguageCode
     )
 
+    const CiteProc = await import('citeproc')
+
     return new CiteProc.Engine(
       {
         retrieveItem: (id: string) => {
@@ -314,6 +315,8 @@ export class CitationManager {
     citationStyleData: string,
     primaryLanguageCode: string
   ) {
+    const CiteProc = await import('citeproc')
+
     const locales: Map<string, string> = new Map()
 
     const localeNames = CiteProc.getLocaleNames(

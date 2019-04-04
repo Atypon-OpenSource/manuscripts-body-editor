@@ -111,6 +111,7 @@
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/styled-components": "^4.1.8",
     "@types/uuid": "^3.4.4",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",

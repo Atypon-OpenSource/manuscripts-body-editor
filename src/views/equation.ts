@@ -21,8 +21,6 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { NodeView } from 'prosemirror-view'
 import { EditorProps } from '../components/Editor'
-import { CodeMirrorCreator } from '../lib/codemirror'
-import { Mathjax } from '../lib/mathjax'
 import { NodeViewCreator } from '../types'
 
 class Equation implements NodeView {
@@ -32,11 +30,6 @@ class Equation implements NodeView {
   private readonly getPos: () => number
   private node: ManuscriptNode
   private readonly view: ManuscriptEditorView
-
-  private readonly imports: {
-    codemirror: Promise<CodeMirrorCreator>
-    mathjax: Promise<Mathjax>
-  }
 
   constructor(
     props: EditorProps,
@@ -50,13 +43,6 @@ class Equation implements NodeView {
     this.view = view
     this.getPos = getPos
     // this.decorations = decorations
-
-    this.imports = {
-      codemirror: import(/* webpackChunkName: "codemirror" */ '../lib/codemirror'),
-      mathjax: import(/* webpackChunkName: "mathjax" */ '../lib/mathjax') as Promise<
-        Mathjax
-      >,
-    }
 
     this.createDOM()
     this.updateContents()
@@ -74,8 +60,8 @@ class Equation implements NodeView {
   public async selectNode() {
     // dom.classList.add('ProseMirror-selectednode')
 
-    const { createEditor } = await this.imports.codemirror
-    const { typeset } = await this.imports.mathjax
+    const { createEditor } = await import('../lib/codemirror')
+    const { typeset } = await import('../lib/mathjax')
 
     const placeholder = 'Enter LaTeX equation, e.g. "a^2 = \\sqrt{b^2 + c^2}"'
 
