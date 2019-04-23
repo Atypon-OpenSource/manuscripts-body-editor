@@ -21,7 +21,6 @@ import {
   joinDown,
   joinUp,
   lift,
-  selectParentNode,
   toggleMark,
 } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
@@ -42,7 +41,6 @@ import { EditorAction } from '../types'
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(undoInputRule, ignoreAtomBlockNodeBackward),
   Delete: ignoreAtomBlockNodeForward,
-  Escape: selectParentNode,
   Tab: goToNextCell(1),
   'Mod-z': undo,
   'Mod-y': redo, // Mac
