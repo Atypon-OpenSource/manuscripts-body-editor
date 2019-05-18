@@ -14,41 +14,20 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { Decoration } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class EquationElement extends Block {
-  protected get elementType() {
-    return 'figure'
-  }
+export class EquationElementView<
+  PropsType extends ViewerProps
+> extends BlockView<PropsType> {
+  public elementType = 'figure'
 
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    if (newNode.type.name !== this.node.type.name) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
-
-  public deselectNode() {
-    this.props.popper.destroy()
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     const { suppressCaption } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
   }
 }
 
-const equationElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new EquationElement(props, node, view, getPos)
-
-export default equationElement
+export default createNodeView(EquationElementView)

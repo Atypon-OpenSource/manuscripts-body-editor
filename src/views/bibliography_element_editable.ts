@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { EditorProps } from '../components/Editor'
-import AbstractBlock from './abstract_block'
+import { BibliographyElementBlockView } from './bibliography_element'
+import { createEditableNodeView } from './creators'
+import { EditableBlock } from './editable_block'
 
-class Block extends AbstractBlock {
-  public constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-  ) {
-    super(props, node, view, getPos)
-
-    this.initialise()
-  }
-}
-
-export default Block
+export default createEditableNodeView(
+  EditableBlock(BibliographyElementBlockView)
+)

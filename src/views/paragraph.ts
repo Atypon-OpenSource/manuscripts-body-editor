@@ -14,38 +14,14 @@
  * limitations under the License.
  */
 
-import { ParagraphNode } from '@manuscripts/manuscript-transform'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeOrElementView } from './creators'
 
-class Paragraph extends Block {
-  protected node: ParagraphNode
-
-  protected get elementType() {
-    return 'p'
-  }
+export class ParagraphView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public elementType = 'p'
 }
 
-const paragraph = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos,
-  decorations
-) => {
-  // TODO: set a node property instead?
-  for (const decoration of decorations) {
-    if (decoration.spec.element) {
-      return new Paragraph(props, node, view, getPos)
-    }
-  }
-
-  const dom = document.createElement('p')
-
-  return {
-    dom,
-    contentDOM: dom,
-  }
-}
-
-export default paragraph
+export default createNodeOrElementView(ParagraphView, 'p')

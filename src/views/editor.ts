@@ -15,25 +15,25 @@
  */
 
 import { EditorProps } from '../components/Editor'
-import bibliographyElement from './bibliography_element'
-import bulletList from './bullet_list'
-import citation from './citation'
-import crossReference from './cross_reference'
-import equation from './equation'
-import equationElement from './equation_element'
-import figure from './figure'
-import figureElement from './figure_element'
-import inlineEquation from './inline_equation'
-import inlineFootnote from './inline_footnote'
-import listing from './listing'
-import listingElement from './listing_element'
-import orderedList from './ordered_list'
-import paragraph from './paragraph'
+import bibliographyElement from './bibliography_element_editable'
+import bulletList from './bullet_list_editable'
+import citation from './citation_editable'
+import crossReference from './cross_reference_editable'
+import equation from './equation_editable'
+import equationElement from './equation_element_editable'
+import figure from './figure_editable'
+import figureElement from './figure_element_editable'
+import inlineEquation from './inline_equation_editable'
+import inlineFootnote from './inline_footnote_editable'
+import listing from './listing_editable'
+import listingElement from './listing_element_editable'
+import orderedList from './ordered_list_editable'
+import paragraph from './paragraph_editable'
 import placeholder from './placeholder'
-import placeholderElement from './placeholder_element'
-import sectionTitle from './section_title'
-import tableElement from './table_element'
-import tocElement from './toc_element'
+import placeholderElement from './placeholder_element_editable'
+import sectionTitle from './section_title_editable'
+import tableElement from './table_element_editable'
+import tocElement from './toc_element_editable'
 
 export default (props: EditorProps) => ({
   bibliography_element: bibliographyElement(props),
@@ -50,7 +50,7 @@ export default (props: EditorProps) => ({
   listing_element: listingElement(props),
   ordered_list: orderedList(props),
   paragraph: paragraph(props),
-  placeholder,
+  placeholder: placeholder(props),
   placeholder_element: placeholderElement(props),
   section_title: sectionTitle(props),
   table_element: tableElement(props),

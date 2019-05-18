@@ -1,5 +1,5 @@
 .env
 *.log
-/.rpt2_cache/
+/.docz/
 /node_modules/
 /dist/

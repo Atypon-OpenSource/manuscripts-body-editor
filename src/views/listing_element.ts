@@ -14,37 +14,21 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { Decoration } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class ListingElement extends Block {
-  protected get elementType() {
-    return 'figure'
-  }
+export class ListingElementView<PropsType extends ViewerProps>
+  extends BlockView<PropsType>
+  implements ManuscriptNodeView {
+  public elementType = 'figure'
 
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]) {
-    if (newNode.type.name !== this.node.type.name) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     const { suppressCaption } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
   }
 }
 
-const listingElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new ListingElement(props, node, view, getPos)
-
-export default listingElement
+export default createNodeView(ListingElementView)

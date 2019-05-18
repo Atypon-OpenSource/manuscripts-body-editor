@@ -14,38 +14,21 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { sanitize } from 'dompurify'
-import { Decoration } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class TOCElement extends Block {
+export class TOCElementView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
   private element: HTMLElement
 
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    if (newNode.type.name !== this.node.type.name) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
+  public ignoreMutation = () => true
 
-  public stopEvent() {
-    return true
-  }
+  public stopEvent = () => true
 
-  public ignoreMutation() {
-    return true
-  }
-
-  protected get elementType() {
-    return 'div'
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     try {
       this.element.innerHTML = sanitize(this.node.attrs.contents)
     } catch (e) {
@@ -57,18 +40,12 @@ class TOCElement extends Block {
     }
   }
 
-  protected createElement() {
-    this.element = document.createElement(this.elementType)
+  public createElement = () => {
+    this.element = document.createElement('div')
     this.element.className = 'block'
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
   }
 }
 
-const tocElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new TOCElement(props, node, view, getPos)
-
-export default tocElement
+export default createNodeView(TOCElementView)

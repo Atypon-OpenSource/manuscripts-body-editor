@@ -16,16 +16,19 @@
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Decoration } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class TableElement extends Block {
-  protected get elementType() {
-    return 'figure'
-  }
+export class TableElementView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public elementType = 'figure'
 
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
+  public update = (
+    newNode: ManuscriptNode,
+    decorations?: Decoration[]
+  ): boolean => {
     if (newNode.type.name !== this.node.type.name) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
     this.handleDecorations(decorations)
@@ -34,7 +37,7 @@ class TableElement extends Block {
     return true
   }
 
-  protected updateContents() {
+  public updateContents = () => {
     const { suppressCaption, suppressHeader, suppressFooter } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
@@ -42,7 +45,7 @@ class TableElement extends Block {
     this.dom.classList.toggle('suppress-footer', suppressFooter)
   }
 
-  protected createElement() {
+  public createElement = () => {
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
@@ -55,10 +58,4 @@ class TableElement extends Block {
   }
 }
 
-const tableElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new TableElement(props, node, view, getPos)
-
-export default tableElement
+export default createNodeView(TableElementView)

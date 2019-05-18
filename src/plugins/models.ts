@@ -25,7 +25,7 @@ export const UPDATE = 'UPDATE'
 export const REMOVE = 'REMOVE'
 
 interface Props {
-  saveModel: <T extends Model>(model: Build<T>) => Promise<T>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
 }
 

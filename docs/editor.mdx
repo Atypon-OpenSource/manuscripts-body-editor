@@ -1,0 +1,86 @@
+---
+name: "Editor"
+---
+
+import { Playground, Props } from 'docz'
+import { createBrowserHistory } from 'history'
+import { 
+  doc, 
+  user, 
+  manuscript, 
+  getModel, 
+  modelMap, 
+  project 
+} from './lib/data'
+import { renderReactComponent, unmountReactComponent } from './lib/render'
+import { Editor, PopperManager } from '../src'
+import '../styles/Editor.css'
+import '../styles/popper.css'
+
+# Editor
+
+<Playground>
+  <Editor
+    allAttachments={async () => []}
+    doc={doc}
+    getCurrentUser={() => user}
+    getManuscript={() => manuscript}
+    getModel={getModel}
+    getLibraryItem={getModel}
+    history={createBrowserHistory()}
+    locale={'en-US'}
+    manuscript={manuscript}
+    modelMap={modelMap}
+    popper={new PopperManager()}
+    projectID={project._id}
+    renderReactComponent={renderReactComponent}
+    unmountReactComponent={unmountReactComponent}
+    plugins={[]}
+    getCitationProcessor={() => null}
+    saveModel={model => {
+      console.log('saveModel', model)
+      modelMap.set(model._id, model)
+    }}
+    putAttachment={(id, attachment) => {
+      console.log('putAttachment', [id, attachment])
+    }}
+    removeAttachment={(id, attachmentID) => {
+      console.log('removeAttachment', [id, attachmentID])
+    }}
+    deleteModel={id => {
+      console.log('deleteModel', id)
+      modelMap.remove(id)
+    }}
+    addLibraryItem={item => {
+      console.log('addLibraryItem', item)
+      modelMap.set(item._id, item)
+    }}
+    filterLibraryItems={query => {
+      console.log('filterLibraryItems', query)
+    }}
+    subscribe={receive => {
+      console.log('subscribe', receive)
+    }}
+    setView={receive => {
+      console.log('setView', receive)
+    }}
+    retrySync={componentIDs => {
+      console.log('retrySync', componentIDs)
+    }}
+    handleStateChange={(view, docChanged) => {
+      console.log('handleStateChange', [view, docChanged])
+    }}
+    permissions={{ 
+      write: true 
+    }}
+    jupyterConfig={{ 
+      url: '',
+      token: '',
+    }}
+    components={{
+      CitationEditor: () => null
+    }}
+  />
+</Playground>
+
+<Props of={Editor} />

@@ -29,12 +29,12 @@ export type EditorAction = (
   view?: ManuscriptEditorView
 ) => boolean
 
-export type NodeViewCreator = (
+export type NodeViewCreator<T extends ManuscriptNodeView> = (
   node: ManuscriptNode,
   view: ManuscriptEditorView,
   getPos: () => number,
   decorations: Decoration[]
-) => ManuscriptNodeView
+) => T
 
 export type ChangeReceiver = (
   op: string,

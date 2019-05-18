@@ -14,129 +14,25 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-  xmlSerializer,
-} from '@manuscripts/manuscript-transform'
-import { NodeView } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-class Equation implements NodeView {
-  public dom: HTMLElement
-
-  private readonly props: EditorProps
-  private readonly getPos: () => number
-  private node: ManuscriptNode
-  private readonly view: ManuscriptEditorView
-
-  constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-    // decorations?: Decoration[]
-  ) {
-    this.props = props
-    this.node = node
-    this.view = view
-    this.getPos = getPos
-    // this.decorations = decorations
-
+export class EquationView<PropsType extends ViewerProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView {
+  public initialise = () => {
     this.createDOM()
     this.updateContents()
   }
 
-  public update(newNode: ManuscriptNode): boolean {
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    if (newNode.type.name !== this.node.type.name) return false
-    this.node = newNode
-    this.updateContents()
-    this.props.popper.update()
-    return true
+  public createDOM = () => {
+    this.dom = document.createElement('div')
+    this.dom.classList.add('equation')
   }
 
-  public async selectNode() {
-    // dom.classList.add('ProseMirror-selectednode')
-
-    const { createEditor } = await import('../lib/codemirror')
-    const { typeset } = await import('../lib/mathjax')
-
-    const placeholder = 'Enter LaTeX equation, e.g. "a^2 = \\sqrt{b^2 + c^2}"'
-
-    const input = await createEditor({
-      value: this.node.attrs.TeXRepresentation || '',
-      mode: 'stex',
-      placeholder,
-      autofocus: true,
-    })
-
-    input.on('changes', async () => {
-      const TeXRepresentation = input.getValue()
-
-      const typesetRoot = typeset(TeXRepresentation, true)
-
-      if (!typesetRoot || !typesetRoot.firstChild) {
-        throw new Error('No SVG output from MathJax')
-      }
-
-      const SVGStringRepresentation = xmlSerializer.serializeToString(
-        typesetRoot.firstChild
-      )
-
-      const tr = this.view.state.tr
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          TeXRepresentation,
-          SVGStringRepresentation,
-        })
-        .setSelection(this.view.state.selection)
-
-      this.view.dispatch(tr)
-    })
-
-    const wrapper = document.createElement('div')
-    wrapper.appendChild(input.getWrapperElement())
-    wrapper.className = 'equation-editor'
-
-    const infoLink = document.createElement('a')
-    infoLink.target = '_blank'
-    infoLink.textContent = '?'
-    infoLink.title = ''
-    infoLink.href = 'https://en.wikibooks.org/wiki/LaTeX/Mathematics#Symbols'
-    infoLink.className = 'equation-editor-info'
-
-    wrapper.appendChild(infoLink)
-
-    this.props.popper.show(this.dom, wrapper, 'bottom')
-
-    window.requestAnimationFrame(() => {
-      input.refresh()
-      input.focus()
-    })
-
-    // dom.classList.add('ProseMirror-selectednode')
-  }
-
-  public deselectNode() {
-    this.props.popper.destroy()
-    // dom.classList.remove('ProseMirror-selectednode')
-  }
-
-  public stopEvent(event: Event) {
-    return event.type !== 'mousedown' && !event.type.startsWith('drag')
-  }
-
-  public ignoreMutation() {
-    return true
-  }
-
-  protected get elementType() {
-    return 'div'
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     const { SVGStringRepresentation } = this.node.attrs
 
     if (SVGStringRepresentation) {
@@ -154,16 +50,7 @@ class Equation implements NodeView {
     }
   }
 
-  protected createDOM() {
-    this.dom = document.createElement(this.elementType)
-    this.dom.classList.add('equation')
-  }
+  public ignoreMutation = () => true
 }
 
-const equation = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new Equation(props, node, view, getPos)
-
-export default equation
+export default createNodeView(EquationView)

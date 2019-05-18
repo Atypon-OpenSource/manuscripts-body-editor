@@ -14,116 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-  xmlSerializer,
-} from '@manuscripts/manuscript-transform'
-import { NodeView } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-class InlineEquation implements NodeView {
-  public dom: HTMLElement
-
-  private readonly props: EditorProps
-  private readonly getPos: () => number
-  private node: ManuscriptNode
-  private readonly view: ManuscriptEditorView
-
-  constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-    // decorations?: Decoration[]
-  ) {
-    this.props = props
-    this.node = node
-    this.view = view
-    this.getPos = getPos
-    // this.decorations = decorations
-
+export class InlineEquationView<PropsType extends ViewerProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView {
+  public initialise = () => {
     this.createDOM()
     this.updateContents()
   }
 
-  public update(newNode: ManuscriptNode): boolean {
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    if (newNode.type.name !== this.node.type.name) return false
-    this.node = newNode
-    this.updateContents()
-    this.props.popper.update()
-    return true
-  }
-
-  public async selectNode() {
-    // dom.classList.add('ProseMirror-selectednode')
-
-    const { createEditor } = await import('../lib/codemirror')
-    const { typeset } = await import('../lib/mathjax')
-
-    const placeholder = 'Enter LaTeX equation, e.g. "E=mc^2"'
-
-    const input = await createEditor({
-      value: this.node.attrs.TeXRepresentation || '',
-      mode: 'stex',
-      placeholder,
-      autofocus: true,
-    })
-
-    input.on('changes', async () => {
-      const TeXRepresentation = input.getValue()
-
-      const typesetRoot = typeset(TeXRepresentation, true)
-
-      if (!typesetRoot || !typesetRoot.firstChild) {
-        throw new Error('No SVG output from MathJax')
-      }
-
-      const SVGRepresentation = xmlSerializer.serializeToString(
-        typesetRoot.firstChild
-      )
-
-      const tr = this.view.state.tr
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          TeXRepresentation,
-          SVGRepresentation,
-        })
-        .setSelection(this.view.state.selection)
-
-      this.view.dispatch(tr)
-    })
-
-    this.props.popper.show(this.dom, input.getWrapperElement(), 'bottom')
-
-    window.requestAnimationFrame(() => {
-      input.refresh()
-      input.focus()
-    })
-
-    // dom.classList.add('ProseMirror-selectednode')
-  }
-
-  public deselectNode() {
-    this.props.popper.destroy()
-    // dom.classList.remove('ProseMirror-selectednode')
-  }
-
-  public stopEvent(event: Event) {
-    return event.type !== 'mousedown' && !event.type.startsWith('drag')
-  }
-
-  public ignoreMutation() {
-    return true
-  }
-
-  protected get elementType() {
-    return 'span'
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     const { SVGRepresentation } = this.node.attrs
 
     if (SVGRepresentation) {
@@ -141,16 +45,12 @@ class InlineEquation implements NodeView {
     }
   }
 
-  protected createDOM() {
-    this.dom = document.createElement(this.elementType)
+  public ignoreMutation = () => true
+
+  protected createDOM = () => {
+    this.dom = document.createElement('span')
     this.dom.classList.add('equation')
   }
 }
 
-const inlineEquation = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new InlineEquation(props, node, view, getPos)
-
-export default inlineEquation
+export default createNodeView(InlineEquationView)

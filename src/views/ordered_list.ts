@@ -14,38 +14,25 @@
  * limitations under the License.
  */
 
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeOrElementView } from './creators'
 
-class OrderedList extends Block {
-  protected get elementType() {
-    return 'ol'
-  }
+export class OrderedListView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public elementType = 'ol'
 }
 
-const orderedList = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos,
-  decorations
-) => {
-  for (const decoration of decorations) {
-    if (decoration.spec.element) {
-      return new OrderedList(props, node, view, getPos)
-    }
-  }
-
-  const dom = document.createElement('ol')
-
+export const orderedListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   if (node.attrs.order !== undefined && node.attrs.order !== 1) {
     dom.setAttribute('start', node.attrs.order)
   }
-
-  return {
-    dom,
-    contentDOM: dom,
-  }
 }
 
-export default orderedList
+export default createNodeOrElementView(
+  OrderedListView,
+  'ol',
+  orderedListCallback
+)

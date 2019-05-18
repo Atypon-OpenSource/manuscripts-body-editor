@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import { EditorProps } from '../components/Editor'
+import { ViewerProps } from '../components/Viewer'
 import { placeholderContent } from '../lib/placeholder'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class PlaceholderElement extends Block {
+export class PlaceholderElementView<
+  PropsType extends ViewerProps
+> extends BlockView<PropsType> {
   private element: HTMLElement
 
-  protected get elementType() {
-    return 'div'
-  }
-
-  protected createElement() {
-    this.element = document.createElement(this.elementType)
+  public createElement = () => {
+    this.element = document.createElement('div')
     this.element.className = 'block'
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
@@ -40,16 +38,6 @@ class PlaceholderElement extends Block {
     )
     this.element.appendChild(content)
   }
-
-  protected updateContents() {
-    // empty
-  }
 }
 
-const placeholderElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new PlaceholderElement(props, node, view, getPos)
-
-export default placeholderElement
+export default createNodeView(PlaceholderElementView)

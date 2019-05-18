@@ -22,7 +22,7 @@ import {
 import React from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
-import { MenuItem, Separator } from './ApplicationMenu'
+import { MenuItem, MenuSeparator } from './ApplicationMenu'
 import { Shortcut, ShortcutContainer } from './Shortcut'
 
 export const Text = styled.div`
@@ -105,7 +105,7 @@ const Container = styled.div`
 `
 
 interface MenuItemProps {
-  item: MenuItem | Separator
+  item: MenuItem | MenuSeparator
   view: ManuscriptEditorView
   closeMenu: () => void
 }
@@ -121,7 +121,7 @@ const classNameFromState = (item: MenuItem, state: ManuscriptEditorState) =>
 const activeContent = (item: MenuItem, state: ManuscriptEditorState) =>
   item.active && item.active(state) ? '✓' : ''
 
-const isSeparator = (item: MenuItem | Separator): item is Separator =>
+const isSeparator = (item: MenuItem | MenuSeparator): item is MenuSeparator =>
   item.role === 'separator'
 
 export class MenuItemContainer extends React.Component<

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { EditorProps } from '../components/Editor'
+import { ViewerProps } from '../components/Viewer'
 import { sectionLevel } from '../lib/context-menu'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class SectionTitle extends Block {
-  protected get elementType() {
-    return 'h1'
-  }
+export class SectionTitleView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public elementType = 'h1'
 
-  protected updateContents() {
+  public updateContents = () => {
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
@@ -40,10 +40,4 @@ class SectionTitle extends Block {
   }
 }
 
-const sectionTitle = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new SectionTitle(props, node, view, getPos)
-
-export default sectionTitle
+export default createNodeView(SectionTitleView)

@@ -17,18 +17,12 @@
 import {
   Build,
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  Manuscript,
-  Model,
-  UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
-import { History, LocationListener, UnregisterCallback } from 'history'
+import { LocationListener, UnregisterCallback } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -41,22 +35,17 @@ import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
 import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { transformPasted } from '../lib/paste'
-import { PopperManager } from '../lib/popper'
 import '../lib/smooth-scroll'
-import plugins from '../plugins'
+import plugins from '../plugins/editor'
 import { ChangeReceiver } from '../types'
-import views from '../views'
+import views from '../views/editor'
+import { ViewerProps } from './Viewer'
 
-export interface EditorProps {
-  attributes?: { [key: string]: string }
+export interface EditorProps extends ViewerProps {
   autoFocus?: boolean
-  plugins: Array<Plugin<ManuscriptSchema>>
   getCitationProcessor: () => CiteProc.Engine | undefined
-  doc: ManuscriptNode
-  editable?: boolean
-  getModel: <T extends Model>(id: string) => T | undefined
+  plugins: Array<Plugin<ManuscriptSchema>>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
   putAttachment: (
     id: string,
     attachment: RxAttachmentCreator
@@ -65,23 +54,10 @@ export interface EditorProps {
   deleteModel: (id: string) => Promise<string>
   addLibraryItem: (item: BibliographyItem) => void
   filterLibraryItems: (query: string) => BibliographyItem[]
-  getLibraryItem: (id: string) => BibliographyItem | undefined
-  getManuscript: () => Manuscript
-  saveManuscript?: (manuscript: Partial<Manuscript>) => Promise<void>
-  deleteManuscript: (id: string) => Promise<void>
-  locale: string
-  subscribe?: (receive: ChangeReceiver) => void
-  modelMap: Map<string, Model>
-  popper: PopperManager
-  setView?: (view: ManuscriptEditorView) => void
-  manuscript: Manuscript
-  projectID: string
-  getCurrentUser: () => UserProfile
-  history: History
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  subscribe: (receive: ChangeReceiver) => void
+  setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
-  handleStateChange?: (view: ManuscriptEditorView, docChanged: boolean) => void
-  CitationEditor: React.ComponentType<any> // tslint:disable-line:no-any
+  handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
   jupyterConfig: {
     url: string
     token: string
@@ -89,12 +65,14 @@ export interface EditorProps {
   permissions: {
     write: boolean
   }
+  components: {
+    [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
+  }
 }
 
 export class Editor extends React.PureComponent<EditorProps> {
+  private readonly editorRef = React.createRef<HTMLDivElement>()
   private readonly view: ManuscriptEditorView
-
-  private readonly editorRef: React.RefObject<HTMLDivElement>
 
   private unregisterHistoryListener?: UnregisterCallback
 
@@ -103,12 +81,12 @@ export class Editor extends React.PureComponent<EditorProps> {
   constructor(props: EditorProps) {
     super(props)
 
-    this.editorRef = React.createRef()
+    const { attributes, doc, handleStateChange, permissions } = this.props
 
     this.view = new EditorView(undefined, {
-      editable: () => this.props.permissions.write,
+      editable: () => permissions.write,
       state: EditorState.create<ManuscriptSchema>({
-        doc: this.props.doc,
+        doc,
         schema,
         plugins: plugins(this.props),
       }),
@@ -122,13 +100,11 @@ export class Editor extends React.PureComponent<EditorProps> {
       },
       dispatchTransaction: this.dispatchTransaction,
       nodeViews: views(this.props),
-      attributes: this.props.attributes,
+      attributes,
       transformPasted,
       handleDOMEvents: {
         focus: () => {
-          if (this.props.handleStateChange) {
-            this.props.handleStateChange(this.view, false)
-          }
+          handleStateChange(this.view, false)
 
           if (!this.isMouseDown) {
             this.view.focus()
@@ -148,17 +124,9 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.editorRef.current.appendChild(this.view.dom)
     }
 
-    if (this.props.subscribe) {
-      this.props.subscribe(this.receive)
-    }
-
-    if (this.props.handleStateChange) {
-      this.props.handleStateChange(this.view, false)
-    }
-
-    if (this.props.setView) {
-      this.props.setView(this.view)
-    }
+    this.props.subscribe(this.receive)
+    this.props.handleStateChange(this.view, false)
+    this.props.setView(this.view)
 
     // dispatch a transaction so that plugins run
     this.view.dispatch(this.view.state.tr.setMeta('update', true))
@@ -206,12 +174,10 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.view.updateState(state)
 
     if (!external) {
-      if (this.props.handleStateChange) {
-        this.props.handleStateChange(
-          this.view,
-          transactions.some(tr => tr.docChanged)
-        )
-      }
+      this.props.handleStateChange(
+        this.view,
+        transactions.some(tr => tr.docChanged)
+      )
     }
   }
 

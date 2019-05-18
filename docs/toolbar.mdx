@@ -1,0 +1,18 @@
+---
+name: "Toolbar"
+---
+
+import { Playground, Props } from 'docz'
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { BrowserRouter } from 'react-router-dom'
+import { ManuscriptToolbar } from '../src'
+import { view } from './lib/data'
+
+# Toolbar
+
+<Playground>
+  <ManuscriptToolbar view={view}/>
+</Playground>
+
+<Props of={ManuscriptToolbar} />

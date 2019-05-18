@@ -8,8 +8,4 @@ A React + ProseMirror editor for manuscripts.
 
 # Usage
 
-```js
-import '@manuscripts/manuscript-editor/styles/Editor.css'
-import '@manuscripts/manuscript-editor/styles/popper.css'
-import { Editor } from '@manuscripts/manuscript-editor'
-````
+See [docs/editor.mdx](docs/editor.mdx) for an example of using the Editor component in React.

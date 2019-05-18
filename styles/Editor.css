@@ -738,3 +738,7 @@
 .ProseMirror [tabindex]:focus {
   outline: none;
 }
+
+.ProseMirror .manuscript-toc {
+  white-space: normal;
+}

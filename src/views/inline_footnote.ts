@@ -14,65 +14,34 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { NodeView } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-class InlineFootnote implements NodeView {
-  public dom: HTMLElement
-
-  private readonly props: EditorProps
-  private node: ManuscriptNode
-
-  constructor(props: EditorProps, node: ManuscriptNode) {
-    this.props = props
-    this.node = node
-
+export class InlineFootnoteView<PropsType extends ViewerProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView {
+  public initialise = () => {
     this.createDOM()
     this.updateContents()
   }
 
-  public update(newNode: ManuscriptNode): boolean {
-    if (!newNode.sameMarkup(this.node)) return false
-    this.node = newNode
-    this.updateContents()
-    this.props.popper.update()
-    return true
-  }
-
-  public selectNode() {
+  public selectNode = () => {
     // TODO: select and scroll to the footnote without changing the URL?
     this.props.history.push('#' + this.node.attrs.rid)
   }
 
-  public deselectNode() {
-    this.props.popper.destroy()
-  }
-
-  public stopEvent(event: Event) {
-    return event.type !== 'mousedown' && !event.type.startsWith('drag')
-  }
-
-  public ignoreMutation() {
-    return true
-  }
-
-  protected get elementType() {
-    return 'span'
-  }
-
-  protected updateContents() {
+  public updateContents = () => {
     this.dom.textContent = this.node.attrs.contents
   }
 
-  protected createDOM() {
-    this.dom = document.createElement(this.elementType)
+  public ignoreMutation = () => true
+
+  protected createDOM = () => {
+    this.dom = document.createElement('span')
     this.dom.classList.add('footnote')
   }
 }
 
-const inlineFootnote = (props: EditorProps): NodeViewCreator => node =>
-  new InlineFootnote(props, node)
-
-export default inlineFootnote
+export default createNodeView(InlineFootnoteView)

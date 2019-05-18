@@ -1,0 +1,44 @@
+---
+name: "Viewer"
+---
+
+import { Playground, Props } from 'docz'
+import { createBrowserHistory } from 'history'
+import { 
+  doc, 
+  user, 
+  manuscript, 
+  getModel, 
+  modelMap, 
+  project 
+} from './lib/data'
+import { renderReactComponent, unmountReactComponent } from './lib/render'
+import { PopperManager, Viewer } from '../src'
+import '../styles/Editor.css'
+import '../styles/popper.css'
+
+# Viewer
+
+<Playground>
+  <Viewer
+    allAttachments={async () => []}
+    doc={doc}
+    getCurrentUser={() => user}
+    getManuscript={() => manuscript}
+    getModel={getModel}
+    getLibraryItem={getModel}
+    history={createBrowserHistory()}
+    locale={'en-US'}
+    manuscript={manuscript}
+    modelMap={modelMap}
+    popper={new PopperManager()}
+    projectID={project._id}
+    renderReactComponent={renderReactComponent}
+    unmountReactComponent={unmountReactComponent}
+    components={{
+      CitationViewer: () => null
+    }}
+  />
+</Playground>
+
+<Props of={Viewer} />

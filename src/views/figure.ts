@@ -14,74 +14,65 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { Decoration, NodeView } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-class FigureBlock implements NodeView {
-  public dom: HTMLElement
-  public contentDOM: HTMLElement
-  private container: HTMLElement
+export class FigureView<PropsType extends ViewerProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView {
+  protected container: HTMLElement
 
-  private readonly props: EditorProps
-  private readonly getPos: () => number
-  private node: ManuscriptNode
-  private readonly view: ManuscriptEditorView
-
-  constructor(
-    props: EditorProps,
-    node: ManuscriptNode,
-    view: ManuscriptEditorView,
-    getPos: () => number
-    // decorations?: Decoration[]
-  ) {
-    this.props = props
-    this.node = node
-    this.view = view
-    this.getPos = getPos
-    // this.decorations = decorations
-
+  public initialise = () => {
     this.createDOM()
     this.updateContents()
   }
 
-  // TODO: does this need to be different?
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    if (newNode.type.name !== this.node.type.name) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
+  public ignoreMutation = () => true
 
-  public selectNode() {
-    this.dom.classList.add('ProseMirror-selectednode')
-  }
-
-  public deselectNode() {
-    this.dom.classList.remove('ProseMirror-selectednode')
-  }
-
-  public stopEvent(event: Event) {
+  public stopEvent = (event: Event) => {
     // only pass through mousedown
     return event.type !== 'mousedown'
   }
 
-  public ignoreMutation() {
-    return true
+  public updateContents = () => {
+    const { src } = this.node.attrs
+
+    while (this.container.hasChildNodes()) {
+      this.container.removeChild(this.container.firstChild as Node)
+    }
+
+    const img = src
+      ? this.createFigureImage(src)
+      : this.createFigurePlaceholder()
+
+    this.container.appendChild(img)
   }
 
-  protected get elementType() {
-    return 'figure'
+  public createFigureImage = (src: string) => {
+    const element = document.createElement('img')
+    element.classList.add('figure-image')
+    element.src = src
+
+    return element
+  }
+
+  public createFigurePlaceholder = () => {
+    const element = document.createElement('div')
+    element.classList.add('figure')
+    element.classList.add('placeholder')
+
+    const instructions = document.createElement('div')
+    instructions.textContent = 'No image here yet…'
+    element.appendChild(instructions)
+
+    return element
   }
 
   // TODO: load/subscribe to the figure style object from the database and use it here?
-  protected createDOM() {
-    this.dom = document.createElement(this.elementType)
+  protected createDOM = () => {
+    this.dom = document.createElement('figure')
     this.dom.setAttribute('id', this.node.attrs.id)
 
     this.container = document.createElement('div')
@@ -94,124 +85,6 @@ class FigureBlock implements NodeView {
     this.contentDOM.setAttribute('tabindex', '1337') // allow focus in this node
     this.dom.appendChild(this.contentDOM)
   }
-
-  protected updateContents() {
-    const { src } = this.node.attrs
-
-    while (this.container.hasChildNodes()) {
-      this.container.removeChild(this.container.firstChild as Node)
-    }
-
-    const img = src
-      ? this.createFigureImage(src)
-      : this.createFigurePlaceholder()
-
-    if (this.props.permissions.write) {
-      const input = document.createElement('input')
-      input.accept = 'image/*'
-      input.type = 'file'
-      input.addEventListener('change', async event => {
-        const target = event.target as HTMLInputElement
-
-        if (target.files && target.files.length) {
-          await this.updateFigure(target.files[0])
-        }
-      })
-
-      img.addEventListener('click', () => {
-        input.click()
-      })
-
-      img.addEventListener('mouseenter', () => {
-        img.classList.toggle('over', true)
-      })
-
-      img.addEventListener('mouseleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener('dragenter', event => {
-        event.preventDefault()
-        img.classList.toggle('over', true)
-      })
-
-      img.addEventListener('dragleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener('dragover', event => {
-        if (event.dataTransfer && event.dataTransfer.items) {
-          for (const item of event.dataTransfer.items) {
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
-              event.preventDefault()
-              event.dataTransfer.dropEffect = 'copy'
-            }
-          }
-        }
-      })
-
-      img.addEventListener('drop', event => {
-        if (event.dataTransfer && event.dataTransfer.files) {
-          event.preventDefault()
-
-          this.updateFigure(event.dataTransfer.files[0]).catch(error => {
-            console.error(error) // tslint:disable-line:no-console
-          })
-        }
-      })
-
-      // TODO: a popup editor for figure contents and metadata?
-    }
-
-    this.container.appendChild(img)
-  }
-
-  private createFigureImage(src: string) {
-    const element = document.createElement('img')
-    element.classList.add('figure-image')
-    element.src = src
-
-    return element
-  }
-
-  private createFigurePlaceholder() {
-    const element = document.createElement('div')
-    element.classList.add('figure')
-    element.classList.add('placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.textContent = 'Click to select an image file'
-    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
-    element.appendChild(instructions)
-
-    return element
-  }
-
-  private async updateFigure(file: File) {
-    const { id } = this.node.attrs
-
-    const attachment = await this.props.putAttachment(id, {
-      id: 'image',
-      type: file.type,
-      data: file,
-    })
-
-    const blob = await attachment.getData()
-    const src = window.URL.createObjectURL(blob)
-
-    this.view.dispatch(
-      this.view.state.tr
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          src,
-          contentType: file.type,
-        })
-        .setSelection(this.view.state.selection)
-    )
-  }
 }
 
-const figure = (props: EditorProps): NodeViewCreator => (node, view, getPos) =>
-  new FigureBlock(props, node, view, getPos)
-
-export default figure
+export default createNodeView(FigureView)

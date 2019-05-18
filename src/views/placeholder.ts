@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { NodeView } from 'prosemirror-view'
+import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ViewerProps } from '../components/Viewer'
 import { placeholderContent } from '../lib/placeholder'
-import { NodeViewCreator } from '../types'
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-class Placeholder implements NodeView {
-  public dom: HTMLElement
-  private node: ManuscriptNode
+export class PlaceholderView<PropsType extends ViewerProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView {
+  public ignoreMutation = () => true
 
-  constructor(node: ManuscriptNode) {
-    this.node = node
-
-    this.initialise()
-  }
-
-  private initialise() {
+  public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('placeholder-item')
     this.dom.innerHTML = placeholderContent(
@@ -39,6 +35,4 @@ class Placeholder implements NodeView {
   }
 }
 
-const placeholder: NodeViewCreator = node => new Placeholder(node)
-
-export default placeholder
+export default createNodeView(PlaceholderView)

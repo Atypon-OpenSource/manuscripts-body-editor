@@ -78,7 +78,7 @@ const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
   }
 `
 
-export interface Separator {
+export interface MenuSeparator {
   role: 'separator'
 }
 
@@ -96,7 +96,7 @@ export interface MenuItem {
   active?: (state: ManuscriptEditorState) => boolean
   enable?: (state: ManuscriptEditorState) => boolean
   run?: (state: ManuscriptEditorState, dispatch: Dispatch) => void
-  submenu?: Array<MenuItem | Separator>
+  submenu?: Array<MenuItem | MenuSeparator>
 }
 
 type Dispatch = (tr: Transaction) => void

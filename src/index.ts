@@ -23,6 +23,7 @@ export {
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
 export { ManuscriptToolbar } from './components/toolbar/ManuscriptToolbar'
 export { Editor } from './components/Editor'
+export { Viewer } from './components/Viewer'
 export { debounceRender } from './components/DebounceRender'
 export * from './csl'
 export { menus } from './menus'

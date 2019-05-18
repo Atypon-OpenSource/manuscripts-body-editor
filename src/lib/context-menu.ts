@@ -15,6 +15,7 @@
  */
 
 import {
+  CommentAnnotation,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -36,7 +37,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  createComment?: (id: string) => Promise<void>
+  createComment?: (id: string) => Promise<CommentAnnotation>
 }
 
 interface SuppressOption {

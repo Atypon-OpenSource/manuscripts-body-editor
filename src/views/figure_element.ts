@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import {
   FigureLayout,
   FigureStyle,
@@ -22,54 +21,28 @@ import {
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import * as CSS from 'csstype'
-import { Decoration } from 'prosemirror-view'
-import { EditorProps } from '../components/Editor'
-import { NodeViewCreator } from '../types'
-import Block from './block'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-class FigureElement extends Block {
-  protected get elementType() {
-    return 'figure'
-  }
+export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public ignoreMutation = () => true
 
-  // TODO: does this need to be different?
-  public update(newNode: ManuscriptNode, decorations?: Decoration[]): boolean {
-    if (newNode.type.name !== this.node.type.name) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
-
-  public selectNode() {
-    this.dom.classList.add('ProseMirror-selectednode')
-  }
-
-  public deselectNode() {
-    this.dom.classList.remove('ProseMirror-selectednode')
-  }
-
-  public stopEvent(event: Event) {
-    return (
-      event.type !== 'mousedown' &&
-      !event.type.startsWith('drop') &&
-      !event.type.startsWith('drag')
-    )
-  }
-
-  public ignoreMutation() {
-    return true
-  }
+  public stopEvent = (event: Event) =>
+    event.type !== 'mousedown' &&
+    !event.type.startsWith('drop') &&
+    !event.type.startsWith('drag')
 
   // TODO: load/subscribe to the figure style object from the database and use it here?
-  protected createElement() {
+  public createElement = () => {
     const container = document.createElement('figure-container')
     container.className = 'block'
     this.dom.appendChild(container)
 
     // figure group
-    this.contentDOM = document.createElement(this.elementType)
+    this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.contentDOM.setAttribute(
@@ -77,7 +50,7 @@ class FigureElement extends Block {
       this.node.attrs.figureStyle
     )
 
-    const style = this.figureStyle
+    const style = this.figureStyle()
 
     if (style) {
       if (style.captionPosition === 'above') {
@@ -91,12 +64,12 @@ class FigureElement extends Block {
     container.appendChild(this.contentDOM)
   }
 
-  protected updateContents() {
+  public updateContents = () => {
     const { suppressCaption } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
 
-    const layout = this.figureLayout
+    const layout = this.figureLayout()
 
     const singleFigure = !layout || layout.rows * layout.columns === 1
 
@@ -107,15 +80,13 @@ class FigureElement extends Block {
     // this.applyStyles(figureContainer, figureStyles)
   }
 
-  private getDefaultModel<T extends Model>(objectType: ObjectTypes) {
-    return this.props.getModel<T>(`${objectType}:default`)
-  }
+  public getDefaultModel = <T extends Model>(objectType: ObjectTypes) =>
+    this.props.getModel<T>(`${objectType}:default`)
 
-  private get defaultFigureLayout() {
-    return this.getDefaultModel<FigureLayout>(ObjectTypes.FigureLayout)
-  }
+  public defaultFigureLayout = () =>
+    this.getDefaultModel<FigureLayout>(ObjectTypes.FigureLayout)
 
-  private get figureLayout() {
+  public figureLayout = () => {
     const { figureLayout } = this.node.attrs
 
     if (figureLayout) {
@@ -126,14 +97,13 @@ class FigureElement extends Block {
       }
     }
 
-    return this.defaultFigureLayout
+    return this.defaultFigureLayout()
   }
 
-  private get defaultFigureStyle() {
-    return this.getDefaultModel<FigureStyle>(ObjectTypes.FigureStyle)
-  }
+  public defaultFigureStyle = () =>
+    this.getDefaultModel<FigureStyle>(ObjectTypes.FigureStyle)
 
-  private get figureStyle() {
+  public figureStyle = () => {
     const { figureStyle } = this.node.attrs
 
     if (figureStyle) {
@@ -144,10 +114,10 @@ class FigureElement extends Block {
       }
     }
 
-    return this.defaultFigureStyle
+    return this.defaultFigureStyle()
   }
 
-  private mergePrototypeChain<T extends Model>(model: T) {
+  public mergePrototypeChain = <T extends Model>(model: T) => {
     let modelWithPrototype = model as T & { prototype: string }
 
     let output: T = modelWithPrototype
@@ -177,10 +147,10 @@ class FigureElement extends Block {
     return output
   }
 
-  private buildPanelStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+  public buildPanelStyles = (style?: FigureStyle): CSS.PropertiesHyphen => {
     const output: CSS.PropertiesHyphen = {}
 
-    const layout = this.figureLayout
+    const layout = this.figureLayout()
 
     if (layout) {
       if (layout.columns) {
@@ -205,7 +175,7 @@ class FigureElement extends Block {
     return output
   }
 
-  private buildElementStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+  public buildElementStyles = (style?: FigureStyle): CSS.PropertiesHyphen => {
     const output: CSS.PropertiesHyphen = {}
 
     if (style) {
@@ -231,7 +201,7 @@ class FigureElement extends Block {
     return output
   }
 
-  // private buildFigureStyles(style?: FigureStyle): CSS.PropertiesHyphen {
+  // public buildFigureStyles(style?: FigureStyle): CSS.PropertiesHyphen {
   //   const output: CSS.PropertiesHyphen = {
   //     // minWidth: 0,
   //     // minHeight: 0,
@@ -255,10 +225,4 @@ class FigureElement extends Block {
   // }
 }
 
-const figureElement = (props: EditorProps): NodeViewCreator => (
-  node,
-  view,
-  getPos
-) => new FigureElement(props, node, view, getPos)
-
-export default figureElement
+export default createNodeView(FigureElementView)
