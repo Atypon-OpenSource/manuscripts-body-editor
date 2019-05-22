@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+import { CSL } from '@manuscripts/manuscript-transform'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
-import { stringify } from 'qs'
+import axios from 'axios'
 import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
@@ -35,36 +36,29 @@ const search = async (
   if (query.trim().match(/^10\.\S+\/\S+$/)) {
     return searchByDOI(query.trim(), mailto)
   }
+  const response = await axios.get<{
+    message: {
+      items: CSL.Item[]
+      'total-results': number
+    }
+  }>(`https://api.crossref.org/works?mailto=${mailto}`, {
+    params: {
+      filter: 'type:journal-article',
+      query,
+      rows,
+    },
+  })
 
-  // const response = await window.fetch(
-  //   'https://api.crossref.org/works?' +
-  //   stringify({
-  //     filter: 'type:journal-article',
-  //     query,
-  //     rows,
-  //     mailto,
-  //   })
-  // )
-
-  const response = await window.fetch(
-    `https://api.crossref.org/works?mailto=${mailto}&` +
-      stringify({
-        filter: 'type:journal-article',
-        query,
-        rows,
-      })
-  )
-
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error('There was a problem searching for this query.')
   }
 
   const {
     message: { items, 'total-results': total },
-  } = await response.json()
+  } = response.data
 
   return {
-    items: items.map(convertDataToBibliographyItem),
+    items: items.map(convertDataToBibliographyItem) as BibliographyItem[],
     total,
   }
 }
@@ -73,25 +67,19 @@ const searchByDOI = async (
   doi: string,
   mailto: string
 ): Promise<SearchResults> => {
-  // const response = await window.fetch(
-  //   `https://api.crossref.org/works/${encodeURIComponent(doi)}?` +
-  //     stringify({
-  //       mailto,
-  //     })
-  // )
-
-  const response = await window.fetch(
+  const response = await axios.get<{ message: CSL.Item }>(
     `https://api.crossref.org/works/${encodeURIComponent(doi)}?mailto=${mailto}`
   )
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error('An item with this DOI could not be found.')
-    }
+  if (response.status === 404) {
+    throw new Error('An item with this DOI could not be found.')
+  }
+
+  if (response.status !== 200) {
     throw new Error('There was a problem searching for this DOI.')
   }
 
-  const { message } = await response.json()
+  const { message } = response.data
 
   const item = convertDataToBibliographyItem(message) as BibliographyItem
 
@@ -107,7 +95,7 @@ const fetch = async (doi: string, mailto: string) => {
   // NOTE: Using data.crossref.org rather than doi.org to avoid the redirect.
   // This is safe as it's only resolving Crossref DOIs.
 
-  const response = await window.fetch(
+  const response = await axios.get<CSL.Item>(
     `https://data.crossref.org/${encodeURIComponent(doi)}`,
     {
       headers: {
@@ -116,16 +104,15 @@ const fetch = async (doi: string, mailto: string) => {
     }
   )
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error('An item with this DOI could not be found.')
-    }
+  if (response.status === 404) {
+    throw new Error('An item with this DOI could not be found.')
+  }
+
+  if (response.status !== 200) {
     throw new Error('There was a problem fetching this DOI.')
   }
 
-  const data = await response.json()
-
-  return convertDataToBibliographyItem(data)
+  return convertDataToBibliographyItem(response.data)
 }
 
 export const crossref = { fetch, search }

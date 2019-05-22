@@ -1,0 +1,1112 @@
+{
+  "data": [
+    {
+      "id": "10.5255/ukda-sn-6926-1",
+      "type": "dois",
+      "attributes": {
+        "doi": "10.5255/ukda-sn-6926-1",
+        "identifiers": [
+          {
+            "identifier": "https://doi.org/10.5255/ukda-sn-6926-1",
+            "identifierType": "DOI"
+          }
+        ],
+        "creators": [
+          {
+            "name": "Department For Transport, Road Accident Statistics Branch",
+            "nameType": "Personal",
+            "givenName": "Road Accident Statistics Branch",
+            "familyName": "Department For Transport"
+          }
+        ],
+        "titles": [
+          {
+            "title": "Road Accident Data, 2010"
+          },
+          {
+            "title": "Road Accident Data, 1985-"
+          }
+        ],
+        "publisher": "UK Data Service",
+        "container": null,
+        "publicationYear": 2011,
+        "subjects": null,
+        "contributors": null,
+        "dates": [
+          {
+            "date": "2011",
+            "dateType": "Issued"
+          }
+        ],
+        "language": null,
+        "types": {
+          "ris": "GEN",
+          "bibtex": "misc",
+          "citeproc": "article",
+          "schemaOrg": "CreativeWork",
+          "resourceType": "[data collection]",
+          "resourceTypeGeneral": "Other"
+        },
+        "relatedIdentifiers": null,
+        "sizes": null,
+        "formats": null,
+        "version": "1st Edition",
+        "rightsList": null,
+        "descriptions": [
+          {
+            "description": "Road accident statistics are collected from information about personal injury road accidents and their consequent casualties, to a common national standard. The aim of collecting and publishing national road accident statistics is to inform public debate and to provide the basis for determining and monitoring effective road safety policies to reduce the road accident casualty toll. They are an essential requirement for monitoring targeted reductions in road accident casualties. The credible monitoring of targeted reductions requires that data are reported consistently and accurately, and both national and local government, and local reporting police forces, work closely to achieve a common reporting standard.&lt;br&gt;\n&lt;br&gt;\nUsers should note that for 1985-1991, and from 2002 onwards, the Vehicle Record file does not contain breath test data. This change has been made in order to protect confidentiality.&lt;br&gt;\n&lt;br&gt;\nData for 1985-1990 were deposited at the Archive at the beginning of 2006. Prior to this, the Archive only held the &lt;i&gt;Road Accident Data&lt;/i&gt; series from 1991 onwards. No extra documentation was available for the 1985-1990 data, so users are advised to consult the documentation for the 1991 survey.&lt;br&gt;\n&lt;br&gt;\nFurther information about the &lt;i&gt;Road Accident Data&lt;/i&gt; series and research based on it may be found on the government &lt;a href=\"https://www.gov.uk/government/collections/road-accidents-and-safety-statistics\" title=\"road accidents and safety statistics\"&gt;road accidents and safety statistics&lt;/a&gt; webpages.&lt;br&gt;\n&lt;br&gt;\nThese studies comprise information gathered using STATS19 and STATS20 forms.&lt;br&gt;\n&lt;br&gt;",
+            "descriptionType": "Abstract"
+          }
+        ],
+        "geoLocations": null,
+        "fundingReferences": null,
+        "url": "https://beta.ukdataservice.ac.uk/datacatalogue/doi/?id=6926#1",
+        "contentUrl": null,
+        "metadataVersion": 5,
+        "schemaVersion": null,
+        "source": "mds",
+        "isActive": true,
+        "state": "findable",
+        "reason": null,
+        "created": "2011-12-13T14:22:12.000Z",
+        "registered": "2011-12-13T14:22:12.000Z",
+        "published": "2011",
+        "updated": "2019-05-22T14:20:05.000Z"
+      },
+      "relationships": {
+        "client": {
+          "data": {
+            "id": "bl.ukda",
+            "type": "clients"
+          }
+        }
+      }
+    },
+    {
+      "id": "10.5255/ukda-sn-6877-2",
+      "type": "dois",
+      "attributes": {
+        "doi": "10.5255/ukda-sn-6877-2",
+        "identifiers": [
+          {
+            "identifier": "https://doi.org/10.5255/ukda-sn-6877-2",
+            "identifierType": "DOI"
+          }
+        ],
+        "creators": [
+          {
+            "name": "Brown, R.",
+            "nameType": "Personal",
+            "givenName": "R.",
+            "familyName": "Brown"
+          },
+          {
+            "name": "Vignoles, V.",
+            "nameType": "Personal",
+            "givenName": "V.",
+            "familyName": "Vignoles"
+          }
+        ],
+        "titles": [
+          {
+            "title": "Motivated Identity Construction in Cultural Context, 2008-2011"
+          }
+        ],
+        "publisher": "UK Data Service",
+        "container": null,
+        "publicationYear": 2016,
+        "subjects": null,
+        "contributors": null,
+        "dates": [
+          {
+            "date": "2016",
+            "dateType": "Issued"
+          }
+        ],
+        "language": null,
+        "types": {
+          "ris": "DATA",
+          "bibtex": "misc",
+          "citeproc": "dataset",
+          "schemaOrg": "Dataset",
+          "resourceType": "[data collection]",
+          "resourceTypeGeneral": "Dataset"
+        },
+        "relatedIdentifiers": null,
+        "sizes": null,
+        "formats": null,
+        "version": "2nd Edition",
+        "rightsList": null,
+        "descriptions": [
+          {
+            "description": "Beyond basic motives to seek food, water, affiliation and security, people's thoughts and actions are often guided by symbolic motives. These include 'identity motives', which guide people to see themselves in particular ways. Existing research suggests that people are motivated to see themselves in a positive light (the self-esteem motive), but also to believe that they are distinguished from others (the distinctiveness motive), that their identities persist through time (the continuity motive), that they are accepted by others (the belonging motive), that they are competent (the efficacy motive), and that their lives are ultimately meaningful (the meaning motive). Yet, little is known about the generality of these motives to people from non-Western cultural backgrounds, the majority of the world's population, and the little available evidence is controversial. &lt;br&gt;\n&lt;br&gt;\nThe researchers have assembled a network of research collaborators in 34 nations chosen to provide a broad representation of global variation in cultural values. They designed two complementary studies to test these new theoretical ideas. Study 1 tested the hypotheses among high school students in 19 nations. A longitudinal design was used so data were collected over two different periods. Study 2 used a simplified design to reach adults in a larger number of cultural groups, aiming to sample maximum possible cultural diversity. In total, the research involved the participation of over 12,000 respondents in over 50 cultural groups.&lt;br&gt;\n&lt;br&gt;\nFurther information is available on the &lt;a href=\"http://www.esrc.ac.uk/my-esrc/grants/RES-062-23-1300/read\" title\"Motivated identity construction in cultural context\"&gt;Motivated identity construction in cultural context&lt;/a&gt; ESRC Award web page.&lt;br&gt;\n&lt;br&gt;\nFor the second edition (September 2016), updated versions of the data files were deposited, with some erroneous cases corrected.&lt;br&gt;\n&lt;br&gt;",
+            "descriptionType": "Abstract"
+          }
+        ],
+        "geoLocations": null,
+        "fundingReferences": null,
+        "url": "https://beta.ukdataservice.ac.uk/datacatalogue/doi/?id=6877#2",
+        "contentUrl": null,
+        "metadataVersion": 4,
+        "schemaVersion": null,
+        "source": "mds",
+        "isActive": true,
+        "state": "findable",
+        "reason": null,
+        "created": "2016-09-21T11:17:16.000Z",
+        "registered": "2016-09-21T11:17:17.000Z",
+        "published": "2016",
+        "updated": "2019-05-22T14:18:45.000Z"
+      },
+      "relationships": {
+        "client": {
+          "data": {
+            "id": "bl.ukda",
+            "type": "clients"
+          }
+        }
+      }
+    },
+    {
+      "id": "10.5255/ukda-sn-6806-1",
+      "type": "dois",
+      "attributes": {
+        "doi": "10.5255/ukda-sn-6806-1",
+        "identifiers": [
+          {
+            "identifier": "https://doi.org/10.5255/ukda-sn-6806-1",
+            "identifierType": "DOI"
+          }
+        ],
+        "creators": [
+          {
+            "name": "Hirst, C.",
+            "nameType": "Personal",
+            "givenName": "C.",
+            "familyName": "Hirst"
+          }
+        ],
+        "titles": [
+          {
+            "title": "SPHERE Study: Secondary Prevention of Heart Disease in General Practice, 2003-2008"
+          }
+        ],
+        "publisher": "UK Data Service",
+        "container": null,
+        "publicationYear": 2011,
+        "subjects": null,
+        "contributors": null,
+        "dates": [
+          {
+            "date": "2011",
+            "dateType": "Issued"
+          }
+        ],
+        "language": null,
+        "types": {
+          "ris": "DATA",
+          "bibtex": "misc",
+          "citeproc": "dataset",
+          "schemaOrg": "Dataset",
+          "resourceType": "[data collection]",
+          "resourceTypeGeneral": "Dataset"
+        },
+        "relatedIdentifiers": null,
+        "sizes": null,
+        "formats": null,
+        "version": "1st Edition",
+        "rightsList": null,
+        "descriptions": [
+          {
+            "description": "The SPHERE Study: Secondary Prevention of Heart Disease in General Practice,  was the largest ever non-pharmaceutical trial in Irish general practice. The aim of the study was to design, implement and test the effectiveness of a complex intervention to improve the process of care and objective clinical outcomes for patients with established coronary heart disease in primary care.&lt;br&gt;\n&lt;br&gt;\nThe SPHERE intervention was designed in consultation with patients and practitioners. Based on principles of patient-centred care, brief motivational interviewing and best practice in medication prescribing, it has the following components:  &lt;br&gt;\n&lt;br&gt;\n1. Practitioners attend two 90-minute training sessions, the first on facilitating lifestyle behaviour change, and the second on optimal medication prescribing for secondary prevention&lt;br&gt;\n2. Patients visit the practice for review every four months&lt;br&gt;\n3. Ongoing support is provided to practitioners by regional SPHERE research nurses&lt;br&gt;\n4. A study newsletter is circulated to intervention practices every four months&lt;br&gt;\n&lt;br&gt;\nPatients with established coronary heart disease were selected from 48 general practices taking part in the study in the East, North and West Ireland. Half the practices were randomly chosen to receive the intervention for 18 months, while the other half continued to provide usual care to their patients. Detailed information about patient risk factors and health status was collected at the beginning of the study and again at the end. &lt;br&gt;\n&lt;br&gt;\nFurther information, including results and publications, can be found on the &lt;a href=\"http://www.spherestudy.com/index.html\" title=\"the SPHERE study\"&gt;SPHERE&lt;/a&gt; study website.&lt;br&gt;\n&lt;br&gt;\nUsers should note that the British Medical Journal (BMJ) article in the user guide has been included with the permission of the BMJ. It is covered by a Creative Commons licence, which allows &lt;b&gt;non-commercial&lt;/b&gt; use as long as the article is properly cited. To seek permission for commercial re-use, see the BMJ's &lt;a href=\"http://group.bmj.com/group/rights-licensing/permissions/permission-for-open-access-articles\" title=\"Permission for Open Access articles\"&gt;Permission for Open Access articles&lt;/a&gt; webpage.&lt;br&gt;",
+            "descriptionType": "Abstract"
+          }
+        ],
+        "geoLocations": null,
+        "fundingReferences": null,
+        "url": "https://beta.ukdataservice.ac.uk/datacatalogue/doi/?id=6806#1",
+        "contentUrl": null,
+        "metadataVersion": 5,
+        "schemaVersion": null,
+        "source": "mds",
+        "isActive": true,
+        "state": "findable",
+        "reason": null,
+        "created": "2011-10-11T12:55:59.000Z",
+        "registered": "2011-10-11T12:55:59.000Z",
+        "published": "2011",
+        "updated": "2019-05-22T14:16:28.000Z"
+      },
+      "relationships": {
+        "client": {
+          "data": {
+            "id": "bl.ukda",
+            "type": "clients"
+          }
+        }
+      }
+    },
+    {
+      "id": "10.5255/ukda-sn-6752-1",
+      "type": "dois",
+      "attributes": {
+        "doi": "10.5255/ukda-sn-6752-1",
+        "identifiers": [
+          {
+            "identifier": "https://doi.org/10.5255/ukda-sn-6752-1",
+            "identifierType": "DOI"
+          }
+        ],
+        "creators": [
+          {
+            "name": "University Of London, Institute Of Education",
+            "nameType": "Personal",
+            "givenName": "Institute Of Education",
+            "familyName": "University Of London"
+          }
+        ],
+        "titles": [
+          {
+            "title": "National Child Development Study: Understanding Individual Behaviour, 2010"
+          },
+          {
+            "title": "National Child Development Study, 1958-"
+          }
+        ],
+        "publisher": "UK Data Service",
+        "container": null,
+        "publicationYear": 2011,
+        "subjects": null,
+        "contributors": null,
+        "dates": [
+          {
+            "date": "2011",
+            "dateType": "Issued"
+          }
+        ],
+        "language": null,
+        "types": {
+          "ris": "DATA",
+          "bibtex": "misc",
+          "citeproc": "dataset",
+          "schemaOrg": "Dataset",
+          "resourceType": "[data collection]",
+          "resourceTypeGeneral": "Dataset"
+        },
+        "relatedIdentifiers": null,
+        "sizes": null,
+        "formats": null,
+        "version": "1st Edition",
+        "rightsList": null,
+        "descriptions": [
+          {
+            "description": "&lt;i&gt;National Child Development Study: Understanding Individual Behaviour, 2010&lt;/i&gt; is a pilot study completed by an inter-disciplinary network of researchers as part of the ESRC’s Understanding Individual Behaviour programme.  The network’s core aim was to explore individual differences in mid-life cognitive capacity and how these relate to experiences and behaviour earlier in life.  &lt;br&gt;\n&lt;br&gt;\nThe pilot study was conducted with a sub-sample of NCDS members living in and around Cambridge in 2010, when study members were aged 52, and sought to investigate the potential for conducting neuro-psychological assessments with purposive sub-samples from the British Birth Cohort Studies. The aim was to recruit individuals with particular cognitive ability trajectories between childhood and mid-adulthood.  Childhood cognitive ability was measured using the age 11 General Ability Test (GAT).  Adult cognitive ability was measured using cognitive assessments conducted at age 50. Potential participants were invited to a research centre at the University of Cambridge to complete a 90 minute testing session which involved three main elements:&lt;ul&gt;&lt;li&gt;1. Repetition of the cognitive assessments included in the NCDS age 50 survey (NCDS8): a) Word-list recall/delayed word-list recall - a test of verbal learning and recall; b) Animal naming - a test of verbal fluency; c) Letter cancellation - a test of attention, mental speed and visual scanning.&lt;/li&gt;&lt;li&gt;2. Five CANTAB (Cambridge Neuropsychological Test Automated Battery) tasks: a) Paired Associates Learning test (PAL) - a visuospatial associative learning test which assesses visual memory and new learning; b) Graded Naming Test (GNT) - a test of semantic and/or verbal memory; c) Affective Go/No-go(AGN) - a test of affective decision making and information processing biases; d) Cambridge Gambling Task (CGT) - a test of decision making and risk taking; and e) Rapid Visual Information Processing (RVP) - a test of attention and general information processing.&lt;/li&gt;&lt;li&gt;3. A short self-completion questionnaire.&lt;/li&gt;&lt;/ul&gt;In total, 45 study members participated in the pilot study.&lt;br&gt;\n&lt;br&gt;\nFurther information is available from &lt;a href=\"http://www.esrc.ac.uk/my-esrc/grants/RES-355-25-0026/read\" title=\"Investigating the genetic, social and neuropsychological influences on individual differences in impulsivity and in memory using a lifecourse approach\"&gt;investigating the genetic, social and neuropsychological influences on individual differences in impulsivity and in memory using a lifecourse approach&lt;/a&gt; ESRC Award web page.&lt;br&gt;\n The &lt;I&gt;National Child Development Study&lt;/I&gt; (NCDS) originated in the &lt;I&gt;Perinatal Mortality Survey&lt;/I&gt; (see SN 5565), which examined social and obstetric factors associated with still birth and infant mortality among over 17,000 babies born in Britain in one week in March 1958. Surviving members of this birth cohort have been surveyed on eight further occasions in order to monitor their changing health, education, social and economic circumstances - in 1965 at age 7, 1969 at age 11, 1974 at age 16 (the first three sweeps are also held under SN 5565), 1981 (age 23 - SN 5566), 1991 (age 33 - SN 5567), 1999/2000 (age 41/2 - SN 5578), 2004-2005 (age 46/47 - SN 5579), 2008-2009 (age 50 - SN 6137) and 2013 (age 55 - SN 7669).&lt;br&gt;\n&lt;br&gt;\nThere have also been surveys of sub-samples of the cohort, the most recent occurring in 1995 (age 37), when a 10% representative sub-sample was assessed for difficulties with basic skills (SN 4992). Finally, during 2002-2004, 9,340 NCDS cohort members participated in a bio-medical survey, carried out by qualified nurses (SN 5594, available under more restrictive Special Licence access conditions; see catalogue record for details). The bio-medical survey did not cover any of the topics included in the 2004/2005 survey. Further NCDS data separate to the main surveys include a response and deaths dataset, parent migration studies, employment, activity and partnership histories, behavioural studies and essays - see the &lt;a href=\"http://discover.ukdataservice.ac.uk/series/?sn=2000032\" title=\"NCDS series page\"&gt;NCDS series page&lt;/a&gt; for details.&lt;br&gt;\n&lt;br&gt;\nFurther information about the NCDS can be found on the &lt;a href=\"http://www.cls.ioe.ac.uk\" title=\"Centre for Longitudinal Studies\"&gt;Centre for Longitudinal Studies&lt;/a&gt; website.&lt;br&gt;\n&lt;br&gt;\n&lt;I&gt;How to access genetic and/or bio-medical sample data from a range of longitudinal surveys:&lt;/I&gt;&lt;br&gt;\nA useful overview of the governance routes for applying for genetic and bio-medical sample data, which are not available through the UK Data Service, can be found at &lt;a href=\"http://www.metadac.ac.uk/data-access-through-metadac/\" title=\"Governance of data and sample access\"&gt;Governance of data and sample access&lt;/a&gt; on the METADAC (Managing Ethico-social, Technical and Administrative issues in Data Access) website.&lt;br&gt;\n&lt;br&gt;",
+            "descriptionType": "Abstract"
+          }
+        ],
+        "geoLocations": null,
+        "fundingReferences": null,
+        "url": "https://beta.ukdataservice.ac.uk/datacatalogue/doi/?id=6752#1",
+        "contentUrl": null,
+        "metadataVersion": 8,
+        "schemaVersion": null,
+        "source": "mds",
+        "isActive": true,
+        "state": "findable",
+        "reason": null,
+        "created": "2011-10-11T12:53:08.000Z",
+        "registered": "2011-10-11T12:53:08.000Z",
+        "published": "2011",
+        "updated": "2019-05-22T14:14:58.000Z"
+      },
+      "relationships": {
+        "client": {
+          "data": {
+            "id": "bl.ukda",
+            "type": "clients"
+          }
+        }
+      }
+    },
+    {
+      "id": "10.5255/ukda-sn-6720-1",
+      "type": "dois",
+      "attributes": {
+        "doi": "10.5255/ukda-sn-6720-1",
+        "identifiers": [
+          {
+            "identifier": "https://doi.org/10.5255/ukda-sn-6720-1",
+            "identifierType": "DOI"
+          }
+        ],
+        "creators": [
+          {
+            "name": "Welsh Assembly Government, Social Research Division",
+            "nameType": "Personal",
+            "givenName": "Social Research Division",
+            "familyName": "Welsh Assembly Government"
+          }
+        ],
+        "titles": [
+          {
+            "title": "National Survey for Wales, 2009-2010: Pilot Study"
+          },
+          {
+            "title": "National Survey for Wales, 2012-"
+          }
+        ],
+        "publisher": "UK Data Service",
+        "container": null,
+        "publicationYear": 2011,
+        "subjects": null,
+        "contributors": null,
+        "dates": [
+          {
+            "date": "2011",
+            "dateType": "Issued"
+          }
+        ],
+        "language": null,
+        "types": {
+          "ris": "DATA",
+          "bibtex": "misc",
+          "citeproc": "dataset",
+          "schemaOrg": "Dataset",
+          "resourceType": "[data collection]",
+          "resourceTypeGeneral": "Dataset"
+        },
+        "relatedIdentifiers": null,
+        "sizes": null,
+        "formats": null,
+        "version": "1st Edition",
+        "rightsList": null,
+        "descriptions": [
+          {
+            "description": "The aim of the &lt;i&gt;National Survey for Wales, 2009-2010: Pilot Study&lt;/i&gt; was to test the survey design, but also to provide valuable information for the Welsh Assembly Government on a range of issues.  The pilot survey was based on face-to-face interviews in a randomly chosen sample of households across Wales. In each of these households, the survey covered the head of household and a randomly selected adult (who may also be the head of household). There was also a short self-completion questionnaire for every adult in the household.&lt;br&gt;\n The &lt;I&gt;National Survey for Wales&lt;/I&gt; is carried out by the Office for National Statistics on behalf of the Welsh Government. The survey is a key source of information for the Welsh Government, other public sector organisations, and academics on the views and circumstances of people in Wales. It is carried out face-to-face with a random sample of over 10,000 adults a year. &lt;br&gt;\n&lt;br&gt;\nThe National Survey brings together five surveys previously commissioned by the Welsh Government and three of its sponsored bodies (Natural Resources Wales, Sport Wales, Arts Council of Wales). These predecessor surveys were: the first set of National Survey for Wales, which ran from 2012-15 (SNs 7320, 7552, 7767, 7768, the 2009-10 pilot study, SN 6720, and its predecessor, the Living in Wales Survey 2004-08, held under SN 33397); the Welsh Health Survey 1998-2015 (held under SN 33371); the Active Adults Survey; the Arts in Wales Survey and the Welsh Outdoor Recreation Survey (none of these three series are currently held at the UK Data Archive).   &lt;br&gt;\n&lt;br&gt;\nFurther information is available on the Welsh Government &lt;a href=\"http://gov.wales/statistics-and-research/national-survey/?lang=en\" title =\"National Survey for Wales\"&gt;National Survey for Wales&lt;/a&gt; webpages.&lt;br&gt;\n&lt;br&gt;",
+            "descriptionType": "Abstract"
+          }
+        ],
+        "geoLocations": null,
+        "fundingReferences": null,
+        "url": "https://beta.ukdataservice.ac.uk/datacatalogue/doi/?id=6720#1",
+        "contentUrl": null,
+        "metadataVersion": 5,
+        "schemaVersion": null,
+        "source": "mds",
+        "isActive": true,
+        "state": "findable",
+        "reason": null,
+        "created": "2011-10-11T12:51:12.000Z",
+        "registered": "2011-10-11T12:51:12.000Z",
+        "published": "2011",
+        "updated": "2019-05-22T14:14:04.000Z"
+      },
+      "relationships": {
+        "client": {
+          "data": {
+            "id": "bl.ukda",
+            "type": "clients"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "id": "bl.ukda",
+      "type": "clients",
+      "attributes": {
+        "name": "UK Data Archive",
+        "symbol": "BL.UKDA",
+        "year": 2011,
+        "contactName": "Steve Hassan",
+        "contactEmail": "steveh@essex.ac.uk",
+        "description": "The UK Data Archive is curator of the largest collection of digital data in the social sciences and humanities in the United Kingdom. With several thousand datasets relating to society, both historical and contemporary, our Archive is a vital resource for researchers, teachers and learners.We are an internationally acknowledged centre of expertise in the areas of acquiring, curating and providing access to data. Since 2005 our archive has been designated a Place of Deposit by the National Archives allowing us to curate public records. We acquire high quality data from the academic, public, and commercial sectors, providing continuous access to these data while we also support existing and emerging communities of data users.",
+        "domains": "esds.ac.uk,ukdataservice.ac.uk",
+        "url": "https://www.data-archive.ac.uk/",
+        "created": "2011-03-07T12:17:46.000Z",
+        "updated": "2019-02-12T11:26:59.000Z",
+        "isActive": true,
+        "hasPassword": true
+      },
+      "relationships": {
+        "provider": {
+          "data": {
+            "id": "bl",
+            "type": "providers"
+          }
+        },
+        "repository": {
+          "data": {
+            "id": "10.17616/R3088K",
+            "type": "repositories"
+          }
+        },
+        "prefixes": {
+          "data": [
+            {
+              "id": "10.5255",
+              "type": "prefixes"
+            },
+            {
+              "id": "10.5072",
+              "type": "prefixes"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total": 177293,
+    "totalPages": 2000,
+    "page": 1,
+    "states": [
+      {
+        "id": "findable",
+        "title": "Findable",
+        "count": 157279
+      },
+      {
+        "id": "draft",
+        "title": "Draft",
+        "count": 13469
+      },
+      {
+        "id": "registered",
+        "title": "Registered",
+        "count": 6545
+      }
+    ],
+    "resourceTypes": [
+      {
+        "id": "text",
+        "title": "Text",
+        "count": 74612
+      },
+      {
+        "id": "dataset",
+        "title": "Dataset",
+        "count": 35885
+      },
+      {
+        "id": "collection",
+        "title": "Collection",
+        "count": 32837
+      },
+      {
+        "id": "image",
+        "title": "Image",
+        "count": 10306
+      },
+      {
+        "id": "other",
+        "title": "Other",
+        "count": 8419
+      },
+      {
+        "id": "software",
+        "title": "Software",
+        "count": 3888
+      },
+      {
+        "id": "audiovisual",
+        "title": "Audiovisual",
+        "count": 1884
+      },
+      {
+        "id": "workflow",
+        "title": "Workflow",
+        "count": 788
+      },
+      {
+        "id": "film",
+        "title": "Film",
+        "count": 248
+      },
+      {
+        "id": "physical-object",
+        "title": "PhysicalObject",
+        "count": 171
+      },
+      {
+        "id": "event",
+        "title": "Event",
+        "count": 104
+      },
+      {
+        "id": "interactive-resource",
+        "title": "InteractiveResource",
+        "count": 49
+      },
+      {
+        "id": "data-paper",
+        "title": "DataPaper",
+        "count": 23
+      },
+      {
+        "id": "model",
+        "title": "Model",
+        "count": 20
+      },
+      {
+        "id": "sound",
+        "title": "Sound",
+        "count": 8
+      }
+    ],
+    "created": [
+      {
+        "id": "2011",
+        "title": "2011",
+        "count": 1493
+      },
+      {
+        "id": "2012",
+        "title": "2012",
+        "count": 4791
+      },
+      {
+        "id": "2013",
+        "title": "2013",
+        "count": 2541
+      },
+      {
+        "id": "2014",
+        "title": "2014",
+        "count": 7221
+      },
+      {
+        "id": "2015",
+        "title": "2015",
+        "count": 16410
+      },
+      {
+        "id": "2016",
+        "title": "2016",
+        "count": 25339
+      },
+      {
+        "id": "2017",
+        "title": "2017",
+        "count": 33161
+      },
+      {
+        "id": "2018",
+        "title": "2018",
+        "count": 53685
+      },
+      {
+        "id": "2019",
+        "title": "2019",
+        "count": 32652
+      }
+    ],
+    "registered": [
+      {
+        "id": "2005",
+        "title": "2005",
+        "count": 7
+      },
+      {
+        "id": "2006",
+        "title": "2006",
+        "count": 31
+      },
+      {
+        "id": "2007",
+        "title": "2007",
+        "count": 46
+      },
+      {
+        "id": "2008",
+        "title": "2008",
+        "count": 52
+      },
+      {
+        "id": "2009",
+        "title": "2009",
+        "count": 309
+      },
+      {
+        "id": "2010",
+        "title": "2010",
+        "count": 910
+      },
+      {
+        "id": "2011",
+        "title": "2011",
+        "count": 939
+      },
+      {
+        "id": "2012",
+        "title": "2012",
+        "count": 4456
+      },
+      {
+        "id": "2013",
+        "title": "2013",
+        "count": 1947
+      },
+      {
+        "id": "2014",
+        "title": "2014",
+        "count": 7242
+      },
+      {
+        "id": "2015",
+        "title": "2015",
+        "count": 16430
+      },
+      {
+        "id": "2016",
+        "title": "2016",
+        "count": 25121
+      },
+      {
+        "id": "2017",
+        "title": "2017",
+        "count": 33041
+      },
+      {
+        "id": "2018",
+        "title": "2018",
+        "count": 53509
+      },
+      {
+        "id": "2019",
+        "title": "2019",
+        "count": 19724
+      }
+    ],
+    "providers": [
+      {
+        "id": "figshare",
+        "title": "figshare",
+        "count": 65282
+      },
+      {
+        "id": "cern",
+        "title": "CERN - European Organization for Nuclear Research",
+        "count": 32942
+      },
+      {
+        "id": "tib",
+        "title": "German National Library of Science and Technology",
+        "count": 11516
+      },
+      {
+        "id": "cisti",
+        "title": "National Research Council Canada",
+        "count": 7989
+      },
+      {
+        "id": "delft",
+        "title": "TU Delft Library",
+        "count": 7042
+      },
+      {
+        "id": "gbif",
+        "title": "Global Biodiversity Information Facility",
+        "count": 6425
+      },
+      {
+        "id": "bl",
+        "title": "British Library",
+        "count": 5477
+      },
+      {
+        "id": "ethz",
+        "title": "ETH Zurich",
+        "count": 4169
+      },
+      {
+        "id": "rg",
+        "title": "ResearchGate",
+        "count": 3529
+      },
+      {
+        "id": "gesis",
+        "title": "GESIS - Leibniz Institute for the Social Sciences",
+        "count": 2868
+      },
+      {
+        "id": "cdl",
+        "title": "California Digital Library",
+        "count": 2550
+      },
+      {
+        "id": "crui",
+        "title": "Conference of Italian University Rectors (CRUI2011)",
+        "count": 2118
+      },
+      {
+        "id": "cul",
+        "title": "Columbia University Libraries",
+        "count": 1701
+      },
+      {
+        "id": "zbmed",
+        "title": "German National Library of Medicine",
+        "count": 1677
+      },
+      {
+        "id": "cos",
+        "title": "Center for Open Science",
+        "count": 1636
+      }
+    ],
+    "clients": [
+      {
+        "id": "figshare.ars",
+        "title": "figshare Academic Research System",
+        "count": 51894
+      },
+      {
+        "id": "cern.zenodo",
+        "title": "Zenodo",
+        "count": 29252
+      },
+      {
+        "id": "figshare.test",
+        "title": "Figshare test Datacenter",
+        "count": 11042
+      },
+      {
+        "id": "delft.jrc",
+        "title": "European Commission Joint Research Centre Directorate G",
+        "count": 6560
+      },
+      {
+        "id": "gbif.gbif",
+        "title": "Global Biodiversity Information Facility",
+        "count": 6425
+      },
+      {
+        "id": "cisti.ubc",
+        "title": "University of British Columbia",
+        "count": 5306
+      },
+      {
+        "id": "rg.rg",
+        "title": "ResearchGate",
+        "count": 3529
+      },
+      {
+        "id": "cdl.ucsb",
+        "title": "UC Santa Barbara",
+        "count": 2120
+      },
+      {
+        "id": "ethz.boris",
+        "title": "Bern Open Repository and Information System (BORIS)",
+        "count": 1941
+      },
+      {
+        "id": "figshare.sage",
+        "title": "figshare SAGE Publications",
+        "count": 1911
+      },
+      {
+        "id": "gesis.icpsr",
+        "title": "ICPSR",
+        "count": 1822
+      },
+      {
+        "id": "cern.hepdata",
+        "title": "HEPData.net",
+        "count": 1710
+      },
+      {
+        "id": "cern.jacow",
+        "title": "JACOW",
+        "count": 1663
+      },
+      {
+        "id": "cos.osf",
+        "title": "Open Science Framework",
+        "count": 1636
+      },
+      {
+        "id": "cul.columbia",
+        "title": "Columbia University Libraries",
+        "count": 1625
+      }
+    ],
+    "prefixes": [
+      {
+        "id": "10.6084",
+        "title": "10.6084",
+        "count": 51894
+      },
+      {
+        "id": "10.5281",
+        "title": "10.5281",
+        "count": 29051
+      },
+      {
+        "id": "10.5072",
+        "title": "10.5072",
+        "count": 12584
+      },
+      {
+        "id": "10.5290",
+        "title": "10.5290",
+        "count": 6560
+      },
+      {
+        "id": "10.15468",
+        "title": "10.15468",
+        "count": 6325
+      },
+      {
+        "id": "10.14288",
+        "title": "10.14288",
+        "count": 5306
+      },
+      {
+        "id": "10.13140",
+        "title": "10.13140",
+        "count": 3529
+      },
+      {
+        "id": "10.6085",
+        "title": "10.6085",
+        "count": 2045
+      },
+      {
+        "id": "10.7892",
+        "title": "10.7892",
+        "count": 1941
+      },
+      {
+        "id": "10.25384",
+        "title": "10.25384",
+        "count": 1911
+      },
+      {
+        "id": "10.3886",
+        "title": "10.3886",
+        "count": 1822
+      },
+      {
+        "id": "10.17182",
+        "title": "10.17182",
+        "count": 1710
+      },
+      {
+        "id": "10.18429",
+        "title": "10.18429",
+        "count": 1663
+      },
+      {
+        "id": "10.17605",
+        "title": "10.17605",
+        "count": 1636
+      },
+      {
+        "id": "10.7916",
+        "title": "10.7916",
+        "count": 1625
+      }
+    ],
+    "schemaVersions": [
+      {
+        "id": "3",
+        "title": "Schema 3",
+        "count": 76514
+      },
+      {
+        "id": "4",
+        "title": "Schema 4",
+        "count": 75008
+      },
+      {
+        "id": "2.2",
+        "title": "Schema 2.2",
+        "count": 14424
+      },
+      {
+        "id": "2.1",
+        "title": "Schema 2.1",
+        "count": 136
+      }
+    ],
+    "sources": [
+      {
+        "id": "mds",
+        "title": "Mds",
+        "count": 67060
+      },
+      {
+        "id": "legacy",
+        "title": "Legacy",
+        "count": 1777
+      },
+      {
+        "id": "ez",
+        "title": "Ez",
+        "count": 1223
+      },
+      {
+        "id": "fabrica",
+        "title": "Fabrica",
+        "count": 442
+      },
+      {
+        "id": "fabricaForm",
+        "title": "Fabrica Form",
+        "count": 145
+      }
+    ],
+    "linkChecksStatus": [
+      {
+        "id": "200",
+        "title": "200",
+        "count": 10653
+      },
+      {
+        "id": "404",
+        "title": "404",
+        "count": 333
+      },
+      {
+        "id": "403",
+        "title": "403",
+        "count": 50
+      },
+      {
+        "id": "500",
+        "title": "500",
+        "count": 33
+      },
+      {
+        "id": "400",
+        "title": "400",
+        "count": 32
+      },
+      {
+        "id": "410",
+        "title": "410",
+        "count": 12
+      },
+      {
+        "id": "503",
+        "title": "503",
+        "count": 8
+      },
+      {
+        "id": "429",
+        "title": "429",
+        "count": 7
+      },
+      {
+        "id": "401",
+        "title": "401",
+        "count": 2
+      },
+      {
+        "id": "502",
+        "title": "502",
+        "count": 2
+      }
+    ],
+    "linksChecked": 1127,
+    "linksWithSchemaOrg": [
+      {
+        "id": "0",
+        "title": "0",
+        "count": 12079
+      },
+      {
+        "id": "1",
+        "title": "1",
+        "count": 576
+      }
+    ],
+    "linkChecksSchemaOrgId": 422,
+    "linkChecksDcIdentifier": 2817,
+    "linkChecksCitationDoi": 0,
+    "subjects": [
+      {
+        "id": "Medicine",
+        "title": "Medicine",
+        "count": 17303
+      },
+      {
+        "id": "69999 Biological Sciences not elsewhere classified",
+        "title": "69999 Biological Sciences Not Elsewhere Classified",
+        "count": 15095
+      },
+      {
+        "id": "Genetics",
+        "title": "Genetics",
+        "count": 12307
+      },
+      {
+        "id": "Cancer",
+        "title": "Cancer",
+        "count": 9347
+      },
+      {
+        "id": "Molecular Biology",
+        "title": "Molecular Biology",
+        "count": 9344
+      },
+      {
+        "id": "Cell Biology",
+        "title": "Cell Biology",
+        "count": 8708
+      },
+      {
+        "id": "Science Policy",
+        "title": "Science Policy",
+        "count": 8458
+      },
+      {
+        "id": "Ecology",
+        "title": "Ecology",
+        "count": 8349
+      },
+      {
+        "id": "Biochemistry",
+        "title": "Biochemistry",
+        "count": 7844
+      },
+      {
+        "id": "Biotechnology",
+        "title": "Biotechnology",
+        "count": 7603
+      },
+      {
+        "id": "Developmental Biology",
+        "title": "Developmental Biology",
+        "count": 7244
+      },
+      {
+        "id": "Sociology",
+        "title": "Sociology",
+        "count": 7181
+      },
+      {
+        "id": "80505 Web Technologies (excl. Web Search)",
+        "title": "80505 Web Technologies (Excl. Web Search)",
+        "count": 7096
+      },
+      {
+        "id": "39999 Chemical Sciences not elsewhere classified",
+        "title": "39999 Chemical Sciences Not Elsewhere Classified",
+        "count": 6682
+      },
+      {
+        "id": "biodiversity",
+        "title": "Biodiversity",
+        "count": 6285
+      }
+    ]
+  },
+  "links": {
+    "self": "https://api.datacite.org/dois/?query=test&page[size]=5",
+    "next": "https://api.datacite.org/dois?page%5Bnumber%5D=2&page%5Bsize%5D=5&query=test"
+  }
+}
