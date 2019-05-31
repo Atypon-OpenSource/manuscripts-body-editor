@@ -55,3 +55,7 @@ export const getChildOfType = (
 export const findParentNodeWithId = findParentNode(node => 'id' in node.attrs)
 
 export const findParentNodeWithIdValue = findParentNode(node => node.attrs.id)
+
+export const findParentSection = findParentNode(
+  node => node.type === node.type.schema.nodes.section
+)
