@@ -19,7 +19,7 @@ import {
   ManuscriptNode,
   Selected,
 } from '@manuscripts/manuscript-transform'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import { Manuscript } from '@manuscripts/manuscripts-json-schema'
 import { parse } from '@manuscripts/title-editor'
 import React from 'react'
 import { debounceRender } from '../DebounceRender'
@@ -30,7 +30,6 @@ interface Props {
   selected: Selected | null
   view: ManuscriptEditorView | null
   doc: ManuscriptNode | null
-  modelMap: Map<string, Model>
 }
 
 const ManuscriptOutline: React.FunctionComponent<Props> = ({
