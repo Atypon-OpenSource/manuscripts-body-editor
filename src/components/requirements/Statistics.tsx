@@ -26,8 +26,8 @@ import { RequirementsAlerts, RequirementsContext } from './RequirementsProvider'
 const AlertContainer = styled.div`
   display: inline-flex;
   align-items: center;
-  height: 1em;
-  width: 24px;
+  width: 20px;
+  cursor: pointer;
 `
 
 const StatisticContainer = styled.div`
@@ -46,7 +46,7 @@ const Statistic: React.FC<{
     <AlertContainer>
       {alert && (
         <Tip placement={'left'} title={alert}>
-          <AttentionOrange height={'1em'} />
+          <AttentionOrange width={12} height={12} />
         </Tip>
       )}
     </AlertContainer>
