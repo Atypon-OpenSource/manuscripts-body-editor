@@ -18,7 +18,6 @@ import Popper from 'popper.js'
 
 export class PopperManager {
   protected activePopper?: Popper
-  protected container?: HTMLDivElement
 
   public show(
     target: Element,
@@ -31,15 +30,15 @@ export class PopperManager {
     }
 
     window.requestAnimationFrame(() => {
-      this.container = document.createElement('div')
-      this.container.className = 'popper'
+      const container = document.createElement('div')
+      container.className = 'popper'
 
       const modifiers: Popper.Modifiers = {}
 
       if (showArrow) {
         const arrow = document.createElement('div')
         arrow.className = 'popper-arrow'
-        this.container.appendChild(arrow)
+        container.appendChild(arrow)
 
         modifiers.arrow = {
           element: arrow,
@@ -50,15 +49,15 @@ export class PopperManager {
         }
       }
 
-      this.container.appendChild(contents)
-      document.body.appendChild(this.container)
+      container.appendChild(contents)
+      document.body.appendChild(container)
 
-      this.activePopper = new Popper(target, this.container, {
+      this.activePopper = new Popper(target, container, {
         placement,
         removeOnDestroy: true,
         modifiers,
         onCreate: () => {
-          this.focusInput(this.container!)
+          this.focusInput(container)
         },
       })
     })

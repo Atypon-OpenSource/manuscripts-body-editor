@@ -39,6 +39,7 @@ import {
 import { findDOMNode } from 'react-dom'
 import { ContextMenu } from '../../lib/context-menu'
 import { nodeTypeIcon } from '../../node-type-icons'
+import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
   Outline,
   OutlineDropPreview,
@@ -90,6 +91,7 @@ export interface TreeItem {
   pos: number
   endPos: number
   parent?: ManuscriptNode
+  requirementsNode?: ManuscriptNode | null
 }
 
 interface Props {
@@ -165,6 +167,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     }
   }
 
+  // tslint:disable-next-line:cyclomatic-complexity
   public render(): React.ReactNode {
     const {
       depth = 0,
@@ -181,7 +184,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { open, dragPosition } = this.state
 
-    const { node, items, isSelected } = tree
+    const { node, requirementsNode, items, isSelected } = tree
 
     const mightDrop = item && isOverCurrent && canDrop
 
@@ -212,7 +215,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   <OutlineItemNoArrow />
                 )}
 
-                <OutlineItemLink to={'#' + node.attrs.id}>
+                <OutlineItemLink to={`#${node.attrs.id || ''}`}>
                   {connectDragPreview(
                     <span
                       style={{
@@ -231,6 +234,8 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   >
                     {this.itemText(node)}
                   </OutlineItemLinkText>
+
+                  <RequirementsAlert node={requirementsNode || node} />
                 </OutlineItemLink>
               </OutlineItem>
             </div>

@@ -1021,6 +1021,11 @@
   resolved "https://registry.npmjs.org/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
+"@iarna/word-count@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/@iarna/word-count/-/word-count-1.1.2.tgz#e4a82b4fa8df0fe8b31e07263a175b5390925713"
+  integrity sha512-kHU3aSVe9u3uAnBHGmEJ+Pj1aDJTAJMgiG2H3GIBrKgZkAKCMEB8AzLMeYzyLoldB45KbK6C+aB8I3rbSoxioQ==
+
 "@jest/console@^24.7.1":
   version "24.7.1"
   resolved "https://registry.npmjs.org/@jest/console/-/console-24.7.1.tgz#32a9e42535a97aedfe037e725bd67e954b459545"
@@ -1224,34 +1229,35 @@
   resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fexamples/-/examples-0.0.5.tgz#335d4fefaf9b4cdc64e59f03c45818cd8fed904d"
   integrity sha512-oTAMMrSHmBXXUnmOK4jBw94r1snEVRcUXeMcC2tGOBKKqeEEP5oGYU50qKnfgcN+N1xZ2p6HZ6Zp0wjTeLvH1A==
 
-"@manuscripts/manuscript-transform@^0.10.2":
-  version "0.10.2"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.10.2.tgz#1d417b52cb5fcc52e356866f84d569caafd6b23d"
-  integrity sha512-JR0OhvWPJcM3eGG3t1XRZFhencp5IQRLD+W/reRGWT0DcxXZqdctBlif7WOLTFn9Y4NOIvlYo1mO/6B7iz3i1g==
+"@manuscripts/manuscript-transform@^0.12.0":
+  version "0.12.0"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.12.0.tgz#dd0c880f5aaa37ebb0cebb68f39dcff5a4280249"
+  integrity sha512-CPb29EU+Sb1XzLGwBiHo+zGBL158bPBfkluWRrEY/rn5z1V/m75RK5Vx8t8d1guN4ZsXnyvg2TvKyYy0jBtJyg==
   dependencies:
     prosemirror-model "^1.7.0"
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
 
-"@manuscripts/manuscripts-json-schema@^1.11.1":
-  version "1.11.1"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscripts-json-schema/-/manuscripts-json-schema-1.11.1.tgz#cf297072c27ef27d51a1097cfa0b5fc4c3101b96"
-  integrity sha512-dSEsI0+RPdzNzaheL4UJWN/irnvV/8nPCpu5wikHI7WTit4Z61VRLlQa+OvxOuhLdV9dBOj38JlCUhTs8jjjAg==
+"@manuscripts/manuscripts-json-schema@^1.12.0":
+  version "1.12.0"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscripts-json-schema/-/manuscripts-json-schema-1.12.0.tgz#3c5b24b5ffc426e93ae440f4d631c1154c4e3bc2"
+  integrity sha512-aWlqDQkg0I8p8hQ/aTTxO8xoXVwtrQohtsl0ApPXpO2lDOXcLzo4KtmTP5wQ6DlXlMKiQSb31NH/7ZJe75Kcog==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/style-guide@^0.6.1":
-  version "0.6.1"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fstyle-guide/-/style-guide-0.6.1.tgz#64c03df8063919bebc8cf23204330281e7807787"
-  integrity sha512-YNvdL6/XtFi1Q4IyZG8J4Zx/iKs1IMYqjxKu7GOpsirlgvSGcdtXLA6YZDYnyrszr9McSx9QZy4jcyxDIU5fVg==
+"@manuscripts/style-guide@^0.7.0":
+  version "0.7.0"
+  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fstyle-guide/-/style-guide-0.7.0.tgz#c6ea909f7c5ad8a3ff21ab5c2eeee98c44b581f1"
+  integrity sha512-fkDkuo8hPwPzdEYMgxkX4Bw6rl/HoglSuPAoNIo9nE1XQQd94Zu+kqZESk5fj0YSGwyRkbW7pSJCi2dJ6f5Low==
   dependencies:
     "@manuscripts/assets" "^0.3.6"
     lodash-es "^4.17.11"
     react-dnd "^7.4.3"
     react-modal "^3.8.1"
     react-select "^2.4.1"
+    tooltip.js "^1.3.2"
 
 "@manuscripts/title-editor@^0.3.1":
   version "0.3.1"
@@ -6230,6 +6236,11 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
   integrity sha512-6uHUhOPEBgQ24HM+r6b/QwWfZq+yiFcipKFrOFiBEnWdy5sdzYoi+pJeQaPI5qOLRFqWmAXUPQNsielzdLoecA==
 
+grapheme-splitter@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
+  integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
+
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.npmjs.org/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
@@ -10359,7 +10370,7 @@ polished@^3.3.0:
   dependencies:
     "@babel/runtime" "^7.4.4"
 
-popper.js@^1.14.4, popper.js@^1.14.7, popper.js@^1.15.0:
+popper.js@^1.0.2, popper.js@^1.14.4, popper.js@^1.14.7, popper.js@^1.15.0:
   version "1.15.0"
   resolved "https://registry.npmjs.org/popper.js/-/popper.js-1.15.0.tgz#5560b99bbad7647e9faa475c6b8056621f5a4ff2"
   integrity sha512-w010cY1oCUmI+9KwwlWki+r5jxKfTFDVoadl7MSrIujHU5MJ5OR6HTDj6Xo8aoR/QsA56x8jKjA59qGH4ELtrA==
@@ -11073,21 +11084,14 @@ prosemirror-keymap@^1.0.0, prosemirror-keymap@^1.0.1:
     prosemirror-state "^1.0.0"
     w3c-keyname "^1.1.8"
 
-prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.2.0, prosemirror-model@^1.6.2, prosemirror-model@^1.7.0:
+prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.2, prosemirror-model@^1.7.0:
   version "1.7.0"
   resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.7.0.tgz#1fde0fd7cb2f9ead0be1581ad9f04593002a65aa"
   integrity sha512-/6ul6guiqyAl5I+0qbnL7SlmuX0DEfYqjvzeLUVEnb7nwF/vmKZuWqbjEG2tqi/9SSudvd3UxQTBDHvxy9hQwA==
   dependencies:
     orderedmap "^1.0.0"
 
-prosemirror-schema-basic@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/prosemirror-schema-basic/-/prosemirror-schema-basic-1.0.1.tgz#13920228aab13e3cc41afbed016c5c6f21c1b215"
-  integrity sha512-LFO/+zr7RSRJ95k6QGHdAwxsTsB3xxSCphU2Xkg6hNroblUV0rYelKe6s5uM5rdyPUdTTRTPjnZWQE28YsGVcA==
-  dependencies:
-    prosemirror-model "^1.2.0"
-
-prosemirror-schema-list@^1.0.0, prosemirror-schema-list@^1.0.3:
+prosemirror-schema-list@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/prosemirror-schema-list/-/prosemirror-schema-list-1.0.3.tgz#539caafa4f9314000943bd783be4017165ec0bd6"
   integrity sha512-+zzSawVds8LsZpl/bLTCYk2lYactF93W219Czh81zBILikCRDOHjp1CQ1os4ZXBp6LlD+JnBqF1h59Q+hilOoQ==
@@ -11113,15 +11117,6 @@ prosemirror-tables@^0.8.0:
     prosemirror-state "^1.0.0"
     prosemirror-transform "^1.0.0"
     prosemirror-view "^1.0.0"
-
-prosemirror-test-builder@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/prosemirror-test-builder/-/prosemirror-test-builder-1.0.1.tgz#24bc75234999b27a5347a59f0bb52dc85278ba87"
-  integrity sha512-ydO7fa0He2DD5riaPvnDEElVD8R8hgAt0/+fOzUdPKa/dqsUblOdY+luC9knT86Jwg5eRMPBmLYWIvJYUKhNqw==
-  dependencies:
-    prosemirror-model "^1.0.0"
-    prosemirror-schema-basic "^1.0.0"
-    prosemirror-schema-list "^1.0.0"
 
 prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transform@^1.1.3:
   version "1.1.3"
@@ -13542,6 +13537,13 @@ toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
+
+tooltip.js@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.npmjs.org/tooltip.js/-/tooltip.js-1.3.2.tgz#ccfe450ffd7332ce5f254033778649526c1db542"
+  integrity sha512-DeDr9JxYx/lSvQ53ZCRFLxXrmrSyU3fLz6k+ITUTw69AIYtpWij/NmOJQscJ7BwY5lcEwWJWSfqqQWVvTMYZiw==
+  dependencies:
+    popper.js "^1.0.2"
 
 touch@^2.0.1:
   version "2.0.2"

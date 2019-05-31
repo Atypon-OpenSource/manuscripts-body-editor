@@ -22,6 +22,10 @@ export {
 } from './components/outline/ManuscriptOutline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
 export { ManuscriptToolbar } from './components/toolbar/ManuscriptToolbar'
+export { Statistics } from './components/requirements/Statistics'
+export {
+  RequirementsProvider,
+} from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'
 export { Viewer } from './components/Viewer'
 export { debounceRender } from './components/DebounceRender'
