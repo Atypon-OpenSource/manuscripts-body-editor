@@ -60,7 +60,7 @@ const acceleratorParts = (accelerator: Accelerator): React.ReactNode[] => {
       parts.push(modifiers[part])
       parts.push(separator)
     } else {
-      parts.push(<Character>{part}</Character>)
+      parts.push(<Character key={part}>{part}</Character>)
     }
   }
 
