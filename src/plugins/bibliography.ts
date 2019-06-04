@@ -32,10 +32,10 @@ import { isEqual } from 'lodash-es'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { getChildOfType } from '..'
 
-type NodesWithPositions = Array<[CitationNode, number]>
+type CitationNodes = Array<[CitationNode, number, Citation]>
 
 interface PluginState {
-  citationNodes: NodesWithPositions
+  citationNodes: CitationNodes
   citations: CiteProc.Citation[]
 }
 
@@ -80,39 +80,34 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const buildCitationNodes = (
-    state: ManuscriptEditorState
-  ): NodesWithPositions => {
-    const citationNodes: NodesWithPositions = []
+  const buildCitationNodes = (state: ManuscriptEditorState): CitationNodes => {
+    const citationNodes: CitationNodes = []
 
     state.doc.descendants((node, pos) => {
       if (isCitationNode(node)) {
-        citationNodes.push([node, pos])
+        const citation = props.getModel<Citation>(node.attrs.rid)
+
+        if (citation) {
+          citationNodes.push([node, pos, citation])
+        }
       }
     })
-
-    // TODO: handle missing objects?
-    // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395
 
     return citationNodes
   }
 
-  const buildCitations = (
-    citationNodes: NodesWithPositions
-  ): CiteProc.Citation[] =>
-    citationNodes
-      .map(([node]) => props.getModel<Citation>(node.attrs.rid)!)
-      .map((citation: Citation) => ({
-        citationID: citation._id,
-        citationItems: citation.embeddedCitationItems.map(
-          (citationItem: CitationItem) => ({
-            id: citationItem.bibliographyItem,
-            data: props.getLibraryItem(citationItem.bibliographyItem), // for comparison
-          })
-        ),
-        properties: { noteIndex: 0 },
-        manuscript: props.getManuscript(), // for comparison
-      }))
+  const buildCitations = (citationNodes: CitationNodes): CiteProc.Citation[] =>
+    citationNodes.map(([node, pos, citation]) => ({
+      citationID: citation._id,
+      citationItems: citation.embeddedCitationItems.map(
+        (citationItem: CitationItem) => ({
+          id: citationItem.bibliographyItem,
+          data: props.getLibraryItem(citationItem.bibliographyItem), // for comparison
+        })
+      ),
+      properties: { noteIndex: 0 },
+      manuscript: props.getManuscript(), // for comparison
+    }))
 
   return new Plugin<PluginState, ManuscriptSchema>({
     key: bibliographyKey,
