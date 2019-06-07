@@ -16,6 +16,7 @@
 
 import {
   generateNodeID,
+  ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { Plugin } from 'prosemirror-state'
@@ -23,8 +24,6 @@ import { Plugin } from 'prosemirror-state'
 export default () => {
   return new Plugin<{}, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
-      let updated = 0
-
       // get the transaction from the new state
       const tr = newState.tr
 
@@ -40,6 +39,12 @@ export default () => {
 
       const ids = new Set()
 
+      const nodesToUpdate: Array<{
+        node: ManuscriptNode
+        pos: number
+        id: string
+      }> = []
+
       // for each node in the doc
       newState.doc.descendants((node, pos) => {
         if (!('id' in node.attrs)) {
@@ -52,25 +57,17 @@ export default () => {
           if (ids.has(id)) {
             // give the duplicate node a new id
             // TODO: maybe change the other node's ID?
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              id: generateNodeID(node.type),
-            })
-
-            // remember that something changed
-            updated++
+            const id = generateNodeID(node.type)
+            nodesToUpdate.push({ node, pos, id })
+            ids.add(id)
           } else {
             ids.add(id)
           }
         } else {
           // set the id on the node at this position
-          tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
-            id: generateNodeID(node.type),
-          })
-
-          // remember that something changed
-          updated++
+          const id = generateNodeID(node.type)
+          nodesToUpdate.push({ node, pos, id })
+          ids.add(id)
         }
 
         // don't descend into lists
@@ -79,8 +76,15 @@ export default () => {
         }
       })
 
-      // return the transaction if something changed
-      if (updated) {
+      // update the nodes and return the transaction if something changed
+      if (nodesToUpdate.length) {
+        for (const { node, pos, id } of nodesToUpdate) {
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            id,
+          })
+        }
+
         return tr.setSelection(newState.selection)
       }
     },

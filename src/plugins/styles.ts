@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import {
+  ManuscriptNode,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
 import {
   BorderStyle,
   FigureStyle,
+  Manuscript,
   Model,
+  PageLayout,
 } from '@manuscripts/manuscripts-json-schema'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
+  manuscript: Manuscript
 }
 
 export default (props: Props) => {
@@ -81,6 +87,58 @@ export default (props: Props) => {
 
         return DecorationSet.create(state.doc, decorations)
       },
+    },
+    appendTransaction: (transactions, oldState, newState) => {
+      // get the transaction from the new state
+      const tr = newState.tr
+
+      // only scan if nodes have changed
+      if (!transactions.some(transaction => transaction.docChanged)) return null
+
+      const { nodes } = newState.schema
+
+      const listNodeTypes = [nodes.bullet_list, nodes.ordered_list]
+
+      const nodesToUpdate: Array<{
+        node: ManuscriptNode
+        pos: number
+      }> = []
+
+      // for each node in the doc
+      newState.doc.descendants((node, pos) => {
+        if (!('paragraphStyle' in node.attrs)) {
+          return true
+        }
+
+        if (!node.attrs.paragraphStyle) {
+          nodesToUpdate.push({ node, pos })
+        }
+
+        // don't descend into lists
+        if (listNodeTypes.includes(node.type)) {
+          return false
+        }
+      })
+
+      // update the nodes and return the transaction if something changed
+      if (nodesToUpdate.length) {
+        if (props.manuscript.pageLayout) {
+          const pageLayout = props.getModel<PageLayout>(
+            props.manuscript.pageLayout
+          )
+
+          if (pageLayout) {
+            for (const { node, pos } of nodesToUpdate) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                paragraphStyle: pageLayout.defaultParagraphStyle,
+              })
+            }
+          }
+
+          return tr.setSelection(newState.selection)
+        }
+      }
     },
   })
 }
