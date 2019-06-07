@@ -15,6 +15,7 @@
  */
 
 import {
+  isElementNode,
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/manuscript-transform'
@@ -58,4 +59,8 @@ export const findParentNodeWithIdValue = findParentNode(node => node.attrs.id)
 
 export const findParentSection = findParentNode(
   node => node.type === node.type.schema.nodes.section
+)
+
+export const findParentElement = findParentNode(
+  node => isElementNode(node) && node.attrs.id
 )
