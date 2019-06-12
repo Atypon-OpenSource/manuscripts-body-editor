@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -25,14 +24,4 @@ export class OrderedListView<PropsType extends ViewerProps> extends BlockView<
   public elementType = 'ol'
 }
 
-export const orderedListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
-  if (node.attrs.order !== undefined && node.attrs.order !== 1) {
-    dom.setAttribute('start', node.attrs.order)
-  }
-}
-
-export default createNodeOrElementView(
-  OrderedListView,
-  'ol',
-  orderedListCallback
-)
+export default createNodeOrElementView(OrderedListView, 'ol')

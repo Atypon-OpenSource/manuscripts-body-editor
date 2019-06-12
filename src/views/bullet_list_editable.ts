@@ -18,4 +18,4 @@ import { BulletListView } from './bullet_list'
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
 
-export default createNodeOrElementView(EditableBlock(BulletListView), 'p')
+export default createNodeOrElementView(EditableBlock(BulletListView), 'ul')
