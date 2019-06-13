@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { BulletListView } from './bullet_list'
+import { bulletListCallback, BulletListView } from './bullet_list'
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
 
-export default createNodeOrElementView(EditableBlock(BulletListView), 'ul')
+export default createNodeOrElementView(
+  EditableBlock(BulletListView),
+  'ul',
+  bulletListCallback
+)

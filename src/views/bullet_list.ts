@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -24,4 +25,8 @@ export class BulletListView<PropsType extends ViewerProps> extends BlockView<
   public elementType = 'ul'
 }
 
-export default createNodeOrElementView(BulletListView, 'ul')
+export const bulletListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
+  dom.classList.add('list')
+}
+
+export default createNodeOrElementView(BulletListView, 'ul', bulletListCallback)

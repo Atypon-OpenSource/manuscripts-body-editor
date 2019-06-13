@@ -16,6 +16,10 @@
 
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
-import { OrderedListView } from './ordered_list'
+import { orderedListCallback, OrderedListView } from './ordered_list'
 
-export default createNodeOrElementView(EditableBlock(OrderedListView), 'ol')
+export default createNodeOrElementView(
+  EditableBlock(OrderedListView),
+  'ol',
+  orderedListCallback
+)

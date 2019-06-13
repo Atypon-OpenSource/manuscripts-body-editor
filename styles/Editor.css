@@ -38,6 +38,18 @@
   padding-left: 30px !important;
 }
 
+.ProseMirror ol > li {
+  display: block;
+  position: relative;
+}
+
+.ProseMirror ol > li:before {
+  padding-right: 8px;
+  position: absolute;
+  margin-right: 100%;
+  right: 0;
+}
+
 .ProseMirror li p {
   margin-top: 0;
   margin-bottom: 0;
