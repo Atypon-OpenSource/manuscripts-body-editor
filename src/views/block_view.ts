@@ -21,6 +21,7 @@ import { BaseNodeView } from './base_node_view'
 
 export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
   implements ManuscriptNodeView {
+  public viewAttributes = ['id', 'placeholder', 'paragraphStyle']
   // public readonly icons = {
   //   plus:
   //     '<svg width="16" height="16" stroke="currentColor"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>',
@@ -46,18 +47,26 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
 
   public updateContents = () => {
     this.contentDOM.classList.toggle('empty-node', !this.node.childCount)
+    this.updateAttributes()
+  }
+
+  public updateAttributes = () => {
+    for (const key of this.viewAttributes) {
+      if (key in this.node.attrs) {
+        const value = this.node.attrs[key]
+
+        if (value) {
+          this.contentDOM.setAttribute(key, value)
+        } else {
+          this.contentDOM.removeAttribute(key)
+        }
+      }
+    }
   }
 
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
-
-    Object.entries(this.node.attrs).forEach(([key, value]) => {
-      // ignore empty or null-like values
-      if (value !== '' && value != null) {
-        this.contentDOM.setAttribute(key, value)
-      }
-    })
 
     this.dom.appendChild(this.contentDOM)
   }
