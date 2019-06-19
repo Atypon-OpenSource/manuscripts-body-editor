@@ -1219,52 +1219,60 @@
     "@babel/runtime" "^7.4.4"
     hoist-non-react-statics "^3.3.0"
 
-"@manuscripts/assets@^0.3.0", "@manuscripts/assets@^0.3.6", "@manuscripts/assets@^0.3.8":
-  version "0.3.8"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fassets/-/assets-0.3.8.tgz#b00a6bd00beae13d493afe853dc883d75dbd5067"
-  integrity sha512-3ZAIB1CnRdrGIQTePAJwvpBNF6ur/fjUg8/FU/zHBeVCmEnNJ32qh28nkkqGIvNXBxlEeTCMzszvcKbwfwQ54g==
+"@manuscripts/assets@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.9.tgz#cb4b3fe086832ff36b18105d62724c07e70f8947"
+  integrity sha512-VQJTFk8rlQiRkZp8jQY4C1Ucqpp81v9OuWXC6qs5zz9cU1AK5VfL7bwscFIXN5q8U+gT5CvTTmCLe7pIkyV9wQ==
 
-"@manuscripts/examples@^0.0.5":
-  version "0.0.5"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fexamples/-/examples-0.0.5.tgz#335d4fefaf9b4cdc64e59f03c45818cd8fed904d"
-  integrity sha512-oTAMMrSHmBXXUnmOK4jBw94r1snEVRcUXeMcC2tGOBKKqeEEP5oGYU50qKnfgcN+N1xZ2p6HZ6Zp0wjTeLvH1A==
+"@manuscripts/examples@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
+  integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.12.0":
-  version "0.12.0"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscript-transform/-/manuscript-transform-0.12.0.tgz#dd0c880f5aaa37ebb0cebb68f39dcff5a4280249"
-  integrity sha512-CPb29EU+Sb1XzLGwBiHo+zGBL158bPBfkluWRrEY/rn5z1V/m75RK5Vx8t8d1guN4ZsXnyvg2TvKyYy0jBtJyg==
+"@manuscripts/manuscript-transform@^0.13.2":
+  version "0.13.2"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.13.2.tgz#6d3e8709534aac011d664504d85d310899c0511b"
+  integrity sha512-lmEJ4oCHwDUh6JhpD4WXBpMVdGqYkyvwYr9X8nXPFcBrXSY0suDXQvawd1Y7vQUC/UDyRc0RdrTrmfut5oc65g==
   dependencies:
     prosemirror-model "^1.7.0"
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
 
-"@manuscripts/manuscripts-json-schema@^1.13.0":
-  version "1.13.0"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fmanuscripts-json-schema/-/manuscripts-json-schema-1.13.0.tgz#102945390d82f19f81fbb304c177a7a0bf9ae77b"
-  integrity sha512-fIYP6maoXOTJYhWZ0BjGdph9U6mK4F5hv4E7xL6Uvrh2mGkIGZTmgEudnMPu/1s1JAwQAClEEB8LbpzM1H6ErQ==
+"@manuscripts/manuscripts-json-schema@^1.14.2":
+  version "1.14.2"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.14.2.tgz#c191a5a3feaee7188467d52263ecbd3de10eaa84"
+  integrity sha512-e3kHh7YszFaXChqGGjXAwCe3nLcnaLUZD/oNnieNFftQuFxKT+3NIcbzo/APZObozGHdEUxInSaW7c10cb9YEA==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/style-guide@^0.7.0":
-  version "0.7.0"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2fstyle-guide/-/style-guide-0.7.0.tgz#c6ea909f7c5ad8a3ff21ab5c2eeee98c44b581f1"
-  integrity sha512-fkDkuo8hPwPzdEYMgxkX4Bw6rl/HoglSuPAoNIo9nE1XQQd94Zu+kqZESk5fj0YSGwyRkbW7pSJCi2dJ6f5Low==
+"@manuscripts/publish@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@manuscripts/publish/-/publish-0.2.1.tgz#0e3d2d546c173a86ef77e68c8b3d9de80c369bba"
+  integrity sha512-47AqfcK6rEfopHaapi6quzspHxykWWMAS8eIvMQknTCw1bjAWzK96t2wRiKHcVTjjRq5czrATfm3VO6O/iFtaw==
   dependencies:
-    "@manuscripts/assets" "^0.3.6"
+    node-fetch "^2.6.0"
+
+"@manuscripts/style-guide@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.8.4.tgz#f782dfff60c0989fdb24a97d0932ebe7601366cf"
+  integrity sha512-/fTT0KLDR1xE7n/XbOuyWBuRQX8JCH+oTBmFSVaktahJ81RVMaRnf+EGNi9LpDtyDzb++ooewBzfTB6XT3w3Qw==
+  dependencies:
+    "@manuscripts/assets" "^0.3.9"
     lodash-es "^4.17.11"
     react-dnd "^7.4.3"
     react-modal "^3.8.1"
     react-select "^2.4.1"
+    react-sizeme "^2.6.7"
     tooltip.js "^1.3.2"
 
 "@manuscripts/title-editor@^0.3.1":
   version "0.3.1"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2ftitle-editor/-/title-editor-0.3.1.tgz#79bbe02121d389c0fb3ee9c13e1d53181edb1b58"
-  integrity sha512-QHnlrbhn/+2BaJuIqEWWzrqB5KxENuy/NC4z6DwFeQrFaqz41lDuR3oOrYDtSzDoqYda/rt2K8RsoGLi1glvsw==
+  resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.3.1.tgz#eae65b60f1ecce1d55ea087f60b6cecf71f478fb"
+  integrity sha512-V3GjFF24oit5tJn+F2AyIBteSgnZKs0SI/Fubn0BO7LUqppWwjWQcZhNpa0+MEHfF1wNpLhormYilC++Q1JRQg==
   dependencies:
-    "@manuscripts/assets" "^0.3.0"
+    "@manuscripts/assets" "^0.3.9"
     prosemirror-commands "^1.0.4"
     prosemirror-history "^1.0.0"
     prosemirror-keymap "^1.0.0"
@@ -1272,10 +1280,10 @@
     prosemirror-state "^1.2.2"
     prosemirror-view "^1.6.3"
 
-"@manuscripts/tslint-config@^0.1.0":
-  version "0.1.1"
-  resolved "https://atypon-npm-registry.herokuapp.com/@manuscripts%2ftslint-config/-/tslint-config-0.1.1.tgz#a2dd24f4a6708df89072cfeb3274b2914c30963e"
-  integrity sha512-iQW3xG4NYQsU0IJAHsFXAuibZ2ddpzy66p9MlQRpTABpbse+s618C7AQE0j34iDnoP8DjxAthssMsoQ1A+PBrA==
+"@manuscripts/tslint-config@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.npmjs.org/@manuscripts/tslint-config/-/tslint-config-0.1.3.tgz#edcf67c318bee85f2674dda3ad8e0d92775d23db"
+  integrity sha512-RVWD2VSvoZgACdHN6KnLOO8q+6PyRDtzxAPaZce9ou/0OOoXuYrv5qnvH5OYYpSW7h7/QAH3l3Bu0I/FGfh+6g==
   dependencies:
     tslint-config-prettier "^1.18.0"
     tslint-config-standard "^8.0.1"
@@ -2939,6 +2947,11 @@ basic-auth@^2.0.0:
   integrity sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==
   dependencies:
     safe-buffer "5.1.2"
+
+batch-processor@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
+  integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
 
 batch@0.6.1:
   version "0.6.1"
@@ -4975,6 +4988,13 @@ electron-to-chromium@^1.3.122, electron-to-chromium@^1.3.133:
   version "1.3.135"
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.135.tgz#f5799b95f2bcd8de17cde47d63392d83a4477041"
   integrity sha512-xXLNstRdVsisPF3pL3H9TVZo2XkMILfqtD6RiWIUmDK2sFX1Bjwqmd8LBp0Kuo2FgKO63JXPoEVGm8WyYdwP0Q==
+
+element-resize-detector@^1.1.15:
+  version "1.1.15"
+  resolved "https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.1.15.tgz#48eba1a2eaa26969a4c998d972171128c971d8d2"
+  integrity sha512-16/5avDegXlUxytGgaumhjyQoM6hpp5j3+L79sYq5hlXfTNRy5WMMuTVWkZU3egp/CokCmTmvf18P3KeB57Iog==
+  dependencies:
+    batch-processor "^1.0.0"
 
 elliptic@^6.0.0:
   version "6.4.1"
@@ -9537,7 +9557,7 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-fetch@^2.0.0, node-fetch@^2.1.2:
+node-fetch@^2.0.0, node-fetch@^2.1.2, node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
@@ -11613,6 +11633,16 @@ react-simple-code-editor@^0.9.0:
   resolved "https://registry.npmjs.org/react-simple-code-editor/-/react-simple-code-editor-0.9.10.tgz#1ab5ea7215687ed918c6d0dae90736cf01890905"
   integrity sha512-80LJwRQS7Wi9Ugh/e6FRHWdcg4oQOpMBDFxyDpORILffrHdV3EIQ1IeX5x7488r05iFgLbVDV4nQ1LRKjgCm0g==
 
+react-sizeme@^2.6.7:
+  version "2.6.7"
+  resolved "https://registry.npmjs.org/react-sizeme/-/react-sizeme-2.6.7.tgz#231339ce8821ac2c26424c791e0027f89dae3e90"
+  integrity sha512-xCjPoBP5jmeW58TxIkcviMZqabZis7tTvDFWf0/Wa5XCgVWQTIe74NQBes2N1Kmp64GRLkpm60BaP0kk+v8aCQ==
+  dependencies:
+    element-resize-detector "^1.1.15"
+    invariant "^2.2.4"
+    shallowequal "^1.1.0"
+    throttle-debounce "^2.1.0"
+
 react-test-renderer@^16.0.0-0:
   version "16.8.6"
   resolved "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.8.6.tgz#188d8029b8c39c786f998aa3efd3ffe7642d5ba1"
@@ -13330,6 +13360,11 @@ throat@^4.0.0:
   version "4.1.0"
   resolved "https://registry.npmjs.org/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
+
+throttle-debounce@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/throttle-debounce/-/throttle-debounce-2.1.0.tgz#257e648f0a56bd9e54fe0f132c4ab8611df4e1d5"
+  integrity sha512-AOvyNahXQuU7NN+VVvOOX+uW6FPaWdAOdRP5HfwYxAfCzXTFKRMoIMk+n+po318+ktcChx+F1Dd91G3YHeMKyg==
 
 through2@^0.6.2, through2@^0.6.5:
   version "0.6.5"

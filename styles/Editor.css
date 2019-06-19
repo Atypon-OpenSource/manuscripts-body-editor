@@ -44,7 +44,7 @@
 }
 
 .ProseMirror ol > li:before {
-  padding-right: 8px;
+  padding-right: 4px;
   position: absolute;
   margin-right: 100%;
   right: 0;
