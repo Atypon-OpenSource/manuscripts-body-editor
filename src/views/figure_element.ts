@@ -158,9 +158,9 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
       }
 
       if (layout.rows) {
-        output['grid-template-rows'] = `repeat(${
-          layout.rows
-        }, minmax(min-content, max-content)) [caption] [listing] auto`
+        output[
+          'grid-template-rows'
+        ] = `repeat(${layout.rows}, minmax(min-content, max-content)) [caption] [listing] auto`
       }
     }
 

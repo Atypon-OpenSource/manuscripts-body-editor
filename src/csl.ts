@@ -334,7 +334,7 @@ export class CitationManager {
     return locales
   }
 
-  private namespaceResolver(ns: string) {
+  private namespaceResolver(ns: string | null) {
     return ns === 'csl' ? 'http://purl.org/net/xbiblio/csl' : null
   }
 

@@ -222,9 +222,7 @@ export default (props: Props) => {
               ? `<div class="csl-bib-body" id="${
                   node.attrs.id
                 }">${generatedBibliographyItems.join('\n')}</div>`
-              : `<div class="csl-bib-body empty-node" data-placeholder="${
-                  node.attrs.placeholder
-                }"></div>`
+              : `<div class="csl-bib-body empty-node" data-placeholder="${node.attrs.placeholder}"></div>`
 
             tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
