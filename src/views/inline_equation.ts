@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { sanitize } from 'dompurify'
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -31,7 +32,9 @@ export class InlineEquationView<PropsType extends ViewerProps>
     const { SVGRepresentation } = this.node.attrs
 
     if (SVGRepresentation) {
-      this.dom.innerHTML = SVGRepresentation // TODO: sanitize!
+      this.dom.innerHTML = sanitize(SVGRepresentation, {
+        USE_PROFILES: { svg: true },
+      })
     } else {
       while (this.dom.hasChildNodes()) {
         this.dom.removeChild(this.dom.firstChild!)
