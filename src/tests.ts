@@ -17,7 +17,6 @@
 import '@babel/polyfill'
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { JSDOM } from 'jsdom'
 import uuid from 'uuid/v4'
 
 configure({ adapter: new Adapter() })
@@ -32,14 +31,6 @@ Object.defineProperty(document, 'queryCommandSupported', {
 
 Object.defineProperty(document, 'execCommand', {
   value: (cmd: string) => supportedCommands.includes(cmd),
-})
-
-// https://github.com/jsdom/jsdom/issues/317
-
-Object.defineProperty(document, 'createRange', {
-  value: () => ({
-    createContextualFragment: JSDOM.fragment,
-  }),
 })
 
 if (!window.URL.createObjectURL) {

@@ -30,9 +30,7 @@
     "@iarna/word-count": "^1.1.2",
     "@jupyterlab/services": "^3.2.1",
     "@manuscripts/assets": "^0.3.9",
-    "@manuscripts/manuscript-transform": "^0.13.2",
     "@manuscripts/manuscripts-json-schema": "^1.14.2",
-    "@manuscripts/style-guide": "^0.8.4",
     "@manuscripts/title-editor": "^0.3.1",
     "axios": "^0.19.0",
     "blob-util": "^2.0.2",
@@ -76,6 +74,8 @@
     "@babel/preset-typescript": "^7.1.0",
     "@manuscripts/examples": "^0.0.6",
     "@manuscripts/publish": "^0.2.1",
+    "@manuscripts/manuscript-transform": "^0.14.0",
+    "@manuscripts/style-guide": "^0.8.4",
     "@manuscripts/tslint-config": "^0.1.3",
     "@types/codemirror": "^0.0.74",
     "@types/dompurify": "^0.0.32",
@@ -83,7 +83,7 @@
     "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/history": "^4.7.2",
     "@types/jest": "^24.0.15",
-    "@types/jsdom": "^12.2.0",
+    "@types/jsdom": "^12.2.4",
     "@types/lodash-es": "^4.17.1",
     "@types/pretty-bytes": "^5.1.0",
     "@types/prosemirror-commands": "^1.0.1",
@@ -120,7 +120,7 @@
     "jest": "^24.8.0",
     "jest-enzyme": "^7.0.0",
     "jest-mock-axios": "^3.0.0",
-    "jsdom": "^14.0.0",
+    "jsdom": "^15.1.1",
     "lodash": "^4.17.11",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.18.2",
@@ -138,6 +138,7 @@
     "typescript": "3.5.2"
   },
   "peerDependencies": {
+    "@manuscripts/manuscript-transform": "^0.14.0",
     "@manuscripts/style-guide": "^0.8.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -145,5 +146,8 @@
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
     "styled-components": "^4.3.2"
+  },
+  "resolutions": {
+    "jsdom": "^15.1.1"
   }
 }
