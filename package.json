@@ -129,7 +129,7 @@
     "react-dom": "^16.8.6",
     "react-hot-loader": "^4.11.1",
     "rimraf": "^2.6.2",
-    "rxdb": "git+https://gitlab.com/mpapp-public/rxdb.git#master",
+    "rxdb": "gitlab:mpapp-public/rxdb#upstream-fork",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
     "style-loader": "^0.23.1",
@@ -142,7 +142,7 @@
     "@manuscripts/style-guide": "^0.8.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "rxdb": "git+https://gitlab.com/mpapp-public/rxdb.git#master",
+    "rxdb": "gitlab:mpapp-public/rxdb#upstream-fork",
     "rxjs": "^6.1.0",
     "rxjs-compat": "^6.1.0",
     "styled-components": "^4.3.2"
