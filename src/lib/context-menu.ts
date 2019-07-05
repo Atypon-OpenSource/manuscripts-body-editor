@@ -15,7 +15,6 @@
  */
 
 import {
-  CommentAnnotation,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -37,7 +36,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  createComment?: (id: string) => Promise<CommentAnnotation>
+  setCommentTarget?: (commentTarget?: string) => void
 }
 
 interface SuppressOption {
@@ -245,12 +244,14 @@ export class ContextMenu {
       )
     }
 
-    if (this.actions.createComment) {
+    const { setCommentTarget } = this.actions
+
+    if (setCommentTarget) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
-            this.createMenuItem('Comment', async () => {
-              await this.actions.createComment!(this.node.attrs.id)
+            this.createMenuItem('Comment', () => {
+              setCommentTarget(this.node.attrs.id)
               popper.destroy()
             })
           )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { buildComment, nodeNames } from '@manuscripts/manuscript-transform'
+import { nodeNames } from '@manuscripts/manuscript-transform'
 import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
 import BlockView from './block_view'
@@ -146,16 +146,10 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
     }
 
     public createMenu = () => {
-      const { getCurrentUser, saveModel } = this.props
+      const { setCommentTarget } = this.props
 
       return new ContextMenu(this.node, this.view, this.getPos, {
-        createComment: (id: string) => {
-          const user = getCurrentUser()
-
-          const comment = buildComment(user._id, id)
-
-          return saveModel(comment)
-        },
+        setCommentTarget,
       })
     }
   }
