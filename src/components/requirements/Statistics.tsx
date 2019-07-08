@@ -18,10 +18,16 @@ import AttentionOrange from '@manuscripts/assets/react/AttentionOrange'
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Tip } from '@manuscripts/style-guide'
 import '@manuscripts/style-guide/styles/tip.css'
+import * as Comlink from 'comlink'
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { buildNodeStatistics, NodeStatistics } from '../../lib/statistics'
+import { buildText, NodeStatistics } from '../../lib/statistics'
 import { RequirementsAlerts, RequirementsContext } from './RequirementsProvider'
+
+const StatisticsWorker = Comlink.wrap<{
+  countCharacters: (text: string) => number
+  countWords: (text: string) => number
+}>(new Worker('../../lib/statistics.worker', { type: 'module' }))
 
 const AlertContainer = styled.div`
   display: inline-flex;
@@ -63,11 +69,26 @@ export const Statistics: React.FC<{
   const buildRequirementsAlerts = useContext(RequirementsContext)
 
   useEffect(() => {
-    const statistics = buildNodeStatistics(node)
+    const timer = setTimeout(async () => {
+      const text = buildText(node)
 
-    setAlerts(buildRequirementsAlerts(node, statistics))
-    setStatistics(statistics)
-  }, [buildRequirementsAlerts, setStatistics, setAlerts, node])
+      const statistics = {
+        text,
+        characters: await StatisticsWorker.countWords(text),
+        words: await StatisticsWorker.countWords(text),
+      }
+
+      setStatistics(statistics)
+
+      const alerts = await buildRequirementsAlerts(node, statistics)
+
+      setAlerts(alerts)
+    }, 250)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [buildRequirementsAlerts, node])
 
   if (!statistics || !alerts) {
     return null

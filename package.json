@@ -107,6 +107,7 @@
     "@types/uuid": "^3.4.4",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "comlink": "^4.0.1",
     "css-loader": "^3.0.0",
     "csstype": "^2.6.5",
     "docz": "^1.2.0",
@@ -140,6 +141,7 @@
   "peerDependencies": {
     "@manuscripts/manuscript-transform": "^0.14.0",
     "@manuscripts/style-guide": "^0.8.4",
+    "comlink": "^4.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "rxdb": "gitlab:mpapp-public/rxdb#upstream-fork",

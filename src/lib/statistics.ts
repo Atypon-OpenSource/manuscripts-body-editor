@@ -42,13 +42,3 @@ export interface NodeStatistics {
   words: number
   characters: number
 }
-
-export const buildNodeStatistics = (node: ManuscriptNode): NodeStatistics => {
-  const text = buildText(node)
-
-  return {
-    text,
-    words: countWords(text),
-    characters: countCharacters(text),
-  }
-}

@@ -17,7 +17,6 @@
 import { schema } from '@manuscripts/manuscript-transform'
 import { Node } from 'prosemirror-model'
 import {
-  buildNodeStatistics,
   buildText,
   countCharacters,
   countWords,
@@ -74,9 +73,4 @@ test('statistics', () => {
 
   const characters = countCharacters(text)
   expect(characters).toBe(229)
-
-  const statistics = buildNodeStatistics(node)
-  expect(statistics.text).toBe(text)
-  expect(statistics.words).toBe(words)
-  expect(statistics.characters).toBe(characters)
 })

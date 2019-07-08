@@ -21,13 +21,14 @@ import {
   Model,
   Section,
 } from '@manuscripts/manuscripts-json-schema'
+import * as Comlink from 'comlink'
 import React, { createContext } from 'react'
-import {
-  buildText,
-  countCharacters,
-  countWords,
-  NodeStatistics,
-} from '../../lib/statistics'
+import { buildText, NodeStatistics } from '../../lib/statistics'
+
+const StatisticsWorker = Comlink.wrap<{
+  countCharacters: (text: string) => number
+  countWords: (text: string) => number
+}>(new Worker('../../lib/statistics.worker', { type: 'module' }))
 
 export interface RequirementsAlerts {
   words?: string
@@ -37,9 +38,11 @@ export interface RequirementsAlerts {
 type RequirementsValue = (
   node: ManuscriptNode,
   statistics?: NodeStatistics
-) => RequirementsAlerts
+) => Promise<RequirementsAlerts>
 
-export const RequirementsContext = createContext<RequirementsValue>(() => ({}))
+export const RequirementsContext = createContext<RequirementsValue>(
+  async () => ({})
+)
 
 export const RequirementsProvider: React.FC<{
   modelMap: Map<string, Model>
@@ -63,10 +66,10 @@ export const RequirementsProvider: React.FC<{
   }
 
   // tslint:disable-next-line:cyclomatic-complexity
-  const buildRequirementsAlerts = (
+  const buildRequirementsAlerts = async (
     node: ManuscriptNode,
     statistics?: NodeStatistics
-  ): RequirementsAlerts => {
+  ): Promise<RequirementsAlerts> => {
     const output: RequirementsAlerts = {}
 
     const { id } = node.attrs
@@ -106,7 +109,9 @@ export const RequirementsProvider: React.FC<{
       const text = statistics ? statistics.text : buildText(node)
 
       if (hasWordsRequirement) {
-        const count = statistics ? statistics.words : countWords(text)
+        const count = statistics
+          ? statistics.words
+          : await StatisticsWorker.countWords(text)
 
         const { maximum, minimum } = requirements.words
 
@@ -120,7 +125,9 @@ export const RequirementsProvider: React.FC<{
       }
 
       if (hasCharactersRequirement) {
-        const count = statistics ? statistics.characters : countCharacters(text)
+        const count = statistics
+          ? statistics.characters
+          : await StatisticsWorker.countCharacters(text)
 
         const { maximum, minimum } = requirements.characters
 

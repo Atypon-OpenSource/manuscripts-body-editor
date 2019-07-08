@@ -22,29 +22,41 @@ import {
   SectionNode,
 } from '@manuscripts/manuscript-transform'
 import { Tip } from '@manuscripts/style-guide'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { RequirementsContext } from './RequirementsProvider'
 
 export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
   node,
 }) => {
+  const [items, setItems] = useState()
+
   const buildRequirementsAlerts = useContext(RequirementsContext)
 
-  if (
-    isNodeType<ActualManuscriptNode>(node, 'manuscript') ||
-    isNodeType<SectionNode>(node, 'section')
-  ) {
-    const alerts = buildRequirementsAlerts(node)
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (
+        isNodeType<ActualManuscriptNode>(node, 'manuscript') ||
+        isNodeType<SectionNode>(node, 'section')
+      ) {
+        const alerts = await buildRequirementsAlerts(node)
 
-    const items = Object.values(alerts).filter(_ => _)
+        const items = Object.values(alerts).filter(_ => _)
 
-    if (items.length) {
-      return (
-        <Tip placement={'right'} title={items.join('. ')}>
-          <AttentionOrange height={'1em'} />
-        </Tip>
-      )
+        setItems(items)
+      }
+    }, 250)
+
+    return () => {
+      clearTimeout(timer)
     }
+  }, [buildRequirementsAlerts, node])
+
+  if (items && items.length) {
+    return (
+      <Tip placement={'right'} title={items.join('. ')}>
+        <AttentionOrange height={'1em'} />
+      </Tip>
+    )
   }
 
   return null
