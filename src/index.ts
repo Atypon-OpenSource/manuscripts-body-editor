@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-export * from './lib/utils'
 export * from './commands'
 export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
 export {
@@ -35,3 +34,5 @@ export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'
 export { crossref } from './lib/crossref'
 export { datacite } from './lib/datacite'
+export { toolbar } from './toolbar'
+export * from './lib/utils'
