@@ -754,3 +754,7 @@
 .ProseMirror .manuscript-toc {
   white-space: normal;
 }
+
+.ProseMirror a.link {
+  cursor: pointer;
+}

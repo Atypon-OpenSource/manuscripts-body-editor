@@ -167,6 +167,31 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
+export const insertLink = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const text = selectedText()
+  const contents = text ? state.schema.text(text) : undefined
+  const matches = text.match(/^\s*(https?:\S+)/)
+  const attrs = {
+    href: matches ? matches[1] : '',
+  }
+  const node = state.schema.nodes.link.create(attrs, contents)
+
+  const tr = state.tr.replaceSelectionWith(node)
+
+  if (dispatch) {
+    dispatch(
+      tr
+        .setSelection(NodeSelection.create(tr.doc, state.tr.selection.from))
+        .scrollIntoView()
+    )
+  }
+
+  return true
+}
+
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch

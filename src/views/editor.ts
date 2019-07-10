@@ -25,6 +25,7 @@ import figure from './figure_editable'
 import figureElement from './figure_element_editable'
 import inlineEquation from './inline_equation_editable'
 import inlineFootnote from './inline_footnote_editable'
+import link from './link_editable'
 import listing from './listing_editable'
 import listingElement from './listing_element_editable'
 import orderedList from './ordered_list_editable'
@@ -46,6 +47,7 @@ export default (props: EditorProps) => ({
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  link: link(props),
   listing: listing(props),
   listing_element: listingElement(props),
   ordered_list: orderedList(props),

@@ -35,6 +35,7 @@ import {
   insertCrossReference,
   insertInlineCitation,
   insertInlineEquation,
+  insertLink,
   markActive,
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
@@ -152,6 +153,19 @@ export const menus: MenuItem[] = [
         // active: blockActive(schema.nodes.listing_element),
         enable: canInsert(schema.nodes.listing_element),
         run: insertBlock(schema.nodes.listing_element),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        label: () => 'Link',
+        accelerator: {
+          mac: 'Option+CommandOrControl+H',
+          pc: 'CommandOrControl+Option+H',
+        },
+        active: blockActive(schema.nodes.link),
+        enable: canInsert(schema.nodes.link),
+        run: insertLink,
       },
       {
         role: 'separator',
