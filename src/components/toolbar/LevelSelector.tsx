@@ -651,11 +651,9 @@ const findSelectedOption = (options: GroupedOptions): Option | undefined => {
   }
 }
 
-interface Props {
+export const LevelSelector: React.FunctionComponent<{
   view: ManuscriptEditorView
-}
-
-export const LevelSelector: React.FunctionComponent<Props> = ({ view }) => {
+}> = ({ view }) => {
   const {
     state: {
       schema: { nodes },

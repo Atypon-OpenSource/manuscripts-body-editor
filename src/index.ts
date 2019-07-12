@@ -20,7 +20,10 @@ export {
   DebouncedManuscriptOutlineContainer,
 } from './components/outline/ManuscriptOutline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
-export { ManuscriptToolbar } from './components/toolbar/ManuscriptToolbar'
+export {
+  ManuscriptToolbar,
+  ToolbarButtonConfig,
+} from './components/toolbar/ManuscriptToolbar'
 export { Statistics } from './components/requirements/Statistics'
 export {
   RequirementsProvider,

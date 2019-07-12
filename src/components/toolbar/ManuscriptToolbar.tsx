@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import { ManuscriptEditorView } from '@manuscripts/manuscript-transform'
 import { Schema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import styled from 'styled-components'
 import { toolbar } from '../../toolbar'
@@ -85,7 +84,7 @@ export const ToolbarGroup = styled.div`
   }
 `
 
-interface ToolbarButtonConfig<S extends Schema> {
+export interface ToolbarButtonConfig<S extends Schema> {
   title: string
   content: React.ReactNode
   active?: (state: EditorState<S>) => boolean
@@ -99,13 +98,9 @@ export interface ToolbarConfig<S extends Schema> {
   }
 }
 
-interface Props {
-  view: EditorView
-}
-
-const Toolbar = <S extends Schema>(): React.FunctionComponent<Props> => ({
-  view,
-}) => (
+export const ManuscriptToolbar: React.FunctionComponent<{
+  view: ManuscriptEditorView
+}> = ({ view }) => (
   <ToolbarContainer>
     {view && (
       <ToolbarGroup>
@@ -134,5 +129,3 @@ const Toolbar = <S extends Schema>(): React.FunctionComponent<Props> => ({
     ))}
   </ToolbarContainer>
 )
-
-export const ManuscriptToolbar = Toolbar<ManuscriptSchema>()
