@@ -55,6 +55,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
         }
         handleSelect={this.handleSelect}
         targets={this.getTargets()}
+        handleCancel={this.handleCancel}
       />,
       this.popperContainer
     )
@@ -71,17 +72,29 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   }
 
   public deselectNode = () => {
-    this.props.popper.destroy()
-
-    if (this.popperContainer) {
-      this.props.unmountReactComponent(this.popperContainer)
-    }
+    this.handleCancel()
   }
 
   public getTargets = () => {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
 
     return Array.from(targets.values())
+  }
+
+  public handleCancel = () => {
+    if (!this.node.attrs.rid) {
+      const { state } = this.view
+
+      const pos = this.getPos()
+
+      this.view.dispatch(
+        state.tr
+          .delete(pos, pos + this.node.nodeSize)
+          .setSelection(this.view.state.selection)
+      )
+    } else {
+      this.destroy()
+    }
   }
 
   public handleSelect = (rid: string) => {
@@ -101,6 +114,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
         })
         .setSelection(this.view.state.selection)
     )
+    this.destroy()
   }
 }
 
