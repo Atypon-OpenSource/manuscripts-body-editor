@@ -31,11 +31,6 @@ export class FigureView<PropsType extends ViewerProps>
 
   public ignoreMutation = () => true
 
-  public stopEvent = (event: Event) => {
-    // only pass through mousedown
-    return event.type !== 'mousedown'
-  }
-
   public updateContents = () => {
     const { src } = this.node.attrs
 

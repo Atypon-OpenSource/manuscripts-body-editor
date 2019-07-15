@@ -30,11 +30,6 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
 > {
   public ignoreMutation = () => true
 
-  public stopEvent = (event: Event) =>
-    event.type !== 'mousedown' &&
-    !event.type.startsWith('drop') &&
-    !event.type.startsWith('drag')
-
   // TODO: load/subscribe to the figure style object from the database and use it here?
   public createElement = () => {
     const container = document.createElement('figure-container')

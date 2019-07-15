@@ -57,11 +57,6 @@ export class BaseNodeView<PropsType extends ViewerProps> {
     // extend this
   }
 
-  public stopEvent = (event: Event) => {
-    // https://discuss.prosemirror.net/t/draggable-and-nodeviews/955/13
-    return event.type !== 'mousedown' && !event.type.startsWith('drag')
-  }
-
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
   }
