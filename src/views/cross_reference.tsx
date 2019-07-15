@@ -32,6 +32,17 @@ export class CrossReferenceView<PropsType extends ViewerProps>
 
   public updateContents = () => {
     this.dom.textContent = this.node.attrs.label
+
+    const auxiliaryObjectReference = this.getAuxiliaryObjectReference(
+      this.node.attrs.rid
+    )
+
+    if (auxiliaryObjectReference) {
+      this.dom.setAttribute(
+        'href',
+        '#' + auxiliaryObjectReference.referencedObject
+      )
+    }
   }
 
   public initialise = () => {
@@ -47,17 +58,6 @@ export class CrossReferenceView<PropsType extends ViewerProps>
   public createDOM = () => {
     this.dom = document.createElement('a')
     this.dom.className = 'cross-reference'
-
-    const auxiliaryObjectReference = this.getAuxiliaryObjectReference(
-      this.node.attrs.rid
-    )
-
-    if (auxiliaryObjectReference) {
-      this.dom.setAttribute(
-        'href',
-        '#' + auxiliaryObjectReference.referencedObject
-      )
-    }
   }
 }
 
