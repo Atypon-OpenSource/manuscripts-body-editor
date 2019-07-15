@@ -1256,11 +1256,12 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.15.0":
-  version "0.15.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.15.0.tgz#f0dbb72bd559bb2b320fe4896031b6638b71e46c"
-  integrity sha512-TNKnplQBKZHFgWlndQqJbXPQMrla/FA2eUVmBPfuWWjkwzi4Ip2U0243rbk0+yirOGfJpi/UbYZeOHeHsJlUEw==
+"@manuscripts/manuscript-transform@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.16.0.tgz#fba4607f2a6c3c1d2689c886f6db249896f5a012"
+  integrity sha512-3u9OSk3gtbT2zE8kJRyhVlpCfwaCDIUMAGrKV2de3urVg0avIDILbBCZHg3Zohf1r04JqdxatLDiTHVV2g+Sog==
   dependencies:
+    debug "^4.1.1"
     prosemirror-model "^1.7.1"
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
