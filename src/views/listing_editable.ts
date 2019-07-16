@@ -26,6 +26,16 @@ interface Output {
 }
 
 export class ListingEditableView extends ListingView<EditorProps> {
+  protected needsFocus = false
+
+  public selectNode = () => {
+    this.needsFocus = true
+
+    if (this.editor) {
+      this.editor.focus()
+    }
+  }
+
   protected createDOM = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('listing')
@@ -86,7 +96,7 @@ export class ListingEditableView extends ListingView<EditorProps> {
           ? codemirrorModeOptions[languageKey as CodemirrorMode]
           : languageKey,
       placeholder: placeholder || defaultPlaceholder,
-      autofocus: false, // TODO: focus if this node is selected?
+      autofocus: this.needsFocus,
     })
 
     this.editor.on('changes', () => {

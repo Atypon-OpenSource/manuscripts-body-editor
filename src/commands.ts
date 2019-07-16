@@ -111,11 +111,22 @@ export const createSelection = (
   position: number,
   doc: ManuscriptNode
 ) => {
-  if (nodeType.isAtom) {
-    return NodeSelection.create(doc, position)
-  }
+  const { nodes } = nodeType.schema
 
-  return TextSelection.near(doc.resolve(position + 1))
+  switch (nodeType) {
+    case nodes.figure_element:
+      // select the figure caption
+      return TextSelection.near(doc.resolve(position + 5), 1)
+
+    case nodes.listing_element:
+      // select the listing
+      return NodeSelection.create(doc, position + 1)
+
+    default:
+      return nodeType.isAtom
+        ? NodeSelection.create(doc, position)
+        : TextSelection.near(doc.resolve(position + 1))
+  }
 }
 
 export const createBlock = (

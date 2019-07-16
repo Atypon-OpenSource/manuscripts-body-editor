@@ -254,7 +254,7 @@ export class ListingView<PropsType extends ViewerProps>
           ? codemirrorModeOptions[languageKey as CodemirrorMode]
           : languageKey,
       placeholder: placeholder || defaultPlaceholder,
-      autofocus: false, // TODO: focus if this node is selected?
+      autofocus: false,
     })
 
     this.container.appendChild(this.editor.getWrapperElement())
