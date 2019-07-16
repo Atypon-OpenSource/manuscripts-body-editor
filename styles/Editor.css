@@ -520,6 +520,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 52px;
 }
 
 .ProseMirror .action-button {
@@ -543,9 +545,10 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   transition: 0.2s all;
   margin: -10px 0;
-  width: 20px;
+  width: 52px;
 }
 
 .ProseMirror .block-container:hover .block-gutter {
