@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { Decoration } from 'prosemirror-view'
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -24,18 +22,6 @@ export class TableElementView<PropsType extends ViewerProps> extends BlockView<
   PropsType
 > {
   public elementType = 'figure'
-
-  public update = (
-    newNode: ManuscriptNode,
-    decorations?: Decoration[]
-  ): boolean => {
-    if (newNode.type.name !== this.node.type.name) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
 
   public updateContents = () => {
     const { suppressCaption, suppressHeader, suppressFooter } = this.node.attrs

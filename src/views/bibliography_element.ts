@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { sanitize } from 'dompurify'
-import { Decoration } from 'prosemirror-view'
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -25,18 +23,6 @@ export class BibliographyElementBlockView<
   PropsType extends ViewerProps
 > extends BlockView<PropsType> {
   private element: HTMLElement
-
-  public update = (
-    newNode: ManuscriptNode,
-    decorations?: Decoration[]
-  ): boolean => {
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    if (newNode.type.name !== this.node.type.name) return false
-    this.handleDecorations(decorations)
-    this.node = newNode
-    this.updateContents()
-    return true
-  }
 
   public stopEvent = () => true
 

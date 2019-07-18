@@ -125,22 +125,27 @@ export default (props: Props) => {
         const decorations: Decoration[] = []
 
         state.doc.descendants((node, pos) => {
-          const target = node.attrs.id ? targets.get(node.attrs.id) : null
+          const { id } = node.attrs
 
-          if (target) {
-            const labelNode = document.createElement('span')
-            labelNode.className = 'figure-label'
-            labelNode.textContent = target.label + ':'
+          if (id) {
+            const target = targets.get(id)
 
-            node.forEach((child, offset) => {
-              if (child.type.name === 'figcaption') {
-                decorations.push(
-                  Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                    side: -1,
-                  })
-                )
-              }
-            })
+            if (target) {
+              const labelNode = document.createElement('span')
+              labelNode.className = 'figure-label'
+              labelNode.textContent = target.label + ':'
+
+              node.forEach((child, offset) => {
+                if (child.type.name === 'figcaption') {
+                  decorations.push(
+                    Decoration.widget(pos + 1 + offset + 1, labelNode, {
+                      side: -1,
+                      key: `figure-label-${id}-${target.label}`,
+                    })
+                  )
+                }
+              })
+            }
           }
         })
 
