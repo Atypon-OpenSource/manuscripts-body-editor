@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@iarna/word-count": "^1.1.2",
-    "@jupyterlab/services": "^3.2.1",
+    "@jupyterlab/services": "^4.0.1",
     "@manuscripts/assets": "^0.3.9",
     "@manuscripts/manuscripts-json-schema": "^1.14.2",
     "@manuscripts/title-editor": "^0.3.1",
