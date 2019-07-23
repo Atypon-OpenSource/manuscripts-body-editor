@@ -33,6 +33,8 @@ import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
 
+import annotations from './annotations'
+
 export default (props: EditorProps) => [
   rules,
   ...keys,
@@ -50,6 +52,7 @@ export default (props: EditorProps) => [
   paragraphs(),
   placeholder(),
   tableEditing(),
+  annotations(props)
 ]
 
 // for tables

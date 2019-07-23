@@ -38,6 +38,7 @@ import {
 } from '../commands'
 import { EditorAction } from '../types'
 
+//@ts-ignore
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(undoInputRule, ignoreAtomBlockNodeBackward),
   Delete: ignoreAtomBlockNodeForward,

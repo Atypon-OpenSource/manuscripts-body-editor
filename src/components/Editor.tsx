@@ -80,10 +80,11 @@ export class Editor extends React.PureComponent<EditorProps> {
   private isMouseDown: boolean = false
 
   constructor(props: EditorProps) {
-    super(props)
+    super(props);
 
     const { attributes, doc, handleStateChange, permissions } = this.props
-
+    debugger;
+    console.log(schema);
     this.view = new EditorView(undefined, {
       editable: () => permissions.write,
       state: EditorState.create<ManuscriptSchema>({
@@ -100,6 +101,7 @@ export class Editor extends React.PureComponent<EditorProps> {
         right: 0,
       },
       dispatchTransaction: this.dispatchTransaction,
+      //@ts-ignore
       nodeViews: views(this.props),
       attributes,
       transformPasted,

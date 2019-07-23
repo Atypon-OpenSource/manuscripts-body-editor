@@ -36,6 +36,9 @@ import sectionTitle from './section_title'
 import tableElement from './table_element'
 import tocElement from './toc_element'
 
+import rmq_pos_start from './rmq_pos_start'
+import rmq_pos_end from './rmq_pos_end'
+
 export default (props: ViewerProps) => ({
   bibliography_element: bibliographyElement(props),
   bullet_list: bulletList(props),
@@ -57,4 +60,7 @@ export default (props: ViewerProps) => ({
   section_title: sectionTitle(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
+
+  rmq_pos_start:rmq_pos_start(props),
+  rmq_pos_end:rmq_pos_end(props)
 })

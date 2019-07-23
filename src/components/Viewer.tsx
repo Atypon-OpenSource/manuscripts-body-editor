@@ -66,7 +66,7 @@ export class Viewer extends React.PureComponent<ViewerProps> {
     super(props)
 
     const { attributes, doc } = this.props
-
+    debugger;
     this.view = new EditorView<ManuscriptSchema>(undefined, {
       editable: () => false,
       state: EditorState.create<ManuscriptSchema>({
@@ -74,6 +74,7 @@ export class Viewer extends React.PureComponent<ViewerProps> {
         schema,
         plugins: plugins(this.props),
       }),
+      // @ts-ignore
       nodeViews: views(this.props),
       attributes,
     })

@@ -1,0 +1,46 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import ListingIcon from '@manuscripts/assets/react/OutlineIconCodeSnippet';
+import EquationIcon from '@manuscripts/assets/react/OutlineIconEquation';
+import FigureIcon from '@manuscripts/assets/react/OutlineIconFigure';
+import ManuscriptIcon from '@manuscripts/assets/react/OutlineIconManuscript';
+import OrderedListIcon from '@manuscripts/assets/react/OutlineIconOrderedList';
+import ParagraphIcon from '@manuscripts/assets/react/OutlineIconParagraph';
+import SectionIcon from '@manuscripts/assets/react/OutlineIconSection';
+import TableIcon from '@manuscripts/assets/react/OutlineIconTable';
+import BulletListIcon from '@manuscripts/assets/react/OutlineIconUnorderedList';
+import { schema } from '@manuscripts/manuscript-transform';
+import { schema as titleSchema } from '@manuscripts/title-editor';
+import React from 'react';
+const { nodes } = schema;
+const icons = new Map([
+    [nodes.bibliography_element, SectionIcon],
+    [nodes.bullet_list, BulletListIcon],
+    [nodes.equation_element, EquationIcon],
+    [nodes.figure_element, FigureIcon],
+    [nodes.listing_element, ListingIcon],
+    [nodes.ordered_list, OrderedListIcon],
+    [nodes.paragraph, ParagraphIcon],
+    [nodes.section, SectionIcon],
+    [nodes.table_element, TableIcon],
+]);
+export const nodeTypeIcon = (nodeType) => {
+    if (nodeType === titleSchema.nodes.title) {
+        return React.createElement(ManuscriptIcon, null);
+    }
+    const Icon = icons.get(nodeType);
+    return Icon ? React.createElement(Icon, null) : null;
+};

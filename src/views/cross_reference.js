@@ -1,0 +1,42 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { BaseNodeView } from './base_node_view';
+import { createNodeView } from './creators';
+export class CrossReferenceView extends BaseNodeView {
+    constructor() {
+        super(...arguments);
+        this.selectNode = () => {
+        };
+        this.updateContents = () => {
+            this.dom.textContent = this.node.attrs.label;
+            const auxiliaryObjectReference = this.getAuxiliaryObjectReference(this.node.attrs.rid);
+            if (auxiliaryObjectReference) {
+                this.dom.setAttribute('href', '#' + auxiliaryObjectReference.referencedObject);
+            }
+        };
+        this.initialise = () => {
+            this.createDOM();
+            this.updateContents();
+        };
+        this.ignoreMutation = () => true;
+        this.getAuxiliaryObjectReference = (id) => this.props.getModel(id);
+        this.createDOM = () => {
+            this.dom = document.createElement('a');
+            this.dom.className = 'cross-reference';
+        };
+    }
+}
+export default createNodeView(CrossReferenceView);

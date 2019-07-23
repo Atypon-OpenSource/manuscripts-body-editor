@@ -24,6 +24,9 @@ import { Fragment, Slice } from 'prosemirror-model'
 import { createBlock } from '../commands'
 import { PopperManager } from './popper'
 
+import {getRandomId,MarkerCommentPlacingStrategy} from './rmq-markup-strategy'
+import {Transaction} from "prosemirror-state";
+
 const popper = new PopperManager()
 
 export const sectionLevel = (depth: number) => {
@@ -251,7 +254,17 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
-              setCommentTarget(this.node.attrs.id)
+              setCommentTarget(this.node.attrs.id);
+              const {from,to} = this.view.state.selection;
+              if (from !== to) {
+                const commentId: string = "tmp_" + getRandomId();
+
+                const _strategy = new MarkerCommentPlacingStrategy(this.view);
+                const strategy = (tr: Transaction) => _strategy.setTransaction(tr);
+
+                const transaction = this.view.state.tr;
+                strategy(transaction).addCommentMark(commentId, 0, false, from, to);
+              }
               popper.destroy()
             })
           )
