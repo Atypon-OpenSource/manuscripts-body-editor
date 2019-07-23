@@ -3,3 +3,5 @@
 /.docz/
 /node_modules/
 /dist/
+*.iml
+
