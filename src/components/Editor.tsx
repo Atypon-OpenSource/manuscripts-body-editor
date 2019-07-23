@@ -83,7 +83,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     super(props);
 
     const { attributes, doc, handleStateChange, permissions } = this.props
-    debugger;
+
     console.log(schema);
     this.view = new EditorView(undefined, {
       editable: () => permissions.write,

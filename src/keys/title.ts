@@ -181,6 +181,7 @@ const protectSectionTitle: EditorAction = (
 
 const titleKeymap: { [key: string]: EditorAction } = {
   Backspace: protectSectionTitle,
+  // @ts-ignore
   Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
   Tab: exitBlock(1),
   'Shift-Tab': exitBlock(-1),

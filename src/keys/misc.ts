@@ -40,6 +40,7 @@ import { EditorAction } from '../types'
 
 //@ts-ignore
 const customKeymap: { [key: string]: EditorAction } = {
+  // @ts-ignore
   Backspace: chainCommands(undoInputRule, ignoreAtomBlockNodeBackward),
   Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
@@ -57,8 +58,11 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-=': toggleMark(schema.marks.superscript),
   'Mod-Alt--': toggleMark(schema.marks.subscript),
   // 'Ctrl->': wrapIn(schema.nodes.blockquote),
+  // @ts-ignore
   'Mod-Enter': chainCommands(exitCode, insertBreak),
+  // @ts-ignore
   'Shift-Enter': chainCommands(exitCode, insertBreak),
+  // @ts-ignore
   'Ctrl-Enter': chainCommands(exitCode, insertBreak), // mac-only?
   // 'Shift-Ctrl-0': setBlockType(schema.nodes.paragraph),
   // 'Shift-Ctrl-\\': setBlockType(schema.nodes.listing_element),
