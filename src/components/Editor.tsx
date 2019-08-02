@@ -17,6 +17,7 @@
 import {
   Build,
   ManuscriptEditorView,
+  ManuscriptNode,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
@@ -69,6 +70,39 @@ export interface EditorProps extends ViewerProps {
   components: {
     [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
   }
+}
+
+const trReplaceDiff = (
+  newNode: ManuscriptNode,
+  oldNode: ManuscriptNode,
+  tr: Transaction,
+  offset: number = 0
+) => {
+  // from https://prosemirror.net/examples/footnote/
+  const start = newNode.content.findDiffStart(oldNode.content)
+
+  if (typeof start === 'number') {
+    // tslint:disable-next-line:no-any - TODO: remove once types are fixed
+    const diffEnd = newNode.content.findDiffEnd(oldNode.content as any)
+
+    if (diffEnd) {
+      let { a: newNodeDiffEnd, b: nodeDiffEnd } = diffEnd
+
+      const overlap = start - Math.min(nodeDiffEnd, newNodeDiffEnd)
+
+      if (overlap > 0) {
+        nodeDiffEnd += overlap
+        newNodeDiffEnd += overlap
+      }
+
+      tr.replace(
+        offset + start + 1,
+        offset + nodeDiffEnd + 1,
+        newNode.slice(start, newNodeDiffEnd)
+      )
+    }
+  }
+  return tr
 }
 
 export class Editor extends React.PureComponent<EditorProps> {
@@ -182,6 +216,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     }
   }
 
+  /* tslint:disable:cyclomatic-complexity */
   private receive: ChangeReceiver = (op, id, newNode) => {
     const { state } = this.view
 
@@ -247,6 +282,16 @@ export class Editor extends React.PureComponent<EditorProps> {
             state.tr.setMeta('update', true),
             true
           )
+        } else if (id === 'root') {
+          let tr = state.tr
+
+          tr = trReplaceDiff(newNode, state.doc, tr)
+
+          tr.setMeta('addToHistory', false)
+
+          this.dispatchTransaction(tr, true)
+
+          return false
         }
 
         // TODO: add to a waitlist if child nodes aren't in the map yet?
