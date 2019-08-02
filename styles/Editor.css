@@ -543,11 +543,9 @@
   cursor: ns-resize;
   opacity: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   transition: 0.2s all;
-  margin: -10px 0;
   width: 52px;
 }
 
@@ -555,22 +553,9 @@
   opacity: 1;
 }
 
-.ProseMirror .add-block,
-.ProseMirror .edit-block {
-  width: 20px;
-  height: 20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  /*z-index: 2;*/
-  border-radius: 50%;
-  cursor: pointer;
-  color: #65cfff;
-  background-size: contain;
-}
-
-.ProseMirror .edit-block {
-  margin-top: 5px;
+.ProseMirror.popper-open [data-balloon-pos]::before,
+.ProseMirror.popper-open [data-balloon-pos]::after {
+  display: none !important;
 }
 
 .ProseMirror .block-gutter-spacer {
@@ -716,21 +701,38 @@
   color: inherit;
 }
 
+.ProseMirror .add-block,
+.ProseMirror .edit-block {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /*z-index: 2;*/
+  cursor: pointer;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
 .ProseMirror .add-block {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAZElEQVRYR2NkGGDAOMD2M4w6YDQEKAqB1PP//4MS8WxDRrLNIVsjyOJRB4yGwGgIDO8QgPmOWrUlrsIKZ0E04A4gxufDOw2MhsBoCIyGwJAIAWIcSUgNRW1CQoYTIz/qgNEQAAALeVAh12Y0dgAAAABJRU5ErkJggg==")
+  /* GutterAddIconNormal */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAABP0lEQVRYR+2TMUvEQBSE520Q8QoRrO1ENEErGxtrE8vzT9hYet3dxlIE/REWthYJWCjYCXaKyf0KwUoFk5F0F7lzz83BqexW28yb2e/NCqZ8ZMr+cAEcAUegEYE4zToECx0FJ7bf2TqATvqbRHELoCUiWzry72xC2Ae4yrb5gUuQEOW1dbR64wL8XwIkRUQ4+EJt6MAwzTBCxhL20v6hsDwg+To4QBRmAVmoSkjBC0q81QwEyyJyrCO/891qzAGSp9rLf7pn8eYX9c7S8yidMUCcZvsETgncfxnSArAiJUCFdwB5jRA5o5ScdUP/ohGBUWJTB8YlZSTgAvwJAsrDXi8Mrsfde62sNqJKc5Tk6wXKh+ruQW10d9cebWZZl7Ayi5O8TVXO6TA4tzGvNI0C2JpOZAWTMHcEHAFH4FcQ+AQ+xqEjzf/hPQAAAABJRU5ErkJggg==");
 }
 
 .ProseMirror .add-block:hover {
-  background-color: #65cfff;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAX0lEQVRYR+2WQQoAIAgE3f8/2vDQMZQKpJiulY6DWLLmpeb8BgAGjgy4u0cTS9qOs30xEgOAAQz8bWBWd+u1XA2r5SBqB6hU/ncPYAADGHjCQAUyO3P0J8yCV/YBwMAA+1lQIVexGWkAAAAASUVORK5CYII=")
+  /* GutterAddIconHighlight */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAACn0lEQVRYR82Xv2sTYRjHv99rcknb/MC0WEWNlBa0QxetONlRB/EPcHGw9SfOTgqBOjk4iai0Do5uDg4KgriJqBRBh1pUWqWItW0Sa3JJ7pE7ezWXXMx7Scn5jve+z/N83ueeXy8R8KJf+wWRYcPApAgOAhjckP9I4pWuYzpKfvCjUxkgV5QRAa4DOC4CTzkSAuARgcvxCN+rgDQFEJFt+RIyIrgogpCSUqJM4lYsjAzJlX/JNAQQka58CWdFMCWCPhXDtWdILJO4GgvjLsmKlw5PgFxJxsXETRGMtmLYA+QtNVyKh/m8bq/6g4gwb+CKwHa5thXGHR0kTAKZmI5rJK1YsZfLA9mCTAswsZWGPW48nYjyTB1A1pDTYmLGj/GXn5dBAmNpfyFCDRMJnfc2PSAivVkDXyFIqAIsZQt48PoTyhUTJ8cGsTPZrSpq+X0toWMXyZ/2L8gZcs40cVtdA7C4uo6Hswu2yInRPUinevyIQ9NwPq7zjg2wVpDHAI760dAuAIAnySiPOQBW+RzqMMB8MsphGyBblJJqlXMg2/UAiXIiwrDjgc28VPVCuwCWnWSUVhLZMdAQwEq1Nws/ENLcRbNiCgplE1b/0cNdCP1RtblWfxk4tLcfR4a3N7yTEsCNp+9UneJ57sL4fnSHvYuqEsDs4gqezS1hIO7O87IpWFkv2qVU04hUT8QFICI4kO7DvoHGpUUJoNH1OxYDHQH4H9Iw2ELUfinejXSq12+2/C3FrTSj7/ki7r+Yt42eOjyE/pg7C5rRuJrRRjv+AkGymWD1/ty3HMqmiZEdvsTq27HdD1oYSPzAVp+tG0iczQ6NZDOJKCcdm64CHvhQ6lAFNpZX/6dAHyY1IME8zWojPLDHaS1IYM/zVnO+mdxvjqp0MhTonAIAAAAASUVORK5CYII=");
 }
 
 .ProseMirror .edit-block {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACl0lEQVRYR+2WS0iUURTHf2fGKXuYLkoqghQD85E6Q9KDhNqk0KrARUEgMRO0ykVCIhakRGQR1SZ0LBdFCze1qKQWbQrMRZPNTBkxliXYQ9IUM53HiW9MEGmcma9Agvngru495/7O/57vnCMs8ieLfD8pgJQC/58CTq+WEKISZbsIu4CgKs8Qui1WulpLxJvMn5WwAtV+XZI1xRmEOsAS45IISotEaGzdKsFEQBICOPpSN0fC3BHIX2aFvdmQs3xmhRUGJyEwAQ+/wFQEULxhK9XXS+VNPIi4ADXvNN02gg8hrzgDajbCqrQ/ux0Nwo0P8Ho8ChEYXUphZ5FMLwQRF8Dp0UsCtYUZUJsXL56Z/SsB8I2DChfdZXLCNIDLozsVnqywIk0FkBEj8vkXjIeg4RVMRlCFina7PI0FsaACTo/eEji0ZzUc3JBY9LOnbg/C42HjJbjptsthUwAuj/YA5a4cKM9KDqBnBNwDGBJ0ux2ywyyAkU4rzxdBli05gG9BOOmPJuNwm0PWmAJwPtchEdZeKI6d+bEcfw9BnS+qwCe3Q9aZBXggQtXxPCjKSE4B7xhc7Y/mwH23XfaZAnB59CxQf2A9VGUnB3DvM9wdij5Bc5tDGk0BOHs1VyL0ZdqwNRUg6bEK8DzvP8Jwug8dDRJMg/xrdnlvCsAwcnq0QaDZngnHchNT4XIA/EYhUurdDjlnuhAZhrtV0za9wGf0gXileCwEHQMzVRDwj5ZR2ikS/isAw/hIr+Zbw3QibEm3opXZyNxm9HES+ifg0Vf0Zzg6Z/qDsL/DLm/jaRa3F8w6SKQdq2JE22KJcOqftuO5UcwOJKJsQ6hQmJbfA0nEQld7qfjiRT13P2EFknGazNkUQEqBlAK/AMVh4iFi1+BYAAAAAElFTkSuQmCC")
+  /* GutterIconNormal */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAAX0lEQVRIS2NkoBJgpJI5DCPVoMZtVz3/MzDMAoUjIwNDWr2X9nZcYYo3jBq2XX38/z+DDNggRoYnDV7asgNrENW8Rkoao086oprXRmMNHLmjsUZhpqVaghx8eW1ouwgAvCBOG6TcJ68AAAAASUVORK5CYII=");
 }
 
 .ProseMirror .edit-block:hover {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACC0lEQVRYR+2Wv2tTURTHP9+kVQcHF0FHUYgoNk1Q/EELbgpODl0EQeTF2UGHInWQIkIRV2lfpYNOWZy0f4BCdfBZk4AiopsOggUnG/OO3CbBKCbvR4RSeHe5vHfvuedzvvfec67Y5KZN9k8GkCmw9RTwajbGT85gnJCYAJpmvECs5PIsz4+pluRmxVZgqmHbdv3gFuI6kOvjJMSYU8jM/FE144DEArjyxg6GLR4LCvaPVd0iG/8N1P6otfJMPSjqXRREJMClj7Zj9Bt1xH7nwETf5GFdgDbMh7XtHKoe1vogiEgAL7B7gqsuwsjJXU+dySbu+uO6lhqgEtgpg2cu6EQAToC2gesmF0t63g9iYFBeYI8EF6L2cdC4wUO/pIupACqBvQSOJY2+cx43tsyMFb+sk2kBvgM7/zhcSeUwvi6UtTsVgPfKPkvsGVKBL35Ze9MCPJU4OxQAPPFLOpcKoBLYbWA6qeq9ZwBjdqGsmVQA3qrtI+StGaNSO8nFaZ1s6brmCBTul/QpFYAz8gK7IZiN4/ivPORuwLRf1p3UicgZnjYbOfCauqsDkanY5Z7fB6axNk6xKrWGAnDGl1etkG9RRRxx5WBAVu6WikYTzi+V9D5KubjbSpxybIaLdi4XcvO/luPeKLoPEhnHEZMG6+o8SMIcy4tF1aOi7h2PrUCSRZPMzQAyBTIFfgGeILQhFHWXjgAAAABJRU5ErkJggg==")
+  /* GutterIconHighlight */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAA1UlEQVRIS2NkoBJghJnz7f9/md+/GLoY/zM4/GdgkMRnPiMDw/P/jAwHWNkYyrgYGZ+A1IINghpykeE/gxBJDmRkeMfKxqAPMgxs0Mef/5cx/GeIJMkQmGJGhuX87IxRYIM+/fj/jJB3cFkC8iYfB6MUxEU//v/HpvDB2y8Mu288B0u5akgyKAjzYDWPn4OREa9Bs4/eZvj84zdYMy8HK0OqteoAG0Q1rxEbiwTDiGoGUc1ro7HGMBprVMi0JCdI6hVs1CpqqVb4I9UklFVHxBYX+NQBAIspyhuwA0n9AAAAAElFTkSuQmCC");
 }
 
 .ProseMirror .sync-warning-button {
@@ -761,3 +763,4 @@
 .ProseMirror a.link {
   cursor: pointer;
 }
+

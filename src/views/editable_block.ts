@@ -27,22 +27,12 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
 ) => {
   return class extends Base {
     public gutterButtons = (): HTMLElement[] =>
-      [
-        this.createAddButton(false),
-        this.createEditButton(),
-        this.createSpacer(),
-        this.createAddButton(true),
-      ].filter(Boolean) as HTMLElement[]
+      [this.createAddButton(true), this.createEditButton()].filter(
+        Boolean
+      ) as HTMLElement[]
 
     public actionGutterButtons = (): HTMLElement[] =>
       [this.createSyncWarningButton()].filter(Boolean) as HTMLElement[]
-
-    public createSpacer = () => {
-      const spacer = document.createElement('div')
-      spacer.classList.add('block-gutter-spacer')
-
-      return spacer
-    }
 
     public createSyncWarningButton = () => {
       if (!this.props.permissions.write) {
@@ -116,7 +106,11 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       const button = document.createElement('a')
       button.classList.add('add-block')
       button.classList.add(after ? 'add-block-after' : 'add-block-before')
-      button.title = 'Add a new block'
+      button.setAttribute(
+        'aria-label',
+        `Add an element ${after ? 'below' : 'above'}`
+      )
+      button.setAttribute('data-balloon-pos', 'down-left')
       // button.innerHTML = this.icons.plus
       button.addEventListener('mousedown', event => {
         event.preventDefault()
@@ -132,7 +126,8 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
     public createEditButton = () => {
       const button = document.createElement('a')
       button.classList.add('edit-block')
-      button.title = 'Edit block'
+      button.setAttribute('aria-label', 'Open menu')
+      button.setAttribute('data-balloon-pos', 'down-left')
       // button.innerHTML = this.icons.circle
       button.addEventListener('mousedown', event => {
         event.preventDefault()

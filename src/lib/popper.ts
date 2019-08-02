@@ -23,7 +23,8 @@ export class PopperManager {
     target: Element,
     contents: HTMLElement,
     placement: Popper.Placement = 'bottom',
-    showArrow: boolean = true
+    showArrow: boolean = true,
+    modifiers: Popper.Modifiers = {}
   ) {
     if (this.activePopper) {
       return this.destroy()
@@ -32,8 +33,6 @@ export class PopperManager {
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
       container.className = 'popper'
-
-      const modifiers: Popper.Modifiers = {}
 
       if (showArrow) {
         const arrow = document.createElement('div')
@@ -57,6 +56,7 @@ export class PopperManager {
         removeOnDestroy: true,
         modifiers,
         onCreate: () => {
+          this.addContainerClass(target)
           this.focusInput(container)
         },
       })
@@ -65,6 +65,7 @@ export class PopperManager {
 
   public destroy() {
     if (this.activePopper) {
+      this.removeContainerClass(this.activePopper.reference as Element)
       this.activePopper.destroy()
       delete this.activePopper
     }
@@ -81,6 +82,22 @@ export class PopperManager {
 
     if (element) {
       element.focus()
+    }
+  }
+
+  private addContainerClass(referenceElement: Element) {
+    const container = referenceElement.closest('.ProseMirror')
+
+    if (container) {
+      container.classList.add('popper-open')
+    }
+  }
+
+  private removeContainerClass(referenceElement: Element) {
+    const container = referenceElement.closest('.ProseMirror')
+
+    if (container) {
+      container.classList.remove('popper-open')
     }
   }
 }
