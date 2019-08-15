@@ -69,6 +69,7 @@ export interface EditorProps extends ViewerProps {
   components: {
     [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
   }
+  environment?: string
 }
 
 export class Editor extends React.PureComponent<EditorProps> {
@@ -82,7 +83,13 @@ export class Editor extends React.PureComponent<EditorProps> {
   constructor(props: EditorProps) {
     super(props)
 
-    const { attributes, doc, handleStateChange, permissions } = this.props
+    const {
+      attributes,
+      doc,
+      environment,
+      handleStateChange,
+      permissions,
+    } = this.props
 
     this.view = new EditorView(undefined, {
       editable: () => permissions.write,
@@ -115,6 +122,20 @@ export class Editor extends React.PureComponent<EditorProps> {
         },
       },
     })
+
+    if (environment === 'development') {
+      import('prosemirror-dev-tools')
+        .then(({ applyDevTools }) => {
+          applyDevTools(this.view)
+        })
+        .catch(error => {
+          // tslint:disable-next-line:no-console
+          console.error(
+            'There was an error loading prosemirror-dev-tools',
+            error.message
+          )
+        })
+    }
   }
 
   public componentDidMount() {
