@@ -20,7 +20,11 @@ import {
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  Model,
+  // Section,
+} from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 import { LocationListener, UnregisterCallback } from 'history'
 import {
@@ -35,9 +39,14 @@ import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
 import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { transformPasted } from '../lib/paste'
+import {
+  childSectionCoordinates,
+  diffReplacementBlocks,
+  findDescendantById,
+} from '../lib/section-sync'
 import '../lib/smooth-scroll'
 import plugins from '../plugins/editor'
-import { ChangeReceiver } from '../types'
+import { ChangeReceiver, ChangeReceiverCommand } from '../types'
 import views from '../views/editor'
 import { ViewerProps } from './Viewer'
 
@@ -203,14 +212,19 @@ export class Editor extends React.PureComponent<EditorProps> {
     }
   }
 
-  private receive: ChangeReceiver = (op, id, newNode) => {
+  /* tslint:disable:cyclomatic-complexity */
+  private receive: ChangeReceiver = (op, id, newNode, command) => {
     const { state } = this.view
+
+    console.log({ op, id, newNode, command }) // tslint:disable-line:no-console
+
+    if (op === 'ORDER_CHILD_SECTIONS') {
+      return this.orderChildSections(id, command)
+    }
 
     if (!id) {
       return
     }
-
-    console.log({ op, id, newNode }) // tslint:disable-line:no-console
 
     switch (op) {
       case 'INSERT':
@@ -226,18 +240,9 @@ export class Editor extends React.PureComponent<EditorProps> {
           // TODO: can anything else be inserted by itself?
           // TODO: subsections! need to use the path
           case state.schema.nodes.section:
-            // +1 for manuscript
-            const sectionIndex = newNode.attrs.priority + 1
-
-            state.doc.forEach((node, offset, index) => {
-              if (index === sectionIndex) {
-                this.dispatchTransaction(state.tr.insert(offset, newNode), true)
-                return false
-              }
-            })
-
-            // TODO: insert at the end if no matching index? Should already be ok because of bibliography section?
+            // do nothing, allow section update to take care of this
             break
+
           default:
             // if an element arrives after the section update (which referenced this new element)
             // find the placeholder element and replace
@@ -330,6 +335,49 @@ export class Editor extends React.PureComponent<EditorProps> {
         })
         break
     }
+  }
+
+  private orderChildSections = (
+    parent?: string,
+    command?: ChangeReceiverCommand
+  ) => {
+    if (!command || !command.childSections) {
+      return
+    }
+
+    const {
+      state: { doc, tr },
+    } = this.view
+
+    const { node, offset } = parent
+      ? findDescendantById(doc, parent)
+      : { node: doc, offset: 0 }
+
+    if (!node || offset === undefined) {
+      return
+    }
+
+    const coords = childSectionCoordinates(node)
+
+    const diff = diffReplacementBlocks(coords, command.childSections)
+
+    if (!diff.remove && !diff.insert.length) {
+      return
+    }
+
+    if (!diff.remove) {
+      const pos =
+        offset +
+        (coords[diff.start] ? coords[diff.start].start : node.content.size)
+      tr.insert(pos, diff.insert)
+    } else {
+      const startOfSplice = offset + coords[diff.start].start
+      const endOfSplice = offset + coords[diff.start + diff.remove - 1].end
+      tr.replaceWith(startOfSplice, endOfSplice, diff.insert)
+    }
+
+    tr.setMeta('addToHistory', false)
+    this.dispatchTransaction(tr, true)
   }
 
   private handleHistoryChange: LocationListener = location => {

@@ -36,10 +36,15 @@ export type NodeViewCreator<T extends ManuscriptNodeView> = (
   decorations: Decoration[]
 ) => T
 
+export interface ChangeReceiverCommand {
+  childSections?: ManuscriptNode[]
+}
+
 export type ChangeReceiver = (
   op: string,
-  id: string,
-  data?: ManuscriptNode | null
+  id?: string,
+  data?: ManuscriptNode | null,
+  command?: ChangeReceiverCommand
 ) => void
 
 export interface SyncError {
