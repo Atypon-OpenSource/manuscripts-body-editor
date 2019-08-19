@@ -1253,10 +1253,10 @@
     "@babel/runtime" "^7.4.4"
     hoist-non-react-statics "^3.3.0"
 
-"@manuscripts/assets@^0.3.13", "@manuscripts/assets@^0.3.9":
-  version "0.3.13"
-  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.13.tgz#99dcd2ce34312856191a372f874013e41c998bb0"
-  integrity sha512-jyk8xhK6WHk1hPIprfOcpxCLLgS6QwCESD215urDRY7PoVxMc3i7YotOeHrHNI4dG3V48slVY/nsu/TtP0pWpg==
+"@manuscripts/assets@^0.3.19", "@manuscripts/assets@^0.3.21", "@manuscripts/assets@^0.3.9":
+  version "0.3.21"
+  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.21.tgz#fa3d0ab25eaf930cefe62c06b8cbf90fa539882c"
+  integrity sha512-CAqc6tY9eMMNHI7YCJJ30H8UGzYPCzheRXwyw5EeqOnTDA+5rUlO+pptj+ZUwTmtsvtCmz+pE4CGz8LRId+p0A==
 
 "@manuscripts/examples@^0.0.6":
   version "0.0.6"
@@ -1273,10 +1273,10 @@
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
 
-"@manuscripts/manuscripts-json-schema@^1.14.3":
-  version "1.14.3"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.14.3.tgz#a85748bc0d309bf0f3f2ffacd6bdfa8c7ad68d06"
-  integrity sha512-GGEHxi4dpNeOVA9oVpBdHU2v82Jy0uzWWRAW9ylIyFARUTggm422GcwsHRjCHtIDnzz8fbZYCQxnWFzmOREgjA==
+"@manuscripts/manuscripts-json-schema@^1.16.1":
+  version "1.16.1"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.16.1.tgz#ad3d97b6827978b199541df61191d2d5fd61b3e5"
+  integrity sha512-9rjrB3uuabtbchZhw9ckRq0+EL8vojZBhKIIjVxeybEWNrW0BJKdwhspnIlJwKdtVOUQNxuSnHw+Ms5hbkRiiQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1289,12 +1289,12 @@
   dependencies:
     node-fetch "^2.6.0"
 
-"@manuscripts/style-guide@^0.9.2":
-  version "0.9.2"
-  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.9.2.tgz#eaadbb8e71ab3be2dd18ba198fd844742cea9e61"
-  integrity sha512-nOEfSrSPp85w05013fD9VNYjOLmPUDgsdKywCcl0Sph5l2fn2IiZX1eziKzNhf4zJAA6sk/0hpC8d5aEgbcmGg==
+"@manuscripts/style-guide@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.10.1.tgz#c08af83276a882a0816bc1a5400bacd0209c5a60"
+  integrity sha512-MGUSBgp/NybauuBaA7TNbaDUdfWz5jYQh07EyexrYtvLxRo0PcKBNCCgdqoyipIx3FeoBucd6U0Z3O9BPdqhbw==
   dependencies:
-    "@manuscripts/assets" "^0.3.9"
+    "@manuscripts/assets" "^0.3.19"
     lodash-es "^4.17.11"
     react-dnd "^7.4.3"
     react-modal "^3.8.1"
@@ -11187,18 +11187,10 @@ prosemirror-schema-list@^1.0.3:
     prosemirror-model "^1.0.0"
     prosemirror-transform "^1.0.0"
 
-prosemirror-state@>=1.0.0:
+prosemirror-state@>=1.0.0, prosemirror-state@^1.0.0, prosemirror-state@^1.2.2, prosemirror-state@^1.2.3:
   version "1.2.4"
   resolved "https://registry.npmjs.org/prosemirror-state/-/prosemirror-state-1.2.4.tgz#aab932ebb33a0f27c256abce6fc20da8ca77ad5e"
   integrity sha512-ViXpXond3BbSL12ENARQGq3Y8igwFMbTcy96xUNK8kfIcfQRlYlgYrBPXIkHC5+QZtbPrYlpuJ2+QyeSlSX9Cw==
-  dependencies:
-    prosemirror-model "^1.0.0"
-    prosemirror-transform "^1.0.0"
-
-prosemirror-state@^1.0.0, prosemirror-state@^1.2.2, prosemirror-state@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.npmjs.org/prosemirror-state/-/prosemirror-state-1.2.3.tgz#b61e88e55336a4e5be088c0d21ac05f18cdd3dcd"
-  integrity sha512-TNFw98jHLcU7JXViozcDHxzIWQj7WfGqTAB05RCrkkUuIleKekW9PbhQGXRZdlSPFkViPlLy/emh+5HtjH1Yzg==
   dependencies:
     prosemirror-model "^1.0.0"
     prosemirror-transform "^1.0.0"
