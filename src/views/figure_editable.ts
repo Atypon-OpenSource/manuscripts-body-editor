@@ -115,15 +115,15 @@ export class FigureEditableView extends FigureView<EditorProps> {
     const blob = await attachment.getData()
     const src = window.URL.createObjectURL(blob)
 
-    this.view.dispatch(
-      this.view.state.tr
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          src,
-          contentType: file.type,
-        })
-        .setSelection(this.view.state.selection)
-    )
+    const { selection, tr } = this.view.state
+
+    tr.setNodeMarkup(this.getPos(), undefined, {
+      ...this.node.attrs,
+      src,
+      contentType: file.type,
+    }).setSelection(selection.map(tr.doc, tr.mapping))
+
+    this.view.dispatch(tr)
   }
 }
 

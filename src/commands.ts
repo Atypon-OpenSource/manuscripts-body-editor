@@ -476,7 +476,11 @@ const selectIsolatingParent = (
     const node = $anchor.node(d)
 
     if (node.type.spec.isolating) {
-      return TextSelection.create(state.doc, $anchor.start(d), $anchor.end(d))
+      return TextSelection.create(
+        state.tr.doc,
+        $anchor.start(d),
+        $anchor.end(d)
+      )
     }
   }
 

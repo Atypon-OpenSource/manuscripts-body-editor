@@ -85,7 +85,7 @@ export default () => {
           })
         }
 
-        return tr.setSelection(newState.selection)
+        return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },
   })

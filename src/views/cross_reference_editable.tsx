@@ -83,14 +83,14 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
   public handleCancel = () => {
     if (!this.node.attrs.rid) {
-      const { state } = this.view
+      const { selection, tr } = this.view.state
 
       const pos = this.getPos()
 
       this.view.dispatch(
-        state.tr
+        tr
           .delete(pos, pos + this.node.nodeSize)
-          .setSelection(this.view.state.selection)
+          .setSelection(selection.map(tr.doc, tr.mapping))
       )
     } else {
       this.destroy()
@@ -98,7 +98,9 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   }
 
   public handleSelect = (rid: string) => {
-    const $pos = this.view.state.doc.resolve(this.getPos())
+    const { doc, selection, tr } = this.view.state
+
+    const $pos = doc.resolve(this.getPos())
 
     const auxiliaryObjectReference = buildAuxiliaryObjectReference(
       $pos.parent.attrs.id,
@@ -106,13 +108,13 @@ export class CrossReferenceEditableView extends CrossReferenceView<
     )
 
     this.view.dispatch(
-      this.view.state.tr
+      tr
         .setMeta(modelsKey, { [INSERT]: [auxiliaryObjectReference] })
         .setNodeMarkup(this.getPos(), undefined, {
           ...this.node.attrs,
           rid: auxiliaryObjectReference._id,
         })
-        .setSelection(this.view.state.selection)
+        .setSelection(selection.map(tr.doc, tr.mapping))
     )
     this.destroy()
   }

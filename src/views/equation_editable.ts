@@ -52,13 +52,13 @@ export class EquationEditableView extends EquationView<EditorProps> {
         typesetRoot.firstChild
       )
 
-      const tr = this.view.state.tr
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          TeXRepresentation,
-          SVGStringRepresentation,
-        })
-        .setSelection(this.view.state.selection)
+      const { selection, tr } = this.view.state
+
+      tr.setNodeMarkup(this.getPos(), undefined, {
+        ...this.node.attrs,
+        TeXRepresentation,
+        SVGStringRepresentation,
+      }).setSelection(selection.map(tr.doc, tr.mapping))
 
       this.view.dispatch(tr)
     })

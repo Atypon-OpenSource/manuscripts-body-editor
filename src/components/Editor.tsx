@@ -310,7 +310,7 @@ export class Editor extends React.PureComponent<EditorProps> {
             }
 
             // TODO: map selection through changes?
-            // tr.setSelection(state.selection)
+            // tr.setSelection(state.selection.map(tr.doc, tr.mapping))
 
             tr.setMeta('addToHistory', false)
 
@@ -394,8 +394,8 @@ export class Editor extends React.PureComponent<EditorProps> {
         this.view.focus()
 
         const selection = node.isAtom
-          ? NodeSelection.create(state.doc, pos)
-          : TextSelection.near(state.doc.resolve(pos + 1))
+          ? NodeSelection.create(state.tr.doc, pos)
+          : TextSelection.near(state.tr.doc.resolve(pos + 1))
 
         this.dispatchTransaction(state.tr.setSelection(selection))
 
