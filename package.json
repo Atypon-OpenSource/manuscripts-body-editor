@@ -30,7 +30,7 @@
     "@iarna/word-count": "^1.1.2",
     "@jupyterlab/services": "^3.2.1",
     "@manuscripts/assets": "^0.3.21",
-    "@manuscripts/manuscripts-json-schema": "^1.16.1",
+    "@manuscripts/manuscripts-json-schema": "^1.16.3",
     "@manuscripts/title-editor": "^0.3.3",
     "axios": "^0.19.0",
     "blob-util": "^2.0.2",
@@ -74,7 +74,7 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
     "@manuscripts/examples": "^0.0.6",
-    "@manuscripts/manuscript-transform": "^0.16.0",
+    "@manuscripts/manuscript-transform": "^0.16.1",
     "@manuscripts/publish": "^0.2.2",
     "@manuscripts/style-guide": "^0.10.1",
     "@manuscripts/tslint-config": "^0.1.4",
@@ -140,8 +140,8 @@
     "typescript": "3.5.2"
   },
   "peerDependencies": {
-    "@manuscripts/manuscript-transform": "^0.16.0",
-    "@manuscripts/style-guide": "^0.8.4",
+    "@manuscripts/manuscript-transform": "^0.16.1",
+    "@manuscripts/style-guide": "^0.10.1",
     "comlink": "^4.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
