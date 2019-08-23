@@ -339,33 +339,14 @@
             "identifierType": "DOI"
           }
         ],
-        "creators": [
-          {
-            "name": "Welsh Assembly Government, Social Research Division",
-            "nameType": "Personal",
-            "givenName": "Social Research Division",
-            "familyName": "Welsh Assembly Government"
-          }
-        ],
-        "titles": [
-          {
-            "title": "National Survey for Wales, 2009-2010: Pilot Study"
-          },
-          {
-            "title": "National Survey for Wales, 2012-"
-          }
-        ],
+        "creators": null,
+        "titles": null,
         "publisher": "UK Data Service",
         "container": null,
         "publicationYear": 2011,
         "subjects": null,
         "contributors": null,
-        "dates": [
-          {
-            "date": "2011",
-            "dateType": "Issued"
-          }
-        ],
+        "dates": null,
         "language": null,
         "types": {
           "ris": "DATA",

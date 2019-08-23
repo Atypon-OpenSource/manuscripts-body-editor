@@ -39,24 +39,39 @@ interface DataCiteItem {
   id: string
   attributes: {
     doi: string
-    dates: Date[]
-    titles: Array<{ title: string }>
-    creators: Creator[]
+    dates?: Date[]
+    titles?: Array<{ title: string }>
+    creators?: Creator[]
   }
 }
 
 const buildIssuedDate = (dates: Date[]): BibliographicDate | undefined => {
   const issued = dates.find(item => item.dateType === 'Issued')
 
-  if (!issued || !issued.date) {
-    return undefined
+  if (issued && issued.date) {
+    return {
+      _id: generateID(ObjectTypes.BibliographicDate),
+      objectType: ObjectTypes.BibliographicDate,
+      'date-parts': [issued.date.split('-')],
+    }
   }
+}
 
-  return {
-    _id: generateID(ObjectTypes.BibliographicDate),
-    objectType: ObjectTypes.BibliographicDate,
-    'date-parts': [issued.date.split('-')],
+const chooseTitle = (titles: Array<{ title: string }>): string | undefined => {
+  if (titles && titles.length) {
+    return titles[0].title
   }
+}
+
+const buildAuthors = (creators: Creator[]): BibliographicName[] => {
+  return creators.map(
+    ({ givenName: given, familyName: family, name }): BibliographicName => ({
+      _id: generateID(ObjectTypes.BibliographicName),
+      objectType: ObjectTypes.BibliographicName,
+      given,
+      family,
+    })
+  )
 }
 
 const convertResult = (item: DataCiteItem): Build<BibliographyItem> => {
@@ -66,17 +81,10 @@ const convertResult = (item: DataCiteItem): Build<BibliographyItem> => {
     _id: generateID(ObjectTypes.BibliographyItem),
     objectType: ObjectTypes.BibliographyItem,
     DOI: doi,
-    title: titles && titles.length ? titles[0].title : undefined,
+    title: chooseTitle(titles || []),
     type: 'dataset',
-    issued: buildIssuedDate(dates),
-    author: creators.map(
-      ({ givenName: given, familyName: family, name }): BibliographicName => ({
-        _id: generateID(ObjectTypes.BibliographicName),
-        objectType: ObjectTypes.BibliographicName,
-        given,
-        family,
-      })
-    ),
+    issued: buildIssuedDate(dates || []),
+    author: buildAuthors(creators || []),
   }
 }
 

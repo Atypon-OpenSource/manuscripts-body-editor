@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import mockAxios from 'jest-mock-axios'
 import { datacite } from '../datacite'
 import fetchResponse from './__fixtures__/datacite-fetch.json'
@@ -39,12 +38,17 @@ describe('datacite', () => {
 
     expect(items).toHaveLength(5)
 
-    const [item]: Array<Partial<BibliographyItem>> = items
+    const [item] = items
 
     expect(item.DOI).toBe('10.5255/ukda-sn-6926-1')
     expect(item.title).toBe('Road Accident Data, 2010')
     expect(item.author).toHaveLength(1)
     expect(item.issued!['date-parts']![0]).toEqual(['2011'])
+
+    const lastItem = items[items.length - 1]
+    expect(lastItem.title).toBeUndefined()
+    expect(lastItem.issued).toBeUndefined()
+    expect(lastItem.author).toHaveLength(0)
   })
 
   test('fetch', async () => {
