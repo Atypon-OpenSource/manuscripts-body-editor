@@ -57,12 +57,6 @@ const Separator = styled.div`
   margin: 4px 0;
 `
 
-const Icon = styled.div`
-  display: none; // inline-flex; // TODO: width from config?
-  flex-shrink: 0;
-  margin: 0 8px;
-`
-
 const Active = styled.div`
   width: 16px;
   display: inline-flex;
@@ -157,7 +151,6 @@ export class MenuItemContainer extends React.Component<
           }}
         >
           <Active>{activeContent(item, view.state)}</Active>
-          {item.icon && <Icon>{item.icon}</Icon>}
           <Text>{item.label(view.state)}</Text>
           {item.accelerator && <Shortcut accelerator={item.accelerator} />}
         </Container>
@@ -180,7 +173,6 @@ export class MenuItemContainer extends React.Component<
                 className={classNameFromState(item, view.state)}
               >
                 <Active>{activeContent(item, view.state)}</Active>
-                {item.icon && <Icon>{item.icon}</Icon>}
                 <Text>{item.label(view.state)}</Text>
                 {item.submenu && <Arrow />}
                 {item.accelerator && (

@@ -88,11 +88,11 @@ export interface Accelerator {
 }
 
 export interface MenuItem {
+  id: string
   label: (state: ManuscriptEditorState) => React.ReactNode
   role?: string
   type?: string
   accelerator?: Accelerator
-  icon?: React.ReactNode
   active?: (state: ManuscriptEditorState) => boolean
   enable?: (state: ManuscriptEditorState) => boolean
   run?: (state: ManuscriptEditorState, dispatch: Dispatch) => void

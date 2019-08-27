@@ -39,7 +39,6 @@ import {
   markActive,
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
-import icons from './icons'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -47,9 +46,11 @@ import {
 
 export const menus: MenuItem[] = [
   {
+    id: 'edit',
     label: () => 'Edit',
     submenu: [
       {
+        id: 'edit-undo',
         role: 'undo',
         label: () => 'Undo',
         accelerator: {
@@ -60,6 +61,7 @@ export const menus: MenuItem[] = [
         run: undo,
       },
       {
+        id: 'edit-redo',
         role: 'redo',
         label: () => 'Redo',
         accelerator: {
@@ -73,6 +75,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'edit-delete',
         role: 'delete',
         label: state => {
           const nodeName = findClosestParentElementNodeName(state)
@@ -85,9 +88,11 @@ export const menus: MenuItem[] = [
     ],
   },
   {
+    id: 'insert',
     label: () => 'Insert',
     submenu: [
       {
+        id: 'insert-paragraph',
         label: () => 'Paragraph',
         // active: blockActive(schema.nodes.paragraph),
         enable: canInsert(schema.nodes.paragraph),
@@ -97,23 +102,23 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-ordered-list',
         label: () => 'Numbered List',
         accelerator: {
           mac: 'Option+CommandOrControl+O',
           pc: 'CommandOrControl+Option+O',
         },
-        icon: icons.ordered_list,
         // active: blockActive(schema.nodes.ordered_list),
         enable: wrapInList(schema.nodes.ordered_list),
         run: wrapInList(schema.nodes.ordered_list),
       },
       {
+        id: 'insert-bullet-list',
         label: () => 'Bullet List',
         accelerator: {
           mac: 'Option+CommandOrControl+K',
           pc: 'CommandOrControl+Option+K',
         },
-        icon: icons.bullet_list,
         // active: blockActive(schema.nodes.bullet_list),
         enable: wrapInList(schema.nodes.bullet_list),
         run: wrapInList(schema.nodes.bullet_list),
@@ -122,34 +127,34 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-figure-element',
         label: () => 'Figure Panel',
         accelerator: {
           mac: 'Option+CommandOrControl+P',
           pc: 'CommandOrControl+Option+P',
         },
-        icon: icons.figure_element,
         // active: blockActive(schema.nodes.figure_element),
         enable: canInsert(schema.nodes.figure_element),
         run: insertBlock(schema.nodes.figure_element),
       },
       {
+        id: 'insert-table-element',
         label: () => 'Table',
         accelerator: {
           mac: 'Option+CommandOrControl+T',
           pc: 'CommandOrControl+Option+T',
         },
-        icon: icons.bullet_list,
         // active: blockActive(schema.nodes.table_element),
         enable: canInsert(schema.nodes.table_element),
         run: insertBlock(schema.nodes.table_element),
       },
       {
+        id: 'insert-paragraph',
         label: () => 'Listing',
         accelerator: {
           mac: 'Option+CommandOrControl+L',
           pc: 'CommandOrControl+Option+L',
         },
-        icon: icons.bullet_list,
         // active: blockActive(schema.nodes.listing_element),
         enable: canInsert(schema.nodes.listing_element),
         run: insertBlock(schema.nodes.listing_element),
@@ -158,6 +163,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-link',
         label: () => 'Link',
         accelerator: {
           mac: 'Option+CommandOrControl+H',
@@ -171,23 +177,23 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-equation',
         label: () => 'Equation',
         accelerator: {
           mac: 'Option+CommandOrControl+E',
           pc: 'CommandOrControl+Option+E',
         },
-        icon: icons.equation_element,
         // active: blockActive(schema.nodes.equation_element),
         enable: canInsert(schema.nodes.equation_element),
         run: insertBlock(schema.nodes.equation_element),
       },
       {
+        id: 'insert-inline-equation',
         label: () => 'Inline Equation',
         accelerator: {
           mac: 'Shift+Option+CommandOrControl+E',
           pc: 'Shift+CommandOrControl+Option+E',
         },
-        icon: icons.inline_equation,
         // active: blockActive(schema.nodes.inline_equation),
         enable: canInsert(schema.nodes.inline_equation),
         run: insertInlineEquation,
@@ -196,32 +202,32 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-citation',
         label: () => 'Citation',
         accelerator: {
           mac: 'Option+CommandOrControl+C',
           pc: 'CommandOrControl+Option+C',
         },
-        icon: icons.citation,
         enable: canInsert(schema.nodes.citation),
         run: insertInlineCitation,
       },
       {
+        id: 'insert-cross-reference',
         label: () => 'Cross-reference',
         accelerator: {
           mac: 'Option+CommandOrControl+R',
           pc: 'CommandOrControl+Option+R',
         },
-        icon: icons.citation,
         enable: canInsert(schema.nodes.cross_reference),
         run: insertCrossReference,
       },
       // {
+      //   id: 'insert-footnote',
       //   label: 'Footnote',
       //   accelerator: {
       //     mac: 'Option+CommandOrControl+F',
       //     pc: 'CommandOrControl+Option+F',
       //   },
-      //   // icon: icons.footnote,
       //   enable: canInsert(schema.nodes.inline_footnote),
       //   run: insertInlineFootnote,
       // },
@@ -229,6 +235,7 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-bibliography',
         label: () => 'Bibliography',
         enable: insertBibliographySection,
         run: insertBibliographySection,
@@ -236,37 +243,38 @@ export const menus: MenuItem[] = [
     ],
   },
   {
+    id: 'format',
     label: () => 'Format',
     submenu: [
       {
+        id: 'format-bold',
         label: () => 'Bold',
         accelerator: {
           mac: 'CommandOrControl+B',
           pc: 'CommandOrControl+B',
         },
-        icon: icons.bold,
         active: markActive(schema.marks.bold),
         enable: toggleMark(schema.marks.bold),
         run: toggleMark(schema.marks.bold),
       },
       {
+        id: 'format-italic',
         label: () => 'Italic',
         accelerator: {
           mac: 'CommandOrControl+I',
           pc: 'CommandOrControl+I',
         },
-        icon: icons.italic,
         active: markActive(schema.marks.italic),
         enable: toggleMark(schema.marks.italic),
         run: toggleMark(schema.marks.italic),
       },
       {
+        id: 'format-underline',
         label: () => 'Underline',
         accelerator: {
           mac: 'CommandOrControl+U',
           pc: 'CommandOrControl+U',
         },
-        icon: icons.underline,
         active: markActive(schema.marks.underline),
         enable: toggleMark(schema.marks.underline),
         run: toggleMark(schema.marks.underline),
@@ -275,23 +283,23 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'format-superscript',
         label: () => 'Superscript',
         accelerator: {
           mac: 'Option+CommandOrControl+=',
           pc: 'CommandOrControl+Option+=',
         },
-        icon: icons.superscript,
         active: markActive(schema.marks.superscript),
         enable: toggleMark(schema.marks.superscript),
         run: toggleMark(schema.marks.superscript),
       },
       {
+        id: 'format-subscript',
         label: () => 'Subscript',
         accelerator: {
           mac: 'Option+CommandOrControl+-',
           pc: 'CommandOrControl+Option+-',
         },
-        icon: icons.subscript,
         active: markActive(schema.marks.subscript),
         enable: toggleMark(schema.marks.subscript),
         run: toggleMark(schema.marks.subscript),
@@ -300,20 +308,24 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'format-table',
         label: () => 'Table',
         enable: blockActive(schema.nodes.table),
         submenu: [
           {
+            id: 'format-table-add-row-before',
             label: () => 'Add Row Above',
             enable: ifInTableBody(addRowBefore),
             run: addRowBefore,
           },
           {
+            id: 'format-table-add-row-after',
             label: () => 'Add Row Below',
             enable: ifInTableBody(addRowAfter),
             run: addRowAfter,
           },
           {
+            id: 'format-table-delete-row',
             label: () => 'Delete Row',
             enable: ifInTableBody(deleteRow),
             run: deleteRow,
@@ -322,16 +334,19 @@ export const menus: MenuItem[] = [
             role: 'separator',
           },
           {
+            id: 'format-table-add-column-before',
             label: () => 'Add Column Before',
             enable: addColumnBefore,
             run: addColumnBefore,
           },
           {
+            id: 'format-table-add-column-after',
             label: () => 'Add Column After',
             enable: addColumnAfter,
             run: addColumnAfter,
           },
           {
+            id: 'format-table-delete-column',
             label: () => 'Delete Column',
             enable: deleteColumn,
             run: deleteColumn,
