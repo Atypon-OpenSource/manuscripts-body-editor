@@ -15,10 +15,10 @@
  */
 
 import { buildAuxiliaryObjectReference } from '@manuscripts/manuscript-transform'
+import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 import { EditorProps } from '../components/Editor'
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
-import { INSERT, modelsKey } from '../plugins/models'
 import { objectsKey, Target } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView } from './cross_reference'
@@ -43,7 +43,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'citation-editor'
+      this.popperContainer.className = 'cross-reference-editor'
     }
 
     renderReactComponent(
@@ -83,39 +83,40 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
   public handleCancel = () => {
     if (!this.node.attrs.rid) {
-      const { selection, tr } = this.view.state
+      const { state } = this.view
 
       const pos = this.getPos()
+      const tr = state.tr.delete(pos, pos + this.node.nodeSize)
+      const selection = TextSelection.create(tr.doc, pos)
 
-      this.view.dispatch(
-        tr
-          .delete(pos, pos + this.node.nodeSize)
-          .setSelection(selection.map(tr.doc, tr.mapping))
-      )
+      this.view.dispatch(tr.setSelection(selection))
     } else {
       this.destroy()
     }
   }
 
-  public handleSelect = (rid: string) => {
-    const { doc, selection, tr } = this.view.state
+  public handleSelect = async (rid: string) => {
+    const { state } = this.view
 
-    const $pos = doc.resolve(this.getPos())
+    const pos = this.getPos()
+    const $pos = state.doc.resolve(pos)
 
     const auxiliaryObjectReference = buildAuxiliaryObjectReference(
       $pos.parent.attrs.id,
       rid
     )
 
-    this.view.dispatch(
-      tr
-        .setMeta(modelsKey, { [INSERT]: [auxiliaryObjectReference] })
-        .setNodeMarkup(this.getPos(), undefined, {
-          ...this.node.attrs,
-          rid: auxiliaryObjectReference._id,
-        })
-        .setSelection(selection.map(tr.doc, tr.mapping))
-    )
+    await this.props.saveModel(auxiliaryObjectReference)
+
+    const tr = state.tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      rid: auxiliaryObjectReference._id,
+    })
+
+    const selection = TextSelection.create(tr.doc, pos)
+
+    this.view.dispatch(tr.setSelection(selection))
+
     this.destroy()
   }
 }

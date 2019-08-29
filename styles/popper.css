@@ -134,7 +134,8 @@
   color: white;
 }
 
-.popper .citation-editor {
+.popper .citation-editor,
+.popper .cross-reference-editor{
   min-width: 400px;
   max-width: 600px;
   height: auto;

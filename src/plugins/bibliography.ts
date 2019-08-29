@@ -29,7 +29,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { getChildOfType } from '..'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
@@ -180,7 +180,8 @@ export default (props: Props) => {
         .rebuildProcessorState(citations)
         .map(item => item[2]) // id, noteIndex, output
 
-      const tr = newState.tr
+      const { tr } = newState
+      const { selection } = tr
 
       citationNodes.forEach(([node, pos], index) => {
         let contents = generatedCitations[index]
@@ -232,7 +233,13 @@ export default (props: Props) => {
         })
       }
 
-      return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
+      // create a new NodeSelection
+      // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
+      if (selection instanceof NodeSelection) {
+        tr.setSelection(NodeSelection.create(tr.doc, selection.from))
+      }
+
+      return tr
     },
   })
 }

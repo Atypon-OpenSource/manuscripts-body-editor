@@ -25,7 +25,6 @@ import {
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 import { EditorProps } from '../components/Editor'
-import { INSERT, modelsKey, UPDATE } from '../plugins/models'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
 
@@ -56,6 +55,7 @@ export class CitationEditableView extends CitationView<EditorProps> {
       <CitationEditor
         items={items}
         filterLibraryItems={filterLibraryItems}
+        importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
         handleCancel={this.handleCancel}
         handleRemove={this.handleRemove}
@@ -76,63 +76,93 @@ export class CitationEditableView extends CitationView<EditorProps> {
     const { state } = this.view
 
     const pos = this.getPos()
+    const tr = state.tr.delete(pos, pos + this.node.nodeSize)
+    const selection = TextSelection.create(tr.doc, pos)
 
-    this.view.dispatch(
-      state.tr
-        .delete(pos, pos + this.node.nodeSize)
-        .setSelection(TextSelection.create(state.tr.doc, pos))
-    )
+    this.view.dispatch(tr.setSelection(selection))
   }
 
-  private handleRemove = (id: string) => {
+  private handleRemove = async (id: string) => {
+    const { saveModel } = this.props
+
     const citation = this.getCitation()
 
     citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
       item => item.bibliographyItem !== id
     )
 
-    this.view.dispatch(
-      this.view.state.tr.setMeta(modelsKey, {
-        [UPDATE]: [citation],
-      })
-    )
+    await saveModel(citation)
+
+    this.props.popper.destroy()
+    this.showPopper() // redraw the popper
   }
 
-  private handleCite = (items: Array<Build<BibliographyItem>>) => {
-    // TODO: reuse if already in library
-
-    if (!this.props.addLibraryItem) {
-      throw new Error('addLibraryItem not defined')
-    }
-
-    const { state } = this.view
-    const { getLibraryItem } = this.props
+  private handleCite = async (items: Array<Build<BibliographyItem>>) => {
+    const {
+      matchLibraryItemByIdentifier,
+      saveModel,
+      setLibraryItem,
+    } = this.props
 
     const citation = this.getCitation()
 
     for (const item of items) {
+      const existingItem = matchLibraryItemByIdentifier(
+        item as BibliographyItem
+      )
+
+      if (existingItem) {
+        item._id = existingItem._id
+      } else {
+        // add the item to the model map so it's definitely available
+        setLibraryItem(item as BibliographyItem)
+
+        // save the new item
+        await saveModel(item)
+      }
+
       citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))
     }
 
-    const newItems = items.filter(item => !getLibraryItem(item._id))
+    await saveModel(citation)
 
-    for (const item of newItems) {
-      // add the database item here so it's ready in time
-      this.props.addLibraryItem(item as BibliographyItem)
-    }
-
-    const tr = state.tr.setMeta(modelsKey, {
-      [INSERT]: newItems,
-      [UPDATE]: [citation],
-    })
-
-    this.view.focus()
-
-    this.view.dispatch(
-      tr.setSelection(TextSelection.near(tr.doc.resolve(state.selection.to)))
+    // move the cursor after this node
+    const selection = TextSelection.create(
+      this.view.state.tr.doc,
+      this.getPos() + 1
     )
 
+    this.view.dispatch(this.view.state.tr.setSelection(selection))
+
     this.props.popper.destroy()
+  }
+
+  private importItems = async (items: Array<Build<BibliographyItem>>) => {
+    const {
+      matchLibraryItemByIdentifier,
+      saveModel,
+      setLibraryItem,
+    } = this.props
+
+    const newItems: BibliographyItem[] = []
+
+    for (const item of items) {
+      const existingItem = matchLibraryItemByIdentifier(
+        item as BibliographyItem
+      )
+
+      if (!existingItem) {
+        // add the item to the model map so it's definitely available
+        setLibraryItem(item as BibliographyItem)
+
+        // save the new item
+        const newItem = await saveModel(item as BibliographyItem)
+
+        newItems.push(newItem)
+      }
+    }
+
+    return newItems
   }
 }
 

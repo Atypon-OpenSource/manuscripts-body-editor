@@ -143,11 +143,8 @@ export const createBlock = (
   const tr = state.tr.insert(position, node!)
 
   if (dispatch) {
-    dispatch(
-      tr
-        .setSelection(createSelection(nodeType, position, tr.doc))
-        .scrollIntoView()
-    )
+    const selection = createSelection(nodeType, position, tr.doc)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 }
 
@@ -193,11 +190,8 @@ export const insertLink = (
   const tr = state.tr.replaceSelectionWith(node)
 
   if (dispatch) {
-    dispatch(
-      tr
-        .setSelection(NodeSelection.create(tr.doc, state.tr.selection.from))
-        .scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, state.tr.selection.from)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true
@@ -221,9 +215,8 @@ export const insertInlineCitation = (
     .insert(pos, node)
 
   if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true
@@ -242,9 +235,8 @@ export const insertCrossReference = (
   const tr = state.tr.insert(pos, node)
 
   if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true
@@ -266,11 +258,8 @@ export const insertInlineEquation = (
     .replaceSelectionWith(state.schema.nodes.inline_equation.create())
 
   if (dispatch) {
-    dispatch(
-      tr
-        .setSelection(NodeSelection.create(tr.doc, state.tr.selection.from))
-        .scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, state.tr.selection.from)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true
@@ -294,9 +283,8 @@ export const insertInlineFootnote = (
     .insert(pos, node)
 
   if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true
@@ -322,9 +310,8 @@ export const insertBibliographySection = (
   const tr = state.tr.insert(pos, section)
 
   if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
+    const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
   return true

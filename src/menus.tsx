@@ -149,7 +149,7 @@ export const menus: MenuItem[] = [
         run: insertBlock(schema.nodes.table_element),
       },
       {
-        id: 'insert-paragraph',
+        id: 'insert-listing',
         label: () => 'Listing',
         accelerator: {
           mac: 'Option+CommandOrControl+L',

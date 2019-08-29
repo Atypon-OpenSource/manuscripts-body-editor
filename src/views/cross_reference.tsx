@@ -30,19 +30,22 @@ export class CrossReferenceView<PropsType extends ViewerProps>
     // TODO: show a list of referenced items?
   }
 
-  public updateContents = () => {
-    this.dom.textContent = this.node.attrs.label
-
+  public handleClick = () => {
     const auxiliaryObjectReference = this.getAuxiliaryObjectReference(
       this.node.attrs.rid
     )
 
     if (auxiliaryObjectReference) {
-      this.dom.setAttribute(
-        'href',
-        '#' + auxiliaryObjectReference.referencedObject
-      )
+      this.props.history.push({
+        pathname: this.props.history.location.pathname,
+        hash: '#' + auxiliaryObjectReference.referencedObject,
+      })
     }
+  }
+
+  public updateContents = () => {
+    this.dom.textContent = this.node.attrs.label
+    this.dom.addEventListener('click', this.handleClick)
   }
 
   public initialise = () => {
@@ -56,7 +59,7 @@ export class CrossReferenceView<PropsType extends ViewerProps>
     this.props.getModel<AuxiliaryObjectReference>(id)
 
   public createDOM = () => {
-    this.dom = document.createElement('a')
+    this.dom = document.createElement('span')
     this.dom.className = 'cross-reference'
   }
 }

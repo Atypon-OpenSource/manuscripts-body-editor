@@ -119,6 +119,7 @@ export const ManuscriptToolbar: React.FunctionComponent<{
               onMouseDown={event => {
                 event.preventDefault()
                 item.run(view.state, view.dispatch)
+                view.focus()
               }}
             >
               {item.content}
