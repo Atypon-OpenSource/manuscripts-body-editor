@@ -380,7 +380,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     }
 
     tr.setMeta('addToHistory', false)
-    this.dispatchTransaction(tr, true)
+    this.dispatchTransaction(tr, false)
   }
 
   private handleHistoryChange: LocationListener = location => {
