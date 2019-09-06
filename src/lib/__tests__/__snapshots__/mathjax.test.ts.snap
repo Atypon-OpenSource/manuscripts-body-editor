@@ -6,7 +6,9 @@ exports[`mathjax generate: mathjax 1`] = `
   jax="SVG"
 >
   <svg
+    focusable="false"
     height="2.739ex"
+    role="img"
     style="vertical-align: -0.667ex;"
     viewBox="0 -915.5 7273.5 1210.5"
     width="16.456ex"
@@ -149,7 +151,9 @@ exports[`mathjax generate: mathjax-display 1`] = `
   jax="SVG"
 >
   <svg
+    focusable="false"
     height="3.167ex"
+    role="img"
     style="vertical-align: -1.018ex;"
     viewBox="0 -950 7661.5 1400"
     width="17.334ex"

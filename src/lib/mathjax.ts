@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { browserAdaptor } from 'mathjax3/mathjax3/adaptors/browserAdaptor'
-import { AbstractMathDocument } from 'mathjax3/mathjax3/core/MathDocument'
-import { AbstractMathItem } from 'mathjax3/mathjax3/core/MathItem'
-import { TeX } from 'mathjax3/mathjax3/input/tex'
-import { SVG } from 'mathjax3/mathjax3/output/svg'
-import 'mathjax3/mathjax3/util/entities/all'
-
-class MathDocument extends AbstractMathDocument<HTMLElement, Text, Document> {}
-class MathItem extends AbstractMathItem<HTMLElement, Text, Document> {}
+import { browserAdaptor } from 'mathjax-full/js/adaptors/browserAdaptor'
+import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
+import { HTMLMathItem } from 'mathjax-full/js/handlers/html/HTMLMathItem'
+import { TeX } from 'mathjax-full/js/input/tex'
+import { SVG } from 'mathjax-full/js/output/svg'
+import 'mathjax-full/js/util/entities/all'
 
 const InputJax = new TeX<HTMLElement, Text, Document>({})
-const OutputJax = new SVG<HTMLElement, Text, Document>()
-const doc = new MathDocument(document, browserAdaptor(), {
+// NOTE: fontCache: 'none' is set to avoid <defs> and <use xlink:href>
+const OutputJax = new SVG<HTMLElement, Text, Document>({ fontCache: 'none' })
+const doc = new HTMLDocument(document, browserAdaptor(), {
   InputJax,
   OutputJax,
 })
-document.head.appendChild(OutputJax.styleSheet(doc) as Node)
+doc.addStyleSheet()
 
 export const typeset = (math: string, display: boolean) => {
-  const item = new MathItem(math, InputJax, display)
+  const item = new HTMLMathItem(math, InputJax, display)
+  // TODO: set containerWidth and lineWidth for wrapping?
   item.setMetrics(16, 8, 1000000, 100000, 1)
   item.compile(doc)
   item.typeset(doc)
