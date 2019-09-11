@@ -15,11 +15,30 @@
  */
 
 import {
+  ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import { Plugin } from 'prosemirror-state'
+import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
+const placeholderWidget = (placeholder: string) => (
+  view: ManuscriptEditorView,
+  getPos: () => number
+) => {
+  const element = document.createElement('span')
+  element.className = 'placeholder-text'
+  element.textContent = placeholder
+  element.addEventListener('click', (event: MouseEvent) => {
+    event.preventDefault()
+    view.dispatch(
+      view.state.tr.setSelection(
+        TextSelection.create(view.state.tr.doc, getPos())
+      )
+    )
+  })
+  return element
+}
 
 export default () =>
   new Plugin<{}, ManuscriptSchema>({
@@ -37,11 +56,9 @@ export default () =>
             node.childCount === 0
           ) {
             if (node.type === node.type.schema.nodes.paragraph) {
-              const placeholderElement = document.createElement('span')
-              placeholderElement.className = 'placeholder-text'
-              placeholderElement.textContent = placeholder
-
-              decorations.push(Decoration.widget(pos + 1, placeholderElement))
+              decorations.push(
+                Decoration.widget(pos + 1, placeholderWidget(placeholder))
+              )
             } else {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
