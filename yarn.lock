@@ -1258,6 +1258,11 @@
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.21.tgz#fa3d0ab25eaf930cefe62c06b8cbf90fa539882c"
   integrity sha512-CAqc6tY9eMMNHI7YCJJ30H8UGzYPCzheRXwyw5EeqOnTDA+5rUlO+pptj+ZUwTmtsvtCmz+pE4CGz8LRId+p0A==
 
+"@manuscripts/data@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.2.tgz#8ecbbb9345fe14cdcb7d236e595b52aa9f372195"
+  integrity sha512-VIeGUZD+gasT6mhaM7l5J+hd5sCRN46IyO1QCMl2/OVNXeI4NIite3xXcV1gpcOxoZ2Z+YnttRa5WRNcjGTo7w==
+
 "@manuscripts/examples@^0.0.6":
   version "0.0.6"
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"

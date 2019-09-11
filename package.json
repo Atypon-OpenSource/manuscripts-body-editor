@@ -73,6 +73,7 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.1.0",
+    "@manuscripts/data": "^0.0.2",
     "@manuscripts/examples": "^0.0.6",
     "@manuscripts/manuscript-transform": "^0.16.1",
     "@manuscripts/publish": "^0.2.2",
@@ -140,6 +141,7 @@
     "typescript": "3.5.2"
   },
   "peerDependencies": {
+    "@manuscripts/data": "^0.0.2",
     "@manuscripts/manuscript-transform": "^0.16.1",
     "@manuscripts/style-guide": "^0.10.1",
     "comlink": "^4.0.1",

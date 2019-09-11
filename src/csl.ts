@@ -220,20 +220,15 @@ export class CitationManager {
     )
   }
 
-  public fetchBundle = async (bundleID: string): Promise<Bundle> => {
-    const bundles = await this.fetchBundles()
-
-    const bundle = bundles.find(item => item._id === bundleID)
-
-    if (!bundle) {
-      throw new Error('Bundle not found: ' + bundleID)
-    }
-
-    return bundle
-  }
+  public fetchBundle = (bundleID: string): Promise<Bundle | undefined> =>
+    this.fetchBundles().then(bundles =>
+      bundles.find(item => item._id === bundleID)
+    )
 
   public fetchBundles = async (): Promise<Bundle[]> =>
-    this.fetchJSON('shared/bundles.json') as Promise<Bundle[]>
+    import('@manuscripts/data/dist/shared/bundles.json').then(
+      module => module.default as Bundle[]
+    )
 
   public fetchLocales = (): Promise<Locales> =>
     this.fetchJSON('csl/locales/locales.json') as Promise<Locales>
