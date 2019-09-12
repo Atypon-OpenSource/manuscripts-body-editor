@@ -135,9 +135,7 @@
 }
 
 .popper .citation-editor,
-.popper .cross-reference-editor{
-  min-width: 400px;
-  max-width: 600px;
+.popper .cross-reference-editor {
   height: auto;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #eee;
@@ -186,11 +184,30 @@
 }
 
 .popper .link-editor {
-  min-width: 400px;
-  max-width: 600px;
   height: auto;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid #eee;
   background: #fff;
   border-radius: 8px;
+}
+
+.popper .citation-editor {
+  width: 600px;
+}
+
+.popper .cross-reference-editor,
+.popper .equation-editor,
+.popper .link-editor {
+  min-width: 500px;
+  max-width: 800px;
+}
+
+@media (max-width: 800px) {
+  .popper .citation-editor,
+  .popper .cross-reference-editor,
+  .popper .equation-editor,
+  .popper .link-editor {
+    min-width: 90%;
+    max-width: 90%;
+  }
 }
