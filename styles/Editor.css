@@ -5,12 +5,14 @@
   background: #fff;
   color: #353535;
   margin-bottom: 100px;
-  
-  /* 
-  Disable the "Font" formatting options in Safari's context menu.
+}
+
+/*
+  Disable the "Font" formatting options in Safari's context menu for editable content.
   Note: this is a deprecated CSS property that isn't widely supported,
   so it'll probably stop working at some point in the future.
-  */
+*/
+.ProseMirror.manuscript-editor[contenteditable=true] {
   -webkit-user-modify: read-write-plaintext-only;
 }
 
