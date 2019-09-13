@@ -46,11 +46,20 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
   }
 
   public updateContents = () => {
+    if (!this.contentDOM) {
+      return
+    }
+
     this.contentDOM.classList.toggle('empty-node', !this.node.childCount)
+
     this.updateAttributes()
   }
 
   public updateAttributes = () => {
+    if (!this.contentDOM) {
+      return
+    }
+
     for (const key of this.viewAttributes) {
       if (key in this.node.attrs) {
         const value = this.node.attrs[key]

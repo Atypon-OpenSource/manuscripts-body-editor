@@ -22,6 +22,7 @@ import { createNodeView } from './creators'
 export class SectionTitleView<PropsType extends ViewerProps> extends BlockView<
   PropsType
 > {
+  public contentDOM: HTMLElement
   public elementType = 'h1'
 
   public updateContents = () => {

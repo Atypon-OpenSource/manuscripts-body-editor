@@ -24,7 +24,7 @@ import { SyncError } from '../types'
 
 export class BaseNodeView<PropsType extends ViewerProps> {
   public dom: HTMLElement
-  public contentDOM: HTMLElement
+  public contentDOM?: HTMLElement
   public syncErrors: SyncError[]
   public elementType = 'div'
 
