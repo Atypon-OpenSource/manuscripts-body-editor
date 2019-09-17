@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { NodeSelection } from 'prosemirror-state'
 import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
 import { EquationView } from './equation'
@@ -47,13 +48,15 @@ export class EquationEditableView extends EquationView<EditorProps> {
         throw new Error('No SVG output from MathJax')
       }
 
-      const { selection, tr } = this.view.state
+      const pos = this.getPos()
 
-      tr.setNodeMarkup(this.getPos(), undefined, {
+      const { tr } = this.view.state
+
+      tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
         TeXRepresentation,
         SVGStringRepresentation,
-      }).setSelection(selection.map(tr.doc, tr.mapping))
+      }).setSelection(NodeSelection.create(tr.doc, pos))
 
       this.view.dispatch(tr)
     })
