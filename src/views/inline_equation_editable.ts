@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { xmlSerializer } from '@manuscripts/manuscript-transform'
 import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
 import { InlineEquationView } from './inline_equation'
@@ -42,15 +41,11 @@ export class InlineEquationEditableView extends InlineEquationView<
     input.on('changes', async () => {
       const TeXRepresentation = input.getValue()
 
-      const typesetRoot = typeset(TeXRepresentation, true)
+      const SVGRepresentation = typeset(TeXRepresentation, true)
 
-      if (!typesetRoot || !typesetRoot.firstChild) {
+      if (!SVGRepresentation) {
         throw new Error('No SVG output from MathJax')
       }
-
-      const SVGRepresentation = xmlSerializer.serializeToString(
-        typesetRoot.firstChild
-      )
 
       const { selection, tr } = this.view.state
 

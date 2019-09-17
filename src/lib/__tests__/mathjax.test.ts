@@ -17,9 +17,14 @@
 import { typeset } from '../mathjax'
 
 describe('mathjax', () => {
-  it('generate', () => {
+  it('generate inline svg', () => {
     const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
-    expect(typeset(tex, false)).toMatchSnapshot('mathjax')
-    expect(typeset(tex, true)).toMatchSnapshot('mathjax-display')
+    const result = typeset(tex, false)
+    expect(result).toMatchSnapshot()
+  })
+  it('generate display svg', () => {
+    const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
+    const result = typeset(tex, true)
+    expect(result).toMatchSnapshot()
   })
 })
