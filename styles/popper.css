@@ -104,7 +104,7 @@
 }
 
 .popper .CodeMirror-placeholder {
-  color: #999;
+  color: #999 !important;
 }
 
 .popper .menu {

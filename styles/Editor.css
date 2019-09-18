@@ -410,7 +410,7 @@
 }
 
 .ProseMirror .CodeMirror-placeholder {
-  color: #999;
+  color: #999 !important;
 }
 
 .ProseMirror header {
