@@ -124,6 +124,10 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
     }
 
     public createEditButton = () => {
+      if (!this.props.permissions.write) {
+        return []
+      }
+
       const button = document.createElement('a')
       button.classList.add('edit-block')
       button.setAttribute('aria-label', 'Open menu')
