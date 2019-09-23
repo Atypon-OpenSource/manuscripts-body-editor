@@ -33,6 +33,7 @@ import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { getChildOfType } from '..'
+import { bibliographyElementContents } from '../lib/bibliography'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
 
@@ -224,20 +225,15 @@ export default (props: Props) => {
             const id =
               node.attrs.id || generateID(ObjectTypes.BibliographyElement)
 
-            const contents = document.createElement('div')
-            contents.classList.add('csl-bib-body')
-            contents.setAttribute('id', id)
-
-            if (generatedBibliographyItems.length) {
-              contents.innerHTML = generatedBibliographyItems.join('\n')
-            } else {
-              contents.classList.add('empty-node')
-              contents.setAttribute('data-placeholder', node.attrs.placeholder)
-            }
+            const contents = bibliographyElementContents(
+              node,
+              id,
+              generatedBibliographyItems
+            )
 
             tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
-              contents: contents.outerHTML,
+              contents,
               id,
             })
           }
