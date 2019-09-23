@@ -16,6 +16,7 @@
 
 import {
   CitationNode,
+  generateID,
   isCitationNode,
   ManuscriptEditorState,
   ManuscriptSchema,
@@ -26,6 +27,7 @@ import {
   CitationItem,
   Manuscript,
   Model,
+  ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
@@ -219,15 +221,24 @@ export default (props: Props) => {
 
         tr.doc.descendants((node, pos) => {
           if (node.type.name === 'bibliography_element') {
-            const contents = generatedBibliographyItems.length
-              ? `<div class="csl-bib-body" id="${
-                  node.attrs.id
-                }">${generatedBibliographyItems.join('\n')}</div>`
-              : `<div class="csl-bib-body empty-node" data-placeholder="${node.attrs.placeholder}"></div>`
+            const id =
+              node.attrs.id || generateID(ObjectTypes.BibliographyElement)
+
+            const contents = document.createElement('div')
+            contents.classList.add('csl-bib-body')
+            contents.setAttribute('id', id)
+
+            if (generatedBibliographyItems.length) {
+              contents.innerHTML = generatedBibliographyItems.join('\n')
+            } else {
+              contents.classList.add('empty-node')
+              contents.setAttribute('data-placeholder', node.attrs.placeholder)
+            }
 
             tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
-              contents,
+              contents: contents.outerHTML,
+              id,
             })
           }
         })
