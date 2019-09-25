@@ -114,6 +114,10 @@
   color: #444;
   font-size: 90%;
   background: #eee;
+  max-width: 400px;
+  overflow-x: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .popper .menu .menu-section {
@@ -127,6 +131,10 @@
 .popper .menu-item {
   padding: 2px 20px;
   cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .popper .menu-item:hover {
