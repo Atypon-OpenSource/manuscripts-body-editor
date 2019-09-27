@@ -58,5 +58,5 @@ export const convertToMathML = (
 
   return visitor
     .visitTree(item)
-    .replace(/^<math>/, '<math xmlns="http://www.w3.org/1998/Math/MathML">')
+    .replace(/^<math/, '<math xmlns="http://www.w3.org/1998/Math/MathML"')
 }

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`mathjax generate display mathml 1`] = `
-"<math display=\\"block\\">
+"<math xmlns=\\"http://www.w3.org/1998/Math/MathML\\" display=\\"block\\">
   <msqrt>
     <mn>2</mn>
   </msqrt>
