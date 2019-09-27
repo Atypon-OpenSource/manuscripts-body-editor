@@ -88,7 +88,9 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           const labelPosition = after ? 'After' : 'Before'
           const sectionTitle = $pos.node($pos.depth).child(0).textContent
-          const itemTitle = sectionTitle ? `“${sectionTitle}”` : 'This Section'
+          const itemTitle = sectionTitle
+            ? `“${this.trimTitle(sectionTitle, 30)}”`
+            : 'This Section'
           const itemLabel = `New ${sectionLevel(
             $pos.depth
           )} ${labelPosition} ${itemTitle}`
@@ -554,5 +556,9 @@ export class ContextMenu {
 
     window.addEventListener('mousedown', mouseListener)
     window.addEventListener('keydown', keyListener)
+  }
+
+  private trimTitle = (title: string, max: number) => {
+    return title.length > max ? title.substr(0, max) + '…' : title
   }
 }
