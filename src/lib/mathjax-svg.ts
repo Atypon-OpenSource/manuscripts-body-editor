@@ -15,9 +15,8 @@
  */
 
 import { xmlSerializer } from '@manuscripts/manuscript-transform'
-import { HTMLAdaptor, MinWindow } from 'mathjax-full/js/adaptors/HTMLAdaptor'
+import { HTMLAdaptor } from 'mathjax-full/js/adaptors/HTMLAdaptor'
 import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
-import { HTMLMathItem } from 'mathjax-full/js/handlers/html/HTMLMathItem'
 import { TeX } from 'mathjax-full/js/input/tex'
 import { SVG } from 'mathjax-full/js/output/svg'
 import 'mathjax-full/js/util/entities/all'
@@ -45,28 +44,31 @@ const OutputJax = new SVG<HTMLElement, Text, Document>({
   fontCache: 'none', // avoid <defs> and <use xlink:href>
 })
 
-const adaptor = new ManuscriptsHTMLAdaptor((window as unknown) as MinWindow<
-  HTMLElement,
-  Document
->)
+// tslint:disable-next-line:no-any
+const adaptor = new ManuscriptsHTMLAdaptor(window as any)
 
-const doc = new HTMLDocument(document, adaptor, {
+const doc = new HTMLDocument<HTMLElement, Text, Document>(document, adaptor, {
   InputJax,
   OutputJax,
 })
 
 doc.addStyleSheet()
 
-export const typeset = (math: string, display: boolean): string | null => {
-  const item = new HTMLMathItem(math, InputJax, display)
+export const convertToSVG = (tex: string, display: boolean): string | null => {
   // TODO: set containerWidth and lineWidth for wrapping?
-  item.setMetrics(16, 8, 1000000, 100000, 1)
-  item.compile(doc)
-  item.typeset(doc)
 
-  if (!item.typesetRoot || !item.typesetRoot.firstChild) {
+  const item = doc.convert(tex, {
+    display,
+    em: 16,
+    ex: 8,
+    containerWidth: 1000000,
+    lineWidth: 1000000,
+    scale: 1,
+  })
+
+  if (!item || !item.firstChild) {
     return null
   }
 
-  return xmlSerializer.serializeToString(item.typesetRoot.firstChild)
+  return xmlSerializer.serializeToString(item.firstChild)
 }

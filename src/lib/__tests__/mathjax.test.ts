@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-import { typeset } from '../mathjax'
+import { convertToMathML } from '../mathjax-mathml'
+import { convertToSVG } from '../mathjax-svg'
 
 describe('mathjax', () => {
   it('generate inline svg', () => {
     const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
-    const result = typeset(tex, false)
+    const result = convertToSVG(tex, false)
     expect(result).toMatchSnapshot()
   })
+
   it('generate display svg', () => {
     const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
-    const result = typeset(tex, true)
+    const result = convertToSVG(tex, true)
+    expect(result).toMatchSnapshot()
+  })
+
+  it('generate inline mathml', () => {
+    const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
+    const result = convertToMathML(tex, false)
+    expect(result).toMatchSnapshot()
+  })
+
+  it('generate display mathml', () => {
+    const tex = '\\sqrt{2}-z_{foo}=\\sum{x}'
+    const result = convertToMathML(tex, true)
     expect(result).toMatchSnapshot()
   })
 })

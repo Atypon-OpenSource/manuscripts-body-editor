@@ -28,7 +28,7 @@ export class InlineEquationEditableView extends InlineEquationView<
     }
 
     const { createEditor } = await import('../lib/codemirror')
-    const { typeset } = await import('../lib/mathjax')
+    const { convertToSVG } = await import('../lib/mathjax-svg')
 
     const placeholder = 'Enter LaTeX equation, e.g. "E=mc^2"'
 
@@ -42,7 +42,7 @@ export class InlineEquationEditableView extends InlineEquationView<
     input.on('changes', async () => {
       const TeXRepresentation = input.getValue()
 
-      const SVGRepresentation = typeset(TeXRepresentation, true)
+      const SVGRepresentation = convertToSVG(TeXRepresentation, true)
 
       if (!SVGRepresentation) {
         throw new Error('No SVG output from MathJax')
