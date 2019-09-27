@@ -15,6 +15,7 @@
  */
 
 import {
+  hasObjectType,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
@@ -23,17 +24,34 @@ import {
   FigureStyle,
   Manuscript,
   Model,
+  ObjectTypes,
   PageLayout,
+  TableStyle,
 } from '@manuscripts/manuscripts-json-schema'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+const DEFAULT_TABLE_STYLE = 'MPTableStyle:default'
+
+const isTableStyle = hasObjectType<TableStyle>(ObjectTypes.TableStyle)
+
 interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
   manuscript: Manuscript
+  modelMap: Map<string, Model>
 }
 
 export default (props: Props) => {
+  const findDefaultTableStyle = (): TableStyle | undefined => {
+    for (const model of props.modelMap.values()) {
+      if (isTableStyle(model) && model.prototype === DEFAULT_TABLE_STYLE) {
+        return model
+      }
+    }
+  }
+
+  const defaultTableStyle = findDefaultTableStyle()
+
   const findBorderStyle = (item: FigureStyle) => {
     const defaultStyle: Partial<BorderStyle> = {
       doubleLines: false,
@@ -99,19 +117,22 @@ export default (props: Props) => {
 
       const listNodeTypes = [nodes.bullet_list, nodes.ordered_list]
 
-      const nodesToUpdate: Array<{
+      let updated = false
+
+      // add paragraphStyle where needed
+
+      const nodesNeedingParagraphStyle: Array<{
         node: ManuscriptNode
         pos: number
       }> = []
 
-      // for each node in the doc
       newState.doc.descendants((node, pos) => {
         if (!('paragraphStyle' in node.attrs)) {
           return true
         }
 
         if (!node.attrs.paragraphStyle) {
-          nodesToUpdate.push({ node, pos })
+          nodesNeedingParagraphStyle.push({ node, pos })
         }
 
         // don't descend into lists
@@ -120,24 +141,42 @@ export default (props: Props) => {
         }
       })
 
-      // update the nodes and return the transaction if something changed
-      if (nodesToUpdate.length) {
+      if (nodesNeedingParagraphStyle.length) {
         if (props.manuscript.pageLayout) {
           const pageLayout = props.getModel<PageLayout>(
             props.manuscript.pageLayout
           )
 
           if (pageLayout) {
-            for (const { node, pos } of nodesToUpdate) {
+            for (const { node, pos } of nodesNeedingParagraphStyle) {
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 paragraphStyle: pageLayout.defaultParagraphStyle,
               })
             }
-          }
 
-          return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
+            updated = true
+          }
         }
+      }
+
+      // add default tableStyle where needed
+      if (defaultTableStyle) {
+        newState.doc.descendants((node, pos) => {
+          if ('tableStyle' in node.attrs && !node.attrs.tableStyle) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              tableStyle: defaultTableStyle._id,
+            })
+
+            updated = true
+          }
+        })
+      }
+
+      //  return the transaction if something changed
+      if (updated) {
+        return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },
   })
