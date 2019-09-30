@@ -1299,6 +1299,35 @@
   dependencies:
     node-fetch "^2.6.0"
 
+"@manuscripts/rxdb@^8.2.0-manuscripts1":
+  version "8.2.0-manuscripts1"
+  resolved "https://registry.npmjs.org/@manuscripts/rxdb/-/rxdb-8.2.0-manuscripts1.tgz#947e10e790e373a80c5cf1cd73213f0ac63cc660"
+  integrity sha512-jHBPfOjndH0wNe1Rs1NcG9qVEqq8Yv+DEQ8yxo5VNzV+6wu8w0TLZHpQOlxZpE04V7V9MskYcio5zMtFIcW4zg==
+  dependencies:
+    "@babel/runtime" "7.4.5"
+    broadcast-channel "2.1.12"
+    clone "^2.1.1"
+    cors "2.8.5"
+    crypto-js "^3.1.8"
+    custom-idle-queue "2.1.2"
+    deep-equal "^1.0.1"
+    express "4.17.1"
+    express-pouchdb "4.1.0"
+    is-electron "2.2.0"
+    is-my-json-valid "2.20.0"
+    modifyjs "0.3.1"
+    object-path "0.11.4"
+    pouchdb-all-dbs "1.0.2"
+    pouchdb-core "7.0.0"
+    pouchdb-find "7.0.0"
+    pouchdb-replication "7.0.0"
+    pouchdb-selector-core "7.0.0"
+    random-token "0.0.8"
+    spark-md5 "^3.0.0"
+    unload "2.1.0"
+    url "^0.11.0"
+    util "^0.12.0"
+
 "@manuscripts/style-guide@^0.10.1":
   version "0.10.1"
   resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.10.1.tgz#c08af83276a882a0816bc1a5400bacd0209c5a60"
@@ -12452,34 +12481,6 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   integrity sha1-6Eg5bwV9Ij8kOGkkYY4laUFh7Ec=
   dependencies:
     aproba "^1.1.1"
-
-"rxdb@gitlab:mpapp-public/rxdb#upstream-fork":
-  version "8.2.0"
-  resolved "https://gitlab.com/mpapp-public/rxdb/repository/archive.tar.gz?ref=d19264a1843d673e51276d55fed6f090ca7fa7ef"
-  dependencies:
-    "@babel/runtime" "7.4.5"
-    broadcast-channel "2.1.12"
-    clone "^2.1.1"
-    cors "2.8.5"
-    crypto-js "^3.1.8"
-    custom-idle-queue "2.1.2"
-    deep-equal "^1.0.1"
-    express "4.17.1"
-    express-pouchdb "4.1.0"
-    is-electron "2.2.0"
-    is-my-json-valid "2.20.0"
-    modifyjs "0.3.1"
-    object-path "0.11.4"
-    pouchdb-all-dbs "1.0.2"
-    pouchdb-core "7.0.0"
-    pouchdb-find "7.0.0"
-    pouchdb-replication "7.0.0"
-    pouchdb-selector-core "7.0.0"
-    random-token "0.0.8"
-    spark-md5 "^3.0.0"
-    unload "2.1.0"
-    url "^0.11.0"
-    util "^0.12.0"
 
 rxjs-compat@^6.1.0:
   version "6.5.2"

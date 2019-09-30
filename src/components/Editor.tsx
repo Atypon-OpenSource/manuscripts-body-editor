@@ -25,6 +25,7 @@ import {
   Model,
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import CiteProc from 'citeproc'
 import { LocationListener, UnregisterCallback } from 'history'
 import {
@@ -37,7 +38,6 @@ import {
 import { EditorView } from 'prosemirror-view'
 import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
-import { RxAttachment, RxAttachmentCreator } from 'rxdb'
 import { transformPasted } from '../lib/paste'
 import {
   childSectionCoordinates,

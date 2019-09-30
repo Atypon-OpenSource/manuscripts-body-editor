@@ -26,12 +26,12 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment } from '@manuscripts/rxdb'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
-import { RxAttachment } from 'rxdb'
 import { PopperManager } from '../lib/popper'
 import '../lib/smooth-scroll'
 import plugins from '../plugins/viewer'
