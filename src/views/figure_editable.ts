@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+import { ModelAttachment } from '@manuscripts/manuscript-transform'
+import { Figure } from '@manuscripts/manuscripts-json-schema'
+import prettyBytes from 'pretty-bytes'
 import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 export class FigureEditableView extends FigureView<EditorProps> {
   public updateContents = () => {
@@ -106,21 +111,35 @@ export class FigureEditableView extends FigureView<EditorProps> {
   public updateFigure = async (file: File) => {
     const { id } = this.node.attrs
 
-    const attachment = await this.props.putAttachment(id, {
-      id: 'image',
-      type: file.type,
-      data: file,
-    })
+    if (file.size > MAX_IMAGE_SIZE) {
+      alert(`The figure image size limit is ${prettyBytes(MAX_IMAGE_SIZE)}`)
+      return
+    }
 
-    const blob = await attachment.getData()
-    const src = window.URL.createObjectURL(blob)
+    const contentType = file.type
+    const src = window.URL.createObjectURL(file)
+
+    const model = this.props.getModel<Figure>(id)
+
+    if (model) {
+      await this.props.saveModel<Figure & ModelAttachment>({
+        ...model,
+        contentType,
+        src,
+        attachment: {
+          id: 'image',
+          type: contentType,
+          data: file,
+        },
+      })
+    }
 
     const { selection, tr } = this.view.state
 
     tr.setNodeMarkup(this.getPos(), undefined, {
       ...this.node.attrs,
       src,
-      contentType: file.type,
+      contentType,
     }).setSelection(selection.map(tr.doc, tr.mapping))
 
     this.view.dispatch(tr)
