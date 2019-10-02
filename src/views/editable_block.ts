@@ -22,19 +22,19 @@ import BlockView from './block_view'
 // tslint:disable-next-line:no-any
 type Constructor<T> = new (...args: any[]) => T
 
+const isNotNull = <T>(a: T | null): a is T => a !== null
+
 export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
   Base: T
 ) => {
   return class extends Base {
     public gutterButtons = (): HTMLElement[] =>
-      [this.createAddButton(true), this.createEditButton()].filter(
-        Boolean
-      ) as HTMLElement[]
+      [this.createAddButton(true), this.createEditButton()].filter(isNotNull)
 
     public actionGutterButtons = (): HTMLElement[] =>
-      [this.createSyncWarningButton()].filter(Boolean) as HTMLElement[]
+      [this.createSyncWarningButton()].filter(isNotNull)
 
-    public createSyncWarningButton = () => {
+    public createSyncWarningButton = (): HTMLElement | null => {
       if (!this.props.permissions.write) {
         return null
       }
@@ -98,7 +98,7 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
     //   return commentButton
     // }
 
-    public createAddButton = (after: boolean) => {
+    public createAddButton = (after: boolean): HTMLElement | null => {
       if (!this.props.permissions.write) {
         return null
       }
@@ -123,9 +123,9 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       return button
     }
 
-    public createEditButton = () => {
+    public createEditButton = (): HTMLElement | null => {
       if (!this.props.permissions.write) {
-        return []
+        return null
       }
 
       const button = document.createElement('a')
