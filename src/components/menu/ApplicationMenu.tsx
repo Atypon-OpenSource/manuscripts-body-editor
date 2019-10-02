@@ -29,12 +29,13 @@ Modal.setAppElement('#root')
 
 const ApplicationMenuContainer = styled.div`
   display: flex;
-  font-size: 14px;
+  font-size: ${props => props.theme.font.size.normal};
 `
 
 const MenuHeading = styled.div<{ isOpen: boolean }>`
   display: inline-flex;
-  padding: 4px 8px;
+  padding: ${props => props.theme.grid.unit}px
+    ${props => props.theme.grid.unit * 2}px;
   cursor: pointer;
   border: 1px solid transparent;
   border-bottom: none;
@@ -44,7 +45,7 @@ const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
   & ${MenuHeading} {
     color: ${props => {
       if (!props.isEnabled) {
-        return '#aaa'
+        return props => props.theme.colors.text.tertiary
       }
 
       return 'inherit'
@@ -66,11 +67,11 @@ const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
 
     color: ${props => {
       if (!props.isEnabled) {
-        return '#aaa'
+        return props => props.theme.colors.text.tertiary
       }
 
       if (props.isActive) {
-        return '#fff'
+        return props => props.theme.colors.text.onDark
       }
 
       return 'inherit'

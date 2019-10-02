@@ -32,16 +32,18 @@ const ToolbarButton = styled.button.attrs({
 })<{
   'data-active'?: boolean
 }>`
-  background-color: ${props => (props['data-active'] ? '#eee' : '#fff')};
-  border: 1px solid #d6d6d6;
+  background-color: ${props =>
+    props['data-active'] ? '#eee' : props.theme.colors.background.primary};
+  border: 1px solid ${props => props.theme.colors.border.secondary};
   cursor: pointer;
-  padding: 2px 12px;
+  padding: 2px ${props => props.theme.grid.unit * 3}px;
   display: inline-flex;
   align-items: center;
   transition: 0.2s all;
 
   &:hover {
-    background: ${props => (props['data-active'] ? '#eee' : '#f6f6f6')};
+    background: ${props =>
+      props['data-active'] ? '#eee' : props.theme.colors.background.secondary};
     z-index: 2;
   }
 
@@ -55,14 +57,14 @@ const ToolbarButton = styled.button.attrs({
 `
 
 export const ToolbarContainer = styled.div`
-  margin: 6px;
+  margin: ${props => props.theme.grid.unit}px;
   display: flex;
   flex-wrap: wrap;
 `
 
 export const ToolbarGroup = styled.div`
-  margin-right: 8px;
-  margin-bottom: 8px;
+  margin-right: ${props => props.theme.grid.unit * 2}px;
+  margin-bottom: ${props => props.theme.grid.unit * 2}px;
   white-space: nowrap;
 
   & ${ToolbarItem} button {
@@ -74,13 +76,13 @@ export const ToolbarGroup = styled.div`
   }
 
   & ${ToolbarItem}:first-of-type button {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    border-top-left-radius: ${props => props.theme.grid.radius.small};
+    border-bottom-left-radius: ${props => props.theme.grid.radius.small};
   }
 
   & ${ToolbarItem}:last-of-type button {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+    border-top-right-radius: ${props => props.theme.grid.radius.small};
+    border-bottom-right-radius: ${props => props.theme.grid.radius.small};
   }
 `
 

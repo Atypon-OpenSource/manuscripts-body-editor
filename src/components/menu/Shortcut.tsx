@@ -21,8 +21,8 @@ import { Accelerator } from './ApplicationMenu'
 
 export const ShortcutContainer = styled.div`
   display: inline-flex;
-  color: #777;
-  margin-left: 16px;
+  color: ${props => props.theme.colors.text.secondary};
+  margin-left: ${props => props.theme.grid.unit * 4}px;
   flex-shrink: 0;
   justify-content: flex-end;
 `

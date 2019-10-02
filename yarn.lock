@@ -1253,7 +1253,7 @@
     "@babel/runtime" "^7.4.4"
     hoist-non-react-statics "^3.3.0"
 
-"@manuscripts/assets@^0.3.19", "@manuscripts/assets@^0.3.9":
+"@manuscripts/assets@^0.3.9":
   version "0.3.21"
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.21.tgz#fa3d0ab25eaf930cefe62c06b8cbf90fa539882c"
   integrity sha512-CAqc6tY9eMMNHI7YCJJ30H8UGzYPCzheRXwyw5EeqOnTDA+5rUlO+pptj+ZUwTmtsvtCmz+pE4CGz8LRId+p0A==
@@ -1262,6 +1262,11 @@
   version "0.4.1"
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.4.1.tgz#3aafbcd5df2c706358fa5508369981534119a8ee"
   integrity sha512-pG77YvrElOFJ9KnMuC06X5etfNt0LcvdTiGwCuXLuGQWDM/N1MIC0FwDaPCxR3QlqfvCljHbhJJv4iDlCrNPUg==
+
+"@manuscripts/assets@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.5.2.tgz#273d307b681e83041194fc581eb530402ab0dc53"
+  integrity sha512-XwwbM2AjVHNNAiqi4fgH/MO9By+9FFC0QVgZIJPwxnV+Eun1D7KFAQ8x7bnqjPOG6cAp47zIaQps8wY+i8M3UQ==
 
 "@manuscripts/data@^0.0.2":
   version "0.0.2"
@@ -1328,12 +1333,12 @@
     url "^0.11.0"
     util "^0.12.0"
 
-"@manuscripts/style-guide@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.10.1.tgz#c08af83276a882a0816bc1a5400bacd0209c5a60"
-  integrity sha512-MGUSBgp/NybauuBaA7TNbaDUdfWz5jYQh07EyexrYtvLxRo0PcKBNCCgdqoyipIx3FeoBucd6U0Z3O9BPdqhbw==
+"@manuscripts/style-guide@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.11.0.tgz#ba4784653f2312a48f1cd7da0bb26e9760a4f14b"
+  integrity sha512-OukTrLlwEWo0IXAMZIz756GCfn2WuegxD2sSwInfjoLnfk/Yj931JRdtEi1p06nZ57gt76hmumTINwEa25jfHA==
   dependencies:
-    "@manuscripts/assets" "^0.3.19"
+    "@manuscripts/assets" "^0.5.2"
     lodash-es "^4.17.11"
     react-dnd "^7.4.3"
     react-modal "^3.8.1"

@@ -610,16 +610,17 @@ const OptionContainer = styled.div<{ isSelected: boolean }>`
   align-items: center;
 
   & svg path {
-    fill: ${props => (props.isSelected ? '#fff' : '#7fb5d5')};
+    fill: ${props =>
+      props.isSelected ? props => props.theme.colors.text.onDark : '#7fb5d5'};
   }
 `
 
 const OptionIcon = styled.span`
   display: inline-flex;
-  width: 16px;
+  width: ${props => props.theme.grid.unit * 4}px;
   justify-content: center;
   align-items: center;
-  margin-right: 8px;
+  margin-right: ${props => props.theme.grid.unit * 2}px;
   flex-shrink: 0;
 `
 
@@ -629,7 +630,7 @@ const OptionLabel = styled.span`
 
 const Group = styled.div`
   &:not(:last-child) {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid ${props => props.theme.colors.border.secondary};
   }
 `
 
@@ -637,7 +638,7 @@ const StyledSelect = styled(Select)`
   z-index: 3;
 
   & > div:hover {
-    border-color: #7fb5d5;
+    border-color: ${props => props.theme.colors.brand.medium};
   }
 `
 
@@ -687,7 +688,7 @@ export const LevelSelector: React.FunctionComponent<{
           const style = props.getStyles('option', props)
 
           style.display = 'flex'
-          style.fontSize = 15
+          style.fontSize = 16
           style.cursor = 'pointer'
           style.paddingLeft = 8 + (data.depth - 1) * 16
           style.minWidth = 200
@@ -698,10 +699,10 @@ export const LevelSelector: React.FunctionComponent<{
           }
 
           if (props.isSelected) {
-            style.backgroundColor = '#7fb5d5'
+            style.backgroundColor = '#0064d6'
             style.color = '#fff'
           } else {
-            style.color = '#333'
+            style.color = '#353535'
           }
 
           if (props.isDisabled && !props.isSelected) {
@@ -734,7 +735,7 @@ export const LevelSelector: React.FunctionComponent<{
           backgroundColor: '#fff',
           borderWidth: 1,
           borderStyle: 'solid',
-          borderColor: '#d6d6d6',
+          borderColor: '#97a2b1',
           boxShadow: 'none',
           fontSize: '14px',
           minHeight: 0,

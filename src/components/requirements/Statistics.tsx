@@ -32,14 +32,14 @@ const StatisticsWorker = Comlink.wrap<{
 const AlertContainer = styled.div`
   display: inline-flex;
   align-items: center;
-  width: 20px;
+  width: ${props => props.theme.grid.unit * 5}px;
   cursor: pointer;
 `
 
 const StatisticContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 8px 0;
+  margin: ${props => props.theme.grid.unit * 2}px 0;
 `
 
 const Statistic: React.FC<{

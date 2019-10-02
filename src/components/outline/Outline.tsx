@@ -39,20 +39,20 @@ export const OutlineItem = styled.div<{
   box-sizing: border-box;
   overflow-x: hidden;
   cursor: pointer;
-  color: #444;
+  color: ${props => props.theme.colors.text.tertiary};
   background: ${props => (props.isSelected ? '#E4EEF7' : 'transparent')};
-  padding-right: 20px;
+  padding-right: ${props => props.theme.grid.unit * 5}px;
   padding-left: ${props => 20 + props.depth * 20}px;
-  margin-left: -20px;
-  margin-right: -20px;
+  margin-left: -${props => props.theme.grid.unit * 5}px;
+  margin-right: -${props => props.theme.grid.unit * 5}px;
 `
 
 export const Outline = styled.div`
-  font-size: 16px;
+  font-size: ${props => props.theme.font.size.medium};
   position: relative;
 
   & .outline-text-title {
-    font-size: 18px;
+    font-size: ${props => props.theme.font.size.large};
   }
 `
 
@@ -64,9 +64,9 @@ export const OutlineItemArrow = styled.button`
   cursor: pointer;
   border: none;
   background: transparent;
-  padding: 0 6px;
+  padding: 0 ${props => props.theme.grid.unit}px;
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: ${props => props.theme.font.size.normal};
 
   &:hover ${StyledTriangleCollapsed} use[fill='#949494'],
   &:hover ${StyledTriangleExpanded} use[fill='#949494'] {
@@ -80,7 +80,7 @@ export const OutlineItemArrow = styled.button`
 
 export const OutlineItemNoArrow = styled.span`
   display: inline-block;
-  width: 24px;
+  width: ${props => props.theme.grid.unit * 6}px;
   flex-shrink: 0;
 `
 
@@ -95,12 +95,12 @@ export const OutlineDropPreview = styled.div<{ depth: number }>`
   &:before {
     content: '';
     display: inline-block;
-    width: 5px;
-    height: 5px;
-    border: 1px solid #65a3ff;
-    border-radius: 6px;
+    width: ${props => props.theme.grid.unit}px;
+    height: ${props => props.theme.grid.unit}px;
+    border: 1px solid ${props => props.theme.colors.brand.default}
+    border-radius: ${props => props.theme.grid.radius.small};
     position: absolute;
-    top: -3px;
+    top: -${props => props.theme.grid.unit}px;
     left: -6px;
   }
 `
@@ -125,9 +125,9 @@ export const OutlineItemLinkText = styled.span`
   display: inline-block;
   overflow-x: hidden;
   text-overflow: ellipsis;
-  margin-left: 4px;
+  margin-left: ${props => props.theme.grid.unit * 2}px;
 `
 
 export const OutlineItemPlaceholder = styled.span`
-  color: #aaa;
+  color: ${props => props.theme.colors.text.tertiary};
 `

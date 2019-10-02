@@ -33,12 +33,12 @@ export const MenuList = styled.div`
   width: auto;
   min-width: 150px;
   white-space: nowrap;
-  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  color: #444;
-  padding: 4px 0;
-  background: white;
+  box-shadow: ${props => props.theme.shadow.dropShadow};
+  border: 1px solid ${props => props.theme.colors.border.secondary};
+  border-radius: ${props => props.theme.grid.radius.small};
+  color: ${props => props.theme.colors.text.tertiary};
+  padding: ${props => props.theme.grid.unit}px 0;
+  background: ${props => props.theme.colors.background.primary};
   z-index: 10;
 
   &[data-placement='bottom-start'] {
@@ -47,18 +47,18 @@ export const MenuList = styled.div`
   }
 
   &[data-placement='right-start'] {
-    top: 10px;
+    top: ${props => props.theme.grid.unit * 2}px;
   }
 `
 
 const Separator = styled.div`
   height: 0;
-  border-bottom: 1px solid #ddd;
-  margin: 4px 0;
+  border-bottom: 1px solid ${props => props.theme.colors.border.secondary};
+  margin: ${props => props.theme.grid.unit}px 0;
 `
 
 const Active = styled.div`
-  width: 16px;
+  width: ${props => props.theme.grid.unit * 4}px;
   display: inline-flex;
   flex-shrink: 0;
   justify-content: center;
@@ -66,10 +66,10 @@ const Active = styled.div`
 `
 
 const Arrow = styled(TriangleCollapsed)`
-  margin-left: 8px;
+  margin-left: ${props => props.theme.grid.unit * 2}px;
 
   & use[fill='#949494'] {
-    fill: #444;
+    fill: ${props => props.theme.colors.text.tertiary};
   }
 `
 
@@ -78,19 +78,21 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   cursor: pointer;
-  padding: 8px 16px 8px 4px;
+  padding: ${props => props.theme.grid.unit * 2}px
+    ${props => props.theme.grid.unit * 4}px
+    ${props => props.theme.grid.unit * 2}px ${props => props.theme.grid.unit}px;
 
   &:hover {
-    background: #7fb5d5;
-    color: white;
+    background: ${props => props.theme.colors.brand.medium};
+    color: ${props => props.theme.colors.text.onDark};
   }
 
   &:hover ${Arrow} use[fill='#949494'] {
-    fill: white;
+    fill: ${props => props.theme.colors.text.onDark};
   }
 
   &:hover ${ShortcutContainer} {
-    color: white;
+    color: ${props => props.theme.colors.text.onDark};
   }
 
   &.disabled {

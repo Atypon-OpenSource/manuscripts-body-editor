@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { Button, PrimaryButton } from '@manuscripts/style-guide'
+import { PrimaryButton, SecondaryButton } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 import { Target } from '../../plugins/objects'
 
 const Container = styled.div`
-  padding: 12px 16px;
+  padding: ${props => props.theme.grid.unit * 3}px
+    ${props => props.theme.grid.unit * 4}px;
 `
 
 const Actions = styled.div`
@@ -31,20 +32,24 @@ const Actions = styled.div`
 
 const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
-  padding: 16px;
+  padding: ${props => props.theme.grid.unit * 4}px;
   transition: background-color 0.1s;
-  border: 2px solid ${props => (props.isSelected ? '#7fb5d5' : '#eee')};
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  margin-bottom: 16px;
+  border: 2px solid
+    ${props =>
+      props.isSelected
+        ? props.theme.colors.brand.medium
+        : props.theme.colors.border.secondary};
+  box-shadow: ${props => props.theme.shadow.dropShadow};
+  border-radius: ${props => props.theme.grid.radius.small};
+  margin-bottom: ${props => props.theme.grid.unit * 4}px;
 
   &:hover {
-    border-color: #6fb7ff;
+    border-color: ${props => props.theme.colors.border.info};
   }
 `
 
 const Label = styled.span`
-  font-weight: bold;
+  font-weight: ${props => props.theme.font.weight.bold};
 `
 
 const Caption = styled.span`
@@ -55,12 +60,12 @@ const Heading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: ${props => props.theme.grid.unit * 4}px;
 `
 
 const Empty = styled.div`
-  margin-bottom: 16px;
-  color: #a6a6a6;
+  margin-bottom: ${props => props.theme.grid.unit * 4}px;
+  color: ${props => props.theme.colors.text.tertiary};
 `
 interface Props {
   referencedObject: string | null
@@ -103,7 +108,7 @@ export class CrossReferenceItems extends React.Component<Props, State> {
           <Empty>No cross-reference targets available.</Empty>
         )}
         <Actions>
-          <Button onClick={handleCancel}>Cancel</Button>
+          <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
           <PrimaryButton
             onClick={() => handleSelect(this.state.selectedItem!)}
             disabled={!this.state.selectedItem}

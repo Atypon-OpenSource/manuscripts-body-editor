@@ -15,9 +15,8 @@
  */
 
 import {
-  Button,
-  MiniButton,
-  PrimarySubmitButton,
+  PrimaryButton,
+  SecondaryButton,
   TextField,
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
@@ -87,12 +86,14 @@ export const LinkForm: React.FC<{
 
       <Actions>
         <ActionGroup>
-          <MiniButton onClick={handleRemove}>Remove Link</MiniButton>
+          <SecondaryButton mini={true} onClick={handleRemove}>
+            Remove Link
+          </SecondaryButton>
         </ActionGroup>
 
         <ActionGroup>
-          <Button onClick={handleCancel}>Cancel</Button>
-          <PrimarySubmitButton>Save</PrimarySubmitButton>
+          <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+          <PrimaryButton type="submit">Save</PrimaryButton>
         </ActionGroup>
       </Actions>
     </Form>
@@ -116,29 +117,29 @@ const ActionGroup = styled.span`
 `
 
 const Field = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: 16px;4px;
 `
 
 const FieldHeading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: ${props => props.theme.grid.unit}px;
 `
 
 const Label = styled.label`
   display: flex;
   align-items: center;
-  color: #777777;
-  font-size: 14px;
+  color: ${props => props.theme.colors.text.tertiary};
+  font-size: ${props => props.theme.font.size.normal};
 `
 
 const Open = styled.a`
   display: inline-block;
-  margin-left: 8px;
+  margin-left: ${props => props.theme.grid.unit * 2}px;
   text-transform: uppercase;
   color: inherit;
-  font-size: 12px;
+  font-size: ${props => props.theme.font.size.small};
   text-decoration: none;
 
   &:after {
