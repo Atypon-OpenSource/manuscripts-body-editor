@@ -118,6 +118,15 @@ const standardFields: Array<keyof CSL.StandardFields> = [
   'year-suffix',
 ]
 
+const numberFields = [
+  'chapter-number',
+  'citation-number',
+  'collection-number',
+  'number',
+  'number-of-pages',
+  'number-of-volumes',
+]
+
 export const convertDataToBibliographyItem = (
   data: CSL.Item
 ): Partial<BibliographyItem> => {
@@ -130,7 +139,7 @@ export const convertDataToBibliographyItem = (
     if (key === 'circa') {
       output[key] = Boolean(item)
     } else if (standardFields.includes(key as keyof CSL.StandardFields)) {
-      output[key] = item
+      output[key] = numberFields.includes(key) ? Number(item) : item
     } else if (roleFields.includes(key as keyof CSL.RoleFields)) {
       output[key] = (item as CSL.Name[]).map(value =>
         buildBibliographicName(value)
