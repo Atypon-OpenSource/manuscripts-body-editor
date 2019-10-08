@@ -33,18 +33,30 @@ export const OutlineItem = styled.div<{
   isSelected: boolean
   depth: number
 }>`
-  display: flex;
   align-items: center;
-  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  background: ${props =>
+    props.isSelected ? props.theme.colors.background.fifth : 'transparent'};
+  border-color: ${props =>
+    props.isSelected
+      ? props.theme.colors.border.primary
+      : props.theme.colors.background.fifth};
+  color: ${props => props.theme.colors.text.primary};
   box-sizing: border-box;
-  overflow-x: hidden;
   cursor: pointer;
-  color: ${props => props.theme.colors.text.tertiary};
-  background: ${props => (props.isSelected ? '#E4EEF7' : 'transparent')};
-  padding-right: ${props => props.theme.grid.unit * 5}px;
-  padding-left: ${props => 20 + props.depth * 20}px;
+  display: flex;
+  font-size: ${props =>
+    props.depth === 0
+      ? props.theme.font.size.large
+      : props.theme.font.size.medium};
+  line-height: 30px;
   margin-left: -${props => props.theme.grid.unit * 5}px;
   margin-right: -${props => props.theme.grid.unit * 5}px;
+  overflow-x: hidden;
+  padding-right: ${props => props.theme.grid.unit * 5}px;
+  padding-left: ${props => 20 + props.depth * 20}px;
+  white-space: nowrap;
 `
 
 export const Outline = styled.div`
@@ -128,6 +140,4 @@ export const OutlineItemLinkText = styled.span`
   margin-left: ${props => props.theme.grid.unit * 2}px;
 `
 
-export const OutlineItemPlaceholder = styled.span`
-  color: ${props => props.theme.colors.text.tertiary};
-`
+export const OutlineItemPlaceholder = styled.span``

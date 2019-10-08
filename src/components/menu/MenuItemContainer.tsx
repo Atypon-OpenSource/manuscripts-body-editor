@@ -23,22 +23,22 @@ import React from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
 import { MenuItem, MenuSeparator } from './ApplicationMenu'
-import { Shortcut, ShortcutContainer } from './Shortcut'
+import { Shortcut } from './Shortcut'
 
 export const Text = styled.div`
   flex: 1;
 `
 
 export const MenuList = styled.div`
-  width: auto;
-  min-width: 150px;
-  white-space: nowrap;
-  box-shadow: ${props => props.theme.shadow.dropShadow};
+  background: ${props => props.theme.colors.background.primary};
   border: 1px solid ${props => props.theme.colors.border.secondary};
   border-radius: ${props => props.theme.grid.radius.small};
-  color: ${props => props.theme.colors.text.tertiary};
+  box-shadow: ${props => props.theme.shadow.dropShadow};
+  color: ${props => props.theme.colors.text.primary};
+  min-width: 150px;
   padding: ${props => props.theme.grid.unit}px 0;
-  background: ${props => props.theme.colors.background.primary};
+  white-space: nowrap;
+  width: auto;
   z-index: 10;
 
   &[data-placement='bottom-start'] {
@@ -67,35 +67,23 @@ const Active = styled.div`
 
 const Arrow = styled(TriangleCollapsed)`
   margin-left: ${props => props.theme.grid.unit * 2}px;
-
-  & use[fill='#949494'] {
-    fill: ${props => props.theme.colors.text.tertiary};
-  }
 `
 
 const Container = styled.div`
-  display: flex;
   align-items: center;
-  position: relative;
   cursor: pointer;
+  display: flex;
   padding: ${props => props.theme.grid.unit * 2}px
     ${props => props.theme.grid.unit * 4}px
     ${props => props.theme.grid.unit * 2}px ${props => props.theme.grid.unit}px;
+  position: relative;
 
   &:hover {
-    background: ${props => props.theme.colors.brand.medium};
-    color: ${props => props.theme.colors.text.onDark};
-  }
-
-  &:hover ${Arrow} use[fill='#949494'] {
-    fill: ${props => props.theme.colors.text.onDark};
-  }
-
-  &:hover ${ShortcutContainer} {
-    color: ${props => props.theme.colors.text.onDark};
+    background: ${props => props.theme.colors.background.fifth};
   }
 
   &.disabled {
+    cursor: default;
     opacity: 0.4;
   }
 `

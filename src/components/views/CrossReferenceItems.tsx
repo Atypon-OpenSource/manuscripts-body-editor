@@ -44,7 +44,7 @@ const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
   margin-bottom: ${props => props.theme.grid.unit * 4}px;
 
   &:hover {
-    border-color: ${props => props.theme.colors.border.info};
+    border-color: ${props => props.theme.colors.background.fifth};
   }
 `
 

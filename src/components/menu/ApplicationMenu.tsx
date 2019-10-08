@@ -43,39 +43,25 @@ const MenuHeading = styled.div<{ isOpen: boolean }>`
 
 const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
   & ${MenuHeading} {
-    color: ${props => {
-      if (!props.isEnabled) {
-        return props => props.theme.colors.text.tertiary
-      }
+    background-color: ${props =>
+      props.isEnabled
+        ? props.isActive
+          ? props.theme.colors.background.fifth
+          : props.theme.colors.background.primary
+        : 'transparent'};
+    color: ${props =>
+      props.isEnabled
+        ? props.isActive
+          ? props.theme.colors.text.tertiary
+          : props.theme.colors.text.primary
+        : props.theme.colors.muted};
 
-      return 'inherit'
-    }};
-  }
-
-  & ${MenuHeading}:hover {
-    background: ${props => {
-      if (!props.isEnabled) {
-        return 'inherit'
-      }
-
-      if (props.isActive) {
-        return '#7fb5d5'
-      }
-
-      return '#eee'
-    }};
-
-    color: ${props => {
-      if (!props.isEnabled) {
-        return props => props.theme.colors.text.tertiary
-      }
-
-      if (props.isActive) {
-        return props => props.theme.colors.text.onDark
-      }
-
-      return 'inherit'
-    }};
+    &:hover {
+      background-color: ${props =>
+        props.isEnabled
+          ? props.theme.colors.background.fifth
+          : props.theme.colors.background.primary};
+    }
   }
 `
 

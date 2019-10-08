@@ -51,6 +51,7 @@ interface Option {
   icon: JSX.Element | null
   isDisabled: boolean
   isSelected: boolean
+  isFocused: boolean
   label: string
   nodeType: ManuscriptNodeType
   value: number
@@ -61,6 +62,7 @@ interface OptionProps {
   depth: number
   isDisabled?: boolean
   isSelected?: boolean
+  isFocused?: boolean
   nodeType: ManuscriptNodeType
   value: number
 }
@@ -77,6 +79,7 @@ const buildOption = (props: OptionProps): Option => ({
   label: titleCase(optionName(props.nodeType, props.value)),
   isDisabled: Boolean(props.isDisabled),
   isSelected: Boolean(props.isSelected),
+  isFocused: Boolean(props.isFocused),
 })
 
 type GroupedOptions = Array<{ options: Option[] }>
@@ -610,8 +613,7 @@ const OptionContainer = styled.div<{ isSelected: boolean }>`
   align-items: center;
 
   & svg path {
-    fill: ${props =>
-      props.isSelected ? props => props.theme.colors.text.onDark : '#7fb5d5'};
+    fill: ${props => props.theme.colors.brand.default};
   }
 `
 
@@ -698,12 +700,13 @@ export const LevelSelector: React.FunctionComponent<{
             style.fontWeight = 600
           }
 
-          if (props.isSelected) {
-            style.backgroundColor = '#0064d6'
-            style.color = '#fff'
-          } else {
-            style.color = '#353535'
+          if (props.isFocused) {
+            style.backgroundColor = '#f5fbfc'
           }
+          if (props.isSelected) {
+            style.backgroundColor = '#ddf3fa'
+          }
+          style.color = '#353535'
 
           if (props.isDisabled && !props.isSelected) {
             style.opacity = 0.4

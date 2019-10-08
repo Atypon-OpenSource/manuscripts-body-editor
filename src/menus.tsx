@@ -66,7 +66,7 @@ export const menus: MenuItem[] = [
         label: () => 'Redo',
         accelerator: {
           mac: 'Shift+CommandOrControl+Z',
-          pc: 'Control+Y',
+          pc: 'CommandOrControl+Y',
         },
         enable: redo,
         run: redo,
