@@ -218,10 +218,11 @@
 }
 
 .ProseMirror figcaption {
-  text-align: center;
   background: white;
+  font-style: italic;
   line-height: 1.4;
   margin-top: 1em;
+  text-align: center;
   word-wrap: break-word;
 }
 
