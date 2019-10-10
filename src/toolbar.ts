@@ -21,6 +21,7 @@ import {
   blockActive,
   canInsert,
   insertBlock,
+  insertHighlight,
   insertInlineCitation,
   markActive,
 } from './commands'
@@ -89,6 +90,12 @@ export const toolbar: ToolbarConfig<ManuscriptSchema> = {
       content: icons.citation,
       enable: canInsert(schema.nodes.citation),
       run: insertInlineCitation,
+    },
+    highlight: {
+      title: 'Insert comment',
+      content: icons.highlight,
+      enable: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
+      run: insertHighlight,
     },
   },
   element: {

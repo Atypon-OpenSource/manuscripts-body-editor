@@ -19,6 +19,7 @@ import Citation from '@manuscripts/assets/react/ToolbarIconCitation'
 import CodeSnippet from '@manuscripts/assets/react/ToolbarIconCodeSnippet'
 import Equation from '@manuscripts/assets/react/ToolbarIconEquation'
 import Figure from '@manuscripts/assets/react/ToolbarIconFigure'
+import Highlight from '@manuscripts/assets/react/ToolbarIconHighlight'
 import InlineMath from '@manuscripts/assets/react/ToolbarIconInlineMath'
 import Italic from '@manuscripts/assets/react/ToolbarIconItalic'
 import OrderedList from '@manuscripts/assets/react/ToolbarIconOrderedList'
@@ -45,4 +46,5 @@ export default {
   equation_element: <Equation />,
   listing_element: <CodeSnippet />,
   symbol: <Symbol />,
+  highlight: <Highlight height={16} width={16} />,
 }

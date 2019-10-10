@@ -18,6 +18,7 @@ import {
   BibliographySectionNode,
   buildCitation,
   buildFootnote,
+  buildHighlight,
   buildInlineMathFragment,
   isElementNode,
   ManuscriptEditorState,
@@ -29,9 +30,15 @@ import {
   ManuscriptTextSelection,
   ManuscriptTransaction,
 } from '@manuscripts/manuscript-transform'
+
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { getChildOfType } from './lib/utils'
+import {
+  getHighlights,
+  highlightKey,
+  SET_COMMENT_TARGET,
+} from './plugins/highlight'
 import { INSERT, modelsKey } from './plugins/models'
 import { EditorAction } from './types'
 
@@ -509,3 +516,80 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.figcaption.create(),
     state.schema.nodes.listing.create(),
   ])
+
+export const insertHighlight = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const highlight = buildHighlight()
+
+  const { from, to } = state.selection
+
+  const text = state.doc.textBetween(from, to, '\n')
+
+  const fromNode = state.schema.nodes.highlight_marker.create({
+    rid: highlight._id,
+    position: 'start',
+    text,
+  })
+
+  const toNode = state.schema.nodes.highlight_marker.create({
+    rid: highlight._id,
+    position: 'end',
+  })
+
+  const tr = state.tr
+    .setMeta(modelsKey, { [INSERT]: [highlight] })
+    .insert(from, fromNode)
+    .insert(to + 1, toNode)
+    .setMeta(highlightKey, { [SET_COMMENT_TARGET]: highlight._id })
+
+  tr.setMeta('addToHistory', false)
+
+  if (dispatch) {
+    dispatch(tr)
+  }
+
+  return highlight
+}
+
+export const deleteHighlightMarkers = (
+  rid: string,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const markersToDelete: number[] = []
+
+  // TODO: work through the doc instead of using the plugin positions?
+
+  const highlights = getHighlights(state)
+
+  for (const highlight of highlights) {
+    if (highlight.rid === rid) {
+      if (highlight.start !== undefined) {
+        markersToDelete.push(highlight.start - 1)
+      }
+
+      if (highlight.end !== undefined) {
+        markersToDelete.push(highlight.end)
+      }
+    }
+  }
+
+  if (markersToDelete.length) {
+    const { tr } = state
+
+    // delete markers last first
+    markersToDelete.sort((a, b) => b - a)
+
+    for (const pos of markersToDelete) {
+      tr.delete(pos, pos + 1)
+    }
+
+    tr.setMeta('addToHistory', false)
+
+    if (dispatch) {
+      dispatch(tr)
+    }
+  }
+}

@@ -37,8 +37,8 @@ export default (props: Props) => {
       init: () => {
         return {}
       },
-      apply: (transaction, pluginState) => {
-        const meta = transaction.getMeta(modelsKey)
+      apply: tr => {
+        const meta = tr.getMeta(modelsKey)
 
         if (meta) {
           if (meta[INSERT]) {
@@ -54,7 +54,7 @@ export default (props: Props) => {
           }
         }
 
-        return pluginState
+        return {}
       },
     },
   })

@@ -40,4 +40,11 @@ export { datacite } from './lib/datacite'
 export { convertToMathML } from './lib/mathjax-mathml'
 export { convertToSVG } from './lib/mathjax-svg'
 export { toolbar } from './toolbar'
+export * from './plugins/highlight'
 export * from './lib/utils'
+
+export {
+  findParentElement,
+  findParentNodeWithIdValue,
+  findParentSection,
+} from './lib/utils'

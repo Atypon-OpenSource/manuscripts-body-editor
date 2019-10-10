@@ -1278,13 +1278,13 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.16.2.tgz#2da219e860edcd00a37c6739cf1c86065e0b5410"
-  integrity sha512-g+/i9lD36gRxW2J5MWQA5VR5YTCqkAwqsgckjq7JGoEbECoisiHayzGWp4ZHBQjaQpQyGvoSkSifVKp4BOTfig==
+"@manuscripts/manuscript-transform@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.17.0.tgz#90a98d0af49031309739525447e2908ed4bb3986"
+  integrity sha512-9Cr8t7PkfOUNugUG1tNquKoLCtP7nRSJ+z+5QtznbYvhcSaj+b0OPJOKHgY0YUzp/g/eCZNvlOxfJ+n81jsUjA==
   dependencies:
     debug "^4.1.1"
-    prosemirror-model "^1.7.1"
+    prosemirror-model "^1.7.2"
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
 
@@ -11283,7 +11283,7 @@ prosemirror-keymap@^1.0.0, prosemirror-keymap@^1.0.1:
     prosemirror-state "^1.0.0"
     w3c-keyname "^1.1.8"
 
-prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.2, prosemirror-model@^1.7.1, prosemirror-model@^1.7.2:
+prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.2, prosemirror-model@^1.7.2:
   version "1.7.2"
   resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.7.2.tgz#829abd7fb496783ba088936d2d7aff228206829a"
   integrity sha512-mopozod/qNTB6utEyY8q4w1nCLDakpr39d8smzHno/wuAivCzBU8HkC9YOx1MBdTcTU6sXiIEh08hQfkC3damw==

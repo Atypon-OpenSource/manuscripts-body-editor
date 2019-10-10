@@ -25,6 +25,7 @@ import keys from '../keys'
 import rules from '../rules'
 import bibliography from './bibliography'
 import elements from './elements'
+import highlights from './highlight'
 import models from './models'
 import objects from './objects'
 import paragraphs from './paragraphs'
@@ -50,6 +51,7 @@ export default (props: EditorProps) => [
   paragraphs(),
   placeholder(),
   tableEditing(),
+  highlights(props),
 ]
 
 // for tables
