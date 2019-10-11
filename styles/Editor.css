@@ -1,7 +1,7 @@
 .ProseMirror.manuscript-editor {
   font-size: 16px;
-  line-height: 1.67;
-  font-family: "IBM Plex Serif", "Georgia", Times, serif;
+  line-height: 1.5;
+  font-family: "PT Sans", sans-serif;
   background: #fff;
   color: #353535;
   margin-bottom: 100px;
@@ -39,7 +39,7 @@
 }
 
 .ProseMirror h1 {
-  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: "PT Sans", sans-serif;
 }
 
 .ProseMirror ul,
@@ -144,11 +144,11 @@
 }
 
 .ProseMirror .figure-block {
-  display: grid;
-  grid-gap: 20px 40px;
   border: 1px solid transparent;
   border-radius: 4px;
-  padding-top: 24px;
+  display: grid;
+  grid-gap: 20px 40px;
+  margin: 16px auto 0;
 }
 
 .ProseMirror .block:focus-within .figure-block,
@@ -197,11 +197,9 @@
   align-items: center;
   border-radius: 16px;
   border: 1px dashed #e2e2e2;
-  color: #aaa;
+  color: #6e6e6e;
   cursor: pointer;
   display: flex;
-  font-family: "IBM Plex Serif", sans-serif;
-  font-size: 16px;
   justify-content: center;
   text-align: center;
   padding: 64px 32px;
@@ -220,7 +218,6 @@
 .ProseMirror figcaption {
   background: white;
   font-style: italic;
-  line-height: 1.4;
   margin-top: 1em;
   text-align: center;
   word-wrap: break-word;
@@ -413,32 +410,8 @@
   color: #999 !important;
 }
 
-.ProseMirror header {
-  background-color: #eeeef2;
-  padding: 5px 50px;
-  margin: 0 -50px 20px;
-}
-
-.ProseMirror h1 {
-  line-height: 1.3;
-}
-
-.ProseMirror section h1 {
-  margin: 0;
-  font-size: 23px;
-  font-weight: 600;
-}
-
 .ProseMirror section.title-suppressed > .block-section_title {
   display: none;
-}
-
-.ProseMirror section > section h1 {
-  font-size: 20px;
-}
-
-.ProseMirror section > section > section h1 {
-  font-size: 17px;
 }
 
 .ProseMirror section > section > section > section h1 {
@@ -446,13 +419,13 @@
 }
 
 .ProseMirror .placeholder-text {
-  color: #aaa;
+  color: #c9c9c9;
   margin: 0;
 }
 
 .ProseMirror .empty-node::before {
   position: absolute;
-  color: #aaa;
+  color: #c9c9c9;
   cursor: text;
   pointer-events: none;
 }
@@ -467,6 +440,7 @@
 
 .ProseMirror table {
   line-height: 1.2;
+  margin: 16px 0 0;
 }
 
 .ProseMirror tr:first-of-type {
@@ -520,7 +494,7 @@
 
 .ProseMirror .block-container > .block {
   flex: 1;
-  padding: 12px;
+  padding: 0 12px;
   margin: 0;
 }
 
@@ -580,7 +554,8 @@
 .ProseMirror .listing {
   display: flex;
   min-height: 34px;
-  padding: 5px;
+  padding: 0;
+  margin: 16px auto 0;
   max-width: 100%;
   overflow-x: auto;
   justify-content: center;
@@ -600,8 +575,7 @@
 .ProseMirror .code-placeholder,
 .ProseMirror .equation-placeholder,
 .ProseMirror .caption-placeholder {
-  color: #aaa;
-  font-style: italic;
+  color: #c9c9c9;
 }
 
 .ProseMirror .equation .equation-placeholder {
@@ -681,11 +655,11 @@
   display: flex;
   flex-wrap: wrap;
   cursor: help;
-  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  font-family: "PT Sans", sans-serif;
   color: #f35143;
   background-color: #fff1f0;
   border: solid 1px #f5c1b7;
-  border-radius: 3px;
+  border-radius: 4px;
   align-items: center;
   white-space: normal;
 }

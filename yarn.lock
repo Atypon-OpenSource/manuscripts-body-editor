@@ -1263,10 +1263,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.4.1.tgz#3aafbcd5df2c706358fa5508369981534119a8ee"
   integrity sha512-pG77YvrElOFJ9KnMuC06X5etfNt0LcvdTiGwCuXLuGQWDM/N1MIC0FwDaPCxR3QlqfvCljHbhJJv4iDlCrNPUg==
 
-"@manuscripts/assets@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.5.2.tgz#273d307b681e83041194fc581eb530402ab0dc53"
-  integrity sha512-XwwbM2AjVHNNAiqi4fgH/MO9By+9FFC0QVgZIJPwxnV+Eun1D7KFAQ8x7bnqjPOG6cAp47zIaQps8wY+i8M3UQ==
+"@manuscripts/assets@^0.5.3":
+  version "0.5.8"
+  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.5.8.tgz#cfbcb8b145510755ed96df0c0424ac419eb6d728"
+  integrity sha512-wGDLANWNP1CG5otyeArGHG1KMjRMiOmfuNGM5mZikgZJ+GiZ/ExXeQjiVMg2+/rZYOB9YATwyUKAr3BkPBi6vg==
 
 "@manuscripts/data@^0.0.2":
   version "0.0.2"
@@ -1333,12 +1333,12 @@
     url "^0.11.0"
     util "^0.12.0"
 
-"@manuscripts/style-guide@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.11.0.tgz#ba4784653f2312a48f1cd7da0bb26e9760a4f14b"
-  integrity sha512-OukTrLlwEWo0IXAMZIz756GCfn2WuegxD2sSwInfjoLnfk/Yj931JRdtEi1p06nZ57gt76hmumTINwEa25jfHA==
+"@manuscripts/style-guide@^0.11.4":
+  version "0.11.4"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.11.4.tgz#03b12a8c5bc9ee4a706ab7d2d3b66c7bac2eb737"
+  integrity sha512-q6Wu27ZVRcc3BP6JkW3TvsuASPT3COkSm/tgMWbLkreht2m8bzSCE30WDfjeBzWgaS4pVzMwVUUEO486CfrM3A==
   dependencies:
-    "@manuscripts/assets" "^0.5.2"
+    "@manuscripts/assets" "^0.5.3"
     lodash-es "^4.17.11"
     react-dnd "^7.4.3"
     react-modal "^3.8.1"
