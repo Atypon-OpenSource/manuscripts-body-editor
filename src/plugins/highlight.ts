@@ -15,12 +15,12 @@
  */
 
 import {
-  CommentAnnotation,
   isHighlightMarkerNode,
   ManuscriptEditorState,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
+import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -152,7 +152,7 @@ const buildDecorations = (highlights: Map<string, HighlightWithNode>) => {
         Decoration.inline(start, end, {
           nodeName: 'span',
           class: 'highlight',
-          style: 'background: #FFE08B', // TODO: use Highlight.color
+          style: 'background: #ffbd26; opacity: 0.5', // TODO: use Highlight.color
         })
       )
     }

@@ -15,14 +15,16 @@
  */
 
 import {
-  AuxiliaryObjectReference,
   ManuscriptNode,
   ManuscriptNodeType,
   ManuscriptSchema,
   nodeNames,
   schema,
 } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  AuxiliaryObjectReference,
+  Model,
+} from '@manuscripts/manuscripts-json-schema'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 

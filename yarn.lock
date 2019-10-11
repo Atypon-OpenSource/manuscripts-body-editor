@@ -1278,20 +1278,20 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.17.0.tgz#90a98d0af49031309739525447e2908ed4bb3986"
-  integrity sha512-9Cr8t7PkfOUNugUG1tNquKoLCtP7nRSJ+z+5QtznbYvhcSaj+b0OPJOKHgY0YUzp/g/eCZNvlOxfJ+n81jsUjA==
+"@manuscripts/manuscript-transform@^0.18.0":
+  version "0.18.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.18.0.tgz#dc9161041b4f6c9b6d63b2a26d1af84fd593aa6d"
+  integrity sha512-syweUCL8AOPF6D9u57k5+SK4hvP3RlrsqA+ZUIF+zopjEdHDsnheFm+WX7wALPX3lOH+zBSucvmPg0aCsnlAsg==
   dependencies:
     debug "^4.1.1"
     prosemirror-model "^1.7.2"
     uuid "^3.3.2"
     w3c-xmlserializer "^1.1.2"
 
-"@manuscripts/manuscripts-json-schema@^1.17.2":
-  version "1.17.2"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.17.2.tgz#44f4e7dc45250f3f1940343363d0fc6bb8e2db79"
-  integrity sha512-jdREH0EE2x2f2bXLdGfpK5zFh3MEZtEzNg2VoD6NRK4wxhaXB++ZPng9C+yZMMbm4uc7YqKtoaxq4lBdjBUAdA==
+"@manuscripts/manuscripts-json-schema@^1.18.2":
+  version "1.18.2"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.18.2.tgz#81ce3daab7bfa6b202b4908bc32d68044e329f71"
+  integrity sha512-G1dlWtkCTYjUVL+1P5Noa6KJx/0WdGrfc7dPQWzvJERUxmphe3c1bgUn+OZTcAqLefE6IShNbOlcsbIHoFDcfQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
