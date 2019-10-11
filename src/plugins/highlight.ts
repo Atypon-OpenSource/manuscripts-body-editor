@@ -152,7 +152,7 @@ const buildDecorations = (highlights: Map<string, HighlightWithNode>) => {
         Decoration.inline(start, end, {
           nodeName: 'span',
           class: 'highlight',
-          style: 'background: #ffbd26; opacity: 0.5', // TODO: use Highlight.color
+          style: 'background: rgba(255, 189, 38, 0.5);', // TODO: use Highlight.color
         })
       )
     }
