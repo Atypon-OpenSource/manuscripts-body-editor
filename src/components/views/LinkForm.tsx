@@ -21,6 +21,7 @@ import {
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { allowedHref } from '../../lib/url'
 
 export interface LinkValue {
   text: string
@@ -50,7 +51,9 @@ export const LinkForm: React.FC<{
         <FieldHeading>
           <Label>URL</Label>
 
-          {href && <Open href={href} target={'_blank'} />}
+          {href && allowedHref(href) && (
+            <Open href={href} target={'_blank'} rel={'noopener'} />
+          )}
         </FieldHeading>
 
         <TextField
@@ -60,7 +63,6 @@ export const LinkForm: React.FC<{
           autoComplete={'off'}
           autoFocus={true}
           required={true}
-          pattern={'https?://.+'}
           onChange={event => {
             setHref(event.target.value)
           }}

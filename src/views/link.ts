@@ -16,6 +16,7 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 import { ViewerProps } from '../components/Viewer'
+import { allowedHref } from '../lib/url'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -30,7 +31,9 @@ export class LinkView<PropsType extends ViewerProps>
   public updateContents = () => {
     const { href } = this.node.attrs
 
-    this.dom.setAttribute('href', href)
+    if (href && allowedHref(href)) {
+      this.dom.setAttribute('href', href)
+    }
   }
 
   protected createDOM = () => {
