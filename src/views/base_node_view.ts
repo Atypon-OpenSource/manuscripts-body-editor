@@ -66,6 +66,10 @@ export class BaseNodeView<PropsType extends ViewerProps> {
     this.props.popper.destroy()
   }
 
+  public destroy = () => {
+    this.props.popper.destroy()
+  }
+
   public handleDecorations = (decorations?: Decoration[]) => {
     if (decorations) {
       const syncErrorDecoration = decorations.find(

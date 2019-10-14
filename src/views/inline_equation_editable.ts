@@ -68,10 +68,6 @@ export class InlineEquationEditableView extends InlineEquationView<
       input.focus()
     })
   }
-
-  public deselectNode = () => {
-    this.props.popper.destroy()
-  }
 }
 
 export default createEditableNodeView(InlineEquationEditableView)
