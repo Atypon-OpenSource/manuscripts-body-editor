@@ -55,7 +55,7 @@ import '../styles/popper.css'
       console.log('addLibraryItem', item)
       modelMap.set(item._id, item)
     }}
-    filterLibraryItems={query => {
+    filterLibraryItems={async query => {
       console.log('filterLibraryItems', query)
     }}
     subscribe={receive => {
