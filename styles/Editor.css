@@ -569,7 +569,7 @@
 .ProseMirror p .equation {
   display: inline-flex;
   min-height: 0;
-  padding: 0 5px;
+  margin: 0 5px;
 }
 
 .ProseMirror .code-placeholder,
