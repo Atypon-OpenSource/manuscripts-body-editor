@@ -1,12 +1,11 @@
 .popper {
-  position: absolute;
-  color: black;
-  width: auto;
+  color: #353535;
+  font-family: "PT Sans", sans-serif;
   min-width: 100px;
-  /*opacity: 0.9;*/
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-  "Ubuntu", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  position: absolute;
+  width: auto;
   z-index: 5;
+  /*opacity: 0.9;*/
 }
 
 .popper-arrow {
@@ -19,7 +18,7 @@
 .popper[x-placement="bottom"] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
-  border-bottom-color: #ccc;
+  border-bottom-color: #e2e2e2;
   border-top-width: 0;
   margin: 0 5px;
 }
@@ -27,7 +26,7 @@
 .popper[x-placement="top"] .popper-arrow {
   bottom: -5px;
   left: calc(50% - 5px);
-  border-top-color: #ccc;
+  border-top-color: #e2e2e2;
   border-bottom-width: 0;
   margin: 0 5px;
 }
@@ -35,7 +34,7 @@
 .popper[x-placement="left"] .popper-arrow {
   right: -5px;
   top: calc(50% - 5px);
-  border-left-color: #ccc;
+  border-left-color: #e2e2e2;
   border-right-width: 0;
   margin: 5px 0;
 }
@@ -43,7 +42,7 @@
 .popper[x-placement="right"] .popper-arrow {
   left: -5px;
   top: calc(50% - 5px);
-  border-right-color: #ccc;
+  border-right-color: #e2e2e2;
   border-left-width: 0;
   margin: 5px 0;
 }
@@ -51,7 +50,7 @@
 .popper[x-placement="bottom-start"] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
-  border-bottom-color: #ccc;
+  border-bottom-color: #e2e2e2;
   border-top-width: 0;
   margin: 0 5px;
 }
@@ -69,22 +68,22 @@
 }
 
 .popper .equation-editor-info {
-  border: 1px solid #949494;
+  align-items: center;
+  border: 1px solid #e2e2e2;
   border-radius: 50%;
+  bottom: 6px;
+  color: #6e6e6e;
+  display: inline-flex;
+  cursor: pointer;
+  font-size: 12px;
+  height: 16px;
+  justify-content: center;
+  opacity: 0.5;
   position: absolute;
   right: 6px;
-  bottom: 6px;
   text-decoration: none;
-  color: #949494;
-  cursor: pointer;
-  opacity: 0.5;
-  display: inline-flex;
-  z-index: 2;
   width: 16px;
-  height: 16px;
-  font-size: 12px;
-  justify-content: center;
-  align-items: center;
+  z-index: 2;
 }
 
 .popper .equation-editor-info:hover {
@@ -92,11 +91,11 @@
 }
 
 .popper .CodeMirror {
-  min-width: 500px;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   height: auto;
   min-height: 4em;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: 1px solid #ccc;
+  min-width: 500px;
 }
 
 .popper .CodeMirror-scroll {
@@ -108,45 +107,44 @@
 }
 
 .popper .menu {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  color: #444;
-  font-size: 90%;
-  background: #eee;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  font-size: 14px;
+  overflow: hidden;
 }
 
 .popper .menu .menu-section {
-  padding: 5px 0;
+  padding: 4px 0;
 }
 
 .popper .menu .menu-section:not(:last-child) {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #e2e2e2;
 }
 
 .popper .menu-item {
-  padding: 2px 20px;
   cursor: pointer;
+  padding: 8px 16px;
 }
 
 .popper .menu-item:hover {
-  background: #65a3ff;
-  color: white;
+  background: #f5fbfc;
 }
 
 .popper .citation-editor,
 .popper .cross-reference-editor {
-  height: auto;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid #eee;
   background: #fff;
+  border: 1px solid #e2e2e2;
   border-radius: 8px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  height: auto;
 }
 
 .popper .conflict-dropdown {
   background: #fff;
-  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ddd;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  border: 1px solid #e2e2e2;
   border-radius: 1px;
 }
 
@@ -156,10 +154,9 @@
 }
 
 .popper .conflict-option-contents {
-  font-family: "PT Sans", sans-serif;
+  color: #353535;
   font-size: 16px;
   line-height: 1.5;
-  color: #353535;
 }
 
 .popper .conflict-option:hover {
@@ -167,28 +164,27 @@
 }
 
 .popper .conflict-option-label {
-  margin-bottom: 4px;
+  color: #0b6bb8;
   font-size: 12px;
-  color: #628ec4;
+  margin-bottom: 4px;
 }
 
 .popper .sync-warning {
-  width: 250px;
   background: #fff;
-  font-family: Barlow, sans-serif;
-  box-shadow: 0 4px 8px #d8d8d8;
-  border: 1px solid #ccc;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   color: #353535;
   padding: 0 12px;
-  border-radius: 8px;
+  width: 250px;
 }
 
 .popper .link-editor {
-  height: auto;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid #eee;
   background: #fff;
   border-radius: 8px;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  height: auto;
 }
 
 .popper .citation-editor {
