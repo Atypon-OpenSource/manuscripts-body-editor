@@ -43,12 +43,7 @@ const MenuHeading = styled.div<{ isOpen: boolean }>`
 
 const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
   & ${MenuHeading} {
-    background-color: ${props =>
-      props.isEnabled
-        ? props.isActive
-          ? props.theme.colors.background.fifth
-          : props.theme.colors.background.primary
-        : 'transparent'};
+    background-color: ${props => props.theme.colors.background.primary};
     color: ${props =>
       props.isEnabled
         ? props.isActive
