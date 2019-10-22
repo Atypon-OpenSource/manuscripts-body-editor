@@ -74,7 +74,7 @@ export const Statistics: React.FC<{
 
       const statistics = {
         text,
-        characters: await StatisticsWorker.countWords(text),
+        characters: await StatisticsWorker.countCharacters(text),
         words: await StatisticsWorker.countWords(text),
       }
 
