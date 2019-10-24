@@ -106,7 +106,59 @@ const search = async (
   }
 }
 
-const fetch = async (id: string, mailto: string) => {
+const fetch = (
+  id: string,
+  mailto: string
+): Promise<Partial<BibliographyItem>> => {
+  try {
+    return fetchCSL(id)
+  } catch (error) {
+    console.error(error) // tslint:disable-line:no-console
+    return fetchSummary(id, mailto)
+  }
+}
+
+interface ErrorResponse {
+  status: 'error'
+  reason: object
+}
+
+const isErrorResponse = (
+  data: CSL.Item | ErrorResponse
+): data is ErrorResponse => {
+  return data.status === 'error'
+}
+
+// Fetch CSL from Literature Citation Exporter
+// https://api.ncbi.nlm.nih.gov/lit/ctxp
+// TODO: Use a Promise queue to avoid concurrent requests
+const fetchCSL = async (id: string) => {
+  const response = await axios.get<CSL.Item | ErrorResponse>(
+    'https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/',
+    {
+      params: {
+        format: 'csl',
+        id,
+      },
+      headers: {
+        'User-Agent': 'Manuscripts.io/1.0 (+https://www.manuscripts.io/)',
+      },
+    }
+  )
+
+  if (response.status !== 200) {
+    throw new Error('There was a problem fetching this PMID.')
+  }
+
+  if (isErrorResponse(response.data)) {
+    throw new Error(JSON.stringify(response.data.reason))
+  }
+
+  return convertDataToBibliographyItem(response.data)
+}
+
+// Fetch eSummary and convert to CSL (fallback)
+const fetchSummary = async (id: string, mailto: string) => {
   const summaryResponse = await axios.get<Response>(
     'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi',
     {
