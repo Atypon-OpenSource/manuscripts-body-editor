@@ -21,8 +21,8 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Manuscript } from '@manuscripts/manuscripts-json-schema'
 import { parse } from '@manuscripts/title-editor'
-import React from 'react'
-import { debounceRender } from '../DebounceRender'
+import React, { useEffect, useState } from 'react'
+import { useDebounce } from '../hooks/use-debounce'
 import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 
 interface Props {
@@ -32,35 +32,42 @@ interface Props {
   doc: ManuscriptNode | null
 }
 
-const ManuscriptOutline: React.FunctionComponent<Props> = ({
-  doc,
-  manuscript,
-  selected,
-  view,
-}) => {
-  if (!doc || !view) return null
+export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
+  const [values, setValues] = useState<{
+    tree: TreeItem
+    view: ManuscriptEditorView
+  }>()
 
-  const { items } = buildTree({ node: doc, pos: 0, index: 0, selected })
+  const debouncedProps = useDebounce(props, 500)
 
-  const node = parse(manuscript.title || '')
+  useEffect(() => {
+    const { doc, view, manuscript, selected } = debouncedProps
 
-  const tree: TreeItem = {
-    node,
-    requirementsNode: doc,
-    pos: 0,
-    endPos: 0,
-    index: 0,
-    isSelected: !selected,
-    items,
-  }
+    if (doc && view) {
+      const { items } = buildTree({
+        node: doc,
+        pos: 0,
+        index: 0,
+        selected,
+      })
 
-  return <DraggableTree tree={tree} view={view} />
+      const node = parse(manuscript.title || '')
+
+      const tree = {
+        node,
+        requirementsNode: doc,
+        pos: 0,
+        endPos: 0,
+        index: 0,
+        isSelected: !selected,
+        items,
+      }
+
+      setValues({ tree, view })
+    } else {
+      setValues(undefined)
+    }
+  }, [debouncedProps])
+
+  return values ? <DraggableTree {...values} /> : null
 }
-
-export const DebouncedManuscriptOutlineContainer = debounceRender<Props>(
-  ManuscriptOutline,
-  500,
-  {
-    leading: true,
-  }
-)

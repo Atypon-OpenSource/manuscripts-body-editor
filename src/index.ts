@@ -16,9 +16,7 @@
 
 export * from './commands'
 export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
-export {
-  DebouncedManuscriptOutlineContainer,
-} from './components/outline/ManuscriptOutline'
+export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
 export {
   ManuscriptToolbar,
@@ -30,7 +28,6 @@ export {
 } from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'
 export { Viewer } from './components/Viewer'
-export { debounceRender } from './components/DebounceRender'
 export * from './csl'
 export { menus } from './menus'
 export { ChangeReceiver } from './types'

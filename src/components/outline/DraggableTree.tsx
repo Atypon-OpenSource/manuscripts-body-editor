@@ -320,7 +320,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
 const dragType = 'outline'
 
-const dragSourceSpec: DragSourceSpec<Props & ConnectedProps, DragObject> = {
+const dragSourceSpec: DragSourceSpec<Props, DragObject> = {
   // return data about the item that's being dragged, for later use
   beginDrag(props: Props) {
     return {
@@ -333,7 +333,7 @@ const dragSourceSpec: DragSourceSpec<Props & ConnectedProps, DragObject> = {
   },
 }
 
-const dropTargetSpec: DropTargetSpec<Props & ConnectedProps> = {
+const dropTargetSpec: DropTargetSpec<Props> = {
   canDrop(props: Props, monitor: DropTargetMonitor) {
     const item = monitor.getItem() as DragSourceProps
 
@@ -452,14 +452,12 @@ const dropTargetCollector: DropTargetCollector<ConnectedDropTargetProps, {}> = (
 
 const dragSource = DragSource<Props, ConnectedDragSourceProps, DragObject>(
   dragType,
-  // @ts-ignore: react-dnd
   dragSourceSpec,
   dragSourceCollector
 )
 
 const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
   dragType,
-  // @ts-ignore: react-dnd
   dropTargetSpec,
   dropTargetCollector
 )
