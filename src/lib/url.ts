@@ -17,7 +17,11 @@
 const allowedHrefProtocols = ['http:', 'https:', 'ftp:']
 
 export const allowedHref = (href: string): boolean => {
-  const url = new URL(href)
+  try {
+    const url = new URL(href)
 
-  return allowedHrefProtocols.includes(url.protocol)
+    return allowedHrefProtocols.includes(url.protocol)
+  } catch {
+    return false
+  }
 }
