@@ -545,7 +545,7 @@
   flex: 1;
 }
 
-.ProseMirror .equation{
+.ProseMirror .equation {
   position: relative;
   cursor: context-menu;
   line-height: 1em;
@@ -567,6 +567,7 @@
   max-width: 100%;
 }
 
+.ProseMirror figcaption .equation,
 .ProseMirror p .equation {
   display: inline-flex;
   min-height: 0;
