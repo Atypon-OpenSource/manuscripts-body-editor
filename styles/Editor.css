@@ -744,6 +744,10 @@
 }
 
 .ProseMirror a.link {
+  color: #0d79d0;
   cursor: pointer;
 }
 
+.ProseMirror a.link:hover {
+  color: #0b6bb8;
+}
