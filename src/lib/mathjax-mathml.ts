@@ -19,10 +19,13 @@ import { STATE } from 'mathjax-full/js/core/MathItem.js'
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor'
 import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
 import { TeX } from 'mathjax-full/js/input/tex'
+import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages'
 import 'mathjax-full/js/util/entities/all'
 
 // TeX input
-const InputJax = new TeX<HTMLElement, Text, Document>({})
+const InputJax = new TeX<HTMLElement, Text, Document>({
+  packages: AllPackages,
+})
 
 // @ts-ignore
 // tslint:disable-next-line:no-any
