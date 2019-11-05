@@ -18,9 +18,9 @@ import { xmlSerializer } from '@manuscripts/manuscript-transform'
 import { HTMLAdaptor } from 'mathjax-full/js/adaptors/HTMLAdaptor'
 import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
 import { TeX } from 'mathjax-full/js/input/tex'
-import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages'
 import { SVG } from 'mathjax-full/js/output/svg'
 import 'mathjax-full/js/util/entities/all'
+import { packages } from './mathjax-packages'
 
 // @ts-ignore for MinHTMLElement nodeValue compatibility
 class ManuscriptsHTMLAdaptor extends HTMLAdaptor<HTMLElement, Text, Document> {
@@ -39,7 +39,7 @@ class ManuscriptsHTMLAdaptor extends HTMLAdaptor<HTMLElement, Text, Document> {
 
 // TeX input
 const InputJax = new TeX<HTMLElement, Text, Document>({
-  packages: AllPackages,
+  packages,
 })
 
 // SVG output
