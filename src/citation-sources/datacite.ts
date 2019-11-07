@@ -95,9 +95,13 @@ const search = async (
   items: Array<Partial<BibliographyItem>>
   total: number
 }> => {
+  query = query.trim()
+
   // if the query is just a DOI, fetch that single record
-  if (query.trim().match(/^10\.\S+\/\S+$/)) {
-    const data = await fetch(query.trim())
+  if (query.match(/^10\.\S+\/\S+$/)) {
+    const data = await fetch({
+      DOI: query,
+    })
 
     return {
       items: [data],
@@ -132,9 +136,15 @@ const search = async (
   }
 }
 
-const fetch = async (doi: string): Promise<Partial<BibliographyItem>> => {
+const fetch = async (
+  item: Partial<BibliographyItem>
+): Promise<Partial<BibliographyItem>> => {
+  if (!item.DOI) {
+    throw new Error('The item does not have a DOI')
+  }
+
   const response = await axios.get<CSL.Item>(
-    'https://api.datacite.org/dois/' + encodeURIComponent(doi),
+    'https://api.datacite.org/dois/' + encodeURIComponent(item.DOI),
     {
       headers: {
         Accept: 'application/vnd.citationstyles.csl+json',

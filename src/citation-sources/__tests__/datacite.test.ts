@@ -52,7 +52,7 @@ describe('datacite', () => {
   })
 
   test('fetch', async () => {
-    const response = datacite.fetch('10.5255/ukda-sn-6926-1')
+    const response = datacite.fetch({ DOI: '10.5255/ukda-sn-6926-1' })
 
     expect(mockAxios.get).toHaveBeenCalledWith(
       'https://api.datacite.org/dois/10.5255%2Fukda-sn-6926-1',

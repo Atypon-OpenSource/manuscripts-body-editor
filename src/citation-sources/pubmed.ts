@@ -107,14 +107,18 @@ const search = async (
 }
 
 const fetch = (
-  id: string,
+  item: Partial<BibliographyItem>,
   mailto: string
 ): Promise<Partial<BibliographyItem>> => {
+  if (!item.PMID) {
+    throw new Error('The item does not have a PMID')
+  }
+
   try {
-    return fetchCSL(id)
+    return fetchCSL(item.PMID)
   } catch (error) {
     console.error(error) // tslint:disable-line:no-console
-    return fetchSummary(id, mailto)
+    return fetchSummary(item.PMID, mailto)
   }
 }
 

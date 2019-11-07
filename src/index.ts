@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+export * from './citation-sources'
 export * from './commands'
 export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
@@ -32,9 +33,6 @@ export * from './csl'
 export { menus } from './menus'
 export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'
-export { crossref } from './lib/crossref'
-export { datacite } from './lib/datacite'
-export { pubmed } from './lib/pubmed'
 export { convertToMathML } from './lib/mathjax-mathml'
 export { convertToSVG } from './lib/mathjax-svg'
 export { toolbar } from './toolbar'

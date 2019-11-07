@@ -89,14 +89,18 @@ const searchByDOI = async (
   }
 }
 
-const fetch = async (doi: string, mailto: string) => {
+const fetch = async (item: Partial<BibliographyItem>, mailto: string) => {
+  if (!item.DOI) {
+    throw new Error('The item does not have a DOI')
+  }
+
   // NOTE: avoiding https://api.crossref.org/works/{doi}/transform/application/vnd.citationstyles.csl+json as it's undocumented and could disappear.
 
   // NOTE: Using data.crossref.org rather than doi.org to avoid the redirect.
   // This is safe as it's only resolving Crossref DOIs.
 
   const response = await axios.get<CSL.Item>(
-    `https://data.crossref.org/${encodeURIComponent(doi)}`,
+    `https://data.crossref.org/${encodeURIComponent(item.DOI)}`,
     {
       headers: {
         accept: 'application/vnd.citationstyles.csl+json',
