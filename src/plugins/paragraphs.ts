@@ -24,7 +24,7 @@ import { Plugin } from 'prosemirror-state'
 export default () => {
   return new Plugin<{}, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
-      let updated = 0
+      const positionsToJoin: number[] = []
 
       const tr = newState.tr
 
@@ -39,14 +39,13 @@ export default () => {
 
         if (
           isParagraphNode(node) &&
-          !node.childCount &&
+          node.childCount === 0 &&
           index < parent.childCount - 1
         ) {
           const nextNode = parent.child(index + 1)
 
           if (isParagraphNode(nextNode) && nextNode.childCount === 0) {
-            tr.join(nodePos + 2)
-            updated++
+            positionsToJoin.push(nodePos + node.nodeSize)
           }
         }
 
@@ -55,8 +54,14 @@ export default () => {
 
       newState.doc.forEach(joinAdjacentParagraphs(newState.doc, 0))
 
-      // return the transaction if something changed
-      if (updated) {
+      if (positionsToJoin.length) {
+        // execute the joins in reverse order so the positions don't change
+        positionsToJoin.reverse()
+
+        for (const nodePos of positionsToJoin) {
+          tr.join(nodePos)
+        }
+
         return tr
       }
     },

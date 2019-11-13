@@ -32,8 +32,8 @@ import {
 import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { getChildOfType } from '..'
 import { bibliographyElementContents } from '../lib/bibliography'
+import { getChildOfType } from '../lib/utils'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
 

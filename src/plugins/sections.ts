@@ -23,7 +23,7 @@ import { Plugin } from 'prosemirror-state'
 export default () => {
   return new Plugin<{}, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
-      let updated = 0
+      const positionsToInsert: number[] = []
 
       const tr = newState.tr
 
@@ -34,15 +34,24 @@ export default () => {
 
         // add a paragraph to sections with only titles
         if (node.childCount === 1) {
-          const title = node.child(0)
-          const paragraph = newState.schema.nodes.paragraph.create()
-          tr.insert(pos + 1 + title.nodeSize, paragraph)
-          updated++
+          const childNode = node.child(0)
+
+          if (childNode.type === childNode.type.schema.nodes.section_title) {
+            positionsToInsert.push(pos + node.nodeSize - 1)
+          }
         }
       })
 
       // return the transaction if something changed
-      if (updated) {
+      if (positionsToInsert.length) {
+        // execute the inserts in reverse order so the positions don't change
+        positionsToInsert.reverse()
+
+        for (const pos of positionsToInsert) {
+          const paragraph = newState.schema.nodes.paragraph.create()
+          tr.insert(pos, paragraph)
+        }
+
         return tr
       }
     },

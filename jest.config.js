@@ -1,5 +1,8 @@
 module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
+  moduleNameMapper: {
+    '^.+\\.css$': '<rootDir>/src/__mocks__/styleMock.ts',
+  },
   setupFilesAfterEnv: ['./src/tests.ts'],
   snapshotSerializers: ['enzyme-to-json/serializer'],
   testPathIgnorePatterns: ['/node_modules/'],
