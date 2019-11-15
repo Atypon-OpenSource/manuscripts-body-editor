@@ -34,6 +34,7 @@ import {
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { getChildOfType } from './lib/utils'
+import { bibliographyKey } from './plugins/bibliography'
 import {
   getHighlights,
   highlightKey,
@@ -204,6 +205,19 @@ export const insertLink = (
   return true
 }
 
+const needsBibliography = (state: ManuscriptEditorState) =>
+  !bibliographyKey.getState(state).citations.length &&
+  !getChildOfType(state.tr.doc, state.schema.nodes.bibliography_section)
+
+const createBibliographySection = (state: ManuscriptEditorState) =>
+  state.schema.nodes.bibliography_section.createAndFill(
+    {},
+    state.schema.nodes.section_title.create(
+      {},
+      state.schema.text('Bibliography')
+    )
+  ) as ManuscriptNode
+
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -217,9 +231,16 @@ export const insertInlineCitation = (
 
   const pos = state.selection.to
 
-  const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [citation] })
-    .insert(pos, node)
+  const { tr } = state
+
+  tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
+
+  if (needsBibliography(state)) {
+    tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
+      bibliographyKey,
+      { bibliographyInserted: true }
+    )
+  }
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
@@ -314,7 +335,11 @@ export const insertBibliographySection = (
 
   const pos = state.tr.doc.content.size
 
-  const tr = state.tr.insert(pos, section)
+  const tr = state.tr
+
+  tr.insert(pos, section).setMeta(bibliographyKey, {
+    bibliographyInserted: true,
+  })
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)

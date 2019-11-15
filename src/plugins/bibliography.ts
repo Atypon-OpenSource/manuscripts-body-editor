@@ -31,9 +31,13 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 import { isEqual } from 'lodash-es'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  Transaction,
+} from 'prosemirror-state'
 import { bibliographyElementContents } from '../lib/bibliography'
-import { getChildOfType } from '../lib/utils'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
 
@@ -42,38 +46,13 @@ interface PluginState {
   citations: CiteProc.Citation[]
 }
 
-const needsBibliographySection = (
-  hadBibliographySection: boolean,
-  hasBibliographySection: boolean,
-  oldCitations: CiteProc.Citation[],
-  citations: CiteProc.Citation[]
-) => {
-  if (hasBibliographySection) return false // not if already exists
-  if (hadBibliographySection) return false // not if being deleted
-  if (citations.length === 0) return false //  not if no citations
-
-  return oldCitations.length === 0 // only when creating the first citation
-}
-
-const needsUpdate = (
-  hadBibliographySection: boolean,
-  hasBibliographySection: boolean,
-  oldCitations: CiteProc.Citation[],
-  citations: CiteProc.Citation[]
-) =>
-  hadBibliographySection !== hasBibliographySection ||
-  !isEqual(citations, oldCitations)
-
-const createBibliographySection = (state: ManuscriptEditorState) =>
-  state.schema.nodes.bibliography_section.createAndFill(
-    {},
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Bibliography')
-    )
-  )
-
 export const bibliographyKey = new PluginKey('bibliography')
+
+const bibliographyInserted = (transactions: Transaction[]): boolean =>
+  transactions.some(tr => {
+    const meta = tr.getMeta(bibliographyKey)
+    return meta && meta.bibliographyInserted
+  })
 
 interface Props {
   getCitationProcessor: () => CiteProc.Engine | undefined
@@ -156,23 +135,9 @@ export default (props: Props) => {
         newState
       ) as PluginState
 
-      const hadBibliographySection = getChildOfType(
-        oldState.tr.doc,
-        oldState.schema.nodes.bibliography_section
-      )
-
-      const hasBibliographySection = getChildOfType(
-        newState.tr.doc,
-        newState.schema.nodes.bibliography_section
-      )
-
       if (
-        !needsUpdate(
-          hadBibliographySection,
-          hasBibliographySection,
-          oldCitations,
-          citations
-        )
+        isEqual(citations, oldCitations) &&
+        !bibliographyInserted(transactions)
       ) {
         return null
       }
@@ -198,17 +163,6 @@ export default (props: Props) => {
           contents,
         })
       })
-
-      if (
-        needsBibliographySection(
-          hadBibliographySection,
-          hasBibliographySection,
-          oldCitations,
-          citations
-        )
-      ) {
-        tr.insert(tr.doc.content.size, createBibliographySection(newState)!)
-      }
 
       // generate the bibliography
       const bibliography = citationProcessor.makeBibliography()
