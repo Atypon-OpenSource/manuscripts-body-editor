@@ -5,7 +5,7 @@ module.exports = {
   },
   setupFilesAfterEnv: ['./src/tests.ts'],
   snapshotSerializers: ['enzyme-to-json/serializer'],
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/dist/'],
   testRegex: '__tests__.*\\.test\\.tsx?$',
   transform: {
     '^.+\\.(j|t)sx?$': 'babel-jest',
