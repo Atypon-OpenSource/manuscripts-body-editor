@@ -28,6 +28,7 @@
     "types/**/*"
   ],
   "exclude": [
+    "**/__mocks__",
     "**/__tests__"
   ]
 }
