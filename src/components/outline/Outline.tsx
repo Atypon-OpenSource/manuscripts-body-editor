@@ -57,6 +57,10 @@ export const OutlineItem = styled.div<{
   padding-right: ${props => props.theme.grid.unit * 5}px;
   padding-left: ${props => 20 + props.depth * 20}px;
   white-space: nowrap;
+
+  &:hover {
+    background: ${props => props.theme.colors.background.fifth};
+  }
 `
 
 export const Outline = styled.div`
