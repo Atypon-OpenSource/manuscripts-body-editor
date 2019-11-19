@@ -177,6 +177,43 @@ export const convertBibliographyItemToData = (
     } as CSL.Item & {[key: string]: any} // tslint:disable-line
   )
 
+const createDoiUrl = (doi: string) =>
+  'https://doi.org/' + encodeURIComponent(doi.replace(/^.*(10\.)/, '$1'))
+
+const createLink = (url: string, contents: string) => {
+  const element = document.createElement('a')
+  element.setAttribute('href', url)
+  element.innerHTML = contents // IMPORTANT: this is HTML so must be sanitised later
+
+  return element.outerHTML
+}
+
+interface VariableWrappers {
+  [field: string]: (itemData: CSL.Item, str: string) => string
+}
+
+export const variableWrappers: VariableWrappers = {
+  DOI: (itemData, str) => {
+    return createLink(createDoiUrl(str), str)
+  },
+
+  title: (itemData, str) => {
+    if (itemData.DOI) {
+      return createLink(createDoiUrl(itemData.DOI), str)
+    }
+
+    if (itemData.URL) {
+      return createLink(itemData.URL, str)
+    }
+
+    return str
+  },
+
+  URL: (itemData, str) => {
+    return createLink(str, str)
+  },
+}
+
 export class CitationManager {
   private readonly baseURL: string
 
@@ -222,6 +259,19 @@ export class CitationManager {
           return convertBibliographyItemToData(item)
         },
         retrieveLocale: (id: string) => citationLocales.get(id)!,
+        variableWrapper: (params, prePunct, str, postPunct) => {
+          if (params.context === 'bibliography') {
+            const [field] = params.variableNames
+
+            if (field in variableWrappers) {
+              const wrap = variableWrappers[field]
+
+              return `${prePunct}${wrap(params.itemData, str)}${postPunct}`
+            }
+          }
+
+          return `${prePunct}${str}${postPunct}`
+        },
       },
       citationStyleData,
       primaryLanguageCode,

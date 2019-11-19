@@ -22,10 +22,11 @@ import {
 import {
   convertBibliographyItemToData,
   convertDataToBibliographyItem,
+  variableWrappers,
 } from '../../csl'
 
-describe('CSL <=> bibliography model transforms', () => {
-  it('should convert data from CSL to bibliography items', () => {
+describe('CSL', () => {
+  test('converts data from CSL to bibliography items', () => {
     const data: CSL.Item = {
       id: 'foo',
       type: 'article',
@@ -42,7 +43,7 @@ describe('CSL <=> bibliography model transforms', () => {
     )
   })
 
-  it('should convert bibliography items to CSL', () => {
+  test('converts bibliography items to CSL', () => {
     const item: BibliographyItem = {
       _id: 'MPBibliographyItem:x',
       objectType: 'MPBibliographyItem',
@@ -86,5 +87,68 @@ describe('CSL <=> bibliography model transforms', () => {
       illustrator: [{ family: 'Derp' }],
       type: 'article-journal',
     })
+  })
+
+  test('wraps DOIs with links', () => {
+    const wrapDOI = variableWrappers.DOI
+
+    const itemData = {
+      DOI: '10.1234/567',
+    }
+
+    expect(wrapDOI(itemData, itemData.DOI)).toBe(
+      `<a href="https://doi.org/10.1234%2F567">10.1234/567</a>`
+    )
+  })
+
+  test('wraps URLs with links', () => {
+    const wrapURL = variableWrappers.URL
+
+    const itemData = {
+      URL: 'https://example.com',
+    }
+
+    expect(wrapURL(itemData, itemData.URL)).toBe(
+      `<a href="https://example.com">https://example.com</a>`
+    )
+  })
+
+  test('wraps titles with DOIs with links', () => {
+    const wrapTitle = variableWrappers.title
+
+    const itemData = {
+      title: 'An example',
+      DOI: '10.1234/567',
+    }
+
+    expect(wrapTitle(itemData, itemData.title)).toBe(
+      `<a href="https://doi.org/10.1234%2F567">An example</a>`
+    )
+  })
+
+  test('wraps titles with URLs with links', () => {
+    const wrapTitle = variableWrappers.title
+
+    const itemData = {
+      title: 'An example',
+      URL: 'https://example.com',
+    }
+
+    expect(wrapTitle(itemData, itemData.title)).toBe(
+      `<a href="https://example.com">An example</a>`
+    )
+  })
+
+  test('keeps HTML when wrapping titles with URLs with links', () => {
+    const wrapTitle = variableWrappers.title
+
+    const itemData = {
+      title: 'An example with <i>some</i> markup',
+      URL: 'https://example.com',
+    }
+
+    expect(wrapTitle(itemData, itemData.title)).toBe(
+      `<a href="https://example.com">An example with <i>some</i> markup</a>`
+    )
   })
 })

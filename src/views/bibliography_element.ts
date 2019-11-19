@@ -19,6 +19,9 @@ import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
+const isLinkElement = (element: HTMLElement): element is HTMLAnchorElement =>
+  element.nodeName === 'A'
+
 export class BibliographyElementBlockView<
   PropsType extends ViewerProps
 > extends BlockView<PropsType> {
@@ -45,6 +48,16 @@ export class BibliographyElementBlockView<
     this.element.className = 'block'
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
+
+    this.element.addEventListener('click', event => {
+      const element = event.target as HTMLElement
+
+      if (isLinkElement(element)) {
+        event.preventDefault()
+
+        window.open(element.href, '_blank', 'noopener')
+      }
+    })
   }
 }
 

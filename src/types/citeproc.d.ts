@@ -32,6 +32,11 @@ declare module 'citeproc' {
   interface SystemOptions {
     retrieveLocale: (id: string) => string | Document | object
     retrieveItem: (id: string) => CSL.Item
+    variableWrapper: (params: {
+      context: string
+      itemData: CSL.Item
+      variableNames: [string]
+    }, prePunct: string, str: string, postPunct: string) => string
   }
 
   interface BibliographyMetadata {
