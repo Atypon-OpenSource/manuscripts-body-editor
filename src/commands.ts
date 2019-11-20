@@ -41,6 +41,7 @@ import {
   SET_COMMENT_TARGET,
 } from './plugins/highlight'
 import { INSERT, modelsKey } from './plugins/models'
+import { symbolsKey } from './plugins/symbols'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
@@ -268,6 +269,21 @@ export const insertCrossReference = (
   }
 
   return true
+}
+
+export const insertSymbol = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = state.selection.anchor
+
+  const tr = state.tr
+    .setMeta(symbolsKey, { pos })
+    .setMeta('addToHistory', false)
+
+  if (dispatch) {
+    dispatch(tr)
+  }
 }
 
 export const insertInlineEquation = (

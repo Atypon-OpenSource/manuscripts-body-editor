@@ -133,7 +133,8 @@
 }
 
 .popper .citation-editor,
-.popper .cross-reference-editor {
+.popper .cross-reference-editor,
+.popper .symbol-picker {
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;
@@ -179,6 +180,10 @@
   width: 250px;
 }
 
+.popper .symbol-picker {
+  width: 600px;
+}
+
 .popper .link-editor {
   background: #fff;
   border-radius: 8px;
@@ -202,7 +207,8 @@
   .popper .citation-editor,
   .popper .cross-reference-editor,
   .popper .equation-editor,
-  .popper .link-editor {
+  .popper .link-editor,
+  .popper .symbol-picker {
     min-width: 90%;
     max-width: 90%;
   }

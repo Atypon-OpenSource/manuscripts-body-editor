@@ -33,6 +33,7 @@ import persist from './persist'
 import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
+import symbols from './symbols'
 
 export default (props: EditorProps) => [
   rules,
@@ -52,6 +53,7 @@ export default (props: EditorProps) => [
   placeholder(),
   tableEditing(),
   highlights(props),
+  symbols(props),
 ]
 
 // for tables

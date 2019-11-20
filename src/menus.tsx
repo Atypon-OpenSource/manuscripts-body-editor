@@ -36,6 +36,7 @@ import {
   insertInlineCitation,
   insertInlineEquation,
   insertLink,
+  insertSymbol,
   markActive,
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
@@ -220,6 +221,12 @@ export const menus: MenuItem[] = [
         },
         enable: canInsert(schema.nodes.cross_reference),
         run: insertCrossReference,
+      },
+      {
+        id: 'insert-symbol',
+        label: () => 'Symbol',
+        enable: () => true, // canInsertSymbol,
+        run: insertSymbol,
       },
       // {
       //   id: 'insert-footnote',
