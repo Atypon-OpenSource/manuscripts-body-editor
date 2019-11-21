@@ -1348,6 +1348,14 @@
     react-sizeme "^2.6.10"
     tooltip.js "^1.3.3"
 
+"@manuscripts/symbol-picker@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/@manuscripts/symbol-picker/-/symbol-picker-0.1.0.tgz#f1cca087be9ed3a2d8d2205c2d94657b26e4beff"
+  integrity sha512-iBcJ0sYCjdS1xBc+NDUVzwCPhp8zPvjMBFomZT8szHZ09sjTdvb5xkR2YamH1+kAsWexWobN7NsRSC/klGq7WQ==
+  dependencies:
+    fuzzysort "^1.1.4"
+    react-window "^1.8.5"
+
 "@manuscripts/title-editor@^0.3.3":
   version "0.3.3"
   resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.3.3.tgz#99f3c1cb303d29bfd7fe499a7d17c1e6d95995c1"

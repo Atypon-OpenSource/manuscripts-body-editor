@@ -18,11 +18,11 @@ import {
   ManuscriptEditorView,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
+import { SymbolPicker } from '@manuscripts/symbol-picker'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import React from 'react'
 import { PopperManager } from '..'
-import { SymbolPicker } from '../components/symbol-picker/SymbolPicker'
 
 export const symbolsKey = new PluginKey('symbols')
 
