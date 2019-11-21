@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import {
+  ManuscriptEditorView,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import React from 'react'
@@ -23,6 +26,8 @@ import { SymbolPicker } from '../components/symbol-picker/SymbolPicker'
 
 export const symbolsKey = new PluginKey('symbols')
 
+const PLUGIN_NAME = 'symbol-picker'
+
 interface Props {
   popper: PopperManager
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
@@ -30,70 +35,89 @@ interface Props {
 }
 
 export default (props: Props) => {
+  const createDecoration = (
+    view: ManuscriptEditorView,
+    getPos: () => number
+  ) => {
+    const popperContainer = document.createElement('div')
+    popperContainer.className = 'symbol-picker'
+
+    const handleClose = () => {
+      window.removeEventListener('mousedown', handleClickOutside)
+
+      view.dispatch(
+        view.state.tr
+          .setMeta(symbolsKey, {
+            remove: getPos(),
+          })
+          .setMeta('addToHistory', false)
+      )
+
+      props.unmountReactComponent(popperContainer)
+      props.popper.destroy()
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (event.target && !popperContainer.contains(event.target as Node)) {
+        handleClose()
+      }
+    }
+
+    const handleSelectCharacter = (character: string) => {
+      handleClose()
+      view.dispatch(view.state.tr.insertText(character, getPos()))
+    }
+
+    const inline = document.createElement('span')
+
+    window.setTimeout(() => {
+      props.renderReactComponent(
+        <SymbolPicker handleSelectCharacter={handleSelectCharacter} />,
+        popperContainer
+      )
+
+      props.popper.show(inline, popperContainer, 'bottom')
+
+      window.addEventListener('mousedown', handleClickOutside)
+    }, 100)
+
+    return inline
+  }
+
   return new Plugin<DecorationSet, ManuscriptSchema>({
     key: symbolsKey,
     state: {
-      init: (config, state) => {
-        return DecorationSet.create(state.doc, [])
-      },
+      init: (config, state) => DecorationSet.create(state.doc, []),
       apply: (tr, decorations) => {
         decorations = decorations.map(tr.mapping, tr.doc)
 
         const meta = tr.getMeta(symbolsKey)
 
         if (meta) {
-          const { pos } = meta
+          if (meta.add) {
+            decorations = decorations.add(tr.doc, [
+              Decoration.widget(meta.add, createDecoration, {
+                plugin: PLUGIN_NAME,
+              }),
+            ])
+          }
 
-          const decoration = Decoration.widget(pos, (view, getPos) => {
-            const popperContainer = document.createElement('div')
-            popperContainer.className = 'symbol-picker'
-
-            const handleClose = () => {
-              props.popper.destroy()
-              props.unmountReactComponent(popperContainer)
-              window.removeEventListener('click', handleClickOutside)
-            }
-
-            const handleClickOutside = (event: MouseEvent) => {
-              if (
-                event.target &&
-                !popperContainer.contains(event.target as Node)
-              ) {
-                handleClose()
-              }
-            }
-
-            window.addEventListener('click', handleClickOutside)
-
-            const handleSelect = (character: string) => {
-              view.dispatch(view.state.tr.insertText(character, getPos()))
-              handleClose()
-            }
-
-            const inline = document.createElement('span')
-
-            window.setTimeout(() => {
-              props.renderReactComponent(
-                <SymbolPicker handleSelect={handleSelect} />,
-                popperContainer
+          if (meta.remove) {
+            decorations = decorations.remove(
+              decorations.find(
+                undefined,
+                undefined,
+                decoration => decoration.plugin === PLUGIN_NAME
               )
-
-              props.popper.show(inline, popperContainer, 'top')
-            }, 100)
-
-            return inline
-          })
-
-          decorations = decorations.add(tr.doc, [decoration])
+            )
+          }
         }
 
         return decorations
       },
     },
     props: {
-      decorations: state => {
-        return symbolsKey.getState(state)
-      },
+      decorations: state => symbolsKey.getState(state),
     },
   })
 }

@@ -223,9 +223,12 @@ export const menus: MenuItem[] = [
         run: insertCrossReference,
       },
       {
+        role: 'separator',
+      },
+      {
         id: 'insert-symbol',
         label: () => 'Symbol',
-        enable: () => true, // canInsertSymbol,
+        enable: state => state.selection && state.selection.empty,
         run: insertSymbol,
       },
       // {

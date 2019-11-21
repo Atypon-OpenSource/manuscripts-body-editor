@@ -278,7 +278,7 @@ export const insertSymbol = (
   const pos = state.selection.anchor
 
   const tr = state.tr
-    .setMeta(symbolsKey, { pos })
+    .setMeta(symbolsKey, { add: pos })
     .setMeta('addToHistory', false)
 
   if (dispatch) {

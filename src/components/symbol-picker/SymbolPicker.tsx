@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TextField } from '@manuscripts/style-guide'
 import fuzzysort from 'fuzzysort'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FixedSizeList } from 'react-window'
@@ -21,61 +22,73 @@ import styled from 'styled-components'
 
 interface Character {
   character: string
-  codepoint: string
-  names: string[]
-  namesJoined: string
+  entity: string
+  group: string
+  name: string
 }
 
+let sortPromise: Fuzzysort.CancelablePromise<Fuzzysort.KeysResults<Character>>
+
 export const SymbolPicker: React.FC<{
-  handleSelect: (character: string) => void
-}> = React.memo(({ handleSelect }) => {
+  handleSelectCharacter: (character: string) => void
+}> = React.memo(({ handleSelectCharacter }) => {
   const [input, setInput] = useState<string>()
-  // const [blocks, setBlocks] = useState()
   const [characters, setCharacters] = useState<Character[]>()
   const [filteredCharacters, setFilteredCharacters] = useState<Character[]>()
 
   useEffect(() => {
-    // import('./blocks.json').then(({ default: data }) => setBlocks(data))
+    import('./grouped.json').then(
+      ({ default: data }: { default: { [key: string]: object[] } }) => {
+        const output: Character[] = []
 
-    import('./characters.json').then(({ default: data }) =>
-      setCharacters(
-        Object.entries(data).map(([codepoint, names]) => {
-          return {
-            codepoint,
-            names,
-            namesJoined: names.join(', '),
-            character: String.fromCodePoint(parseInt(codepoint, 16)),
+        for (const [group, items] of Object.entries(data)) {
+          for (const item of items) {
+            // @ts-ignore
+            const [character, entity, _codepoint, name] = item
+
+            output.push({
+              character,
+              entity,
+              group,
+              name,
+            })
           }
-        })
-      )
+        }
+
+        setCharacters(output)
+      }
     )
   }, [])
 
   const getItemKey = useCallback(
-    (index: number) => filteredCharacters![index].codepoint,
+    (index: number) => filteredCharacters![index].character,
     [filteredCharacters]
   )
 
   const listRef = useRef<FixedSizeList>(null)
 
   useEffect(() => {
+    if (sortPromise) {
+      sortPromise.cancel()
+    }
+
     if (!input) {
       setFilteredCharacters([])
       return
     }
 
-    // TODO: debounce or cancel?
-    fuzzysort
-      .goAsync<Character>(input, characters!, {
-        keys: ['namesJoined'],
-        limit: 25,
-        allowTypo: false,
-        threshold: -100,
-      })
-      .then(results => {
-        const output = results.map(result => result.obj)
-        setFilteredCharacters(output)
-      })
+    // TODO: debounce?
+    sortPromise = fuzzysort.goAsync<Character>(input, characters!, {
+      keys: ['entity', 'name'],
+      limit: 100,
+      allowTypo: false,
+      threshold: -100,
+    })
+
+    sortPromise.then(results => {
+      const output = results.map(result => result.obj)
+      setFilteredCharacters(output)
+    })
   }, [characters, input])
 
   const handleInputChange = useCallback(event => {
@@ -88,33 +101,43 @@ export const SymbolPicker: React.FC<{
 
   return (
     <div>
-      <SymbolSearch
-        type={'search'}
-        value={input}
-        onChange={handleInputChange}
-        autoFocus={true}
-        placeholder={'Enter the name of a symbol…'}
-      />
+      <SearchContainer>
+        <TextField
+          type={'search'}
+          value={input}
+          onChange={handleInputChange}
+          autoFocus={true}
+          placeholder={'Enter the name of a symbol…'}
+        />
+      </SearchContainer>
+
       <FixedSizeList
         ref={listRef}
         height={300}
         width={600}
         itemCount={filteredCharacters.length}
-        itemSize={32}
+        itemSize={64}
         itemKey={getItemKey}
       >
         {({ index, style }) => {
-          const { character, codepoint, names } = filteredCharacters[index]
+          const { character, name, entity, group } = filteredCharacters[index]
 
           return (
             <SymbolListItem
               style={style}
-              key={codepoint}
-              id={codepoint}
-              onClick={() => handleSelect(character)}
+              key={character}
+              id={character}
+              onClick={() => handleSelectCharacter(character)}
             >
-              <Symbol>{character}</Symbol>
-              <SymbolName>{names[0]}</SymbolName>
+              <SymbolListItemSection>
+                <Symbol>{character}</Symbol>
+                <SymbolName>
+                  {name} {entity && <code>{entity}</code>}
+                </SymbolName>
+              </SymbolListItemSection>
+              <SymbolListItemSection>
+                <SymbolGroup>{group}</SymbolGroup>
+              </SymbolListItemSection>
             </SymbolListItem>
           )
         }}
@@ -123,36 +146,44 @@ export const SymbolPicker: React.FC<{
   )
 })
 
-const SymbolSearch = styled.input`
-  display: block;
+const SearchContainer = styled.div`
   padding: 8px;
-  width: 100%;
-  border: none;
-  font-size: 16px;
 `
 
 const SymbolListItem = styled.div`
   transition: all 200ms ease-in-out;
-  padding: 4px 8px;
+  padding: 8px;
   white-space: nowrap;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  font-size: 24px;
+  box-sizing: border-box;
 
   &:hover {
-    background: #eee;
+    background: #f5fbfc;
   }
+`
+
+const SymbolListItemSection = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const Symbol = styled.div`
   flex-shrink: 0;
   display: flex;
   justify-content: center;
-  width: 2em;
+  width: 32px;
+  font-size: 20px;
 `
 
 const SymbolName = styled.div`
   flex: 1;
   color: #777;
+  font-size: 16px;
+`
+
+const SymbolGroup = styled.div`
+  flex: 1;
+  color: #777;
+  font-size: 16px;
+  padding-left: 32px;
 `
