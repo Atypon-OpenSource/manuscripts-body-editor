@@ -1947,13 +1947,6 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-window@^1.8.1":
-  version "1.8.1"
-  resolved "https://registry.npmjs.org/@types/react-window/-/react-window-1.8.1.tgz#6e1ceab2e6f2f78dbf1f774ee0e00f1bb0364bb3"
-  integrity sha512-V3k1O5cbfZIRa0VVbQ81Ekq/7w42CK1SuiB9U1oPMTxv270D9qUn7rHb3sZoqMkIJFfB1NZxaH7NRDlk+ToDsg==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react@*", "@types/react@^16.8.22":
   version "16.8.22"
   resolved "https://registry.npmjs.org/@types/react/-/react-16.8.22.tgz#7f18bf5ea0c1cad73c46b6b1c804a3ce0eec6d54"
