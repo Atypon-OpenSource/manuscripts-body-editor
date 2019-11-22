@@ -72,6 +72,14 @@ const search = async (
     esearchresult: { count, querykey, webenv },
   } = searchResponse.data
 
+  const total = Number(count)
+  if (!total) {
+    return {
+      total,
+      items: [],
+    }
+  }
+
   const summaryResponse = await axios.get<Response>(
     'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi',
     {
@@ -102,7 +110,7 @@ const search = async (
 
   return {
     items: items.map(convertDataToBibliographyItem) as BibliographyItem[],
-    total: Number(count),
+    total,
   }
 }
 
