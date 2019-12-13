@@ -20,6 +20,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
+  Citation,
   CitationItem,
 } from '@manuscripts/manuscripts-json-schema'
 import { TextSelection } from 'prosemirror-state'
@@ -37,6 +38,7 @@ export class CitationEditableView extends CitationView<EditorProps> {
       permissions,
       projectID,
       renderReactComponent,
+      saveModel,
     } = this.props
 
     const citation = this.getCitation()
@@ -45,6 +47,17 @@ export class CitationEditableView extends CitationView<EditorProps> {
       (citationItem: CitationItem) =>
         getLibraryItem(citationItem.bibliographyItem)
     )
+
+    const updateCitation = async (data: Partial<Citation>) => {
+      await saveModel({
+        ...citation,
+        ...data,
+      })
+
+      this.view.dispatch(this.view.state.tr.setMeta('update', true))
+
+      this.props.popper.update()
+    }
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
@@ -60,6 +73,8 @@ export class CitationEditableView extends CitationView<EditorProps> {
         handleCancel={this.handleCancel}
         handleRemove={this.handleRemove}
         handleCite={this.handleCite}
+        citation={citation}
+        updateCitation={updateCitation}
         projectID={projectID}
         scheduleUpdate={this.props.popper.update}
       />

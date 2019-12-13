@@ -41,6 +41,8 @@ import { bibliographyElementContents } from '../lib/bibliography'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
 
+type DisplayScheme = 'show-all' | 'author-only' | 'suppress-author'
+
 interface PluginState {
   citationNodes: CitationNodes
   citations: CiteProc.Citation[]
@@ -78,6 +80,14 @@ export default (props: Props) => {
     return citationNodes
   }
 
+  const chooseMode = (displayScheme?: DisplayScheme) => {
+    if (displayScheme === 'show-all') {
+      return undefined
+    }
+
+    return displayScheme
+  }
+
   const buildCitations = (citationNodes: CitationNodes): CiteProc.Citation[] =>
     citationNodes.map(([node, pos, citation]) => ({
       citationID: citation._id,
@@ -87,7 +97,10 @@ export default (props: Props) => {
           data: props.getLibraryItem(citationItem.bibliographyItem), // for comparison
         })
       ),
-      properties: { noteIndex: 0 },
+      properties: {
+        noteIndex: 0,
+        mode: chooseMode(citation.displayScheme),
+      },
       manuscript: props.getManuscript(), // for comparison
     }))
 
