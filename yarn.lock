@@ -3732,10 +3732,10 @@ circular-json-es6@^2.0.1:
   resolved "https://registry.npmjs.org/circular-json-es6/-/circular-json-es6-2.0.2.tgz#e4f4a093e49fb4b6aba1157365746112a78bd344"
   integrity sha512-ODYONMMNb3p658Zv+Pp+/XPa5s6q7afhz3Tzyvo+VRh9WIrJ64J76ZC4GQxnlye/NesTn09jvOiuE8+xxfpwhQ==
 
-citeproc@^2.2.10:
-  version "2.2.10"
-  resolved "https://registry.npmjs.org/citeproc/-/citeproc-2.2.10.tgz#f74fee53db484ae7be6ec3bbc5265828a655aa32"
-  integrity sha512-ylqV/0anr98ZJ1M1QIIGt9sPdFeN1+CV0isRHrpHkAvhWgcZFDAimhiHvg118UVIykXljtBKA/ZSeYbxKVF0jw==
+citeproc@^2.2.30:
+  version "2.2.30"
+  resolved "https://registry.npmjs.org/citeproc/-/citeproc-2.2.30.tgz#cb53fe03cb7ba56c2bb40599b1fb6b2b301137fe"
+  integrity sha512-8EFCQiKCh4MC5mKgNiME/8tco4sehq2iZDvkX7NlI3tAS8fhUGlnbQZopeHVdHnj/LD69OEsj/yjiNZYPjHHCw==
 
 class-utils@^0.3.5:
   version "0.3.6"

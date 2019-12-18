@@ -35,7 +35,7 @@
     "astrocite-eutils": "^0.16.0",
     "axios": "^0.19.0",
     "blob-util": "^2.0.2",
-    "citeproc": "^2.2.10",
+    "citeproc": "^2.2.30",
     "codemirror": "^5.48.0",
     "crypto-hash": "^1.2.1",
     "dompurify": "^2.0.0",
