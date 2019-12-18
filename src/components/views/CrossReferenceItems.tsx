@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { PrimaryButton, SecondaryButton } from '@manuscripts/style-guide'
+import {
+  ButtonGroup,
+  PrimaryButton,
+  SecondaryButton,
+} from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 import { Target } from '../../plugins/objects'
@@ -22,12 +26,23 @@ import { Target } from '../../plugins/objects'
 const Container = styled.div`
   padding: ${props => props.theme.grid.unit * 3}px
     ${props => props.theme.grid.unit * 4}px;
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+  overflow: hidden;
 `
 
 const Actions = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-shrink: 0;
+`
+
+const Items = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  margin: ${props => props.theme.grid.unit * 4}px 0;
 `
 
 const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
@@ -60,13 +75,26 @@ const Heading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${props => props.theme.grid.unit * 4}px;
+  flex-shrink: 0;
+  font-weight: ${props => props.theme.font.weight.bold};
 `
 
 const Empty = styled.div`
   margin-bottom: ${props => props.theme.grid.unit * 4}px;
   color: ${props => props.theme.colors.text.tertiary};
 `
+
+// trim a caption, avoiding cutting words
+const trimmedCaption = (caption: string, limit: number): string => {
+  if (caption.length <= limit) {
+    return caption
+  }
+
+  const captionSearch = new RegExp(`^(.{${limit}}[^\\s]*).*`)
+
+  return caption.replace(captionSearch, '$1…')
+}
+
 interface Props {
   referencedObject: string | null
   targets: Target[]
@@ -89,32 +117,40 @@ export class CrossReferenceItems extends React.Component<Props, State> {
     return (
       <Container>
         <Heading>Insert Cross-reference</Heading>
-        {targets.length ? (
-          targets.map(target => (
-            <CrossReferenceItem
-              key={target.id}
-              isSelected={this.state.selectedItem === target.id}
-              onMouseDown={() =>
-                this.setState({
-                  selectedItem: target.id,
-                })
-              }
-            >
-              <Label>{target.label}</Label>
-              <Caption>{target.caption && ': ' + target.caption}</Caption>
-            </CrossReferenceItem>
-          ))
-        ) : (
-          <Empty>No cross-reference targets available.</Empty>
-        )}
+
+        <Items>
+          {targets.length ? (
+            targets.map(target => (
+              <CrossReferenceItem
+                key={target.id}
+                isSelected={this.state.selectedItem === target.id}
+                onMouseDown={() =>
+                  this.setState({
+                    selectedItem: target.id,
+                  })
+                }
+              >
+                <Label>{target.label}</Label>
+                <Caption>
+                  {target.caption && ': ' + trimmedCaption(target.caption, 200)}
+                </Caption>
+              </CrossReferenceItem>
+            ))
+          ) : (
+            <Empty>No cross-reference targets available.</Empty>
+          )}
+        </Items>
+
         <Actions>
-          <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-          <PrimaryButton
-            onClick={() => handleSelect(this.state.selectedItem!)}
-            disabled={!this.state.selectedItem}
-          >
-            Insert
-          </PrimaryButton>
+          <ButtonGroup>
+            <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+            <PrimaryButton
+              onClick={() => handleSelect(this.state.selectedItem!)}
+              disabled={!this.state.selectedItem}
+            >
+              Insert
+            </PrimaryButton>
+          </ButtonGroup>
         </Actions>
       </Container>
     )
