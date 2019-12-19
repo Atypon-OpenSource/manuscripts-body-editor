@@ -75,7 +75,7 @@
     "@babel/preset-typescript": "^7.1.0",
     "@manuscripts/data": "^0.0.2",
     "@manuscripts/examples": "^0.0.6",
-    "@manuscripts/manuscript-transform": "^0.19.1",
+    "@manuscripts/manuscript-transform": "^0.20.0",
     "@manuscripts/publish": "^0.2.2",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.14.0",
@@ -143,7 +143,7 @@
   },
   "peerDependencies": {
     "@manuscripts/data": "^0.0.2",
-    "@manuscripts/manuscript-transform": "^0.19.1",
+    "@manuscripts/manuscript-transform": "^0.20.0",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.14.0",
     "comlink": "^4.0.1",
