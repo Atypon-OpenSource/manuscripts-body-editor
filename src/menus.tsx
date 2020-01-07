@@ -269,6 +269,17 @@ export const menus: MenuItem[] = [
         run: toggleMark(schema.marks.italic),
       },
       {
+        id: 'format-strikethrough',
+        label: () => 'Strikethrough',
+        accelerator: {
+          mac: 'CommandOrControl+Shift+X',
+          pc: 'CommandOrControl+Shift+X',
+        },
+        active: markActive(schema.marks.strikethrough),
+        enable: toggleMark(schema.marks.strikethrough),
+        run: toggleMark(schema.marks.strikethrough),
+      },
+      {
         id: 'format-underline',
         label: () => 'Underline',
         accelerator: {

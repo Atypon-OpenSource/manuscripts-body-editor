@@ -51,6 +51,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-a': selectAllIsolating,
   'Mod-b': toggleMark(schema.marks.bold),
   'Mod-i': toggleMark(schema.marks.italic),
+  'Shift-Mod-x': toggleMark(schema.marks.strikethrough),
   'Mod-u': toggleMark(schema.marks.underline),
   // 'Mod-`': toggleMark(schema.marks.code),
   'Mod-Alt-=': toggleMark(schema.marks.superscript),
