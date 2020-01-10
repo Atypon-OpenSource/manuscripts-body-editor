@@ -22,6 +22,7 @@
     "prebuild": "rimraf dist",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preversion": "npm-run-all --parallel typecheck lint test",
+    "storybook": "start-storybook -p 9001 -c .storybook",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "version": "yarn build"
@@ -80,6 +81,8 @@
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.15.1",
     "@manuscripts/tslint-config": "^0.1.4",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/react": "^5.2.8",
     "@types/codemirror": "^0.0.74",
     "@types/dompurify": "^0.0.33",
     "@types/enzyme": "^3.9.3",
@@ -108,6 +111,7 @@
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/styled-components": "^4.1.16",
     "@types/uuid": "^3.4.4",
+    "babel-loader": "^8.0.6",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "comlink": "^4.0.1",
@@ -139,7 +143,9 @@
     "style-loader": "^0.23.1",
     "styled-components": "^4.3.2",
     "tslint": "^5.18.0",
-    "typescript": "3.5.2"
+    "typescript": "3.5.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "peerDependencies": {
     "@manuscripts/data": "^0.0.2",
