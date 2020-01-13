@@ -59,7 +59,6 @@ export interface EditorProps extends ViewerProps {
     id: string,
     attachment: RxAttachmentCreator
   ) => Promise<RxAttachment<Model>>
-  removeAttachment: (id: string, attachmentID: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void
   matchLibraryItemByIdentifier: (

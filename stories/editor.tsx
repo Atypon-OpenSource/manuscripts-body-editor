@@ -62,6 +62,5 @@ storiesOf('Editor', module).add('basic', () => (
     saveModel={console.log} // (model) => Promise<void>
     deleteModel={console.log} // (id: string) => Promise<void>
     putAttachment={console.log} // (id: string, File: File/Blob) => Promise<void>
-    removeAttachment={console.log} // (id: string, attachmentId: string) => Promise()
   />
 ))
