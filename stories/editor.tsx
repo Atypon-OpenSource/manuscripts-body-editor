@@ -59,7 +59,6 @@ storiesOf('Editor', module).add('basic', () => (
     permissions={{ write: true }}
     history={createBrowserHistory()} // why is this here? can we live without it?
     jupyterConfig={{ url: '', token: '' }} // can we get rid of this? Can it be an external component somehow?
-    retrySync={console.log} // does this really belong here? Can we get rid of it?
     saveModel={console.log} // (model) => Promise<void>
     deleteModel={console.log} // (id: string) => Promise<void>
     putAttachment={console.log} // (id: string, File: File/Blob) => Promise<void>

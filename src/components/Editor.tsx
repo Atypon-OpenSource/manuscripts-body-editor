@@ -68,7 +68,7 @@ export interface EditorProps extends ViewerProps {
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   subscribe: (receive: ChangeReceiver) => void
   setView: (view: ManuscriptEditorView) => void
-  retrySync: (componentIDs: string[]) => Promise<void>
+  retrySync?: (componentIDs: string[]) => Promise<void>
   handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
   setCommentTarget: (commentTarget?: string) => void
   jupyterConfig: {
