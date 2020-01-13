@@ -35,6 +35,7 @@ import {
   insertCrossReference,
   insertInlineCitation,
   insertInlineEquation,
+  insertKeywordsSection,
   insertLink,
   markActive,
 } from './commands'
@@ -233,6 +234,12 @@ export const menus: MenuItem[] = [
       // },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-keywords',
+        label: () => 'Keywords',
+        enable: insertKeywordsSection,
+        run: insertKeywordsSection,
       },
       {
         id: 'insert-bibliography',

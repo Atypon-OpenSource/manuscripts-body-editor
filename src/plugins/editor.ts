@@ -26,6 +26,7 @@ import rules from '../rules'
 import bibliography from './bibliography'
 import elements from './elements'
 import highlights from './highlight'
+import keywords from './keywords'
 import models from './models'
 import objects from './objects'
 import paragraphs from './paragraphs'
@@ -46,6 +47,7 @@ export default (props: EditorProps) => [
   persist(),
   sections(),
   styles(props),
+  keywords(props),
   bibliography(props),
   objects(props),
   paragraphs(),

@@ -318,6 +318,34 @@ export const insertInlineFootnote = (
   return true
 }
 
+export const insertKeywordsSection = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  // TODO: use SectionCategory for title and to enforce uniqueness
+
+  if (getChildOfType(state.doc, state.schema.nodes.keywords_section)) {
+    return false
+  }
+
+  const section = state.schema.nodes.keywords_section.createAndFill({}, [
+    state.schema.nodes.section_title.create({}, state.schema.text('Keywords')),
+  ]) as BibliographySectionNode
+
+  const pos = 0
+
+  const tr = state.tr
+
+  tr.insert(pos, section)
+
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
 export const insertBibliographySection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
