@@ -29,10 +29,14 @@ export class LinkView<PropsType extends ViewerProps>
   }
 
   public updateContents = () => {
-    const { href } = this.node.attrs
+    const { href, title } = this.node.attrs
 
     if (href && allowedHref(href)) {
       this.dom.setAttribute('href', href)
+    }
+
+    if (title) {
+      this.dom.setAttribute('title', title)
     }
   }
 

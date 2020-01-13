@@ -26,6 +26,7 @@ import { allowedHref } from '../../lib/url'
 export interface LinkValue {
   text: string
   href: string
+  title?: string
 }
 
 export const LinkForm: React.FC<{
@@ -36,13 +37,14 @@ export const LinkForm: React.FC<{
 }> = ({ handleCancel, handleRemove, handleSave, value }) => {
   const [href, setHref] = useState(value.href)
   const [text, setText] = useState(value.text)
+  const [title, setTitle] = useState(value.title || '')
 
   const handleSubmit = useCallback(
     event => {
       event.preventDefault()
-      handleSave({ href, text })
+      handleSave({ href, text, title })
     },
-    [href, text]
+    [href, text, title]
   )
 
   return (
@@ -86,16 +88,35 @@ export const LinkForm: React.FC<{
         />
       </Field>
 
+      <Field>
+        <FieldHeading>
+          <Label>Title (optional)</Label>
+        </FieldHeading>
+
+        <TextField
+          type={'text'}
+          name={'title'}
+          value={title}
+          autoComplete={'off'}
+          required={false}
+          onChange={event => {
+            setTitle(event.target.value)
+          }}
+        />
+      </Field>
+
       <Actions>
         <ActionGroup>
-          <SecondaryButton mini={true} onClick={handleRemove}>
+          <SecondaryButton type={'button'} mini={true} onClick={handleRemove}>
             Remove Link
           </SecondaryButton>
         </ActionGroup>
 
         <ActionGroup>
-          <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit">Save</PrimaryButton>
+          <SecondaryButton type={'button'} onClick={handleCancel}>
+            Cancel
+          </SecondaryButton>
+          <PrimaryButton type={'submit'}>Save</PrimaryButton>
         </ActionGroup>
       </Actions>
     </Form>
@@ -116,10 +137,14 @@ const Actions = styled.div`
 const ActionGroup = styled.span`
   display: flex;
   align-items: center;
+
+  button:not(:last-of-type) {
+    margin-right: 4px;
+  }
 `
 
 const Field = styled.div`
-  margin-bottom: 16px;4px;
+  margin-bottom: ${props => props.theme.grid.unit * 4}px;
 `
 
 const FieldHeading = styled.div`

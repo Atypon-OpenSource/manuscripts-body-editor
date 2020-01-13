@@ -52,6 +52,7 @@ export class LinkEditableView extends LinkView<EditorProps> {
 
     const originalValue: LinkValue = {
       href: this.node.attrs.href,
+      title: this.node.attrs.title,
       text: this.node.textContent,
     }
 
@@ -92,10 +93,14 @@ export class LinkEditableView extends LinkView<EditorProps> {
 
           const pos = this.getPos()
 
-          if (data.href !== originalValue.href) {
+          if (
+            data.href !== originalValue.href ||
+            data.title !== originalValue.title
+          ) {
             tr.setNodeMarkup(pos, undefined, {
               ...this.node.attrs,
               href: data.href,
+              title: data.title,
             })
           }
 
