@@ -17,19 +17,10 @@
 import {
   Build,
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  Manuscript,
-  Model,
-  UserProfile,
-  // Section,
-} from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
-import CiteProc from 'citeproc'
-import { History, LocationListener, UnregisterCallback } from 'history'
+import { Model } from '@manuscripts/manuscripts-json-schema'
+import { LocationListener, UnregisterCallback } from 'history'
 import {
   NodeSelection,
   Plugin,
@@ -38,7 +29,6 @@ import {
 } from 'prosemirror-state'
 import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
-import { PopperManager } from '../lib/popper'
 import {
   childSectionCoordinates,
   diffReplacementBlocks,
@@ -46,51 +36,18 @@ import {
 } from '../lib/section-sync'
 import '../lib/smooth-scroll'
 import { ChangeReceiver, ChangeReceiverCommand } from '../types'
+import { ViewerBaseProps } from './Viewer'
 
-export interface EditorBaseProps {
-  attributes?: { [key: string]: string }
-  doc: ManuscriptNode
-  getModel: <T extends Model>(id: string) => T | undefined
-  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
-  getManuscript: () => Manuscript
-  getLibraryItem: (id: string) => BibliographyItem | undefined
-  locale: string
-  modelMap: Map<string, Model>
-  popper: PopperManager
-  manuscript: Manuscript
-  projectID: string
-  getCurrentUser: () => UserProfile
-  history: History
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
-  unmountReactComponent: (container: HTMLElement) => void
+export interface EditorBaseProps extends ViewerBaseProps {
   autoFocus?: boolean
-  getCitationProcessor: () => CiteProc.Engine | undefined
   plugins: Array<Plugin<ManuscriptSchema>>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  putAttachment: (
-    id: string,
-    attachment: RxAttachmentCreator
-  ) => Promise<RxAttachment<Model>>
   deleteModel: (id: string) => Promise<string>
-  setLibraryItem: (item: BibliographyItem) => void
-  matchLibraryItemByIdentifier: (
-    item: BibliographyItem
-  ) => BibliographyItem | undefined
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   subscribe: (receive: ChangeReceiver) => void
   setView: (view: ManuscriptEditorView) => void
-  retrySync?: (componentIDs: string[]) => Promise<void>
   handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
-  setCommentTarget: (commentTarget?: string) => void
-  jupyterConfig: {
-    url: string
-    token: string
-  }
   permissions: {
     write: boolean
-  }
-  components: {
-    [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
   }
   environment?: string
 }
@@ -128,11 +85,13 @@ export abstract class EditorBase<
       this.view.focus()
     }
 
-    this.handleHistoryChange(this.props.history.location, 'PUSH')
+    if (this.props.history) {
+      this.handleHistoryChange(this.props.history.location, 'PUSH')
 
-    this.unregisterHistoryListener = this.props.history.listen(
-      this.handleHistoryChange
-    )
+      this.unregisterHistoryListener = this.props.history.listen(
+        this.handleHistoryChange
+      )
+    }
   }
 
   public componentWillUnmount() {

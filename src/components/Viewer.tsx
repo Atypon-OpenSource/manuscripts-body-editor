@@ -37,11 +37,10 @@ import '../lib/smooth-scroll'
 import plugins from '../plugins/viewer'
 import views from '../views/viewer'
 
-export interface ViewerProps {
+export interface ViewerBaseProps {
   attributes?: { [key: string]: string }
   doc: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
-  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
   locale: string
@@ -50,12 +49,16 @@ export interface ViewerProps {
   manuscript: Manuscript
   projectID: string
   getCurrentUser: () => UserProfile
-  history: History
+  history?: History
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
   unmountReactComponent: (container: HTMLElement) => void
   components: {
     [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
   }
+}
+
+export interface ViewerProps extends ViewerBaseProps {
+  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
 }
 
 export class Viewer extends React.PureComponent<ViewerProps> {

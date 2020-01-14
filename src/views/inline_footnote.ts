@@ -28,6 +28,8 @@ export class InlineFootnoteView<PropsType extends ViewerProps>
   }
 
   public selectNode = () => {
+    if (!this.props.history) return
+
     // TODO: select and scroll to the footnote without changing the URL?
     this.props.history.push('#' + this.node.attrs.rid)
   }

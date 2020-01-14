@@ -33,7 +33,7 @@ export class CrossReferenceView<PropsType extends ViewerProps>
       this.node.attrs.rid
     )
 
-    if (auxiliaryObjectReference) {
+    if (auxiliaryObjectReference && this.props.history) {
       this.props.history.push({
         pathname: this.props.history.location.pathname,
         hash: '#' + auxiliaryObjectReference.referencedObject,

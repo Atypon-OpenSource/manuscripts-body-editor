@@ -15,6 +15,13 @@
  */
 
 import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
+import {
+  BibliographyItem,
+  Model,
+  UserProfile,
+} from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
+import CiteProc from 'citeproc'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import 'prosemirror-view/style/prosemirror.css'
@@ -24,7 +31,26 @@ import plugins from '../plugins/editor'
 import views from '../views/editor'
 import { EditorBase, EditorBaseProps } from './EditorBase'
 
-export interface EditorProps extends EditorBaseProps {}
+export interface EditorProps extends EditorBaseProps {
+  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
+  putAttachment: (
+    id: string,
+    attachment: RxAttachmentCreator
+  ) => Promise<RxAttachment<Model>>
+  getCurrentUser: () => UserProfile
+  getCitationProcessor: () => CiteProc.Engine | undefined
+  setLibraryItem: (item: BibliographyItem) => void
+  matchLibraryItemByIdentifier: (
+    item: BibliographyItem
+  ) => BibliographyItem | undefined
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  retrySync: (componentIDs: string[]) => Promise<void>
+  setCommentTarget: (commentTarget?: string) => void
+  jupyterConfig: {
+    url: string
+    token: string
+  }
+}
 
 export class Editor extends EditorBase<EditorProps> {
   constructor(props: EditorProps) {
