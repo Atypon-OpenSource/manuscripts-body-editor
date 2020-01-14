@@ -26,13 +26,15 @@ import {
   Model,
   ObjectTypes,
   PageLayout,
+  ParagraphStyle,
   TableStyle,
 } from '@manuscripts/manuscripts-json-schema'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-const DEFAULT_TABLE_STYLE = 'MPTableStyle:default'
-
+const isParagraphStyle = hasObjectType<ParagraphStyle>(
+  ObjectTypes.ParagraphStyle
+)
 const isTableStyle = hasObjectType<TableStyle>(ObjectTypes.TableStyle)
 
 interface Props {
@@ -44,7 +46,18 @@ interface Props {
 export default (props: Props) => {
   const findDefaultTableStyle = (): TableStyle | undefined => {
     for (const model of props.modelMap.values()) {
-      if (isTableStyle(model) && model.prototype === DEFAULT_TABLE_STYLE) {
+      if (isTableStyle(model) && model.prototype === 'MPTableStyle:default') {
+        return model
+      }
+    }
+  }
+
+  const findDefaultTOCStyle = (): ParagraphStyle | undefined => {
+    for (const model of props.modelMap.values()) {
+      if (
+        isParagraphStyle(model) &&
+        model.prototype === 'MPParagraphStyle:toc'
+      ) {
         return model
       }
     }
@@ -148,10 +161,26 @@ export default (props: Props) => {
           )
 
           if (pageLayout) {
+            const chooseParagraphStyle = (
+              node: ManuscriptNode
+            ): string | undefined => {
+              switch (node.type) {
+                case node.type.schema.nodes.toc_element:
+                  const defaultStyle = findDefaultTOCStyle()
+
+                  return defaultStyle ? defaultStyle._id : undefined
+
+                default:
+                  return pageLayout.defaultParagraphStyle
+              }
+            }
+
             for (const { node, pos } of nodesNeedingParagraphStyle) {
+              const paragraphStyle = chooseParagraphStyle(node)
+
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
-                paragraphStyle: pageLayout.defaultParagraphStyle,
+                paragraphStyle,
               })
             }
 

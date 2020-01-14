@@ -15,13 +15,17 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
-import { Properties } from 'csstype'
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 
 export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
   implements ManuscriptNodeView {
-  public viewAttributes = ['id', 'placeholder', 'paragraphStyle']
+  public viewAttributes = {
+    id: 'id',
+    placeholder: 'placeholder',
+    paragraphStyle: 'data-paragraph-style',
+  }
+
   // public readonly icons = {
   //   plus:
   //     '<svg width="16" height="16" stroke="currentColor"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>',
@@ -46,13 +50,16 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
   }
 
   public updateContents = () => {
+    this.updateClasses()
+    this.updateAttributes()
+  }
+
+  public updateClasses = () => {
     if (!this.contentDOM) {
       return
     }
 
     this.contentDOM.classList.toggle('empty-node', !this.node.childCount)
-
-    this.updateAttributes()
   }
 
   public updateAttributes = () => {
@@ -60,14 +67,14 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
       return
     }
 
-    for (const key of this.viewAttributes) {
+    for (const [key, target] of Object.entries(this.viewAttributes)) {
       if (key in this.node.attrs) {
         const value = this.node.attrs[key]
 
         if (value) {
-          this.contentDOM.setAttribute(key, value)
+          this.contentDOM.setAttribute(target, value)
         } else {
-          this.contentDOM.removeAttribute(key)
+          this.contentDOM.removeAttribute(target)
         }
       }
     }
@@ -78,12 +85,6 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
     this.contentDOM.className = 'block'
 
     this.dom.appendChild(this.contentDOM)
-  }
-
-  public applyStyles = (node: HTMLElement, styles: Properties) => {
-    Object.entries(styles).forEach(([key, value]) => {
-      node.style.setProperty(key, value)
-    })
   }
 
   public createDOM = () => {

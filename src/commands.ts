@@ -29,6 +29,7 @@ import {
   ManuscriptNodeType,
   ManuscriptTextSelection,
   ManuscriptTransaction,
+  TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 
 import { ResolvedPos } from 'prosemirror-model'
@@ -41,6 +42,7 @@ import {
   SET_COMMENT_TARGET,
 } from './plugins/highlight'
 import { INSERT, modelsKey } from './plugins/models'
+// import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
@@ -372,6 +374,39 @@ export const insertBibliographySection = (
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
     dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
+export const insertTOCSection = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  if (getChildOfType(state.doc, state.schema.nodes.toc_section)) {
+    return false
+  }
+
+  const section = state.schema.nodes.toc_section.createAndFill({}, [
+    state.schema.nodes.section_title.create(
+      {},
+      state.schema.text('Table of Contents')
+    ),
+  ]) as TOCSectionNode
+
+  const pos = 0
+
+  const tr = state.tr.insert(
+    pos,
+    section
+  ) /*.setMeta(tocKey, {
+    tocInserted: true,
+  })*/
+
+  if (dispatch) {
+    dispatch(
+      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
+    )
   }
 
   return true

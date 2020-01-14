@@ -230,6 +230,11 @@ describe('editor view', () => {
 
     const sectionWithEmptyParagraphs = view.state.doc.child(5)
     expect(sectionWithEmptyParagraphs.childCount).toBe(3)
+
+    const tableOfContentsSection = view.state.doc.child(0)
+    expect(
+      tableOfContentsSection.content.child(1).attrs.contents
+    ).toMatchSnapshot()
   })
 
   test('loads with plugins', () => {
@@ -257,12 +262,24 @@ describe('editor view', () => {
 
     const sectionWithEmptyParagraphs = view.state.doc.child(4)
     expect(sectionWithEmptyParagraphs.childCount).toBe(2)
-    expect(emptySection.content.child(0).type).toBe(
-      emptySection.type.schema.nodes.section_title
+    expect(sectionWithEmptyParagraphs.content.child(0).type).toBe(
+      sectionWithEmptyParagraphs.type.schema.nodes.section_title
     )
-    expect(emptySection.content.child(1).type).toBe(
-      emptySection.type.schema.nodes.paragraph
+    expect(sectionWithEmptyParagraphs.content.child(1).type).toBe(
+      sectionWithEmptyParagraphs.type.schema.nodes.paragraph
     )
-    expect(emptySection.content.child(1).textContent).toBe('')
+    expect(sectionWithEmptyParagraphs.content.child(1).textContent).toBe('')
+
+    const tableOfContentsSection = view.state.doc.child(0)
+    expect(tableOfContentsSection.type).toBe(
+      tableOfContentsSection.type.schema.nodes.toc_section
+    )
+    expect(tableOfContentsSection.childCount).toBe(2)
+    expect(tableOfContentsSection.content.child(0).type).toBe(
+      tableOfContentsSection.type.schema.nodes.section_title
+    )
+    expect(tableOfContentsSection.content.child(1).type).toBe(
+      tableOfContentsSection.type.schema.nodes.toc_element
+    )
   })
 })

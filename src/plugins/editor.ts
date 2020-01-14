@@ -34,6 +34,7 @@ import persist from './persist'
 import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
+import toc from './toc'
 
 export default (props: EditorProps) => [
   rules,
@@ -46,6 +47,7 @@ export default (props: EditorProps) => [
   elements(),
   persist(),
   sections(),
+  toc(props),
   styles(props),
   keywords(props),
   bibliography(props),

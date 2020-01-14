@@ -37,6 +37,7 @@ import {
   insertInlineEquation,
   insertKeywordsSection,
   insertLink,
+  insertTOCSection,
   markActive,
 } from './commands'
 import { MenuItem } from './components/menu/ApplicationMenu'
@@ -234,6 +235,12 @@ export const menus: MenuItem[] = [
       // },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-toc',
+        label: () => 'Table of Contents',
+        enable: insertTOCSection,
+        run: insertTOCSection,
       },
       {
         id: 'insert-keywords',

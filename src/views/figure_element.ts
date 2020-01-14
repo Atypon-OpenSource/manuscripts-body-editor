@@ -59,6 +59,12 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
     container.appendChild(this.contentDOM)
   }
 
+  public applyStyles = (node: HTMLElement, styles: CSS.PropertiesHyphen) => {
+    Object.entries(styles).forEach(([key, value]) => {
+      node.style.setProperty(key, value)
+    })
+  }
+
   public updateContents = () => {
     const { suppressCaption } = this.node.attrs
 

@@ -1642,10 +1642,12 @@
   dependencies:
     "@types/tern" "*"
 
-"@types/dompurify@^0.0.33":
-  version "0.0.33"
-  resolved "https://registry.npmjs.org/@types/dompurify/-/dompurify-0.0.33.tgz#bec490ba5a5b4b31679fb9e5a70e4d2f405516bd"
-  integrity sha512-lUN9iC6b4txeaEef2PW7zIdhEKAp0Sw9bymOcXXZ7BaepB0nsDJYcLIrFfgpIkRSoZWBJ8IcYunB2hAXuHL1NA==
+"@types/dompurify@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/@types/dompurify/-/dompurify-2.0.1.tgz#0bf3a9f8ee21d81adb20b8c374ab034d6a74dbf7"
+  integrity sha512-OQ16dECrRv/I//woKkVUxyVGYR94W3qp3Wy//B63awHVe3h/1/URFqP5a/V2m4k01DEvWs1+z7FWW3xfM1lH3Q==
+  dependencies:
+    "@types/trusted-types" "*"
 
 "@types/enzyme-adapter-react-16@^1.0.3":
   version "1.0.5"
@@ -1982,6 +1984,11 @@
   version "2.3.5"
   resolved "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-2.3.5.tgz#9da44ed75571999b65c37b60c9b2b88db54c585d"
   integrity sha512-SCcK7mvGi3+ZNz833RRjFIxrn4gI1PPR3NtuIS+6vMkvmsGjosqTJwRt5bAEFLRz+wtJMWv8+uOnZf2hi2QXTg==
+
+"@types/trusted-types@*":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-1.0.4.tgz#922d092c84a776a59acb0bd6785fd82b59b9bad5"
+  integrity sha512-6jtHrHpmiXOXoJ31Cg9R+iEVwuEKPf0XHwFUI93eEPXx492/J2JHyafkleKE2EYzZprayk9FSjTyK1GDqcwDng==
 
 "@types/unist@*", "@types/unist@^2.0.0", "@types/unist@^2.0.2":
   version "2.0.3"
@@ -5058,10 +5065,10 @@ domhandler@^2.3.0:
   dependencies:
     domelementtype "1"
 
-dompurify@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/dompurify/-/dompurify-2.0.0.tgz#2afb46460fc3f72096f4e77537edd9811dcdf512"
-  integrity sha512-i8LWSIMDpGmv7AbOcQOyy54L4TrRhjs6yrSessoNeYspsAtgaKiiGeBAG5959qLfhGvyndkHeyZWxx0dd4iDxw==
+dompurify@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.npmjs.org/dompurify/-/dompurify-2.0.7.tgz#f8266ad38fe1602fb5b3222f31eedbf5c16c4fd5"
+  integrity sha512-S3O0lk6rFJtO01ZTzMollCOGg+WAtCwS3U5E2WSDY/x/sy7q70RjEC4Dmrih5/UqzLLB9XoKJ8KqwBxaNvBu4A==
 
 domutils@1.5.1:
   version "1.5.1"
