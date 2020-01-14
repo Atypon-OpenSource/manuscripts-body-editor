@@ -105,6 +105,10 @@ export abstract class EditorBase<
 
   private unregisterHistoryListener?: UnregisterCallback
 
+  constructor(props: P) {
+    super(props)
+  }
+
   public componentDidMount() {
     window.addEventListener('mousedown', this.handleMouseDown)
     window.addEventListener('mouseup', this.handleMouseUp)
