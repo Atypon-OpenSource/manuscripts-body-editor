@@ -143,7 +143,7 @@
   },
   "peerDependencies": {
     "@manuscripts/data": "^0.0.2",
-    "@manuscripts/manuscript-transform": "^0.20.0",
+    "@manuscripts/manuscript-transform": "^0.21.0",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.15.1",
     "comlink": "^4.0.1",
