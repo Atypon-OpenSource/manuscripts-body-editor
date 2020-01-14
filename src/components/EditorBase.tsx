@@ -1,0 +1,374 @@
+/*!
+ * © 2019 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {
+  Build,
+  ManuscriptEditorView,
+  ManuscriptNode,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
+import {
+  BibliographyItem,
+  Manuscript,
+  Model,
+  UserProfile,
+  // Section,
+} from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
+import CiteProc from 'citeproc'
+import { History, LocationListener, UnregisterCallback } from 'history'
+import {
+  NodeSelection,
+  Plugin,
+  TextSelection,
+  Transaction,
+} from 'prosemirror-state'
+import 'prosemirror-view/style/prosemirror.css'
+import React from 'react'
+import { PopperManager } from '../lib/popper'
+import {
+  childSectionCoordinates,
+  diffReplacementBlocks,
+  findDescendantById,
+} from '../lib/section-sync'
+import '../lib/smooth-scroll'
+import { ChangeReceiver, ChangeReceiverCommand } from '../types'
+
+export interface EditorBaseProps {
+  attributes?: { [key: string]: string }
+  doc: ManuscriptNode
+  getModel: <T extends Model>(id: string) => T | undefined
+  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
+  getManuscript: () => Manuscript
+  getLibraryItem: (id: string) => BibliographyItem | undefined
+  locale: string
+  modelMap: Map<string, Model>
+  popper: PopperManager
+  manuscript: Manuscript
+  projectID: string
+  getCurrentUser: () => UserProfile
+  history: History
+  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  unmountReactComponent: (container: HTMLElement) => void
+  autoFocus?: boolean
+  getCitationProcessor: () => CiteProc.Engine | undefined
+  plugins: Array<Plugin<ManuscriptSchema>>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  putAttachment: (
+    id: string,
+    attachment: RxAttachmentCreator
+  ) => Promise<RxAttachment<Model>>
+  deleteModel: (id: string) => Promise<string>
+  setLibraryItem: (item: BibliographyItem) => void
+  matchLibraryItemByIdentifier: (
+    item: BibliographyItem
+  ) => BibliographyItem | undefined
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  subscribe: (receive: ChangeReceiver) => void
+  setView: (view: ManuscriptEditorView) => void
+  retrySync?: (componentIDs: string[]) => Promise<void>
+  handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
+  setCommentTarget: (commentTarget?: string) => void
+  jupyterConfig: {
+    url: string
+    token: string
+  }
+  permissions: {
+    write: boolean
+  }
+  components: {
+    [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
+  }
+  environment?: string
+}
+
+export abstract class EditorBase<
+  P extends EditorBaseProps
+> extends React.PureComponent<P> {
+  protected isMouseDown: boolean = false
+  protected view: ManuscriptEditorView
+
+  protected readonly editorRef = React.createRef<HTMLDivElement>()
+
+  private unregisterHistoryListener?: UnregisterCallback
+
+  public componentDidMount() {
+    window.addEventListener('mousedown', this.handleMouseDown)
+    window.addEventListener('mouseup', this.handleMouseUp)
+
+    if (this.editorRef.current) {
+      this.editorRef.current.appendChild(this.view.dom)
+    }
+
+    this.props.subscribe(this.receive)
+    this.props.handleStateChange(this.view, false)
+    this.props.setView(this.view)
+
+    // dispatch a transaction so that plugins run
+    this.view.dispatch(this.view.state.tr.setMeta('update', true))
+
+    if (this.props.autoFocus) {
+      this.view.focus()
+    }
+
+    this.handleHistoryChange(this.props.history.location, 'PUSH')
+
+    this.unregisterHistoryListener = this.props.history.listen(
+      this.handleHistoryChange
+    )
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener('mousedown', this.handleMouseDown)
+    window.removeEventListener('mouseup', this.handleMouseUp)
+
+    if (this.unregisterHistoryListener) {
+      this.unregisterHistoryListener()
+    }
+  }
+
+  public render() {
+    return <div ref={this.editorRef} />
+  }
+
+  protected dispatchTransaction = (
+    transaction: Transaction,
+    external: boolean = false
+  ) => {
+    const { state, transactions } = this.view.state.applyTransaction(
+      transaction
+    )
+
+    this.view.updateState(state)
+
+    if (!external) {
+      this.props.handleStateChange(
+        this.view,
+        transactions.some(tr => tr.docChanged)
+      )
+    }
+  }
+
+  private handleMouseDown = () => {
+    this.isMouseDown = true
+  }
+
+  private handleMouseUp = () => {
+    this.isMouseDown = false
+  }
+
+  /* tslint:disable:cyclomatic-complexity */
+  private receive: ChangeReceiver = (op, id, newNode, command) => {
+    const { state } = this.view
+
+    console.log({ op, id, newNode, command }) // tslint:disable-line:no-console
+
+    if (op === 'ORDER_CHILD_SECTIONS') {
+      return this.orderChildSections(id, command)
+    }
+
+    if (!id) {
+      return
+    }
+
+    switch (op) {
+      case 'INSERT':
+        if (!newNode) {
+          // tell the editor to update
+          return this.dispatchTransaction(
+            state.tr.setMeta('update', true),
+            true
+          )
+        }
+
+        switch (newNode.type) {
+          // TODO: can anything else be inserted by itself?
+          // TODO: subsections! need to use the path
+          case state.schema.nodes.section:
+            // do nothing, allow section update to take care of this
+            break
+
+          default:
+            // if an element arrives after the section update (which referenced this new element)
+            // find the placeholder element and replace
+            const {
+              schema: { nodes },
+              tr,
+            } = state
+            state.doc.descendants((node, pos) => {
+              if (
+                node.attrs.id === id &&
+                (node.type === nodes.placeholder_element ||
+                  node.type === nodes.placeholder)
+              ) {
+                tr.replaceWith(pos, pos + node.nodeSize, newNode)
+                tr.setMeta('addToHistory', false)
+                this.dispatchTransaction(tr, true)
+                return false
+              }
+            })
+            break
+        }
+        break
+
+      case 'UPDATE':
+        if (!newNode) {
+          // tell the editor to update
+          return this.dispatchTransaction(
+            state.tr.setMeta('update', true),
+            true
+          )
+        }
+
+        // TODO: add to a waitlist if child nodes aren't in the map yet?
+        // TODO: make sure there aren't any local edits since saving?
+        state.doc.descendants((node, pos) => {
+          const tr = state.tr
+
+          if (node.attrs.id === id) {
+            // TODO: only do this if attributes changed?
+            tr.setNodeMarkup(pos, undefined, newNode.attrs) // TODO: merge attrs?
+
+            // from https://prosemirror.net/examples/footnote/
+            const start = newNode.content.findDiffStart(node.content)
+
+            if (typeof start === 'number') {
+              // tslint:disable-next-line:no-any - TODO: remove once types are fixed
+              const diffEnd = newNode.content.findDiffEnd(node.content as any)
+
+              if (diffEnd) {
+                let { a: newNodeDiffEnd, b: nodeDiffEnd } = diffEnd
+
+                const overlap = start - Math.min(nodeDiffEnd, newNodeDiffEnd)
+
+                if (overlap > 0) {
+                  nodeDiffEnd += overlap
+                  newNodeDiffEnd += overlap
+                }
+
+                tr.replace(
+                  pos + start + 1,
+                  pos + nodeDiffEnd + 1,
+                  newNode.slice(start, newNodeDiffEnd)
+                )
+              }
+            }
+
+            // TODO: map selection through changes?
+            // tr.setSelection(state.selection.map(tr.doc, tr.mapping))
+
+            tr.setMeta('addToHistory', false)
+
+            this.dispatchTransaction(tr, true)
+
+            return false
+          }
+        })
+        break
+
+      case 'REMOVE':
+        state.doc.descendants((node, pos) => {
+          if (node.attrs.id === id) {
+            const tr = state.tr
+              .delete(pos, pos + node.nodeSize)
+              .setMeta('addToHistory', false)
+
+            this.dispatchTransaction(tr, true)
+
+            return false
+          }
+        })
+        break
+    }
+  }
+
+  private orderChildSections = (
+    parent?: string,
+    command?: ChangeReceiverCommand
+  ) => {
+    if (!command || !command.childSections) {
+      return
+    }
+
+    const {
+      state: { doc, tr },
+    } = this.view
+
+    const { node, offset } = parent
+      ? findDescendantById(doc, parent)
+      : { node: doc, offset: 0 }
+
+    if (!node || offset === undefined) {
+      return
+    }
+
+    const coords = childSectionCoordinates(node)
+
+    const diff = diffReplacementBlocks(coords, command.childSections)
+
+    if (!diff.remove && !diff.insert.length) {
+      return
+    }
+
+    if (!diff.remove) {
+      const pos =
+        offset +
+        (coords[diff.start] ? coords[diff.start].start : node.content.size)
+      tr.insert(pos, diff.insert)
+    } else {
+      const startOfSplice = offset + coords[diff.start].start
+      const endOfSplice = offset + coords[diff.start + diff.remove - 1].end
+      tr.replaceWith(startOfSplice, endOfSplice, diff.insert)
+    }
+
+    tr.setMeta('addToHistory', false)
+    this.dispatchTransaction(tr, false)
+  }
+
+  private handleHistoryChange: LocationListener = location => {
+    this.focusNodeWithId(location.hash.substring(1))
+  }
+
+  private focusNodeWithId(id: string) {
+    if (!id || !this.view) return
+
+    const { state } = this.view
+
+    state.doc.descendants((node, pos) => {
+      if (node.attrs.id === id) {
+        this.view.focus()
+
+        const selection = node.isAtom
+          ? NodeSelection.create(state.tr.doc, pos)
+          : TextSelection.near(state.tr.doc.resolve(pos + 1))
+
+        this.dispatchTransaction(state.tr.setSelection(selection))
+
+        const dom = this.view.domAtPos(pos + 1)
+
+        if (dom.node instanceof Element) {
+          dom.node.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          })
+        }
+
+        return false
+      }
+    })
+  }
+}
