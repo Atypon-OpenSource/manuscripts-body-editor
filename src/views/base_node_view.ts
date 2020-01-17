@@ -19,10 +19,10 @@ import {
   ManuscriptNode,
 } from '@manuscripts/manuscript-transform'
 import { Decoration } from 'prosemirror-view'
-import { ViewerProps } from '../components/Viewer'
+import { ViewerBaseProps } from '../components/Viewer'
 import { SyncError } from '../types'
 
-export class BaseNodeView<PropsType extends ViewerProps> {
+export class BaseNodeView<PropsType extends ViewerBaseProps> {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]

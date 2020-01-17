@@ -28,6 +28,7 @@ export {
   RequirementsProvider,
 } from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'
+export { SimpleEditor } from './components/SimpleEditor'
 export { Viewer } from './components/Viewer'
 export * from './csl'
 export { menus } from './menus'
