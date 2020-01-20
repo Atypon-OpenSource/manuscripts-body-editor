@@ -142,10 +142,10 @@
     "typescript": "3.5.2"
   },
   "peerDependencies": {
-    "@manuscripts/data": "^0.0.2",
-    "@manuscripts/manuscript-transform": "^0.21.1",
+    "@manuscripts/data": "^0.0.4",
+    "@manuscripts/manuscript-transform": "^0.21.2",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
-    "@manuscripts/style-guide": "^0.16.1",
+    "@manuscripts/style-guide": "^0.16.2",
     "comlink": "^4.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
