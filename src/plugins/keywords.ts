@@ -14,16 +14,44 @@
  * limitations under the License.
  */
 
-import { generateID, ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import {
+  generateID,
+  ManuscriptNode,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
 import {
   Keyword,
   Manuscript,
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  Transaction,
+} from 'prosemirror-state'
 
 export const keywordsKey = new PluginKey('keywords')
+
+const keywordsInserted = (transactions: Transaction[]): boolean =>
+  transactions.some(tr => {
+    const meta = tr.getMeta(keywordsKey)
+
+    return meta && meta.keywordsInserted
+  })
+
+export const buildKeywordsContents = (
+  manuscript: Manuscript,
+  manuscriptKeywords: Keyword[]
+) => {
+  const p = document.createElement('p')
+  p.classList.add('keywords')
+
+  p.textContent = manuscriptKeywords.map(keyword => keyword.name).join(', ')
+
+  return p.outerHTML
+}
 
 interface Props {
   getManuscript: () => Manuscript
@@ -35,42 +63,49 @@ export default (props: Props) => {
     key: keywordsKey,
 
     appendTransaction(transactions, oldState, newState) {
+      if (!keywordsInserted(transactions)) {
+        return
+      }
+
+      const keywordsElements: Array<{
+        node: ManuscriptNode
+        pos: number
+      }> = []
+
       const { tr } = newState
 
       tr.doc.descendants((node, pos) => {
         if (node.type === node.type.schema.nodes.keywords_element) {
-          const id = node.attrs.id || generateID(ObjectTypes.KeywordsElement)
+          keywordsElements.push({
+            node,
+            pos,
+          })
+        }
+      })
 
+      if (keywordsElements.length) {
+        for (const { node, pos } of keywordsElements) {
           const manuscript = props.getManuscript()
 
           const manuscriptKeywords: Keyword[] = (manuscript.keywordIDs || [])
             .map(id => props.getModel(id))
             .filter(Boolean) as Keyword[]
 
-          const p = document.createElement('p')
-          p.classList.add('keywords')
-
-          p.textContent = manuscriptKeywords
-            .map(keyword => keyword.name)
-            .join(', ')
-
-          const contents = p.outerHTML
-
           tr.setNodeMarkup(pos, undefined, {
             ...node.attrs,
-            contents,
-            id,
+            contents: buildKeywordsContents(manuscript, manuscriptKeywords),
+            id: node.attrs.id || generateID(ObjectTypes.KeywordsElement),
           })
-
-          // create a new NodeSelection
-          // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
-          if (tr.selection instanceof NodeSelection) {
-            tr.setSelection(NodeSelection.create(tr.doc, tr.selection.from))
-          }
         }
-      })
 
-      return tr
+        // create a new NodeSelection
+        // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
+        if (tr.selection instanceof NodeSelection) {
+          tr.setSelection(NodeSelection.create(tr.doc, tr.selection.from))
+        }
+
+        return tr
+      }
     },
   })
 }

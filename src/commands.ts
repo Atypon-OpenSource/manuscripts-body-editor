@@ -41,6 +41,7 @@ import {
   highlightKey,
   SET_COMMENT_TARGET,
 } from './plugins/highlight'
+import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
@@ -338,7 +339,7 @@ export const insertKeywordsSection = (
 
   const tr = state.tr
 
-  tr.insert(pos, section)
+  tr.insert(pos, section).setMeta(keywordsKey, { keywordsInserted: true })
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)

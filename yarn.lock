@@ -1270,20 +1270,20 @@
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.6.1.tgz#c1d1c88b3e3c030177b8bbff0f6d6e352a045992"
   integrity sha512-neLPcFNE8XcstDR1bj85xlAcB9IpBMOk0oaRzXxD/HeO8N63eqcOCzTMiGz239t+wk4oRnqAHzPbRQTYngdC2A==
 
-"@manuscripts/data@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.2.tgz#8ecbbb9345fe14cdcb7d236e595b52aa9f372195"
-  integrity sha512-VIeGUZD+gasT6mhaM7l5J+hd5sCRN46IyO1QCMl2/OVNXeI4NIite3xXcV1gpcOxoZ2Z+YnttRa5WRNcjGTo7w==
+"@manuscripts/data@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.4.tgz#d355429adbf5f4b2b15254235b9b1b2fd53ddb21"
+  integrity sha512-1jk6gtTB/dPsljaZGRQpx1VZeqglH4gtfadkKE3AH3zIEsBYGgX+havq5nqt9yJezFm2BN9AupRcVaYuJo7fKQ==
 
 "@manuscripts/examples@^0.0.6":
   version "0.0.6"
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.21.1":
-  version "0.21.1"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.21.1.tgz#e2a60fd06b262b2224d3ce02def76fcb02791d16"
-  integrity sha512-7imV3CWz0aPewJhsFpwpwsvIdON62K6F9ZDyPotk/jK5OOsh3/FiA5oy7qdCOUWPtiLMtfZcMOBWbsNLpGL08w==
+"@manuscripts/manuscript-transform@^0.21.2":
+  version "0.21.2"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.21.2.tgz#1ef8f8c6fb0aff09269f2518313639efcbe2f08b"
+  integrity sha512-TsMOEdOyt81Yu9K8sG/mNlMkjKjqgAVOq6QkPJnmg6pKKArZZCeSark0jxz8LY7oC2giBnAwQdhNEnw4259szg==
   dependencies:
     debug "^4.1.1"
     prosemirror-model "^1.7.2"

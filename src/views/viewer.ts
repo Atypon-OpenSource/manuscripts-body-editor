@@ -25,6 +25,7 @@ import figure from './figure'
 import figureElement from './figure_element'
 import inlineEquation from './inline_equation'
 import inlineFootnote from './inline_footnote'
+import keywordsElement from './keywords_element'
 import link from './link'
 import listing from './listing'
 import listingElement from './listing_element'
@@ -47,6 +48,7 @@ export default (props: ViewerProps) => ({
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  keywords_element: keywordsElement(props),
   link: link(props),
   listing: listing(props),
   listing_element: listingElement(props),
