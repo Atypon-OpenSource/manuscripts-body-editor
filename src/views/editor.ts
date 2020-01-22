@@ -16,6 +16,7 @@
 
 import { EditorProps } from '../components/Editor'
 import bibliographyElement from './bibliography_element_editable'
+import blockquoteElement from './blockquote_element_editable'
 import bulletList from './bullet_list_editable'
 import citation from './citation_editable'
 import crossReference from './cross_reference_editable'
@@ -33,12 +34,14 @@ import orderedList from './ordered_list_editable'
 import paragraph from './paragraph_editable'
 import placeholder from './placeholder'
 import placeholderElement from './placeholder_element_editable'
+import pullquoteElement from './pullquote_element_editable'
 import sectionTitle from './section_title_editable'
 import tableElement from './table_element_editable'
 import tocElement from './toc_element_editable'
 
 export default (props: EditorProps) => ({
   bibliography_element: bibliographyElement(props),
+  blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
   citation: citation(props),
   cross_reference: crossReference(props),
@@ -56,6 +59,7 @@ export default (props: EditorProps) => ({
   paragraph: paragraph(props),
   placeholder: placeholder(props),
   placeholder_element: placeholderElement(props),
+  pullquote_element: pullquoteElement(props),
   section_title: sectionTitle(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),

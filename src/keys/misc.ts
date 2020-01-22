@@ -22,6 +22,7 @@ import {
   joinUp,
   lift,
   toggleMark,
+  wrapIn,
 } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { undoInputRule } from 'prosemirror-inputrules'
@@ -56,7 +57,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   // 'Mod-`': toggleMark(schema.marks.code),
   'Mod-Alt-=': toggleMark(schema.marks.superscript),
   'Mod-Alt--': toggleMark(schema.marks.subscript),
-  // 'Ctrl->': wrapIn(schema.nodes.blockquote),
+  'Ctrl->': wrapIn(schema.nodes.blockquote),
   'Mod-Enter': chainCommands(exitCode, insertBreak),
   'Shift-Enter': chainCommands(exitCode, insertBreak),
   'Ctrl-Enter': chainCommands(exitCode, insertBreak), // mac-only?

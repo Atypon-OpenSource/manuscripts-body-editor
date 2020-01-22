@@ -150,7 +150,7 @@ export class ContextMenu {
 
           if (insertableTypes.bulletList) {
             section.appendChild(
-              this.createMenuItem('Bullet list', () => {
+              this.createMenuItem('Bullet List', () => {
                 this.addBlock(nodes.bullet_list, after)
                 popper.destroy()
               })
@@ -201,6 +201,35 @@ export class ContextMenu {
             section.appendChild(
               this.createMenuItem('Listing', () => {
                 this.addBlock(nodes.listing_element, after)
+                popper.destroy()
+              })
+            )
+          }
+        })
+      )
+    }
+
+    if (
+      this.showMenuSection(insertableTypes, [
+        'blockquoteElement',
+        'pullquoteElement',
+      ])
+    ) {
+      menu.appendChild(
+        this.createMenuSection((section: HTMLElement) => {
+          if (insertableTypes.blockquoteElement) {
+            section.appendChild(
+              this.createMenuItem('Block Quote', () => {
+                this.addBlock(nodes.blockquote_element, after)
+                popper.destroy()
+              })
+            )
+          }
+
+          if (insertableTypes.pullquoteElement) {
+            section.appendChild(
+              this.createMenuItem('Pull Quote', () => {
+                this.addBlock(nodes.pullquote_element, after)
                 popper.destroy()
               })
             )
@@ -410,6 +439,8 @@ export class ContextMenu {
       tableElement: this.canAddBlock(nodes.table_element, after),
       equationElement: this.canAddBlock(nodes.equation_element, after),
       listingElement: this.canAddBlock(nodes.listing_element, after),
+      blockquoteElement: this.canAddBlock(nodes.blockquote_element, after),
+      pullquoteElement: this.canAddBlock(nodes.pullquote_element, after),
     }
   }
 

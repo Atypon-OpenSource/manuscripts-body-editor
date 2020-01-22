@@ -129,6 +129,23 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'insert-blockquote',
+        label: () => 'Block Quote',
+        // active: blockActive(schema.nodes.blockquote_element),
+        enable: canInsert(schema.nodes.blockquote_element),
+        run: insertBlock(schema.nodes.blockquote_element),
+      },
+      {
+        id: 'insert-pullquote',
+        label: () => 'Pull Quote',
+        // active: blockActive(schema.nodes.pullquote_element),
+        enable: canInsert(schema.nodes.pullquote_element),
+        run: insertBlock(schema.nodes.pullquote_element),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'insert-figure-element',
         label: () => 'Figure Panel',
         accelerator: {

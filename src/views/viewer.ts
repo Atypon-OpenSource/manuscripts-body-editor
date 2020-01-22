@@ -16,6 +16,7 @@
 
 import { ViewerProps } from '../components/Viewer'
 import bibliographyElement from './bibliography_element'
+import blockquoteElement from './blockquote_element'
 import bulletList from './bullet_list'
 import citation from './citation'
 import crossReference from './cross_reference'
@@ -33,12 +34,14 @@ import orderedList from './ordered_list'
 import paragraph from './paragraph'
 import placeholder from './placeholder'
 import placeholderElement from './placeholder_element'
+import pullquoteElement from './pullquote_element'
 import sectionTitle from './section_title'
 import tableElement from './table_element'
 import tocElement from './toc_element'
 
 export default (props: ViewerProps) => ({
   bibliography_element: bibliographyElement(props),
+  blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
   citation: citation(props),
   cross_reference: crossReference(props),
@@ -56,6 +59,7 @@ export default (props: ViewerProps) => ({
   paragraph: paragraph(props),
   placeholder: placeholder(props),
   placeholder_element: placeholderElement(props),
+  pullquote_element: pullquoteElement(props),
   section_title: sectionTitle(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
