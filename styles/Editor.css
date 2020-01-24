@@ -69,25 +69,30 @@
 }
 
 .ProseMirror blockquote {
-  padding-left: 32px !important;
+  padding: 16px 0 16px 32px !important;
   border-left: 5px solid #e2e2e2;
 }
 
-.ProseMirror blockquote p:first-child {
-  padding-top: 0;
+.ProseMirror blockquote p:first-of-type {
+  margin-top: 0;
 }
 
-.ProseMirror blockquote p:last-child {
-  padding-bottom: 0;
+.ProseMirror blockquote p:last-of-type {
+  margin-bottom: 0;
 }
 
 .ProseMirror blockquote footer {
-  font-size: 14px;
-  color: #aaa;
+  margin-top: 16px;
+  font-size: 16px;
+  color: #777;
 }
 
-.ProseMirror aside.pullquote {
-  padding: 8px 16px !important;
+.ProseMirror blockquote footer:before {
+  content: '— ';
+}
+
+.ProseMirror .pullquote {
+  padding: 32px 16px !important;
   border-top: 5px solid #e2e2e2;
   border-bottom: 5px solid #e2e2e2;
   font-size: 32px;
@@ -95,9 +100,34 @@
   line-height: 1.1;
 }
 
-.ProseMirror aside.pullquote footer {
-  font-size: 14px;
-  color: #aaa;
+.ProseMirror .pullquote p:first-of-type {
+  margin-top: 0;
+  display: flex;
+}
+
+.ProseMirror .pullquote p:first-of-type:before {
+  content: open-quote;
+  display: block;
+  font-size: 2em;
+  margin-right: 8px;
+  position: relative;
+  color: #777;
+  top: -4px;
+}
+
+.ProseMirror .pullquote p:last-of-type {
+  margin-bottom: 0;
+}
+
+.ProseMirror .pullquote footer {
+  margin-top: 24px;
+  margin-left: 8px;
+  font-size: 18px;
+  color: #777;
+}
+
+.ProseMirror aside.pullquote footer:before {
+  content: '— ';
 }
 
 .ProseMirror img {

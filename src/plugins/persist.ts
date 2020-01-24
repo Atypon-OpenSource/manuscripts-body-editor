@@ -35,7 +35,12 @@ export default () => {
 
       const { nodes } = newState.schema
 
-      const listNodeTypes = [nodes.bullet_list, nodes.ordered_list]
+      const containerNodeTypes = [
+        nodes.bullet_list,
+        nodes.ordered_list,
+        nodes.blockquote_element,
+        nodes.pullquote_element,
+      ]
 
       const ids = new Set()
 
@@ -71,7 +76,8 @@ export default () => {
         }
 
         // don't descend into lists
-        if (listNodeTypes.includes(node.type)) {
+        // TODO: descend, but only give ids to inline nodes
+        if (containerNodeTypes.includes(node.type)) {
           return false
         }
       })
