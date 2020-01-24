@@ -92,17 +92,23 @@
 }
 
 .ProseMirror .pullquote {
-  padding: 32px 16px !important;
+  padding: 32px 0 32px 32px !important;
   border-top: 5px solid #e2e2e2;
   border-bottom: 5px solid #e2e2e2;
-  font-size: 32px;
+}
+
+.ProseMirror .pullquote p {
   font-style: italic;
-  line-height: 1.1;
+  line-height: 1.2;
+  font-size: 32px;
+}
+
+.ProseMirror .pullquote p i {
+  font-style: normal;
 }
 
 .ProseMirror .pullquote p:first-of-type {
   margin-top: 0;
-  display: flex;
 }
 
 .ProseMirror .pullquote p:first-of-type:before {
@@ -110,9 +116,11 @@
   display: block;
   font-size: 2em;
   margin-right: 8px;
-  position: relative;
   color: #777;
-  top: -4px;
+  line-height: 0;
+  position: relative;
+  top: 0.5em;
+  left: -0.5em;
 }
 
 .ProseMirror .pullquote p:last-of-type {
@@ -126,7 +134,7 @@
   color: #777;
 }
 
-.ProseMirror aside.pullquote footer:before {
+.ProseMirror .pullquote footer:before {
   content: '— ';
 }
 
