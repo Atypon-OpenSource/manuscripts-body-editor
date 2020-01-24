@@ -35,12 +35,14 @@ const icons: Map<
   React.FunctionComponent<React.SVGAttributes<SVGElement>>
 > = new Map([
   [nodes.bibliography_element, SectionIcon],
+  // [nodes.blockquote_element, BlockQuoteIcon],
   [nodes.bullet_list, BulletListIcon],
   [nodes.equation_element, EquationIcon],
   [nodes.figure_element, FigureIcon],
   [nodes.listing_element, ListingIcon],
   [nodes.ordered_list, OrderedListIcon],
   [nodes.paragraph, ParagraphIcon],
+  // [nodes.pullquote_element, PullQuoteIcon],
   [nodes.section, SectionIcon],
   [nodes.table_element, TableIcon],
 ])
