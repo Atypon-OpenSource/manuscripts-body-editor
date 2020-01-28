@@ -15,7 +15,7 @@
  */
 
 import {
-  isSectionNode,
+  isAnySectionNode,
   ManuscriptNode,
 } from '@manuscripts/manuscript-transform'
 
@@ -41,7 +41,7 @@ export const childSectionCoordinates = (node: ManuscriptNode) => {
   const coordinates: Coordinates = []
 
   node.forEach((child, pos) => {
-    if (isSectionNode(child)) {
+    if (isAnySectionNode(child)) {
       coordinates.push({
         start: pos,
         end: pos + child.nodeSize,

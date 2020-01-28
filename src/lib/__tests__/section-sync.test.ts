@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { diffReplacementBlocks } from '../section-sync'
+import { schema } from '@manuscripts/manuscript-transform'
+import { childSectionCoordinates, diffReplacementBlocks } from '../section-sync'
 
 /* tslint:disable:no-any */
 describe('diffReplacementBlocks', () => {
@@ -93,5 +94,49 @@ describe('diffReplacementBlocks', () => {
     expect(result).toHaveProperty('start', 1)
     expect(result).toHaveProperty('remove', 1)
     expect(result.insert).toHaveLength(0)
+  })
+})
+
+describe('childSectionCoordinates', () => {
+  test('correctly identifies all types of section nodes', () => {
+    const node = schema.nodes.manuscript.create({}, [
+      schema.nodes.section.createAndFill({
+        id: 'MPSection:1',
+      })!,
+      schema.nodes.toc_section.createAndFill({
+        id: 'MPTOCSection:1',
+      })!,
+      schema.nodes.keywords_section.createAndFill({
+        id: 'MPKeywordsSection:1',
+      })!,
+      schema.nodes.bibliography_section.createAndFill({
+        id: 'MPBibliographySection:1',
+      })!,
+    ])
+
+    const result = childSectionCoordinates(node)
+
+    expect(result).toEqual([
+      {
+        end: 4,
+        id: 'MPSection:1',
+        start: 0,
+      },
+      {
+        end: 9,
+        id: 'MPTOCSection:1',
+        start: 4,
+      },
+      {
+        end: 14,
+        id: 'MPKeywordsSection:1',
+        start: 9,
+      },
+      {
+        end: 19,
+        id: 'MPBibliographySection:1',
+        start: 14,
+      },
+    ])
   })
 })
