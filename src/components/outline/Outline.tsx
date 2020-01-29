@@ -96,7 +96,7 @@ export const OutlineItemArrow = styled.button`
 
 export const OutlineItemNoArrow = styled.span`
   display: inline-block;
-  width: ${props => props.theme.grid.unit * 6}px;
+  width: ${props => props.theme.grid.unit * 5}px;
   flex-shrink: 0;
 `
 

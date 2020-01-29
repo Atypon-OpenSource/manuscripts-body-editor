@@ -34,17 +34,19 @@ const icons: Map<
   ManuscriptNodeType,
   React.FunctionComponent<React.SVGAttributes<SVGElement>>
 > = new Map([
-  [nodes.bibliography_element, SectionIcon],
+  [nodes.bibliography_section, SectionIcon],
   // [nodes.blockquote_element, BlockQuoteIcon],
   [nodes.bullet_list, BulletListIcon],
   [nodes.equation_element, EquationIcon],
   [nodes.figure_element, FigureIcon],
+  [nodes.keywords_section, SectionIcon],
   [nodes.listing_element, ListingIcon],
   [nodes.ordered_list, OrderedListIcon],
   [nodes.paragraph, ParagraphIcon],
   // [nodes.pullquote_element, PullQuoteIcon],
   [nodes.section, SectionIcon],
   [nodes.table_element, TableIcon],
+  [nodes.toc_section, SectionIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType) => {
