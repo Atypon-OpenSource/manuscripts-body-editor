@@ -1403,10 +1403,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.23.3":
-  version "0.23.3"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.23.3.tgz#048cf9c65ca15c103414753d7b1b8085ce4c4990"
-  integrity sha512-JrjCjvD6rUrF5d4yzj8uE2/R0UYGuRACDSUIZ187TbUEh95xCDzD+LdmxMD929yOCqKmVCcSeKuLdlnqDJ4oFA==
+"@manuscripts/manuscript-transform@^0.23.4":
+  version "0.23.4"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.23.4.tgz#d8d1962643309190923137639c55bd1cad8b0535"
+  integrity sha512-hbfR7y0egQd5dGV2rJ2wa05tMl0IHK0KgmIr5MEbqf0czGAHSERrr6GhDoU6eEQdwJwPrbzOVvYCDa2u6LJahw==
   dependencies:
     debug "^4.1.1"
     jest-environment-jsdom-sixteen "^1.0.0"
