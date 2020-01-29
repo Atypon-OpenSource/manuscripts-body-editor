@@ -52,12 +52,11 @@ export default (props: Props) => {
     }
   }
 
-  const findDefaultTOCStyle = (): ParagraphStyle | undefined => {
+  const findDefaultParagraphStyle = (
+    prototype: string
+  ): ParagraphStyle | undefined => {
     for (const model of props.modelMap.values()) {
-      if (
-        isParagraphStyle(model) &&
-        model.prototype === 'MPParagraphStyle:toc'
-      ) {
+      if (isParagraphStyle(model) && model.prototype === prototype) {
         return model
       }
     }
@@ -164,15 +163,23 @@ export default (props: Props) => {
             const chooseParagraphStyle = (
               node: ManuscriptNode
             ): string | undefined => {
-              switch (node.type) {
-                case node.type.schema.nodes.toc_element:
-                  const defaultStyle = findDefaultTOCStyle()
+              const { nodes } = node.type.schema
 
-                  return defaultStyle ? defaultStyle._id : undefined
+              const styleMap = new Map([
+                [nodes.toc_element, 'MPParagraphStyle:toc'],
+                [nodes.keywords_element, 'MPParagraphStyle:keywords'],
+                [nodes.bibliography_element, 'MPParagraphStyle:bibliography'],
+              ])
 
-                default:
-                  return pageLayout.defaultParagraphStyle
+              const prototype = styleMap.get(node.type)
+
+              if (prototype) {
+                const defaultStyle = findDefaultParagraphStyle(prototype)
+
+                return defaultStyle ? defaultStyle._id : undefined
               }
+
+              return pageLayout.defaultParagraphStyle
             }
 
             for (const { node, pos } of nodesNeedingParagraphStyle) {
