@@ -31,7 +31,6 @@ import {
   ManuscriptTransaction,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { getChildOfType } from './lib/utils'
@@ -223,9 +222,14 @@ const createBibliographySection = (state: ManuscriptEditorState) =>
 
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: ManuscriptEditorView,
+  embeddedCitationItems: string[] = []
 ) => {
-  const citation = buildCitation(state.selection.$anchor.parent.attrs.id, [])
+  const citation = buildCitation(
+    state.selection.$anchor.parent.attrs.id,
+    embeddedCitationItems
+  )
 
   const node = state.schema.nodes.citation.create({
     rid: citation._id,
