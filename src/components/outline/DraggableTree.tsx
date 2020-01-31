@@ -98,6 +98,9 @@ interface Props {
   depth?: number
   tree: TreeItem
   view: ManuscriptEditorView
+  permissions: {
+    write: boolean
+  }
 }
 
 interface State {
@@ -306,6 +309,8 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     event.preventDefault()
     event.stopPropagation()
 
+    if (!this.props.permissions.write) return false
+
     const menu = this.createMenu()
     menu.showEditMenu(event.currentTarget as HTMLAnchorElement)
   }
@@ -329,7 +334,7 @@ const dragSourceSpec: DragSourceSpec<Props, DragObject> = {
   },
 
   canDrag(props: Props) {
-    return !!props.tree.parent
+    return props.permissions.write && !!props.tree.parent
   },
 }
 

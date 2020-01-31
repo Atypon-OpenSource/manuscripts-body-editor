@@ -30,6 +30,9 @@ interface Props {
   selected: Selected | null
   view: ManuscriptEditorView | null
   doc: ManuscriptNode | null
+  permissions: {
+    write: boolean
+  }
 }
 
 export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
@@ -69,5 +72,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
     }
   }, [debouncedProps])
 
-  return values ? <DraggableTree {...values} /> : null
+  return values ? (
+    <DraggableTree {...values} permissions={props.permissions} />
+  ) : null
 }
