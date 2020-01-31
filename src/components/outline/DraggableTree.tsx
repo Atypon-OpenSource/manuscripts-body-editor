@@ -98,6 +98,7 @@ interface Props {
   depth?: number
   tree: TreeItem
   view: ManuscriptEditorView
+  dragDisabled?: boolean
 }
 
 interface State {
@@ -329,7 +330,7 @@ const dragSourceSpec: DragSourceSpec<Props, DragObject> = {
   },
 
   canDrag(props: Props) {
-    return !!props.tree.parent
+    return !props.dragDisabled && !!props.tree.parent
   },
 }
 
