@@ -1393,31 +1393,30 @@
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.6.1.tgz#c1d1c88b3e3c030177b8bbff0f6d6e352a045992"
   integrity sha512-neLPcFNE8XcstDR1bj85xlAcB9IpBMOk0oaRzXxD/HeO8N63eqcOCzTMiGz239t+wk4oRnqAHzPbRQTYngdC2A==
 
-"@manuscripts/data@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.4.tgz#d355429adbf5f4b2b15254235b9b1b2fd53ddb21"
-  integrity sha512-1jk6gtTB/dPsljaZGRQpx1VZeqglH4gtfadkKE3AH3zIEsBYGgX+havq5nqt9yJezFm2BN9AupRcVaYuJo7fKQ==
+"@manuscripts/data@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.5.tgz#a8510cc00bba64683b6f9771e7b7891932931524"
+  integrity sha512-PWDYslKO5IigO960Yb8WbR+fNw1XcMVgcSWO4Tpu2n5bBQgJiCdA4hmTcMv/WoDOMwFX21Vo+YZyJCfnhHkaaA==
 
 "@manuscripts/examples@^0.0.6":
   version "0.0.6"
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.23.4":
-  version "0.23.4"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.23.4.tgz#d8d1962643309190923137639c55bd1cad8b0535"
-  integrity sha512-hbfR7y0egQd5dGV2rJ2wa05tMl0IHK0KgmIr5MEbqf0czGAHSERrr6GhDoU6eEQdwJwPrbzOVvYCDa2u6LJahw==
+"@manuscripts/manuscript-transform@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.24.0.tgz#653f7012da70d52efd57dc67f58873c8c4156c37"
+  integrity sha512-rv+t+nshc1zchT7O4/kID0mtBvFvoeFNekWoDhdcs2PcpWKMw1SbrWf9hO81IruelT+AP4ZpDjsy6KL8j7+SXg==
   dependencies:
     debug "^4.1.1"
-    jest-environment-jsdom-sixteen "^1.0.0"
     prosemirror-model "^1.7.2"
     uuid "^3.3.2"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.22.0":
-  version "1.22.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.22.0.tgz#2b1f051278a9111f01eaf449787a2f0a5ede55ea"
-  integrity sha512-Yy9Y7zOFYt1pnUge7fg/E/TJzoL4+dOaUgZda75HrBoUtYDlntMEGoNnslEcW6Tkl2E7yG+DljAUKJ7Ki5yWxQ==
+"@manuscripts/manuscripts-json-schema@^1.24.0":
+  version "1.24.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.24.0.tgz#5be8fabc014405c7d519b3bcc22d7ba6c08e4f17"
+  integrity sha512-Qi2Z3Gu1UMI/DC7U/8Fcw3IO+MtURd+IRMzi8874MV6xP/WUN7kUx3e0lReXdsk8D13ABBPegrM0aaVnSfkBCg==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1459,23 +1458,23 @@
     url "^0.11.0"
     util "^0.12.0"
 
-"@manuscripts/style-guide@^0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.16.2.tgz#a5c2d37b0f4f412e89276117c1b333d103b56059"
-  integrity sha512-049k2gqFNvvb3XRKk9y5APoy9wBTy3SyLbusuGxv7bkauEF3ONN1g7rfnH5G0nIPgssHL8HVRq0ZoHkVV/vi3w==
+"@manuscripts/style-guide@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.17.0.tgz#28bb918e534611f1ecb603f7774c0a6e96861290"
+  integrity sha512-bTMYcsKtNw8//naFIVJRHp5G7QBq9u2xGZ/klLj1Yv1EA+w5v9kegs6/1lS5AESekRUWXT8vfzh+PMbKcx27UQ==
   dependencies:
     "@manuscripts/assets" "^0.6.1"
     lodash-es "^4.17.15"
     react-dnd "^9.4.0"
     react-modal "^3.11.1"
     react-select "^2.4.1"
-    react-sizeme "^2.6.10"
+    react-sizeme "^2.6.12"
     tooltip.js "^1.3.3"
 
-"@manuscripts/title-editor@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.3.3.tgz#99f3c1cb303d29bfd7fe499a7d17c1e6d95995c1"
-  integrity sha512-dV6yMCJe5pvyI21hN6/YIOsupviEFbardUGw8RiawrFIGS9xmVVUO5e4Nxazcu+CXyVsksPgUQTtHeE+TBs5kw==
+"@manuscripts/title-editor@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.4.0.tgz#81185a0b11b38e316b573ccf0314bd55c48bbe4d"
+  integrity sha512-/iEr3sZMp8hczQnkJql8BrU5xRYr2QvrxAX6fW+phcHtYPD+FkWTCfGGfiDsHXCnaSnGNgSUwa6N5Xx0qyrkQA==
   dependencies:
     "@manuscripts/assets" "^0.3.9"
     prosemirror-commands "^1.0.4"
@@ -3253,7 +3252,7 @@ basic-auth@^2.0.0:
   dependencies:
     safe-buffer "5.1.2"
 
-batch-processor@^1.0.0:
+batch-processor@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
   integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
@@ -5400,12 +5399,12 @@ electron-to-chromium@^1.3.122, electron-to-chromium@^1.3.164:
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.167.tgz#6c22e5384a6b54fb13136ca5b3ade5daac9bf894"
   integrity sha512-84IjpeRudjP43Q0+K7tlS7ESoHOl0W6CIdzs5reS9p+sAjCQEDiaAyiXN2v1qLUdL+Of6ZSaH4Cq6bl+sfzy8A==
 
-element-resize-detector@^1.1.15:
-  version "1.1.15"
-  resolved "https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.1.15.tgz#48eba1a2eaa26969a4c998d972171128c971d8d2"
-  integrity sha512-16/5avDegXlUxytGgaumhjyQoM6hpp5j3+L79sYq5hlXfTNRy5WMMuTVWkZU3egp/CokCmTmvf18P3KeB57Iog==
+element-resize-detector@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.2.1.tgz#b0305194447a4863155e58f13323a0aef30851d1"
+  integrity sha512-BdFsPepnQr9fznNPF9nF4vQ457U/ZJXQDSNF1zBe7yaga8v9AdZf3/NElYxFdUh7SitSGt040QygiTo6dtatIw==
   dependencies:
-    batch-processor "^1.0.0"
+    batch-processor "1.0.0"
 
 elliptic@^6.0.0:
   version "6.4.1"
@@ -12462,12 +12461,12 @@ react-simple-code-editor@^0.9.0:
   resolved "https://registry.npmjs.org/react-simple-code-editor/-/react-simple-code-editor-0.9.10.tgz#1ab5ea7215687ed918c6d0dae90736cf01890905"
   integrity sha512-80LJwRQS7Wi9Ugh/e6FRHWdcg4oQOpMBDFxyDpORILffrHdV3EIQ1IeX5x7488r05iFgLbVDV4nQ1LRKjgCm0g==
 
-react-sizeme@^2.6.10:
-  version "2.6.10"
-  resolved "https://registry.npmjs.org/react-sizeme/-/react-sizeme-2.6.10.tgz#9993dcb5e67fab94a8e5d078a0d3820609010f17"
-  integrity sha512-OJAPQxSqbcpbsXFD+fr5ARw4hNSAOimWcaTOLcRkIqnTp9+IFWY0w3Qdw1sMez6Ao378aimVL/sW6TTsgigdOA==
+react-sizeme@^2.6.12:
+  version "2.6.12"
+  resolved "https://registry.npmjs.org/react-sizeme/-/react-sizeme-2.6.12.tgz#ed207be5476f4a85bf364e92042520499455453e"
+  integrity sha512-tL4sCgfmvapYRZ1FO2VmBmjPVzzqgHA7kI8lSJ6JS6L78jXFNRdOZFpXyK6P1NBZvKPPCZxReNgzZNUajAerZw==
   dependencies:
-    element-resize-detector "^1.1.15"
+    element-resize-detector "^1.2.1"
     invariant "^2.2.4"
     shallowequal "^1.1.0"
     throttle-debounce "^2.1.0"
