@@ -23,24 +23,30 @@ export class TableElementView<PropsType extends ViewerProps> extends BlockView<
 > {
   public elementType = 'figure'
 
+  public createElement = () => {
+    this.contentDOM = document.createElement('figure')
+    this.contentDOM.classList.add('block')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.dom.appendChild(this.contentDOM)
+  }
+
   public updateContents = () => {
     const { suppressCaption, suppressHeader, suppressFooter } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
     this.dom.classList.toggle('suppress-header', suppressHeader)
     this.dom.classList.toggle('suppress-footer', suppressFooter)
-  }
 
-  public createElement = () => {
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.contentDOM.setAttribute(
-      'data-paragraph-style',
-      this.node.attrs.paragraphStyle
-    )
-    this.contentDOM.setAttribute('data-table-style', this.node.attrs.tableStyle)
-    this.dom.appendChild(this.contentDOM)
+    if (this.contentDOM) {
+      this.contentDOM.setAttribute(
+        'data-paragraph-style',
+        this.node.attrs.paragraphStyle
+      )
+      this.contentDOM.setAttribute(
+        'data-table-style',
+        this.node.attrs.tableStyle
+      )
+    }
   }
 }
 

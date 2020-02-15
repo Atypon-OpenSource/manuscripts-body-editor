@@ -20,7 +20,7 @@ import {
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
-  BorderStyle,
+  FigureLayout,
   FigureStyle,
   Manuscript,
   Model,
@@ -30,12 +30,13 @@ import {
   TableStyle,
 } from '@manuscripts/manuscripts-json-schema'
 import { Plugin } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
 
 const isParagraphStyle = hasObjectType<ParagraphStyle>(
   ObjectTypes.ParagraphStyle
 )
+const isFigureStyle = hasObjectType<FigureStyle>(ObjectTypes.FigureStyle)
 const isTableStyle = hasObjectType<TableStyle>(ObjectTypes.TableStyle)
+const isFigureLayout = hasObjectType<FigureLayout>(ObjectTypes.FigureLayout)
 
 interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
@@ -44,81 +45,69 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const findDefaultTableStyle = (): TableStyle | undefined => {
+  const chooseDefaultFigureStyle = (): string | undefined => {
     for (const model of props.modelMap.values()) {
-      if (isTableStyle(model) && model.prototype === 'MPTableStyle:default') {
-        return model
+      if (isFigureStyle(model) && model.prototype === 'MPFigureStyle:default') {
+        return model._id
       }
     }
   }
 
-  const findDefaultTOCStyle = (): ParagraphStyle | undefined => {
+  const chooseDefaultFigureLayout = (): string | undefined => {
+    for (const model of props.modelMap.values()) {
+      if (
+        isFigureLayout(model) &&
+        model.prototype === 'MPFigureLayout:default'
+      ) {
+        return model._id
+      }
+    }
+  }
+
+  const chooseDefaultTableStyle = (): string | undefined => {
+    for (const model of props.modelMap.values()) {
+      if (isTableStyle(model) && model.prototype === 'MPTableStyle:default') {
+        return model._id
+      }
+    }
+  }
+
+  const chooseDefaultTOCStyle = (): string | undefined => {
     for (const model of props.modelMap.values()) {
       if (
         isParagraphStyle(model) &&
         model.prototype === 'MPParagraphStyle:toc'
       ) {
-        return model
+        return model._id
       }
     }
   }
 
-  const defaultTableStyle = findDefaultTableStyle()
+  const chooseDefaultParagraphStyle = (
+    node: ManuscriptNode
+  ): string | undefined => {
+    switch (node.type) {
+      case node.type.schema.nodes.toc_element:
+        return chooseDefaultTOCStyle()
 
-  const findBorderStyle = (item: FigureStyle) => {
-    const defaultStyle: Partial<BorderStyle> = {
-      doubleLines: false,
+      default:
+        if (!props.manuscript.pageLayout) {
+          return undefined
+        }
+
+        const pageLayout = props.getModel<PageLayout>(
+          props.manuscript.pageLayout
+        )
+
+        if (!pageLayout) {
+          return undefined
+        }
+
+        return pageLayout.defaultParagraphStyle
     }
-
-    if (!item.innerBorder.style) return defaultStyle
-
-    const style = props.getModel<BorderStyle>(item.innerBorder.style)
-
-    return style || defaultStyle
-  }
-
-  // TODO: handle missing components?
-  // TODO: subscribe to the db directly and use styled-components?
-  // TODO: use context to subscribe a "subscribeToComponent" method?
-  const styleString = (id: string) => {
-    const item = props.getModel<FigureStyle>(id)
-
-    // TODO: handle missing objects?
-    // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395
-    if (!item) return ''
-
-    // TODO: bundled objects need to be available here
-    const borderStyle = findBorderStyle(item)
-
-    const styles = [
-      ['border-color', item.innerBorder.color], // TODO: need bundled colors - this is an id
-      ['border-width', item.innerBorder.width + 'px'],
-      ['border-style', borderStyle.doubleLines ? 'double' : 'solid'],
-    ]
-
-    return styles.map(style => style.join(':')).join(';')
   }
 
   return new Plugin<{}, ManuscriptSchema>({
-    props: {
-      decorations: state => {
-        const decorations: Decoration[] = []
-
-        // TODO: generate decorations when state changes and just map them here?
-
-        state.doc.descendants((node, pos) => {
-          if (node.attrs.figureStyle) {
-            decorations.push(
-              Decoration.node(pos, pos + node.nodeSize, {
-                style: styleString(node.attrs.figureStyle),
-              })
-            )
-          }
-        })
-
-        return DecorationSet.create(state.doc, decorations)
-      },
-    },
     appendTransaction: (transactions, oldState, newState) => {
       // get the transaction from the new state
       const tr = newState.tr
@@ -128,83 +117,60 @@ export default (props: Props) => {
 
       const { nodes } = newState.schema
 
-      const listNodeTypes = [nodes.bullet_list, nodes.ordered_list]
-
-      let updated = false
-
-      // add paragraphStyle where needed
-
-      const nodesNeedingParagraphStyle: Array<{
+      const nodesNeedingStyle: Array<{
         node: ManuscriptNode
         pos: number
+        attrs: { [key: string]: string }
       }> = []
 
-      newState.doc.descendants((node, pos) => {
-        if (!('paragraphStyle' in node.attrs)) {
-          return true
-        }
-
-        if (!node.attrs.paragraphStyle) {
-          nodesNeedingParagraphStyle.push({ node, pos })
-        }
-
-        // don't descend into lists
-        if (listNodeTypes.includes(node.type)) {
+      // tslint:disable-next-line:cyclomatic-complexity
+      newState.doc.descendants((node, pos, parent) => {
+        // don't descend into elements
+        if (parent.type !== nodes.manuscript && parent.type !== nodes.section) {
           return false
+        }
+
+        if ('paragraphStyle' in node.attrs && !node.attrs.paragraphStyle) {
+          const paragraphStyle = chooseDefaultParagraphStyle(node)
+
+          if (paragraphStyle) {
+            nodesNeedingStyle.push({ node, pos, attrs: { paragraphStyle } })
+          }
+        }
+
+        if ('figureStyle' in node.attrs && !node.attrs.figureStyle) {
+          const figureStyle = chooseDefaultFigureStyle()
+
+          if (figureStyle) {
+            nodesNeedingStyle.push({ node, pos, attrs: { figureStyle } })
+          }
+        }
+
+        if ('figureLayout' in node.attrs && !node.attrs.figureLayout) {
+          const figureLayout = chooseDefaultFigureLayout()
+
+          if (figureLayout) {
+            nodesNeedingStyle.push({ node, pos, attrs: { figureLayout } })
+          }
+        }
+
+        if ('tableStyle' in node.attrs && !node.attrs.tableStyle) {
+          const tableStyle = chooseDefaultTableStyle()
+
+          if (tableStyle) {
+            nodesNeedingStyle.push({ node, pos, attrs: { tableStyle } })
+          }
         }
       })
 
-      if (nodesNeedingParagraphStyle.length) {
-        if (props.manuscript.pageLayout) {
-          const pageLayout = props.getModel<PageLayout>(
-            props.manuscript.pageLayout
-          )
-
-          if (pageLayout) {
-            const chooseParagraphStyle = (
-              node: ManuscriptNode
-            ): string | undefined => {
-              switch (node.type) {
-                case node.type.schema.nodes.toc_element:
-                  const defaultStyle = findDefaultTOCStyle()
-
-                  return defaultStyle ? defaultStyle._id : undefined
-
-                default:
-                  return pageLayout.defaultParagraphStyle
-              }
-            }
-
-            for (const { node, pos } of nodesNeedingParagraphStyle) {
-              const paragraphStyle = chooseParagraphStyle(node)
-
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                paragraphStyle,
-              })
-            }
-
-            updated = true
-          }
+      if (nodesNeedingStyle.length) {
+        for (const { node, pos, attrs } of nodesNeedingStyle) {
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            ...attrs,
+          })
         }
-      }
 
-      // add default tableStyle where needed
-      if (defaultTableStyle) {
-        newState.doc.descendants((node, pos) => {
-          if ('tableStyle' in node.attrs && !node.attrs.tableStyle) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              tableStyle: defaultTableStyle._id,
-            })
-
-            updated = true
-          }
-        })
-      }
-
-      //  return the transaction if something changed
-      if (updated) {
         return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },

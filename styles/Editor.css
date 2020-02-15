@@ -210,7 +210,7 @@
   border: 1px solid transparent;
   border-radius: 4px;
   display: grid;
-  grid-gap: 20px 40px;
+  gap: 20px 40px;
   margin: 16px auto 0;
 }
 
@@ -243,17 +243,13 @@
 }
 
 .ProseMirror .figure-block > figcaption {
-  grid-row: caption;
+  /*grid-row: caption;*/
   grid-column-start: 1;
   grid-column-end: -1;
   margin-top: 0;
 }
 
-.ProseMirror .figure-block.caption-above > figcaption {
-  grid-row: 1;
-}
-
-.ProseMirror .single-figure .figure-caption {
+.ProseMirror .figure-caption {
   display: none;
 }
 
