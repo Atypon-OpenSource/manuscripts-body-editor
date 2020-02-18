@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   AuxiliaryObjectReference,
+  Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
 import { Plugin, PluginKey } from 'prosemirror-state'
@@ -41,7 +42,7 @@ export const objectsKey = new PluginKey<Map<string, Target>, ManuscriptSchema>(
 
 // TODO: labels for "figure" (parts of a figure panel)
 
-const types: ManuscriptNodeType[] = [
+const labelledNodeTypes: ManuscriptNodeType[] = [
   schema.nodes.figure_element,
   schema.nodes.table_element,
   schema.nodes.equation_element,
@@ -57,20 +58,47 @@ interface Counters {
   [key: string]: Counter
 }
 
-const buildTargets = (doc: ManuscriptNode) => {
+const labelProperties: Map<
+  ManuscriptNodeType,
+  keyof Partial<Manuscript>
+> = new Map([
+  [schema.nodes.figure_element, 'figureElementLabel'],
+  [schema.nodes.table_element, 'tableElementLabel'],
+  [schema.nodes.equation_element, 'equationElementLabel'],
+  [schema.nodes.listing_element, 'listingElementLabel'],
+])
+
+const chooseLabel = (
+  nodeType: ManuscriptNodeType,
+  manuscript: Manuscript
+): string => {
+  const labelProperty = labelProperties.get(nodeType)
+
+  if (labelProperty) {
+    const label = manuscript[labelProperty]
+
+    if (label) {
+      return label as string
+    }
+  }
+
+  return nodeNames.get(nodeType) as string
+}
+
+const buildTargets = (doc: ManuscriptNode, manuscript: Manuscript) => {
   const counters: Counters = {}
 
-  for (const type of types) {
-    counters[type.name] = {
-      label: nodeNames.get(type)!, // TODO: label from settings?
-      index: 0,
+  for (const nodeType of labelledNodeTypes) {
+    counters[nodeType.name] = {
+      label: chooseLabel(nodeType, manuscript),
+      index: 0, // TODO: use manuscript.figureElementNumberingScheme
     }
   }
 
   const buildLabel = (type: ManuscriptNodeType) => {
     const counter = counters[type.name]
     counter.index++
-    return `${counter.label} ${counter.index}` // TODO: label from node.attrs.title?
+    return `${counter.label} ${counter.index}`
   }
 
   const targets: Map<string, Target> = new Map()
@@ -104,6 +132,7 @@ const buildTargets = (doc: ManuscriptNode) => {
 }
 
 interface Props {
+  getManuscript: () => Manuscript
   getModel: <T extends Model>(id: string) => T | undefined
 }
 
@@ -112,12 +141,13 @@ export default (props: Props) => {
     key: objectsKey,
 
     state: {
-      init: (config, state) => buildTargets(state.doc),
+      init: (config, state) => buildTargets(state.doc, props.getManuscript()),
       apply: (tr, old) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
+        // TODO: use setMeta to update labels
 
-        return tr.docChanged ? buildTargets(tr.doc) : old
+        return buildTargets(tr.doc, props.getManuscript())
       },
     },
     props: {
