@@ -37,19 +37,24 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
   }
 
   public updateContents = () => {
-    const { suppressCaption } = this.node.attrs
+    const {
+      suppressCaption,
+      figureStyle,
+      figureLayout,
+      sizeFraction,
+    } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
 
-    this.contentDOM!.setAttribute(
-      'data-figure-style',
-      this.node.attrs.figureStyle
-    )
+    this.contentDOM!.setAttribute('data-figure-style', figureStyle)
 
-    this.contentDOM!.setAttribute(
-      'data-figure-layout',
-      this.node.attrs.figureLayout
-    )
+    this.contentDOM!.setAttribute('data-figure-layout', figureLayout)
+
+    this.contentDOM!.setAttribute('data-size-fraction', sizeFraction)
+
+    if (sizeFraction) {
+      this.contentDOM!.style.width = `${sizeFraction * 100}%`
+    }
   }
 }
 
