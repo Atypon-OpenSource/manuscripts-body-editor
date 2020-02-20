@@ -20,8 +20,8 @@ import {
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
-  Keyword,
   Manuscript,
+  ManuscriptKeyword,
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
@@ -43,7 +43,7 @@ const keywordsInserted = (transactions: Transaction[]): boolean =>
 
 export const buildKeywordsContents = (
   manuscript: Manuscript,
-  manuscriptKeywords: Keyword[]
+  manuscriptKeywords: ManuscriptKeyword[]
 ) => {
   const p = document.createElement('p')
   p.classList.add('keywords')
@@ -87,9 +87,11 @@ export default (props: Props) => {
         for (const { node, pos } of keywordsElements) {
           const manuscript = props.getManuscript()
 
-          const manuscriptKeywords: Keyword[] = (manuscript.keywordIDs || [])
+          const manuscriptKeywords: ManuscriptKeyword[] = (
+            manuscript.keywordIDs || []
+          )
             .map(id => props.getModel(id))
-            .filter(Boolean) as Keyword[]
+            .filter(Boolean) as ManuscriptKeyword[]
 
           tr.setNodeMarkup(pos, undefined, {
             ...node.attrs,
