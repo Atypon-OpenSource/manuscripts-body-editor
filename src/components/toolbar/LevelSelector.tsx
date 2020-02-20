@@ -611,10 +611,6 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
 const OptionContainer = styled.div<{ isSelected: boolean }>`
   display: flex;
   align-items: center;
-
-  & svg path {
-    fill: ${props => props.theme.colors.brand.default};
-  }
 `
 
 const OptionIcon = styled.span`
@@ -640,7 +636,7 @@ const StyledSelect = styled(Select)`
   z-index: 3;
 
   & > div:hover {
-    border-color: ${props => props.theme.colors.brand.medium};
+    border-color: ${props => props.theme.colors.border.secondary};
   }
 `
 
@@ -704,7 +700,9 @@ export const LevelSelector: React.FunctionComponent<{
             style.backgroundColor = '#f5fbfc'
           }
           if (props.isSelected) {
-            style.backgroundColor = '#ddf3fa'
+            style.backgroundColor = '#f2fbfc'
+            style.borderBottom = '1px solid #bce7f6'
+            style.borderTop = '1px solid #bce7f6'
           }
           style.color = '#353535'
 
@@ -738,7 +736,7 @@ export const LevelSelector: React.FunctionComponent<{
           backgroundColor: '#fff',
           borderWidth: 1,
           borderStyle: 'solid',
-          borderColor: '#97a2b1',
+          borderColor: '#e2e2e2',
           boxShadow: 'none',
           fontSize: '14px',
           minHeight: 0,
@@ -746,6 +744,7 @@ export const LevelSelector: React.FunctionComponent<{
           width: 200,
           overflowX: 'hidden',
           textOverflow: 'ellipsis',
+          cursor: 'pointer',
         }),
         indicatorSeparator: (): CSSProperties => ({
           display: 'none',

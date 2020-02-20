@@ -584,11 +584,9 @@
   position: relative;
   cursor: ns-resize;
   opacity: 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
   transition: 0.2s all;
   width: 52px;
+  margin-top: 16px;
 }
 
 .ProseMirror .block-container:hover .block-gutter {
