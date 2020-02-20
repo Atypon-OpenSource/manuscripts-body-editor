@@ -72,12 +72,9 @@ export default (props: Props) => {
     }
   }
 
-  const chooseDefaultTOCStyle = (): string | undefined => {
+  const findParagraphStyleByPrototype = (id: string): string | undefined => {
     for (const model of props.modelMap.values()) {
-      if (
-        isParagraphStyle(model) &&
-        model.prototype === 'MPParagraphStyle:toc'
-      ) {
+      if (isParagraphStyle(model) && model.prototype === id) {
         return model._id
       }
     }
@@ -88,7 +85,13 @@ export default (props: Props) => {
   ): string | undefined => {
     switch (node.type) {
       case node.type.schema.nodes.toc_element:
-        return chooseDefaultTOCStyle()
+        return findParagraphStyleByPrototype('MPParagraphStyle:toc')
+
+      case node.type.schema.nodes.keywords_element:
+        return findParagraphStyleByPrototype('MPParagraphStyle:keywords')
+
+      case node.type.schema.nodes.bibliography_element:
+        return findParagraphStyleByPrototype('MPParagraphStyle:bibliography')
 
       default:
         if (!props.manuscript.pageLayout) {
