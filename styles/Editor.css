@@ -489,6 +489,20 @@
   display: none;
 }
 
+.ProseMirror section.page-break-before::before {
+  content: '';
+  display: block;
+  border-top: 2px dashed #aaa;
+  margin: 16px 64px;
+}
+
+.ProseMirror section.page-break-after::after {
+  content: '';
+  display: block;
+  border-bottom: 2px dashed #ccc;
+  margin: 16px 64px;
+}
+
 .ProseMirror section > section > section > section h1 {
   font-size: 100%;
 }
