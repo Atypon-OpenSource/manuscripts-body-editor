@@ -229,6 +229,7 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  overflow: hidden;
 }
 
 .ProseMirror .figure-block > .listing {
@@ -273,6 +274,20 @@
 .ProseMirror .figure-image {
   max-width: 100%;
   object-fit: contain;
+}
+
+.ProseMirror .figure-embed {
+  width: 640px;
+  max-width: 90%;
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.ProseMirror .figure-embed .figure-embed-object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
 }
 
 .ProseMirror figcaption {

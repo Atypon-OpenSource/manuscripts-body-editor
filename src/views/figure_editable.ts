@@ -25,74 +25,74 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 export class FigureEditableView extends FigureView<EditorProps> {
   public updateContents = () => {
-    const { src } = this.node.attrs
-
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const img = src
-      ? this.createFigureImage(src)
-      : this.createFigurePlaceholder()
+    const media = this.createMedia()
 
-    if (this.props.permissions.write) {
-      const input = document.createElement('input')
-      input.accept = 'image/*'
-      input.type = 'file'
-      input.addEventListener('change', async event => {
-        const target = event.target as HTMLInputElement
+    if (media) {
+      this.container.appendChild(media)
+    } else {
+      const img = this.createFigureImage() || this.createFigurePlaceholder()
 
-        if (target.files && target.files.length) {
-          await this.updateFigure(target.files[0])
-        }
-      })
+      if (this.props.permissions.write) {
+        const input = document.createElement('input')
+        input.accept = 'image/*'
+        input.type = 'file'
+        input.addEventListener('change', async event => {
+          const target = event.target as HTMLInputElement
 
-      img.addEventListener('click', () => {
-        input.click()
-      })
+          if (target.files && target.files.length) {
+            await this.updateFigure(target.files[0])
+          }
+        })
 
-      img.addEventListener('mouseenter', () => {
-        img.classList.toggle('over', true)
-      })
+        img.addEventListener('click', () => {
+          input.click()
+        })
 
-      img.addEventListener('mouseleave', () => {
-        img.classList.toggle('over', false)
-      })
+        img.addEventListener('mouseenter', () => {
+          img.classList.toggle('over', true)
+        })
 
-      img.addEventListener('dragenter', event => {
-        event.preventDefault()
-        img.classList.toggle('over', true)
-      })
+        img.addEventListener('mouseleave', () => {
+          img.classList.toggle('over', false)
+        })
 
-      img.addEventListener('dragleave', () => {
-        img.classList.toggle('over', false)
-      })
+        img.addEventListener('dragenter', event => {
+          event.preventDefault()
+          img.classList.toggle('over', true)
+        })
 
-      img.addEventListener('dragover', event => {
-        if (event.dataTransfer && event.dataTransfer.items) {
-          for (const item of event.dataTransfer.items) {
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
-              event.preventDefault()
-              event.dataTransfer.dropEffect = 'copy'
+        img.addEventListener('dragleave', () => {
+          img.classList.toggle('over', false)
+        })
+
+        img.addEventListener('dragover', event => {
+          if (event.dataTransfer && event.dataTransfer.items) {
+            for (const item of event.dataTransfer.items) {
+              if (item.kind === 'file' && item.type.startsWith('image/')) {
+                event.preventDefault()
+                event.dataTransfer.dropEffect = 'copy'
+              }
             }
           }
-        }
-      })
+        })
 
-      img.addEventListener('drop', event => {
-        if (event.dataTransfer && event.dataTransfer.files) {
-          event.preventDefault()
+        img.addEventListener('drop', event => {
+          if (event.dataTransfer && event.dataTransfer.files) {
+            event.preventDefault()
 
-          this.updateFigure(event.dataTransfer.files[0]).catch(error => {
-            console.error(error) // tslint:disable-line:no-console
-          })
-        }
-      })
+            this.updateFigure(event.dataTransfer.files[0]).catch(error => {
+              console.error(error) // tslint:disable-line:no-console
+            })
+          }
+        })
+      }
+
+      this.container.appendChild(img)
     }
-
-    // TODO: a popup editor for figure contents and metadata?
-
-    this.container.appendChild(img)
   }
 
   public createFigurePlaceholder = () => {

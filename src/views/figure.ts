@@ -32,25 +32,51 @@ export class FigureView<PropsType extends ViewerProps>
   public ignoreMutation = () => true
 
   public updateContents = () => {
-    const { src } = this.node.attrs
-
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const img = src
-      ? this.createFigureImage(src)
-      : this.createFigurePlaceholder()
+    const object =
+      this.createMedia() ||
+      this.createFigureImage() ||
+      this.createFigurePlaceholder()
 
-    this.container.appendChild(img)
+    this.container.appendChild(object)
   }
 
-  public createFigureImage = (src: string) => {
-    const element = document.createElement('img')
-    element.classList.add('figure-image')
-    element.src = src
+  public createMedia = () => {
+    const { embedURL } = this.node.attrs
 
-    return element
+    if (embedURL) {
+      const container = document.createElement('div')
+      container.classList.add('figure-embed')
+
+      const object = document.createElement('iframe')
+      object.classList.add('figure-embed-object')
+      object.setAttribute('src', embedURL)
+      object.setAttribute('height', '100%')
+      object.setAttribute('width', '100%')
+      object.setAttribute('allowfullscreen', 'true')
+      object.setAttribute('sandbox', 'allow-scripts allow-same-origin')
+      container.appendChild(object)
+
+      // TODO: use oEmbed to fetch information for any URL?
+      // TODO: use figure image as preview/click to play?
+
+      return container
+    }
+  }
+
+  public createFigureImage = () => {
+    const { src } = this.node.attrs
+
+    if (src) {
+      const element = document.createElement('img')
+      element.classList.add('figure-image')
+      element.src = src
+
+      return element
+    }
   }
 
   public createFigurePlaceholder = () => {
