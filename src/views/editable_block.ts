@@ -46,13 +46,11 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       warningButton.classList.add('sync-warning-button')
       // warningButton.innerHTML = this.icons.attention
 
-      if (retrySync) {
-        warningButton.addEventListener('click', async () => {
-          const errors = this.syncErrors.map(error => error._id)
+      warningButton.addEventListener('click', async () => {
+        const errors = this.syncErrors.map(error => error._id)
 
-          await retrySync(errors)
-        })
-      }
+        await retrySync(errors)
+      })
 
       warningButton.addEventListener('mouseenter', () => {
         const warning = document.createElement('div')
@@ -67,15 +65,13 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
           })()
         )
 
-        if (retrySync) {
-          warning.appendChild(
-            (() => {
-              const node = document.createElement('p')
-              node.textContent = `Please click to retry, and contact support@manuscriptsapp.com if the failure continues.`
-              return node
-            })()
-          )
-        }
+        warning.appendChild(
+          (() => {
+            const node = document.createElement('p')
+            node.textContent = `Please click to retry, and contact support@manuscriptsapp.com if the failure continues.`
+            return node
+          })()
+        )
 
         this.props.popper.show(warningButton, warning, 'left')
       })

@@ -73,6 +73,7 @@ export class Viewer extends React.PureComponent<ViewerProps> {
         schema,
         plugins: plugins(this.props),
       }),
+      // @ts-ignore (types)
       nodeViews: views(this.props),
       attributes,
     })

@@ -28,7 +28,7 @@ import { RequirementsContext } from './RequirementsProvider'
 export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
   node,
 }) => {
-  const [items, setItems] = useState()
+  const [items, setItems] = useState<string[]>()
 
   const buildRequirementsAlerts = useContext(RequirementsContext)
 
