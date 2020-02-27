@@ -47,7 +47,6 @@ export interface ViewerProps {
   locale: string
   modelMap: Map<string, Model>
   popper: PopperManager
-  manuscript: Manuscript
   projectID: string
   getCurrentUser: () => UserProfile
   history: History

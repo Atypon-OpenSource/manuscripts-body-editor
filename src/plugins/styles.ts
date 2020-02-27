@@ -40,7 +40,7 @@ const isFigureLayout = hasObjectType<FigureLayout>(ObjectTypes.FigureLayout)
 
 interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
-  manuscript: Manuscript
+  getManuscript: () => Manuscript
   modelMap: Map<string, Model>
 }
 
@@ -91,13 +91,13 @@ export default (props: Props) => {
         return chooseDefaultTOCStyle()
 
       default:
-        if (!props.manuscript.pageLayout) {
+        const manuscript = props.getManuscript()
+
+        if (!manuscript.pageLayout) {
           return undefined
         }
 
-        const pageLayout = props.getModel<PageLayout>(
-          props.manuscript.pageLayout
-        )
+        const pageLayout = props.getModel<PageLayout>(manuscript.pageLayout)
 
         if (!pageLayout) {
           return undefined
