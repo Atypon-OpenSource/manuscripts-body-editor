@@ -212,6 +212,7 @@
   display: grid;
   gap: 20px 40px;
   margin: 16px auto 0;
+  box-sizing: border-box;
 }
 
 .ProseMirror .block:focus-within .figure-block,
