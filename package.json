@@ -31,7 +31,7 @@
     "@jupyterlab/services": "^3.2.1",
     "@manuscripts/assets": "^0.6.1",
     "@manuscripts/manuscripts-json-schema": "^1.28.0",
-    "@manuscripts/title-editor": "^0.4.0",
+    "@manuscripts/title-editor": "^0.5.0",
     "astrocite-eutils": "^0.16.0",
     "axios": "^0.19.0",
     "blob-util": "^2.0.2",

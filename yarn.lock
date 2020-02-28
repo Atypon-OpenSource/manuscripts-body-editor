@@ -1159,11 +1159,6 @@
     "@phosphor/disposable" "^1.1.2"
     "@phosphor/signaling" "^1.2.2"
 
-"@manuscripts/assets@^0.3.9":
-  version "0.3.21"
-  resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.3.21.tgz#fa3d0ab25eaf930cefe62c06b8cbf90fa539882c"
-  integrity sha512-CAqc6tY9eMMNHI7YCJJ30H8UGzYPCzheRXwyw5EeqOnTDA+5rUlO+pptj+ZUwTmtsvtCmz+pE4CGz8LRId+p0A==
-
 "@manuscripts/assets@^0.6.1":
   version "0.6.1"
   resolved "https://registry.npmjs.org/@manuscripts/assets/-/assets-0.6.1.tgz#c1d1c88b3e3c030177b8bbff0f6d6e352a045992"
@@ -1247,18 +1242,18 @@
     react-sizeme "^2.6.12"
     tooltip.js "^1.3.3"
 
-"@manuscripts/title-editor@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.4.0.tgz#81185a0b11b38e316b573ccf0314bd55c48bbe4d"
-  integrity sha512-/iEr3sZMp8hczQnkJql8BrU5xRYr2QvrxAX6fW+phcHtYPD+FkWTCfGGfiDsHXCnaSnGNgSUwa6N5Xx0qyrkQA==
+"@manuscripts/title-editor@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/@manuscripts/title-editor/-/title-editor-0.5.0.tgz#c360e909b88c5334df2ea747194f250177844a5b"
+  integrity sha512-CWTrTRtS76aeR7Il/4wwmo4E8OuCWgamJ3asCTowx03KUYWAI5DlrOuKQJ8CSsNPWcK4wH5qL5PAKjIyTHuquQ==
   dependencies:
-    "@manuscripts/assets" "^0.3.9"
-    prosemirror-commands "^1.0.4"
-    prosemirror-history "^1.0.0"
-    prosemirror-keymap "^1.0.0"
-    prosemirror-model "^1.6.2"
-    prosemirror-state "^1.2.2"
-    prosemirror-view "^1.6.3"
+    "@manuscripts/assets" "^0.6.1"
+    prosemirror-commands "^1.1.3"
+    prosemirror-history "^1.1.3"
+    prosemirror-keymap "^1.1.3"
+    prosemirror-model "^1.9.1"
+    prosemirror-state "^1.3.2"
+    prosemirror-view "^1.14.2"
 
 "@manuscripts/tslint-config@^0.1.4":
   version "0.1.4"
@@ -8365,7 +8360,7 @@ property-is-enumerable-x@^1.1.0:
     to-object-x "^1.4.1"
     to-property-key-x "^2.0.1"
 
-prosemirror-commands@^1.0.4, prosemirror-commands@^1.1.3:
+prosemirror-commands@^1.1.3:
   version "1.1.3"
   resolved "https://registry.npmjs.org/prosemirror-commands/-/prosemirror-commands-1.1.3.tgz#4ee481ff062a02498ff3d50cfcca2f6327fd1fde"
   integrity sha512-YVbKwTR4likoyhuwIUC9egbzHvnFrFUNbiesB0DB/HZ8hBcopQ42Tb4KGlYrS3n+pNDTFObN73CLFY6mYLN2IQ==
@@ -8411,7 +8406,7 @@ prosemirror-gapcursor@^1.1.3:
     prosemirror-state "^1.0.0"
     prosemirror-view "^1.0.0"
 
-prosemirror-history@^1.0.0, prosemirror-history@^1.1.3:
+prosemirror-history@^1.1.3:
   version "1.1.3"
   resolved "https://registry.npmjs.org/prosemirror-history/-/prosemirror-history-1.1.3.tgz#4f76a1e71db4ef7cdf0e13dec6d8da2aeaecd489"
   integrity sha512-zGDotijea+vnfnyyUGyiy1wfOQhf0B/b6zYcCouBV8yo6JmrE9X23M5q7Nf/nATywEZbgRLG70R4DmfSTC+gfg==
@@ -8436,7 +8431,7 @@ prosemirror-keymap@^1.0.0, prosemirror-keymap@^1.1.2, prosemirror-keymap@^1.1.3:
     prosemirror-state "^1.0.0"
     w3c-keyname "^2.2.0"
 
-prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.6.2, prosemirror-model@^1.7.2, prosemirror-model@^1.8.1, prosemirror-model@^1.9.1:
+prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.7.2, prosemirror-model@^1.8.1, prosemirror-model@^1.9.1:
   version "1.9.1"
   resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.9.1.tgz#8c08cf556f593c5f015548d2c1a6825661df087f"
   integrity sha512-Qblh8pm1c7Ll64sYLauwwzjimo/tFg1zW3Q3IWhKRhvfOEgRKqa6dC5pRrAa+XHOIjBFEYrqbi52J5bqA2dV8Q==
@@ -8482,7 +8477,7 @@ prosemirror-utils@^0.9.6:
   resolved "https://registry.npmjs.org/prosemirror-utils/-/prosemirror-utils-0.9.6.tgz#3d97bd85897e3b535555867dc95a51399116a973"
   integrity sha512-UC+j9hQQ1POYfMc5p7UFxBTptRiGPR7Kkmbl3jVvU8VgQbkI89tR/GK+3QYC8n+VvBZrtAoCrJItNhWSxX3slA==
 
-prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.14.2, prosemirror-view@^1.6.3:
+prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.14.2:
   version "1.14.2"
   resolved "https://registry.npmjs.org/prosemirror-view/-/prosemirror-view-1.14.2.tgz#23eb89f6101e9671b5e0c19d82ee0ad9de5608de"
   integrity sha512-9yPVH6OLyaEraHjWHbSk2DB0R/1TsEE6AA1LI+vmCypXXA+zTzNrktUFzBhSJHehXDoEJcQfnl1Wdp5GPSh2+g==
@@ -8719,15 +8714,10 @@ react-input-autosize@^2.2.1:
   dependencies:
     prop-types "^15.5.8"
 
-react-is@^16.11.0:
+react-is@^16.11.0, react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   version "16.13.0"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
-
-react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
-  version "16.12.0"
-  resolved "https://registry.npmjs.org/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
-  integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
 react-json-tree@^0.11.0:
   version "0.11.2"
