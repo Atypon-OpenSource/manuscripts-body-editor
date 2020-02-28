@@ -49,7 +49,7 @@ const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
         ? props.isActive
           ? props.theme.colors.text.tertiary
           : props.theme.colors.text.primary
-        : props.theme.colors.muted};
+        : props.theme.colors.text.muted};
 
     &:hover {
       background-color: ${props =>
