@@ -21,19 +21,21 @@ import { createNodeView } from './creators'
 export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
   PropsType
 > {
+  private container: HTMLElement
+
   public ignoreMutation = () => true
 
   public createElement = () => {
-    const container = document.createElement('figure-container')
-    container.className = 'block'
-    this.dom.appendChild(container)
+    this.container = document.createElement('div')
+    this.container.classList.add('block')
+    this.dom.appendChild(this.container)
 
     // figure group
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
 
-    container.appendChild(this.contentDOM)
+    this.container.appendChild(this.contentDOM)
   }
 
   public updateContents = () => {
@@ -41,6 +43,7 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
       suppressCaption,
       figureStyle,
       figureLayout,
+      alignment,
       sizeFraction,
     } = this.node.attrs
 
@@ -50,11 +53,18 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
 
     this.contentDOM!.setAttribute('data-figure-layout', figureLayout)
 
-    this.contentDOM!.setAttribute('data-size-fraction', sizeFraction)
+    this.contentDOM!.setAttribute('data-alignment', alignment)
 
-    if (sizeFraction) {
-      this.contentDOM!.style.width = `${sizeFraction * 100}%`
+    if (sizeFraction > 1) {
+      // fit to page width
+      this.contentDOM!.style.width = '100%'
+      this.contentDOM!.style.padding = '0 !important'
+    } else {
+      // fit to margin
+      this.contentDOM!.style.width = `${(sizeFraction || 1) * 100}%`
     }
+
+    this.container.classList.toggle('fit-to-page', sizeFraction === 2)
   }
 }
 
