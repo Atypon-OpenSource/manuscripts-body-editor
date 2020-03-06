@@ -1174,10 +1174,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.6.tgz#0fad862ca3ecfaf513428474fe07aa45bae7fd19"
   integrity sha512-XlOsQozWXXz61BPwiNGIMR3SrMi811c1oxpIP+CmsY9LZjf6JyXTnlCR4FOvcHjQcmWe9Ktb77mWZDR0uXuHpg==
 
-"@manuscripts/manuscript-transform@^0.27.0":
-  version "0.27.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.27.0.tgz#e2eaa6050052e5445605a0834de2bd3a0939f66b"
-  integrity sha512-j1jzd+W9AKI4TLE+qGSCkzOBC68PJqYFt3I49ft0se2h5xXzYDrNPw/Qxwg3D8wFlS/s0iXhomJsqY29UN7afA==
+"@manuscripts/manuscript-transform@^0.27.1":
+  version "0.27.1"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.27.1.tgz#6d8a9bd29b1f877c864d90abd9aec404d6b4d654"
+  integrity sha512-m6grU+MzeKFcj0D//83yTG1kY6fn3QFlT2pp6j/rJBWr46PrB6rsg5+DVEUNu+F4+7dpcfBCJ6Cmu/4mpFEOHw==
   dependencies:
     debug "^4.1.1"
     prosemirror-model "^1.7.2"
