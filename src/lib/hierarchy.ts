@@ -15,11 +15,13 @@
  */
 
 import {
-  isElementNode,
-  isListNode,
-  isSectionNode,
+  GROUP_LIST,
+  hasGroup,
+  isElementNodeType,
+  isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptNode,
+  ManuscriptNodeType,
   nodeNames,
 } from '@manuscripts/manuscript-transform'
 import { ResolvedPos } from 'prosemirror-model'
@@ -31,13 +33,16 @@ interface NodeWithPosition {
   after: number
 }
 
+const isListNodeType = (nodeType: ManuscriptNodeType) =>
+  hasGroup(nodeType, GROUP_LIST)
+
 export const findListParent = (
   $pos: ResolvedPos
 ): NodeWithPosition | undefined => {
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
 
-    if (isListNode(node)) {
+    if (isListNodeType(node.type)) {
       return {
         node,
         before: $pos.before(depth),
@@ -59,7 +64,7 @@ export const findClosestParentElement = (
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
 
-    if (isSectionNode(node) || isElementNode(node)) {
+    if (isSectionNodeType(node.type) || isElementNodeType(node.type)) {
       return {
         node,
         before: $pos.before(depth),

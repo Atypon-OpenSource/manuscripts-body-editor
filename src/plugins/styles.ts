@@ -16,6 +16,7 @@
 
 import {
   hasObjectType,
+  isElementNodeType,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
@@ -115,8 +116,6 @@ export default (props: Props) => {
       // only scan if nodes have changed
       if (!transactions.some(transaction => transaction.docChanged)) return null
 
-      const { nodes } = newState.schema
-
       const nodesNeedingStyle: Array<{
         node: ManuscriptNode
         pos: number
@@ -125,11 +124,6 @@ export default (props: Props) => {
 
       // tslint:disable-next-line:cyclomatic-complexity
       newState.doc.descendants((node, pos, parent) => {
-        // don't descend into elements
-        if (parent.type !== nodes.manuscript && parent.type !== nodes.section) {
-          return false
-        }
-
         if ('paragraphStyle' in node.attrs && !node.attrs.paragraphStyle) {
           const paragraphStyle = chooseDefaultParagraphStyle(node)
 
@@ -160,6 +154,11 @@ export default (props: Props) => {
           if (tableStyle) {
             nodesNeedingStyle.push({ node, pos, attrs: { tableStyle } })
           }
+        }
+
+        // don't descend into elements
+        if (isElementNodeType(node.type)) {
+          return false
         }
       })
 

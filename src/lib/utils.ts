@@ -15,7 +15,8 @@
  */
 
 import {
-  isElementNode,
+  isElementNodeType,
+  isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/manuscript-transform'
@@ -48,6 +49,17 @@ export const getMatchingChild = (
   }
 }
 
+export const getMatchingDescendant = (
+  parent: ManuscriptNode,
+  matcher: (node: ManuscriptNode) => boolean
+): ManuscriptNode | undefined => {
+  for (const node of iterateChildren(parent, true)) {
+    if (matcher(node)) {
+      return node
+    }
+  }
+}
+
 export const getChildOfType = (
   parent: ManuscriptNode,
   nodeType: ManuscriptNodeType
@@ -57,10 +69,10 @@ export const findParentNodeWithId = findParentNode(node => 'id' in node.attrs)
 
 export const findParentNodeWithIdValue = findParentNode(node => node.attrs.id)
 
-export const findParentSection = findParentNode(
-  node => node.type === node.type.schema.nodes.section
+export const findParentSection = findParentNode(node =>
+  isSectionNodeType(node.type)
 )
 
 export const findParentElement = findParentNode(
-  node => isElementNode(node) && node.attrs.id
+  node => isElementNodeType(node.type) && node.attrs.id
 )

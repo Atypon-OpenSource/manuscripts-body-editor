@@ -17,7 +17,8 @@
 import {
   generateID,
   hasObjectType,
-  isSectionNode,
+  isSectionNodeType,
+  isTOCSectionNode,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
@@ -67,8 +68,7 @@ const buildTOCList = (
   let index = sectionNumberingStyle ? sectionNumberingStyle.startIndex : 1
 
   for (const childNode of iterateChildren(node)) {
-    // TODO: include nonstandard sections?
-    if (isSectionNode(childNode)) {
+    if (isSectionNodeType(childNode.type) && !isTOCSectionNode(childNode)) {
       const numbering = numberingScheme === 'none' ? '' : `${prefix}${index}`
 
       const firstChildNode = childNode.child(0)
@@ -88,7 +88,9 @@ const buildTOCList = (
         list.appendChild(item)
       }
 
-      const childSection = getMatchingChild(childNode, isSectionNode)
+      const childSection = getMatchingChild(childNode, node =>
+        isSectionNodeType(node.type)
+      )
 
       if (childSection) {
         const paragraphStyle = headingStyles.get(`heading${depth + 1}`)

@@ -16,6 +16,7 @@
 
 import {
   generateNodeID,
+  isListNode,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
@@ -33,15 +34,6 @@ export default () => {
       // TODO: keep track of changed nodes that haven't been saved yet?
       // TODO: call insertComponent directly?
 
-      const { nodes } = newState.schema
-
-      const containerNodeTypes = [
-        nodes.bullet_list,
-        nodes.ordered_list,
-        nodes.blockquote_element,
-        nodes.pullquote_element,
-      ]
-
       const ids = new Set()
 
       const nodesToUpdate: Array<{
@@ -50,37 +42,51 @@ export default () => {
         id: string
       }> = []
 
-      // for each node in the doc
-      newState.doc.descendants((node, pos) => {
-        if (!('id' in node.attrs)) {
-          return true
-        }
-
-        const { id } = node.attrs
-
-        if (id) {
-          if (ids.has(id)) {
-            // give the duplicate node a new id
-            // TODO: maybe change the other node's ID?
-            const id = generateNodeID(node.type)
-            nodesToUpdate.push({ node, pos, id })
-            ids.add(id)
-          } else {
-            ids.add(id)
+      const processNode = (
+        parentNode: ManuscriptNode,
+        parentPos = 0,
+        insideList = false
+      ) => {
+        // tslint:disable-next-line:cyclomatic-complexity
+        parentNode.forEach((node, offset) => {
+          if (node.isText) {
+            return
           }
-        } else {
-          // set the id on the node at this position
-          const id = generateNodeID(node.type)
-          nodesToUpdate.push({ node, pos, id })
-          ids.add(id)
-        }
 
-        // don't descend into lists
-        // TODO: descend, but only give ids to inline nodes
-        if (containerNodeTypes.includes(node.type)) {
-          return false
-        }
-      })
+          // node pos
+          const pos = parentPos + offset
+
+          // set ids for nodes that need them, except blocks inside lists
+          if ('id' in node.attrs && (!insideList || node.isInline)) {
+            const { id } = node.attrs
+
+            if (id) {
+              if (ids.has(id)) {
+                // give the duplicate node a new id
+                // TODO: maybe change the other node's ID?
+                const id = generateNodeID(node.type)
+                nodesToUpdate.push({ node, pos, id })
+                ids.add(id)
+              } else {
+                ids.add(id)
+              }
+            } else {
+              // set the id on the node at this position
+              const id = generateNodeID(node.type)
+              nodesToUpdate.push({ node, pos, id })
+              ids.add(id)
+            }
+          }
+
+          const isList = () => isListNode(node)
+
+          if (node.childCount) {
+            processNode(node, pos + 1, insideList || isList())
+          }
+        })
+      }
+
+      processNode(newState.doc, 0, false)
 
       // update the nodes and return the transaction if something changed
       if (nodesToUpdate.length) {

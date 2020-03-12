@@ -20,7 +20,7 @@ import {
   buildFootnote,
   buildHighlight,
   buildInlineMathFragment,
-  isElementNode,
+  isElementNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptMarkType,
@@ -108,7 +108,7 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
   for (let d = $from.depth; d >= 0; d--) {
     const node = $from.node(d)
 
-    if (isElementNode(node)) {
+    if (isElementNodeType(node.type)) {
       return $from.after(d)
     }
   }

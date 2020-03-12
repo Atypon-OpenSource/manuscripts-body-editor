@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import {
-  isElementNode,
+  isElementNodeType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -141,7 +141,7 @@ export const buildTree: TreeBuilder = ({
 
   node.forEach((childNode, offset, childIndex) => {
     if (
-      (!childNode.isAtom || isElementNode(childNode)) &&
+      (!childNode.isAtom || isElementNodeType(childNode.type)) &&
       childNode.attrs.id &&
       !isExcluded(childNode.type)
     ) {

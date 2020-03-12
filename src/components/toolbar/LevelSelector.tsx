@@ -16,12 +16,11 @@
 
 import {
   generateNodeID,
-  isSectionNode,
+  isSectionNodeType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
-  SectionNode,
   SectionTitleNode,
 } from '@manuscripts/manuscript-transform'
 import { Fragment } from 'prosemirror-model'
@@ -320,7 +319,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
 
     let anchor
 
-    if (previousNode && isSectionNode(previousNode)) {
+    if (previousNode && isSectionNodeType(previousNode.type)) {
       tr.replaceWith(
         beforeSection - previousNode.nodeSize,
         afterSection,
@@ -431,7 +430,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       for (let depth = 1; depth < sectionDepth; depth++) {
         const node = $from.node(depth)
 
-        if (isSectionNode(node)) {
+        if (isSectionNodeType(node.type)) {
           sectionOptions.push(
             buildOption({
               nodeType: nodes.section,
@@ -459,10 +458,10 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       const beforeSectionPos = $from.before(parentSectionDepth + 1)
       const $beforeSectionPos = doc.resolve(beforeSectionPos)
 
-      const precedingSections: SectionNode[] = []
+      const precedingSections: ManuscriptNode[] = []
 
       parentSection.nodesBetween(0, $beforeSectionPos.parentOffset, node => {
-        if (isSectionNode(node)) {
+        if (isSectionNodeType(node.type)) {
           precedingSections.push(node)
         }
         return false
@@ -515,7 +514,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       for (let depth = 1; depth <= sectionDepth; depth++) {
         const node = $from.node(depth)
 
-        if (isSectionNode(node)) {
+        if (isSectionNodeType(node.type)) {
           sectionOptions.push(
             buildOption({
               nodeType: nodes.section,

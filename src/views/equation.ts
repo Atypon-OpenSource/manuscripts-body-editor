@@ -31,6 +31,7 @@ export class EquationView<PropsType extends ViewerProps>
   public createDOM = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('equation')
+    this.dom.setAttribute('id', this.node.attrs.id)
   }
 
   public updateContents = () => {

@@ -53,6 +53,7 @@ export class InlineEquationView<PropsType extends ViewerProps>
   protected createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.classList.add('equation')
+    this.dom.setAttribute('id', this.node.attrs.id)
   }
 }
 
