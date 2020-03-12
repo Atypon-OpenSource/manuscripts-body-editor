@@ -41,6 +41,11 @@ export class BibliographyElementBlockView<
         'There was an error loading the HTML purifier, please reload to try again'
       )
     }
+
+    this.element.setAttribute(
+      'data-paragraph-style',
+      this.node.attrs.paragraphStyle
+    )
   }
 
   public createElement = () => {
