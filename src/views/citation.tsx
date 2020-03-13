@@ -15,7 +15,12 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
-import { Citation, CitationItem } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  Citation,
+  CitationItem,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
 import { sanitize } from 'dompurify'
 import React from 'react'
 import { ViewerProps } from '../components/Viewer'
@@ -38,8 +43,21 @@ export class CitationView<PropsType extends ViewerProps>
     const citation = this.getCitation()
 
     const items = citation.embeddedCitationItems.map(
-      (citationItem: CitationItem) =>
-        getLibraryItem(citationItem.bibliographyItem)
+      (citationItem: CitationItem): BibliographyItem => {
+        const libraryItem = getLibraryItem(citationItem.bibliographyItem)
+
+        if (!libraryItem) {
+          const placeholderItem = {
+            _id: citationItem.bibliographyItem,
+            objectType: ObjectTypes.BibliographyItem,
+            title: '[missing library item]',
+          }
+
+          return placeholderItem as BibliographyItem
+        }
+
+        return libraryItem
+      }
     )
 
     if (!this.popperContainer) {

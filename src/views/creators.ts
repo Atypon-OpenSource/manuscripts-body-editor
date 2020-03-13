@@ -22,8 +22,13 @@ import { BaseNodeView } from './base_node_view'
 
 export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
   type: new (...args: any[]) => T // tslint:disable-line:no-any
-) => (props: ViewerProps): NodeViewCreator<T> => (node, view, getPos) => {
-  const nodeView = new type(props, node, view, getPos)
+) => (props: ViewerProps): NodeViewCreator<T> => (
+  node,
+  view,
+  getPos,
+  decorations
+) => {
+  const nodeView = new type(props, node, view, getPos, decorations)
 
   nodeView.initialise()
 
@@ -32,8 +37,13 @@ export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
 
 export const createEditableNodeView = <T extends BaseNodeView<EditorProps>>(
   type: new (...args: any[]) => T // tslint:disable-line:no-any
-) => (props: EditorProps): NodeViewCreator<T> => (node, view, getPos) => {
-  const nodeView = new type(props, node, view, getPos)
+) => (props: EditorProps): NodeViewCreator<T> => (
+  node,
+  view,
+  getPos,
+  decorations
+) => {
+  const nodeView = new type(props, node, view, getPos, decorations)
 
   nodeView.initialise()
 
@@ -54,7 +64,7 @@ export const createNodeOrElementView = <T extends BaseNodeView<ViewerProps>>(
 
   for (const decoration of decorations) {
     if (decoration.spec.element) {
-      const nodeView = new type(props, node, view, getPos)
+      const nodeView = new type(props, node, view, getPos, decorations)
 
       nodeView.initialise()
 

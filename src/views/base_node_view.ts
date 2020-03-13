@@ -17,12 +17,19 @@
 import {
   ManuscriptEditorView,
   ManuscriptNode,
+  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import { Decoration } from 'prosemirror-view'
+import { Decoration, NodeView } from 'prosemirror-view'
 import { ViewerProps } from '../components/Viewer'
 import { SyncError } from '../types'
 
-export class BaseNodeView<PropsType extends ViewerProps> {
+export interface DecorationSpec {
+  syncErrors?: SyncError[]
+  missing?: true
+}
+
+export class BaseNodeView<PropsType extends ViewerProps>
+  implements NodeView<ManuscriptSchema> {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]
@@ -32,12 +39,13 @@ export class BaseNodeView<PropsType extends ViewerProps> {
     public readonly props: PropsType,
     public node: ManuscriptNode,
     public readonly view: ManuscriptEditorView,
-    public readonly getPos: () => number
+    public readonly getPos: () => number,
+    public decorations: Array<Decoration<DecorationSpec>>
   ) {}
 
   public update = (
     newNode: ManuscriptNode,
-    decorations: Decoration[]
+    decorations: Array<Decoration<DecorationSpec>>
   ): boolean => {
     // if (!newNode.sameMarkup(this.node)) return false
     if (newNode.attrs.id !== this.node.attrs.id) return false
@@ -70,14 +78,20 @@ export class BaseNodeView<PropsType extends ViewerProps> {
     this.props.popper.destroy()
   }
 
-  public handleDecorations = (decorations?: Decoration[]) => {
+  public handleDecorations = (
+    decorations: Array<Decoration<DecorationSpec>>
+  ) => {
+    this.decorations = decorations
+
     if (decorations) {
       const syncErrorDecoration = decorations.find(
         decoration => decoration.spec.syncErrors
       )
+
       this.syncErrors = syncErrorDecoration
-        ? syncErrorDecoration.spec.syncErrors
+        ? syncErrorDecoration.spec.syncErrors!
         : []
+
       this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
     }
   }

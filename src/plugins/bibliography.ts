@@ -19,6 +19,7 @@ import {
   generateID,
   isCitationNode,
   ManuscriptEditorState,
+  ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
@@ -37,6 +38,7 @@ import {
   PluginKey,
   Transaction,
 } from 'prosemirror-state'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 import { bibliographyElementContents } from '../lib/bibliography'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
@@ -55,6 +57,9 @@ const bibliographyInserted = (transactions: Transaction[]): boolean =>
     const meta = tr.getMeta(bibliographyKey)
     return meta && meta.bibliographyInserted
   })
+
+const isBibliographyElement = (node: ManuscriptNode) =>
+  node.type === node.type.schema.nodes.bibliography_element
 
 interface Props {
   getCitationProcessor: () => CiteProc.Engine | undefined
@@ -104,8 +109,77 @@ export default (props: Props) => {
       manuscript: props.getManuscript(), // for comparison
     }))
 
+  const buildDecorations = (
+    doc: ManuscriptNode,
+    citationNodes: CitationNodes
+  ) => {
+    const decorations: Array<Decoration<{ missing: true }>> = []
+
+    let hasMissingItems = false
+
+    for (const [node, pos, citation] of citationNodes) {
+      if (citation.embeddedCitationItems.length) {
+        for (const citationItem of citation.embeddedCitationItems) {
+          if (!props.getLibraryItem(citationItem.bibliographyItem)) {
+            decorations.push(
+              Decoration.node(pos, pos + node.nodeSize, {
+                class: 'citation-missing',
+              })
+            )
+
+            hasMissingItems = true
+          }
+        }
+      } else {
+        decorations.push(
+          Decoration.node(pos, pos + node.nodeSize, {
+            class: 'citation-empty',
+          })
+        )
+      }
+    }
+
+    if (hasMissingItems) {
+      doc.descendants((node, pos) => {
+        if (isBibliographyElement(node)) {
+          decorations.push(
+            Decoration.node(
+              pos,
+              pos + node.nodeSize,
+              {},
+              {
+                missing: true,
+              }
+            )
+          )
+
+          decorations.push(
+            Decoration.widget(pos, () => {
+              const el = document.createElement('div')
+              el.className = 'bibliography-missing'
+              el.textContent = `The bibliography could not be generated, due to a missing library item.`
+              return el
+            })
+          )
+        }
+      })
+    }
+
+    return decorations
+  }
+
   return new Plugin<PluginState, ManuscriptSchema>({
     key: bibliographyKey,
+    props: {
+      decorations: state => {
+        const { citationNodes } = bibliographyKey.getState(state)
+
+        return DecorationSet.create<ManuscriptSchema>(
+          state.doc,
+          buildDecorations(state.doc, citationNodes)
+        )
+      },
+    },
     state: {
       init(config, instance): PluginState {
         const citationNodes = buildCitationNodes(instance)
@@ -155,65 +229,67 @@ export default (props: Props) => {
         return null
       }
 
-      // TODO: move this into a web worker and/or make it asynchronous?
-
-      const generatedCitations = citationProcessor
-        .rebuildProcessorState(citations)
-        .map(item => item[2]) // id, noteIndex, output
-
       const { tr } = newState
       const { selection } = tr
 
-      citationNodes.forEach(([node, pos], index) => {
-        let contents = generatedCitations[index]
+      try {
+        const generatedCitations = citationProcessor
+          .rebuildProcessorState(citations)
+          .map(item => item[2]) // id, noteIndex, output
 
-        if (contents === '[NO_PRINTED_FORM]') {
-          contents = ''
-        }
+        citationNodes.forEach(([node, pos], index) => {
+          let contents = generatedCitations[index]
 
-        tr.setNodeMarkup(pos, undefined, {
-          ...node.attrs,
-          contents,
-        })
-      })
-
-      // generate the bibliography
-      const bibliography = citationProcessor.makeBibliography()
-
-      if (bibliography) {
-        const [bibmeta, generatedBibliographyItems] = bibliography
-
-        if (bibmeta.bibliography_errors.length) {
-          console.warn(bibmeta.bibliography_errors) // tslint:disable-line:no-console
-        }
-
-        tr.doc.descendants((node, pos) => {
-          if (node.type.name === 'bibliography_element') {
-            const id =
-              node.attrs.id || generateID(ObjectTypes.BibliographyElement)
-
-            const contents = bibliographyElementContents(
-              node,
-              id,
-              generatedBibliographyItems
-            )
-
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              contents,
-              id,
-            })
+          if (contents === '[NO_PRINTED_FORM]') {
+            contents = ''
           }
+
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            contents,
+          })
         })
-      }
 
-      // create a new NodeSelection
-      // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
-      if (selection instanceof NodeSelection) {
-        tr.setSelection(NodeSelection.create(tr.doc, selection.from))
-      }
+        // generate the bibliography
+        const bibliography = citationProcessor.makeBibliography()
 
-      return tr
+        if (bibliography) {
+          const [bibmeta, generatedBibliographyItems] = bibliography
+
+          if (bibmeta.bibliography_errors.length) {
+            console.error(bibmeta.bibliography_errors) // tslint:disable-line:no-console
+          }
+
+          tr.doc.descendants((node, pos) => {
+            if (isBibliographyElement(node)) {
+              const id =
+                node.attrs.id || generateID(ObjectTypes.BibliographyElement)
+
+              const contents = bibliographyElementContents(
+                node,
+                id,
+                generatedBibliographyItems
+              )
+
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                contents,
+                id,
+              })
+            }
+          })
+        }
+
+        // create a new NodeSelection
+        // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
+        if (selection instanceof NodeSelection) {
+          tr.setSelection(NodeSelection.create(tr.doc, selection.from))
+        }
+
+        return tr
+      } catch (error) {
+        console.error(error) // tslint:disable-line:no-console
+      }
     },
   })
 }

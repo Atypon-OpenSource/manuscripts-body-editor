@@ -867,3 +867,24 @@
 .ProseMirror a.link:hover {
   color: #0b6bb8;
 }
+
+.ProseMirror .citation-missing  {
+  background-color: red;
+  color: white;
+  padding: 2px;
+}
+
+.ProseMirror .citation-empty {
+  display: inline-block;
+  height: 1em;
+  width: 1ch;
+  border: 2px solid red;
+}
+
+.ProseMirror .bibliography-missing {
+  padding: 8px;
+  color: red;
+  border: 2px solid red;
+  border-radius: 4px;
+  margin: 16px 64px;
+}

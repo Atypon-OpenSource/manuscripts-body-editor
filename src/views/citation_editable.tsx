@@ -22,6 +22,7 @@ import {
   BibliographyItem,
   Citation,
   CitationItem,
+  ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
@@ -44,8 +45,21 @@ export class CitationEditableView extends CitationView<EditorProps> {
     const citation = this.getCitation()
 
     const items = citation.embeddedCitationItems.map(
-      (citationItem: CitationItem) =>
-        getLibraryItem(citationItem.bibliographyItem)
+      (citationItem: CitationItem): BibliographyItem => {
+        const libraryItem = getLibraryItem(citationItem.bibliographyItem)
+
+        if (!libraryItem) {
+          const placeholderItem = {
+            _id: citationItem.bibliographyItem,
+            objectType: ObjectTypes.BibliographyItem,
+            title: '[missing library item]',
+          }
+
+          return placeholderItem as BibliographyItem
+        }
+
+        return libraryItem
+      }
     )
 
     const updateCitation = async (data: Partial<Citation>) => {
@@ -71,6 +85,7 @@ export class CitationEditableView extends CitationView<EditorProps> {
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
         handleCancel={this.handleCancel}
+        handleClose={this.handleClose}
         handleRemove={this.handleRemove}
         handleCite={this.handleCite}
         citation={citation}
@@ -85,6 +100,10 @@ export class CitationEditableView extends CitationView<EditorProps> {
     renderReactComponent(component, this.popperContainer)
 
     this.props.popper.show(this.dom, this.popperContainer, 'right')
+  }
+
+  private handleClose = () => {
+    this.props.popper.destroy()
   }
 
   private handleCancel = () => {
@@ -109,7 +128,10 @@ export class CitationEditableView extends CitationView<EditorProps> {
     await saveModel(citation)
 
     this.props.popper.destroy()
-    this.showPopper() // redraw the popper
+
+    window.setTimeout(() => {
+      this.showPopper() // redraw the popper
+    }, 100)
   }
 
   private handleCite = async (items: Array<Build<BibliographyItem>>) => {

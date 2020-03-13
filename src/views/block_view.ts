@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { Decoration } from 'prosemirror-view'
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 
@@ -49,7 +50,7 @@ export default class BlockView<T extends ViewerProps> extends BaseNodeView<T>
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents = (decorations?: Decoration[]) => {
     this.updateClasses()
     this.updateAttributes()
   }

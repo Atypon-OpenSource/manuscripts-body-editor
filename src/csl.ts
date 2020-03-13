@@ -253,7 +253,7 @@ export class CitationManager {
           const item = getLibraryItem(id)
 
           if (!item) {
-            throw new Error('Library item not found')
+            throw new Error(`Library item ${id} is missing`)
           }
 
           return convertBibliographyItemToData(item)

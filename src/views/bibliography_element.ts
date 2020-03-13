@@ -32,20 +32,29 @@ export class BibliographyElementBlockView<
   public ignoreMutation = () => true
 
   public updateContents = () => {
-    try {
-      this.element.innerHTML = sanitize(this.node.attrs.contents)
-    } catch (e) {
-      console.error(e) // tslint:disable-line:no-console
-      // TODO: improve the UI for presenting offline/import errors
-      window.alert(
-        'There was an error loading the HTML purifier, please reload to try again'
+    if (
+      this.decorations &&
+      this.decorations.find(decoration => decoration.spec.missing)
+    ) {
+      this.element.innerHTML = ''
+
+      this.element.removeAttribute('data-paragraph-style')
+    } else {
+      try {
+        this.element.innerHTML = sanitize(this.node.attrs.contents)
+      } catch (e) {
+        console.error(e) // tslint:disable-line:no-console
+        // TODO: improve the UI for presenting offline/import errors
+        window.alert(
+          'There was an error loading the HTML purifier, please reload to try again'
+        )
+      }
+
+      this.element.setAttribute(
+        'data-paragraph-style',
+        this.node.attrs.paragraphStyle
       )
     }
-
-    this.element.setAttribute(
-      'data-paragraph-style',
-      this.node.attrs.paragraphStyle
-    )
   }
 
   public createElement = () => {
