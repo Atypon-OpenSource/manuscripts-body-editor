@@ -596,10 +596,6 @@
   display: grid;
 }
 
-.ProseMirror .block-container > h1.block {
-  display: flex;
-}
-
 .ProseMirror .block-container > .block.fit-to-page {
   margin: 0 -60px 0 -52px;
   padding: 0;
