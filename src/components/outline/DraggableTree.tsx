@@ -97,7 +97,7 @@ export interface TreeItem {
 interface Props {
   depth?: number
   tree: TreeItem
-  view: ManuscriptEditorView
+  view?: ManuscriptEditorView
   permissions: {
     write: boolean
   }
@@ -312,11 +312,15 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     if (!this.props.permissions.write) return false
 
     const menu = this.createMenu()
+    if (!menu) return false
+
     menu.showEditMenu(event.currentTarget as HTMLAnchorElement)
   }
 
   private createMenu = () => {
     const { tree, view } = this.props
+
+    if (!view) return null
 
     // TODO: getPos?
     return new ContextMenu(tree.node, view, () => tree.pos - 1)
@@ -411,6 +415,7 @@ const dropTargetSpec: DropTargetSpec<Props> = {
 
   drop(props: Props, monitor: DropTargetMonitor) {
     if (monitor.didDrop()) return // already dropped on something else
+    if (!props.view) return // cant drop without a view to transact upon
 
     const item = monitor.getItem() as DragSourceProps
 

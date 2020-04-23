@@ -28,17 +28,17 @@ import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 interface Props {
   manuscript: Manuscript
   selected: Selected | null
-  view: ManuscriptEditorView | null
   doc: ManuscriptNode | null
   permissions: {
     write: boolean
   }
+  view?: ManuscriptEditorView
 }
 
 export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
   const [values, setValues] = useState<{
     tree: TreeItem
-    view: ManuscriptEditorView
+    view?: ManuscriptEditorView
   }>()
 
   const debouncedProps = useDebounce(props, 500)
@@ -46,7 +46,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
   useEffect(() => {
     const { doc, view, manuscript, selected } = debouncedProps
 
-    if (doc && view) {
+    if (doc) {
       const { items } = buildTree({
         node: doc,
         pos: 0,
