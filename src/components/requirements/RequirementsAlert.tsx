@@ -30,7 +30,7 @@ export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
 }) => {
   const [items, setItems] = useState<string[]>()
 
-  const buildRequirementsAlerts = useContext(RequirementsContext)
+  const validateRequirements = useContext(RequirementsContext)
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -38,9 +38,11 @@ export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
         isNodeType<ActualManuscriptNode>(node, 'manuscript') ||
         isNodeType<SectionNode>(node, 'section')
       ) {
-        const alerts = await buildRequirementsAlerts(node)
+        const requirements = await validateRequirements(node)
 
-        const items = Object.values(alerts).filter(_ => _)
+        const items = Object.values(requirements)
+          .filter(requirement => !requirement.passed)
+          .map(requirement => requirement.message)
 
         setItems(items)
       }
@@ -49,7 +51,7 @@ export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
     return () => {
       clearTimeout(timer)
     }
-  }, [buildRequirementsAlerts, node])
+  }, [validateRequirements, node])
 
   if (items && items.length) {
     return (

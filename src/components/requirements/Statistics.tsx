@@ -60,13 +60,26 @@ const Statistic: React.FC<{
   </StatisticContainer>
 )
 
+const chooseAlertMessage = (
+  requirements: RequirementsAlerts,
+  types: Array<keyof RequirementsAlerts>
+) => {
+  for (const type of types) {
+    const result = requirements[type]
+
+    if (result && !result.passed) {
+      return result.message
+    }
+  }
+}
+
 export const Statistics: React.FC<{
   node: ManuscriptNode
 }> = ({ node }) => {
   const [statistics, setStatistics] = useState<NodeStatistics>()
   const [alerts, setAlerts] = useState<RequirementsAlerts>()
 
-  const buildRequirementsAlerts = useContext(RequirementsContext)
+  const validateRequirements = useContext(RequirementsContext)
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -80,7 +93,7 @@ export const Statistics: React.FC<{
 
       setStatistics(statistics)
 
-      const alerts = await buildRequirementsAlerts(node, statistics)
+      const alerts = await validateRequirements(node, statistics)
 
       setAlerts(alerts)
     }, 250)
@@ -88,7 +101,7 @@ export const Statistics: React.FC<{
     return () => {
       clearTimeout(timer)
     }
-  }, [buildRequirementsAlerts, node])
+  }, [validateRequirements, node])
 
   if (!statistics || !alerts) {
     return null
@@ -98,14 +111,17 @@ export const Statistics: React.FC<{
     <Container>
       <Statistic
         value={statistics.words}
-        alert={alerts.words}
+        alert={chooseAlertMessage(alerts, ['words_maximum', 'words_minimum'])}
         singular={'word'}
         plural={'words'}
       />
 
       <Statistic
         value={statistics.characters}
-        alert={alerts.characters}
+        alert={chooseAlertMessage(alerts, [
+          'characters_maximum',
+          'characters_minimum',
+        ])}
         singular={'character'}
         plural={'characters'}
       />

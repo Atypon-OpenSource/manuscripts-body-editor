@@ -18,13 +18,17 @@ export * from './citation-sources'
 export * from './commands'
 export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
+export { OutlineItemIcon } from './components/outline/Outline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
 export {
   ManuscriptToolbar,
   ToolbarButtonConfig,
 } from './components/toolbar/ManuscriptToolbar'
+export { Checks } from './components/requirements/Checks'
 export { Statistics } from './components/requirements/Statistics'
 export {
+  RequirementsAlerts,
+  RequirementsContext,
   RequirementsProvider,
 } from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'

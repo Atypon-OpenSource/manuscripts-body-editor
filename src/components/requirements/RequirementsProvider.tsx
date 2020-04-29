@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode, nodeNames } from '@manuscripts/manuscript-transform'
 import {
   CountRequirement,
   Manuscript,
@@ -30,18 +30,27 @@ const StatisticsWorker = Comlink.wrap<{
   countWords: (text: string) => number
 }>(new Worker('../../lib/statistics.worker', { type: 'module' }))
 
-export interface RequirementsAlerts {
-  words?: string
-  characters?: string
+export interface RequirementResult {
+  message: string
+  passed?: boolean
 }
 
-type RequirementsValue = (
+export interface RequirementsAlerts {
+  words_maximum?: RequirementResult
+  words_minimum?: RequirementResult
+  characters_maximum?: RequirementResult
+  characters_minimum?: RequirementResult
+}
+
+export type RequirementsValue = (
   node: ManuscriptNode,
   statistics?: NodeStatistics
 ) => Promise<RequirementsAlerts>
 
 export const RequirementsContext = createContext<RequirementsValue>(
-  async () => ({})
+  async () => {
+    throw new Error('RequirementsProvider is not mounted')
+  }
 )
 
 export const RequirementsProvider: React.FC<{
@@ -104,7 +113,10 @@ export const RequirementsProvider: React.FC<{
     const hasAnyRequirement = hasWordsRequirement || hasCharactersRequirement
 
     if (hasAnyRequirement) {
-      const type = node.type.name
+      const nodeTypeName = nodeNames.get(node.type)
+      const nodeName = nodeTypeName
+        ? nodeTypeName.toLowerCase()
+        : node.type.name
 
       const text = statistics ? statistics.text : buildText(node)
 
@@ -115,12 +127,18 @@ export const RequirementsProvider: React.FC<{
 
         const { maximum, minimum } = requirements.words
 
-        if (maximum !== undefined && count > maximum) {
-          output.words = `The ${type} should have a maximum of ${maximum.toLocaleString()} words`
+        if (maximum !== undefined) {
+          output.words_maximum = {
+            message: `The ${nodeName} should have a maximum of ${maximum.toLocaleString()} words`,
+            passed: count <= maximum,
+          }
         }
 
-        if (minimum !== undefined && count < minimum) {
-          output.words = `The ${type} should have a minimum of ${minimum.toLocaleString()} words`
+        if (minimum !== undefined) {
+          output.words_minimum = {
+            message: `The ${nodeName} should have a minimum of ${minimum.toLocaleString()} words`,
+            passed: count >= minimum,
+          }
         }
       }
 
@@ -131,12 +149,18 @@ export const RequirementsProvider: React.FC<{
 
         const { maximum, minimum } = requirements.characters
 
-        if (maximum !== undefined && count > maximum) {
-          output.characters = `The ${type} should have a maximum of ${maximum.toLocaleString()} characters`
+        if (maximum !== undefined) {
+          output.characters_maximum = {
+            message: `The ${nodeName} should have a maximum of ${maximum.toLocaleString()} characters`,
+            passed: count <= maximum,
+          }
         }
 
-        if (minimum !== undefined && count < minimum) {
-          output.characters = `The ${type} should have a minimum of ${minimum.toLocaleString()} characters`
+        if (minimum !== undefined) {
+          output.characters_minimum = {
+            message: `The ${nodeName} should have a minimum of ${minimum.toLocaleString()} characters`,
+            passed: count >= minimum,
+          }
         }
       }
     }
