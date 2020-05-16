@@ -29,12 +29,7 @@ import {
   ConnectDragSource,
   ConnectDropTarget,
   DragSource,
-  DragSourceCollector,
-  DragSourceSpec,
   DropTarget,
-  DropTargetCollector,
-  DropTargetMonitor,
-  DropTargetSpec,
 } from 'react-dnd'
 import { findDOMNode } from 'react-dom'
 import { ContextMenu } from '../../lib/context-menu'
@@ -327,149 +322,137 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
   }
 }
 
-const dragType = 'outline'
-
-const dragSourceSpec: DragSourceSpec<Props, DragObject> = {
-  // return data about the item that's being dragged, for later use
-  beginDrag(props: Props) {
-    return {
-      tree: props.tree,
-    }
-  },
-
-  canDrag(props: Props) {
-    return props.permissions.write && !!props.tree.parent
-  },
-}
-
-const dropTargetSpec: DropTargetSpec<Props> = {
-  canDrop(props: Props, monitor: DropTargetMonitor) {
-    const item = monitor.getItem() as DragSourceProps
-
-    if (!props.tree.parent) {
-      return false
-    }
-
-    // can't drop on itself
-    if (item.tree.node.attrs.id === props.tree.node.attrs.id) {
-      return false
-    }
-
-    // can't drop within itself
-    if (
-      item.tree.pos <= props.tree.pos &&
-      item.tree.endPos >= props.tree.endPos
-    ) {
-      return false
-    }
-
-    const index =
-      item.position === 'before' ? props.tree.index : props.tree.index + 1
-
-    // TODO: canInsert, leaving the current node in place (needed for subsections after paragraphs, etc)
-
-    return props.tree.parent.canReplace(
-      index,
-      index,
-      Fragment.from(item.tree.node)
-    )
-  },
-
-  hover(
-    props: Props,
-    monitor: DropTargetMonitor,
-    component: React.Component<Props>
-  ) {
-    // if (!monitor.canDrop()) return null
-
-    if (!monitor.isOver({ shallow: true })) return
-
-    // get the target DOM node
-    const node = findDOMNode(component) as Element
-
-    // get the rectangle on screen
-    const { bottom, top } = node.getBoundingClientRect()
-
-    // Determine mouse position
-    const offset = monitor.getClientOffset()
-
-    if (!offset) return
-
-    // get the vertical middle
-    const verticalMiddle = (bottom - top) / 2
-
-    // get pixels from the top
-    const verticalHover = offset.y - top
-
-    // get the dragged item
-    const item = monitor.getItem() as DragSourceProps
-
-    // store the position on the dragged item
-    item.position = verticalHover < verticalMiddle ? 'before' : 'after'
-
-    // from https://github.com/react-dnd/react-dnd/issues/179#issuecomment-236226301
-    component.setState({
-      dragPosition: item.position,
-    })
-  },
-
-  drop(props: Props, monitor: DropTargetMonitor) {
-    if (monitor.didDrop()) return // already dropped on something else
-    if (!props.view) return // cant drop without a view to transact upon
-
-    const item = monitor.getItem() as DragSourceProps
-
-    const source = item.tree
-    const target = props.tree
-    const side = item.position
-
-    const insertPos =
-      side === 'before' ? target.pos - 1 : target.pos + target.node.nodeSize - 1
-
-    let sourcePos = source.pos - 1
-
-    const tr = props.view.state.tr.insert(insertPos, source.node)
-
-    sourcePos = tr.mapping.map(sourcePos)
-
-    tr.delete(sourcePos, sourcePos + source.node.nodeSize)
-
-    props.view.dispatch(tr)
-  },
-}
-
-const dragSourceCollector: DragSourceCollector<ConnectedDragSourceProps, {}> = (
-  connect,
-  monitor
-) => ({
-  connectDragSource: connect.dragSource(),
-  connectDragPreview: connect.dragPreview(),
-  isDragging: monitor.isDragging(),
-  canDrag: monitor.canDrag(),
-  item: monitor.getItem(),
-})
-
-const dropTargetCollector: DropTargetCollector<ConnectedDropTargetProps, {}> = (
-  connect,
-  monitor
-) => ({
-  connectDropTarget: connect.dropTarget(),
-  // isOver: monitor.isOver(),
-  isOverCurrent: monitor.isOver({ shallow: true }),
-  canDrop: monitor.canDrop(),
-  itemType: monitor.getItemType(),
-})
-
 const dragSource = DragSource<Props, ConnectedDragSourceProps, DragObject>(
-  dragType,
-  dragSourceSpec,
-  dragSourceCollector
+  'outline',
+  {
+    // return data about the item that's being dragged, for later use
+    beginDrag(props) {
+      return {
+        tree: props.tree,
+      }
+    },
+
+    canDrag(props) {
+      return props.permissions.write && !!props.tree.parent
+    },
+  },
+  (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging(),
+    canDrag: monitor.canDrag(),
+    item: monitor.getItem(),
+  })
 )
 
 const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
-  dragType,
-  dropTargetSpec,
-  dropTargetCollector
+  'outline',
+  {
+    canDrop(props, monitor) {
+      const item = monitor.getItem() as DragSourceProps
+
+      if (!props.tree.parent) {
+        return false
+      }
+
+      // can't drop on itself
+      if (item.tree.node.attrs.id === props.tree.node.attrs.id) {
+        return false
+      }
+
+      // can't drop within itself
+      if (
+        item.tree.pos <= props.tree.pos &&
+        item.tree.endPos >= props.tree.endPos
+      ) {
+        return false
+      }
+
+      const index =
+        item.position === 'before' ? props.tree.index : props.tree.index + 1
+
+      // if (index === props.tree.parent.childCount) {
+      //   return props.tree.parent.canAppend(item.tree.node)
+      // }
+      //
+      // return props.tree.parent.canReplaceWith(index, index, item.tree.node.type)
+
+      return props.tree.parent.canReplace(
+        index,
+        index,
+        Fragment.from(item.tree.node)
+      )
+    },
+
+    hover(props, monitor, component) {
+      // if (!monitor.canDrop()) {
+      //   return null
+      // }
+
+      if (monitor.isOver({ shallow: true })) {
+        // Determine mouse position
+        const offset = monitor.getClientOffset()
+
+        if (offset) {
+          // get the dragged item
+          const item = monitor.getItem() as DragSourceProps
+
+          // get the target DOM node
+          const node = findDOMNode(component) as Element
+
+          // get the rectangle on screen
+          const { bottom, top } = node.getBoundingClientRect()
+
+          // get the vertical middle
+          const verticalMiddle = (bottom - top) / 2
+
+          // get pixels from the top
+          const verticalHover = offset.y - top
+
+          // store the position on the dragged item
+          item.position = verticalHover < verticalMiddle ? 'before' : 'after'
+
+          // from https://github.com/react-dnd/react-dnd/issues/179#issuecomment-236226301
+          component.setState({
+            dragPosition: item.position,
+          })
+        }
+      }
+    },
+
+    drop(props, monitor) {
+      if (monitor.didDrop()) return // already dropped on something else
+      if (!props.view) return // cant drop without a view to transact upon
+
+      const item = monitor.getItem() as DragSourceProps
+
+      const source = item.tree
+      const target = props.tree
+      const side = item.position
+
+      const insertPos =
+        side === 'before'
+          ? target.pos - 1
+          : target.pos + target.node.nodeSize - 1
+
+      let sourcePos = source.pos - 1
+
+      const tr = props.view.state.tr.insert(insertPos, source.node)
+
+      sourcePos = tr.mapping.map(sourcePos)
+
+      tr.delete(sourcePos, sourcePos + source.node.nodeSize)
+
+      props.view.dispatch(tr)
+    },
+  },
+  (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    // isOver: monitor.isOver(),
+    isOverCurrent: monitor.isOver({ shallow: true }),
+    canDrop: monitor.canDrop(),
+    itemType: monitor.getItemType(),
+  })
 )
 
 const DraggableTree = dragSource(dropTarget(Tree))
