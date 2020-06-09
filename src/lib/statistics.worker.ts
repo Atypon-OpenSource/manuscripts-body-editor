@@ -15,6 +15,7 @@
  */
 
 import * as Comlink from 'comlink'
+
 import { countCharacters, countWords } from './statistics'
 
 Comlink.expose({ countWords, countCharacters })

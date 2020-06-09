@@ -15,11 +15,12 @@
  */
 
 import { nodeNames } from '@manuscripts/manuscript-transform'
+
 import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
 import BlockView from './block_view'
 
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
 
 const isNotNull = <T>(a: T | null): a is T => a !== null
@@ -47,7 +48,7 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       // warningButton.innerHTML = this.icons.attention
 
       warningButton.addEventListener('click', async () => {
-        const errors = this.syncErrors.map(error => error._id)
+        const errors = this.syncErrors.map((error) => error._id)
 
         await retrySync(errors)
       })
@@ -108,7 +109,7 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       )
       button.setAttribute('data-balloon-pos', 'down-left')
       // button.innerHTML = this.icons.plus
-      button.addEventListener('mousedown', event => {
+      button.addEventListener('mousedown', (event) => {
         event.preventDefault()
         event.stopPropagation()
 
@@ -129,7 +130,7 @@ export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
       button.setAttribute('aria-label', 'Open menu')
       button.setAttribute('data-balloon-pos', 'down-left')
       // button.innerHTML = this.icons.circle
-      button.addEventListener('mousedown', event => {
+      button.addEventListener('mousedown', (event) => {
         event.preventDefault()
         event.stopPropagation()
 

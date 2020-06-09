@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'

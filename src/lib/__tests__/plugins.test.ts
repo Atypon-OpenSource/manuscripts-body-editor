@@ -36,15 +36,18 @@ import {
   TableElement,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
+// eslint-disable-next-line import/no-unresolved
 import { RxAttachment } from '@manuscripts/rxdb/typings/rx-attachment'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
+
 import { EditorProps } from '../../components/Editor'
 import plugins from '../../plugins/editor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 
+// eslint-disable-next-line jest/no-export
 export interface ProjectDump {
   version: string
   data: Model[]
@@ -60,7 +63,7 @@ const isSection = hasObjectType<Section>(ObjectTypes.Section)
 const nextPriority = () => {
   const rootSections = data
     .filter(isSection)
-    .filter(model => model.path.length === 1)
+    .filter((model) => model.path.length === 1)
 
   return rootSections.length
 }
@@ -296,7 +299,7 @@ addSectionWithTable()
 const buildModelMap = (doc: ProjectDump): Map<string, Model> => {
   const output: Map<string, Model> = new Map()
 
-  doc.data.forEach(item => {
+  doc.data.forEach((item) => {
     output.set(item._id, item)
   })
 
@@ -306,7 +309,7 @@ const buildModelMap = (doc: ProjectDump): Map<string, Model> => {
 const modelMap = buildModelMap(projectDump as ProjectDump)
 
 const manuscript = [...modelMap.values()].find(
-  model => model.objectType === ObjectTypes.Manuscript
+  (model) => model.objectType === ObjectTypes.Manuscript
 ) as Manuscript
 
 const userProfile: UserProfile = {
@@ -329,33 +332,33 @@ const buildProps = (
 ): EditorProps => ({
   doc,
   getModel: <T extends Model>(id: string) => modelMap.get(id) as T | undefined,
-  allAttachments: async (id: string) => [],
+  allAttachments: async () => [],
   getManuscript: () => manuscript,
-  getLibraryItem: (id: string) => undefined,
+  getLibraryItem: () => undefined,
   locale: 'en-US',
   modelMap,
   popper: new PopperManager(),
   projectID: '',
   getCurrentUser: () => userProfile,
   history,
-  renderReactComponent: (child, container) => undefined,
-  unmountReactComponent: container => undefined,
+  renderReactComponent: () => undefined,
+  unmountReactComponent: () => undefined,
   getCitationProcessor: () => undefined,
   plugins: [],
-  putAttachment: async (id, attachment) => ({} as RxAttachment<Model>), // tslint:disable-line:no-object-literal-type-assertion
-  removeAttachment: async (id, attachmentID) => undefined,
-  deleteModel: async id => {
+  putAttachment: async () => ({} as RxAttachment<Model>),
+  removeAttachment: async () => undefined,
+  deleteModel: async (id) => {
     modelMap.delete(id)
     return id
   },
   setLibraryItem: () => undefined,
-  saveModel: async <T extends Model>() => ({} as T), // tslint:disable-line:no-object-literal-type-assertion
-  filterLibraryItems: async query => [],
-  subscribe: receive => undefined,
-  setView: view => undefined,
-  retrySync: async componentIDs => undefined,
-  handleStateChange: (view, docChanged) => undefined,
-  setCommentTarget: commentTarget => undefined,
+  saveModel: async <T extends Model>() => ({} as T),
+  filterLibraryItems: async () => [],
+  subscribe: () => undefined,
+  setView: () => undefined,
+  retrySync: async () => undefined,
+  handleStateChange: () => undefined,
+  setCommentTarget: () => undefined,
   jupyterConfig: {
     url: '',
     token: '',
@@ -364,7 +367,7 @@ const buildProps = (
     write: true,
   },
   components: {},
-  matchLibraryItemByIdentifier: item => undefined,
+  matchLibraryItemByIdentifier: () => undefined,
 })
 
 describe('editor view', () => {
@@ -461,7 +464,7 @@ describe('editor view', () => {
 
     const inlineEquation = getMatchingDescendant(
       orderedList,
-      node => node.type === node.type.schema.nodes.inline_equation
+      (node) => node.type === node.type.schema.nodes.inline_equation
     )
 
     expect(inlineEquation).not.toBeUndefined()

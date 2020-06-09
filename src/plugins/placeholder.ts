@@ -41,9 +41,9 @@ const placeholderWidget = (placeholder: string) => (
 }
 
 export default () =>
-  new Plugin<{}, ManuscriptSchema>({
+  new Plugin<null, ManuscriptSchema>({
     props: {
-      decorations: state => {
+      decorations: (state) => {
         const decorations: Decoration[] = []
 
         const decorate = (node: ManuscriptNode, pos: number) => {

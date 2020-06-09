@@ -15,6 +15,7 @@
  */
 
 import { base64StringToBlob } from 'blob-util'
+
 import { EditorProps } from '../components/Editor'
 import { CodemirrorMode } from '../lib/codemirror-modes'
 import { createEditableNodeView } from './creators'
@@ -23,6 +24,11 @@ import { ListingView } from './listing'
 interface Output {
   type: 'stderr' | 'stdout' | 'display' | 'error' | 'status'
   text: string
+}
+
+interface Image {
+  value: string
+  type: string
 }
 
 export class ListingEditableView extends ListingView<EditorProps> {
@@ -61,7 +67,7 @@ export class ListingEditableView extends ListingView<EditorProps> {
         attachButton.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24">
     <path d="M19.098 11.84l-8.517 7.942c-1.165 1.087-3.33 2.278-5.696-.26-2.366-2.537-1.084-4.773.032-5.814l10.377-9.676c.915-.854 2.739-1.431 4.08.006 1.34 1.437.647 3.001-.113 3.71l-9.737 9.08c-1.127 1.05-1.664 1.31-2.41.51-.746-.8-.678-1.436.977-2.995.92-.859 3.125-2.96 6.613-6.305" stroke-width="1.2" stroke="#2A6F9D" fill="none" fill-rule="evenodd" stroke-linecap="round"/>
   </svg>`
-        attachButton.addEventListener('mousedown', async event => {
+        attachButton.addEventListener('mousedown', async (event) => {
           event.preventDefault()
           await this.attachListingData()
           await this.updateAttachmentsNode()
@@ -72,13 +78,13 @@ export class ListingEditableView extends ListingView<EditorProps> {
       this.container = document.createElement('div')
       this.dom.appendChild(this.container)
 
-      this.createEditor().catch(error => {
+      this.createEditor().catch((error) => {
         console.error(error) // tslint:disable-line:no-console
       })
     }
   }
 
-  protected createEditor = async (defaultPlaceholder: string = '<Listing>') => {
+  protected createEditor = async (defaultPlaceholder = '<Listing>') => {
     if (!this.props.permissions.write) {
       return
     }
@@ -111,10 +117,7 @@ export class ListingEditableView extends ListingView<EditorProps> {
     this.refreshEditor()
   }
 
-  protected toggleText = (
-    contents: string,
-    isExpanded: boolean = false
-  ): string => {
+  protected toggleText = (contents: string, isExpanded = false): string => {
     if (isExpanded) {
       return 'Hide Code'
     }
@@ -126,13 +129,12 @@ export class ListingEditableView extends ListingView<EditorProps> {
     return 'Attach Code'
   }
 
-  // tslint:disable-next-line:cyclomatic-complexity
   private buildLanguageSelector = async () => {
     const { languageKey } = this.node.attrs
 
     const languageSelector = document.createElement('select')
 
-    languageSelector.addEventListener('mousedown', event => {
+    languageSelector.addEventListener('mousedown', (event) => {
       event.stopPropagation()
     })
 
@@ -225,7 +227,7 @@ export class ListingEditableView extends ListingView<EditorProps> {
     this.outputNode.scrollTop = this.outputNode.scrollHeight
   }
 
-  private executeListing: EventListener = async event => {
+  private executeListing: EventListener = async (event) => {
     event.preventDefault()
 
     const { id, contents } = this.node.attrs
@@ -241,7 +243,7 @@ export class ListingEditableView extends ListingView<EditorProps> {
     const rxAttachments = await this.props.allAttachments(id)
 
     const attachments = await Promise.all(
-      (rxAttachments || []).map(async attachment => {
+      (rxAttachments || []).map(async (attachment) => {
         return {
           data: await attachment.getData(),
           mime: attachment.type,
@@ -257,14 +259,13 @@ export class ListingEditableView extends ListingView<EditorProps> {
     const outputs: Output[] = []
     this.showOutputs(outputs)
 
-    const images: Array<{ value: string; type: string }> = []
+    const images: Array<Image> = []
 
     const addOutput = (output: Output) => {
       outputs.push(output)
       this.showOutputs(outputs)
     }
 
-    // tslint:disable-next-line:cyclomatic-complexity
     const handleOutput = (
       message: import('@jupyterlab/services').KernelMessage.IIOPubMessage
     ) => {
@@ -327,11 +328,11 @@ export class ListingEditableView extends ListingView<EditorProps> {
 
     if (images.length > 0) {
       // use the last item
-      const image = images.pop()!
+      const image = images.pop() as Image
       await this.handleOutputData(image.value, image.type)
     }
 
-    const hasError = outputs.some(output => output.type === 'error')
+    const hasError = outputs.some((output) => output.type === 'error')
 
     if (!hasError) {
       addOutput({
@@ -372,11 +373,17 @@ export class ListingEditableView extends ListingView<EditorProps> {
 
     const figureType = this.view.state.schema.nodes.figure
 
-    this.parentFigureElement!.node.forEach((node, pos) => {
+    const parentFigureElement = this.parentFigureElement
+
+    if (!parentFigureElement) {
+      throw new Error('No parent figure element')
+    }
+
+    parentFigureElement.node.forEach((node, pos) => {
       if (node.type === figureType) {
         this.view.dispatch(
           this.view.state.tr.setNodeMarkup(
-            this.parentFigureElement!.start + pos,
+            parentFigureElement.start + pos,
             undefined,
             {
               ...node.attrs,
@@ -396,13 +403,13 @@ export class ListingEditableView extends ListingView<EditorProps> {
   private attachListingData = () => {
     const { id } = this.node.attrs
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const input = document.createElement('input')
       input.accept = '*/*'
       input.type = 'file'
       input.multiple = true
 
-      input.addEventListener('change', async event => {
+      input.addEventListener('change', async (event) => {
         const target = event.target as HTMLInputElement
 
         if (!target.files) {

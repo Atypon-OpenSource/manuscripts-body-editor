@@ -22,4 +22,4 @@ export interface Purify {
   sanitize: Sanitize
 }
 
-export const sanitize: Sanitize = dirty => purify.sanitize(dirty) // TODO: options
+export const sanitize: Sanitize = (dirty) => purify.sanitize(dirty) // TODO: options

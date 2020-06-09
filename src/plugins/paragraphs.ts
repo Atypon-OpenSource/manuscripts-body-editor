@@ -22,13 +22,14 @@ import {
 import { Plugin } from 'prosemirror-state'
 
 export default () => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
       const positionsToJoin: number[] = []
 
       const tr = newState.tr
 
-      if (!transactions.some(transaction => transaction.docChanged)) return null
+      if (!transactions.some((transaction) => transaction.docChanged))
+        return null
 
       const joinAdjacentParagraphs = (parent: ManuscriptNode, pos: number) => (
         node: ManuscriptNode,

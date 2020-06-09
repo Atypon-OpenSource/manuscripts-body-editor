@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

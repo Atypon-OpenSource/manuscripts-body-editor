@@ -22,6 +22,7 @@ import {
 import { Manuscript } from '@manuscripts/manuscripts-json-schema'
 import { parse } from '@manuscripts/title-editor'
 import React, { useEffect, useState } from 'react'
+
 import { useDebounce } from '../hooks/use-debounce'
 import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 
@@ -35,7 +36,7 @@ interface Props {
   view?: ManuscriptEditorView
 }
 
-export const ManuscriptOutline: React.FunctionComponent<Props> = props => {
+export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
   const [values, setValues] = useState<{
     tree: TreeItem
     view?: ManuscriptEditorView

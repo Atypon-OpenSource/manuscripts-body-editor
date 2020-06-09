@@ -103,7 +103,7 @@ const buildTargets = (doc: ManuscriptNode, manuscript: Manuscript) => {
 
   const targets: Map<string, Target> = new Map()
 
-  doc.descendants(node => {
+  doc.descendants((node) => {
     if (node.type.name in counters) {
       const label = buildLabel(node.type)
 
@@ -142,7 +142,7 @@ export default (props: Props) => {
 
     state: {
       init: (config, state) => buildTargets(state.doc, props.getManuscript()),
-      apply: (tr, old) => {
+      apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
@@ -151,41 +151,47 @@ export default (props: Props) => {
       },
     },
     props: {
-      decorations: state => {
-        const targets: Map<string, Target> = objectsKey.getState(state)
-
+      decorations: (state) => {
         const decorations: Decoration[] = []
 
-        state.doc.descendants((node, pos) => {
-          const { id } = node.attrs
+        const targets = objectsKey.getState(state)
 
-          if (id) {
-            const target = targets.get(id)
+        if (targets) {
+          state.doc.descendants((node, pos) => {
+            const { id } = node.attrs
 
-            if (target) {
-              const labelNode = document.createElement('span')
-              labelNode.className = 'figure-label'
-              labelNode.textContent = target.label + ':'
+            if (id) {
+              const target = targets.get(id)
 
-              node.forEach((child, offset) => {
-                if (child.type.name === 'figcaption') {
-                  decorations.push(
-                    Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                      side: -1,
-                      key: `figure-label-${id}-${target.label}`,
-                    })
-                  )
-                }
-              })
+              if (target) {
+                const labelNode = document.createElement('span')
+                labelNode.className = 'figure-label'
+                labelNode.textContent = target.label + ':'
+
+                node.forEach((child, offset) => {
+                  if (child.type.name === 'figcaption') {
+                    decorations.push(
+                      Decoration.widget(pos + 1 + offset + 1, labelNode, {
+                        side: -1,
+                        key: `figure-label-${id}-${target.label}`,
+                      })
+                    )
+                  }
+                })
+              }
             }
-          }
-        })
+          })
+        }
 
         return DecorationSet.create(state.doc, decorations)
       },
     },
     appendTransaction: (transactions, oldState, newState) => {
-      const targets: Map<string, Target> = objectsKey.getState(newState)
+      const targets = objectsKey.getState(newState)
+
+      if (!targets) {
+        return
+      }
 
       let updated = 0
 

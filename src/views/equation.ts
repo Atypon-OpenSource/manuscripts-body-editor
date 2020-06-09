@@ -16,6 +16,7 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 import { sanitize } from 'dompurify'
+
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -43,7 +44,7 @@ export class EquationView<PropsType extends ViewerProps>
       })
     } else {
       while (this.dom.hasChildNodes()) {
-        this.dom.removeChild(this.dom.firstChild!)
+        this.dom.removeChild(this.dom.firstChild as ChildNode)
       }
 
       const placeholder = document.createElement('div')

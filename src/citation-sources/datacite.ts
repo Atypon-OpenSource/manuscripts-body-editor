@@ -22,6 +22,7 @@ import {
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
+
 import { convertDataToBibliographyItem } from '../csl'
 
 interface Creator {
@@ -46,7 +47,7 @@ interface DataCiteItem {
 }
 
 const buildIssuedDate = (dates: Date[]): BibliographicDate | undefined => {
-  const issued = dates.find(item => item.dateType === 'Issued')
+  const issued = dates.find((item) => item.dateType === 'Issued')
 
   if (issued && issued.date) {
     return {
@@ -65,7 +66,7 @@ const chooseTitle = (titles: Array<{ title: string }>): string | undefined => {
 
 const buildAuthors = (creators: Creator[]): BibliographicName[] => {
   return creators.map(
-    ({ givenName: given, familyName: family, name }): BibliographicName => ({
+    ({ givenName: given, familyName: family }): BibliographicName => ({
       _id: generateID(ObjectTypes.BibliographicName),
       objectType: ObjectTypes.BibliographicName,
       given,
@@ -131,7 +132,7 @@ const search = async (
   } = response.data
 
   return {
-    items: data.map(convertResult),
+    items: data.map(convertResult) as Partial<BibliographyItem>[],
     total,
   }
 }

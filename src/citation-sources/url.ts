@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { CSL } from '@manuscripts/manuscript-transform'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
+
 import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
@@ -30,35 +32,40 @@ const client = axios.create({
 const translate = async (query: string, rows: number) => {
   const response = await client.post('/web', query, {
     headers: { 'Content-Type': 'text/plain' },
-    validateStatus: status => status === 200 || status === 300,
+    validateStatus: (status) => status === 200 || status === 300,
   })
 
   switch (response.status) {
     case 200:
       return { data: response.data, total: 1 }
 
-    case 300:
+    case 300: {
       const entries = Object.entries(response.data.items)
       const total = entries.length
 
       response.data.items = Object.fromEntries(entries.slice(0, rows))
 
-      const { data } = await client.post('/web', response.data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
+      const { data } = await client.post<Record<string, unknown>>(
+        '/web',
+        response.data,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
 
       return { data, total }
+    }
 
     default:
       throw new Error(`Unexpected status ${response.status}`)
   }
 }
 
-const convert = async (data: object[], format: string) => {
-  const response = await client.post('/export', data, {
+const convert = async (data: Record<string, unknown>[], format: string) => {
+  const response = await client.post<CSL.Item[]>('/export', data, {
     params: { format },
     headers: { 'Content-Type': 'application/json' },
-    validateStatus: status => status === 200 || status === 300,
+    validateStatus: (status) => status === 200 || status === 300,
   })
 
   return response.data.map(convertDataToBibliographyItem) as BibliographyItem[]

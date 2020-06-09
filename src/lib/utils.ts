@@ -24,7 +24,7 @@ import { findParentNode } from 'prosemirror-utils'
 
 export function* iterateChildren(
   node: ManuscriptNode,
-  recurse: boolean = false
+  recurse = false
 ): Iterable<ManuscriptNode> {
   for (let i = 0; i < node.childCount; i++) {
     const child = node.child(i)
@@ -63,16 +63,16 @@ export const getMatchingDescendant = (
 export const getChildOfType = (
   parent: ManuscriptNode,
   nodeType: ManuscriptNodeType
-): boolean => !!getMatchingChild(parent, node => node.type === nodeType)
+): boolean => !!getMatchingChild(parent, (node) => node.type === nodeType)
 
-export const findParentNodeWithId = findParentNode(node => 'id' in node.attrs)
+export const findParentNodeWithId = findParentNode((node) => 'id' in node.attrs)
 
-export const findParentNodeWithIdValue = findParentNode(node => node.attrs.id)
+export const findParentNodeWithIdValue = findParentNode((node) => node.attrs.id)
 
-export const findParentSection = findParentNode(node =>
+export const findParentSection = findParentNode((node) =>
   isSectionNodeType(node.type)
 )
 
 export const findParentElement = findParentNode(
-  node => isElementNodeType(node.type) && node.attrs.id
+  (node) => isElementNodeType(node.type) && node.attrs.id
 )

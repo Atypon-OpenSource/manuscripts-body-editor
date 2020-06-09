@@ -16,6 +16,7 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 import { AuxiliaryObjectReference } from '@manuscripts/manuscripts-json-schema'
+
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

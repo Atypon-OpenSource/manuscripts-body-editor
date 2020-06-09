@@ -15,7 +15,7 @@
  */
 
 export const placeholderContent = (
-  label: string = 'A component',
+  label = 'A component',
   supportEmail: string
 ) => `
   <div class="placeholder-item-icon">

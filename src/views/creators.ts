@@ -15,13 +15,14 @@
  */
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+
 import { EditorProps } from '../components/Editor'
 import { ViewerProps } from '../components/Viewer'
 import { NodeViewCreator } from '../types'
 import { BaseNodeView } from './base_node_view'
 
 export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
-  type: new (...args: any[]) => T // tslint:disable-line:no-any
+  type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => (props: ViewerProps): NodeViewCreator<T> => (
   node,
   view,
@@ -36,7 +37,7 @@ export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
 }
 
 export const createEditableNodeView = <T extends BaseNodeView<EditorProps>>(
-  type: new (...args: any[]) => T // tslint:disable-line:no-any
+  type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => (props: EditorProps): NodeViewCreator<T> => (
   node,
   view,
@@ -51,7 +52,7 @@ export const createEditableNodeView = <T extends BaseNodeView<EditorProps>>(
 }
 
 export const createNodeOrElementView = <T extends BaseNodeView<ViewerProps>>(
-  type: new (...args: any[]) => T, // tslint:disable-line:no-any
+  type: new (...args: any[]) => T, // eslint-disable-line @typescript-eslint/no-explicit-any
   tagName: string,
   callback?: (node: ManuscriptNode, dom: HTMLElement) => void
 ) => (props: ViewerProps): NodeViewCreator<T> => (

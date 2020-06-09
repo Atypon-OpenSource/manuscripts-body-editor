@@ -30,7 +30,7 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
 
 // remove `id` from pasted content
 const removeIDs = (slice: ManuscriptSlice) => {
-  slice.content.descendants(node => {
+  slice.content.descendants((node) => {
     if (node.attrs.id) {
       node.attrs.id = null
     }

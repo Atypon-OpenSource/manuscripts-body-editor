@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Tip } from '@manuscripts/style-guide'
 import React, { useContext, useEffect, useState } from 'react'
+
 import { RequirementsContext } from './RequirementsProvider'
 
 export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
@@ -41,8 +42,8 @@ export const RequirementsAlert: React.FC<{ node: ManuscriptNode }> = ({
         const requirements = await validateRequirements(node)
 
         const items = Object.values(requirements)
-          .filter(requirement => !requirement.passed)
-          .map(requirement => requirement.message)
+          .filter((requirement) => !requirement.passed)
+          .map((requirement) => requirement.message)
 
         setItems(items)
       }

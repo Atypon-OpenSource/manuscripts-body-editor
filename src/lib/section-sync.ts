@@ -19,7 +19,7 @@ import {
   ManuscriptNode,
 } from '@manuscripts/manuscript-transform'
 
-type Coordinates = Array<{ start: number; end: number; id: string }>
+export type Coordinates = Array<{ start: number; end: number; id: string }>
 
 export const findDescendantById = (parent: ManuscriptNode, id: string) => {
   let result: { node?: ManuscriptNode; offset?: number } = {}

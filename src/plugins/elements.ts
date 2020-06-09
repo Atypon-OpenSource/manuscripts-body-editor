@@ -19,9 +19,9 @@ import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 export default () => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     props: {
-      decorations: state => {
+      decorations: (state) => {
         const { section } = state.schema.nodes
 
         const decorations: Decoration[] = []

@@ -17,6 +17,7 @@
 import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
 import { toggleMark } from 'prosemirror-commands'
 import { wrapInList } from 'prosemirror-schema-list'
+
 import {
   blockActive,
   canInsert,

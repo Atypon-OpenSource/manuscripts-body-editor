@@ -21,11 +21,12 @@ import {
 } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
+
 import { Target } from '../../plugins/objects'
 
 const Container = styled.div`
-  padding: ${props => props.theme.grid.unit * 3}px
-    ${props => props.theme.grid.unit * 4}px;
+  padding: ${(props) => props.theme.grid.unit * 3}px
+    ${(props) => props.theme.grid.unit * 4}px;
   display: flex;
   flex-direction: column;
   max-height: 60vh;
@@ -42,29 +43,29 @@ const Actions = styled.div`
 const Items = styled.div`
   flex: 1;
   overflow-y: auto;
-  margin: ${props => props.theme.grid.unit * 4}px 0;
+  margin: ${(props) => props.theme.grid.unit * 4}px 0;
 `
 
 const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
   cursor: pointer;
-  padding: ${props => props.theme.grid.unit * 4}px;
+  padding: ${(props) => props.theme.grid.unit * 4}px;
   transition: background-color 0.1s;
   border: 2px solid
-    ${props =>
+    ${(props) =>
       props.isSelected
         ? props.theme.colors.brand.medium
         : props.theme.colors.border.secondary};
-  box-shadow: ${props => props.theme.shadow.dropShadow};
-  border-radius: ${props => props.theme.grid.radius.small};
-  margin-bottom: ${props => props.theme.grid.unit * 4}px;
+  box-shadow: ${(props) => props.theme.shadow.dropShadow};
+  border-radius: ${(props) => props.theme.grid.radius.small};
+  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
 
   &:hover {
-    border-color: ${props => props.theme.colors.background.fifth};
+    border-color: ${(props) => props.theme.colors.background.fifth};
   }
 `
 
 const Label = styled.span`
-  font-weight: ${props => props.theme.font.weight.bold};
+  font-weight: ${(props) => props.theme.font.weight.bold};
 `
 
 const Caption = styled.span`
@@ -76,12 +77,12 @@ const Heading = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  font-weight: ${props => props.theme.font.weight.bold};
+  font-weight: ${(props) => props.theme.font.weight.bold};
 `
 
 const Empty = styled.div`
-  margin-bottom: ${props => props.theme.grid.unit * 4}px;
-  color: ${props => props.theme.colors.text.tertiary};
+  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
+  color: ${(props) => props.theme.colors.text.tertiary};
 `
 
 // trim a caption, avoiding cutting words
@@ -120,7 +121,7 @@ export class CrossReferenceItems extends React.Component<Props, State> {
 
         <Items>
           {targets.length ? (
-            targets.map(target => (
+            targets.map((target) => (
               <CrossReferenceItem
                 key={target.id}
                 isSelected={this.state.selectedItem === target.id}
@@ -145,7 +146,9 @@ export class CrossReferenceItems extends React.Component<Props, State> {
           <ButtonGroup>
             <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
             <PrimaryButton
-              onClick={() => handleSelect(this.state.selectedItem!)}
+              onClick={() =>
+                this.state.selectedItem && handleSelect(this.state.selectedItem)
+              }
               disabled={!this.state.selectedItem}
             >
               Insert

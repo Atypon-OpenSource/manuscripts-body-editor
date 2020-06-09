@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { dropCursor } from 'prosemirror-dropcursor'
 // import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
+import 'prosemirror-tables/style/tables.css'
+
+import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
-import 'prosemirror-tables/style/tables.css'
+
 import { EditorProps } from '../components/Editor'
 import keys from '../keys'
 import rules from '../rules'

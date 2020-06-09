@@ -19,6 +19,7 @@ import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { EUtilsError, toCSL } from 'astrocite-eutils'
 import { Response } from 'astrocite-eutils/lib/schema'
 import axios from 'axios'
+
 import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
@@ -125,14 +126,14 @@ const fetch = (
   try {
     return fetchCSL(item.PMID)
   } catch (error) {
-    console.error(error) // tslint:disable-line:no-console
+    console.error(error)
     return fetchSummary(item.PMID, mailto)
   }
 }
 
 interface ErrorResponse {
   status: 'error'
-  reason: object
+  reason: Record<string, unknown>
 }
 
 const isErrorResponse = (

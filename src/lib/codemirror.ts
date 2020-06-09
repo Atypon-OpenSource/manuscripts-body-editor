@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import CodeMirror from 'codemirror'
 import 'codemirror/addon/display/placeholder'
 import 'codemirror/lib/codemirror.css'
+
+import CodeMirror from 'codemirror'
 
 type CreateEditor = (
   options: CodeMirror.EditorConfiguration
 ) => Promise<CodeMirror.Editor>
 
-export const createEditor: CreateEditor = async options => {
+export const createEditor: CreateEditor = async (options) => {
   return CodeMirror(
     () => {
       // no-op

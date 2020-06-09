@@ -17,6 +17,7 @@
 import { CSL } from '@manuscripts/manuscript-transform'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
+
 import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
@@ -89,7 +90,7 @@ const searchByDOI = async (
   }
 }
 
-const fetch = async (item: Partial<BibliographyItem>, mailto: string) => {
+const fetch = async (item: Partial<BibliographyItem>) => {
   if (!item.DOI) {
     throw new Error('The item does not have a DOI')
   }

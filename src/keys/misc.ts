@@ -27,6 +27,7 @@ import {
 import { redo, undo } from 'prosemirror-history'
 import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
+
 import {
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,

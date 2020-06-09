@@ -27,7 +27,9 @@ import { Fragment } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select from 'react-select'
+import { OptionProps } from 'react-select/lib/components/Option'
 import styled from 'styled-components'
+
 import { findClosestParentElement } from '../../lib/hierarchy'
 import { nodeTypeIcon } from '../../node-type-icons'
 
@@ -42,7 +44,7 @@ const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
 }
 
 const titleCase = (text: string) =>
-  text.replace(/\b([a-z])/g, match => match.toUpperCase())
+  text.replace(/\b([a-z])/g, (match) => match.toUpperCase())
 
 interface Option {
   action?: () => void
@@ -56,7 +58,7 @@ interface Option {
   value: number
 }
 
-interface OptionProps {
+interface SelectorOptionProps {
   action?: () => void
   depth: number
   isDisabled?: boolean
@@ -72,7 +74,7 @@ interface NodeWithPosition {
   after: number
 }
 
-const buildOption = (props: OptionProps): Option => ({
+const buildOption = (props: SelectorOptionProps): Option => ({
   ...props,
   icon: nodeTypeIcon(props.nodeType),
   label: titleCase(optionName(props.nodeType, props.value)),
@@ -84,7 +86,6 @@ const buildOption = (props: OptionProps): Option => ({
 type GroupedOptions = Array<{ options: Option[] }>
 type Options = GroupedOptions | Option[]
 
-// tslint:disable:cyclomatic-complexity
 const buildOptions = (view: ManuscriptEditorView): Options => {
   const {
     state: {
@@ -190,6 +191,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
 
   // move the section up the tree
   // TODO: target depth
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const promoteSection = (target: number) => () => {
     const sectionDepth = $from.depth - 1
     const section = $from.node(sectionDepth)
@@ -242,6 +244,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
 
   // move paragraph to title of new section at this position, along with the rest of the section
   // TODO: target depth
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const promoteParagraphToSection = (target: number) => () => {
     const paragraph = $from.node($from.depth)
     const beforeParagraph = $from.before($from.depth)
@@ -460,7 +463,7 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
 
       const precedingSections: ManuscriptNode[] = []
 
-      parentSection.nodesBetween(0, $beforeSectionPos.parentOffset, node => {
+      parentSection.nodesBetween(0, $beforeSectionPos.parentOffset, (node) => {
         if (isSectionNodeType(node.type)) {
           precedingSections.push(node)
         }
@@ -607,17 +610,17 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
   }
 }
 
-const OptionContainer = styled.div<{ isSelected: boolean }>`
+const OptionContainer = styled.div`
   display: flex;
   align-items: center;
 `
 
 const OptionIcon = styled.span`
   display: inline-flex;
-  width: ${props => props.theme.grid.unit * 4}px;
+  width: ${(props) => props.theme.grid.unit * 4}px;
   justify-content: center;
   align-items: center;
-  margin-right: ${props => props.theme.grid.unit * 2}px;
+  margin-right: ${(props) => props.theme.grid.unit * 2}px;
   flex-shrink: 0;
 `
 
@@ -627,7 +630,7 @@ const OptionLabel = styled.span`
 
 const Group = styled.div`
   &:not(:last-child) {
-    border-bottom: 1px solid ${props => props.theme.colors.border.secondary};
+    border-bottom: 1px solid ${(props) => props.theme.colors.border.secondary};
   }
 `
 
@@ -635,7 +638,7 @@ const StyledSelect = styled(Select)`
   z-index: 3;
 
   & > div:hover {
-    border-color: ${props => props.theme.colors.border.secondary};
+    border-color: ${(props) => props.theme.colors.border.secondary};
   }
 `
 
@@ -671,18 +674,16 @@ export const LevelSelector: React.FunctionComponent<{
           : findSelectedOption(options as GroupedOptions)
       }
       components={{
-        // tslint:disable-next-line:no-any
-        Group: (props: any) => (
+        Group: (props: OptionProps<Options>) => (
           <Group ref={props.innerRef} {...props.innerProps}>
             {props.children}
           </Group>
         ),
         GroupHeading: () => null,
-        // tslint:disable-next-line:no-any
-        Option: (props: any) => {
+        Option: (props: OptionProps<Options>) => {
           const data = props.data as Option
 
-          const style = props.getStyles('option', props)
+          const style: CSSProperties = props.getStyles('option', props)
 
           style.display = 'flex'
           style.fontSize = 16
@@ -714,8 +715,6 @@ export const LevelSelector: React.FunctionComponent<{
               ref={props.innerRef}
               {...props.innerProps}
               style={style}
-              depth={data.value}
-              isSelected={props.isSelected}
             >
               <OptionIcon>{nodeTypeIcon(data.nodeType)}</OptionIcon>
               <OptionLabel>{data.label}</OptionLabel>

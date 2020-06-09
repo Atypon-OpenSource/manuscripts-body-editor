@@ -20,6 +20,7 @@ import {
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { Decoration, NodeView } from 'prosemirror-view'
+
 import { ViewerProps } from '../components/Viewer'
 import { SyncError } from '../types'
 
@@ -85,11 +86,11 @@ export class BaseNodeView<PropsType extends ViewerProps>
 
     if (decorations) {
       const syncErrorDecoration = decorations.find(
-        decoration => decoration.spec.syncErrors
+        (decoration) => decoration.spec.syncErrors
       )
 
       this.syncErrors = syncErrorDecoration
-        ? syncErrorDecoration.spec.syncErrors!
+        ? (syncErrorDecoration.spec.syncErrors as SyncError[])
         : []
 
       this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)

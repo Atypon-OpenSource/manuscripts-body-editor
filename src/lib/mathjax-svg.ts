@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import 'mathjax-full/js/util/entities/all'
+
 import { xmlSerializer } from '@manuscripts/manuscript-transform'
 import { HTMLAdaptor } from 'mathjax-full/js/adaptors/HTMLAdaptor'
 import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
 import { TeX } from 'mathjax-full/js/input/tex'
 import { SVG } from 'mathjax-full/js/output/svg'
-import 'mathjax-full/js/util/entities/all'
+
 import { packages } from './mathjax-packages'
 
 // @ts-ignore for MinHTMLElement nodeValue compatibility
@@ -47,8 +49,7 @@ const OutputJax = new SVG<HTMLElement, Text, Document>({
   fontCache: 'none', // avoid <defs> and <use xlink:href>
 })
 
-// tslint:disable-next-line:no-any
-const adaptor = new ManuscriptsHTMLAdaptor(window as any)
+const adaptor = new ManuscriptsHTMLAdaptor(window)
 
 const doc = new HTMLDocument<HTMLElement, Text, Document>(document, adaptor, {
   InputJax,

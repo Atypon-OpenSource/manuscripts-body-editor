@@ -25,6 +25,7 @@ import {
   nodeNames,
 } from '@manuscripts/manuscript-transform'
 import { ResolvedPos } from 'prosemirror-model'
+
 import { Dispatch } from '../commands'
 
 interface NodeWithPosition {

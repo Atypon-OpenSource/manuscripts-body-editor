@@ -112,15 +112,16 @@ const buildHighlightsMap = (doc: ManuscriptNode) => {
       const { position, rid } = node.attrs
 
       switch (position) {
-        case 'start':
+        case 'start': {
           highlights.set(rid, {
             start: pos + 1,
             rid,
             node,
           })
           break
+        }
 
-        case 'end':
+        case 'end': {
           const highlight = highlights.get(rid)
 
           if (highlight && highlight.start !== undefined) {
@@ -134,6 +135,7 @@ const buildHighlightsMap = (doc: ManuscriptNode) => {
           }
 
           break
+        }
       }
     }
   })
@@ -179,7 +181,7 @@ export default (props: Props) => {
     state: {
       init: (tr, state) => buildPluginState(state.doc),
       // TODO: map the decorations through content changes, and use setMeta to add/remove/update them
-      apply: tr => {
+      apply: (tr) => {
         const meta = tr.getMeta(highlightKey)
 
         if (meta) {
@@ -192,7 +194,13 @@ export default (props: Props) => {
       },
     },
     props: {
-      decorations: state => highlightKey.getState(state).decorations,
+      decorations: (state) => {
+        const pluginState = highlightKey.getState(state)
+
+        if (pluginState) {
+          return pluginState.decorations
+        }
+      },
     },
   })
 }

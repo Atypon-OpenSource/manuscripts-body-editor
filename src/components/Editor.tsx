@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import 'prosemirror-view/style/prosemirror.css'
+import '../lib/smooth-scroll'
+
 import {
   Build,
   ManuscriptEditorView,
@@ -36,15 +39,14 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
+
 import { transformPasted } from '../lib/paste'
 import {
   childSectionCoordinates,
   diffReplacementBlocks,
   findDescendantById,
 } from '../lib/section-sync'
-import '../lib/smooth-scroll'
 import plugins from '../plugins/editor'
 import { ChangeReceiver, ChangeReceiverCommand } from '../types'
 import views from '../views/editor'
@@ -78,9 +80,7 @@ export interface EditorProps extends ViewerProps {
   permissions: {
     write: boolean
   }
-  components: {
-    [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
-  }
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
 }
 
@@ -90,7 +90,7 @@ export class Editor extends React.PureComponent<EditorProps> {
 
   private unregisterHistoryListener?: UnregisterCallback
 
-  private isMouseDown: boolean = false
+  private isMouseDown = false
 
   constructor(props: EditorProps) {
     super(props)
@@ -137,11 +137,8 @@ export class Editor extends React.PureComponent<EditorProps> {
 
     if (environment === 'development') {
       import('prosemirror-dev-tools')
-        .then(({ applyDevTools }) => {
-          applyDevTools(this.view)
-        })
-        .catch(error => {
-          // tslint:disable-next-line:no-console
+        .then(({ applyDevTools }) => applyDevTools(this.view))
+        .catch((error) => {
           console.error(
             'There was an error loading prosemirror-dev-tools',
             error.message
@@ -199,7 +196,7 @@ export class Editor extends React.PureComponent<EditorProps> {
 
   private dispatchTransaction = (
     transaction: Transaction,
-    external: boolean = false
+    external = false
   ) => {
     const { state, transactions } = this.view.state.applyTransaction(
       transaction
@@ -210,16 +207,15 @@ export class Editor extends React.PureComponent<EditorProps> {
     if (!external) {
       this.props.handleStateChange(
         this.view,
-        transactions.some(tr => tr.docChanged)
+        transactions.some((tr) => tr.docChanged)
       )
     }
   }
 
-  /* tslint:disable:cyclomatic-complexity */
   private receive: ChangeReceiver = (op, id, newNode, command) => {
     const { state } = this.view
 
-    console.log({ op, id, newNode, command }) // tslint:disable-line:no-console
+    console.log({ op, id, newNode, command })
 
     if (op === 'ORDER_CHILD_SECTIONS') {
       return this.orderChildSections(id, command)
@@ -246,13 +242,14 @@ export class Editor extends React.PureComponent<EditorProps> {
             // do nothing, allow section update to take care of this
             break
 
-          default:
+          default: {
             // if an element arrives after the section update (which referenced this new element)
             // find the placeholder element and replace
             const {
               schema: { nodes },
               tr,
             } = state
+
             state.doc.descendants((node, pos) => {
               if (
                 node.attrs.id === id &&
@@ -266,6 +263,7 @@ export class Editor extends React.PureComponent<EditorProps> {
               }
             })
             break
+          }
         }
         break
 
@@ -291,7 +289,8 @@ export class Editor extends React.PureComponent<EditorProps> {
             const start = newNode.content.findDiffStart(node.content)
 
             if (typeof start === 'number') {
-              // tslint:disable-next-line:no-any - TODO: remove once types are fixed
+              // TODO: remove "any" when types are fixed
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const diffEnd = newNode.content.findDiffEnd(node.content as any)
 
               if (diffEnd) {
@@ -383,7 +382,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.dispatchTransaction(tr, false)
   }
 
-  private handleHistoryChange: LocationListener = location => {
+  private handleHistoryChange: LocationListener = (location) => {
     this.focusNodeWithId(location.hash.substring(1))
   }
 

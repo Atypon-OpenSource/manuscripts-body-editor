@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import * as Comlink from 'comlink'
 import React, { createContext } from 'react'
+
 import { buildText, NodeStatistics } from '../../lib/statistics'
 
 const StatisticsWorker = Comlink.wrap<{
@@ -74,7 +75,6 @@ export const RequirementsProvider: React.FC<{
     return requirement.count
   }
 
-  // tslint:disable-next-line:cyclomatic-complexity
   const buildRequirementsAlerts = async (
     node: ManuscriptNode,
     statistics?: NodeStatistics

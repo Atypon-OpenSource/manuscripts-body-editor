@@ -29,11 +29,11 @@ import {
   ParagraphStyle,
 } from '@manuscripts/manuscripts-json-schema'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+
 import { getMatchingChild, iterateChildren } from '../lib/utils'
 
 export const tocKey = new PluginKey('toc')
 
-// tslint:disable-next-line:cyclomatic-complexity
 const buildTOCList = (
   headingStyles: Map<string, ParagraphStyle>,
   list: HTMLUListElement,
@@ -81,14 +81,14 @@ const buildTOCList = (
         item.setAttribute('data-referenced-section', childNode.attrs.id)
         item.setAttribute('data-referenced-section-path-length', String(depth))
 
-        item.textContent = `${
-          numbering ? `${numbering}${suffix}` : ''
-        } ${firstChildNode.textContent || 'Untitled Section'}` // TODO: numbering and markup
+        item.textContent = `${numbering ? `${numbering}${suffix}` : ''} ${
+          firstChildNode.textContent || 'Untitled Section'
+        }` // TODO: numbering and markup
 
         list.appendChild(item)
       }
 
-      const childSection = getMatchingChild(childNode, node =>
+      const childSection = getMatchingChild(childNode, (node) =>
         isSectionNodeType(node.type)
       )
 
@@ -140,13 +140,14 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     key: tocKey,
 
     appendTransaction(transactions, oldState, newState) {
       if (
         !transactions.some(
-          transaction => transaction.docChanged || transaction.getMeta('update')
+          (transaction) =>
+            transaction.docChanged || transaction.getMeta('update')
         )
       ) {
         return

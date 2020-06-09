@@ -23,13 +23,14 @@ import {
 import { Plugin } from 'prosemirror-state'
 
 export default () => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
       // get the transaction from the new state
       const tr = newState.tr
 
       // only scan if nodes have changed
-      if (!transactions.some(transaction => transaction.docChanged)) return null
+      if (!transactions.some((transaction) => transaction.docChanged))
+        return null
 
       // TODO: keep track of changed nodes that haven't been saved yet?
       // TODO: call insertComponent directly?
@@ -47,7 +48,6 @@ export default () => {
         parentPos = 0,
         insideList = false
       ) => {
-        // tslint:disable-next-line:cyclomatic-complexity
         parentNode.forEach((node, offset) => {
           if (node.isText) {
             return

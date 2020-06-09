@@ -166,7 +166,7 @@ export type CodemirrorMode = keyof typeof codemirrorModeLabels
 
 interface ModeDescription {
   name: string
-  [key: string]: any // tslint:disable-line:no-any
+  [key: string]: unknown
 }
 
 export const codemirrorModeOptions: {

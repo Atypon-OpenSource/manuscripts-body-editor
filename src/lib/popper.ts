@@ -23,7 +23,7 @@ export class PopperManager {
     target: Element,
     contents: HTMLElement,
     placement: Popper.Placement = 'bottom',
-    showArrow: boolean = true,
+    showArrow = true,
     modifiers: Popper.Modifiers = {}
   ) {
     if (this.activePopper) {

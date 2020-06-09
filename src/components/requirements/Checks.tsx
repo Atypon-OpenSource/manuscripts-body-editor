@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import React from 'react'
 import styled from 'styled-components'
+
 import { nodeTypeIcon } from '../../node-type-icons'
 import { OutlineItemIcon } from '../outline/Outline'
 import { RequirementsAlerts } from './RequirementsProvider'
@@ -30,15 +31,15 @@ import { RequirementsAlerts } from './RequirementsProvider'
 const IconContainer = styled.div`
   display: inline-flex;
   align-items: center;
-  width: ${props => props.theme.grid.unit * 5}px;
-  margin-right: ${props => props.theme.grid.unit}px;
+  width: ${(props) => props.theme.grid.unit * 5}px;
+  margin-right: ${(props) => props.theme.grid.unit}px;
 `
 
 const CheckContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: ${props => props.theme.grid.unit * 2}px 0;
-  padding-left: ${props => props.theme.grid.unit * 4}px;
+  margin: ${(props) => props.theme.grid.unit * 2}px 0;
+  padding-left: ${(props) => props.theme.grid.unit * 4}px;
 
   &:not(:last-child) {
     margin-bottom: 8px;

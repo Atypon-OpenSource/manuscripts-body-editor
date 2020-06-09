@@ -19,6 +19,7 @@ import { nodeTitlePlaceholder } from '@manuscripts/manuscript-transform'
 import { Manuscript, Project } from '@manuscripts/manuscripts-json-schema'
 import { parse, schema } from '@manuscripts/title-editor'
 import React from 'react'
+
 import {
   Outline,
   OutlineItem,

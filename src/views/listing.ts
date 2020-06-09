@@ -21,6 +21,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import CodeMirror from 'codemirror'
 import prettyBytes from 'pretty-bytes'
+
 import { ViewerProps } from '../components/Viewer'
 import { CodemirrorMode } from '../lib/codemirror-modes'
 import { BaseNodeView } from './base_node_view'
@@ -53,7 +54,7 @@ export class ListingView<PropsType extends ViewerProps>
       if (isExpanded) {
         this.editor.refresh()
 
-        this.updateAttachmentsNode().catch(error => {
+        this.updateAttachmentsNode().catch((error) => {
           console.error(error) // tslint:disable-line:no-console
         })
       }
@@ -117,7 +118,7 @@ export class ListingView<PropsType extends ViewerProps>
 
     const toggleListingButton = document.createElement('button')
     toggleListingButton.className = 'toggle-listing'
-    toggleListingButton.addEventListener('mousedown', event => {
+    toggleListingButton.addEventListener('mousedown', (event) => {
       event.preventDefault()
 
       const { contents, isExpanded } = this.node.attrs
@@ -163,7 +164,7 @@ export class ListingView<PropsType extends ViewerProps>
     this.outputNode.className = 'executable-outputs'
     executableMain.appendChild(this.outputNode)
 
-    this.createEditor('Enter code to be executed…').catch(error => {
+    this.createEditor('Enter code to be executed…').catch((error) => {
       console.error(error) // tslint:disable-line:no-console
     })
 
@@ -184,18 +185,16 @@ export class ListingView<PropsType extends ViewerProps>
       this.container = document.createElement('div')
       this.dom.appendChild(this.container)
 
-      this.createEditor().catch(error => {
+      this.createEditor().catch((error) => {
         console.error(error) // tslint:disable-line:no-console
       })
     }
   }
 
-  protected toggleText = (
-    contents: string,
-    isExpanded: boolean = false
-  ): string => (isExpanded ? 'Hide Code' : 'Show Code')
+  protected toggleText = (contents: string, isExpanded = false): string =>
+    isExpanded ? 'Hide Code' : 'Show Code'
 
-  protected toggleIcon = (contents: string, isExpanded: boolean = false) => {
+  protected toggleIcon = (contents: string, isExpanded = false) => {
     if (isExpanded) {
       return `<svg width="12" height="12" xmlns:xlink="http://www.w3.org/1999/xlink" class="toggle-icon">
   <defs>
@@ -239,7 +238,7 @@ export class ListingView<PropsType extends ViewerProps>
   }
 
   // noinspection HtmlDeprecatedTag
-  protected createEditor = async (defaultPlaceholder: string = '<Listing>') => {
+  protected createEditor = async (defaultPlaceholder = '<Listing>') => {
     const { contents, languageKey, placeholder } = this.node.attrs
 
     const { createEditor } = await import('../lib/codemirror')
@@ -299,7 +298,7 @@ export class ListingView<PropsType extends ViewerProps>
     }
   }
 
-  protected setNodeAttrs = (attrs: object) => {
+  protected setNodeAttrs = (attrs: Record<string, unknown>) => {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
         ...this.node.attrs,

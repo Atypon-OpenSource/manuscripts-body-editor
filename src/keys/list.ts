@@ -21,6 +21,7 @@ import {
   splitListItem,
   wrapInList,
 } from 'prosemirror-schema-list'
+
 import { EditorAction } from '../types'
 
 const listKeymap: { [key: string]: EditorAction } = {

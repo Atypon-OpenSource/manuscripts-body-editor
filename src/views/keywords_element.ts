@@ -15,6 +15,7 @@
  */
 
 import { sanitize } from 'dompurify'
+
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeView } from './creators'

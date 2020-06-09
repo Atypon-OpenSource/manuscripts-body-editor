@@ -15,6 +15,7 @@
  */
 
 import { NodeSelection } from 'prosemirror-state'
+
 import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
 import { EquationView } from './equation'

@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2020 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-
-import { ViewerProps } from '../components/Viewer'
-import BlockView from './block_view'
-import { createNodeOrElementView } from './creators'
-
-export class BulletListView<PropsType extends ViewerProps> extends BlockView<
-  PropsType
-> {
-  public elementType = 'ul'
+module.exports = {
+  extends: '@manuscripts/eslint-config',
+  rules: {
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+  },
+  overrides: [
+    {
+      files: '**/*.test.ts',
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+  ],
 }
-
-export const bulletListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
-  dom.classList.add('list')
-}
-
-export default createNodeOrElementView(BulletListView, 'ul', bulletListCallback)

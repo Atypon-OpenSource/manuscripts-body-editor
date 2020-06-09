@@ -26,6 +26,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
+
 import { EditorProps } from '../components/Editor'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
@@ -122,7 +123,7 @@ export class CitationEditableView extends CitationView<EditorProps> {
     const citation = this.getCitation()
 
     citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
-      item => item.bibliographyItem !== id
+      (item) => item.bibliographyItem !== id
     )
 
     await saveModel(citation)

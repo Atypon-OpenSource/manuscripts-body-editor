@@ -23,19 +23,20 @@ import React from 'react'
 import Modal from 'react-modal'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
+
 import { MenuItemContainer, MenuList, Text } from './MenuItemContainer'
 
 Modal.setAppElement('#root')
 
 const ApplicationMenuContainer = styled.div`
   display: flex;
-  font-size: ${props => props.theme.font.size.normal};
+  font-size: ${(props) => props.theme.font.size.normal};
 `
 
 const MenuHeading = styled.div<{ isOpen: boolean }>`
   display: inline-flex;
-  padding: ${props => props.theme.grid.unit}px
-    ${props => props.theme.grid.unit * 2}px;
+  padding: ${(props) => props.theme.grid.unit}px
+    ${(props) => props.theme.grid.unit * 2}px;
   cursor: pointer;
   border: 1px solid transparent;
   border-bottom: none;
@@ -43,8 +44,8 @@ const MenuHeading = styled.div<{ isOpen: boolean }>`
 
 const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
   & ${MenuHeading} {
-    background-color: ${props => props.theme.colors.background.primary};
-    color: ${props =>
+    background-color: ${(props) => props.theme.colors.background.primary};
+    color: ${(props) =>
       props.isEnabled
         ? props.isActive
           ? props.theme.colors.text.tertiary
@@ -52,7 +53,7 @@ const MenuContainer = styled.div<{ isActive: boolean; isEnabled: boolean }>`
         : props.theme.colors.text.muted};
 
     &:hover {
-      background-color: ${props =>
+      background-color: ${(props) =>
         props.isEnabled
           ? props.theme.colors.background.fifth
           : props.theme.colors.background.primary};
@@ -133,7 +134,7 @@ export class ApplicationMenu extends React.Component<Props, State> {
                   {({ ref }) => (
                     <MenuHeading
                       ref={ref}
-                      onMouseDown={event => {
+                      onMouseDown={(event) => {
                         event.preventDefault()
                         this.setActiveMenu(activeMenu !== null ? null : index)
                       }}

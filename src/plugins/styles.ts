@@ -91,7 +91,7 @@ export default (props: Props) => {
       case node.type.schema.nodes.toc_element:
         return chooseDefaultTOCStyle()
 
-      default:
+      default: {
         const manuscript = props.getManuscript()
 
         if (!manuscript.pageLayout) {
@@ -105,16 +105,18 @@ export default (props: Props) => {
         }
 
         return pageLayout.defaultParagraphStyle
+      }
     }
   }
 
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
       // get the transaction from the new state
       const tr = newState.tr
 
       // only scan if nodes have changed
-      if (!transactions.some(transaction => transaction.docChanged)) return null
+      if (!transactions.some((transaction) => transaction.docChanged))
+        return null
 
       const nodesNeedingStyle: Array<{
         node: ManuscriptNode
@@ -122,8 +124,7 @@ export default (props: Props) => {
         attrs: { [key: string]: string }
       }> = []
 
-      // tslint:disable-next-line:cyclomatic-complexity
-      newState.doc.descendants((node, pos, parent) => {
+      newState.doc.descendants((node, pos) => {
         if ('paragraphStyle' in node.attrs && !node.attrs.paragraphStyle) {
           const paragraphStyle = chooseDefaultParagraphStyle(node)
 

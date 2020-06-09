@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import 'prosemirror-view/style/prosemirror.css'
+import '../lib/smooth-scroll'
+
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -30,10 +33,9 @@ import { RxAttachment } from '@manuscripts/rxdb'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import 'prosemirror-view/style/prosemirror.css'
 import React from 'react'
+
 import { PopperManager } from '../lib/popper'
-import '../lib/smooth-scroll'
 import plugins from '../plugins/viewer'
 import views from '../views/viewer'
 
@@ -52,9 +54,7 @@ export interface ViewerProps {
   history: History
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
   unmountReactComponent: (container: HTMLElement) => void
-  components: {
-    [key: string]: React.ComponentType<any> // tslint:disable-line:no-any
-  }
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export class Viewer extends React.PureComponent<ViewerProps> {

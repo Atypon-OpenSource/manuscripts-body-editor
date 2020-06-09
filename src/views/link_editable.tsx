@@ -16,6 +16,7 @@
 
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
+
 import { EditorProps } from '../components/Editor'
 import { LinkForm, LinkValue } from '../components/views/LinkForm'
 import { createEditableNodeView } from './creators'

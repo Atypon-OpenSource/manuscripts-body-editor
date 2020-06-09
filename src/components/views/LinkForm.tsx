@@ -21,6 +21,7 @@ import {
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
+
 import { allowedHref } from '../../lib/url'
 
 export interface LinkValue {
@@ -40,11 +41,11 @@ export const LinkForm: React.FC<{
   const [title, setTitle] = useState(value.title || '')
 
   const handleSubmit = useCallback(
-    event => {
+    (event) => {
       event.preventDefault()
       handleSave({ href, text, title })
     },
-    [href, text, title]
+    [href, text, title, handleSave]
   )
 
   return (
@@ -65,7 +66,7 @@ export const LinkForm: React.FC<{
           autoComplete={'off'}
           autoFocus={true}
           required={true}
-          onChange={event => {
+          onChange={(event) => {
             setHref(event.target.value)
           }}
         />
@@ -82,7 +83,7 @@ export const LinkForm: React.FC<{
           value={text}
           autoComplete={'off'}
           required={true}
-          onChange={event => {
+          onChange={(event) => {
             setText(event.target.value)
           }}
         />
@@ -99,7 +100,7 @@ export const LinkForm: React.FC<{
           value={title}
           autoComplete={'off'}
           required={false}
-          onChange={event => {
+          onChange={(event) => {
             setTitle(event.target.value)
           }}
         />
@@ -144,29 +145,29 @@ const ActionGroup = styled.span`
 `
 
 const Field = styled.div`
-  margin-bottom: ${props => props.theme.grid.unit * 4}px;
+  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
 `
 
 const FieldHeading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${props => props.theme.grid.unit}px;
+  margin-bottom: ${(props) => props.theme.grid.unit}px;
 `
 
 const Label = styled.label`
   display: flex;
   align-items: center;
-  color: ${props => props.theme.colors.text.tertiary};
-  font-size: ${props => props.theme.font.size.normal};
+  color: ${(props) => props.theme.colors.text.tertiary};
+  font-size: ${(props) => props.theme.font.size.normal};
 `
 
 const Open = styled.a`
   display: inline-block;
-  margin-left: ${props => props.theme.grid.unit * 2}px;
+  margin-left: ${(props) => props.theme.grid.unit * 2}px;
   text-transform: uppercase;
   color: inherit;
-  font-size: ${props => props.theme.font.size.small};
+  font-size: ${(props) => props.theme.font.size.small};
   text-decoration: none;
 
   &:after {

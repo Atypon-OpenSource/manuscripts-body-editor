@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import { sanitize } from 'dompurify'
 import React from 'react'
+
 import { ViewerProps } from '../components/Viewer'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

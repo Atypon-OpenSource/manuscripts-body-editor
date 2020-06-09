@@ -21,6 +21,7 @@ import {
 import { chainCommands } from 'prosemirror-commands'
 import { ResolvedPos } from 'prosemirror-model'
 import { Selection, TextSelection, Transaction } from 'prosemirror-state'
+
 import {
   isAtEndOfTextBlock,
   isAtStartOfTextBlock,
@@ -46,8 +47,8 @@ const insertParagraph = (
 
   if (
     !nextNode ||
-    (nextNode.type !== nextNode.type.schema.nodes.paragraph ||
-      nextNode.nodeSize > 2)
+    nextNode.type !== nextNode.type.schema.nodes.paragraph ||
+    nextNode.nodeSize > 2
   ) {
     tr.insert(pos, nodes.paragraph.create())
   }

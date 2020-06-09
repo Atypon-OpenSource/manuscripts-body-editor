@@ -23,6 +23,7 @@ import {
 } from '@jupyterlab/services'
 import { blobToBase64String } from 'blob-util'
 import { sha256 } from 'crypto-hash'
+
 import { CodemirrorMode } from './codemirror-modes'
 
 interface ListingAttachment {
@@ -46,7 +47,7 @@ const ensureDirectoryExists = async (
   const directoryExists = await contentsManager
     .get(listingID)
     .then(() => true)
-    .catch(e => e.response.ok) // TODO: check for 404
+    .catch((e) => e.response.ok) // TODO: check for 404
 
   if (!directoryExists) {
     const untitledDirectory = await contentsManager.newUntitled({
@@ -275,13 +276,9 @@ export const executeKernel = async (
 
   const future = session.kernel.requestExecute({ code })
 
-  return new Promise(async resolve => {
+  return new Promise((resolve, reject) => {
     future.onIOPub = callback
 
-    await future.done
-
-    await session.shutdown()
-
-    resolve()
+    future.done.then(session.shutdown).then(resolve).catch(reject)
   })
 }

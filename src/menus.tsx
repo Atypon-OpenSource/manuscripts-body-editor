@@ -26,6 +26,7 @@ import {
   deleteColumn,
   deleteRow,
 } from 'prosemirror-tables'
+
 import {
   blockActive,
   canInsert,
@@ -79,12 +80,12 @@ export const menus: MenuItem[] = [
       {
         id: 'edit-delete',
         role: 'delete',
-        label: state => {
+        label: (state) => {
           const nodeName = findClosestParentElementNodeName(state)
 
           return `Delete ${nodeName}`
         },
-        enable: state => Boolean(state.selection),
+        enable: (state) => Boolean(state.selection),
         run: deleteClosestParentElement,
       },
     ],

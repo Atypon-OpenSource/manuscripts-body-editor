@@ -132,8 +132,7 @@ export const convertDataToBibliographyItem = (
 ): Partial<BibliographyItem> => {
   // const output: { [key in keyof BibliographyItem]: BibliographyItem[key] } = {}
 
-  // tslint:disable-next-line:no-any
-  const output: { [key: string]: any } = {}
+  const output: { [key: string]: unknown } = {}
 
   for (const [key, item] of Object.entries(data)) {
     if (key === 'circa') {
@@ -141,7 +140,7 @@ export const convertDataToBibliographyItem = (
     } else if (standardFields.includes(key as keyof CSL.StandardFields)) {
       output[key] = numberFields.includes(key) ? Number(item) : item
     } else if (roleFields.includes(key as keyof CSL.RoleFields)) {
-      output[key] = (item as CSL.Name[]).map(value =>
+      output[key] = (item as CSL.Name[]).map((value) =>
         buildBibliographicName(value)
       )
     } else if (dateFields.includes(key as keyof CSL.DateFields)) {
@@ -160,11 +159,13 @@ export const convertBibliographyItemToData = (
       if (standardFields.includes(key as keyof CSL.StandardFields)) {
         output[key] = item as string
       } else if (roleFields.includes(key as keyof CSL.RoleFields)) {
-        output[key] = (item as BibliographicName[]).map(name => {
+        output[key] = (item as BibliographicName[]).map((name) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { _id, objectType, ...rest } = name
           return rest
         }) as CSL.Name[]
       } else if (dateFields.includes(key as keyof CSL.DateFields)) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, objectType, ...rest } = item as BibliographicDate
         output[key] = rest as CSL.Date
       }
@@ -174,7 +175,7 @@ export const convertBibliographyItemToData = (
     {
       id: bibliographyItem._id,
       type: bibliographyItem.type || 'article-journal',
-    } as CSL.Item & {[key: string]: any} // tslint:disable-line
+    } as CSL.Item & { [key: string]: unknown }
   )
 
 const createDoiUrl = (doi: string) =>
@@ -258,7 +259,7 @@ export class CitationManager {
 
           return convertBibliographyItemToData(item)
         },
-        retrieveLocale: (id: string) => citationLocales.get(id)!,
+        retrieveLocale: (id: string) => citationLocales.get(id) as string,
         variableWrapper: (params, prePunct, str, postPunct) => {
           if (params.context === 'bibliography') {
             const [field] = params.variableNames
@@ -280,17 +281,17 @@ export class CitationManager {
   }
 
   public fetchBundle = (bundleID: string): Promise<Bundle | undefined> =>
-    this.fetchBundles().then(bundles =>
-      bundles.find(item => item._id === bundleID)
+    this.fetchBundles().then((bundles) =>
+      bundles.find((item) => item._id === bundleID)
     )
 
   public fetchBundles = async (): Promise<Bundle[]> =>
     import('@manuscripts/data/dist/shared/bundles.json').then(
-      module => module.default as Bundle[]
+      (module) => module.default as Bundle[]
     )
 
   public fetchLocales = (): Promise<Locales> =>
-    this.fetchJSON('csl/locales/locales.json') as Promise<Locales>
+    this.fetchJSON<Locales>('csl/locales/locales.json')
 
   public async fetchCitationStyleString(bundle: Bundle): Promise<string> {
     if (!bundle.csl || !bundle.csl.cslIdentifier) {
@@ -349,8 +350,8 @@ export class CitationManager {
     return response.data
   }
 
-  private async fetchJSON(path: string) {
-    const response = await axios.get<object>(this.buildURL(path))
+  private async fetchJSON<T>(path: string) {
+    const response = await axios.get<T>(this.buildURL(path))
 
     return response.data
   }
@@ -379,7 +380,7 @@ export class CitationManager {
     )
 
     await Promise.all(
-      localeNames.map(async localeName => {
+      localeNames.map(async (localeName) => {
         const data = await this.fetchLocale(localeName)
         locales.set(localeName, data)
       })

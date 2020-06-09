@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
+
 import { createBlock, insertHighlight } from '../commands'
 import { PopperManager } from './popper'
 
@@ -406,7 +407,7 @@ export class ContextMenu {
     const item = document.createElement('div')
     item.className = 'menu-item'
     item.textContent = contents
-    item.addEventListener('mousedown', event => {
+    item.addEventListener('mousedown', (event) => {
       event.preventDefault()
       handler(event)
     })
@@ -447,7 +448,7 @@ export class ContextMenu {
   private showMenuSection = (
     insertableTypes: { [key: string]: boolean },
     types: string[]
-  ) => types.some(type => insertableTypes[type])
+  ) => types.some((type) => insertableTypes[type])
 
   private changeNodeType = (nodeType: ManuscriptNodeType) => {
     this.view.dispatch(
@@ -592,7 +593,7 @@ export class ContextMenu {
       })
     }
 
-    const keyListener: EventListener = event => {
+    const keyListener: EventListener = (event) => {
       if ((event as KeyboardEvent).key === 'Escape') {
         window.removeEventListener('keydown', keyListener)
         popper.destroy()

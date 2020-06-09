@@ -15,6 +15,7 @@
  */
 
 import { sanitize } from 'dompurify'
+
 import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -34,7 +35,7 @@ export class BibliographyElementBlockView<
   public updateContents = () => {
     if (
       this.decorations &&
-      this.decorations.find(decoration => decoration.spec.missing)
+      this.decorations.find((decoration) => decoration.spec.missing)
     ) {
       this.element.innerHTML = ''
 
@@ -63,7 +64,7 @@ export class BibliographyElementBlockView<
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
 
-    this.element.addEventListener('click', event => {
+    this.element.addEventListener('click', (event) => {
       const element = event.target as HTMLElement
 
       if (isLinkElement(element)) {

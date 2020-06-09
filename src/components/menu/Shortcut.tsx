@@ -16,13 +16,14 @@
 
 import React from 'react'
 import styled from 'styled-components'
+
 import { isMac } from '../../lib/platform'
 import { Accelerator } from './ApplicationMenu'
 
 export const ShortcutContainer = styled.div`
   display: inline-flex;
-  color: ${props => props.theme.colors.text.secondary};
-  margin-left: ${props => props.theme.grid.unit * 4}px;
+  color: ${(props) => props.theme.colors.text.secondary};
+  margin-left: ${(props) => props.theme.grid.unit * 4}px;
   flex-shrink: 0;
   justify-content: flex-end;
 `

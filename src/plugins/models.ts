@@ -30,14 +30,14 @@ interface Props {
 }
 
 export default (props: Props) => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<Record<string, unknown>, ManuscriptSchema>({
     key: modelsKey,
 
     state: {
       init: () => {
         return {}
       },
-      apply: tr => {
+      apply: (tr) => {
         const meta = tr.getMeta(modelsKey)
 
         if (meta) {

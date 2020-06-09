@@ -17,6 +17,7 @@
 import { ModelAttachment } from '@manuscripts/manuscript-transform'
 import { Figure } from '@manuscripts/manuscripts-json-schema'
 import prettyBytes from 'pretty-bytes'
+
 import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
@@ -40,7 +41,7 @@ export class FigureEditableView extends FigureView<EditorProps> {
         const input = document.createElement('input')
         input.accept = 'image/*'
         input.type = 'file'
-        input.addEventListener('change', async event => {
+        input.addEventListener('change', async (event) => {
           const target = event.target as HTMLInputElement
 
           if (target.files && target.files.length) {
@@ -60,7 +61,7 @@ export class FigureEditableView extends FigureView<EditorProps> {
           img.classList.toggle('over', false)
         })
 
-        img.addEventListener('dragenter', event => {
+        img.addEventListener('dragenter', (event) => {
           event.preventDefault()
           img.classList.toggle('over', true)
         })
@@ -69,7 +70,7 @@ export class FigureEditableView extends FigureView<EditorProps> {
           img.classList.toggle('over', false)
         })
 
-        img.addEventListener('dragover', event => {
+        img.addEventListener('dragover', (event) => {
           if (event.dataTransfer && event.dataTransfer.items) {
             for (const item of event.dataTransfer.items) {
               if (item.kind === 'file' && item.type.startsWith('image/')) {
@@ -80,11 +81,11 @@ export class FigureEditableView extends FigureView<EditorProps> {
           }
         })
 
-        img.addEventListener('drop', event => {
+        img.addEventListener('drop', (event) => {
           if (event.dataTransfer && event.dataTransfer.files) {
             event.preventDefault()
 
-            this.updateFigure(event.dataTransfer.files[0]).catch(error => {
+            this.updateFigure(event.dataTransfer.files[0]).catch((error) => {
               console.error(error) // tslint:disable-line:no-console
             })
           }

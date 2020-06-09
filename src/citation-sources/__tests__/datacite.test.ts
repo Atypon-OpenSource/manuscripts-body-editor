@@ -15,6 +15,7 @@
  */
 
 import mockAxios from 'jest-mock-axios'
+
 import { datacite } from '../datacite'
 import fetchResponse from './__fixtures__/datacite-fetch.json'
 import searchResponse from './__fixtures__/datacite-search.json'
@@ -54,7 +55,9 @@ describe('datacite', () => {
   test('fetch', async () => {
     const response = datacite.fetch({ DOI: '10.5255/ukda-sn-6926-1' })
 
-    expect(mockAxios.get).toHaveBeenCalledWith(
+    expect(
+      mockAxios.get
+    ).toHaveBeenCalledWith(
       'https://api.datacite.org/dois/10.5255%2Fukda-sn-6926-1',
       { headers: { Accept: 'application/vnd.citationstyles.csl+json' } }
     )

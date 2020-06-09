@@ -36,39 +36,39 @@ export const OutlineItem = styled.div<{
   align-items: center;
   border-bottom: 1px solid transparent;
   border-top: 1px solid transparent;
-  background: ${props =>
+  background: ${(props) =>
     props.isSelected ? props.theme.colors.background.fifth : 'transparent'};
-  border-color: ${props =>
+  border-color: ${(props) =>
     props.isSelected
       ? props.theme.colors.border.primary
       : props.theme.colors.background.fifth};
-  color: ${props => props.theme.colors.text.primary};
+  color: ${(props) => props.theme.colors.text.primary};
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  font-size: ${props =>
+  font-size: ${(props) =>
     props.depth === 0
       ? props.theme.font.size.large
       : props.theme.font.size.medium};
   line-height: 30px;
-  margin-left: -${props => props.theme.grid.unit * 5}px;
-  margin-right: -${props => props.theme.grid.unit * 5}px;
+  margin-left: -${(props) => props.theme.grid.unit * 5}px;
+  margin-right: -${(props) => props.theme.grid.unit * 5}px;
   overflow-x: hidden;
-  padding-right: ${props => props.theme.grid.unit * 5}px;
-  padding-left: ${props => 20 + props.depth * 20}px;
+  padding-right: ${(props) => props.theme.grid.unit * 5}px;
+  padding-left: ${(props) => 20 + props.depth * 20}px;
   white-space: nowrap;
 
   &:hover {
-    background: ${props => props.theme.colors.background.fifth};
+    background: ${(props) => props.theme.colors.background.fifth};
   }
 `
 
 export const Outline = styled.div`
-  font-size: ${props => props.theme.font.size.medium};
+  font-size: ${(props) => props.theme.font.size.medium};
   position: relative;
 
   & .outline-text-title {
-    font-size: ${props => props.theme.font.size.large};
+    font-size: ${(props) => props.theme.font.size.large};
   }
 `
 
@@ -80,9 +80,9 @@ export const OutlineItemArrow = styled.button`
   cursor: pointer;
   border: none;
   background: transparent;
-  padding: 0 ${props => props.theme.grid.unit}px;
+  padding: 0 ${(props) => props.theme.grid.unit}px;
   flex-shrink: 0;
-  font-size: ${props => props.theme.font.size.normal};
+  font-size: ${(props) => props.theme.font.size.normal};
 
   &:hover ${StyledTriangleCollapsed} use[fill='#949494'],
   &:hover ${StyledTriangleExpanded} use[fill='#949494'] {
@@ -96,7 +96,7 @@ export const OutlineItemArrow = styled.button`
 
 export const OutlineItemNoArrow = styled.span`
   display: inline-block;
-  width: ${props => props.theme.grid.unit * 5}px;
+  width: ${(props) => props.theme.grid.unit * 5}px;
   flex-shrink: 0;
 `
 
@@ -105,18 +105,18 @@ export const OutlineDropPreview = styled.div<{ depth: number }>`
   background: #65a3ff;
   height: 1px;
   position: absolute;
-  margin-left: ${props => 30 + props.depth * 20}px;
+  margin-left: ${(props) => 30 + props.depth * 20}px;
   z-index: 2;
 
   &:before {
     content: '';
     display: inline-block;
-    width: ${props => props.theme.grid.unit}px;
-    height: ${props => props.theme.grid.unit}px;
-    border: 1px solid ${props => props.theme.colors.brand.default}
-    border-radius: ${props => props.theme.grid.radius.small};
+    width: ${(props) => props.theme.grid.unit}px;
+    height: ${(props) => props.theme.grid.unit}px;
+    border: 1px solid ${(props) => props.theme.colors.brand.default}
+    border-radius: ${(props) => props.theme.grid.radius.small};
     position: absolute;
-    top: -${props => props.theme.grid.unit}px;
+    top: -${(props) => props.theme.grid.unit}px;
     left: -6px;
   }
 `
@@ -141,7 +141,7 @@ export const OutlineItemLinkText = styled.span`
   display: inline-block;
   overflow-x: hidden;
   text-overflow: ellipsis;
-  margin-left: ${props => props.theme.grid.unit * 2}px;
+  margin-left: ${(props) => props.theme.grid.unit * 2}px;
 `
 
 export const OutlineItemPlaceholder = styled.span``

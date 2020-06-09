@@ -43,9 +43,3 @@ export { toolbar } from './toolbar'
 export * from './plugins/highlight'
 export * from './plugins/keywords'
 export * from './lib/utils'
-
-export {
-  findParentElement,
-  findParentNodeWithIdValue,
-  findParentSection,
-} from './lib/utils'

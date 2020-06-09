@@ -16,6 +16,7 @@
 
 import { schema } from '@manuscripts/manuscript-transform'
 import { Node } from 'prosemirror-model'
+
 import { bibliographyElementContents } from '../bibliography'
 
 describe('bibliography', () => {

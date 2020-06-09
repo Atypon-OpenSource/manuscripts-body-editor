@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Theme } from '@manuscripts/style-guide'
 import 'styled-components'
 
+import { Theme } from '@manuscripts/style-guide'
+
 declare module 'styled-components' {
-  // tslint:disable-next-line:no-empty-interface
-  export interface DefaultTheme extends Theme {}
+  export type DefaultTheme = Theme
 }

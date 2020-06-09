@@ -22,6 +22,7 @@ import {
 import React from 'react'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
+
 import { MenuItem, MenuSeparator } from './ApplicationMenu'
 import { Shortcut } from './Shortcut'
 
@@ -30,13 +31,13 @@ export const Text = styled.div`
 `
 
 export const MenuList = styled.div`
-  background: ${props => props.theme.colors.background.primary};
-  border: 1px solid ${props => props.theme.colors.border.secondary};
-  border-radius: ${props => props.theme.grid.radius.small};
-  box-shadow: ${props => props.theme.shadow.dropShadow};
-  color: ${props => props.theme.colors.text.primary};
+  background: ${(props) => props.theme.colors.background.primary};
+  border: 1px solid ${(props) => props.theme.colors.border.secondary};
+  border-radius: ${(props) => props.theme.grid.radius.small};
+  box-shadow: ${(props) => props.theme.shadow.dropShadow};
+  color: ${(props) => props.theme.colors.text.primary};
   min-width: 150px;
-  padding: ${props => props.theme.grid.unit}px 0;
+  padding: ${(props) => props.theme.grid.unit}px 0;
   white-space: nowrap;
   width: auto;
   z-index: 10;
@@ -47,18 +48,18 @@ export const MenuList = styled.div`
   }
 
   &[data-placement='right-start'] {
-    top: ${props => props.theme.grid.unit * 2}px;
+    top: ${(props) => props.theme.grid.unit * 2}px;
   }
 `
 
 const Separator = styled.div`
   height: 0;
-  border-bottom: 1px solid ${props => props.theme.colors.border.secondary};
-  margin: ${props => props.theme.grid.unit}px 0;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border.secondary};
+  margin: ${(props) => props.theme.grid.unit}px 0;
 `
 
 const Active = styled.div`
-  width: ${props => props.theme.grid.unit * 4}px;
+  width: ${(props) => props.theme.grid.unit * 4}px;
   display: inline-flex;
   flex-shrink: 0;
   justify-content: center;
@@ -66,20 +67,21 @@ const Active = styled.div`
 `
 
 const Arrow = styled(TriangleCollapsed)`
-  margin-left: ${props => props.theme.grid.unit * 2}px;
+  margin-left: ${(props) => props.theme.grid.unit * 2}px;
 `
 
 const Container = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
-  padding: ${props => props.theme.grid.unit * 2}px
-    ${props => props.theme.grid.unit * 4}px
-    ${props => props.theme.grid.unit * 2}px ${props => props.theme.grid.unit}px;
+  padding: ${(props) => props.theme.grid.unit * 2}px
+    ${(props) => props.theme.grid.unit * 4}px
+    ${(props) => props.theme.grid.unit * 2}px
+    ${(props) => props.theme.grid.unit}px;
   position: relative;
 
   &:hover {
-    background: ${props => props.theme.colors.background.fifth};
+    background: ${(props) => props.theme.colors.background.fifth};
   }
 
   &.disabled {

@@ -23,7 +23,7 @@ const splitter = new GraphemeSplitter()
 export const buildText = (node: ManuscriptNode) => {
   const parts: string[] = []
 
-  node.descendants(childNode => {
+  node.descendants((childNode) => {
     if (childNode.isTextblock) {
       parts.push(childNode.textContent)
     }

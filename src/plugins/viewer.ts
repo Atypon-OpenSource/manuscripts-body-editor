@@ -16,6 +16,7 @@
 
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
+
 import { ViewerProps } from '../components/Viewer'
 import elements from './elements'
 import objects from './objects'

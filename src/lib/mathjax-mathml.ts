@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import 'mathjax-full/js/util/entities/all'
+
 import { HTMLAdaptor } from 'mathjax-full/js/adaptors/HTMLAdaptor'
 import { STATE } from 'mathjax-full/js/core/MathItem.js'
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor'
 import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument'
 import { TeX } from 'mathjax-full/js/input/tex'
-import 'mathjax-full/js/util/entities/all'
+
 import { packages } from './mathjax-packages'
 
 // TeX input
@@ -28,8 +30,7 @@ const InputJax = new TeX<HTMLElement, Text, Document>({
 })
 
 // @ts-ignore
-// tslint:disable-next-line:no-any
-const adaptor = new HTMLAdaptor<HTMLElement, Text, Document>(window as any)
+const adaptor = new HTMLAdaptor<HTMLElement, Text, Document>(window)
 
 const doc = new HTMLDocument<HTMLElement, Text, Document>(document, adaptor, {
   InputJax,

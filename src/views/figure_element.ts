@@ -49,19 +49,23 @@ export class FigureElementView<PropsType extends ViewerProps> extends BlockView<
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
 
-    this.contentDOM!.setAttribute('data-figure-style', figureStyle)
+    if (!this.contentDOM) {
+      throw new Error('No contentDOM')
+    }
 
-    this.contentDOM!.setAttribute('data-figure-layout', figureLayout)
+    this.contentDOM.setAttribute('data-figure-style', figureStyle)
 
-    this.contentDOM!.setAttribute('data-alignment', alignment)
+    this.contentDOM.setAttribute('data-figure-layout', figureLayout)
+
+    this.contentDOM.setAttribute('data-alignment', alignment)
 
     if (sizeFraction > 1) {
       // fit to page width
-      this.contentDOM!.style.width = '100%'
-      this.contentDOM!.style.padding = '0 !important'
+      this.contentDOM.style.width = '100%'
+      this.contentDOM.style.padding = '0 !important'
     } else {
       // fit to margin
-      this.contentDOM!.style.width = `${(sizeFraction || 1) * 100}%`
+      this.contentDOM.style.width = `${(sizeFraction || 1) * 100}%`
     }
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)

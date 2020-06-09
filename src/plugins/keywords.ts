@@ -35,7 +35,7 @@ import {
 export const keywordsKey = new PluginKey('keywords')
 
 const keywordsInserted = (transactions: Transaction[]): boolean =>
-  transactions.some(tr => {
+  transactions.some((tr) => {
     const meta = tr.getMeta(keywordsKey)
 
     return meta && meta.keywordsInserted
@@ -48,7 +48,7 @@ export const buildKeywordsContents = (
   const p = document.createElement('p')
   p.classList.add('keywords')
 
-  p.textContent = manuscriptKeywords.map(keyword => keyword.name).join(', ')
+  p.textContent = manuscriptKeywords.map((keyword) => keyword.name).join(', ')
 
   return p.outerHTML
 }
@@ -90,7 +90,7 @@ export default (props: Props) => {
           const manuscriptKeywords: ManuscriptKeyword[] = (
             manuscript.keywordIDs || []
           )
-            .map(id => props.getModel(id))
+            .map((id) => props.getModel(id))
             .filter(Boolean) as ManuscriptKeyword[]
 
           tr.setNodeMarkup(pos, undefined, {

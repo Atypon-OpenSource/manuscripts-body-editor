@@ -33,6 +33,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import {
@@ -150,7 +151,7 @@ export const createBlock = (
       ? createAndFillTableElement(state)
       : nodeType.createAndFill()
 
-  const tr = state.tr.insert(position, node!)
+  const tr = state.tr.insert(position, node as ManuscriptNode)
 
   if (dispatch) {
     const selection = createSelection(nodeType, position, tr.doc)
@@ -243,10 +244,10 @@ export const insertInlineCitation = (
   tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
 
   if (needsBibliography(state)) {
-    tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
-      bibliographyKey,
-      { bibliographyInserted: true }
-    )
+    tr.insert(
+      tr.doc.content.size,
+      createBibliographySection(state)
+    ).setMeta(bibliographyKey, { bibliographyInserted: true })
   }
 
   if (dispatch) {
@@ -283,9 +284,7 @@ export const insertInlineEquation = (
 ) => {
   const inlineMathFragment = buildInlineMathFragment(
     state.selection.$anchor.parent.attrs.id,
-    selectedText()
-      .replace(/^\$/, '')
-      .replace(/\$$/, '')
+    selectedText().replace(/^\$/, '').replace(/\$$/, '')
   )
 
   const tr = state.tr

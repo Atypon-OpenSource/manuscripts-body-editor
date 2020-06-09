@@ -19,6 +19,7 @@ import {
   BibliographyItem,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
+
 import {
   convertBibliographyItemToData,
   convertDataToBibliographyItem,
@@ -37,8 +38,7 @@ describe('CSL', () => {
     const bibItem = convertDataToBibliographyItem(data)
     expect(bibItem.DOI).toMatch(data.DOI!)
     expect(bibItem.type).toMatch('article')
-    // tslint:disable-next-line:no-any
-    expect((bibItem.illustrator as any)[0].objectType).toMatch(
+    expect(bibItem.illustrator![0].objectType).toMatch(
       ObjectTypes.BibliographicName
     )
   })

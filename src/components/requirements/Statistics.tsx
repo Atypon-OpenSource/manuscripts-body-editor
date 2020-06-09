@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+import '@manuscripts/style-guide/styles/tip.css'
+
 import AttentionOrange from '@manuscripts/assets/react/AttentionOrange'
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Tip } from '@manuscripts/style-guide'
-import '@manuscripts/style-guide/styles/tip.css'
 import * as Comlink from 'comlink'
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
+
 import { buildText, NodeStatistics } from '../../lib/statistics'
 import { RequirementsAlerts, RequirementsContext } from './RequirementsProvider'
 
@@ -32,14 +34,14 @@ const StatisticsWorker = Comlink.wrap<{
 const AlertContainer = styled.div`
   display: inline-flex;
   align-items: center;
-  width: ${props => props.theme.grid.unit * 5}px;
+  width: ${(props) => props.theme.grid.unit * 5}px;
   cursor: pointer;
 `
 
 const StatisticContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: ${props => props.theme.grid.unit * 2}px 0;
+  margin: ${(props) => props.theme.grid.unit * 2}px 0;
 `
 
 const Statistic: React.FC<{

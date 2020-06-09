@@ -21,7 +21,7 @@ import {
 import { Plugin } from 'prosemirror-state'
 
 export default () => {
-  return new Plugin<{}, ManuscriptSchema>({
+  return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {
       const positionsToInsert: number[] = []
 

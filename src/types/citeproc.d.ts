@@ -17,8 +17,6 @@
 // https://citeproc-js.readthedocs.io/en/latest/running.html#introduction
 // https://github.com/citation-style-language/schema
 
-// tslint:disable:only-arrow-functions
-
 declare module 'citeproc' {
   import { CSL } from '@manuscripts/manuscript-transform'
 
@@ -30,13 +28,18 @@ declare module 'citeproc' {
   }
 
   interface SystemOptions {
-    retrieveLocale: (id: string) => string | Document | object
+    retrieveLocale: (id: string) => string | Document | Record<string, unkon>
     retrieveItem: (id: string) => CSL.Item
-    variableWrapper: (params: {
-      context: string
-      itemData: CSL.Item
-      variableNames: [string]
-    }, prePunct: string, str: string, postPunct: string) => string
+    variableWrapper: (
+      params: {
+        context: string
+        itemData: CSL.Item
+        variableNames: [string]
+      },
+      prePunct: string,
+      str: string,
+      postPunct: string
+    ) => string
   }
 
   interface BibliographyMetadata {

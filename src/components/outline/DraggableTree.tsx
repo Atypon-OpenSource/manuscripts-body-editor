@@ -32,6 +32,7 @@ import {
   DropTarget,
 } from 'react-dnd'
 import { findDOMNode } from 'react-dom'
+
 import { ContextMenu } from '../../lib/context-menu'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
@@ -165,7 +166,6 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     }
   }
 
-  // tslint:disable-next-line:cyclomatic-complexity
   public render(): React.ReactNode {
     const {
       depth = 0,
@@ -241,8 +241,8 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
           {items.length ? (
             <div style={{ display: open ? '' : 'none' }}>
-              {items.map(subtree => (
-                <DraggableTree // tslint:disable-line:no-use-before-declare
+              {items.map((subtree) => (
+                <DraggableTree
                   {...this.props}
                   key={subtree.node.attrs.id}
                   tree={subtree}
@@ -300,7 +300,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     return <OutlineItemPlaceholder>{placeholder}</OutlineItemPlaceholder>
   }
 
-  private handleContextMenu: React.EventHandler<React.MouseEvent> = event => {
+  private handleContextMenu: React.EventHandler<React.MouseEvent> = (event) => {
     event.preventDefault()
     event.stopPropagation()
 
@@ -398,6 +398,7 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
           const item = monitor.getItem() as DragSourceProps
 
           // get the target DOM node
+          // eslint-disable-next-line react/no-find-dom-node
           const node = findDOMNode(component) as Element
 
           // get the rectangle on screen

@@ -19,6 +19,7 @@ import {
   ManuscriptEditorState,
 } from '@manuscripts/manuscript-transform'
 import { Selection } from 'prosemirror-state'
+
 import { Dispatch, isTextSelection } from '../commands'
 import { EditorAction } from '../types'
 

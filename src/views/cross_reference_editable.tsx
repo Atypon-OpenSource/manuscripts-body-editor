@@ -17,6 +17,7 @@
 import { buildAuxiliaryObjectReference } from '@manuscripts/manuscript-transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
+
 import { EditorProps } from '../components/Editor'
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { objectsKey, Target } from '../plugins/objects'

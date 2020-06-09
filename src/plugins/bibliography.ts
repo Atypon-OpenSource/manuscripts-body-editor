@@ -39,6 +39,7 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
 import { bibliographyElementContents } from '../lib/bibliography'
 
 type CitationNodes = Array<[CitationNode, number, Citation]>
@@ -53,7 +54,7 @@ interface PluginState {
 export const bibliographyKey = new PluginKey('bibliography')
 
 const bibliographyInserted = (transactions: Transaction[]): boolean =>
-  transactions.some(tr => {
+  transactions.some((tr) => {
     const meta = tr.getMeta(bibliographyKey)
     return meta && meta.bibliographyInserted
   })
@@ -94,6 +95,7 @@ export default (props: Props) => {
   }
 
   const buildCitations = (citationNodes: CitationNodes): CiteProc.Citation[] =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     citationNodes.map(([node, pos, citation]) => ({
       citationID: citation._id,
       citationItems: citation.embeddedCitationItems.map(
@@ -171,7 +173,7 @@ export default (props: Props) => {
   return new Plugin<PluginState, ManuscriptSchema>({
     key: bibliographyKey,
     props: {
-      decorations: state => {
+      decorations: (state) => {
         const { citationNodes } = bibliographyKey.getState(state)
 
         return DecorationSet.create<ManuscriptSchema>(
@@ -235,7 +237,7 @@ export default (props: Props) => {
       try {
         const generatedCitations = citationProcessor
           .rebuildProcessorState(citations)
-          .map(item => item[2]) // id, noteIndex, output
+          .map((item) => item[2]) // id, noteIndex, output
 
         citationNodes.forEach(([node, pos], index) => {
           let contents = generatedCitations[index]
