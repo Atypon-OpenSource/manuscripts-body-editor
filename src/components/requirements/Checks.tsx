@@ -21,12 +21,12 @@ import {
   nodeTitle,
   nodeTitlePlaceholder,
 } from '@manuscripts/manuscript-transform'
+import { RequirementsAlerts } from '@manuscripts/requirements'
 import React from 'react'
 import styled from 'styled-components'
 
 import { nodeTypeIcon } from '../../node-type-icons'
 import { OutlineItemIcon } from '../outline/Outline'
-import { RequirementsAlerts } from './RequirementsProvider'
 
 const IconContainer = styled.div`
   display: inline-flex;

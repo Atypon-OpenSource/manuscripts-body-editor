@@ -27,7 +27,6 @@ export {
 export { Checks } from './components/requirements/Checks'
 export { Statistics } from './components/requirements/Statistics'
 export {
-  RequirementsAlerts,
   RequirementsContext,
   RequirementsProvider,
 } from './components/requirements/RequirementsProvider'

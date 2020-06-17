@@ -1275,10 +1275,21 @@
     uuid "^3.3.2"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.29.0":
-  version "1.29.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.29.0.tgz#b100904c9ab2354fed82c1da4449012cafd44f99"
-  integrity sha512-r88iCJ/no0asNHdGj3gMFL5o7Fk6VCc/NwxpFs5l6SN67O7jxZLEjQVksdJn/INtwlwP5r0O6TZRzmSLyoppWw==
+"@manuscripts/manuscript-transform@^0.30.0":
+  version "0.30.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.30.0.tgz#265d9a957057f07a6fdcfd088b8ac8831c9e70a1"
+  integrity sha512-kAxJL+E4P+Z4ZdVCZRyYC6c8Xl+XL7GPlA4agS2LdGNjM4z03nQubkbXTOaHyRxkf69nrPn879MdB39HYf2/Xg==
+  dependencies:
+    "@manuscripts/manuscripts-json-schema" "^1.29.2"
+    debug "^4.1.1"
+    prosemirror-model "^1.7.2"
+    uuid "^3.3.2"
+    w3c-xmlserializer "^2.0.0"
+
+"@manuscripts/manuscripts-json-schema@^1.29.0", "@manuscripts/manuscripts-json-schema@^1.29.2":
+  version "1.30.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.30.0.tgz#1339f19c396ba232423a981d5eac8157f3577af3"
+  integrity sha512-Xo07N40qAW+pyMXT3cuvA749L5eFIO7HU7CB7KcU1dHCxZQAExoysyPkeBEVqMtZYIvixU/sIOhuym+KGSvfzA==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1290,6 +1301,17 @@
   integrity sha512-9aRP2fyKdoSmVnlDRnL9o+iabynVDSjj7x1Stn2kSoxCkrn2ueaH4Ng5ysXgOoh1mi5T4wFIydYPor5RtLXIRg==
   dependencies:
     node-fetch "^2.6.0"
+
+"@manuscripts/requirements@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.npmjs.org/@manuscripts/requirements/-/requirements-0.0.2.tgz#da3daf27bf42831e203a2bb9c8cf899e36dd019c"
+  integrity sha512-ozGi3GnVAM7Vpa2VsZCHlRgQ3V+duduItqP67XihlZtiJU2dpzQ4mq066O8DoxXETxqZDetUrIQJRf5H0hYf2w==
+  dependencies:
+    "@iarna/word-count" "^1.1.2"
+    "@manuscripts/data" "^0.0.7"
+    "@manuscripts/eslint-config" "^0.2.1"
+    "@manuscripts/manuscript-transform" "^0.30.0"
+    grapheme-splitter "^1.0.4"
 
 "@manuscripts/rxdb@^8.2.0-manuscripts1":
   version "8.2.0-manuscripts1"
@@ -9847,14 +9869,7 @@ rimraf@2.6.3, rimraf@^2.5.4, rimraf@^2.6.1:
   dependencies:
     glob "^7.1.3"
 
-rimraf@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/rimraf/-/rimraf-3.0.0.tgz#614176d4b3010b75e5c390eb0ee96f6dc0cebb9b"
-  integrity sha512-NDGVxTsjqfunkds7CqsOiEnxln4Bo7Nddl3XhS4pXg5OzwkLqJ971ZVAAnB+DDLnF76N+VnDEiBHaVV8I06SUg==
-  dependencies:
-    glob "^7.1.3"
-
-rimraf@^3.0.2:
+rimraf@^3.0.0, rimraf@^3.0.2:
   version "3.0.2"
   resolved "https://registry.npmjs.org/rimraf/-/rimraf-3.0.2.tgz#f1a5402ba6220ad52cc1282bac1ae3aa49fd061a"
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==

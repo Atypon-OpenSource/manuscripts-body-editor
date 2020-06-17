@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
+import { countCharacters, countWords } from '@manuscripts/requirements'
 import * as Comlink from 'comlink'
-
-import { countCharacters, countWords } from './statistics'
 
 Comlink.expose({ countWords, countCharacters })

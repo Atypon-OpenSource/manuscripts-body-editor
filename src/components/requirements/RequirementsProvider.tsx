@@ -14,41 +14,28 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode, nodeNames } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
-  CountRequirement,
-  Manuscript,
-  Model,
-  Section,
-} from '@manuscripts/manuscripts-json-schema'
+  createRequirementsValidator,
+  findModelFromNode,
+  NodeStatistics,
+  RequirementsAlerts,
+} from '@manuscripts/requirements'
 import * as Comlink from 'comlink'
 import React, { createContext } from 'react'
-
-import { buildText, NodeStatistics } from '../../lib/statistics'
 
 const StatisticsWorker = Comlink.wrap<{
   countCharacters: (text: string) => number
   countWords: (text: string) => number
 }>(new Worker('../../lib/statistics.worker', { type: 'module' }))
 
-export interface RequirementResult {
-  message: string
-  passed?: boolean
-}
-
-export interface RequirementsAlerts {
-  words_maximum?: RequirementResult
-  words_minimum?: RequirementResult
-  characters_maximum?: RequirementResult
-  characters_minimum?: RequirementResult
-}
-
-export type RequirementsValue = (
+export type ValidateRequirements = (
   node: ManuscriptNode,
   statistics?: NodeStatistics
 ) => Promise<RequirementsAlerts>
 
-export const RequirementsContext = createContext<RequirementsValue>(
+export const RequirementsContext = createContext<ValidateRequirements>(
   async () => {
     throw new Error('RequirementsProvider is not mounted')
   }
@@ -57,119 +44,28 @@ export const RequirementsContext = createContext<RequirementsValue>(
 export const RequirementsProvider: React.FC<{
   modelMap: Map<string, Model>
 }> = ({ modelMap, children }) => {
-  const getActiveRequirementCount = (id?: string) => {
-    if (!id) {
-      return undefined
+  const validateRequirements = createRequirementsValidator(modelMap, {
+    countCharacters: StatisticsWorker.countCharacters,
+    countWords: StatisticsWorker.countWords,
+  })
+
+  const validateNodeRequirements: ValidateRequirements = async (
+    node,
+    statistics
+  ) => {
+    let model
+
+    try {
+      model = findModelFromNode(node, modelMap)
+    } catch (error) {
+      return {}
     }
 
-    const requirement = modelMap.get(id) as CountRequirement | undefined
-
-    if (!requirement) {
-      return undefined
-    }
-
-    if (requirement.ignored) {
-      return undefined
-    }
-
-    return requirement.count
-  }
-
-  const buildRequirementsAlerts = async (
-    node: ManuscriptNode,
-    statistics?: NodeStatistics
-  ): Promise<RequirementsAlerts> => {
-    const output: RequirementsAlerts = {}
-
-    const { id } = node.attrs
-
-    if (!id) {
-      return output
-    }
-
-    const model = modelMap.get(id) as Manuscript | Section | undefined
-
-    if (!model) {
-      return output
-    }
-
-    const requirements = {
-      words: {
-        minimum: getActiveRequirementCount(model.minWordCountRequirement),
-        maximum: getActiveRequirementCount(model.maxWordCountRequirement),
-      },
-      characters: {
-        minimum: getActiveRequirementCount(model.minCharacterCountRequirement),
-        maximum: getActiveRequirementCount(model.maxCharacterCountRequirement),
-      },
-    }
-
-    const hasWordsRequirement =
-      requirements.words.maximum || requirements.words.minimum
-
-    const hasCharactersRequirement =
-      requirements.characters.maximum || requirements.characters.minimum
-
-    const hasAnyRequirement = hasWordsRequirement || hasCharactersRequirement
-
-    if (hasAnyRequirement) {
-      const nodeTypeName = nodeNames.get(node.type)
-      const nodeName = nodeTypeName
-        ? nodeTypeName.toLowerCase()
-        : node.type.name
-
-      const text = statistics ? statistics.text : buildText(node)
-
-      if (hasWordsRequirement) {
-        const count = statistics
-          ? statistics.words
-          : await StatisticsWorker.countWords(text)
-
-        const { maximum, minimum } = requirements.words
-
-        if (maximum !== undefined) {
-          output.words_maximum = {
-            message: `The ${nodeName} should have a maximum of ${maximum.toLocaleString()} words`,
-            passed: count <= maximum,
-          }
-        }
-
-        if (minimum !== undefined) {
-          output.words_minimum = {
-            message: `The ${nodeName} should have a minimum of ${minimum.toLocaleString()} words`,
-            passed: count >= minimum,
-          }
-        }
-      }
-
-      if (hasCharactersRequirement) {
-        const count = statistics
-          ? statistics.characters
-          : await StatisticsWorker.countCharacters(text)
-
-        const { maximum, minimum } = requirements.characters
-
-        if (maximum !== undefined) {
-          output.characters_maximum = {
-            message: `The ${nodeName} should have a maximum of ${maximum.toLocaleString()} characters`,
-            passed: count <= maximum,
-          }
-        }
-
-        if (minimum !== undefined) {
-          output.characters_minimum = {
-            message: `The ${nodeName} should have a minimum of ${minimum.toLocaleString()} characters`,
-            passed: count >= minimum,
-          }
-        }
-      }
-    }
-
-    return output
+    return validateRequirements(node, model, statistics)
   }
 
   return (
-    <RequirementsContext.Provider value={buildRequirementsAlerts}>
+    <RequirementsContext.Provider value={validateNodeRequirements}>
       {children}
     </RequirementsContext.Provider>
   )

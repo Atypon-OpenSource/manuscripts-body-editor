@@ -18,13 +18,17 @@ import '@manuscripts/style-guide/styles/tip.css'
 
 import AttentionOrange from '@manuscripts/assets/react/AttentionOrange'
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import {
+  buildText,
+  NodeStatistics,
+  RequirementsAlerts,
+} from '@manuscripts/requirements'
 import { Tip } from '@manuscripts/style-guide'
 import * as Comlink from 'comlink'
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { buildText, NodeStatistics } from '../../lib/statistics'
-import { RequirementsAlerts, RequirementsContext } from './RequirementsProvider'
+import { RequirementsContext } from './RequirementsProvider'
 
 const StatisticsWorker = Comlink.wrap<{
   countCharacters: (text: string) => number
