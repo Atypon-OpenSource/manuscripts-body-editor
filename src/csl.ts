@@ -242,7 +242,7 @@ const variableWrapper: CiteProc.VariableWrapper = (
 interface Options {
   bundleID?: string
   bundle?: Bundle
-  citationStyleData?: Record<string, unknown>
+  citationStyleData?: string
 }
 
 interface Link {
