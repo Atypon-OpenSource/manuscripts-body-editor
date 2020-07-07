@@ -18,7 +18,6 @@ import {
   CitationNode,
   generateID,
   isCitationNode,
-  ManuscriptEditorState,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
@@ -42,7 +41,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { bibliographyElementContents } from '../lib/bibliography'
 
-type CitationNodes = Array<[CitationNode, number, Citation]>
+export type CitationNodes = Array<[CitationNode, number, Citation]>
 
 type DisplayScheme = 'show-all' | 'author-only' | 'suppress-author'
 
@@ -62,55 +61,66 @@ const bibliographyInserted = (transactions: Transaction[]): boolean =>
 const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
 
+export const buildCitationNodes = (
+  doc: ManuscriptNode,
+  getModel: GetModel
+): CitationNodes => {
+  const citationNodes: CitationNodes = []
+
+  doc.descendants((node, pos) => {
+    if (isCitationNode(node)) {
+      const citation = getModel<Citation>(node.attrs.rid)
+
+      if (citation) {
+        citationNodes.push([node, pos, citation])
+      }
+    }
+  })
+
+  return citationNodes
+}
+
+export const buildCitations = (
+  citationNodes: CitationNodes,
+  getLibraryItem: GetLibraryItem,
+  getManuscript: GetManuscript
+): CiteProc.Citation[] =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  citationNodes.map(([node, pos, citation]) => ({
+    citationID: citation._id,
+    citationItems: citation.embeddedCitationItems.map(
+      (citationItem: CitationItem) => ({
+        id: citationItem.bibliographyItem,
+        data: getLibraryItem(citationItem.bibliographyItem), // for comparison
+      })
+    ),
+    properties: {
+      noteIndex: 0,
+      mode: chooseMode(citation.displayScheme),
+    },
+    manuscript: getManuscript(), // for comparison
+  }))
+
+const chooseMode = (displayScheme?: DisplayScheme) => {
+  if (displayScheme === 'show-all') {
+    return undefined
+  }
+
+  return displayScheme
+}
+
+export type GetLibraryItem = (id: string) => BibliographyItem | undefined
+export type GetModel = <T extends Model>(id: string) => T | undefined
+export type GetManuscript = () => Manuscript
+
 interface Props {
   getCitationProcessor: () => CiteProc.Engine | undefined
-  getLibraryItem: (id: string) => BibliographyItem | undefined
-  getModel: <T extends Model>(id: string) => T | undefined
-  getManuscript: () => Manuscript
+  getLibraryItem: GetLibraryItem
+  getModel: GetModel
+  getManuscript: GetManuscript
 }
 
 export default (props: Props) => {
-  const buildCitationNodes = (state: ManuscriptEditorState): CitationNodes => {
-    const citationNodes: CitationNodes = []
-
-    state.doc.descendants((node, pos) => {
-      if (isCitationNode(node)) {
-        const citation = props.getModel<Citation>(node.attrs.rid)
-
-        if (citation) {
-          citationNodes.push([node, pos, citation])
-        }
-      }
-    })
-
-    return citationNodes
-  }
-
-  const chooseMode = (displayScheme?: DisplayScheme) => {
-    if (displayScheme === 'show-all') {
-      return undefined
-    }
-
-    return displayScheme
-  }
-
-  const buildCitations = (citationNodes: CitationNodes): CiteProc.Citation[] =>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    citationNodes.map(([node, pos, citation]) => ({
-      citationID: citation._id,
-      citationItems: citation.embeddedCitationItems.map(
-        (citationItem: CitationItem) => ({
-          id: citationItem.bibliographyItem,
-          data: props.getLibraryItem(citationItem.bibliographyItem), // for comparison
-        })
-      ),
-      properties: {
-        noteIndex: 0,
-        mode: chooseMode(citation.displayScheme),
-      },
-      manuscript: props.getManuscript(), // for comparison
-    }))
-
   const buildDecorations = (
     doc: ManuscriptNode,
     citationNodes: CitationNodes
@@ -184,8 +194,13 @@ export default (props: Props) => {
     },
     state: {
       init(config, instance): PluginState {
-        const citationNodes = buildCitationNodes(instance)
-        const citations = buildCitations(citationNodes)
+        const citationNodes = buildCitationNodes(instance.doc, props.getModel)
+
+        const citations = buildCitations(
+          citationNodes,
+          props.getLibraryItem,
+          props.getManuscript
+        )
 
         return {
           citationNodes,
@@ -194,8 +209,13 @@ export default (props: Props) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const citationNodes = buildCitationNodes(newState)
-        const citations = buildCitations(citationNodes)
+        const citationNodes = buildCitationNodes(newState.doc, props.getModel)
+
+        const citations = buildCitations(
+          citationNodes,
+          props.getLibraryItem,
+          props.getManuscript
+        )
 
         return {
           citationNodes,

@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-import mockAxios from 'jest-mock-axios'
+import axios from 'axios'
+import AxiosMockAdapter from 'axios-mock-adapter'
 
 import { datacite } from '../datacite'
 import fetchResponse from './__fixtures__/datacite-fetch.json'
 import searchResponse from './__fixtures__/datacite-search.json'
 
-afterEach(() => {
-  mockAxios.reset()
-})
-
 describe('datacite', () => {
   test('search', async () => {
-    const response = datacite.search('test', 5)
+    const mockClient = new AxiosMockAdapter(axios)
 
-    expect(mockAxios.get).toHaveBeenCalledWith(
-      'https://api.datacite.org/dois',
-      { params: { 'page[size]': 5, query: 'test' } }
-    )
+    mockClient
+      .onGet('https://api.datacite.org/dois')
+      .reply(async (requestConfig) => {
+        expect(requestConfig.params).toStrictEqual({
+          'page[size]': 5,
+          query: 'test',
+        })
 
-    mockAxios.mockResponse({ data: searchResponse })
+        return [200, searchResponse]
+      })
 
-    const { items } = await response
+    const { items } = await datacite.search('test', 5)
 
     expect(items).toHaveLength(5)
 
@@ -53,16 +54,19 @@ describe('datacite', () => {
   })
 
   test('fetch', async () => {
+    const mockClient = new AxiosMockAdapter(axios)
+
+    mockClient
+      .onGet('https://api.datacite.org/dois/10.5255%2Fukda-sn-6926-1')
+      .reply(async (requestConfig) => {
+        expect(requestConfig.headers.Accept).toBe(
+          'application/vnd.citationstyles.csl+json'
+        )
+
+        return [200, fetchResponse]
+      })
+
     const response = datacite.fetch({ DOI: '10.5255/ukda-sn-6926-1' })
-
-    expect(
-      mockAxios.get
-    ).toHaveBeenCalledWith(
-      'https://api.datacite.org/dois/10.5255%2Fukda-sn-6926-1',
-      { headers: { Accept: 'application/vnd.citationstyles.csl+json' } }
-    )
-
-    mockAxios.mockResponse({ data: fetchResponse })
 
     const item = await response
 

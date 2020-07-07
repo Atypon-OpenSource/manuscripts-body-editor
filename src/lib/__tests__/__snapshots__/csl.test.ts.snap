@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CSL generates bibliography: bibliography-items-http://www.zotero.org/styles/american-medical-association 1`] = `
+Array [
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">1</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Rodal AA, Littleton JT</span>. <a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"title\\">Synaptic Endocytosis: Illuminating the Role of Clathrin Assembly</a>. <span data-field=\\"container-title\\"><i>Current Biology</i></span>. <span data-field=\\"issued\\">2008;</span><span data-field=\\"volume\\">18</span><span data-field=\\"issue\\">(6)</span>:<span data-field=\\"page\\">R259-R261</span>. doi:<a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"DOI\\">10.1016/j.cub.2008.02.014</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">2</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Zhao L, Wang D, Wang Q, Rodal AA, Zhang YQ</span>. <a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"title\\">Drosophila cyfip Regulates Synaptic Development and Endocytosis by Suppressing Filamentous Actin Assembly</a>. <span data-field=\\"editor\\">Lu B, ed</span>. <span data-field=\\"container-title\\"><i>PLoS Genet</i></span>. <span data-field=\\"issued\\">2013;</span><span data-field=\\"volume\\">9</span><span data-field=\\"issue\\">(4)</span>:<span data-field=\\"page\\">e1003450</span>. doi:<a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"DOI\\">10.1371/journal.pgen.1003450</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">3</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Voegtli WC, Madrona AY, Wilson DK</span>. <a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"title\\">The Structure of Aip1p, a WD Repeat Protein That Regulates Cofilin-mediated Actin Depolymerization</a>. <span data-field=\\"container-title\\"><i>J Biol Chem</i></span>. <span data-field=\\"issued\\">2003;</span><span data-field=\\"volume\\">278</span><span data-field=\\"issue\\">(36)</span>:<span data-field=\\"page\\">34373-34379</span>. doi:<a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"DOI\\">10.1074/jbc.m302773200</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">4</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Guicciardi ME, Gores GJ</span>. <a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"title\\">AIP1: a new player in TNF signaling</a>. <span data-field=\\"container-title\\"><i>J Clin Invest</i></span>. <span data-field=\\"issued\\">2003;</span><span data-field=\\"volume\\">111</span><span data-field=\\"issue\\">(12)</span>:<span data-field=\\"page\\">1813-1815</span>. doi:<a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"DOI\\">10.1172/jci18911</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">5</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Okada K, Ravi H, Smith EM, Goode BL</span>. <a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"title\\">Aip1 and Cofilin Promote Rapid Turnover of Yeast Actin Patches and Cables: A Coordinated Mechanism for Severing and Capping Filaments</a>. <span data-field=\\"editor\\">Drubin D, ed</span>. <span data-field=\\"container-title\\"><i>MBoC</i></span>. <span data-field=\\"issued\\">2006;</span><span data-field=\\"volume\\">17</span><span data-field=\\"issue\\">(7)</span>:<span data-field=\\"page\\">2855-2868</span>. doi:<a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"DOI\\">10.1091/mbc.e06-02-0135</a></div>
+  </div>
+",
+]
+`;
+
+exports[`CSL generates bibliography: bibliography-items-http://www.zotero.org/styles/nature 1`] = `
+Array [
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">1</span>.</div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Rodal, A. A. &amp; Littleton, J. T</span>. <a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"title\\">Synaptic Endocytosis: Illuminating the Role of Clathrin Assembly</a>. <span data-field=\\"container-title\\"><i>Current Biology</i></span> <span data-field=\\"volume\\"><b>18</b></span>, <span data-field=\\"page\\">R259–R261</span> <span data-field=\\"issued\\">(2008)</span>.</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">2</span>.</div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Zhao, L., Wang, D., Wang, Q., Rodal, A. A. &amp; Zhang, Y. Q</span>. <a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"title\\">Drosophila cyfip Regulates Synaptic Development and Endocytosis by Suppressing Filamentous Actin Assembly</a>. <span data-field=\\"container-title\\"><i>PLoS Genet</i></span> <span data-field=\\"volume\\"><b>9</b></span>, <span data-field=\\"page\\">e1003450</span> <span data-field=\\"issued\\">(2013)</span>.</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">3</span>.</div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Voegtli, W. C., Madrona, A. Y. &amp; Wilson, D. K</span>. <a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"title\\">The Structure of Aip1p, a WD Repeat Protein That Regulates Cofilin-mediated Actin Depolymerization</a>. <span data-field=\\"container-title\\"><i>J. Biol. Chem.</i></span> <span data-field=\\"volume\\"><b>278</b></span>, <span data-field=\\"page\\">34373–34379</span> <span data-field=\\"issued\\">(2003)</span>.</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">4</span>.</div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Guicciardi, M. E. &amp; Gores, G. J</span>. <a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"title\\">AIP1: a new player in TNF signaling</a>. <span data-field=\\"container-title\\"><i>J. Clin. Invest.</i></span> <span data-field=\\"volume\\"><b>111</b></span>, <span data-field=\\"page\\">1813–1815</span> <span data-field=\\"issued\\">(2003)</span>.</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">5</span>.</div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Okada, K., Ravi, H., Smith, E. M. &amp; Goode, B. L</span>. <a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"title\\">Aip1 and Cofilin Promote Rapid Turnover of Yeast Actin Patches and Cables: A Coordinated Mechanism for Severing and Capping Filaments</a>. <span data-field=\\"container-title\\"><i>MBoC</i></span> <span data-field=\\"volume\\"><b>17</b></span>, <span data-field=\\"page\\">2855–2868</span> <span data-field=\\"issued\\">(2006)</span>.</div>
+  </div>
+",
+]
+`;
+
+exports[`CSL generates bibliography: bibliography-items-http://www.zotero.org/styles/plos 1`] = `
+Array [
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">1</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Rodal AA, Littleton JT</span>. <a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"title\\">Synaptic Endocytosis: Illuminating the Role of Clathrin Assembly</a>. <span data-field=\\"container-title\\">Current Biology</span>. <span data-field=\\"issued\\">2008;</span><span data-field=\\"volume\\">18</span>: <span data-field=\\"page\\">R259–R261</span>. <a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"DOI\\">doi:10.1016/j.cub.2008.02.014</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">2</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Zhao L, Wang D, Wang Q, Rodal AA, Zhang YQ</span>. <a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"title\\">Drosophila cyfip Regulates Synaptic Development and Endocytosis by Suppressing Filamentous Actin Assembly</a>. <span data-field=\\"editor\\">Lu B, editor</span>. <span data-field=\\"container-title\\">PLoS Genet</span>. <span data-field=\\"issued\\">2013;</span><span data-field=\\"volume\\">9</span>: <span data-field=\\"page\\">e1003450</span>. <a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"DOI\\">doi:10.1371/journal.pgen.1003450</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">3</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Voegtli WC, Madrona AY, Wilson DK</span>. <a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"title\\">The Structure of Aip1p, a WD Repeat Protein That Regulates Cofilin-mediated Actin Depolymerization</a>. <span data-field=\\"container-title\\">J Biol Chem</span>. <span data-field=\\"issued\\">2003;</span><span data-field=\\"volume\\">278</span>: <span data-field=\\"page\\">34373–34379</span>. <a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"DOI\\">doi:10.1074/jbc.m302773200</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">4</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Guicciardi ME, Gores GJ</span>. <a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"title\\">AIP1: a new player in TNF signaling</a>. <span data-field=\\"container-title\\">J Clin Invest</span>. <span data-field=\\"issued\\">2003;</span><span data-field=\\"volume\\">111</span>: <span data-field=\\"page\\">1813–1815</span>. <a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"DOI\\">doi:10.1172/jci18911</a></div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">5</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">Okada K, Ravi H, Smith EM, Goode BL</span>. <a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"title\\">Aip1 and Cofilin Promote Rapid Turnover of Yeast Actin Patches and Cables: A Coordinated Mechanism for Severing and Capping Filaments</a>. <span data-field=\\"editor\\">Drubin D, editor</span>. <span data-field=\\"container-title\\">MBoC</span>. <span data-field=\\"issued\\">2006;</span><span data-field=\\"volume\\">17</span>: <span data-field=\\"page\\">2855–2868</span>. <a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"DOI\\">doi:10.1091/mbc.e06-02-0135</a></div>
+  </div>
+",
+]
+`;
+
+exports[`CSL generates bibliography: bibliography-items-http://www.zotero.org/styles/science 1`] = `
+Array [
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">1</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">A. A. Rodal, J. T. Littleton</span>, <a href=\\"https://doi.org/10.1016%2Fj.cub.2008.02.014\\" data-field=\\"title\\">Synaptic Endocytosis: Illuminating the Role of Clathrin Assembly</a>. <span data-field=\\"container-title\\"><i>Current Biology</i></span>. <span data-field=\\"volume\\"><b>18</b></span>, <span data-field=\\"page\\">R259–R261</span> (<span data-field=\\"issued\\">2008</span>).</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">2</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">L. Zhao, D. Wang, Q. Wang, A. A. Rodal, Y. Q. Zhang</span>, <a href=\\"https://doi.org/10.1371%2Fjournal.pgen.1003450\\" data-field=\\"title\\">Drosophila cyfip Regulates Synaptic Development and Endocytosis by Suppressing Filamentous Actin Assembly</a>. <span data-field=\\"container-title\\"><i>PLoS Genet</i></span>. <span data-field=\\"volume\\"><b>9</b></span>, <span data-field=\\"page\\">e1003450</span> (<span data-field=\\"issued\\">2013</span>).</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">3</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">W. C. Voegtli, A. Y. Madrona, D. K. Wilson</span>, <a href=\\"https://doi.org/10.1074%2Fjbc.m302773200\\" data-field=\\"title\\">The Structure of Aip1p, a WD Repeat Protein That Regulates Cofilin-mediated Actin Depolymerization</a>. <span data-field=\\"container-title\\"><i>J. Biol. Chem.</i></span> <span data-field=\\"volume\\"><b>278</b></span>, <span data-field=\\"page\\">34373–34379</span> (<span data-field=\\"issued\\">2003</span>).</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">4</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">M. E. Guicciardi, G. J. Gores</span>, <a href=\\"https://doi.org/10.1172%2Fjci18911\\" data-field=\\"title\\">AIP1: a new player in TNF signaling</a>. <span data-field=\\"container-title\\"><i>J. Clin. Invest.</i></span> <span data-field=\\"volume\\"><b>111</b></span>, <span data-field=\\"page\\">1813–1815</span> (<span data-field=\\"issued\\">2003</span>).</div>
+  </div>
+",
+  "  <div class=\\"csl-entry\\">
+    <div class=\\"csl-left-margin\\"><span data-field=\\"citation-number\\">5</span>. </div><div class=\\"csl-right-inline\\"><span data-field=\\"author\\">K. Okada, H. Ravi, E. M. Smith, B. L. Goode</span>, <a href=\\"https://doi.org/10.1091%2Fmbc.e06-02-0135\\" data-field=\\"title\\">Aip1 and Cofilin Promote Rapid Turnover of Yeast Actin Patches and Cables: A Coordinated Mechanism for Severing and Capping Filaments</a>. <span data-field=\\"container-title\\"><i>MBoC</i></span>. <span data-field=\\"volume\\"><b>17</b></span>, <span data-field=\\"page\\">2855–2868</span> (<span data-field=\\"issued\\">2006</span>).</div>
+  </div>
+",
+]
+`;
+
+exports[`CSL generates bibliography: citations-http://www.zotero.org/styles/american-medical-association 1`] = `
+Array [
+  Array [
+    "MPCitation:31E42852-8377-4550-8C25-9E602EE657B0",
+    0,
+    "<sup>1,2</sup>",
+  ],
+  Array [
+    "MPCitation:D30D9817-5C61-49BC-8393-F45AE2995F87",
+    0,
+    "<sup>3–5</sup>",
+  ],
+]
+`;
+
+exports[`CSL generates bibliography: citations-http://www.zotero.org/styles/nature 1`] = `
+Array [
+  Array [
+    "MPCitation:31E42852-8377-4550-8C25-9E602EE657B0",
+    0,
+    "<sup>1,2</sup>",
+  ],
+  Array [
+    "MPCitation:D30D9817-5C61-49BC-8393-F45AE2995F87",
+    0,
+    "<sup>3–5</sup>",
+  ],
+]
+`;
+
+exports[`CSL generates bibliography: citations-http://www.zotero.org/styles/plos 1`] = `
+Array [
+  Array [
+    "MPCitation:31E42852-8377-4550-8C25-9E602EE657B0",
+    0,
+    "[1,2]",
+  ],
+  Array [
+    "MPCitation:D30D9817-5C61-49BC-8393-F45AE2995F87",
+    0,
+    "[3–5]",
+  ],
+]
+`;
+
+exports[`CSL generates bibliography: citations-http://www.zotero.org/styles/science 1`] = `
+Array [
+  Array [
+    "MPCitation:31E42852-8377-4550-8C25-9E602EE657B0",
+    0,
+    "(<i>1</i>, <i>2</i>)",
+  ],
+  Array [
+    "MPCitation:D30D9817-5C61-49BC-8393-F45AE2995F87",
+    0,
+    "(<i>3</i>–<i>5</i>)",
+  ],
+]
+`;

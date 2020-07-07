@@ -25,12 +25,7 @@ import {
   BibliographyItem,
   Bundle,
 } from '@manuscripts/manuscripts-json-schema'
-import axios from 'axios'
-import { basename } from 'path'
-
-interface Locales {
-  'language-names': { [key: string]: string[] }
-}
+import CiteProc from 'citeproc'
 
 const roleFields: Array<keyof CSL.RoleFields> = [
   'author',
@@ -181,235 +176,181 @@ export const convertBibliographyItemToData = (
 const createDoiUrl = (doi: string) =>
   'https://doi.org/' + encodeURIComponent(doi.replace(/^.*(10\.)/, '$1'))
 
-const createLink = (url: string, contents: string) => {
+const createLink = (url: string, contents: string): Element => {
   const element = document.createElement('a')
   element.setAttribute('href', url)
   element.innerHTML = contents // IMPORTANT: this is HTML so must be sanitised later
 
-  return element.outerHTML
+  return element
 }
 
-interface VariableWrappers {
-  [field: string]: (itemData: CSL.Item, str: string) => string
+const createSpan = (contents: string): Element => {
+  const element = document.createElement('span')
+  element.innerHTML = contents // IMPORTANT: this is HTML so must be sanitised later
+
+  return element
 }
 
-export const variableWrappers: VariableWrappers = {
-  DOI: (itemData, str) => {
-    return createLink(createDoiUrl(str), str)
-  },
+export const wrapVariable = (
+  field: string,
+  itemData: CSL.Item,
+  str: string
+): Element => {
+  switch (field) {
+    case 'title': {
+      if (itemData.DOI) {
+        return createLink(createDoiUrl(itemData.DOI), str)
+      }
 
-  title: (itemData, str) => {
-    if (itemData.DOI) {
-      return createLink(createDoiUrl(itemData.DOI), str)
+      if (itemData.URL) {
+        return createLink(itemData.URL, str)
+      }
+
+      return createSpan(str)
     }
 
-    if (itemData.URL) {
-      return createLink(itemData.URL, str)
-    }
+    case 'URL':
+      return createLink(str, str)
 
-    return str
-  },
+    case 'DOI':
+      return createLink(createDoiUrl(str), str)
 
-  URL: (itemData, str) => {
-    return createLink(str, str)
-  },
+    default:
+      return createSpan(str)
+  }
 }
 
-export class CitationManager {
-  private readonly baseURL: string
+const variableWrapper: CiteProc.VariableWrapper = (
+  params,
+  prePunct,
+  str,
+  postPunct
+) => {
+  if (params.context === 'bibliography') {
+    const fields = params.variableNames.join(' ')
 
-  public constructor(baseURL: string) {
-    this.baseURL = baseURL
+    const element = wrapVariable(fields, params.itemData, str)
+
+    element.setAttribute('data-field', fields)
+
+    return `${prePunct}${element.outerHTML}${postPunct}`
   }
 
-  public createProcessor = async (
-    bundleID: string,
-    primaryLanguageCode: string,
-    getLibraryItem: (id: string) => BibliographyItem | undefined,
-    bundle?: Bundle,
-    citationStyleData?: string
-  ) => {
-    if (!bundle) {
-      bundle = await this.fetchBundle(bundleID)
-    }
+  return `${prePunct}${str}${postPunct}`
+}
 
-    if (!bundle) {
-      throw new Error('Bundle not found')
-    }
+interface Options {
+  bundleID?: string
+  bundle?: Bundle
+  citationStyleData?: Record<string, unknown>
+}
 
-    if (!citationStyleData) {
-      citationStyleData = await this.fetchCitationStyleString(bundle)
-    }
+interface Link {
+  rel?: string
+  href?: string
+}
 
-    const citationLocales = await this.fetchCitationLocales(
-      citationStyleData,
-      primaryLanguageCode
-    )
+export const createProcessor = async (
+  primaryLanguageCode: string,
+  getLibraryItem: (id: string) => BibliographyItem | undefined,
+  options: Options = {}
+): Promise<CiteProc.Engine> => {
+  const citationStyleData =
+    options.citationStyleData ||
+    (await loadCitationStyleFromBundle(options.bundle)) ||
+    (await loadCitationStyleFromBundleID(options.bundleID))
 
-    const CiteProc = await import('citeproc')
+  if (!citationStyleData) {
+    throw new Error('Missing citation style data')
+  }
 
-    return new CiteProc.Engine(
-      {
-        retrieveItem: (id: string) => {
-          const item = getLibraryItem(id)
+  const locales = (await import(
+    '@manuscripts/csl-locales/dist/locales.json'
+  )) as Record<string, CiteProc.Locale>
 
-          if (!item) {
-            throw new Error(`Library item ${id} is missing`)
-          }
+  return new CiteProc.Engine(
+    {
+      retrieveItem: (id: string): CSL.Item => {
+        const item = getLibraryItem(id)
 
-          return convertBibliographyItemToData(item)
-        },
-        retrieveLocale: (id: string) => citationLocales.get(id) as string,
-        variableWrapper: (params, prePunct, str, postPunct) => {
-          if (params.context === 'bibliography') {
-            const [field] = params.variableNames
+        if (!item) {
+          throw new Error(`Library item ${id} is missing`)
+        }
 
-            if (field in variableWrappers) {
-              const wrap = variableWrappers[field]
-
-              return `${prePunct}${wrap(params.itemData, str)}${postPunct}`
-            }
-          }
-
-          return `${prePunct}${str}${postPunct}`
-        },
+        return convertBibliographyItemToData(item)
       },
-      citationStyleData,
-      primaryLanguageCode,
-      false
-    )
+      retrieveLocale: (id: string): CiteProc.Locale => locales[id],
+      variableWrapper,
+    },
+    citationStyleData,
+    primaryLanguageCode,
+    false
+  )
+}
+
+const loadCitationStyleFromBundle = async (
+  bundle?: Bundle
+): Promise<CiteProc.Style | undefined> => {
+  if (bundle && bundle.csl && bundle.csl.cslIdentifier) {
+    return fetchCitationStyle(bundle.csl.cslIdentifier)
   }
 
-  public fetchBundle = (bundleID: string): Promise<Bundle | undefined> =>
-    this.fetchBundles().then((bundles) =>
-      bundles.find((item) => item._id === bundleID)
-    )
+  return undefined
+}
 
-  public fetchBundles = async (): Promise<Bundle[]> =>
-    import('@manuscripts/data/dist/shared/bundles.json').then(
-      (module) => module.default as Bundle[]
-    )
+const loadCitationStyleFromBundleID = async (
+  bundleID?: string
+): Promise<CiteProc.Style | undefined> => {
+  const bundles: Bundle[] = await import(
+    '@manuscripts/data/dist/shared/bundles.json'
+  )
 
-  public fetchLocales = (): Promise<Locales> =>
-    this.fetchJSON<Locales>('csl/locales/locales.json')
+  const bundle = bundles.find((item) => item._id === bundleID)
 
-  public async fetchCitationStyleString(bundle: Bundle): Promise<string> {
-    if (!bundle.csl || !bundle.csl.cslIdentifier) {
-      throw new Error('No CSL identifier')
-    }
+  return loadCitationStyleFromBundle(bundle)
+}
 
-    const cslIdentifier = basename(bundle.csl.cslIdentifier, '.csl')
-    const citationStyleDoc = await this.fetchCitationStyle(cslIdentifier)
+const fetchCitationStyle = async (id: string): Promise<CiteProc.Style> => {
+  const style = await loadStyle(id)
 
-    const serializer = new XMLSerializer()
-    return serializer.serializeToString(citationStyleDoc)
+  const parentStyle = await findParentStyle(style)
+
+  if (!parentStyle) {
+    return style
   }
 
-  private async fetchCitationStyle(id: string) {
-    const doc = await this.fetchStyle(id)
+  // TODO: merge locales from style into parentStyle
 
-    const parentURLNode = this.selectParentURL(doc)
-    const parentURL = parentURLNode.stringValue
+  return parentStyle
+}
 
-    if (!parentURL || !parentURL.startsWith('http://www.zotero.org/styles/')) {
-      return doc
-    }
+const findParentStyle = async (
+  style: CiteProc.Style
+): Promise<CiteProc.Style | undefined> => {
+  const item = new CiteProc.XmlJSON(style)
 
-    const parentDoc = await this.fetchStyle(basename(parentURL))
+  const links = item.getNodesByName(style, 'link') as Link[]
 
-    if (!parentDoc) {
-      return doc
-    }
+  const parentLink = links.find(
+    (link) =>
+      link.rel === 'independent-parent' &&
+      link.href &&
+      link.href.startsWith('http://www.zotero.org/styles/')
+  )
 
-    const locales = this.selectLocaleNodes(doc)
+  return parentLink ? await loadStyle(parentLink.href as string) : undefined
+}
 
-    if (!locales.snapshotLength) {
-      return parentDoc
-    }
+export const loadStyle = async (id: string): Promise<CiteProc.Style> => {
+  const basename = id.split('/').pop()
 
-    // TODO: merge locales
-
-    return parentDoc
+  if (!basename) {
+    throw new Error('No style name')
   }
 
-  private buildURL = (path: string) => this.baseURL + '/' + path
+  const styles = await import(
+    `@manuscripts/csl-styles/dist/${basename[0]}.json`
+  )
 
-  private async fetchDocument(path: string) {
-    const response = await axios.get<Document>(this.buildURL(path), {
-      responseType: 'document',
-    })
-
-    return response.data
-  }
-
-  private async fetchText(path: string) {
-    const response = await axios.get<string>(this.buildURL(path), {
-      responseType: 'text',
-    })
-
-    return response.data
-  }
-
-  private async fetchJSON<T>(path: string) {
-    const response = await axios.get<T>(this.buildURL(path))
-
-    return response.data
-  }
-
-  private fetchLocale(id: string) {
-    // TODO: verify that the response is actually a CSL locale
-    return this.fetchText(`csl/locales/locales-${id}.xml`)
-  }
-
-  private fetchStyle(id: string) {
-    // TODO: verify that the response is actually a CSL style
-    return this.fetchDocument(`csl/styles/${id}.csl`)
-  }
-
-  private async fetchCitationLocales(
-    citationStyleData: string,
-    primaryLanguageCode: string
-  ) {
-    const CiteProc = await import('citeproc')
-
-    const locales: Map<string, string> = new Map()
-
-    const localeNames = CiteProc.getLocaleNames(
-      citationStyleData,
-      primaryLanguageCode
-    )
-
-    await Promise.all(
-      localeNames.map(async (localeName) => {
-        const data = await this.fetchLocale(localeName)
-        locales.set(localeName, data)
-      })
-    )
-
-    return locales
-  }
-
-  private namespaceResolver(ns: string | null) {
-    return ns === 'csl' ? 'http://purl.org/net/xbiblio/csl' : null
-  }
-
-  private selectParentURL(doc: Document) {
-    return doc.evaluate(
-      'string(/csl:style/csl:info/csl:link[@rel="independent-parent"]/@href)',
-      doc,
-      this.namespaceResolver,
-      XPathResult.STRING_TYPE,
-      null
-    )
-  }
-
-  private selectLocaleNodes(doc: Document) {
-    return doc.evaluate(
-      '/csl:style/csl:locale',
-      doc,
-      this.namespaceResolver,
-      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-      null
-    )
-  }
+  return styles[id] as CiteProc.Style
 }

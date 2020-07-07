@@ -27,19 +27,21 @@ declare module 'citeproc' {
     }
   }
 
+  type VariableWrapper = (
+    params: {
+      context: string
+      itemData: CSL.Item
+      variableNames: [string]
+    },
+    prePunct: string,
+    str: string,
+    postPunct: string
+  ) => string
+
   interface SystemOptions {
-    retrieveLocale: (id: string) => string | Document | Record<string, unkon>
+    retrieveLocale: (id: string) => string | Document | Locale
     retrieveItem: (id: string) => CSL.Item
-    variableWrapper: (
-      params: {
-        context: string
-        itemData: CSL.Item
-        variableNames: [string]
-      },
-      prePunct: string,
-      str: string,
-      postPunct: string
-    ) => string
+    variableWrapper: VariableWrapper
   }
 
   interface BibliographyMetadata {
@@ -51,7 +53,7 @@ declare module 'citeproc' {
   export class Engine {
     constructor(
       sys: SystemOptions,
-      style: string,
+      style: string | Style,
       lang?: string,
       forceLang?: boolean
     )
@@ -66,7 +68,15 @@ declare module 'citeproc' {
   }
 
   export function getLocaleNames(
-    style: string,
+    style: string | Record<string, unknown>,
     preferredLocale: string
   ): string[]
+
+  type Locale = Record<string, unknown>
+  type Style = Record<string, unknown>
+
+  class XmlJSON {
+    constructor(dataObj: unknown)
+    getNodesByName: (data: unknown, name: string) => Record<string, unknown>[]
+  }
 }
