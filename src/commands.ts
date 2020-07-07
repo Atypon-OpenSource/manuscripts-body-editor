@@ -73,7 +73,9 @@ export const blockActive = (type: ManuscriptNodeType) => (
 
   const { to, $from } = selection as ManuscriptTextSelection
 
-  if (to > $from.end()) return false
+  if (to > $from.end()) {
+    return false
+  }
 
   for (let d = $from.depth; d >= 0; d--) {
     const ancestor = $from.node(d)
@@ -165,7 +167,9 @@ export const insertBlock = (nodeType: ManuscriptNodeType) => (
 ) => {
   const position = findBlockInsertPosition(state)
 
-  if (position === null) return false
+  if (position === null) {
+    return false
+  }
 
   createBlock(nodeType, position, state, dispatch)
 
@@ -445,8 +449,12 @@ export const ifInTableBody = (
 const findCutBefore = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
     for (let i = $pos.depth - 1; i >= 0; i--) {
-      if ($pos.index(i) > 0) return $pos.doc.resolve($pos.before(i + 1))
-      if ($pos.node(i).type.spec.isolating) break
+      if ($pos.index(i) > 0) {
+        return $pos.doc.resolve($pos.before(i + 1))
+      }
+      if ($pos.node(i).type.spec.isolating) {
+        break
+      }
     }
   }
   return null
@@ -471,14 +479,20 @@ export const ignoreAtomBlockNodeBackward = (
 ): boolean => {
   const { selection } = state
 
-  if (!isTextSelection(selection)) return false
+  if (!isTextSelection(selection)) {
+    return false
+  }
 
   const { $cursor } = selection
 
-  if (!$cursor) return false
+  if (!$cursor) {
+    return false
+  }
 
   // ignore empty blocks
-  if ($cursor.parent.content.size === 0) return false
+  if ($cursor.parent.content.size === 0) {
+    return false
+  }
 
   // handle cursor at start of textblock
   if (!isAtStartOfTextBlock(state, $cursor, view)) {
@@ -487,11 +501,15 @@ export const ignoreAtomBlockNodeBackward = (
 
   const $cut = findCutBefore($cursor)
 
-  if (!$cut) return false
+  if (!$cut) {
+    return false
+  }
 
   const node = $cut.nodeBefore
 
-  if (!node) return false
+  if (!node) {
+    return false
+  }
 
   return node.isBlock && node.isAtom
 }
@@ -504,7 +522,9 @@ const findCutAfter = ($pos: ResolvedPos) => {
       if ($pos.index(i) + 1 < parent.childCount) {
         return $pos.doc.resolve($pos.after(i + 1))
       }
-      if (parent.type.spec.isolating) break
+      if (parent.type.spec.isolating) {
+        break
+      }
     }
   }
   return null
@@ -528,14 +548,20 @@ export const ignoreAtomBlockNodeForward = (
 ): boolean => {
   const { selection } = state
 
-  if (!isTextSelection(selection)) return false
+  if (!isTextSelection(selection)) {
+    return false
+  }
 
   const { $cursor } = selection
 
-  if (!$cursor) return false
+  if (!$cursor) {
+    return false
+  }
 
   // ignore empty blocks
-  if ($cursor.parent.content.size === 0) return false
+  if ($cursor.parent.content.size === 0) {
+    return false
+  }
 
   // handle cursor at start of textblock
   if (!isAtEndOfTextBlock(state, $cursor, view)) {
@@ -544,11 +570,15 @@ export const ignoreAtomBlockNodeForward = (
 
   const $cut = findCutAfter($cursor)
 
-  if (!$cut) return false
+  if (!$cut) {
+    return false
+  }
 
   const node = $cut.nodeAfter
 
-  if (!node) return false
+  if (!node) {
+    return false
+  }
 
   return node.isBlock && node.isAtom
 }
@@ -582,7 +612,9 @@ export const selectAllIsolating = (
 ): boolean => {
   const selection = selectIsolatingParent(state)
 
-  if (!selection) return false
+  if (!selection) {
+    return false
+  }
 
   if (dispatch) {
     dispatch(state.tr.setSelection(selection))

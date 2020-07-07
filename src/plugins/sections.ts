@@ -30,7 +30,9 @@ export default () => {
       // if (!transactions.some(tr => tr.docChanged)) return null
 
       newState.doc.descendants((node, pos) => {
-        if (!isSectionNode(node)) return false
+        if (!isSectionNode(node)) {
+          return false
+        }
 
         // add a paragraph to sections with only titles
         if (node.childCount === 1) {

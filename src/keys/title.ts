@@ -78,7 +78,9 @@ const enterNextBlock = (
     selection = Selection.findFrom(tr.doc.resolve(pos), 1, true)
   }
 
-  if (!selection) return false
+  if (!selection) {
+    return false
+  }
 
   tr.setSelection(selection).scrollIntoView()
 
@@ -98,7 +100,9 @@ const enterPreviousBlock = (
   const $pos = tr.doc.resolve($anchor.pos - offset - 1)
   const previous = Selection.findFrom($pos, -1, true)
 
-  if (!previous) return false
+  if (!previous) {
+    return false
+  }
 
   tr.setSelection(TextSelection.create(tr.doc, previous.from)).scrollIntoView()
 
@@ -123,11 +127,15 @@ const exitBlock = (direction: number): EditorAction => (state, dispatch) => {
 const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state
 
-  if (!isTextSelection(selection)) return false
+  if (!isTextSelection(selection)) {
+    return false
+  }
 
   const { $cursor } = selection
 
-  if (!$cursor) return false
+  if (!$cursor) {
+    return false
+  }
 
   if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
     return false
@@ -168,11 +176,15 @@ const protectSectionTitle: EditorAction = (
 ) => {
   const { selection } = state
 
-  if (!isTextSelection(selection)) return false
+  if (!isTextSelection(selection)) {
+    return false
+  }
 
   const { $cursor } = selection
 
-  if (!$cursor) return false
+  if (!$cursor) {
+    return false
+  }
 
   return (
     $cursor.parent.type === $cursor.parent.type.schema.nodes.section_title &&

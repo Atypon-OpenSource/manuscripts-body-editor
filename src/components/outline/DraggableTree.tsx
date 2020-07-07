@@ -304,10 +304,14 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     event.preventDefault()
     event.stopPropagation()
 
-    if (!this.props.permissions.write) return false
+    if (!this.props.permissions.write) {
+      return false
+    }
 
     const menu = this.createMenu()
-    if (!menu) return false
+    if (!menu) {
+      return false
+    }
 
     menu.showEditMenu(event.currentTarget as HTMLAnchorElement)
   }
@@ -315,7 +319,9 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
   private createMenu = () => {
     const { tree, view } = this.props
 
-    if (!view) return null
+    if (!view) {
+      return null
+    }
 
     // TODO: getPos?
     return new ContextMenu(tree.node, view, () => tree.pos - 1)
@@ -422,8 +428,12 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
     },
 
     drop(props, monitor) {
-      if (monitor.didDrop()) return // already dropped on something else
-      if (!props.view) return // cant drop without a view to transact upon
+      if (monitor.didDrop()) {
+        return
+      } // already dropped on something else
+      if (!props.view) {
+        return
+      } // cant drop without a view to transact upon
 
       const item = monitor.getItem() as DragSourceProps
 

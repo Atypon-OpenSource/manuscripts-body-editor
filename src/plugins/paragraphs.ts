@@ -28,8 +28,9 @@ export default () => {
 
       const tr = newState.tr
 
-      if (!transactions.some((transaction) => transaction.docChanged))
+      if (!transactions.some((transaction) => transaction.docChanged)) {
         return null
+      }
 
       const joinAdjacentParagraphs = (parent: ManuscriptNode, pos: number) => (
         node: ManuscriptNode,

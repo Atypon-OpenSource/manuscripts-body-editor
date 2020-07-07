@@ -29,8 +29,9 @@ export default () => {
       const tr = newState.tr
 
       // only scan if nodes have changed
-      if (!transactions.some((transaction) => transaction.docChanged))
+      if (!transactions.some((transaction) => transaction.docChanged)) {
         return null
+      }
 
       // TODO: keep track of changed nodes that haven't been saved yet?
       // TODO: call insertComponent directly?

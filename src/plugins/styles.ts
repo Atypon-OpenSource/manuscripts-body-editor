@@ -115,8 +115,9 @@ export default (props: Props) => {
       const tr = newState.tr
 
       // only scan if nodes have changed
-      if (!transactions.some((transaction) => transaction.docChanged))
+      if (!transactions.some((transaction) => transaction.docChanged)) {
         return null
+      }
 
       const nodesNeedingStyle: Array<{
         node: ManuscriptNode

@@ -387,7 +387,9 @@ export class Editor extends React.PureComponent<EditorProps> {
   }
 
   private focusNodeWithId(id: string) {
-    if (!id || !this.view) return
+    if (!id || !this.view) {
+      return
+    }
 
     const { state } = this.view
 

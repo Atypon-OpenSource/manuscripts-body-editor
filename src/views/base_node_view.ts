@@ -49,8 +49,12 @@ export class BaseNodeView<PropsType extends ViewerProps>
     decorations: Array<Decoration<DecorationSpec>>
   ): boolean => {
     // if (!newNode.sameMarkup(this.node)) return false
-    if (newNode.attrs.id !== this.node.attrs.id) return false
-    if (newNode.type.name !== this.node.type.name) return false
+    if (newNode.attrs.id !== this.node.attrs.id) {
+      return false
+    }
+    if (newNode.type.name !== this.node.type.name) {
+      return false
+    }
     this.handleDecorations(decorations)
     this.node = newNode
     this.updateContents()

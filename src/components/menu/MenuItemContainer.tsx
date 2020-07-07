@@ -125,7 +125,9 @@ export class MenuItemContainer extends React.Component<
     const { item, view, closeMenu } = this.props
     const { isOpen } = this.state
 
-    if (isSeparator(item)) return <Separator />
+    if (isSeparator(item)) {
+      return <Separator />
+    }
 
     if (!item.submenu) {
       return (
