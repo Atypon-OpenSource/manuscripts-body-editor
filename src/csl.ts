@@ -174,7 +174,7 @@ export const convertBibliographyItemToData = (
   )
 
 const createDoiUrl = (doi: string) =>
-  'https://doi.org/' + encodeURIComponent(doi.replace(/^.*(10\.)/, '$1'))
+  'https://doi.org/' + encodeURIComponent(doi.replace(/^.*?(10\.)/, '$1'))
 
 const createLink = (url: string, contents: string): Element => {
   const element = document.createElement('a')
