@@ -75,8 +75,17 @@ declare module 'citeproc' {
   type Locale = Record<string, unknown>
   type Style = Record<string, unknown>
 
-  export class XmlJSON {
-    constructor(dataObj: unknown)
-    getNodesByName: (data: unknown, name: string) => Record<string, unknown>[]
+  type Node = {
+    name: string
+    attrs: Record<string, unknown>
+    children: Node[]
   }
+
+  export class XmlJSON {
+    constructor(dataObj: string | Record<string, unknown>)
+    dataObj: Record<string, unknown>
+    getNodesByName: (data: unknown, name: string) => Node[]
+  }
+
+  export function setupXml(style: string | Record<string, unknown>): XmlJSON
 }

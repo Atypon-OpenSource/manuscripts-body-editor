@@ -245,17 +245,12 @@ interface Options {
   citationStyleData?: string
 }
 
-interface Link {
-  rel?: string
-  href?: string
-}
-
 export const createProcessor = async (
   primaryLanguageCode: string,
   getLibraryItem: (id: string) => BibliographyItem | undefined,
   options: Options = {}
 ): Promise<CiteProc.Engine> => {
-  const citationStyleData =
+  const citationStyleData: string | CiteProc.Style | undefined =
     options.citationStyleData ||
     (await loadCitationStyleFromBundle(options.bundle)) ||
     (await loadCitationStyleFromBundleID(options.bundleID))
@@ -263,6 +258,10 @@ export const createProcessor = async (
   if (!citationStyleData) {
     throw new Error('Missing citation style data')
   }
+
+  const parentStyleData = await findParentStyle(citationStyleData)
+
+  // TODO: merge metadata (locales) into parent from child?
 
   const locales = (await import(
     '@manuscripts/csl-locales/dist/locales.json'
@@ -282,7 +281,7 @@ export const createProcessor = async (
       retrieveLocale: (id: string): CiteProc.Locale => locales[id],
       variableWrapper,
     },
-    citationStyleData,
+    parentStyleData || citationStyleData,
     primaryLanguageCode,
     false
   )
@@ -292,7 +291,7 @@ const loadCitationStyleFromBundle = async (
   bundle?: Bundle
 ): Promise<CiteProc.Style | undefined> => {
   if (bundle && bundle.csl && bundle.csl.cslIdentifier) {
-    return fetchCitationStyle(bundle.csl.cslIdentifier)
+    return loadStyle(bundle.csl.cslIdentifier)
   }
 
   return undefined
@@ -310,35 +309,24 @@ const loadCitationStyleFromBundleID = async (
   return loadCitationStyleFromBundle(bundle)
 }
 
-const fetchCitationStyle = async (id: string): Promise<CiteProc.Style> => {
-  const style = await loadStyle(id)
-
-  const parentStyle = await findParentStyle(style)
-
-  if (!parentStyle) {
-    return style
-  }
-
-  // TODO: merge locales from style into parentStyle
-
-  return parentStyle
-}
-
 const findParentStyle = async (
-  style: CiteProc.Style
+  citationStyleData: string | CiteProc.Style
 ): Promise<CiteProc.Style | undefined> => {
-  const item = new CiteProc.XmlJSON(style)
+  const parser = CiteProc.setupXml(citationStyleData)
 
-  const links = item.getNodesByName(style, 'link') as Link[]
+  const links = parser.getNodesByName(parser.dataObj, 'link') as CiteProc.Node[]
 
   const parentLink = links.find(
-    (link) =>
-      link.rel === 'independent-parent' &&
-      link.href &&
-      link.href.startsWith('http://www.zotero.org/styles/')
+    (link) => link.attrs.rel === 'independent-parent'
   )
 
-  return parentLink ? await loadStyle(parentLink.href as string) : undefined
+  if (parentLink) {
+    const href = parentLink.attrs.href as string | undefined
+
+    if (href && href.startsWith('http://www.zotero.org/styles/')) {
+      return loadStyle(href)
+    }
+  }
 }
 
 export const loadStyle = async (id: string): Promise<CiteProc.Style> => {

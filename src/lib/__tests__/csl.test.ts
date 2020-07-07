@@ -19,7 +19,7 @@ import { data } from '@manuscripts/examples/data/project-dump-2.json'
 import { CSL, Decoder, findManuscript } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
-  Bundle,
+  // Bundle,
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
@@ -28,6 +28,7 @@ import {
   convertBibliographyItemToData,
   convertDataToBibliographyItem,
   createProcessor,
+  loadStyle,
   wrapVariable,
 } from '../../csl'
 import {
@@ -183,20 +184,29 @@ describe('CSL', () => {
       'http://www.zotero.org/styles/nature',
       'http://www.zotero.org/styles/science',
       'http://www.zotero.org/styles/plos',
+      'http://www.zotero.org/styles/peerj',
       'http://www.zotero.org/styles/american-medical-association',
+      'http://www.zotero.org/styles/3-biotech', // has independent-parent
     ]
 
     for (const cslIdentifier of cslIdentifiers) {
-      const bundle: Bundle = {
-        _id: 'MPBundle:test',
-        objectType: ObjectTypes.Bundle,
-        createdAt: 0,
-        updatedAt: 0,
-        csl: { cslIdentifier },
-      }
+      // const bundle: Bundle = {
+      //   _id: 'MPBundle:test',
+      //   objectType: ObjectTypes.Bundle,
+      //   createdAt: 0,
+      //   updatedAt: 0,
+      //   csl: { cslIdentifier },
+      // }
+      //
+      // const citationProcessor = await createProcessor('en-GB', getLibraryItem, {
+      //   bundle,
+      // })
+
+      const style = await loadStyle(cslIdentifier)
+      const citationStyleData = JSON.stringify(style)
 
       const citationProcessor = await createProcessor('en-GB', getLibraryItem, {
-        bundle,
+        citationStyleData,
       })
 
       const decoder = new Decoder(modelMap)
@@ -216,6 +226,11 @@ describe('CSL', () => {
       )
 
       expect(generatedCitations).toMatchSnapshot(`citations-${cslIdentifier}`)
+
+      for (const generatedCitation of generatedCitations) {
+        const [, , content] = generatedCitation
+        expect(content).not.toBe('[NO_PRINTED_FORM]')
+      }
 
       const [
         bibmeta,
