@@ -27,6 +27,8 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import CiteProc from 'citeproc'
 
+import { variableWrapper } from './lib/variable-wrapper'
+
 const roleFields: Array<keyof CSL.RoleFields> = [
   'author',
   'collection-editor',
@@ -172,72 +174,6 @@ export const convertBibliographyItemToData = (
       type: bibliographyItem.type || 'article-journal',
     } as CSL.Item & { [key: string]: unknown }
   )
-
-const createDoiUrl = (doi: string) =>
-  'https://doi.org/' + encodeURIComponent(doi.replace(/^.*?(10\.)/, '$1'))
-
-const createLink = (url: string, contents: string): Element => {
-  const element = document.createElement('a')
-  element.setAttribute('href', url)
-  element.innerHTML = contents // IMPORTANT: this is HTML so must be sanitised later
-
-  return element
-}
-
-const createSpan = (contents: string): Element => {
-  const element = document.createElement('span')
-  element.innerHTML = contents // IMPORTANT: this is HTML so must be sanitised later
-
-  return element
-}
-
-export const wrapVariable = (
-  field: string,
-  itemData: CSL.Item,
-  str: string
-): Element => {
-  switch (field) {
-    case 'title': {
-      if (itemData.DOI) {
-        return createLink(createDoiUrl(itemData.DOI), str)
-      }
-
-      if (itemData.URL) {
-        return createLink(itemData.URL, str)
-      }
-
-      return createSpan(str)
-    }
-
-    case 'URL':
-      return createLink(str, str)
-
-    case 'DOI':
-      return createLink(createDoiUrl(str), str)
-
-    default:
-      return createSpan(str)
-  }
-}
-
-const variableWrapper: CiteProc.VariableWrapper = (
-  params,
-  prePunct,
-  str,
-  postPunct
-) => {
-  if (params.context === 'bibliography') {
-    const fields = params.variableNames.join(' ')
-
-    const element = wrapVariable(fields, params.itemData, str)
-
-    element.setAttribute('data-field', fields)
-
-    return `${prePunct}${element.outerHTML}${postPunct}`
-  }
-
-  return `${prePunct}${str}${postPunct}`
-}
 
 interface Options {
   bundleID?: string

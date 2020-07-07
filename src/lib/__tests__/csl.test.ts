@@ -29,7 +29,6 @@ import {
   convertDataToBibliographyItem,
   createProcessor,
   loadStyle,
-  wrapVariable,
 } from '../../csl'
 import {
   buildCitationNodes,
@@ -100,68 +99,6 @@ describe('CSL', () => {
       illustrator: [{ family: 'Derp' }],
       type: 'article-journal',
     })
-  })
-
-  test('wraps DOIs with links', () => {
-    const itemData = {
-      DOI: '10.1234/567',
-    }
-
-    const element = wrapVariable('DOI', itemData, itemData.DOI)
-
-    expect(element.outerHTML).toBe(
-      `<a href="https://doi.org/10.1234%2F567">10.1234/567</a>`
-    )
-  })
-
-  test('wraps URLs with links', () => {
-    const itemData = {
-      URL: 'https://example.com',
-    }
-    const element = wrapVariable('URL', itemData, itemData.URL)
-
-    expect(element.outerHTML).toBe(
-      `<a href="https://example.com">https://example.com</a>`
-    )
-  })
-
-  test('wraps titles with DOIs with links', () => {
-    const itemData = {
-      title: 'An example',
-      DOI: '10.1234/567',
-    }
-
-    const element = wrapVariable('title', itemData, itemData.title)
-
-    expect(element.outerHTML).toBe(
-      `<a href="https://doi.org/10.1234%2F567">An example</a>`
-    )
-  })
-
-  test('wraps titles with URLs with links', () => {
-    const itemData = {
-      title: 'An example',
-      URL: 'https://example.com',
-    }
-
-    const element = wrapVariable('title', itemData, itemData.title)
-
-    expect(element.outerHTML).toBe(
-      `<a href="https://example.com">An example</a>`
-    )
-  })
-
-  test('keeps HTML when wrapping titles with URLs with links', () => {
-    const itemData = {
-      title: 'An example with <i>some</i> markup',
-      URL: 'https://example.com',
-    }
-
-    const element = wrapVariable('title', itemData, itemData.title)
-
-    expect(element.outerHTML).toBe(
-      `<a href="https://example.com">An example with <i>some</i> markup</a>`
-    )
   })
 
   test('generates bibliography', async () => {
