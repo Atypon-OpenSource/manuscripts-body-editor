@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { CSL } from '@manuscripts/manuscript-transform'
+import { convertDataToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
-
-import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
   items: BibliographyItem[]
@@ -62,7 +60,7 @@ const translate = async (query: string, rows: number) => {
 }
 
 const convert = async (data: Record<string, unknown>[], format: string) => {
-  const response = await client.post<CSL.Item[]>('/export', data, {
+  const response = await client.post<CSL.Data[]>('/export', data, {
     params: { format },
     headers: { 'Content-Type': 'application/json' },
     validateStatus: (status) => status === 200 || status === 300,

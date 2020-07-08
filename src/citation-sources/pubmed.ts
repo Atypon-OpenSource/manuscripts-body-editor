@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { CSL } from '@manuscripts/manuscript-transform'
+import { convertDataToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { EUtilsError, toCSL } from 'astrocite-eutils'
 import { Response } from 'astrocite-eutils/lib/schema'
 import axios from 'axios'
-
-import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
   items: BibliographyItem[]
@@ -101,11 +99,11 @@ const search = async (
 
   const results = toCSL(summaryResponse.data)
 
-  const items: CSL.Item[] = []
+  const items: CSL.Data[] = []
 
   for (const item of results) {
     if (!(item instanceof EUtilsError)) {
-      items.push(item as CSL.Item)
+      items.push(item as CSL.Data)
     }
   }
 
@@ -137,7 +135,7 @@ interface ErrorResponse {
 }
 
 const isErrorResponse = (
-  data: CSL.Item | ErrorResponse
+  data: CSL.Data | ErrorResponse
 ): data is ErrorResponse => {
   return data.status === 'error'
 }
@@ -146,7 +144,7 @@ const isErrorResponse = (
 // https://api.ncbi.nlm.nih.gov/lit/ctxp
 // TODO: Use a Promise queue to avoid concurrent requests
 const fetchCSL = async (id: string) => {
-  const response = await axios.get<CSL.Item | ErrorResponse>(
+  const response = await axios.get<CSL.Data | ErrorResponse>(
     'https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/',
     {
       params: {
@@ -200,7 +198,7 @@ const fetchSummary = async (id: string, mailto: string) => {
     throw new Error('There was a problem fetching this PMID.')
   }
 
-  return convertDataToBibliographyItem(item as CSL.Item)
+  return convertDataToBibliographyItem(item as CSL.Data)
 }
 
 export const pubmed = { fetch, search }

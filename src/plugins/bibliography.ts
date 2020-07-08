@@ -15,21 +15,21 @@
  */
 
 import {
-  CitationNode,
+  bibliographyElementContents,
+  buildCitationNodes,
+  buildCitations,
+  CitationNodes,
+  GetCitationProcessor,
+  GetLibraryItem,
+  GetManuscript,
+  GetModel,
+} from '@manuscripts/library'
+import {
   generateID,
-  isCitationNode,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  Citation,
-  CitationItem,
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
-import CiteProc from 'citeproc'
+import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import { isEqual } from 'lodash-es'
 import {
   NodeSelection,
@@ -39,15 +39,16 @@ import {
 } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { bibliographyElementContents } from '../lib/bibliography'
-
-export type CitationNodes = Array<[CitationNode, number, Citation]>
-
-type DisplayScheme = 'show-all' | 'author-only' | 'suppress-author'
+interface CiteProcCitation {
+  citationItems: Array<{ id: string }>
+  properties?: {
+    noteIndex?: number
+  }
+}
 
 interface PluginState {
   citationNodes: CitationNodes
-  citations: CiteProc.Citation[]
+  citations: CiteProcCitation[]
 }
 
 export const bibliographyKey = new PluginKey('bibliography')
@@ -61,60 +62,8 @@ const bibliographyInserted = (transactions: Transaction[]): boolean =>
 const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
 
-export const buildCitationNodes = (
-  doc: ManuscriptNode,
-  getModel: GetModel
-): CitationNodes => {
-  const citationNodes: CitationNodes = []
-
-  doc.descendants((node, pos) => {
-    if (isCitationNode(node)) {
-      const citation = getModel<Citation>(node.attrs.rid)
-
-      if (citation) {
-        citationNodes.push([node, pos, citation])
-      }
-    }
-  })
-
-  return citationNodes
-}
-
-export const buildCitations = (
-  citationNodes: CitationNodes,
-  getLibraryItem: GetLibraryItem,
-  getManuscript: GetManuscript
-): CiteProc.Citation[] =>
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  citationNodes.map(([node, pos, citation]) => ({
-    citationID: citation._id,
-    citationItems: citation.embeddedCitationItems.map(
-      (citationItem: CitationItem) => ({
-        id: citationItem.bibliographyItem,
-        data: getLibraryItem(citationItem.bibliographyItem), // for comparison
-      })
-    ),
-    properties: {
-      noteIndex: 0,
-      mode: chooseMode(citation.displayScheme),
-    },
-    manuscript: getManuscript(), // for comparison
-  }))
-
-const chooseMode = (displayScheme?: DisplayScheme) => {
-  if (displayScheme === 'show-all') {
-    return undefined
-  }
-
-  return displayScheme
-}
-
-export type GetLibraryItem = (id: string) => BibliographyItem | undefined
-export type GetModel = <T extends Model>(id: string) => T | undefined
-export type GetManuscript = () => Manuscript
-
 interface Props {
-  getCitationProcessor: () => CiteProc.Engine | undefined
+  getCitationProcessor: GetCitationProcessor
   getLibraryItem: GetLibraryItem
   getModel: GetModel
   getManuscript: GetManuscript

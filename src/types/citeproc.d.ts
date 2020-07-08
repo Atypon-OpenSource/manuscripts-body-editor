@@ -18,8 +18,6 @@
 // https://github.com/citation-style-language/schema
 
 declare module 'citeproc' {
-  import { CSL } from '@manuscripts/manuscript-transform'
-
   interface Citation {
     citationItems: Array<{ id: string }>
     properties?: {
@@ -30,7 +28,7 @@ declare module 'citeproc' {
   type VariableWrapper = (
     params: {
       context: string
-      itemData: CSL.Item
+      itemData: CSL.Data
       variableNames: [string]
     },
     prePunct: string,
@@ -40,7 +38,7 @@ declare module 'citeproc' {
 
   interface SystemOptions {
     retrieveLocale: (id: string) => string | Document | Locale
-    retrieveItem: (id: string) => CSL.Item
+    retrieveItem: (id: string) => CSL.Data
     variableWrapper: VariableWrapper
   }
 

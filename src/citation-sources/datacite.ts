@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Build, CSL, generateID } from '@manuscripts/manuscript-transform'
+import { convertDataToBibliographyItem } from '@manuscripts/library'
+import { Build, generateID } from '@manuscripts/manuscript-transform'
 import {
   BibliographicDate,
   BibliographicName,
@@ -22,8 +23,6 @@ import {
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
-
-import { convertDataToBibliographyItem } from '../csl'
 
 interface Creator {
   givenName: string
@@ -144,7 +143,7 @@ const fetch = async (
     throw new Error('The item does not have a DOI')
   }
 
-  const response = await axios.get<CSL.Item>(
+  const response = await axios.get<CSL.Data>(
     'https://api.datacite.org/dois/' + encodeURIComponent(item.DOI),
     {
       headers: {

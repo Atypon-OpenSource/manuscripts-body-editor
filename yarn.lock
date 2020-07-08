@@ -1237,10 +1237,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-locales/-/csl-locales-0.0.4.tgz#28b427cc39349f370e65d26638e88dfa62bb9b9e"
   integrity sha512-Vw9XPCpDi5rk0GMW0nNpLwhVAD9MSHSzbqjIbL8DyeTbdm5iqtA+4KukF/bX6zamatTR98a+HZqwfJoRblyMcg==
 
-"@manuscripts/csl-styles@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.1.0.tgz#fc01da38b53366b4103246373b49fcdca2e86b96"
-  integrity sha512-9mPM3YgYOqEVvmC/0Unr9K4TkZemP7ND0bLW34lfIyOtsGOk95GMkzRxU92urYnWtXp1guN8kzv1l2QbpZc+Vw==
+"@manuscripts/csl-styles@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.1.1.tgz#d48882ae2a2d9fb293da8c124a1d5e60c572394b"
+  integrity sha512-mtdrB7roMkaqw2tWE2nxiE+qy4St8KD5CaA15eJALSyJda5Bs7YcwbG0SSPqHOFlWiRh+63TxqxFLrACYOxgcQ==
 
 "@manuscripts/data@^0.0.7":
   version "0.0.7"
@@ -1262,19 +1262,32 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.7.tgz#f7f0cef173fb2c83fbf283a2c2962b5d6ea32874"
   integrity sha512-7a1y6H/wnvn4hTh7S+TEyC8R5tLHHNiWYJnbeS43JCMYS/6qhMCzJTS0PwQynoep7PWwi2LdgaSZ3qALxzgg0g==
 
-"@manuscripts/manuscript-transform@^0.32.0":
-  version "0.32.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.32.0.tgz#c3ad938145c16d94e48cb73c34c8e4a8cb667789"
-  integrity sha512-ZRpTCyc7Jq36bscMjfkV2kywc/FtxdF3FafMYHeILPXu8NXShUa2T6akvlaMxU5cyc9J18eL5Jj5O2blRvvliQ==
+"@manuscripts/library@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.0.3.tgz#c2b2a468472e4eb2a77666915b31c07f2ae1bf31"
+  integrity sha512-XPYy0ov8SySv1ujcnO/D/IgoMUC1Sm00E/BRSxnWhr27bzdvXXR0kI3mfEYDjC2fqbINM85xIu11ECvXK4duEg==
   dependencies:
-    "@manuscripts/manuscripts-json-schema" "^1.29.2"
+    "@manuscripts/csl-locales" "^0.0.4"
+    "@manuscripts/csl-styles" "^0.1.1"
+    "@manuscripts/data" "^0.0.7"
+    "@manuscripts/manuscript-transform" "^0.33.0"
+    astrocite-bibtex "^0.16.3"
+    astrocite-ris "^0.16.0"
+    citeproc "^2.4.6"
+
+"@manuscripts/manuscript-transform@^0.33.0":
+  version "0.33.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.33.0.tgz#a99db5d5fd742367adc080657089181cab6c2278"
+  integrity sha512-LRdlX9swl5LHw2II1rSnzo4yW+c7VM9askL7ZNTprEUU4WyIV8OHXar59JhK/lpWbq4IHLbtXiZ+UsoyAnqaHw==
+  dependencies:
+    "@manuscripts/manuscripts-json-schema" "^1.30.0"
     debug "^4.1.1"
     mime-types "^2.1.27"
-    prosemirror-model "^1.7.2"
-    uuid "^3.3.2"
+    prosemirror-model "^1.11.0"
+    uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.29.2", "@manuscripts/manuscripts-json-schema@^1.30.0":
+"@manuscripts/manuscripts-json-schema@^1.30.0":
   version "1.30.0"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.30.0.tgz#1339f19c396ba232423a981d5eac8157f3577af3"
   integrity sha512-Xo07N40qAW+pyMXT3cuvA749L5eFIO7HU7CB7KcU1dHCxZQAExoysyPkeBEVqMtZYIvixU/sIOhuym+KGSvfzA==
@@ -2203,6 +2216,14 @@ astral-regex@^1.0.0:
   resolved "https://registry.npmjs.org/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
+astrocite-bibtex@^0.16.3:
+  version "0.16.3"
+  resolved "https://registry.npmjs.org/astrocite-bibtex/-/astrocite-bibtex-0.16.3.tgz#f0586543a9897e4f22bd87cb59adb3e44a906181"
+  integrity sha512-9PPKyxqWEJH+/eAcbWF33Goued2ymoP5/dzbr+PrfUlsXsi+2B4vOT/4sFlS6FLrulsntBoqjeHqF48QyH57hA==
+  dependencies:
+    astrocite-core "^0.16.0"
+    csl-json "^0.1.0"
+
 astrocite-core@^0.16.0:
   version "0.16.0"
   resolved "https://registry.npmjs.org/astrocite-core/-/astrocite-core-0.16.0.tgz#63b1616200e62b1005d5c4e7c5e8472c8b7dd364"
@@ -2218,6 +2239,14 @@ astrocite-eutils@^0.16.0:
     astrocite-core "^0.16.0"
     csl-json "^0.1.0"
     he "^1.2.0"
+
+astrocite-ris@^0.16.0:
+  version "0.16.0"
+  resolved "https://registry.npmjs.org/astrocite-ris/-/astrocite-ris-0.16.0.tgz#a44275a7774b8cee85044fd8b523a60462cc5a89"
+  integrity sha512-astB/rYaYDuHnbBhcRWl64sYRFDui7KwlEsbCw+FXahMRAS+Oj2V7Q+Q846puyvubpVhVl4qJku+V7+eexD8ww==
+  dependencies:
+    astrocite-core "^0.16.0"
+    csl-json "^0.1.0"
 
 async-limiter@~1.0.0:
   version "1.0.0"
@@ -2943,10 +2972,10 @@ ci-info@^2.0.0:
   resolved "https://registry.npmjs.org/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-citeproc@^2.4.5:
-  version "2.4.5"
-  resolved "https://registry.npmjs.org/citeproc/-/citeproc-2.4.5.tgz#2f81385a3b862c2bbcfdfbb88566bf960578d3b6"
-  integrity sha512-FL6aYheOzBUuPP215dm42SKa23F8iL3ngKMmwEERqSMg/AIsg3XiGqTtLUOAwm342gW61ou909WNIbHmdOMmMg==
+citeproc@^2.4.5, citeproc@^2.4.6:
+  version "2.4.6"
+  resolved "https://registry.npmjs.org/citeproc/-/citeproc-2.4.6.tgz#e867013cb57744307f16c45c52f7c86a007789fe"
+  integrity sha512-c6Oard5OhTJ0UJTLzYbKKK0/iY5FHsLw26uTCFg4V+UL54wJpDNCpA+jEE6Dkq42xfkHxM0WwPkgJvMyuv2O3g==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -8838,10 +8867,10 @@ prosemirror-keymap@^1.0.0, prosemirror-keymap@^1.1.2, prosemirror-keymap@^1.1.3,
     prosemirror-state "^1.0.0"
     w3c-keyname "^2.2.0"
 
-prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.10.0, prosemirror-model@^1.7.2, prosemirror-model@^1.8.1, prosemirror-model@^1.9.1:
-  version "1.10.0"
-  resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.10.0.tgz#bb1101732bccacf336e23a36a8b045b865025fa2"
-  integrity sha512-xTMbbO2q4abs5lJdeRvk/SrftNfZlMdvChKziTiK+OKtP8LkQI8uw39u4S5zqyflrmW3Or6+qnyFPf1p4v2u1g==
+prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, prosemirror-model@^1.10.0, prosemirror-model@^1.11.0, prosemirror-model@^1.8.1, prosemirror-model@^1.9.1:
+  version "1.11.0"
+  resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.11.0.tgz#dc36cdb3ad6442b9f6325c7d89170c624f9dc520"
+  integrity sha512-GqoAz/mIYjdv8gVYJ8mWFKpHoTxn/lXq4tXJ6bTVxs+rem2LzMYXrNVXfucGtfsgqsJlRIgng/ByG9j7Q8XDrg==
   dependencies:
     orderedmap "^1.1.0"
 
@@ -11031,6 +11060,11 @@ uuid@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmjs.org/uuid/-/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
   integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
+
+uuid@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.npmjs.org/uuid/-/uuid-8.2.0.tgz#cb10dd6b118e2dada7d0cd9730ba7417c93d920e"
+  integrity sha512-CYpGiFTUrmI6OBMkAdjSDM0k5h8SkkiTP4WAjQgDgNB1S3Ou9VBEvr6q0Kv2H1mMk7IWfxYGpMH5sd5AvcIV2Q==
 
 v8-compile-cache@^2.0.3:
   version "2.1.1"

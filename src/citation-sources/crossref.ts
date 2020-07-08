@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { CSL } from '@manuscripts/manuscript-transform'
+import { convertDataToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
-
-import { convertDataToBibliographyItem } from '../csl'
 
 interface SearchResults {
   items: BibliographyItem[]
@@ -39,7 +37,7 @@ const search = async (
   }
   const response = await axios.get<{
     message: {
-      items: CSL.Item[]
+      items: CSL.Data[]
       'total-results': number
     }
   }>(`https://api.crossref.org/works?mailto=${mailto}`, {
@@ -68,7 +66,7 @@ const searchByDOI = async (
   doi: string,
   mailto: string
 ): Promise<SearchResults> => {
-  const response = await axios.get<{ message: CSL.Item }>(
+  const response = await axios.get<{ message: CSL.Data }>(
     `https://api.crossref.org/works/${encodeURIComponent(doi)}?mailto=${mailto}`
   )
 
@@ -100,7 +98,7 @@ const fetch = async (item: Partial<BibliographyItem>) => {
   // NOTE: Using data.crossref.org rather than doi.org to avoid the redirect.
   // This is safe as it's only resolving Crossref DOIs.
 
-  const response = await axios.get<CSL.Item>(
+  const response = await axios.get<CSL.Data>(
     `https://data.crossref.org/${encodeURIComponent(item.DOI)}`,
     {
       headers: {

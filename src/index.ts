@@ -33,7 +33,6 @@ export {
 } from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'
 export { Viewer } from './components/Viewer'
-export * from './csl'
 export { menus } from './menus'
 export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'
