@@ -1296,13 +1296,6 @@
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/publish@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/@manuscripts/publish/-/publish-0.2.2.tgz#6f466268bc67e9f6293727163384ded0d9b3440c"
-  integrity sha512-9aRP2fyKdoSmVnlDRnL9o+iabynVDSjj7x1Stn2kSoxCkrn2ueaH4Ng5ysXgOoh1mi5T4wFIydYPor5RtLXIRg==
-  dependencies:
-    node-fetch "^2.6.0"
-
 "@manuscripts/rxdb@^8.2.0-manuscripts1":
   version "8.2.0-manuscripts1"
   resolved "https://registry.npmjs.org/@manuscripts/rxdb/-/rxdb-8.2.0-manuscripts1.tgz#947e10e790e373a80c5cf1cd73213f0ac63cc660"
@@ -7535,7 +7528,7 @@ node-fetch@^1.0.1:
     encoding "^0.1.11"
     is-stream "^1.0.1"
 
-node-fetch@^2.0.0, node-fetch@^2.6.0:
+node-fetch@^2.0.0:
   version "2.6.0"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==

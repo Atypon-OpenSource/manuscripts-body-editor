@@ -77,7 +77,6 @@
     "@manuscripts/examples": "^0.0.7",
     "@manuscripts/library": "^0.0.4",
     "@manuscripts/manuscript-transform": "^0.33.0",
-    "@manuscripts/publish": "^0.2.2",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.21.0",
     "@types/codemirror": "^0.0.74",

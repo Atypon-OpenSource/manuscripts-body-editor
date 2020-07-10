@@ -22,5 +22,4 @@ publish:
     refs:
       - master
   script:
-    - yarn install --frozen-lockfile --non-interactive
     - npx @manuscripts/publish
