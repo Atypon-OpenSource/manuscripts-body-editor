@@ -1237,15 +1237,15 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-locales/-/csl-locales-0.0.4.tgz#28b427cc39349f370e65d26638e88dfa62bb9b9e"
   integrity sha512-Vw9XPCpDi5rk0GMW0nNpLwhVAD9MSHSzbqjIbL8DyeTbdm5iqtA+4KukF/bX6zamatTR98a+HZqwfJoRblyMcg==
 
-"@manuscripts/csl-styles@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.1.1.tgz#d48882ae2a2d9fb293da8c124a1d5e60c572394b"
-  integrity sha512-mtdrB7roMkaqw2tWE2nxiE+qy4St8KD5CaA15eJALSyJda5Bs7YcwbG0SSPqHOFlWiRh+63TxqxFLrACYOxgcQ==
+"@manuscripts/csl-styles@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.2.0.tgz#8b8ae4e0afd9f9bbda371c1548d5854c703d8747"
+  integrity sha512-Lr7am9TkzLYOJjgPr6pRtkd8IjX/atew6YX/9o9xspIZJla51fSSPk6cTCVtT70Srn1aShLxZF4hi1jZH5+Gzw==
 
-"@manuscripts/data@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.7.tgz#8c18b1be112c4e7eba7dbb6c80ff8f3d007f0afa"
-  integrity sha512-fuCeInO5fITnfRVaBD0mkKo+OmBpn+84zvtlEL0DxtnExO8M7EGXDC8lB1Gi4YDdB5kul3z01fouQAcbchOOUw==
+"@manuscripts/data@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.8.tgz#f272842533080726fe4634b0a305dfb38c10960a"
+  integrity sha512-kHk5kYL6GQ2HEZHTsNUaeszqVdNwCNPtD9cHdw2rZ+iyFSVX8vZwZYae6mUrtFjKTPK9qDGVXSGrgvtHMxAweA==
 
 "@manuscripts/eslint-config@^0.2.2":
   version "0.2.2"
@@ -1262,35 +1262,35 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.7.tgz#f7f0cef173fb2c83fbf283a2c2962b5d6ea32874"
   integrity sha512-7a1y6H/wnvn4hTh7S+TEyC8R5tLHHNiWYJnbeS43JCMYS/6qhMCzJTS0PwQynoep7PWwi2LdgaSZ3qALxzgg0g==
 
-"@manuscripts/library@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.0.4.tgz#48293191bc8eb8ab8cf6ef3d4f5e06b43690d823"
-  integrity sha512-/t2q+Jt312GhBDG8IfHtI3pIHliJ9xKoufcZozziJPxqcUv8YLsMHNjVE3ceWxT8FQdmyZG9Nx3Q11PBVw5PJg==
+"@manuscripts/library@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.1.1.tgz#949105be32b9ada69af218a6f398dfcec56f26d9"
+  integrity sha512-5eSH8AnDGcT8XfhdTjrOxCzKik0+qRyPZW1cgPfV73op4FLmlb1IX9li19AZ+yyPdgA4noSncsmaURmBQKEFLw==
   dependencies:
     "@manuscripts/csl-locales" "^0.0.4"
-    "@manuscripts/csl-styles" "^0.1.1"
-    "@manuscripts/data" "^0.0.7"
-    "@manuscripts/manuscript-transform" "^0.33.0"
+    "@manuscripts/csl-styles" "^0.2.0"
+    "@manuscripts/data" "^0.0.8"
+    "@manuscripts/manuscript-transform" "^0.34.1"
     astrocite-bibtex "^0.16.3"
     astrocite-ris "^0.16.0"
     citeproc "^2.4.6"
 
-"@manuscripts/manuscript-transform@^0.33.0":
-  version "0.33.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.33.0.tgz#a99db5d5fd742367adc080657089181cab6c2278"
-  integrity sha512-LRdlX9swl5LHw2II1rSnzo4yW+c7VM9askL7ZNTprEUU4WyIV8OHXar59JhK/lpWbq4IHLbtXiZ+UsoyAnqaHw==
+"@manuscripts/manuscript-transform@^0.34.1":
+  version "0.34.1"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.34.1.tgz#337e7a0a5233b1e1f07b73249356b0e34b1234f1"
+  integrity sha512-ngo/hkFt3TMDxJzy8tHke7A9khjbhGnROBSLLBqICWcFlmaEL+k/S5zlyWFBKA/x+x0/P9a0ArK1GtOB+IjaLA==
   dependencies:
-    "@manuscripts/manuscripts-json-schema" "^1.30.0"
+    "@manuscripts/manuscripts-json-schema" "^1.30.2"
     debug "^4.1.1"
     mime-types "^2.1.27"
     prosemirror-model "^1.11.0"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.30.0":
-  version "1.30.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.30.0.tgz#1339f19c396ba232423a981d5eac8157f3577af3"
-  integrity sha512-Xo07N40qAW+pyMXT3cuvA749L5eFIO7HU7CB7KcU1dHCxZQAExoysyPkeBEVqMtZYIvixU/sIOhuym+KGSvfzA==
+"@manuscripts/manuscripts-json-schema@^1.30.2":
+  version "1.30.2"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.30.2.tgz#72acb85168e3977b856c08f24f4e48be9070ae4e"
+  integrity sha512-VkgSzatstHHGwL9etnziWQZtTTWvqKMjwHkaCI4UfCoQfbjr7D0LeHZxPXLJ5S5NHjJLpVp54o1tgbmkecysRg==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
