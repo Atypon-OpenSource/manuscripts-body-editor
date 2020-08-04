@@ -146,7 +146,7 @@
     "typescript": "^3.9.5"
   },
   "peerDependencies": {
-    "@manuscripts/data": "^0.0.8",
+    "@manuscripts/data": "^0.0.9",
     "@manuscripts/library": "^0.1.0",
     "@manuscripts/manuscript-transform": "^0.34.1",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
