@@ -28,7 +28,7 @@
     "@iarna/word-count": "^1.1.2",
     "@jupyterlab/services": "^3.2.1",
     "@manuscripts/assets": "^0.6.1",
-    "@manuscripts/manuscripts-json-schema": "^1.30.2",
+    "@manuscripts/manuscripts-json-schema": "^1.31.0",
     "@manuscripts/title-editor": "^0.5.0",
     "astrocite-eutils": "^0.16.0",
     "axios": "^0.19.0",
