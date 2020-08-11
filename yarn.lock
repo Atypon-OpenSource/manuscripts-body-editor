@@ -1242,10 +1242,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.2.0.tgz#8b8ae4e0afd9f9bbda371c1548d5854c703d8747"
   integrity sha512-Lr7am9TkzLYOJjgPr6pRtkd8IjX/atew6YX/9o9xspIZJla51fSSPk6cTCVtT70Srn1aShLxZF4hi1jZH5+Gzw==
 
-"@manuscripts/data@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.8.tgz#f272842533080726fe4634b0a305dfb38c10960a"
-  integrity sha512-kHk5kYL6GQ2HEZHTsNUaeszqVdNwCNPtD9cHdw2rZ+iyFSVX8vZwZYae6mUrtFjKTPK9qDGVXSGrgvtHMxAweA==
+"@manuscripts/data@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.10.tgz#85b934698f022b91d13eadd46e7dd3d0db87fb16"
+  integrity sha512-sWuIlZ0AW50haJlxCw4ucqvgM66gRsE9tp4O5hGQxmiDVcW/nXsCeArGpfbw5UGmqkukQCaLYxt3uAZrL4zRhw==
 
 "@manuscripts/eslint-config@^0.2.2":
   version "0.2.2"
@@ -1262,35 +1262,36 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.7.tgz#f7f0cef173fb2c83fbf283a2c2962b5d6ea32874"
   integrity sha512-7a1y6H/wnvn4hTh7S+TEyC8R5tLHHNiWYJnbeS43JCMYS/6qhMCzJTS0PwQynoep7PWwi2LdgaSZ3qALxzgg0g==
 
-"@manuscripts/library@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.1.1.tgz#949105be32b9ada69af218a6f398dfcec56f26d9"
-  integrity sha512-5eSH8AnDGcT8XfhdTjrOxCzKik0+qRyPZW1cgPfV73op4FLmlb1IX9li19AZ+yyPdgA4noSncsmaURmBQKEFLw==
+"@manuscripts/library@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.3.0.tgz#df803244a3c786bf4cc182125772a6006194f9de"
+  integrity sha512-2txWsuwPiwAqjjS5TV0IPp44d9pDlzWAUUFlTV1pUsPHxNCdQQymFa/OEFBJ5BP5nQuc2CxBWe3pNPU1f+/dwA==
   dependencies:
     "@manuscripts/csl-locales" "^0.0.4"
     "@manuscripts/csl-styles" "^0.2.0"
-    "@manuscripts/data" "^0.0.8"
-    "@manuscripts/manuscript-transform" "^0.34.1"
+    "@manuscripts/data" "^0.0.10"
+    "@manuscripts/manuscript-transform" "^0.35.0"
     astrocite-bibtex "^0.16.3"
     astrocite-ris "^0.16.0"
     citeproc "^2.4.6"
+    fontoxpath "^3.12.1"
 
-"@manuscripts/manuscript-transform@^0.34.1":
-  version "0.34.1"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.34.1.tgz#337e7a0a5233b1e1f07b73249356b0e34b1234f1"
-  integrity sha512-ngo/hkFt3TMDxJzy8tHke7A9khjbhGnROBSLLBqICWcFlmaEL+k/S5zlyWFBKA/x+x0/P9a0ArK1GtOB+IjaLA==
+"@manuscripts/manuscript-transform@^0.35.0":
+  version "0.35.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.35.0.tgz#8b8fc8048bc21930ba277bdb055a080a9614e9b0"
+  integrity sha512-6+oFsIo0SGOm5yd6KZbZVzfz3x2du1TpmxWzNtYM5haCbmeLT4t+m+YFy2DHOUnjLHyJ2wQS6koTkFF24puqHw==
   dependencies:
-    "@manuscripts/manuscripts-json-schema" "^1.30.2"
+    "@manuscripts/manuscripts-json-schema" "^1.32.0"
     debug "^4.1.1"
     mime-types "^2.1.27"
     prosemirror-model "^1.11.0"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.30.2", "@manuscripts/manuscripts-json-schema@^1.31.0":
-  version "1.31.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.31.0.tgz#5f934f7f00f4873c00621f1b1d7003a66a4ed247"
-  integrity sha512-M0Qez9QsZh+PpedbqbNyPHP9cXa3pL8WO+4C3WonyXt5Vfqehy/HKuyBRyyMaq/WkuftuFieMH1zA1rIg9sVqQ==
+"@manuscripts/manuscripts-json-schema@^1.32.0":
+  version "1.32.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.32.0.tgz#e47dca8d9ee215fb8cfdfec25b785a03203a9fdf"
+  integrity sha512-1Ad1prk3VWLaYPHJwCcSaGw5c9ojtG91CQ307w0R50GC8t/grfDq7b3NuHLxETXpoE8NeWGvUyFlV5yWEcL6lQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -4749,6 +4750,13 @@ follow-redirects@1.5.10:
   integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
   dependencies:
     debug "=3.1.0"
+
+fontoxpath@^3.12.1:
+  version "3.12.1"
+  resolved "https://registry.npmjs.org/fontoxpath/-/fontoxpath-3.12.1.tgz#ce4858b75b12466a8979a1c767eaab9cbca06c24"
+  integrity sha512-c6gCK1BJPFAAf12z6HNA3LChYB6GNG80nJgX+DhEoBSgqdJLfHjM0CqwpyPi7IZLtco33wKhXG5eJwUq8WYvRg==
+  dependencies:
+    xspattern "^1.2.1"
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
@@ -8928,6 +8936,11 @@ proxy-addr@~2.0.5:
     forwarded "~0.1.2"
     ipaddr.js "1.9.0"
 
+prsc@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/prsc/-/prsc-1.1.0.tgz#868f26c18a1dca3e94bf8446d0544af983901808"
+  integrity sha512-sNn5XUwyMA9dbF5l23ksu2+MsOKf+Ihuae0T88GMABgsKiPA1oLME3qdlrkPxyVVK6wFhO7VSKNuSyZrCYQrOg==
+
 pseudomap@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
@@ -11229,6 +11242,11 @@ white-space-x@^3.0.0:
   resolved "https://registry.npmjs.org/white-space-x/-/white-space-x-3.0.1.tgz#81a82d5432da725aba5ca671624bb579c9e66d4f"
   integrity sha512-BwMFXQNPna/4RsNPOgldVYn+FkEv+lc3wUiFzuaW6Z2DH/oSk1UrRD6SBqDgWQO4JU+aBq3PVuPD9Vz0j7mh0w==
 
+whynot@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/whynot/-/whynot-3.0.3.tgz#56abf3e0e2e54f5550cebcc952ddf5b38e38f136"
+  integrity sha512-CyFCWOprdyBdUPoHCE7WIVH5lBqv2QHz2+WID/JaelCurmyn/wQ71O6wmJbX657HcLJfABKMRtsPp4XuzDO6Jw==
+
 wicked-good-xpath@*:
   version "1.3.0"
   resolved "https://registry.npmjs.org/wicked-good-xpath/-/wicked-good-xpath-1.3.0.tgz#81b0e95e8650e49c94b22298fff8686b5553cf6c"
@@ -11358,6 +11376,14 @@ xregexp@^4.3.0:
   integrity sha512-7jXDIFXh5yJ/orPn4SXjuVrWWoi4Cr8jfV1eHv9CixKSbU+jY4mxfrBwAuDvupPNKpMUY+FeIqsVw/JLT9+B8g==
   dependencies:
     "@babel/runtime-corejs3" "^7.8.3"
+
+xspattern@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/xspattern/-/xspattern-1.2.1.tgz#0a5cc1192b3746543eb8dd988c3b80f0085917ac"
+  integrity sha512-fkM2XB5N8MOCQiEW2ITa8XIKKjqbNlFTOiqT9zKMPr7jMsBe1jIBq+E5HCm1c4kmgFRWqpVGyLloTQ/y1pW+Yg==
+  dependencies:
+    prsc "^1.1.0"
+    whynot "^3.0.3"
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0:
   version "4.0.1"

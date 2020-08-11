@@ -99,8 +99,8 @@ export const RequirementsProvider: React.FC<{
         maximum: getActiveRequirementCount(model.maxWordCountRequirement),
       },
       characters: {
-        minimum: getActiveRequirementCount(model.minCharCountRequirement),
-        maximum: getActiveRequirementCount(model.maxCharCountRequirement),
+        minimum: getActiveRequirementCount(model.minCharacterCountRequirement),
+        maximum: getActiveRequirementCount(model.maxCharacterCountRequirement),
       },
     }
 
