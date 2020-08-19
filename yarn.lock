@@ -1242,10 +1242,10 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.2.0.tgz#8b8ae4e0afd9f9bbda371c1548d5854c703d8747"
   integrity sha512-Lr7am9TkzLYOJjgPr6pRtkd8IjX/atew6YX/9o9xspIZJla51fSSPk6cTCVtT70Srn1aShLxZF4hi1jZH5+Gzw==
 
-"@manuscripts/data@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.0.10.tgz#85b934698f022b91d13eadd46e7dd3d0db87fb16"
-  integrity sha512-sWuIlZ0AW50haJlxCw4ucqvgM66gRsE9tp4O5hGQxmiDVcW/nXsCeArGpfbw5UGmqkukQCaLYxt3uAZrL4zRhw==
+"@manuscripts/data@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.0.tgz#b663eec1bf166e885dd1630f74ac5316c04a0c23"
+  integrity sha512-Wrq67UVjazhPL2Qb4CNQiyaQpwd05Di063h/9+blBkg1Cz/i/MxlIQ/ZSLnzqeBXRxKgHYVZW2koUAKyJft/EA==
 
 "@manuscripts/eslint-config@^0.2.2":
   version "0.2.2"
@@ -1262,14 +1262,14 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.7.tgz#f7f0cef173fb2c83fbf283a2c2962b5d6ea32874"
   integrity sha512-7a1y6H/wnvn4hTh7S+TEyC8R5tLHHNiWYJnbeS43JCMYS/6qhMCzJTS0PwQynoep7PWwi2LdgaSZ3qALxzgg0g==
 
-"@manuscripts/library@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.3.0.tgz#df803244a3c786bf4cc182125772a6006194f9de"
-  integrity sha512-2txWsuwPiwAqjjS5TV0IPp44d9pDlzWAUUFlTV1pUsPHxNCdQQymFa/OEFBJ5BP5nQuc2CxBWe3pNPU1f+/dwA==
+"@manuscripts/library@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.3.1.tgz#e51c3baeb3e3fc85c5d24f128abde4062c1014e8"
+  integrity sha512-OIpr8wvi9iPELY7bYPhgoSaP4tfEBAElztRvvwNX/09RoAQ5sNIoPAHnel6RbnHBHUd/XbDbHTti3VMuvcIz4w==
   dependencies:
     "@manuscripts/csl-locales" "^0.0.4"
     "@manuscripts/csl-styles" "^0.2.0"
-    "@manuscripts/data" "^0.0.10"
+    "@manuscripts/data" "^0.1.0"
     "@manuscripts/manuscript-transform" "^0.35.0"
     astrocite-bibtex "^0.16.3"
     astrocite-ris "^0.16.0"
@@ -1280,6 +1280,18 @@
   version "0.35.0"
   resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.35.0.tgz#8b8fc8048bc21930ba277bdb055a080a9614e9b0"
   integrity sha512-6+oFsIo0SGOm5yd6KZbZVzfz3x2du1TpmxWzNtYM5haCbmeLT4t+m+YFy2DHOUnjLHyJ2wQS6koTkFF24puqHw==
+  dependencies:
+    "@manuscripts/manuscripts-json-schema" "^1.32.0"
+    debug "^4.1.1"
+    mime-types "^2.1.27"
+    prosemirror-model "^1.11.0"
+    uuid "^8.2.0"
+    w3c-xmlserializer "^2.0.0"
+
+"@manuscripts/manuscript-transform@^0.36.0":
+  version "0.36.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.36.0.tgz#5fe1a6e50188cfe45b00a2ce6a1c9da5f5aea25e"
+  integrity sha512-zuC91MnqcEwk+MK5rRnLLFixqruXmKCLc1VeFPGpHfAMfYFynXfUxGicysaR+0kUU0C8KUPFfRZb+MvmK1QJUg==
   dependencies:
     "@manuscripts/manuscripts-json-schema" "^1.32.0"
     debug "^4.1.1"
