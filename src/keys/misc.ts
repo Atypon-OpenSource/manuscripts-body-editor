@@ -36,6 +36,7 @@ import {
   insertCrossReference,
   insertInlineCitation,
   insertInlineEquation,
+  insertSection,
   selectAllIsolating,
 } from '../commands'
 import { EditorAction } from '../types'
@@ -59,7 +60,8 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-=': toggleMark(schema.marks.superscript),
   'Mod-Alt--': toggleMark(schema.marks.subscript),
   'Ctrl->': wrapIn(schema.nodes.blockquote),
-  'Mod-Enter': chainCommands(exitCode, insertBreak),
+  'Shift-Mod-Enter': insertSection(true),
+  'Mod-Enter': chainCommands(exitCode, insertSection()),
   'Shift-Enter': chainCommands(exitCode, insertBreak),
   'Ctrl-Enter': chainCommands(exitCode, insertBreak), // mac-only?
   // 'Shift-Ctrl-0': setBlockType(schema.nodes.paragraph),

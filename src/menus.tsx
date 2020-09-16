@@ -38,6 +38,7 @@ import {
   insertInlineEquation,
   insertKeywordsSection,
   insertLink,
+  insertSection,
   insertTOCSection,
   markActive,
 } from './commands'
@@ -94,6 +95,26 @@ export const menus: MenuItem[] = [
     id: 'insert',
     label: () => 'Insert',
     submenu: [
+      {
+        id: 'insert-section',
+        label: () => 'Section',
+        accelerator: {
+          mac: 'CommandOrControl+Enter',
+          pc: 'CommandOrControl+Enter',
+        },
+        enable: insertSection(),
+        run: insertSection(),
+      },
+      {
+        id: 'insert-subsection',
+        label: () => 'Subsection',
+        accelerator: {
+          mac: 'Shift+CommandOrControl+Enter',
+          pc: 'Shift+CommandOrControl+Enter',
+        },
+        enable: insertSection(true),
+        run: insertSection(true),
+      },
       {
         id: 'insert-paragraph',
         label: () => 'Paragraph',

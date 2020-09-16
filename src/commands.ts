@@ -21,6 +21,7 @@ import {
   buildHighlight,
   buildInlineMathFragment,
   isElementNodeType,
+  isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptMarkType,
@@ -29,6 +30,7 @@ import {
   ManuscriptNodeType,
   ManuscriptTextSelection,
   ManuscriptTransaction,
+  SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 import { ResolvedPos } from 'prosemirror-model'
@@ -350,6 +352,46 @@ export const insertKeywordsSection = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
+const findPosAfterParentSection = (state: ManuscriptEditorState) => {
+  const { $from } = state.selection
+
+  for (let d = $from.depth; d >= 0; d--) {
+    const node = $from.node(d)
+
+    if (isSectionNodeType(node.type)) {
+      return $from.after(d)
+    }
+  }
+
+  return null
+}
+
+export const insertSection = (subsection = false) => (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = findPosAfterParentSection(state)
+
+  if (pos === null) {
+    return false
+  }
+
+  const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
+
+  const tr = state.tr.insert(
+    pos + adjustment,
+    state.schema.nodes.section.createAndFill() as SectionNode
+  )
+
+  if (dispatch) {
+    // place cursor inside section title
+    const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 

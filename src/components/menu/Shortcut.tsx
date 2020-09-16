@@ -38,11 +38,13 @@ const modifiers: { [key in Keys]: string } & { [key: string]: string } = isMac
       Option: '⌥',
       CommandOrControl: '⌘',
       Shift: '⇧',
+      Enter: '⏎',
     }
   : {
       Option: 'Alt',
       CommandOrControl: 'Ctrl',
-      Shift: 'Shift',
+      Shift: '⇧',
+      Enter: '⏎',
     }
 
 const system = isMac ? 'mac' : 'pc'
