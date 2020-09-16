@@ -351,6 +351,20 @@ export const menus: MenuItem[] = [
         role: 'separator',
       },
       {
+        id: 'format-code',
+        label: () => 'Code',
+        accelerator: {
+          mac: 'CommandOrControl+`',
+          pc: 'CommandOrControl+`',
+        },
+        active: markActive(schema.marks.code),
+        enable: toggleMark(schema.marks.code),
+        run: toggleMark(schema.marks.code),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'format-table',
         label: () => 'Table',
         enable: blockActive(schema.nodes.table),
