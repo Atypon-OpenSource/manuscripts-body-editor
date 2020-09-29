@@ -31,6 +31,7 @@ export {
   RequirementsContext,
   RequirementsProvider,
 } from './components/requirements/RequirementsProvider'
+export { TrackChanges } from './components/track'
 export { Editor } from './components/Editor'
 export { Viewer } from './components/Viewer'
 export { menus } from './menus'

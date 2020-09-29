@@ -37,6 +37,7 @@ import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
 import toc from './toc'
+import track from './track'
 
 export default (props: EditorProps) => [
   rules,
@@ -58,6 +59,7 @@ export default (props: EditorProps) => [
   placeholder(),
   tableEditing(),
   highlights(props),
+  track(),
 ]
 
 // for tables
