@@ -31,20 +31,25 @@ export const CommitsList: React.FC<Props> = ({ view }) => {
     return null
   }
 
-  const { tracked } = trackChangesKey.getState(state) as TrackPluginState
+  const { tracked, focusedCommit } = trackChangesKey.getState(
+    state
+  ) as TrackPluginState
   const { commits } = tracked
 
   return (
     <div>
       {commits.map((commit, i) => (
         <div
-          className="commit"
           key={commit.id}
           onClick={(e) => {
             e.preventDefault()
             const { tr } = state
             tr.setMeta(trackChangesKey, { type: 'FOCUS', commit: i })
             dispatch(tr)
+          }}
+          style={{
+            backgroundColor:
+              focusedCommit === i ? 'rgba(13, 213, 252, 0.5)' : 'transparent',
           }}
         >
           {commit.message}

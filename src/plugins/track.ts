@@ -20,6 +20,8 @@ import { Step, StepMap as Map, Transform } from 'prosemirror-transform'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import uuid from 'uuid/v4'
 
+import { isTextSelection } from '../commands'
+
 export class Commit {
   public id: string
   public steps: Step[]
@@ -119,7 +121,6 @@ const updateBlameMap = (map: Span[], transform: Transform, id: number) => {
   return result
 }
 
-// TrackState{
 export class TrackState {
   public commits: Commit[]
   public blameMap: Span[]
@@ -181,6 +182,26 @@ export class TrackState {
     return new TrackState(this.blameMap, this.commits.concat(commit))
   }
 
+  findInBlameMap(pos: number) {
+    const { blameMap } = this
+
+    for (let i = 0; i < blameMap.length; i++) {
+      const span = blameMap[i]
+      if (span.commit === null) {
+        continue
+      }
+      if (
+        span.to >= pos &&
+        span.from <= pos &&
+        span.commit < this.commits.length
+      ) {
+        return blameMap[i].commit
+      }
+    }
+
+    return null
+  }
+
   decorateBlameMap(focusedCommit: number | null) {
     return this.blameMap
       .map((span) => {
@@ -220,9 +241,37 @@ export interface TrackPluginState {
 
 export const trackChangesKey = new PluginKey('track-changes')
 
+const applyAction = (
+  state: TrackPluginState,
+  action?: { type: string; [key: string]: any } // tslint:disable:no-any
+): TrackPluginState => {
+  if (!action) {
+    return state
+  }
+
+  switch (action.type) {
+    case 'COMMIT': {
+      return {
+        ...state,
+        tracked: state.tracked.applyCommit(action.message),
+      }
+    }
+    case 'FOCUS': {
+      return {
+        ...state,
+        focusedCommit: action.commit,
+      }
+    }
+    default: {
+      return state
+    }
+  }
+}
+
 export default () => {
   const trackPlugin: Plugin<TrackPluginState, typeof schema> = new Plugin({
     key: trackChangesKey,
+
     state: {
       init(_, instance): TrackPluginState {
         return {
@@ -233,47 +282,39 @@ export default () => {
           focusedCommit: null,
         }
       },
-      apply(tr, state, _, editorState) {
-        // calculate the default next state if no actions in this domain
-        // are taken
-        const tracked = tr.docChanged
-          ? state.tracked.applyTransform(tr)
-          : state.tracked
+
+      apply(tr, state: TrackPluginState, _, editorState) {
+        const { selection } = editorState
+        const action = tr.getMeta(trackChangesKey)
+
+        // FIRST update the TrackState object
+        // THEN apply specific commands relating to this plugin
+        const nextState = applyAction(
+          {
+            ...state,
+            tracked: tr.docChanged
+              ? state.tracked.applyTransform(tr)
+              : state.tracked,
+          },
+          action
+        )
+
+        // FINALLY recalculate the decorations based on this new state
+        const focusedCommit =
+          isTextSelection(selection) && !action
+            ? nextState.tracked.findInBlameMap(selection.head)
+            : nextState.focusedCommit
+
         const deco = DecorationSet.create(
           editorState.doc,
-          tracked.decorateBlameMap(state.focusedCommit)
+          nextState.tracked.decorateBlameMap(focusedCommit)
         )
-        const nextState = {
-          ...state,
+
+        return {
+          ...nextState,
           deco,
-          tracked,
+          focusedCommit,
         }
-
-        const action = tr.getMeta(trackChangesKey)
-        if (!action) {
-          return nextState
-        }
-
-        switch (action.type) {
-          case 'COMMIT': {
-            return {
-              ...nextState,
-              tracked: tracked.applyCommit(action.message),
-            }
-          }
-          case 'FOCUS': {
-            return {
-              ...nextState,
-              focusedCommit: action.commit,
-              deco: DecorationSet.create(
-                editorState.doc,
-                tracked.decorateBlameMap(action.commit)
-              ),
-            }
-          }
-        }
-
-        return nextState
       },
     },
     props: {
