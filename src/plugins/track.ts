@@ -15,8 +15,8 @@
  */
 
 import { schema } from '@manuscripts/manuscript-transform'
-import { Plugin, PluginKey } from 'prosemirror-state'
-import { Step, StepMap as Map, Transform } from 'prosemirror-transform'
+import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
+import { Mapping, Step, StepMap as Map, Transform } from 'prosemirror-transform'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import uuid from 'uuid/v4'
 
@@ -27,12 +27,21 @@ export class Commit {
   public steps: Step[]
   public maps: Map[]
   public message: string
+  public status: 'accepted' | 'rejected' | null
 
   constructor(steps: Step[], maps: Map[], message?: string) {
     this.id = uuid()
     this.steps = steps
     this.maps = maps
     this.message = message || ''
+    this.status = null
+  }
+
+  reject() {
+    return {
+      ...this,
+      status: 'rejected',
+    }
   }
 }
 
@@ -124,7 +133,7 @@ const updateBlameMap = (map: Span[], transform: Transform, id: number) => {
 export class TrackState {
   public commits: Commit[]
   public blameMap: Span[]
-  private uncommittedSteps: Step[]
+  public uncommittedSteps: Step[]
   private uncommittedMaps: Map[]
 
   constructor(
@@ -182,6 +191,54 @@ export class TrackState {
     return new TrackState(this.blameMap, this.commits.concat(commit))
   }
 
+  revertCommit(index: number) {
+    // Reverting is only possible if there are no uncommitted changes
+    if (this.uncommittedSteps.length) {
+      return this
+    }
+    const commits = this.commits.map((commit, i) =>
+      i === index ? commit.reject() : commit
+    )
+    return new TrackState(this.blameMap, commits)
+  }
+
+  getRevertTr(index: number, tr: Transaction) {
+    // Reverting is only possible if there are no uncommitted changes
+    if (this.uncommittedSteps.length) {
+      throw new Error('Cannot revert when there are uncommitted changes')
+    }
+
+    const commitToRevert = this.commits[index]
+
+    // This is the mapping from the document as it was at the start of
+    // the commit to the current document.
+    const remap = new Mapping(
+      this.commits
+        .slice(index)
+        .reduce((maps, c) => maps.concat(c.maps), [] as Map[])
+    )
+
+    // Build up a transaction that includes all (inverted) steps in this
+    // commit, rebased to the current document. They have to be applied
+    // in reverse order.
+    for (let i = commitToRevert.steps.length - 1; i >= 0; i--) {
+      // The mapping is sliced to not include maps for this step and the
+      // ones before it.
+      const remapped = commitToRevert.steps[i].map(remap.slice(i + 1))
+      if (!remapped) {
+        continue
+      }
+      const result = tr.maybeStep(remapped)
+      // If the step can be applied, add its map to our mapping
+      // pipeline, so that subsequent steps are mapped over it.
+      if (result.doc) {
+        remap.appendMap(remapped.getMap(), i)
+      }
+    }
+
+    return tr
+  }
+
   findInBlameMap(pos: number) {
     const { blameMap } = this
 
@@ -193,7 +250,8 @@ export class TrackState {
       if (
         span.to >= pos &&
         span.from <= pos &&
-        span.commit < this.commits.length
+        span.commit < this.commits.length &&
+        !this.commits[span.commit].status
       ) {
         return blameMap[i].commit
       }
@@ -212,6 +270,9 @@ export class TrackState {
           return this.createBlameDecoration(span.from, span.to, 'focused')
         }
         if (span.commit < this.commits.length) {
+          if (this.commits[span.commit].status) {
+            return null
+          }
           return this.createBlameDecoration(span.from, span.to, 'committed')
         }
         return this.createBlameDecoration(span.from, span.to, 'uncommitted')
@@ -262,6 +323,12 @@ const applyAction = (
         focusedCommit: action.commit,
       }
     }
+    case 'REVERT': {
+      return {
+        ...state,
+        tracked: state.tracked.revertCommit(action.commit),
+      }
+    }
     default: {
       return state
     }
@@ -310,6 +377,8 @@ export default () => {
           nextState.tracked.decorateBlameMap(focusedCommit)
         )
 
+        console.log(nextState.tracked)
+
         return {
           ...nextState,
           deco,
@@ -321,6 +390,25 @@ export default () => {
       decorations(state) {
         return trackChangesKey.getState(state).deco
       },
+    },
+    appendTransaction(trs, _, newState) {
+      const revert = trs.find((tr) => {
+        const action = tr.getMeta(trackChangesKey)
+        return action && action.type === 'REVERT'
+      })
+      if (!revert) {
+        return
+      }
+
+      console.log(revert)
+
+      const { tracked } = trackChangesKey.getState(newState)
+      const revertTr = tracked.getRevertTr(
+        revert.getMeta(trackChangesKey).commit,
+        revert
+      )
+
+      return revertTr.docChanged ? revertTr : undefined
     },
   })
 

@@ -34,27 +34,43 @@ export const CommitsList: React.FC<Props> = ({ view }) => {
   const { tracked, focusedCommit } = trackChangesKey.getState(
     state
   ) as TrackPluginState
-  const { commits } = tracked
+  const { commits, uncommittedSteps } = tracked
 
   return (
     <div>
-      {commits.map((commit, i) => (
-        <div
-          key={commit.id}
-          onClick={(e) => {
-            e.preventDefault()
-            const { tr } = state
-            tr.setMeta(trackChangesKey, { type: 'FOCUS', commit: i })
-            dispatch(tr)
-          }}
-          style={{
-            backgroundColor:
-              focusedCommit === i ? 'rgba(13, 213, 252, 0.5)' : 'transparent',
-          }}
-        >
-          {commit.message}
-        </div>
-      ))}
+      {commits.map((commit, i) => {
+        if (commit.status) {
+          return null
+        }
+        return (
+          <div
+            key={commit.id}
+            onClick={(e) => {
+              e.preventDefault()
+              const { tr } = state
+              tr.setMeta(trackChangesKey, { type: 'FOCUS', commit: i })
+              dispatch(tr)
+            }}
+            style={{
+              backgroundColor:
+                focusedCommit === i ? 'rgba(13, 213, 252, 0.5)' : 'transparent',
+            }}
+          >
+            {commit.message}
+            <button
+              type="button"
+              onClick={() => {
+                const { tr } = state
+                tr.setMeta(trackChangesKey, { type: 'REVERT', commit: i })
+                dispatch(tr)
+              }}
+              disabled={!!uncommittedSteps.length}
+            >
+              Revert
+            </button>
+          </div>
+        )
+      })}
     </div>
   )
 }
