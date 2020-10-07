@@ -18,7 +18,7 @@ import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 
-import { trackChangesKey } from '../../plugins/track'
+import { trackPluginKey } from '../../plugins/track'
 
 interface Props {
   view: EditorView<ManuscriptSchema>
@@ -35,7 +35,7 @@ export const CommitForm: React.FC<Props> = ({ view }) => {
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
     dispatch(
-      state.tr.setMeta(trackChangesKey, { type: 'COMMIT', message: inputVal })
+      state.tr.setMeta(trackPluginKey, { type: 'COMMIT', message: inputVal })
     )
     setInputVal('')
     return false

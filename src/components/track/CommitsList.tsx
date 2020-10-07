@@ -18,7 +18,13 @@ import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
-import { trackChangesKey, TrackPluginState } from '../../plugins/track'
+import {
+  TRACK_PLUGIN_ACTIONS,
+  trackPluginKey,
+  TrackPluginState,
+} from '../../plugins/track'
+
+const { FOCUS, REVERT } = TRACK_PLUGIN_ACTIONS
 
 interface Props {
   view: EditorView<ManuscriptSchema>
@@ -31,7 +37,7 @@ export const CommitsList: React.FC<Props> = ({ view }) => {
     return null
   }
 
-  const { tracked, focusedCommit } = trackChangesKey.getState(
+  const { tracked, focusedCommit } = trackPluginKey.getState(
     state
   ) as TrackPluginState
   const { commits, uncommittedSteps } = tracked
@@ -48,7 +54,7 @@ export const CommitsList: React.FC<Props> = ({ view }) => {
             onClick={(e) => {
               e.preventDefault()
               const { tr } = state
-              tr.setMeta(trackChangesKey, { type: 'FOCUS', commit: i })
+              tr.setMeta(trackPluginKey, { type: FOCUS, commit: i })
               dispatch(tr)
             }}
             style={{
@@ -61,7 +67,7 @@ export const CommitsList: React.FC<Props> = ({ view }) => {
               type="button"
               onClick={() => {
                 const { tr } = state
-                tr.setMeta(trackChangesKey, { type: 'REVERT', commit: i })
+                tr.setMeta(trackPluginKey, { type: REVERT, commit: i })
                 dispatch(tr)
               }}
               disabled={!!uncommittedSteps.length}

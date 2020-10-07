@@ -300,30 +300,37 @@ export interface TrackPluginState {
   focusedCommit: number | null
 }
 
-export const trackChangesKey = new PluginKey('track-changes')
+export const trackPluginKey = new PluginKey('track-changes-plugin')
+
+export enum TRACK_PLUGIN_ACTIONS {
+  COMMIT = 'COMMIT',
+  FOCUS = 'FOCUS',
+  REVERT = 'REVERT',
+}
 
 const applyAction = (
   state: TrackPluginState,
-  action?: { type: string; [key: string]: any } // tslint:disable:no-any
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  action?: { type: string; [key: string]: any }
 ): TrackPluginState => {
   if (!action) {
     return state
   }
 
   switch (action.type) {
-    case 'COMMIT': {
+    case TRACK_PLUGIN_ACTIONS.COMMIT: {
       return {
         ...state,
         tracked: state.tracked.applyCommit(action.message),
       }
     }
-    case 'FOCUS': {
+    case TRACK_PLUGIN_ACTIONS.FOCUS: {
       return {
         ...state,
         focusedCommit: action.commit,
       }
     }
-    case 'REVERT': {
+    case TRACK_PLUGIN_ACTIONS.REVERT: {
       return {
         ...state,
         tracked: state.tracked.revertCommit(action.commit),
@@ -337,7 +344,7 @@ const applyAction = (
 
 export default () => {
   const trackPlugin: Plugin<TrackPluginState, typeof schema> = new Plugin({
-    key: trackChangesKey,
+    key: trackPluginKey,
 
     state: {
       init(_, instance): TrackPluginState {
@@ -352,7 +359,7 @@ export default () => {
 
       apply(tr, state: TrackPluginState, _, editorState) {
         const { selection } = editorState
-        const action = tr.getMeta(trackChangesKey)
+        const action = tr.getMeta(trackPluginKey)
 
         // FIRST update the TrackState object
         // THEN apply specific commands relating to this plugin
@@ -377,8 +384,6 @@ export default () => {
           nextState.tracked.decorateBlameMap(focusedCommit)
         )
 
-        console.log(nextState.tracked)
-
         return {
           ...nextState,
           deco,
@@ -388,23 +393,21 @@ export default () => {
     },
     props: {
       decorations(state) {
-        return trackChangesKey.getState(state).deco
+        return trackPluginKey.getState(state).deco
       },
     },
     appendTransaction(trs, _, newState) {
       const revert = trs.find((tr) => {
-        const action = tr.getMeta(trackChangesKey)
-        return action && action.type === 'REVERT'
+        const action = tr.getMeta(trackPluginKey)
+        return action && action.type === TRACK_PLUGIN_ACTIONS.REVERT
       })
       if (!revert) {
         return
       }
 
-      console.log(revert)
-
-      const { tracked } = trackChangesKey.getState(newState)
+      const { tracked } = trackPluginKey.getState(newState)
       const revertTr = tracked.getRevertTr(
-        revert.getMeta(trackChangesKey).commit,
+        revert.getMeta(trackPluginKey).commit,
         revert
       )
 
