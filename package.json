@@ -40,7 +40,7 @@
     "dompurify": "^2.0.7",
     "grapheme-splitter": "^1.0.4",
     "lodash-es": "^4.17.11",
-    "mathjax-full": "^3.0.0",
+    "mathjax-full": "^3.1.0",
     "popper.js": "^1.15.0",
     "pretty-bytes": "^5.2.0",
     "prosemirror-commands": "^1.1.4",

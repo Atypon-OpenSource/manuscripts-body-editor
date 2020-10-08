@@ -60,7 +60,5 @@ export const convertToMathML = (
 
   // TODO: use xml-serializer to avoid adding the namespace manually?
 
-  return visitor
-    .visitTree(item)
-    .replace(/^<math/, '<math xmlns="http://www.w3.org/1998/Math/MathML"')
+  return visitor.visitTree(item)
 }

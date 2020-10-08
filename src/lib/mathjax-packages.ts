@@ -16,4 +16,6 @@
 
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages'
 
-export const packages = AllPackages.filter((name) => name !== 'html')
+export const packages = AllPackages.filter(
+  (name) => name !== 'html' && name !== 'bussproofs'
+)
