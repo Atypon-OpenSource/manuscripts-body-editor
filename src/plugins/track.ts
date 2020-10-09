@@ -43,6 +43,14 @@ export class Commit {
       status: 'rejected',
     }
   }
+
+  toJSON() {
+    // TODO TRACKCHANGES
+  }
+
+  static fromJSON() {
+    // TODO TRACKCHANGES
+  }
 }
 
 class Span {
@@ -54,6 +62,19 @@ class Span {
     this.from = from
     this.to = to
     this.commit = commit
+  }
+
+  toJSON() {
+    return JSON.stringify({
+      commit: this.commit,
+      from: this.from,
+      to: this.to,
+    })
+  }
+
+  static fromJSON(json: string) {
+    const { from, to, commit } = JSON.parse(json)
+    return new Span(from, to, commit)
   }
 }
 
@@ -183,6 +204,7 @@ export class TrackState {
     if (this.uncommittedSteps.length === 0) {
       return this
     }
+    console.log(this.uncommittedMaps)
     const commit = new Commit(
       this.uncommittedSteps,
       this.uncommittedMaps,
@@ -291,6 +313,30 @@ export class TrackState {
     return Decoration.inline(from, to, {
       class: `blame-${type}`,
     })
+  }
+
+  toJSON() {
+    return JSON.stringify({
+      blameMap: this.blameMap.map((span) => span.toJSON()),
+      commits: this.commits.map((commit) => commit.toJSON()),
+      uncommittedSteps: this.uncommittedSteps.map((step) => step.toJSON()),
+      // TODO TRACKCHANGES: figure out how to serialize and deserialize a stepmap
+      uncommittedMaps: this.uncommittedMaps.map((map) =>
+        map.forEach(console.log)
+      ),
+    })
+  }
+
+  static fromJSON(json: string) {
+    const { blameMap, commits, uncommittedSteps } = JSON.parse(json)
+    // TODO Deserialize the uncommittedMaps
+    return new TrackState(
+      blameMap.map(Span.fromJSON),
+      commits.map(Commit.fromJSON),
+      uncommittedSteps.map((json: { [key: string]: any }) =>
+        Step.fromJSON(schema, json)
+      )
+    )
   }
 }
 
