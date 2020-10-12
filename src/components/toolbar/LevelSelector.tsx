@@ -26,8 +26,7 @@ import {
 import { Fragment } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
-import Select from 'react-select'
-import { OptionProps } from 'react-select/lib/components/Option'
+import Select, { OptionProps } from 'react-select'
 import styled from 'styled-components'
 
 import { findClosestParentElement } from '../../lib/hierarchy'

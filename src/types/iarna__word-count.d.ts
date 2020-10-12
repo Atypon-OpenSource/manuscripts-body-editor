@@ -15,5 +15,6 @@
  */
 
 declare module '@iarna/word-count' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export default (text: string) => number
 }

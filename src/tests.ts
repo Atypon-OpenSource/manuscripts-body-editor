@@ -18,7 +18,7 @@ import '@babel/polyfill'
 
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 configure({ adapter: new Adapter() })
 

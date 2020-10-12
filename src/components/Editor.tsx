@@ -30,7 +30,7 @@ import {
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
 import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
-import { LocationListener, UnregisterCallback } from 'history'
+import { Action, Listener } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -88,7 +88,7 @@ export class Editor extends React.PureComponent<EditorProps> {
   private readonly editorRef = React.createRef<HTMLDivElement>()
   private readonly view: ManuscriptEditorView
 
-  private unregisterHistoryListener?: UnregisterCallback
+  private unregisterHistoryListener?: () => void
 
   private isMouseDown = false
 
@@ -166,7 +166,10 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.view.focus()
     }
 
-    this.handleHistoryChange(this.props.history.location, 'PUSH')
+    this.handleHistoryChange({
+      action: Action.Push,
+      location: this.props.history.location,
+    })
 
     this.unregisterHistoryListener = this.props.history.listen(
       this.handleHistoryChange
@@ -382,7 +385,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.dispatchTransaction(tr, false)
   }
 
-  private handleHistoryChange: LocationListener = (location) => {
+  private handleHistoryChange: Listener = ({ location }) => {
     this.focusNodeWithId(location.hash.substring(1))
   }
 
