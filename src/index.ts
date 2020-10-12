@@ -16,7 +16,11 @@
 
 export * from './citation-sources'
 export * from './commands'
-export { ApplicationMenu, MenuItem } from './components/menu/ApplicationMenu'
+export {
+  ApplicationMenu,
+  MenuItem,
+  MenuSeparator,
+} from './components/menu/ApplicationMenu'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
