@@ -30,7 +30,7 @@ import {
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
 import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
-import { Action, Listener } from 'history'
+import { LocationListener } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -166,10 +166,7 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.view.focus()
     }
 
-    this.handleHistoryChange({
-      action: Action.Push,
-      location: this.props.history.location,
-    })
+    this.handleHistoryChange(this.props.history.location, 'PUSH')
 
     this.unregisterHistoryListener = this.props.history.listen(
       this.handleHistoryChange
@@ -385,7 +382,7 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.dispatchTransaction(tr, false)
   }
 
-  private handleHistoryChange: Listener = ({ location }) => {
+  private handleHistoryChange: LocationListener = (location) => {
     this.focusNodeWithId(location.hash.substring(1))
   }
 
