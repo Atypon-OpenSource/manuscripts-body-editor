@@ -41,6 +41,8 @@ export const MenuList = styled.div`
   white-space: nowrap;
   width: auto;
   z-index: 10;
+  max-height: 80vh;
+  overflow-y: auto;
 
   &[data-placement='bottom-start'] {
     border-top-left-radius: 0;
