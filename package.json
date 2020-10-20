@@ -16,7 +16,7 @@
     "build:cjs": "tsc --outDir dist/cjs --module commonjs --project tsconfig.build.json",
     "build:es": "tsc --outDir dist/es --declarationDir dist/types --declaration --project tsconfig.build.json",
     "dev": "concurrently 'yarn:build:* --watch'",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings=0",
     "prebuild": "rimraf dist",
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
     "preversion": "concurrently 'yarn:typecheck' 'yarn:lint' 'yarn:test'",
