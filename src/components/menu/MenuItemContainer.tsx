@@ -20,6 +20,7 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/manuscript-transform'
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { Manager, Popper, Reference } from 'react-popper'
 import styled from 'styled-components'
 
@@ -36,6 +37,7 @@ export const MenuList = styled.div`
   border-radius: ${(props) => props.theme.grid.radius.small};
   box-shadow: ${(props) => props.theme.shadow.dropShadow};
   color: ${(props) => props.theme.colors.text.primary};
+  font-size: ${(props) => props.theme.font.size.normal};
   min-width: 150px;
   padding: ${(props) => props.theme.grid.unit}px 0;
   white-space: nowrap;
@@ -43,6 +45,7 @@ export const MenuList = styled.div`
   z-index: 10;
   max-height: 80vh;
   overflow-y: auto;
+  overflow-x: visible;
 
   &[data-placement='bottom-start'] {
     border-top-left-radius: 0;
@@ -177,28 +180,37 @@ export class MenuItemContainer extends React.Component<
               </Container>
             )}
           </Reference>
-          {isOpen && (
-            <Popper placement="right-start">
-              {({ ref, style, placement }) => (
-                <MenuList
-                  // @ts-ignore: styled
-                  ref={ref}
-                  style={style}
-                  data-placement={placement}
-                >
-                  {item.submenu &&
-                    item.submenu.map((menu, index) => (
-                      <MenuItemContainer
-                        key={`menu-${index}`}
-                        item={menu}
-                        view={view}
-                        closeMenu={closeMenu}
-                      />
-                    ))}
-                </MenuList>
-              )}
-            </Popper>
-          )}
+          {isOpen &&
+            createPortal(
+              <Popper
+                placement="right-start"
+                modifiers={{
+                  preventOverflow: {
+                    enabled: false,
+                  },
+                }}
+              >
+                {({ ref, style, placement }) => (
+                  <MenuList
+                    // @ts-ignore: styled
+                    ref={ref}
+                    style={style}
+                    data-placement={placement}
+                  >
+                    {item.submenu &&
+                      item.submenu.map((menu, index) => (
+                        <MenuItemContainer
+                          key={`menu-${index}`}
+                          item={menu}
+                          view={view}
+                          closeMenu={closeMenu}
+                        />
+                      ))}
+                  </MenuList>
+                )}
+              </Popper>,
+              document.getElementById('menu') as HTMLDivElement
+            )}
         </Manager>
       </div>
     )
