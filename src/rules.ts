@@ -18,11 +18,29 @@ import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
 import {
   ellipsis,
   emDash,
+  InputRule,
   inputRules,
   smartQuotes,
-  textblockTypeInputRule,
-  wrappingInputRule,
 } from 'prosemirror-inputrules'
+import { Node as ProsemirrorNode, NodeType, Schema } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
+
+const creatingInputRule = <S extends Schema>(
+  regexp: RegExp,
+  nodeType: NodeType<S>
+) =>
+  new InputRule<S>(regexp, (state, match, start, end) => {
+    const tr = state.tr.delete(start, end)
+    const range = tr.doc.resolve(start).blockRange()
+    if (range) {
+      const node = nodeType.createAndFill() as ProsemirrorNode<S>
+      tr.replaceRangeWith(range.start, range.end, node)
+      const $anchor = tr.doc.resolve(range.start)
+      tr.setSelection(TextSelection.between($anchor, $anchor))
+      return tr
+    }
+    return null
+  })
 
 export default inputRules({
   rules: [
@@ -30,34 +48,25 @@ export default inputRules({
     ellipsis,
     emDash,
 
-    // > blockquote
-    wrappingInputRule<ManuscriptSchema>(/^\s*>\s$/, schema.nodes.blockquote),
-
-    // 1. ordered list
-    wrappingInputRule<ManuscriptSchema>(
-      /^(\d+)\.\s$/,
-      schema.nodes.ordered_list,
-      (match) => ({ order: +match[1] }),
-      (match, node) => node.childCount + node.attrs.order === +match[1]
+    // 1. or 1) ordered list
+    creatingInputRule<ManuscriptSchema>(
+      /^\d+[.)]\s$/,
+      schema.nodes.ordered_list
     ),
 
     // * bullet list
-    wrappingInputRule<ManuscriptSchema>(
-      /^\s*([-+*])\s$/,
-      schema.nodes.bullet_list
+    creatingInputRule<ManuscriptSchema>(/^\s*\*\s$/, schema.nodes.bullet_list),
+
+    // > blockquote
+    creatingInputRule<ManuscriptSchema>(
+      /^\s*>\s$/,
+      schema.nodes.blockquote_element
     ),
 
     // ``` listing
-    textblockTypeInputRule<ManuscriptSchema>(
-      /^```$/,
-      schema.nodes.listing_element
-    ),
+    creatingInputRule<ManuscriptSchema>(/^```$/, schema.nodes.listing_element),
 
-    // # heading
-    textblockTypeInputRule<ManuscriptSchema>(
-      new RegExp('^(#{1,6})\\s$'),
-      schema.nodes.heading,
-      (match) => ({ level: match[1].length })
-    ),
+    // # section (heading)
+    creatingInputRule<ManuscriptSchema>(/^#\s$/, schema.nodes.section),
   ],
 })
