@@ -15,121 +15,22 @@
  */
 
 import {
-  ManuscriptNode,
-  ManuscriptNodeType,
+  buildTargets,
   ManuscriptSchema,
-  nodeNames,
-  schema,
+  Target,
 } from '@manuscripts/manuscript-transform'
 import {
   AuxiliaryObjectReference,
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
+import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-
-export interface Target {
-  type: string
-  id: string
-  label: string
-  caption: string
-}
 
 export const objectsKey = new PluginKey<Map<string, Target>, ManuscriptSchema>(
   'objects'
 )
-
-// TODO: labels for "figure" (parts of a figure panel)
-
-const labelledNodeTypes: ManuscriptNodeType[] = [
-  schema.nodes.figure_element,
-  schema.nodes.table_element,
-  schema.nodes.equation_element,
-  schema.nodes.listing_element,
-]
-
-interface Counter {
-  label: string
-  index: number
-}
-
-interface Counters {
-  [key: string]: Counter
-}
-
-const labelProperties: Map<
-  ManuscriptNodeType,
-  keyof Partial<Manuscript>
-> = new Map([
-  [schema.nodes.figure_element, 'figureElementLabel'],
-  [schema.nodes.table_element, 'tableElementLabel'],
-  [schema.nodes.equation_element, 'equationElementLabel'],
-  [schema.nodes.listing_element, 'listingElementLabel'],
-])
-
-const chooseLabel = (
-  nodeType: ManuscriptNodeType,
-  manuscript: Manuscript
-): string => {
-  const labelProperty = labelProperties.get(nodeType)
-
-  if (labelProperty) {
-    const label = manuscript[labelProperty]
-
-    if (label) {
-      return label as string
-    }
-  }
-
-  return nodeNames.get(nodeType) as string
-}
-
-const buildTargets = (doc: ManuscriptNode, manuscript: Manuscript) => {
-  const counters: Counters = {}
-
-  for (const nodeType of labelledNodeTypes) {
-    counters[nodeType.name] = {
-      label: chooseLabel(nodeType, manuscript),
-      index: 0, // TODO: use manuscript.figureElementNumberingScheme
-    }
-  }
-
-  const buildLabel = (type: ManuscriptNodeType) => {
-    const counter = counters[type.name]
-    counter.index++
-    return `${counter.label} ${counter.index}`
-  }
-
-  const targets: Map<string, Target> = new Map()
-
-  doc.descendants((node) => {
-    if (node.type.name in counters) {
-      const label = buildLabel(node.type)
-
-      targets.set(node.attrs.id, {
-        type: node.type.name,
-        id: node.attrs.id,
-        label,
-        caption: node.textContent, // TODO: HTML?
-      })
-
-      // TODO: allow an individual figure to be referenced
-      // if (node.attrs.containedObjectIDs) {
-      //   node.attrs.containedObjectIDs.forEach((containedObjectID: string) => {
-      //     targets.set(containedObjectID, {
-      //       type: '',
-      //       id: containedObjectID,
-      //       label,
-      //       caption: '',
-      //     })
-      //   })
-      // }
-    }
-  })
-
-  return targets
-}
 
 interface Props {
   getManuscript: () => Manuscript
@@ -141,13 +42,15 @@ export default (props: Props) => {
     key: objectsKey,
 
     state: {
-      init: (config, state) => buildTargets(state.doc, props.getManuscript()),
+      init: (config, state) => {
+        return buildTargets(Fragment.from(state.doc), props.getManuscript())
+      },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(tr.doc, props.getManuscript())
+        return buildTargets(Fragment.from(tr.doc), props.getManuscript())
       },
     },
     props: {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Target } from '@manuscripts/manuscript-transform'
 import {
   ButtonGroup,
   PrimaryButton,
@@ -21,8 +22,6 @@ import {
 } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
-
-import { Target } from '../../plugins/objects'
 
 const Container = styled.div`
   padding: ${(props) => props.theme.grid.unit * 3}px

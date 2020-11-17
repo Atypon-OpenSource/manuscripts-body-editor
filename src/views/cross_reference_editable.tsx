@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { buildAuxiliaryObjectReference } from '@manuscripts/manuscript-transform'
+import {
+  buildAuxiliaryObjectReference,
+  Target,
+} from '@manuscripts/manuscript-transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
 import { EditorProps } from '../components/Editor'
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
-import { objectsKey, Target } from '../plugins/objects'
+import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView } from './cross_reference'
 
