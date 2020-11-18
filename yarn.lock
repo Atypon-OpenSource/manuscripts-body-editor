@@ -1383,15 +1383,15 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.2.0.tgz#8b8ae4e0afd9f9bbda371c1548d5854c703d8747"
   integrity sha512-Lr7am9TkzLYOJjgPr6pRtkd8IjX/atew6YX/9o9xspIZJla51fSSPk6cTCVtT70Srn1aShLxZF4hi1jZH5+Gzw==
 
-"@manuscripts/data@^0.1.0", "@manuscripts/data@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.2.tgz#dcd91f6458a4063a5431e0d60656e557f07c1c5a"
-  integrity sha512-QoRRK3Y4N8VU9Oq1M5ZX+ZhlzfptX5bBa1B4RjC1SlWRANAWuELlbEbJ80b2nH+uhfkEdFAtVrczfeRJU3kQ9Q==
+"@manuscripts/data@^0.1.2", "@manuscripts/data@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.3.tgz#7f5fda8b518e6851e4461e21664182aae39621f9"
+  integrity sha512-FriVBENLiEyNS7S6r3lgwqbpmKxpZirwcrjNdE6jdchEI6AfbZUe2OoLyv29a9HNRbQAZq1eUKevoZZ4OuwLpw==
 
-"@manuscripts/eslint-config@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.npmjs.org/@manuscripts/eslint-config/-/eslint-config-0.4.1.tgz#595ab21e8848d229676726616101b9e24a1a8290"
-  integrity sha512-9wZ4gN71CZyGKMkBDpEVLnX5RRMq2Sy2IDqhRpihYnu9iEnLkyvakS1gjr1x3IvrBEqxS+6Tl+M3bAjYNz1THg==
+"@manuscripts/eslint-config@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/@manuscripts/eslint-config/-/eslint-config-0.4.2.tgz#4c4c3dbccba86d3205550864ae971e4b882f793c"
+  integrity sha512-x+R4+hYOnENyjDY548WM+hP18QLCZBW+3OPO5KbHQKtM0qHKuxbGUv2fS3lP8SenU9FmZ0KmTOYWsgiimgp3DA==
   dependencies:
     "@typescript-eslint/parser" "^4.1.0"
     eslint-config-prettier "^6.11.0"
@@ -1402,34 +1402,34 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.7.tgz#f7f0cef173fb2c83fbf283a2c2962b5d6ea32874"
   integrity sha512-7a1y6H/wnvn4hTh7S+TEyC8R5tLHHNiWYJnbeS43JCMYS/6qhMCzJTS0PwQynoep7PWwi2LdgaSZ3qALxzgg0g==
 
-"@manuscripts/library@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.4.0.tgz#4f41d19a8468afac65f53362b578336841077aff"
-  integrity sha512-H1ewqD03YtnGQvPxgeARPxfDicS0qwlX1sBIRybCMFGPlCXNQGlPQQD+3ktZnUMmbPSrRKVqqhhpl0xUPOfFvw==
+"@manuscripts/library@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.5.0.tgz#f5a969939dadd979365b76a2ff2401b59b75f445"
+  integrity sha512-iFtCFegmbRxpsYSG49hDwQcgsfQ+wZwRreSO3hy+cGLzlqCDUQnl4XsjwxB29LIJA7iuAw1d2MRl/SzhV930jA==
   dependencies:
     "@manuscripts/csl-locales" "^0.0.4"
     "@manuscripts/csl-styles" "^0.2.0"
     "@manuscripts/data" "^0.1.2"
-    "@manuscripts/manuscript-transform" "^0.37.0"
+    "@manuscripts/manuscript-transform" "^0.38.0"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.48"
     fontoxpath "^3.14.0"
 
-"@manuscripts/manuscript-transform@^0.37.0":
-  version "0.37.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.37.0.tgz#035ef74c8a3ac11d3eebf6e8f0320ab845eaec03"
-  integrity sha512-TN77nkRtQG3DQmraM5wU/kjfkTmPFT3pCXtP/XpTi+sdJfdJaHqfAG7HBXqmC6Y30s7JnrPvmB0BnPaXjM5ecA==
+"@manuscripts/manuscript-transform@^0.38.0":
+  version "0.38.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.38.0.tgz#7751be101666291b46afaab3614605d772276536"
+  integrity sha512-ZNjZymdx69Gk9WSJiB0Rt4mz9KfyrrsVUd/vdoF5cANkY19b2lM55Jm79nNdrkafeZNo0mJdlBe3fKeVaBkUIg==
   dependencies:
-    "@manuscripts/data" "^0.1.0"
-    "@manuscripts/manuscripts-json-schema" "^1.32.0"
+    "@manuscripts/data" "^0.1.3"
+    "@manuscripts/manuscripts-json-schema" "^1.38.0"
     debug "^4.1.1"
     mime-types "^2.1.27"
     prosemirror-model "^1.11.0"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@^1.32.0", "@manuscripts/manuscripts-json-schema@^1.39.0":
+"@manuscripts/manuscripts-json-schema@^1.38.0", "@manuscripts/manuscripts-json-schema@^1.39.0":
   version "1.39.0"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.39.0.tgz#cd96f1fb0b5fb88562c56b68fed2bfed809840d2"
   integrity sha512-TbPi71Uu0EsBNXikh3CARj988Q22OdURi4NIOhGEsUwqH8GrPQvnVKJY/wncKbU73+fA/IV591O90QRuUE41vA==
