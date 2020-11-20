@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-import purify from 'dompurify'
+import purify, { Config } from 'dompurify'
 
-type Sanitize = (dirty: string) => string
+type Sanitize = (
+  dirty: string,
+  config?: Pick<Config, 'USE_PROFILES'>
+) => DocumentFragment
 
 export interface Purify {
   sanitize: Sanitize
 }
 
-export const sanitize: Sanitize = (dirty) => purify.sanitize(dirty) // TODO: options
+export const sanitize: Sanitize = (dirty, config) =>
+  purify.sanitize(dirty, {
+    RETURN_DOM_FRAGMENT: true,
+    RETURN_DOM_IMPORT: true,
+    ...config,
+  })

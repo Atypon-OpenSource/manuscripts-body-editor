@@ -293,12 +293,21 @@ export const insertInlineEquation = (
     selectedText().replace(/^\$/, '').replace(/\$$/, '')
   )
 
+  const sourcePos = state.selection.from - 1
+
   const tr = state.tr
     .setMeta(modelsKey, { [INSERT]: [inlineMathFragment] })
-    .replaceSelectionWith(state.schema.nodes.inline_equation.create())
+    .replaceSelectionWith(
+      state.schema.nodes.inline_equation.create({
+        id: inlineMathFragment._id,
+      })
+    )
 
   if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, state.tr.selection.from)
+    const selection = NodeSelection.create(
+      tr.doc,
+      tr.mapping.map(sourcePos) + 1
+    )
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 

@@ -21,10 +21,10 @@ import {
   CitationItem,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
-import { sanitize } from 'dompurify'
 import React from 'react'
 
 import { ViewerProps } from '../components/Viewer'
+import { sanitize } from '../lib/dompurify'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -115,7 +115,9 @@ export class CitationView<PropsType extends ViewerProps>
   }
 
   public updateContents = () => {
-    this.dom.innerHTML = sanitize(this.node.attrs.contents) // TODO: whitelist
+    const fragment = sanitize(this.node.attrs.contents) // TODO: whitelist
+    this.dom.innerHTML = ''
+    this.dom.appendChild(fragment)
   }
 
   public getCitation = () => {

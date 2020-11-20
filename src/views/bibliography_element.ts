@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { sanitize } from 'dompurify'
-
 import { ViewerProps } from '../components/Viewer'
+import { sanitize } from '../lib/dompurify'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
@@ -42,7 +41,9 @@ export class BibliographyElementBlockView<
       this.element.removeAttribute('data-paragraph-style')
     } else {
       try {
-        this.element.innerHTML = sanitize(this.node.attrs.contents)
+        const fragment = sanitize(this.node.attrs.contents)
+        this.element.innerHTML = ''
+        this.element.appendChild(fragment)
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors

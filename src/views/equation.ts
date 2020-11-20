@@ -15,9 +15,9 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
-import { sanitize } from 'dompurify'
 
 import { ViewerProps } from '../components/Viewer'
+import { sanitize } from '../lib/dompurify'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -38,15 +38,16 @@ export class EquationView<PropsType extends ViewerProps>
   public updateContents = () => {
     const { SVGStringRepresentation } = this.node.attrs
 
+    while (this.dom.hasChildNodes()) {
+      this.dom.removeChild(this.dom.firstChild as ChildNode)
+    }
+
     if (SVGStringRepresentation) {
-      this.dom.innerHTML = sanitize(SVGStringRepresentation, {
+      const fragment = sanitize(SVGStringRepresentation, {
         USE_PROFILES: { svg: true },
       })
+      this.dom.appendChild(fragment)
     } else {
-      while (this.dom.hasChildNodes()) {
-        this.dom.removeChild(this.dom.firstChild as ChildNode)
-      }
-
       const placeholder = document.createElement('div')
       placeholder.className = 'equation-placeholder'
       placeholder.textContent = '<Equation>'

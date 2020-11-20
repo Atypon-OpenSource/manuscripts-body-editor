@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { convertTeXToSVG } from '@manuscripts/manuscript-transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { EditorProps } from '../components/Editor'
@@ -29,7 +30,6 @@ export class InlineEquationEditableView extends InlineEquationView<
     }
 
     const { createEditor } = await import('../lib/codemirror')
-    const { convertToSVG } = await import('../lib/mathjax-svg')
 
     const placeholder = 'Enter LaTeX equation, e.g. "E=mc^2"'
 
@@ -43,7 +43,7 @@ export class InlineEquationEditableView extends InlineEquationView<
     input.on('changes', async () => {
       const TeXRepresentation = input.getValue()
 
-      const SVGRepresentation = convertToSVG(TeXRepresentation, true)
+      const SVGRepresentation = await convertTeXToSVG(TeXRepresentation, true)
 
       if (!SVGRepresentation) {
         throw new Error('No SVG output from MathJax')
