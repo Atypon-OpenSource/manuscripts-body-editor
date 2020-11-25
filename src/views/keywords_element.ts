@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ViewerProps } from '../components/Viewer'
 import { sanitize } from '../lib/dompurify'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
 export class KeywordsElementView<
-  PropsType extends ViewerProps
+  PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   private element: HTMLElement
 

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import { ViewerProps } from '../components/Viewer'
 import bibliographyElement from './bibliography_element'
 import blockquoteElement from './blockquote_element'
 import bulletList from './bullet_list'
-import citation from './citation'
-import crossReference from './cross_reference'
+import citation, { CitationViewProps } from './citation'
+import crossReference, { CrossReferenceViewProps } from './cross_reference'
 import equation from './equation'
 import equationElement from './equation_element'
 import figure from './figure'
 import figureElement from './figure_element'
 import inlineEquation from './inline_equation'
-import inlineFootnote from './inline_footnote'
+import inlineFootnote, { InlineFootnoteProps } from './inline_footnote'
 import keywordsElement from './keywords_element'
 import link from './link'
-import listing from './listing'
+import listing, { ListingViewProps } from './listing'
 import listingElement from './listing_element'
 import orderedList from './ordered_list'
 import paragraph from './paragraph'
@@ -38,6 +37,11 @@ import pullquoteElement from './pullquote_element'
 import sectionTitle from './section_title'
 import tableElement from './table_element'
 import tocElement from './toc_element'
+
+type ViewerProps = CitationViewProps &
+  CrossReferenceViewProps &
+  InlineFootnoteProps &
+  ListingViewProps
 
 export default (props: ViewerProps) => ({
   bibliography_element: bibliographyElement(props),

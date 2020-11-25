@@ -18,12 +18,16 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { isMac } from '../../lib/platform'
-import { Accelerator } from './ApplicationMenu'
+
+export interface Accelerator {
+  mac: string
+  pc: string
+}
 
 export const ShortcutContainer = styled.div`
   display: inline-flex;
-  color: ${(props) => props.theme.colors.text.secondary};
-  margin-left: ${(props) => props.theme.grid.unit * 4}px;
+  color: #6e6e6e;
+  margin-left: 16px;
   flex-shrink: 0;
   justify-content: flex-end;
 `
@@ -38,13 +42,11 @@ const modifiers: { [key in Keys]: string } & { [key: string]: string } = isMac
       Option: '⌥',
       CommandOrControl: '⌘',
       Shift: '⇧',
-      Enter: '⏎',
     }
   : {
       Option: 'Alt',
       CommandOrControl: 'Ctrl',
-      Shift: '⇧',
-      Enter: '⏎',
+      Shift: 'Shift',
     }
 
 const system = isMac ? 'mac' : 'pc'

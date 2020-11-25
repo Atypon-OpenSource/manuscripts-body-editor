@@ -19,9 +19,10 @@ import {
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import { Decoration, NodeView } from 'prosemirror-view'
 
-import { ViewerProps } from '../components/Viewer'
+import { PopperManager } from '../lib/popper'
 import { SyncError } from '../types'
 
 export interface DecorationSpec {
@@ -29,7 +30,14 @@ export interface DecorationSpec {
   missing?: true
 }
 
-export class BaseNodeView<PropsType extends ViewerProps>
+export interface BaseNodeProps {
+  popper: PopperManager
+  getModel: <T extends Model>(id: string) => T | undefined
+  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  unmountReactComponent: (container: HTMLElement) => void
+}
+
+export class BaseNodeView<PropsType extends BaseNodeProps>
   implements NodeView<ManuscriptSchema> {
   public dom: HTMLElement
   public contentDOM?: HTMLElement

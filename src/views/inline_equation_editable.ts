@@ -17,12 +17,12 @@
 import { convertTeXToSVG } from '@manuscripts/manuscript-transform'
 import { NodeSelection } from 'prosemirror-state'
 
-import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import { InlineEquationView } from './inline_equation'
 
 export class InlineEquationEditableView extends InlineEquationView<
-  EditorProps
+  EditableBlockProps
 > {
   public selectNode = async () => {
     if (!this.props.permissions.write) {

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { nodeNames } from '@manuscripts/manuscript-transform'
+import { Build, nodeNames } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 
-import { EditorProps } from '../components/Editor'
 import { ContextMenu } from '../lib/context-menu'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +26,18 @@ type Constructor<T> = new (...args: any[]) => T
 
 const isNotNull = <T>(a: T | null): a is T => a !== null
 
-export const EditableBlock = <T extends Constructor<BlockView<EditorProps>>>(
+export interface EditableBlockProps extends BaseNodeProps {
+  permissions: {
+    write: boolean
+  }
+  retrySync: (componentIDs: string[]) => Promise<void>
+  setCommentTarget: (commentTarget?: string) => void
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+}
+
+export const EditableBlock = <
+  T extends Constructor<BlockView<EditableBlockProps>>
+>(
   Base: T
 ) => {
   return class extends Base {

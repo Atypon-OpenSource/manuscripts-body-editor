@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { ViewerProps } from '../components/Viewer'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
 export class PullquoteElementView<
-  PropsType extends ViewerProps
+  PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'aside'
   // public footerElement: HTMLElement

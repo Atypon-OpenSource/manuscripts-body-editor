@@ -3,3 +3,4 @@
 /.docz/
 /node_modules/
 /dist/
+.cache

@@ -18,13 +18,13 @@ import { ModelAttachment } from '@manuscripts/manuscript-transform'
 import { Figure } from '@manuscripts/manuscripts-json-schema'
 import prettyBytes from 'pretty-bytes'
 
-import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
-export class FigureEditableView extends FigureView<EditorProps> {
+export class FigureEditableView extends FigureView<EditableBlockProps> {
   public updateContents = () => {
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)

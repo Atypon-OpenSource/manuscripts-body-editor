@@ -18,58 +18,44 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { GetCitationProcessor } from '@manuscripts/library'
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  Manuscript,
-  Model,
-} from '@manuscripts/manuscripts-json-schema'
+import { Build } from '@manuscripts/manuscript-transform'
+import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
-import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
-import keys from '../keys'
-import rules from '../rules'
-import bibliography from './bibliography'
-import elements from './elements'
-import highlights from './highlight'
-import keywords from './keywords'
-import models from './models'
-import objects from './objects'
-import paragraphs from './paragraphs'
-import persist from './persist'
-import placeholder from './placeholder'
-import sections from './sections'
-import styles from './styles'
-import toc from './toc'
+import keys from '../src/keys'
+import elements from '../src/plugins/elements'
+import highlights from '../src/plugins/highlight'
+import keywords from '../src/plugins/keywords'
+import models from '../src/plugins/models'
+import objects from '../src/plugins/objects'
+import paragraphs from '../src/plugins/paragraphs'
+import persist from '../src/plugins/persist'
+import placeholder from '../src/plugins/placeholder'
+import sections from '../src/plugins/sections'
+import styles from '../src/plugins/styles'
+import toc from '../src/plugins/toc'
+import rules from '../src/rules'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
-  getCitationProcessor: GetCitationProcessor
-  getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget: (commentTarget?: string) => void
-  plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
 export default (props: PluginProps) => {
   const {
     deleteModel,
-    getCitationProcessor,
-    getLibraryItem,
     getModel,
     getManuscript,
     modelMap,
     saveModel,
     setCommentTarget,
   } = props
-
-  const plugins = props.plugins || []
 
   return [
     rules,
@@ -78,19 +64,12 @@ export default (props: PluginProps) => {
     // gapCursor(),
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
-    ...plugins, // TODO: should these run after persist?
     elements(),
     persist(),
     sections(),
     toc({ modelMap }),
     styles({ getModel, getManuscript, modelMap }),
     keywords({ getManuscript, getModel }),
-    bibliography({
-      getCitationProcessor,
-      getLibraryItem,
-      getModel,
-      getManuscript,
-    }),
     objects({ getManuscript, getModel }),
     paragraphs(),
     placeholder(),
@@ -98,7 +77,3 @@ export default (props: PluginProps) => {
     highlights({ setCommentTarget }),
   ]
 }
-
-// for tables
-document.execCommand('enableObjectResizing', false, 'false')
-document.execCommand('enableInlineTableEditing', false, 'false')

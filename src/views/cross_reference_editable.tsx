@@ -21,14 +21,14 @@ import {
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
-import { EditorProps } from '../components/Editor'
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
-import { CrossReferenceView } from './cross_reference'
+import { CrossReferenceView, CrossReferenceViewProps } from './cross_reference'
+import { EditableBlockProps } from './editable_block'
 
 export class CrossReferenceEditableView extends CrossReferenceView<
-  EditorProps
+  CrossReferenceViewProps & EditableBlockProps
 > {
   protected popperContainer: HTMLDivElement
 

@@ -16,10 +16,9 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
-import { ViewerProps } from '../components/Viewer'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 
-export default class BlockView<T extends ViewerProps>
+export default class BlockView<T extends BaseNodeProps>
   extends BaseNodeView<T>
   implements ManuscriptNodeView {
   public viewAttributes = {

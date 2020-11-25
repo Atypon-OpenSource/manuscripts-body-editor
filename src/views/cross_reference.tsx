@@ -16,12 +16,16 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 import { AuxiliaryObjectReference } from '@manuscripts/manuscripts-json-schema'
+import { History } from 'history'
 
-import { ViewerProps } from '../components/Viewer'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class CrossReferenceView<PropsType extends ViewerProps>
+export interface CrossReferenceViewProps extends BaseNodeProps {
+  history: History
+}
+
+export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   public selectNode = () => {

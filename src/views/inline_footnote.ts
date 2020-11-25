@@ -15,12 +15,16 @@
  */
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { History } from 'history'
 
-import { ViewerProps } from '../components/Viewer'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class InlineFootnoteView<PropsType extends ViewerProps>
+export interface InlineFootnoteProps extends BaseNodeProps {
+  history: History
+}
+
+export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   public initialise = () => {

@@ -111,5 +111,7 @@ export const deleteClosestParentElement = (
         )
       }
     }
+    return true
   }
+  return false
 }

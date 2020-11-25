@@ -16,11 +16,7 @@
 
 export * from './citation-sources'
 export * from './commands'
-export {
-  ApplicationMenu,
-  MenuItem,
-  MenuSeparator,
-} from './components/menu/ApplicationMenu'
+export * from './components/application-menu'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
@@ -37,10 +33,13 @@ export {
 } from './components/requirements/RequirementsProvider'
 export { Editor } from './components/Editor'
 export { Viewer } from './components/Viewer'
-export { menus } from './menus'
+export { default as getMenus } from './menus'
 export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'
 export { toolbar } from './toolbar'
 export * from './plugins/highlight'
 export * from './plugins/keywords'
 export * from './lib/utils'
+export { default as useEditor, EditorHookValue } from './useEditor'
+export { default as ManuscriptsViewer } from './configs/ManuscriptsViewer'
+export { default as ManuscriptsEditor } from './configs/ManuscriptsEditor'

@@ -17,13 +17,23 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { ViewerProps } from '../components/Viewer'
+import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+
 import elements from './elements'
 import objects from './objects'
 import styles from './styles'
 
-export default (props: ViewerProps) => [
-  elements(),
-  styles(props),
-  objects(props),
-]
+interface PluginProps {
+  getModel: <T extends Model>(id: string) => T | undefined
+  getManuscript: () => Manuscript
+  modelMap: Map<string, Model>
+}
+
+export default (props: PluginProps) => {
+  const { getModel, getManuscript, modelMap } = props
+  return [
+    elements(),
+    styles({ getModel, getManuscript, modelMap }),
+    objects({ getModel, getManuscript }),
+  ]
+}

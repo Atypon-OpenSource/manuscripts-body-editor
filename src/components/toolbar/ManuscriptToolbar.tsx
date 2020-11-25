@@ -102,34 +102,40 @@ export interface ToolbarConfig<S extends Schema> {
 }
 
 export const ManuscriptToolbar: React.FunctionComponent<{
-  view: ManuscriptEditorView
-}> = ({ view }) => (
-  <ToolbarContainer>
-    {view && (
-      <ToolbarGroup>
-        <LevelSelector view={view} />
-      </ToolbarGroup>
-    )}
+  view?: ManuscriptEditorView
+}> = ({ view }) => {
+  if (!view) {
+    return null
+  }
 
-    {Object.entries(toolbar).map(([groupKey, toolbarGroup]) => (
-      <ToolbarGroup key={groupKey}>
-        {Object.entries(toolbarGroup).map(([itemKey, item]) => (
-          <ToolbarItem key={itemKey}>
-            <ToolbarButton
-              title={item.title}
-              data-active={item.active && item.active(view.state)}
-              disabled={item.enable && !item.enable(view.state)}
-              onMouseDown={(event) => {
-                event.preventDefault()
-                item.run(view.state, view.dispatch)
-                view.focus()
-              }}
-            >
-              {item.content}
-            </ToolbarButton>
-          </ToolbarItem>
-        ))}
-      </ToolbarGroup>
-    ))}
-  </ToolbarContainer>
-)
+  return (
+    <ToolbarContainer>
+      {view && (
+        <ToolbarGroup>
+          <LevelSelector view={view} />
+        </ToolbarGroup>
+      )}
+
+      {Object.entries(toolbar).map(([groupKey, toolbarGroup]) => (
+        <ToolbarGroup key={groupKey}>
+          {Object.entries(toolbarGroup).map(([itemKey, item]) => (
+            <ToolbarItem key={itemKey}>
+              <ToolbarButton
+                title={item.title}
+                data-active={item.active && item.active(view.state)}
+                disabled={item.enable && !item.enable(view.state)}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                  item.run(view.state, view.dispatch)
+                  view.focus()
+                }}
+              >
+                {item.content}
+              </ToolbarButton>
+            </ToolbarItem>
+          ))}
+        </ToolbarGroup>
+      ))}
+    </ToolbarContainer>
+  )
+}

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ViewerProps } from '../components/Viewer'
 import { sanitize } from '../lib/dompurify'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
@@ -23,7 +23,7 @@ const isLinkElement = (element: HTMLElement): element is HTMLAnchorElement =>
   element.nodeName === 'A'
 
 export class BibliographyElementBlockView<
-  PropsType extends ViewerProps
+  PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   private element: HTMLElement
 

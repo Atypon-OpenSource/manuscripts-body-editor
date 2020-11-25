@@ -22,16 +22,28 @@ import {
   BibliographyItem,
   Citation,
   CitationItem,
+  Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
-import { EditorProps } from '../components/Editor'
-import { CitationView } from './citation'
+import { CitationView, CitationViewProps } from './citation'
 import { createEditableNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 
-export class CitationEditableView extends CitationView<EditorProps> {
+export interface CitationEditableProps extends CitationViewProps {
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  matchLibraryItemByIdentifier: (
+    item: BibliographyItem
+  ) => BibliographyItem | undefined
+  setLibraryItem: (item: BibliographyItem) => void
+}
+
+export class CitationEditableView extends CitationView<
+  CitationEditableProps & EditableBlockProps
+> {
   public showPopper = () => {
     const {
       components: { CitationEditor, CitationViewer },

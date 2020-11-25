@@ -16,12 +16,11 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
-import { ViewerProps } from '../components/Viewer'
 import { allowedHref } from '../lib/url'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class LinkView<PropsType extends ViewerProps>
+export class LinkView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   public initialise = () => {

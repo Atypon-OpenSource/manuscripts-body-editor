@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import { Model } from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { base64StringToBlob } from 'blob-util'
 
-import { EditorProps } from '../components/Editor'
 import { CodemirrorMode } from '../lib/codemirror-modes'
 import { createEditableNodeView } from './creators'
-import { ListingView } from './listing'
+import { EditableBlockProps } from './editable_block'
+import { ListingView, ListingViewProps } from './listing'
 
 interface Output {
   type: 'stderr' | 'stdout' | 'display' | 'error' | 'status'
@@ -31,7 +33,20 @@ interface Image {
   type: string
 }
 
-export class ListingEditableView extends ListingView<EditorProps> {
+export interface ListingEditableProps extends ListingViewProps {
+  jupyterConfig: {
+    url: string
+    token: string
+  }
+  putAttachment: (
+    id: string,
+    attachment: RxAttachmentCreator
+  ) => Promise<RxAttachment<Model>>
+}
+
+export class ListingEditableView extends ListingView<
+  ListingEditableProps & EditableBlockProps
+> {
   protected needsFocus = false
 
   public selectNode = () => {

@@ -17,11 +17,11 @@
 import { convertTeXToSVG } from '@manuscripts/manuscript-transform'
 import { NodeSelection } from 'prosemirror-state'
 
-import { EditorProps } from '../components/Editor'
 import { createEditableNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import { EquationView } from './equation'
 
-export class EquationEditableView extends EquationView<EditorProps> {
+export class EquationEditableView extends EquationView<EditableBlockProps> {
   public selectNode = async () => {
     const { permissions } = this.props
 

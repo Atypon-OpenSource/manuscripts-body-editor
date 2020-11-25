@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { ViewerProps } from '../components/Viewer'
 import { sectionLevel } from '../lib/context-menu'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class SectionTitleView<PropsType extends ViewerProps> extends BlockView<
-  PropsType
-> {
+export class SectionTitleView<
+  PropsType extends BaseNodeProps
+> extends BlockView<PropsType> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 

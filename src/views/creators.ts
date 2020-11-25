@@ -16,14 +16,16 @@
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 
-import { EditorProps } from '../components/Editor'
-import { ViewerProps } from '../components/Viewer'
 import { NodeViewCreator } from '../types'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { EditableBlockProps } from './editable_block'
 
-export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
+export const createNodeView = <
+  T extends BaseNodeView<BaseNodeProps>,
+  PropsT extends BaseNodeProps
+>(
   type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
-) => (props: ViewerProps): NodeViewCreator<T> => (
+) => (props: PropsT): NodeViewCreator<T> => (
   node,
   view,
   getPos,
@@ -36,9 +38,12 @@ export const createNodeView = <T extends BaseNodeView<ViewerProps>>(
   return nodeView
 }
 
-export const createEditableNodeView = <T extends BaseNodeView<EditorProps>>(
+export const createEditableNodeView = <
+  T extends BaseNodeView<EditableBlockProps>,
+  PropsT extends EditableBlockProps
+>(
   type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
-) => (props: EditorProps): NodeViewCreator<T> => (
+) => (props: PropsT): NodeViewCreator<T> => (
   node,
   view,
   getPos,
@@ -51,11 +56,14 @@ export const createEditableNodeView = <T extends BaseNodeView<EditorProps>>(
   return nodeView
 }
 
-export const createNodeOrElementView = <T extends BaseNodeView<ViewerProps>>(
+export const createNodeOrElementView = <
+  T extends BaseNodeView<BaseNodeProps>,
+  PropsT extends BaseNodeProps
+>(
   type: new (...args: any[]) => T, // eslint-disable-line @typescript-eslint/no-explicit-any
   tagName: string,
   callback?: (node: ManuscriptNode, dom: HTMLElement) => void
-) => (props: ViewerProps): NodeViewCreator<T> => (
+) => (props: PropsT): NodeViewCreator<T> => (
   node,
   view,
   getPos,

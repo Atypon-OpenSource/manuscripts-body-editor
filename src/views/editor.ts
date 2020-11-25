@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { EditorProps } from '../components/Editor'
 import bibliographyElement from './bibliography_element_editable'
 import blockquoteElement from './blockquote_element_editable'
 import bulletList from './bullet_list_editable'
-import citation from './citation_editable'
+import citation, { CitationEditableProps } from './citation_editable'
 import crossReference from './cross_reference_editable'
+import { EditableBlockProps } from './editable_block'
 import equation from './equation_editable'
 import equationElement from './equation_element_editable'
 import figure from './figure_editable'
@@ -28,7 +28,7 @@ import inlineEquation from './inline_equation_editable'
 import inlineFootnote from './inline_footnote_editable'
 import keywordsElement from './keywords_element_editable'
 import link from './link_editable'
-import listing from './listing_editable'
+import listing, { ListingEditableProps } from './listing_editable'
 import listingElement from './listing_element_editable'
 import orderedList from './ordered_list_editable'
 import paragraph from './paragraph_editable'
@@ -38,6 +38,10 @@ import pullquoteElement from './pullquote_element_editable'
 import sectionTitle from './section_title_editable'
 import tableElement from './table_element_editable'
 import tocElement from './toc_element_editable'
+
+type EditorProps = EditableBlockProps &
+  CitationEditableProps &
+  ListingEditableProps
 
 export default (props: EditorProps) => ({
   bibliography_element: bibliographyElement(props),

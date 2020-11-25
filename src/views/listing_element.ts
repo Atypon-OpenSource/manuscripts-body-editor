@@ -16,11 +16,11 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
-import { ViewerProps } from '../components/Viewer'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class ListingElementView<PropsType extends ViewerProps>
+export class ListingElementView<PropsType extends BaseNodeProps>
   extends BlockView<PropsType>
   implements ManuscriptNodeView {
   public elementType = 'figure'

@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-import { createEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
-import { InlineFootnoteProps, InlineFootnoteView } from './inline_footnote'
-
-export class InlineFootnoteEditableView extends InlineFootnoteView<
-  EditableBlockProps & InlineFootnoteProps
-> {
-  public selectNode = () => {
-    if (!this.props.permissions.write) {
-      return
-    }
-
-    // TODO: select/create footnote?
-  }
-}
-
-export default createEditableNodeView(InlineFootnoteEditableView)
+export { ApplicationMenus } from './ApplicationMenu'
+export { useApplicationMenus } from './useApplicationMenus'
+export type { MenuSpec } from './types'

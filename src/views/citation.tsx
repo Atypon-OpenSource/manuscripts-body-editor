@@ -23,12 +23,17 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import React from 'react'
 
-import { ViewerProps } from '../components/Viewer'
 import { sanitize } from '../lib/dompurify'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class CitationView<PropsType extends ViewerProps>
+export interface CitationViewProps extends BaseNodeProps {
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
+  getLibraryItem: (id: string) => BibliographyItem | undefined
+  projectID: string
+}
+
+export class CitationView<PropsType extends CitationViewProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   protected popperContainer?: HTMLDivElement

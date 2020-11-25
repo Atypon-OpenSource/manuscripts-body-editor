@@ -17,12 +17,12 @@
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
-import { EditorProps } from '../components/Editor'
 import { LinkForm, LinkValue } from '../components/views/LinkForm'
 import { createEditableNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import { LinkView } from './link'
 
-export class LinkEditableView extends LinkView<EditorProps> {
+export class LinkEditableView extends LinkView<EditableBlockProps> {
   protected popperContainer: HTMLDivElement
 
   public selectNode = () => {

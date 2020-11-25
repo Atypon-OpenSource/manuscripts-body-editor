@@ -16,11 +16,10 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
-import { ViewerProps } from '../components/Viewer'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class FigureView<PropsType extends ViewerProps>
+export class FigureView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   protected container: HTMLElement

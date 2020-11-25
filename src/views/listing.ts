@@ -19,15 +19,20 @@ import {
   isFigureElementNode,
   ManuscriptNodeView,
 } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
+import { RxAttachment } from '@manuscripts/rxdb'
 import CodeMirror from 'codemirror'
 import prettyBytes from 'pretty-bytes'
 
-import { ViewerProps } from '../components/Viewer'
 import { CodemirrorMode } from '../lib/codemirror-modes'
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class ListingView<PropsType extends ViewerProps>
+export interface ListingViewProps extends BaseNodeProps {
+  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
+}
+
+export class ListingView<PropsType extends ListingViewProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   protected container: HTMLElement
