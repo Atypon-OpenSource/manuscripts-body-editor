@@ -40,6 +40,9 @@ const placeholderWidget = (placeholder: string) => (
   return element
 }
 
+/**
+ * This plugin adds a placeholder decoration to empty nodes
+ */
 export default () =>
   new Plugin<null, ManuscriptSchema>({
     props: {

@@ -20,6 +20,9 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Plugin } from 'prosemirror-state'
 
+/**
+ * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
+ */
 export default () => {
   return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {

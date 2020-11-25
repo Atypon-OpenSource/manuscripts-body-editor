@@ -21,6 +21,9 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Plugin } from 'prosemirror-state'
 
+/**
+ * This plugin enforces a rule that there can never be more than one adjacent empty paragraph.
+ */
 export default () => {
   return new Plugin<null, ManuscriptSchema>({
     appendTransaction: (transactions, oldState, newState) => {

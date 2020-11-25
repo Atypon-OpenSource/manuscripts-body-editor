@@ -18,6 +18,11 @@ import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+/**
+ * This plugin simply sets `element: true` in a Decoration spec for each element (a non-section node that is a child of a section).
+ * `createNodeOrElementView` uses this to decide whether to create a NodeView or just a regular DOM element.
+ * This is useful for paragraphs and lists, for example, which may be nested inside top-level elements of the same node type.
+ */
 export default () => {
   return new Plugin<null, ManuscriptSchema>({
     props: {

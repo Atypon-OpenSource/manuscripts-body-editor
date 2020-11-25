@@ -29,6 +29,9 @@ interface Props {
   deleteModel: (id: string) => Promise<string>
 }
 
+/**
+ * This plugin allows commands that don't otherwise have access to the database to insert, remove or update models, by dispatching the model in a transaction.
+ */
 export default (props: Props) => {
   return new Plugin<Record<string, unknown>, ManuscriptSchema>({
     key: modelsKey,

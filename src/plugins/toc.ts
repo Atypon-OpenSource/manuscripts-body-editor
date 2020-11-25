@@ -139,6 +139,9 @@ interface Props {
   modelMap: Map<string, Model>
 }
 
+/**
+ * This plugin generates the content for a Table of Contents element, if present
+ */
 export default (props: Props) => {
   return new Plugin<null, ManuscriptSchema>({
     key: tocKey,

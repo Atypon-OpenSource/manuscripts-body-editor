@@ -58,6 +58,9 @@ interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
 }
 
+/**
+ * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
+ */
 export default (props: Props) => {
   return new Plugin<undefined, ManuscriptSchema>({
     key: keywordsKey,

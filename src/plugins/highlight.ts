@@ -175,6 +175,9 @@ interface Props {
   setCommentTarget: (target?: string) => void
 }
 
+/**
+ * This plugin creates a decoration around each highlight marker start and end pair, and keeps a map of all the highlights.
+ */
 export default (props: Props) => {
   return new Plugin<HighlightPluginState, ManuscriptSchema>({
     key: highlightKey,

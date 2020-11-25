@@ -69,6 +69,10 @@ interface Props {
   getManuscript: GetManuscript
 }
 
+/**
+ * This plugin generates labels for inline citations and the bibliography contents, using citeproc-js.
+ * The citation labels and bibliography are regenerated when any relevant content changes.
+ */
 export default (props: Props) => {
   const buildDecorations = (
     doc: ManuscriptNode,
@@ -165,6 +169,8 @@ export default (props: Props) => {
           props.getLibraryItem,
           props.getManuscript
         )
+
+        // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,

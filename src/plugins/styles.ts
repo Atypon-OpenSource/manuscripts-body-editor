@@ -45,6 +45,9 @@ interface Props {
   modelMap: Map<string, Model>
 }
 
+/**
+ * This plugin ensures that all nodes are given default styles where needed, according to the attributes defined in the node spec.
+ */
 export default (props: Props) => {
   const chooseDefaultFigureStyle = (): string | undefined => {
     for (const model of props.modelMap.values()) {
