@@ -26,28 +26,27 @@ export const Text = styled.div`
 `
 
 export const MenuList = styled.div`
-  background: ${(props) => props.theme.colors.background.primary};
-  border: 1px solid ${(props) => props.theme.colors.border.secondary};
-  border-radius: ${(props) => props.theme.grid.radius.small};
-  box-shadow: ${(props) => props.theme.shadow.dropShadow};
-  color: ${(props) => props.theme.colors.text.primary};
-  font-size: ${(props) => props.theme.font.size.normal};
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  color: #353535;
   min-width: 150px;
-  padding: ${(props) => props.theme.grid.unit}px 0;
+  padding: 4px 0;
   white-space: nowrap;
   width: auto;
   z-index: 10;
-  max-height: 80vh;
-  overflow-y: auto;
-  overflow-x: visible;
+
+  position: absolute;
 
   &[data-placement='bottom-start'] {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+  closeMenu={closeMenu}
 
   &[data-placement='right-start'] {
-    top: ${(props) => props.theme.grid.unit * 2}px;
+    top: 8px;
   }
 `
 
