@@ -2076,10 +2076,24 @@
     citeproc "^2.4.48"
     fontoxpath "^3.14.0"
 
-"@manuscripts/manuscript-transform@^0.38.0", "@manuscripts/manuscript-transform@^0.38.2":
+"@manuscripts/manuscript-transform@^0.38.0":
   version "0.38.2"
   resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.38.2.tgz#29d1b7c14b46eef7cee6f52b2186c010df81413c"
   integrity sha512-zh7GjttCnOGwTOkVW5QoH+TUa8K+LnrxrisG6Y0YhYMiJwNE8hs/0zD6Js/0DQRZUzR6nVKSSaEwYiKbBAxfkg==
+  dependencies:
+    "@manuscripts/data" "^0.1.3"
+    "@manuscripts/manuscripts-json-schema" "^1.38.0"
+    debug "^4.1.1"
+    mathjax-full "^3.1.2"
+    mime "^2.4.6"
+    prosemirror-model "^1.11.0"
+    uuid "^8.2.0"
+    w3c-xmlserializer "^2.0.0"
+
+"@manuscripts/manuscript-transform@^0.38.3":
+  version "0.38.3"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.38.3.tgz#ad26ba77ac96d79d537339196f1d2e853185b837"
+  integrity sha512-fTmcaASQsBBggRDSHyFGGuyDzfynjrI3KAxHL5FglWbBG2ihwhe5CObvULun9vjwD7nsHE9HHQG1IojJZmFTbA==
   dependencies:
     "@manuscripts/data" "^0.1.3"
     "@manuscripts/manuscripts-json-schema" "^1.38.0"
@@ -2638,7 +2652,7 @@
     "@types/prosemirror-state" "*"
     "@types/prosemirror-view" "*"
 
-"@types/prosemirror-model@*", "@types/prosemirror-model@^1.7.4":
+"@types/prosemirror-model@*", "@types/prosemirror-model@~1.7.2":
   version "1.7.4"
   resolved "https://registry.npmjs.org/@types/prosemirror-model/-/prosemirror-model-1.7.4.tgz#fdbee6af3f450cdac6ab915cec3b033c598e0c7d"
   integrity sha512-nXDcEopJ1fqeSJhGHxQMLd1VKWfA0kRaNLvK30CZhGXOKRySk66hWyrqo9swdGzzGtGZ7VzjDkECo0L4ScYk+w==

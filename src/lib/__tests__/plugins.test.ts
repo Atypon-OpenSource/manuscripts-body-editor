@@ -16,10 +16,10 @@
 
 import projectDump from '@manuscripts/examples/data/project-dump.json'
 import {
+  ActualManuscriptNode,
   Decoder,
   generateID,
   hasObjectType,
-  ManuscriptNode,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
@@ -327,7 +327,7 @@ const userProfile: UserProfile = {
 const history = createMemoryHistory()
 
 const buildProps = (
-  doc: ManuscriptNode,
+  doc: ActualManuscriptNode,
   modelMap: Map<string, Model>
 ): EditorProps => ({
   doc,
@@ -407,7 +407,7 @@ describe('editor view', () => {
 
   test('loads with plugins', () => {
     const decoder = new Decoder(modelMap)
-    const doc = decoder.createArticleNode()
+    const doc = decoder.createArticleNode() as ActualManuscriptNode
 
     const state = EditorState.create<ManuscriptSchema>({
       doc,

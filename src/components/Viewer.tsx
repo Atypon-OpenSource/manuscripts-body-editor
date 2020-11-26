@@ -18,8 +18,8 @@ import 'prosemirror-view/style/prosemirror.css'
 import '../lib/smooth-scroll'
 
 import {
+  ActualManuscriptNode,
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
@@ -41,7 +41,7 @@ import views from '../views/viewer'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
-  doc: ManuscriptNode
+  doc: ActualManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
   getManuscript: () => Manuscript
