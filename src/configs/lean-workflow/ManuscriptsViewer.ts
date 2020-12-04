@@ -15,7 +15,7 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../lib/smooth-scroll'
+import '../../lib/smooth-scroll'
 
 import {
   ManuscriptNode,
@@ -28,22 +28,22 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment } from '@manuscripts/rxdb'
+import { Commit } from '@manuscripts/track-changes'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
-import { PopperManager } from '../lib/popper'
-import plugins from '../plugins/viewer'
-import { CreateView } from '../useEditor'
-import views from '../views/viewer'
+import { PopperManager } from '../../lib/popper'
+import plugins from '../../plugins/viewer'
+import { CreateView } from '../../useEditor'
+import views from './viewer-views-lw'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
+  commit: Commit
   doc: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
-  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
   locale: string

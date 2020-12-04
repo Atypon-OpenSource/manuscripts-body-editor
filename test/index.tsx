@@ -45,12 +45,10 @@ const buildModelMap = (models: Model[]): Map<string, Model> => {
 
 const EditorComponent: React.FC<Props> = (props) => {
   const initState = config.createState(props)
-  const { state, onRender } = useEditor<ManuscriptSchema>(
+  const { onRender } = useEditor<ManuscriptSchema>(
     initState,
     config.createView(props)
   )
-
-  console.log(state)
 
   return <div ref={onRender} id="editor"></div>
 }
@@ -100,6 +98,11 @@ const start = async () => {
     projectID: 'my-project',
     retrySync: () => Promise.resolve(),
     setCommentTarget: () => undefined,
+    getAttachment: () => new File([], 'my-file.png'),
+    putAttachment: (file: File) => {
+      console.log('uploading ', file)
+      return Promise.resolve('uuid')
+    },
   }
 
   ReactDOM.render(

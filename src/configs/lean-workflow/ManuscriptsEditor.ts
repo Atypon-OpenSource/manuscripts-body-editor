@@ -15,7 +15,7 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../lib/smooth-scroll'
+import '../../lib/smooth-scroll'
 
 import { GetCitationProcessor } from '@manuscripts/library'
 import {
@@ -29,26 +29,20 @@ import {
   Model,
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
-import { transformPasted } from '../lib/paste'
-import plugins from '../plugins/editor'
-import { ChangeReceiver } from '../types'
-import { CreateView } from '../useEditor'
-import views from '../views/editor'
+import { transformPasted } from '../../lib/paste'
+import plugins from '../../plugins/editor'
+import { ChangeReceiver } from '../../types'
+import { CreateView } from '../../useEditor'
+import views from './editor-views-lw'
 import { ViewerProps } from './ManuscriptsViewer'
 
 export interface EditorProps extends ViewerProps {
   plugins?: Array<Plugin<ManuscriptSchema>>
   getCitationProcessor: GetCitationProcessor
-  putAttachment: (
-    id: string,
-    attachment: RxAttachmentCreator
-  ) => Promise<RxAttachment<Model>>
-  removeAttachment: (id: string, attachmentID: string) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void
@@ -60,10 +54,6 @@ export interface EditorProps extends ViewerProps {
   setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   setCommentTarget: (commentTarget?: string) => void
-  jupyterConfig: {
-    url: string
-    token: string
-  }
   permissions: {
     write: boolean
   }

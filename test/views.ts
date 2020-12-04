@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { FigureNode } from '@manuscripts/manuscript-transform'
+
+import { Dispatch } from '../src/commands'
 import bibliographyElement from '../src/views/bibliography_element_editable'
 import blockquoteElement from '../src/views/blockquote_element_editable'
 import bulletList from '../src/views/bullet_list_editable'
@@ -22,26 +25,25 @@ import crossReference from '../src/views/cross_reference_editable'
 import { EditableBlockProps } from '../src/views/editable_block'
 import equation from '../src/views/equation_editable'
 import equationElement from '../src/views/equation_element_editable'
-import figure from '../src/views/figure_editable'
+import Figure, { FigureProps } from '../src/views/Figure'
 import figureElement from '../src/views/figure_element_editable'
 import inlineEquation from '../src/views/inline_equation_editable'
 import inlineFootnote from '../src/views/inline_footnote_editable'
 import keywordsElement from '../src/views/keywords_element_editable'
 import link from '../src/views/link_editable'
-import listing from '../src/views/listing_editable'
-import listingElement from '../src/views/listing_element_editable'
 import orderedList from '../src/views/ordered_list_editable'
 import paragraph from '../src/views/paragraph_editable'
 import placeholder from '../src/views/placeholder'
 import placeholderElement from '../src/views/placeholder_element_editable'
 import pullquoteElement from '../src/views/pullquote_element_editable'
+import ReactView from '../src/views/ReactView'
 import sectionTitle from '../src/views/section_title_editable'
 import tableElement from '../src/views/table_element_editable'
 import tocElement from '../src/views/toc_element_editable'
 
-type ViewProps = EditableBlockProps
+type ViewProps = EditableBlockProps & FigureProps
 
-export default (props: ViewProps) => ({
+export default (props: ViewProps, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
@@ -49,14 +51,12 @@ export default (props: ViewProps) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: figure(props),
+  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
   keywords_element: keywordsElement(props),
   link: link(props),
-  listing: listing(props),
-  listing_element: listingElement(props),
   ordered_list: orderedList(props),
   paragraph: paragraph(props),
   placeholder: placeholder(props),

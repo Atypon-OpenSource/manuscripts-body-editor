@@ -23,6 +23,7 @@ import {
   schema,
 } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import { Commit } from '@manuscripts/track-changes'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -35,6 +36,7 @@ import views from './views'
 
 export interface Props {
   doc: ManuscriptNode
+  commit: Commit
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   locale: string
@@ -51,6 +53,9 @@ export interface Props {
   permissions: {
     write: boolean
   }
+
+  getAttachment: (id: string) => Blob
+  putAttachment: (file: File) => Promise<string>
 }
 
 export default {
@@ -73,7 +78,7 @@ export default {
         right: 0,
       },
       dispatchTransaction: dispatch,
-      nodeViews: views(props),
+      nodeViews: views(props, dispatch),
       transformPasted,
     }),
 }
