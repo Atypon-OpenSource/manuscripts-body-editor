@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { FigureNode } from '@manuscripts/manuscript-transform'
+
+import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element_editable'
 import blockquoteElement from '../../views/blockquote_element_editable'
 import bulletList from '../../views/bullet_list_editable'
@@ -22,7 +25,7 @@ import crossReference from '../../views/cross_reference_editable'
 import { EditableBlockProps } from '../../views/editable_block'
 import equation from '../../views/equation_editable'
 import equationElement from '../../views/equation_element_editable'
-import figure from '../../views/figure_editable'
+import Figure, { FigureProps } from '../../views/Figure'
 import figureElement from '../../views/figure_element_editable'
 import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
@@ -33,13 +36,14 @@ import paragraph from '../../views/paragraph_editable'
 import placeholder from '../../views/placeholder'
 import placeholderElement from '../../views/placeholder_element_editable'
 import pullquoteElement from '../../views/pullquote_element_editable'
+import ReactView from '../../views/ReactView'
 import sectionTitle from '../../views/section_title_editable'
 import tableElement from '../../views/table_element_editable'
 import tocElement from '../../views/toc_element_editable'
 
-type EditorProps = EditableBlockProps & CitationEditableProps
+type EditorProps = EditableBlockProps & CitationEditableProps & FigureProps
 
-export default (props: EditorProps) => ({
+export default (props: EditorProps, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
@@ -47,7 +51,7 @@ export default (props: EditorProps) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: figure(props),
+  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),

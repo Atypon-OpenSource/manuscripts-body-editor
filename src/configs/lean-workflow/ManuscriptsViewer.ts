@@ -35,8 +35,8 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
 import { PopperManager } from '../../lib/popper'
-import plugins from '../../plugins/viewer'
 import { CreateView } from '../../useEditor'
+import plugins from './viewer-plugins-lw'
 import views from './viewer-views-lw'
 
 export interface ViewerProps {
@@ -46,6 +46,10 @@ export interface ViewerProps {
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
+  permissions: {
+    write: boolean
+  }
+  putAttachment: (file: File) => Promise<string>
   locale: string
   modelMap: Map<string, Model>
   popper: PopperManager
@@ -69,8 +73,8 @@ export default {
     new EditorView<ManuscriptSchema>(el, {
       editable: () => false,
       state,
-      // @ts-ignore (types)
-      nodeViews: views(props),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      nodeViews: views(props, dispatch) as any,
       dispatchTransaction: dispatch,
       attributes: props.attributes,
     }),

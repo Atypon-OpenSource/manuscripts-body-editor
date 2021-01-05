@@ -20,23 +20,17 @@ import '../../lib/smooth-scroll'
 import { GetCitationProcessor } from '@manuscripts/library'
 import {
   Build,
-  ManuscriptEditorView,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  Model,
-  // Section,
-} from '@manuscripts/manuscripts-json-schema'
+import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
 import { transformPasted } from '../../lib/paste'
-import plugins from '../../plugins/editor'
-import { ChangeReceiver } from '../../types'
 import { CreateView } from '../../useEditor'
+import plugins from './editor-plugins-lw'
 import views from './editor-views-lw'
 import { ViewerProps } from './ManuscriptsViewer'
 
@@ -50,13 +44,9 @@ export interface EditorProps extends ViewerProps {
     item: BibliographyItem
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
-  subscribe: (receive: ChangeReceiver) => void
-  setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   setCommentTarget: (commentTarget?: string) => void
-  permissions: {
-    write: boolean
-  }
+
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
 }
@@ -81,7 +71,8 @@ export default {
         right: 0,
       },
       dispatchTransaction: dispatch,
-      nodeViews: views(props),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      nodeViews: views(props, dispatch) as any,
       attributes: props.attributes,
       transformPasted,
     }),

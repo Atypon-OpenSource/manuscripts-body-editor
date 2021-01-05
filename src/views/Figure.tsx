@@ -21,8 +21,8 @@ import styled from 'styled-components'
 import { ReactViewComponentProps } from './ReactView'
 
 export interface FigureProps {
-  putAttachment: (file: File) => Promise<string>
   permissions: { write: boolean }
+  putAttachment: (file: File) => Promise<string>
 }
 
 const Figure = ({ putAttachment, permissions }: FigureProps) => {

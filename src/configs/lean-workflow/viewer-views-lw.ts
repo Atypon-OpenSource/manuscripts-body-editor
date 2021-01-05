@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { FigureNode } from '@manuscripts/manuscript-transform'
+
+import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element'
 import blockquoteElement from '../../views/blockquote_element'
 import bulletList from '../../views/bullet_list'
@@ -23,7 +26,7 @@ import crossReference, {
 } from '../../views/cross_reference'
 import equation from '../../views/equation'
 import equationElement from '../../views/equation_element'
-import figure from '../../views/figure'
+import Figure, { FigureProps } from '../../views/Figure'
 import figureElement from '../../views/figure_element'
 import inlineEquation from '../../views/inline_equation'
 import inlineFootnote, {
@@ -36,15 +39,17 @@ import paragraph from '../../views/paragraph'
 import placeholder from '../../views/placeholder'
 import placeholderElement from '../../views/placeholder_element'
 import pullquoteElement from '../../views/pullquote_element'
+import ReactView from '../../views/ReactView'
 import sectionTitle from '../../views/section_title'
 import tableElement from '../../views/table_element'
 import tocElement from '../../views/toc_element'
 
 type ViewerProps = CitationViewProps &
   CrossReferenceViewProps &
-  InlineFootnoteProps
+  InlineFootnoteProps &
+  FigureProps
 
-export default (props: ViewerProps) => ({
+export default (props: ViewerProps, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
@@ -52,7 +57,7 @@ export default (props: ViewerProps) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: figure(props),
+  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
