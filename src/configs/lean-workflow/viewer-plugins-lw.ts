@@ -28,7 +28,7 @@ interface PluginProps {
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
-  commit: Commit
+  commit: Commit | null
 }
 
 export default (props: PluginProps) => {
@@ -37,6 +37,6 @@ export default (props: PluginProps) => {
     elements(),
     styles({ getModel, getManuscript, modelMap }),
     objects({ getModel, getManuscript }),
-    track(commit),
+    track(commit || undefined),
   ]
 }

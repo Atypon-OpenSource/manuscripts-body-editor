@@ -47,7 +47,7 @@ import toc from '../../plugins/toc'
 import rules from '../../rules'
 
 interface PluginProps {
-  commit: Commit
+  commit: Commit | null
   deleteModel: (id: string) => Promise<string>
   getCitationProcessor: GetCitationProcessor
   getLibraryItem: (id: string) => BibliographyItem | undefined
@@ -98,7 +98,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track(commit),
+    track(commit || undefined),
     highlights({ setCommentTarget }),
   ]
 }

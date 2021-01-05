@@ -41,7 +41,7 @@ import views from './viewer-views-lw'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
-  commit: Commit
+  commit: Commit | null
   doc: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
