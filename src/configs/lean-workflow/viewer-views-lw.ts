@@ -26,8 +26,8 @@ import crossReference, {
 } from '../../views/cross_reference'
 import equation from '../../views/equation'
 import equationElement from '../../views/equation_element'
-import Figure, { FigureProps } from '../../views/Figure'
 import figureElement from '../../views/figure_element'
+import Figure, { FigureProps } from '../../views/FigureComponent'
 import inlineEquation from '../../views/inline_equation'
 import inlineFootnote, {
   InlineFootnoteProps,

@@ -25,7 +25,7 @@ export interface FigureProps {
   putAttachment: (file: File) => Promise<string>
 }
 
-const Figure = ({ putAttachment, permissions }: FigureProps) => {
+const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
     setNodeAttrs,
@@ -134,4 +134,4 @@ const Placeholder = styled.div`
   min-height: 100px;
 `
 
-export default Figure
+export default FigureComponent
