@@ -31,8 +31,13 @@ import { uniqueId } from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import {
+  ApplicationMenus,
+  getMenus,
+  useApplicationMenus,
+  useEditor,
+} from '../src'
 import { PopperManager } from '../src/lib/popper'
-import useEditor from '../src/useEditor'
 import config, { Props } from './config'
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
@@ -45,12 +50,20 @@ const buildModelMap = (models: Model[]): Map<string, Model> => {
 
 const EditorComponent: React.FC<Props> = (props) => {
   const initState = config.createState(props)
-  const { onRender } = useEditor<ManuscriptSchema>(
+  const editor = useEditor<ManuscriptSchema>(
     initState,
     config.createView(props)
   )
+  const { onRender } = editor
+  const menus = useApplicationMenus(getMenus(editor))
 
-  return <div ref={onRender} id="editor"></div>
+  return (
+    <div>
+      <ApplicationMenus {...menus} />
+      <hr />
+      <div ref={onRender} id="editor"></div>
+    </div>
+  )
 }
 
 const start = async () => {

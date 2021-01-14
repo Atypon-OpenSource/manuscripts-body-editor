@@ -54,7 +54,7 @@ const separator = isMac ? '' : '-'
 
 const Character = styled.span`
   display: inline-block;
-  width: 1ch;
+  min-width: 1ch;
 `
 
 const acceleratorParts = (accelerator: Accelerator): React.ReactNode[] => {
