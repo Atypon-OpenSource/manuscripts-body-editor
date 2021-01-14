@@ -899,3 +899,35 @@
   border-radius: 4px;
   margin: 16px 64px;
 }
+
+/*
+** TRACK CHANGES
+*/
+
+.ProseMirror .blame {
+  background-color: rgba(57, 255, 20, 0.5);
+}
+.ProseMirror .blame-uncommitted {
+  background-color: rgba(255, 218, 20, 0.5);
+}
+.ProseMirror .blame-focused {
+  background-color: rgba(13, 213, 252, 0.5);
+}
+
+.ProseMirror .blame-point,
+.ProseMirror .blame-focused-point {
+  position: relative;
+}
+.ProseMirror .blame-point::after,
+.ProseMirror .blame-focused-point::after {
+  position: absolute;
+  left: -2.5px;
+  display: inline-block;
+  content: ' ';
+  border: 1px solid rgba(255, 0, 0);
+  transform: rotate(45deg);
+  border-top: none;
+  border-left: none;
+  width: 5px;
+  height: 5px;
+}
