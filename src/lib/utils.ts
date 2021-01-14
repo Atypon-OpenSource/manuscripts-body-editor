@@ -20,6 +20,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/manuscript-transform'
+import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
 export function* iterateChildren(
@@ -73,6 +74,11 @@ export const findParentSection = findParentNode((node) =>
   isSectionNodeType(node.type)
 )
 
-export const findParentElement = findParentNode(
-  (node) => isElementNodeType(node.type) && node.attrs.id
-)
+export const findParentElement = (selection: Selection, validIds?: string[]) =>
+  findParentNode((node) => {
+    // if validIds was passed and this element is not in it, then keep looking
+    if (validIds && !validIds.includes(node.attrs.id)) {
+      return false
+    }
+    return isElementNodeType(node.type) && node.attrs.id
+  })(selection)
