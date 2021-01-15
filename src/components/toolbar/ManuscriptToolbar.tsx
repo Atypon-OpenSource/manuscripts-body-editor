@@ -104,10 +104,6 @@ export interface ToolbarConfig<S extends Schema> {
 export const ManuscriptToolbar: React.FunctionComponent<{
   view?: ManuscriptEditorView
 }> = ({ view }) => {
-  if (!view) {
-    return null
-  }
-
   return (
     <ToolbarContainer>
       {view && (
@@ -122,10 +118,13 @@ export const ManuscriptToolbar: React.FunctionComponent<{
             <ToolbarItem key={itemKey}>
               <ToolbarButton
                 title={item.title}
-                data-active={item.active && item.active(view.state)}
-                disabled={item.enable && !item.enable(view.state)}
+                data-active={view && item.active && item.active(view.state)}
+                disabled={!view || (item.enable && !item.enable(view.state))}
                 onMouseDown={(event) => {
                   event.preventDefault()
+                  if (!view) {
+                    return
+                  }
                   item.run(view.state, view.dispatch)
                   view.focus()
                 }}
