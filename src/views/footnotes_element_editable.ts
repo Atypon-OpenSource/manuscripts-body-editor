@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { createEditableNodeView } from './creators'
-import { InlineFootnoteView } from './inline_footnote'
+import { createNodeOrElementView } from './creators'
+import { EditableBlock } from './editable_block'
+import { FootnotesElementView } from './footnotes_element'
 
-export default createEditableNodeView(InlineFootnoteView)
+export default createNodeOrElementView(
+  EditableBlock(FootnotesElementView),
+  'div'
+)

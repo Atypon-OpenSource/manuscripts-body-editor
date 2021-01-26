@@ -17,10 +17,15 @@
 import {
   BibliographySectionNode,
   buildCitation,
-  buildFootnote,
   buildHighlight,
   buildInlineMathFragment,
+  FootnoteNode,
+  FootnotesElementNode,
+  FootnotesSectionNode,
+  generateID,
+  InlineFootnoteNode,
   isElementNodeType,
+  isFootnotesElementNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -28,16 +33,19 @@ import {
   ManuscriptNode,
   ManuscriptNodeSelection,
   ManuscriptNodeType,
+  ManuscriptResolvedPos,
   ManuscriptTextSelection,
   ManuscriptTransaction,
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
+import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
+import { footnotesKey } from './plugins/footnotes'
 import {
   getHighlights,
   highlightKey,
@@ -314,25 +322,74 @@ export const insertInlineEquation = (
   return true
 }
 
-export const insertInlineFootnote = (
+interface NodePos {
+  node: FootnotesElementNode
+  pos: number
+}
+
+const findFootnotesElement = (doc: ManuscriptNode): NodePos | undefined => {
+  let nodePos: NodePos | undefined = undefined
+
+  doc.descendants((node, pos) => {
+    if (isFootnotesElementNode(node)) {
+      nodePos = { node, pos }
+    }
+  })
+
+  return nodePos
+}
+
+export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const footnote = buildFootnote(
-    state.selection.$anchor.parent.attrs.id,
-    (window.getSelection() || '').toString()
-  )
+  const footnote = state.schema.nodes.footnote.createAndFill({
+    id: generateID(ObjectTypes.Footnote),
+    kind,
+  }) as FootnoteNode
 
-  const node = state.schema.nodes.inline_footnote.create()
-
-  const pos = state.selection.to
+  const inlineFootnote = state.schema.nodes.inline_footnote.create({
+    rid: footnote.attrs.id,
+  }) as InlineFootnoteNode
 
   const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [footnote] })
-    .insert(pos, node)
+
+  // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
+  tr.insert(state.selection.to, inlineFootnote)
+
+  const footnotesElementAndPos = findFootnotesElement(tr.doc)
+
+  let selectionPos: number
+
+  if (footnotesElementAndPos === undefined) {
+    // create a new footnotes section if needed
+    const footnotesSection = state.schema.nodes.footnotes_section.create({}, [
+      state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+      state.schema.nodes.footnotes_element.create(
+        {},
+        footnote
+      ) as FootnotesElementNode,
+    ]) as FootnotesSectionNode
+
+    const insideEndPos = tr.doc.content.size
+
+    // TODO: insert bibliography section before footnotes section
+    tr.insert(insideEndPos, footnotesSection)
+
+    selectionPos = insideEndPos - 3 // inside footnote inside element inside section
+  } else {
+    const insideEndPos =
+      footnotesElementAndPos.pos + footnotesElementAndPos.node.nodeSize - 1
+
+    // insert footnote at end of last element in section
+    tr.insert(insideEndPos, footnote)
+
+    selectionPos = insideEndPos - 1
+  }
 
   if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
+    // set selection inside new footnote
+    const selection = TextSelection.create(tr.doc, selectionPos)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
@@ -367,14 +424,14 @@ export const insertKeywordsSection = (
   return true
 }
 
-const findPosAfterParentSection = (state: ManuscriptEditorState) => {
-  const { $from } = state.selection
-
-  for (let d = $from.depth; d >= 0; d--) {
-    const node = $from.node(d)
+const findPosAfterParentSection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  for (let d = $pos.depth; d >= 0; d--) {
+    const node = $pos.node(d)
 
     if (isSectionNodeType(node.type)) {
-      return $from.after(d)
+      return $pos.after(d)
     }
   }
 
@@ -385,7 +442,7 @@ export const insertSection = (subsection = false) => (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const pos = findPosAfterParentSection(state)
+  const pos = findPosAfterParentSection(state.selection.$from)
 
   if (pos === null) {
     return false
@@ -401,6 +458,35 @@ export const insertSection = (subsection = false) => (
   if (dispatch) {
     // place cursor inside section title
     const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
+export const insertFootnotesSection = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  if (getChildOfType(state.doc, state.schema.nodes.footnotes_section)) {
+    return false
+  }
+
+  const section = state.schema.nodes.footnotes_section.createAndFill({}, [
+    state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+    state.schema.nodes.footnotes_element.create(),
+  ]) as BibliographySectionNode
+
+  const pos = state.tr.doc.content.size
+
+  const tr = state.tr
+
+  tr.insert(pos, section).setMeta(footnotesKey, {
+    footnotesElementInserted: true,
+  })
+
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 

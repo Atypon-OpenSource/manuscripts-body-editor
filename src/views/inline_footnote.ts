@@ -27,25 +27,29 @@ export interface InlineFootnoteProps extends BaseNodeProps {
 export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
+  public handleClick = () => {
+    this.props.history.push({
+      ...this.props.history.location,
+      hash: '#' + this.node.attrs.rid,
+    })
+  }
+
+  public updateContents = () => {
+    this.dom.textContent = this.node.attrs.contents // TODO: CSS counter?
+
+    this.dom.addEventListener('click', this.handleClick)
+  }
+
   public initialise = () => {
     this.createDOM()
     this.updateContents()
   }
 
-  public selectNode = () => {
-    // TODO: select and scroll to the footnote without changing the URL?
-    this.props.history.push('#' + this.node.attrs.rid)
-  }
-
-  public updateContents = () => {
-    this.dom.textContent = this.node.attrs.contents
-  }
-
   public ignoreMutation = () => true
 
-  protected createDOM = () => {
+  public createDOM = () => {
     this.dom = document.createElement('span')
-    this.dom.classList.add('footnote')
+    this.dom.className = 'footnote'
   }
 }
 

@@ -16,6 +16,7 @@
 
 import {
   generateNodeID,
+  isFootnoteNode,
   isListNode,
   ManuscriptNode,
   ManuscriptSchema,
@@ -50,7 +51,7 @@ export default () => {
       const processNode = (
         parentNode: ManuscriptNode,
         parentPos = 0,
-        insideList = false
+        insideListOrFootnote = false
       ) => {
         parentNode.forEach((node, offset) => {
           if (node.isText) {
@@ -61,7 +62,7 @@ export default () => {
           const pos = parentPos + offset
 
           // set ids for nodes that need them, except blocks inside lists
-          if ('id' in node.attrs && (!insideList || node.isInline)) {
+          if ('id' in node.attrs && (!insideListOrFootnote || node.isInline)) {
             const { id } = node.attrs
 
             if (id) {
@@ -85,7 +86,11 @@ export default () => {
           const isList = () => isListNode(node)
 
           if (node.childCount) {
-            processNode(node, pos + 1, insideList || isList())
+            processNode(
+              node,
+              pos + 1,
+              insideListOrFootnote || isList() || isFootnoteNode(node)
+            )
           }
         })
       }

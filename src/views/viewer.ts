@@ -23,6 +23,8 @@ import equation from './equation'
 import equationElement from './equation_element'
 import figure from './figure'
 import figureElement from './figure_element'
+import footnote from './footnote'
+import footnotesElement from './footnotes_element'
 import inlineEquation from './inline_equation'
 import inlineFootnote, { InlineFootnoteProps } from './inline_footnote'
 import keywordsElement from './keywords_element'
@@ -53,6 +55,8 @@ export default (props: ViewerProps) => ({
   equation_element: equationElement(props),
   figure: figure(props),
   figure_element: figureElement(props),
+  footnote: footnote(props),
+  footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
   keywords_element: keywordsElement(props),

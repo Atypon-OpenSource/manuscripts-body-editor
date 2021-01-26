@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { createEditableNodeView } from './creators'
-import { InlineFootnoteView } from './inline_footnote'
+import { ViewerProps } from '../components/Viewer'
+import BlockView from './block_view'
+import { createNodeOrElementView } from './creators'
 
-export default createEditableNodeView(InlineFootnoteView)
+export class FootnoteView<PropsType extends ViewerProps> extends BlockView<
+  PropsType
+> {
+  public elementType = 'div'
+}
+
+export default createNodeOrElementView(FootnoteView, 'div')

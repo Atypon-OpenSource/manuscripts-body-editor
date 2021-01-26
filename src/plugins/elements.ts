@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import {
+  isSectionNodeType,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -34,7 +37,7 @@ export default () => {
         // TODO: only calculate these when something changes
 
         state.doc.descendants((node, pos, parent) => {
-          if (parent.type === section && node.type !== section) {
+          if (isSectionNodeType(parent.type) && node.type !== section) {
             decorations.push(
               Decoration.node(
                 pos,

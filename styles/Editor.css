@@ -900,6 +900,20 @@
   margin: 16px 64px;
 }
 
+.ProseMirror .footnote {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  vertical-align: super;
+  font-size: 75%;
+}
+
+.ProseMirror .footnote-label {
+  vertical-align: super;
+  font-size: 75%;
+  margin-right: 8px;
+  cursor: pointer;
+}
 /*
 ** TRACK CHANGES
 */

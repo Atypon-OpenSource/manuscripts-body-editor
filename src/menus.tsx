@@ -34,8 +34,10 @@ import {
   insertBibliographySection,
   insertBlock,
   insertCrossReference,
+  // insertFootnotesSection, // this is disabled by commenting until we test the footnotes
   insertInlineCitation,
   insertInlineEquation,
+  insertInlineFootnote,
   insertKeywordsSection,
   insertLink,
   insertSection,
@@ -49,12 +51,15 @@ import {
 } from './lib/hierarchy'
 import { Command, EditorHookValue } from './useEditor'
 
-export default (editor: EditorHookValue<ManuscriptSchema>): MenuSpec[] => {
+export default (
+  editor: EditorHookValue<ManuscriptSchema>,
+  footnotesEnabled?: boolean
+): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const wrap = (command: Command<ManuscriptSchema>) => () =>
     editor.doCommand(command)
 
-  return [
+  const menus = [
     {
       id: 'edit',
       label: 'Edit',
@@ -268,15 +273,26 @@ export default (editor: EditorHookValue<ManuscriptSchema>): MenuSpec[] => {
           enable: isCommandValid(canInsert(schema.nodes.cross_reference)),
           run: wrap(insertCrossReference),
         },
+        {
+          id: 'insert-footnote',
+          label: 'Footnote',
+          accelerator: {
+            mac: 'Option+CommandOrControl+F',
+            pc: 'CommandOrControl+Option+F',
+          },
+          enable: isCommandValid(canInsert(schema.nodes.inline_footnote)),
+          run: wrap(insertInlineFootnote('footnote')),
+        },
+        // endnote type is not used at the moment, this will be needed when we enable them
         // {
-        //   id: 'insert-footnote',
-        //   label: 'Footnote',
+        //   id: 'insert-endnote',
+        //   label: () => 'Endnote',
         //   accelerator: {
-        //     mac: 'Option+CommandOrControl+F',
-        //     pc: 'CommandOrControl+Option+F',
+        //     mac: 'Option+CommandOrControl+E',
+        //     pc: 'CommandOrControl+Option+E',
         //   },
         //   enable: canInsert(schema.nodes.inline_footnote),
-        //   run: insertInlineFootnote,
+        //   run: insertInlineFootnote('endnote'),
         // },
         {
           role: 'separator',
@@ -426,4 +442,14 @@ export default (editor: EditorHookValue<ManuscriptSchema>): MenuSpec[] => {
       ],
     },
   ]
+
+  // this is temporal. once footnotes are production ready this filtering will be removed and the function should return the menus array above
+  return menus.map((menuGroup: MenuSpec) => {
+    if (menuGroup.submenu) {
+      menuGroup.submenu = menuGroup.submenu.filter(
+        (submenu) => !(submenu.id == 'insert-footnote' && !footnotesEnabled)
+      )
+    }
+    return menuGroup
+  })
 }

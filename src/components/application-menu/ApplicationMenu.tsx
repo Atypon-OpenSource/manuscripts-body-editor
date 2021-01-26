@@ -77,19 +77,22 @@ export const ApplicationMenus: React.FC<Props> = ({
             {menu.enable && menu.isOpen && (
               <MenuList>
                 {menu.submenu &&
-                  menu.submenu.map((submenu, menuIndex) => (
-                    <MenuItemContainer
-                      key={`menu-${menuIndex}`}
-                      item={submenu}
-                      depth={1}
-                      handleMenuItemClick={() =>
-                        handleItemClick([index, menuIndex])
-                      }
-                      handleSubmenuItemClick={(submenuIndex: number) =>
-                        handleItemClick([index, menuIndex, submenuIndex])
-                      }
-                    />
-                  ))}
+                  menu.submenu.map((submenu, menuIndex) => {
+                    // temporarily adding cofigurable footnotes to test them safely
+                    return (
+                      <MenuItemContainer
+                        key={`menu-${menuIndex}`}
+                        item={submenu}
+                        depth={1}
+                        handleMenuItemClick={() =>
+                          handleItemClick([index, menuIndex])
+                        }
+                        handleSubmenuItemClick={(submenuIndex: number) =>
+                          handleItemClick([index, menuIndex, submenuIndex])
+                        }
+                      />
+                    )
+                  })}
               </MenuList>
             )}
           </MenuContainer>

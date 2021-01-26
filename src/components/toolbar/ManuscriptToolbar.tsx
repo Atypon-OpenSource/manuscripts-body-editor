@@ -103,7 +103,8 @@ export interface ToolbarConfig<S extends Schema> {
 
 export const ManuscriptToolbar: React.FunctionComponent<{
   view?: ManuscriptEditorView
-}> = ({ view }) => {
+  footnotesEnabled?: boolean
+}> = ({ view, footnotesEnabled }) => {
   return (
     <ToolbarContainer>
       {view && (
@@ -114,25 +115,29 @@ export const ManuscriptToolbar: React.FunctionComponent<{
 
       {Object.entries(toolbar).map(([groupKey, toolbarGroup]) => (
         <ToolbarGroup key={groupKey}>
-          {Object.entries(toolbarGroup).map(([itemKey, item]) => (
-            <ToolbarItem key={itemKey}>
-              <ToolbarButton
-                title={item.title}
-                data-active={view && item.active && item.active(view.state)}
-                disabled={!view || (item.enable && !item.enable(view.state))}
-                onMouseDown={(event) => {
-                  event.preventDefault()
-                  if (!view) {
-                    return
-                  }
-                  item.run(view.state, view.dispatch)
-                  view.focus()
-                }}
-              >
-                {item.content}
-              </ToolbarButton>
-            </ToolbarItem>
-          ))}
+          {Object.entries(toolbarGroup)
+            .filter(
+              ([itemKey]) => !(itemKey === 'footnotes' && !footnotesEnabled) // Excluding 'Add Footnote' menu if footnotes are disabled in the config
+            ) // footnote check is temporal change. Footnotes is supposed to be a non-optional feature once fully ready for production
+            .map(([itemKey, item]) => (
+              <ToolbarItem key={itemKey}>
+                <ToolbarButton
+                  title={item.title}
+                  data-active={view && item.active && item.active(view.state)}
+                  disabled={!view || (item.enable && !item.enable(view.state))}
+                  onMouseDown={(event) => {
+                    event.preventDefault()
+                    if (!view) {
+                      return
+                    }
+                    item.run(view.state, view.dispatch)
+                    view.focus()
+                  }}
+                >
+                  {item.content}
+                </ToolbarButton>
+              </ToolbarItem>
+            ))}
         </ToolbarGroup>
       ))}
     </ToolbarContainer>

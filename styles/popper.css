@@ -207,3 +207,12 @@
     max-width: 90%;
   }
 }
+
+.popper .footnote-editor {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+  height: auto;
+  width: 600px;
+}

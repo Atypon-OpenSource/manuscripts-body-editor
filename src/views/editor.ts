@@ -24,6 +24,8 @@ import equation from './equation_editable'
 import equationElement from './equation_element_editable'
 import figure from './figure_editable'
 import figureElement from './figure_element_editable'
+import footnote from './footnote_editable'
+import footnotesElement from './footnotes_element_editable'
 import inlineEquation from './inline_equation_editable'
 import inlineFootnote from './inline_footnote_editable'
 import keywordsElement from './keywords_element_editable'
@@ -53,6 +55,8 @@ export default (props: EditorProps) => ({
   equation_element: equationElement(props),
   figure: figure(props),
   figure_element: figureElement(props),
+  footnote: footnote(props),
+  footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
   keywords_element: keywordsElement(props),

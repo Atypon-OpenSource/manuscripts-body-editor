@@ -34,6 +34,7 @@ import keys from '../keys'
 import rules from '../rules'
 import bibliography from './bibliography'
 import elements from './elements'
+import footnotes from './footnotes'
 import highlights from './highlight'
 import keywords from './keywords'
 import models from './models'
@@ -83,6 +84,7 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
+    footnotes(props),
     styles({ getModel, getManuscript, modelMap }),
     keywords({ getManuscript, getModel }),
     bibliography({
