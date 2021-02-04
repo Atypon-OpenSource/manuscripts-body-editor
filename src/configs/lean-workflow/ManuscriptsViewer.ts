@@ -28,7 +28,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { Commit } from '@manuscripts/track-changes'
+import { checkout, Commit } from '@manuscripts/track-changes'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -62,12 +62,18 @@ export interface ViewerProps {
 }
 
 export default {
-  createState: (props: ViewerProps) =>
-    EditorState.create<ManuscriptSchema>({
-      doc: props.doc,
+  createState: (props: ViewerProps) => {
+    const { doc, commit } = props
+    const ancestorState = EditorState.create<ManuscriptSchema>({
+      doc,
       schema,
       plugins: plugins(props),
-    }),
+    })
+    if (!commit) {
+      return ancestorState
+    }
+    return checkout(doc, ancestorState, commit)
+  },
 
   createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>
     new EditorView<ManuscriptSchema>(el, {
