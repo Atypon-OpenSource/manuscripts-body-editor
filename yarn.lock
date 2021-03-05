@@ -2154,10 +2154,10 @@
     prosemirror-state "^1.3.3"
     prosemirror-view "^1.16.0"
 
-"@manuscripts/track-changes@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.8.tgz#aa2d0734ef67eedac9a37881f26e49fd5e24a17e"
-  integrity sha512-hleJzAi3eCUrNEGSy+iUZhF/QeJ19KoR9x72PsSpfG8zNXrSCDE8aiTPOLdVMbNtAHtht3GFNoi3AUGkgkuJLA==
+"@manuscripts/track-changes@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.11.tgz#501f3087ecfcd3c9a133de4b13f6f87687c73f5a"
+  integrity sha512-NPkfFA94HkZ0HgNB7zQ5FcGtxgwPW44x208sPc6iMKHUg112cfpTo5vV6ho6eJSEhFB+iIwwRtT1DAya+ILyvw==
   dependencies:
     "@manuscripts/manuscripts-json-schema" "^1.45.9"
     prosemirror-state "^1.3.3"

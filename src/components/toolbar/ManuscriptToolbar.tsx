@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ManuscriptEditorView } from '@manuscripts/manuscript-transform'
+import {
+  ManuscriptEditorState,
+  ManuscriptEditorView,
+} from '@manuscripts/manuscript-transform'
 import { Schema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React from 'react'
@@ -102,16 +105,16 @@ export interface ToolbarConfig<S extends Schema> {
 }
 
 export const ManuscriptToolbar: React.FunctionComponent<{
+  state: ManuscriptEditorState
+  dispatch: (tr: Transaction) => void
   view?: ManuscriptEditorView
   footnotesEnabled?: boolean
-}> = ({ view, footnotesEnabled }) => {
+}> = ({ state, dispatch, view, footnotesEnabled }) => {
   return (
     <ToolbarContainer>
-      {view && (
-        <ToolbarGroup>
-          <LevelSelector view={view} />
-        </ToolbarGroup>
-      )}
+      <ToolbarGroup>
+        <LevelSelector state={state} dispatch={dispatch} view={view} />
+      </ToolbarGroup>
 
       {Object.entries(toolbar).map(([groupKey, toolbarGroup]) => (
         <ToolbarGroup key={groupKey}>
@@ -123,15 +126,12 @@ export const ManuscriptToolbar: React.FunctionComponent<{
               <ToolbarItem key={itemKey}>
                 <ToolbarButton
                   title={item.title}
-                  data-active={view && item.active && item.active(view.state)}
-                  disabled={!view || (item.enable && !item.enable(view.state))}
+                  data-active={item.active && item.active(state)}
+                  disabled={item.enable && !item.enable(state)}
                   onMouseDown={(event) => {
                     event.preventDefault()
-                    if (!view) {
-                      return
-                    }
-                    item.run(view.state, view.dispatch)
-                    view.focus()
+                    item.run(state, dispatch)
+                    view && view.focus()
                   }}
                 >
                   {item.content}

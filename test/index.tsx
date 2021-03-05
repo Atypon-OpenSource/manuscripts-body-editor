@@ -76,6 +76,7 @@ const start = async () => {
   const modelMap = buildModelMap(models)
   const decoder = new Decoder(modelMap)
   const doc = decoder.createArticleNode()
+  const ancestorDoc = decoder.createArticleNode()
 
   const getModel = <T extends Model>(id: string) =>
     modelMap.get(id) as T | undefined
@@ -98,6 +99,7 @@ const start = async () => {
 
   const props: Props = {
     doc,
+    ancestorDoc,
     popper: new PopperManager(),
     locale: 'en-GB',
     permissions: { write: true },

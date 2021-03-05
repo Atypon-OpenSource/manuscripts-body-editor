@@ -19,7 +19,11 @@ import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
 import { GetCitationProcessor } from '@manuscripts/library'
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import {
+  Build,
+  ManuscriptNode,
+  ManuscriptSchema,
+} from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
@@ -34,7 +38,6 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../../keys'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
-import highlights from '../../plugins/highlight'
 import keywords from '../../plugins/keywords'
 import models from '../../plugins/models'
 import objects from '../../plugins/objects'
@@ -47,6 +50,7 @@ import toc from '../../plugins/toc'
 import rules from '../../rules'
 
 interface PluginProps {
+  ancestorDoc?: ManuscriptNode
   commit: Commit | null
   deleteModel: (id: string) => Promise<string>
   getCitationProcessor: GetCitationProcessor
@@ -61,6 +65,7 @@ interface PluginProps {
 
 export default (props: PluginProps) => {
   const {
+    ancestorDoc,
     commit,
     deleteModel,
     getCitationProcessor,
@@ -69,7 +74,6 @@ export default (props: PluginProps) => {
     getManuscript,
     modelMap,
     saveModel,
-    setCommentTarget,
   } = props
 
   const plugins = props.plugins || []
@@ -98,8 +102,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track(commit || undefined),
-    highlights({ setCommentTarget }),
+    track({ commit: commit || undefined, ancestorDoc, minFreezeInterval: 30 }),
   ]
 }
 

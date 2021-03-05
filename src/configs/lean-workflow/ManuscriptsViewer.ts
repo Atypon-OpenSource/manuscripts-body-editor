@@ -43,6 +43,7 @@ export interface ViewerProps {
   attributes?: { [key: string]: string }
   commit: Commit | null
   doc: ManuscriptNode
+  ancestorDoc?: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined

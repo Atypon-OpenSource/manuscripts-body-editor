@@ -40,8 +40,13 @@ import {
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import {
+  commands as trackPluginCommands,
+  getTrackPluginState,
+} from '@manuscripts/track-changes'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+import { v4 as uuid } from 'uuid'
 
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
@@ -782,6 +787,16 @@ export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  const isTrackEnabled = !!getTrackPluginState(state)
+  if (isTrackEnabled) {
+    const id = uuid()
+    const result = trackPluginCommands.addAnnotation(
+      id,
+      'rgba(255, 189, 38, 0.5)'
+    )(state, dispatch)
+    return result ? id : undefined
+  }
+
   const highlight = buildHighlight()
 
   const { from, to } = state.selection

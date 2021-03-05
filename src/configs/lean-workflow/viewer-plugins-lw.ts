@@ -17,6 +17,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import track, { Commit } from '@manuscripts/track-changes'
 
@@ -25,6 +26,7 @@ import objects from '../../plugins/objects'
 import styles from '../../plugins/styles'
 
 interface PluginProps {
+  ancestorDoc?: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
@@ -32,11 +34,11 @@ interface PluginProps {
 }
 
 export default (props: PluginProps) => {
-  const { commit, getModel, getManuscript, modelMap } = props
+  const { commit, ancestorDoc, getModel, getManuscript, modelMap } = props
   return [
     elements(),
     styles({ getModel, getManuscript, modelMap }),
     objects({ getModel, getManuscript }),
-    track(commit || undefined),
+    track({ commit: commit || undefined, ancestorDoc }),
   ]
 }

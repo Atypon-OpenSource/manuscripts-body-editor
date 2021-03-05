@@ -299,7 +299,13 @@ export class ContextMenu {
                 setCommentTarget(this.node.attrs.id)
               } else {
                 const highlight = insertHighlight(state, dispatch)
-                setCommentTarget(highlight._id)
+                setCommentTarget(
+                  typeof highlight === 'string'
+                    ? highlight
+                    : !highlight
+                    ? undefined
+                    : highlight._id
+                )
               }
 
               popper.destroy()

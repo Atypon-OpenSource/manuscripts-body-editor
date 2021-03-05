@@ -17,6 +17,7 @@
 import {
   generateNodeID,
   isSectionNodeType,
+  ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -24,7 +25,7 @@ import {
   SectionTitleNode,
 } from '@manuscripts/manuscript-transform'
 import { Fragment } from 'prosemirror-model'
-import { TextSelection } from 'prosemirror-state'
+import { TextSelection, Transaction } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select, { OptionProps } from 'react-select'
 import styled from 'styled-components'
@@ -85,15 +86,17 @@ const buildOption = (props: SelectorOptionProps): Option => ({
 type GroupedOptions = Array<{ options: Option[] }>
 type Options = GroupedOptions | Option[]
 
-const buildOptions = (view: ManuscriptEditorView): Options => {
+const buildOptions = (
+  state: ManuscriptEditorState,
+  dispatch: (tr: Transaction) => void,
+  view?: ManuscriptEditorView
+): Options => {
   const {
-    state: {
-      doc,
-      selection: { $from, $to },
-      schema,
-      tr,
-    },
-  } = view
+    doc,
+    selection: { $from, $to },
+    schema,
+    tr,
+  } = state
 
   const { nodes } = schema
 
@@ -149,9 +152,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   // append the section to the preceding section as a subsection
@@ -183,9 +185,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   // move the section up the tree
@@ -236,9 +237,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   // move paragraph to title of new section at this position, along with the rest of the section
@@ -294,9 +294,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   const demoteSectionToParagraph = () => {
@@ -349,9 +348,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   const convertParagraphToList = (nodeType: ManuscriptNodeType) => () => {
@@ -377,9 +375,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
       TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
     )
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   const convertListType = (
@@ -388,9 +385,8 @@ const buildOptions = (view: ManuscriptEditorView): Options => {
   ) => () => {
     tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
 
-    view.focus()
-
-    view.dispatch(tr.scrollIntoView())
+    dispatch(tr.scrollIntoView())
+    view && view.focus()
   }
 
   const parentElementType = parentElement.node.type
@@ -652,15 +648,15 @@ const findSelectedOption = (options: GroupedOptions): Option | undefined => {
 }
 
 export const LevelSelector: React.FunctionComponent<{
-  view: ManuscriptEditorView
-}> = ({ view }) => {
+  state: ManuscriptEditorState
+  dispatch: (tr: Transaction) => void
+  view?: ManuscriptEditorView
+}> = ({ state, dispatch, view }) => {
   const {
-    state: {
-      schema: { nodes },
-    },
-  } = view
+    schema: { nodes },
+  } = state
 
-  const options = buildOptions(view)
+  const options = buildOptions(state, dispatch, view)
 
   return (
     <StyledSelect
