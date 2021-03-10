@@ -48,6 +48,7 @@ import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { v4 as uuid } from 'uuid'
 
+import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { footnotesKey } from './plugins/footnotes'
@@ -187,6 +188,28 @@ export const insertBlock = (nodeType: ManuscriptNodeType) => (
   }
 
   createBlock(nodeType, position, state, dispatch)
+
+  return true
+}
+
+export const deleteBlock = (typeToDelete: string) => (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const { selection, tr } = state
+  const { $head } = selection
+  const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
+
+  if (!depth) {
+    return false
+  }
+
+  if (dispatch) {
+    const start = $head.start(depth)
+    const end = $head.end(depth)
+    tr.delete(start - 1, end + 1)
+    dispatch(tr)
+  }
 
   return true
 }

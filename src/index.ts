@@ -17,6 +17,7 @@
 export * from './citation-sources'
 export * from './commands'
 export * from './components/application-menu'
+export { DialogController } from './components/dialog'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'

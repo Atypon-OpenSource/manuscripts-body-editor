@@ -25,6 +25,8 @@ import {
   addRowBefore,
   deleteColumn,
   deleteRow,
+  mergeCells,
+  splitCell,
 } from 'prosemirror-tables'
 
 import {
@@ -45,6 +47,7 @@ import {
   markActive,
 } from './commands'
 import { MenuSpec } from './components/application-menu'
+import { DialogNames } from './components/dialog'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -53,6 +56,7 @@ import { Command, EditorHookValue } from './useEditor'
 
 export default (
   editor: EditorHookValue<ManuscriptSchema>,
+  handleOpenDialog: (dialog: DialogNames) => void,
   footnotesEnabled?: boolean
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
@@ -436,6 +440,39 @@ export default (
               label: 'Delete Column',
               enable: isCommandValid(deleteColumn),
               run: wrap(deleteColumn),
+            },
+            {
+              role: 'separator',
+            },
+            {
+              id: 'merge-cells',
+              label: 'Merge Cells',
+              enable: isCommandValid(mergeCells),
+              run: wrap(mergeCells),
+            },
+            {
+              id: 'split-cells',
+              label: 'Split Cell',
+              enable: isCommandValid(splitCell),
+              run: wrap(splitCell),
+            },
+            {
+              id: 'table-options',
+              label: 'Table options \u2026',
+              run: () => handleOpenDialog(DialogNames.TableOptions),
+              enable: isCommandValid(ifInTableBody(deleteRow)),
+            },
+            {
+              id: 'style-table-cell',
+              label: 'Cell style \u2026',
+              run: () => handleOpenDialog(DialogNames.TableCellOptions),
+              enable: isCommandValid(ifInTableBody(deleteRow)),
+            },
+            {
+              id: 'style-table-cell-border',
+              label: 'Border style \u2026',
+              run: () => DialogNames.TableCellBorderOptions,
+              enable: isCommandValid(ifInTableBody(deleteRow)),
             },
           ],
         },
