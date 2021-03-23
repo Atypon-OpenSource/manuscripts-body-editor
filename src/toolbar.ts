@@ -24,7 +24,6 @@ import {
   insertBlock,
   insertHighlight,
   insertInlineCitation,
-  insertInlineFootnote,
   markActive,
 } from './commands'
 import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
@@ -118,12 +117,6 @@ export const toolbar: ToolbarConfig<ManuscriptSchema> = {
       content: icons.equation_element,
       enable: canInsert(schema.nodes.equation_element),
       run: insertBlock(schema.nodes.equation_element),
-    },
-    footnote: {
-      title: 'Insert footnote',
-      content: icons.citation,
-      enable: canInsert(schema.nodes.inline_footnote),
-      run: insertInlineFootnote('footnote'),
     },
     listing_element: {
       title: 'Insert listing',
