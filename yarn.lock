@@ -2145,6 +2145,11 @@
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
+"@manuscripts/plugin-persist@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/@manuscripts/plugin-persist/-/plugin-persist-0.1.2.tgz#104852652ab9024f1b303c973125077abaa67b07"
+  integrity sha512-hQkwrDAEgICxYC0V5twuqyUDZ3Sro/KjN3G5rrrgDOKS4BNUUU3VbQ748jAv59NoLZJOp6pJN3SeQvWIgiVh3Q==
+
 "@manuscripts/rxdb@^8.2.0-manuscripts1":
   version "8.2.0-manuscripts1"
   resolved "https://registry.npmjs.org/@manuscripts/rxdb/-/rxdb-8.2.0-manuscripts1.tgz#947e10e790e373a80c5cf1cd73213f0ac63cc660"

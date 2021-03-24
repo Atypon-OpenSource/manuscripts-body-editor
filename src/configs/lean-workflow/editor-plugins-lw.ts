@@ -29,6 +29,7 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
+import persist from '@manuscripts/plugin-persist'
 import track, { Commit } from '@manuscripts/track-changes'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
@@ -42,7 +43,6 @@ import keywords from '../../plugins/keywords'
 import models from '../../plugins/models'
 import objects from '../../plugins/objects'
 import paragraphs from '../../plugins/paragraphs'
-import persist from '../../plugins/persist'
 import placeholder from '../../plugins/placeholder'
 import sections from '../../plugins/sections'
 import styles from '../../plugins/styles'
