@@ -39,6 +39,7 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../../keys'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
+import highlight from '../../plugins/highlight'
 import keywords from '../../plugins/keywords'
 import models from '../../plugins/models'
 import objects from '../../plugins/objects'
@@ -74,6 +75,7 @@ export default (props: PluginProps) => {
     getManuscript,
     modelMap,
     saveModel,
+    setCommentTarget,
   } = props
 
   const plugins = props.plugins || []
@@ -103,6 +105,8 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     track({ commit: commit || undefined, ancestorDoc, minFreezeInterval: 30 }),
+    // temporary:
+    highlight({ setCommentTarget }),
   ]
 }
 
