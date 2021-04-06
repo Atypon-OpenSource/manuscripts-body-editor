@@ -35,21 +35,20 @@ export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   }
 
   public updateContents = () => {
-    this.dom.textContent = this.node.attrs.contents // TODO: CSS counter?
-
-    this.dom.addEventListener('click', this.handleClick)
+    this.setDomAttrs(this.node, this.dom)
   }
 
   public initialise = () => {
-    this.createDOM()
+    this.dom = this.createDOM()
+    this.dom.classList.add('footnote')
+    this.dom.addEventListener('click', this.handleClick)
     this.updateContents()
   }
 
   public ignoreMutation = () => true
 
   public createDOM = () => {
-    this.dom = document.createElement('span')
-    this.dom.className = 'footnote'
+    return document.createElement('span')
   }
 }
 

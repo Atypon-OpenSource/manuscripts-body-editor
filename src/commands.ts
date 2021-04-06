@@ -16,6 +16,7 @@
 
 import {
   BibliographySectionNode,
+  Build,
   buildCitation,
   buildHighlight,
   buildInlineMathFragment,
@@ -39,7 +40,7 @@ import {
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import { Highlight, ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 
@@ -804,7 +805,7 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
 export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
-) => {
+): Build<Highlight> => {
   // COMMENTED OUT WHILE WE SORT OUT HIGHLIGHT IN LW:
 
   // const isTrackEnabled = !!getTrackPluginState(state)

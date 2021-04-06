@@ -84,7 +84,7 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
-    footnotes(props),
+    footnotes(),
     styles({ getModel, getManuscript, modelMap }),
     keywords({ getManuscript, getModel }),
     bibliography({

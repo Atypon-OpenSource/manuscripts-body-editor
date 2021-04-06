@@ -78,6 +78,12 @@ export class BaseNodeView<PropsType extends BaseNodeProps>
     // extend this
   }
 
+  public setDomAttrs(node: ManuscriptNode, element: HTMLElement) {
+    Object.keys(node.attrs || {}).forEach((attr) => {
+      element.setAttribute(attr, node.attrs[attr])
+    })
+  }
+
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
   }

@@ -20,17 +20,12 @@ import {
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import { Footnote, Model } from '@manuscripts/manuscripts-json-schema'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-type GetModel = <T extends Model>(id: string) => T | undefined
-
-type InlineFootnoteNodes = Array<[InlineFootnoteNode, number, Footnote]>
-
 interface PluginState {
-  nodes: InlineFootnoteNodes
+  nodes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
 }
 
@@ -38,23 +33,16 @@ export const footnotesKey = new PluginKey<PluginState, ManuscriptSchema>(
   'footnotes'
 )
 
-export const buildPluginState = (
-  doc: ManuscriptNode,
-  getModel: GetModel
-): PluginState => {
-  const nodes: InlineFootnoteNodes = []
+export const buildPluginState = (doc: ManuscriptNode): PluginState => {
+  const nodes: [InlineFootnoteNode, number][] = []
 
   let index = 0
   const labels = new Map<string, string>()
 
   doc.descendants((node, pos) => {
     if (isInlineFootnoteNode(node)) {
-      const footnote = getModel<Footnote>(node.attrs.rid)
-
-      if (footnote) {
-        nodes.push([node, pos, footnote])
-        labels.set(node.attrs.rid, String(++index))
-      }
+      nodes.push([node, pos])
+      labels.set(node.attrs.rid, String(++index))
     }
   })
 
@@ -82,11 +70,6 @@ const labelWidget = (label: string, id: string) => (
   })
 
   return element
-}
-
-interface Props {
-  modelMap: Map<string, Model>
-  getModel: <T extends Model>(id: string) => T | undefined
 }
 
 /**
@@ -121,17 +104,17 @@ interface Props {
  *       },
  *
  */
-export default (props: Props) => {
+export default () => {
   return new Plugin<PluginState, ManuscriptSchema>({
     key: footnotesKey,
 
     state: {
       init(config, instance): PluginState {
-        return buildPluginState(instance.doc, props.getModel)
+        return buildPluginState(instance.doc)
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        return buildPluginState(newState.doc, props.getModel)
+        return buildPluginState(newState.doc)
       },
     },
 
