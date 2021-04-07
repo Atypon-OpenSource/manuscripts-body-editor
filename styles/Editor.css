@@ -900,7 +900,8 @@
   margin: 16px 64px;
 }
 
-.ProseMirror .footnote {
+.ProseMirror .footnote::before {
+  content: attr(contents);
   display: inline-block;
   position: relative;
   cursor: pointer;

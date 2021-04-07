@@ -26,7 +26,6 @@ import {
   generateID,
   InlineFootnoteNode,
   isElementNodeType,
-  isFootnotesElementNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -48,6 +47,7 @@ import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { footnotesKey } from './plugins/footnotes'
+import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import {
   getHighlights,
   highlightKey,
@@ -346,23 +346,6 @@ export const insertInlineEquation = (
   return true
 }
 
-interface NodePos {
-  node: FootnotesElementNode
-  pos: number
-}
-
-const findFootnotesElement = (doc: ManuscriptNode): NodePos | undefined => {
-  let nodePos: NodePos | undefined = undefined
-
-  doc.descendants((node, pos) => {
-    if (isFootnotesElementNode(node)) {
-      nodePos = { node, pos }
-    }
-  })
-
-  return nodePos
-}
-
 export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -372,16 +355,23 @@ export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
     kind,
   }) as FootnoteNode
 
+  const insertedAt = state.selection.to
+  const thisFootnoteNumbering = footnotesUtils.getNewFootnoteNumbering(
+    insertedAt,
+    state
+  )
+
   const inlineFootnote = state.schema.nodes.inline_footnote.create({
     rid: footnote.attrs.id,
+    contents: thisFootnoteNumbering.toString(),
   }) as InlineFootnoteNode
 
   const tr = state.tr
 
   // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
-  tr.insert(state.selection.to, inlineFootnote)
+  tr.insert(insertedAt, inlineFootnote)
 
-  const footnotesElementAndPos = findFootnotesElement(tr.doc)
+  const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
 
   let selectionPos: number
 
@@ -399,16 +389,15 @@ export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
 
     // TODO: insert bibliography section before footnotes section
     tr.insert(insideEndPos, footnotesSection)
-
-    selectionPos = insideEndPos - 3 // inside footnote inside element inside section
+    // inside footnote inside element inside section
+    selectionPos = insideEndPos + footnotesSection.nodeSize
   } else {
-    const insideEndPos =
-      footnotesElementAndPos.pos + footnotesElementAndPos.node.nodeSize - 1
-
-    // insert footnote at end of last element in section
-    tr.insert(insideEndPos, footnote)
-
-    selectionPos = insideEndPos - 1
+    const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
+      footnotesElementAndPos,
+      thisFootnoteNumbering
+    )
+    tr.insert(footnotePos, footnote)
+    selectionPos = selectPos
   }
 
   if (dispatch) {

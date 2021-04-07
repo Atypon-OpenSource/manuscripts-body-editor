@@ -133,26 +133,6 @@ export default () => {
 
       const { tr } = newState
 
-      const redundantFootnotesIds = oldInlineFootnoteNodes.reduce(
-        (acc, [node]) => {
-          const isRedundant = !inlineFootnoteNodes.some(
-            ([old]) => old.attrs.rid === node.attrs.rid
-          )
-          if (isRedundant) {
-            acc.push(node.attrs.rid)
-          }
-          return acc
-        },
-        [] as Array<string>
-      )
-
-      tr.doc.descendants((node, pos) => {
-        const { id } = node.attrs
-        if (redundantFootnotesIds.includes(id)) {
-          tr.delete(pos, pos + node.nodeSize)
-        }
-      })
-
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const contents = labels.get(node.attrs.rid)
 
@@ -182,7 +162,7 @@ export default () => {
                   pos + 2,
                   labelWidget(labels.get(id) as string, id),
                   {
-                    side: 1,
+                    side: -1,
                   }
                 )
               )
