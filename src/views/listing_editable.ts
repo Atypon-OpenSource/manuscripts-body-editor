@@ -439,7 +439,7 @@ export class ListingEditableView extends ListingView<
           })
         }
 
-        resolve()
+        resolve(true)
       })
 
       input.click()

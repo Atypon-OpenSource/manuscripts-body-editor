@@ -21,9 +21,7 @@ import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { InlineEquationView } from './inline_equation'
 
-export class InlineEquationEditableView extends InlineEquationView<
-  EditableBlockProps
-> {
+export class InlineEquationEditableView extends InlineEquationView<EditableBlockProps> {
   public selectNode = async () => {
     if (!this.props.permissions.write) {
       return

@@ -18,9 +18,9 @@ import { ViewerProps } from '../components/Viewer'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class FootnoteView<PropsType extends ViewerProps> extends BlockView<
-  PropsType
-> {
+export class FootnoteView<
+  PropsType extends ViewerProps
+> extends BlockView<PropsType> {
   public elementType = 'div'
 }
 

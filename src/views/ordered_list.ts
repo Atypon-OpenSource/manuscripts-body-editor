@@ -20,9 +20,9 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class OrderedListView<PropsType extends BaseNodeProps> extends BlockView<
-  PropsType
-> {
+export class OrderedListView<
+  PropsType extends BaseNodeProps
+> extends BlockView<PropsType> {
   public elementType = 'ol'
 }
 

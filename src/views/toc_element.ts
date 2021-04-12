@@ -19,9 +19,9 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class TOCElementView<PropsType extends BaseNodeProps> extends BlockView<
-  PropsType
-> {
+export class TOCElementView<
+  PropsType extends BaseNodeProps
+> extends BlockView<PropsType> {
   private element: HTMLElement
 
   public ignoreMutation = () => true

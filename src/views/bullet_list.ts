@@ -20,9 +20,9 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class BulletListView<PropsType extends BaseNodeProps> extends BlockView<
-  PropsType
-> {
+export class BulletListView<
+  PropsType extends BaseNodeProps
+> extends BlockView<PropsType> {
   public elementType = 'ul'
 }
 

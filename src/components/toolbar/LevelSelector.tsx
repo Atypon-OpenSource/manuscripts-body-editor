@@ -669,13 +669,13 @@ export const LevelSelector: React.FunctionComponent<{
           : findSelectedOption(options as GroupedOptions)
       }
       components={{
-        Group: (props: OptionProps<Options>) => (
+        Group: (props: OptionProps<Options, false>) => (
           <Group ref={props.innerRef} {...props.innerProps}>
             {props.children}
           </Group>
         ),
         GroupHeading: () => null,
-        Option: (props: OptionProps<Options>) => {
+        Option: (props: OptionProps<Options, false>) => {
           const data = props.data as Option
 
           const style: CSSProperties = props.getStyles('option', props)
