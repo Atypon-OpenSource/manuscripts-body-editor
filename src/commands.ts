@@ -39,7 +39,11 @@ import {
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-import { Highlight, ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import {
+  ExternalFile,
+  Highlight,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 
@@ -173,6 +177,32 @@ export const createBlock = (
   }
 }
 
+export const insertFileAsFigure = (
+  file: ExternalFile,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const position = findBlockInsertPosition(state)
+
+  if (position === null || !dispatch) {
+    return false
+  }
+  const node = state.schema.nodes.figure.createAndFill({
+    label: file.displayName,
+    src: file.publicUrl,
+    embedURL: { default: undefined },
+    originalURL: { default: undefined },
+    externalFileReferences: [
+      {
+        url: file.publicUrl,
+        kind: 'imageRepresentation',
+      },
+    ],
+  })
+  const tr = state.tr.insert(position, node as ManuscriptNode)
+  dispatch(tr)
+  return true
+}
 export const insertBlock = (nodeType: ManuscriptNodeType) => (
   state: ManuscriptEditorState,
   dispatch?: Dispatch

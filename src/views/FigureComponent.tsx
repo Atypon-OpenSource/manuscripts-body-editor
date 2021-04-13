@@ -15,14 +15,15 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
-import React, { SyntheticEvent, useRef, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { addImageRepresentation } from '../lib/external-files'
 import { ReactViewComponentProps } from './ReactView'
 
 export interface FigureProps {
   permissions: { write: boolean }
-  putAttachment: (file: File) => Promise<string>
+  putAttachment: (file: File, type: string) => Promise<string>
 }
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
@@ -32,6 +33,9 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
   }) => {
     const [displayUrl, setDisplayUrl] = useState<string>(nodeAttrs.src || '')
     const fileInput = useRef<HTMLInputElement>(null)
+    useEffect(() => {
+      setDisplayUrl(nodeAttrs.src || '')
+    }, [nodeAttrs.src])
 
     const handleUpload = async (e: SyntheticEvent) => {
       e.preventDefault()
@@ -44,15 +48,20 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       if (!file || !permissions.write) {
         return
       }
-
-      setDisplayUrl(window.URL.createObjectURL(file))
-
-      const url = await putAttachment(file)
-
+      const url = await putAttachment(file, 'figure')
+      setDisplayUrl(url)
+      /* This is a bit tricky - we will need:
+        1. Upload files to the LW store
+        2. Adjust src attribute to have a correct url for that -  it seems like we need to know the url from the store of the image before we receive an MPExternalFile injection
+      */
       setNodeAttrs({
         contentType: file.type,
-        // TODO: MPExternalFile
+        externalFileReferences: addImageRepresentation(
+          nodeAttrs.externalFileReferences,
+          url
+        ),
         src: url,
+        label: url,
       })
     }
 
@@ -67,7 +76,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
     }
 
     return (
-      <React.Fragment>
+      <>
         {permissions.write && (
           <HiddenInput
             type="file"
@@ -96,7 +105,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
             </Placeholder>
           </UnstyledButton>
         )}
-      </React.Fragment>
+      </>
     )
   }
 

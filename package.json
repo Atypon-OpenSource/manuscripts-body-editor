@@ -63,7 +63,8 @@
     "react-popper": "^1.0.2",
     "react-select": "^3.1.0",
     "smoothscroll-polyfill": "^0.4.4",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.1",
+    "@manuscripts/comment-editor": "^0.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -78,7 +79,7 @@
     "@manuscripts/library": "^0.5.7",
     "@manuscripts/manuscript-transform": "^0.42.5",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
-    "@manuscripts/style-guide": "^0.26.1",
+    "@manuscripts/style-guide": "^0.27.1",
     "@types/codemirror": "^0.0.98",
     "@types/dompurify": "^2.0.4",
     "@types/enzyme": "^3.10.7",
@@ -153,7 +154,7 @@
     "@manuscripts/library": "^0.5.4",
     "@manuscripts/manuscript-transform": "^0.42.5",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
-    "@manuscripts/style-guide": "^0.21.1",
+    "@manuscripts/style-guide": "^0.27.1",
     "comlink": "^4.0.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
@@ -163,6 +164,8 @@
     "styled-components": "^5.0.1"
   },
   "resolutions": {
+    "@manuscripts/style-guide": "^0.27.1",
+    "@manuscripts/comment-editor": "^0.2.1",
     "@types/prosemirror-model": "~1.13.0"
   }
 }

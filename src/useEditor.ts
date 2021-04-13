@@ -36,6 +36,7 @@ export interface EditorHookValue<Schema extends ProsemirrorSchema> {
   isCommandValid: (command: Command<Schema>) => boolean
   doCommand: (command: Command<Schema>) => boolean
   replaceState: (state: EditorState<Schema>) => void
+  replaceView: (state: EditorState, createView: CreateView) => void
   dispatch: (tr: Transaction) => EditorState<Schema>
   view?: EditorView<Schema>
 }
@@ -46,6 +47,7 @@ const useEditor = <Schema extends ProsemirrorSchema>(
 ): EditorHookValue<Schema> => {
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState<Schema>>(initialState)
+  const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
 
   const dispatch = useCallback(
     (tr: Transaction) => {
@@ -64,12 +66,20 @@ const useEditor = <Schema extends ProsemirrorSchema>(
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
+  const replaceView = (state: EditorState, createView: CreateView) => {
+    if (viewElement && view.current) {
+      view.current.destroy()
+      view.current = createView(viewElement, state, dispatch)
+      setState(view.current.state)
+    }
+  }
   const onRender = useCallback((el: HTMLDivElement | null) => {
     if (!el) {
       return
     }
     view.current = createView(el, state, dispatch)
     setState(view.current.state)
+    setViewElement(el)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCommandValid = useCallback(
@@ -96,8 +106,8 @@ const useEditor = <Schema extends ProsemirrorSchema>(
     isCommandValid,
     doCommand,
     replaceState,
-
     // advanced use:
+    replaceView,
     view: view.current,
     dispatch,
   }
