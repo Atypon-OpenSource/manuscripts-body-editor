@@ -76,7 +76,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@manuscripts/eslint-config": "^0.4.2",
     "@manuscripts/examples": "^0.0.8",
-    "@manuscripts/library": "^0.5.7",
+    "@manuscripts/library": "^0.5.9",
     "@manuscripts/manuscript-transform": "^0.42.8",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.27.1",
