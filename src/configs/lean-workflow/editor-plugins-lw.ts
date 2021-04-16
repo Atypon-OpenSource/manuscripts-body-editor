@@ -104,7 +104,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track({ commit: commit || undefined, ancestorDoc, minFreezeInterval: 30 }),
+    track({ commit: commit || undefined, ancestorDoc }),
     // temporary:
     highlight({ setCommentTarget }),
   ]
