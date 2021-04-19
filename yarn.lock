@@ -1520,6 +1520,21 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
+"@manuscripts/manuscript-transform@^0.42.9":
+  version "0.42.9"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.42.9.tgz#0386539956236eef3f9c813a91676fdeeee54d7a"
+  integrity sha512-CM51OXK1oy/Pu+cfze0Qm69z3pKHiH7F2rxLAufFPLLxb9+A8K4dFngWvU5ZR4bXqFlbep5YFFW6Fx6p9NEYNQ==
+  dependencies:
+    "@manuscripts/data" "^0.1.3"
+    "@manuscripts/manuscripts-json-schema" "^1.46.2"
+    debug "^4.1.1"
+    lodash.pickby "^4.6.0"
+    mathjax-full "^3.1.2"
+    mime "^2.4.6"
+    prosemirror-model "~1.14.0"
+    uuid "^8.2.0"
+    w3c-xmlserializer "^2.0.0"
+
 "@manuscripts/manuscripts-json-schema@1.46.2", "@manuscripts/manuscripts-json-schema@^1.46.2":
   version "1.46.2"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.2.tgz#fac4be683e5301e56dbba1600691e7d617198fb3"

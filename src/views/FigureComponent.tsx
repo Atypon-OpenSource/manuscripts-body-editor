@@ -31,7 +31,18 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
     nodeAttrs,
     setNodeAttrs,
   }) => {
-    const [displayUrl, setDisplayUrl] = useState<string>(nodeAttrs.src || '')
+    const imageExternalFile = nodeAttrs.externalFileReferences?.find(
+      (file) => file.kind === 'imageRepresentation'
+    )
+    const webFormatQuery = '&format=jpg'
+    let externalFilesSrc = imageExternalFile?.url + webFormatQuery // these links are aways provided with url query, it's safe to assume we need to use amp here
+    externalFilesSrc = externalFilesSrc?.replace(
+      'ciplit.com.ciplit.com',
+      'ciplit.com'
+    ) // hotfix for weird bug needed for a presentation
+    const [displayUrl, setDisplayUrl] = useState<string>(
+      externalFilesSrc || nodeAttrs.src || ''
+    )
     const fileInput = useRef<HTMLInputElement>(null)
     useEffect(() => {
       setDisplayUrl(nodeAttrs.src || '')
@@ -50,17 +61,13 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       }
       const url = await putAttachment(file, 'figure')
       setDisplayUrl(url)
-      /* This is a bit tricky - we will need:
-        1. Upload files to the LW store
-        2. Adjust src attribute to have a correct url for that -  it seems like we need to know the url from the store of the image before we receive an MPExternalFile injection
-      */
       setNodeAttrs({
         contentType: file.type,
         externalFileReferences: addImageRepresentation(
           nodeAttrs.externalFileReferences,
           url
         ),
-        src: url,
+        src: url + webFormatQuery,
         label: url,
       })
     }
