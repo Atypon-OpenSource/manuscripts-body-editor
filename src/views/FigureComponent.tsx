@@ -40,12 +40,15 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       'ciplit.com.ciplit.com',
       'ciplit.com'
     ) // hotfix for weird bug needed for a presentation
+
     const [displayUrl, setDisplayUrl] = useState<string>(
       externalFilesSrc || nodeAttrs.src || ''
     )
     const fileInput = useRef<HTMLInputElement>(null)
     useEffect(() => {
-      setDisplayUrl(nodeAttrs.src || '')
+      setDisplayUrl(nodeAttrs.src || externalFilesSrc || '')
+      // @TODO eslint disable with hotfix removal
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodeAttrs.src])
 
     const handleUpload = async (e: SyntheticEvent) => {
