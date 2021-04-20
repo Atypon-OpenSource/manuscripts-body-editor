@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { placeholderContent } from '../lib/placeholder'
+import { createPlaceholderContent } from '../lib/placeholder'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -30,12 +30,8 @@ export class PlaceholderElementView<
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
 
-    const content = document.createElement('div')
+    const content = createPlaceholderContent('An element')
     content.className = 'placeholder-item'
-    content.innerHTML = placeholderContent(
-      'An element',
-      'support@manuscriptsapp.com'
-    )
     this.element.appendChild(content)
   }
 }

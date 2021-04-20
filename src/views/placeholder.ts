@@ -16,7 +16,7 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
-import { placeholderContent } from '../lib/placeholder'
+import { createPlaceholderContent } from '../lib/placeholder'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -26,12 +26,8 @@ export class PlaceholderView<PropsType extends BaseNodeProps>
   public ignoreMutation = () => true
 
   public initialise = () => {
-    this.dom = document.createElement('div')
+    this.dom = createPlaceholderContent(this.node.attrs.label)
     this.dom.classList.add('placeholder-item')
-    this.dom.innerHTML = placeholderContent(
-      this.node.attrs.label,
-      'support@manuscriptsapp.com'
-    )
   }
 }
 
