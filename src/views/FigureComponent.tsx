@@ -138,6 +138,9 @@ const UnstyledButton = styled.button`
   &:focus {
     outline: rgb(13, 121, 208) auto 1px;
   }
+  img {
+    max-width: 100%;
+  }
 `
 
 const Placeholder = styled.div`
