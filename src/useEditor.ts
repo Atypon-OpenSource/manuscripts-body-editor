@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
+import { Command } from 'prosemirror-commands'
 import { Schema as ProsemirrorSchema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useRef, useState } from 'react'
-
-export type Command<Schema extends ProsemirrorSchema> = (
-  state: EditorState<Schema>,
-  dispatch?: (tr: Transaction) => void
-) => boolean
 
 export type CreateView = (
   element: HTMLDivElement,
@@ -30,21 +26,10 @@ export type CreateView = (
   dispatch: (tr: Transaction) => EditorState
 ) => EditorView
 
-export interface EditorHookValue<Schema extends ProsemirrorSchema> {
-  state: EditorState<Schema>
-  onRender: (el: HTMLDivElement) => void
-  isCommandValid: (command: Command<Schema>) => boolean
-  doCommand: (command: Command<Schema>) => boolean
-  replaceState: (state: EditorState<Schema>) => void
-  replaceView: (state: EditorState, createView: CreateView) => void
-  dispatch: (tr: Transaction) => EditorState<Schema>
-  view?: EditorView<Schema>
-}
-
 const useEditor = <Schema extends ProsemirrorSchema>(
   initialState: EditorState,
   createView: CreateView
-): EditorHookValue<Schema> => {
+) => {
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState<Schema>>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
@@ -88,7 +73,8 @@ const useEditor = <Schema extends ProsemirrorSchema>(
   )
 
   const doCommand = useCallback(
-    (command: Command<Schema>): boolean => command(state, dispatch),
+    (command: Command<Schema>): boolean =>
+      command(state, dispatch, view.current),
     [state, dispatch]
   )
 
@@ -114,19 +100,3 @@ const useEditor = <Schema extends ProsemirrorSchema>(
 }
 
 export default useEditor
-
-// interface FaccProps<Schema extends ProsemirrorSchema> {
-//   initialState: EditorState
-//   createView: CreateView
-//   children: (hookValue: HookValue<Schema>) => JSX.Element
-// }
-
-// const EditorStateComponent: React.FC<FaccProps<Schema>> = ({
-//   initialState,
-//   createView,
-//   children,
-// }) => {
-//   const editorProps = useEditor(initialState, createView)
-
-//   return children(editorProps)
-// }

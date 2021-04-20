@@ -15,7 +15,7 @@
  */
 
 import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
-import { toggleMark } from 'prosemirror-commands'
+import { Command, toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -52,10 +52,10 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
-import { Command, EditorHookValue } from './useEditor'
+import useEditor from './useEditor'
 
 export default (
-  editor: EditorHookValue<ManuscriptSchema>,
+  editor: ReturnType<typeof useEditor>,
   handleOpenDialog: (dialog: DialogNames) => void,
   footnotesEnabled?: boolean
 ): MenuSpec[] => {

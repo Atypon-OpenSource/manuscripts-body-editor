@@ -1615,10 +1615,10 @@
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
 
-"@manuscripts/track-changes@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.15.tgz#463fbb4ab826ca82c4a3dde996c04aa96236b83d"
-  integrity sha512-HOjilVWCNHgaB5dpP+gOhDzVjCwUcQPbc6ID97eI8RwG1ux+snUdyMBM5iwsrQ/vlJO2XfdfULUzONi5dEq2yw==
+"@manuscripts/track-changes@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.16.tgz#1bcfbd9a4296031c39517f67daa0c4f0412db80a"
+  integrity sha512-6g2C9Kyffk+uLzlziN4ryPN9D4hewyMwzj9Wpa8DuTh9dmj0Np4bVic7lnIwb7P1H6Nn3NqnvjCoCVbkR57niw==
   dependencies:
     "@manuscripts/manuscripts-json-schema" "1.46.2"
     prosemirror-state "~1.3.4"
