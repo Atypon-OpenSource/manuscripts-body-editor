@@ -118,7 +118,6 @@ export class Editor extends React.PureComponent<EditorProps> {
         right: 0,
       },
       dispatchTransaction: this.dispatchTransaction,
-      // @ts-ignore (types)
       nodeViews: views(this.props),
       attributes,
       transformPasted,

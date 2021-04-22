@@ -1,0 +1,95 @@
+{
+  "doc": {
+    "type": "manuscript",
+    "attrs": {
+      "id": "MPManuscript:D1797375-EF63-49AF-B140-04B2FA6B8365"
+    },
+    "content": [
+      {
+        "type": "section",
+        "attrs": {
+          "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71",
+          "category": "",
+          "titleSuppressed": false
+        },
+        "content": [
+          {
+            "type": "section_title"
+          },
+          {
+            "type": "paragraph",
+            "attrs": {
+              "id": "MPParagraphElement:08E4B001-BB01-4666-9E33-9355AEC3CFC3",
+              "paragraphStyle": "MPParagraphStyle:51671E8C-C9EE-461D-B6FF-756817829B3F",
+              "placeholder": ""
+            },
+            "content": [
+              {
+                "text": "test",
+                "type": "text"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "footnotes_section",
+        "attrs": {
+          "id": "MOCKED_NODE_ID"
+        },
+        "content": [
+          {
+            "type": "section_title",
+            "content": [
+              {
+                "type": "text",
+                "text": "Notes"
+              }
+            ]
+          },
+          {
+            "type": "footnotes_element",
+            "attrs": {
+              "id": "MOCKED_NODE_ID",
+              "kind": "footnote",
+              "paragraphStyle": ""
+            },
+            "content": [
+              {
+                "type": "footnote",
+                "attrs": {
+                  "id": "MOCKED_ID",
+                  "kind": "footnote",
+                  "paragraphStyle": "",
+                  "placeholder": "",
+                  "sequenceNumber": -1
+                },
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "id": "",
+                      "paragraphStyle": "",
+                      "placeholder": ""
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "a footnote"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "selection": {
+    "type": "text",
+    "anchor": 8,
+    "head": 8
+  }
+}

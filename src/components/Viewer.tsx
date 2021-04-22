@@ -52,7 +52,10 @@ export interface ViewerProps {
   projectID: string
   getCurrentUser: () => UserProfile
   history: History
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  renderReactComponent: (
+    child: React.ReactElement,
+    container: HTMLElement
+  ) => void
   unmountReactComponent: (container: HTMLElement) => void
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -73,7 +76,6 @@ export class Viewer extends React.PureComponent<ViewerProps> {
         schema,
         plugins: plugins(this.props),
       }),
-      // @ts-ignore (types)
       nodeViews: views(this.props),
       attributes,
     })

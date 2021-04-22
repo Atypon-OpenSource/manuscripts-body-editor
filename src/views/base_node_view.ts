@@ -33,7 +33,10 @@ export interface DecorationSpec {
 export interface BaseNodeProps {
   popper: PopperManager
   getModel: <T extends Model>(id: string) => T | undefined
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  renderReactComponent: (
+    child: React.ReactElement,
+    container: HTMLElement
+  ) => void
   unmountReactComponent: (container: HTMLElement) => void
 }
 
