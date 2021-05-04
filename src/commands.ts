@@ -44,8 +44,13 @@ import {
   Highlight,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
+import {
+  commands as trackPluginCommands,
+  getTrackPluginState,
+} from '@manuscripts/track-changes'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+import { v4 as uuid } from 'uuid'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
@@ -824,18 +829,18 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
 export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
-): Build<Highlight> => {
+): Build<Highlight> | string | null => {
   // COMMENTED OUT WHILE WE SORT OUT HIGHLIGHT IN LW:
 
-  // const isTrackEnabled = !!getTrackPluginState(state)
-  // if (isTrackEnabled) {
-  //   const id = uuid()
-  //   const result = trackPluginCommands.addAnnotation(
-  //     id,
-  //     'rgba(255, 189, 38, 0.5)'
-  //   )(state, dispatch)
-  //   return result ? id : undefined
-  // }
+  const isTrackEnabled = !!getTrackPluginState(state)
+  if (isTrackEnabled) {
+    const id = uuid()
+    const result = trackPluginCommands.addAnnotation(
+      id,
+      'rgba(255, 189, 38, 0.5)'
+    )(state, dispatch)
+    return result ? id : null
+  }
 
   const highlight = buildHighlight()
 
