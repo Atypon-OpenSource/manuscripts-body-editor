@@ -31,8 +31,8 @@ export interface EditableBlockProps extends BaseNodeProps {
     write: boolean
   }
   retrySync: (componentIDs: string[]) => Promise<void>
-  setCommentTarget: (commentTarget?: string) => void
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  setCommentTarget?: (commentTarget?: string) => void
 }
 
 export const EditableBlock = <

@@ -59,7 +59,6 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
