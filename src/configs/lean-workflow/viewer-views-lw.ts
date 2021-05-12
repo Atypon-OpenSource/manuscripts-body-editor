@@ -57,7 +57,7 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
+  figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),

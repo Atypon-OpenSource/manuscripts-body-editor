@@ -28,6 +28,7 @@ import { checkout } from '@manuscripts/track-changes'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
+import { DefaultTheme } from 'styled-components'
 
 import { transformPasted } from '../../lib/paste'
 import { CreateView } from '../../useEditor'
@@ -49,6 +50,9 @@ export interface EditorProps extends ViewerProps {
 
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
+  submissionId: string
+  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  theme: DefaultTheme
 }
 
 export default {

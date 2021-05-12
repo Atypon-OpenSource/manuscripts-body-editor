@@ -13,34 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
+
 /**
  * A helper to check for existing external files of 'imageRepresentation' kind and replace/add it when needed.
  * Assuming that there should always be only one 'imageRepresentation' file reference as it serves for the basic display in the article body.
  */
-export const addImageRepresentation = (
-  externalFileReferences:
-    | Array<{
-        url: string
-        kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset'
-      }>
-    | undefined,
-  absolutePublicUrl: string
+export interface ExternalFileRef {
+  url: string
+  kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset'
+  ref?: ExternalFile
+}
+export const addExternalFileRef = (
+  externalFileReferences: ExternalFileRef[] | undefined,
+  absolutePublicUrl: string,
+  kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset',
+  additionalProps: { [key: string]: unknown } = {}
 ) => {
-  const newRefs = externalFileReferences || []
-  const fullFilePath = absolutePublicUrl
-  newRefs.reduce((tracking, item, index, source) => {
-    if (item.kind == 'imageRepresentation') {
-      item.url = fullFilePath
-      tracking.push(item)
-    }
-    if (index === source.length - 1 && !tracking.length) {
-      source.push({
-        kind: 'imageRepresentation',
-        url: fullFilePath,
-      })
-    }
-    return tracking
-  }, [] as Array<{ kind?: string; url: string }>)
-
-  return newRefs
+  const newRefs =
+    externalFileReferences?.filter((item) => item.kind !== kind) || []
+  // return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
+  return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
 }

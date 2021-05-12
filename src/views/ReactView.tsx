@@ -22,19 +22,30 @@ import {
 import { NodeView } from 'prosemirror-view'
 import React, { useCallback, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
+import { DefaultTheme, ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
   setNodeAttrs: (nextAttrs: Partial<NodeT['attrs']>) => void
+  contentDOM?: HTMLElement | null
+  viewProps: {
+    view: ManuscriptEditorView
+    getPos: () => number
+    node: ManuscriptNode
+  }
+  dispatch: Dispatch
 }
 
-export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
+export default (dispatch: Dispatch, theme: DefaultTheme) => <
+  NodeT extends ManuscriptNode
+>(
   Component: React.FC<ReactViewComponentProps<NodeT>>,
-  contentDOMElementType?: keyof HTMLElementTagNameMap | null
+  contentDOMElementType?: keyof HTMLElementTagNameMap | null,
+  nodeViewProps?: NodeView
 ) => (
-  node: NodeT,
+  initialNode: ManuscriptNode,
   view: ManuscriptEditorView,
   getPos: () => number
 ): NodeView<ManuscriptSchema> => {
@@ -51,11 +62,11 @@ export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
 
   // a very simple event emitter that tracks the current value of ManuscriptNode
   // and injects it into Component
-  let subscriber: ((node: NodeT['attrs']) => void) | null
-  const setNode = (next: NodeT['attrs']) => {
+  let subscriber: ((node: ManuscriptNode) => void) | null
+  const setNode = (next: ManuscriptNode) => {
     subscriber && subscriber(next)
   }
-  const subscribe = (func: (node: NodeT['attrs']) => void) => {
+  const subscribe = (func: (node: ManuscriptNode) => void) => {
     subscriber = func
   }
   const unsubscribe = () => {
@@ -63,9 +74,11 @@ export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
   }
 
   const Wrapped: React.FC = () => {
-    const [attrsState, setAttrsState] = useState<NodeT['attrs']>(node.attrs)
+    const [node, setNode] = useState<ManuscriptNode>(initialNode)
     useEffect(() => {
-      subscribe(setAttrsState)
+      subscribe((node) => {
+        setNode(node)
+      })
       return () => {
         unsubscribe()
       }
@@ -76,20 +89,30 @@ export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
         const { selection, tr } = view.state
 
         tr.setNodeMarkup(getPos(), undefined, {
-          ...attrsState,
+          ...node.attrs,
           ...nextAttrs,
         }).setSelection(selection.map(tr.doc, tr.mapping))
 
         dispatch(tr)
       },
-      [attrsState]
+      [node.attrs]
     )
 
-    if (!attrsState) {
+    if (!node.attrs) {
       return null
     }
 
-    return <Component nodeAttrs={attrsState} setNodeAttrs={setNodeAttrs} />
+    return (
+      <ThemeProvider theme={theme}>
+        <Component
+          nodeAttrs={node.attrs}
+          setNodeAttrs={setNodeAttrs}
+          viewProps={{ node, view, getPos }}
+          dispatch={dispatch}
+          contentDOM={contentDOM}
+        />
+      </ThemeProvider>
+    )
   }
 
   ReactDOM.render(<Wrapped />, reactChild)
@@ -99,8 +122,9 @@ export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
     contentDOM,
     destroy: () => ReactDOM.unmountComponentAtNode(reactChild),
     update: (next: ManuscriptNode) => {
-      setNode(next.attrs)
+      setNode(next)
       return true
     },
+    ...nodeViewProps,
   }
 }

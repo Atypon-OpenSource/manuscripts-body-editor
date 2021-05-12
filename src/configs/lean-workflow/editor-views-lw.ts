@@ -25,8 +25,8 @@ import crossReference from '../../views/cross_reference_editable'
 import { EditableBlockProps } from '../../views/editable_block'
 import equation from '../../views/equation_editable'
 import equationElement from '../../views/equation_element_editable'
-import figureElement from '../../views/figure_element_editable'
 import Figure, { FigureProps } from '../../views/FigureComponent'
+import FigureElement from '../../views/FigureElement'
 import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
 import keywordsElement from '../../views/keywords_element_editable'
@@ -38,31 +38,47 @@ import placeholderElement from '../../views/placeholder_element_editable'
 import pullquoteElement from '../../views/pullquote_element_editable'
 import ReactView from '../../views/ReactView'
 import sectionTitle from '../../views/section_title_editable'
-import tableElement from '../../views/table_element_editable'
+import TableElement from '../../views/TableElement'
 import tocElement from '../../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps & CitationEditableProps & FigureProps
 
-export default (props: EditorProps, dispatch: Dispatch) => ({
-  bibliography_element: bibliographyElement(props),
-  blockquote_element: blockquoteElement(props),
-  bullet_list: bulletList(props),
-  citation: citation(props),
-  cross_reference: crossReference(props),
-  equation: equation(props),
-  equation_element: equationElement(props),
-  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
-  figure_element: figureElement(props),
-  inline_equation: inlineEquation(props),
-  inline_footnote: inlineFootnote(props),
-  keywords_element: keywordsElement(props),
-  link: link(props),
-  ordered_list: orderedList(props),
-  paragraph: paragraph(props),
-  placeholder: placeholder(props),
-  placeholder_element: placeholderElement(props),
-  pullquote_element: pullquoteElement(props),
-  section_title: sectionTitle(props),
-  table_element: tableElement(props),
-  toc_element: tocElement(props),
-})
+export default (props: EditorProps, dispatch: Dispatch) => {
+  return {
+    bibliography_element: bibliographyElement(props),
+    blockquote_element: blockquoteElement(props),
+    bullet_list: bulletList(props),
+    citation: citation(props),
+    cross_reference: crossReference(props),
+    equation: equation(props),
+    equation_element: equationElement(props),
+    figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
+    figure_element: ReactView(dispatch, props.theme)(
+      FigureElement(props),
+      'div',
+      {
+        stopEvent: () => true,
+        ignoreMutation: () => true,
+      }
+    ),
+    inline_equation: inlineEquation(props),
+    inline_footnote: inlineFootnote(props),
+    keywords_element: keywordsElement(props),
+    link: link(props),
+    ordered_list: orderedList(props),
+    paragraph: paragraph(props),
+    placeholder: placeholder(props),
+    placeholder_element: placeholderElement(props),
+    pullquote_element: pullquoteElement(props),
+    section_title: sectionTitle(props),
+    table_element: ReactView(dispatch, props.theme)(
+      TableElement(props),
+      'figure',
+      {
+        stopEvent: () => false,
+        ignoreMutation: () => true,
+      }
+    ),
+    toc_element: tocElement(props),
+  }
+}

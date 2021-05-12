@@ -15,15 +15,20 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
-import React, { SyntheticEvent, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
+import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
+import React, { SyntheticEvent, useEffect, useMemo, useRef } from 'react'
+import styled, { DefaultTheme } from 'styled-components'
 
-import { addImageRepresentation } from '../lib/external-files'
+import { addExternalFileRef } from '../lib/external-files'
 import { ReactViewComponentProps } from './ReactView'
 
 export interface FigureProps {
   permissions: { write: boolean }
   putAttachment: (file: File, type: string) => Promise<string>
+  externalFiles?: ExternalFile[]
+  submissionId: string
+  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  theme: DefaultTheme
 }
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
@@ -31,44 +36,38 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
     nodeAttrs,
     setNodeAttrs,
   }) => {
-    const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-      (file) => file.kind === 'imageRepresentation'
-    )
     const webFormatQuery = '&format=jpg'
-    let externalFilesSrc = imageExternalFile?.url + webFormatQuery // these links are aways provided with url query, it's safe to assume we need to use amp here
-    externalFilesSrc = externalFilesSrc?.replace(
-      'ciplit.com.ciplit.com',
-      'ciplit.com'
-    ) // hotfix for weird bug needed for a presentation
+    const externalFilesSrc = useMemo(() => {
+      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
+        (file) => file.kind === 'imageRepresentation'
+      )
+      return imageExternalFile?.url + webFormatQuery // these links are aways provided with url query, it's safe to assume we need to use amp here
+    }, [nodeAttrs.externalFileReferences])
 
-    const [displayUrl, setDisplayUrl] = useState<string>(
-      externalFilesSrc || nodeAttrs.src || ''
-    )
-    const fileInput = useRef<HTMLInputElement>(null)
     useEffect(() => {
-      setDisplayUrl(nodeAttrs.src || externalFilesSrc || '')
-      // @TODO eslint disable with hotfix removal
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nodeAttrs.src])
+      if (!nodeAttrs.src && externalFilesSrc) {
+        setNodeAttrs({
+          src: externalFilesSrc,
+        })
+      }
+    }, [externalFilesSrc, nodeAttrs.src, setNodeAttrs])
+    const fileInput = useRef<HTMLInputElement>(null)
 
     const handleUpload = async (e: SyntheticEvent) => {
       e.preventDefault()
 
-      const file =
-        fileInput.current &&
-        fileInput.current.files &&
-        fileInput.current.files[0]
+      const file = fileInput.current?.files?.[0]
 
       if (!file || !permissions.write) {
         return
       }
       const url = await putAttachment(file, 'figure')
-      setDisplayUrl(url)
       setNodeAttrs({
         contentType: file.type,
-        externalFileReferences: addImageRepresentation(
+        externalFileReferences: addExternalFileRef(
           nodeAttrs.externalFileReferences,
-          url
+          url,
+          'imageRepresentation'
         ),
         src: url + webFormatQuery,
         label: url,
@@ -95,11 +94,10 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
             accept="image/*"
           />
         )}
-
-        {displayUrl ? (
+        {nodeAttrs.src ? (
           <UnstyledButton type="button" onClick={handleImageClick}>
             <img
-              src={displayUrl}
+              src={nodeAttrs.src}
               alt={nodeAttrs.label}
               style={{ cursor: 'pointer' }}
             />
