@@ -343,7 +343,7 @@ const buildProps = (
   history,
   renderReactComponent: () => undefined,
   unmountReactComponent: () => undefined,
-  getCitationProcessor: () => undefined,
+  getCitationProvider: () => undefined,
   plugins: [],
   putAttachment: async () => ({} as RxAttachment<Model>),
   removeAttachment: async () => undefined,

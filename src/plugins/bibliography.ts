@@ -15,21 +15,22 @@
  */
 
 import {
-  bibliographyElementContents,
   buildCitationNodes,
   buildCitations,
   CitationNodes,
-  GetCitationProcessor,
-  GetLibraryItem,
-  GetManuscript,
-  GetModel,
+  CitationProvider,
+  createBibliographyElementContents,
 } from '@manuscripts/library'
 import {
   generateID,
   ManuscriptNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  Model,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
 import { isEqual } from 'lodash-es'
 import {
   NodeSelection,
@@ -63,10 +64,22 @@ const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
 
 interface Props {
-  getCitationProcessor: GetCitationProcessor
-  getLibraryItem: GetLibraryItem
-  getModel: GetModel
-  getManuscript: GetManuscript
+  getCitationProvider: () => CitationProvider | undefined
+  getLibraryItem: (id: string) => BibliographyItem | undefined
+  getModel: <T extends Model>(id: string) => T | undefined
+}
+
+/**
+ * Since the library collection is only updated _after_ the models have been saved thus
+ * the items not always being available, depending on how fast the page renders, as a
+ * fallback the bibliography items are also retrieved from the modelsMap.
+ */
+function getBibliographyItem(props: Props, id: string) {
+  const libraryItem = props.getLibraryItem(id)
+  if (libraryItem) {
+    return libraryItem
+  }
+  return props.getModel<BibliographyItem>(id)
 }
 
 /**
@@ -85,7 +98,7 @@ export default (props: Props) => {
     for (const [node, pos, citation] of citationNodes) {
       if (citation.embeddedCitationItems.length) {
         for (const citationItem of citation.embeddedCitationItems) {
-          if (!props.getLibraryItem(citationItem.bibliographyItem)) {
+          if (!getBibliographyItem(props, citationItem.bibliographyItem)) {
             decorations.push(
               Decoration.node(pos, pos + node.nodeSize, {
                 class: 'citation-missing',
@@ -149,10 +162,8 @@ export default (props: Props) => {
       init(config, instance): PluginState {
         const citationNodes = buildCitationNodes(instance.doc, props.getModel)
 
-        const citations = buildCitations(
-          citationNodes,
-          props.getLibraryItem,
-          props.getManuscript
+        const citations = buildCitations(citationNodes, (id: string) =>
+          getBibliographyItem(props, id)
         )
 
         return {
@@ -164,12 +175,9 @@ export default (props: Props) => {
       apply(tr, value, oldState, newState): PluginState {
         const citationNodes = buildCitationNodes(newState.doc, props.getModel)
 
-        const citations = buildCitations(
-          citationNodes,
-          props.getLibraryItem,
-          props.getManuscript
+        const citations = buildCitations(citationNodes, (id: string) =>
+          getBibliographyItem(props, id)
         )
-
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
@@ -180,16 +188,11 @@ export default (props: Props) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const citationProcessor = props.getCitationProcessor()
+      const citationProvider = props.getCitationProvider()
 
-      if (!citationProcessor) {
+      if (!citationProvider) {
         return null
       }
-
-      // TODO: use setMeta to notify of updates when the doc hasn't changed?
-      // if (!transactions.some(transaction => transaction.docChanged)) {
-      //   return null
-      // }
 
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
@@ -199,18 +202,19 @@ export default (props: Props) => {
         newState
       ) as PluginState
 
+      // This equality is trigged by such things as the addition of createdAt, updatedAt,
+      // sessionID, _rev when the models are simply persisted to the PouchDB without modifications
       if (
         isEqual(citations, oldCitations) &&
         !bibliographyInserted(transactions)
       ) {
         return null
       }
-
       const { tr } = newState
       const { selection } = tr
 
       try {
-        const generatedCitations = citationProcessor
+        const generatedCitations = citationProvider
           .rebuildProcessorState(citations)
           .map((item) => item[2]) // id, noteIndex, output
 
@@ -227,9 +231,7 @@ export default (props: Props) => {
           })
         })
 
-        // generate the bibliography
-        const bibliography = citationProcessor.makeBibliography()
-
+        const bibliography = citationProvider.makeBibliography()
         if (bibliography) {
           const [bibmeta, generatedBibliographyItems] = bibliography
 
@@ -242,10 +244,10 @@ export default (props: Props) => {
               const id =
                 node.attrs.id || generateID(ObjectTypes.BibliographyElement)
 
-              const contents = bibliographyElementContents(
-                node,
+              const contents = createBibliographyElementContents(
+                generatedBibliographyItems,
                 id,
-                generatedBibliographyItems
+                node.attrs.placeholder
               )
 
               tr.setNodeMarkup(pos, undefined, {

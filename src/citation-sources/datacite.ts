@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convertDataToBibliographyItem } from '@manuscripts/library'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { Build, generateID } from '@manuscripts/manuscript-transform'
 import {
   BibliographicDate,
@@ -156,7 +156,7 @@ const fetch = async (
     throw new Error('There was a problem fetching this item.')
   }
 
-  return convertDataToBibliographyItem(response.data)
+  return convertCSLToBibliographyItem(response.data)
 }
 
 export const datacite = { fetch, search }

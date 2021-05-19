@@ -18,7 +18,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { GetCitationProcessor } from '@manuscripts/library'
+import { CitationProvider } from '@manuscripts/library'
 import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
@@ -48,7 +48,7 @@ import toc from './toc'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
-  getCitationProcessor: GetCitationProcessor
+  getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
@@ -61,7 +61,7 @@ interface PluginProps {
 export default (props: PluginProps) => {
   const {
     deleteModel,
-    getCitationProcessor,
+    getCitationProvider,
     getLibraryItem,
     getModel,
     getManuscript,
@@ -88,10 +88,9 @@ export default (props: PluginProps) => {
     styles({ getModel, getManuscript, modelMap }),
     keywords({ getManuscript, getModel }),
     bibliography({
-      getCitationProcessor,
+      getCitationProvider,
       getLibraryItem,
       getModel,
-      getManuscript,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),

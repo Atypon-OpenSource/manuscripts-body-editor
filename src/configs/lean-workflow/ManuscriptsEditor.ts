@@ -17,7 +17,7 @@
 import 'prosemirror-view/style/prosemirror.css'
 import '../../lib/smooth-scroll'
 
-import { GetCitationProcessor } from '@manuscripts/library'
+import { CitationProvider } from '@manuscripts/library'
 import {
   Build,
   ManuscriptSchema,
@@ -37,7 +37,7 @@ import { ViewerProps } from './ManuscriptsViewer'
 
 export interface EditorProps extends ViewerProps {
   plugins?: Array<Plugin<ManuscriptSchema>>
-  getCitationProcessor: GetCitationProcessor
+  getCitationProvider: () => CitationProvider | undefined
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void

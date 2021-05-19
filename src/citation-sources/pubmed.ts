@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convertDataToBibliographyItem } from '@manuscripts/library'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { EUtilsError, toCSL } from 'astrocite-eutils'
 import { Response } from 'astrocite-eutils/lib/schema'
@@ -108,7 +108,7 @@ const search = async (
   }
 
   return {
-    items: items.map(convertDataToBibliographyItem) as BibliographyItem[],
+    items: items.map(convertCSLToBibliographyItem) as BibliographyItem[],
     total,
   }
 }
@@ -165,7 +165,7 @@ const fetchCSL = async (id: string) => {
     throw new Error(JSON.stringify(response.data.reason))
   }
 
-  return convertDataToBibliographyItem(response.data)
+  return convertCSLToBibliographyItem(response.data)
 }
 
 // Fetch eSummary and convert to CSL (fallback)
@@ -198,7 +198,7 @@ const fetchSummary = async (id: string, mailto: string) => {
     throw new Error('There was a problem fetching this PMID.')
   }
 
-  return convertDataToBibliographyItem(item as CSL.Data)
+  return convertCSLToBibliographyItem(item as CSL.Data)
 }
 
 export const pubmed = { fetch, search }
