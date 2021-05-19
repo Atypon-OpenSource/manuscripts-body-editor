@@ -18,6 +18,7 @@ import {
   FootnotesElementNode,
   isFootnoteNode,
   isFootnotesElementNode,
+  isFootnotesSectionNode,
   ManuscriptNode,
 } from '@manuscripts/manuscript-transform'
 import { EditorState } from 'prosemirror-state'
@@ -47,6 +48,9 @@ export const findFootnotesElement = (
     if (isFootnotesElementNode(node)) {
       nodePos = { node, pos }
     }
+    // Prevents iterating through the whole doc by iterating only footnotes_sections
+    // which have only one footnotes_elements as their direct child
+    return isFootnotesSectionNode(node)
   })
 
   return nodePos

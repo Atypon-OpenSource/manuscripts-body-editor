@@ -26,6 +26,9 @@ import {
   generateID,
   InlineFootnoteNode,
   isElementNodeType,
+  isFootnoteNode,
+  isFootnotesElementNode,
+  isFootnotesSectionNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -50,6 +53,7 @@ import {
 } from '@manuscripts/track-changes'
 import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+import { findParentNodeClosestToPos } from 'prosemirror-utils'
 import { v4 as uuid } from 'uuid'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
@@ -385,6 +389,17 @@ export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  const predicate = (n: ManuscriptNode) =>
+    isFootnoteNode(n) || isFootnotesElementNode(n) || isFootnotesSectionNode(n)
+  // Find if the selection's head (where the inline_footnote would appear)
+  // is inside footnotes_section to prevent referencing footnotes inside footnotes
+  const insertedInsideFootnotes = findParentNodeClosestToPos(
+    state.selection.$head,
+    predicate
+  )
+  if (insertedInsideFootnotes) {
+    return false
+  }
   const footnote = state.schema.nodes.footnote.createAndFill({
     id: generateID(ObjectTypes.Footnote),
     kind,
