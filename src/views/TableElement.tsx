@@ -16,11 +16,7 @@
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
-import {
-  FileSectionItem,
-  isDataset,
-  isFileDroppable,
-} from '@manuscripts/style-guide'
+import { FileSectionItem } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -64,7 +60,6 @@ const TableElement = ({
       figure.attrs?.externalFileReferences?.find(
         (file: ExternalFileRef) => file.kind === 'dataset'
       )
-    const allowedFiles = externalFiles?.filter((file) => isFileDroppable(file))
 
     useEffect(() => {
       if (contentDOM) {
@@ -115,26 +110,24 @@ const TableElement = ({
         return
       }
       const prevAttrs = { ...figure.attrs }
-      if (isDataset(file)) {
-        setTableAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.publicUrl,
-            'dataset',
-            { ref: file }
-          ),
-        })
-        updateDesignation('dataset', file.filename).catch(() => {
-          setTableAttrs(prevAttrs)
-        })
-      }
+      setTableAttrs({
+        externalFileReferences: addExternalFileRef(
+          figure?.attrs.externalFileReferences,
+          file.publicUrl,
+          'dataset',
+          { ref: file }
+        ),
+      })
+      updateDesignation('dataset', file.filename).catch(() => {
+        setTableAttrs(prevAttrs)
+      })
     }
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {allowedFiles && (
+          {externalFiles && (
             <AttachableFilesDropdown
-              files={allowedFiles}
+              files={externalFiles}
               onSelect={handleSelectedFile}
             />
           )}

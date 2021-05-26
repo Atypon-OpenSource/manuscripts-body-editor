@@ -23,9 +23,7 @@ import {
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
   FileSectionItem,
-  isDataset,
   isFigure,
-  isFileDroppable,
   RoundIconButton,
   useDropdown,
 } from '@manuscripts/style-guide'
@@ -129,7 +127,6 @@ const FigureElement = ({
       figure.attrs?.externalFileReferences?.find(
         (file: ExternalFileRef) => file.kind === 'dataset'
       )
-    const allowedFiles = externalFiles?.filter((file) => isFileDroppable(file))
 
     useEffect(() => {
       if (content && content.current) {
@@ -151,19 +148,6 @@ const FigureElement = ({
         return
       }
       const prevAttrs = { ...figure.attrs }
-      if (isDataset(file)) {
-        setFigureAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.publicUrl,
-            'dataset',
-            { ref: file }
-          ),
-        })
-        updateDesignation('dataset', file.filename).catch(() => {
-          setFigureAttrs(prevAttrs)
-        })
-      }
       if (isFigure(file)) {
         setFigureAttrs({
           externalFileReferences: addExternalFileRef(
@@ -177,15 +161,27 @@ const FigureElement = ({
         updateDesignation('dataset', file.filename).catch(() => {
           setFigureAttrs(prevAttrs)
         })
+      } else {
+        setFigureAttrs({
+          externalFileReferences: addExternalFileRef(
+            figure?.attrs.externalFileReferences,
+            file.publicUrl,
+            'dataset',
+            { ref: file }
+          ),
+        })
+        updateDesignation('dataset', file.filename).catch(() => {
+          setFigureAttrs(prevAttrs)
+        })
       }
     }
 
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {allowedFiles && (
+          {externalFiles && (
             <AttachableFilesDropdown
-              files={allowedFiles}
+              files={externalFiles}
               onSelect={handleSelectedFile}
             />
           )}
