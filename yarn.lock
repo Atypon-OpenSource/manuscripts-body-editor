@@ -1509,6 +1509,20 @@
     citeproc "^2.4.48"
     fontoxpath "^3.14.0"
 
+"@manuscripts/library@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.6.0.tgz#3149fbf968d8be9e8aed27f35726f85d94532cc6"
+  integrity sha512-RcnvMw18ydSJckWhkb5lT1DKdVTZOqDVyrd+5K3XxG3ZSJeBzJjm/inN7GX3eF57EzeSn9EiF59063dvYEUklw==
+  dependencies:
+    "@manuscripts/csl-locales" "^0.0.5"
+    "@manuscripts/csl-styles" "^0.2.1"
+    "@manuscripts/data" "^0.1.2"
+    "@manuscripts/manuscript-transform" "^0.42.12"
+    astrocite-bibtex "^0.16.4"
+    astrocite-ris "^0.16.4"
+    citeproc "^2.4.48"
+    fontoxpath "^3.17.2"
+
 "@manuscripts/manuscript-transform@^0.42.12":
   version "0.42.12"
   resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.42.12.tgz#5e0d7200a70ee58f8571ecc16f8de06bda519f33"
@@ -1539,10 +1553,44 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@1.46.2", "@manuscripts/manuscripts-json-schema@^1.46.2":
+"@manuscripts/manuscript-transform@^0.43.0":
+  version "0.43.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.43.0.tgz#07dbf31807f655a91b5663eb25ff861d0fc55f31"
+  integrity sha512-ubgHvwpbZwFvwnOr+lTlM+BLtAm1wE+CSy3lrLRCKO3W7+Y6Xoo4aU2kY5lnobrDSPdJEm0iMXkrQkGCfGiqYQ==
+  dependencies:
+    "@manuscripts/data" "^0.1.3"
+    "@manuscripts/library" "^0.6.0"
+    "@manuscripts/manuscripts-json-schema" "^1.46.7"
+    debug "^4.1.1"
+    lodash.pickby "^4.6.0"
+    mathjax-full "^3.1.2"
+    mime "^2.4.6"
+    prosemirror-model "~1.14.0"
+    uuid "^8.2.0"
+    w3c-xmlserializer "^2.0.0"
+
+"@manuscripts/manuscripts-json-schema@1.46.3":
+  version "1.46.3"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.3.tgz#9dbbea080b198a6b60239ddfccfece7b1fa5f2c2"
+  integrity sha512-ZTMAZ0JgW7CMRxDZHANll4oSmWGQiq/BBkRPggG2jU+0KWaQN2y/da1q3BYY7OyX5OdEAB1csmIQOmSY6wdB/A==
+  dependencies:
+    ajv "^6.10.0"
+    deepmerge "^3.2.0"
+    js-beautify "^1.9.0"
+
+"@manuscripts/manuscripts-json-schema@^1.46.2":
   version "1.46.2"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.2.tgz#fac4be683e5301e56dbba1600691e7d617198fb3"
   integrity sha512-TDMONHRO0grvkx+DcBTlWg9bXpsZMfW6VbHDdC5d8vsjAdIlXzYHARi7H35I5oCoFuJwiWDQ/rJsJC1c7t5jyQ==
+  dependencies:
+    ajv "^6.10.0"
+    deepmerge "^3.2.0"
+    js-beautify "^1.9.0"
+
+"@manuscripts/manuscripts-json-schema@^1.46.7":
+  version "1.46.10"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.10.tgz#66c57b2b7c6608f59761943869efeb36074bda99"
+  integrity sha512-3Me1oyePX6qJeYBuvJ/am4QvFsijk05/cSexmyA1dDvjUWU0nxZHCQia4Mf2/X4ZAoLGQpSTeuVV6zsonnOUwA==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1620,12 +1668,12 @@
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
 
-"@manuscripts/track-changes@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.16.tgz#1bcfbd9a4296031c39517f67daa0c4f0412db80a"
-  integrity sha512-6g2C9Kyffk+uLzlziN4ryPN9D4hewyMwzj9Wpa8DuTh9dmj0Np4bVic7lnIwb7P1H6Nn3NqnvjCoCVbkR57niw==
+"@manuscripts/track-changes@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.0.18.tgz#b7d986acc54bbe55e127e6e1e39245335f72e479"
+  integrity sha512-2chlS5vEp7c4SDKikb5t7l7kAB6zH+4n9qRqHRRqMOB+ImF8rzmXcC2uHnY3CjTwSUuq6NJXvuM6FyHDv8XqrQ==
   dependencies:
-    "@manuscripts/manuscripts-json-schema" "1.46.2"
+    "@manuscripts/manuscripts-json-schema" "1.46.3"
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
     uuid "8.3.2"
@@ -6141,6 +6189,13 @@ fontoxpath@^3.14.0:
   version "3.17.2"
   resolved "https://registry.npmjs.org/fontoxpath/-/fontoxpath-3.17.2.tgz#0312db0f3cdf675269d5cdca7221997f64859d7b"
   integrity sha512-+Lm7dHifsp+t+kA1NLCZLUPzxqKJ6uy0IljdVS+tMpoQNiSlttr7e/Cfg9DwgvQL7HWzTT7I54vxCPSAiQkzYw==
+  dependencies:
+    xspattern "^2.0.0"
+
+fontoxpath@^3.17.2:
+  version "3.17.4"
+  resolved "https://registry.npmjs.org/fontoxpath/-/fontoxpath-3.17.4.tgz#1574d3535e7680823166badd4ef118600c84316e"
+  integrity sha512-BDtf/sKM0M1/NfHPrRZwjpddykZkYWsoVawb7AMgaeX/v7daticV8Nr/KAx62++y1cIg4/j6j6f9/f7QZVVzgg==
   dependencies:
     xspattern "^2.0.0"
 
