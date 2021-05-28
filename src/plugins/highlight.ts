@@ -24,6 +24,8 @@ import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { ANNOTATION_COLOR } from '../lib/annotations'
+
 export const highlightKey = new PluginKey<
   HighlightPluginState,
   ManuscriptSchema
@@ -154,7 +156,7 @@ const buildDecorations = (highlights: Map<string, HighlightWithNode>) => {
         Decoration.inline(start, end, {
           nodeName: 'span',
           class: 'highlight',
-          style: 'background: rgba(255, 189, 38, 0.5);', // TODO: use Highlight.color
+          style: `background: ${ANNOTATION_COLOR}`, // TODO: use Highlight.color
         })
       )
     }

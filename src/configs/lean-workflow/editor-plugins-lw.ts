@@ -37,6 +37,7 @@ import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../../keys'
+import { loadAnnoationsToTrack } from '../../lib/annotations'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
 import keywords from '../../plugins/keywords'
@@ -101,7 +102,11 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track({ commit: commit || undefined, ancestorDoc }),
+    track({
+      commit: commit || undefined,
+      ancestorDoc,
+      annotations: loadAnnoationsToTrack(modelMap),
+    }),
   ]
 }
 

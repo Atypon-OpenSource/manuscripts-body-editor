@@ -52,6 +52,7 @@ import { ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
 import { v4 as uuid } from 'uuid'
 
+import { ANNOTATION_COLOR } from './lib/annotations'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
@@ -835,10 +836,10 @@ export const insertHighlight = (
   const isTrackEnabled = !!getTrackPluginState(state)
   if (isTrackEnabled) {
     const id = uuid()
-    const result = trackPluginCommands.addAnnotation(
-      id,
-      'rgba(255, 189, 38, 0.5)'
-    )(state, dispatch)
+    const result = trackPluginCommands.addAnnotation(id, ANNOTATION_COLOR)(
+      state,
+      dispatch
+    )
     return result ? id : null
   }
 
