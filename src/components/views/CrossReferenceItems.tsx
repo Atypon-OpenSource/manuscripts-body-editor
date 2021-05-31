@@ -96,7 +96,6 @@ const trimmedCaption = (caption: string, limit: number): string => {
 }
 
 interface Props {
-  referencedObject: string | null
   targets: Target[]
   handleSelect: (id: string) => void
   handleCancel: () => void

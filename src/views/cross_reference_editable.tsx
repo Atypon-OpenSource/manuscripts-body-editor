@@ -35,15 +35,15 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   public selectNode = () => {
     const { permissions, renderReactComponent } = this.props
 
-    if (!permissions.write) {
-      return
-    }
-
     const { rid } = this.node.attrs
 
     const auxiliaryObjectReference = rid
       ? this.getAuxiliaryObjectReference(rid)
       : null
+
+    if (!permissions.write || auxiliaryObjectReference?.referencedObject) {
+      return
+    }
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
@@ -52,11 +52,6 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
     renderReactComponent(
       <CrossReferenceItems
-        referencedObject={
-          auxiliaryObjectReference
-            ? auxiliaryObjectReference.referencedObject
-            : null
-        }
         handleSelect={this.handleSelect}
         targets={this.getTargets()}
         handleCancel={this.handleCancel}
