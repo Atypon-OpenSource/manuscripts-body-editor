@@ -118,12 +118,11 @@ const fetch = async (item: Partial<BibliographyItem>) => {
   return convertCSLToBibliographyItem(response.data)
 }
 
-type CrossRef = {
+export const crossref: {
   fetch: (item: Partial<BibliographyItem>) => Promise<Partial<BibliographyItem>>
   search: (
     query: string,
     rows: number,
     mailto: string
   ) => Promise<SearchResults>
-}
-export const crossref: CrossRef = { fetch, search }
+} = { fetch, search }

@@ -21,7 +21,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import { Annotation } from '@manuscripts/track-changes'
 
-export const ANNOTATION_COLOR = 'rgba(255, 189, 38, 0.5)'
+export const ANNOTATION_COLOR = [255, 189, 38] as [number, number, number]
 
 export const loadAnnoationsToTrack = (
   modelMap: Map<string, Model>

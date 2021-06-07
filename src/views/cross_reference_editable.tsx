@@ -41,7 +41,11 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       ? this.getAuxiliaryObjectReference(rid)
       : null
 
-    if (!permissions.write || auxiliaryObjectReference?.referencedObject) {
+    if (
+      !permissions.write ||
+      auxiliaryObjectReference?.referencedObject ||
+      auxiliaryObjectReference?.referencedObjects
+    ) {
       return
     }
 
@@ -100,9 +104,10 @@ export class CrossReferenceEditableView extends CrossReferenceView<
     const pos = this.getPos()
     const $pos = state.doc.resolve(pos)
 
+    const rids = rid.trim().split(/\s+/)
     const auxiliaryObjectReference = buildAuxiliaryObjectReference(
       $pos.parent.attrs.id,
-      rid
+      rids
     )
 
     await this.props.saveModel(auxiliaryObjectReference)

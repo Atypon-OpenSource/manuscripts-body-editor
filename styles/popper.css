@@ -133,7 +133,8 @@
 }
 
 .popper .citation-editor,
-.popper .cross-reference-editor {
+.popper .cross-reference-editor,
+.popper .citation-references {
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;

@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView, Target } from '@manuscripts/manuscript-transform'
 import { AuxiliaryObjectReference } from '@manuscripts/manuscripts-json-schema'
 import { History } from 'history'
+import React from 'react'
 
+import { objectsKey } from '../plugins/objects'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
   history: History
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
+  protected popperContainer?: HTMLDivElement
+
   public selectNode = () => {
     // TODO: navigate to referenced item?
     // TODO: show a list of referenced items?
@@ -39,11 +44,47 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
     )
 
     if (auxiliaryObjectReference) {
-      this.props.history.push({
-        pathname: this.props.history.location.pathname,
-        hash: '#' + auxiliaryObjectReference.referencedObject,
-      })
+      if (auxiliaryObjectReference.referencedObjects) {
+        this.showPopper(auxiliaryObjectReference.referencedObjects)
+      } else {
+        this.props.history.push({
+          pathname: this.props.history.location.pathname,
+          hash: '#' + auxiliaryObjectReference.referencedObject,
+        })
+      }
     }
+  }
+
+  public showPopper = (referencedObjects: string[]) => {
+    const {
+      components: { ReferencesViewer },
+      renderReactComponent,
+    } = this.props
+
+    if (!this.popperContainer) {
+      this.popperContainer = document.createElement('div')
+      this.popperContainer.className = 'citation-references'
+    }
+
+    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+    const items: { label: string; referencedObject: string }[] = []
+
+    referencedObjects.map((referencedObject) => {
+      const target = targets.get(referencedObject)
+      if (target && target.label) {
+        items.push({
+          label: target.label,
+          referencedObject,
+        })
+      }
+    })
+
+    renderReactComponent(
+      <ReferencesViewer items={items} history={this.props.history} />,
+      this.popperContainer
+    )
+
+    this.props.popper.show(this.dom, this.popperContainer, 'right')
   }
 
   public updateContents = () => {

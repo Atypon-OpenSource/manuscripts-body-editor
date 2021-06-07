@@ -831,15 +831,11 @@ export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ): Build<Highlight> | string | null => {
-  // COMMENTED OUT WHILE WE SORT OUT HIGHLIGHT IN LW:
-
   const isTrackEnabled = !!getTrackPluginState(state)
   if (isTrackEnabled) {
     const id = uuid()
-    const result = trackPluginCommands.addAnnotation(id, ANNOTATION_COLOR)(
-      state,
-      dispatch
-    )
+    const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
+    const result = trackPluginCommands.addAnnotation(id, color)(state, dispatch)
     return result ? id : null
   }
 
