@@ -18,7 +18,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { Build } from '@manuscripts/manuscript-transform'
+import { Build, ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import persist from '@manuscripts/plugin-persist'
 import track, { Commit } from '@manuscripts/track-changes'
@@ -47,6 +47,7 @@ interface PluginProps {
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget: (commentTarget?: string) => void
+  ancestorDoc: ManuscriptNode
 }
 
 export default (props: PluginProps) => {
@@ -58,6 +59,7 @@ export default (props: PluginProps) => {
     modelMap,
     saveModel,
     setCommentTarget,
+    ancestorDoc,
   } = props
 
   return [
@@ -77,7 +79,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track(commit),
+    track({ commit, ancestorDoc }),
     highlights({ setCommentTarget }),
   ]
 }

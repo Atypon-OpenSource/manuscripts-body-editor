@@ -36,6 +36,7 @@ import {
   insertBibliographySection,
   insertBlock,
   insertCrossReference,
+  insertHighlight,
   // insertFootnotesSection, // this is disabled by commenting until we test the footnotes
   insertInlineCitation,
   insertInlineEquation,
@@ -286,6 +287,12 @@ export default (
           },
           enable: isCommandValid(canInsert(schema.nodes.inline_footnote)),
           run: wrap(insertInlineFootnote('footnote')),
+        },
+        {
+          id: 'insert-comment',
+          label: 'Comment',
+          enable: isCommandValid(insertHighlight),
+          run: wrap(insertHighlight),
         },
         // endnote type is not used at the moment, this will be needed when we enable them
         // {

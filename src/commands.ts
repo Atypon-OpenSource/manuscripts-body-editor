@@ -16,7 +16,6 @@
 
 import {
   BibliographySectionNode,
-  Build,
   buildCitation,
   buildHighlight,
   buildInlineMathFragment,
@@ -39,11 +38,7 @@ import {
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-import {
-  ExternalFile,
-  Highlight,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { ExternalFile, ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import {
   commands as trackPluginCommands,
   getTrackPluginState,
@@ -827,16 +822,29 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.listing.create(),
   ])
 
-export const insertHighlight = (
+export const insertAnnotation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
-): Build<Highlight> | string | null => {
+): boolean => {
   const isTrackEnabled = !!getTrackPluginState(state)
   if (isTrackEnabled) {
     const id = uuid()
     const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
-    const result = trackPluginCommands.addAnnotation(id, color)(state, dispatch)
-    return result ? id : null
+    return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
+  }
+
+  return false
+}
+
+export const insertHighlight = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+): boolean => {
+  const isTrackEnabled = !!getTrackPluginState(state)
+  if (isTrackEnabled) {
+    const id = uuid()
+    const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
+    return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
   }
 
   const highlight = buildHighlight()
@@ -868,7 +876,7 @@ export const insertHighlight = (
     dispatch(tr)
   }
 
-  return highlight
+  return true
 }
 
 export const deleteHighlightMarkers = (

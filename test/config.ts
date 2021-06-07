@@ -36,6 +36,7 @@ import views from './views'
 
 export interface Props {
   doc: ManuscriptNode
+  ancestorDoc: ManuscriptNode
   commit: Commit
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript

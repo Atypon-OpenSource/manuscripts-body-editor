@@ -21,7 +21,6 @@ import {
   nodeNames,
 } from '@manuscripts/manuscript-transform'
 import { Fragment, Slice } from 'prosemirror-model'
-import { TextSelection } from 'prosemirror-state'
 
 import { createBlock, insertHighlight } from '../commands'
 import { PopperManager } from './popper'
@@ -289,25 +288,7 @@ export class ContextMenu {
           section.appendChild(
             this.createMenuItem('Comment', () => {
               const { state, dispatch } = this.view
-
-              // TODO: ensure that text is selected
-
-              if (
-                state.selection.empty ||
-                !(state.selection instanceof TextSelection)
-              ) {
-                setCommentTarget(this.node.attrs.id)
-              } else {
-                const highlight = insertHighlight(state, dispatch)
-                setCommentTarget(
-                  typeof highlight === 'string'
-                    ? highlight
-                    : !highlight
-                    ? undefined
-                    : highlight._id
-                )
-              }
-
+              insertHighlight(state, dispatch)
               popper.destroy()
             })
           )

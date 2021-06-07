@@ -55,7 +55,7 @@ const EditorComponent: React.FC<Props> = (props) => {
     config.createView(props)
   )
   const { onRender } = editor
-  const menus = useApplicationMenus(getMenus(editor))
+  const menus = useApplicationMenus(getMenus(editor, () => null))
 
   return (
     <div>
