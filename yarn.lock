@@ -1495,20 +1495,6 @@
   resolved "https://registry.npmjs.org/@manuscripts/examples/-/examples-0.0.8.tgz#877effcbf22b11c3b24e162284665042f4125192"
   integrity sha512-hCmYSKgflejywcX1A8eTwU3MnKTaq5fHgTA7EciYG8HFm3qIST4rk+tTPvNhZ/JkwbZqs2hSTPhKbUR3IwwcDQ==
 
-"@manuscripts/library@^0.5.9":
-  version "0.5.9"
-  resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.5.9.tgz#4cc75b3dc130925dfcd134d10dd2d93457544566"
-  integrity sha512-oHeGJgoGL3mEOWxRivh7vYFEp709ixcrqHRRPv7+Z1JMxmUEzYKvXCRWNZe+IB2j23pHl2FE3DXORzqTvUs/NQ==
-  dependencies:
-    "@manuscripts/csl-locales" "^0.0.5"
-    "@manuscripts/csl-styles" "^0.2.1"
-    "@manuscripts/data" "^0.1.2"
-    "@manuscripts/manuscript-transform" "^0.42.8"
-    astrocite-bibtex "^0.16.4"
-    astrocite-ris "^0.16.4"
-    citeproc "^2.4.48"
-    fontoxpath "^3.14.0"
-
 "@manuscripts/library@^0.6.0":
   version "0.6.0"
   resolved "https://registry.npmjs.org/@manuscripts/library/-/library-0.6.0.tgz#3149fbf968d8be9e8aed27f35726f85d94532cc6"
@@ -1527,21 +1513,6 @@
   version "0.42.12"
   resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.42.12.tgz#5e0d7200a70ee58f8571ecc16f8de06bda519f33"
   integrity sha512-bg3xL6yHgohSFtuI6N/oghl19NTDqQ33Tl+bikk/S5nYENmzO/rO4fim20VCbBl9zo+p74jGf2aaJxou9clYaw==
-  dependencies:
-    "@manuscripts/data" "^0.1.3"
-    "@manuscripts/manuscripts-json-schema" "^1.46.2"
-    debug "^4.1.1"
-    lodash.pickby "^4.6.0"
-    mathjax-full "^3.1.2"
-    mime "^2.4.6"
-    prosemirror-model "~1.14.0"
-    uuid "^8.2.0"
-    w3c-xmlserializer "^2.0.0"
-
-"@manuscripts/manuscript-transform@^0.42.8":
-  version "0.42.9"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.42.9.tgz#0386539956236eef3f9c813a91676fdeeee54d7a"
-  integrity sha512-CM51OXK1oy/Pu+cfze0Qm69z3pKHiH7F2rxLAufFPLLxb9+A8K4dFngWvU5ZR4bXqFlbep5YFFW6Fx6p9NEYNQ==
   dependencies:
     "@manuscripts/data" "^0.1.3"
     "@manuscripts/manuscripts-json-schema" "^1.46.2"
@@ -6184,13 +6155,6 @@ follow-redirects@^1.10.0:
   version "1.13.3"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
   integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
-
-fontoxpath@^3.14.0:
-  version "3.17.2"
-  resolved "https://registry.npmjs.org/fontoxpath/-/fontoxpath-3.17.2.tgz#0312db0f3cdf675269d5cdca7221997f64859d7b"
-  integrity sha512-+Lm7dHifsp+t+kA1NLCZLUPzxqKJ6uy0IljdVS+tMpoQNiSlttr7e/Cfg9DwgvQL7HWzTT7I54vxCPSAiQkzYw==
-  dependencies:
-    xspattern "^2.0.0"
 
 fontoxpath@^3.17.2:
   version "3.17.4"

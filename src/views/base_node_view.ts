@@ -81,9 +81,15 @@ export class BaseNodeView<PropsType extends BaseNodeProps>
     // extend this
   }
 
-  public setDomAttrs(node: ManuscriptNode, element: HTMLElement) {
+  public setDomAttrs(
+    node: ManuscriptNode,
+    element: HTMLElement,
+    omit: string[] = []
+  ) {
     Object.keys(node.attrs || {}).forEach((attr) => {
-      element.setAttribute(attr, node.attrs[attr])
+      if (!omit.includes(attr)) {
+        element.setAttribute(attr, node.attrs[attr])
+      }
     })
   }
 

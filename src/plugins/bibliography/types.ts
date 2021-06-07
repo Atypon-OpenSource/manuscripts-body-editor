@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import purify, { Config } from 'dompurify'
+import { CitationNodes, CitationProvider } from '@manuscripts/library'
+import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 
-type Sanitize = (
-  dirty: string,
-  config?: Pick<Config, 'USE_PROFILES' | 'ALLOWED_TAGS'>
-) => DocumentFragment
-
-export interface Purify {
-  sanitize: Sanitize
+export interface CiteProcCitation {
+  citationItems: Array<{ id: string }>
+  properties?: {
+    noteIndex?: number
+  }
 }
 
-export const sanitize: Sanitize = (dirty, config) =>
-  purify.sanitize(dirty, {
-    RETURN_DOM_FRAGMENT: true,
-    RETURN_DOM_IMPORT: true,
-    ...config,
-  })
+export interface PluginState {
+  citationNodes: CitationNodes
+  citations: CiteProcCitation[]
+}
+
+export interface BibliographyProps {
+  getCitationProvider: () => CitationProvider | undefined
+  getLibraryItem: (id: string) => BibliographyItem | undefined
+  getModel: <T extends Model>(id: string) => T | undefined
+}

@@ -111,7 +111,7 @@ export const defaultEditorProps: EditorProps = {
   ...defaultViewerProps,
   ...{
     autoFocus: undefined,
-    getCitationProcessor: () => undefined,
+    getCitationProvider: () => undefined,
     plugins: [],
     saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => {
       const id = model._id ?? ''

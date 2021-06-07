@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convertDataToBibliographyItem } from '@manuscripts/library'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
 
@@ -66,7 +66,7 @@ const convert = async (data: Record<string, unknown>[], format: string) => {
     validateStatus: (status) => status === 200 || status === 300,
   })
 
-  return response.data.map(convertDataToBibliographyItem) as BibliographyItem[]
+  return response.data.map(convertCSLToBibliographyItem) as BibliographyItem[]
 }
 
 const search = async (query: string, rows: number): Promise<SearchResults> => {

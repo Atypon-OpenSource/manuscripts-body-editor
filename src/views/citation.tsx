@@ -21,6 +21,7 @@ import {
   CitationItem,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
+import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
@@ -108,21 +109,24 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public initialise = () => {
-    this.createDOM()
+    if (!this.node.type.spec.toDOM) {
+      throw Error(`Node view ${this.node.type} doesn't have toDOM method`)
+    }
+    const outputSpec = this.node.type.spec.toDOM(this.node)
+    const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
+    this.dom = dom as HTMLElement
+    this.contentDOM = (contentDOM as HTMLElement) || undefined
     this.updateContents()
-  }
-
-  public createDOM = () => {
-    this.dom = document.createElement('span')
-    this.dom.className = 'citation'
-    this.dom.setAttribute('data-reference-id', this.node.attrs.rid)
-    this.dom.setAttribute('spellcheck', 'false')
+    return this
   }
 
   public updateContents = () => {
-    const fragment = sanitize(this.node.attrs.contents) // TODO: whitelist
+    const fragment = sanitize(this.node.attrs.contents, {
+      ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
+    })
     this.dom.innerHTML = ''
     this.dom.appendChild(fragment)
+    this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
   }
 
   public getCitation = () => {

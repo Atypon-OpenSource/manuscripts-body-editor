@@ -15,11 +15,10 @@
  */
 
 import { schema } from '@manuscripts/manuscript-transform'
-import { Node } from 'prosemirror-model'
 
 import { buildText, countCharacters, countWords } from '../statistics'
 
-const node = Node.fromJSON(schema, {
+const node = schema.nodeFromJSON({
   type: 'manuscript',
   content: [
     {

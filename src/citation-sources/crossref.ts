@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convertDataToBibliographyItem } from '@manuscripts/library'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import axios from 'axios'
 
@@ -57,7 +57,7 @@ const search = async (
   } = response.data
 
   return {
-    items: items.map(convertDataToBibliographyItem) as BibliographyItem[],
+    items: items.map(convertCSLToBibliographyItem) as BibliographyItem[],
     total,
   }
 }
@@ -80,7 +80,7 @@ const searchByDOI = async (
 
   const { message } = response.data
 
-  const item = convertDataToBibliographyItem(message) as BibliographyItem
+  const item = convertCSLToBibliographyItem(message) as BibliographyItem
 
   return {
     items: [item],
@@ -115,7 +115,15 @@ const fetch = async (item: Partial<BibliographyItem>) => {
     throw new Error('There was a problem fetching this DOI.')
   }
 
-  return convertDataToBibliographyItem(response.data)
+  return convertCSLToBibliographyItem(response.data)
 }
 
-export const crossref = { fetch, search }
+type CrossRef = {
+  fetch: (item: Partial<BibliographyItem>) => Promise<Partial<BibliographyItem>>
+  search: (
+    query: string,
+    rows: number,
+    mailto: string
+  ) => Promise<SearchResults>
+}
+export const crossref: CrossRef = { fetch, search }

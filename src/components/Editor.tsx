@@ -17,7 +17,7 @@
 import 'prosemirror-view/style/prosemirror.css'
 import '../lib/smooth-scroll'
 
-import { GetCitationProcessor } from '@manuscripts/library'
+import { CitationProvider } from '@manuscripts/library'
 import {
   Build,
   ManuscriptEditorView,
@@ -54,7 +54,7 @@ import { ViewerProps } from './Viewer'
 
 export interface EditorProps extends ViewerProps {
   autoFocus?: boolean
-  getCitationProcessor: GetCitationProcessor
+  getCitationProvider: () => CitationProvider | undefined
   plugins: Array<Plugin<ManuscriptSchema>>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   putAttachment: (
