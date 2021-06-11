@@ -919,11 +919,9 @@
 .track-changes--blame {
   background-color: hsl(196, 91%, 91%);
 }
-.track-changes--blame.track-changes--blame-uncommitted {
-  background-color: hsla(196, 93%, 84%);
-}
+.track-changes--blame.track-changes--blame-uncommitted,
 .track-changes--blame.track-changes--focused {
-  background-color: hsla(196, 93%, 84%);
+  background-color: hsl(196, 93%, 84%);
 }
 
 .track-changes--replaced {
@@ -932,7 +930,7 @@
   text-decoration: line-through;
 }
 .track-changes--replaced.track-changes--focused {
-  background-color: hsla(196, 93%, 84%);
+  background-color: hsl(196, 93%, 84%);
 }
 
 .track-changes--annotation {
@@ -956,4 +954,9 @@
   border-left: none;
   width: 5px;
   height: 5px;
+}
+
+/* legacy */
+.highlight {
+  background-color: rgba(250, 224, 150, 0.6);
 }
