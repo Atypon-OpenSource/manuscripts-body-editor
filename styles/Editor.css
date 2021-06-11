@@ -955,8 +955,3 @@
   width: 5px;
   height: 5px;
 }
-
-/* legacy */
-.highlight {
-  background-color: rgba(250, 224, 150, 0.6);
-}

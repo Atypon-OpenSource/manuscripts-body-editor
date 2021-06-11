@@ -156,7 +156,7 @@ const buildDecorations = (highlights: Map<string, HighlightWithNode>) => {
         Decoration.inline(start, end, {
           nodeName: 'span',
           class: 'highlight',
-          style: `background: ${ANNOTATION_COLOR}`, // TODO: use Highlight.color
+          style: `background: rgba(${ANNOTATION_COLOR.join(', ')}, 0.6)`,
         })
       )
     }
