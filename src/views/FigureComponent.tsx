@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
+import {
+  FigureNode,
+  ManuscriptEditorState,
+  ManuscriptNode,
+} from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import React, { SyntheticEvent, useEffect, useMemo, useRef } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
+import { Build } from '@manuscripts/manuscript-transform'
 
 import { addExternalFileRef } from '../lib/external-files'
 import { ReactViewComponentProps } from './ReactView'
+import { Dispatch } from '../commands'
 
 export interface FigureProps {
   permissions: { write: boolean }
@@ -29,6 +35,27 @@ export interface FigureProps {
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   theme: DefaultTheme
+  saveModel: <Model>(
+    model: Model | Build<Model> | Partial<Model>
+  ) => Promise<Model>
+}
+
+export const insertFileCaption = (
+  externalFileId: string,
+  state: ManuscriptEditorState,
+  dispatch: Dispatch,
+  position: number
+) => {
+  if (!(position >= 0)) {
+    return false
+  }
+  const node = state.schema.nodes.filecaption.createAndFill({
+    fileId: externalFileId,
+  })
+  const tr = state.tr.insert(position, node as ManuscriptNode)
+  dispatch(tr)
+
+  return true
 }
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {

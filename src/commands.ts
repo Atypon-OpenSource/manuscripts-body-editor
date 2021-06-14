@@ -355,7 +355,7 @@ export const insertInlineEquation = (
     state.selection.$anchor.parent.attrs.id,
     selectedText().replace(/^\$/, '').replace(/\$$/, '')
   )
-
+  debugger
   const sourcePos = state.selection.from - 1
 
   const tr = state.tr

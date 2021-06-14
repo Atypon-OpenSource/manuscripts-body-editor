@@ -34,7 +34,7 @@ import styled from 'styled-components'
 import { Dispatch } from '../commands'
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
-import { FigureProps } from './FigureComponent'
+import { FigureProps, insertFileCaption } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
 
 interface AttachableFilesDropdownProps {
@@ -176,6 +176,42 @@ const FigureElement = ({
       }
     }
 
+    console.log(contentDOM)
+    useEffect(() => {
+      if (content && content.current && dataset) {
+        // check if there is already a dom element for that
+        let fileCaptionDOM = contentDOM?.querySelector(
+          `figpcation[data-file-id="${dataset.ref._id}"]`
+        )
+        if (fileCaptionDOM) {
+          console.log(fileCaptionDOM)
+          // return fileCaptionDOM
+        }
+        insertFileCaption(
+          dataset?.ref?._id,
+          viewProps.view.state,
+          dispatch,
+          viewProps.getPos() + 1
+        )
+      }
+    }, [dataset])
+
+    console.log(viewProps.getPos())
+
+    const nx = contentDOM && contentDOM.querySelector(`figcaption.file-caption`)
+
+    let fileCaptionDOM = null
+
+    if (dataset?.ref) {
+      const dom = contentDOM?.querySelector(
+        `figpcation[data-file-id="${dataset.ref._id}"]`
+      )
+      if (dom) {
+        console.log(fileCaptionDOM)
+        fileCaptionDOM = dom
+      }
+    }
+
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
@@ -202,6 +238,7 @@ const FigureElement = ({
                 ) => updateDesignation(typeId, name)}
                 externalFile={dataset.ref}
                 showDesignationActions={true}
+                captionEditor={nx}
               />
             </AlternativesList>
           )}
