@@ -16,6 +16,7 @@
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import React, { SyntheticEvent, useEffect, useMemo, useRef } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 
@@ -29,6 +30,7 @@ export interface FigureProps {
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   theme: DefaultTheme
+  capabilities?: Capabilities
 }
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {

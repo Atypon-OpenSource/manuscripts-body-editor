@@ -30,6 +30,7 @@ import {
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
 import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
+import { Capabilities } from '@manuscripts/style-guide'
 import { LocationListener } from 'history'
 import {
   EditorState,
@@ -80,6 +81,7 @@ export interface EditorProps extends ViewerProps {
   permissions: {
     write: boolean
   }
+  capabilites?: Capabilities
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
 }

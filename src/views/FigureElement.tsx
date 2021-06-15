@@ -105,6 +105,7 @@ const FigureElement = ({
   submissionId,
   updateDesignation,
   permissions,
+  capabilities: can,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -179,7 +180,7 @@ const FigureElement = ({
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {externalFiles && (
+          {can?.changeDesignation && externalFiles && (
             <AttachableFilesDropdown
               files={externalFiles}
               onSelect={handleSelectedFile}
@@ -201,7 +202,7 @@ const FigureElement = ({
                   name: string
                 ) => updateDesignation(typeId, name)}
                 externalFile={dataset.ref}
-                showDesignationActions={true}
+                showDesignationActions={false}
               />
             </AlternativesList>
           )}

@@ -18,6 +18,7 @@ import {
   ManuscriptEditorState,
   ManuscriptEditorView,
 } from '@manuscripts/manuscript-transform'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Schema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React from 'react'
@@ -109,7 +110,8 @@ export const ManuscriptToolbar: React.FunctionComponent<{
   dispatch: (tr: Transaction) => void
   view?: ManuscriptEditorView
   footnotesEnabled?: boolean
-}> = ({ state, dispatch, view, footnotesEnabled }) => {
+  can: Capabilities
+}> = ({ state, dispatch, view, footnotesEnabled, can }) => {
   return (
     <ToolbarContainer>
       <ToolbarGroup>
@@ -120,7 +122,16 @@ export const ManuscriptToolbar: React.FunctionComponent<{
         <ToolbarGroup key={groupKey}>
           {Object.entries(toolbarGroup)
             .filter(
-              ([itemKey]) => !(itemKey === 'footnotes' && !footnotesEnabled) // Excluding 'Add Footnote' menu if footnotes are disabled in the config
+              ([itemKey]) => {
+                switch (itemKey) {
+                  case 'footnotes':
+                    return footnotesEnabled
+                  case 'highlight':
+                    return can.handleOwnComments
+                  default:
+                    return true
+                }
+              } // Excluding 'Add Footnote' menu if footnotes are disabled in the config
             ) // footnote check is temporal change. Footnotes is supposed to be a non-optional feature once fully ready for production
             .map(([itemKey, item]) => (
               <ToolbarItem key={itemKey}>

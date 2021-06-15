@@ -24,6 +24,7 @@ import {
   schema,
 } from '@manuscripts/manuscript-transform'
 import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { checkout } from '@manuscripts/track-changes'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -53,6 +54,7 @@ export interface EditorProps extends ViewerProps {
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   theme: DefaultTheme
+  capabilities?: Capabilities
 }
 
 export default {
