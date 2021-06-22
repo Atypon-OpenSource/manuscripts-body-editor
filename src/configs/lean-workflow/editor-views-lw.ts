@@ -27,6 +27,8 @@ import equation from '../../views/equation_editable'
 import equationElement from '../../views/equation_element_editable'
 import Figure, { FigureProps } from '../../views/FigureComponent'
 import FigureElement from '../../views/FigureElement'
+import footnote from '../../views/footnote_editable'
+import footnotesElement from '../../views/footnotes_element'
 import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
 import keywordsElement from '../../views/keywords_element_editable'
@@ -61,6 +63,8 @@ export default (props: EditorProps, dispatch: Dispatch) => {
         ignoreMutation: () => true,
       }
     ),
+    footnote: footnote(props),
+    footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props),
     keywords_element: keywordsElement(props),

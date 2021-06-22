@@ -28,6 +28,8 @@ import equation from '../../views/equation'
 import equationElement from '../../views/equation_element'
 import figureElement from '../../views/figure_element'
 import Figure, { FigureProps } from '../../views/FigureComponent'
+import footnote from '../../views/footnote_editable'
+import footnotesElement from '../../views/footnotes_element'
 import inlineEquation from '../../views/inline_equation'
 import inlineFootnote, {
   InlineFootnoteProps,
@@ -59,6 +61,8 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   equation_element: equationElement(props),
   figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
+  footnote: footnote(props),
+  footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
   keywords_element: keywordsElement(props),
