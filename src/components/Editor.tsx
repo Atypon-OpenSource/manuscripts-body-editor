@@ -51,6 +51,7 @@ import {
 import plugins from '../plugins/editor'
 import { ChangeReceiver, ChangeReceiverCommand } from '../types'
 import views from '../views/editor'
+import { injectTrackChanges } from './track-changes'
 import { ViewerProps } from './Viewer'
 
 export interface EditorProps extends ViewerProps {
@@ -135,7 +136,7 @@ export class Editor extends React.PureComponent<EditorProps> {
         },
       },
     })
-
+    injectTrackChanges(this.view)
     if (environment === 'development') {
       import('prosemirror-dev-tools')
         .then(({ applyDevTools }) => applyDevTools(this.view))

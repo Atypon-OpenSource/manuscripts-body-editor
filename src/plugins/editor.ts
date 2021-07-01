@@ -45,6 +45,7 @@ import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
 import toc from './toc'
+import track from './track'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
@@ -97,6 +98,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights({ setCommentTarget }),
+    track(),
   ]
 }
 

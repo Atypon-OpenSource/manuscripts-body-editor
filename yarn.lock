@@ -2164,6 +2164,14 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
+"@types/prosemirror-changeset@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@types/prosemirror-changeset/-/prosemirror-changeset-2.1.0.tgz#eabdfb605e75e7472725fd46f7c3e41b11b2a809"
+  integrity sha512-eCKu8G9/yGxZTlQj4IDgF2WLKVVZpoNWkMNAoiBvWWqW4CyoosNyg6RNPrYV4Vg9yy69eG/R48XWPXlPnM7RLQ==
+  dependencies:
+    "@types/prosemirror-model" "*"
+    "@types/prosemirror-transform" "*"
+
 "@types/prosemirror-commands@*", "@types/prosemirror-commands@^1.0.3", "@types/prosemirror-commands@~1.0.4":
   version "1.0.4"
   resolved "https://registry.npmjs.org/@types/prosemirror-commands/-/prosemirror-commands-1.0.4.tgz#d08551415127d93ae62e7239d30db0b5e7208e22"
@@ -11281,6 +11289,13 @@ property-is-enumerable-x@^1.1.0:
   dependencies:
     to-object-x "^1.4.1"
     to-property-key-x "^2.0.1"
+
+prosemirror-changeset@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.npmjs.org/prosemirror-changeset/-/prosemirror-changeset-2.1.2.tgz#91dee900eb4618b21ed0c38c8d41dc7539303864"
+  integrity sha512-/eeAM2XeOFmtiPsFVfVkM3Iq4xfNlFuDB6MlC8Hqch/ibq3YlH3YxDi8fqg78fT8fkrfvN6zRu9EE0HkSmH8PA==
+  dependencies:
+    prosemirror-transform "^1.0.0"
 
 prosemirror-commands@^1.1.4, prosemirror-commands@~1.1.7:
   version "1.1.7"
