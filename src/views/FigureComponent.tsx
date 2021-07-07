@@ -17,8 +17,8 @@
 import { FigureNode } from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import React, { SyntheticEvent, useEffect, useMemo, useRef } from 'react'
-import styled, { DefaultTheme } from 'styled-components'
+import React, { SyntheticEvent, useMemo, useRef } from 'react'
+import styled from 'styled-components'
 
 import { addExternalFileRef } from '../lib/external-files'
 import { ReactViewComponentProps } from './ReactView'
@@ -29,30 +29,27 @@ export interface FigureProps {
   externalFiles?: ExternalFile[]
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  theme: DefaultTheme
   capabilities?: Capabilities
 }
+
+const WEB_FORMAT_QUERY = '&format=jpg'
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
     setNodeAttrs,
   }) => {
-    const webFormatQuery = '&format=jpg'
-    const externalFilesSrc = useMemo(() => {
+    const src = useMemo(() => {
+      if (nodeAttrs.src) {
+        return nodeAttrs.src
+      }
+
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
         (file) => file.kind === 'imageRepresentation'
       )
-      return imageExternalFile?.url + webFormatQuery // these links are aways provided with url query, it's safe to assume we need to use amp here
-    }, [nodeAttrs.externalFileReferences])
+      return imageExternalFile?.url + WEB_FORMAT_QUERY // these links are always provided with url query, it's safe to assume we need to use amp here
+    }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(() => {
-      if (!nodeAttrs.src && externalFilesSrc) {
-        setNodeAttrs({
-          src: externalFilesSrc,
-        })
-      }
-    }, [externalFilesSrc, nodeAttrs.src, setNodeAttrs])
     const fileInput = useRef<HTMLInputElement>(null)
 
     const handleUpload = async (e: SyntheticEvent) => {
@@ -71,7 +68,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
           url,
           'imageRepresentation'
         ),
-        src: url + webFormatQuery,
+        src: url + WEB_FORMAT_QUERY,
         label: url,
       })
     }
@@ -99,7 +96,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
         {nodeAttrs.src ? (
           <UnstyledButton type="button" onClick={handleImageClick}>
             <img
-              src={nodeAttrs.src}
+              src={src}
               alt={nodeAttrs.label}
               style={{ cursor: 'pointer' }}
             />

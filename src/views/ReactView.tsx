@@ -22,7 +22,6 @@ import {
 import { NodeView } from 'prosemirror-view'
 import React, { useCallback, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { DefaultTheme, ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
 
@@ -38,9 +37,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   dispatch: Dispatch
 }
 
-export default (dispatch: Dispatch, theme: DefaultTheme) => <
-  NodeT extends ManuscriptNode
->(
+export default (dispatch: Dispatch) => <NodeT extends ManuscriptNode>(
   Component: React.FC<ReactViewComponentProps<NodeT>>,
   contentDOMElementType?: keyof HTMLElementTagNameMap | null,
   nodeViewProps?: NodeView
@@ -103,15 +100,13 @@ export default (dispatch: Dispatch, theme: DefaultTheme) => <
     }
 
     return (
-      <ThemeProvider theme={theme}>
-        <Component
-          nodeAttrs={node.attrs}
-          setNodeAttrs={setNodeAttrs}
-          viewProps={{ node, view, getPos }}
-          dispatch={dispatch}
-          contentDOM={contentDOM}
-        />
-      </ThemeProvider>
+      <Component
+        nodeAttrs={node.attrs}
+        setNodeAttrs={setNodeAttrs}
+        viewProps={{ node, view, getPos }}
+        dispatch={dispatch}
+        contentDOM={contentDOM}
+      />
     )
   }
 
