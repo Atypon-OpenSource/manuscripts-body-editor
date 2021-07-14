@@ -23,21 +23,18 @@ import track, { Commit } from '@manuscripts/track-changes'
 
 import elements from '../../plugins/elements'
 import objects from '../../plugins/objects'
-import styles from '../../plugins/styles'
 
 interface PluginProps {
   ancestorDoc?: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
   commit: Commit | null
 }
 
 export default (props: PluginProps) => {
-  const { commit, ancestorDoc, getModel, getManuscript, modelMap } = props
+  const { commit, ancestorDoc, getModel, getManuscript } = props
   return [
     elements(),
-    styles({ getModel, getManuscript, modelMap }),
     objects({ getModel, getManuscript }),
     track({ commit: commit || undefined, ancestorDoc }),
   ]

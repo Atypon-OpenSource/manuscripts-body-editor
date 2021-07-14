@@ -46,7 +46,6 @@ import objects from '../../plugins/objects'
 import paragraphs from '../../plugins/paragraphs'
 import placeholder from '../../plugins/placeholder'
 import sections from '../../plugins/sections'
-import styles from '../../plugins/styles'
 import toc from '../../plugins/toc'
 import rules from '../../rules'
 
@@ -90,7 +89,6 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
-    styles({ getModel, getManuscript, modelMap }),
     keywords({ getManuscript, getModel }),
     bibliography({
       getCitationProvider,
