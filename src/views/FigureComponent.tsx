@@ -32,7 +32,13 @@ export interface FigureProps {
   capabilities?: Capabilities
 }
 
-const WEB_FORMAT_QUERY = '&format=jpg'
+const WEB_FORMAT_QUERY = 'format=jpg'
+const addFormatQuery = (url?: string) => {
+  if (url) {
+    const join = url.includes('?') ? '&' : '?'
+    return url + join + WEB_FORMAT_QUERY
+  }
+}
 
 const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
@@ -47,7 +53,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
         (file) => file.kind === 'imageRepresentation'
       )
-      return imageExternalFile?.url + WEB_FORMAT_QUERY // these links are always provided with url query, it's safe to assume we need to use amp here
+      return addFormatQuery(imageExternalFile?.url) // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const fileInput = useRef<HTMLInputElement>(null)
@@ -68,7 +74,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
           url,
           'imageRepresentation'
         ),
-        src: url + WEB_FORMAT_QUERY,
+        src: addFormatQuery(url),
         label: url,
       })
     }
