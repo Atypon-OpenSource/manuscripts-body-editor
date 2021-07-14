@@ -15,6 +15,7 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
+import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element_editable'
@@ -43,7 +44,9 @@ import sectionTitle from '../../views/section_title_editable'
 import TableElement from '../../views/TableElement'
 import tocElement from '../../views/toc_element_editable'
 
-type EditorProps = EditableBlockProps & CitationEditableProps & FigureProps
+type EditorProps = EditableBlockProps &
+  CitationEditableProps &
+  FigureProps & { theme: DefaultTheme }
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
@@ -54,11 +57,15 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props),
     equation: equation(props),
     equation_element: equationElement(props),
-    figure: ReactView(dispatch)<FigureNode>(Figure(props)),
-    figure_element: ReactView(dispatch)(FigureElement(props), 'div', {
-      stopEvent: () => true,
-      ignoreMutation: () => true,
-    }),
+    figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
+    figure_element: ReactView(dispatch, props.theme)(
+      FigureElement(props),
+      'div',
+      {
+        stopEvent: () => true,
+        ignoreMutation: () => true,
+      }
+    ),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
@@ -71,10 +78,14 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     placeholder_element: placeholderElement(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
-    table_element: ReactView(dispatch)(TableElement(props), 'figure', {
-      stopEvent: () => false,
-      ignoreMutation: () => true,
-    }),
+    table_element: ReactView(dispatch, props.theme)(
+      TableElement(props),
+      'figure',
+      {
+        stopEvent: () => false,
+        ignoreMutation: () => true,
+      }
+    ),
     toc_element: tocElement(props),
   }
 }

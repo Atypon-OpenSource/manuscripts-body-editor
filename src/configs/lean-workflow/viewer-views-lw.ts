@@ -15,6 +15,7 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
+import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element'
@@ -49,7 +50,7 @@ import tocElement from '../../views/toc_element'
 type ViewerProps = CitationViewProps &
   CrossReferenceViewProps &
   InlineFootnoteProps &
-  FigureProps
+  FigureProps & { theme: DefaultTheme }
 
 export default (props: ViewerProps, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
@@ -59,7 +60,7 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
+  figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   footnote: footnote(props),
   footnotes_element: footnotesElement(props),
