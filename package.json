@@ -78,7 +78,7 @@
     "@manuscripts/eslint-config": "^0.4.2",
     "@manuscripts/examples": "^0.0.8",
     "@manuscripts/library": "^0.6.2",
-    "@manuscripts/manuscript-transform": "^0.46.0",
+    "@manuscripts/manuscript-transform": "^0.46.1",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.29.9",
     "@types/codemirror": "^0.0.98",
@@ -154,7 +154,7 @@
   },
   "peerDependencies": {
     "@manuscripts/library": "^0.5.4",
-    "@manuscripts/manuscript-transform": "^0.46.0",
+    "@manuscripts/manuscript-transform": "^0.46.1",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
     "@manuscripts/style-guide": "^0.29.9",
     "comlink": "^4.0.1",

@@ -19,9 +19,12 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
-import { Annotation } from '@manuscripts/track-changes'
+import { Annotation, commands } from '@manuscripts/track-changes'
+import { Command } from 'prosemirror-commands'
 
 export const ANNOTATION_COLOR = [250, 224, 150] as [number, number, number]
+
+const { addAnnotation } = commands
 
 export const loadAnnoationsToTrack = (
   modelMap: Map<string, Model>
@@ -41,4 +44,18 @@ export const loadAnnoationsToTrack = (
     updatedAt: comment.updatedAt,
   }))
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
+}
+
+export const insertAnnotationFromComment = (
+  comment: CommentAnnotation
+): Command | null => {
+  // replies and legacy comments do not need annotations
+  if (!comment.selector) {
+    return null
+  }
+
+  return addAnnotation(comment.target, `rgb(${ANNOTATION_COLOR.join(', ')})`, {
+    from: comment.selector.from,
+    to: comment.selector.to,
+  })
 }
