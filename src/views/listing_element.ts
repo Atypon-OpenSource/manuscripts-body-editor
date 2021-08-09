@@ -26,9 +26,13 @@ export class ListingElementView<PropsType extends BaseNodeProps>
   public elementType = 'figure'
 
   public updateContents = () => {
-    const { suppressCaption } = this.node.attrs
+    const { suppressCaption, suppressTitle } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
+    this.dom.classList.toggle(
+      'suppress-title',
+      suppressTitle === undefined ? true : suppressTitle
+    )
   }
 }
 

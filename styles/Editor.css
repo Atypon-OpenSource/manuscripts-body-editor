@@ -303,7 +303,31 @@
   word-wrap: break-word;
 }
 
-.ProseMirror .suppress-caption figcaption {
+.ProseMirror .caption-description {
+  margin: 0;
+}
+
+.ProseMirror .suppress-title .caption-description {
+  display: inline;
+}
+
+.ProseMirror .caption-title.empty-node::before {
+  content: 'Title...';
+}
+
+.ProseMirror .caption-description.empty-node::before {
+  content: 'Caption...';
+}
+
+.ProseMirror .suppress-caption .caption-description {
+  display: none;
+}
+
+.ProseMirror .suppress-caption figcaption > .figure-label {
+  display: none !important;
+}
+
+.ProseMirror .suppress-title .caption-title {
   display: none;
 }
 

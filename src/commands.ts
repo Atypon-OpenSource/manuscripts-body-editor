@@ -165,10 +165,30 @@ export const createBlock = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const node =
-    nodeType === state.schema.nodes.table_element
-      ? createAndFillTableElement(state)
-      : nodeType.createAndFill()
+  let node
+
+  switch (nodeType) {
+    case state.schema.nodes.table_element:
+      node = createAndFillTableElement(state)
+      break
+    case state.schema.nodes.figure_element:
+      node = createAndFillFigureElement(state)
+      break
+    case state.schema.nodes.listing_element:
+      node = state.schema.nodes.listing_element.create({}, [
+        state.schema.nodes.listing.create(),
+        createAndFillFigcaptionElement(state),
+      ])
+      break
+    case state.schema.nodes.equation_element:
+      node = state.schema.nodes.equation_element.create({}, [
+        state.schema.nodes.equation.create(),
+        createAndFillFigcaptionElement(state),
+      ])
+      break
+    default:
+      node = nodeType.createAndFill()
+  }
 
   const tr = state.tr.insert(position, node as ManuscriptNode)
 
@@ -818,8 +838,23 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
         ])
       )
     ),
-    state.schema.nodes.figcaption.create(),
+    createAndFillFigcaptionElement(state),
     state.schema.nodes.listing.create(),
+  ])
+
+const createAndFillFigureElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.figure_element.create({}, [
+    state.schema.nodes.figure.create({}, [
+      state.schema.nodes.figcaption.create(),
+    ]),
+    createAndFillFigcaptionElement(state),
+    state.schema.nodes.listing.create(),
+  ])
+
+const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.figcaption.create({}, [
+    state.schema.nodes.caption_title.create(),
+    state.schema.nodes.caption.create(),
   ])
 
 export const insertAnnotation = (

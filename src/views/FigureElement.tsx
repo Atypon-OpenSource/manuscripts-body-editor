@@ -137,6 +137,17 @@ const FigureElement = ({
       }
     }, [contentDOM])
 
+    useEffect(() => {
+      const { suppressCaption, suppressTitle } = viewProps.node.attrs
+      if (content.current) {
+        content.current.classList.toggle('suppress-caption', suppressCaption)
+        content.current.classList.toggle(
+          'suppress-title',
+          suppressTitle === undefined ? true : suppressTitle
+        )
+      }
+    }, [viewProps.node.attrs])
+
     /* eslint-disable react-hooks/exhaustive-deps */
     const setFigureAttrs = useCallback(
       /* eslint-enable react-hooks/exhaustive-deps */

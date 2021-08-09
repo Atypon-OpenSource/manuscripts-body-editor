@@ -41,6 +41,7 @@ export class FigureElementView<
   public updateContents = () => {
     const {
       suppressCaption,
+      suppressTitle,
       figureStyle,
       figureLayout,
       alignment,
@@ -48,6 +49,10 @@ export class FigureElementView<
     } = this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
+    this.dom.classList.toggle(
+      'suppress-title',
+      suppressTitle === undefined ? true : suppressTitle
+    )
 
     if (!this.contentDOM) {
       throw new Error('No contentDOM')

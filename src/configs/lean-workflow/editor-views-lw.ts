@@ -34,6 +34,8 @@ import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
 import keywordsElement from '../../views/keywords_element_editable'
 import link from '../../views/link_editable'
+import listing from '../../views/listing_editable'
+import listingElement from '../../views/listing_element_editable'
 import orderedList from '../../views/ordered_list_editable'
 import paragraph from '../../views/paragraph_editable'
 import placeholder from '../../views/placeholder'
@@ -72,6 +74,8 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     inline_footnote: inlineFootnote(props),
     keywords_element: keywordsElement(props),
     link: link(props),
+    listing: listing(props),
+    listing_element: listingElement(props),
     ordered_list: orderedList(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),

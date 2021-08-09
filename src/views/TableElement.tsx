@@ -80,11 +80,16 @@ const TableElement = ({
         suppressCaption,
         suppressHeader,
         suppressFooter,
+        suppressTitle,
       } = viewProps.node.attrs
       if (content.current) {
         content.current.classList.toggle('suppress-caption', suppressCaption)
         content.current.classList.toggle('suppress-header', suppressHeader)
         content.current.classList.toggle('suppress-footer', suppressFooter)
+        content.current.classList.toggle(
+          'suppress-title',
+          suppressTitle === undefined ? true : suppressTitle
+        )
 
         if (contentDOM) {
           contentDOM.setAttribute(
