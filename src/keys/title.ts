@@ -19,7 +19,7 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/manuscript-transform'
 import { chainCommands } from 'prosemirror-commands'
-import { ResolvedPos } from 'prosemirror-model'
+import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
 import { Selection, TextSelection, Transaction } from 'prosemirror-state'
 
 import {
@@ -152,20 +152,12 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
   return true
 }
 
-const leaveFigcaption: EditorAction = (state, dispatch) => {
+const leaveFigcaption: EditorAction = (state) => {
   const {
     selection: { $anchor },
   } = state
 
-  if ($anchor.parent.type !== $anchor.parent.type.schema.nodes.figcaption) {
-    return false
-  }
-
-  if (dispatch) {
-    enterNextBlock(dispatch, state, $anchor, true)
-  }
-
-  return true
+  return $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title
 }
 
 // ignore backspace at the start of section titles
@@ -192,10 +184,49 @@ const protectSectionTitle: EditorAction = (
   )
 }
 
+const protectCaption: EditorAction = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const {
+    selection: { $anchor },
+  } = state
+
+  if (
+    dispatch &&
+    ($anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title ||
+      $anchor.parent.type === $anchor.parent.type.schema.nodes.caption) &&
+    $anchor.parent.content.size === 1
+  ) {
+    const slice = new Slice(
+      Fragment.from([state.schema.nodes.caption_title.create()]),
+      1,
+      1
+    )
+    const tr = state.tr.replace($anchor.pos - 1, $anchor.pos, slice)
+    dispatch(tr)
+
+    return true
+  }
+
+  return false
+}
+
+const keepCaption = (state: ManuscriptEditorState) => {
+  const {
+    selection: { $anchor },
+  } = state
+  return (
+    $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title &&
+    $anchor.parent.content.size === 0
+  )
+}
+
 const titleKeymap: { [key: string]: EditorAction } = {
-  Backspace: protectSectionTitle,
+  Backspace: chainCommands(protectSectionTitle, protectCaption),
   Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
   Tab: exitBlock(1),
+  Delete: keepCaption,
   'Shift-Tab': exitBlock(-1),
 }
 
