@@ -58,13 +58,14 @@ import useEditor from './useEditor'
 export default (
   editor: ReturnType<typeof useEditor>,
   handleOpenDialog: (dialog: DialogNames) => void,
-  footnotesEnabled?: boolean
+  footnotesEnabled?: boolean,
+  contentEditable?: boolean
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const wrap = (command: Command<ManuscriptSchema>) => () =>
     editor.doCommand(command)
 
-  const menus = [
+  let menus = [
     {
       id: 'edit',
       label: 'Edit',
@@ -486,6 +487,14 @@ export default (
       ],
     },
   ]
+
+  const menusEditable = ['insert', 'edit']
+
+  if (contentEditable === false) {
+    menus = menus.filter(
+      (item) => !(item.id && menusEditable.includes(item.id))
+    )
+  }
 
   // this is temporal. once footnotes are production ready this filtering will be removed and the function should return the menus array above
   return menus.map((menuGroup: MenuSpec) => {
