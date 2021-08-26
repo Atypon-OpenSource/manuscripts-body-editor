@@ -99,7 +99,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
             accept="image/*"
           />
         )}
-        {nodeAttrs.src ? (
+        {src ? (
           <UnstyledButton type="button" onClick={handleImageClick}>
             <img
               src={src}
