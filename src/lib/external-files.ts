@@ -20,6 +20,9 @@ import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
  * A helper to check for existing external files of 'imageRepresentation' kind and replace/add it when needed.
  * Assuming that there should always be only one 'imageRepresentation' file reference as it serves for the basic display in the article body.
  */
+
+const excludedDesignations = ['main-manuscript', 'metadata']
+
 export interface ExternalFileRef {
   url: string
   kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset'
@@ -36,3 +39,6 @@ export const addExternalFileRef = (
   // return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
   return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
 }
+
+export const getAllowedForInFigure = (files: ExternalFile[]) =>
+  files.filter((file) => !excludedDesignations.includes(file.designation))

@@ -32,7 +32,11 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
+import {
+  addExternalFileRef,
+  ExternalFileRef,
+  getAllowedForInFigure,
+} from '../lib/external-files'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
@@ -69,6 +73,7 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
 }) => {
   // select and browse local selectio
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
   return (
     <DropdownWrapper ref={wrapperRef}>
       <RoundIconButton
@@ -83,8 +88,8 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
       </RoundIconButton>
       {isOpen && (
         <DropdownContainer>
-          {files &&
-            files.map((file, i) => (
+          {allowedFiles &&
+            allowedFiles.map((file, i) => (
               <DropdownItem key={i} onClick={() => onSelect(file)}>
                 {file.filename}
               </DropdownItem>
