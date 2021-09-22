@@ -64,9 +64,8 @@ export class ListingEditableView extends ListingView<
     this.setParentFigureElement()
 
     if (this.parentFigureElement) {
-      const { actionsContainer } = this.buildExecutableListingElement()
-
       if (this.props.permissions.write) {
+        const { actionsContainer } = this.buildExecutableListingElement()
         const executeButton = document.createElement('button')
         executeButton.classList.add('execute-listing')
         executeButton.classList.add('executable-action')
