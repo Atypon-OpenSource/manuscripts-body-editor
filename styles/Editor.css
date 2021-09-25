@@ -577,10 +577,6 @@
   counter-increment: footer_counter;
 }
 
-.ProseMirror td.empty-node::before {
-  content: 'Data';
-}
-
 .ProseMirror
   .block-table_element:not(.suppress-header)
   tr:first-of-type
