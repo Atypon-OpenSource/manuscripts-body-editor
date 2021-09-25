@@ -36,6 +36,7 @@ import {
   addExternalFileRef,
   ExternalFileRef,
   getAllowedForInFigure,
+  removeExternalFileRef,
 } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
@@ -128,7 +129,7 @@ const FigureElement = ({
       return figure
     }, [viewProps.node.content])
 
-    const dataset =
+    const dataset: ExternalFileRef =
       figure &&
       figure.attrs?.externalFileReferences?.find(
         (file: ExternalFileRef) => file.kind === 'dataset'
@@ -219,6 +220,14 @@ const FigureElement = ({
                 ) => updateDesignation(typeId, name)}
                 externalFile={dataset.ref}
                 showDesignationActions={false}
+                onClose={() => {
+                  setFigureAttrs({
+                    externalFileReferences: removeExternalFileRef(
+                      figure?.attrs.externalFileReferences,
+                      dataset.url
+                    ),
+                  })
+                }}
               />
             </AlternativesList>
           )}

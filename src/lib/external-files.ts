@@ -39,6 +39,11 @@ export const addExternalFileRef = (
   // return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
   return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
 }
-
+export const removeExternalFileRef = (
+  externalFileReferences: ExternalFileRef[] | undefined,
+  url: string
+) => {
+  return externalFileReferences?.filter((item) => item.url !== url)
+}
 export const getAllowedForInFigure = (files: ExternalFile[]) =>
   files.filter((file) => !excludedDesignations.includes(file.designation))
