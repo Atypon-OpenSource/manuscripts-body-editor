@@ -38,6 +38,7 @@ const TableElement = ({
   submissionId,
   updateDesignation,
   permissions,
+  uploadAttachment,
   capabilities: can,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
@@ -135,6 +136,22 @@ const TableElement = ({
             <AttachableFilesDropdown
               files={externalFiles}
               onSelect={handleSelectedFile}
+              uploadAttachment={uploadAttachment}
+              addFigureExFileRef={(relation, publicUrl) => {
+                if (figure) {
+                  const newAttrs: Node['attrs'] = {
+                    externalFileReferences: addExternalFileRef(
+                      figure?.attrs.externalFileReferences,
+                      publicUrl,
+                      relation
+                    ),
+                  }
+                  if (relation == 'imageRepresentation') {
+                    newAttrs.src = publicUrl
+                  }
+                  setTableAttrs(newAttrs)
+                }
+              }}
             />
           )}
           <div contentEditable="true" ref={content}></div>

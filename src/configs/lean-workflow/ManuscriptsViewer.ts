@@ -64,6 +64,7 @@ export interface ViewerProps {
   theme: DefaultTheme
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export default {

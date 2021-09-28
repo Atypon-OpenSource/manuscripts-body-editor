@@ -28,6 +28,7 @@ export interface FigureProps {
   putAttachment: (file: File, type: string) => Promise<string>
   externalFiles?: ExternalFile[]
   submissionId: string
+  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
 }
@@ -51,7 +52,7 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       }
 
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-        (file) => file.kind === 'imageRepresentation'
+        (file) => file && file.kind === 'imageRepresentation'
       )
       return addFormatQuery(imageExternalFile?.url) // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps

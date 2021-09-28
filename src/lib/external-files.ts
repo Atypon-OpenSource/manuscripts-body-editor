@@ -25,17 +25,17 @@ const excludedDesignations = ['main-manuscript', 'metadata']
 
 export interface ExternalFileRef {
   url: string
-  kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset'
+  kind?: string
   ref?: ExternalFile
 }
 export const addExternalFileRef = (
   externalFileReferences: ExternalFileRef[] | undefined,
   absolutePublicUrl: string,
-  kind?: 'imageRepresentation' | 'interactiveRepresentation' | 'dataset',
+  kind?: string,
   additionalProps: { [key: string]: unknown } = {}
 ) => {
   const newRefs =
-    externalFileReferences?.filter((item) => item.kind !== kind) || []
+    externalFileReferences?.filter((item) => item && item.kind !== kind) || []
   // return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
   return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
 }

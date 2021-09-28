@@ -1524,14 +1524,14 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.46.4":
-  version "0.46.4"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.46.4.tgz#4c0b9381c3ccec08b1269c4258a41687511e1ed3"
-  integrity sha512-5PLRdqpsxxf8OMjEmLBPcWQIZxct4+rYsDrfchnbi7Emzy+zTqss62cBe8tRA9Td3KkfJ3DjP2pDM36geO1IGA==
+"@manuscripts/manuscript-transform@^0.47.3":
+  version "0.47.3"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.47.3.tgz#6ff040c6d5c2d0c9e1081c15499e2556a6e22dea"
+  integrity sha512-UDa89P56DalcDCbKRYdHI4bm+pZbaw41SzPy4w1EJ9SK+UkybLM29rlZTMkYOAlMYzn/6OI9AFWhczyOiLV40w==
   dependencies:
     "@manuscripts/data" "^0.1.3"
     "@manuscripts/library" "^0.6.2"
-    "@manuscripts/manuscripts-json-schema" "^1.48.1"
+    "@manuscripts/manuscripts-json-schema" "^1.48.6"
     debug "^4.1.1"
     lodash.pickby "^4.6.0"
     mathjax-full "^3.1.2"
@@ -1567,10 +1567,10 @@
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/manuscripts-json-schema@^1.48.1":
-  version "1.48.1"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.48.1.tgz#6d9a00f3d1a67e25d4bea6c9904a06237411b07b"
-  integrity sha512-UKJMIChBeSivsEwYvedv7GELMYW2p5aWK7BlQuZJW6hJN3bWipy7DJLmmdjCdKCzC2L0jUJ0RP+QUOBhLnMcEA==
+"@manuscripts/manuscripts-json-schema@^1.48.6":
+  version "1.48.7"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.48.7.tgz#61957b5d62f9b2592cbcdd78923eddc3e8998cf9"
+  integrity sha512-OkE+f1CPbz5e7bj8VZnq+18Y13QQeGhK97VdAmGzyYgnxXFeva2WZqtjEWW99qX4oDuJ57zNbeXpRFepZK08DQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"

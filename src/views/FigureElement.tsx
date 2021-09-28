@@ -22,13 +22,23 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
+  Designation,
   FileSectionItem,
+  getDesignationName,
   isFigure,
   RoundIconButton,
+  SelectDialogDesignation,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -45,6 +55,8 @@ import { ReactViewComponentProps } from './ReactView'
 interface AttachableFilesDropdownProps {
   onSelect: (file: ExternalFile) => void
   files: ExternalFile[]
+  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  addFigureExFileRef: (relation: string, publicUrl: string) => void
 }
 
 export interface viewProps {
@@ -68,13 +80,51 @@ export const setNodeAttrs = (
   dispatch(tr)
 }
 
+const getFileExtension = (file: File) => {
+  return file.name.split('.').pop() || ''
+}
+
 export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = ({
   onSelect,
   files,
+  uploadAttachment,
+  addFigureExFileRef,
 }) => {
   // select and browse local selectio
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
+  const [
+    isOpenDesignationSelector,
+    toggleDesignationSelector,
+  ] = useState<boolean>(false)
+
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null)
+  const [
+    uploadedFileDesignation,
+    setUploadedFileDesignation,
+  ] = useState<string>('')
+  const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e && e.target && e.target.files ? e.target.files[0] : ''
+    if (file) {
+      setFileToUpload(file)
+      toggleDesignationSelector(true)
+    }
+  }
+
+  const addNewFile = () => {
+    if (fileInputRef && fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }
+
+  const resetUploadProcess = () => {
+    toggleDesignationSelector(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
   return (
     <DropdownWrapper ref={wrapperRef}>
       <RoundIconButton
@@ -95,7 +145,46 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
                 {file.filename}
               </DropdownItem>
             ))}
+          <DropdownItem onClick={() => addNewFile()}>Add file...</DropdownItem>
         </DropdownContainer>
+      )}
+      <input
+        type="file"
+        style={{ display: 'none' }}
+        onChange={onFileInputChange}
+        value={''}
+        ref={fileInputRef}
+      />
+      {fileToUpload && (
+        <SelectDialogDesignation
+          isOpen={isOpenDesignationSelector}
+          fileExtension={getFileExtension(fileToUpload)}
+          fileSection={[Designation.Dataset, Designation.Figure]}
+          handleCancel={resetUploadProcess}
+          uploadFileHandler={() => {
+            if (uploadedFileDesignation) {
+              uploadAttachment(uploadedFileDesignation, fileToUpload)
+                .then((result) => {
+                  if (result?.data?.uploadAttachment) {
+                    const { link } = result.data.uploadAttachment
+                    const relation =
+                      uploadedFileDesignation === 'figure'
+                        ? 'imageRepresentation'
+                        : 'dataset'
+                    addFigureExFileRef(relation, link)
+                    // having the name and the link - add either image represnation or a dataset for the current figure
+                  }
+                  resetUploadProcess()
+                  return
+                })
+                .catch((e) => console.log(e))
+            }
+          }}
+          // @ts-ignore: Defined as any in the style-guide
+          dispatch={({ designation }) => {
+            setUploadedFileDesignation(getDesignationName(designation))
+          }}
+        />
       )}
     </DropdownWrapper>
   )
@@ -110,6 +199,7 @@ const FigureElement = ({
   externalFiles,
   submissionId,
   updateDesignation,
+  uploadAttachment,
   permissions,
   capabilities: can,
 }: FigureProps) => {
@@ -132,8 +222,29 @@ const FigureElement = ({
     const dataset: ExternalFileRef =
       figure &&
       figure.attrs?.externalFileReferences?.find(
-        (file: ExternalFileRef) => file.kind === 'dataset'
+        (file: ExternalFileRef) => file && file.kind === 'dataset'
       )
+
+    useEffect(() => {
+      if (figure?.attrs?.externalFileReferences?.length) {
+        const externalFileReferences = figure?.attrs?.externalFileReferences?.map(
+          (exRef: ExternalFileRef) => {
+            if (exRef && typeof exRef.ref === 'undefined') {
+              const ref = externalFiles?.find(
+                (file) => file.publicUrl === exRef.url
+              )
+              if (ref) {
+                exRef.ref = ref
+              }
+            }
+            return exRef
+          }
+        )
+        setFigureAttrs({
+          externalFileReferences: [...externalFileReferences],
+        })
+      }
+    }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (content && content.current) {
@@ -201,6 +312,22 @@ const FigureElement = ({
             <AttachableFilesDropdown
               files={externalFiles}
               onSelect={handleSelectedFile}
+              uploadAttachment={uploadAttachment}
+              addFigureExFileRef={(relation, publicUrl) => {
+                if (figure) {
+                  const newAttrs: Node['attrs'] = {
+                    externalFileReferences: addExternalFileRef(
+                      figure?.attrs.externalFileReferences,
+                      publicUrl,
+                      relation
+                    ),
+                  }
+                  if (relation == 'imageRepresentation') {
+                    newAttrs.src = publicUrl
+                  }
+                  setFigureAttrs(newAttrs)
+                }
+              }}
             />
           )}
           <div contentEditable="true" ref={content}></div>
@@ -208,11 +335,7 @@ const FigureElement = ({
             <AlternativesList>
               <FileSectionItem
                 submissionId={submissionId}
-                title={
-                  dataset.ref.filename ||
-                  dataset.ref.displayName ||
-                  dataset.ref.filename
-                }
+                title={dataset.ref.filename || dataset.ref.displayName || ''}
                 handleChangeDesignation={(
                   submissionId: string,
                   typeId: string,
