@@ -247,6 +247,21 @@ const FigureElement = ({
     }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
+      if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
+        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
+          if (exRef) {
+            const file = externalFiles?.find(
+              (file) => file.publicUrl === exRef.url
+            )
+            if (file) {
+              contentDOM.setAttribute('id', file._id) // to allow focus in this node
+            }
+          }
+        })
+      }
+    }, [contentDOM, figure?.attrs?.externalFileReferences])
+
+    useEffect(() => {
       if (content && content.current) {
         content.current.appendChild(
           contentDOM || document.createElement('figure')
