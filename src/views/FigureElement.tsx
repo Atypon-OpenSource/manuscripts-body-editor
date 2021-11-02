@@ -241,7 +241,6 @@ const FigureElement = ({
               })
             }
           }
-          return exRef
         })
       }
     }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
