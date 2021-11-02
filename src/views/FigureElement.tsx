@@ -227,21 +227,21 @@ const FigureElement = ({
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length) {
-        const externalFileReferences = figure?.attrs?.externalFileReferences?.map(
-          (exRef: ExternalFileRef) => {
-            if (exRef && typeof exRef.ref === 'undefined') {
-              const ref = externalFiles?.find(
-                (file) => file.publicUrl === exRef.url
-              )
-              if (ref) {
-                exRef.ref = ref
-              }
+        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
+          if (exRef && typeof exRef.ref === 'undefined') {
+            const ref = externalFiles?.find(
+              (file) => file.publicUrl === exRef.url
+            )
+            exRef.ref = ref
+            if (ref) {
+              setFigureAttrs({
+                externalFileReferences: [
+                  ...figure?.attrs.externalFileReferences,
+                ],
+              })
             }
-            return exRef
           }
-        )
-        setFigureAttrs({
-          externalFileReferences: [...externalFileReferences],
+          return exRef
         })
       }
     }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
