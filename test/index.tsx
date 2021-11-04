@@ -30,6 +30,8 @@ import {
 import { uniqueId } from 'lodash'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { MemoryRouter } from 'react-router'
+import { ThemeProvider } from 'styled-components'
 
 import {
   ApplicationMenus,
@@ -39,6 +41,7 @@ import {
 } from '../src'
 import { PopperManager } from '../src/lib/popper'
 import config, { Props } from './config'
+import { theme } from './theme'
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
   return new Map(
@@ -103,6 +106,7 @@ const start = async () => {
     popper: new PopperManager(),
     locale: 'en-GB',
     permissions: { write: true },
+    // @ts-ignore
     renderReactComponent: ReactDOM.render,
     unmountReactComponent: ReactDOM.unmountComponentAtNode,
     modelMap,
@@ -118,10 +122,15 @@ const start = async () => {
       console.log('uploading ', file)
       return Promise.resolve('uuid')
     },
+    theme,
   }
 
   ReactDOM.render(
-    <EditorComponent {...props} />,
+    <MemoryRouter>
+      <ThemeProvider theme={theme}>
+        <EditorComponent {...props} />
+      </ThemeProvider>
+    </MemoryRouter>,
     document.getElementById('root')
   )
 }

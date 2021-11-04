@@ -15,6 +15,7 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
+import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../src/commands'
 import bibliographyElement from '../src/views/bibliography_element_editable'
@@ -41,7 +42,7 @@ import sectionTitle from '../src/views/section_title_editable'
 import tableElement from '../src/views/table_element_editable'
 import tocElement from '../src/views/toc_element_editable'
 
-type ViewProps = EditableBlockProps & FigureProps
+type ViewProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
 
 export default (props: ViewProps, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
@@ -51,7 +52,7 @@ export default (props: ViewProps, dispatch: Dispatch) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: ReactView(dispatch)<FigureNode>(Figure(props)),
+  figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
