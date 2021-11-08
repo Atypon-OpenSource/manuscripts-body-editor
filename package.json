@@ -80,7 +80,7 @@
     "@manuscripts/library": "^0.6.2",
     "@manuscripts/manuscript-transform": "^0.49.4",
     "@manuscripts/rxdb": "^8.2.0-manuscripts1",
-    "@manuscripts/style-guide": "^0.31.14",
+    "@manuscripts/style-guide": "workspace:*",
     "@types/codemirror": "^0.0.98",
     "@types/dompurify": "^2.0.4",
     "@types/enzyme": "^3.10.7",
