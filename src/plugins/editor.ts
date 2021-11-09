@@ -30,7 +30,6 @@ import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
-import { trackChangesPlugin } from '@manuscripts/pm-track-changes'
 
 import keys from '../keys'
 import rules from '../rules'
@@ -98,7 +97,6 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights({ setCommentTarget }),
-    trackChangesPlugin({ user: undefined }),
   ]
 }
 
