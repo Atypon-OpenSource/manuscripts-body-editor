@@ -33,6 +33,7 @@
     "@manuscripts/comment-editor": "^0.2.1",
     "@manuscripts/manuscripts-json-schema": "^1.49.11",
     "@manuscripts/plugin-persist": "^0.1.2",
+    "@manuscripts/pm-track-changes": "workspace:*",
     "@manuscripts/title-editor": "^0.5.2",
     "@manuscripts/track-changes-plugin": "^0.0.4",
     "astrocite-eutils": "^0.16.4",
