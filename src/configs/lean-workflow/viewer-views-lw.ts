@@ -43,6 +43,7 @@ import placeholder from '../../views/placeholder'
 import placeholderElement from '../../views/placeholder_element'
 import pullquoteElement from '../../views/pullquote_element'
 import ReactView from '../../views/ReactView'
+import sectionLabel from '../../views/section_label'
 import sectionTitle from '../../views/section_title'
 import tableElement from '../../views/table_element'
 import tocElement from '../../views/toc_element'
@@ -74,6 +75,7 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   placeholder_element: placeholderElement(props),
   pullquote_element: pullquoteElement(props),
   section_title: sectionTitle(props),
+  section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
 })

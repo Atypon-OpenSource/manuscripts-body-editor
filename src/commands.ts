@@ -44,7 +44,12 @@ import {
   getTrackPluginState,
 } from '@manuscripts/track-changes'
 import { ResolvedPos } from 'prosemirror-model'
-import { NodeSelection, Selection, TextSelection } from 'prosemirror-state'
+import {
+  NodeSelection,
+  Selection,
+  TextSelection,
+  Transaction,
+} from 'prosemirror-state'
 import { v4 as uuid } from 'uuid'
 
 import { ANNOTATION_COLOR } from './lib/annotations'
@@ -275,6 +280,57 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
+const findPosAfterParentSection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  for (let d = $pos.depth; d >= 0; d--) {
+    const node = $pos.node(d)
+
+    if (isSectionNodeType(node.type)) {
+      return $pos.after(d)
+    }
+  }
+
+  return null
+}
+
+const findParentSectionStartPosition = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  for (let d = $pos.depth; d >= 0; d--) {
+    const node = $pos.node(d)
+
+    if (isSectionNodeType(node.type)) {
+      return $pos.start(d)
+    }
+  }
+
+  return null
+}
+
+export const insertSectionLabel = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  currentTr?: Transaction
+) => {
+  const pos = findParentSectionStartPosition(state.selection.$from)
+  if (pos === null) {
+    return false
+  }
+  const node = state.schema.nodes.section_label.create(
+    {},
+    state.schema.text('Label')
+  )
+  const tr = (currentTr || state.tr).insert(pos, node)
+  if (dispatch) {
+    // place cursor inside section title
+    // const selection = TextSelection.create(tr.doc, pos + 2)
+    dispatch(tr)
+  }
+
+  return true
+}
+
 export const insertLink = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -486,20 +542,6 @@ export const insertKeywordsSection = (
   }
 
   return true
-}
-
-const findPosAfterParentSection = (
-  $pos: ManuscriptResolvedPos
-): number | null => {
-  for (let d = $pos.depth; d >= 0; d--) {
-    const node = $pos.node(d)
-
-    if (isSectionNodeType(node.type)) {
-      return $pos.after(d)
-    }
-  }
-
-  return null
 }
 
 export const insertSection = (subsection = false) => (

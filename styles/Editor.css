@@ -518,6 +518,10 @@
   display: none;
 }
 
+.ProseMirror section.generated-label .block-section_label {
+  display: none;
+}
+
 .ProseMirror section.page-break-before::before {
   content: '';
   display: block;

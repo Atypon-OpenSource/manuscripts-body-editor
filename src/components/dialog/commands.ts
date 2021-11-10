@@ -271,26 +271,26 @@ export const setTableCellBorderStyles = ({
   let commands: StyleCommand[] = []
   if (['all', 'top'].includes(direction)) {
     commands = commands.concat(
-      mapStylesToNodes(nodes, { borderTop: value }),
-      mapStylesToNodes(neighbours('top'), { borderBottom: value })
+      mapStylesToNodes(nodes, { 'border-top': value }),
+      mapStylesToNodes(neighbours('top'), { 'border-bottom': value })
     )
   }
   if (['all', 'bottom'].includes(direction)) {
     commands = commands.concat(
-      mapStylesToNodes(nodes, { borderBottom: value }),
-      mapStylesToNodes(neighbours('bottom'), { borderTop: value })
+      mapStylesToNodes(nodes, { 'border-bottom': value }),
+      mapStylesToNodes(neighbours('bottom'), { 'border-top': value })
     )
   }
   if (['all', 'left'].includes(direction)) {
     commands = commands.concat(
-      mapStylesToNodes(nodes, { borderLeft: value }),
-      mapStylesToNodes(neighbours('left'), { borderRight: value })
+      mapStylesToNodes(nodes, { 'border-left': value }),
+      mapStylesToNodes(neighbours('left'), { 'border-right': value })
     )
   }
   if (['all', 'right'].includes(direction)) {
     commands = commands.concat(
-      mapStylesToNodes(nodes, { borderRight: value }),
-      mapStylesToNodes(neighbours('right'), { borderLeft: value })
+      mapStylesToNodes(nodes, { 'border-right': value }),
+      mapStylesToNodes(neighbours('right'), { 'border-left': value })
     )
   }
 
