@@ -103,7 +103,7 @@ export default (props: PluginProps) => {
       commit: commit || undefined,
       ancestorDoc,
       annotations: loadAnnoationsToTrack(modelMap),
-      showBlameSpanButtons: !!commit,
+      showBlameSpanButtons: true,
     }),
   ]
 }
