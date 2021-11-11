@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class ListingElementView<PropsType extends BaseNodeProps>
   extends BlockView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public elementType = 'figure'
 
   public updateContents = () => {

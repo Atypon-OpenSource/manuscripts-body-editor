@@ -148,11 +148,8 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleCite = async (items: Array<Build<BibliographyItem>>) => {
-    const {
-      matchLibraryItemByIdentifier,
-      saveModel,
-      setLibraryItem,
-    } = this.props
+    const { matchLibraryItemByIdentifier, saveModel, setLibraryItem } =
+      this.props
 
     const citation = this.getCitation()
 
@@ -188,11 +185,8 @@ export class CitationEditableView extends CitationView<
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
-    const {
-      matchLibraryItemByIdentifier,
-      saveModel,
-      setLibraryItem,
-    } = this.props
+    const { matchLibraryItemByIdentifier, saveModel, setLibraryItem } =
+      this.props
 
     const newItems: BibliographyItem[] = []
 

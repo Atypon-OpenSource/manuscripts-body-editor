@@ -22,23 +22,22 @@ import {
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-const placeholderWidget = (placeholder: string) => (
-  view: ManuscriptEditorView,
-  getPos: () => number
-) => {
-  const element = document.createElement('span')
-  element.className = 'placeholder-text'
-  element.textContent = placeholder
-  element.addEventListener('click', (event: MouseEvent) => {
-    event.preventDefault()
-    view.dispatch(
-      view.state.tr.setSelection(
-        TextSelection.create(view.state.tr.doc, getPos())
+const placeholderWidget =
+  (placeholder: string) =>
+  (view: ManuscriptEditorView, getPos: () => number) => {
+    const element = document.createElement('span')
+    element.className = 'placeholder-text'
+    element.textContent = placeholder
+    element.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault()
+      view.dispatch(
+        view.state.tr.setSelection(
+          TextSelection.create(view.state.tr.doc, getPos())
+        )
       )
-    )
-  })
-  return element
-}
+    })
+    return element
+  }
 
 /**
  * This plugin adds a placeholder decoration to empty nodes

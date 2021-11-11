@@ -43,18 +43,22 @@ export const Menus: React.FC<{
   )
 }
 
-export const openMenu = (viewProps: viewProps, edit = false) => (
-  e: SyntheticEvent
-) => {
-  e.preventDefault()
-  e.stopPropagation()
-  const menu = new ContextMenu(viewProps.node, viewProps.view, viewProps.getPos)
-  if (edit) {
-    menu.showEditMenu(e.currentTarget)
-  } else {
-    menu.showAddMenu(e.currentTarget, true)
+export const openMenu =
+  (viewProps: viewProps, edit = false) =>
+  (e: SyntheticEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const menu = new ContextMenu(
+      viewProps.node,
+      viewProps.view,
+      viewProps.getPos
+    )
+    if (edit) {
+      menu.showEditMenu(e.currentTarget)
+    } else {
+      menu.showAddMenu(e.currentTarget, true)
+    }
   }
-}
 
 interface EditableBlockProps {
   canWrite: boolean

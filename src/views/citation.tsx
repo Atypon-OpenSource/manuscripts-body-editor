@@ -36,7 +36,8 @@ export interface CitationViewProps extends BaseNodeProps {
 
 export class CitationView<PropsType extends CitationViewProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected popperContainer?: HTMLDivElement
 
   public showPopper = () => {

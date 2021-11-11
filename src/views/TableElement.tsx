@@ -77,12 +77,8 @@ const TableElement = ({
     }, [contentDOM])
 
     useEffect(() => {
-      const {
-        suppressCaption,
-        suppressHeader,
-        suppressFooter,
-        suppressTitle,
-      } = viewProps.node.attrs
+      const { suppressCaption, suppressHeader, suppressFooter, suppressTitle } =
+        viewProps.node.attrs
       if (content.current) {
         content.current.classList.toggle('suppress-caption', suppressCaption)
         content.current.classList.toggle('suppress-header', suppressHeader)

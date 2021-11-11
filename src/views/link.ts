@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class LinkView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public initialise = () => {
     this.createDOM()
     this.updateContents()

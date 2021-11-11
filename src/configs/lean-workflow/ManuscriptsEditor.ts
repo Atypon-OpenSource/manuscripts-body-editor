@@ -70,21 +70,23 @@ export default {
     return checkout(doc, ancestorState, commit)
   },
 
-  createView: (props: EditorProps): CreateView => (el, state, dispatch) =>
-    new EditorView(el, {
-      state,
-      editable: () => props.permissions.write,
-      scrollThreshold: 100,
-      scrollMargin: {
-        top: 100,
-        bottom: 100,
-        left: 0,
-        right: 0,
-      },
-      dispatchTransaction: dispatch,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nodeViews: views(props, dispatch) as any,
-      attributes: props.attributes,
-      transformPasted,
-    }),
+  createView:
+    (props: EditorProps): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        state,
+        editable: () => props.permissions.write,
+        scrollThreshold: 100,
+        scrollMargin: {
+          top: 100,
+          bottom: 100,
+          left: 0,
+          right: 0,
+        },
+        dispatchTransaction: dispatch,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeViews: views(props, dispatch) as any,
+        attributes: props.attributes,
+        transformPasted,
+      }),
 }

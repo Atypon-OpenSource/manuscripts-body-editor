@@ -111,18 +111,20 @@ const enterPreviousBlock = (
   return true
 }
 
-const exitBlock = (direction: number): EditorAction => (state, dispatch) => {
-  const {
-    selection: { $anchor },
-  } = state
+const exitBlock =
+  (direction: number): EditorAction =>
+  (state, dispatch) => {
+    const {
+      selection: { $anchor },
+    } = state
 
-  if (dispatch) {
-    return direction === 1
-      ? enterNextBlock(dispatch, state, $anchor)
-      : enterPreviousBlock(dispatch, state, $anchor)
+    if (dispatch) {
+      return direction === 1
+        ? enterNextBlock(dispatch, state, $anchor)
+        : enterPreviousBlock(dispatch, state, $anchor)
+    }
+    return true
   }
-  return true
-}
 
 const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state

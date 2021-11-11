@@ -34,7 +34,8 @@ export interface ListingViewProps extends BaseNodeProps {
 
 export class ListingView<PropsType extends ListingViewProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected container: HTMLElement
   protected attachmentsNode: HTMLElement
   protected outputNode: HTMLElement

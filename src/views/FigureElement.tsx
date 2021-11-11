@@ -65,130 +65,122 @@ export interface viewProps {
   getPos: () => number
 }
 
-export const setNodeAttrs = (
-  figure: Node | undefined,
-  viewProps: viewProps,
-  dispatch: Dispatch
-) => (attrs: Node['attrs']) => {
-  const { selection, tr } = viewProps.view.state
-  tr.setNodeMarkup(viewProps.getPos() + 1, undefined, {
-    // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
-    ...figure?.attrs,
-    ...attrs,
-  }).setSelection(selection.map(tr.doc, tr.mapping))
+export const setNodeAttrs =
+  (figure: Node | undefined, viewProps: viewProps, dispatch: Dispatch) =>
+  (attrs: Node['attrs']) => {
+    const { selection, tr } = viewProps.view.state
+    tr.setNodeMarkup(viewProps.getPos() + 1, undefined, {
+      // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
+      ...figure?.attrs,
+      ...attrs,
+    }).setSelection(selection.map(tr.doc, tr.mapping))
 
-  dispatch(tr)
-}
+    dispatch(tr)
+  }
 
 const getFileExtension = (file: File) => {
   return file.name.split('.').pop() || ''
 }
 
-export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = ({
-  onSelect,
-  files,
-  uploadAttachment,
-  addFigureExFileRef,
-}) => {
-  // select and browse local selectio
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
-  const [
-    isOpenDesignationSelector,
-    toggleDesignationSelector,
-  ] = useState<boolean>(false)
+export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> =
+  ({ onSelect, files, uploadAttachment, addFigureExFileRef }) => {
+    // select and browse local selectio
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+    const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
+    const [isOpenDesignationSelector, toggleDesignationSelector] =
+      useState<boolean>(false)
 
-  const [fileToUpload, setFileToUpload] = useState<File | null>(null)
-  const [
-    uploadedFileDesignation,
-    setUploadedFileDesignation,
-  ] = useState<string>('')
-  const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e && e.target && e.target.files ? e.target.files[0] : ''
-    if (file) {
-      setFileToUpload(file)
-      toggleDesignationSelector(true)
+    const [fileToUpload, setFileToUpload] = useState<File | null>(null)
+    const [uploadedFileDesignation, setUploadedFileDesignation] =
+      useState<string>('')
+    const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e && e.target && e.target.files ? e.target.files[0] : ''
+      if (file) {
+        setFileToUpload(file)
+        toggleDesignationSelector(true)
+      }
     }
-  }
 
-  const addNewFile = () => {
-    if (fileInputRef && fileInputRef.current) {
-      fileInputRef.current.click()
+    const addNewFile = () => {
+      if (fileInputRef && fileInputRef.current) {
+        fileInputRef.current.click()
+      }
     }
-  }
 
-  const resetUploadProcess = () => {
-    toggleDesignationSelector(false)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+    const resetUploadProcess = () => {
+      toggleDesignationSelector(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
-  }
 
-  return (
-    <DropdownWrapper ref={wrapperRef}>
-      <RoundIconButton
-        className={isOpen ? 'active' : ''}
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          toggleOpen()
-        }}
-      >
-        <AttachIcon />
-      </RoundIconButton>
-      {isOpen && (
-        <DropdownContainer>
-          {allowedFiles &&
-            allowedFiles.map((file, i) => (
-              <DropdownItem key={i} onClick={() => onSelect(file)}>
-                {file.filename}
-              </DropdownItem>
-            ))}
-          <DropdownItem onClick={() => addNewFile()}>Add file...</DropdownItem>
-        </DropdownContainer>
-      )}
-      <input
-        type="file"
-        style={{ display: 'none' }}
-        onChange={onFileInputChange}
-        value={''}
-        ref={fileInputRef}
-      />
-      {fileToUpload && (
-        <SelectDialogDesignation
-          isOpen={isOpenDesignationSelector}
-          fileExtension={getFileExtension(fileToUpload)}
-          fileSection={[Designation.Dataset, Designation.Figure]}
-          handleCancel={resetUploadProcess}
-          uploadFileHandler={() => {
-            if (uploadedFileDesignation) {
-              uploadAttachment(uploadedFileDesignation, fileToUpload)
-                .then((result) => {
-                  if (result?.data?.uploadAttachment) {
-                    const { link } = result.data.uploadAttachment
-                    const relation =
-                      uploadedFileDesignation === 'figure'
-                        ? 'imageRepresentation'
-                        : 'dataset'
-                    addFigureExFileRef(relation, link)
-                    // having the name and the link - add either image represnation or a dataset for the current figure
-                  }
-                  resetUploadProcess()
-                  return
-                })
-                .catch((e) => console.log(e))
-            }
+    return (
+      <DropdownWrapper ref={wrapperRef}>
+        <RoundIconButton
+          className={isOpen ? 'active' : ''}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            toggleOpen()
           }}
-          // @ts-ignore: Defined as any in the style-guide
-          dispatch={({ designation }) => {
-            setUploadedFileDesignation(getDesignationName(designation))
-          }}
+        >
+          <AttachIcon />
+        </RoundIconButton>
+        {isOpen && (
+          <DropdownContainer>
+            {allowedFiles &&
+              allowedFiles.map((file, i) => (
+                <DropdownItem key={i} onClick={() => onSelect(file)}>
+                  {file.filename}
+                </DropdownItem>
+              ))}
+            <DropdownItem onClick={() => addNewFile()}>
+              Add file...
+            </DropdownItem>
+          </DropdownContainer>
+        )}
+        <input
+          type="file"
+          style={{ display: 'none' }}
+          onChange={onFileInputChange}
+          value={''}
+          ref={fileInputRef}
         />
-      )}
-    </DropdownWrapper>
-  )
-}
+        {fileToUpload && (
+          <SelectDialogDesignation
+            isOpen={isOpenDesignationSelector}
+            fileExtension={getFileExtension(fileToUpload)}
+            fileSection={[Designation.Dataset, Designation.Figure]}
+            handleCancel={resetUploadProcess}
+            uploadFileHandler={() => {
+              if (uploadedFileDesignation) {
+                uploadAttachment(uploadedFileDesignation, fileToUpload)
+                  .then((result) => {
+                    if (result?.data?.uploadAttachment) {
+                      const { link } = result.data.uploadAttachment
+                      const relation =
+                        uploadedFileDesignation === 'figure'
+                          ? 'imageRepresentation'
+                          : 'dataset'
+                      addFigureExFileRef(relation, link)
+                      // having the name and the link - add either image represnation or a dataset for the current figure
+                    }
+                    resetUploadProcess()
+                    return
+                  })
+                  .catch((e) => console.log(e))
+              }
+            }}
+            // @ts-ignore: Defined as any in the style-guide
+            dispatch={({ designation }) => {
+              setUploadedFileDesignation(getDesignationName(designation))
+            }}
+          />
+        )}
+      </DropdownWrapper>
+    )
+  }
 
 export const isTableNode = (node: Node) =>
   node.type === node.type.schema.nodes.table

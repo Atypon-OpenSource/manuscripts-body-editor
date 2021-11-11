@@ -97,13 +97,8 @@ export class Editor extends React.PureComponent<EditorProps> {
   constructor(props: EditorProps) {
     super(props)
 
-    const {
-      attributes,
-      doc,
-      environment,
-      handleStateChange,
-      permissions,
-    } = this.props
+    const { attributes, doc, environment, handleStateChange, permissions } =
+      this.props
 
     this.view = new EditorView(undefined, {
       editable: () => permissions.write,
@@ -199,9 +194,8 @@ export class Editor extends React.PureComponent<EditorProps> {
     transaction: Transaction,
     external = false
   ) => {
-    const { state, transactions } = this.view.state.applyTransaction(
-      transaction
-    )
+    const { state, transactions } =
+      this.view.state.applyTransaction(transaction)
 
     this.view.updateState(state)
 
