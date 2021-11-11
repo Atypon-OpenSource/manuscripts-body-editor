@@ -41,7 +41,8 @@ export interface BaseNodeProps {
 }
 
 export class BaseNodeView<PropsType extends BaseNodeProps>
-  implements NodeView<ManuscriptSchema> {
+  implements NodeView<ManuscriptSchema>
+{
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]

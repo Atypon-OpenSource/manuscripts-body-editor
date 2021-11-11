@@ -64,18 +64,21 @@ export default {
       plugins: plugins(props),
     }),
 
-  createView: (props: Props): CreateView => (el, state, dispatch) =>
-    new EditorView(el, {
-      state,
-      editable: () => props.permissions.write,
-      scrollMargin: {
-        top: 100,
-        bottom: 100,
-        left: 0,
-        right: 0,
-      },
-      dispatchTransaction: dispatch,
-      nodeViews: views(props, dispatch),
-      transformPasted,
-    }),
+  createView:
+    (props: Props): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        state,
+        editable: () => props.permissions.write,
+        scrollThreshold: 100,
+        scrollMargin: {
+          top: 100,
+          bottom: 100,
+          left: 0,
+          right: 0,
+        },
+        dispatchTransaction: dispatch,
+        nodeViews: views(props, dispatch),
+        transformPasted,
+      }),
 }

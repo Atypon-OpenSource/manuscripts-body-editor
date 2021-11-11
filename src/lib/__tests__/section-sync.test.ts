@@ -41,7 +41,7 @@ describe('diffReplacementBlocks', () => {
 
     const result = diffReplacementBlocks(
       coords as Coordinates,
-      (nodes as unknown) as ManuscriptNode[]
+      nodes as unknown as ManuscriptNode[]
     )
     expect(result).toHaveProperty('start', 2)
     expect(result).toHaveProperty('remove', 1)
@@ -59,7 +59,7 @@ describe('diffReplacementBlocks', () => {
 
     const result = diffReplacementBlocks(
       coords as Coordinates,
-      (nodes as unknown) as ManuscriptNode[]
+      nodes as unknown as ManuscriptNode[]
     )
     expect(result).toHaveProperty('start', 0)
     expect(result).toHaveProperty('remove', 3)
@@ -77,7 +77,7 @@ describe('diffReplacementBlocks', () => {
 
     const result = diffReplacementBlocks(
       coords as Coordinates,
-      (nodes as unknown) as ManuscriptNode[]
+      nodes as unknown as ManuscriptNode[]
     )
     expect(result.remove).toEqual(0)
     expect(result.insert).toHaveLength(0)
@@ -95,7 +95,7 @@ describe('diffReplacementBlocks', () => {
 
     const result = diffReplacementBlocks(
       coords as Coordinates,
-      (nodes as unknown) as ManuscriptNode[]
+      nodes as unknown as ManuscriptNode[]
     )
     expect(result).toHaveProperty('start', 2)
     expect(result).toHaveProperty('remove', 0)
@@ -109,7 +109,7 @@ describe('diffReplacementBlocks', () => {
 
     const result = diffReplacementBlocks(
       coords as Coordinates,
-      (nodes as unknown) as ManuscriptNode[]
+      nodes as unknown as ManuscriptNode[]
     )
     expect(result).toHaveProperty('start', 1)
     expect(result).toHaveProperty('remove', 1)

@@ -56,28 +56,27 @@ export const getSelectedTableAttr = (state: ManuscriptEditorState) => {
   return tableEl.attrs
 }
 
-export const setTableAttrs = (attrs: TableNode['attrs']) => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const { selection, tr } = state
-  const { $head } = selection
-  const tableDepth = nearestAncestor(isNodeOfType('table'))($head)
+export const setTableAttrs =
+  (attrs: TableNode['attrs']) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection, tr } = state
+    const { $head } = selection
+    const tableDepth = nearestAncestor(isNodeOfType('table'))($head)
 
-  if (!tableDepth) {
-    return false
+    if (!tableDepth) {
+      return false
+    }
+
+    const tableEl = $head.node(tableDepth) as TableNode
+    const start = $head.start(tableDepth)
+
+    if (dispatch) {
+      tr.setNodeMarkup(start - 1, tableEl.type, attrs, tableEl.marks)
+      dispatch(tr)
+    }
+
+    return true
   }
-
-  const tableEl = $head.node(tableDepth) as TableNode
-  const start = $head.start(tableDepth)
-
-  if (dispatch) {
-    tr.setNodeMarkup(start - 1, tableEl.type, attrs, tableEl.marks)
-    dispatch(tr)
-  }
-
-  return true
-}
 
 // Returns the table cell(s) the user is intending to work with
 // when attempting to format.
@@ -210,63 +209,52 @@ const mapStylesToNodes = (
 > => {
   return nodes.map((node) => [node[0], node[1], style])
 }
-const applyStylesToTableCells = (commands: StyleCommand[]): Command => (
-  state,
-  dispatch
-) => {
-  const { tr } = state
-  if (!commands.length) {
-    return false
+const applyStylesToTableCells =
+  (commands: StyleCommand[]): Command =>
+  (state, dispatch) => {
+    const { tr } = state
+    if (!commands.length) {
+      return false
+    }
+
+    // reshaped cells so that each style command is only executed once
+    const reshaped = reshapeStyleCommands(commands)
+
+    reshaped.map(([node, pos, styles]) => {
+      tr.setNodeMarkup(
+        pos - 1,
+        undefined,
+        { ...node.attrs, styles: { ...node.attrs.styles, ...styles } },
+        node.marks
+      )
+    })
+    dispatch && dispatch(tr)
+    return true
   }
 
-  // reshaped cells so that each style command is only executed once
-  const reshaped = reshapeStyleCommands(commands)
+export const setTableCellStyles =
+  (styles: Partial<TableCellNode['attrs']['styles']>) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection } = state
+    const nodes = getTableCellSelection(selection)
+    if (!nodes.length) {
+      return false
+    }
 
-  reshaped.map(([node, pos, styles]) => {
-    tr.setNodeMarkup(
-      pos - 1,
-      undefined,
-      { ...node.attrs, styles: { ...node.attrs.styles, ...styles } },
-      node.marks
+    return applyStylesToTableCells(mapStylesToNodes(nodes, styles))(
+      state,
+      dispatch
     )
-  })
-  dispatch && dispatch(tr)
-  return true
-}
-
-export const setTableCellStyles = (
-  styles: Partial<TableCellNode['attrs']['styles']>
-) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-  const { selection } = state
-  const nodes = getTableCellSelection(selection)
-  if (!nodes.length) {
-    return false
   }
 
-  return applyStylesToTableCells(mapStylesToNodes(nodes, styles))(
-    state,
-    dispatch
-  )
-}
-
-export const setTableCellBorderStyles = ({
-  direction,
-  width,
-  color,
-}: TableCellBorderParams) => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const { selection } = state
-  const nodes = getTableCellSelection(selection)
-  if (!nodes.length) {
-    return false
-  }
-
-  const neighbours = getNeighbouringCells(state, nodes)
-  const value = Number(width)
-    ? `${width}px solid ${color}`
-    : `1px solid transparent`
+export const setTableCellBorderStyles =
+  ({ direction, width, color }: TableCellBorderParams) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection } = state
+    const nodes = getTableCellSelection(selection)
+    if (!nodes.length) {
+      return false
+    }
 
   let commands: StyleCommand[] = []
   if (['all', 'top'].includes(direction)) {
@@ -294,5 +282,5 @@ export const setTableCellBorderStyles = ({
     )
   }
 
-  return applyStylesToTableCells(commands)(state, dispatch)
-}
+    return applyStylesToTableCells(commands)(state, dispatch)
+  }

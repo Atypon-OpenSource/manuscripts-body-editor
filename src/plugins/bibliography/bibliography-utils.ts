@@ -29,15 +29,14 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
  * the items not always being available, depending on how fast the page renders, as a
  * fallback the bibliography items are also retrieved from the modelsMap.
  */
-export const getBibliographyItemFn = (props: BibliographyProps) => (
-  id: string
-) => {
-  const libraryItem = props.getLibraryItem(id)
-  if (libraryItem) {
-    return libraryItem
+export const getBibliographyItemFn =
+  (props: BibliographyProps) => (id: string) => {
+    const libraryItem = props.getLibraryItem(id)
+    if (libraryItem) {
+      return libraryItem
+    }
+    return props.getModel<BibliographyItem>(id)
   }
-  return props.getModel<BibliographyItem>(id)
-}
 
 export const buildDecorations = (
   doc: ManuscriptNode,

@@ -72,13 +72,15 @@ export default {
     })
   },
 
-  createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>
-    new EditorView<ManuscriptSchema>(el, {
-      editable: () => false,
-      state,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nodeViews: views(props, dispatch) as any,
-      dispatchTransaction: dispatch,
-      attributes: props.attributes,
-    }),
+  createView:
+    (props: ViewerProps): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView<ManuscriptSchema>(el, {
+        editable: () => false,
+        state,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeViews: views(props, dispatch) as any,
+        dispatchTransaction: dispatch,
+        attributes: props.attributes,
+      }),
 }

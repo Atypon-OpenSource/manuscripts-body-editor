@@ -30,7 +30,8 @@ export interface CrossReferenceViewProps extends BaseNodeProps {
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected popperContainer?: HTMLDivElement
 
   public selectNode = () => {

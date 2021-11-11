@@ -58,19 +58,19 @@ const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   })
 }
 
-const labelWidget = (label: string, id: string) => (
-  view: EditorView
-): Element => {
-  const element = document.createElement('span')
-  element.className = 'footnote-label'
-  element.textContent = label
+const labelWidget =
+  (label: string, id: string) =>
+  (view: EditorView): Element => {
+    const element = document.createElement('span')
+    element.className = 'footnote-label'
+    element.textContent = label
 
-  element.addEventListener('click', () => {
-    scrollToInlineFootnote(id, view)
-  })
+    element.addEventListener('click', () => {
+      scrollToInlineFootnote(id, view)
+    })
 
-  return element
-}
+    return element
+  }
 
 /**
  * This plugin provides support of footnotes related behaviours:

@@ -38,93 +38,93 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   dispatch: Dispatch
 }
 
-export default (dispatch: Dispatch, theme: DefaultTheme) => <
-  NodeT extends ManuscriptNode
->(
-  Component: React.FC<ReactViewComponentProps<NodeT>>,
-  contentDOMElementType?: keyof HTMLElementTagNameMap | null,
-  nodeViewProps?: NodeView
-) => (
-  initialNode: ManuscriptNode,
-  view: ManuscriptEditorView,
-  getPos: () => number
-): NodeView<ManuscriptSchema> => {
-  const root = document.createElement('div')
-  const reactChild = root.appendChild(document.createElement('div'))
+export default (dispatch: Dispatch, theme: DefaultTheme) =>
+  <NodeT extends ManuscriptNode>(
+    Component: React.FC<ReactViewComponentProps<NodeT>>,
+    contentDOMElementType?: keyof HTMLElementTagNameMap | null,
+    nodeViewProps?: NodeView
+  ) =>
+  (
+    initialNode: ManuscriptNode,
+    view: ManuscriptEditorView,
+    getPos: () => number
+  ): NodeView<ManuscriptSchema> => {
+    const root = document.createElement('div')
+    const reactChild = root.appendChild(document.createElement('div'))
 
-  let contentDOM: HTMLElement | null
-  if (contentDOMElementType) {
-    contentDOM = document.createElement(contentDOMElementType)
-    root.appendChild(contentDOM)
-  } else {
-    contentDOM = null
-  }
-
-  // a very simple event emitter that tracks the current value of ManuscriptNode
-  // and injects it into Component
-  let subscriber: ((node: ManuscriptNode) => void) | null
-  const setNode = (next: ManuscriptNode) => {
-    subscriber && subscriber(next)
-  }
-  const subscribe = (func: (node: ManuscriptNode) => void) => {
-    subscriber = func
-  }
-  const unsubscribe = () => {
-    subscriber = null
-  }
-
-  const Wrapped: React.FC = () => {
-    const [node, setNode] = useState<ManuscriptNode>(initialNode)
-    useEffect(() => {
-      subscribe((node) => {
-        setNode(node)
-      })
-      return () => {
-        unsubscribe()
-      }
-    }, [])
-
-    const setNodeAttrs = useCallback(
-      (nextAttrs: Partial<NodeT['attrs']>) => {
-        const { selection, tr } = view.state
-
-        tr.setNodeMarkup(getPos(), undefined, {
-          ...node.attrs,
-          ...nextAttrs,
-        }).setSelection(selection.map(tr.doc, tr.mapping))
-
-        dispatch(tr)
-      },
-      [node.attrs]
-    )
-
-    if (!node.attrs) {
-      return null
+    let contentDOM: HTMLElement | null
+    if (contentDOMElementType) {
+      contentDOM = document.createElement(contentDOMElementType)
+      root.appendChild(contentDOM)
+    } else {
+      contentDOM = null
     }
 
-    return (
-      <ThemeProvider theme={theme}>
-        <Component
-          nodeAttrs={node.attrs}
-          setNodeAttrs={setNodeAttrs}
-          viewProps={{ node, view, getPos }}
-          dispatch={dispatch}
-          contentDOM={contentDOM}
-        />
-      </ThemeProvider>
-    )
-  }
+    // a very simple event emitter that tracks the current value of ManuscriptNode
+    // and injects it into Component
+    let subscriber: ((node: ManuscriptNode) => void) | null
+    const setNode = (next: ManuscriptNode) => {
+      subscriber && subscriber(next)
+    }
+    const subscribe = (func: (node: ManuscriptNode) => void) => {
+      subscriber = func
+    }
+    const unsubscribe = () => {
+      subscriber = null
+    }
 
-  ReactDOM.render(<Wrapped />, reactChild)
+    const Wrapped: React.FC = () => {
+      const [node, setNode] = useState<ManuscriptNode>(initialNode)
+      useEffect(() => {
+        subscribe((node) => {
+          setNode(node)
+        })
+        return () => {
+          unsubscribe()
+        }
+      }, [])
 
-  return {
-    dom: root,
-    contentDOM,
-    destroy: () => ReactDOM.unmountComponentAtNode(reactChild),
-    update: (next: ManuscriptNode) => {
-      setNode(next)
-      return true
-    },
-    ...nodeViewProps,
+      const setNodeAttrs = useCallback(
+        (nextAttrs: Partial<NodeT['attrs']>) => {
+          const { selection, tr } = view.state
+
+          tr.setNodeMarkup(getPos(), undefined, {
+            ...node.attrs,
+            ...nextAttrs,
+          }).setSelection(selection.map(tr.doc, tr.mapping))
+
+          dispatch(tr)
+        },
+        [node.attrs]
+      )
+
+      if (!node.attrs) {
+        return null
+      }
+
+      return (
+        <ThemeProvider theme={theme}>
+          <Component
+            nodeAttrs={node.attrs}
+            setNodeAttrs={setNodeAttrs}
+            viewProps={{ node, view, getPos }}
+            dispatch={dispatch}
+            contentDOM={contentDOM}
+          />
+        </ThemeProvider>
+      )
+    }
+
+    ReactDOM.render(<Wrapped />, reactChild)
+
+    return {
+      dom: root,
+      contentDOM,
+      destroy: () => ReactDOM.unmountComponentAtNode(reactChild),
+      update: (next: ManuscriptNode) => {
+        setNode(next)
+        return true
+      },
+      ...nodeViewProps,
+    }
   }
-}
