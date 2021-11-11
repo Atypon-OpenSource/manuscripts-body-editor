@@ -18,7 +18,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "target": "es2015",
-    "typeRoots": ["node_modules/@types", "./types", "./src/types"]
+    "typeRoots": ["node_modules/@types", "./types", "src/global-types"]
   },
   "include": ["src", "types"]
 }
