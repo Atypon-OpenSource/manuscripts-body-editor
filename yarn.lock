@@ -1540,10 +1540,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@1.46.3":
-  version "1.46.3"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.3.tgz"
-  integrity sha512-ZTMAZ0JgW7CMRxDZHANll4oSmWGQiq/BBkRPggG2jU+0KWaQN2y/da1q3BYY7OyX5OdEAB1csmIQOmSY6wdB/A==
+"@manuscripts/manuscripts-json-schema@1.49.3", "@manuscripts/manuscripts-json-schema@^1.49.3":
+  version "1.49.3"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.3.tgz#44543f94d4405a8e153100efb1b097da45760869"
+  integrity sha512-tZgwGQqHzGXaR7uYeJxKu2yS2QE7qbwNvEdwEH7Ng27wjzz783VxSkL1dm5/9hMkDUmUeQn14RPcX4qz8Vw2Cg==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1553,15 +1553,6 @@
   version "1.46.2"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.46.2.tgz"
   integrity sha512-TDMONHRO0grvkx+DcBTlWg9bXpsZMfW6VbHDdC5d8vsjAdIlXzYHARi7H35I5oCoFuJwiWDQ/rJsJC1c7t5jyQ==
-  dependencies:
-    ajv "^6.10.0"
-    deepmerge "^3.2.0"
-    js-beautify "^1.9.0"
-
-"@manuscripts/manuscripts-json-schema@^1.49.3":
-  version "1.49.3"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.3.tgz#44543f94d4405a8e153100efb1b097da45760869"
-  integrity sha512-tZgwGQqHzGXaR7uYeJxKu2yS2QE7qbwNvEdwEH7Ng27wjzz783VxSkL1dm5/9hMkDUmUeQn14RPcX4qz8Vw2Cg==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1666,12 +1657,12 @@
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
 
-"@manuscripts/track-changes@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.2.1.tgz#027d0ba227a21428871bad10f3cdeb550749a245"
-  integrity sha512-zpEwZpaamswLcgVrk8D4gkt6SIV8fDQ8fYw0iuWQktTWmxySHfA2cmIZfMG7Io0ydVkKlAiWdgN1kYrjfp/VVA==
+"@manuscripts/track-changes@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.2.2.tgz#7f9f90e570dfa013c50d4075898cfd6f790516fe"
+  integrity sha512-2JwSENGlHjfAT/IuKvj0LwbmYsZUVV1SopcaajcGNMbVJlXwmFOcg/USONcS8hS0ebpekK5fFrjGkO90UzRIZw==
   dependencies:
-    "@manuscripts/manuscripts-json-schema" "1.46.3"
+    "@manuscripts/manuscripts-json-schema" "1.49.3"
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
     tinycolor2 "^1.4.2"
