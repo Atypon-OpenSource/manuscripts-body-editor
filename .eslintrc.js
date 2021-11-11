@@ -18,6 +18,7 @@ module.exports = {
   extends: '@manuscripts/eslint-config',
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
     'jsx-a11y/no-autofocus': 'off',
     'jsx-a11y/no-onchange': 'off',
   },
