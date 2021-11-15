@@ -37,6 +37,7 @@ import paragraph from './paragraph_editable'
 import placeholder from './placeholder'
 import placeholderElement from './placeholder_element_editable'
 import pullquoteElement from './pullquote_element_editable'
+import sectionLabel from './section_label'
 import sectionTitle from './section_title_editable'
 import tableElement from './table_element_editable'
 import tocElement from './toc_element_editable'
@@ -69,6 +70,7 @@ export default (props: EditorProps) => ({
   placeholder_element: placeholderElement(props),
   pullquote_element: pullquoteElement(props),
   section_title: sectionTitle(props),
+  section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
 })
