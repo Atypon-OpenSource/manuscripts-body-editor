@@ -45,7 +45,7 @@ export class EditorViewProvider {
     this._view = view
   }
 
-  execCommand(cmd: Command) {
+  execCommand = (cmd: Command) => {
     cmd(this.view.state, this.view.dispatch)
     this.focus()
   }
