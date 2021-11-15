@@ -13,4 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const ProseMirror: string
+import { useEffect, useLayoutEffect } from 'react'
+
+export const useSSRLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect

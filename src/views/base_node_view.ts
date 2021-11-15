@@ -23,7 +23,7 @@ import { Model } from '@manuscripts/manuscripts-json-schema'
 import { Decoration, NodeView } from 'prosemirror-view'
 
 import { PopperManager } from '../lib/popper'
-import { SyncError } from '../types'
+import { SyncError } from '../typings/utils'
 
 export interface DecorationSpec {
   syncErrors?: SyncError[]

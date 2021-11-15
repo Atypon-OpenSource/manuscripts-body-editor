@@ -39,7 +39,7 @@ import {
   insertSection,
   selectAllIsolating,
 } from '../commands'
-import { EditorAction } from '../types'
+import { EditorAction } from '../typings/utils'
 
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(undoInputRule, ignoreAtomBlockNodeBackward),

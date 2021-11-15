@@ -13,4 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const ProseMirror: string
+import { Keymap } from 'prosemirror-commands'
+import type { Plugin } from 'prosemirror-state'
+
+import type { EditorProviders } from '../context'
+import type { Commands } from './editor'
+
+export type CreateExtension = (ctx: EditorProviders) => Extension
+export interface Extension {
+  name: string
+  commands?: Commands
+  keymaps?: Keymap[]
+  plugins?: Plugin[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  store?: Record<string, any>
+  onDestroy?: () => void
+}

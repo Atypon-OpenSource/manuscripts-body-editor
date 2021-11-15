@@ -13,4 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const ProseMirror: string
+import { createContext, useContext } from 'react'
+
+import { EditorProviders, emptyProviders } from './Providers'
+
+export type { EditorProviders } from './Providers'
+
+export const ReactEditorContext = createContext<
+  EditorProviders | typeof emptyProviders
+>(emptyProviders)
+
+export const useEditorContext = () => useContext(ReactEditorContext)
+export { createDefaultProviders } from './Providers'

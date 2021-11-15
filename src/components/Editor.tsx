@@ -49,42 +49,9 @@ import {
   findDescendantById,
 } from '../lib/section-sync'
 import plugins from '../plugins/editor'
-import { ChangeReceiver, ChangeReceiverCommand } from '../types'
+import { EditorProps } from '../typings/editor'
+import { ChangeReceiver, ChangeReceiverCommand } from '../typings/utils'
 import views from '../views/editor'
-import { ViewerProps } from './Viewer'
-
-export interface EditorProps extends ViewerProps {
-  autoFocus?: boolean
-  getCitationProvider: () => CitationProvider | undefined
-  plugins: Array<Plugin<ManuscriptSchema>>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  putAttachment: (
-    id: string,
-    attachment: RxAttachmentCreator
-  ) => Promise<RxAttachment<Model>>
-  removeAttachment: (id: string, attachmentID: string) => Promise<void>
-  deleteModel: (id: string) => Promise<string>
-  setLibraryItem: (item: BibliographyItem) => void
-  matchLibraryItemByIdentifier: (
-    item: BibliographyItem
-  ) => BibliographyItem | undefined
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
-  subscribe: (receive: ChangeReceiver) => void
-  setView: (view: ManuscriptEditorView) => void
-  retrySync: (componentIDs: string[]) => Promise<void>
-  handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
-  setCommentTarget: (commentTarget?: string) => void
-  jupyterConfig: {
-    url: string
-    token: string
-  }
-  permissions: {
-    write: boolean
-  }
-  capabilites?: Capabilities
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-  environment?: string
-}
 
 export class Editor extends React.PureComponent<EditorProps> {
   private readonly editorRef = React.createRef<HTMLDivElement>()

@@ -27,7 +27,7 @@ import {
   isAtStartOfTextBlock,
   isTextSelection,
 } from '../commands'
-import { EditorAction } from '../types'
+import { EditorAction } from '../typings/utils'
 
 type Dispatch = (transaction: Transaction) => void
 

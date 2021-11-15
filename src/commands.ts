@@ -61,7 +61,7 @@ import {
 import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
-import { EditorAction } from './types'
+import { EditorAction } from './typings/utils'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
