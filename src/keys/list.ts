@@ -22,7 +22,7 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 
-import { EditorAction } from '../types'
+import { EditorAction } from '../typings/utils'
 
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),

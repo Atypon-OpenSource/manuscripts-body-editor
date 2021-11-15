@@ -49,7 +49,8 @@ import {
   findDescendantById,
 } from '../lib/section-sync'
 import plugins from '../plugins/editor'
-import { ChangeReceiver, ChangeReceiverCommand } from '../types'
+import { EditorProps } from '../typings/editor'
+import { ChangeReceiver, ChangeReceiverCommand } from '../typings/utils'
 import views from '../views/editor'
 import { ViewerProps } from './Viewer'
 

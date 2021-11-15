@@ -16,7 +16,7 @@
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 
-import { NodeViewCreator } from '../types'
+import { NodeViewCreator } from '../typings/utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { EditableBlockProps } from './editable_block'
 

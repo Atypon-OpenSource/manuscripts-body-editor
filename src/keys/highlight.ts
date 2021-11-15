@@ -21,7 +21,7 @@ import {
 import { Selection } from 'prosemirror-state'
 
 import { Dispatch, isTextSelection } from '../commands'
-import { EditorAction } from '../types'
+import { EditorAction } from '../typings/utils'
 
 const skipHighlightNode =
   (dir: number): EditorAction =>
