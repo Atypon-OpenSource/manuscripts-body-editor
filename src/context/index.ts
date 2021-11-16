@@ -25,3 +25,7 @@ export const ReactEditorContext = createContext<
 
 export const useEditorContext = () => useContext(ReactEditorContext)
 export { createDefaultProviders } from './Providers'
+
+export { EditorViewProvider } from './EditorViewProvider'
+export { ExtensionProvider } from './ExtensionProvider'
+export { PluginStateProvider } from './PluginStateProvider'

@@ -19,8 +19,11 @@ import type { Plugin } from 'prosemirror-state'
 import type { EditorProviders } from '../context'
 import type { Commands } from './editor'
 
+export type CreateExtensionFn = (
+  ...args: any[]
+) => (ctx: EditorProviders) => Extension
 export type CreateExtension = (ctx: EditorProviders) => Extension
-export interface Extension {
+export type Extension = {
   name: string
   commands?: Commands
   keymaps?: Keymap[]
