@@ -25,9 +25,9 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
-import persist from '@manuscripts/plugin-persist'
+// import persist from '@manuscripts/plugin-persist'
 import { dropCursor } from 'prosemirror-dropcursor'
-import { history } from 'prosemirror-history'
+// import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
@@ -77,7 +77,7 @@ export default (props: PluginProps) => {
     ...keys,
     dropCursor(),
     // gapCursor(),
-    history(),
+    // history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     elements(),
