@@ -29,7 +29,6 @@ import {
   Model,
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { Capabilities } from '@manuscripts/style-guide'
 import { LocationListener } from 'history'
 import {

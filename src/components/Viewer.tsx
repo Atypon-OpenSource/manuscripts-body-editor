@@ -29,7 +29,6 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment } from '@manuscripts/rxdb'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -43,7 +42,7 @@ export interface ViewerProps {
   attributes?: { [key: string]: string }
   doc: ActualManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
-  allAttachments: (id: string) => Promise<Array<RxAttachment<Model>>>
+  allAttachments: (id: string) => Promise<Array<any>>
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
   locale: string

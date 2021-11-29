@@ -37,7 +37,7 @@ import {
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
 // eslint-disable-next-line import/no-unresolved
-import { RxAttachment } from '@manuscripts/rxdb/typings/rx-attachment'
+// import { RxAttachment } from '@manuscripts/rxdb/typings/rx-attachment'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -345,7 +345,7 @@ const buildProps = (
   unmountReactComponent: () => undefined,
   getCitationProvider: () => undefined,
   plugins: [],
-  putAttachment: async () => ({} as RxAttachment<Model>),
+  putAttachment: async () => ({} as any),
   removeAttachment: async () => undefined,
   deleteModel: async (id) => {
     modelMap.delete(id)

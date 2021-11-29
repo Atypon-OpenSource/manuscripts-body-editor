@@ -26,7 +26,6 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment } from '@manuscripts/rxdb'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
 import ReactDOM from 'react-dom'
@@ -88,7 +87,7 @@ const defaultViewerProps: ViewerProps = {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },
   allAttachments: (_id: string) => {
-    return Promise.resolve([] as RxAttachment<Model>[])
+    return Promise.resolve([] as any[])
   },
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   getLibraryItem: (_id: string) => undefined,
@@ -104,7 +103,7 @@ const defaultViewerProps: ViewerProps = {
 }
 
 export const MOCKS = {
-  putAttachment: jest.fn(() => Promise.resolve(new RxAttachment<Model>())),
+  putAttachment: jest.fn(() => Promise.resolve(true),
 }
 
 export const defaultEditorProps: EditorProps = {
