@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
+// import { Model } from '@manuscripts/manuscripts-json-schema'
+// import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { base64StringToBlob } from 'blob-util'
 
 import { CodemirrorMode } from '../lib/codemirror-modes'
@@ -38,10 +38,7 @@ export interface ListingEditableProps extends ListingViewProps {
     url: string
     token: string
   }
-  putAttachment: (
-    id: string,
-    attachment: RxAttachmentCreator
-  ) => Promise<RxAttachment<Model>>
+  putAttachment: (id: string, attachment: any) => Promise<any>
 }
 
 export class ListingEditableView extends ListingView<
