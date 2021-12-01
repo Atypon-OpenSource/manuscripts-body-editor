@@ -70,6 +70,7 @@ export interface EditorProps extends ViewerProps {
 export interface UseEditorProps {
   className?: string
   initialState?: EditorState
+  initialDoc?: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
   manuscriptsProps: EditorProps
   extensions: CreateExtension[]
   ctx: EditorProviders

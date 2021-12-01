@@ -83,6 +83,7 @@ const useEditor = (
   function createEditorState(ctx: EditorProviders, props: UseEditorProps) {
     return EditorState.create({
       schema,
+      doc: props.initialDoc ? schema.nodeFromJSON(props.initialDoc) : undefined,
       plugins: [
         ...createPlugins(props.manuscriptsProps),
         ...ctx.extensionProvider.plugins,
