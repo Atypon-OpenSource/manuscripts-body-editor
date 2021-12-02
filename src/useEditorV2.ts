@@ -40,9 +40,6 @@ const useEditor = (
         editorViewRef.current
       )
     }
-    return () => {
-      editorViewRef.current?.destroy()
-    }
   }, [editorDOMRef.current, editorProps])
 
   function init(
@@ -52,15 +49,18 @@ const useEditor = (
   ) {
     const { ctx } = props
     ctx.extensionProvider.init(ctx, props.extensions || [])
-    const state = props.initialState || createEditorState(ctx, props)
-    const view = oldView || createEditorView(element, state, ctx, props)
     if (oldView) {
-      view.setProps({
+      const state = oldView.state.reconfigure({
+        plugins: [
+          ...createPlugins(props.manuscriptsProps),
+          ...ctx.extensionProvider.plugins,
+        ],
+      })
+      oldView.setProps({
         state,
         dispatchTransaction(tr: Transaction) {
           const oldEditorState = this.state
           const newState = oldEditorState.apply(tr)
-          this.updateState(newState)
           ctx.viewProvider.updateState(newState)
           ctx.pluginStateProvider.updatePluginListeners(
             oldEditorState,
@@ -69,14 +69,18 @@ const useEditor = (
           props.onEdit && props.onEdit(newState)
         },
       })
+      ctx.viewProvider.updateState(state)
+      return oldView
     }
+    const state = props.initialState || createEditorState(ctx, props)
+    const view = createEditorView(element, state, ctx, props)
+    ctx.viewProvider.init(view)
+    ctx.viewProvider.updateState(state)
+    props.onEditorReady && props.onEditorReady(ctx)
     if (window) {
       // @ts-ignore
       window.editorView = view
     }
-    ctx.viewProvider.init(view)
-    ctx.viewProvider.updateState(state)
-    props.onEditorReady && props.onEditorReady(ctx)
     return view
   }
 
@@ -113,7 +117,6 @@ const useEditor = (
         dispatchTransaction(tr: Transaction) {
           const oldEditorState = this.state
           const newState = oldEditorState.apply(tr)
-          this.updateState(newState)
           ctx.viewProvider.updateState(newState)
           ctx.pluginStateProvider.updatePluginListeners(
             oldEditorState,
