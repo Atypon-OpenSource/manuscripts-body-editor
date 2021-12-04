@@ -518,7 +518,7 @@
   display: none;
 }
 
-.ProseMirror section.generated-label .block-section_label {
+.ProseMirror section.generated-label > .block-section_label {
   display: none;
 }
 
