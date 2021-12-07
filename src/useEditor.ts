@@ -16,15 +16,9 @@
 
 import { Command } from 'prosemirror-commands'
 import { Schema as ProsemirrorSchema } from 'prosemirror-model'
-import {
-  EditorState,
-  NodeSelection,
-  TextSelection,
-  Transaction,
-} from 'prosemirror-state'
+import { EditorState, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useCallback, useRef, useState } from 'react'
 
 export type CreateView = (
   element: HTMLDivElement,
@@ -39,7 +33,6 @@ const useEditor = <Schema extends ProsemirrorSchema>(
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState<Schema>>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
-  const history = useHistory()
 
   const dispatch = useCallback(
     (tr: Transaction) => {
@@ -91,56 +84,6 @@ const useEditor = <Schema extends ProsemirrorSchema>(
       view.current.updateState(state)
     }
   }, [])
-
-  const focusNodeWithId = useCallback(
-    (id: string) => {
-      const currentView = view.current
-      if (!id || !currentView || !state) {
-        return
-      }
-
-      state.doc.descendants((node, pos) => {
-        if (node.attrs.id === id) {
-          currentView.focus()
-
-          const selection = node.isAtom
-            ? NodeSelection.create(state.tr.doc, pos)
-            : TextSelection.near(state.tr.doc.resolve(pos + 1))
-
-          currentView.dispatch(state.tr.setSelection(selection))
-          const dom = currentView.domAtPos(pos + 1)
-
-          if (dom.node instanceof Element) {
-            dom.node.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-              inline: 'nearest',
-            })
-          }
-
-          return false
-        }
-      })
-    },
-    [state]
-  )
-
-  useEffect(() => {
-    const unlisten = history.listen(() => {
-      // This will be evaluated on every route change. So, if
-      // the route has changed and the node id is defined, we want to
-      // focus that node.
-      const nodeId = history.location.hash.substring(1)
-      if (nodeId) {
-        focusNodeWithId(nodeId)
-      }
-    })
-    // This function will be invoked on component unmount and will clean up
-    // the event listener.
-    return () => {
-      unlisten()
-    }
-  }, [history, focusNodeWithId])
 
   return {
     // ordinary use:

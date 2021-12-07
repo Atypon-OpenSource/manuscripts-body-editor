@@ -18,68 +18,33 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { Build, ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
-import persist from '@manuscripts/plugin-persist'
-import track, { Commit } from '@manuscripts/track-changes'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../src/keys'
+import bibliography from '../src/plugins/bibliography'
+import { BibliographyProps } from '../src/plugins/bibliography/types'
 import elements from '../src/plugins/elements'
-import highlights from '../src/plugins/highlight'
-import keywords from '../src/plugins/keywords'
-import models from '../src/plugins/models'
-import objects from '../src/plugins/objects'
 import paragraphs from '../src/plugins/paragraphs'
 import placeholder from '../src/plugins/placeholder'
 import sections from '../src/plugins/sections'
-import styles from '../src/plugins/styles'
-import toc from '../src/plugins/toc'
 import rules from '../src/rules'
 
-interface PluginProps {
-  deleteModel: (id: string) => Promise<string>
-  commit?: Commit
-  getModel: <T extends Model>(id: string) => T | undefined
-  getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: string) => void
-  ancestorDoc: ManuscriptNode
-}
-
-export default (props: PluginProps) => {
-  const {
-    commit,
-    deleteModel,
-    getModel,
-    getManuscript,
-    modelMap,
-    saveModel,
-    setCommentTarget,
-    ancestorDoc,
-  } = props
+export default (props: BibliographyProps) => {
+  const { getModel, getLibraryItem, getCitationProvider } = props
 
   return [
     rules,
     ...keys,
     dropCursor(),
     // gapCursor(),
+    // bibliography({ getModel, getLibraryItem, getCitationProvider }),
     history(),
-    models({ saveModel, deleteModel }), // NOTE: this should come first
     elements(),
-    persist(),
     sections(),
-    toc({ modelMap }),
-    styles({ getModel, getManuscript, modelMap }),
-    keywords({ getManuscript, getModel }),
-    objects({ getManuscript, getModel }),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track({ commit, ancestorDoc }),
-    highlights({ setCommentTarget }),
   ]
 }

@@ -32,7 +32,7 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
 export const getBibliographyItemFn = (props: BibliographyProps) => (
   id: string
 ) => {
-  const libraryItem = props.getLibraryItem(id)
+  const libraryItem = props.getLibraryItem && props.getLibraryItem(id)
   if (libraryItem) {
     return libraryItem
   }

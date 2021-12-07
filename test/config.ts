@@ -17,46 +17,29 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import {
-  Build,
   ManuscriptNode,
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
-import { Commit } from '@manuscripts/track-changes'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
 import { transformPasted } from '../src/lib/paste'
-import { PopperManager } from '../src/lib/popper'
+// import views from './views'
+import { BibliographyProps } from '../src/plugins/bibliography/types'
 import { CreateView } from '../src/useEditor'
 import plugins from './plugins'
-import views from './views'
 
-export interface Props {
+export interface Props extends BibliographyProps {
   doc: ManuscriptNode
-  ancestorDoc: ManuscriptNode
-  commit: Commit
   getModel: <T extends Model>(id: string) => T | undefined
-  getManuscript: () => Manuscript
-  locale: string
-  modelMap: Map<string, Model>
-  popper: PopperManager
-  projectID: string
   renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
   unmountReactComponent: (container: HTMLElement) => void
-
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  deleteModel: (id: string) => Promise<string>
-  retrySync: (componentIDs: string[]) => Promise<void>
-  setCommentTarget: (commentTarget?: string) => void
   permissions: {
     write: boolean
   }
-
-  getAttachment: (id: string) => Blob
-  putAttachment: (file: File) => Promise<string>
 }
 
 export default {
@@ -79,7 +62,7 @@ export default {
         right: 0,
       },
       dispatchTransaction: dispatch,
-      nodeViews: views(props, dispatch),
+      // nodeViews: views(props, dispatch),
       transformPasted,
     }),
 }

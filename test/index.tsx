@@ -16,22 +16,11 @@
 
 import '@babel/polyfill'
 
-import projectDump from '@manuscripts/examples/data/project-dump.json'
-import {
-  Build,
-  Decoder,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import {
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
-import { uniqueId } from 'lodash'
+import projectDump from '@manuscripts/examples/data/project-dump-2.json'
+import { Decoder, ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { MemoryRouter } from 'react-router'
-import { ThemeProvider } from 'styled-components'
 
 import {
   ApplicationMenus,
@@ -39,9 +28,7 @@ import {
   useApplicationMenus,
   useEditor,
 } from '../src'
-import { PopperManager } from '../src/lib/popper'
 import config, { Props } from './config'
-import { theme } from './theme'
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
   return new Map(
@@ -70,67 +57,26 @@ const EditorComponent: React.FC<Props> = (props) => {
 }
 
 const start = async () => {
-  const models = projectDump.data as Model[]
-
-  const manuscript = models.find(
-    (model) => model.objectType === ObjectTypes.Manuscript
-  ) as Manuscript
+  const models = (projectDump.data as unknown) as Model[]
 
   const modelMap = buildModelMap(models)
   const decoder = new Decoder(modelMap)
   const doc = decoder.createArticleNode()
-  const ancestorDoc = decoder.createArticleNode()
 
   const getModel = <T extends Model>(id: string) =>
     modelMap.get(id) as T | undefined
-  const deleteModel = (id: string) => {
-    modelMap.delete(id)
-    return Promise.resolve(id)
-  }
-  const saveModel = <T extends Model>(model: T | Build<T> | Partial<T>) => {
-    const oldModel = getModel<T>(model._id)
-    const updatedModel = {
-      createdAt: Date.now() / 1000,
-      updatedAt: Date.now() / 1000,
-      _id: uniqueId(),
-      ...oldModel,
-      ...model,
-    }
-    modelMap.set(model._id, updatedModel)
-    return Promise.resolve(updatedModel)
-  }
 
   const props: Props = {
     doc,
-    ancestorDoc,
-    popper: new PopperManager(),
-    locale: 'en-GB',
     permissions: { write: true },
     // @ts-ignore
     renderReactComponent: ReactDOM.render,
     unmountReactComponent: ReactDOM.unmountComponentAtNode,
-    modelMap,
     getModel,
-    saveModel,
-    deleteModel,
-    getManuscript: () => manuscript,
-    projectID: 'my-project',
-    retrySync: () => Promise.resolve(),
-    setCommentTarget: () => undefined,
-    getAttachment: () => new File([], 'my-file.png'),
-    putAttachment: (file: File) => {
-      console.log('uploading ', file)
-      return Promise.resolve('uuid')
-    },
-    theme,
   }
 
   ReactDOM.render(
-    <MemoryRouter>
-      <ThemeProvider theme={theme}>
-        <EditorComponent {...props} />
-      </ThemeProvider>
-    </MemoryRouter>,
+    <EditorComponent {...props} />,
     document.getElementById('root')
   )
 }
