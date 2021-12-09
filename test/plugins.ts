@@ -39,7 +39,7 @@ export default (props: BibliographyProps) => {
     ...keys,
     dropCursor(),
     // gapCursor(),
-    // bibliography({ getModel, getLibraryItem, getCitationProvider }),
+    bibliography({ getModel, getLibraryItem, getCitationProvider }),
     history(),
     elements(),
     sections(),

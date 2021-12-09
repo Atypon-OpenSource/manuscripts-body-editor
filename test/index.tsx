@@ -17,8 +17,16 @@
 import '@babel/polyfill'
 
 import projectDump from '@manuscripts/examples/data/project-dump-2.json'
+import { CitationProvider } from '@manuscripts/library'
 import { Decoder, ManuscriptSchema } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  Bundle,
+  Manuscript,
+  Model,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
+import axios from 'axios'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -29,6 +37,36 @@ import {
   useEditor,
 } from '../src'
 import config, { Props } from './config'
+
+type ModelMap = Map<string, Model>
+
+const fetchCitationStyle = (bundleID: string): Promise<string> =>
+  axios.get(`http://localhost:3000/csl/${bundleID}`).then((res) => {
+    if (res.status >= 400) {
+      return new Error('No style retrieved')
+    }
+    return res.data
+  })
+
+const findOneModel = (
+  modelMap: ModelMap,
+  selector: (model: Model) => boolean
+) => {
+  return Array.from(modelMap.values()).find(selector)
+}
+
+const getBundleID = (modelMap: ModelMap) => {
+  const manuscript = findOneModel(
+    modelMap,
+    (model) => model.objectType === ObjectTypes.Manuscript
+  )
+  const bundleID = (manuscript as Manuscript)?.bundle
+  if (!bundleID) {
+    return undefined
+  }
+  const bundle = modelMap.get(bundleID) as Bundle | undefined
+  return bundle?.prototype
+}
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
   return new Map(
@@ -66,6 +104,16 @@ const start = async () => {
   const getModel = <T extends Model>(id: string) =>
     modelMap.get(id) as T | undefined
 
+  const getLibraryItem = (id: string) => modelMap.get(id) as BibliographyItem
+
+  const bundleID = getBundleID(modelMap)
+  const styles = await fetchCitationStyle(bundleID)
+  const provider = new CitationProvider({
+    lang: 'en-GB',
+    citationStyle: styles,
+    getLibraryItem,
+  })
+
   const props: Props = {
     doc,
     permissions: { write: true },
@@ -73,6 +121,8 @@ const start = async () => {
     renderReactComponent: ReactDOM.render,
     unmountReactComponent: ReactDOM.unmountComponentAtNode,
     getModel,
+    getLibraryItem,
+    getCitationProvider: () => provider,
   }
 
   ReactDOM.render(
