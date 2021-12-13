@@ -34,7 +34,7 @@ const useEditor = (
   const [oldEditorProps, setOldEditorProps] = useState<UseEditorProps>()
 
   useSSRLayoutEffect(() => {
-    if (editorDOMRef.current) {
+    if (editorDOMRef.current && editorProps !== oldEditorProps) {
       editorViewRef.current = init(
         editorDOMRef.current,
         editorProps,
@@ -52,7 +52,7 @@ const useEditor = (
     oldProps?: UseEditorProps
   ) {
     const { ctx } = props
-    ctx.extensionProvider.destroy()
+    oldView && ctx.extensionProvider.destroy()
     ctx.extensionProvider.init(ctx, props.extensions || [])
     if (oldView) {
       const state = createEditorState(ctx, props, oldView.state, oldProps)
