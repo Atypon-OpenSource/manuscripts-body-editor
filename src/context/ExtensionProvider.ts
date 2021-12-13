@@ -62,4 +62,8 @@ export class ExtensionProvider {
   offUpdate(cb: (data: State) => void) {
     this._observable.off('update', cb)
   }
+
+  destroy() {
+    this.extensions.forEach((e) => e.onDestroy && e.onDestroy())
+  }
 }

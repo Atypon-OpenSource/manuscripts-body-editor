@@ -52,6 +52,7 @@ const useEditor = (
     oldProps?: UseEditorProps
   ) {
     const { ctx } = props
+    ctx.extensionProvider.destroy()
     ctx.extensionProvider.init(ctx, props.extensions || [])
     if (oldView) {
       const state = createEditorState(ctx, props, oldView.state, oldProps)
