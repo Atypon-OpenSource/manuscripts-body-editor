@@ -20,14 +20,9 @@ import { Commands } from '../typings/editor'
 import { CreateExtension, Extension } from '../typings/extension'
 import { EditorProviders } from './Providers'
 
-interface State {
-  extensions: Extension[]
-  plugins: Plugin[]
-  commands: Commands
-}
-
 export class ExtensionProvider {
   _observable = new Observable<'update'>()
+  _extensionListeners = new Observable<string>()
   extensions: Extension[] = []
   plugins: Plugin[] = []
   commands: Commands = {}
@@ -43,23 +38,35 @@ export class ExtensionProvider {
       (acc, ext) => Object.assign(acc, ext.commands),
       {} as Commands
     )
-    const state: State = {
-      extensions: this.extensions,
-      plugins: this.plugins,
-      commands: this.commands,
-    }
-    this._observable.emit('update', state)
+    this._observable.emit('update', this)
   }
 
   getExtension(name: string) {
-    return this.extensions.find((e) => e.name === name)
+    const ext = this.extensions.find((e) => e.name === name)
+    if (!ext) {
+      throw Error('No extension found with name: ' + name)
+    }
+    return ext
   }
 
-  onUpdate(cb: (data: State) => void) {
+  // eslint-disable-next-line
+  emitExtensionUpdate(name: string, data: any) {
+    this._extensionListeners.emit(name, data)
+  }
+
+  onExtensionUpdate<T>(name: string, cb: (data: T) => void) {
+    this._extensionListeners.on(name, cb)
+  }
+
+  offExtensionUpdate<T>(name: string, cb: (data: T) => void) {
+    this._extensionListeners.off(name, cb)
+  }
+
+  onUpdate(cb: (data: ExtensionProvider) => void) {
     this._observable.on('update', cb)
   }
 
-  offUpdate(cb: (data: State) => void) {
+  offUpdate(cb: (data: ExtensionProvider) => void) {
     this._observable.off('update', cb)
   }
 
