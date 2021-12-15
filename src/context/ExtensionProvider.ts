@@ -41,12 +41,12 @@ export class ExtensionProvider {
     this._observable.emit('update', this)
   }
 
-  getExtension(name: string) {
+  getExtension<T extends Extension>(name: string) {
     const ext = this.extensions.find((e) => e.name === name)
     if (!ext) {
       throw Error('No extension found with name: ' + name)
     }
-    return ext
+    return ext as T
   }
 
   // eslint-disable-next-line
