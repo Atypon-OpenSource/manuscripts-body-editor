@@ -70,6 +70,7 @@ const useEditor = (
         },
       })
       ctx.viewProvider.updateState(state)
+      props.onEditorReady && props.onEditorReady(ctx)
       return oldView
     }
     const state = props.initialState || createEditorState(ctx, props)
