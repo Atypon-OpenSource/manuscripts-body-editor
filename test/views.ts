@@ -26,8 +26,8 @@ import crossReference from '../src/views/cross_reference_editable'
 import { EditableBlockProps } from '../src/views/editable_block'
 import equation from '../src/views/equation_editable'
 import equationElement from '../src/views/equation_element_editable'
-import figureElement from '../src/views/figure_element_editable'
 import Figure, { FigureProps } from '../src/views/FigureComponent'
+import FigureElement from '../src/views/FigureElement'
 import inlineEquation from '../src/views/inline_equation_editable'
 import inlineFootnote from '../src/views/inline_footnote_editable'
 import keywordsElement from '../src/views/keywords_element_editable'
@@ -53,7 +53,14 @@ export default (props: ViewProps, dispatch: Dispatch) => ({
   equation: equation(props),
   equation_element: equationElement(props),
   figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
-  figure_element: figureElement(props),
+  figure_element: ReactView(dispatch, props.theme)(
+    FigureElement(props),
+    'div',
+    {
+      stopEvent: () => true,
+      ignoreMutation: () => true,
+    }
+  ),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
   keywords_element: keywordsElement(props),

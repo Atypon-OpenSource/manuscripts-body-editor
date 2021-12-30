@@ -68,7 +68,7 @@ const EditableBlock: React.FC<EditableBlockProps> = ({
 }) => {
   return (
     <div className="block-container">
-      <div className="block-gutter">
+      <div className="block-gutter" contentEditable={false}>
         {canWrite && (
           <Menus
             openAddMenu={openMenu(viewProps)}
@@ -77,7 +77,7 @@ const EditableBlock: React.FC<EditableBlockProps> = ({
         )}
       </div>
       <div className="block">{children}</div>
-      <div className="block-gutter"></div>
+      <div className="block-gutter" contentEditable={false}></div>
     </div>
   )
 }
