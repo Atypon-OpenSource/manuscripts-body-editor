@@ -15,6 +15,13 @@
   background-color: hsl(196, 93%, 84%);
 }
 
+.track-changes--annotation {
+  background-color: rgba(var(--annotation-color), 0.6);
+}
+.track-changes--annotation.track-changes--focused {
+  background-color: rgba(var(--annotation-color), 1);
+}
+
 .track-changes--blame-point {
   position: relative;
 }
