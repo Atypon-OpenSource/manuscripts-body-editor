@@ -101,7 +101,7 @@
   text-indent: 0pt !important;
 }
 
-.ProseMirror .list {
+/* .ProseMirror .list {
   counter-reset: list-level-2 0;
 }
 .ProseMirror .list > li {
@@ -189,7 +189,7 @@
 }
 .ProseMirror ul.block > li {
   counter-increment: list-level-1;
-}
+} */
 
 .ProseMirror > section:not(.toc) {
   counter-increment: section-1;
