@@ -116,6 +116,13 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleClose = () => {
+    // move the cursor after this node
+    const selection = TextSelection.create(
+      this.view.state.tr.doc,
+      this.getPos() + 1
+    )
+    this.view.dispatch(this.view.state.tr.setSelection(selection))
+
     this.props.popper.destroy()
   }
 
@@ -176,15 +183,7 @@ export class CitationEditableView extends CitationView<
 
     await saveModel(citation)
 
-    // move the cursor after this node
-    const selection = TextSelection.create(
-      this.view.state.tr.doc,
-      this.getPos() + 1
-    )
-
-    this.view.dispatch(this.view.state.tr.setSelection(selection))
-
-    this.props.popper.destroy()
+    this.handleClose()
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
