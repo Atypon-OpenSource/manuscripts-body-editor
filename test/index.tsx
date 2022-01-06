@@ -16,7 +16,7 @@
 
 import '@babel/polyfill'
 
-import projectDump from '@manuscripts/examples/data/project-dump-2.json'
+import projectDump from '@manuscripts/examples/data/project-dump.json'
 import { CitationProvider } from '@manuscripts/library'
 import { Decoder, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
@@ -40,13 +40,16 @@ import config, { Props } from './config'
 
 type ModelMap = Map<string, Model>
 
-const fetchCitationStyle = (bundleID: string): Promise<string> =>
-  axios.get(`http://localhost:3000/csl/${bundleID}`).then((res) => {
-    if (res.status >= 400) {
-      return new Error('No style retrieved')
-    }
-    return res.data
-  })
+const fetchCitationStyle = (bundleID: string): Promise<string | null> =>
+  axios
+    .get(`http://localhost:3000/csl/${bundleID}`)
+    .then((res) => {
+      if (res.status >= 400) {
+        return null
+      }
+      return res.data
+    })
+    .catch(() => null)
 
 const findOneModel = (
   modelMap: ModelMap,
@@ -108,11 +111,13 @@ const start = async () => {
 
   const bundleID = getBundleID(modelMap)
   const styles = await fetchCitationStyle(bundleID)
-  const provider = new CitationProvider({
-    lang: 'en-GB',
-    citationStyle: styles,
-    getLibraryItem,
-  })
+  const provider = styles
+    ? new CitationProvider({
+        lang: 'en-GB',
+        citationStyle: styles,
+        getLibraryItem,
+      })
+    : undefined
 
   const props: Props = {
     doc,
