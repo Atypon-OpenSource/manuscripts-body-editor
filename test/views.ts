@@ -41,10 +41,11 @@ import ReactView from '../src/views/ReactView'
 import sectionTitle from '../src/views/section_title_editable'
 import tableElement from '../src/views/table_element_editable'
 import tocElement from '../src/views/toc_element_editable'
+import { Props } from './config'
 
-type ViewProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
+type ViewProps = EditableBlockProps & FigureProps
 
-export default (props: ViewProps, dispatch: Dispatch) => ({
+export default (props: Props, dispatch: Dispatch) => ({
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
@@ -52,8 +53,11 @@ export default (props: ViewProps, dispatch: Dispatch) => ({
   cross_reference: crossReference(props),
   equation: equation(props),
   equation_element: equationElement(props),
-  figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
-  figure_element: ReactView(dispatch, props.theme)(
+  figure: ReactView(
+    dispatch,
+    props.renderReactComponent
+  )<FigureNode>(Figure(props)),
+  figure_element: ReactView(dispatch, props.renderReactComponent)(
     FigureElement(props),
     'div',
     {

@@ -29,6 +29,7 @@ import {
 import axios from 'axios'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { ThemeProvider } from 'styled-components'
 
 import {
   ApplicationMenus,
@@ -37,6 +38,7 @@ import {
   useEditor,
 } from '../src'
 import config, { Props } from './config'
+import { theme } from './theme'
 
 type ModelMap = Map<string, Model>
 
@@ -97,6 +99,16 @@ const EditorComponent: React.FC<Props> = (props) => {
   )
 }
 
+const renderReactComponent = (
+  child: React.ReactNode,
+  container: HTMLElement
+) => {
+  ReactDOM.render(
+    <ThemeProvider theme={theme}>{child}</ThemeProvider>,
+    container
+  )
+}
+
 const start = async () => {
   const models = (projectDump.data as unknown) as Model[]
 
@@ -122,8 +134,7 @@ const start = async () => {
   const props: Props = {
     doc,
     permissions: { write: true },
-    // @ts-ignore
-    renderReactComponent: ReactDOM.render,
+    renderReactComponent,
     unmountReactComponent: ReactDOM.unmountComponentAtNode,
     getModel,
     getLibraryItem,
