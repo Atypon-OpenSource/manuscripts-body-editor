@@ -128,8 +128,11 @@
 .ProseMirror td {
   padding: 10px;
 }
+.ProseMirror th {
+  padding: 10px;
+}
 
-.ProseMirror tr:first-of-type td {
+.ProseMirror tr:first-of-type th {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   background: #f2f2f2;
@@ -547,7 +550,7 @@
   counter-reset: header_counter;
 }
 
-.ProseMirror tr:first-of-type td {
+.ProseMirror tr:first-of-type th {
   counter-increment: header_counter;
 }
 
@@ -562,7 +565,7 @@
 .ProseMirror
   .block-table_element:not(.suppress-header)
   tr:first-of-type
-  td.empty-node::before {
+  th.empty-node::before {
   content: 'Header ' counter(header_counter);
 }
 
