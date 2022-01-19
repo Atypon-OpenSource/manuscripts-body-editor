@@ -28,7 +28,7 @@ export class ParagraphView<
     this.updateAttributes()
 
     if (this.contentDOM) {
-      this.contentDOM.classList.add('block_paragraph')
+      this.contentDOM.setAttribute('role', 'paragraph')
     }
   }
 }

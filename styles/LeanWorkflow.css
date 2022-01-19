@@ -49,7 +49,7 @@
     counter(section-5, decimal) '. ' attr(data-placeholder);
 }
 
-.ProseMirror p.block, div.block_paragraph {
+.ProseMirror p.block, div[role="paragraph"] {
   font-size: 12pt !important;
   font-style: normal !important;
   font-weight: normal !important;

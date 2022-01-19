@@ -18,4 +18,4 @@ import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
 import { ParagraphView } from './paragraph'
 
-export default createNodeOrElementView(EditableBlock(ParagraphView), 'p')
+export default createNodeOrElementView(EditableBlock(ParagraphView), 'div')

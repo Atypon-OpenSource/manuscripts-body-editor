@@ -47,11 +47,11 @@
   margin: 0;
 }
 
-.ProseMirror div.block_paragraph > p {
+.ProseMirror div[role="paragraph"] > p {
   margin: 0;
 }
 
-.ProseMirror div.block.block_paragraph {
+.ProseMirror div[role="paragraph"] {
   margin: 12px 0;
 }
 
