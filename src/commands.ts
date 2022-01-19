@@ -191,6 +191,11 @@ export const createBlock = (
         createAndFillFigcaptionElement(state),
       ])
       break
+    case state.schema.nodes.paragraph:
+      node = state.schema.nodes.paragraph.create({}, [
+        state.schema.nodes.fragment.create(),
+      ])
+      break
     default:
       node = nodeType.createAndFill()
   }

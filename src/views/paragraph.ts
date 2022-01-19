@@ -21,7 +21,16 @@ import { createNodeOrElementView } from './creators'
 export class ParagraphView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
-  public elementType = 'p'
+  public elementType = 'div'
+
+  public updateContents = () => {
+    this.updateClasses()
+    this.updateAttributes()
+
+    if (this.contentDOM) {
+      this.contentDOM.classList.add('block_paragraph')
+    }
+  }
 }
 
-export default createNodeOrElementView(ParagraphView, 'p')
+export default createNodeOrElementView(ParagraphView, 'div')

@@ -47,6 +47,14 @@
   margin: 0;
 }
 
+.ProseMirror div.block_paragraph > p {
+  margin: 0;
+}
+
+.ProseMirror div.block.block_paragraph {
+  margin: 12px 0;
+}
+
 .ProseMirror blockquote {
   padding: 16px 0 16px 32px !important;
   border-left: 5px solid #e2e2e2;
