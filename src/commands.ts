@@ -194,6 +194,10 @@ export const createBlock = (
     case state.schema.nodes.paragraph:
       node = nodeType.createAndFill({}, state.schema.nodes.fragment.create())
       break
+    case state.schema.nodes.blockquote_element:
+    case state.schema.nodes.pullquote_element:
+      node = nodeType.createAndFill({}, [createAndFillParagraphElement(state)])
+      break
     default:
       node = nodeType.createAndFill()
   }
@@ -900,6 +904,11 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
   state.schema.nodes.figcaption.create({}, [
     state.schema.nodes.caption_title.create(),
     state.schema.nodes.caption.create(),
+  ])
+
+const createAndFillParagraphElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.paragraph.create({}, [
+    state.schema.nodes.fragment.create(),
   ])
 
 export const insertAnnotation = (
