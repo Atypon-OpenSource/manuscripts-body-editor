@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
 import { FootnoteView } from './footnote'
 
-export default createNodeOrElementView(EditableBlock(FootnoteView), 'div')
+const footnoteElementCallback = (node: ManuscriptNode, dom: HTMLElement) => {
+  dom.classList.add('footnote_element')
+}
+
+export default createNodeOrElementView(
+  EditableBlock(FootnoteView),
+  'div',
+  footnoteElementCallback
+)

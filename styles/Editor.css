@@ -74,6 +74,14 @@
   color: #777;
 }
 
+.ProseMirror .footnote_element > div {
+  margin: 12px 0;
+}
+
+.ProseMirror .footnote_element > div > p {
+  display: inline;
+}
+
 .ProseMirror blockquote footer:before {
   content: '— ';
 }
