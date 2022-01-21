@@ -496,6 +496,10 @@
   color: #999 !important;
 }
 
+.ProseMirror.manuscript-editor section.bibliography {
+  overflow-wrap: normal;
+}
+
 .ProseMirror section.title-suppressed > .block-section_title {
   display: none;
 }
