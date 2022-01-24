@@ -69,6 +69,21 @@ export default () => {
 
         return tr
       }
+
+      const emptyParagraphPositions: number[] = []
+      newState.doc.descendants((node, pos) => {
+        if (isParagraphNode(node) && node.childCount === 0) {
+          emptyParagraphPositions.push(pos + node.nodeSize - 1)
+        }
+      })
+
+      if (emptyParagraphPositions.length) {
+        for (const pos of emptyParagraphPositions) {
+          const fragment = newState.schema.nodes.fragment.create()
+          tr.insert(pos, fragment)
+        }
+        return tr
+      }
     },
   })
 }
