@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
 import { ParagraphView } from './paragraph'
 
-export default createNodeOrElementView(EditableBlock(ParagraphView), 'div')
+export const paragraphCallback = (node: ManuscriptNode, dom: HTMLElement) => {
+  dom.setAttribute('role', 'paragraph')
+}
+
+export default createNodeOrElementView(
+  EditableBlock(ParagraphView),
+  'div',
+  paragraphCallback
+)
