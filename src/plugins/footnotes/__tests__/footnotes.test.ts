@@ -38,11 +38,24 @@ jest.mock('@manuscripts/manuscript-transform', () => {
 })
 
 describe('footnotes plugin', () => {
+  document.createRange = () => ({
+    setStart: jest.fn(),
+    setEnd: jest.fn(),
+    // @ts-ignore
+    getClientRects: jest.fn(() => ({
+      length: 0,
+    })),
+    // @ts-ignore
+    getBoundingClientRect: jest.fn(() => ({
+      width: 0,
+    })),
+  })
   test("should create an inline node and footnotes section if it doesn't exist", () => {
     const expectedDoc = parseDoc(insertedFootnoteJson.doc)
     const { view } = setupEditor()
-      .selectText(8)
+      .selectText(9)
       .command(insertInlineFootnote('footnote'))
+      .selectText(25)
       .insertText('a footnote')
 
     expect(view.state.tr.doc.toJSON()).toEqual(expectedDoc.toJSON())
@@ -53,10 +66,11 @@ describe('footnotes plugin', () => {
   test('should remove the inline node as well as the footnote on deletion', () => {
     const expectedDoc = parseDoc(deletedFootnoteJson.doc)
     const { view } = setupEditor()
-      .selectText(8)
-      .command(insertInlineFootnote('footnote'))
-      .insertText('a footnote')
       .selectText(9)
+      .command(insertInlineFootnote('footnote'))
+      .selectText(25)
+      .insertText('a footnote')
+      .selectText(10)
       .backspace()
 
     expect(view.state.tr.doc.toJSON()).toEqual(expectedDoc.toJSON())

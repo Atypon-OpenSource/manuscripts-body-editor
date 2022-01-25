@@ -78,6 +78,8 @@ export default () => {
       })
 
       if (emptyParagraphPositions.length) {
+        emptyParagraphPositions.reverse()
+
         for (const pos of emptyParagraphPositions) {
           const fragment = newState.schema.nodes.fragment.create()
           tr.insert(pos, fragment)

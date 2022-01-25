@@ -25,15 +25,20 @@
             },
             "content": [
               {
-                "text": "test",
-                "type": "text"
-              },
-              {
-                "type": "inline_footnote",
-                "attrs": {
-                  "rid": "MOCKED_ID",
-                  "contents": "1"
-                }
+                "type": "fragment",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "test"
+                  },
+                  {
+                    "type": "inline_footnote",
+                    "attrs": {
+                      "rid": "MOCKED_ID",
+                      "contents": "1"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -81,8 +86,13 @@
                     },
                     "content": [
                       {
-                        "type": "text",
-                        "text": "a footnote"
+                        "type": "fragment",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "a footnote"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -96,7 +106,7 @@
   },
   "selection": {
     "type": "text",
-    "anchor": 32,
-    "head": 32
+    "anchor": 35,
+    "head": 35
   }
 }

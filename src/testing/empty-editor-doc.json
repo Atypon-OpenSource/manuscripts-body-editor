@@ -24,8 +24,13 @@
           },
           "content": [
             {
-              "type": "text",
-              "text": "test"
+              "type": "fragment",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "test"
+                }
+              ]
             }
           ]
         }

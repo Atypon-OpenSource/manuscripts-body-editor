@@ -37,9 +37,14 @@ const node = schema.nodeFromJSON({
           type: 'paragraph',
           content: [
             {
-              type: 'text',
-              text:
-                'Every conscious movement a person makes, whether lifting a pencil or playing a violin, begins in the brain.',
+              type: 'fragment',
+              content: [
+                {
+                  type: 'text',
+                  text:
+                    'Every conscious movement a person makes, whether lifting a pencil or playing a violin, begins in the brain.',
+                },
+              ],
             },
           ],
         },
@@ -47,9 +52,14 @@ const node = schema.nodeFromJSON({
           type: 'paragraph',
           content: [
             {
-              type: 'text',
-              text:
-                'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
+              type: 'fragment',
+              content: [
+                {
+                  type: 'text',
+                  text:
+                    'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
+                },
+              ],
             },
           ],
         },

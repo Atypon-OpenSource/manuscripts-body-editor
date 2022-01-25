@@ -100,7 +100,7 @@ const addSectionWithEmptyParagraphs = () => {
     manuscriptID,
     containerID,
     elementType: 'p',
-    contents: `<p class="MPElement" id="${firstParagraphID}"></p>`,
+    contents: `<div class="MPElement" id="${firstParagraphID}"></div>`,
   }
 
   data.push(firstEmptyParagraph)
@@ -116,7 +116,7 @@ const addSectionWithEmptyParagraphs = () => {
     manuscriptID,
     containerID,
     elementType: 'p',
-    contents: `<p class="MPElement" id="${secondParagraphID}"></p>`,
+    contents: `<div class="MPElement" id="${secondParagraphID}"></div>`,
   }
 
   data.push(secondEmptyParagraph)

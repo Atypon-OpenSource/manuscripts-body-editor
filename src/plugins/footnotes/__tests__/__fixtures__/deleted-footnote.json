@@ -25,8 +25,13 @@
             },
             "content": [
               {
-                "text": "test",
-                "type": "text"
+                "type": "fragment",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "test"
+                  }
+                ]
               }
             ]
           }
@@ -74,8 +79,13 @@
                     },
                     "content": [
                       {
-                        "type": "text",
-                        "text": "a footnote"
+                        "type": "fragment",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "a footnote"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -89,7 +99,7 @@
   },
   "selection": {
     "type": "text",
-    "anchor": 8,
-    "head": 8
+    "anchor": 9,
+    "head": 9
   }
 }
