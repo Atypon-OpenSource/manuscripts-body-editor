@@ -16,11 +16,31 @@
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
-import React, { SyntheticEvent, useMemo, useRef } from 'react'
+import {
+  Capabilities,
+  FileSectionItem,
+  isFigure,
+} from '@manuscripts/style-guide'
+import { Node } from 'prosemirror-model'
+import React, {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import styled from 'styled-components'
 
-import { addExternalFileRef } from '../lib/external-files'
+import {
+  addExternalFileRef,
+  ExternalFileRef,
+  removeExternalFileRef,
+} from '../lib/external-files'
+import {
+  AlternativesList,
+  AttachableFilesDropdown,
+  setNodeAttrs as setGivenNodeAttrs,
+} from './FigureElement'
 import { ReactViewComponentProps } from './ReactView'
 
 export interface FigureProps {
@@ -41,11 +61,23 @@ const addFormatQuery = (url?: string) => {
   }
 }
 
-const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
+const FigureComponent = ({
+  putAttachment,
+  permissions,
+  uploadAttachment,
+  updateDesignation,
+  capabilities: can,
+  externalFiles,
+  submissionId,
+}: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
+    viewProps,
+    dispatch,
     setNodeAttrs,
   }) => {
+    const figure = viewProps.node
+
     const src = useMemo(() => {
       if (nodeAttrs.src) {
         return nodeAttrs.src
@@ -58,6 +90,26 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
     }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const fileInput = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+      if (figure?.attrs?.externalFileReferences?.length) {
+        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
+          if (exRef && typeof exRef.ref === 'undefined') {
+            const ref = externalFiles?.find(
+              (file) => file.publicUrl === exRef.url
+            )
+            exRef.ref = ref
+            if (ref) {
+              setFigureAttrs({
+                externalFileReferences: [
+                  ...figure?.attrs.externalFileReferences,
+                ],
+              })
+            }
+          }
+        })
+      }
+    }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleUpload = async (e: SyntheticEvent) => {
       e.preventDefault()
@@ -90,8 +142,76 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
       fileInput.current.click()
     }
 
+    /* eslint-disable react-hooks/exhaustive-deps */
+    const setFigureAttrs = useCallback(
+      /* eslint-enable react-hooks/exhaustive-deps */
+      setGivenNodeAttrs(figure, viewProps, dispatch),
+      [figure, viewProps, dispatch]
+    )
+
+    const handleSelectedFile = (file: ExternalFile) => {
+      if (!figure) {
+        return
+      }
+      const prevAttrs = { ...figure.attrs }
+      if (isFigure(file)) {
+        setFigureAttrs({
+          externalFileReferences: addExternalFileRef(
+            figure?.attrs.externalFileReferences,
+            file.publicUrl,
+            'imageRepresentation',
+            { ref: file }
+          ),
+          src: file.publicUrl,
+        })
+        updateDesignation('dataset', file.filename).catch(() => {
+          setFigureAttrs(prevAttrs)
+        })
+      } else {
+        setFigureAttrs({
+          externalFileReferences: addExternalFileRef(
+            figure?.attrs.externalFileReferences,
+            file.publicUrl,
+            'dataset',
+            { ref: file }
+          ),
+        })
+        updateDesignation('dataset', file.filename).catch(() => {
+          setFigureAttrs(prevAttrs)
+        })
+      }
+    }
+
+    const dataset: ExternalFileRef =
+      figure &&
+      figure.attrs?.externalFileReferences?.find(
+        (file: ExternalFileRef) => file && file.kind === 'dataset'
+      )
+
     return (
       <>
+        {can?.changeDesignation && externalFiles && (
+          <AttachableFilesDropdown
+            files={externalFiles}
+            onSelect={handleSelectedFile}
+            uploadAttachment={uploadAttachment}
+            addFigureExFileRef={(relation, publicUrl) => {
+              if (figure) {
+                const newAttrs: Node['attrs'] = {
+                  externalFileReferences: addExternalFileRef(
+                    figure?.attrs.externalFileReferences,
+                    publicUrl,
+                    relation
+                  ),
+                }
+                if (relation == 'imageRepresentation') {
+                  newAttrs.src = publicUrl
+                }
+                setFigureAttrs(newAttrs)
+              }
+            }}
+          />
+        )}
         {permissions.write && (
           <HiddenInput
             type="file"
@@ -118,6 +238,29 @@ const FigureComponent = ({ putAttachment, permissions }: FigureProps) => {
               </div>
             </Placeholder>
           </UnstyledButton>
+        )}
+        {figure && dataset?.ref && (
+          <AlternativesList>
+            <FileSectionItem
+              submissionId={submissionId}
+              title={dataset.ref.filename || dataset.ref.displayName || ''}
+              handleChangeDesignation={(
+                submissionId: string,
+                typeId: string,
+                name: string
+              ) => updateDesignation(typeId, name)}
+              externalFile={dataset.ref}
+              showDesignationActions={false}
+              onClose={() => {
+                setFigureAttrs({
+                  externalFileReferences: removeExternalFileRef(
+                    figure?.attrs.externalFileReferences,
+                    dataset.url
+                  ),
+                })
+              }}
+            />
+          </AlternativesList>
         )}
       </>
     )

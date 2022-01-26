@@ -23,31 +23,17 @@ import {
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
   Designation,
-  FileSectionItem,
   getDesignationName,
-  isFigure,
   RoundIconButton,
   SelectDialogDesignation,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch } from '../commands'
-import {
-  addExternalFileRef,
-  ExternalFileRef,
-  getAllowedForInFigure,
-  removeExternalFileRef,
-} from '../lib/external-files'
+import { ExternalFileRef, getAllowedForInFigure } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
@@ -195,18 +181,10 @@ export const isTableNode = (node: Node) =>
 export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
-const FigureElement = ({
-  externalFiles,
-  submissionId,
-  updateDesignation,
-  uploadAttachment,
-  permissions,
-  capabilities: can,
-}: FigureProps) => {
+const FigureElement = ({ externalFiles, permissions }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
     viewProps,
-    dispatch,
   }) => {
     const content = useRef<HTMLDivElement>(null)
     const figure = useMemo(() => {
@@ -218,32 +196,6 @@ const FigureElement = ({
       })
       return figure
     }, [viewProps.node.content])
-
-    const dataset: ExternalFileRef =
-      figure &&
-      figure.attrs?.externalFileReferences?.find(
-        (file: ExternalFileRef) => file && file.kind === 'dataset'
-      )
-
-    useEffect(() => {
-      if (figure?.attrs?.externalFileReferences?.length) {
-        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
-          if (exRef && typeof exRef.ref === 'undefined') {
-            const ref = externalFiles?.find(
-              (file) => file.publicUrl === exRef.url
-            )
-            exRef.ref = ref
-            if (ref) {
-              setFigureAttrs({
-                externalFileReferences: [
-                  ...figure?.attrs.externalFileReferences,
-                ],
-              })
-            }
-          }
-        })
-      }
-    }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
@@ -279,95 +231,10 @@ const FigureElement = ({
       }
     }, [viewProps.node.attrs])
 
-    /* eslint-disable react-hooks/exhaustive-deps */
-    const setFigureAttrs = useCallback(
-      /* eslint-enable react-hooks/exhaustive-deps */
-      setNodeAttrs(figure, viewProps, dispatch),
-      [figure, viewProps, dispatch]
-    )
-
-    const handleSelectedFile = (file: ExternalFile) => {
-      if (!figure) {
-        return
-      }
-      const prevAttrs = { ...figure.attrs }
-      if (isFigure(file)) {
-        setFigureAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.publicUrl,
-            'imageRepresentation',
-            { ref: file }
-          ),
-          src: file.publicUrl,
-        })
-        updateDesignation('dataset', file.filename).catch(() => {
-          setFigureAttrs(prevAttrs)
-        })
-      } else {
-        setFigureAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.publicUrl,
-            'dataset',
-            { ref: file }
-          ),
-        })
-        updateDesignation('dataset', file.filename).catch(() => {
-          setFigureAttrs(prevAttrs)
-        })
-      }
-    }
-
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {can?.changeDesignation && externalFiles && (
-            <AttachableFilesDropdown
-              files={externalFiles}
-              onSelect={handleSelectedFile}
-              uploadAttachment={uploadAttachment}
-              addFigureExFileRef={(relation, publicUrl) => {
-                if (figure) {
-                  const newAttrs: Node['attrs'] = {
-                    externalFileReferences: addExternalFileRef(
-                      figure?.attrs.externalFileReferences,
-                      publicUrl,
-                      relation
-                    ),
-                  }
-                  if (relation == 'imageRepresentation') {
-                    newAttrs.src = publicUrl
-                  }
-                  setFigureAttrs(newAttrs)
-                }
-              }}
-            />
-          )}
           <div contentEditable="true" ref={content}></div>
-          {figure && dataset?.ref && (
-            <AlternativesList>
-              <FileSectionItem
-                submissionId={submissionId}
-                title={dataset.ref.filename || dataset.ref.displayName || ''}
-                handleChangeDesignation={(
-                  submissionId: string,
-                  typeId: string,
-                  name: string
-                ) => updateDesignation(typeId, name)}
-                externalFile={dataset.ref}
-                showDesignationActions={false}
-                onClose={() => {
-                  setFigureAttrs({
-                    externalFileReferences: removeExternalFileRef(
-                      figure?.attrs.externalFileReferences,
-                      dataset.url
-                    ),
-                  })
-                }}
-              />
-            </AlternativesList>
-          )}
         </FigureWrapper>
       </EditableBlock>
     )
