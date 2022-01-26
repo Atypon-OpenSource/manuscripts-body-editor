@@ -91,21 +91,19 @@ const useEditor = (
     oldState?: EditorState,
     oldProps?: UseEditorProps
   ) {
+    const plugins = [
+      ...createPlugins(props.manuscriptsProps),
+      ...ctx.extensionProvider.plugins,
+    ]
     if (oldState && oldProps?.initialDoc === props.initialDoc) {
       return oldState.reconfigure({
-        plugins: [
-          ...createPlugins(props.manuscriptsProps),
-          ...ctx.extensionProvider.plugins,
-        ],
+        plugins,
       })
     }
     return EditorState.create({
       schema,
       doc: props.initialDoc ? schema.nodeFromJSON(props.initialDoc) : undefined,
-      plugins: [
-        ...createPlugins(props.manuscriptsProps),
-        ...ctx.extensionProvider.plugins,
-      ],
+      plugins,
     })
   }
 
