@@ -34,10 +34,11 @@ const useEditor = (
   const [oldEditorProps, setOldEditorProps] = useState<UseEditorProps>()
 
   useSSRLayoutEffect(() => {
-    if (editorDOMRef.current && editorProps !== oldEditorProps) {
+    if (editorDOMRef.current && editorProps !== oldEditorProps && editorProps.ctx.viewProvider) {
       editorViewRef.current = init(
         editorDOMRef.current,
         editorProps,
+        editorProps.ctx,
         editorViewRef.current,
         oldEditorProps
       )
@@ -48,10 +49,10 @@ const useEditor = (
   function init(
     element: HTMLElement,
     props: UseEditorProps,
+    ctx: EditorProviders,
     oldView?: EditorView | null,
     oldProps?: UseEditorProps
   ) {
-    const { ctx } = props
     oldView && ctx.extensionProvider.destroy()
     ctx.extensionProvider.init(ctx, props.extensions || [])
     if (oldView) {

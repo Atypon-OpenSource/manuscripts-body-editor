@@ -30,7 +30,7 @@ import { EditorState, Plugin, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
 import { ViewerProps } from '../components/Viewer'
-import { EditorProviders } from '../context/Providers'
+import { EditorContext, EditorProviders } from '../context'
 import type { CreateExtension } from './extension'
 import { ChangeReceiver } from './utils'
 
@@ -73,8 +73,8 @@ export interface UseEditorProps {
   initialDoc?: Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
   manuscriptsProps: EditorProps
   extensions: CreateExtension[]
-  ctx: EditorProviders
-  onEditorReady?: (providers: EditorProviders) => void
+  ctx: EditorContext
+  onEditorReady?: (ctx: EditorProviders) => void
   onEdit?: (state: EditorState) => void
 }
 
