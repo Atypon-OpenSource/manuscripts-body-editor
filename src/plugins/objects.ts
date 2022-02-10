@@ -16,6 +16,7 @@
 
 import {
   buildTargets,
+  isInGraphicalAbstractSection,
   ManuscriptSchema,
   Target,
 } from '@manuscripts/manuscript-transform'
@@ -68,8 +69,12 @@ export default (props: Props) => {
 
             if (id) {
               const target = targets.get(id)
+              const resolvedPos = state.doc.resolve(pos)
+              const isInGraphicalAbstract = isInGraphicalAbstractSection(
+                resolvedPos
+              )
 
-              if (target) {
+              if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'figure-label'
                 labelNode.textContent = target.label + ':'

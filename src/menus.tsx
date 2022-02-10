@@ -36,6 +36,7 @@ import {
   insertBibliographySection,
   insertBlock,
   insertCrossReference,
+  insertGraphicalAbstract,
   insertHighlight,
   // insertFootnotesSection, // this is disabled by commenting until we test the footnotes
   insertInlineCitation,
@@ -121,6 +122,12 @@ export default (
           },
           enable: isCommandValid(insertSection()),
           run: wrap(insertSection()),
+        },
+        {
+          id: 'insert-graphical-abstract',
+          label: 'Graphical Abstract',
+          enable: isCommandValid(insertGraphicalAbstract),
+          run: wrap(insertGraphicalAbstract),
         },
         {
           id: 'insert-subsection',

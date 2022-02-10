@@ -925,3 +925,7 @@
   margin-right: 8px;
   cursor: pointer;
 }
+
+.graphical-abstract .listing {
+  display: none;
+}

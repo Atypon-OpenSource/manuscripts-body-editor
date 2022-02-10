@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
+import {
+  FigureNode,
+  isInGraphicalAbstractSection,
+} from '@manuscripts/manuscript-transform'
 import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
   Capabilities,
@@ -51,6 +54,7 @@ export interface FigureProps {
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
+  onlyGraphic?: boolean
 }
 
 const WEB_FORMAT_QUERY = 'format=jpg'
@@ -75,8 +79,15 @@ const FigureComponent = ({
     viewProps,
     dispatch,
     setNodeAttrs,
+    contentDOM,
   }) => {
     const figure = viewProps.node
+
+    const onlyGraphic = useMemo(() => {
+      // allows to manipulate only images, needed for graphical abstract
+      const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
+      return isInGraphicalAbstractSection(resolvedPos)
+    }, [viewProps])
 
     const src = useMemo(() => {
       if (nodeAttrs.src) {
@@ -110,6 +121,21 @@ const FigureComponent = ({
         })
       }
     }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
+        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
+          if (exRef) {
+            const file = externalFiles?.find(
+              (file) => file.publicUrl === exRef.url
+            )
+            if (file) {
+              contentDOM.setAttribute('id', file._id) // to allow focus in this node
+            }
+          }
+        })
+      }
+    }, [contentDOM, figure?.attrs?.externalFileReferences])
 
     const handleUpload = async (e: SyntheticEvent) => {
       e.preventDefault()
@@ -201,7 +227,7 @@ const FigureComponent = ({
                   externalFileReferences: addExternalFileRef(
                     figure?.attrs.externalFileReferences,
                     publicUrl,
-                    relation
+                    onlyGraphic ? 'imageRepresentation' : relation
                   ),
                 }
                 if (relation == 'imageRepresentation') {
@@ -239,7 +265,7 @@ const FigureComponent = ({
             </Placeholder>
           </UnstyledButton>
         )}
-        {figure && dataset?.ref && (
+        {!onlyGraphic && figure && dataset?.ref && (
           <AlternativesList>
             <FileSectionItem
               submissionId={submissionId}

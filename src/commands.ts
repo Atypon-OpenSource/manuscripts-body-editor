@@ -23,6 +23,7 @@ import {
   FootnotesElementNode,
   FootnotesSectionNode,
   generateID,
+  GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
   isSectionNodeType,
@@ -521,7 +522,6 @@ export const insertKeywordsSection = (
   dispatch?: Dispatch
 ) => {
   // TODO: use SectionCategory for title and to enforce uniqueness
-
   if (getChildOfType(state.doc, state.schema.nodes.keywords_section)) {
     return false
   }
@@ -538,6 +538,43 @@ export const insertKeywordsSection = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
+export const insertGraphicalAbstract = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = findPosAfterParentSection(state.selection.$from)
+  if (pos === null) {
+    return false
+  }
+  // check if another graphical abstract already exists
+  if (
+    getChildOfType(state.doc, state.schema.nodes.graphical_abstract_section)
+  ) {
+    return false
+  }
+
+  const section = state.schema.nodes.graphical_abstract_section.createAndFill(
+    {},
+    [
+      state.schema.nodes.section_title.create(
+        {},
+        state.schema.text('Graphical Abstract')
+      ),
+      createAndFillFigureElement(state),
+    ]
+  ) as GraphicalAbstractSectionNode
+
+  const tr = state.tr.insert(pos, section)
+
+  if (dispatch) {
+    // place cursor inside section title
+    const selection = TextSelection.create(tr.doc, pos)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 

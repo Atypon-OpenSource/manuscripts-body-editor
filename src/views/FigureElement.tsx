@@ -33,7 +33,7 @@ import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { ExternalFileRef, getAllowedForInFigure } from '../lib/external-files'
+import { getAllowedForInFigure } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
@@ -181,36 +181,12 @@ export const isTableNode = (node: Node) =>
 export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
-const FigureElement = ({ externalFiles, permissions }: FigureProps) => {
+const FigureElement = ({ permissions }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
     viewProps,
   }) => {
     const content = useRef<HTMLDivElement>(null)
-    const figure = useMemo(() => {
-      let figure: Node | undefined
-      viewProps.node.content.descendants((node) => {
-        if (isTableNode(node) || isFigureNode(node)) {
-          figure = node
-        }
-      })
-      return figure
-    }, [viewProps.node.content])
-
-    useEffect(() => {
-      if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
-        figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
-          if (exRef) {
-            const file = externalFiles?.find(
-              (file) => file.publicUrl === exRef.url
-            )
-            if (file) {
-              contentDOM.setAttribute('id', file._id) // to allow focus in this node
-            }
-          }
-        })
-      }
-    }, [contentDOM, figure?.attrs?.externalFileReferences])
 
     useEffect(() => {
       if (content && content.current) {

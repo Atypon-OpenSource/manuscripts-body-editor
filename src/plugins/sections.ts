@@ -15,16 +15,61 @@
  */
 
 import {
+  isGraphicalAbstractSectionNode,
   isSectionNode,
+  isSectionTitleNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import { Plugin } from 'prosemirror-state'
+import { Plugin, Transaction } from 'prosemirror-state'
 
 /**
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
  */
+
+const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
+  // Prevent graphical abstract section title from being changed
+  let dontPrevent = true
+
+  const isInRange = (start: number, end: number, position: number) =>
+    position >= start && position <= end
+
+  tr.steps.forEach((step) => {
+    if (
+      step.constructor.name !== 'ReplaceStep' &&
+      step.constructor.name !== 'ReplaceAroundStep'
+    ) {
+      return
+    }
+
+    step.getMap().forEach((fromA, toA) => {
+      tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
+        // detecting if there is a change inside the title of the graphical abstract section and preventing that change
+        if (isGraphicalAbstractSectionNode(node)) {
+          node.descendants((childNode, childPos) => {
+            const inDocPos = nodePos + childPos
+            if (
+              isSectionTitleNode(childNode) &&
+              (isInRange(inDocPos, inDocPos + node.nodeSize, toA) ||
+                isInRange(inDocPos, inDocPos + node.nodeSize, fromA))
+            ) {
+              dontPrevent = false
+              return false
+            }
+          })
+        }
+        // check if one is graphical abstract and another one is a title
+      })
+    })
+  })
+
+  return dontPrevent
+}
+
 export default () => {
   return new Plugin<null, ManuscriptSchema>({
+    filterTransaction: (tr) => {
+      return preventGraphicalAbstractTitleEdit(tr)
+    },
     appendTransaction: (transactions, oldState, newState) => {
       const positionsToInsert: number[] = []
 
