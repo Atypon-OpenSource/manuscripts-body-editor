@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 import { PluginKey } from 'prosemirror-state'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useEditorContext } from '../context'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let timeout: NodeJS.Timeout | undefined, data: any
 
 export function usePluginState<T>(pluginKey: PluginKey, debounce?: number) {
   const { pluginStateProvider } = useEditorContext()
 
   const [state, setState] = useState<T | null>(pluginStateProvider?.getPluginState(pluginKey))
+  const timeout = useRef<NodeJS.Timeout | undefined>()
+  const data = useRef<T | null>(null)
 
   useEffect(() => {
     const cb = (pluginState: T) => {
       if (debounce === undefined) {
         setState(pluginState)
-      } else if (timeout) {
-        data = pluginState
+      } else if (timeout.current) {
+        data.current = pluginState
       } else {
-        if (!data) {
-          data = pluginState
+        if (!data.current) {
+          data.current = pluginState
         }
-        timeout = setTimeout(() => {
-          setState(data)
-          data = undefined
-          timeout = undefined
+        timeout.current = setTimeout(() => {
+          setState(data.current)
+          data.current = null
+          timeout.current = undefined
         }, debounce)
       }
     }
