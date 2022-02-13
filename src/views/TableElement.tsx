@@ -40,6 +40,7 @@ const TableElement = ({
   permissions,
   uploadAttachment,
   capabilities: can,
+  mediaAlternativesEnabled,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -132,7 +133,7 @@ const TableElement = ({
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {can?.changeDesignation && externalFiles && (
+          {mediaAlternativesEnabled && can?.changeDesignation && externalFiles && (
             <AttachableFilesDropdown
               files={externalFiles}
               onSelect={handleSelectedFile}

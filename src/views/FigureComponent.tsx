@@ -55,6 +55,7 @@ export interface FigureProps {
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
   onlyGraphic?: boolean
+  mediaAlternativesEnabled?: boolean
 }
 
 const WEB_FORMAT_QUERY = 'format=jpg'
@@ -71,6 +72,7 @@ const FigureComponent = ({
   uploadAttachment,
   updateDesignation,
   capabilities: can,
+  mediaAlternativesEnabled,
   externalFiles,
   submissionId,
 }: FigureProps) => {
@@ -216,7 +218,7 @@ const FigureComponent = ({
 
     return (
       <>
-        {can?.changeDesignation && externalFiles && (
+        {mediaAlternativesEnabled && can?.changeDesignation && externalFiles && (
           <AttachableFilesDropdown
             files={externalFiles}
             onSelect={handleSelectedFile}
