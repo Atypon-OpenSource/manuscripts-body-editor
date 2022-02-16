@@ -81,8 +81,8 @@ export default (props: PluginProps) => {
     models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     elements(),
-    // persist(),
-    sections(),
+    persist(),
+    // sections(),
     toc({ modelMap }),
     footnotes(),
     styles({ getModel, getManuscript, modelMap }),
