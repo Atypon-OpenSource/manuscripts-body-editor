@@ -71,7 +71,6 @@ export default {
     new EditorView(el, {
       state,
       editable: () => props.permissions.write,
-      scrollThreshold: 100,
       scrollMargin: {
         top: 100,
         bottom: 100,

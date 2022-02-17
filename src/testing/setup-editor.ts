@@ -55,7 +55,6 @@ export function setupEditor(props?: Partial<EditorProps>, clean = true) {
   })
   const view = new EditorView(place, {
     state,
-    scrollThreshold: 100,
     scrollMargin: {
       top: 100,
       bottom: 100,

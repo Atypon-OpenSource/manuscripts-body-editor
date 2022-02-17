@@ -112,7 +112,6 @@ export class Editor extends React.PureComponent<EditorProps> {
         schema,
         plugins: plugins(this.props),
       }),
-      scrollThreshold: 100,
       scrollMargin: {
         top: 100,
         bottom: 100,
