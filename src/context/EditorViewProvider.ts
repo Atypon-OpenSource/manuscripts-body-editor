@@ -60,13 +60,25 @@ export class EditorViewProvider {
     return true
   }
 
+  docToJSON() {
+    return this.view.state.doc.toJSON()
+  }
+
   stateToJSON() {
     const state = this.view.state.toJSON()
     return { ...state, plugins: [] } as unknown as JSONEditorState
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  hydrateStateFromJSON(rawValue: { [key: string]: any }) {
+  hydrateDocFromJSON(doc: Record<string, any>) {
+    const state = EditorState.create({
+      doc: this.view.state.schema.nodeFromJSON(doc)
+    })
+    this.updateState(state, true)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  hydrateStateFromJSON(rawValue: { doc: Record<string, any>, selection: Record<string, any> }) {
     const state = EditorState.fromJSON(
       {
         schema: this.view.state.schema,
@@ -74,10 +86,7 @@ export class EditorViewProvider {
       },
       rawValue
     )
-
-    this.view.updateState(state)
-    // Fire an empty transaction to trigger PluginStateProvider to update
-    this.view.dispatch(this.view.state.tr)
+    this.updateState(state, true)
   }
 
   updateState(newState: EditorState, replaced = false) {
