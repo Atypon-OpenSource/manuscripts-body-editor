@@ -72,7 +72,8 @@ export class EditorViewProvider {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hydrateDocFromJSON(doc: Record<string, any>) {
     const state = EditorState.create({
-      doc: this.view.state.schema.nodeFromJSON(doc)
+      doc: this.view.state.schema.nodeFromJSON(doc),
+      plugins: this.view.state.plugins,
     })
     this.updateState(state, true)
   }
