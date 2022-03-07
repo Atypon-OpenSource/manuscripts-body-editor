@@ -148,6 +148,7 @@ export const defaultEditorProps: EditorProps = {
     jupyterConfig: {
       url: 'http://test-jupyter-url',
       token: 'test-jupyter-token',
+      disabled: false,
     },
     permissions: {
       write: true,

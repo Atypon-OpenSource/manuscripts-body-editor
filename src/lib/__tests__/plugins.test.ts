@@ -362,6 +362,7 @@ const buildProps = (
   jupyterConfig: {
     url: '',
     token: '',
+    disabled: false,
   },
   permissions: {
     write: true,

@@ -77,6 +77,7 @@ export interface EditorProps extends ViewerProps {
   jupyterConfig: {
     url: string
     token: string
+    disabled: boolean
   }
   permissions: {
     write: boolean

@@ -37,6 +37,7 @@ export interface ListingEditableProps extends ListingViewProps {
   jupyterConfig: {
     url: string
     token: string
+    disabled: boolean
   }
   putAttachment: (
     id: string,
@@ -64,7 +65,7 @@ export class ListingEditableView extends ListingView<
     this.setParentFigureElement()
 
     if (this.parentFigureElement) {
-      if (this.props.permissions.write) {
+      if (this.props.permissions.write && !this.props.jupyterConfig.disabled) {
         const { actionsContainer } = this.buildExecutableListingElement()
         const executeButton = document.createElement('button')
         executeButton.classList.add('execute-listing')
@@ -99,7 +100,7 @@ export class ListingEditableView extends ListingView<
   }
 
   protected createEditor = async (defaultPlaceholder = '<Listing>') => {
-    if (!this.props.permissions.write) {
+    if (!this.props.permissions.write || this.props.jupyterConfig.disabled) {
       return
     }
 

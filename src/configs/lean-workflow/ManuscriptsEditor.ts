@@ -54,6 +54,11 @@ export interface EditorProps extends ViewerProps {
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
+  jupyterConfig: {
+    url: string
+    token: string
+    disabled: boolean
+  }
 }
 
 export default {
