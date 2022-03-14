@@ -1524,10 +1524,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.48.15":
-  version "0.48.15"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.48.15.tgz#27bfee575a11a94abd5db61c91a6918dbf32e568"
-  integrity sha512-jtiY31l8YVpslDd4gFKhZM9IesnFiun4oh0QfV8Rh8uYRmoN/RixOcZMyROiZKqCAa86OFLDwKHYbMsG4sN7AA==
+"@manuscripts/manuscript-transform@^0.48.18":
+  version "0.48.18"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.48.18.tgz#e0bc9fa2b4623c5a8301b118f8000bb900097236"
+  integrity sha512-5NP/bRTuA7xnmC3Qmx0oMhU7p18h9LFZkkNA35Aj7mxbl0J34nyEzv8lzsrRk9RdCtP3j/C1kReIfPyjzDBFTQ==
   dependencies:
     "@manuscripts/data" "^0.1.3"
     "@manuscripts/library" "^0.6.2"

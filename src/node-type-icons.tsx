@@ -48,6 +48,7 @@ const icons: Map<
   [nodes.section, SectionIcon],
   [nodes.table_element, TableIcon],
   [nodes.toc_section, SectionIcon],
+  [nodes.graphical_abstract_section, SectionIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType) => {
