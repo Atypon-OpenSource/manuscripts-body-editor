@@ -54,7 +54,7 @@ export interface FigureProps {
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
-  onlyGraphic?: boolean
+  isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
 }
 
@@ -85,7 +85,7 @@ const FigureComponent = ({
   }) => {
     const figure = viewProps.node
 
-    const onlyGraphic = useMemo(() => {
+    const isInGraphicalAbstract = useMemo(() => {
       // allows to manipulate only images, needed for graphical abstract
       const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
       return isInGraphicalAbstractSection(resolvedPos)
@@ -147,7 +147,10 @@ const FigureComponent = ({
       if (!file || !permissions.write) {
         return
       }
-      const url = await putAttachment(file, 'figure')
+      const url = await putAttachment(
+        file,
+        isInGraphicalAbstract ? 'graphical-abstract' : 'figure'
+      )
       setNodeAttrs({
         contentType: file.type,
         externalFileReferences: addExternalFileRef(
@@ -229,7 +232,7 @@ const FigureComponent = ({
                   externalFileReferences: addExternalFileRef(
                     figure?.attrs.externalFileReferences,
                     publicUrl,
-                    onlyGraphic ? 'imageRepresentation' : relation
+                    isInGraphicalAbstract ? 'imageRepresentation' : relation
                   ),
                 }
                 if (relation == 'imageRepresentation') {
@@ -267,7 +270,7 @@ const FigureComponent = ({
             </Placeholder>
           </UnstyledButton>
         )}
-        {!onlyGraphic && figure && dataset?.ref && (
+        {!isInGraphicalAbstract && figure && dataset?.ref && (
           <AlternativesList>
             <FileSectionItem
               submissionId={submissionId}
