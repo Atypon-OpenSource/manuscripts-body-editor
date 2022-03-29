@@ -15,14 +15,13 @@
  */
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
-import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import { FileSectionItem } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
-import { FigureProps } from './FigureComponent'
+import { FigureProps, SubmissionAttachment } from './FigureComponent'
 import {
   AlternativesList,
   AttachableFilesDropdown,
@@ -113,7 +112,7 @@ const TableElement = ({
       [figure, viewProps, dispatch]
     )
 
-    const handleSelectedFile = (file: ExternalFile) => {
+    const handleSelectedFile = (file: SubmissionAttachment) => {
       if (!figure) {
         return
       }
@@ -121,12 +120,12 @@ const TableElement = ({
       setTableAttrs({
         externalFileReferences: addExternalFileRef(
           figure?.attrs.externalFileReferences,
-          file.publicUrl,
+          file.id,
           'dataset',
           { ref: file }
         ),
       })
-      updateDesignation('dataset', file.filename).catch(() => {
+      updateDesignation('dataset', file.name).catch(() => {
         setTableAttrs(prevAttrs)
       })
     }
@@ -138,12 +137,12 @@ const TableElement = ({
               files={externalFiles}
               onSelect={handleSelectedFile}
               uploadAttachment={uploadAttachment}
-              addFigureExFileRef={(relation, publicUrl) => {
+              addFigureExFileRef={(relation, publicUrl, attachmentId) => {
                 if (figure) {
                   const newAttrs: Node['attrs'] = {
                     externalFileReferences: addExternalFileRef(
                       figure?.attrs.externalFileReferences,
-                      publicUrl,
+                      attachmentId,
                       relation
                     ),
                   }

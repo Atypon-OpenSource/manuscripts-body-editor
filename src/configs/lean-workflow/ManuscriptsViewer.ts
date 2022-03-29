@@ -37,6 +37,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { PopperManager } from '../../lib/popper'
 import { CreateView } from '../../useEditor'
+import { SubmissionAttachment } from '../../views/FigureComponent'
 import plugins from './viewer-plugins-lw'
 import views from './viewer-views-lw'
 
@@ -51,7 +52,7 @@ export interface ViewerProps {
   permissions: {
     write: boolean
   }
-  putAttachment: (file: File) => Promise<string>
+  putAttachment: (file: File) => Promise<SubmissionAttachment>
   locale: string
   modelMap: Map<string, Model>
   popper: PopperManager

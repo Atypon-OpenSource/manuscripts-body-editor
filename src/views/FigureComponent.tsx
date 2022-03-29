@@ -18,11 +18,10 @@ import {
   FigureNode,
   isInGraphicalAbstractSection,
 } from '@manuscripts/manuscript-transform'
-import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
   Capabilities,
   FileSectionItem,
-  isFigure,
+  namesWithDesignationMap,
 } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
 import React, {
@@ -46,10 +45,22 @@ import {
 } from './FigureElement'
 import { ReactViewComponentProps } from './ReactView'
 
+export type SubmissionAttachment = {
+  id: string
+  name: string
+  type: SubmissionAttachmentType
+  link: string
+}
+
+export type SubmissionAttachmentType = {
+  id: string
+  label?: string
+}
+
 export interface FigureProps {
   permissions: { write: boolean }
-  putAttachment: (file: File, type: string) => Promise<string>
-  externalFiles?: ExternalFile[]
+  putAttachment: (file: File, type: string) => Promise<SubmissionAttachment>
+  externalFiles?: SubmissionAttachment[]
   submissionId: string
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -64,6 +75,10 @@ const addFormatQuery = (url?: string) => {
     const join = url.includes('?') ? '&' : '?'
     return url + join + WEB_FORMAT_QUERY
   }
+}
+
+const isFigure = (file: SubmissionAttachment) => {
+  return namesWithDesignationMap.get(file.type.label)
 }
 
 const FigureComponent = ({
@@ -108,9 +123,14 @@ const FigureComponent = ({
       if (figure?.attrs?.externalFileReferences?.length) {
         figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
           if (exRef && typeof exRef.ref === 'undefined') {
-            const ref = externalFiles?.find(
-              (file) => file.publicUrl === exRef.url
-            )
+            const ref = externalFiles?.find((file) => {
+              // in the new implementation ExternalFileRef url will be attachment id LEAN-988
+              if (exRef.url.includes('https://')) {
+                return file.link === exRef.url
+              } else {
+                return file.id === exRef.url.replace('attachment:', '')
+              }
+            })
             exRef.ref = ref
             if (ref) {
               setFigureAttrs({
@@ -128,11 +148,9 @@ const FigureComponent = ({
       if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
         figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
           if (exRef) {
-            const file = externalFiles?.find(
-              (file) => file.publicUrl === exRef.url
-            )
+            const file = externalFiles?.find((file) => file.link === exRef.url)
             if (file) {
-              contentDOM.setAttribute('id', file._id) // to allow focus in this node
+              contentDOM.setAttribute('id', file.id) // to allow focus in this node
             }
           }
         })
@@ -147,7 +165,7 @@ const FigureComponent = ({
       if (!file || !permissions.write) {
         return
       }
-      const url = await putAttachment(
+      const { id, link } = await putAttachment(
         file,
         isInGraphicalAbstract ? 'graphical-abstract' : 'figure'
       )
@@ -155,11 +173,11 @@ const FigureComponent = ({
         contentType: file.type,
         externalFileReferences: addExternalFileRef(
           nodeAttrs.externalFileReferences,
-          url,
+          id,
           'imageRepresentation'
         ),
-        src: addFormatQuery(url),
-        label: url,
+        src: addFormatQuery(link),
+        label: link,
       })
     }
 
@@ -180,7 +198,7 @@ const FigureComponent = ({
       [figure, viewProps, dispatch]
     )
 
-    const handleSelectedFile = (file: ExternalFile) => {
+    const handleSelectedFile = (file: SubmissionAttachment) => {
       if (!figure) {
         return
       }
@@ -189,25 +207,25 @@ const FigureComponent = ({
         setFigureAttrs({
           externalFileReferences: addExternalFileRef(
             figure?.attrs.externalFileReferences,
-            file.publicUrl,
+            file.id,
             'imageRepresentation',
             { ref: file }
           ),
-          src: file.publicUrl,
+          src: file.link,
         })
-        updateDesignation('dataset', file.filename).catch(() => {
+        updateDesignation('dataset', file.name).catch(() => {
           setFigureAttrs(prevAttrs)
         })
       } else {
         setFigureAttrs({
           externalFileReferences: addExternalFileRef(
             figure?.attrs.externalFileReferences,
-            file.publicUrl,
+            file.id,
             'dataset',
             { ref: file }
           ),
         })
-        updateDesignation('dataset', file.filename).catch(() => {
+        updateDesignation('dataset', file.name).catch(() => {
           setFigureAttrs(prevAttrs)
         })
       }
@@ -226,12 +244,12 @@ const FigureComponent = ({
             files={externalFiles}
             onSelect={handleSelectedFile}
             uploadAttachment={uploadAttachment}
-            addFigureExFileRef={(relation, publicUrl) => {
+            addFigureExFileRef={(relation, publicUrl, attachmentId) => {
               if (figure) {
                 const newAttrs: Node['attrs'] = {
                   externalFileReferences: addExternalFileRef(
                     figure?.attrs.externalFileReferences,
-                    publicUrl,
+                    attachmentId,
                     isInGraphicalAbstract ? 'imageRepresentation' : relation
                   ),
                 }
@@ -274,7 +292,7 @@ const FigureComponent = ({
           <AlternativesList>
             <FileSectionItem
               submissionId={submissionId}
-              title={dataset.ref.filename || dataset.ref.displayName || ''}
+              title={dataset.ref.name}
               handleChangeDesignation={(
                 submissionId: string,
                 typeId: string,

@@ -39,7 +39,7 @@ import {
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-import { ExternalFile, ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import {
   commands as trackPluginCommands,
   getTrackPluginState,
@@ -68,6 +68,7 @@ import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
+import { SubmissionAttachment } from './views/FigureComponent'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -205,7 +206,7 @@ export const createBlock = (
 }
 
 export const insertFileAsFigure = (
-  file: ExternalFile,
+  file: SubmissionAttachment,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
@@ -215,13 +216,13 @@ export const insertFileAsFigure = (
     return false
   }
   const node = state.schema.nodes.figure.createAndFill({
-    label: file.displayName,
-    src: file.publicUrl,
+    label: file.name,
+    src: file.link,
     embedURL: { default: undefined },
     originalURL: { default: undefined },
     externalFileReferences: [
       {
-        url: file.publicUrl,
+        url: file.id,
         kind: 'imageRepresentation',
       },
     ],

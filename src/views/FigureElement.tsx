@@ -20,7 +20,6 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
 } from '@manuscripts/manuscript-transform'
-import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
 import {
   Designation,
   getDesignationName,
@@ -35,14 +34,18 @@ import styled from 'styled-components'
 import { Dispatch } from '../commands'
 import { getAllowedForInFigure } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
-import { FigureProps } from './FigureComponent'
+import { FigureProps, SubmissionAttachment } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
 
 interface AttachableFilesDropdownProps {
-  onSelect: (file: ExternalFile) => void
-  files: ExternalFile[]
+  onSelect: (file: SubmissionAttachment) => void
+  files: SubmissionAttachment[]
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  addFigureExFileRef: (relation: string, publicUrl: string) => void
+  addFigureExFileRef: (
+    relation: string,
+    publicUrl: string,
+    attachmentId: string
+  ) => void
 }
 
 export interface viewProps {
@@ -118,7 +121,7 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()
-          toggleOpen()
+          toggleOpen(e)
         }}
       >
         <AttachIcon />
@@ -128,7 +131,7 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
           {allowedFiles &&
             allowedFiles.map((file, i) => (
               <DropdownItem key={i} onClick={() => onSelect(file)}>
-                {file.filename}
+                {file.name}
               </DropdownItem>
             ))}
           <DropdownItem onClick={() => addNewFile()}>Add file...</DropdownItem>
@@ -152,12 +155,12 @@ export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = (
               uploadAttachment(uploadedFileDesignation, fileToUpload)
                 .then((result) => {
                   if (result?.data?.uploadAttachment) {
-                    const { link } = result.data.uploadAttachment
+                    const { link, id } = result.data.uploadAttachment
                     const relation =
                       uploadedFileDesignation === 'figure'
                         ? 'imageRepresentation'
                         : 'dataset'
-                    addFigureExFileRef(relation, link)
+                    addFigureExFileRef(relation, link, id)
                     // having the name and the link - add either image represnation or a dataset for the current figure
                   }
                   resetUploadProcess()

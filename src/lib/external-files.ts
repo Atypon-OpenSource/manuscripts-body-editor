@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ExternalFile } from '@manuscripts/manuscripts-json-schema'
+import { SubmissionAttachment } from '../views/FigureComponent'
 
 /**
  * A helper to check for existing external files of 'imageRepresentation' kind and replace/add it when needed.
@@ -26,18 +26,18 @@ const excludedDesignations = ['main-manuscript', 'metadata']
 export interface ExternalFileRef {
   url: string
   kind?: string
-  ref?: ExternalFile
+  ref?: SubmissionAttachment
 }
 export const addExternalFileRef = (
   externalFileReferences: ExternalFileRef[] | undefined,
-  absolutePublicUrl: string,
+  attachmentId: string,
   kind?: string,
   additionalProps: { [key: string]: unknown } = {}
 ) => {
   const newRefs =
     externalFileReferences?.filter((item) => item && item.kind !== kind) || []
   // return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
-  return [...newRefs, { ...additionalProps, kind, url: absolutePublicUrl }]
+  return [...newRefs, { ...additionalProps, kind, url: attachmentId }]
 }
 export const removeExternalFileRef = (
   externalFileReferences: ExternalFileRef[] | undefined,
@@ -45,5 +45,7 @@ export const removeExternalFileRef = (
 ) => {
   return externalFileReferences?.filter((item) => item.url !== url)
 }
-export const getAllowedForInFigure = (files: ExternalFile[]) =>
-  files.filter((file) => !excludedDesignations.includes(file.designation))
+export const getAllowedForInFigure = (files: SubmissionAttachment[]) =>
+  files.filter(
+    (file) => file.type.label && !excludedDesignations.includes(file.type.label)
+  )

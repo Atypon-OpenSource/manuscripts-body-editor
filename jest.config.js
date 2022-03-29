@@ -19,7 +19,10 @@ module.exports = {
     '^.+\\.css$': '<rootDir>/src/__mocks__/styleMock.ts',
   },
   setupFilesAfterEnv: ['./src/tests.ts', 'jest-prosemirror/environment'],
-  snapshotSerializers: ['enzyme-to-json/serializer', 'jest-prosemirror/serializer'],
+  snapshotSerializers: [
+    'enzyme-to-json/serializer',
+    'jest-prosemirror/serializer',
+  ],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/dist/'],
   testRegex: '__tests__.*\\.test\\.tsx?$',
@@ -27,6 +30,6 @@ module.exports = {
     '^.+\\.(j|t)sx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(lodash-es|@manuscripts)/)',
+    '<rootDir>/node_modules/(?!(lodash-es|@manuscripts|pdfjs-dist)/)',
   ],
 }
