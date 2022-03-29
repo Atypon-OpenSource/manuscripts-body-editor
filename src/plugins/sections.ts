@@ -21,6 +21,7 @@ import {
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { Plugin, Transaction } from 'prosemirror-state'
+import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
 /**
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
@@ -35,8 +36,8 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 
   tr.steps.forEach((step) => {
     if (
-      step.constructor.name !== 'ReplaceStep' &&
-      step.constructor.name !== 'ReplaceAroundStep'
+      !(step instanceof ReplaceStep) &&
+      !(step instanceof ReplaceAroundStep)
     ) {
       return
     }
