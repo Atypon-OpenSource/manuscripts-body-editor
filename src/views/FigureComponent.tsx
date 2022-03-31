@@ -138,12 +138,12 @@ const FigureComponent = ({
     )
 
     const addFigureExFileRef = useCallback(
-      (relation, publicUrl) => {
+      (relation, publicUrl, attachmentId) => {
         if (figure) {
           setFigureAttrs({
             externalFileReferences: addExternalFileRef(
               figure?.attrs.externalFileReferences,
-              publicUrl,
+              attachmentId,
               relation
             ),
             src: publicUrl,
