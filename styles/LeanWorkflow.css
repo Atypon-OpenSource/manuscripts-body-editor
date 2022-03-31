@@ -525,6 +525,12 @@
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 }
 
+.ProseMirror .figure-group {
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
 .ProseMirror .figure-block > figure {
   border-color: #000 !important;
   border-style: none !important;

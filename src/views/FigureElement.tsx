@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   Designation,
+  DropdownContainer,
   getDesignationName,
   RoundIconButton,
   SelectDialogDesignation,
@@ -32,6 +33,12 @@ import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch } from '../commands'
+import {
+  useFigureSelection,
+  useFileInputRef,
+} from '../components/hooks/figure-upload'
+import { FilesDropdown } from '../components/views/FilesDropdown'
+import { FileUpload } from '../components/views/FileUpload'
 import { getAllowedForInFigure } from '../lib/external-files'
 import EditableBlock from './EditableBlock'
 import { FigureProps, SubmissionAttachment } from './FigureComponent'
@@ -57,10 +64,11 @@ export interface viewProps {
 export const setNodeAttrs = (
   figure: Node | undefined,
   viewProps: viewProps,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  pos?: number
 ) => (attrs: Node['attrs']) => {
   const { selection, tr } = viewProps.view.state
-  tr.setNodeMarkup(viewProps.getPos() + 1, undefined, {
+  tr.setNodeMarkup(pos || viewProps.getPos() + 1, undefined, {
     // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
     ...figure?.attrs,
     ...attrs,
@@ -69,7 +77,7 @@ export const setNodeAttrs = (
   dispatch(tr)
 }
 
-const getFileExtension = (file: File) => {
+export const getFileExtension = (file: File) => {
   return file.name.split('.').pop() || ''
 }
 
@@ -184,7 +192,13 @@ export const isTableNode = (node: Node) =>
 export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
-const FigureElement = ({ permissions }: FigureProps) => {
+const FigureElement = ({
+  permissions,
+  externalFiles,
+  uploadAttachment,
+  capabilities: can,
+  mediaAlternativesEnabled,
+}: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
     viewProps,
@@ -210,9 +224,31 @@ const FigureElement = ({ permissions }: FigureProps) => {
       }
     }, [viewProps.node.attrs])
 
+    const { fileInputRef, onUploadClick } = useFileInputRef()
+
+    const { addFigureExFileRef } = useFigureSelection(viewProps)
+
     return (
       <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
+          <FileUpload
+            fileInputRef={fileInputRef}
+            uploadAttachment={uploadAttachment}
+            addFigureExFileRef={addFigureExFileRef}
+            designation={'figure'}
+            accept={'image/*'}
+            relation={'imageRepresentation'}
+          />
+
+          <FilesDropdown
+            externalFiles={externalFiles}
+            onUploadClick={onUploadClick}
+            mediaAlternativesEnabled={mediaAlternativesEnabled}
+            addFigureExFileRef={addFigureExFileRef}
+            canReplaceFile={can?.replaceFile}
+            canUploadFile={can?.uploadFile}
+          />
+
           <div contentEditable="true" ref={content}></div>
         </FigureWrapper>
       </EditableBlock>
@@ -227,8 +263,10 @@ export const AlternativesList = styled.div`
 `
 
 export const FigureWrapper = styled.div`
-  border: 1px solid #f6f6f6;
-  padding-bottom: 0.5rem;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  padding: 0.5rem;
+  position: relative;
 `
 
 export const DropdownWrapper = styled.div`
@@ -237,15 +275,6 @@ export const DropdownWrapper = styled.div`
 
 export const DropdownItem = styled.div`
   padding: 0.5em;
-`
-
-export const DropdownContainer = styled.div`
-  background: #ffffff;
-  box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  position: absolute;
-  top: 100%;
-  z-index: 5;
 `
 
 export default FigureElement

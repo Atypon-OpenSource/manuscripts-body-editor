@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-import {
-  FigureNode,
-  isInGraphicalAbstractSection,
-} from '@manuscripts/manuscript-transform'
-import {
-  Capabilities,
-  FileSectionItem,
-  namesWithDesignationMap,
-} from '@manuscripts/style-guide'
-import { Node } from 'prosemirror-model'
-import React, {
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react'
+import { FigureNode } from '@manuscripts/manuscript-transform'
+import { Capabilities } from '@manuscripts/style-guide'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
-import {
-  addExternalFileRef,
-  ExternalFileRef,
-  removeExternalFileRef,
-} from '../lib/external-files'
-import {
-  AlternativesList,
-  AttachableFilesDropdown,
-  setNodeAttrs as setGivenNodeAttrs,
-} from './FigureElement'
+import { useFileInputRef } from '../components/hooks/figure-upload'
+import { OptionsDropdown } from '../components/views/FilesDropdown'
+import { FileUpload } from '../components/views/FileUpload'
+import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
+import { setNodeAttrs as setGivenNodeAttrs } from './FigureElement'
 import { ReactViewComponentProps } from './ReactView'
 
 export type SubmissionAttachment = {
@@ -70,22 +51,16 @@ export interface FigureProps {
 }
 
 const WEB_FORMAT_QUERY = 'format=jpg'
-const addFormatQuery = (url?: string) => {
+export const addFormatQuery = (url?: string) => {
   if (url) {
     const join = url.includes('?') ? '&' : '?'
     return url + join + WEB_FORMAT_QUERY
   }
 }
 
-const isFigure = (file: SubmissionAttachment) => {
-  return namesWithDesignationMap.get(file.type.label)
-}
-
 const FigureComponent = ({
-  putAttachment,
   permissions,
   uploadAttachment,
-  updateDesignation,
   capabilities: can,
   mediaAlternativesEnabled,
   externalFiles,
@@ -95,16 +70,9 @@ const FigureComponent = ({
     nodeAttrs,
     viewProps,
     dispatch,
-    setNodeAttrs,
     contentDOM,
   }) => {
     const figure = viewProps.node
-
-    const isInGraphicalAbstract = useMemo(() => {
-      // allows to manipulate only images, needed for graphical abstract
-      const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
-      return isInGraphicalAbstractSection(resolvedPos)
-    }, [viewProps])
 
     const src = useMemo(() => {
       if (nodeAttrs.src) {
@@ -116,8 +84,6 @@ const FigureComponent = ({
       )
       return addFormatQuery(imageExternalFile?.url) // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps
-
-    const fileInput = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length) {
@@ -156,121 +122,58 @@ const FigureComponent = ({
         })
       }
     }, [contentDOM, figure?.attrs?.externalFileReferences])
-
-    const handleUpload = async (e: SyntheticEvent) => {
-      e.preventDefault()
-
-      const file = fileInput.current?.files?.[0]
-
-      if (!file || !permissions.write) {
-        return
-      }
-      const { id, link } = await putAttachment(
-        file,
-        isInGraphicalAbstract ? 'graphical-abstract' : 'figure'
-      )
-      setNodeAttrs({
-        contentType: file.type,
-        externalFileReferences: addExternalFileRef(
-          nodeAttrs.externalFileReferences,
-          id,
-          'imageRepresentation'
-        ),
-        src: addFormatQuery(link),
-        label: link,
-      })
-    }
-
-    const handleImageClick = (e: SyntheticEvent) => {
-      e.preventDefault()
-
-      if (!permissions.write || !fileInput.current) {
-        return
-      }
-
-      fileInput.current.click()
-    }
-
     /* eslint-disable react-hooks/exhaustive-deps */
+
     const setFigureAttrs = useCallback(
       /* eslint-enable react-hooks/exhaustive-deps */
-      setGivenNodeAttrs(figure, viewProps, dispatch),
+      setGivenNodeAttrs(figure, viewProps, dispatch, viewProps.getPos()),
       [figure, viewProps, dispatch]
     )
 
-    const handleSelectedFile = (file: SubmissionAttachment) => {
-      if (!figure) {
-        return
-      }
-      const prevAttrs = { ...figure.attrs }
-      if (isFigure(file)) {
-        setFigureAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.id,
-            'imageRepresentation',
-            { ref: file }
-          ),
-          src: file.link,
-        })
-        updateDesignation('dataset', file.name).catch(() => {
-          setFigureAttrs(prevAttrs)
-        })
-      } else {
-        setFigureAttrs({
-          externalFileReferences: addExternalFileRef(
-            figure?.attrs.externalFileReferences,
-            file.id,
-            'dataset',
-            { ref: file }
-          ),
-        })
-        updateDesignation('dataset', file.name).catch(() => {
-          setFigureAttrs(prevAttrs)
-        })
-      }
-    }
+    const addFigureExFileRef = useCallback(
+      (relation, publicUrl) => {
+        if (figure) {
+          setFigureAttrs({
+            externalFileReferences: addExternalFileRef(
+              figure?.attrs.externalFileReferences,
+              publicUrl,
+              relation
+            ),
+            src: publicUrl,
+          })
+        }
+      },
+      [figure, setFigureAttrs]
+    )
 
-    const dataset: ExternalFileRef =
-      figure &&
-      figure.attrs?.externalFileReferences?.find(
-        (file: ExternalFileRef) => file && file.kind === 'dataset'
-      )
+    const { fileInputRef, onUploadClick } = useFileInputRef()
 
     return (
-      <>
-        {mediaAlternativesEnabled && can?.changeDesignation && externalFiles && (
-          <AttachableFilesDropdown
-            files={externalFiles}
-            onSelect={handleSelectedFile}
-            uploadAttachment={uploadAttachment}
-            addFigureExFileRef={(relation, publicUrl, attachmentId) => {
-              if (figure) {
-                const newAttrs: Node['attrs'] = {
-                  externalFileReferences: addExternalFileRef(
-                    figure?.attrs.externalFileReferences,
-                    attachmentId,
-                    isInGraphicalAbstract ? 'imageRepresentation' : relation
-                  ),
-                }
-                if (relation == 'imageRepresentation') {
-                  newAttrs.src = publicUrl
-                }
-                setFigureAttrs(newAttrs)
-              }
-            }}
-          />
-        )}
+      <Container>
         {permissions.write && (
-          <HiddenInput
-            type="file"
-            ref={fileInput}
-            onChange={handleUpload}
-            accept="image/*"
+          <FileUpload
+            fileInputRef={fileInputRef}
+            uploadAttachment={uploadAttachment}
+            addFigureExFileRef={addFigureExFileRef}
+            designation={'figure'}
+            accept={'image/*'}
+            relation={'imageRepresentation'}
           />
         )}
-        {src ? (
-          <UnstyledButton type="button" onClick={handleImageClick}>
+
+        {src && src.length > 0 ? (
+          <UnstyledButton type="button" onClick={onUploadClick}>
+            <OptionsDropdown
+              url={src}
+              submissionId={submissionId}
+              onUploadClick={onUploadClick}
+              setFigureAttrs={setFigureAttrs}
+              externalFiles={externalFiles}
+              mediaAlternativesEnabled={mediaAlternativesEnabled}
+              canReplaceFile={can?.replaceFile}
+              canDownloadFile={can?.downloadFiles}
+            />
+
             <img
               src={src}
               alt={nodeAttrs.label}
@@ -278,7 +181,7 @@ const FigureComponent = ({
             />
           </UnstyledButton>
         ) : (
-          <UnstyledButton type="button" onClick={handleImageClick}>
+          <UnstyledButton type="button" onClick={onUploadClick}>
             <Placeholder>
               <div>
                 {permissions.write
@@ -288,39 +191,12 @@ const FigureComponent = ({
             </Placeholder>
           </UnstyledButton>
         )}
-        {!isInGraphicalAbstract && figure && dataset?.ref && (
-          <AlternativesList>
-            <FileSectionItem
-              submissionId={submissionId}
-              title={dataset.ref.name}
-              handleChangeDesignation={(
-                submissionId: string,
-                typeId: string,
-                name: string
-              ) => updateDesignation(typeId, name)}
-              externalFile={dataset.ref}
-              showDesignationActions={false}
-              onClose={() => {
-                setFigureAttrs({
-                  externalFileReferences: removeExternalFileRef(
-                    figure?.attrs.externalFileReferences,
-                    dataset.url
-                  ),
-                })
-              }}
-            />
-          </AlternativesList>
-        )}
-      </>
+      </Container>
     )
   }
 
   return Component
 }
-
-const HiddenInput = styled.input`
-  display: none;
-`
 
 const UnstyledButton = styled.button`
   display: block;
@@ -330,12 +206,18 @@ const UnstyledButton = styled.button`
   margin-right: auto;
   min-width: 250px;
   padding: 0;
+  position: relative;
 
   &:focus {
     outline: rgb(13, 121, 208) auto 1px;
   }
   img {
     max-width: 100%;
+  }
+  &:hover {
+    .options_button {
+      visibility: visible;
+    }
   }
 `
 
@@ -350,6 +232,10 @@ const Placeholder = styled.div`
   text-align: center;
   padding: 64px 32px;
   min-height: 100px;
+`
+
+const Container = styled.div`
+  position: relative;
 `
 
 export default FigureComponent
