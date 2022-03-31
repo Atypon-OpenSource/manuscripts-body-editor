@@ -82,8 +82,15 @@ const FigureComponent = ({
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
         (file) => file && file.kind === 'imageRepresentation'
       )
-      return addFormatQuery(imageExternalFile?.url) // these links are always provided with url query, it's safe to assume we need to use amp here
-    }, [nodeAttrs.src]) // eslint-disable-line react-hooks/exhaustive-deps
+      // in the new implementation ExternalFileRef url will be attachment id LEAN-988
+      let url = imageExternalFile?.url
+      if (!imageExternalFile?.url.includes('https://')) {
+        url = externalFiles?.find((file) => file.id === imageExternalFile?.url)
+          ?.link
+      }
+
+      return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
+    }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length) {
