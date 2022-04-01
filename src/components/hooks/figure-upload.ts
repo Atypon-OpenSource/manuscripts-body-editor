@@ -61,7 +61,7 @@ export const useFigureSelection = (viewProps: {
       (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
     ) || { url: '' }
 
-    return imageExternalFile.url.trim().length < 1
+    return imageExternalFile?.url.trim().length < 1
   }, [viewProps.node])
 
   const addFigureExFileRef = useCallback(
