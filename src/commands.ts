@@ -575,7 +575,7 @@ export const insertGraphicalAbstract = (
 
   if (dispatch) {
     // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos)
+    const selection = TextSelection.create(tr.doc, pos + 2)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
