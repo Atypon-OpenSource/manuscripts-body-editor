@@ -66,7 +66,7 @@ export const getPaperClipButtonFiles = (
     const fileExtension = file.name.split('.').pop() || ''
     const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
 
-    if (designation) {
+    if (designation !== undefined) {
       switch (
         getDesignationSectionType(
           designation,
@@ -103,7 +103,7 @@ export const getOtherFiles = (
       const fileType = extensionsWithFileTypesMap.get(
         fileExtension.toLowerCase()
       )
-      if (designation) {
+      if (designation !== undefined) {
         const sectionType = getDesignationSectionType(
           designation,
           fileType,

@@ -40,7 +40,6 @@ export type SubmissionAttachmentType = {
 
 export interface FigureProps {
   permissions: { write: boolean }
-  putAttachment: (file: File, type: string) => Promise<SubmissionAttachment>
   externalFiles?: SubmissionAttachment[]
   submissionId: string
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -76,7 +75,7 @@ const FigureComponent = ({
 
     const src = useMemo(() => {
       if (nodeAttrs.src) {
-        return nodeAttrs.src
+        return `${nodeAttrs.src}#${Date.now()}`
       }
 
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
@@ -89,7 +88,7 @@ const FigureComponent = ({
         url = externalFiles?.find((file) => file.id === attachmentId)?.link
       }
 
-      return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
+      return `${addFormatQuery(url)}#${Date.now()}` // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -182,6 +181,7 @@ const FigureComponent = ({
             />
 
             <img
+              id={nodeAttrs.id}
               src={src}
               alt={nodeAttrs.label}
               style={{ cursor: 'pointer' }}

@@ -24,7 +24,7 @@ interface FileUploadProps {
   uploadAttachment: (
     designation: string,
     file: File
-  ) => Promise<SubmissionAttachment>
+  ) => Promise<{ data?: { uploadAttachment?: SubmissionAttachment } }>
   addFigureExFileRef: (
     relation: string,
     publicUrl: string,
@@ -50,8 +50,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files && e.target.files[0]
       if (file) {
-        const { link, id } = await uploadAttachment(designation, file)
-        if (link) {
+        const response = await uploadAttachment(designation, file)
+        if (response?.data?.uploadAttachment) {
+          const { link, id } = response.data?.uploadAttachment
           addFigureExFileRef(relation, link, id)
         }
         resetUpload()
