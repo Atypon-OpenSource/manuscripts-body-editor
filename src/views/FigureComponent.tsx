@@ -75,7 +75,7 @@ const FigureComponent = ({
 
     const src = useMemo(() => {
       if (nodeAttrs.src) {
-        return `${nodeAttrs.src}#${Date.now()}`
+        return nodeAttrs.src
       }
 
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
@@ -88,7 +88,7 @@ const FigureComponent = ({
         url = externalFiles?.find((file) => file.id === attachmentId)?.link
       }
 
-      return `${addFormatQuery(url)}#${Date.now()}` // these links are always provided with url query, it's safe to assume we need to use amp here
+      return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
