@@ -19,6 +19,7 @@ import {
   buildCitation,
   buildHighlight,
   buildInlineMathFragment,
+  FigureNode,
   FootnoteNode,
   FootnotesElementNode,
   FootnotesSectionNode,
@@ -215,7 +216,7 @@ export const insertFileAsFigure = (
   if (position === null || !dispatch) {
     return false
   }
-  const node = state.schema.nodes.figure.createAndFill({
+  const figure = state.schema.nodes.figure.createAndFill({
     label: file.name,
     src: file.link,
     embedURL: { default: undefined },
@@ -226,8 +227,16 @@ export const insertFileAsFigure = (
         kind: 'imageRepresentation',
       },
     ],
-  })
-  const tr = state.tr.insert(position, node as ManuscriptNode)
+  }) as FigureNode
+
+  const figureElement = state.schema.nodes.figure_element.createAndFill({}, [
+    figure,
+    state.schema.nodes.figcaption.create({}, [
+      state.schema.nodes.caption_title.create(),
+      state.schema.nodes.caption.create(),
+    ]),
+  ])
+  const tr = state.tr.insert(position, figureElement as ManuscriptNode)
   dispatch(tr)
   return true
 }
