@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
+import {
+  FigureNode,
+  isInGraphicalAbstractSection,
+} from '@manuscripts/manuscript-transform'
 import { Capabilities } from '@manuscripts/style-guide'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
@@ -72,6 +75,8 @@ const FigureComponent = ({
     contentDOM,
   }) => {
     const figure = viewProps.node
+    const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
+    const isInGraphicalAbstract = isInGraphicalAbstractSection(resolvedPos)
 
     const src = useMemo(() => {
       if (nodeAttrs.src) {
@@ -161,7 +166,9 @@ const FigureComponent = ({
             fileInputRef={fileInputRef}
             uploadAttachment={uploadAttachment}
             addFigureExFileRef={addFigureExFileRef}
-            designation={'figure'}
+            designation={
+              isInGraphicalAbstract ? 'graphical-abstract' : 'figure'
+            }
             accept={'image/*'}
             relation={'imageRepresentation'}
           />
