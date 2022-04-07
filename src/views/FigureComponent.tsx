@@ -18,8 +18,8 @@ import {
   FigureNode,
   isInGraphicalAbstractSection,
 } from '@manuscripts/manuscript-transform'
-import { Capabilities } from '@manuscripts/style-guide'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import { Capabilities, MissingImage } from '@manuscripts/style-guide'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { useFileInputRef } from '../components/hooks/figure-upload'
@@ -165,6 +165,9 @@ const FigureComponent = ({
 
     const { fileInputRef, onUploadClick } = useFileInputRef()
 
+    const [imageError, setImageError] = useState(false)
+    const onError = useCallback(() => setImageError(true), [])
+
     return (
       <Container>
         {permissions.write && (
@@ -181,7 +184,11 @@ const FigureComponent = ({
         )}
 
         {src && src.length > 0 ? (
-          <UnstyledButton type="button" onClick={onUploadClick}>
+          <UnstyledButton
+            type="button"
+            onClick={onUploadClick}
+            error={imageError}
+          >
             <OptionsDropdown
               url={src}
               submissionId={submissionId}
@@ -193,12 +200,23 @@ const FigureComponent = ({
               canDownloadFile={can?.downloadFiles}
             />
 
-            <img
-              id={nodeAttrs.id}
-              src={src}
-              alt={nodeAttrs.label}
-              style={{ cursor: 'pointer' }}
-            />
+            {(imageError && (
+              <Placeholder error>
+                <div>
+                  <MissingImage />
+                  <Header>Missing image</Header>
+                  {permissions.write && <Label>Drag or click to upload</Label>}
+                </div>
+              </Placeholder>
+            )) || (
+              <img
+                id={nodeAttrs.id}
+                src={src}
+                onError={onError}
+                alt={nodeAttrs.label}
+                style={{ cursor: 'pointer' }}
+              />
+            )}
           </UnstyledButton>
         ) : (
           <UnstyledButton type="button" onClick={onUploadClick}>
@@ -218,12 +236,14 @@ const FigureComponent = ({
   return Component
 }
 
-const UnstyledButton = styled.button`
+const UnstyledButton = styled.button<{ error?: boolean }>`
   display: block;
   border: none;
   background: none;
-  margin-left: auto;
-  margin-right: auto;
+  ${(props) => !props.error && 'margin-left: auto;'};
+  margin-right: ${(props) => (props.error && '8px') || 'auto'};
+  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
+  ${(props) => props.error && 'width: 100%;'};
   min-width: 250px;
   padding: 0;
   position: relative;
@@ -241,10 +261,14 @@ const UnstyledButton = styled.button`
   }
 `
 
-const Placeholder = styled.div`
+const Placeholder = styled.div<{ error?: boolean }>`
   align-items: center;
   border-radius: 16px;
-  border: 1px dashed #e2e2e2;
+  border: 1px dashed
+    ${(props) =>
+      (props.error && props.theme.colors.border.error) ||
+      props.theme.colors.border.secondary};
+  ${(props) => props.error && 'background: #fafafa;'}
   color: #6e6e6e;
   cursor: pointer;
   display: flex;
@@ -258,4 +282,14 @@ const Container = styled.div`
   position: relative;
 `
 
+const Label = styled.div`
+  font-weight: ${(props) => props.theme.font.weight.normal};
+  line-height: ${(props) => props.theme.font.lineHeight.large};
+  font-size: ${(props) => props.theme.font.size.small};
+`
+
+const Header = styled(Label)`
+  font-size: ${(props) => props.theme.font.size.large};
+  letter-spacing: -0.369231px;
+`
 export default FigureComponent
