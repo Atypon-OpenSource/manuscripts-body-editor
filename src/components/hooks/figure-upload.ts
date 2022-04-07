@@ -76,7 +76,7 @@ export const useFigureSelection = (viewProps: {
           {
             externalFileReferences: [
               {
-                url: attachmentId,
+                url: `attachment:${attachmentId}`,
                 kind: 'imageRepresentation',
               },
             ],
@@ -106,7 +106,7 @@ export const useFigureSelection = (viewProps: {
           src: publicUrl,
           externalFileReferences: [
             {
-              url: attachmentId,
+              url: `attachment:${attachmentId}`,
               kind: 'imageRepresentation',
             },
           ],

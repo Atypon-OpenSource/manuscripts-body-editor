@@ -125,7 +125,13 @@ const FigureComponent = ({
       if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
         figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
           if (exRef) {
-            const file = externalFiles?.find((file) => file.link === exRef.url)
+            const file = externalFiles?.find((file) => {
+              if (exRef.url.includes('https://')) {
+                return file.link === exRef.url
+              } else {
+                return file.id === exRef.url.replace('attachment:', '')
+              }
+            })
             if (file) {
               contentDOM.setAttribute('id', file.id) // to allow focus in this node
             }
@@ -147,7 +153,7 @@ const FigureComponent = ({
           setFigureAttrs({
             externalFileReferences: addExternalFileRef(
               figure?.attrs.externalFileReferences,
-              attachmentId,
+              `attachment:${attachmentId}`,
               relation
             ),
             src: publicUrl,
