@@ -333,8 +333,8 @@ const FilesButton = styled(RoundIconButton)`
 
 const FilesDropdownWrapper = styled.div`
   position: absolute;
-  top: -1%;
-  left: -1%;
+  top: -8px;
+  left: -5px;
   z-index: 1;
 `
 
