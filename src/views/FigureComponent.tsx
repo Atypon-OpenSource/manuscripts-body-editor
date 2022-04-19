@@ -173,7 +173,7 @@ const FigureComponent = ({
             uploadAttachment={uploadAttachment}
             addFigureExFileRef={addFigureExFileRef}
             designation={
-              isInGraphicalAbstract ? 'graphical-abstract' : 'figure'
+              isInGraphicalAbstract ? 'graphical-abstract-image' : 'figure'
             }
             accept={'image/*'}
             relation={'imageRepresentation'}
