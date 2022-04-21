@@ -34,34 +34,37 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
   const isInRange = (start: number, end: number, position: number) =>
     position >= start && position <= end
 
-  tr.steps.forEach((step) => {
-    if (
-      !(step instanceof ReplaceStep) &&
-      !(step instanceof ReplaceAroundStep)
-    ) {
-      return
-    }
+  const hasReplaceAroundSteps = tr.steps.some(
+    (step) => step instanceof ReplaceAroundStep
+  )
 
-    step.getMap().forEach((fromA, toA) => {
-      tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
-        // detecting if there is a change inside the title of the graphical abstract section and preventing that change
-        if (isGraphicalAbstractSectionNode(node)) {
-          node.descendants((childNode, childPos) => {
-            const inDocPos = nodePos + childPos
-            if (
-              isSectionTitleNode(childNode) &&
-              (isInRange(inDocPos, inDocPos + node.nodeSize, toA) ||
-                isInRange(inDocPos, inDocPos + node.nodeSize, fromA))
-            ) {
-              dontPrevent = false
-              return false
-            }
-          })
-        }
-        // check if one is graphical abstract and another one is a title
+  if (!hasReplaceAroundSteps) {
+    tr.steps.forEach((step) => {
+      if (!(step instanceof ReplaceStep)) {
+        return
+      }
+
+      step.getMap().forEach((fromA, toA) => {
+        tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
+          // detecting if there is a change inside the title of the graphical abstract section and preventing that change
+          if (isGraphicalAbstractSectionNode(node)) {
+            node.descendants((childNode, childPos) => {
+              const inDocPos = nodePos + childPos
+              if (
+                isSectionTitleNode(childNode) &&
+                (isInRange(inDocPos, inDocPos + childNode.nodeSize, toA) ||
+                  isInRange(inDocPos, inDocPos + childNode.nodeSize, fromA))
+              ) {
+                dontPrevent = false
+                return false
+              }
+            })
+          }
+          // check if one is graphical abstract and another one is a title
+        })
       })
     })
-  })
+  }
 
   return dontPrevent
 }
