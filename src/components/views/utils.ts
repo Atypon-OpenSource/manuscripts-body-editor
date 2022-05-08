@@ -50,6 +50,7 @@ const getDesignationSectionType = (
 }
 
 export const getPaperClipButtonFiles = (
+  inlineAttachmentsIds: Set<string>,
   externalFiles?: SubmissionAttachment[],
   mediaAlternativesEnabled?: boolean
 ) => {
@@ -81,10 +82,12 @@ export const getPaperClipButtonFiles = (
           })
           break
         case FileSectionType.OtherFile:
-          files.otherFiles.push({
-            ...file,
-            icon: fileTypesWithIconMap.get(fileType),
-          })
+          if (!inlineAttachmentsIds.has(file.id)) {
+            files.otherFiles.push({
+              ...file,
+              icon: fileTypesWithIconMap.get(fileType),
+            })
+          }
           break
       }
     }
@@ -93,6 +96,7 @@ export const getPaperClipButtonFiles = (
 }
 
 export const getOtherFiles = (
+  inlineAttachmentsIds: Set<string>,
   externalFiles?: SubmissionAttachment[],
   mediaAlternativesEnabled?: boolean
 ) =>
@@ -109,7 +113,10 @@ export const getOtherFiles = (
           fileType,
           mediaAlternativesEnabled
         )
-        return sectionType === FileSectionType.OtherFile
+        return (
+          sectionType === FileSectionType.OtherFile &&
+          !inlineAttachmentsIds.has(file.id)
+        )
       }
     })) ||
   []

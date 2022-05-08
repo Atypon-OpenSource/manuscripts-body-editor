@@ -195,6 +195,7 @@ export const isFigureNode = (node: Node) =>
 const FigureElement = ({
   permissions,
   externalFiles,
+  modelMap,
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
@@ -242,6 +243,7 @@ const FigureElement = ({
 
           <FilesDropdown
             externalFiles={externalFiles}
+            modelMap={modelMap}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}
             addFigureExFileRef={addFigureExFileRef}

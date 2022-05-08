@@ -16,11 +16,13 @@
 import AddIconHighlight from '@manuscripts/assets/react/AddIconHighlight'
 import GutterIconNormal from '@manuscripts/assets/react/GutterIconNormal'
 import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
   AttachIcon,
   DropdownList,
   IconButton,
   IconTextButton,
+  inlineFiles,
   RoundIconButton,
   UploadIcon,
   useDropdown,
@@ -39,6 +41,7 @@ export type ExternalFileIcon = SubmissionAttachment & { icon?: JSX.Element }
 
 interface DropdownProps {
   externalFiles?: SubmissionAttachment[]
+  modelMap: Map<string, Model>
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
   canReplaceFile?: boolean
@@ -62,6 +65,7 @@ interface FilesDropdownProps extends DropdownProps {
 
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   externalFiles,
+  modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   addFigureExFileRef,
@@ -70,9 +74,27 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
+  const inlineAttachmentsIds = useMemo(() => {
+    const attachmentsIDs = new Set<string>()
+    if (externalFiles) {
+      inlineFiles(modelMap, externalFiles).map(({ attachments }) => {
+        if (attachments) {
+          attachments.map((attachment) => attachmentsIDs.add(attachment.id))
+        }
+      })
+    }
+    return attachmentsIDs
+    // eslint-disable-next-line
+  }, [externalFiles, modelMap.values()])
+
   const { supplements, otherFiles } = useMemo(
-    () => getPaperClipButtonFiles(externalFiles, mediaAlternativesEnabled),
-    [externalFiles, mediaAlternativesEnabled]
+    () =>
+      getPaperClipButtonFiles(
+        inlineAttachmentsIds,
+        externalFiles,
+        mediaAlternativesEnabled
+      ),
+    [externalFiles, inlineAttachmentsIds, mediaAlternativesEnabled]
   )
 
   const onFileClick = useCallback(
@@ -164,6 +186,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 export const OptionsDropdown: React.FC<OptionsProps> = ({
   url,
   externalFiles,
+  modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   canReplaceFile,
@@ -172,9 +195,27 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
+  const inlineAttachmentsIds = useMemo(() => {
+    const attachmentsIDs = new Set<string>()
+    if (externalFiles) {
+      inlineFiles(modelMap, externalFiles).map(({ attachments }) => {
+        if (attachments) {
+          attachments.map((attachment) => attachmentsIDs.add(attachment.id))
+        }
+      })
+    }
+    return attachmentsIDs
+    // eslint-disable-next-line
+  }, [externalFiles, modelMap.values()])
+
   const otherFiles = useMemo(
-    () => getOtherFiles(externalFiles, mediaAlternativesEnabled),
-    [externalFiles, mediaAlternativesEnabled]
+    () =>
+      getOtherFiles(
+        inlineAttachmentsIds,
+        externalFiles,
+        mediaAlternativesEnabled
+      ),
+    [externalFiles, inlineAttachmentsIds, mediaAlternativesEnabled]
   )
 
   const onDownloadClick = useCallback(() => window.location.assign(url), [url])

@@ -18,6 +18,7 @@ import {
   FigureNode,
   isInGraphicalAbstractSection,
 } from '@manuscripts/manuscript-transform'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
@@ -44,6 +45,7 @@ export type SubmissionAttachmentType = {
 export interface FigureProps {
   permissions: { write: boolean }
   externalFiles?: SubmissionAttachment[]
+  modelMap: Map<string, Model>
   submissionId: string
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -67,6 +69,7 @@ const FigureComponent = ({
   mediaAlternativesEnabled,
   externalFiles,
   submissionId,
+  modelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
@@ -188,6 +191,7 @@ const FigureComponent = ({
               onUploadClick={onUploadClick}
               setFigureAttrs={setFigureAttrs}
               externalFiles={externalFiles}
+              modelMap={modelMap}
               mediaAlternativesEnabled={mediaAlternativesEnabled}
               canReplaceFile={can?.replaceFile}
               canDownloadFile={can?.downloadFiles}
