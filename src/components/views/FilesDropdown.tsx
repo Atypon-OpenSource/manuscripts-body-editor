@@ -22,7 +22,6 @@ import {
   DropdownList,
   IconButton,
   IconTextButton,
-  inlineFiles,
   RoundIconButton,
   UploadIcon,
   useDropdown,
@@ -35,7 +34,12 @@ import {
   SubmissionAttachment,
 } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
-import { getIcon, getOtherFiles, getPaperClipButtonFiles } from './utils'
+import {
+  getIcon,
+  getInlineAttachmentsIds,
+  getOtherFiles,
+  getPaperClipButtonFiles,
+} from './utils'
 
 export type ExternalFileIcon = SubmissionAttachment & { icon?: JSX.Element }
 
@@ -74,18 +78,10 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const inlineAttachmentsIds = useMemo(() => {
-    const attachmentsIDs = new Set<string>()
-    if (externalFiles) {
-      inlineFiles(modelMap, externalFiles).map(({ attachments }) => {
-        if (attachments) {
-          attachments.map((attachment) => attachmentsIDs.add(attachment.id))
-        }
-      })
-    }
-    return attachmentsIDs
+  const inlineAttachmentsIds = useMemo(
+    () => getInlineAttachmentsIds(modelMap, externalFiles),
     // eslint-disable-next-line
-  }, [externalFiles, modelMap.values()])
+   [externalFiles, modelMap.size])
 
   const { supplements, otherFiles } = useMemo(
     () =>
@@ -195,18 +191,10 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const inlineAttachmentsIds = useMemo(() => {
-    const attachmentsIDs = new Set<string>()
-    if (externalFiles) {
-      inlineFiles(modelMap, externalFiles).map(({ attachments }) => {
-        if (attachments) {
-          attachments.map((attachment) => attachmentsIDs.add(attachment.id))
-        }
-      })
-    }
-    return attachmentsIDs
+  const inlineAttachmentsIds = useMemo(
+    () => getInlineAttachmentsIds(modelMap, externalFiles),
     // eslint-disable-next-line
-  }, [externalFiles, modelMap.values()])
+    [externalFiles, modelMap.size])
 
   const otherFiles = useMemo(
     () =>

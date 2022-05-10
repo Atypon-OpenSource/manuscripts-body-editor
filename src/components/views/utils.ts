@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
   Designation,
   designationWithFileSectionsMap,
@@ -21,6 +22,7 @@ import {
   FileSectionType,
   FileType,
   fileTypesWithIconMap,
+  inlineFiles,
   namesWithDesignationMap,
 } from '@manuscripts/style-guide'
 
@@ -120,3 +122,18 @@ export const getOtherFiles = (
       }
     })) ||
   []
+
+export const getInlineAttachmentsIds = (
+  modelMap: Map<string, Model>,
+  externalFiles?: SubmissionAttachment[]
+) => {
+  const attachmentsIDs = new Set<string>()
+  if (externalFiles) {
+    inlineFiles(modelMap, externalFiles).map(({ attachments }) => {
+      if (attachments) {
+        attachments.map((attachment) => attachmentsIDs.add(attachment.id))
+      }
+    })
+  }
+  return attachmentsIDs
+}
