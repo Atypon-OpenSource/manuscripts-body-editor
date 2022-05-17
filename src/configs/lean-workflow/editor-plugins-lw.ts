@@ -38,6 +38,7 @@ import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../../keys'
 import { loadAnnoationsToTrack } from '../../lib/annotations'
+import auxiliary_object_order from '../../plugins/auxiliary_object_order'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
 import keywords from '../../plugins/keywords'
@@ -96,6 +97,7 @@ export default (props: PluginProps) => {
       getModel,
     }),
     objects({ getManuscript, getModel }),
+    auxiliary_object_order({ modelMap }),
     paragraphs(),
     placeholder(),
     tableEditing(),
