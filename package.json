@@ -134,7 +134,6 @@
     "formik": "^2.2.0",
     "history": "^4.10.1",
     "husky": "^4.3.0",
-    "jest": "^26.5.3",
     "jest-prosemirror": "1.0.0-next.60",
     "lodash": "^4.17.20",
     "parcel-bundler": "^1.12.4",
