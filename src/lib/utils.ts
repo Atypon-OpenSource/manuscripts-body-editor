@@ -20,8 +20,26 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/manuscript-transform'
+import { ResolvedPos } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
-import { findParentNode } from 'prosemirror-utils'
+
+// https://github.com/atlassian/prosemirror-utils/blob/1b97ff08f1bbaea781f205744588a3dfd228b0d1/src/selection.js
+export const findParentNode = (predicate: (n: ManuscriptNode) => boolean) => ({ $from }: Selection) =>
+  findParentNodeClosestToPos($from, predicate)
+
+export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: (n: ManuscriptNode) => boolean) => {
+  for (let i = $pos.depth; i > 0; i--) {
+    const node = $pos.node(i)
+    if (predicate(node)) {
+      return {
+        pos: i > 0 ? $pos.before(i) : 0,
+        start: $pos.start(i),
+        depth: i,
+        node
+      }
+    }
+  }
+}
 
 export function* iterateChildren(
   node: ManuscriptNode,
