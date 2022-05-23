@@ -19,7 +19,10 @@ import {
   isInGraphicalAbstractSection,
 } from '@manuscripts/manuscript-transform'
 import { Model } from '@manuscripts/manuscripts-json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
+import {
+  Capabilities,
+  UnsupportedFormatFileIcon,
+} from '@manuscripts/style-guide'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -97,6 +100,41 @@ const FigureComponent = ({
       }
 
       return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
+    }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    const { isSupportedImageType, fileName } = useMemo(() => {
+      const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)$/gi
+      let attachmentFileName = nodeAttrs.label || nodeAttrs.src
+
+      if (nodeAttrs.contentType) {
+        return {
+          isSupportedImageType: nodeAttrs.contentType.startsWith('image/'),
+          fileName: attachmentFileName,
+        }
+      }
+
+      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
+        (file) => file && file.kind === 'imageRepresentation'
+      )
+
+      if (imageExternalFile) {
+        const imageExternalFileRef = externalFiles?.find((file) => {
+          if (imageExternalFile.url.includes('https://')) {
+            return file.link === imageExternalFile.url
+          } else {
+            return file.id === imageExternalFile.url.replace('attachment:', '')
+          }
+        })
+
+        if (imageExternalFileRef) {
+          attachmentFileName = imageExternalFileRef.name
+        }
+      }
+
+      return {
+        isSupportedImageType: imageFileRegex.test(attachmentFileName),
+        fileName: attachmentFileName,
+      }
     }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
@@ -184,26 +222,47 @@ const FigureComponent = ({
         )}
 
         {src && src.length > 0 ? (
-          <UnstyledButton type="button" onClick={onUploadClick}>
-            <OptionsDropdown
-              url={src}
-              submissionId={submissionId}
-              onUploadClick={onUploadClick}
-              setFigureAttrs={setFigureAttrs}
-              externalFiles={externalFiles}
-              modelMap={modelMap}
-              mediaAlternativesEnabled={mediaAlternativesEnabled}
-              canReplaceFile={can?.replaceFile}
-              canDownloadFile={can?.downloadFiles}
-            />
+          isSupportedImageType ? (
+            <UnstyledButton type="button" onClick={onUploadClick}>
+              <OptionsDropdown
+                url={src}
+                submissionId={submissionId}
+                onUploadClick={onUploadClick}
+                setFigureAttrs={setFigureAttrs}
+                externalFiles={externalFiles}
+                modelMap={modelMap}
+                mediaAlternativesEnabled={mediaAlternativesEnabled}
+                canReplaceFile={can?.replaceFile}
+                canDownloadFile={can?.downloadFiles}
+              />
 
-            <img
-              id={nodeAttrs.id}
-              src={src}
-              alt={nodeAttrs.label}
-              style={{ cursor: 'pointer' }}
-            />
-          </UnstyledButton>
+              <img
+                id={nodeAttrs.id}
+                src={src}
+                alt={nodeAttrs.label}
+                style={{ cursor: 'pointer' }}
+              />
+            </UnstyledButton>
+          ) : (
+            <UnstyledButton type="button" onClick={onUploadClick}>
+              <Placeholder>
+                <div>
+                  <UnsupportedFormatIconWrapper>
+                    <UnsupportedFormatFileIcon />
+                  </UnsupportedFormatIconWrapper>
+                  <div>{fileName}</div>
+                  <UnsupportedFormatLabel>
+                    Unsupported file format
+                  </UnsupportedFormatLabel>
+                  <div>
+                    {permissions.write
+                      ? 'Click to add image'
+                      : 'No image here yet…'}
+                  </div>
+                </div>
+              </Placeholder>
+            </UnstyledButton>
+          )
         ) : (
           <UnstyledButton type="button" onClick={onUploadClick}>
             <Placeholder>
@@ -260,6 +319,16 @@ const Placeholder = styled.div`
 
 const Container = styled.div`
   position: relative;
+`
+
+const UnsupportedFormatLabel = styled.div`
+  font-size: 140%;
+  line-height: 1.3;
+  padding: 10px 0;
+`
+
+const UnsupportedFormatIconWrapper = styled.div`
+  padding: 0 0 15px;
 `
 
 export default FigureComponent
