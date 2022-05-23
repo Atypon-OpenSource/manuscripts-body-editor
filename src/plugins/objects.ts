@@ -47,14 +47,20 @@ export default (props: Props) => {
 
     state: {
       init: (config, state) => {
-        return buildTargets(Fragment.from(state.doc), props.getManuscript())
+        return buildTargets(
+          Fragment.from(state.doc.content),
+          props.getManuscript()
+        )
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(Fragment.from(tr.doc), props.getManuscript())
+        return buildTargets(
+          Fragment.from(tr.doc.content),
+          props.getManuscript()
+        )
       },
     },
     props: {
