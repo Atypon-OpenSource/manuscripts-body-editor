@@ -40,6 +40,7 @@ const icons: Map<
   [nodes.bullet_list, BulletListIcon],
   [nodes.equation_element, EquationIcon],
   [nodes.figure_element, FigureIcon],
+  [nodes.multi_graphic_figure_element, FigureIcon],
   [nodes.keywords_section, SectionIcon],
   [nodes.listing_element, ListingIcon],
   [nodes.ordered_list, OrderedListIcon],
