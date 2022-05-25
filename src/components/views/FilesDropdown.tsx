@@ -238,6 +238,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
             disabled={!canReplaceFile}
             parentToggleOpen={toggleOpen}
             buttonText={'Replace'}
+            moveLeft
             list={
               <>
                 {otherFiles.map((file, index) => (
@@ -267,7 +268,8 @@ const NestedDropdown: React.FC<{
   buttonText: string
   disabled: boolean
   list: React.ReactNode
-}> = ({ parentToggleOpen, buttonText, disabled, list }) => {
+  moveLeft?: boolean
+}> = ({ parentToggleOpen, buttonText, disabled, list, moveLeft }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
   return (
@@ -278,6 +280,7 @@ const NestedDropdown: React.FC<{
       {isOpen && (
         <NestedListDropdownList
           direction={'right'}
+          moveLeft={moveLeft}
           width={192}
           onClick={(e) => {
             toggleOpen(e)
@@ -375,9 +378,9 @@ const NestedListButton = styled(ListItemButton)`
   }
 `
 
-const NestedListDropdownList = styled(DropdownList)`
-  left: 100%;
+const NestedListDropdownList = styled(DropdownList)<{ moveLeft?: boolean }>`
   top: 0;
+  ${(props) => (props.moveLeft && 'right: 30%;') || 'left: 100%;'}
 `
 
 const UploadButton = styled(IconTextButton)`
