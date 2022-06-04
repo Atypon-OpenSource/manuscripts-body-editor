@@ -16,18 +16,13 @@
 
 import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
-  Designation,
-  designationWithFileSectionsMap,
   extensionsWithFileTypesMap,
-  FileSectionType,
-  FileType,
   fileTypesWithIconMap,
+  getSupplementFiles,
   inlineFiles,
-  namesWithDesignationMap,
 } from '@manuscripts/style-guide'
 
 import { SubmissionAttachment } from '../../views/FigureComponent'
-import { ExternalFileIcon } from './FilesDropdown'
 
 export const getIcon = (file: SubmissionAttachment) => {
   const fileExtension = file.name.split('.').pop() || ''
@@ -35,95 +30,36 @@ export const getIcon = (file: SubmissionAttachment) => {
   return fileTypesWithIconMap.get(fileType)
 }
 
-const getDesignationSectionType = (
-  designation: Designation,
-  fileType?: FileType,
-  mediaAlternativesEnabled?: boolean
-) => {
-  if (mediaAlternativesEnabled) {
-    // TODO:: specify file type for media Alternatives
-    return designationWithFileSectionsMap.get(designation)
-  } else {
-    return (
-      fileType === FileType.Image &&
-      designationWithFileSectionsMap.get(designation)
-    )
-  }
+export const getFileType = (fileName: string) => {
+  const fileExtension = fileName.split('.').pop() || ''
+  return extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
 }
 
-export const getPaperClipButtonFiles = (
-  inlineAttachmentsIds: Set<string>,
-  externalFiles?: SubmissionAttachment[],
-  mediaAlternativesEnabled?: boolean
-) => {
-  const files: {
-    supplements: ExternalFileIcon[]
-    otherFiles: ExternalFileIcon[]
-  } = {
-    supplements: [],
-    otherFiles: [],
-  }
-
-  externalFiles?.map((file) => {
-    const designation = namesWithDesignationMap.get(file.type.label)
-    const fileExtension = file.name.split('.').pop() || ''
-    const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
-
-    if (designation !== undefined) {
-      switch (
-        getDesignationSectionType(
-          designation,
-          fileType,
-          mediaAlternativesEnabled
-        )
-      ) {
-        case FileSectionType.Supplements:
-          files.supplements.push({
-            ...file,
-            icon: fileTypesWithIconMap.get(fileType),
-          })
-          break
-        case FileSectionType.OtherFile:
-          if (!inlineAttachmentsIds.has(file.id)) {
-            files.otherFiles.push({
-              ...file,
-              icon: fileTypesWithIconMap.get(fileType),
-            })
-          }
-          break
-      }
-    }
-  })
-  return files
-}
+export const getSupplements = (
+  modelMap: Map<string, Model>,
+  externalFiles: SubmissionAttachment[],
+  hasFileType: (fileName: string) => boolean
+) =>
+  getSupplementFiles(modelMap, externalFiles).filter(({ name }) =>
+    hasFileType(name)
+  ) as SubmissionAttachment[]
 
 export const getOtherFiles = (
-  inlineAttachmentsIds: Set<string>,
-  externalFiles?: SubmissionAttachment[],
-  mediaAlternativesEnabled?: boolean
-) =>
-  (externalFiles &&
-    externalFiles.filter((file) => {
-      const designation = namesWithDesignationMap.get(file.type.label)
-      const fileExtension = file.name.split('.').pop() || ''
-      const fileType = extensionsWithFileTypesMap.get(
-        fileExtension.toLowerCase()
-      )
-      if (designation !== undefined) {
-        const sectionType = getDesignationSectionType(
-          designation,
-          fileType,
-          mediaAlternativesEnabled
-        )
-        return (
-          sectionType === FileSectionType.OtherFile &&
-          !inlineAttachmentsIds.has(file.id)
-        )
-      }
-    })) ||
-  []
+  modelMap: Map<string, Model>,
+  externalFiles: SubmissionAttachment[],
+  hasFileType: (fileName: string) => boolean
+) => {
+  const attachmentsIds = getAttachmentsIds(modelMap, externalFiles)
+  return externalFiles.filter(
+    ({ id, name }) => !attachmentsIds.has(id) && hasFileType(name)
+  )
+}
 
-export const getInlineAttachmentsIds = (
+/**
+ * This Set of AttachmentsIds for both inlineFiles and supplement
+ * that will not be shown in other files
+ */
+const getAttachmentsIds = (
   modelMap: Map<string, Model>,
   externalFiles?: SubmissionAttachment[]
 ) => {
@@ -134,6 +70,9 @@ export const getInlineAttachmentsIds = (
         attachments.map((attachment) => attachmentsIDs.add(attachment.id))
       }
     })
+    getSupplementFiles(modelMap, externalFiles).map(({ id }) =>
+      attachmentsIDs.add(id)
+    )
   }
   return attachmentsIDs
 }

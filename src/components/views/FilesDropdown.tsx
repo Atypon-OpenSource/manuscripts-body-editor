@@ -20,6 +20,7 @@ import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
   AttachIcon,
   DropdownList,
+  FileType,
   IconButton,
   IconTextButton,
   RoundIconButton,
@@ -34,12 +35,7 @@ import {
   SubmissionAttachment,
 } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
-import {
-  getIcon,
-  getInlineAttachmentsIds,
-  getOtherFiles,
-  getPaperClipButtonFiles,
-} from './utils'
+import { getFileType, getIcon, getOtherFiles, getSupplements } from './utils'
 
 export type ExternalFileIcon = SubmissionAttachment & { icon?: JSX.Element }
 
@@ -67,6 +63,19 @@ interface FilesDropdownProps extends DropdownProps {
   ) => void
 }
 
+const isFileValidForFigure = (
+  fileName: string,
+  mediaAlternativesEnabled?: boolean
+) => {
+  const fileType = getFileType(fileName)
+  if (mediaAlternativesEnabled) {
+    // TODO:: specify other file types for media Alternatives
+    return fileType === FileType.Image
+  } else {
+    return fileType === FileType.Image
+  }
+}
+
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   externalFiles,
   modelMap,
@@ -78,19 +87,17 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const inlineAttachmentsIds = useMemo(
-    () => getInlineAttachmentsIds(modelMap, externalFiles),
-    // eslint-disable-next-line
-   [externalFiles, modelMap.size])
-
   const { supplements, otherFiles } = useMemo(
-    () =>
-      getPaperClipButtonFiles(
-        inlineAttachmentsIds,
-        externalFiles,
-        mediaAlternativesEnabled
+    () => ({
+      otherFiles: getOtherFiles(modelMap, externalFiles || [], (fileName) =>
+        isFileValidForFigure(fileName, mediaAlternativesEnabled)
       ),
-    [externalFiles, inlineAttachmentsIds, mediaAlternativesEnabled]
+      supplements: getSupplements(modelMap, externalFiles || [], (fileName) =>
+        isFileValidForFigure(fileName, mediaAlternativesEnabled)
+      ),
+    }),
+    // eslint-disable-next-line
+    [modelMap.size, externalFiles, mediaAlternativesEnabled]
   )
 
   const onFileClick = useCallback(
@@ -144,7 +151,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
                     id={index.toString()}
                     onClick={onSupplementsClick}
                   >
-                    {file.icon}
+                    {getIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -163,7 +170,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
                     id={index.toString()}
                     onClick={onOtherFilesClick}
                   >
-                    {file.icon}
+                    {getIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -191,19 +198,18 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const inlineAttachmentsIds = useMemo(
-    () => getInlineAttachmentsIds(modelMap, externalFiles),
-    // eslint-disable-next-line
-    [externalFiles, modelMap.size])
-
   const otherFiles = useMemo(
-    () =>
-      getOtherFiles(
-        inlineAttachmentsIds,
-        externalFiles,
-        mediaAlternativesEnabled
-      ),
-    [externalFiles, inlineAttachmentsIds, mediaAlternativesEnabled]
+    () => {
+      if (!externalFiles) {
+        return []
+      }
+
+      return getOtherFiles(modelMap, externalFiles, (fileName) =>
+        isFileValidForFigure(fileName, mediaAlternativesEnabled)
+      )
+    },
+    // eslint-disable-next-line
+    [modelMap.size, externalFiles, mediaAlternativesEnabled]
   )
 
   const onDownloadClick = useCallback(() => window.location.assign(url), [url])
