@@ -17,25 +17,17 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
-import track, { Commit } from '@manuscripts/track-changes'
 
 import elements from '../../plugins/elements'
 import objects from '../../plugins/objects'
 
 interface PluginProps {
-  ancestorDoc?: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  commit: Commit | null
 }
 
 export default (props: PluginProps) => {
-  const { commit, ancestorDoc, getModel, getManuscript } = props
-  return [
-    elements(),
-    objects({ getModel, getManuscript }),
-    track({ commit: commit || undefined, ancestorDoc }),
-  ]
+  const { getModel, getManuscript } = props
+  return [elements(), objects({ getModel, getManuscript })]
 }

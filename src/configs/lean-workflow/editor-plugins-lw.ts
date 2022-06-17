@@ -19,25 +19,18 @@ import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
 import { CitationProvider } from '@manuscripts/library'
-import {
-  Build,
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
-import persist from '@manuscripts/plugin-persist'
-import track, { Commit } from '@manuscripts/track-changes'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../../keys'
-import { loadAnnoationsToTrack } from '../../lib/annotations'
 import auxiliary_object_order from '../../plugins/auxiliary_object_order'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
@@ -45,14 +38,13 @@ import keywords from '../../plugins/keywords'
 import models from '../../plugins/models'
 import objects from '../../plugins/objects'
 import paragraphs from '../../plugins/paragraphs'
+import persist from '../../plugins/persist'
 import placeholder from '../../plugins/placeholder'
 import sections from '../../plugins/sections'
 import toc from '../../plugins/toc'
 import rules from '../../rules'
 
 interface PluginProps {
-  ancestorDoc?: ManuscriptNode
-  commit: Commit | null
   deleteModel: (id: string) => Promise<string>
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
@@ -65,8 +57,6 @@ interface PluginProps {
 
 export default (props: PluginProps) => {
   const {
-    ancestorDoc,
-    commit,
     deleteModel,
     getCitationProvider,
     getLibraryItem,
@@ -101,12 +91,6 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track({
-      commit: commit || undefined,
-      ancestorDoc,
-      annotations: loadAnnoationsToTrack(modelMap),
-      showBlameSpanButtons: true,
-    }),
   ]
 }
 

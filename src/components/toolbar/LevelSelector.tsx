@@ -393,7 +393,7 @@ const buildOptions = (
 
   switch (parentElementType) {
     case parentElementType.schema.nodes.section: {
-      const sectionDepth = $from.depth - 1
+      const sectionDepth = Math.max(1, $from.depth - 1)
       const parentSectionDepth = sectionDepth - 1
       const minimumDepth = Math.max(1, parentSectionDepth)
 

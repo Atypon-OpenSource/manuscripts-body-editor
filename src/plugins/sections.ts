@@ -20,6 +20,7 @@ import {
   isSectionTitleNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
+import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
@@ -33,6 +34,10 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 
   const isInRange = (start: number, end: number, position: number) =>
     position >= start && position <= end
+
+  if (tr.getMeta('origin') === trackChangesPluginKey) {
+    return dontPrevent
+  }
 
   const hasReplaceAroundSteps = tr.steps.some(
     (step) => step instanceof ReplaceAroundStep

@@ -6,6 +6,7 @@ Object {
     Object {
       "attrs": Object {
         "contentType": undefined,
+        "dataTracked": null,
         "id": null,
         "paragraphStyle": "",
         "placeholder": "",

@@ -25,7 +25,6 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
-import persist from '@manuscripts/plugin-persist'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
@@ -41,6 +40,7 @@ import keywords from './keywords'
 import models from './models'
 import objects from './objects'
 import paragraphs from './paragraphs'
+import persist from './persist'
 import placeholder from './placeholder'
 import sections from './sections'
 import styles from './styles'
