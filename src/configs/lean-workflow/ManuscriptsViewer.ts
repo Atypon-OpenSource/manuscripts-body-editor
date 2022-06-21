@@ -28,7 +28,6 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { checkout, Commit } from '@manuscripts/track-changes'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -42,9 +41,7 @@ import views from './viewer-views-lw'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
-  commit: Commit | null
   doc: ManuscriptNode
-  ancestorDoc: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
@@ -68,16 +65,11 @@ export interface ViewerProps {
 
 export default {
   createState: (props: ViewerProps) => {
-    const { doc, commit } = props
-    const ancestorState = EditorState.create<ManuscriptSchema>({
-      doc,
+    return EditorState.create<ManuscriptSchema>({
+      doc: props.doc,
       schema,
       plugins: plugins(props),
     })
-    if (!commit) {
-      return ancestorState
-    }
-    return checkout(doc, ancestorState, commit)
   },
 
   createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>

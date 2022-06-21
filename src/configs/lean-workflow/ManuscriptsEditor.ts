@@ -25,7 +25,6 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { checkout } from '@manuscripts/track-changes'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -63,16 +62,11 @@ export interface EditorProps extends ViewerProps {
 
 export default {
   createState: (props: EditorProps) => {
-    const { doc, commit } = props
-    const ancestorState = EditorState.create<ManuscriptSchema>({
-      doc,
+    return EditorState.create<ManuscriptSchema>({
+      doc: props.doc,
       schema,
       plugins: plugins(props),
     })
-    if (!commit) {
-      return ancestorState
-    }
-    return checkout(doc, ancestorState, commit)
   },
 
   createView: (props: EditorProps): CreateView => (el, state, dispatch) =>

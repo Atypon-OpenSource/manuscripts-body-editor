@@ -18,10 +18,9 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { Build, ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { Build } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import persist from '@manuscripts/plugin-persist'
-import track, { Commit } from '@manuscripts/track-changes'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
@@ -41,25 +40,21 @@ import rules from '../src/rules'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
-  commit?: Commit
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget: (commentTarget?: string) => void
-  ancestorDoc: ManuscriptNode
 }
 
 export default (props: PluginProps) => {
   const {
-    commit,
     deleteModel,
     getModel,
     getManuscript,
     modelMap,
     saveModel,
     setCommentTarget,
-    ancestorDoc,
   } = props
 
   return [
@@ -79,7 +74,6 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    track({ commit, ancestorDoc }),
     highlights({ setCommentTarget }),
   ]
 }

@@ -41,20 +41,15 @@ import {
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
-import {
-  commands as trackPluginCommands,
-  getTrackPluginState,
-} from '@manuscripts/track-changes'
-import { ResolvedPos } from 'prosemirror-model'
+import { NodeRange, ResolvedPos } from 'prosemirror-model'
 import {
   NodeSelection,
   Selection,
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { v4 as uuid } from 'uuid'
+import { findWrapping } from 'prosemirror-transform'
 
-import { ANNOTATION_COLOR } from './lib/annotations'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
@@ -352,9 +347,23 @@ export const insertLink = (
   const attrs = {
     href: matches ? matches[1] : '',
   }
-  const node = state.schema.nodes.link.create(attrs, contents)
 
-  const tr = state.tr.replaceSelectionWith(node)
+  const range = new NodeRange(
+    state.selection.$from,
+    state.selection.$to,
+    state.selection.$from.depth
+  )
+  const { tr } = state
+  const wrapping = findWrapping(range, state.schema.nodes.link, attrs)
+
+  if (wrapping) {
+    tr.wrap(range, wrapping)
+  } else {
+    tr.insert(
+      state.selection.anchor,
+      state.schema.nodes.link.create(attrs, contents)
+    )
+  }
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, state.tr.selection.from)
@@ -949,16 +958,15 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
-export const insertAnnotation = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-): boolean => {
-  const isTrackEnabled = !!getTrackPluginState(state)
-  if (isTrackEnabled) {
-    const id = uuid()
-    const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
-    return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
-  }
+export const insertAnnotation = (): // state: ManuscriptEditorState,
+// dispatch?: Dispatch
+boolean => {
+  // const isTrackEnabled = !!getTrackPluginState(state)
+  // if (isTrackEnabled) {
+  //   const id = uuid()
+  //   const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
+  //   return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
+  // }
 
   return false
 }
@@ -967,12 +975,12 @@ export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ): boolean => {
-  const isTrackEnabled = !!getTrackPluginState(state)
-  if (isTrackEnabled) {
-    const id = uuid()
-    const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
-    return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
-  }
+  // const isTrackEnabled = !!getTrackPluginState(state)
+  // if (isTrackEnabled) {
+  //   const id = uuid()
+  //   const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
+  //   return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
+  // }
 
   const highlight = buildHighlight()
 

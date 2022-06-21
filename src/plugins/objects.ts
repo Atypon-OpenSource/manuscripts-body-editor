@@ -25,6 +25,10 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
+import {
+  setAction,
+  TrackChangesAction,
+} from '@manuscripts/track-changes-plugin'
 import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -143,6 +147,7 @@ export default (props: Props) => {
       })
 
       if (updated) {
+        setAction(tr, TrackChangesAction.skipTrack, true)
         return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },

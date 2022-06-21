@@ -23,7 +23,6 @@ import {
   schema,
 } from '@manuscripts/manuscript-transform'
 import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
-import { Commit } from '@manuscripts/track-changes'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -36,8 +35,6 @@ import views from './views'
 
 export interface Props {
   doc: ManuscriptNode
-  ancestorDoc: ManuscriptNode
-  commit: Commit
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   locale: string

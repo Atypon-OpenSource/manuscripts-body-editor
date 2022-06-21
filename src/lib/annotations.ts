@@ -14,48 +14,47 @@
  * limitations under the License.
  */
 
-import {
-  CommentAnnotation,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
-import { Annotation, commands } from '@manuscripts/track-changes'
-import { Command } from 'prosemirror-commands'
+// import {
+//   CommentAnnotation,
+//   Model,
+//   ObjectTypes,
+// } from '@manuscripts/manuscripts-json-schema'
+// import { Command } from 'prosemirror-commands'
 
 export const ANNOTATION_COLOR = [250, 224, 150] as [number, number, number]
 
-const { addAnnotation } = commands
+// const { addAnnotation } = commands
 
-export const loadAnnoationsToTrack = (
-  modelMap: Map<string, Model>
-): Array<Omit<Annotation, 'from' | 'to'>> => {
-  const comments = Array.from(modelMap.values()).filter(
-    (model) =>
-      model.objectType === ObjectTypes.CommentAnnotation &&
-      Boolean((model as CommentAnnotation).selector)
-  ) as CommentAnnotation[]
+// export const loadAnnoationsToTrack = (
+//   modelMap: Map<string, Model>
+// ): Array<Omit<Annotation, 'from' | 'to'>> => {
+//   const comments = Array.from(modelMap.values()).filter(
+//     (model) =>
+//       model.objectType === ObjectTypes.CommentAnnotation &&
+//       Boolean((model as CommentAnnotation).selector)
+//   ) as CommentAnnotation[]
 
-  /* eslint-disable @typescript-eslint/no-non-null-assertion */
-  return comments.map((comment) => ({
-    ancestorFrom: comment.selector!.from,
-    ancestorTo: comment.selector!.to,
-    uid: comment.target,
-    color: ANNOTATION_COLOR,
-    updatedAt: comment.updatedAt,
-  }))
-  /* eslint-enable @typescript-eslint/no-non-null-assertion */
-}
+//   /* eslint-disable @typescript-eslint/no-non-null-assertion */
+//   return comments.map((comment) => ({
+//     ancestorFrom: comment.selector!.from,
+//     ancestorTo: comment.selector!.to,
+//     uid: comment.target,
+//     color: ANNOTATION_COLOR,
+//     updatedAt: comment.updatedAt,
+//   }))
+//   /* eslint-enable @typescript-eslint/no-non-null-assertion */
+// }
 
-export const insertAnnotationFromComment = (
-  comment: CommentAnnotation
-): Command | null => {
-  // replies and legacy comments do not need annotations
-  if (!comment.selector) {
-    return null
-  }
+// export const insertAnnotationFromComment = (
+//   comment: CommentAnnotation
+// ): Command | null => {
+//   // replies and legacy comments do not need annotations
+//   if (!comment.selector) {
+//     return null
+//   }
 
-  return addAnnotation(comment.target, `rgb(${ANNOTATION_COLOR.join(', ')})`, {
-    from: comment.selector.from,
-    to: comment.selector.to,
-  })
-}
+//   return addAnnotation(comment.target, `rgb(${ANNOTATION_COLOR.join(', ')})`, {
+//     from: comment.selector.from,
+//     to: comment.selector.to,
+//   })
+// }

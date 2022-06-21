@@ -1599,10 +1599,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.49.0":
-  version "0.49.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.49.0.tgz#402f2b21050d4c77fda10e751fce8da15f1b9438"
-  integrity sha512-J41ji7jYzXyZNtpqZfz6dcxNLBgzk1taSI1+/llxYydi1IiIED9w6AGm3G+msjBg/ZpswIKvXrSqIle+SeNerg==
+"@manuscripts/manuscript-transform@^0.49.1":
+  version "0.49.1"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.49.1.tgz#ddef90f6936a164336989f5f2a6af2d539ee69d9"
+  integrity sha512-/WBzzJaLr3wWt3diGKnJT5A5L7UMWS4715k4YHLOocwFiOPGWWDpjZVssC7ggQTigEaQoGmXyfNOywvqzIj8Hw==
   dependencies:
     "@manuscripts/data" "^0.1.3"
     "@manuscripts/library" "^0.6.2"
@@ -1613,15 +1613,6 @@
     prosemirror-model "~1.14.0"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
-
-"@manuscripts/manuscripts-json-schema@1.49.3":
-  version "1.49.3"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.3.tgz#44543f94d4405a8e153100efb1b097da45760869"
-  integrity sha512-tZgwGQqHzGXaR7uYeJxKu2yS2QE7qbwNvEdwEH7Ng27wjzz783VxSkL1dm5/9hMkDUmUeQn14RPcX4qz8Vw2Cg==
-  dependencies:
-    ajv "^6.10.0"
-    deepmerge "^3.2.0"
-    js-beautify "^1.9.0"
 
 "@manuscripts/manuscripts-json-schema@^1.46.2":
   version "1.46.2"
@@ -1743,23 +1734,12 @@
     prosemirror-state "~1.3.4"
     prosemirror-view "~1.18.2"
 
-"@manuscripts/track-changes-plugin@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes-plugin/-/track-changes-plugin-0.0.2.tgz#5092503c63b51c2bdb00a6a533f38c75f5c8f6d5"
-  integrity sha512-zk9ObQrKxcwpChRdgNGU6RksNQpUvgbcHBj+MsyyefN8Olzag+MarFuM1IFyFzPYkyuXHPNmcCL2D0lUBTWWrg==
+"@manuscripts/track-changes-plugin@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@manuscripts/track-changes-plugin/-/track-changes-plugin-0.0.4.tgz#4273ac96e160f9648e01a45996c5431557c0cdcd"
+  integrity sha512-n7Bb+dWa3hmKSbiYhHylv6pSfiS9QMSGiTNd7ZGEemximfTABR5C/xhbPTEcGVz5hf4p/HKL/53UEJuOGdSDMw==
   dependencies:
     debug "^4.3.4"
-
-"@manuscripts/track-changes@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.npmjs.org/@manuscripts/track-changes/-/track-changes-0.3.3.tgz#bbf67a6f6ea2b6421dc386bfb7e1a45e0bc99b43"
-  integrity sha512-we+bgvDyLUdVYFGa3Rjz/6C7uvuoocGOdhEHHCrRlfaJyJCbGD/YroizyD5FtFo130E7jzsrkKvMcsJYgpUwlQ==
-  dependencies:
-    "@manuscripts/manuscripts-json-schema" "1.49.3"
-    prosemirror-state "~1.3.4"
-    prosemirror-view "~1.18.2"
-    tinycolor2 "^1.4.2"
-    uuid "8.3.2"
 
 "@mdx-js/util@1.6.22":
   version "1.6.22"
@@ -2326,9 +2306,9 @@
     "@types/prosemirror-view" "*"
 
 "@types/prosemirror-model@*", "@types/prosemirror-model@^1.11.0", "@types/prosemirror-model@~1.13.0":
-  version "1.13.0"
-  resolved "https://registry.npmjs.org/@types/prosemirror-model/-/prosemirror-model-1.13.0.tgz"
-  integrity sha512-EIUr2R38Zh9n1eA8BQ1C3NX/XLV9U44DhNVk8x3Sth2RW+wa7jNA82XHMPOoapsOTfmpnh32xaHBOzREiBqdPQ==
+  version "1.13.2"
+  resolved "https://registry.npmjs.org/@types/prosemirror-model/-/prosemirror-model-1.13.2.tgz#2adad3ec478f83204f155d7fb94c9dfde2fc3296"
+  integrity sha512-a2rDB0aZ+7aIP7uBqQq1wLb4Hg4qqEvpkCqvhsgT/gG8IWC0peCAZfQ24sgTco0qSJLeDgIbtPeU6mgr869/kg==
   dependencies:
     "@types/orderedmap" "*"
 
@@ -13607,7 +13587,7 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.2, tiny-warning@^1.0.3:
   resolved "https://registry.npmjs.org/tiny-warning/-/tiny-warning-1.0.3.tgz"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
 
-tinycolor2@^1.4.1, tinycolor2@^1.4.2:
+tinycolor2@^1.4.1:
   version "1.4.2"
   resolved "https://registry.npmjs.org/tinycolor2/-/tinycolor2-1.4.2.tgz"
   integrity sha512-vJhccZPs965sV/L2sU4oRQVAos0pQXwsvTLkWYdqJ+a8Q5kPFzJTuOFwy7UniPli44NKQGAglksjvOcpo95aZA==
@@ -14278,11 +14258,6 @@ uuid@3.2.1:
   resolved "https://registry.npmjs.org/uuid/-/uuid-3.2.1.tgz"
   integrity sha512-jZnMwlb9Iku/O3smGWvZhauCf6cvvpKi4BKRiliS3cxnI+Gz9j5MEpTz2UFuXiKPJocb7gnsLHwiS05ige5BEA==
 
-uuid@8.3.2, uuid@^8.2.0, uuid@^8.3.0, uuid@^8.3.1:
-  version "8.3.2"
-  resolved "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
-
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.4.0"
   resolved "https://registry.npmjs.org/uuid/-/uuid-3.4.0.tgz"
@@ -14292,6 +14267,11 @@ uuid@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmjs.org/uuid/-/uuid-7.0.3.tgz"
   integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
+
+uuid@^8.2.0, uuid@^8.3.0, uuid@^8.3.1:
+  version "8.3.2"
+  resolved "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.0, v8-compile-cache@^2.0.3:
   version "2.3.0"
