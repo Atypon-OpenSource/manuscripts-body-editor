@@ -179,6 +179,7 @@ export default (props: Props) => {
           })
         }
         setAction(tr, TrackChangesAction.skipTrack, true)
+        tr.setMeta('origin', 'styles')
         return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },

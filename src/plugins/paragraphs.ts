@@ -66,7 +66,7 @@ export default () => {
         for (const nodePos of positionsToJoin) {
           tr.join(nodePos)
         }
-
+        tr.setMeta('origin', 'paragraphs')
         return tr
       }
     },

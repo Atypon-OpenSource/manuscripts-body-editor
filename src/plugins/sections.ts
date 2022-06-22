@@ -110,7 +110,7 @@ export default () => {
           const paragraph = newState.schema.nodes.paragraph.create()
           tr.insert(pos, paragraph)
         }
-
+        tr.setMeta('origin', 'sections')
         return tr
       }
     },

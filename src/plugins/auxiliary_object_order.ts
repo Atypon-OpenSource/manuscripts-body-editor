@@ -81,7 +81,7 @@ export default (props: Props) =>
       )
 
       if (!isEqual(stateElementsOrder, elementsOrder)) {
-        let tr: Transaction | null = null
+        let tr: Transaction | undefined
         Object.entries(elementsOrder).map(([key, elements]) => {
           const model =
             state[key as AuxiliaryObjects] ||
@@ -92,6 +92,7 @@ export default (props: Props) =>
             })
           }
         })
+        tr?.setMeta('origin', modelsKey)
         return tr
       }
       return null

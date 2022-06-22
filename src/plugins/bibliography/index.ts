@@ -150,7 +150,7 @@ export default (props: BibliographyProps) => {
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
-
+        tr.setMeta('origin', bibliographyKey)
         return tr
       } catch (error) {
         console.error(error) // tslint:disable-line:no-console

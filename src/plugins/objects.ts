@@ -148,6 +148,7 @@ export default (props: Props) => {
 
       if (updated) {
         setAction(tr, TrackChangesAction.skipTrack, true)
+        tr.setMeta('origin', objectsKey)
         return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
     },

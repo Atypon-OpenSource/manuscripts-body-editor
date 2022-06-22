@@ -108,7 +108,7 @@ export default (props: Props) => {
         if (tr.selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, tr.selection.from))
         }
-
+        tr.setMeta('origin', keywordsKey)
         return tr
       }
     },

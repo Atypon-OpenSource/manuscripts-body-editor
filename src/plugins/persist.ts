@@ -66,6 +66,7 @@ export default () => {
           }
         })
         setAction(newTr, TrackChangesAction.skipTrack, true)
+        newTr.setMeta('origin', 'persist')
         return newTr
       }
       return null
