@@ -87,17 +87,6 @@
     "@types/jest": "^26.0.14",
     "@types/lodash-es": "^4.17.1",
     "@types/pretty-bytes": "^5.2.0",
-    "@types/prosemirror-commands": "~1.0.4",
-    "@types/prosemirror-dropcursor": "~1.0.3",
-    "@types/prosemirror-gapcursor": "~1.0.4",
-    "@types/prosemirror-history": "~1.0.3",
-    "@types/prosemirror-inputrules": "~1.0.4",
-    "@types/prosemirror-keymap": "~1.0.4",
-    "@types/prosemirror-model": "~1.16.1",
-    "@types/prosemirror-schema-list": "~1.0.3",
-    "@types/prosemirror-state": "~1.2.7",
-    "@types/prosemirror-tables": "~0.9.1",
-    "@types/prosemirror-view": "^1.23.1",
     "@types/react": "^16.9.52",
     "@types/react-dom": "^16.9.8",
     "@types/react-modal": "^3.10.6",
@@ -159,7 +148,6 @@
   },
   "resolutions": {
     "@manuscripts/style-guide": "^0.30.1",
-    "@manuscripts/comment-editor": "^0.2.1",
-    "@types/prosemirror-model": ">=1.13.0"
+    "@manuscripts/comment-editor": "^0.2.1"
   }
 }
