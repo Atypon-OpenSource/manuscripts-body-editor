@@ -45,6 +45,7 @@ export interface EditorProps extends ViewerProps {
     item: BibliographyItem
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  setCommentTarget: (commentTarget?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
 
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any

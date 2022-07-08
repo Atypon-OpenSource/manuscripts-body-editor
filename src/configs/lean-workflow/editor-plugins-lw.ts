@@ -34,6 +34,7 @@ import keys from '../../keys'
 import auxiliary_object_order from '../../plugins/auxiliary_object_order'
 import bibliography from '../../plugins/bibliography'
 import elements from '../../plugins/elements'
+import highlights from '../../plugins/highlight'
 import keywords from '../../plugins/keywords'
 import models from '../../plugins/models'
 import objects from '../../plugins/objects'
@@ -52,6 +53,7 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  setCommentTarget: (commentTarget?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
@@ -64,6 +66,7 @@ export default (props: PluginProps) => {
     getManuscript,
     modelMap,
     saveModel,
+    setCommentTarget,
   } = props
 
   const plugins = props.plugins || []
@@ -91,6 +94,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
+    highlights({ setCommentTarget }),
   ]
 }
 

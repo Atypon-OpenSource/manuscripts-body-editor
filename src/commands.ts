@@ -41,6 +41,7 @@ import {
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import { Command } from 'prosemirror-commands'
 import { NodeRange, ResolvedPos } from 'prosemirror-model'
 import {
   NodeSelection,
@@ -55,11 +56,7 @@ import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
-import {
-  getHighlights,
-  highlightKey,
-  SET_COMMENT_TARGET,
-} from './plugins/highlight'
+import { highlightKey, SET_COMMENT_TARGET } from './plugins/highlight'
 import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
@@ -958,40 +955,17 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
-export const insertAnnotation = (): // state: ManuscriptEditorState,
-// dispatch?: Dispatch
-boolean => {
-  // const isTrackEnabled = !!getTrackPluginState(state)
-  // if (isTrackEnabled) {
-  //   const id = uuid()
-  //   const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
-  //   return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
-  // }
-
-  return false
-}
-
 export const insertHighlight = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ): boolean => {
-  // const isTrackEnabled = !!getTrackPluginState(state)
-  // if (isTrackEnabled) {
-  //   const id = uuid()
-  //   const color = `rgb(${ANNOTATION_COLOR.join(', ')})`
-  //   return trackPluginCommands.addAnnotation(id, color)(state, dispatch)
-  // }
-
   const highlight = buildHighlight()
 
   const { from, to } = state.selection
 
-  const text = state.doc.textBetween(from, to, '\n')
-
   const fromNode = state.schema.nodes.highlight_marker.create({
     rid: highlight._id,
     position: 'start',
-    text,
   })
 
   const toNode = state.schema.nodes.highlight_marker.create({
@@ -1014,43 +988,27 @@ export const insertHighlight = (
   return true
 }
 
-export const deleteHighlightMarkers = (
-  rid: string,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
+export const deleteHighlightMarkers = (rid: string): Command => (
+  state,
+  dispatch
 ) => {
   const markersToDelete: number[] = []
-
-  // TODO: work through the doc instead of using the plugin positions?
-
-  const highlights = getHighlights(state)
-
-  for (const highlight of highlights) {
+  highlightKey.getState(state)?.highlights.forEach((highlight) => {
     if (highlight.rid === rid) {
-      if (highlight.start !== undefined) {
-        markersToDelete.push(highlight.start - 1)
-      }
-
-      if (highlight.end !== undefined) {
-        markersToDelete.push(highlight.end)
-      }
+      markersToDelete.push(highlight.start - 1)
+      markersToDelete.push(highlight.end)
     }
+  })
+  if (markersToDelete.length === 0) {
+    return false
   }
-
-  if (markersToDelete.length) {
-    const { tr } = state
-
-    // delete markers last first
-    markersToDelete.sort((a, b) => b - a)
-
-    for (const pos of markersToDelete) {
+  const { tr } = state
+  markersToDelete
+    .sort((a, b) => b - a)
+    .forEach((pos) => {
       tr.delete(pos, pos + 1)
-    }
-
-    tr.setMeta('addToHistory', false)
-
-    if (dispatch) {
-      dispatch(tr)
-    }
-  }
+    })
+  tr.setMeta('addToHistory', false)
+  dispatch && dispatch(tr)
+  return true
 }
