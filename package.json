@@ -34,7 +34,7 @@
     "@manuscripts/manuscripts-json-schema": "^1.49.11",
     "@manuscripts/plugin-persist": "^0.1.2",
     "@manuscripts/title-editor": "^0.5.2",
-    "@manuscripts/track-changes-plugin": "^0.0.4",
+    "@manuscripts/track-changes-plugin": "workspace:*",
     "astrocite-eutils": "^0.16.4",
     "axios": "^0.20.0",
     "blob-util": "^2.0.2",
