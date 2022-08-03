@@ -30,10 +30,7 @@ import {
   ParagraphStyle,
   TableStyle,
 } from '@manuscripts/manuscripts-json-schema'
-import {
-  setAction,
-  TrackChangesAction,
-} from '@manuscripts/track-changes-plugin'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { Plugin } from 'prosemirror-state'
 
 const isParagraphStyle = hasObjectType<ParagraphStyle>(
@@ -178,7 +175,7 @@ export default (props: Props) => {
             ...attrs,
           })
         }
-        setAction(tr, TrackChangesAction.skipTrack, true)
+        skipTracking(tr)
         tr.setMeta('origin', 'styles')
         return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
       }
