@@ -34,7 +34,6 @@ import { ReactViewComponentProps } from './ReactView'
 
 const TableElement = ({
   externalFiles,
-  submissionId,
   updateDesignation,
   permissions,
   uploadAttachment,
@@ -158,17 +157,14 @@ const TableElement = ({
           {figure && dataset?.ref && (
             <AlternativesList>
               <FileSectionItem
-                submissionId={submissionId}
                 title={
                   dataset.ref.filename ||
                   dataset.ref.displayName ||
                   dataset.ref.filename
                 }
-                handleChangeDesignation={(
-                  submissionId: string,
-                  typeId: string,
-                  name: string
-                ) => updateDesignation(typeId, name)}
+                handleChangeDesignation={(typeId: string, name: string) =>
+                  updateDesignation(typeId, name)
+                }
                 externalFile={dataset.ref}
                 showDesignationActions={true}
               />

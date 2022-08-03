@@ -1698,10 +1698,10 @@
     tooltip.js "^1.3.3"
     typeface-lato "^1.1.13"
 
-"@manuscripts/style-guide@^0.31.14":
-  version "0.31.14"
-  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.31.14.tgz#c1caa83a43e02d6fa393063aeb6c99fd9875fa9f"
-  integrity sha512-mu9bG8bnxXuhhw4h5QiHYSb8cY6+dyQIkNR0C25BzQhaeEMYGS6tJX1RgXJFZMwR8l79DQudHkmvtMCNEaXpIg==
+"@manuscripts/style-guide@^0.31.16":
+  version "0.31.16"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.31.16.tgz#e94e9fbabe363125f869b82aea5274fb39de8f41"
+  integrity sha512-wltuH224PB1qUoEPcVA2CrS9HK5QsM3JUtjfWGaMJ0pu8AuulxTicy3KY64A8sH59jM1XezHki47XejJi4OHxA==
   dependencies:
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"
