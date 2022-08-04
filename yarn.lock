@@ -1551,15 +1551,15 @@
   resolved "https://registry.npmjs.org/@manuscripts/csl-styles/-/csl-styles-0.2.1.tgz"
   integrity sha512-DUbNRehtEiX1K3qA3swqRNyxv2fIa4zGYz8MasIkSxrMfrBG7f68FSWtERrorz6OyL4tL2WQ+K5hIt3WrIlg2Q==
 
+"@manuscripts/data@^0.1.12":
+  version "0.1.12"
+  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.12.tgz#14ca113e714e4b71586f89f443f8ab4079a9fa84"
+  integrity sha512-zS7RuBXhw8YypwjhT18V//rukLq72oZj2/za35zjfZntql6uJi5PtsLm8CCBkGW4jvqAbNg3JO+avFUy8jcsvQ==
+
 "@manuscripts/data@^0.1.2", "@manuscripts/data@^0.1.3":
   version "0.1.3"
   resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.3.tgz"
   integrity sha512-FriVBENLiEyNS7S6r3lgwqbpmKxpZirwcrjNdE6jdchEI6AfbZUe2OoLyv29a9HNRbQAZq1eUKevoZZ4OuwLpw==
-
-"@manuscripts/data@^0.1.7":
-  version "0.1.10"
-  resolved "https://registry.npmjs.org/@manuscripts/data/-/data-0.1.10.tgz#b6517ffc4b1ea152bd8e607183bab0fb6e1cc8e8"
-  integrity sha512-ytEesiSyZ7oeaxkca+fw9HtkGvyE7axI8CwFNJ621z14ROOsHzK5JeOC7LEenwtndA2GfuSD2qFnG/guprEA/w==
 
 "@manuscripts/eslint-config@^0.4.2":
   version "0.4.2"
@@ -1604,14 +1604,14 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.49.4":
-  version "0.49.4"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.49.4.tgz#5d5fdc97cc2e939808e7ecbc23e8a89853382a04"
-  integrity sha512-kCXkHwdSlevQuzWhYa3RlcojyH0RRda06xiMAVYv6kCFK3QmHKaTPfCUMsmSm6NRdmjPDLyEa7Fdl7KEM8OCbQ==
+"@manuscripts/manuscript-transform@^0.49.6":
+  version "0.49.6"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.49.6.tgz#ebf5d947fcc133a262047849a87f24f09a4ff1df"
+  integrity sha512-bbub4QiwK9Cl9IixPmyBiBZVxC+hG/JdocmpBIEotGKTUi6prH3+Hym6eGiOWMB1ySD8KkwK8w2CrfwkigeMXQ==
   dependencies:
-    "@manuscripts/data" "^0.1.7"
+    "@manuscripts/data" "^0.1.12"
     "@manuscripts/library" "^0.6.2"
-    "@manuscripts/manuscripts-json-schema" "^1.49.11"
+    "@manuscripts/manuscripts-json-schema" "^1.49.13"
     debug "^4.1.1"
     mathjax-full "^3.1.2"
     mime "^2.4.6"
@@ -1628,10 +1628,10 @@
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/manuscripts-json-schema@^1.49.11":
-  version "1.49.11"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.11.tgz#ea078c9f905b8e9087b40793c79c9f1bf30a1d89"
-  integrity sha512-yp3ePJNGE+Ms6bPL8NAsHSKUwZp+q9S8J0U1+0KGOAe/0X2pkJroNB6/hORnFVEXiQN2BTAwNnWeLZGkTf1mPA==
+"@manuscripts/manuscripts-json-schema@^1.49.13":
+  version "1.49.13"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.13.tgz#6dc29d2d2be56d2a406e717e67b487758ff28ecf"
+  integrity sha512-YDoWW95clkWLj160IXx//oIaJqGhRReQeDDF6GdR56WbHS1FZRyOa2hdmp6V7UTlmVac/K9CDEbmf5nKKlrcMA==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
