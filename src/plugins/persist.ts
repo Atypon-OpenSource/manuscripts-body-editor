@@ -19,10 +19,7 @@ import {
   isListNode,
   ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
-import {
-  setAction,
-  TrackChangesAction,
-} from '@manuscripts/track-changes-plugin'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { Plugin } from 'prosemirror-state'
 
 /**
@@ -65,7 +62,7 @@ export default () => {
             ids.add(newId)
           }
         })
-        setAction(newTr, TrackChangesAction.skipTrack, true)
+        skipTracking(newTr)
         newTr.setMeta('origin', 'persist')
         return newTr
       }

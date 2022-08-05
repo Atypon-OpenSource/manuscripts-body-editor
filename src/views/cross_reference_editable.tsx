@@ -18,10 +18,7 @@ import {
   buildAuxiliaryObjectReference,
   Target,
 } from '@manuscripts/manuscript-transform'
-import {
-  setAction,
-  TrackChangesAction,
-} from '@manuscripts/track-changes-plugin'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
@@ -95,7 +92,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       const pos = this.getPos()
       const tr = state.tr.delete(pos, pos + this.node.nodeSize)
       tr.setSelection(TextSelection.create(tr.doc, pos))
-      setAction(tr, TrackChangesAction.skipTrack, true)
+      skipTracking(tr)
       this.view.dispatch(tr)
     } else {
       this.destroy()
