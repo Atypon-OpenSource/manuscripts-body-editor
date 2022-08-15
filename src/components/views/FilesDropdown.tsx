@@ -20,24 +20,33 @@ import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
   AttachIcon,
   DropdownList,
+  extensionsWithFileTypesMap,
   FileType,
+  fileTypesWithIconMap,
   IconButton,
   IconTextButton,
   RoundIconButton,
+  SubmissionAttachment,
   UploadIcon,
   useDropdown,
+  useFiles,
 } from '@manuscripts/style-guide'
-import React, { SyntheticEvent, useCallback, useMemo } from 'react'
+import React, { SyntheticEvent, useCallback } from 'react'
 import styled from 'styled-components'
 
-import {
-  addFormatQuery,
-  SubmissionAttachment,
-} from '../../views/FigureComponent'
+import { addFormatQuery } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
-import { getFileType, getIcon, getOtherFiles, getSupplements } from './utils'
 
-export type ExternalFileIcon = SubmissionAttachment & { icon?: JSX.Element }
+const getIcon = (file: SubmissionAttachment) => {
+  const fileExtension = file.name.split('.').pop() || ''
+  const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
+  return fileTypesWithIconMap.get(fileType)
+}
+
+const getFileType = (fileName: string) => {
+  const fileExtension = fileName.split('.').pop() || ''
+  return extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
+}
 
 interface DropdownProps {
   externalFiles?: SubmissionAttachment[]
@@ -87,21 +96,14 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const { supplements, otherFiles } = useMemo(
-    () => ({
-      otherFiles: getOtherFiles(modelMap, externalFiles || [], (fileName) =>
-        isFileValidForFigure(fileName, mediaAlternativesEnabled)
-      ),
-      supplements: getSupplements(modelMap, externalFiles || [], (fileName) =>
-        isFileValidForFigure(fileName, mediaAlternativesEnabled)
-      ),
-    }),
-    // eslint-disable-next-line
-    [modelMap.size, externalFiles, mediaAlternativesEnabled]
+  const { otherFiles, supplementFiles } = useFiles(
+    modelMap,
+    externalFiles || [],
+    (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
   const onFileClick = useCallback(
-    (e, file: ExternalFileIcon) => {
+    (e, file: SubmissionAttachment) => {
       toggleOpen(e)
       addFigureExFileRef('imageRepresentation', file.link, file.id)
     },
@@ -109,8 +111,8 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   )
 
   const onSupplementsClick = useCallback(
-    (e) => onFileClick(e, supplements[e.currentTarget.id]),
-    [onFileClick, supplements]
+    (e) => onFileClick(e, supplementFiles[e.currentTarget.id]),
+    [onFileClick, supplementFiles]
   )
 
   const onOtherFilesClick = useCallback(
@@ -140,12 +142,12 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
           top={7}
         >
           <NestedDropdown
-            disabled={supplements.length < 1 || !canReplaceFile}
+            disabled={supplementFiles.length < 1 || !canReplaceFile}
             parentToggleOpen={toggleOpen}
             buttonText={'Supplements'}
             list={
               <>
-                {supplements.map((file, index) => (
+                {supplementFiles.map((file, index) => (
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
@@ -198,18 +200,8 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const otherFiles = useMemo(
-    () => {
-      if (!externalFiles) {
-        return []
-      }
-
-      return getOtherFiles(modelMap, externalFiles, (fileName) =>
-        isFileValidForFigure(fileName, mediaAlternativesEnabled)
-      )
-    },
-    // eslint-disable-next-line
-    [modelMap.size, externalFiles, mediaAlternativesEnabled]
+  const { otherFiles } = useFiles(modelMap, externalFiles || [], (fileName) =>
+    isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
   const onDownloadClick = useCallback(() => window.location.assign(url), [url])
