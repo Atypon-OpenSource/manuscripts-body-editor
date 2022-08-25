@@ -335,18 +335,20 @@ export class ContextMenu {
       )
     }
 
-    menu.appendChild(
-      this.createMenuSection((section: HTMLElement) => {
-        const nodeName = nodeNames.get(nodeType) || ''
+    if (nodeType !== nodes.bibliography_element) {
+      menu.appendChild(
+        this.createMenuSection((section: HTMLElement) => {
+          const nodeName = nodeNames.get(nodeType) || ''
 
-        section.appendChild(
-          this.createMenuItem(`Delete ${nodeName}`, () => {
-            this.deleteNode(nodeType)
-            popper.destroy()
-          })
-        )
-      })
-    )
+          section.appendChild(
+            this.createMenuItem(`Delete ${nodeName}`, () => {
+              this.deleteNode(nodeType)
+              popper.destroy()
+            })
+          )
+        })
+      )
+    }
 
     popper.show(target, menu, 'right', true, {
       modifiers: {
