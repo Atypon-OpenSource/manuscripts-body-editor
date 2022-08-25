@@ -16,6 +16,7 @@
 
 import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 
+import { ExternalFileRef } from '../lib/external-files'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -70,11 +71,14 @@ export class FigureView<PropsType extends BaseNodeProps>
   public createFigureImage = () => {
     const { src } = this.node.attrs
 
-    if (src) {
+    const imageExternalFile = this.node.attrs.externalFileReferences?.find(
+      (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
+    ) || { url: '' }
+
+    if (src || imageExternalFile.src) {
       const element = document.createElement('img')
       element.classList.add('figure-image')
-      element.src = src
-
+      element.src = src || imageExternalFile.url
       return element
     }
   }

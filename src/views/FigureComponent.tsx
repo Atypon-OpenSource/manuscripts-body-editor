@@ -30,7 +30,7 @@ import { useFileInputRef } from '../components/hooks/figure-upload'
 import { OptionsDropdown } from '../components/views/FilesDropdown'
 import { FileUpload } from '../components/views/FileUpload'
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
-import { setNodeAttrs as setGivenNodeAttrs } from './FigureElement'
+import { setNodeAttrs as setGivenNodeAttrs } from '../lib/utils'
 import { ReactViewComponentProps } from './ReactView'
 
 export type SubmissionAttachment = {
@@ -88,7 +88,6 @@ const FigureComponent = ({
       if (nodeAttrs.src) {
         return nodeAttrs.src
       }
-
       const imageExternalFile = nodeAttrs.externalFileReferences?.find(
         (file) => file && file.kind === 'imageRepresentation'
       )
@@ -298,7 +297,7 @@ const UnstyledButton = styled.button`
     max-width: 100%;
   }
   &:hover {
-    .options_button {
+    .options-button {
       visibility: visible;
     }
   }

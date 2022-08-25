@@ -20,6 +20,7 @@ import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
+import { setNodeAttrs } from '../lib/utils'
 import EditableBlock from './EditableBlock'
 import { FigureProps, SubmissionAttachment } from './FigureComponent'
 import {
@@ -28,7 +29,6 @@ import {
   FigureWrapper,
   isFigureNode,
   isTableNode,
-  setNodeAttrs,
 } from './FigureElement'
 import { ReactViewComponentProps } from './ReactView'
 

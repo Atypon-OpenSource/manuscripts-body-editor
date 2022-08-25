@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import AttachIcon from '@manuscripts/assets/react/AttachIcon'
+import { FigureNode } from '@manuscripts/manuscript-transform'
 import {
-  FigureNode,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import {
+  AttachIcon,
   Designation,
   DropdownContainer,
   getDesignationName,
@@ -32,7 +28,6 @@ import { Node } from 'prosemirror-model'
 import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { Dispatch } from '../commands'
 import {
   useFigureSelection,
   useFileInputRef,
@@ -40,6 +35,7 @@ import {
 import { FilesDropdown } from '../components/views/FilesDropdown'
 import { FileUpload } from '../components/views/FileUpload'
 import { getAllowedForInFigure } from '../lib/external-files'
+import { getFileExtension } from '../lib/utils'
 import EditableBlock from './EditableBlock'
 import { FigureProps, SubmissionAttachment } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
@@ -53,32 +49,6 @@ interface AttachableFilesDropdownProps {
     publicUrl: string,
     attachmentId: string
   ) => void
-}
-
-export interface viewProps {
-  node: ManuscriptNode
-  view: ManuscriptEditorView
-  getPos: () => number
-}
-
-export const setNodeAttrs = (
-  figure: Node | undefined,
-  viewProps: viewProps,
-  dispatch: Dispatch,
-  pos?: number
-) => (attrs: Node['attrs']) => {
-  const { selection, tr } = viewProps.view.state
-  tr.setNodeMarkup(pos || viewProps.getPos() + 1, undefined, {
-    // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
-    ...figure?.attrs,
-    ...attrs,
-  }).setSelection(selection.map(tr.doc, tr.mapping))
-
-  dispatch(tr)
-}
-
-export const getFileExtension = (file: File) => {
-  return file.name.split('.').pop() || ''
 }
 
 export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = ({

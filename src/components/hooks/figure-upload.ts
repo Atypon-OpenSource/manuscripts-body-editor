@@ -21,8 +21,7 @@ import {
 import { SyntheticEvent, useCallback, useMemo, useRef, useState } from 'react'
 
 import { ExternalFileRef } from '../../lib/external-files'
-import { getMatchingChild } from '../../lib/utils'
-import { setNodeAttrs } from '../../views/FigureElement'
+import { getMatchingChild, setNodeAttrs } from '../../lib/utils'
 
 export const useFileInputRef = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -57,6 +56,7 @@ export const useFigureSelection = (viewProps: {
       viewProps.node,
       (node) => node.type === node.type.schema.nodes.figure
     )
+
     const imageExternalFile = figure?.attrs.externalFileReferences?.find(
       (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
     ) || { url: '' }

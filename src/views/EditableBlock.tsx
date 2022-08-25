@@ -17,7 +17,7 @@ import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
 import { ContextMenu } from '../lib/context-menu'
-import { viewProps } from './FigureElement'
+import { viewProps } from '../lib/utils'
 
 export const Menus: React.FC<{
   openAddMenu: (e: SyntheticEvent) => void

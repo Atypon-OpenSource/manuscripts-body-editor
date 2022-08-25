@@ -191,6 +191,11 @@
   margin: 16px 0 0;
   box-sizing: border-box;
   justify-self: center;
+  position: relative;
+}
+
+.ProseMirror .figure-block:hover .options-button {
+  visibility: visible;
 }
 
 .ProseMirror .block:focus-within .figure-block,
@@ -252,6 +257,7 @@
   text-align: center;
   padding: 64px 32px;
   min-height: 100px;
+  white-space: normal;
 }
 
 .ProseMirror .figure.placeholder.over {

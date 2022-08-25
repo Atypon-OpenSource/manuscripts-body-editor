@@ -16,7 +16,9 @@
 
 import { Build, nodeNames } from '@manuscripts/manuscript-transform'
 import { Model } from '@manuscripts/manuscripts-json-schema'
+import { DefaultTheme } from 'styled-components'
 
+import { Dispatch } from '../commands'
 import { ContextMenu } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
@@ -33,6 +35,8 @@ export interface EditableBlockProps extends BaseNodeProps {
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget?: (commentTarget?: string) => void
+  dispatch?: Dispatch
+  theme?: DefaultTheme
 }
 
 export const EditableBlock = <

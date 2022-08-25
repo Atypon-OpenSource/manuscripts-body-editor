@@ -16,6 +16,7 @@
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 
+import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { EditableBlockProps } from './editable_block'
@@ -43,13 +44,19 @@ export const createEditableNodeView = <
   PropsT extends EditableBlockProps
 >(
   type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
-) => (props: PropsT): NodeViewCreator<T> => (
+) => (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> => (
   node,
   view,
   getPos,
   decorations
 ) => {
-  const nodeView = new type(props, node, view, getPos, decorations)
+  const nodeView = new type(
+    { ...props, dispatch },
+    node,
+    view,
+    getPos,
+    decorations
+  )
 
   nodeView.initialise()
 

@@ -98,7 +98,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 
   const { otherFiles, supplementFiles } = useFiles(
     modelMap,
-    externalFiles || [],
+    externalFiles?.map((f) => ({ ...f })) || [],
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
@@ -199,9 +199,10 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   setFigureAttrs,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-
-  const { otherFiles } = useFiles(modelMap, externalFiles || [], (fileName) =>
-    isFileValidForFigure(fileName, mediaAlternativesEnabled)
+  const { otherFiles } = useFiles(
+    modelMap,
+    externalFiles?.map((f) => ({ ...f })) || [],
+    (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
   const onDownloadClick = useCallback(() => window.location.assign(url), [url])
@@ -219,7 +220,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 
   return (
     <DropdownWrapper ref={wrapperRef}>
-      <OptionsButton className={'options_button'} onClick={toggleOpen}>
+      <OptionsButton className={'options-button'} onClick={toggleOpen}>
         <GutterIconNormal />
       </OptionsButton>
       {isOpen && (
@@ -363,8 +364,8 @@ const FilesButton = styled(RoundIconButton)`
 
 const FilesDropdownWrapper = styled.div`
   position: absolute;
-  top: -8px;
-  left: -5px;
+  top: 8px;
+  left: 70px;
   z-index: 1;
 `
 

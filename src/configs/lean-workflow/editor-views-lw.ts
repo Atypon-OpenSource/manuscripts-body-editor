@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'
@@ -26,8 +25,9 @@ import crossReference from '../../views/cross_reference_editable'
 import { EditableBlockProps } from '../../views/editable_block'
 import equation from '../../views/equation_editable'
 import equationElement from '../../views/equation_element_editable'
-import Figure, { FigureProps } from '../../views/FigureComponent'
-import FigureElement from '../../views/FigureElement'
+import figureElement from '../../views/figure_element_extended_editable'
+import extendedFigure from '../../views/figure_extended_editable'
+import { FigureProps } from '../../views/FigureComponent'
 import footnote from '../../views/footnote_editable'
 import footnotesElement from '../../views/footnotes_element'
 import inlineEquation from '../../views/inline_equation_editable'
@@ -41,10 +41,9 @@ import paragraph from '../../views/paragraph_editable'
 import placeholder from '../../views/placeholder'
 import placeholderElement from '../../views/placeholder_element_editable'
 import pullquoteElement from '../../views/pullquote_element_editable'
-import ReactView from '../../views/ReactView'
 import sectionLabel from '../../views/section_label'
 import sectionTitle from '../../views/section_title_editable'
-import TableElement from '../../views/TableElement'
+import tableElement from '../../views/table_element_extended_editable'
 import tocElement from '../../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps &
@@ -60,15 +59,8 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props),
     equation: equation(props),
     equation_element: equationElement(props),
-    figure: ReactView(dispatch, props.theme)<FigureNode>(Figure(props)),
-    figure_element: ReactView(dispatch, props.theme)(
-      FigureElement(props),
-      'div',
-      {
-        stopEvent: () => true,
-        ignoreMutation: () => true,
-      }
-    ),
+    figure: extendedFigure(props, dispatch),
+    figure_element: figureElement(props, dispatch),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
@@ -84,14 +76,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
-    table_element: ReactView(dispatch, props.theme)(
-      TableElement(props),
-      'figure',
-      {
-        stopEvent: () => false,
-        ignoreMutation: () => true,
-      }
-    ),
+    table_element: tableElement(props),
     toc_element: tocElement(props),
   }
 }

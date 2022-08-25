@@ -16,7 +16,7 @@
 import { SubmissionAttachment } from '@manuscripts/style-guide'
 import React, { ChangeEvent, useCallback } from 'react'
 
-interface FileUploadProps {
+export interface FileUploadProps {
   fileInputRef: React.RefObject<HTMLInputElement>
   designation: string
   accept: string
