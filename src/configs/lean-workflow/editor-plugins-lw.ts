@@ -43,6 +43,7 @@ import persist from '../../plugins/persist'
 import placeholder from '../../plugins/placeholder'
 import sections from '../../plugins/sections'
 import toc from '../../plugins/toc'
+import track_changes_ui from '../../plugins/track-changes-ui'
 import rules from '../../rules'
 
 interface PluginProps {
@@ -95,6 +96,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights({ setCommentTarget }),
+    track_changes_ui(),
   ]
 }
 
