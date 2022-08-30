@@ -60,9 +60,6 @@ export class FigureElementView extends BlockView<
       (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
     ) || { url: '' }
 
-    console.log(imageExternalFile)
-    console.log(imageExternalFile?.url.trim().length < 1)
-
     return imageExternalFile?.url.trim().length < 1
   }
 
@@ -161,7 +158,7 @@ export class FigureElementView extends BlockView<
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
-    if (this.props.permissions.write) {
+    if (this.props.permissions.write && this.props.capabilities?.uploadFile) {
       const uploadAttachmentHandler = createOnUploadHandler(
         this.props.uploadAttachment,
         this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',

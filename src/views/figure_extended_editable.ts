@@ -263,11 +263,12 @@ export class FigureEditableView extends FigureView<
       this.container.appendChild(img)
 
       // CREATE REACT TOOLS
-      // Not sure if prosemirror updates the current dom or recreates it from scratch. In the second the next block is redundant
-      if (this.reactTools && this.reactTools.parentElement == this.dom) {
-        this.dom.removeChild(this.reactTools)
-      }
+      // Not sure if prosemirror updates the current dom or recreates it from scratch. In the second case the next block is redundant
+      // if (this.reactTools && this.reactTools.parentElement == this.dom) {
+      //   this.dom.removeChild(this.reactTools)
+      // }
 
+      // @TODO - because we pass component props to different components the type here is unclear, it must be improved.
       const componentProps = {
         src: url,
         onUploadClick: this.envokeFileInput,
