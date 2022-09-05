@@ -7,7 +7,8 @@
   text-decoration: none;
 }
 .ProseMirror .inserted.rejected {
-  background: #cac5c7;
+  display: none;
+  visibility: hidden;
 }
 .ProseMirror .deleted.pending {
   background: #DDF3FA;
