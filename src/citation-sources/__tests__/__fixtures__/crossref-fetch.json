@@ -1,0 +1,958 @@
+{
+  "indexed": {
+    "date-parts": [
+      [
+        2022,
+        8,
+        24
+      ]
+    ],
+    "date-time": "2022-08-24T20:27:35Z",
+    "timestamp": 1661372855491
+  },
+  "reference-count": 105,
+  "publisher": "American Psychological Association (APA)",
+  "issue": "1",
+  "content-domain": {
+    "domain": [],
+    "crossmark-restriction": false
+  },
+  "DOI": "10.1037\/0003-066x.59.1.29",
+  "type": "journal-article",
+  "created": {
+    "date-parts": [
+      [
+        2004,
+        1,
+        21
+      ]
+    ],
+    "date-time": "2004-01-21T14:31:19Z",
+    "timestamp": 1074695479000
+  },
+  "page": "29-40",
+  "source": "Crossref",
+  "is-referenced-by-count": 96,
+  "title": "How the Mind Hurts and Heals the Body.",
+  "prefix": "10.1037",
+  "volume": "59",
+  "author": [
+    {
+      "given": "Oakley",
+      "family": "Ray",
+      "sequence": "first",
+      "affiliation": []
+    }
+  ],
+  "member": "15",
+  "published-online": {
+    "date-parts": [
+      [
+        2004
+      ]
+    ]
+  },
+  "reference": [
+    {
+      "key": "r1_10.1037\/0003-066X.59.1.29",
+      "volume-title": "The burdens of progress, 1900-1929.",
+      "author": "Abrams",
+      "year": "1978"
+    },
+    {
+      "key": "r2_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1126\/science.275.5306.1586"
+    },
+    {
+      "issue": "11",
+      "key": "r3_10.1037\/0003-066X.59.1.29",
+      "first-page": "34",
+      "article-title": "A new take on psychoneuroimmunology.",
+      "volume": "32",
+      "author": "Azar",
+      "year": "2001",
+      "journal-title": "Monitor on Psychology",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1529-4978",
+      "issn-type": "print"
+    },
+    {
+      "key": "r4_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "186",
+      "DOI": "10.1093\/oxfordjournals.aje.a112674",
+      "article-title": "Social networks, host resistance, and mortality: A nine-year follow-up study of Alameda County residents.",
+      "volume": "109",
+      "author": "Berkman",
+      "year": "1979",
+      "journal-title": "American Journal of Epidemiology",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0002-9262",
+      "issn-type": "print"
+    },
+    {
+      "key": "r5_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Alternative medicine: Expanding medical horizons.",
+      "author": "Berman",
+      "year": "1994"
+    },
+    {
+      "key": "r6_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/S0006-3223(99)00009-8"
+    },
+    {
+      "issue": "10",
+      "key": "r7_10.1037\/0003-066X.59.1.29",
+      "first-page": "78",
+      "article-title": "Curriculum overhaul gives behavioral medicine a higher profile.",
+      "volume": "32",
+      "author": "Carpenter",
+      "year": "2001",
+      "journal-title": "Monitor on Psychology",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1529-4978",
+      "issn-type": "print"
+    },
+    {
+      "key": "r8_10.1037\/0003-066X.59.1.29",
+      "unstructured": "Cherry. 1980"
+    },
+    {
+      "key": "r9_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1093\/clipsy\/6.2.204"
+    },
+    {
+      "key": "r10_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.285.1.89"
+    },
+    {
+      "key": "r11_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "747",
+      "DOI": "10.1001\/archpsyc.1974.01760120013002",
+      "article-title": "Mortality and morbidity in the first year of widowhood.",
+      "volume": "30",
+      "author": "Clayton",
+      "year": "1974",
+      "journal-title": "Archives of General Psychiatry",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0003-990X",
+      "issn-type": "print"
+    },
+    {
+      "key": "r12_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1111\/1467-8721.ep10772808"
+    },
+    {
+      "key": "r13_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "175",
+      "DOI": "10.1097\/00006842-199903000-00009",
+      "article-title": "Psychological stress, cytokine production, and severity of upper respiratory illness.",
+      "volume": "61",
+      "author": "Cohen",
+      "year": "1999",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r14_10.1037\/0003-066X.59.1.29",
+      "first-page": "129",
+      "article-title": "Social relationships and health: Challenges for measurement and intervention.",
+      "volume": "17",
+      "author": "Cohen",
+      "year": "2001",
+      "journal-title": "Advances in Mind-Body Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1470-3556",
+      "issn-type": "print"
+    },
+    {
+      "key": "r15_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Measuring stress.",
+      "author": "Cohen",
+      "year": "1995"
+    },
+    {
+      "key": "r16_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "606",
+      "DOI": "10.1056\/NEJM199108293250903",
+      "article-title": "Psychological stress and susceptibility to the common cold.",
+      "volume": "325",
+      "author": "Cohen",
+      "year": "1991",
+      "journal-title": "The New England Journal of Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0028-4793",
+      "issn-type": "print"
+    },
+    {
+      "key": "r17_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0022-3514.64.1.131"
+    },
+    {
+      "key": "r18_10.1037\/0003-066X.59.1.29",
+      "first-page": "20",
+      "article-title": "Belief becomes biology.",
+      "volume": "6",
+      "author": "Cousins",
+      "year": "1989",
+      "journal-title": "Advances in Mind-Body Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1470-3556",
+      "issn-type": "print"
+    },
+    {
+      "key": "r19_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1093\/clipsy\/6.2.221"
+    },
+    {
+      "key": "r20_10.1037\/0003-066X.59.1.29",
+      "first-page": "276",
+      "article-title": "Association of involvement in psychological self-regulation with longer survival in patients with metastatic cancer: An exploratory study.",
+      "volume": "16",
+      "author": "Cunningham",
+      "year": "2000",
+      "journal-title": "Advances in Mind-Body Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1470-3556",
+      "issn-type": "print"
+    },
+    {
+      "key": "r21_10.1037\/0003-066X.59.1.29",
+      "first-page": "102",
+      "article-title": "Can we understand the brain and coping without considering the immune system?",
+      "volume-title": "Coping with challenge: Welfare in animals including humans",
+      "volume": "Vol. 7",
+      "author": "Dantzer",
+      "year": "2001"
+    },
+    {
+      "key": "r22_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "volume-title": "Microbe hunters.",
+      "author": "De Kruif",
+      "year": "1926",
+      "DOI": "10.2307\/3221690"
+    },
+    {
+      "key": "r23_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1054\/ambm.2000.0266"
+    },
+    {
+      "key": "r24_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "1477",
+      "DOI": "10.1001\/jama.1955.02950340007002",
+      "article-title": "Unsolved problems in the study and control of microbial diseases. JAMA",
+      "volume": "157",
+      "author": "Dubos",
+      "year": "1955",
+      "journal-title": "Journal of the American Medical Association",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0002-9955",
+      "issn-type": "print"
+    },
+    {
+      "key": "r25_10.1037\/0003-066X.59.1.29",
+      "first-page": "100",
+      "article-title": "Can therapy affect physical health?",
+      "volume": "9",
+      "author": "Eells",
+      "year": "2000",
+      "journal-title": "The Journal of Psychotherapy Practice and Research",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1055-050X",
+      "issn-type": "print"
+    },
+    {
+      "key": "r26_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1207\/s15327965pli0203_1"
+    },
+    {
+      "key": "r27_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "419",
+      "DOI": "10.7326\/0003-4819-129-5-199809010-00014",
+      "article-title": "Medical care and health improvement: The critical link.",
+      "volume": "129",
+      "author": "Frenk",
+      "year": "1998",
+      "journal-title": "Annals of Internal Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0003-4819",
+      "issn-type": "print"
+    },
+    {
+      "key": "r28_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0003-066X.42.6.539"
+    },
+    {
+      "issue": "10",
+      "key": "r29_10.1037\/0003-066X.59.1.29",
+      "first-page": "1",
+      "article-title": "Quality care: Don't be a wimp in the doctor's office.",
+      "volume": "27",
+      "author": "Frishman",
+      "year": "1996",
+      "journal-title": "Harvard Health Letter",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1052-1577",
+      "issn-type": "print"
+    },
+    {
+      "key": "r30_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "234",
+      "DOI": "10.1097\/00006842-199903000-00016",
+      "article-title": "Gender, social support, and cardiovascular responses to stress.",
+      "volume": "61",
+      "author": "Glynn",
+      "year": "1999",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r31_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1056\/NEJMoa011871"
+    },
+    {
+      "key": "r32_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "43",
+      "DOI": "10.1017\/S003329170001463X",
+      "article-title": "Psychological response to cancer and survival.",
+      "volume": "21",
+      "author": "Greer",
+      "year": "1991",
+      "journal-title": "Psychological Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-2917",
+      "issn-type": "print"
+    },
+    {
+      "key": "r33_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.286.20.2578"
+    },
+    {
+      "key": "r34_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "315",
+      "DOI": "10.2466\/pr0.1989.65.1.315",
+      "article-title": "Length of survival and lymphocyte percentage in women with mammary cancer as a function of psychotherapy.",
+      "volume": "65",
+      "author": "Grossarth-Maticek",
+      "year": "1989",
+      "journal-title": "Psychological Reports",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-2941",
+      "issn-type": "print"
+    },
+    {
+      "key": "r35_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "391",
+      "DOI": "10.1111\/j.1469-8749.1980.tb03723.x",
+      "article-title": "Life stress, illness and social supports.",
+      "volume": "22",
+      "author": "Haggerty",
+      "year": "1980",
+      "journal-title": "Developmental Medicine and Child Neurology",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0012-1622",
+      "issn-type": "print"
+    },
+    {
+      "key": "r36_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Sickness and healing: An anthropological perspective.",
+      "author": "Hahn",
+      "year": "1987"
+    },
+    {
+      "key": "r37_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0278-6133.19.2.107"
+    },
+    {
+      "key": "r38_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "802",
+      "DOI": "10.2105\/AJPH.71.8.802",
+      "article-title": "Factors associated with mortality after widowhood.",
+      "volume": "71",
+      "author": "Helsing",
+      "year": "1981",
+      "journal-title": "American Journal of Public Health",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0090-0036",
+      "issn-type": "print"
+    },
+    {
+      "key": "r39_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/0022-3999(67)90010-4"
+    },
+    {
+      "key": "r40_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "540",
+      "DOI": "10.1126\/science.3399889",
+      "article-title": "Social relationships and health.",
+      "volume": "241",
+      "author": "House",
+      "year": "1988",
+      "journal-title": "Science",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0036-8075",
+      "issn-type": "print"
+    },
+    {
+      "key": "r41_10.1037\/0003-066X.59.1.29",
+      "unstructured": "2000"
+    },
+    {
+      "key": "r42_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "31",
+      "DOI": "10.1097\/00006842-196901000-00004",
+      "article-title": "Relationship of life change, maladaptive aggression, and upper respiratory infection in male college students.",
+      "volume": "31",
+      "author": "Jacobs",
+      "year": "1969",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r43_10.1037\/0003-066X.59.1.29",
+      "first-page": "232",
+      "article-title": "Critical life events and the onset of illness.",
+      "volume": "20",
+      "author": "Justice",
+      "year": "1994",
+      "journal-title": "Comprehensive Therapy",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0098-8243",
+      "issn-type": "print"
+    },
+    {
+      "key": "r44_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Kamen. Explanatory style and health. 6 207 1989",
+      "DOI": "10.1007\/BF02686648"
+    },
+    {
+      "key": "r45_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "457",
+      "DOI": "10.1176\/ajp.155.4.457",
+      "article-title": "A new intellectual framework for psychiatry.",
+      "volume": "155",
+      "author": "Kandel",
+      "year": "1998",
+      "journal-title": "The American Journal of Psychiatry",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0002-953X",
+      "issn-type": "print"
+    },
+    {
+      "key": "r46_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.273.15.1208"
+    },
+    {
+      "key": "r47_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Human stress and immunity.",
+      "author": "Keller",
+      "year": "1994"
+    },
+    {
+      "key": "r48_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1111\/1467-8721.00025"
+    },
+    {
+      "key": "r49_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1006\/brbi.1999.0562"
+    },
+    {
+      "issue": "2",
+      "key": "r50_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "16",
+      "DOI": "10.1207\/s15324796abm0902_3",
+      "article-title": "Psychosocial moderators of immune function.",
+      "volume": "9",
+      "author": "Kiecolt-Glaser",
+      "year": "1987",
+      "journal-title": "Journal of Behavioral Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0160-7715",
+      "issn-type": "print"
+    },
+    {
+      "key": "r51_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "13",
+      "DOI": "10.1097\/00006842-198701000-00002",
+      "article-title": "Marital quality, marital disruption, and immune function.",
+      "volume": "49",
+      "author": "Kiecolt-Glaser",
+      "year": "1987",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r52_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "volume-title": "Differential mortality in the United Stales: A study in socioeconomic epidemiology.",
+      "author": "Kitagawa",
+      "year": "1973",
+      "DOI": "10.4159\/harvard.9780674188471"
+    },
+    {
+      "key": "r53_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.285.10.1316"
+    },
+    {
+      "key": "r54_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "910",
+      "DOI": "10.1097\/00006842-200111000-00009",
+      "article-title": "Is the glass half empty or half full? A prospective study of optimism and coronary heart disease in the Normative Aging Study.",
+      "volume": "63",
+      "author": "Kubzansky",
+      "year": "2001",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r55_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Stress, appraisal, and coping.",
+      "author": "Lazarus",
+      "year": "1984"
+    },
+    {
+      "key": "r56_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0003-066X.49.12.1004"
+    },
+    {
+      "key": "r57_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "140",
+      "DOI": "10.1016\/S0025-6196(11)64184-0",
+      "article-title": "Optimists vs. pessimists: Survival rate among medical patients over a 30-year period.",
+      "volume": "75",
+      "author": "Maruta",
+      "year": "2000",
+      "journal-title": "Mayo Clinic Proceedings",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0025-6196",
+      "issn-type": "print"
+    },
+    {
+      "key": "r58_10.1037\/0003-066X.59.1.29",
+      "first-page": "108",
+      "article-title": "Allostasis and allostatic load: Implications for neuropsychopharmacology.",
+      "volume": "23",
+      "author": "McEwen",
+      "year": "1999",
+      "journal-title": "Neuropsychopharmacology",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0893-133X",
+      "issn-type": "print"
+    },
+    {
+      "key": "r59_10.1037\/0003-066X.59.1.29",
+      "volume-title": "The end of stress as we know it.",
+      "author": "McEwen",
+      "year": "2002"
+    },
+    {
+      "key": "r60_10.1037\/0003-066X.59.1.29",
+      "first-page": "12",
+      "article-title": "Medical measures and the decline of mortality.",
+      "volume-title": "The sociology of health and illness: Critical perspectives",
+      "author": "McKinlay",
+      "year": "1981"
+    },
+    {
+      "key": "r61_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/0140-6736(91)91234-L"
+    },
+    {
+      "key": "r62_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1097\/00001888-199109000-00023"
+    },
+    {
+      "key": "r63_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0003-066X.58.1.24"
+    },
+    {
+      "key": "r64_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0003-066X.58.1.24"
+    },
+    {
+      "key": "r65_10.1037\/0003-066X.59.1.29",
+      "unstructured": "Muggeridge. 1997"
+    },
+    {
+      "key": "r66_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "5",
+      "DOI": "10.1097\/00006842-199501000-00002",
+      "article-title": "Lack of social participation or religious strength and comfort as risk factors for death after cardiac surgery in the elderly.",
+      "volume": "57",
+      "author": "Oxman",
+      "year": "1995",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r67_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/archinte.161.15.1881"
+    },
+    {
+      "key": "r68_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Opening up: The healing power of confiding in others.",
+      "author": "Pennebaker",
+      "year": "1990"
+    },
+    {
+      "key": "r69_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0022-006X.56.2.239"
+    },
+    {
+      "key": "r70_10.1037\/0003-066X.59.1.29",
+      "first-page": "52",
+      "article-title": "Deathday and birthday: An unexpected connection.",
+      "volume-title": "Statistics: A guide to the unknown",
+      "author": "Phillips",
+      "year": "1972"
+    },
+    {
+      "key": "r71_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/S0140-6736(88)90198-5"
+    },
+    {
+      "key": "r72_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.263.14.1947"
+    },
+    {
+      "key": "r73_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/0140-6736(93)92124-C"
+    },
+    {
+      "key": "r74_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "532",
+      "DOI": "10.1097\/00006842-199209000-00001",
+      "article-title": "The birthday: Lifeline or deadline?",
+      "volume": "54",
+      "author": "Phillips",
+      "year": "1992",
+      "journal-title": "Psychosomatic Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-3174",
+      "issn-type": "print"
+    },
+    {
+      "key": "r75_10.1037\/0003-066X.59.1.29",
+      "first-page": "287",
+      "article-title": "Challenges to the biomedical model: Are actions of patients almost always as important as actions of health professionals in long-term outcomes of chronic diseases?",
+      "volume": "16",
+      "author": "Pincus",
+      "year": "2000",
+      "journal-title": "Advances in Mind-Body Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1470-3556",
+      "issn-type": "print"
+    },
+    {
+      "key": "r76_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "406",
+      "DOI": "10.7326\/0003-4819-129-5-199809010-00011",
+      "article-title": "Social conditions and self-management are more powerful determinants of health than access to care.",
+      "volume": "129",
+      "author": "Pincus",
+      "year": "1998",
+      "journal-title": "Annals of Internal Medicine",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0003-4819",
+      "issn-type": "print"
+    },
+    {
+      "key": "r77_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Primitive and ancient medicine.",
+      "volume": "Vol. 1",
+      "author": "Prioreschi",
+      "year": "1991"
+    },
+    {
+      "key": "r78_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1053\/scnp.2001.0060277"
+    },
+    {
+      "key": "r79_10.1037\/0003-066X.59.1.29",
+      "volume-title": "Drugs, society, and human behavior",
+      "author": "Ray",
+      "year": "2004",
+      "edition": "10th ed."
+    },
+    {
+      "key": "r80_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0278-6133.13.4.299"
+    },
+    {
+      "key": "r81_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "13",
+      "DOI": "10.1136\/bmj.4.5570.13",
+      "article-title": "Mortality of bereavement.",
+      "volume": "4",
+      "author": "Rees",
+      "year": "1967",
+      "journal-title": "British Medical Journal",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0007-1447",
+      "issn-type": "print"
+    },
+    {
+      "key": "r82_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Rotter. 1966",
+      "DOI": "10.1080\/00224545.1966.9712425"
+    },
+    {
+      "key": "r83_10.1037\/0003-066X.59.1.29",
+      "volume-title": "The health of nations: True causes of sickness and well-being.",
+      "author": "Sagan",
+      "year": "1987"
+    },
+    {
+      "key": "r84_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Scheurich. Reconsidering spirituality and medicine. 78 356 2003",
+      "DOI": "10.1097\/00001888-200304000-00005"
+    },
+    {
+      "key": "r85_10.1037\/0003-066X.59.1.29",
+      "first-page": "5",
+      "article-title": "Long-term psychotherapy is highly effective: The Consumer Reports study.",
+      "volume": "21",
+      "author": "Seligman",
+      "year": "1996",
+      "journal-title": "The Harvard Mental Health Letter",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/1057-5022",
+      "issn-type": "print"
+    },
+    {
+      "key": "r86_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1097\/00001888-200201000-00021"
+    },
+    {
+      "key": "r87_10.1037\/0003-066X.59.1.29",
+      "unstructured": "Shubin. Can loneliness be lethal? 4 3 3 1978"
+    },
+    {
+      "key": "r88_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0278-6133.20.3.228"
+    },
+    {
+      "key": "r89_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0003-066X.32.9.752"
+    },
+    {
+      "key": "r90_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.284.13.1705"
+    },
+    {
+      "key": "r91_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "647",
+      "DOI": "10.1111\/j.1749-6632.1987.tb35825.x",
+      "article-title": "An intensive psychoimmunologic study of long-surviving persons with AIDS.",
+      "volume": "496",
+      "author": "Solomon",
+      "year": "1987",
+      "journal-title": "Annals of the New York Academy of Sciences",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0077-8923",
+      "issn-type": "print"
+    },
+    {
+      "issue": "5",
+      "key": "r92_10.1037\/0003-066X.59.1.29",
+      "first-page": "12",
+      "article-title": "Paying more attention to the interaction of mind and body could reduce health care costs, improve quality of life.",
+      "volume": "29",
+      "author": "Spiegel",
+      "year": "1994",
+      "journal-title": "Psychiatric News",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0033-2704",
+      "issn-type": "print"
+    },
+    {
+      "key": "r93_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1056\/NEJM200112133452409"
+    },
+    {
+      "key": "r94_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/S0140-6736(89)91551-1"
+    },
+    {
+      "key": "r95_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "115",
+      "DOI": "10.1080\/08964289.1992.9936961",
+      "article-title": "Development of common cold symptoms following experimental rhinovirus infection is related to prior stressful life events.",
+      "volume": "18",
+      "author": "Stone",
+      "year": "1992",
+      "journal-title": "Behavioral Medicine (Washington, D.C.)",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0896-4289",
+      "issn-type": "print"
+    },
+    {
+      "key": "r96_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Straus. 2001",
+      "DOI": "10.1097\/00001888-200104000-00002"
+    },
+    {
+      "key": "r97_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1097\/00001648-200105000-00015"
+    },
+    {
+      "key": "r98_10.1037\/0003-066X.59.1.29",
+      "unstructured": "Thorn. 2001"
+    },
+    {
+      "key": "r99_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1126\/science.1061542"
+    },
+    {
+      "key": "r100_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1111\/1467-8721.00034"
+    },
+    {
+      "key": "r101_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "first-page": "839",
+      "DOI": "10.1176\/appi.ajp.158.6.839",
+      "article-title": "Successful aging.",
+      "volume": "158",
+      "author": "Vaillant",
+      "year": "2001",
+      "journal-title": "The American Journal of Psychiatry",
+      "ISSN": "http:\/\/id.crossref.org\/issn\/0002-953X",
+      "issn-type": "print"
+    },
+    {
+      "key": "r102_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1037\/0278-6133.20.3.155"
+    },
+    {
+      "key": "r103_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1016\/S0140-6736(98)11392-2"
+    },
+    {
+      "key": "r104_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "crossref",
+      "unstructured": "Wesley. 2003",
+      "DOI": "10.1057\/9781403944023_10"
+    },
+    {
+      "key": "r105_10.1037\/0003-066X.59.1.29",
+      "doi-asserted-by": "publisher",
+      "DOI": "10.1001\/jama.285.10.1348"
+    }
+  ],
+  "container-title": "American Psychologist",
+  "original-title": [],
+  "language": "en",
+  "link": [
+    {
+      "URL": "http:\/\/psycnet.apa.org\/journals\/amp\/59\/1\/29.pdf",
+      "content-type": "unspecified",
+      "content-version": "vor",
+      "intended-application": "similarity-checking"
+    }
+  ],
+  "deposited": {
+    "date-parts": [
+      [
+        2020,
+        3,
+        29
+      ]
+    ],
+    "date-time": "2020-03-29T05:38:13Z",
+    "timestamp": 1585460293000
+  },
+  "score": 1,
+  "resource": {
+    "primary": {
+      "URL": "http:\/\/doi.apa.org\/getdoi.cfm?doi=10.1037\/0003-066X.59.1.29"
+    }
+  },
+  "subtitle": [],
+  "short-title": [],
+  "issued": {
+    "date-parts": [
+      [
+        2004
+      ]
+    ]
+  },
+  "references-count": 105,
+  "journal-issue": {
+    "issue": "1",
+    "published-online": {
+      "date-parts": [
+        [
+          2004
+        ]
+      ]
+    }
+  },
+  "alternative-id": [
+    "2004-10043-004",
+    "14736318"
+  ],
+  "URL": "http:\/\/dx.doi.org\/10.1037\/0003-066X.59.1.29",
+  "relation": {},
+  "ISSN": [
+    "1935-990X",
+    "0003-066X"
+  ],
+  "subject": [
+    "General Psychology",
+    "General Medicine"
+  ],
+  "container-title-short": "American Psychologist",
+  "published": {
+    "date-parts": [
+      [
+        2004
+      ]
+    ]
+  }
+}
