@@ -103,7 +103,7 @@ const FigureComponent = ({
 
     const { isSupportedImageType, fileName } = useMemo(() => {
       const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)$/gi
-      let attachmentFileName = nodeAttrs.label || nodeAttrs.src
+      let attachmentFileName = nodeAttrs.src
 
       if (nodeAttrs.contentType) {
         return {
@@ -238,7 +238,7 @@ const FigureComponent = ({
               <img
                 id={nodeAttrs.id}
                 src={src}
-                alt={nodeAttrs.label}
+                alt={''}
                 style={{ cursor: 'pointer' }}
               />
             </UnstyledButton>
