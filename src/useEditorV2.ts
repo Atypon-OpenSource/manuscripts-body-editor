@@ -15,6 +15,7 @@
  */
 
 import { schema } from '@manuscripts/manuscript-transform'
+import { Slice } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useRef, useState } from 'react'
@@ -82,6 +83,8 @@ const useEditor = (
     if (window) {
       // @ts-ignore
       window.editorView = view
+      // @ts-ignore
+      window.slice = Slice
     }
     return view
   }

@@ -103,7 +103,7 @@ const defaultViewerProps: ViewerProps = {
 }
 
 export const MOCKS = {
-  putAttachment: jest.fn(() => Promise.resolve(true),
+  putAttachment: jest.fn(() => Promise.resolve(true)),
 }
 
 export const defaultEditorProps: EditorProps = {

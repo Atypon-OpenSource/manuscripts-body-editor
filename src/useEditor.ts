@@ -24,7 +24,6 @@ import {
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
 export type CreateView = (
   element: HTMLDivElement,
@@ -39,7 +38,6 @@ const useEditor = <Schema extends ProsemirrorSchema>(
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState<Schema>>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
-  const history = useHistory()
 
   const dispatch = useCallback(
     (tr: Transaction) => {
