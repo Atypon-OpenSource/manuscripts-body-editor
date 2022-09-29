@@ -33,6 +33,7 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../../keys'
 import auxiliary_object_order from '../../plugins/auxiliary_object_order'
 import bibliography from '../../plugins/bibliography'
+import comment_annotation from '../../plugins/comment_annotation'
 import elements from '../../plugins/elements'
 import highlights from '../../plugins/highlight'
 import keywords from '../../plugins/keywords'
@@ -92,6 +93,7 @@ export default (props: PluginProps) => {
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
+    comment_annotation({ setCommentTarget, modelMap }),
     paragraphs(),
     placeholder(),
     tableEditing(),
