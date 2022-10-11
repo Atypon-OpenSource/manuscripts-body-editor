@@ -50,12 +50,10 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { EditorView } from 'prosemirror-view'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
-import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT_TARGET } from './plugins/highlight'
@@ -1012,61 +1010,5 @@ export const deleteHighlightMarkers = (rid: string): Command => (
     })
   tr.setMeta('addToHistory', false)
   dispatch && dispatch(tr)
-  return true
-}
-
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-): boolean
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  viewNode?: ManuscriptNode | EditorView
-): boolean
-
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  viewNode?: ManuscriptNode | EditorView
-) {
-  const { selection } = state
-  const { $anchor, $head } = state.selection
-  const {
-    type: { name },
-    attrs: { id },
-  } = (viewNode && 'attrs' in viewNode && viewNode) || selection.$anchor.node()
-
-  const addCommentAnnotation = () => {
-    const tr = state.tr.setMeta(commentAnnotation, {
-      [SET_COMMENT_TARGET]: id,
-    })
-
-    tr.setMeta('addToHistory', false)
-
-    if (dispatch) {
-      dispatch(tr)
-    }
-  }
-
-  switch (name) {
-    case 'figure_element':
-    case 'table_element':
-      addCommentAnnotation()
-      break
-    case 'paragraph':
-      if ($anchor.textOffset === 0 && $head.textOffset === 0) {
-        addCommentAnnotation()
-        break
-      } else {
-        return insertHighlight(state, dispatch)
-      }
-    default: {
-      if (isTextSelection(selection)) {
-        return insertHighlight(state, dispatch)
-      }
-    }
-  }
-
   return true
 }
