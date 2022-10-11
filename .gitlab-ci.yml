@@ -23,3 +23,7 @@ publish:
       - master
   script:
     - npx @manuscripts/publish
+
+publish_manually:
+  <<: *publish
+  when: manual
