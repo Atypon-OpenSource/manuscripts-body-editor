@@ -601,8 +601,3 @@
 .tools-static {
   position: static;
 }
-
-.comment_icon:active > path {
-  stroke: #F7B314;
-  fill: #FFE0B2;
-}

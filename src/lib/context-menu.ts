@@ -22,7 +22,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { Fragment, Slice } from 'prosemirror-model'
 
-import { addComment, createBlock } from '../commands'
+import { createBlock, insertHighlight } from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -289,7 +289,7 @@ export class ContextMenu {
           section.appendChild(
             this.createMenuItem('Comment', () => {
               const { state, dispatch } = this.view
-              addComment(state, dispatch, this.node)
+              insertHighlight(state, dispatch)
               popper.destroy()
             })
           )

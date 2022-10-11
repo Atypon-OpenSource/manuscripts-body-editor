@@ -19,6 +19,7 @@ import Citation from '@manuscripts/assets/react/ToolbarIconCitation'
 import CodeSnippet from '@manuscripts/assets/react/ToolbarIconCodeSnippet'
 import Equation from '@manuscripts/assets/react/ToolbarIconEquation'
 import Figure from '@manuscripts/assets/react/ToolbarIconFigure'
+import Highlight from '@manuscripts/assets/react/ToolbarIconHighlight'
 import InlineMath from '@manuscripts/assets/react/ToolbarIconInlineMath'
 import Italic from '@manuscripts/assets/react/ToolbarIconItalic'
 import OrderedList from '@manuscripts/assets/react/ToolbarIconOrderedList'
@@ -28,7 +29,6 @@ import Symbol from '@manuscripts/assets/react/ToolbarIconSymbol'
 import Table from '@manuscripts/assets/react/ToolbarIconTable'
 import Underline from '@manuscripts/assets/react/ToolbarIconUnderline'
 import UnorderedList from '@manuscripts/assets/react/ToolbarIconUnorderedList'
-import { AddComment } from '@manuscripts/style-guide'
 import React from 'react'
 
 export default {
@@ -46,5 +46,5 @@ export default {
   equation_element: <Equation />,
   listing_element: <CodeSnippet />,
   symbol: <Symbol />,
-  highlight: <AddComment />,
+  highlight: <Highlight height={16} width={16} />,
 }
