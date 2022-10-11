@@ -19,10 +19,10 @@ import { toggleMark } from 'prosemirror-commands'
 import { wrapInList } from 'prosemirror-schema-list'
 
 import {
+  addComment,
   blockActive,
   canInsert,
   insertBlock,
-  insertHighlight,
   insertInlineCitation,
   markActive,
 } from './commands'
@@ -96,7 +96,7 @@ export const toolbar: ToolbarConfig<ManuscriptSchema> = {
       title: 'Insert comment',
       content: icons.highlight,
       enable: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
-      run: insertHighlight,
+      run: addComment,
     },
   },
   element: {
