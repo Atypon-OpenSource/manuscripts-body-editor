@@ -24,6 +24,16 @@ publish:
   script:
     - npx @manuscripts/publish
 
+
+.deploy_development_def: &deploy_development_def
+  stage: deploy
+  environment:
+    name: development
+    url: https://api-dev.manuscripts.io
+  script:
+    - yarn install --frozen-lockfile --non-interactive
+
+
 publish_manually:
-  <<: *publish
+  <<: *deploy_development_def
   when: manual
