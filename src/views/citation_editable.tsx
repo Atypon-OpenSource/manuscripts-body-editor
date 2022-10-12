@@ -97,7 +97,6 @@ export class CitationEditableView extends CitationView<
         filterLibraryItems={filterLibraryItems}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
-        setCommentTarget={this.props.setCommentTarget}
         handleCancel={this.handleCancel}
         handleClose={this.handleClose}
         handleRemove={this.handleRemove}
@@ -108,11 +107,7 @@ export class CitationEditableView extends CitationView<
         scheduleUpdate={this.props.popper.update}
       />
     ) : (
-      <CitationViewer
-        items={items}
-        setCommentTarget={this.props.setCommentTarget}
-        scheduleUpdate={this.props.popper.update}
-      />
+      <CitationViewer items={items} scheduleUpdate={this.props.popper.update} />
     )
 
     renderReactComponent(component, this.popperContainer)
