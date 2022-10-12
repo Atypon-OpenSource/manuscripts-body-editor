@@ -21,10 +21,11 @@ import { EditableBlockProps } from '../../views/editable_block'
 import { SubmissionAttachment } from '../../views/figure_extended_editable'
 import { OptionsDropdown } from './FilesDropdown'
 
-interface Props {
+export interface FigureOptionsSubviewProps {
   src: string
   submissionId: string
   onUploadClick: (e: SyntheticEvent | Event) => void
+  onDetachClick: () => void
   externalFiles: SubmissionAttachment[]
   modelMap: Map<string, Model>
   mediaAlternativesEnabled: boolean
@@ -32,10 +33,13 @@ interface Props {
   can: Capabilities
 }
 // ReactViewComponentProps
-const FigureOptionsSubview: React.FC<EditableBlockProps & Props> = ({
+const FigureOptionsSubview: React.FC<
+  EditableBlockProps & FigureOptionsSubviewProps
+> = ({
   src,
   submissionId,
   onUploadClick,
+  onDetachClick,
   setFigureAttrs,
   externalFiles,
   modelMap,
@@ -50,6 +54,7 @@ const FigureOptionsSubview: React.FC<EditableBlockProps & Props> = ({
       setFigureAttrs={setFigureAttrs}
       externalFiles={externalFiles}
       modelMap={modelMap}
+      onDetachClick={onDetachClick}
       mediaAlternativesEnabled={mediaAlternativesEnabled}
       canReplaceFile={can?.replaceFile}
       canDownloadFile={can?.downloadFiles}

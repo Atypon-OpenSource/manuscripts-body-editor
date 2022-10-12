@@ -29,8 +29,14 @@ import prettyBytes from 'pretty-bytes'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
-import FigureOptionsSubview from '../components/views/FigureOptionsSubview'
-import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
+import FigureOptionsSubview, {
+  FigureOptionsSubviewProps,
+} from '../components/views/FigureOptionsSubview'
+import {
+  addExternalFileRef,
+  ExternalFileRef,
+  removeExternalFileRef,
+} from '../lib/external-files'
 import { createOnUploadHandler } from '../lib/figure-file-upload'
 import { setNodeAttrs as setGivenNodeAttrs } from '../lib/utils'
 import { createEditableNodeView } from './creators'
@@ -126,10 +132,7 @@ export class FigureEditableView extends FigureView<
       }
     }
 
-    const imageExternalFile = (this.node.attrs
-      .externalFileReferences as ExternalFileRef[])?.find(
-      (file) => file && file.kind === 'imageRepresentation'
-    )
+    const imageExternalFile = this.getExRef()
 
     if (imageExternalFile) {
       const imageExternalFileRef = this.props.externalFiles?.find((file) => {
@@ -149,8 +152,17 @@ export class FigureEditableView extends FigureView<
     return {
       isSupportedImageType: imageFileRegex.test(attachmentFileName),
       fileName: attachmentFileName,
-      url,
+      url: url || '',
     }
+  }
+
+  private getExRef = () => {
+    const imageExternalFile = (this.node.attrs
+      .externalFileReferences as ExternalFileRef[])?.find(
+      (file) => file && file.kind === 'imageRepresentation'
+    )
+
+    return imageExternalFile
   }
 
   public createImage = (isSupportedImageType: boolean, src?: string) => {
@@ -184,6 +196,25 @@ export class FigureEditableView extends FigureView<
   private isInGraphicalAbstract = () => {
     const resolvedPos = this.view.state.doc.resolve(this.getPos())
     return isInGraphicalAbstractSection(resolvedPos)
+  }
+
+  private detachImageRef = () => {
+    if (this.node) {
+      const ref = this.getExRef()
+
+      if (ref) {
+        const newAttrs = {
+          externalFileReferences: removeExternalFileRef(
+            this.node.attrs.externalFileReferences,
+            ref.url
+          ),
+          src: '',
+        }
+        this.setFigureAttrs(newAttrs)
+
+        this.updateFigureModel(newAttrs) // can the model take the attributes same way as PM model has?
+      }
+    }
   }
 
   public updateContents = () => {
@@ -262,25 +293,20 @@ export class FigureEditableView extends FigureView<
       this.container.innerHTML = ''
       this.container.appendChild(img)
 
-      // CREATE REACT TOOLS
-      // Not sure if prosemirror updates the current dom or recreates it from scratch. In the second case the next block is redundant
-      // if (this.reactTools && this.reactTools.parentElement == this.dom) {
-      //   this.dom.removeChild(this.reactTools)
-      // }
-
       // @TODO - because we pass component props to different components the type here is unclear, it must be improved.
-      const componentProps = {
-        src: url,
-        onUploadClick: this.envokeFileInput,
-        externalFiles: this.props.externalFiles,
-        modelMap: this.props.modelMap,
-        mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
-        setFigureAttrs: this.setFigureAttrs,
-        can: this.props.capabilities,
-        submissionId: this.props.submissionId,
-      }
+      if (this.props.dispatch && this.props.theme && this.props.capabilities) {
+        const componentProps: FigureOptionsSubviewProps = {
+          src: url,
+          onUploadClick: this.envokeFileInput,
+          externalFiles: this.props.externalFiles || [],
+          modelMap: this.props.modelMap,
+          onDetachClick: this.detachImageRef,
+          mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
+          setFigureAttrs: this.setFigureAttrs,
+          can: this.props.capabilities,
+          submissionId: this.props.submissionId,
+        }
 
-      if (this.props.dispatch && this.props.theme) {
         this.reactTools = ReactSubView(
           this.props,
           FigureOptionsSubview,
@@ -344,8 +370,20 @@ export class FigureEditableView extends FigureView<
     return element
   }
 
-  public updateFigure = async (file: File) => {
+  public updateFigureModel = (newAttrs: { [key: string]: any }) => {
     const { id } = this.node.attrs
+    const model = this.props.getModel<Figure>(id)
+
+    if (model) {
+      return this.props.saveModel<Figure & ModelAttachment>({
+        ...model,
+        ...newAttrs,
+      })
+    }
+  }
+
+  public updateFigure = async (file: File) => {
+    // const { id } = this.node.attrs
 
     if (file.size > MAX_IMAGE_SIZE) {
       alert(`The figure image size limit is ${prettyBytes(MAX_IMAGE_SIZE)}`)
@@ -355,20 +393,30 @@ export class FigureEditableView extends FigureView<
     const contentType = file.type
     const src = window.URL.createObjectURL(file)
 
-    const model = this.props.getModel<Figure>(id)
+    // const model = this.props.getModel<Figure>(id)
 
-    if (model) {
-      await this.props.saveModel<Figure & ModelAttachment>({
-        ...model,
-        contentType,
-        src,
-        attachment: {
-          id: 'image',
-          type: contentType,
-          data: file,
-        },
-      })
-    }
+    // if (model) {
+    //   await this.props.saveModel<Figure & ModelAttachment>({
+    //     ...model,
+    //     contentType,
+    //     src,
+    //     attachment: {
+    //       id: 'image',
+    //       type: contentType,
+    //       data: file,
+    //     },
+    //   })
+    // }
+
+    await this.updateFigureModel({
+      contentType,
+      src,
+      attachment: {
+        id: 'image',
+        type: contentType,
+        data: file,
+      },
+    })
 
     const { selection, tr } = this.view.state
 

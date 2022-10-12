@@ -60,6 +60,7 @@ interface OptionsProps extends DropdownProps {
   url: string
   submissionId: string
   canDownloadFile?: boolean
+  onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
 }
 
@@ -194,6 +195,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
+  onDetachClick,
   canReplaceFile,
   canDownloadFile,
   setFigureAttrs,
@@ -256,6 +258,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
+          <ListItemButton onClick={onDetachClick}>Detach</ListItemButton>
         </DropdownList>
       )}
     </DropdownWrapper>
