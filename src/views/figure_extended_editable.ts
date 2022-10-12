@@ -370,6 +370,7 @@ export class FigureEditableView extends FigureView<
     return element
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public updateFigureModel = (newAttrs: { [key: string]: any }) => {
     const { id } = this.node.attrs
     const model = this.props.getModel<Figure>(id)

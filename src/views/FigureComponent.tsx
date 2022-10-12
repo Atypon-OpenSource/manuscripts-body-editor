@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// PLEASE NOTE: React views for the editor nodes are depercated. This is kept for historical purposes and possible (but not likely) change of direction on the project
+
 import {
   FigureNode,
   isInGraphicalAbstractSection,
@@ -233,6 +235,9 @@ const FigureComponent = ({
                 mediaAlternativesEnabled={mediaAlternativesEnabled}
                 canReplaceFile={can?.replaceFile}
                 canDownloadFile={can?.downloadFiles}
+                onDetachClick={() => {
+                  console.log('Detach not implemented for Figure View')
+                }}
               />
 
               <img
