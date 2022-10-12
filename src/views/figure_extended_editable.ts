@@ -394,21 +394,6 @@ export class FigureEditableView extends FigureView<
     const contentType = file.type
     const src = window.URL.createObjectURL(file)
 
-    // const model = this.props.getModel<Figure>(id)
-
-    // if (model) {
-    //   await this.props.saveModel<Figure & ModelAttachment>({
-    //     ...model,
-    //     contentType,
-    //     src,
-    //     attachment: {
-    //       id: 'image',
-    //       type: contentType,
-    //       data: file,
-    //     },
-    //   })
-    // }
-
     await this.updateFigureModel({
       contentType,
       src,
