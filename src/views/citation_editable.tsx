@@ -35,10 +35,13 @@ import { EditableBlockProps } from './editable_block'
 export interface CitationEditableProps extends CitationViewProps {
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  deleteModel: (id: string) => Promise<string>
+  modelMap: Map<string, Model>
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
   setLibraryItem: (item: BibliographyItem) => void
+  removeLibraryItem: (id: string) => void
 }
 
 export class CitationEditableView extends CitationView<
@@ -48,11 +51,15 @@ export class CitationEditableView extends CitationView<
     const {
       components: { CitationEditor, CitationViewer },
       filterLibraryItems,
+      setLibraryItem,
+      removeLibraryItem,
       getLibraryItem,
       permissions,
       projectID,
       renderReactComponent,
       saveModel,
+      deleteModel,
+      modelMap,
     } = this.props
 
     const citation = this.getCitation()
@@ -94,12 +101,18 @@ export class CitationEditableView extends CitationView<
     const component = permissions.write ? (
       <CitationEditor
         items={items}
+        saveModel={saveModel}
+        deleteModel={deleteModel}
+        modelMap={modelMap}
+        setLibraryItem={setLibraryItem}
         filterLibraryItems={filterLibraryItems}
+        removeLibraryItem={removeLibraryItem}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
         handleCancel={this.handleCancel}
         handleClose={this.handleClose}
         handleRemove={this.handleRemove}
+        updatePopper={this.updatePopper}
         handleCite={this.handleCite}
         citation={citation}
         updateCitation={updateCitation}
@@ -151,6 +164,14 @@ export class CitationEditableView extends CitationView<
 
     window.setTimeout(() => {
       this.showPopper() // redraw the popper
+    }, 100)
+  }
+
+  private updatePopper = () => {
+    this.props.popper.destroy()
+
+    window.setTimeout(() => {
+      this.showPopper()
     }, 100)
   }
 
