@@ -18,8 +18,8 @@ build:
 
 publish:
   stage: deploy
-  only:
-    refs:
-      - master
+#  only:
+#    refs:
+#      - master
   script:
     - npx @manuscripts/publish
