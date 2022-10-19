@@ -1064,6 +1064,11 @@ export function addComment(
       } else {
         return insertHighlight(state, dispatch)
       }
+    default: {
+      if (isTextSelection(selection)) {
+        return insertHighlight(state, dispatch)
+      }
+    }
   }
 
   return true
