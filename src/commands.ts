@@ -1055,18 +1055,29 @@ export function addComment(
       addCommentAnnotation()
       break
     case 'paragraph':
-      if ($anchor.textOffset === 0 && $head.textOffset === 0) {
+      if (
+        ($anchor.textOffset === 0 && $head.textOffset === 0) ||
+        $anchor.textOffset === $head.textOffset
+      ) {
         addCommentAnnotation()
         break
       } else {
         return insertHighlight(state, dispatch)
       }
-    default: {
-      if (isTextSelection(selection)) {
-        return insertHighlight(state, dispatch)
-      }
-    }
   }
 
   return true
+}
+
+export const updateCommentAnnotationState = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr.setMeta(commentAnnotation, {})
+
+  tr.setMeta('addToHistory', false)
+
+  if (dispatch) {
+    dispatch(tr)
+  }
 }
