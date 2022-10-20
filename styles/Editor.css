@@ -619,7 +619,7 @@
 }
 
 .ProseMirror .block-container > h1.block {
-  display: flex;
+  display: block; /* Using flex causes absolutely positioned buttons for track changed to be misaligned */
 }
 
 .ProseMirror .block-container > .block.fit-to-page {
