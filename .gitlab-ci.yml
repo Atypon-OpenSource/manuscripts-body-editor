@@ -23,3 +23,14 @@ publish:
       - master
   script:
     - npx @manuscripts/publish
+
+
+.publish_manually_def: &publish_manually_def
+  stage: deploy
+  script:
+    - npx @manuscripts/publish
+
+
+publish_manually:
+  <<: *publish_manually_def
+  when: manual
