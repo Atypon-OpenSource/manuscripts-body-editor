@@ -86,7 +86,12 @@ const commentsState = (
   )
   const commentsMap = new Map()
   comments.map((comment) => {
-    commentsMap.set(comment.target, (commentsMap.get(comment.target) || 0) + 1)
+    if (!comment.target.includes('MPHighlight')) {
+      commentsMap.set(
+        comment.target,
+        (commentsMap.get(comment.target) || 0) + 1
+      )
+    }
   })
 
   const decorations: Decoration[] = []
