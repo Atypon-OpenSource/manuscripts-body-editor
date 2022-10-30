@@ -114,17 +114,18 @@ const getCommentIcon = (
   type: NodeType<ManuscriptSchema>
 ) => () => {
   const isInline = type === schema.nodes.citation
+  const isFigure = type === schema.nodes.figure_element
   const element = document.createElement('div')
 
   element.style.height = '0'
-  element.style.position =
-    (type !== schema.nodes.figure_element && 'relative') || ''
-  element.style.display = (isInline && 'inline-flex') || ''
+  element.style.position = (!isFigure && 'relative') || ''
+  element.style.display =
+    (isInline && 'inline-flex') || (isFigure && 'contents') || ''
 
   const iconStyle = (isInline && 'top: -25px;') || 'top: 0; right: 0;'
   const groupIconStyle =
     (isInline && 'top: -30px; right: -22px;') ||
-    (type === schema.nodes.figure_element && 'top: -6px; right: -2px;') ||
+    (isFigure && 'top: -6px; right: -2px;') ||
     'top: -6px; right: -5px;'
 
   const groupCommentIcon =
