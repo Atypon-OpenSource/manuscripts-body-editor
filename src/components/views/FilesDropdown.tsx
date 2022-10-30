@@ -224,7 +224,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
         <GutterIconNormal />
       </OptionsButton>
       {isOpen && (
-        <DropdownList
+        <OptionsDropdownList
           direction={'right'}
           width={128}
           onClick={toggleOpen}
@@ -256,7 +256,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
-        </DropdownList>
+        </OptionsDropdownList>
       )}
     </DropdownWrapper>
   )
@@ -293,6 +293,10 @@ const NestedDropdown: React.FC<{
   )
 }
 
+const OptionsDropdownList = styled(DropdownList)`
+  right: 4%;
+`
+
 const OptionsButton = styled(IconButton)`
   border: 1px solid #e2e2e2 !important;
   box-sizing: border-box;
@@ -303,8 +307,8 @@ const OptionsButton = styled(IconButton)`
   visibility: hidden;
   background: white;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 8px;
+  right: 4%;
 
   &:hover {
     background: #f2fbfc !important;
