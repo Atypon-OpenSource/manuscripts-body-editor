@@ -19,7 +19,10 @@ import {
   isInGraphicalAbstractSection,
 } from '@manuscripts/manuscript-transform'
 
-import { FilesDropdown } from '../components/views/FilesDropdown'
+import {
+  FilesDropdown,
+  FilesDropdownProps,
+} from '../components/views/FilesDropdown'
 import { ExternalFileRef } from '../lib/external-files'
 import { createOnUploadHandler } from '../lib/figure-file-upload'
 import { getMatchingChild, setNodeAttrs } from '../lib/utils'
@@ -176,9 +179,9 @@ export class FigureElementView extends BlockView<
     }
 
     if (this.props.dispatch && this.props.theme) {
-      const componentProps = {
+      const componentProps: FilesDropdownProps = {
         externalFiles: this.props.externalFiles,
-        modelMap: this.props.externalFiles,
+        modelMap: this.props.modelMap,
         onUploadClick: this.envokeFileInput,
         mediaAlternativesEnabled: this.props.mediaAlternativesEnabled,
         addFigureExFileRef: this.addFigureExFileRef,

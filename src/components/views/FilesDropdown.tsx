@@ -64,7 +64,7 @@ interface OptionsProps extends DropdownProps {
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
 }
 
-interface FilesDropdownProps extends DropdownProps {
+export interface FilesDropdownProps extends DropdownProps {
   canUploadFile?: boolean
   addFigureExFileRef: (
     relation: string,
