@@ -158,7 +158,10 @@ export class FigureElementView extends BlockView<
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
-    if (this.props.permissions.write && this.props.capabilities?.uploadFile) {
+    if (
+      this.props.capabilities?.editArticle &&
+      this.props.capabilities?.uploadFile
+    ) {
       const uploadAttachmentHandler = createOnUploadHandler(
         this.props.uploadAttachment,
         this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',

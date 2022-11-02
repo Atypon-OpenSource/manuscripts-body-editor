@@ -34,7 +34,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   protected popperContainer: HTMLDivElement
 
   public selectNode = () => {
-    const { permissions, renderReactComponent } = this.props
+    const { capabilities, renderReactComponent } = this.props
 
     const { rid } = this.node.attrs
 
@@ -43,7 +43,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       : null
 
     if (
-      !permissions.write ||
+      !capabilities?.editArticle ||
       auxiliaryObjectReference?.referencedObject ||
       auxiliaryObjectReference?.referencedObjects
     ) {

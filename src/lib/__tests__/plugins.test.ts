@@ -364,9 +364,6 @@ const buildProps = (
     token: '',
     disabled: false,
   },
-  permissions: {
-    write: true,
-  },
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
 })

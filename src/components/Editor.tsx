@@ -79,10 +79,7 @@ export interface EditorProps extends ViewerProps {
     token: string
     disabled: boolean
   }
-  permissions: {
-    write: boolean
-  }
-  capabilites?: Capabilities
+  capabilities?: Capabilities
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
 }
@@ -103,11 +100,11 @@ export class Editor extends React.PureComponent<EditorProps> {
       doc,
       environment,
       handleStateChange,
-      permissions,
+      capabilities,
     } = this.props
 
     this.view = new EditorView(undefined, {
-      editable: () => permissions.write,
+      editable: () => !!capabilities?.editArticle,
       state: EditorState.create<ManuscriptSchema>({
         doc,
         schema,

@@ -37,7 +37,7 @@ export class FigureEditableView extends FigureView<EditableBlockProps> {
     } else {
       const img = this.createFigureImage() || this.createFigurePlaceholder()
 
-      if (this.props.permissions.write) {
+      if (this.props.capabilities?.editArticle) {
         const input = document.createElement('input')
         input.accept = 'image/*'
         input.type = 'file'

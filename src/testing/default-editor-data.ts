@@ -150,9 +150,6 @@ export const defaultEditorProps: EditorProps = {
       token: 'test-jupyter-token',
       disabled: false,
     },
-    permissions: {
-      write: true,
-    },
     components: {},
     environment: undefined,
   },
