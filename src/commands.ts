@@ -53,7 +53,7 @@ import { findWrapping } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
-import { getChildOfType } from './lib/utils'
+import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
@@ -980,6 +980,7 @@ export const insertHighlight = (
     .insert(from, fromNode)
     .insert(to + 1, toNode)
     .setMeta(highlightKey, { [SET_COMMENT_TARGET]: highlight._id })
+    .setMeta(highlightKey, { [SET_COMMENT_TARGET]: highlight._id })
 
   tr.setMeta('addToHistory', false)
 
@@ -1031,13 +1032,13 @@ export function addComment(
   viewNode?: ManuscriptNode | EditorView
 ) {
   const { selection } = state
-  const { $anchor, $head } = state.selection
+  const { $anchor, $head, from, to } = state.selection
   const {
     type: { name },
     attrs: { id },
   } = (viewNode && 'attrs' in viewNode && viewNode) || selection.$anchor.node()
 
-  const addCommentAnnotation = () => {
+  const addCommentAnnotation = (id: string) => {
     const tr = state.tr.setMeta(commentAnnotation, {
       [SET_COMMENT_TARGET]: id,
     })
@@ -1052,18 +1053,28 @@ export function addComment(
   switch (name) {
     case 'figure_element':
     case 'table_element':
-      addCommentAnnotation()
+      addCommentAnnotation(id)
       break
     case 'paragraph':
       if (
         ($anchor.textOffset === 0 && $head.textOffset === 0) ||
         $anchor.textOffset === $head.textOffset
       ) {
-        addCommentAnnotation()
+        addCommentAnnotation(id)
         break
       } else {
         return insertHighlight(state, dispatch)
       }
+    case 'section_title': {
+      const sectionTitle = state.doc.slice(from, to).content
+      if (sectionTitle.size === 0) {
+        const sectionId = findParentNodeWithId(selection)?.node.attrs.id
+        addCommentAnnotation(sectionId)
+        break
+      } else {
+        return insertHighlight(state, dispatch)
+      }
+    }
     default: {
       if (isTextSelection(selection)) {
         return insertHighlight(state, dispatch)
