@@ -18,6 +18,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element_editable'
+import bibliographyItem from '../../views/bibliography_item_editable'
 import blockquoteElement from '../../views/blockquote_element_editable'
 import bulletList from '../../views/bullet_list_editable'
 import citation, { CitationEditableProps } from '../../views/citation_editable'
@@ -52,6 +53,7 @@ type EditorProps = EditableBlockProps &
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
+    bibliography_item: bibliographyItem(props),
     bibliography_element: bibliographyElement(props),
     blockquote_element: blockquoteElement(props),
     bullet_list: bulletList(props),
