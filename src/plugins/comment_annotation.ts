@@ -111,12 +111,15 @@ const commentsState = (
 const getCommentIcon = (commentCount: number, node: ManuscriptNode) => () => {
   const { type, attrs } = node
   const element = document.createElement('div')
-  const elementClass =
-    type === schema.nodes.section
-      ? 'block_comment'
-      : type === schema.nodes.figure_element
-      ? 'figure_comment'
-      : 'inline_comment'
+  const isSection =
+    type === schema.nodes.section ||
+    type === type.schema.nodes.footnotes_section ||
+    type === type.schema.nodes.bibliography_section
+  const elementClass = isSection
+    ? 'block_comment'
+    : type === schema.nodes.figure_element
+    ? 'figure_comment'
+    : 'inline_comment'
 
   if (type === schema.nodes.citation) {
     element.id = attrs['rid']
