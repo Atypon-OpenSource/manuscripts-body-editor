@@ -24,7 +24,6 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
-import { NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -101,7 +100,7 @@ const commentsState = (
       commentsMap.get(node.attrs['id']) || commentsMap.get(node.attrs['rid'])
     if (commentCount) {
       decorations.push(
-        Decoration.widget(pos + 1, getCommentIcon(commentCount, node.type))
+        Decoration.widget(pos + 1, getCommentIcon(commentCount, node))
       )
     }
   })
@@ -109,35 +108,33 @@ const commentsState = (
   return { comments, decorations: DecorationSet.create(doc, decorations) }
 }
 
-const getCommentIcon = (
-  commentCount: number,
-  type: NodeType<ManuscriptSchema>
-) => () => {
-  const isInline = type === schema.nodes.citation
-  const isFigure = type === schema.nodes.figure_element
+const getCommentIcon = (commentCount: number, node: ManuscriptNode) => () => {
+  const { type, attrs } = node
   const element = document.createElement('div')
+  const elementClass =
+    type === schema.nodes.section
+      ? 'block_comment'
+      : type === schema.nodes.figure_element
+      ? 'figure_comment'
+      : 'inline_comment'
 
-  element.style.height = '0'
-  element.style.position = (!isFigure && 'relative') || ''
-  element.style.display =
-    (isInline && 'inline-flex') || (isFigure && 'contents') || ''
+  if (type === schema.nodes.citation) {
+    element.id = attrs['rid']
+    element.classList.add('inline_citation')
+  }
 
-  const iconStyle = (isInline && 'top: -25px;') || 'top: 0; right: 0;'
-  const groupIconStyle =
-    (isInline && 'top: -30px; right: -22px;') ||
-    (isFigure && 'top: -6px; right: -2px;') ||
-    'top: -6px; right: -5px;'
+  element.classList.add('block_comment_button', elementClass)
 
   const groupCommentIcon =
     (commentCount > 1 &&
-      ` <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; cursor: pointer; ${groupIconStyle}">
+      ` <svg class="group_comment_icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="12" height="12" rx="6" fill="#F7B314"></rect>
           <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${commentCount}</text>
       </svg>`) ||
     ''
 
   element.innerHTML = `
-      <svg class="comment_icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; cursor: pointer; ${iconStyle};">
+      <svg class="comment_icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.0625 2.9375V7.3125L1.4375 11.6875H12.8125C13.7794 11.6875 14.5625 10.9044 14.5625 9.9375V2.9375C14.5625 1.97062 13.7794 1.1875 12.8125 1.1875H5.8125C4.84562 1.1875 4.0625 1.97062 4.0625 2.9375Z"
                 fill="#FFFCDB" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M6.6875 4.6875H11.9375" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>

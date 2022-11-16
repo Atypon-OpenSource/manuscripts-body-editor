@@ -289,7 +289,7 @@ export class ContextMenu {
           section.appendChild(
             this.createMenuItem('Comment', () => {
               const { state, dispatch } = this.view
-              addComment(state, dispatch, this.node)
+              addComment(state, dispatch, this.node, this.resolvePos())
               popper.destroy()
             })
           )

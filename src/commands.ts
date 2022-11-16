@@ -35,6 +35,7 @@ import {
   ManuscriptNodeSelection,
   ManuscriptNodeType,
   ManuscriptResolvedPos,
+  ManuscriptSchema,
   ManuscriptTextSelection,
   ManuscriptTransaction,
   SectionNode,
@@ -42,7 +43,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import { Command } from 'prosemirror-commands'
-import { NodeRange, ResolvedPos } from 'prosemirror-model'
+import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
   NodeSelection,
   Selection,
@@ -50,7 +51,7 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { EditorView } from 'prosemirror-view'
+import { findParentNode } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
@@ -1023,66 +1024,136 @@ export function addComment(
 export function addComment(
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  viewNode?: ManuscriptNode | EditorView
+  viewNode?: ManuscriptNode,
+  resolvePos?: ResolvedPos<ManuscriptSchema>
 ): boolean
 
+/**
+ * when the value of viewNode is undefined, function call came from __toolbar__ or __menus__ otherwise
+ * function call will be for __context-menu__.
+ *
+ * Will add block or highlight comment based on this cases:
+ *  > For context-menu call:
+ *    * if the selected text parent is the `viewNode` add highlight comment, ***for paragraph
+ *      if we selected all of the text will add block comment***
+ *    * otherwise add block comment for `viewNode`
+ *
+ *  > For toolbar or menus call:
+ *    * if we select text will add highlight comment for it, and the same exception
+ *    will be for paragraph, as mentioned above
+ *    * otherwise add block comment for the parent node of selection
+ * @param viewNode: node beside the __context-menu(3DotMenu)__
+ * @param state
+ * @param dispatch
+ * @param resolvePos
+ */
 export function addComment(
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  viewNode?: ManuscriptNode | EditorView
+  viewNode?: ManuscriptNode,
+  resolvePos?: ResolvedPos<ManuscriptSchema>
 ) {
   const { selection } = state
-  const { $anchor, $head, from, to } = state.selection
-  const {
-    type: { name },
-    attrs: { id },
-  } = (viewNode && 'attrs' in viewNode && viewNode) || selection.$anchor.node()
+  const isThereTextSelected = selection.content().size > 0
+  const { type: selectionNodeType, id: selectionParentId } = getParentNode(
+    selection
+  )
 
-  const addCommentAnnotation = (id: string) => {
-    const tr = state.tr.setMeta(commentAnnotation, {
-      [SET_COMMENT_TARGET]: id,
-    })
+  if (viewNode && resolvePos) {
+    const { type: viewNodeType, id: viewNodeId } = getParentNode(
+      TextSelection.near(resolvePos)
+    )
 
-    tr.setMeta('addToHistory', false)
-
-    if (dispatch) {
-      dispatch(tr)
+    if (isThereTextSelected && selectionParentId === viewNodeId) {
+      return addHighlightComment(viewNodeId, viewNodeType, state, dispatch)
+    } else {
+      return addBlockComment(viewNodeId, viewNodeType, state, dispatch)
+    }
+  } else {
+    if (isThereTextSelected) {
+      return addHighlightComment(
+        selectionParentId,
+        selectionNodeType,
+        state,
+        dispatch
+      )
+    } else {
+      // TODO:: add block comment for the selection parent node or what!!!
+      return addBlockComment(
+        selectionParentId,
+        selectionNodeType,
+        state,
+        dispatch
+      )
     }
   }
+}
 
-  switch (name) {
-    case 'figure_element':
-    case 'table_element':
-      addCommentAnnotation(id)
-      break
-    case 'paragraph':
-      if (
-        ($anchor.textOffset === 0 && $head.textOffset === 0) ||
-        $anchor.textOffset === $head.textOffset
-      ) {
-        addCommentAnnotation(id)
-        break
-      } else {
-        return insertHighlight(state, dispatch)
-      }
-    case 'section_title': {
-      const sectionTitle = state.doc.slice(from, to).content
-      if (sectionTitle.size === 0) {
-        const sectionId = findParentNodeWithId(selection)?.node.attrs.id
-        addCommentAnnotation(sectionId)
-        break
-      } else {
-        return insertHighlight(state, dispatch)
-      }
-    }
-    default: {
-      if (isTextSelection(selection)) {
-        return insertHighlight(state, dispatch)
-      }
-    }
+/**
+ * This to make sure we get block node
+ */
+const getParentNode = (selection: Selection) => {
+  const parentNode = findParentNodeWithId(selection)
+  let node = parentNode?.node as ManuscriptNode
+
+  if (node.type === node.type.schema.nodes.table && parentNode) {
+    const findTableElement = findParentNode(
+      (node) => node.type === node.type.schema.nodes.table_element
+    )
+    node = findTableElement(selection)?.node as ManuscriptNode
+  }
+
+  return { type: node.type, id: node.attrs.id }
+}
+
+// TODO:: remove this check when we allow all type of block node to have comment
+const isAllowedType = (type: NodeType<ManuscriptSchema>) =>
+  type === type.schema.nodes.section ||
+  type === type.schema.nodes.footnotes_section ||
+  type === type.schema.nodes.bibliography_section ||
+  type === type.schema.nodes.paragraph ||
+  type === type.schema.nodes.figure_element ||
+  type === type.schema.nodes.table_element
+
+const addBlockComment = (
+  id: string,
+  type: NodeType<ManuscriptSchema>,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr.setMeta(commentAnnotation, {
+    [SET_COMMENT_TARGET]: id,
+  })
+
+  tr.setMeta('addToHistory', false)
+
+  if (dispatch && isAllowedType(type)) {
+    dispatch(tr)
   }
 
   return true
+}
+
+const addHighlightComment = (
+  id: string,
+  type: NodeType<ManuscriptSchema>,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  if (type === state.schema.nodes.paragraph) {
+    const { $anchor, $head } = state.selection
+    const isAllTextSelected =
+      ($anchor.textOffset === 0 && $head.textOffset === 0) ||
+      $anchor.textOffset === $head.textOffset
+
+    if (isAllTextSelected) {
+      return addBlockComment(id, type, state, dispatch)
+    } else {
+      return insertHighlight(state, dispatch)
+    }
+  } else {
+    return insertHighlight(state, dispatch)
+  }
 }
 
 export const updateCommentAnnotationState = (
