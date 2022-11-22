@@ -24,31 +24,35 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
+import { NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { SET_COMMENT_TARGET } from './highlight'
+import { SET_COMMENT } from './highlight'
 
-export const commentAnnotation = new PluginKey<
-  CommentAnnotationState,
-  ManuscriptSchema
->('comment_annotation')
+export const commentAnnotation = new PluginKey<DecorationSet, ManuscriptSchema>(
+  'comment_annotation'
+)
 
 interface CommentAnnotationProps {
   setCommentTarget: (target?: string) => void
   modelMap: Map<string, Model>
 }
 
-type CommentAnnotationState = {
-  comments: CommentAnnotation[]
-  decorations: DecorationSet
+type Comment = {
+  id: string
+  target: string
+  position: number
+  location: 'block' | 'point'
+  count: number
+  targetType: NodeType
 }
 
 /**
  * This plugin creates a icon decoration for both inline and block comment.
  */
 export default (props: CommentAnnotationProps) => {
-  return new Plugin<CommentAnnotationState, ManuscriptSchema>({
+  return new Plugin<DecorationSet, ManuscriptSchema>({
     key: commentAnnotation,
     state: {
       init: (tr) => commentsState(props.modelMap, tr.doc),
@@ -56,8 +60,8 @@ export default (props: CommentAnnotationProps) => {
         const meta = tr.getMeta(commentAnnotation)
 
         if (meta) {
-          if (SET_COMMENT_TARGET in meta) {
-            props.setCommentTarget(meta[SET_COMMENT_TARGET])
+          if (SET_COMMENT in meta) {
+            props.setCommentTarget(meta[SET_COMMENT])
           }
         }
 
@@ -68,7 +72,7 @@ export default (props: CommentAnnotationProps) => {
       decorations: (state) => {
         const pluginState = commentAnnotation.getState(state)
         if (pluginState) {
-          return pluginState.decorations
+          return pluginState
         }
       },
     },
@@ -78,61 +82,86 @@ export default (props: CommentAnnotationProps) => {
 const commentsState = (
   modelMap: Map<string, Model>,
   doc: ManuscriptNode
-): CommentAnnotationState => {
+): DecorationSet => {
   const comments = getModelsByType<CommentAnnotation>(
     modelMap,
     ObjectTypes.CommentAnnotation
   )
-  const commentsMap = new Map()
-  comments.map((comment) => {
-    if (!comment.target.includes('MPHighlight')) {
-      commentsMap.set(
-        comment.target,
-        (commentsMap.get(comment.target) || 0) + 1
-      )
+  /**
+   * gather comments with their count that belongs to a target node
+   */
+  const targetComments = comments.reduce((map, { _id, target, selector }) => {
+    if (!selector || selector.from === selector.to) {
+      const comments = map.get(target)?.map((comment) => {
+        const { id, count } = comment as Comment
+        return _id === id ? { ...comment, count: count + 1 } : comment
+      }) || [
+        {
+          id: _id,
+          target,
+          location: selector ? 'point' : 'block',
+          position: selector?.from,
+          count: 1,
+        },
+      ]
+
+      map.set(target, comments)
     }
-  })
+    return map
+  }, new Map<string, Partial<Comment>[]>())
 
   const decorations: Decoration[] = []
 
   doc.descendants((node, pos) => {
-    const commentCount =
-      commentsMap.get(node.attrs['id']) || commentsMap.get(node.attrs['rid'])
-    if (commentCount) {
-      decorations.push(
-        Decoration.widget(pos + 1, getCommentIcon(commentCount, node))
-      )
+    const id = node.attrs['id'] || node.attrs['rid']
+    const targetComment = targetComments.get(id)
+    if (targetComment) {
+      targetComment.map((comment) => {
+        decorations.push(
+          Decoration.widget(
+            comment.position || pos + 1,
+            getCommentIcon({ ...comment, targetType: node.type } as Comment)
+          )
+        )
+      })
     }
   })
 
-  return { comments, decorations: DecorationSet.create(doc, decorations) }
+  return DecorationSet.create(doc, decorations)
 }
 
-const getCommentIcon = (commentCount: number, node: ManuscriptNode) => () => {
-  const { type, attrs } = node
+const getCommentIcon = (comment: Comment) => () => {
+  const { id, target, targetType, count, location } = comment
   const element = document.createElement('div')
   const isSection =
-    type === schema.nodes.section ||
-    type === type.schema.nodes.footnotes_section ||
-    type === type.schema.nodes.bibliography_section
+    targetType === schema.nodes.section ||
+    targetType === targetType.schema.nodes.footnotes_section ||
+    targetType === targetType.schema.nodes.bibliography_section
   const elementClass = isSection
     ? 'block_comment'
-    : type === schema.nodes.figure_element
+    : targetType === schema.nodes.figure_element
     ? 'figure_comment'
     : 'inline_comment'
 
-  if (type === schema.nodes.citation) {
-    element.id = attrs['rid']
-    element.classList.add('inline_citation')
+  if (targetType === schema.nodes.citation || location === 'point') {
+    element.id = target
+    element.classList.add(
+      location === 'point' ? 'point_comment' : 'inline_citation'
+    )
   }
 
   element.classList.add('block_comment_button', elementClass)
 
+  element.onclick = () => {
+    // TODO:: scroll and select comment in the inspector
+    console.log(id)
+  }
+
   const groupCommentIcon =
-    (commentCount > 1 &&
+    (count > 1 &&
       ` <svg class="group_comment_icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="12" height="12" rx="6" fill="#F7B314"></rect>
-          <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${commentCount}</text>
+          <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${count}</text>
       </svg>`) ||
     ''
 

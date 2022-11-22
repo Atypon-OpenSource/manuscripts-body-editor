@@ -20,7 +20,8 @@ export interface HighlightPluginProps {
 }
 
 export interface HighlightStartMarker {
-  rid: string
+  id: string
+  tid: string
   start: number
 }
 export interface HighlightMarker extends HighlightStartMarker {

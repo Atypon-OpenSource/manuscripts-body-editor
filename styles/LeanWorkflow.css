@@ -665,3 +665,10 @@
   top: -8%;
   display: inline-flex;
 }
+
+.block_comment_button.point_comment {
+  z-index: 1;
+  left: 0;
+  bottom: 38px;
+  display: inline-flex;
+}
