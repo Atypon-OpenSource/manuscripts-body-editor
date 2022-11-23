@@ -87,35 +87,48 @@ const commentsState = (
     modelMap,
     ObjectTypes.CommentAnnotation
   )
+  const blockCommentsCount = new Map<string, number>()
+  const pointCommentsCount = new Map<string, number>()
+
   /**
    * gather comments with their count that belongs to a target node
    */
   const targetComments = comments.reduce((map, { _id, target, selector }) => {
-    if (!selector || selector.from === selector.to) {
-      const comments = map.get(target)?.map((comment) => {
-        const { id, count } = comment as Comment
-        return _id === id ? { ...comment, count: count + 1 } : comment
-      }) || [
+    if (
+      !selector ||
+      (selector.from === selector.to &&
+        !target.includes(ObjectTypes.CommentAnnotation))
+    ) {
+      let count
+      if (!selector) {
+        count = (blockCommentsCount.get(target) || 0) + 1
+        blockCommentsCount.set(target, count)
+      } else {
+        count = (pointCommentsCount.get(target) || 0) + 1
+        pointCommentsCount.set(target, count)
+      }
+
+      const comments = [
+        ...(map.get(target) || []),
         {
           id: _id,
           target,
           location: selector ? 'point' : 'block',
           position: selector?.from,
-          count: 1,
+          count: count,
         },
       ]
-
       map.set(target, comments)
     }
     return map
-  }, new Map<string, Partial<Comment>[]>())
+  }, new Map<string, Omit<Partial<Comment>, 'targetType' | 'location'>[]>())
 
   const decorations: Decoration[] = []
 
   doc.descendants((node, pos) => {
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = targetComments.get(id)
-    if (targetComment) {
+    if (targetComment && isAllowedType(node.type)) {
       targetComment.map((comment) => {
         decorations.push(
           Decoration.widget(
@@ -130,6 +143,10 @@ const commentsState = (
   return DecorationSet.create(doc, decorations)
 }
 
+// TODO:: remove this check when we implement individual references
+const isAllowedType = (type: NodeType) =>
+  type !== type.schema.nodes.bibliography_element
+
 const getCommentIcon = (comment: Comment) => () => {
   const { id, target, targetType, count, location } = comment
   const element = document.createElement('div')
@@ -137,9 +154,11 @@ const getCommentIcon = (comment: Comment) => () => {
     targetType === schema.nodes.section ||
     targetType === targetType.schema.nodes.footnotes_section ||
     targetType === targetType.schema.nodes.bibliography_section
+  const isFigure = targetType === schema.nodes.figure_element
+
   const elementClass = isSection
     ? 'block_comment'
-    : targetType === schema.nodes.figure_element
+    : isFigure
     ? 'figure_comment'
     : 'inline_comment'
 
@@ -153,8 +172,14 @@ const getCommentIcon = (comment: Comment) => () => {
   element.classList.add('block_comment_button', elementClass)
 
   element.onclick = () => {
-    // TODO:: scroll and select comment in the inspector
-    console.log(id)
+    const el = document.querySelector(`[id="${id}"]`)
+    if (el) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+    }
   }
 
   const groupCommentIcon =
