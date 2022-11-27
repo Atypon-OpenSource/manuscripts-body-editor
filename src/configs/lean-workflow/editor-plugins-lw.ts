@@ -56,6 +56,7 @@ interface PluginProps {
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget: (commentTarget?: string) => void
+  setSelectedComment: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
@@ -69,6 +70,7 @@ export default (props: PluginProps) => {
     modelMap,
     saveModel,
     setCommentTarget,
+    setSelectedComment,
   } = props
 
   const plugins = props.plugins || []
@@ -93,7 +95,7 @@ export default (props: PluginProps) => {
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
-    comment_annotation({ setCommentTarget, modelMap }),
+    comment_annotation({ setCommentTarget, setSelectedComment, modelMap }),
     paragraphs(),
     placeholder(),
     tableEditing(),

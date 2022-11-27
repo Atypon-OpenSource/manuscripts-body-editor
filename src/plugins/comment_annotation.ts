@@ -64,6 +64,7 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
 
 interface CommentAnnotationProps {
   setCommentTarget: (target?: string) => void
+  setSelectedComment: (id?: string) => void
   modelMap: Map<string, Model>
 }
 
@@ -83,7 +84,8 @@ export default (props: CommentAnnotationProps) => {
   return new Plugin<DecorationSet, ManuscriptSchema>({
     key: commentAnnotation,
     state: {
-      init: (tr) => commentsState(props.modelMap, tr.doc),
+      init: (tr) =>
+        commentsState(props.modelMap, props.setSelectedComment, tr.doc),
       apply: (tr) => {
         const meta = tr.getMeta(commentAnnotation)
 
@@ -93,7 +95,7 @@ export default (props: CommentAnnotationProps) => {
           }
         }
 
-        return commentsState(props.modelMap, tr.doc)
+        return commentsState(props.modelMap, props.setSelectedComment, tr.doc)
       },
     },
     props: {
@@ -111,6 +113,7 @@ type CommentsMapType = Map<string, Omit<Partial<Comment>, 'targetType'>>
 
 const commentsState = (
   modelMap: Map<string, Model>,
+  setSelectedComment: (id?: string) => void,
   doc: ManuscriptNode
 ): DecorationSet => {
   const comments = getModelsByType<CommentAnnotation>(
@@ -148,7 +151,10 @@ const commentsState = (
         decorations.push(
           Decoration.widget(
             comment.position || pos + 1,
-            getCommentIcon({ ...comment, targetType: node.type } as Comment),
+            getCommentIcon(
+              { ...comment, targetType: node.type } as Comment,
+              setSelectedComment
+            ),
             { key: comment.id }
           )
         )
@@ -163,7 +169,10 @@ const commentsState = (
 const isAllowedType = (type: NodeType) =>
   type !== type.schema.nodes.bibliography_element
 
-const getCommentIcon = (comment: Comment) => () => {
+const getCommentIcon = (
+  comment: Comment,
+  setSelectedComment: (id?: string) => void
+) => () => {
   const { id, targetType, target, count, location } = comment
   const commentId = location === 'block' ? target : id
   const element = document.createElement('div')
@@ -188,7 +197,10 @@ const getCommentIcon = (comment: Comment) => () => {
 
   element.classList.add('block_comment_button', elementClass)
 
-  element.onclick = () => commentScroll(commentId, 'inspector')
+  element.onclick = () => {
+    commentScroll(commentId, 'inspector')
+    setSelectedComment(undefined)
+  }
 
   const groupCommentIcon =
     (count > 1 &&
