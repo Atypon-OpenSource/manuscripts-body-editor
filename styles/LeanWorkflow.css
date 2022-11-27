@@ -614,6 +614,11 @@
   fill: #FFE0B2;
 }
 
+.selected_comment{
+  stroke: #F7B314;
+  fill: #FFE0B2;
+}
+
 .block_comment_button.block_comment {
   z-index: 10;
   left: 93%;

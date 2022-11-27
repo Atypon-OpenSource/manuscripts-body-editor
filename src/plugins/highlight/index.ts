@@ -44,11 +44,9 @@ export const getHighlightTarget = (
   comment: CommentAnnotation,
   state: ManuscriptEditorState
 ) => {
-  if (hasHighlightTarget(comment)) {
-    return highlightKey
-      .getState(state)
-      ?.highlights.find((item) => item.id === comment._id)
-  }
+  return highlightKey
+    .getState(state)
+    ?.highlights.find((item) => item.id === comment._id)
 }
 
 export const selectedHighlights = (state: ManuscriptEditorState) => {

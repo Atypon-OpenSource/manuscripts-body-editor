@@ -34,6 +34,34 @@ export const commentAnnotation = new PluginKey<DecorationSet, ManuscriptSchema>(
   'comment_annotation'
 )
 
+export const commentScroll = (
+  id: string,
+  direction: 'editor' | 'inspector',
+  isHighlight?: boolean
+) => {
+  const elementClass = isHighlight ? 'highlight-marker' : 'ProseMirror-widget'
+  const commentIcon = document.querySelector(`[id="${id}"].${elementClass}`)
+  const commentCard = document.querySelectorAll(`.comments-group [id="${id}"]`)
+
+  if (commentIcon && commentCard.length > 0) {
+    const element = direction === 'editor' ? commentIcon : commentCard.item(0)
+
+    document
+      .querySelectorAll(`.selected_comment`)
+      .forEach((element) => element.classList.remove('selected_comment'))
+    commentIcon.classList.add('selected_comment')
+    commentCard.forEach((node) => node.classList.add('selected_comment'))
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }
+}
+
+const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
+  comment.selector && comment.selector.from !== comment.selector.to
+
 interface CommentAnnotationProps {
   setCommentTarget: (target?: string) => void
   modelMap: Map<string, Model>
@@ -79,6 +107,8 @@ export default (props: CommentAnnotationProps) => {
   })
 }
 
+type CommentsMapType = Map<string, Omit<Partial<Comment>, 'targetType'>>
+
 const commentsState = (
   modelMap: Map<string, Model>,
   doc: ManuscriptNode
@@ -87,41 +117,26 @@ const commentsState = (
     modelMap,
     ObjectTypes.CommentAnnotation
   )
-  const blockCommentsCount = new Map<string, number>()
-  const pointCommentsCount = new Map<string, number>()
 
   /**
    * gather comments with their count that belongs to a target node
    */
   const targetComments = comments.reduce((map, { _id, target, selector }) => {
-    if (
-      !selector ||
-      (selector.from === selector.to &&
-        !target.includes(ObjectTypes.CommentAnnotation))
-    ) {
-      let count
-      if (!selector) {
-        count = (blockCommentsCount.get(target) || 0) + 1
-        blockCommentsCount.set(target, count)
-      } else {
-        count = (pointCommentsCount.get(target) || 0) + 1
-        pointCommentsCount.set(target, count)
-      }
+    if (!isHighlightComment({ selector })) {
+      const commentsMap = (map.get(target) ||
+        map.set(target, new Map()).get(target)) as CommentsMapType
+      const commentId = selector ? _id : target
 
-      const comments = [
-        ...(map.get(target) || []),
-        {
-          id: _id,
-          target,
-          location: selector ? 'point' : 'block',
-          position: selector?.from,
-          count: count,
-        },
-      ]
-      map.set(target, comments)
+      commentsMap.set(commentId, {
+        id: _id,
+        target,
+        location: selector ? 'point' : 'block',
+        position: selector?.from,
+        count: (commentsMap.get(commentId)?.count || 0) + 1,
+      })
     }
     return map
-  }, new Map<string, Omit<Partial<Comment>, 'targetType' | 'location'>[]>())
+  }, new Map<string, CommentsMapType>())
 
   const decorations: Decoration[] = []
 
@@ -129,11 +144,12 @@ const commentsState = (
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = targetComments.get(id)
     if (targetComment && isAllowedType(node.type)) {
-      targetComment.map((comment) => {
+      Array.from(targetComment.values()).map((comment) => {
         decorations.push(
           Decoration.widget(
             comment.position || pos + 1,
-            getCommentIcon({ ...comment, targetType: node.type } as Comment)
+            getCommentIcon({ ...comment, targetType: node.type } as Comment),
+            { key: comment.id }
           )
         )
       })
@@ -148,8 +164,10 @@ const isAllowedType = (type: NodeType) =>
   type !== type.schema.nodes.bibliography_element
 
 const getCommentIcon = (comment: Comment) => () => {
-  const { id, target, targetType, count, location } = comment
+  const { id, targetType, target, count, location } = comment
+  const commentId = location === 'block' ? target : id
   const element = document.createElement('div')
+  element.id = commentId
   const isSection =
     targetType === schema.nodes.section ||
     targetType === targetType.schema.nodes.footnotes_section ||
@@ -163,7 +181,6 @@ const getCommentIcon = (comment: Comment) => () => {
     : 'inline_comment'
 
   if (targetType === schema.nodes.citation || location === 'point') {
-    element.id = target
     element.classList.add(
       location === 'point' ? 'point_comment' : 'inline_citation'
     )
@@ -171,16 +188,7 @@ const getCommentIcon = (comment: Comment) => () => {
 
   element.classList.add('block_comment_button', elementClass)
 
-  element.onclick = () => {
-    const el = document.querySelector(`[id="${id}"]`)
-    if (el) {
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'nearest',
-      })
-    }
-  }
+  element.onclick = () => commentScroll(commentId, 'inspector')
 
   const groupCommentIcon =
     (count > 1 &&
