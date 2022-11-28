@@ -30,7 +30,6 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 const createBibliography = async (items: BibliographyItem[]) => {
-  console.log('create bibliography')
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
   const citationStyle = await loadCitationStyle(styleOpts)
   const [
@@ -42,8 +41,6 @@ const createBibliography = async (items: BibliographyItem[]) => {
     console.error(bibmeta.bibliography_errors)
   }
   const contents = createBibliographyElementContents(bibliographyItems)
-  console.log('bibliography content ^^')
-  console.log(contents.outerHTML)
   return contents
 }
 
@@ -51,29 +48,45 @@ export class BibliographyItemView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView {
   public initialise = () => {
-    console.log('initialize - bibliography item - ^^^^')
     this.createDOM()
     this.updateContents()
   }
 
   public createDOM = () => {
     this.dom = document.createElement('div')
-    this.dom.className = 'csl-entry'
+    this.dom.className = 'bib-item'
     this.dom.setAttribute('id', this.node.attrs.id)
   }
 
   public updateContents = async () => {
-    const reference = this.node.attrs
+    let attrs = this.node.attrs
+
+    delete attrs.paragraphStyle
+    delete attrs.dataTracked
+
+    attrs['_id'] = this.node.attrs.id
+    delete attrs.id
+
+    if (attrs.doi) {
+      attrs['DOI'] = attrs.doi
+      delete attrs.doi
+    }
+
+    const reference = attrs
     if (reference) {
       const bibliography = await createBibliography([
         reference,
       ] as BibliographyItem[])
-      const fragment = sanitize(bibliography.outerHTML)
-      this.dom.appendChild(fragment)
-    } else {
-      const placeholder = document.createElement('div')
-      placeholder.className = 'bib-placeholder'
-      this.dom.appendChild(placeholder)
+      try {
+        const fragment = sanitize(bibliography.outerHTML)
+        this.dom.appendChild(fragment)
+      } catch (e) {
+        console.error(e) // tslint:disable-line:no-console
+        // TODO: improve the UI for presenting offline/import errors
+        window.alert(
+          'There was an error loading the HTML purifier, please reload to try again'
+        )
+      }
     }
   }
 

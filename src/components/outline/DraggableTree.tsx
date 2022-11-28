@@ -291,7 +291,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
   private itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
 
-    if (text) {
+    if (text && text.trim()) {
       return text.trim()
     }
 
