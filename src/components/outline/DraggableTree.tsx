@@ -107,7 +107,12 @@ interface State {
 const isExcluded = (nodeType: ManuscriptNodeType) => {
   const { nodes } = nodeType.schema
 
-  const excludedTypes = [nodes.table, nodes.figure, nodes.footnotes_element]
+  const excludedTypes = [
+    nodes.table,
+    nodes.figure,
+    nodes.footnotes_element,
+    nodes.bibliography_element,
+  ]
 
   return excludedTypes.includes(nodeType)
 }
@@ -301,7 +306,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
   private itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
 
-    if (text && text.trim()) {
+    if (text) {
       return text.trim()
     }
 
