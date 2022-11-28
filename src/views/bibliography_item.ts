@@ -59,7 +59,7 @@ export class BibliographyItemView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = async () => {
-    let attrs = this.node.attrs
+    const attrs = this.node.attrs
 
     delete attrs.paragraphStyle
     delete attrs.dataTracked
