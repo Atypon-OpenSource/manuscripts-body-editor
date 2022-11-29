@@ -48,7 +48,7 @@ export function setupEditor(props?: Partial<EditorProps>, clean = true) {
   const combinedEditorProps = { ...defaultEditorProps, ...props }
   const { doc } = combinedEditorProps
   const place = document.body.appendChild(document.createElement('div'))
-  const state = EditorState.create<ManuscriptSchema>({
+  const state = EditorState.create({
     doc,
     schema,
     plugins: createPlugins(combinedEditorProps),

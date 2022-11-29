@@ -18,7 +18,6 @@ import {
   hasObjectType,
   isElementNodeType,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
   FigureLayout,
@@ -113,7 +112,7 @@ export default (props: Props) => {
     }
   }
 
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     appendTransaction: (transactions, oldState, newState) => {
       // get the transaction from the new state
       const tr = newState.tr

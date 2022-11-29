@@ -17,7 +17,6 @@
 import {
   ManuscriptEditorView,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { Model } from '@manuscripts/manuscripts-json-schema'
 import { Decoration, NodeView } from 'prosemirror-view'
@@ -40,8 +39,7 @@ export interface BaseNodeProps {
   unmountReactComponent: (container: HTMLElement) => void
 }
 
-export class BaseNodeView<PropsType extends BaseNodeProps>
-  implements NodeView<ManuscriptSchema> {
+export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]
@@ -52,12 +50,12 @@ export class BaseNodeView<PropsType extends BaseNodeProps>
     public node: ManuscriptNode,
     public readonly view: ManuscriptEditorView,
     public readonly getPos: () => number,
-    public decorations: Array<Decoration<DecorationSpec>>
+    public decorations: Decoration[]
   ) {}
 
   public update = (
     newNode: ManuscriptNode,
-    decorations: Array<Decoration<DecorationSpec>>
+    decorations: readonly Decoration[]
   ): boolean => {
     // if (!newNode.sameMarkup(this.node)) return false
     if (newNode.attrs.id !== this.node.attrs.id) {
@@ -66,7 +64,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps>
     if (newNode.type.name !== this.node.type.name) {
       return false
     }
-    this.handleDecorations(decorations)
+    this.handleDecorations([...decorations])
     this.node = newNode
     this.updateContents()
     this.props.popper.update()
@@ -106,9 +104,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps>
     this.props.popper.destroy()
   }
 
-  public handleDecorations = (
-    decorations: Array<Decoration<DecorationSpec>>
-  ) => {
+  public handleDecorations = (decorations: Decoration[]) => {
     this.decorations = decorations
 
     if (decorations) {

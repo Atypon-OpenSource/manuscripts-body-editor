@@ -17,7 +17,6 @@
 import {
   ManuscriptEditorView,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -44,7 +43,7 @@ const placeholderWidget = (placeholder: string) => (
  * This plugin adds a placeholder decoration to empty nodes
  */
 export default () =>
-  new Plugin<null, ManuscriptSchema>({
+  new Plugin<null>({
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []

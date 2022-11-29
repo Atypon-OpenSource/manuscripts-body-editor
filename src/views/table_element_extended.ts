@@ -18,6 +18,7 @@ import { Node } from 'prosemirror-model'
 
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs } from '../lib/utils'
+import { Mutable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -98,7 +99,7 @@ export class TableElementView extends BlockView<
         attachmentId: string
       ) => {
         if (figure) {
-          const newAttrs: Node['attrs'] = {
+          const newAttrs: Mutable<Node['attrs']> = {
             externalFileReferences: addExternalFileRef(
               figure?.attrs.externalFileReferences,
               attachmentId,

@@ -17,7 +17,6 @@
 import {
   ManuscriptEditorView,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { NodeView } from 'prosemirror-view'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -48,7 +47,7 @@ export default (dispatch: Dispatch, theme: DefaultTheme) => <
   initialNode: ManuscriptNode,
   view: ManuscriptEditorView,
   getPos: () => number
-): NodeView<ManuscriptSchema> => {
+): NodeView => {
   const root = document.createElement('div')
   const reactChild = root.appendChild(document.createElement('div'))
 

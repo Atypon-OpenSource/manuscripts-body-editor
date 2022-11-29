@@ -19,7 +19,7 @@ import {
   buildCitations,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import { generateID, ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import { generateID } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
@@ -41,7 +41,7 @@ export const bibliographyKey = new PluginKey('bibliography')
 export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
 
-  return new Plugin<PluginState, ManuscriptSchema>({
+  return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
@@ -159,7 +159,7 @@ export default (props: BibliographyProps) => {
     props: {
       decorations(state) {
         const { citationNodes } = this.getState(state)
-        return DecorationSet.create<ManuscriptSchema>(
+        return DecorationSet.create(
           state.doc,
           buildDecorations(state.doc, citationNodes, getBibliographyItem)
         )

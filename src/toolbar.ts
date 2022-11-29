@@ -29,7 +29,7 @@ import {
 import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
 import icons from './icons'
 
-export const toolbar: ToolbarConfig<ManuscriptSchema> = {
+export const toolbar: ToolbarConfig = {
   style: {
     bold: {
       title: 'Toggle bold',

@@ -17,7 +17,6 @@
 import {
   buildTargets,
   isInGraphicalAbstractSection,
-  ManuscriptSchema,
   Target,
 } from '@manuscripts/manuscript-transform'
 import {
@@ -30,9 +29,7 @@ import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-export const objectsKey = new PluginKey<Map<string, Target>, ManuscriptSchema>(
-  'objects'
-)
+export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 interface Props {
   getManuscript: () => Manuscript
@@ -43,7 +40,7 @@ interface Props {
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
-  return new Plugin<Map<string, Target>, ManuscriptSchema>({
+  return new Plugin<Map<string, Target>>({
     key: objectsKey,
 
     state: {

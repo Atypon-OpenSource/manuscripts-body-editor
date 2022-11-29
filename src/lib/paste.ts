@@ -32,6 +32,7 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
 const removeIDs = (slice: ManuscriptSlice) => {
   slice.content.descendants((node) => {
     if (node.attrs.id) {
+      // @ts-ignore
       node.attrs.id = null
     }
   })

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 
 export const isNodeOfType = (...type: string[]) => (node: Node): boolean => {
@@ -32,7 +29,7 @@ export const isNodeOfType = (...type: string[]) => (node: Node): boolean => {
 }
 
 export const nearestAncestor = (func: (node: ManuscriptNode) => boolean) => (
-  $pos: ResolvedPos<ManuscriptSchema>
+  $pos: ResolvedPos
 ): number | null => {
   for (let d = $pos.depth; d >= 0; d--) {
     if (func($pos.node(d))) {

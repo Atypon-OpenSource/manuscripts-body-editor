@@ -383,12 +383,12 @@ describe('editor view', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode()
 
-    const state = EditorState.create<ManuscriptSchema>({
+    const state = EditorState.create({
       doc,
       schema,
     })
 
-    const view = new EditorView(undefined, { state })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
@@ -411,13 +411,13 @@ describe('editor view', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
-    const state = EditorState.create<ManuscriptSchema>({
+    const state = EditorState.create({
       doc,
       schema,
       plugins: plugins(buildProps(doc, modelMap)),
     })
 
-    const view = new EditorView(undefined, { state })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 

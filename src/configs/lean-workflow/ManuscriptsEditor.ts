@@ -64,7 +64,7 @@ export interface EditorProps extends ViewerProps {
 
 export default {
   createState: (props: EditorProps) => {
-    return EditorState.create<ManuscriptSchema>({
+    return EditorState.create({
       doc: props.doc,
       schema,
       plugins: plugins(props),

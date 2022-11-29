@@ -69,9 +69,9 @@ export class Viewer extends React.PureComponent<ViewerProps> {
 
     const { attributes, doc } = this.props
 
-    this.view = new EditorView<ManuscriptSchema>(undefined, {
+    this.view = new EditorView(null, {
       editable: () => false,
-      state: EditorState.create<ManuscriptSchema>({
+      state: EditorState.create({
         doc,
         schema,
         plugins: plugins(this.props),

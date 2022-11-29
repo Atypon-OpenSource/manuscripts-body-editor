@@ -16,7 +16,6 @@
 import {
   getModelsByType,
   ManuscriptNode,
-  ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
 import {
@@ -29,10 +28,9 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { SET_COMMENT_TARGET } from './highlight'
 
-export const commentAnnotation = new PluginKey<
-  CommentAnnotationState,
-  ManuscriptSchema
->('comment_annotation')
+export const commentAnnotation = new PluginKey<CommentAnnotationState>(
+  'comment_annotation'
+)
 
 interface CommentAnnotationProps {
   setCommentTarget: (target?: string) => void
@@ -48,7 +46,7 @@ type CommentAnnotationState = {
  * This plugin creates a icon decoration for both inline and block comment.
  */
 export default (props: CommentAnnotationProps) => {
-  return new Plugin<CommentAnnotationState, ManuscriptSchema>({
+  return new Plugin<CommentAnnotationState>({
     key: commentAnnotation,
     state: {
       init: (tr) => commentsState(props.modelMap, tr.doc),
@@ -77,7 +75,7 @@ export default (props: CommentAnnotationProps) => {
 
 const commentsState = (
   modelMap: Map<string, Model>,
-  doc: ManuscriptNode
+  doc?: ManuscriptNode
 ): CommentAnnotationState => {
   const comments = getModelsByType<CommentAnnotation>(
     modelMap,
@@ -95,17 +93,21 @@ const commentsState = (
 
   const decorations: Decoration[] = []
 
-  doc.descendants((node, pos) => {
-    const commentCount =
-      commentsMap.get(node.attrs['id']) || commentsMap.get(node.attrs['rid'])
-    if (commentCount) {
-      decorations.push(
-        Decoration.widget(pos + 1, getCommentIcon(commentCount, node))
-      )
-    }
-  })
+  if (doc) {
+    doc.descendants((node, pos) => {
+      const commentCount =
+        commentsMap.get(node.attrs['id']) || commentsMap.get(node.attrs['rid'])
+      if (commentCount) {
+        decorations.push(
+          Decoration.widget(pos + 1, getCommentIcon(commentCount, node))
+        )
+      }
+    })
 
-  return { comments, decorations: DecorationSet.create(doc, decorations) }
+    return { comments, decorations: DecorationSet.create(doc, decorations) }
+  } else {
+    return { comments, decorations: DecorationSet.empty }
+  }
 }
 
 const getCommentIcon = (commentCount: number, node: ManuscriptNode) => () => {

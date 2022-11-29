@@ -62,11 +62,11 @@ interface Props {
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
 export default (props: Props) => {
-  return new Plugin<undefined, ManuscriptSchema>({
+  return new Plugin<undefined>({
     key: keywordsKey,
 
     appendTransaction(transactions, oldState, newState) {
-      if (!keywordsInserted(transactions)) {
+      if (!keywordsInserted([...transactions])) {
         return
       }
 

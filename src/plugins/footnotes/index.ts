@@ -18,7 +18,6 @@ import {
   InlineFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
@@ -29,9 +28,7 @@ interface PluginState {
   labels: Map<string, string>
 }
 
-export const footnotesKey = new PluginKey<PluginState, ManuscriptSchema>(
-  'footnotes'
-)
+export const footnotesKey = new PluginKey<PluginState>('footnotes')
 
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const nodes: [InlineFootnoteNode, number][] = []
@@ -105,7 +102,7 @@ const labelWidget = (label: string, id: string) => (
  *
  */
 export default () => {
-  return new Plugin<PluginState, ManuscriptSchema>({
+  return new Plugin<PluginState>({
     key: footnotesKey,
 
     state: {

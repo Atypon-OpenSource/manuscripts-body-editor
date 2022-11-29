@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Command } from 'prosemirror-commands'
 import { Schema as ProsemirrorSchema } from 'prosemirror-model'
 import {
+  Command,
   EditorState,
   NodeSelection,
   TextSelection,
@@ -37,7 +37,7 @@ const useEditor = <Schema extends ProsemirrorSchema>(
   createView: CreateView
 ) => {
   const view = useRef<EditorView>()
-  const [state, setState] = useState<EditorState<Schema>>(initialState)
+  const [state, setState] = useState<EditorState>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
   const history = useHistory()
 
@@ -75,13 +75,12 @@ const useEditor = <Schema extends ProsemirrorSchema>(
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCommandValid = useCallback(
-    (command: Command<Schema>): boolean => command(state),
+    (command: Command): boolean => command(state),
     [state]
   )
 
   const doCommand = useCallback(
-    (command: Command<Schema>): boolean =>
-      command(state, dispatch, view.current),
+    (command: Command): boolean => command(state, dispatch, view.current),
     [state, dispatch]
   )
 

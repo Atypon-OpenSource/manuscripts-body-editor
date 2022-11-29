@@ -107,9 +107,9 @@ export class Editor extends React.PureComponent<EditorProps> {
       permissions,
     } = this.props
 
-    this.view = new EditorView(undefined, {
+    this.view = new EditorView(null, {
       editable: () => permissions.write,
-      state: EditorState.create<ManuscriptSchema>({
+      state: EditorState.create({
         doc,
         schema,
         plugins: plugins(this.props),
