@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptSlice } from '@manuscripts/manuscript-transform'
+import { Slice } from 'prosemirror-model'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -24,7 +25,13 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
     firstChild.type === firstChild.type.schema.nodes.paragraph &&
     firstChild.textContent === ''
   ) {
-    slice.content = slice.content.cut(firstChild.nodeSize)
+    return new Slice(
+      slice.content.cut(firstChild.nodeSize),
+      slice.openStart,
+      slice.openEnd
+    )
+  } else {
+    return slice
   }
 }
 
@@ -39,9 +46,9 @@ const removeIDs = (slice: ManuscriptSlice) => {
 }
 
 export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
-  removeFirstParagraphIfEmpty(slice)
+  const checkedSlice = removeFirstParagraphIfEmpty(slice)
 
-  removeIDs(slice)
+  removeIDs(checkedSlice)
 
-  return slice
+  return checkedSlice
 }
