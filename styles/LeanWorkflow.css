@@ -614,7 +614,7 @@
   fill: #FFE0B2;
 }
 
-.selected_comment{
+.selected_comment > svg > path {
   stroke: #F7B314;
   fill: #FFE0B2;
 }

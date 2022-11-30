@@ -71,7 +71,6 @@ interface CommentAnnotationProps {
 type Comment = {
   id: string
   target: string
-  position: number
   location: 'block' | 'point'
   count: number
   targetType: NodeType
@@ -109,8 +108,6 @@ export default (props: CommentAnnotationProps) => {
   })
 }
 
-type CommentsMapType = Map<string, Omit<Partial<Comment>, 'targetType'>>
-
 const commentsState = (
   modelMap: Map<string, Model>,
   setSelectedComment: (id?: string) => void,
@@ -121,53 +118,40 @@ const commentsState = (
     ObjectTypes.CommentAnnotation
   )
 
-  /**
-   * gather comments with their count that belongs to a target node
-   */
-  const targetComments = comments.reduce((map, { _id, target, selector }) => {
+  const commentsMap = comments.reduce((map, { _id, target, selector }) => {
     if (!isHighlightComment({ selector })) {
-      const commentsMap = (map.get(target) ||
-        map.set(target, new Map()).get(target)) as CommentsMapType
       const commentId = selector ? _id : target
-
-      commentsMap.set(commentId, {
+      map.set(commentId, {
         id: _id,
         target,
         location: selector ? 'point' : 'block',
-        position: selector?.from,
-        count: (commentsMap.get(commentId)?.count || 0) + 1,
+        count: (map.get(commentId)?.count || 0) + 1,
       })
     }
     return map
-  }, new Map<string, CommentsMapType>())
+  }, new Map<string, Omit<Partial<Comment>, 'targetType'>>())
 
   const decorations: Decoration[] = []
 
   doc.descendants((node, pos) => {
     const id = node.attrs['id'] || node.attrs['rid']
-    const targetComment = targetComments.get(id)
-    if (targetComment && isAllowedType(node.type)) {
-      Array.from(targetComment.values()).map((comment) => {
-        decorations.push(
-          Decoration.widget(
-            comment.position || pos + 1,
-            getCommentIcon(
-              { ...comment, targetType: node.type } as Comment,
-              setSelectedComment
-            ),
-            { key: comment.id }
-          )
+    const targetComment = commentsMap.get(id)
+    if (targetComment) {
+      decorations.push(
+        Decoration.widget(
+          pos + 1,
+          getCommentIcon(
+            { ...targetComment, targetType: node.type } as Comment,
+            setSelectedComment
+          ),
+          { key: targetComment.id }
         )
-      })
+      )
     }
   })
 
   return DecorationSet.create(doc, decorations)
 }
-
-// TODO:: remove this check when we implement individual references
-const isAllowedType = (type: NodeType) =>
-  type !== type.schema.nodes.bibliography_element
 
 const getCommentIcon = (
   comment: Comment,
