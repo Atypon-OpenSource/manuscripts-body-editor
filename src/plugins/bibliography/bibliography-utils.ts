@@ -44,7 +44,7 @@ export const buildDecorations = (
   citationNodes: CitationNodes,
   getBibliographyItem: (id: string) => BibliographyItem | undefined
 ) => {
-  const decorations: Array<Decoration<{ missing: true }>> = []
+  const decorations: Array<Decoration> = []
 
   let hasMissingItems = false
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/manuscript-transform'
 import { ProsemirrorTestChain, TestEditorView } from 'jest-prosemirror'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -73,5 +73,5 @@ export function setupEditor(props?: Partial<EditorProps>, clean = true) {
     })
   }
 
-  return ProsemirrorTestChain.of(view as TestEditorView<ManuscriptSchema>)
+  return ProsemirrorTestChain.of(view as TestEditorView)
 }

@@ -158,11 +158,14 @@ export default (props: BibliographyProps) => {
     },
     props: {
       decorations(state) {
-        const { citationNodes } = this.getState(state)
-        return DecorationSet.create(
-          state.doc,
-          buildDecorations(state.doc, citationNodes, getBibliographyItem)
-        )
+        const pluginState = this.getState(state)
+        if (pluginState) {
+          const { citationNodes } = pluginState
+          return DecorationSet.create(
+            state.doc,
+            buildDecorations(state.doc, citationNodes, getBibliographyItem)
+          )
+        }
       },
     },
   })

@@ -17,11 +17,7 @@
 import 'prosemirror-view/style/prosemirror.css'
 import '../../lib/smooth-scroll'
 
-import {
-  ManuscriptNode,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptNode, schema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
@@ -73,7 +69,7 @@ export default {
   },
 
   createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>
-    new EditorView<ManuscriptSchema>(el, {
+    new EditorView(el, {
       editable: () => false,
       state,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

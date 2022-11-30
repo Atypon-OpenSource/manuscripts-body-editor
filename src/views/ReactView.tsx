@@ -44,7 +44,7 @@ export default (dispatch: Dispatch, theme: DefaultTheme) => <
   contentDOMElementType?: keyof HTMLElementTagNameMap | null,
   nodeViewProps?: NodeView
 ) => (
-  initialNode: ProsemirrorNode,
+  initialNode: ManuscriptNode,
   view: ManuscriptEditorView,
   getPos: () => number
 ): NodeView => {

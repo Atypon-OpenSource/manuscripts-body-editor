@@ -23,18 +23,19 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 const placeholderWidget = (placeholder: string) => (
   view: ManuscriptEditorView,
-  getPos: () => number
+  getPos: () => number | undefined
 ) => {
   const element = document.createElement('span')
   element.className = 'placeholder-text'
   element.textContent = placeholder
   element.addEventListener('click', (event: MouseEvent) => {
     event.preventDefault()
-    view.dispatch(
-      view.state.tr.setSelection(
-        TextSelection.create(view.state.tr.doc, getPos())
+    const pos = getPos()
+    if (pos) {
+      view.dispatch(
+        view.state.tr.setSelection(TextSelection.create(view.state.tr.doc, pos))
       )
-    )
+    }
   })
   return element
 }

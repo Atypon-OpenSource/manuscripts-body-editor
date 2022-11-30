@@ -20,7 +20,6 @@ import {
   Decoder,
   generateID,
   hasObjectType,
-  ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
 import {

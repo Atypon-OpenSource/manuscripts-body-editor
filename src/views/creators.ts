@@ -18,7 +18,6 @@ import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { NodeViewConstructor } from 'prosemirror-view'
 
 import { Dispatch } from '../commands'
-import { NodeViewCreator } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { EditableBlockProps } from './editable_block'
 
@@ -45,7 +44,7 @@ export const createEditableNodeView = <
   PropsT extends EditableBlockProps
 >(
   type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
-) => (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> => (
+) => (props: PropsT, dispatch?: Dispatch): NodeViewConstructor => (
   node,
   view,
   getPos,
@@ -71,7 +70,7 @@ export const createNodeOrElementView = <
   type: new (...args: any[]) => T, // eslint-disable-line @typescript-eslint/no-explicit-any
   tagName: string,
   callback?: (node: ManuscriptNode, dom: HTMLElement) => void
-) => (props: PropsT): NodeViewCreator<T> => (
+) => (props: PropsT): NodeViewConstructor => (
   node,
   view,
   getPos,
@@ -100,5 +99,5 @@ export const createNodeOrElementView = <
     contentDOM: dom,
   }
 
-  return nodeView as T
+  return nodeView
 }
