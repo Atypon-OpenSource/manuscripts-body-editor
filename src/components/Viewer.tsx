@@ -20,7 +20,6 @@ import '../lib/smooth-scroll'
 import {
   ActualManuscriptNode,
   ManuscriptEditorView,
-  ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
 import {

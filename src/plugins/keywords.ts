@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  generateID,
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { generateID, ManuscriptNode } from '@manuscripts/manuscript-transform'
 import {
   Manuscript,
   ManuscriptKeyword,

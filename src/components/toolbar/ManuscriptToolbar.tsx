@@ -19,7 +19,6 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/manuscript-transform'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Schema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React from 'react'
 import styled from 'styled-components'

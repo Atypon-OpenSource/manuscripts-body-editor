@@ -17,7 +17,6 @@
 import {
   ManuscriptEditorState,
   ManuscriptNode,
-  ManuscriptSchema,
   ManuscriptTransaction,
   TABLE_CELL_STYLES,
   TableCellNode,
@@ -25,8 +24,7 @@ import {
   TableNode,
 } from '@manuscripts/manuscript-transform'
 import { get as _get } from 'lodash-es'
-import { Command } from 'prosemirror-commands'
-import { Selection } from 'prosemirror-state'
+import { Command, Selection } from 'prosemirror-state'
 import { CellSelection, TableMap } from 'prosemirror-tables'
 
 import { isTextSelection } from '../../commands'
@@ -86,7 +84,7 @@ export const setTableAttrs = (attrs: TableNode['attrs']) => (
 // Given a TextSelection within a table cell, returns the cell
 // and position containing the cursor.
 const getTableCellSelection = (
-  selection: Selection<ManuscriptSchema>
+  selection: Selection
 ): Array<[TableCellNode, number]> => {
   if (selection instanceof CellSelection) {
     const nodes: Array<[TableCellNode, number]> = []

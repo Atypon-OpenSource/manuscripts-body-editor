@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { NodeViewConstructor } from 'prosemirror-view'
 
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
@@ -26,7 +27,7 @@ export const createNodeView = <
   PropsT extends BaseNodeProps
 >(
   type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
-) => (props: PropsT): NodeViewCreator<T> => (
+) => (props: PropsT): NodeViewConstructor => (
   node,
   view,
   getPos,
