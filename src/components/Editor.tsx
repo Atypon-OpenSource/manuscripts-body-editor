@@ -137,16 +137,16 @@ export class Editor extends React.PureComponent<EditorProps> {
       },
     })
 
-    if (environment === 'development') {
-      import('prosemirror-dev-tools')
-        .then(({ applyDevTools }) => applyDevTools(this.view))
-        .catch((error) => {
-          console.error(
-            'There was an error loading prosemirror-dev-tools',
-            error.message
-          )
-        })
-    }
+    // if (environment === 'development') {
+    //   import('prosemirror-dev-tools')
+    //     .then(({ applyDevTools }) => applyDevTools(this.view))
+    //     .catch((error) => {
+    //       console.error(
+    //         'There was an error loading prosemirror-dev-tools',
+    //         error.message
+    //       )
+    //     })
+    // }
   }
 
   public componentDidMount() {
