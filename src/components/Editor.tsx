@@ -26,6 +26,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
+  CommentAnnotation,
   Model,
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
@@ -74,7 +75,7 @@ export interface EditorProps extends ViewerProps {
   setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
-  setCommentTarget: (commentTarget?: string) => void
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
   jupyterConfig: {
     url: string
     token: string

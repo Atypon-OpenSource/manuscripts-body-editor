@@ -22,7 +22,11 @@ import {
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  CommentAnnotation,
+  Manuscript,
+  Model,
+} from '@manuscripts/manuscripts-json-schema'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -47,7 +51,7 @@ export interface Props {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
-  setCommentTarget: (commentTarget?: string) => void
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
   permissions: {
     write: boolean
   }

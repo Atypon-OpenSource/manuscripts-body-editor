@@ -63,7 +63,7 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
   comment.selector && comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
-  setCommentTarget: (target?: string) => void
+  setCommentTarget: (target?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   modelMap: Map<string, Model>
 }

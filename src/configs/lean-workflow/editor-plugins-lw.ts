@@ -22,6 +22,7 @@ import { CitationProvider } from '@manuscripts/library'
 import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
+  CommentAnnotation,
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
@@ -55,7 +56,7 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: string) => void
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }

@@ -16,7 +16,6 @@
 
 import {
   BibliographySectionNode,
-  Build,
   buildCitation,
   buildComment,
   buildInlineMathFragment,
@@ -964,7 +963,7 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
 
 export const insertHighlight = (
   state: ManuscriptEditorState,
-  comment: Build<CommentAnnotation>,
+  comment: CommentAnnotation,
   dispatch?: Dispatch
 ): boolean => {
   const { from, to } = state.selection
@@ -1138,7 +1137,7 @@ const addHighlightComment = (
     attrs: { id },
     type,
   } = node
-  const comment = buildComment(id)
+  const comment = buildComment(id) as CommentAnnotation
 
   if (type === state.schema.nodes.paragraph) {
     const { $anchor, $head } = state.selection

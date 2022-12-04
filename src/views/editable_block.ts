@@ -15,7 +15,7 @@
  */
 
 import { Build, nodeNames } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Model } from '@manuscripts/manuscripts-json-schema'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -34,7 +34,7 @@ export interface EditableBlockProps extends BaseNodeProps {
   }
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget?: (commentTarget?: string) => void
+  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
   dispatch?: Dispatch
   theme?: DefaultTheme
 }

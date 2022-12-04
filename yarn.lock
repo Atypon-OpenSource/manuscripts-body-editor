@@ -1640,14 +1640,14 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.55.0":
-  version "0.55.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.55.0.tgz#0c68cd46e7aa277306370d8a90cb800a14eaa044"
-  integrity sha512-SJNA5YaA35A+i/xmPujcFGb80TXgTZTitilcqUpidaIRIUMADMo4gc3UK+FX5xrJZJ9HfzDJrEj/s4WMkDUidg==
+"@manuscripts/manuscript-transform@^0.59.0":
+  version "0.59.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.59.0.tgz#cb165d59f5d5538699c8dd285efab8873b4d6251"
+  integrity sha512-xAs2cAxrZZS+VHYXOsN7TftdkoiIVd7r/sPzg0PDZMwZH7K1KTGulWQwjXu/G1lV9NjZSq0vzPv+pWN300xjkw==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/library" "^0.6.2"
-    "@manuscripts/manuscripts-json-schema" "1.51.0"
+    "@manuscripts/manuscripts-json-schema" "1.52.0"
     debug "^4.1.1"
     mathjax-full "^3.1.2"
     mime "^2.4.6"
@@ -1655,10 +1655,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@1.51.0", "@manuscripts/manuscripts-json-schema@^1.51.0":
-  version "1.51.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.51.0.tgz#6677f4ac81243496b92608c82f1e2d1c56acf22a"
-  integrity sha512-YNrqrX8SScXZ5V/3/2Cyy/3SepOkMX/mn18TdKggh+WNN8n3AtKM31/Qw+2jVcF84w9pZ+RU+wuObr2u+GlSUA==
+"@manuscripts/manuscripts-json-schema@1.52.0":
+  version "1.52.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.52.0.tgz#404b692d6f3ea1fc4faa57ef4b5b6bdbcbd780db"
+  integrity sha512-cZXmc0uigHG9s6vRIS4rUhamvqsoRzXb4OVOd5/6FHMWgNijSFIKhD5Y/QIaSF51C/SHM+7t2ido7t8frMts+Q==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1668,6 +1668,15 @@
   version "1.49.12"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.12.tgz#2fe461dcf3b26169605f5a4980fd0c2891c2672e"
   integrity sha512-ZHb+VunM/884YNZuXFi4EgalKT8aLFK9v+AwgGQhtoVk4Q/LThYV8TqOrevtCbNk/cydWNynDeTpEB3QxWXZzQ==
+  dependencies:
+    ajv "^6.10.0"
+    deepmerge "^3.2.0"
+    js-beautify "^1.9.0"
+
+"@manuscripts/manuscripts-json-schema@^1.51.0":
+  version "1.51.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.51.0.tgz#6677f4ac81243496b92608c82f1e2d1c56acf22a"
+  integrity sha512-YNrqrX8SScXZ5V/3/2Cyy/3SepOkMX/mn18TdKggh+WNN8n3AtKM31/Qw+2jVcF84w9pZ+RU+wuObr2u+GlSUA==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
