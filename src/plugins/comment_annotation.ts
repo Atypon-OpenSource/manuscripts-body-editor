@@ -170,8 +170,8 @@ const getCommentIcon = (
   const elementClass = isSection
     ? 'block-comment'
     : isFigure
-    ? 'figure-comment'
-    : 'inline-comment'
+      ? 'figure-comment'
+      : 'inline-comment'
 
   if (targetType === schema.nodes.citation || location === 'point') {
     element.classList.add(

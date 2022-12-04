@@ -69,6 +69,7 @@ export interface EditorProps extends ViewerProps {
     item: BibliographyItem
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  removeLibraryItem: (id: string) => void
   subscribe: (receive: ChangeReceiver) => void
   setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>

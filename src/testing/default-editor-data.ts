@@ -137,6 +137,7 @@ export const defaultEditorProps: EditorProps = {
     setLibraryItem: (_item: BibliographyItem) => undefined,
     matchLibraryItemByIdentifier: (_item: BibliographyItem) => undefined,
     filterLibraryItems: (_query: string) => Promise.resolve([]),
+    removeLibraryItem: () => undefined,
     putAttachment: MOCKS.putAttachment,
     removeAttachment: (_id: string, _attachmentID: string) => Promise.resolve(),
     subscribe: () => undefined,
