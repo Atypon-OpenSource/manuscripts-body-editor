@@ -47,10 +47,10 @@ export const commentScroll = (
     const element = direction === 'editor' ? commentIcon : commentCard.item(0)
 
     document
-      .querySelectorAll(`.selected_comment`)
-      .forEach((element) => element.classList.remove('selected_comment'))
-    commentIcon.classList.add('selected_comment')
-    commentCard.forEach((node) => node.classList.add('selected_comment'))
+      .querySelectorAll(`.selected-comment`)
+      .forEach((element) => element.classList.remove('selected-comment'))
+    commentIcon.classList.add('selected-comment')
+    commentCard.forEach((node) => node.classList.add('selected-comment'))
     element?.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
@@ -168,18 +168,18 @@ const getCommentIcon = (
   const isFigure = targetType === schema.nodes.figure_element
 
   const elementClass = isSection
-    ? 'block_comment'
+    ? 'block-comment'
     : isFigure
-    ? 'figure_comment'
-    : 'inline_comment'
+    ? 'figure-comment'
+    : 'inline-comment'
 
   if (targetType === schema.nodes.citation || location === 'point') {
     element.classList.add(
-      location === 'point' ? 'point_comment' : 'inline_citation'
+      location === 'point' ? 'point-comment' : 'inline-citation'
     )
   }
 
-  element.classList.add('block_comment_button', elementClass)
+  element.classList.add('block-comment-button', elementClass)
 
   element.onclick = () => {
     commentScroll(commentId, 'inspector')
@@ -188,14 +188,14 @@ const getCommentIcon = (
 
   const groupCommentIcon =
     (count > 1 &&
-      ` <svg class="group_comment_icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      ` <svg class="group-comment-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="12" height="12" rx="6" fill="#F7B314"></rect>
           <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${count}</text>
       </svg>`) ||
     ''
 
   element.innerHTML = `
-      <svg class="comment_icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg class="comment-icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.0625 2.9375V7.3125L1.4375 11.6875H12.8125C13.7794 11.6875 14.5625 10.9044 14.5625 9.9375V2.9375C14.5625 1.97062 13.7794 1.1875 12.8125 1.1875H5.8125C4.84562 1.1875 4.0625 1.97062 4.0625 2.9375Z"
                 fill="#FFFCDB" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M6.6875 4.6875H11.9375" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
