@@ -162,8 +162,6 @@ export class FigureEditableView extends FigureView<
     }
   }
 
-  // @CHECK props if they really contain all that stuff
-
   addFigureExFileRef = (
     relation: string,
     publicUrl: string,
@@ -176,7 +174,7 @@ export class FigureEditableView extends FigureView<
           `attachment:${attachmentId}`,
           relation
         ),
-        src: publicUrl,
+        src: `attachment:${attachmentId}`,
       })
     }
   }

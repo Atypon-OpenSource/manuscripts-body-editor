@@ -213,15 +213,9 @@ export const insertFileAsFigure = (
   }
   const figure = state.schema.nodes.figure.createAndFill({
     label: file.name,
-    src: file.link,
+    src: file.id,
     embedURL: { default: undefined },
     originalURL: { default: undefined },
-    externalFileReferences: [
-      {
-        url: file.id,
-        kind: 'imageRepresentation',
-      },
-    ],
   }) as FigureNode
 
   const figureElement = state.schema.nodes.figure_element.createAndFill({}, [
