@@ -54,7 +54,7 @@ export class CitationEditableView extends CitationView<
       setLibraryItem,
       removeLibraryItem,
       getLibraryItem,
-      permissions,
+      capabilities,
       projectID,
       renderReactComponent,
       saveModel,
@@ -98,7 +98,7 @@ export class CitationEditableView extends CitationView<
       this.popperContainer.className = 'citation-editor'
     }
 
-    const component = permissions.write ? (
+    const component = capabilities?.editArticle ? (
       <CitationEditor
         items={items}
         saveModel={saveModel}

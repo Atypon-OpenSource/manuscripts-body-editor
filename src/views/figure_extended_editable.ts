@@ -54,7 +54,6 @@ export type SubmissionAttachmentType = {
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 interface FigureProps {
-  permissions: { write: boolean }
   externalFiles?: SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
@@ -202,7 +201,7 @@ export class FigureEditableView extends FigureView<
         this.createImage(isSupportedImageType, url) ||
         this.createPlaceholder(isSupportedImageType, fileName)
 
-      if (this.props.permissions.write) {
+      if (this.props.capabilities?.editArticle) {
         const uploadAttachmentHandler = createOnUploadHandler(
           this.props.uploadAttachment,
           this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
@@ -328,7 +327,7 @@ export class FigureEditableView extends FigureView<
           </div>
           <div>
             ${
-              this.props.permissions.write
+              this.props.capabilities?.editArticle
                 ? 'Click to add image'
                 : 'No image here yet…'
             }

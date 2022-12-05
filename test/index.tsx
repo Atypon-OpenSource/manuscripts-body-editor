@@ -105,7 +105,6 @@ const start = async () => {
     ancestorDoc,
     popper: new PopperManager(),
     locale: 'en-GB',
-    permissions: { write: true },
     // @ts-ignore
     renderReactComponent: ReactDOM.render,
     unmountReactComponent: ReactDOM.unmountComponentAtNode,
