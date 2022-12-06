@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/manuscript-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "0.93.11-LEAN-1748",
+  "version": "0.93.11-LEAN-1748-fix1",
   "repository": "gitlab:mpapp-public/manuscripts-manuscript-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",

@@ -630,8 +630,8 @@
 }
 
 .block-comment > .group-comment-icon {
-  left: 8px;
-  top: 8px;
+  left: 7px;
+  top: 10px;
 }
 
 .block-comment-button.figure-comment {
@@ -641,12 +641,12 @@
 
 .figure-comment > .comment-icon {
   position: absolute;
-  top: 4px;
+  top: 6px;
 }
 
 .figure-comment > .group-comment-icon {
   top: 0;
-  left: 10px;
+  left: 7px;
 }
 
 .block-comment-button.inline-comment {
@@ -654,7 +654,7 @@
   left: 100%;
 }
 
-.inline_comment > .comment-icon, .group-comment-icon {
+.inline-comment > .comment-icon, .group-comment-icon {
   position: absolute;
   top: 12px;
 }
