@@ -18,9 +18,8 @@ import {
   isInGraphicalAbstractSection,
   ManuscriptEditorView,
   ManuscriptNode,
-  ModelAttachment,
 } from '@manuscripts/manuscript-transform'
-import { Figure, Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/manuscripts-json-schema'
 import {
   Capabilities,
   UnsupportedFormatFileIcon,
@@ -212,7 +211,8 @@ export class FigureEditableView extends FigureView<
         }
         this.setFigureAttrs(newAttrs)
 
-        this.updateFigureModel(newAttrs) // can the model take the attributes same way as PM model has?
+        // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
+        // this.updateFigureModel(newAttrs) // can the model take the attributes same way as PM model has?
       }
     }
   }
@@ -293,7 +293,6 @@ export class FigureEditableView extends FigureView<
       this.container.innerHTML = ''
       this.container.appendChild(img)
 
-      // @TODO - because we pass component props to different components the type here is unclear, it must be improved.
       if (this.props.dispatch && this.props.theme && this.props.capabilities) {
         const componentProps: FigureOptionsSubviewProps = {
           src: url,
@@ -370,18 +369,18 @@ export class FigureEditableView extends FigureView<
     return element
   }
 
+  // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public updateFigureModel = (newAttrs: { [key: string]: any }) => {
-    const { id } = this.node.attrs
-    const model = this.props.getModel<Figure>(id)
-
-    if (model) {
-      return this.props.saveModel<Figure & ModelAttachment>({
-        ...model,
-        ...newAttrs,
-      })
-    }
-  }
+  // public updateFigureModel = (newAttrs: { [key: string]: any }) => {
+  //   const { id } = this.node.attrs
+  //   const model = this.props.getModel<Figure>(id)
+  //   if (model) {
+  //     return this.props.saveModel<Figure & ModelAttachment>({
+  //       ...model,
+  //       ...newAttrs,
+  //     })
+  //   }
+  // }
 
   public updateFigure = async (file: File) => {
     // const { id } = this.node.attrs
@@ -394,15 +393,16 @@ export class FigureEditableView extends FigureView<
     const contentType = file.type
     const src = window.URL.createObjectURL(file)
 
-    await this.updateFigureModel({
-      contentType,
-      src,
-      attachment: {
-        id: 'image',
-        type: contentType,
-        data: file,
-      },
-    })
+    // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
+    // await this.updateFigureModel({
+    //   contentType,
+    //   src,
+    //   attachment: {
+    //     id: 'image',
+    //     type: contentType,
+    //     data: file,
+    //   },
+    // })
 
     const { selection, tr } = this.view.state
 
