@@ -16,6 +16,7 @@
 
 import { Build, nodeNames } from '@manuscripts/manuscript-transform'
 import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -29,9 +30,7 @@ type Constructor<T> = new (...args: any[]) => T
 const isNotNull = <T>(a: T | null): a is T => a !== null
 
 export interface EditableBlockProps extends BaseNodeProps {
-  permissions: {
-    write: boolean
-  }
+  capabilities?: Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget?: (commentTarget?: string) => void
@@ -52,7 +51,7 @@ export const EditableBlock = <
       [this.createSyncWarningButton()].filter(isNotNull)
 
     public createSyncWarningButton = (): HTMLElement | null => {
-      if (!this.props.permissions.write) {
+      if (!this.props.capabilities?.editArticle) {
         return null
       }
 
@@ -112,7 +111,7 @@ export const EditableBlock = <
     // }
 
     public createAddButton = (after: boolean): HTMLElement | null => {
-      if (!this.props.permissions.write) {
+      if (!this.props.capabilities?.editArticle) {
         return null
       }
 
@@ -137,7 +136,7 @@ export const EditableBlock = <
     }
 
     public createEditButton = (): HTMLElement | null => {
-      if (!this.props.permissions.write) {
+      if (!this.props.capabilities?.editArticle) {
         return null
       }
 

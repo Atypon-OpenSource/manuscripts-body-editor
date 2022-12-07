@@ -45,9 +45,6 @@ export interface ViewerProps {
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
-  permissions: {
-    write: boolean
-  }
   locale: string
   modelMap: Map<string, Model>
   popper: PopperManager
