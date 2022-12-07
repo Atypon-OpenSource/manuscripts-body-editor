@@ -45,6 +45,7 @@ export interface EditorProps extends ViewerProps {
     item: BibliographyItem
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  removeLibraryItem: (id: string) => void
   setCommentTarget: (commentTarget?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
 
@@ -73,7 +74,7 @@ export default {
   createView: (props: EditorProps): CreateView => (el, state, dispatch) =>
     new EditorView(el, {
       state,
-      editable: () => props.permissions.write,
+      editable: () => !!props.capabilities?.editArticle,
       scrollMargin: {
         top: 100,
         bottom: 100,

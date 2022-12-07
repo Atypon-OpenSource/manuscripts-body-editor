@@ -601,3 +601,67 @@
 .tools-static {
   position: static;
 }
+
+.block_comment_button {
+  cursor: pointer;
+  position: relative;
+  height: 0;
+  width: 0;
+}
+
+.block_comment_button:active > svg > path {
+  stroke: #F7B314;
+  fill: #FFE0B2;
+}
+
+.block_comment_button.block_comment {
+  z-index: 10;
+  left: 93%;
+}
+
+.block_comment > .comment_icon, .group_comment_icon {
+  position: absolute;
+  top: 16px;
+}
+
+.block_comment > .group_comment_icon {
+  left: 8px;
+  top: 8px;
+}
+
+.block_comment_button.figure_comment {
+  position: absolute;
+  right: 3%;
+}
+
+.figure_comment > .comment_icon {
+  position: absolute;
+  top: 4px;
+}
+
+.figure_comment > .group_comment_icon {
+  top: 0;
+  left: 10px;
+}
+
+.block_comment_button.inline_comment {
+  z-index: 10;
+  left: 100%;
+}
+
+.inline_comment > .comment_icon, .group_comment_icon {
+  position: absolute;
+  top: 12px;
+}
+
+.inline_comment > .group_comment_icon {
+  left: 8px;
+  top: 6px;
+}
+
+.block_comment_button.inline_citation {
+  z-index: 1;
+  left: -1%;
+  top: -8%;
+  display: inline-flex;
+}

@@ -164,7 +164,6 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  permissions,
   externalFiles,
   modelMap,
   uploadAttachment,
@@ -201,7 +200,7 @@ const FigureElement = ({
     const { addFigureExFileRef } = useFigureSelection(viewProps)
 
     return (
-      <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
+      <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
           <FileUpload
             fileInputRef={fileInputRef}

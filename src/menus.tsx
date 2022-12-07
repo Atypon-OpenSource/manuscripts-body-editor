@@ -30,6 +30,7 @@ import {
 } from 'prosemirror-tables'
 
 import {
+  addComment,
   blockActive,
   canInsert,
   ifInTableBody,
@@ -37,7 +38,6 @@ import {
   insertBlock,
   insertCrossReference,
   insertGraphicalAbstract,
-  insertHighlight,
   // insertFootnotesSection, // this is disabled by commenting until we test the footnotes
   insertInlineCitation,
   insertInlineEquation,
@@ -299,8 +299,8 @@ export default (
         {
           id: 'insert-comment',
           label: 'Comment',
-          enable: isCommandValid(insertHighlight),
-          run: wrap(insertHighlight),
+          enable: isCommandValid(addComment),
+          run: wrap(addComment),
         },
         // endnote type is not used at the moment, this will be needed when we enable them
         // {

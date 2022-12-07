@@ -20,6 +20,7 @@ import {
   Selected,
 } from '@manuscripts/manuscript-transform'
 import { Manuscript } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { parse } from '@manuscripts/title-editor'
 import React, { useEffect, useState } from 'react'
 
@@ -30,9 +31,7 @@ interface Props {
   manuscript: Manuscript
   selected: Selected | null
   doc: ManuscriptNode | null
-  permissions: {
-    write: boolean
-  }
+  capabilities?: Capabilities
   view?: ManuscriptEditorView
 }
 
@@ -40,6 +39,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
   const [values, setValues] = useState<{
     tree: TreeItem
     view?: ManuscriptEditorView
+    editArticle: boolean
   }>()
 
   const debouncedProps = useDebounce(props, 500)
@@ -67,13 +67,11 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
         items,
       }
 
-      setValues({ tree, view })
+      setValues({ tree, view, editArticle: !!props.capabilities?.editArticle })
     } else {
       setValues(undefined)
     }
-  }, [debouncedProps])
+  }, [debouncedProps, props.capabilities?.editArticle])
 
-  return values ? (
-    <DraggableTree {...values} permissions={props.permissions} />
-  ) : null
+  return values ? <DraggableTree {...values} /> : null
 }

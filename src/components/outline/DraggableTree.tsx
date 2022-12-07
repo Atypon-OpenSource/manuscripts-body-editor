@@ -94,9 +94,7 @@ interface Props {
   depth?: number
   tree: TreeItem
   view?: ManuscriptEditorView
-  permissions: {
-    write: boolean
-  }
+  editArticle: boolean
 }
 
 interface State {
@@ -107,7 +105,15 @@ interface State {
 const isExcluded = (nodeType: ManuscriptNodeType) => {
   const { nodes } = nodeType.schema
 
-  const excludedTypes = [nodes.table]
+  const excludedTypes = [nodes.table, nodes.figure, nodes.footnotes_element]
+
+  return excludedTypes.includes(nodeType)
+}
+
+const isChildrenExcluded = (nodeType: ManuscriptNodeType) => {
+  const { nodes } = nodeType.schema
+
+  const excludedTypes = [nodes.pullquote_element, nodes.blockquote_element]
 
   return excludedTypes.includes(nodeType)
 }
@@ -135,23 +141,25 @@ export const buildTree: TreeBuilder = ({
   const endPos = pos + node.nodeSize
   const isSelected = selected ? node.attrs.id === selected.node.attrs.id : false
 
-  node.forEach((childNode, offset, childIndex) => {
-    if (
-      (!childNode.isAtom || isElementNodeType(childNode.type)) &&
-      childNode.attrs.id &&
-      !isExcluded(childNode.type)
-    ) {
-      items.push(
-        buildTree({
-          node: childNode,
-          pos: startPos + offset,
-          index: childIndex,
-          selected,
-          parent: node,
-        })
-      )
-    }
-  })
+  if (!isChildrenExcluded(node.type)) {
+    node.forEach((childNode, offset, childIndex) => {
+      if (
+        (!childNode.isAtom || isElementNodeType(childNode.type)) &&
+        childNode.attrs.id &&
+        !isExcluded(childNode.type)
+      ) {
+        items.push(
+          buildTree({
+            node: childNode,
+            pos: startPos + offset,
+            index: childIndex,
+            selected,
+            parent: node,
+          })
+        )
+      }
+    })
+  }
 
   return { node, index, items, pos, endPos, parent, isSelected }
 }
@@ -304,7 +312,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     event.preventDefault()
     event.stopPropagation()
 
-    if (!this.props.permissions.write) {
+    if (!this.props.editArticle) {
       return false
     }
 
@@ -339,7 +347,7 @@ const dragSource = DragSource<Props, ConnectedDragSourceProps, DragObject>(
     },
 
     canDrag(props) {
-      return props.permissions.write && !!props.tree.parent
+      return props.editArticle && !!props.tree.parent
     },
   },
   (connect, monitor) => ({

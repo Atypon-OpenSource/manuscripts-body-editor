@@ -354,6 +354,7 @@ const buildProps = (
   setLibraryItem: () => undefined,
   saveModel: async <T extends Model>() => ({} as T),
   filterLibraryItems: async () => [],
+  removeLibraryItem: () => undefined,
   subscribe: () => undefined,
   setView: () => undefined,
   retrySync: async () => undefined,
@@ -363,9 +364,6 @@ const buildProps = (
     url: '',
     token: '',
     disabled: false,
-  },
-  permissions: {
-    write: true,
   },
   components: {},
   matchLibraryItemByIdentifier: () => undefined,

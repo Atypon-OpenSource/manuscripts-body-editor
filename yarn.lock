@@ -3,9 +3,15 @@
 
 
 "@apollo/client@^3.6.9":
+<<<<<<< HEAD
   version "3.7.0"
   resolved "https://registry.npmjs.org/@apollo/client/-/client-3.7.0.tgz#1c26a04488f45b3a4779fa2562e4b706402cb876"
   integrity sha512-hp4OvrH1ZIQACRYcIrh/C0WFnY7IM7G6nlTpC8DSTEWxfZQ2kvpvDY0I/hYmCs0oAVrg26g3ANEdOzGWTcYbPg==
+=======
+  version "3.7.1"
+  resolved "https://registry.npmjs.org/@apollo/client/-/client-3.7.1.tgz#86ce47c18a0714e229231148b0306562550c2248"
+  integrity sha512-xu5M/l7p9gT9Fx7nF3AQivp0XukjB7TM7tOd5wifIpI8RskYveL4I+rpTijzWrnqCPZabkbzJKH7WEAKdctt9w==
+>>>>>>> 0965347c74dfdb216fc34adeccc2fd45f235940b
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/context" "^0.7.0"
@@ -1640,10 +1646,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.54.0":
-  version "0.54.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.54.0.tgz#f1ea6fc748f66386e8a97ef8511b8323b5352fa0"
-  integrity sha512-Zyn6NsHhT8IMwm1KJyZdHBBZrmjKJtZXfn2h3RaKlfCrpyjhy+9tlli8WyxA+FsKL1nQivVwAQdbn2z4WKhVeQ==
+"@manuscripts/manuscript-transform@^0.55.0":
+  version "0.55.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.55.0.tgz#0c68cd46e7aa277306370d8a90cb800a14eaa044"
+  integrity sha512-SJNA5YaA35A+i/xmPujcFGb80TXgTZTitilcqUpidaIRIUMADMo4gc3UK+FX5xrJZJ9HfzDJrEj/s4WMkDUidg==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/library" "^0.6.2"
@@ -1707,10 +1713,45 @@
     url "^0.11.0"
     util "^0.12.0"
 
+<<<<<<< HEAD
 "@manuscripts/style-guide@^0.31.19", "@manuscripts/style-guide@^0.31.20":
   version "0.31.25"
   resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.31.25.tgz#e70fd9cfb7c9a72004faf58b6598c8511ee55dac"
   integrity sha512-xSniaGTHU/I8T++fgk2mUhXHnOL/3EhOFaeFSCISzH08onQmOo/Oj7Mb+LCCz+EBZPM4Sp98VLMD5Bt18SfzYg==
+=======
+"@manuscripts/style-guide@^0.31.19":
+  version "0.31.19"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.31.19.tgz#c79e023103920db6338e0cf2fb122a9d0f23258a"
+  integrity sha512-iVaMIZ3oz2j08Bji3N6qyEhwDAb75zBkAIdOsjB79QqwbARE2snwaPYzgpmJ3sjkeGONdlWyIQaJoboSAaLmgA==
+  dependencies:
+    "@formatjs/intl-relativetimeformat" "^4.5.9"
+    "@formatjs/intl-utils" "^2.2.0"
+    "@manuscripts/assets" "^0.6.1"
+    "@manuscripts/eslint-config" "^0.4.2"
+    "@reach/tabs" "^0.11.2"
+    "@types/prosemirror-model" "~1.13.0"
+    "@types/react-color" "^3.0.4"
+    "@types/react-router-dom" "^5.1.6"
+    date-fns "^2.16.1"
+    lodash-es "^4.17.15"
+    pdfjs-dist "^2.7.570"
+    react-color "^2.19.3"
+    react-dnd "^11.1.3"
+    react-intl "^3.12.0"
+    react-modal "^3.11.2"
+    react-modern-calendar-datepicker "^3.1.3"
+    react-router-dom "^5.2.0"
+    react-select "^5.0.1"
+    react-sizeme "^2.6.12"
+    react-tooltip "^4.2.11"
+    tooltip.js "^1.3.3"
+    typeface-lato "^1.1.13"
+
+"@manuscripts/style-guide@^0.31.27":
+  version "0.31.27"
+  resolved "https://registry.npmjs.org/@manuscripts/style-guide/-/style-guide-0.31.27.tgz#268bb277523df0aa6fba3aaebe755989f8a028b9"
+  integrity sha512-QtIdvjPBjdsn0O7t1XGhWxTWHCPewXFGxKA0tQAJjoW9LfOhXP0vbejIKN9aqiNUPr4IqQWOYRws5x+6v4QDZA==
+>>>>>>> 0965347c74dfdb216fc34adeccc2fd45f235940b
   dependencies:
     "@apollo/client" "^3.6.9"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -13924,9 +13965,15 @@ tslib@^2.0.0, tslib@^2.1.0:
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
 
 tslib@^2.3.0:
+<<<<<<< HEAD
   version "2.4.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+=======
+  version "2.4.1"
+  resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
+  integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
+>>>>>>> 0965347c74dfdb216fc34adeccc2fd45f235940b
 
 tsutils@^3.17.1:
   version "3.21.0"

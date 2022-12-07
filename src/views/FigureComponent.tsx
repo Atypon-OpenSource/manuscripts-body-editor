@@ -48,7 +48,6 @@ export type SubmissionAttachmentType = {
 }
 
 export interface FigureProps {
-  permissions: { write: boolean }
   externalFiles?: SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
@@ -68,7 +67,6 @@ export const addFormatQuery = (url?: string) => {
 }
 
 const FigureComponent = ({
-  permissions,
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
@@ -209,7 +207,7 @@ const FigureComponent = ({
 
     return (
       <Container>
-        {permissions.write && (
+        {can?.editArticle && (
           <FileUpload
             fileInputRef={fileInputRef}
             uploadAttachment={uploadAttachment}
@@ -259,7 +257,7 @@ const FigureComponent = ({
                     Unsupported file format
                   </UnsupportedFormatLabel>
                   <div>
-                    {permissions.write
+                    {can?.editArticle
                       ? 'Click to add image'
                       : 'No image here yet…'}
                   </div>
@@ -271,9 +269,7 @@ const FigureComponent = ({
           <UnstyledButton type="button" onClick={onUploadClick}>
             <Placeholder>
               <div>
-                {permissions.write
-                  ? 'Click to add image'
-                  : 'No image here yet…'}
+                {can?.editArticle ? 'Click to add image' : 'No image here yet…'}
               </div>
             </Placeholder>
           </UnstyledButton>
