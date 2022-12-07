@@ -35,7 +35,6 @@ import { ReactViewComponentProps } from './ReactView'
 const TableElement = ({
   externalFiles,
   updateDesignation,
-  permissions,
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
@@ -129,7 +128,7 @@ const TableElement = ({
       })
     }
     return (
-      <EditableBlock canWrite={permissions.write} viewProps={viewProps}>
+      <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
           {mediaAlternativesEnabled && can?.changeDesignation && externalFiles && (
             <AttachableFilesDropdown
