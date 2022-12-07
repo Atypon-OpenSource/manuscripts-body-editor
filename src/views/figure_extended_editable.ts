@@ -84,14 +84,6 @@ export class FigureEditableView extends FigureView<
   public setFigureAttrs: (attrs: { [key: string]: unknown }) => void
 
   public initialise = () => {
-    this.setFigureAttrs = setGivenNodeAttrs(
-      // try it out like that - having it initialised before update contents
-      this.viewProps.node,
-      this.viewProps,
-      this.view.dispatch,
-      this.viewProps.getPos()
-    )
-
     this.createDOM()
     this.updateContents()
 
@@ -100,6 +92,14 @@ export class FigureEditableView extends FigureView<
       getPos: this.getPos,
       view: this.view,
     }
+
+    this.setFigureAttrs = setGivenNodeAttrs(
+      // try it out like that - having it initialised before update contents
+      this.viewProps.node,
+      this.viewProps,
+      this.view.dispatch,
+      this.viewProps.getPos()
+    )
   }
 
   // TODO: load/subscribe to the figure style object from the database and use it here?
