@@ -1640,10 +1640,10 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.59.0":
-  version "0.59.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.59.0.tgz#cb165d59f5d5538699c8dd285efab8873b4d6251"
-  integrity sha512-xAs2cAxrZZS+VHYXOsN7TftdkoiIVd7r/sPzg0PDZMwZH7K1KTGulWQwjXu/G1lV9NjZSq0vzPv+pWN300xjkw==
+"@manuscripts/manuscript-transform@^0.60.0":
+  version "0.60.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.60.0.tgz#6cbdaba058110a92ecfc8458721e1c6dc42dec3b"
+  integrity sha512-/Ah/QeaUpVgyETecFCSXcoTQvDkjb9JCglZs/fbbrcZyt6o4hhNb3oh1udxaxnEeahiTIPu1UHKhs5k5RX6HmA==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/library" "^0.6.2"
@@ -1651,7 +1651,7 @@
     debug "^4.1.1"
     mathjax-full "^3.1.2"
     mime "^2.4.6"
-    prosemirror-model "~1.14.0"
+    prosemirror-model "~1.18.3"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
@@ -10045,6 +10045,11 @@ orderedmap@^1.1.0:
   resolved "https://registry.npmjs.org/orderedmap/-/orderedmap-1.1.1.tgz"
   integrity sha512-3Ux8um0zXbVacKUkcytc0u3HgC0b0bBLT+I60r2J/En72cI0nZffqrA7Xtf2Hqs27j1g82llR5Mhbd0Z1XW4AQ==
 
+orderedmap@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/orderedmap/-/orderedmap-2.1.0.tgz#819457082fa3a06abd316d83a281a1ca467437cd"
+  integrity sha512-/pIFexOm6S70EPdznemIz3BQZoJ4VTFrhqzu0ACBqBgeLsLxq8e6Jim63ImIfwW/zAD1AlXpRMlOv3aghmo4dA==
+
 os-browserify@^0.3.0:
   version "0.3.0"
   resolved "https://registry.npmjs.org/os-browserify/-/os-browserify-0.3.0.tgz"
@@ -11561,6 +11566,13 @@ prosemirror-model@>=1.0.0, prosemirror-model@^1.0.0, prosemirror-model@^1.1.0, p
   integrity sha512-+9J7YE2qD2lsRgaI5aF7u6LynBoHxb/8sW1gaMKRAhK+yeQ+motBIaxb2GxRWSadDWMOq5haAImSTBo6jDkv2A==
   dependencies:
     orderedmap "^1.1.0"
+
+prosemirror-model@~1.18.3:
+  version "1.18.3"
+  resolved "https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.18.3.tgz#d1026a78cff928fd600e90d87cf7d162e0a4e3fd"
+  integrity sha512-yUVejauEY3F1r7PDy4UJKEGeIU+KFc71JQl5sNvG66CLVdKXRjhWpBW6KMeduGsmGOsw85f6EGrs6QxIKOVILA==
+  dependencies:
+    orderedmap "^2.0.0"
 
 prosemirror-schema-basic@^1.0.0, prosemirror-schema-basic@^1.1.2:
   version "1.1.2"
