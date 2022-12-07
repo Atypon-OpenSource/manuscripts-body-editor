@@ -258,6 +258,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
+          <ListItemButton onClick={onDetachClick}>Detach</ListItemButton>
         </OptionsDropdownList>
       )}
     </DropdownWrapper>
