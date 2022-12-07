@@ -27,7 +27,6 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -53,7 +52,6 @@ export interface Props {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
-  setCommentTarget: (commentTarget?: string) => void
   capabilities?: Capabilities
   setCommentTarget: (commentTarget?: CommentAnnotation) => void
 
