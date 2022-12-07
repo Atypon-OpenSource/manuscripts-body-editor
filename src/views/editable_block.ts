@@ -15,9 +15,8 @@
  */
 
 import { Build, nodeNames } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
 import { CommentAnnotation, Model } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
