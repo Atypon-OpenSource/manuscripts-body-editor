@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  buildCitationNodes,
-  buildCitations,
-  createBibliographyElementContents,
-} from '@manuscripts/library'
-import { generateID, ManuscriptSchema } from '@manuscripts/manuscript-transform'
-import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import { buildCitationNodes, buildCitations } from '@manuscripts/library'
+import { ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import {
-  buildDecorations,
-  getBibliographyItemFn,
-  isBibliographyElement,
-} from './bibliography-utils'
+import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
 export const bibliographyKey = new PluginKey('bibliography')
 
 /**
- * This plugin generates labels for inline citations and the bibliography contents, using citeproc-js.
- * The citation labels and bibliography are regenerated when any relevant content changes.
+ * This plugin generates labels for inline citations using citeproc-js.
+ * The citation labels are regenerated when any relevant content changes.
  */
 export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
@@ -116,34 +107,6 @@ export default (props: BibliographyProps) => {
             contents,
           })
         })
-
-        const bibliography = citationProvider.makeBibliography()
-        if (bibliography) {
-          const [bibmeta, generatedBibliographyItems] = bibliography
-
-          if (bibmeta.bibliography_errors.length) {
-            console.error(bibmeta.bibliography_errors) // tslint:disable-line:no-console
-          }
-
-          tr.doc.descendants((node, pos) => {
-            if (isBibliographyElement(node)) {
-              const id =
-                node.attrs.id || generateID(ObjectTypes.BibliographyElement)
-
-              const contentsElement = createBibliographyElementContents(
-                generatedBibliographyItems,
-                id,
-                node.attrs.placeholder
-              )
-
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                contents: contentsElement.outerHTML,
-                id,
-              })
-            }
-          })
-        }
 
         // create a new NodeSelection
         // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
