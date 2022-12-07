@@ -79,7 +79,7 @@ export default {
   createView: (props: EditorProps): CreateView => (el, state, dispatch) =>
     new EditorView(el, {
       state,
-      editable: () => props.permissions.write,
+      editable: () => !!props.capabilities?.editArticle,
       scrollMargin: {
         top: 100,
         bottom: 100,

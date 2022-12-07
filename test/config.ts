@@ -27,6 +27,8 @@ import {
   Manuscript,
   Model,
 } from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -51,10 +53,9 @@ export interface Props {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
+  setCommentTarget: (commentTarget?: string) => void
+  capabilities?: Capabilities
   setCommentTarget: (commentTarget?: CommentAnnotation) => void
-  permissions: {
-    write: boolean
-  }
 
   getAttachment: (id: string) => Blob
   putAttachment: (file: File) => Promise<string>
@@ -71,7 +72,7 @@ export default {
   createView: (props: Props): CreateView => (el, state, dispatch) =>
     new EditorView(el, {
       state,
-      editable: () => props.permissions.write,
+      editable: () => !!props.capabilities?.editArticle,
       scrollMargin: {
         top: 100,
         bottom: 100,
