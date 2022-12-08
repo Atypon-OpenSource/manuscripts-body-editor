@@ -153,7 +153,7 @@ describe('childSectionCoordinates', () => {
         start: 9,
       },
       {
-        end: 19,
+        end: 21,
         id: 'MPBibliographySection:1',
         start: 14,
       },
