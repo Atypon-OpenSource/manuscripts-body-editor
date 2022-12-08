@@ -23,11 +23,11 @@ export function findHighlightMarkers(doc: PMNode) {
   let current: HighlightStartMarker | undefined
   doc.descendants((node, pos) => {
     if (isHighlightMarkerNode(node)) {
-      const { position, rid } = node.attrs
+      const { position, tid } = node.attrs
       if (position === 'start') {
         current = {
           start: pos + 1,
-          rid,
+          rid: tid,
         }
       } else if (position === 'end' && current) {
         markers.push({
