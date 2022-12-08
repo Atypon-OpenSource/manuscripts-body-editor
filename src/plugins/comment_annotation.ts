@@ -116,7 +116,7 @@ const commentsState = (
   const comments = getModelsByType<CommentAnnotation>(
     modelMap,
     ObjectTypes.CommentAnnotation
-  )
+  ).filter((comment) => !comment.target.includes(ObjectTypes.CommentAnnotation))
 
   const commentsMap = comments.reduce((map, { _id, target, selector }) => {
     if (!isHighlightComment({ selector })) {
