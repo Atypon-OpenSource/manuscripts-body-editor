@@ -23,7 +23,11 @@ import {
   ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
-import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Model,
+} from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -46,7 +50,8 @@ export interface EditorProps extends ViewerProps {
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   removeLibraryItem: (id: string) => void
-  setCommentTarget: (commentTarget?: string) => void
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setSelectedComment: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
 
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
