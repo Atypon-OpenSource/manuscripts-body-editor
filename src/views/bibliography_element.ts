@@ -14,66 +14,22 @@
  * limitations under the License.
  */
 
-import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-const isLinkElement = (element: HTMLElement): element is HTMLAnchorElement =>
-  element.nodeName === 'A'
-
 export class BibliographyElementBlockView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
-  private element: HTMLElement
-
   public stopEvent = () => true
 
   public ignoreMutation = () => true
 
-  public updateContents = () => {
-    if (
-      this.decorations &&
-      this.decorations.find((decoration) => decoration.spec.missing)
-    ) {
-      this.element.innerHTML = ''
-
-      this.element.removeAttribute('data-paragraph-style')
-    } else {
-      try {
-        const fragment = sanitize(this.node.attrs.contents)
-        this.element.innerHTML = ''
-        this.element.appendChild(fragment)
-      } catch (e) {
-        console.error(e) // tslint:disable-line:no-console
-        // TODO: improve the UI for presenting offline/import errors
-        window.alert(
-          'There was an error loading the HTML purifier, please reload to try again'
-        )
-      }
-
-      this.element.setAttribute(
-        'data-paragraph-style',
-        this.node.attrs.paragraphStyle
-      )
-    }
-  }
-
   public createElement = () => {
-    this.element = document.createElement('div')
-    this.element.className = 'block'
-    this.element.setAttribute('id', this.node.attrs.id)
-    this.dom.appendChild(this.element)
-
-    this.element.addEventListener('click', (event) => {
-      const element = event.target as HTMLElement
-
-      if (isLinkElement(element)) {
-        event.preventDefault()
-
-        window.open(element.href, '_blank', 'noopener')
-      }
-    })
+    this.contentDOM = document.createElement('div')
+    this.contentDOM.classList.add('block')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.dom.appendChild(this.contentDOM)
   }
 }
 
