@@ -16,7 +16,7 @@
 
 import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
-import axios, { CancelTokenSource } from 'axios'
+import axios, { CancelToken } from 'axios'
 
 interface SearchResults {
   items: BibliographyItem[]
@@ -30,13 +30,12 @@ const search = async (
   query: string,
   rows: number,
   mailto: string,
-  tokenSource?: CancelTokenSource
+  tokenSource?: CancelToken
 ): Promise<SearchResults> => {
   // if the query is just a DOI, fetch that single record
   if (query.trim().match(/^10\.\S+\/\S+$/)) {
     return searchByDOI(query.trim(), mailto)
   }
-  const token = tokenSource ? { cancelToken: tokenSource.token } : {}
 
   const response = await axios.get<{
     message: {
@@ -49,7 +48,7 @@ const search = async (
       query,
       rows,
     },
-    ...token,
+    cancelToken: tokenSource,
   })
 
   if (response.status !== 200) {
