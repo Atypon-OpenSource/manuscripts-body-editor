@@ -153,7 +153,7 @@ const commentsState = (
   return DecorationSet.create(doc, decorations)
 }
 
-const getCommentIcon = (
+export const getCommentIcon = (
   comment: Comment,
   setSelectedComment: (id?: string) => void
 ) => () => {
