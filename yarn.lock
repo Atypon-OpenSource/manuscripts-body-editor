@@ -1655,7 +1655,7 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@1.53.0":
+"@manuscripts/manuscripts-json-schema@1.53.0", "@manuscripts/manuscripts-json-schema@^1.53.0":
   version "1.53.0"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.53.0.tgz#f77ada694654147920149e6212b9947831682d2d"
   integrity sha512-Has/uaN4mpyDc8TKJS1IQGj1Ly3jZFfQeEj9n+FNlvCJcSOtfAwVeZXQcfDCGhp89Lv7e1XVmTJfKZMX7nbvfg==
@@ -1668,15 +1668,6 @@
   version "1.49.12"
   resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.49.12.tgz#2fe461dcf3b26169605f5a4980fd0c2891c2672e"
   integrity sha512-ZHb+VunM/884YNZuXFi4EgalKT8aLFK9v+AwgGQhtoVk4Q/LThYV8TqOrevtCbNk/cydWNynDeTpEB3QxWXZzQ==
-  dependencies:
-    ajv "^6.10.0"
-    deepmerge "^3.2.0"
-    js-beautify "^1.9.0"
-
-"@manuscripts/manuscripts-json-schema@^1.53.0":
-  version "1.54.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.54.0.tgz#d97e74ba45b59ea46b0d8d05d96523633835fa78"
-  integrity sha512-JLL/kaJjUICGCYfAzUX6h521hjhJvYogxOOqiU1kxaYveNFaJ3dNCz9yfWu2mDwOAdM4jfrdxtPlE5Osn9o5IQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
