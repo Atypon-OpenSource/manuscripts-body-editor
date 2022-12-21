@@ -62,6 +62,7 @@ interface OptionsProps extends DropdownProps {
   canDownloadFile?: boolean
   onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
+  canEditArticle?: boolean
 }
 
 export interface FilesDropdownProps extends DropdownProps {

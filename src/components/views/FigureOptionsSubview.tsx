@@ -58,6 +58,7 @@ const FigureOptionsSubview: React.FC<
       mediaAlternativesEnabled={mediaAlternativesEnabled}
       canReplaceFile={can?.replaceFile}
       canDownloadFile={can?.downloadFiles}
+      canEditArticle={can?.editArticle}
     />
   )
 }
