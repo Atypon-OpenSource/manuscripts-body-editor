@@ -66,6 +66,7 @@ interface OptionsProps extends DropdownProps {
 
 export interface FilesDropdownProps extends DropdownProps {
   canUploadFile?: boolean
+  canEditArticle?: boolean
   addFigureExFileRef: (
     relation: string,
     publicUrl: string,
@@ -198,6 +199,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   onDetachClick,
   canReplaceFile,
   canDownloadFile,
+  canEditArticle,
   setFigureAttrs,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
@@ -258,7 +260,9 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
-          <ListItemButton onClick={onDetachClick}>Detach</ListItemButton>
+          {canEditArticle && (
+            <ListItemButton onClick={onDetachClick}>Detach</ListItemButton>
+          )}
         </OptionsDropdownList>
       )}
     </DropdownWrapper>
