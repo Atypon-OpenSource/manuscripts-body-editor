@@ -1640,25 +1640,25 @@
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscript-transform@^0.61.0":
-  version "0.61.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.61.0.tgz#7f613ef3959e5a8f0067790df1fc8749e251f6fc"
-  integrity sha512-2CSp4Lml8LMATn04WmWw9qf7qKSxas5I60LheXK89j4TEkY6oDKyIXwNk4RYqCpg6aqIGFaORsRJ88O/d699oA==
+"@manuscripts/manuscript-transform@^0.62.0":
+  version "0.62.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscript-transform/-/manuscript-transform-0.62.0.tgz#cc28fcbb7b7c1e94d2152378a26f3bc23242659d"
+  integrity sha512-MyFLh7YqLipStgosHtxXtQQHkzsf3iYibUkxiKocf1/Sslf5J2iSI+dOhs/7ye7J6rzduqJQ5bRjxMHzdvRufQ==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/library" "^0.6.2"
-    "@manuscripts/manuscripts-json-schema" "1.52.0"
+    "@manuscripts/manuscripts-json-schema" "1.53.0"
     debug "^4.1.1"
-    mathjax-full "^3.1.2"
+    mathjax-full "^3.2.2"
     mime "^2.4.6"
     prosemirror-model "~1.14.0"
     uuid "^8.2.0"
     w3c-xmlserializer "^2.0.0"
 
-"@manuscripts/manuscripts-json-schema@1.52.0":
-  version "1.52.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.52.0.tgz#404b692d6f3ea1fc4faa57ef4b5b6bdbcbd780db"
-  integrity sha512-cZXmc0uigHG9s6vRIS4rUhamvqsoRzXb4OVOd5/6FHMWgNijSFIKhD5Y/QIaSF51C/SHM+7t2ido7t8frMts+Q==
+"@manuscripts/manuscripts-json-schema@1.53.0":
+  version "1.53.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.53.0.tgz#f77ada694654147920149e6212b9947831682d2d"
+  integrity sha512-Has/uaN4mpyDc8TKJS1IQGj1Ly3jZFfQeEj9n+FNlvCJcSOtfAwVeZXQcfDCGhp89Lv7e1XVmTJfKZMX7nbvfg==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -1673,10 +1673,10 @@
     deepmerge "^3.2.0"
     js-beautify "^1.9.0"
 
-"@manuscripts/manuscripts-json-schema@^1.51.0":
-  version "1.51.0"
-  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.51.0.tgz#6677f4ac81243496b92608c82f1e2d1c56acf22a"
-  integrity sha512-YNrqrX8SScXZ5V/3/2Cyy/3SepOkMX/mn18TdKggh+WNN8n3AtKM31/Qw+2jVcF84w9pZ+RU+wuObr2u+GlSUA==
+"@manuscripts/manuscripts-json-schema@^1.53.0":
+  version "1.54.0"
+  resolved "https://registry.npmjs.org/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-1.54.0.tgz#d97e74ba45b59ea46b0d8d05d96523633835fa78"
+  integrity sha512-JLL/kaJjUICGCYfAzUX6h521hjhJvYogxOOqiU1kxaYveNFaJ3dNCz9yfWu2mDwOAdM4jfrdxtPlE5Osn9o5IQ==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^3.2.0"
@@ -4256,6 +4256,11 @@ command-exists@^1.2.6:
   version "1.2.9"
   resolved "https://registry.npmjs.org/command-exists/-/command-exists-1.2.9.tgz"
   integrity sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==
+
+commander@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.npmjs.org/commander/-/commander-9.2.0.tgz#6e21014b2ed90d8b7c9647230d8b7a94a4a419a9"
+  integrity sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==
 
 commander@>=7.0.0:
   version "7.2.0"
@@ -9284,6 +9289,16 @@ mathjax-full@^3.1.2:
     mj-context-menu "^0.6.1"
     speech-rule-engine "^3.1.1"
 
+mathjax-full@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.npmjs.org/mathjax-full/-/mathjax-full-3.2.2.tgz#43f02e55219db393030985d2b6537ceae82f1fa7"
+  integrity sha512-+LfG9Fik+OuI8SLwsiR02IVdjcnRCy5MufYLi0C3TdMT56L/pjB0alMVGgoWJF8pN9Rc7FESycZB9BMNWIid5w==
+  dependencies:
+    esm "^3.2.25"
+    mhchemparser "^4.1.0"
+    mj-context-menu "^0.6.1"
+    speech-rule-engine "^4.0.6"
+
 max-safe-integer@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/max-safe-integer/-/max-safe-integer-1.0.1.tgz"
@@ -9372,6 +9387,11 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/methods/-/methods-1.1.2.tgz"
   integrity sha1-VSmk1nZUE07cxSZmVoNbD4Ua/O4=
+
+mhchemparser@^4.1.0:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/mhchemparser/-/mhchemparser-4.1.1.tgz#a2142fdab37a02ec8d1b48a445059287790becd5"
+  integrity sha512-R75CUN6O6e1t8bgailrF1qPq+HhVeFTM3XQ0uzI+mXTybmphy3b6h4NbLOYhemViQ3lUs+6CKRkC3Ws1TlYREA==
 
 micromatch@^2.3.11:
   version "2.3.11"
@@ -13138,6 +13158,15 @@ speech-rule-engine@^3.1.1:
     wicked-good-xpath "^1.3.0"
     xmldom-sre "^0.1.31"
 
+speech-rule-engine@^4.0.6:
+  version "4.0.7"
+  resolved "https://registry.npmjs.org/speech-rule-engine/-/speech-rule-engine-4.0.7.tgz#b655dacbad3dae04acc0f7665e26ef258397dd09"
+  integrity sha512-sJrL3/wHzNwJRLBdf6CjJWIlxC04iYKkyXvYSVsWVOiC2DSkHmxsqOhEeMsBA9XK+CHuNcsdkbFDnoUfAsmp9g==
+  dependencies:
+    commander "9.2.0"
+    wicked-good-xpath "1.3.0"
+    xmldom-sre "0.1.31"
+
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
   resolved "https://registry.npmjs.org/split-string/-/split-string-3.1.0.tgz"
@@ -14644,7 +14673,7 @@ whynot@^4.0.0:
   resolved "https://registry.npmjs.org/whynot/-/whynot-4.0.0.tgz"
   integrity sha512-dnIPzjyDaTu1Yjv7koEu0cxKx7Zq9ZuXM7bO3ZvG5PNgFuMp7+E4+ZkVUo4Ei73Zixwu04ahOf58SPcH+KA4oQ==
 
-wicked-good-xpath@^1.3.0:
+wicked-good-xpath@1.3.0, wicked-good-xpath@^1.3.0:
   version "1.3.0"
   resolved "https://registry.npmjs.org/wicked-good-xpath/-/wicked-good-xpath-1.3.0.tgz"
   integrity sha1-gbDpXoZQ5JyUsiKY//hoa1VTz2w=
@@ -14738,7 +14767,7 @@ xmlchars@^2.1.1, xmlchars@^2.2.0:
   resolved "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xmldom-sre@^0.1.31:
+xmldom-sre@0.1.31, xmldom-sre@^0.1.31:
   version "0.1.31"
   resolved "https://registry.npmjs.org/xmldom-sre/-/xmldom-sre-0.1.31.tgz"
   integrity sha512-f9s+fUkX04BxQf+7mMWAp5zk61pciie+fFLC9hX9UVvCeJQfNHRHXpeo5MPcR0EUf57PYLdt+ZO4f3Ipk2oZUw==

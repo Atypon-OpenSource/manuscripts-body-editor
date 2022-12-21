@@ -22,14 +22,11 @@ import {
 import {
   buildComment,
   DEFAULT_BUNDLE,
-  getModelsByType,
   ManuscriptNodeView,
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   CommentAnnotation,
-  Model,
-  ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 
 import { sanitize } from '../lib/dompurify'
@@ -53,7 +50,6 @@ const createBibliography = async (items: BibliographyItem[]) => {
 
 interface BibliographyItemProps extends BaseNodeProps {
   setCommentTarget: (target?: CommentAnnotation) => void
-  modelMap: Map<string, Model>
 }
 
 export class BibliographyItemView<PropsType extends BibliographyItemProps>
@@ -83,10 +79,6 @@ export class BibliographyItemView<PropsType extends BibliographyItemProps>
       attrs['DOI'] = attrs.doi
       delete attrs.doi
     }
-    const bibliographyComments = getModelsByType<CommentAnnotation>(
-      this.props.modelMap,
-      ObjectTypes.CommentAnnotation
-    ).filter((comment) => comment.target === this.node.attrs.id)
 
     const reference = attrs
     if (reference) {
@@ -116,8 +108,7 @@ export class BibliographyItemView<PropsType extends BibliographyItemProps>
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        bibliographyComments.map(() => {})
-        this.dom.appendChild(fragment)
+        this.dom.appendChild(doubleButton)
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors
