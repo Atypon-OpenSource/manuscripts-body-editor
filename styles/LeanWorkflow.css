@@ -665,3 +665,46 @@
   top: -8%;
   display: inline-flex;
 }
+
+.bib-item{
+  position: relative;
+  margin-right: 40px;
+}
+
+.bib-item:hover > .bibliography-double-button {
+  visibility: visible;
+}
+
+.bibliography-double-button{
+  display: inline-flex;
+  flex-direction: column;
+  position: absolute;
+  top: -50%;
+  left: 100%;
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.bibliography-edit-button, .bibliography-comment-button {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  background: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 0 32px 32px 0;
+}
+
+.bibliography-edit-button {
+  transform: rotate(-90deg);
+}
+
+.bibliography-comment-button {
+  transform: rotate(90deg);
+}
+
+.bibliography-comment-button > svg {
+  transform: rotate(-90deg);
+}
