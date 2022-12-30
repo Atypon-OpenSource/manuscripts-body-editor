@@ -33,7 +33,7 @@ export type NodeViewCreator<T extends ManuscriptNodeView> = (
   node: ManuscriptNode,
   view: ManuscriptEditorView,
   getPos: boolean | (() => number),
-  decorations: Decoration[]
+  decorations: readonly Decoration[]
 ) => T
 
 export interface ChangeReceiverCommand {

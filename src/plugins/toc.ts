@@ -20,7 +20,6 @@ import {
   isSectionNodeType,
   isTOCSectionNode,
   ManuscriptNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
   Model,
@@ -143,7 +142,7 @@ interface Props {
  * This plugin generates the content for a Table of Contents element, if present
  */
 export default (props: Props) => {
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     key: tocKey,
 
     appendTransaction(transactions, oldState, newState) {

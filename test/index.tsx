@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import '@babel/polyfill'
-
+// @ts-ignore
 import projectDump from '@manuscripts/examples/data/project-dump.json'
-import {
-  Build,
-  Decoder,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { Build, Decoder } from '@manuscripts/manuscript-transform'
 import {
   Manuscript,
   Model,
@@ -38,10 +33,11 @@ import {
   getMenus,
   useApplicationMenus,
   useEditor,
+  PopperManager,
 } from '../src'
-import { PopperManager } from '../src/lib/popper'
 import config, { Props } from './config'
 import { theme } from './theme'
+import {Node} from "prosemirror-model/src/node";
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
   return new Map(
@@ -53,10 +49,7 @@ const buildModelMap = (models: Model[]): Map<string, Model> => {
 
 const EditorComponent: React.FC<Props> = (props) => {
   const initState = config.createState(props)
-  const editor = useEditor<ManuscriptSchema>(
-    initState,
-    config.createView(props)
-  )
+  const editor = useEditor(initState, config.createView(props))
   const { onRender } = editor
   const menus = useApplicationMenus(getMenus(editor, () => null))
 
@@ -80,6 +73,8 @@ const start = async () => {
   const decoder = new Decoder(modelMap)
   const doc = decoder.createArticleNode()
   const ancestorDoc = decoder.createArticleNode()
+
+  console.log((doc as Node).attrs)
 
   const getModel = <T extends Model>(id: string) =>
     modelMap.get(id) as T | undefined

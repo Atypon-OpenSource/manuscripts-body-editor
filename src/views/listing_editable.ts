@@ -343,7 +343,7 @@ export class ListingEditableView extends ListingView<
     } catch (error) {
       addOutput({
         type: 'error',
-        text: error.message,
+        text: 'error',
       })
     }
 

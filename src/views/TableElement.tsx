@@ -145,6 +145,7 @@ const TableElement = ({
                     ),
                   }
                   if (relation == 'imageRepresentation') {
+                    // @ts-ignore
                     newAttrs.src = publicUrl
                   }
                   setTableAttrs(newAttrs)

@@ -18,7 +18,6 @@ import {
   isGraphicalAbstractSectionNode,
   isSectionNode,
   isSectionTitleNode,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { Plugin, Transaction } from 'prosemirror-state'
@@ -75,7 +74,7 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 }
 
 export default () => {
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     filterTransaction: (tr) => {
       return preventGraphicalAbstractTitleEdit(tr)
     },

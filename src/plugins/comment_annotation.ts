@@ -16,7 +16,6 @@
 import {
   getModelsByType,
   ManuscriptNode,
-  ManuscriptSchema,
   schema,
 } from '@manuscripts/manuscript-transform'
 import {
@@ -29,10 +28,9 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { SET_COMMENT_TARGET } from './highlight'
 
-export const commentAnnotation = new PluginKey<
-  CommentAnnotationState,
-  ManuscriptSchema
->('comment_annotation')
+export const commentAnnotation = new PluginKey<CommentAnnotationState>(
+  'comment_annotation'
+)
 
 interface CommentAnnotationProps {
   setCommentTarget: (target?: string) => void
@@ -48,10 +46,10 @@ type CommentAnnotationState = {
  * This plugin creates a icon decoration for both inline and block comment.
  */
 export default (props: CommentAnnotationProps) => {
-  return new Plugin<CommentAnnotationState, ManuscriptSchema>({
+  return new Plugin<CommentAnnotationState>({
     key: commentAnnotation,
     state: {
-      init: (tr) => commentsState(props.modelMap, tr.doc),
+      init: (config) => commentsState(props.modelMap, config.doc as ManuscriptNode),
       apply: (tr) => {
         const meta = tr.getMeta(commentAnnotation)
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import '@babel/polyfill'
 
+import 'regenerator-runtime/runtime'
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import { v4 as uuid } from 'uuid'

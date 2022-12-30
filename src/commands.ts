@@ -35,14 +35,13 @@ import {
   ManuscriptNodeSelection,
   ManuscriptNodeType,
   ManuscriptResolvedPos,
-  ManuscriptSchema,
   ManuscriptTextSelection,
   ManuscriptTransaction,
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
 import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
-import { Command } from 'prosemirror-commands'
+import { Command } from 'prosemirror-state'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
   NodeSelection,
@@ -1025,7 +1024,7 @@ export function addComment(
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   viewNode?: ManuscriptNode,
-  resolvePos?: ResolvedPos<ManuscriptSchema>
+  resolvePos?: ResolvedPos
 ): boolean
 
 /**
@@ -1051,7 +1050,7 @@ export function addComment(
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   viewNode?: ManuscriptNode,
-  resolvePos?: ResolvedPos<ManuscriptSchema>
+  resolvePos?: ResolvedPos
 ) {
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
@@ -1107,7 +1106,7 @@ const getParentNode = (selection: Selection) => {
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
-const isAllowedType = (type: NodeType<ManuscriptSchema>) =>
+const isAllowedType = (type: NodeType) =>
   type === type.schema.nodes.section ||
   type === type.schema.nodes.footnotes_section ||
   type === type.schema.nodes.bibliography_section ||
@@ -1117,7 +1116,7 @@ const isAllowedType = (type: NodeType<ManuscriptSchema>) =>
 
 const addBlockComment = (
   id: string,
-  type: NodeType<ManuscriptSchema>,
+  type: NodeType,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
@@ -1136,7 +1135,7 @@ const addBlockComment = (
 
 const addHighlightComment = (
   id: string,
-  type: NodeType<ManuscriptSchema>,
+  type: NodeType,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {

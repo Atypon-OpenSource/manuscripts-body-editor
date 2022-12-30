@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Category, Dialog } from '@manuscripts/style-guide'
-import { Command } from 'prosemirror-commands'
+import { Command } from 'prosemirror-state'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React, { useCallback, useState } from 'react'
 

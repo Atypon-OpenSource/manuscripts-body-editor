@@ -18,7 +18,6 @@ import {
   buildElementsOrder,
   getElementsOrder,
   getModelsByType,
-  ManuscriptSchema,
 } from '@manuscripts/manuscript-transform'
 import {
   ElementsOrder,
@@ -38,7 +37,7 @@ type AuxiliaryObjectsOrder = {
   [key in AuxiliaryObjects]: ElementsOrder
 }
 
-export const modelsKey = new PluginKey<AuxiliaryObjectsOrder, ManuscriptSchema>(
+export const modelsKey = new PluginKey<AuxiliaryObjectsOrder>(
   'auxiliary_elements_order'
 )
 
@@ -49,7 +48,7 @@ export const modelsKey = new PluginKey<AuxiliaryObjectsOrder, ManuscriptSchema>(
  *  with difference to update state of the order object.
  */
 export default (props: Props) =>
-  new Plugin<AuxiliaryObjectsOrder, ManuscriptSchema>({
+  new Plugin<AuxiliaryObjectsOrder>({
     key: modelsKey,
     state: {
       init: () => getAuxiliaryObjects(props.modelMap),
