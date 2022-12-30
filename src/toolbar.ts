@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/manuscript-transform'
 import { toggleMark } from 'prosemirror-commands'
 import { wrapInList } from 'prosemirror-schema-list'
 
@@ -29,7 +29,7 @@ import {
 import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
 import icons from './icons'
 
-export const toolbar: ToolbarConfig<ManuscriptSchema> = {
+export const toolbar: ToolbarConfig = {
   style: {
     bold: {
       title: 'Toggle bold',

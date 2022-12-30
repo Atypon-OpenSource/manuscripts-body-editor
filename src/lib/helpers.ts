@@ -14,53 +14,51 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 
-export const isNodeOfType = (...type: string[]) => (node: Node): boolean => {
-  const [head, ...tail] = type
-  if (node.type === node.type.schema.nodes[head]) {
-    return true
-  }
-  if (tail && tail.length) {
-    return isNodeOfType(...tail)(node)
-  }
-  return false
-}
-
-export const nearestAncestor = (func: (node: ManuscriptNode) => boolean) => (
-  $pos: ResolvedPos<ManuscriptSchema>
-): number | null => {
-  for (let d = $pos.depth; d >= 0; d--) {
-    if (func($pos.node(d))) {
-      return d
+export const isNodeOfType =
+  (...type: string[]) =>
+  (node: Node): boolean => {
+    const [head, ...tail] = type
+    if (node.type === node.type.schema.nodes[head]) {
+      return true
     }
+    if (tail && tail.length) {
+      return isNodeOfType(...tail)(node)
+    }
+    return false
   }
-  return null
-}
+
+export const nearestAncestor =
+  (func: (node: ManuscriptNode) => boolean) =>
+  ($pos: ResolvedPos): number | null => {
+    for (let d = $pos.depth; d >= 0; d--) {
+      if (func($pos.node(d))) {
+        return d
+      }
+    }
+    return null
+  }
 
 // This function finds and merges similar items in an array.
 // It uses a compare function to determine which items in the array
 // are similar (or identical), and if a match is found, uses the mergeFunc
 // to merge it with the match.
-export const mergeSimilarItems = <T>(
-  compareFunc: (a: T, b: T) => boolean,
-  mergeFunc: (a: T, b: T) => T
-) => (items: T[]): T[] => {
-  return items.reduce((acc: T[], item: T) => {
-    const existingIndex = acc.findIndex((existing) =>
-      compareFunc(existing, item)
-    )
-    if (existingIndex === -1) {
-      return [...acc, item]
-    }
-    return [
-      ...acc.slice(0, existingIndex),
-      mergeFunc(acc[existingIndex], item),
-      ...acc.slice(existingIndex + 1),
-    ]
-  }, [])
-}
+export const mergeSimilarItems =
+  <T>(compareFunc: (a: T, b: T) => boolean, mergeFunc: (a: T, b: T) => T) =>
+  (items: T[]): T[] => {
+    return items.reduce((acc: T[], item: T) => {
+      const existingIndex = acc.findIndex((existing) =>
+        compareFunc(existing, item)
+      )
+      if (existingIndex === -1) {
+        return [...acc, item]
+      }
+      return [
+        ...acc.slice(0, existingIndex),
+        mergeFunc(acc[existingIndex], item),
+        ...acc.slice(existingIndex + 1),
+      ]
+    }, [])
+  }

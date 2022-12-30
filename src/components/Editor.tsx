@@ -32,7 +32,7 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { Capabilities } from '@manuscripts/style-guide'
-import { LocationListener } from 'history'
+import { Action, Listener } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -97,17 +97,12 @@ export class Editor extends React.PureComponent<EditorProps> {
   constructor(props: EditorProps) {
     super(props)
 
-    const {
-      attributes,
-      doc,
-      environment,
-      handleStateChange,
-      capabilities,
-    } = this.props
+    const { attributes, doc, environment, handleStateChange, capabilities } =
+      this.props
 
-    this.view = new EditorView(undefined, {
+    this.view = new EditorView(null, {
       editable: () => !!capabilities?.editArticle,
-      state: EditorState.create<ManuscriptSchema>({
+      state: EditorState.create({
         doc,
         schema,
         plugins: plugins(this.props),
@@ -166,7 +161,10 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.view.focus()
     }
 
-    this.handleHistoryChange(this.props.history.location, 'PUSH')
+    this.handleHistoryChange({
+      action: Action.Push,
+      location: this.props.history.location,
+    })
 
     this.unregisterHistoryListener = this.props.history.listen(
       this.handleHistoryChange
@@ -198,9 +196,8 @@ export class Editor extends React.PureComponent<EditorProps> {
     transaction: Transaction,
     external = false
   ) => {
-    const { state, transactions } = this.view.state.applyTransaction(
-      transaction
-    )
+    const { state, transactions } =
+      this.view.state.applyTransaction(transaction)
 
     this.view.updateState(state)
 
@@ -382,8 +379,8 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.dispatchTransaction(tr, false)
   }
 
-  private handleHistoryChange: LocationListener = (location) => {
-    this.focusNodeWithId(location.hash.substring(1))
+  private handleHistoryChange: Listener = (update) => {
+    this.focusNodeWithId(update.location.hash.substring(1))
   }
 
   private focusNodeWithId(id: string) {

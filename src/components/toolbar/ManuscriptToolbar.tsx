@@ -19,7 +19,6 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/manuscript-transform'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Schema } from 'prosemirror-model'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React from 'react'
 import styled from 'styled-components'
@@ -91,17 +90,17 @@ export const ToolbarGroup = styled.div`
   }
 `
 
-export interface ToolbarButtonConfig<S extends Schema> {
+export interface ToolbarButtonConfig {
   title: string
   content: React.ReactNode
-  active?: (state: EditorState<S>) => boolean
-  run: (state: EditorState<S>, dispatch: (tr: Transaction<S>) => void) => void
-  enable?: (state: EditorState<S>) => boolean
+  active?: (state: EditorState) => boolean
+  run: (state: EditorState, dispatch: (tr: Transaction) => void) => void
+  enable?: (state: EditorState) => boolean
 }
 
-export interface ToolbarConfig<S extends Schema> {
+export interface ToolbarConfig {
   [key: string]: {
-    [key: string]: ToolbarButtonConfig<S>
+    [key: string]: ToolbarButtonConfig
   }
 }
 

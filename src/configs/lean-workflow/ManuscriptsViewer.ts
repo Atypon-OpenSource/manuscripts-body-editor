@@ -17,11 +17,7 @@
 import 'prosemirror-view/style/prosemirror.css'
 import '../../lib/smooth-scroll'
 
-import {
-  ManuscriptNode,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptNode, schema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
@@ -64,20 +60,22 @@ export interface ViewerProps {
 
 export default {
   createState: (props: ViewerProps) => {
-    return EditorState.create<ManuscriptSchema>({
+    return EditorState.create({
       doc: props.doc,
       schema,
       plugins: plugins(props),
     })
   },
 
-  createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>
-    new EditorView<ManuscriptSchema>(el, {
-      editable: () => false,
-      state,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nodeViews: views(props, dispatch) as any,
-      dispatchTransaction: dispatch,
-      attributes: props.attributes,
-    }),
+  createView:
+    (props: ViewerProps): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        editable: () => false,
+        state,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeViews: views(props, dispatch) as any,
+        dispatchTransaction: dispatch,
+        attributes: props.attributes,
+      }),
 }

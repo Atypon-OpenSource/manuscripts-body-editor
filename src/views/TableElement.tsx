@@ -21,6 +21,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs } from '../lib/utils'
+import { Mutable } from '../types'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import {
@@ -75,12 +76,8 @@ const TableElement = ({
     }, [contentDOM])
 
     useEffect(() => {
-      const {
-        suppressCaption,
-        suppressHeader,
-        suppressFooter,
-        suppressTitle,
-      } = viewProps.node.attrs
+      const { suppressCaption, suppressHeader, suppressFooter, suppressTitle } =
+        viewProps.node.attrs
       if (content.current) {
         content.current.classList.toggle('suppress-caption', suppressCaption)
         content.current.classList.toggle('suppress-header', suppressHeader)
@@ -139,7 +136,7 @@ const TableElement = ({
                 uploadAttachment={uploadAttachment}
                 addFigureExFileRef={(relation, publicUrl, attachmentId) => {
                   if (figure) {
-                    const newAttrs: Node['attrs'] = {
+                    const newAttrs: Mutable<Node['attrs']> = {
                       externalFileReferences: addExternalFileRef(
                         figure?.attrs.externalFileReferences,
                         attachmentId,
@@ -149,7 +146,7 @@ const TableElement = ({
                     if (relation == 'imageRepresentation') {
                       newAttrs.src = publicUrl
                     }
-                    setTableAttrs(newAttrs)
+                    setTableAttrs({ ...newAttrs })
                   }
                 }}
               />

@@ -89,21 +89,23 @@ const FigureComponent = ({
       if (nodeAttrs.src) {
         return nodeAttrs.src
       }
-      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-        (file) => file && file.kind === 'imageRepresentation'
-      )
+      const imageExternalFile = {
+        url: 'test',
+      }
       // in the new implementation ExternalFileRef url will be attachment id LEAN-988
       let url = imageExternalFile?.url
       if (!imageExternalFile?.url.includes('https://')) {
         const attachmentId = imageExternalFile?.url.replace('attachment:', '')
-        url = getAttachments()?.find((file) => file.id === attachmentId)?.link
+        url =
+          getAttachments()?.find((file) => file.id === attachmentId)?.link || ''
       }
 
       return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src, getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const { isSupportedImageType, fileName } = useMemo(() => {
-      const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
+      const imageFileRegex =
+        /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
       let attachmentFileName = nodeAttrs.src
 
       if (nodeAttrs.contentType) {
@@ -113,9 +115,9 @@ const FigureComponent = ({
         }
       }
 
-      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-        (file) => file && file.kind === 'imageRepresentation'
-      )
+      const imageExternalFile = {
+        url: 'test',
+      }
 
       if (imageExternalFile) {
         const imageExternalFileRef = getAttachments()?.find((file) => {

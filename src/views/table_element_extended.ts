@@ -106,6 +106,7 @@ export class TableElementView extends BlockView<
             ),
           }
           if (relation == 'imageRepresentation') {
+            // @ts-ignore
             newAttrs.src = publicUrl
           }
           setNodeAttrs(

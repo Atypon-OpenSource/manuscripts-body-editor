@@ -30,6 +30,10 @@ module.exports = {
     '^.+\\.(j|t)sx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(lodash-es|@manuscripts|pdfjs-dist)/)',
+    '<rootDir>/node_modules/(?!(lodash-es|@manuscripts|pdfjs-dist|pretty-bytes)/)',
   ],
+  snapshotFormat: {
+    printBasicPrototype: true,
+    escapeString: true,
+  },
 }

@@ -49,6 +49,7 @@ describe('footnotes plugin', () => {
     expect(view.state.tr.selection.toJSON()).toEqual(
       insertedFootnoteJson.selection
     )
+    view.destroy()
   })
   test('should remove the inline node as well as the footnote on deletion', () => {
     const expectedDoc = parseDoc(deletedFootnoteJson.doc)
@@ -63,5 +64,6 @@ describe('footnotes plugin', () => {
     expect(view.state.tr.selection.toJSON()).toEqual(
       deletedFootnoteJson.selection
     )
+    view.destroy()
   })
 })

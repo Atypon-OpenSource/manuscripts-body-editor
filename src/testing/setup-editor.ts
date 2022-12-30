@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/manuscript-transform'
 import { ProsemirrorTestChain, TestEditorView } from 'jest-prosemirror'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -42,13 +42,13 @@ export function parseDoc(json: { [key: string]: unknown }) {
   return schema.nodeFromJSON(json)
 }
 
-export function setupEditor(props?: Partial<EditorProps>, clean = true) {
+export function setupEditor(props?: Partial<EditorProps>) {
   polyfillDom()
 
   const combinedEditorProps = { ...defaultEditorProps, ...props }
   const { doc } = combinedEditorProps
   const place = document.body.appendChild(document.createElement('div'))
-  const state = EditorState.create<ManuscriptSchema>({
+  const state = EditorState.create({
     doc,
     schema,
     plugins: createPlugins(combinedEditorProps),
@@ -64,14 +64,5 @@ export function setupEditor(props?: Partial<EditorProps>, clean = true) {
     nodeViews: createNodeViews(combinedEditorProps),
   })
 
-  if (clean) {
-    afterEach(() => {
-      view.destroy()
-      if (place.parentNode) {
-        place.parentNode.removeChild(place)
-      }
-    })
-  }
-
-  return ProsemirrorTestChain.of(view as TestEditorView<ManuscriptSchema>)
+  return ProsemirrorTestChain.of(view as TestEditorView)
 }
