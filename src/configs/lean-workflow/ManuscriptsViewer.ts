@@ -15,7 +15,6 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../../lib/smooth-scroll'
 
 import { ManuscriptNode, schema } from '@manuscripts/manuscript-transform'
 import {

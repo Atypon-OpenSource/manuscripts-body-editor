@@ -27,7 +27,6 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment } from '@manuscripts/rxdb'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
 import ReactDOM from 'react-dom'
@@ -88,9 +87,6 @@ const defaultViewerProps: ViewerProps = {
   getModel: <T extends Model>(id: string) => {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },
-  allAttachments: (_id: string) => {
-    return Promise.resolve([] as RxAttachment<Model>[])
-  },
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   getLibraryItem: (_id: string) => undefined,
   locale: 'en-GB',
@@ -102,10 +98,6 @@ const defaultViewerProps: ViewerProps = {
   renderReactComponent: ReactDOM.render,
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
   components: {},
-}
-
-export const MOCKS = {
-  putAttachment: jest.fn(() => Promise.resolve(new RxAttachment<Model>())),
 }
 
 export const defaultEditorProps: EditorProps = {
@@ -139,7 +131,6 @@ export const defaultEditorProps: EditorProps = {
     matchLibraryItemByIdentifier: (_item: BibliographyItem) => undefined,
     filterLibraryItems: (_query: string) => Promise.resolve([]),
     removeLibraryItem: () => undefined,
-    putAttachment: MOCKS.putAttachment,
     removeAttachment: (_id: string, _attachmentID: string) => Promise.resolve(),
     subscribe: () => undefined,
     setView: () => undefined,

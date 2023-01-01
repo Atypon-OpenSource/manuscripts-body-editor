@@ -36,7 +36,6 @@ import {
   UserProfile,
 } from '@manuscripts/manuscripts-json-schema'
 // eslint-disable-next-line import/no-unresolved
-import { RxAttachment } from '@manuscripts/rxdb/typings/rx-attachment'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -331,7 +330,6 @@ const buildProps = (
 ): EditorProps => ({
   doc,
   getModel: <T extends Model>(id: string) => modelMap.get(id) as T | undefined,
-  allAttachments: async () => [],
   getManuscript: () => manuscript,
   getLibraryItem: () => undefined,
   locale: 'en-US',
@@ -344,7 +342,6 @@ const buildProps = (
   unmountReactComponent: () => undefined,
   getCitationProvider: () => undefined,
   plugins: [],
-  putAttachment: async () => ({} as RxAttachment<Model>),
   removeAttachment: async () => undefined,
   deleteModel: async (id) => {
     modelMap.delete(id)

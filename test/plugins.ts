@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
@@ -65,7 +64,6 @@ export default (props: PluginProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     elements(),
