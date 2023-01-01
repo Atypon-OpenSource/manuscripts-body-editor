@@ -15,7 +15,6 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../lib/smooth-scroll'
 
 import { CitationProvider } from '@manuscripts/library'
 import {
@@ -25,9 +24,8 @@ import {
   schema,
 } from '@manuscripts/manuscript-transform'
 import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment, RxAttachmentCreator } from '@manuscripts/rxdb'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Action, Listener } from 'history'
+import { LocationListener } from 'history'
 import {
   EditorState,
   NodeSelection,
@@ -54,10 +52,6 @@ export interface EditorProps extends ViewerProps {
   getCitationProvider: () => CitationProvider | undefined
   plugins: Array<Plugin<ManuscriptSchema>>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  putAttachment: (
-    id: string,
-    attachment: RxAttachmentCreator
-  ) => Promise<RxAttachment<Model>>
   removeAttachment: (id: string, attachmentID: string) => Promise<void>
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void
@@ -156,10 +150,7 @@ export class Editor extends React.PureComponent<EditorProps> {
       this.view.focus()
     }
 
-    this.handleHistoryChange({
-      action: Action.Push,
-      location: this.props.history.location,
-    })
+    this.handleHistoryChange(this.props.history.location, 'PUSH')
 
     this.unregisterHistoryListener = this.props.history.listen(
       this.handleHistoryChange
@@ -374,8 +365,8 @@ export class Editor extends React.PureComponent<EditorProps> {
     this.dispatchTransaction(tr, false)
   }
 
-  private handleHistoryChange: Listener = (update) => {
-    this.focusNodeWithId(update.location.hash.substring(1))
+  private handleHistoryChange: LocationListener = (location) => {
+    this.focusNodeWithId(location.hash.substring(1))
   }
 
   private focusNodeWithId(id: string) {

@@ -15,14 +15,9 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../../lib/smooth-scroll'
 
 import { CitationProvider } from '@manuscripts/library'
-import {
-  Build,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
+import { Build, schema } from '@manuscripts/manuscript-transform'
 import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { EditorState, Plugin } from 'prosemirror-state'
@@ -36,7 +31,7 @@ import views from './editor-views-lw'
 import { ViewerProps } from './ManuscriptsViewer'
 
 export interface EditorProps extends ViewerProps {
-  plugins?: Array<Plugin<ManuscriptSchema>>
+  plugins?: Plugin[]
   getCitationProvider: () => CitationProvider | undefined
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
