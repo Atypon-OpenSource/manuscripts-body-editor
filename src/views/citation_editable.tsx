@@ -155,21 +155,31 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleRemove = async (id: string) => {
-    const { saveModel } = this.props
+    const { saveModel, deleteModel } = this.props
 
     const citation = this.getCitation()
-
-    citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
+    const embeddedCitationItems = citation.embeddedCitationItems.filter(
       (item) => item.bibliographyItem !== id
     )
 
-    await saveModel(citation)
+    if (embeddedCitationItems.length > 0) {
+      citation.embeddedCitationItems = embeddedCitationItems
+      await saveModel(citation)
+
+      window.setTimeout(() => {
+        this.showPopper() // redraw the popper
+      }, 100)
+    } else {
+      const { tr } = this.view.state
+      const pos = this.getPos()
+
+      tr.delete(pos, pos + 1)
+      tr.setMeta('history$', true)
+      this.view.dispatch(tr)
+      await deleteModel(citation._id)
+    }
 
     this.props.popper.destroy()
-
-    window.setTimeout(() => {
-      this.showPopper() // redraw the popper
-    }, 100)
   }
 
   private updatePopper = () => {

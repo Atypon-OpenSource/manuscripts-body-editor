@@ -910,6 +910,7 @@
 }
 
 .ProseMirror .citation-empty {
+  display: inline-block;
   height: 1em;
   width: 1ch;
   border: 2px solid red;
