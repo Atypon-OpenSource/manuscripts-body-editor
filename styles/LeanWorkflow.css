@@ -694,17 +694,9 @@
   height: 36px;
   background: #FFFFFF;
   border: 1px solid #E2E2E2;
-  border-radius: 0 32px 32px 0;
+  border-radius: 32px 32px 0 0;
 }
 
-.bibliography-edit-button {
-  transform: rotate(-90deg);
-}
-
-.bibliography-comment-button {
-  transform: rotate(90deg);
-}
-
-.bibliography-comment-button > svg {
-  transform: rotate(-90deg);
+.bibliography-comment-button{
+  border-radius: 0 0 32px 32px;
 }
