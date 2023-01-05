@@ -65,7 +65,10 @@ export class ListingEditableView extends ListingView<
     this.setParentFigureElement()
 
     if (this.parentFigureElement) {
-      if (this.props.permissions.write && !this.props.jupyterConfig.disabled) {
+      if (
+        this.props.capabilities?.editArticle &&
+        !this.props.jupyterConfig.disabled
+      ) {
         const { actionsContainer } = this.buildExecutableListingElement()
         const executeButton = document.createElement('button')
         executeButton.classList.add('execute-listing')
@@ -100,7 +103,10 @@ export class ListingEditableView extends ListingView<
   }
 
   protected createEditor = async (defaultPlaceholder = '<Listing>') => {
-    if (!this.props.permissions.write || this.props.jupyterConfig.disabled) {
+    if (
+      !this.props.capabilities?.editArticle ||
+      this.props.jupyterConfig.disabled
+    ) {
       return
     }
 
@@ -153,7 +159,7 @@ export class ListingEditableView extends ListingView<
       event.stopPropagation()
     })
 
-    if (!this.props.permissions.write) {
+    if (!this.props.capabilities?.editArticle) {
       languageSelector.setAttribute('disabled', 'disabled')
     }
 

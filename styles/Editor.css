@@ -718,6 +718,14 @@
   text-align: center;
 }
 
+.ProseMirror .block {
+  counter-reset: bib_item;
+}
+
+.ProseMirror .bib-item {
+  counter-increment: bib_item;
+}
+
 .ProseMirror .csl-bib-body {
   white-space: normal;
 }
@@ -728,11 +736,11 @@
 
 .ProseMirror .csl-left-margin {
   padding-right: 1ch;
-  display: table-cell;
+  display: none;
 }
 
-.ProseMirror .csl-right-inline {
-  display: table-cell;
+.ProseMirror .csl-right-inline::before {
+  content: counter(bib_item) '. ';
 }
 
 .ProseMirror .csl-entry a {

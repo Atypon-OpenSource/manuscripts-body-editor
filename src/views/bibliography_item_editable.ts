@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
-import { DecorationSet } from 'prosemirror-view'
 
-export interface HighlightPluginProps {
-  setCommentTarget: (target?: CommentAnnotation) => void
-}
+import { BibliographyItemView } from './bibliography_item'
+import { createEditableNodeView } from './creators'
 
-export interface HighlightStartMarker {
-  id: string
-  tid: string
-  start: number
-}
-export interface HighlightMarker extends HighlightStartMarker {
-  end: number
-  text: string
-}
-
-export interface HighlightPluginState {
-  highlights: HighlightMarker[]
-  decorations: DecorationSet
-}
+export default createEditableNodeView(BibliographyItemView)

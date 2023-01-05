@@ -94,9 +94,7 @@ interface Props {
   depth?: number
   tree: TreeItem
   view?: ManuscriptEditorView
-  permissions: {
-    write: boolean
-  }
+  editArticle: boolean
 }
 
 interface State {
@@ -107,7 +105,12 @@ interface State {
 const isExcluded = (nodeType: ManuscriptNodeType) => {
   const { nodes } = nodeType.schema
 
-  const excludedTypes = [nodes.table, nodes.figure, nodes.footnotes_element]
+  const excludedTypes = [
+    nodes.table,
+    nodes.figure,
+    nodes.footnotes_element,
+    nodes.bibliography_element,
+  ]
 
   return excludedTypes.includes(nodeType)
 }
@@ -314,7 +317,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     event.preventDefault()
     event.stopPropagation()
 
-    if (!this.props.permissions.write) {
+    if (!this.props.editArticle) {
       return false
     }
 
@@ -349,7 +352,7 @@ const dragSource = DragSource<Props, ConnectedDragSourceProps, DragObject>(
     },
 
     canDrag(props) {
-      return props.permissions.write && !!props.tree.parent
+      return props.editArticle && !!props.tree.parent
     },
   },
   (connect, monitor) => ({

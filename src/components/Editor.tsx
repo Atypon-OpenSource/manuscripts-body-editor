@@ -26,6 +26,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
+  CommentAnnotation,
   Model,
   // Section,
 } from '@manuscripts/manuscripts-json-schema'
@@ -74,16 +75,13 @@ export interface EditorProps extends ViewerProps {
   setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
-  setCommentTarget: (commentTarget?: string) => void
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
   jupyterConfig: {
     url: string
     token: string
     disabled: boolean
   }
-  permissions: {
-    write: boolean
-  }
-  capabilites?: Capabilities
+  capabilities?: Capabilities
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
 }
@@ -104,11 +102,11 @@ export class Editor extends React.PureComponent<EditorProps> {
       doc,
       environment,
       handleStateChange,
-      permissions,
+      capabilities,
     } = this.props
 
     this.view = new EditorView(undefined, {
-      editable: () => permissions.write,
+      editable: () => !!capabilities?.editArticle,
       state: EditorState.create<ManuscriptSchema>({
         doc,
         schema,

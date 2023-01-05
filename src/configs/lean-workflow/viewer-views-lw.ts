@@ -19,6 +19,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'
 import bibliographyElement from '../../views/bibliography_element'
+import bibliographyItem from '../../views/bibliography_item'
 import blockquoteElement from '../../views/blockquote_element'
 import bulletList from '../../views/bullet_list'
 import citation, { CitationViewProps } from '../../views/citation'
@@ -54,6 +55,7 @@ type ViewerProps = CitationViewProps &
   FigureProps & { theme: DefaultTheme }
 
 export default (props: ViewerProps, dispatch: Dispatch) => ({
+  bibliography_item: bibliographyItem(props),
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),
