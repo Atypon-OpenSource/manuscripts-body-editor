@@ -23,6 +23,7 @@ import {
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
 import { uniqueId } from 'lodash'
+import { Node } from 'prosemirror-model'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { MemoryRouter } from 'react-router'
@@ -31,13 +32,12 @@ import { ThemeProvider } from 'styled-components'
 import {
   ApplicationMenus,
   getMenus,
+  PopperManager,
   useApplicationMenus,
   useEditor,
-  PopperManager,
 } from '../src'
 import config, { Props } from './config'
 import { theme } from './theme'
-import {Node} from "prosemirror-model/src/node";
 
 const buildModelMap = (models: Model[]): Map<string, Model> => {
   return new Map(

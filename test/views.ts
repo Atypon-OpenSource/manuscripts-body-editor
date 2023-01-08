@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Dispatch } from '../src'
 import bibliographyElement from '../src/views/bibliography_element_editable'
 import blockquoteElement from '../src/views/blockquote_element_editable'
 import bulletList from '../src/views/bullet_list_editable'
@@ -40,7 +39,7 @@ import tocElement from '../src/views/toc_element_editable'
 
 type ViewProps = EditableBlockProps
 
-export default (props: ViewProps, dispatch: Dispatch) => ({
+export default (props: ViewProps) => ({
   bibliography_element: bibliographyElement(props),
   blockquote_element: blockquoteElement(props),
   bullet_list: bulletList(props),

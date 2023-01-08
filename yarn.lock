@@ -1479,8 +1479,10 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.1.tgz#c1d1c88b3e3c030177b8bbff0f6d6e352a045992"
   integrity sha512-neLPcFNE8XcstDR1bj85xlAcB9IpBMOk0oaRzXxD/HeO8N63eqcOCzTMiGz239t+wk4oRnqAHzPbRQTYngdC2A==
 
-"@manuscripts/comment-editor@../manuscripts-comment-editor":
+"@manuscripts/comment-editor@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/comment-editor/-/comment-editor-1.0.0.tgz#7b08334b68b0ec703a109cad06476538319fe050"
+  integrity sha512-QMubgn9ekrYbTSsmw+5hzmelO7sgY6sKz5QPq5jtYy4otVk39nlMNHFrApMUL+Nn6hCpLR+OEwB2F3g010GV0w==
 
 "@manuscripts/data@^0.1.12":
   version "0.1.12"
@@ -1501,16 +1503,20 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/examples/-/examples-0.1.0.tgz#249c842a4a63185fecf35077a895991b8d84ce6a"
   integrity sha512-C/OHc6+vcDZAM8EaPArbMLGCBMudHwxkHgogIEoxYGZL/tkqC/hGDx+eWQSHsZUAHiDyCM3ca3d1a+cuGvId8g==
 
-"@manuscripts/library@../manuscripts-library":
+"@manuscripts/library@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.0.0.tgz#fc2bf525c2f1af90036e00f5c617fec8edf12311"
+  integrity sha512-AWtB1eUnRdrU0bZ04jEnOqGrSiFRF2cYDENnxyexU60z3sWZX7DOXOT3FJlQN8Wkbq7oYm5VQA/iCr33X+8pdw==
   dependencies:
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/manuscript-transform@../manuscripts-manuscript-transform":
+"@manuscripts/manuscript-transform@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/manuscript-transform/-/manuscript-transform-1.0.0.tgz#61718aac76ebc01bb29ef5ee19e5a4d031be9835"
+  integrity sha512-IlFfr3vjSTdC376jG8zjRkDSdaG8bwwDVlwbe3N+dURfxC/cuDnhCbmmyWu9Y6gvFvFmrWHEhh5LcS/u50YzBw==
   dependencies:
     debug "^4.3.4"
     mathjax-full "^3.2.2"
@@ -1518,8 +1524,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/manuscripts-json-schema@../manuscripts-json-schema":
+"@manuscripts/manuscripts-json-schema@^2.0.0":
   version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/manuscripts-json-schema/-/manuscripts-json-schema-2.0.0.tgz#ac3adb8d7b50d0b6f67174d7e7937aa11131083f"
+  integrity sha512-zT6Pigh54iQMAtFb+79lci7RzhGCfi8oL2quKMp4YdeXtcwsRvY/HpQXVsfBxAEgys0wuDiM7x5VBIFp1YPndw==
   dependencies:
     ajv "^6.10.0"
     deepmerge "^4.2.2"
@@ -1536,8 +1544,10 @@
     tooltip.js "^1.3.3"
     typeface-lato "^1.1.13"
 
-"@manuscripts/title-editor@../manuscripts-title-editor":
+"@manuscripts/title-editor@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/title-editor/-/title-editor-1.0.0.tgz#714d34ce7ebf2f4fec2d15c12f181dcccea3f554"
+  integrity sha512-FHN+/TD5XDbCxXcrbZ2ZtwCYZZKX1czbdvwPTGLWSW1eTQfJVPXM4Tte6Ul1bjbI5HHk7b9suzKvGCqxdc/GYQ==
 
 "@manuscripts/track-changes-plugin@^0.4.5":
   version "0.4.5"
@@ -2085,11 +2095,6 @@
   version "7.3.13"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.13.tgz#da4bfd73f49bd541d28920ab0e2bf0ee80f71c91"
   integrity sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==
-
-"@types/smoothscroll-polyfill@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@types/smoothscroll-polyfill/-/smoothscroll-polyfill-0.3.1.tgz#77fb3a6e116bdab4a5959122e3b8e201224dcd49"
-  integrity sha512-+KkHw4y+EyeCtVXET7woHUhIbfWFCflc0E0mZnSV+ZdjPQeHt/9KPEuT7gSW/kFQ8O3EG30PLO++YhChDt8+Ag==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"

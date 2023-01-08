@@ -19,7 +19,7 @@ import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
 import { CitationProvider } from '@manuscripts/library'
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
+import { Build } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
@@ -55,7 +55,7 @@ interface PluginProps {
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setCommentTarget: (commentTarget?: string) => void
-  plugins?: Array<Plugin<ManuscriptSchema>>
+  plugins?: Plugin<null>[]
 }
 
 export default (props: PluginProps) => {
