@@ -66,7 +66,8 @@ export default {
       plugins: plugins(props),
     }),
 
-  createView: (props: Props): CreateView =>
+  createView:
+    (props: Props): CreateView =>
     (el, state, dispatch) =>
       new EditorView(el, {
         state,
@@ -78,7 +79,7 @@ export default {
           right: 0,
         },
         dispatchTransaction: dispatch,
-        nodeViews: views(props, dispatch),
+        nodeViews: views(props),
         transformPasted,
       }),
 }

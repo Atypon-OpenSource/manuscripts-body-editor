@@ -29,10 +29,12 @@ import {
 } from '@manuscripts/manuscripts-json-schema'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
+import { ReactElement, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import { DefaultTheme } from 'styled-components'
 
-import { EditorProps } from '../components/Editor'
-import { ViewerProps } from '../components/Viewer'
+import { EditorProps } from '../configs/lean-workflow/ManuscriptsEditor'
+import { ViewerProps } from '../configs/lean-workflow/ManuscriptsViewer'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 
@@ -43,6 +45,8 @@ type TestData = {
   DOC: ActualManuscriptNode
   MODEL_MAP: Map<string, Model>
 }
+
+const theme: DefaultTheme = {}
 
 export const TEST_DATA: TestData = {
   MANUSCRIPT: {
@@ -95,9 +99,15 @@ const defaultViewerProps: ViewerProps = {
   projectID: 'test-project-id',
   getCurrentUser: () => TEST_DATA.USER,
   history: createBrowserHistory(),
-  renderReactComponent: ReactDOM.render,
+  renderReactComponent: (child: ReactNode, container: HTMLElement) => {
+    ReactDOM.render(child as ReactElement, container)
+  },
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
   components: {},
+  theme,
+  submissionId: 'test-submission-id',
+  updateDesignation: async () => undefined,
+  uploadAttachment: async () => undefined,
 }
 
 export const defaultEditorProps: EditorProps = {

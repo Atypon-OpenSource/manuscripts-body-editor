@@ -19,7 +19,6 @@ import { ProsemirrorTestChain, TestEditorView } from 'jest-prosemirror'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import { EditorProps } from '../components/Editor'
 import createPlugins from '../plugins/editor'
 import createNodeViews from '../views/editor'
 import { defaultEditorProps } from './default-editor-data'
@@ -42,16 +41,16 @@ export function parseDoc(json: { [key: string]: unknown }) {
   return schema.nodeFromJSON(json)
 }
 
-export function setupEditor(props?: Partial<EditorProps>) {
+export function setupEditor() {
   polyfillDom()
 
-  const combinedEditorProps = { ...defaultEditorProps, ...props }
-  const { doc } = combinedEditorProps
+  const props = { ...defaultEditorProps }
+  const { doc } = props
   const place = document.body.appendChild(document.createElement('div'))
   const state = EditorState.create({
     doc,
     schema,
-    plugins: createPlugins(combinedEditorProps),
+    plugins: createPlugins(props),
   })
   const view = new EditorView(place, {
     state,
@@ -61,7 +60,7 @@ export function setupEditor(props?: Partial<EditorProps>) {
       left: 0,
       right: 0,
     },
-    nodeViews: createNodeViews(combinedEditorProps),
+    nodeViews: createNodeViews(props),
   })
 
   return ProsemirrorTestChain.of(view as TestEditorView)
