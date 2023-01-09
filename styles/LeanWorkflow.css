@@ -602,67 +602,79 @@
   position: static;
 }
 
-.block_comment_button {
+.block-comment-button {
   cursor: pointer;
   position: relative;
   height: 0;
   width: 0;
 }
 
-.block_comment_button:active > svg > path {
+.block-comment-button:active > svg > path {
   stroke: #F7B314;
   fill: #FFE0B2;
 }
 
-.block_comment_button.block_comment {
+.selected-comment > svg > path {
+  stroke: #F7B314;
+  fill: #FFE0B2;
+}
+
+.block-comment-button.block-comment {
   z-index: 10;
   left: 93%;
 }
 
-.block_comment > .comment_icon, .group_comment_icon {
+.block-comment > .comment-icon, .group-comment-icon {
   position: absolute;
   top: 16px;
 }
 
-.block_comment > .group_comment_icon {
-  left: 8px;
-  top: 8px;
+.block-comment > .group-comment-icon {
+  left: 7px;
+  top: 10px;
 }
 
-.block_comment_button.figure_comment {
+.block-comment-button.figure-comment {
   position: absolute;
   right: 3%;
 }
 
-.figure_comment > .comment_icon {
+.figure-comment > .comment-icon {
   position: absolute;
   top: 4px;
 }
 
-.figure_comment > .group_comment_icon {
+.figure-comment > .group-comment-icon {
   top: 0;
   left: 10px;
 }
 
-.block_comment_button.inline_comment {
+.block-comment-button.inline-comment {
   z-index: 10;
   left: 100%;
 }
 
-.inline_comment > .comment_icon, .group_comment_icon {
+.inline-comment > .comment-icon, .group-comment-icon {
   position: absolute;
   top: 12px;
 }
 
-.inline_comment > .group_comment_icon {
+.inline-comment > .group-comment-icon {
   left: 8px;
   top: 6px;
 }
 
-.block_comment_button.inline_citation {
+.block-comment-button.inline-citation {
   z-index: 1;
   left: -1%;
   top: -8%;
+  display: inline-flex;
+}
+
+.block-comment-button.point-comment {
+  z-index: 1;
+  left: 0;
+  bottom: 38px;
   display: inline-flex;
 }
 
