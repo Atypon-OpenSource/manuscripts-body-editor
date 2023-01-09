@@ -678,11 +678,6 @@
   display: inline-flex;
 }
 
-.bib-item{
-  position: relative;
-  margin-right: 40px;
-}
-
 .bib-item:hover > .bibliography-double-button {
   visibility: visible;
 }
