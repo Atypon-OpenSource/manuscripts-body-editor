@@ -115,7 +115,7 @@ const start = async () => {
     getManuscript: () => manuscript,
     projectID: 'my-project',
     retrySync: () => Promise.resolve(),
-    setCommentTarget: () => undefined,
+    setComment: () => undefined,
     getAttachment: () => new File([], 'my-file.png'),
     putAttachment: (file: File) => {
       console.log('uploading ', file)

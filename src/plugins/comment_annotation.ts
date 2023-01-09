@@ -63,7 +63,7 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
   comment.selector && comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
-  setCommentTarget: (target?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   modelMap: Map<string, Model>
 }
@@ -90,7 +90,7 @@ export default (props: CommentAnnotationProps) => {
 
         if (meta) {
           if (SET_COMMENT in meta) {
-            props.setCommentTarget(meta[SET_COMMENT])
+            props.setComment(meta[SET_COMMENT])
           }
         }
 
