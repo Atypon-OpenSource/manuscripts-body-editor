@@ -155,17 +155,17 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleRemove = async (id: string) => {
-    const { saveModel, deleteModel } = this.props
+    const { saveModel } = this.props
 
     const citation = this.getCitation()
     const embeddedCitationItems = citation.embeddedCitationItems.filter(
       (item) => item.bibliographyItem !== id
     )
 
-    if (embeddedCitationItems.length > 0) {
-      citation.embeddedCitationItems = embeddedCitationItems
-      await saveModel(citation)
+    citation.embeddedCitationItems = embeddedCitationItems
+    await saveModel(citation)
 
+    if (embeddedCitationItems.length > 0) {
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
       }, 100)
@@ -174,9 +174,7 @@ export class CitationEditableView extends CitationView<
       const pos = this.getPos()
 
       tr.delete(pos, pos + 1)
-      tr.setMeta('history$', true)
       this.view.dispatch(tr)
-      await deleteModel(citation._id)
     }
 
     this.props.popper.destroy()
