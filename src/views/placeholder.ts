@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { createPlaceholderContent } from '../lib/placeholder'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'

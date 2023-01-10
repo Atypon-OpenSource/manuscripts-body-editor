@@ -15,18 +15,18 @@
  */
 
 import {
+  Model,
+  NumberingStyle,
+  ObjectTypes,
+  ParagraphStyle,
+} from '@manuscripts/json-schema'
+import {
   generateID,
   hasObjectType,
   isSectionNodeType,
   isTOCSectionNode,
   ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import {
-  Model,
-  NumberingStyle,
-  ObjectTypes,
-  ParagraphStyle,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/transform'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 
 import { getMatchingChild, iterateChildren } from '../lib/utils'

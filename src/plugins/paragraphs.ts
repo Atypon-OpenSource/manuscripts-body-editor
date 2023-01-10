@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  isParagraphNode,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+import { isParagraphNode, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 /**

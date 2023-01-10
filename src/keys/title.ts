@@ -17,7 +17,7 @@
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
 import { Selection, TextSelection, Transaction } from 'prosemirror-state'

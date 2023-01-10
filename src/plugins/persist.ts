@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isFootnoteNode,
   isListNode,
-} from '@manuscripts/manuscript-transform'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+} from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 /**

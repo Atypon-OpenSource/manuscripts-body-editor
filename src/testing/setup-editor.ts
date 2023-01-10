@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/transform'
 import { ProsemirrorTestChain, TestEditorView } from 'jest-prosemirror'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -24,9 +24,9 @@ import createNodeViews from '../views/editor'
 import { defaultEditorProps } from './default-editor-data'
 import { polyfillDom } from './polyfill-dom'
 
-jest.mock('@manuscripts/manuscript-transform', () => {
+jest.mock('@manuscripts/transform', () => {
   const mockTransformOriginal = jest.requireActual(
-    '@manuscripts/manuscript-transform'
+    '@manuscripts/transform'
   )
   return {
     ...mockTransformOriginal,

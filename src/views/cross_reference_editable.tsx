@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  buildAuxiliaryObjectReference,
-  Target,
-} from '@manuscripts/manuscript-transform'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { buildAuxiliaryObjectReference, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 

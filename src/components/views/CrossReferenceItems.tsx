@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Target } from '@manuscripts/manuscript-transform'
 import {
   ButtonGroup,
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
+import { Target } from '@manuscripts/transform'
 import React from 'react'
 import styled from 'styled-components'
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'

@@ -19,9 +19,9 @@ import { parseDoc, setupEditor } from '../../../testing/setup-editor'
 import deletedFootnoteJson from './__fixtures__/deleted-footnote.json'
 import insertedFootnoteJson from './__fixtures__/inserted-footnote.json'
 
-jest.mock('@manuscripts/manuscript-transform', () => {
+jest.mock('@manuscripts/transform', () => {
   const mockTransformOriginal = jest.requireActual(
-    '@manuscripts/manuscript-transform'
+    '@manuscripts/transform'
   )
   return {
     ...mockTransformOriginal,

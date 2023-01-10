@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  getModelsByType,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { getModelsByType, ManuscriptNode, schema } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -49,7 +41,8 @@ export default (props: CommentAnnotationProps) => {
   return new Plugin<CommentAnnotationState>({
     key: commentAnnotation,
     state: {
-      init: (config) => commentsState(props.modelMap, config.doc as ManuscriptNode),
+      init: (config) =>
+        commentsState(props.modelMap, config.doc as ManuscriptNode),
       apply: (tr) => {
         const meta = tr.getMeta(commentAnnotation)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 import CodeMirror from 'codemirror'
 
 import { CodemirrorMode } from '../lib/codemirror-modes'

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ObjectTypes } from '@manuscripts/json-schema'
 import {
   BibliographySectionNode,
   buildCitation,
@@ -39,11 +40,10 @@ import {
   ManuscriptTransaction,
   SectionNode,
   TOCSectionNode,
-} from '@manuscripts/manuscript-transform'
-import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
-import { Command } from 'prosemirror-state'
+} from '@manuscripts/transform'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
+  Command,
   NodeSelection,
   Selection,
   TextSelection,

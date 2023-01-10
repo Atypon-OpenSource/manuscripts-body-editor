@@ -23,7 +23,7 @@ import {
   ManuscriptNodeType,
   nodeNames,
   SectionTitleNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'

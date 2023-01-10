@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 

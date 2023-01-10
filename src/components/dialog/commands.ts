@@ -22,7 +22,7 @@ import {
   TableCellNode,
   TableCellStyles,
   TableNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { get as _get } from 'lodash-es'
 import { Command, Selection } from 'prosemirror-state'
 import { CellSelection, TableMap } from 'prosemirror-tables'

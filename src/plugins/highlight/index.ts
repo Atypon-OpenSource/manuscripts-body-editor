@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorState,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation } from '@manuscripts/json-schema'
+import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 

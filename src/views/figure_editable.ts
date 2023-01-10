@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ModelAttachment } from '@manuscripts/manuscript-transform'
-import { Figure } from '@manuscripts/manuscripts-json-schema'
+import { Figure } from '@manuscripts/json-schema'
+import { ModelAttachment } from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
 
 import { createEditableNodeView } from './creators'

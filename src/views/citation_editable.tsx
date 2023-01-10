@@ -15,16 +15,13 @@
  */
 
 import {
-  Build,
-  buildEmbeddedCitationItem,
-} from '@manuscripts/manuscript-transform'
-import {
   BibliographyItem,
   Citation,
   CitationItem,
   Model,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { Build, buildEmbeddedCitationItem } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 

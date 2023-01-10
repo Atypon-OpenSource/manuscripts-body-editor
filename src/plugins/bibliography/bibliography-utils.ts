@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes } from '@manuscripts/library'
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
+import { ManuscriptNode } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
 import { BibliographyProps } from './types'

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
+import { Figure, Model } from '@manuscripts/json-schema'
+import {
+  Capabilities,
+  UnsupportedFormatFileIcon,
+} from '@manuscripts/style-guide'
 import {
   isInGraphicalAbstractSection,
   ManuscriptEditorView,
   ManuscriptNode,
   ModelAttachment,
-} from '@manuscripts/manuscript-transform'
-import { Figure, Model } from '@manuscripts/manuscripts-json-schema'
-import {
-  Capabilities,
-  UnsupportedFormatFileIcon,
-} from '@manuscripts/style-guide'
+} from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'

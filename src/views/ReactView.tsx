@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { NodeView } from 'prosemirror-view'
 import React, { useCallback, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'

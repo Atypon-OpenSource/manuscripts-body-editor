@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isSectionNodeType } from '@manuscripts/manuscript-transform'
+import { isSectionNodeType } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 

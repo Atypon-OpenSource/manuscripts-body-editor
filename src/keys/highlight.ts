@@ -17,7 +17,7 @@
 import {
   isHighlightMarkerNode,
   ManuscriptEditorState,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Selection } from 'prosemirror-state'
 
 import { Dispatch, isTextSelection } from '../commands'

@@ -16,10 +16,10 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
+import { BibliographyItem, Model } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
-import { Build, schema } from '@manuscripts/manuscript-transform'
-import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'

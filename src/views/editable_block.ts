@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Build, nodeNames } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, nodeNames } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'

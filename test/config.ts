@@ -16,13 +16,9 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import {
-  Build,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'

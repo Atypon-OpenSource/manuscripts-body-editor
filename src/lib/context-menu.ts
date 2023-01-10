@@ -19,7 +19,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Fragment, Slice } from 'prosemirror-model'
 
 import { addComment, createBlock } from '../commands'

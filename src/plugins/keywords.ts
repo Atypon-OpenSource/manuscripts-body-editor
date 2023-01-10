@@ -15,15 +15,12 @@
  */
 
 import {
-  generateID,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import {
   Manuscript,
   ManuscriptKeyword,
   Model,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { generateID, ManuscriptNode } from '@manuscripts/transform'
 import {
   NodeSelection,
   Plugin,

@@ -20,7 +20,7 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'

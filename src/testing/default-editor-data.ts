@@ -15,17 +15,17 @@
  */
 
 import {
-  ActualManuscriptNode,
-  Build,
-  ManuscriptEditorView,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
   BibliographyItem,
   Manuscript,
   Model,
   UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import {
+  ActualManuscriptNode,
+  Build,
+  ManuscriptEditorView,
+  schema,
+} from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
 import { ReactElement, ReactNode } from 'react'

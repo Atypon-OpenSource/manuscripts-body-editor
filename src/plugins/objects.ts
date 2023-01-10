@@ -15,16 +15,16 @@
  */
 
 import {
-  buildTargets,
-  isInGraphicalAbstractSection,
-  Target,
-} from '@manuscripts/manuscript-transform'
-import {
   AuxiliaryObjectReference,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  buildTargets,
+  isInGraphicalAbstractSection,
+  Target,
+} from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'

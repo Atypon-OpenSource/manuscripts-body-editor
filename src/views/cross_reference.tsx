@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView, Target } from '@manuscripts/manuscript-transform'
-import { AuxiliaryObjectReference } from '@manuscripts/manuscripts-json-schema'
+import { AuxiliaryObjectReference } from '@manuscripts/json-schema'
+import { ManuscriptNodeView, Target } from '@manuscripts/transform'
 import { History } from 'history'
 import React from 'react'
 
@@ -30,7 +30,8 @@ export interface CrossReferenceViewProps extends BaseNodeProps {
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected popperContainer?: HTMLDivElement
 
   public selectNode = () => {

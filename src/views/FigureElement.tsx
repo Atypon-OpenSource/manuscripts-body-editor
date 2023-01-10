@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
 import {
   AttachIcon,
   Designation,
@@ -24,6 +23,7 @@ import {
   SelectDialogDesignation,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'

@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 

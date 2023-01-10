@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { ExternalFileRef } from '../lib/external-files'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'

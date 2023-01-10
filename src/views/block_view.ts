@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 
 export default class BlockView<T extends BaseNodeProps>
   extends BaseNodeView<T>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public viewAttributes = {
     id: 'id',
     placeholder: 'placeholder',

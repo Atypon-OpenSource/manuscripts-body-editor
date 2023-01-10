@@ -15,11 +15,6 @@
  */
 
 import {
-  hasObjectType,
-  isElementNodeType,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import {
   FigureLayout,
   FigureStyle,
   Manuscript,
@@ -28,8 +23,13 @@ import {
   PageLayout,
   ParagraphStyle,
   TableStyle,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  hasObjectType,
+  isElementNodeType,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 const isParagraphStyle = hasObjectType<ParagraphStyle>(

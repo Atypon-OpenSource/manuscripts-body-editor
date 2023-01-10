@@ -17,8 +17,8 @@
 import '@manuscripts/style-guide/styles/tip.css'
 
 import AttentionOrange from '@manuscripts/assets/react/AttentionOrange'
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
 import { Tip } from '@manuscripts/style-guide'
+import { ManuscriptNode } from '@manuscripts/transform'
 import * as Comlink from 'comlink'
 import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'

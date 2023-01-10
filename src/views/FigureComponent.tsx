@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import {
-  FigureNode,
-  isInGraphicalAbstractSection,
-} from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
+import {
+  FigureNode,
+  isInGraphicalAbstractSection,
+} from '@manuscripts/transform'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -150,6 +150,7 @@ const FigureComponent = ({
             if (ref) {
               setFigureAttrs({
                 externalFileReferences: [
+                  // eslint-disable-next-line no-unsafe-optional-chaining
                   ...figure?.attrs.externalFileReferences,
                 ],
               })

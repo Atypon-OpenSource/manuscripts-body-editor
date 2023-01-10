@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { isHighlightMarkerNode } from '@manuscripts/manuscript-transform'
+import { isHighlightMarkerNode } from '@manuscripts/transform'
 import { Node as PMNode } from 'prosemirror-model'
 
 import { HighlightMarker, HighlightStartMarker } from './types'

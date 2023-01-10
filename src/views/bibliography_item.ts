@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
   loadCitationStyle,
 } from '@manuscripts/library'
-import {
-  DEFAULT_BUNDLE,
-  ManuscriptNodeView,
-} from '@manuscripts/manuscript-transform'
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
+import { DEFAULT_BUNDLE, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'

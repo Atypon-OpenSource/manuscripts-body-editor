@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { Capabilities } from '@manuscripts/style-guide'
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
-} from '@manuscripts/manuscript-transform'
-import { Capabilities } from '@manuscripts/style-guide'
+} from '@manuscripts/transform'
 import { EditorState, Transaction } from 'prosemirror-state'
 import React from 'react'
 import styled from 'styled-components'

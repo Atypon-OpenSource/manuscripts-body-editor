@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptSlice } from '@manuscripts/manuscript-transform'
+import { ManuscriptSlice } from '@manuscripts/transform'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
