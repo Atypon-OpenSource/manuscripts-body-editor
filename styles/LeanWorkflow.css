@@ -700,6 +700,7 @@
   position: absolute;
   top: -50%;
   left: 100%;
+  width: 36px;
   visibility: hidden;
   cursor: pointer;
 }
@@ -709,8 +710,7 @@
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
-  width: 40px;
-  height: 36px;
+  height: 40px;
   background: #FFFFFF;
   border: 1px solid #E2E2E2;
   border-radius: 32px 32px 0 0;
