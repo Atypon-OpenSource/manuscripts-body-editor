@@ -87,13 +87,14 @@ const FigureComponent = ({
         return nodeAttrs.src
       }
       const imageExternalFile = {
-        url: 'test'
+        url: 'test',
       }
       // in the new implementation ExternalFileRef url will be attachment id LEAN-988
       let url = imageExternalFile?.url
       if (!imageExternalFile?.url.includes('https://')) {
         const attachmentId = imageExternalFile?.url.replace('attachment:', '')
-        url = externalFiles?.find((file) => file.id === attachmentId)?.link as string
+        url = externalFiles?.find((file) => file.id === attachmentId)
+          ?.link as string
       }
 
       return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
@@ -111,7 +112,7 @@ const FigureComponent = ({
       }
 
       const imageExternalFile = {
-        url: 'test'
+        url: 'test',
       }
 
       if (imageExternalFile) {

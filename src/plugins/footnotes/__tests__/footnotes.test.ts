@@ -20,9 +20,7 @@ import deletedFootnoteJson from './__fixtures__/deleted-footnote.json'
 import insertedFootnoteJson from './__fixtures__/inserted-footnote.json'
 
 jest.mock('@manuscripts/transform', () => {
-  const mockTransformOriginal = jest.requireActual(
-    '@manuscripts/transform'
-  )
+  const mockTransformOriginal = jest.requireActual('@manuscripts/transform')
   return {
     ...mockTransformOriginal,
     // Inline footnotes require the id of the footnote when created thus

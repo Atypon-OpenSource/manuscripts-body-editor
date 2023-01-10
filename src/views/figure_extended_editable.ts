@@ -125,10 +125,9 @@ export class FigureEditableView extends FigureView<
       }
     }
 
-    const imageExternalFile = (this.node.attrs
-      .externalFileReferences as ExternalFileRef[])?.find(
-      (file) => file && file.kind === 'imageRepresentation'
-    )
+    const imageExternalFile = (
+      this.node.attrs.externalFileReferences as ExternalFileRef[]
+    )?.find((file) => file && file.kind === 'imageRepresentation')
 
     if (imageExternalFile) {
       const imageExternalFileRef = this.props.externalFiles?.find((file) => {

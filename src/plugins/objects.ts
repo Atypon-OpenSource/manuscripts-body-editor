@@ -113,9 +113,8 @@ export default (props: Props) => {
 
       newState.doc.descendants((node, pos) => {
         if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference = props.getModel<AuxiliaryObjectReference>(
-            node.attrs.rid
-          )
+          const auxiliaryObjectReference =
+            props.getModel<AuxiliaryObjectReference>(node.attrs.rid)
 
           // TODO: handle missing objects?
           // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395

@@ -379,15 +379,13 @@ const buildOptions = (
     view && view.focus()
   }
 
-  const convertListType = (
-    nodeType: ManuscriptNodeType,
-    list: NodeWithPosition
-  ) => () => {
-    tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
+  const convertListType =
+    (nodeType: ManuscriptNodeType, list: NodeWithPosition) => () => {
+      tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
 
-    dispatch(tr.scrollIntoView())
-    view && view.focus()
-  }
+      dispatch(tr.scrollIntoView())
+      view && view.focus()
+    }
 
   const parentElementType = parentElement.node.type
 

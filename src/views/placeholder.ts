@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class PlaceholderView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public ignoreMutation = () => true
 
   public initialise = () => {

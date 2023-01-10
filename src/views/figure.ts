@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class FigureView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected container: HTMLElement
 
   public initialise = () => {

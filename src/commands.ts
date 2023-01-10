@@ -67,62 +67,60 @@ import { SubmissionAttachment } from './views/FigureComponent'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
-export const markActive = (type: ManuscriptMarkType) => (
-  state: ManuscriptEditorState
-): boolean => {
-  const { from, $from, to, empty } = state.selection
+export const markActive =
+  (type: ManuscriptMarkType) =>
+  (state: ManuscriptEditorState): boolean => {
+    const { from, $from, to, empty } = state.selection
 
-  return empty
-    ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
-    : state.doc.rangeHasMark(from, to, type)
-}
+    return empty
+      ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
+      : state.doc.rangeHasMark(from, to, type)
+  }
 
 export const isNodeSelection = (
   selection: Selection
 ): selection is ManuscriptNodeSelection => selection instanceof NodeSelection
 
-export const blockActive = (type: ManuscriptNodeType) => (
-  state: ManuscriptEditorState
-) => {
-  const { selection } = state
+export const blockActive =
+  (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
+    const { selection } = state
 
-  if (isNodeSelection(selection)) {
-    return selection.node.type === type
-  }
+    if (isNodeSelection(selection)) {
+      return selection.node.type === type
+    }
 
-  const { to, $from } = selection as ManuscriptTextSelection
+    const { to, $from } = selection as ManuscriptTextSelection
 
-  if (to > $from.end()) {
+    if (to > $from.end()) {
+      return false
+    }
+
+    for (let d = $from.depth; d >= 0; d--) {
+      const ancestor = $from.node(d)
+
+      // only look at the closest parent with an id
+      if (ancestor.attrs.id) {
+        return ancestor.type === type
+      }
+    }
+
     return false
   }
 
-  for (let d = $from.depth; d >= 0; d--) {
-    const ancestor = $from.node(d)
+export const canInsert =
+  (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
+    const { $from } = state.selection
 
-    // only look at the closest parent with an id
-    if (ancestor.attrs.id) {
-      return ancestor.type === type
+    for (let d = $from.depth; d >= 0; d--) {
+      const index = $from.index(d)
+
+      if ($from.node(d).canReplaceWith(index, index, type)) {
+        return true
+      }
     }
+
+    return false
   }
-
-  return false
-}
-
-export const canInsert = (type: ManuscriptNodeType) => (
-  state: ManuscriptEditorState
-) => {
-  const { $from } = state.selection
-
-  for (let d = $from.depth; d >= 0; d--) {
-    const index = $from.index(d)
-
-    if ($from.node(d).canReplaceWith(index, index, type)) {
-      return true
-    }
-  }
-
-  return false
-}
 
 const findBlockInsertPosition = (state: ManuscriptEditorState) => {
   const { $from } = state.selection
@@ -234,42 +232,40 @@ export const insertFileAsFigure = (
   dispatch(tr)
   return true
 }
-export const insertBlock = (nodeType: ManuscriptNodeType) => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const position = findBlockInsertPosition(state)
+export const insertBlock =
+  (nodeType: ManuscriptNodeType) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const position = findBlockInsertPosition(state)
 
-  if (position === null) {
-    return false
+    if (position === null) {
+      return false
+    }
+
+    createBlock(nodeType, position, state, dispatch)
+
+    return true
   }
 
-  createBlock(nodeType, position, state, dispatch)
+export const deleteBlock =
+  (typeToDelete: string) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection, tr } = state
+    const { $head } = selection
+    const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
 
-  return true
-}
+    if (!depth) {
+      return false
+    }
 
-export const deleteBlock = (typeToDelete: string) => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const { selection, tr } = state
-  const { $head } = selection
-  const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
+    if (dispatch) {
+      const start = $head.start(depth)
+      const end = $head.end(depth)
+      tr.delete(start - 1, end + 1)
+      dispatch(tr)
+    }
 
-  if (!depth) {
-    return false
+    return true
   }
-
-  if (dispatch) {
-    const start = $head.start(depth)
-    const end = $head.end(depth)
-    tr.delete(start - 1, end + 1)
-    dispatch(tr)
-  }
-
-  return true
-}
 
 export const insertBreak: EditorAction = (state, dispatch) => {
   const br = state.schema.nodes.hard_break.create()
@@ -408,10 +404,10 @@ export const insertInlineCitation = (
   tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
 
   if (needsBibliography(state)) {
-    tr.insert(
-      tr.doc.content.size,
-      createBibliographySection(state)
-    ).setMeta(bibliographyKey, { bibliographyInserted: true })
+    tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
+      bibliographyKey,
+      { bibliographyInserted: true }
+    )
   }
 
   if (dispatch) {
@@ -472,68 +468,67 @@ export const insertInlineEquation = (
   return true
 }
 
-export const insertInlineFootnote = (kind: 'footnote' | 'endnote') => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const footnote = state.schema.nodes.footnote.createAndFill({
-    id: generateID(ObjectTypes.Footnote),
-    kind,
-  }) as FootnoteNode
+export const insertInlineFootnote =
+  (kind: 'footnote' | 'endnote') =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const footnote = state.schema.nodes.footnote.createAndFill({
+      id: generateID(ObjectTypes.Footnote),
+      kind,
+    }) as FootnoteNode
 
-  const insertedAt = state.selection.to
-  const thisFootnoteNumbering = footnotesUtils.getNewFootnoteNumbering(
-    insertedAt,
-    state
-  )
-
-  const inlineFootnote = state.schema.nodes.inline_footnote.create({
-    rid: footnote.attrs.id,
-    contents: thisFootnoteNumbering.toString(),
-  }) as InlineFootnoteNode
-
-  const tr = state.tr
-
-  // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
-  tr.insert(insertedAt, inlineFootnote)
-
-  const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
-
-  let selectionPos: number
-
-  if (footnotesElementAndPos === undefined) {
-    // create a new footnotes section if needed
-    const footnotesSection = state.schema.nodes.footnotes_section.create({}, [
-      state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
-      state.schema.nodes.footnotes_element.create(
-        {},
-        footnote
-      ) as FootnotesElementNode,
-    ]) as FootnotesSectionNode
-
-    const insideEndPos = tr.doc.content.size
-
-    // TODO: insert bibliography section before footnotes section
-    tr.insert(insideEndPos, footnotesSection)
-    // inside footnote inside element inside section
-    selectionPos = insideEndPos + footnotesSection.nodeSize
-  } else {
-    const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
-      footnotesElementAndPos,
-      thisFootnoteNumbering
+    const insertedAt = state.selection.to
+    const thisFootnoteNumbering = footnotesUtils.getNewFootnoteNumbering(
+      insertedAt,
+      state
     )
-    tr.insert(footnotePos, footnote)
-    selectionPos = selectPos
-  }
 
-  if (dispatch) {
-    // set selection inside new footnote
-    const selection = TextSelection.create(tr.doc, selectionPos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
+    const inlineFootnote = state.schema.nodes.inline_footnote.create({
+      rid: footnote.attrs.id,
+      contents: thisFootnoteNumbering.toString(),
+    }) as InlineFootnoteNode
 
-  return true
-}
+    const tr = state.tr
+
+    // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
+    tr.insert(insertedAt, inlineFootnote)
+
+    const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
+
+    let selectionPos: number
+
+    if (footnotesElementAndPos === undefined) {
+      // create a new footnotes section if needed
+      const footnotesSection = state.schema.nodes.footnotes_section.create({}, [
+        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+        state.schema.nodes.footnotes_element.create(
+          {},
+          footnote
+        ) as FootnotesElementNode,
+      ]) as FootnotesSectionNode
+
+      const insideEndPos = tr.doc.content.size
+
+      // TODO: insert bibliography section before footnotes section
+      tr.insert(insideEndPos, footnotesSection)
+      // inside footnote inside element inside section
+      selectionPos = insideEndPos + footnotesSection.nodeSize
+    } else {
+      const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
+        footnotesElementAndPos,
+        thisFootnoteNumbering
+      )
+      tr.insert(footnotePos, footnote)
+      selectionPos = selectPos
+    }
+
+    if (dispatch) {
+      // set selection inside new footnote
+      const selection = TextSelection.create(tr.doc, selectionPos)
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
+  }
 
 export const insertKeywordsSection = (
   state: ManuscriptEditorState,
@@ -599,31 +594,30 @@ export const insertGraphicalAbstract = (
   return true
 }
 
-export const insertSection = (subsection = false) => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const pos = findPosAfterParentSection(state.selection.$from)
+export const insertSection =
+  (subsection = false) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const pos = findPosAfterParentSection(state.selection.$from)
 
-  if (pos === null) {
-    return false
+    if (pos === null) {
+      return false
+    }
+
+    const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
+
+    const tr = state.tr.insert(
+      pos + adjustment,
+      state.schema.nodes.section.createAndFill() as SectionNode
+    )
+
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
   }
-
-  const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
-
-  const tr = state.tr.insert(
-    pos + adjustment,
-    state.schema.nodes.section.createAndFill() as SectionNode
-  )
-
-  if (dispatch) {
-    // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
-}
 
 export const insertFootnotesSection = (
   state: ManuscriptEditorState,
@@ -702,10 +696,7 @@ export const insertTOCSection = (
 
   const pos = 0
 
-  const tr = state.tr.insert(
-    pos,
-    section
-  ) /*.setMeta(tocKey, {
+  const tr = state.tr.insert(pos, section) /*.setMeta(tocKey, {
     tocInserted: true,
   })*/
 
@@ -721,27 +712,27 @@ export const insertTOCSection = (
 /**
  * Call the callback (a prosemirror-tables command) if the current selection is in the table body
  */
-export const ifInTableBody = (
-  command: (state: ManuscriptEditorState) => boolean
-) => (state: ManuscriptEditorState): boolean => {
-  const $head = state.selection.$head
+export const ifInTableBody =
+  (command: (state: ManuscriptEditorState) => boolean) =>
+  (state: ManuscriptEditorState): boolean => {
+    const $head = state.selection.$head
 
-  for (let d = $head.depth; d > 0; d--) {
-    const node = $head.node(d)
+    for (let d = $head.depth; d > 0; d--) {
+      const node = $head.node(d)
 
-    if (node.type === state.schema.nodes.table_row) {
-      const table = $head.node(d - 1)
+      if (node.type === state.schema.nodes.table_row) {
+        const table = $head.node(d - 1)
 
-      if (table.firstChild === node || table.lastChild === node) {
-        return false
+        if (table.firstChild === node || table.lastChild === node) {
+          return false
+        }
+
+        return command(state)
       }
-
-      return command(state)
     }
-  }
 
-  return false
-}
+    return false
+  }
 
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
@@ -991,30 +982,29 @@ export const insertHighlight = (
   return true
 }
 
-export const deleteHighlightMarkers = (rid: string): Command => (
-  state,
-  dispatch
-) => {
-  const markersToDelete: number[] = []
-  highlightKey.getState(state)?.highlights.forEach((highlight) => {
-    if (highlight.rid === rid) {
-      markersToDelete.push(highlight.start - 1)
-      markersToDelete.push(highlight.end)
-    }
-  })
-  if (markersToDelete.length === 0) {
-    return false
-  }
-  const { tr } = state
-  markersToDelete
-    .sort((a, b) => b - a)
-    .forEach((pos) => {
-      tr.delete(pos, pos + 1)
+export const deleteHighlightMarkers =
+  (rid: string): Command =>
+  (state, dispatch) => {
+    const markersToDelete: number[] = []
+    highlightKey.getState(state)?.highlights.forEach((highlight) => {
+      if (highlight.rid === rid) {
+        markersToDelete.push(highlight.start - 1)
+        markersToDelete.push(highlight.end)
+      }
     })
-  tr.setMeta('addToHistory', false)
-  dispatch && dispatch(tr)
-  return true
-}
+    if (markersToDelete.length === 0) {
+      return false
+    }
+    const { tr } = state
+    markersToDelete
+      .sort((a, b) => b - a)
+      .forEach((pos) => {
+        tr.delete(pos, pos + 1)
+      })
+    tr.setMeta('addToHistory', false)
+    dispatch && dispatch(tr)
+    return true
+  }
 
 export function addComment(
   state: ManuscriptEditorState,
@@ -1054,9 +1044,8 @@ export function addComment(
 ) {
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
-  const { type: selectionNodeType, id: selectionParentId } = getParentNode(
-    selection
-  )
+  const { type: selectionNodeType, id: selectionParentId } =
+    getParentNode(selection)
 
   if (viewNode && resolvePos) {
     const { type: viewNodeType, id: viewNodeId } = getParentNode(

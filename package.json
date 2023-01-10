@@ -139,7 +139,6 @@
     "@manuscripts/assets": "^0.6.1",
     "@manuscripts/library": "^1.0.0",
     "@manuscripts/transform": "^1.0.1",
-    "@manuscripts/title-editor": "^1.0.0",
     "@manuscripts/track-changes-plugin": "^0.4.5",
     "@manuscripts/style-guide": "^1.0.0",
     "react": ">=16.11.0",

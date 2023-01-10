@@ -26,7 +26,8 @@ export interface InlineFootnoteProps extends BaseNodeProps {
 
 export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public handleClick = () => {
     this.props.history.push({
       ...this.props.history.location,

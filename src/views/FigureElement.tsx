@@ -51,26 +51,19 @@ interface AttachableFilesDropdownProps {
   ) => void
 }
 
-export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = ({
-  onSelect,
-  files,
-  uploadAttachment,
-  addFigureExFileRef,
-}) => {
+export const AttachableFilesDropdown: React.FC<
+  AttachableFilesDropdownProps
+> = ({ onSelect, files, uploadAttachment, addFigureExFileRef }) => {
   // select and browse local selectio
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
-  const [
-    isOpenDesignationSelector,
-    toggleDesignationSelector,
-  ] = useState<boolean>(false)
+  const [isOpenDesignationSelector, toggleDesignationSelector] =
+    useState<boolean>(false)
 
   const [fileToUpload, setFileToUpload] = useState<File | null>(null)
-  const [
-    uploadedFileDesignation,
-    setUploadedFileDesignation,
-  ] = useState<string>('')
+  const [uploadedFileDesignation, setUploadedFileDesignation] =
+    useState<string>('')
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e && e.target && e.target.files ? e.target.files[0] : ''
     if (file) {

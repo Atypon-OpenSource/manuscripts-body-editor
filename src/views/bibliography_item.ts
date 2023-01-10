@@ -29,10 +29,8 @@ import { createNodeView } from './creators'
 const createBibliography = async (items: BibliographyItem[]) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
   const citationStyle = await loadCitationStyle(styleOpts)
-  const [
-    bibmeta,
-    bibliographyItems,
-  ] = CitationProvider.makeBibliographyFromCitations(items, citationStyle)
+  const [bibmeta, bibliographyItems] =
+    CitationProvider.makeBibliographyFromCitations(items, citationStyle)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors)
@@ -43,7 +41,8 @@ const createBibliography = async (items: BibliographyItem[]) => {
 
 export class BibliographyItemView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public initialise = () => {
     this.createDOM()
     this.updateContents()

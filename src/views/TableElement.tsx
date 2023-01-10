@@ -75,12 +75,8 @@ const TableElement = ({
     }, [contentDOM])
 
     useEffect(() => {
-      const {
-        suppressCaption,
-        suppressHeader,
-        suppressFooter,
-        suppressTitle,
-      } = viewProps.node.attrs
+      const { suppressCaption, suppressHeader, suppressFooter, suppressTitle } =
+        viewProps.node.attrs
       if (content.current) {
         content.current.classList.toggle('suppress-caption', suppressCaption)
         content.current.classList.toggle('suppress-header', suppressHeader)
@@ -130,29 +126,31 @@ const TableElement = ({
     return (
       <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {mediaAlternativesEnabled && can?.changeDesignation && externalFiles && (
-            <AttachableFilesDropdown
-              files={externalFiles}
-              onSelect={handleSelectedFile}
-              uploadAttachment={uploadAttachment}
-              addFigureExFileRef={(relation, publicUrl, attachmentId) => {
-                if (figure) {
-                  const newAttrs: Node['attrs'] = {
-                    externalFileReferences: addExternalFileRef(
-                      figure?.attrs.externalFileReferences,
-                      attachmentId,
-                      relation
-                    ),
+          {mediaAlternativesEnabled &&
+            can?.changeDesignation &&
+            externalFiles && (
+              <AttachableFilesDropdown
+                files={externalFiles}
+                onSelect={handleSelectedFile}
+                uploadAttachment={uploadAttachment}
+                addFigureExFileRef={(relation, publicUrl, attachmentId) => {
+                  if (figure) {
+                    const newAttrs: Node['attrs'] = {
+                      externalFileReferences: addExternalFileRef(
+                        figure?.attrs.externalFileReferences,
+                        attachmentId,
+                        relation
+                      ),
+                    }
+                    if (relation == 'imageRepresentation') {
+                      // @ts-ignore
+                      newAttrs.src = publicUrl
+                    }
+                    setTableAttrs(newAttrs)
                   }
-                  if (relation == 'imageRepresentation') {
-                    // @ts-ignore
-                    newAttrs.src = publicUrl
-                  }
-                  setTableAttrs(newAttrs)
-                }
-              }}
-            />
-          )}
+                }}
+              />
+            )}
           <div contentEditable="true" ref={content}></div>
           {figure && dataset?.ref && (
             <AlternativesList>
