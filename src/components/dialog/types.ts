@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptEditorState } from '@manuscripts/manuscript-transform'
-import { Color } from '@manuscripts/manuscripts-json-schema'
+import { Color } from '@manuscripts/json-schema'
+import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Transaction } from 'prosemirror-state'
 
 export enum DialogNames {

@@ -18,7 +18,7 @@ import {
   InlineFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'

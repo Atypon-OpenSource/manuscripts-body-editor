@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import {
   isGraphicalAbstractSectionNode,
   isSectionNode,
   isSectionTitleNode,
-} from '@manuscripts/manuscript-transform'
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+} from '@manuscripts/transform'
 import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 

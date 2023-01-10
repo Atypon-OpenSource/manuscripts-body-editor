@@ -16,13 +16,12 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { ManuscriptNode, schema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
   Model,
   UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { SubmissionAttachment } from '@manuscripts/style-guide'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'

@@ -17,44 +17,43 @@
 import {
   isHighlightMarkerNode,
   ManuscriptEditorState,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Selection } from 'prosemirror-state'
 
 import { Dispatch, isTextSelection } from '../commands'
 import { EditorAction } from '../types'
 
-const skipHighlightNode = (dir: number): EditorAction => (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const { selection, tr } = state
+const skipHighlightNode =
+  (dir: number): EditorAction =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection, tr } = state
 
-  if (isTextSelection(selection)) {
-    const { $anchor, $cursor } = selection
+    if (isTextSelection(selection)) {
+      const { $anchor, $cursor } = selection
 
-    if ($cursor) {
-      const adjacentNode = dir === -1 ? $cursor.nodeBefore : $cursor.nodeAfter
+      if ($cursor) {
+        const adjacentNode = dir === -1 ? $cursor.nodeBefore : $cursor.nodeAfter
 
-      if (adjacentNode && isHighlightMarkerNode(adjacentNode)) {
-        const $adjacentPos = tr.doc.resolve($anchor.pos + dir)
+        if (adjacentNode && isHighlightMarkerNode(adjacentNode)) {
+          const $adjacentPos = tr.doc.resolve($anchor.pos + dir)
 
-        const adjacentSelection = Selection.findFrom($adjacentPos, dir, true)
+          const adjacentSelection = Selection.findFrom($adjacentPos, dir, true)
 
-        if (adjacentSelection) {
-          // TODO: handle multiple adjacent markers
+          if (adjacentSelection) {
+            // TODO: handle multiple adjacent markers
 
-          tr.setSelection(adjacentSelection)
+            tr.setSelection(adjacentSelection)
 
-          if (dispatch) {
-            dispatch(tr)
+            if (dispatch) {
+              dispatch(tr)
+            }
           }
         }
       }
     }
-  }
 
-  return false
-}
+    return false
+  }
 
 const highlightKeymap: { [key: string]: EditorAction } = {
   Backspace: skipHighlightNode(-1),

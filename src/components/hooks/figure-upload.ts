@@ -17,7 +17,7 @@ import {
   FigureNode,
   ManuscriptEditorView,
   ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { SyntheticEvent, useCallback, useMemo, useRef, useState } from 'react'
 
 import { ExternalFileRef } from '../../lib/external-files'

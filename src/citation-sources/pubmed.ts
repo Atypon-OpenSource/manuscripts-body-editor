@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import { convertCSLToBibliographyItem } from '@manuscripts/library'
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
 import { EUtilsError, toCSL } from 'astrocite-eutils'
 import { Response } from 'astrocite-eutils/lib/schema'
 import axios from 'axios'

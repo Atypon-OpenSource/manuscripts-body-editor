@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 import { History } from 'history'
 
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -26,7 +26,8 @@ export interface InlineFootnoteProps extends BaseNodeProps {
 
 export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public handleClick = () => {
     this.props.history.push({
       ...this.props.history.location,

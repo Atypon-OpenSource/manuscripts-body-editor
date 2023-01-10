@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { convertTeXToSVG } from '@manuscripts/manuscript-transform'
+import { convertTeXToSVG } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { createEditableNodeView } from './creators'

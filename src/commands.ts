@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 import {
   BibliographySectionNode,
   buildCitation,
@@ -39,12 +41,7 @@ import {
   ManuscriptTransaction,
   SectionNode,
   TOCSectionNode,
-} from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
-import { SubmissionAttachment } from '@manuscripts/style-guide'
+} from '@manuscripts/transform'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
   Command,

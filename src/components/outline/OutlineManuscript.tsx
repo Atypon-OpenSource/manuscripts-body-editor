@@ -15,9 +15,9 @@
  */
 
 import OutlineIconManuscript from '@manuscripts/assets/react/OutlineIconManuscript'
-import { nodeTitlePlaceholder } from '@manuscripts/manuscript-transform'
-import { Manuscript, Project } from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Project } from '@manuscripts/json-schema'
 import { parse, schema } from '@manuscripts/title-editor'
+import { nodeTitlePlaceholder } from '@manuscripts/transform'
 import React from 'react'
 
 import {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
+import { FigureNode } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../../commands'

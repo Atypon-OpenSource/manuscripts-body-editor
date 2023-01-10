@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import { Capabilities, SubmissionAttachment } from '@manuscripts/style-guide'
 import React, { SyntheticEvent } from 'react'
 

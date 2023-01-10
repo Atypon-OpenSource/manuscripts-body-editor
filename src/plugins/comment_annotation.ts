@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  getModelsByType,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { getModelsByType, ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'

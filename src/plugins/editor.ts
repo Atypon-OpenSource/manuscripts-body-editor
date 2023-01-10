@@ -18,14 +18,14 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { CitationProvider } from '@manuscripts/library'
-import { Build } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   CommentAnnotation,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { CitationProvider } from '@manuscripts/library'
+import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'

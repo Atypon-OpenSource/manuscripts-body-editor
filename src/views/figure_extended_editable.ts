@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import {
-  isInGraphicalAbstractSection,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   SubmissionAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
+import {
+  isInGraphicalAbstractSection,
+  ManuscriptEditorView,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -108,7 +108,8 @@ export class FigureEditableView extends FigureView<
   }
 
   public getFileData = () => {
-    const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
+    const imageFileRegex =
+      /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
     let attachmentFileName = this.node.attrs.src
     let url: string | undefined
     if (this.node.attrs.contentType && attachmentFileName) {
@@ -148,10 +149,9 @@ export class FigureEditableView extends FigureView<
   }
 
   private getExRef = () => {
-    const imageExternalFile = (this.node.attrs
-      .externalFileReferences as ExternalFileRef[])?.find(
-      (file) => file && file.kind === 'imageRepresentation'
-    )
+    const imageExternalFile = (
+      this.node.attrs.externalFileReferences as ExternalFileRef[]
+    )?.find((file) => file && file.kind === 'imageRepresentation')
 
     return imageExternalFile
   }

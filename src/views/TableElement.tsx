@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
 import { FileSectionItem, SubmissionAttachment } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 

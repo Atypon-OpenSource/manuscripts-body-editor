@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Build } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
+import { Build } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 
 export const modelsKey = new PluginKey('models')

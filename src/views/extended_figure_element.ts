@@ -17,7 +17,7 @@
 import {
   FigureNode,
   isInGraphicalAbstractSection,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 
 import {
   FilesDropdown,

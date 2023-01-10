@@ -15,16 +15,16 @@
  */
 
 import {
-  buildTargets,
-  isInGraphicalAbstractSection,
-  Target,
-} from '@manuscripts/manuscript-transform'
-import {
   AuxiliaryObjectReference,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  buildTargets,
+  isInGraphicalAbstractSection,
+  Target,
+} from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -113,9 +113,8 @@ export default (props: Props) => {
 
       newState.doc.descendants((node, pos) => {
         if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference = props.getModel<AuxiliaryObjectReference>(
-            node.attrs.rid
-          )
+          const auxiliaryObjectReference =
+            props.getModel<AuxiliaryObjectReference>(node.attrs.rid)
 
           // TODO: handle missing objects?
           // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395

@@ -16,12 +16,8 @@
 
 // @ts-ignore
 import projectDump from '@manuscripts/examples/data/project-dump.json'
-import { Build, Decoder } from '@manuscripts/manuscript-transform'
-import {
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { Build, Decoder } from '@manuscripts/transform'
 import { uniqueId } from 'lodash'
 import { Node } from 'prosemirror-model'
 import React from 'react'

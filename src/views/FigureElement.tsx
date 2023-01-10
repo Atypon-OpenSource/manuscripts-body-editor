@@ -15,7 +15,6 @@
  */
 // PLEASE NOTE: React views for the editor nodes are depercated. This is kept for historical purposes and possible (but not likely) change of direction on the project
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
 import {
   AttachIcon,
   Designation,
@@ -26,6 +25,7 @@ import {
   SubmissionAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -53,26 +53,19 @@ interface AttachableFilesDropdownProps {
   ) => void
 }
 
-export const AttachableFilesDropdown: React.FC<AttachableFilesDropdownProps> = ({
-  onSelect,
-  files,
-  uploadAttachment,
-  addFigureExFileRef,
-}) => {
+export const AttachableFilesDropdown: React.FC<
+  AttachableFilesDropdownProps
+> = ({ onSelect, files, uploadAttachment, addFigureExFileRef }) => {
   // select and browse local selectio
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
-  const [
-    isOpenDesignationSelector,
-    toggleDesignationSelector,
-  ] = useState<boolean>(false)
+  const [isOpenDesignationSelector, toggleDesignationSelector] =
+    useState<boolean>(false)
 
   const [fileToUpload, setFileToUpload] = useState<File | null>(null)
-  const [
-    uploadedFileDesignation,
-    setUploadedFileDesignation,
-  ] = useState<string>('')
+  const [uploadedFileDesignation, setUploadedFileDesignation] =
+    useState<string>('')
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e && e.target && e.target.files ? e.target.files[0] : ''
     if (file) {

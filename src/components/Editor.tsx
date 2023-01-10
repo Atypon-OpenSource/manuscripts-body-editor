@@ -16,15 +16,19 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Model,
+} from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
 import {
   Build,
   ManuscriptEditorView,
   ManuscriptSchema,
   schema,
-} from '@manuscripts/manuscript-transform'
-import { BibliographyItem, CommentAnnotation, Model } from '@manuscripts/manuscripts-json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
+} from '@manuscripts/transform'
 import { LocationListener } from 'history'
 import {
   EditorState,
@@ -36,6 +40,7 @@ import {
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
+import { ViewerProps } from '../configs/lean-workflow/ManuscriptsViewer'
 import { transformPasted } from '../lib/paste'
 import {
   childSectionCoordinates,
@@ -45,7 +50,6 @@ import {
 import plugins from '../plugins/editor'
 import { ChangeReceiver, ChangeReceiverCommand } from '../types'
 import views from '../views/editor'
-import { ViewerProps } from './Viewer'
 
 export interface EditorProps extends ViewerProps {
   autoFocus?: boolean

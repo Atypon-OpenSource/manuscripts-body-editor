@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TableCellStyles } from '@manuscripts/manuscript-transform'
-import { Color } from '@manuscripts/manuscripts-json-schema'
+import { Color } from '@manuscripts/json-schema'
 import { ColorField } from '@manuscripts/style-guide'
+import { TableCellStyles } from '@manuscripts/transform'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 

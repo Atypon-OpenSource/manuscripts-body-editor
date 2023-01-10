@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  isParagraphNode,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+import { isParagraphNode, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 /**
@@ -34,27 +31,25 @@ export default () => {
         return null
       }
 
-      const joinAdjacentParagraphs = (parent: ManuscriptNode, pos: number) => (
-        node: ManuscriptNode,
-        offset: number,
-        index: number
-      ) => {
-        const nodePos = pos + offset
+      const joinAdjacentParagraphs =
+        (parent: ManuscriptNode, pos: number) =>
+        (node: ManuscriptNode, offset: number, index: number) => {
+          const nodePos = pos + offset
 
-        if (
-          isParagraphNode(node) &&
-          node.childCount === 0 &&
-          index < parent.childCount - 1
-        ) {
-          const nextNode = parent.child(index + 1)
+          if (
+            isParagraphNode(node) &&
+            node.childCount === 0 &&
+            index < parent.childCount - 1
+          ) {
+            const nextNode = parent.child(index + 1)
 
-          if (isParagraphNode(nextNode) && nextNode.childCount === 0) {
-            positionsToJoin.push(nodePos + node.nodeSize)
+            if (isParagraphNode(nextNode) && nextNode.childCount === 0) {
+              positionsToJoin.push(nodePos + node.nodeSize)
+            }
           }
-        }
 
-        node.forEach(joinAdjacentParagraphs(node, nodePos + 1))
-      }
+          node.forEach(joinAdjacentParagraphs(node, nodePos + 1))
+        }
 
       newState.doc.forEach(joinAdjacentParagraphs(newState.doc, 0))
 

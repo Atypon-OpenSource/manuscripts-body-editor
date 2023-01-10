@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElementsOrder, Model, ObjectTypes } from '@manuscripts/json-schema'
 import {
   AuxiliaryObjects,
   buildElementsOrder,
   getElementsOrder,
   getModelsByType,
-} from '@manuscripts/manuscript-transform'
-import {
-  ElementsOrder,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
 

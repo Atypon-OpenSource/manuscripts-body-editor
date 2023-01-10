@@ -16,13 +16,6 @@
 
 import projectDump from '@manuscripts/examples/data/project-dump.json'
 import {
-  ActualManuscriptNode,
-  Decoder,
-  generateID,
-  hasObjectType,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
   Figure,
   FigureElement,
   ListElement,
@@ -34,13 +27,20 @@ import {
   Table,
   TableElement,
   UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import {
+  ActualManuscriptNode,
+  Decoder,
+  generateID,
+  hasObjectType,
+  schema,
+} from '@manuscripts/transform'
 // eslint-disable-next-line import/no-unresolved
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import { EditorProps } from '../../components/Editor'
+import { EditorProps } from '../../configs/lean-workflow/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
@@ -351,10 +351,7 @@ const buildProps = (
   saveModel: async <T extends Model>() => ({} as T),
   filterLibraryItems: async () => [],
   removeLibraryItem: () => undefined,
-  subscribe: () => undefined,
-  setView: () => undefined,
   retrySync: async () => undefined,
-  handleStateChange: () => undefined,
   setCommentTarget: () => undefined,
   jupyterConfig: {
     url: '',

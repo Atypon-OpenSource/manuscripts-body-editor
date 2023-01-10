@@ -20,7 +20,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeView,
   ManuscriptTransaction,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
 export type EditorAction = (
