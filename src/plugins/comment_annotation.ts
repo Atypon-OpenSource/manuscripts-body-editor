@@ -136,10 +136,13 @@ const commentsState = (
   doc.descendants((node, pos) => {
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
-    if (targetComment && !excludedNode(node.type)) {
+    if (targetComment) {
+      const position =
+        node.type === node.type.schema.nodes.bibliography_item ? pos : pos + 1
+
       decorations.push(
         Decoration.widget(
-          pos + 1,
+          position,
           getCommentIcon(
             { ...targetComment, targetType: node.type } as Comment,
             setSelectedComment
@@ -153,10 +156,6 @@ const commentsState = (
   return DecorationSet.create(doc, decorations)
 }
 
-// TODO:: remove this check when we allow bibliography item to show comment icon
-const excludedNode = (type: NodeType<ManuscriptSchema>) =>
-  type === type.schema.nodes.bibliography_item
-
 const getCommentIcon = (
   comment: Comment,
   setSelectedComment: (id?: string) => void
@@ -165,17 +164,23 @@ const getCommentIcon = (
   const commentId = location === 'block' ? target : id
   const element = document.createElement('div')
   element.id = commentId
-  const isSection =
-    targetType === schema.nodes.section ||
-    targetType === targetType.schema.nodes.footnotes_section ||
-    targetType === targetType.schema.nodes.bibliography_section
-  const isFigure = targetType === schema.nodes.figure_element
 
-  const elementClass = isSection
-    ? 'block-comment'
-    : isFigure
-    ? 'figure-comment'
-    : 'inline-comment'
+  let elementClass
+  switch (targetType) {
+    case schema.nodes.section:
+    case schema.nodes.footnotes_section:
+    case schema.nodes.bibliography_section:
+      elementClass = 'block-comment'
+      break
+    case schema.nodes.figure_element:
+      elementClass = 'figure-comment'
+      break
+    case schema.nodes.bibliography_item:
+      elementClass = 'bibliography-comment'
+      break
+    default:
+      elementClass = 'inline-comment'
+  }
 
   if (targetType === schema.nodes.citation || location === 'point') {
     element.classList.add(
