@@ -353,13 +353,12 @@ const buildProps = (
   removeLibraryItem: () => undefined,
   retrySync: async () => undefined,
   setCommentTarget: () => undefined,
-  jupyterConfig: {
-    url: '',
-    token: '',
-    disabled: false,
-  },
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
+  submissionId: 'testId',
+  updateDesignation: () => new Promise(() => ''),
+  uploadAttachment: () => new Promise(() => ''),
+  theme: {},
 })
 
 describe('editor view', () => {

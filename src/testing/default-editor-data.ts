@@ -147,12 +147,7 @@ export const defaultEditorProps: EditorProps = {
     retrySync: (_componentIDs: string[]) => Promise.resolve(),
     handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
       undefined,
-    setCommentTarget: (_commentTarget?: CommentAnnotation) => undefined,
-    jupyterConfig: {
-      url: 'http://test-jupyter-url',
-      token: 'test-jupyter-token',
-      disabled: false,
-    },
+    setCommentTarget: (_commentTarget?: string) => undefined,
     components: {},
     environment: undefined,
     setSelectedComment: () => undefined,
