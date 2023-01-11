@@ -90,7 +90,7 @@ export class TableElementView extends BlockView<
     if (
       this.props.mediaAlternativesEnabled &&
       this.props.capabilities?.changeDesignation &&
-      this.props.externalFiles
+      this.props.getAttachments()
     ) {
       const addFigureExFileRef = (
         relation: string,
@@ -116,7 +116,7 @@ export class TableElementView extends BlockView<
         }
       }
       const componentProps = {
-        files: this.props.externalFiles,
+        files: this.props.getAttachments(),
         handleSelectedFile: () => null,
         uploadAttachment: this.props.uploadAttachment,
         addFigureExFileRef: addFigureExFileRef,

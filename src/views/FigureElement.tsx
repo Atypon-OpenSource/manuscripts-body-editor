@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// PLEASE NOTE: React views for the editor nodes are depercated. This is kept for historical purposes and possible (but not likely) change of direction on the project
 
 import { FigureNode } from '@manuscripts/manuscript-transform'
 import {
@@ -22,6 +23,7 @@ import {
   getDesignationName,
   RoundIconButton,
   SelectDialogDesignation,
+  SubmissionAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
@@ -37,7 +39,7 @@ import { FileUpload } from '../components/views/FileUpload'
 import { getAllowedForInFigure } from '../lib/external-files'
 import { getFileExtension } from '../lib/utils'
 import EditableBlock from './EditableBlock'
-import { FigureProps, SubmissionAttachment } from './FigureComponent'
+import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
 
 interface AttachableFilesDropdownProps {
@@ -163,9 +165,9 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  externalFiles,
   modelMap,
   uploadAttachment,
+  getAttachments,
   capabilities: can,
   mediaAlternativesEnabled,
 }: FigureProps) => {
@@ -211,7 +213,7 @@ const FigureElement = ({
           />
 
           <FilesDropdown
-            externalFiles={externalFiles}
+            getAttachments={getAttachments}
             modelMap={modelMap}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}
