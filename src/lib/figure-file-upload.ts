@@ -29,8 +29,8 @@ export function createOnUploadHandler(
     const file = target.files && target.files[0]
     if (file) {
       const response = await uploadAttachment(designation, file)
-      if (response?.data?.uploadAttachment) {
-        const { link, id } = response.data?.uploadAttachment
+      if (response) {
+        const { link, id } = response
         addFigureExFileRef(relation, link, id)
       }
       target.value = ''

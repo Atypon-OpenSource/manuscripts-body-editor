@@ -20,6 +20,7 @@ import {
   ManuscriptNodeType,
   nodeNames,
 } from '@manuscripts/manuscript-transform'
+import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
 import { Fragment, Slice } from 'prosemirror-model'
 
 import { addComment, createBlock } from '../commands'
@@ -37,7 +38,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  setCommentTarget?: (commentTarget?: string) => void
+  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
 }
 
 interface SuppressOption {

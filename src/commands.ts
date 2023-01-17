@@ -17,7 +17,7 @@
 import {
   BibliographySectionNode,
   buildCitation,
-  buildHighlight,
+  buildComment,
   buildInlineMathFragment,
   FigureNode,
   FootnoteNode,
@@ -41,7 +41,11 @@ import {
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/manuscript-transform'
-import { ObjectTypes } from '@manuscripts/manuscripts-json-schema'
+import {
+  CommentAnnotation,
+  ObjectTypes,
+} from '@manuscripts/manuscripts-json-schema'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 import { Command } from 'prosemirror-commands'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
@@ -59,12 +63,11 @@ import { bibliographyKey } from './plugins/bibliography'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
-import { highlightKey, SET_COMMENT_TARGET } from './plugins/highlight'
+import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
-import { SubmissionAttachment } from './views/FigureComponent'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -960,28 +963,29 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
 
 export const insertHighlight = (
   state: ManuscriptEditorState,
+  comment: CommentAnnotation,
   dispatch?: Dispatch
 ): boolean => {
-  const highlight = buildHighlight()
-
   const { from, to } = state.selection
 
   const fromNode = state.schema.nodes.highlight_marker.create({
-    rid: highlight._id,
+    id: comment._id,
+    tid: comment.target,
     position: 'start',
   })
 
   const toNode = state.schema.nodes.highlight_marker.create({
-    rid: highlight._id,
+    id: comment._id,
+    tid: comment.target,
     position: 'end',
   })
 
   const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [highlight] })
     .insert(from, fromNode)
     .insert(to + 1, toNode)
-    .setMeta(highlightKey, { [SET_COMMENT_TARGET]: highlight._id })
-    .setMeta(highlightKey, { [SET_COMMENT_TARGET]: highlight._id })
+    .setMeta(highlightKey, {
+      [SET_COMMENT]: { ...comment, selector: { from, to } },
+    })
 
   tr.setMeta('addToHistory', false)
 
@@ -992,13 +996,13 @@ export const insertHighlight = (
   return true
 }
 
-export const deleteHighlightMarkers = (rid: string): Command => (
+export const deleteHighlightMarkers = (id: string): Command => (
   state,
   dispatch
 ) => {
   const markersToDelete: number[] = []
   highlightKey.getState(state)?.highlights.forEach((highlight) => {
-    if (highlight.rid === rid) {
+    if (highlight.id === id) {
       markersToDelete.push(highlight.start - 1)
       markersToDelete.push(highlight.end)
     }
@@ -1055,36 +1059,22 @@ export function addComment(
 ) {
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
-  const { type: selectionNodeType, id: selectionParentId } = getParentNode(
-    selection
-  )
+  const selectionNode = getParentNode(selection)
 
   if (viewNode && resolvePos) {
-    const { type: viewNodeType, id: viewNodeId } = getParentNode(
-      TextSelection.near(resolvePos)
-    )
+    const viewNode = getParentNode(TextSelection.near(resolvePos))
 
-    if (isThereTextSelected && selectionParentId === viewNodeId) {
-      return addHighlightComment(viewNodeId, viewNodeType, state, dispatch)
+    if (isThereTextSelected && selectionNode.attrs.id === viewNode.attrs.id) {
+      return addHighlightComment(viewNode, state, dispatch)
     } else {
-      return addBlockComment(viewNodeId, viewNodeType, state, dispatch)
+      return addBlockComment(viewNode, state, dispatch)
     }
   } else {
     if (isThereTextSelected) {
-      return addHighlightComment(
-        selectionParentId,
-        selectionNodeType,
-        state,
-        dispatch
-      )
+      return addHighlightComment(selectionNode, state, dispatch)
     } else {
       // TODO:: add block comment for the selection parent node or what!!!
-      return addBlockComment(
-        selectionParentId,
-        selectionNodeType,
-        state,
-        dispatch
-      )
+      return addBlockComment(selectionNode, state, dispatch)
     }
   }
 }
@@ -1103,7 +1093,7 @@ const getParentNode = (selection: Selection) => {
     node = findTableElement(selection)?.node as ManuscriptNode
   }
 
-  return { type: node.type, id: node.attrs.id }
+  return node
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
@@ -1116,13 +1106,17 @@ const isAllowedType = (type: NodeType<ManuscriptSchema>) =>
   type === type.schema.nodes.table_element
 
 const addBlockComment = (
-  id: string,
-  type: NodeType<ManuscriptSchema>,
+  node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  const {
+    attrs: { id },
+    type,
+  } = node
+  const comment = buildComment(id)
   const tr = state.tr.setMeta(commentAnnotation, {
-    [SET_COMMENT_TARGET]: id,
+    [SET_COMMENT]: comment,
   })
 
   tr.setMeta('addToHistory', false)
@@ -1135,11 +1129,16 @@ const addBlockComment = (
 }
 
 const addHighlightComment = (
-  id: string,
-  type: NodeType<ManuscriptSchema>,
+  node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  const {
+    attrs: { id },
+    type,
+  } = node
+  const comment = buildComment(id) as CommentAnnotation
+
   if (type === state.schema.nodes.paragraph) {
     const { $anchor, $head } = state.selection
     const isAllTextSelected =
@@ -1147,12 +1146,12 @@ const addHighlightComment = (
       $anchor.textOffset === $head.textOffset
 
     if (isAllTextSelected) {
-      return addBlockComment(id, type, state, dispatch)
+      return addBlockComment(node, state, dispatch)
     } else {
-      return insertHighlight(state, dispatch)
+      return insertHighlight(state, comment, dispatch)
     }
   } else {
-    return insertHighlight(state, dispatch)
+    return insertHighlight(state, comment, dispatch)
   }
 }
 

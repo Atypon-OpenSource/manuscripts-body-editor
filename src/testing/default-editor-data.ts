@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
+  CommentAnnotation,
   Manuscript,
   Model,
   UserProfile,
@@ -145,7 +146,7 @@ export const defaultEditorProps: EditorProps = {
     retrySync: (_componentIDs: string[]) => Promise.resolve(),
     handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
       undefined,
-    setCommentTarget: (_commentTarget?: string) => undefined,
+    setCommentTarget: (_commentTarget?: CommentAnnotation) => undefined,
     jupyterConfig: {
       url: 'http://test-jupyter-url',
       token: 'test-jupyter-token',
