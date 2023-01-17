@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SubmissionAttachment } from '../views/FigureComponent'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 
 /**
  * A helper to check for existing external files of 'imageRepresentation' kind and replace/add it when needed.

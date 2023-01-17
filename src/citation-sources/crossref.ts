@@ -16,7 +16,7 @@
 
 import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
-import axios from 'axios'
+import axios, { CancelToken } from 'axios'
 
 interface SearchResults {
   items: BibliographyItem[]
@@ -29,12 +29,14 @@ interface SearchResults {
 const search = async (
   query: string,
   rows: number,
-  mailto: string
+  mailto: string,
+  tokenSource?: CancelToken
 ): Promise<SearchResults> => {
   // if the query is just a DOI, fetch that single record
   if (query.trim().match(/^10\.\S+\/\S+$/)) {
     return searchByDOI(query.trim(), mailto)
   }
+
   const response = await axios.get<{
     message: {
       items: CSL.Data[]
@@ -46,6 +48,7 @@ const search = async (
       query,
       rows,
     },
+    cancelToken: tokenSource,
   })
 
   if (response.status !== 200) {
@@ -118,6 +121,7 @@ export const crossref: {
   search: (
     query: string,
     rows: number,
-    mailto: string
+    mailto: string,
+    tokenSource?: CancelToken
   ) => Promise<SearchResults>
 } = { fetch, search }

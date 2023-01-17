@@ -45,6 +45,7 @@ import {
   CommentAnnotation,
   ObjectTypes,
 } from '@manuscripts/manuscripts-json-schema'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 import { Command } from 'prosemirror-commands'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
@@ -67,7 +68,6 @@ import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
-import { SubmissionAttachment } from './views/FigureComponent'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
