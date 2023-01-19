@@ -32,17 +32,12 @@ import ReactDOM from 'react-dom'
 import FigureOptionsSubview, {
   FigureOptionsSubviewProps,
 } from '../components/views/FigureOptionsSubview'
-import {
-  addExternalFileRef,
-  ExternalFileRef,
-  removeExternalFileRef,
-} from '../lib/external-files'
 import { createOnUploadHandler } from '../lib/figure-file-upload'
 import { setNodeAttrs as setGivenNodeAttrs } from '../lib/utils'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
-import { addFormatQuery, WEB_FORMAT_QUERY } from './FigureComponent'
+import { addFormatQuery } from './FigureComponent'
 import ReactSubView from './ReactSubView'
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
@@ -108,52 +103,29 @@ export class FigureEditableView extends FigureView<
   }
 
   public getFileData = () => {
+    // When in PM doc we replace attachment id with a real uri. So the src like 'https://lw.com/image.jpg'
+
     const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
-    let attachmentFileName = this.node.attrs.src
-    let url: string | undefined
-    if (this.node.attrs.contentType && attachmentFileName) {
+    const src = this.node.attrs.src
+    if (this.node.attrs.contentType && src) {
       return {
         isSupportedImageType: this.node.attrs.contentType.startsWith(
           'image/'
         ) as boolean,
-        fileName: attachmentFileName,
-        url: addFormatQuery(attachmentFileName) as string,
-      }
-    }
-
-    const imageExternalFile = this.getExRef()
-
-    if (imageExternalFile) {
-      const imageExternalFileRef = this.props.getAttachments().find((file) => {
-        if (imageExternalFile.url.startsWith('http')) {
-          const reg = new RegExp('[?|&]' + WEB_FORMAT_QUERY)
-
-          return file.link === imageExternalFile.url.replace(reg, '')
-        } else {
-          return file.id === imageExternalFile.url.replace('attachment:', '')
-        }
-      })
-
-      if (imageExternalFileRef) {
-        attachmentFileName = imageExternalFileRef.name
-        url = addFormatQuery(imageExternalFileRef.link) as string
+        fileName: src,
+        url: addFormatQuery(src) as string,
       }
     }
 
     return {
-      isSupportedImageType: imageFileRegex.test(attachmentFileName),
-      fileName: attachmentFileName,
-      url: url || '',
+      isSupportedImageType: imageFileRegex.test(src),
+      fileName: src,
+      url: addFormatQuery(src),
     }
   }
 
-  private getExRef = () => {
-    const imageExternalFile = (this.node.attrs
-      .externalFileReferences as ExternalFileRef[])?.find(
-      (file) => file && file.kind === 'imageRepresentation'
-    )
-
-    return imageExternalFile
+  private getAttachment = (src: string) => {
+    return this.props.getAttachments().find((a) => src.startsWith(a.link))
   }
 
   public createImage = (isSupportedImageType: boolean, src?: string) => {
@@ -165,21 +137,10 @@ export class FigureEditableView extends FigureView<
     }
   }
 
-  // @CHECK props if they really contain all that stuff
-
-  addFigureExFileRef = (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => {
+  addAttachmentSrc = (link: string) => {
     if (this.node) {
       this.setFigureAttrs({
-        externalFileReferences: addExternalFileRef(
-          this.node.attrs.externalFileReferences,
-          `attachment:${attachmentId}`,
-          relation
-        ),
-        src: publicUrl,
+        src: link,
       })
     }
   }
@@ -191,17 +152,12 @@ export class FigureEditableView extends FigureView<
 
   private detachImageRef = () => {
     if (this.node) {
-      const ref = this.getExRef()
+      const ref = this.getAttachment(this.node.attrs.src)
 
       if (ref) {
-        const newAttrs = {
-          externalFileReferences: removeExternalFileRef(
-            this.node.attrs.externalFileReferences,
-            ref.url
-          ),
+        this.setFigureAttrs({
           src: '',
-        }
-        this.setFigureAttrs(newAttrs)
+        })
 
         // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
         // this.updateFigureModel(newAttrs) // can the model take the attributes same way as PM model has?
@@ -229,8 +185,7 @@ export class FigureEditableView extends FigureView<
         const uploadAttachmentHandler = createOnUploadHandler(
           this.props.uploadAttachment,
           this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
-          'imageRepresentation',
-          this.addFigureExFileRef
+          this.addAttachmentSrc
         )
         const input = document.createElement('input')
         input.accept = 'image/*'

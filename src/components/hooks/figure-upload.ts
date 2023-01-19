@@ -20,7 +20,6 @@ import {
 } from '@manuscripts/manuscript-transform'
 import { SyntheticEvent, useCallback, useMemo, useRef, useState } from 'react'
 
-import { ExternalFileRef } from '../../lib/external-files'
 import { getMatchingChild, setNodeAttrs } from '../../lib/utils'
 
 export const useFileInputRef = () => {
@@ -57,15 +56,11 @@ export const useFigureSelection = (viewProps: {
       (node) => node.type === node.type.schema.nodes.figure
     )
 
-    const imageExternalFile = figure?.attrs.externalFileReferences?.find(
-      (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
-    ) || { url: '' }
-
-    return imageExternalFile?.url.trim().length < 1
+    return !!figure?.attrs.src
   }, [viewProps.node])
 
   const addFigureExFileRef = useCallback(
-    (relation, publicUrl, attachmentId) => {
+    (link) => {
       const {
         state: { tr, schema },
         dispatch,
@@ -74,13 +69,7 @@ export const useFigureSelection = (viewProps: {
       if (!isEmptyFigure) {
         const figure = schema.nodes.figure.createAndFill(
           {
-            externalFileReferences: [
-              {
-                url: `attachment:${attachmentId}`,
-                kind: 'imageRepresentation',
-              },
-            ],
-            src: publicUrl,
+            src: link,
           },
           []
         ) as FigureNode
@@ -103,13 +92,7 @@ export const useFigureSelection = (viewProps: {
           viewProps,
           dispatch
         )({
-          src: publicUrl,
-          externalFileReferences: [
-            {
-              url: `attachment:${attachmentId}`,
-              kind: 'imageRepresentation',
-            },
-          ],
+          src: link,
         })
       }
     },

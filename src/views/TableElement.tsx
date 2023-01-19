@@ -137,19 +137,9 @@ const TableElement = ({
                 files={getAttachments()}
                 onSelect={handleSelectedFile}
                 uploadAttachment={uploadAttachment}
-                addFigureExFileRef={(relation, publicUrl, attachmentId) => {
+                addFigureExFileRef={(publicUrl) => {
                   if (figure) {
-                    const newAttrs: Node['attrs'] = {
-                      externalFileReferences: addExternalFileRef(
-                        figure?.attrs.externalFileReferences,
-                        attachmentId,
-                        relation
-                      ),
-                    }
-                    if (relation == 'imageRepresentation') {
-                      newAttrs.src = publicUrl
-                    }
-                    setTableAttrs(newAttrs)
+                    setTableAttrs({ src: publicUrl })
                   }
                 }}
               />

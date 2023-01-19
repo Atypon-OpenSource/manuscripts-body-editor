@@ -1,8 +1,8 @@
 {
   "name": "@manuscripts/manuscript-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "0.94.1",
-  "repository": "github:Atypon-OpenSource/manuscripts-manuscript-editor",
+  "version": "0.95.0",
+  "repository": "gitlab:mpapp-public/manuscripts-manuscript-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
   "module": "dist/es",
