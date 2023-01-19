@@ -158,18 +158,26 @@ export class CitationEditableView extends CitationView<
     const { saveModel } = this.props
 
     const citation = this.getCitation()
-
-    citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
+    const embeddedCitationItems = citation.embeddedCitationItems.filter(
       (item) => item.bibliographyItem !== id
     )
 
+    citation.embeddedCitationItems = embeddedCitationItems
     await saveModel(citation)
 
-    this.props.popper.destroy()
+    if (embeddedCitationItems.length > 0) {
+      window.setTimeout(() => {
+        this.showPopper() // redraw the popper
+      }, 100)
+    } else {
+      const { tr } = this.view.state
+      const pos = this.getPos()
 
-    window.setTimeout(() => {
-      this.showPopper() // redraw the popper
-    }, 100)
+      tr.delete(pos, pos + 1)
+      this.view.dispatch(tr)
+    }
+
+    this.props.popper.destroy()
   }
 
   private updatePopper = () => {
