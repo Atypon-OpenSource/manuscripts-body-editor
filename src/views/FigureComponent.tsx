@@ -60,11 +60,9 @@ export interface FigureProps {
 }
 
 export const WEB_FORMAT_QUERY = 'format=jpg'
-export const addFormatQuery = (url?: string) => {
-  if (url) {
-    const join = url.includes('?') ? '&' : '?'
-    return url + join + WEB_FORMAT_QUERY
-  }
+export const addFormatQuery = (url: string) => {
+  const join = url.includes('?') ? '&' : '?'
+  return url + join + WEB_FORMAT_QUERY
 }
 
 const FigureComponent = ({
@@ -99,7 +97,7 @@ const FigureComponent = ({
         url = getAttachments()?.find((file) => file.id === attachmentId)?.link
       }
 
-      return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
+      return addFormatQuery(url || '') // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src, getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const { isSupportedImageType, fileName } = useMemo(() => {

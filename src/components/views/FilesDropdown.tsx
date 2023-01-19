@@ -68,11 +68,7 @@ interface OptionsProps extends DropdownProps {
 export interface FilesDropdownProps extends DropdownProps {
   canUploadFile?: boolean
   canEditArticle?: boolean
-  addFigureExFileRef: (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => void
+  addFigureExFileRef: (link: string) => void
 }
 
 const isFileValidForFigure = (
@@ -108,7 +104,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   const onFileClick = useCallback(
     (e, file: SubmissionAttachment) => {
       toggleOpen(e)
-      addFigureExFileRef('imageRepresentation', file.link, file.id)
+      addFigureExFileRef(file.link)
     },
     [addFigureExFileRef, toggleOpen]
   )
