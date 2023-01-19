@@ -63,7 +63,7 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
   comment.selector && comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
-  setCommentTarget: (target?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   modelMap: Map<string, Model>
 }
@@ -90,7 +90,7 @@ export default (props: CommentAnnotationProps) => {
 
         if (meta) {
           if (SET_COMMENT in meta) {
-            props.setCommentTarget(meta[SET_COMMENT])
+            props.setComment(meta[SET_COMMENT])
           }
         }
 
@@ -137,9 +137,12 @@ const commentsState = (
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
     if (targetComment) {
+      const position =
+        node.type === node.type.schema.nodes.bibliography_item ? pos : pos + 1
+
       decorations.push(
         Decoration.widget(
-          pos + 1,
+          position,
           getCommentIcon(
             { ...targetComment, targetType: node.type } as Comment,
             setSelectedComment
@@ -161,17 +164,23 @@ const getCommentIcon = (
   const commentId = location === 'block' ? target : id
   const element = document.createElement('div')
   element.id = commentId
-  const isSection =
-    targetType === schema.nodes.section ||
-    targetType === targetType.schema.nodes.footnotes_section ||
-    targetType === targetType.schema.nodes.bibliography_section
-  const isFigure = targetType === schema.nodes.figure_element
 
-  const elementClass = isSection
-    ? 'block-comment'
-    : isFigure
-    ? 'figure-comment'
-    : 'inline-comment'
+  let elementClass
+  switch (targetType) {
+    case schema.nodes.section:
+    case schema.nodes.footnotes_section:
+    case schema.nodes.bibliography_section:
+      elementClass = 'block-comment'
+      break
+    case schema.nodes.figure_element:
+      elementClass = 'figure-comment'
+      break
+    case schema.nodes.bibliography_item:
+      elementClass = 'bibliography-comment'
+      break
+    default:
+      elementClass = 'inline-comment'
+  }
 
   if (targetType === schema.nodes.citation || location === 'point') {
     element.classList.add(

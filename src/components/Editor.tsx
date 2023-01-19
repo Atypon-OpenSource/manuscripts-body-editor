@@ -75,7 +75,7 @@ export interface EditorProps extends ViewerProps {
   setView: (view: ManuscriptEditorView) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   handleStateChange: (view: ManuscriptEditorView, docChanged: boolean) => void
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   jupyterConfig: {
     url: string
     token: string

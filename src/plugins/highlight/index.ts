@@ -99,7 +99,7 @@ export default (props: HighlightPluginProps) => {
 
         if (meta) {
           if (SET_COMMENT in meta) {
-            props.setCommentTarget(meta[SET_COMMENT])
+            props.setComment(meta[SET_COMMENT])
           }
         }
 

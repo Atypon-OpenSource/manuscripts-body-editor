@@ -359,7 +359,7 @@ const buildProps = (
   setView: () => undefined,
   retrySync: async () => undefined,
   handleStateChange: () => undefined,
-  setCommentTarget: () => undefined,
+  setComment: () => undefined,
   jupyterConfig: {
     url: '',
     token: '',
