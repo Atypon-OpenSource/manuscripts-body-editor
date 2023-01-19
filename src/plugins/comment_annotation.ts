@@ -63,7 +63,7 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
   comment.selector && comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
-  setCommentTarget: (target?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   modelMap: Map<string, Model>
 }
@@ -90,7 +90,7 @@ export default (props: CommentAnnotationProps) => {
 
         if (meta) {
           if (SET_COMMENT in meta) {
-            props.setCommentTarget(meta[SET_COMMENT])
+            props.setComment(meta[SET_COMMENT])
           }
         }
 
@@ -136,7 +136,7 @@ const commentsState = (
   doc.descendants((node, pos) => {
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
-    if (targetComment) {
+    if (targetComment && !excludedNode(node.type)) {
       decorations.push(
         Decoration.widget(
           pos + 1,
@@ -152,6 +152,10 @@ const commentsState = (
 
   return DecorationSet.create(doc, decorations)
 }
+
+// TODO:: remove this check when we allow bibliography item to show comment icon
+const excludedNode = (type: NodeType<ManuscriptSchema>) =>
+  type === type.schema.nodes.bibliography_item
 
 const getCommentIcon = (
   comment: Comment,

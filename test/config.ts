@@ -53,7 +53,7 @@ export interface Props {
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
   capabilities?: Capabilities
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
 
   getAttachment: (id: string) => Blob
   putAttachment: (file: File) => Promise<string>
