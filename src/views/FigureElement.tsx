@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// PLEASE NOTE: React views for the editor nodes are depercated. This is kept for historical purposes and possible (but not likely) change of direction on the project
 
 import {
   AttachIcon,
@@ -21,6 +22,7 @@ import {
   getDesignationName,
   RoundIconButton,
   SelectDialogDesignation,
+  SubmissionAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
@@ -37,18 +39,14 @@ import { FileUpload } from '../components/views/FileUpload'
 import { getAllowedForInFigure } from '../lib/external-files'
 import { getFileExtension } from '../lib/utils'
 import EditableBlock from './EditableBlock'
-import { FigureProps, SubmissionAttachment } from './FigureComponent'
+import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
 
 interface AttachableFilesDropdownProps {
   onSelect: (file: SubmissionAttachment) => void
   files: SubmissionAttachment[]
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  addFigureExFileRef: (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => void
+  addFigureExFileRef: (attachmentId: string) => void
 }
 
 export const AttachableFilesDropdown: React.FC<
@@ -126,12 +124,8 @@ export const AttachableFilesDropdown: React.FC<
               uploadAttachment(uploadedFileDesignation, fileToUpload)
                 .then((result) => {
                   if (result?.data?.uploadAttachment) {
-                    const { link, id } = result.data.uploadAttachment
-                    const relation =
-                      uploadedFileDesignation === 'figure'
-                        ? 'imageRepresentation'
-                        : 'dataset'
-                    addFigureExFileRef(relation, link, id)
+                    const { link } = result.data.uploadAttachment
+                    addFigureExFileRef(link)
                     // having the name and the link - add either image represnation or a dataset for the current figure
                   }
                   resetUploadProcess()
@@ -156,9 +150,9 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  externalFiles,
   modelMap,
   uploadAttachment,
+  getAttachments,
   capabilities: can,
   mediaAlternativesEnabled,
 }: FigureProps) => {
@@ -204,7 +198,7 @@ const FigureElement = ({
           />
 
           <FilesDropdown
-            externalFiles={externalFiles}
+            getAttachments={getAttachments}
             modelMap={modelMap}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}

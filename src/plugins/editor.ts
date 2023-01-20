@@ -18,7 +18,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { BibliographyItem, Manuscript, Model } from '@manuscripts/json-schema'
+import { BibliographyItem, CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
@@ -50,8 +50,8 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: string) => void
-  plugins?: Plugin<null>[]
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  plugins?: Array<Plugin<null>>
 }
 
 export default (props: PluginProps) => {

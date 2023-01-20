@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FileSectionItem } from '@manuscripts/style-guide'
+import { FileSectionItem, SubmissionAttachment } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -22,7 +22,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs } from '../lib/utils'
 import EditableBlock from './EditableBlock'
-import { FigureProps, SubmissionAttachment } from './FigureComponent'
+import { FigureProps } from './FigureComponent'
 import {
   AlternativesList,
   AttachableFilesDropdown,
@@ -33,11 +33,11 @@ import {
 import { ReactViewComponentProps } from './ReactView'
 
 const TableElement = ({
-  externalFiles,
   updateDesignation,
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
+  getAttachments,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -128,25 +128,14 @@ const TableElement = ({
         <FigureWrapper contentEditable="false">
           {mediaAlternativesEnabled &&
             can?.changeDesignation &&
-            externalFiles && (
+            getAttachments() && (
               <AttachableFilesDropdown
-                files={externalFiles}
+                files={getAttachments()}
                 onSelect={handleSelectedFile}
                 uploadAttachment={uploadAttachment}
-                addFigureExFileRef={(relation, publicUrl, attachmentId) => {
+                addFigureExFileRef={(publicUrl) => {
                   if (figure) {
-                    const newAttrs: Node['attrs'] = {
-                      externalFileReferences: addExternalFileRef(
-                        figure?.attrs.externalFileReferences,
-                        attachmentId,
-                        relation
-                      ),
-                    }
-                    if (relation == 'imageRepresentation') {
-                      // @ts-ignore
-                      newAttrs.src = publicUrl
-                    }
-                    setTableAttrs(newAttrs)
+                    setTableAttrs({ src: publicUrl })
                   }
                 }}
               />

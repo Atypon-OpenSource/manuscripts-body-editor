@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 import { Model } from '@manuscripts/json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
+import { Capabilities, SubmissionAttachment } from '@manuscripts/style-guide'
 import React, { SyntheticEvent } from 'react'
 
 import { EditableBlockProps } from '../../views/editable_block'
-import { SubmissionAttachment } from '../../views/figure_extended_editable'
 import { OptionsDropdown } from './FilesDropdown'
 
-interface Props {
+export interface FigureOptionsSubviewProps {
   src: string
   submissionId: string
   onUploadClick: (e: SyntheticEvent | Event) => void
-  externalFiles: SubmissionAttachment[]
+  onDetachClick: () => void
+  getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   mediaAlternativesEnabled: boolean
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   can: Capabilities
 }
 // ReactViewComponentProps
-const FigureOptionsSubview: React.FC<EditableBlockProps & Props> = ({
+const FigureOptionsSubview: React.FC<
+  EditableBlockProps & FigureOptionsSubviewProps
+> = ({
   src,
   submissionId,
   onUploadClick,
+  onDetachClick,
   setFigureAttrs,
-  externalFiles,
+  getAttachments,
   modelMap,
   mediaAlternativesEnabled,
   can,
@@ -48,11 +51,13 @@ const FigureOptionsSubview: React.FC<EditableBlockProps & Props> = ({
       submissionId={submissionId}
       onUploadClick={onUploadClick}
       setFigureAttrs={setFigureAttrs}
-      externalFiles={externalFiles}
+      getAttachments={getAttachments}
       modelMap={modelMap}
+      onDetachClick={onDetachClick}
       mediaAlternativesEnabled={mediaAlternativesEnabled}
       canReplaceFile={can?.replaceFile}
       canDownloadFile={can?.downloadFiles}
+      canEditArticle={can?.editArticle}
     />
   )
 }

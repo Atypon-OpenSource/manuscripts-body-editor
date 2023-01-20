@@ -33,6 +33,7 @@ import { PopperManager } from '../../lib/popper'
 import { CreateView } from '../../useEditor'
 import plugins from './viewer-plugins-lw'
 import views from './viewer-views-lw'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
@@ -53,6 +54,7 @@ export interface ViewerProps {
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  getAttachments: () => SubmissionAttachment[]
 }
 
 export default {

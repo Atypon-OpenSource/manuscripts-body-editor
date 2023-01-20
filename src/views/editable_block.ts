@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
+import { CommentAnnotation, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { Build, nodeNames } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
@@ -33,7 +33,7 @@ export interface EditableBlockProps extends BaseNodeProps {
   capabilities?: Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget?: (commentTarget?: string) => void
+  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
   dispatch?: Dispatch
   theme?: DefaultTheme
 }

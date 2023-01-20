@@ -16,8 +16,7 @@
 import { FileSectionItem } from '@manuscripts/style-guide'
 import { Node } from 'prosemirror-model'
 
-import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
-import { setNodeAttrs } from '../lib/utils'
+import { ExternalFileRef } from '../lib/external-files'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -90,34 +89,33 @@ export class TableElementView extends BlockView<
     if (
       this.props.mediaAlternativesEnabled &&
       this.props.capabilities?.changeDesignation &&
-      this.props.externalFiles
+      this.props.getAttachments()
     ) {
-      const addFigureExFileRef = (
-        relation: string,
-        publicUrl: string,
-        attachmentId: string
-      ) => {
-        if (figure) {
-          const newAttrs: Node['attrs'] = {
-            externalFileReferences: addExternalFileRef(
-              figure?.attrs.externalFileReferences,
-              attachmentId,
-              relation
-            ),
-          }
-          if (relation == 'imageRepresentation') {
-            // @ts-ignore
-            newAttrs.src = publicUrl
-          }
-          setNodeAttrs(
-            figure,
-            { getPos: this.getPos, node: this.node, view: this.view },
-            this.view.dispatch
-          )(newAttrs)
-        }
+      const addFigureExFileRef = () => {
+        // This is not active implementation but maybe used later on
+        //   if (figure) {
+        //     const newAttrs: Node['attrs'] = {
+        //       externalFileReferences: addExternalFileRef(
+        //         figure?.attrs.externalFileReferences,
+        //         attachmentId,
+        //         relation
+        //       ),
+        //     }
+        //     if (relation == 'imageRepresentation') {
+        //       newAttrs.src = publicUrl
+        //     }
+        //     setNodeAttrs(
+        //       figure,
+        //       { getPos: this.getPos, node: this.node, view: this.view },
+        //       this.view.dispatch
+        //     )(newAttrs)
+        //   }
+        console.error(
+          'Not supported at the moment. Requires reimplementation withtout external file references'
+        )
       }
       const componentProps = {
-        files: this.props.externalFiles,
+        files: this.props.getAttachments(),
         handleSelectedFile: () => null,
         uploadAttachment: this.props.uploadAttachment,
         addFigureExFileRef: addFigureExFileRef,

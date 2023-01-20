@@ -17,22 +17,16 @@
 export function createOnUploadHandler(
   uploadAttachment: (designation: string, file: File) => Promise<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   designation: string,
-  relation: string,
-  addFigureExFileRef: (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => void
+  addAttachmentSrc: (link: string) => void
 ) {
   return async function (e: Event) {
     const target = e.target as HTMLInputElement
     const file = target.files && target.files[0]
     if (file) {
       const response = await uploadAttachment(designation, file)
-      if (response?.data?.uploadAttachment) {
-        // eslint-disable-next-line no-unsafe-optional-chaining
-        const { link, id } = response.data?.uploadAttachment
-        addFigureExFileRef(relation, link, id)
+      if (response) {
+        const { link } = response
+        addAttachmentSrc(link)
       }
       target.value = ''
     }

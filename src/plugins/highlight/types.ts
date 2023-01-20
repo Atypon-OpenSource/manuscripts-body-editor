@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import { DecorationSet } from 'prosemirror-view'
 
 export interface HighlightPluginProps {
-  setCommentTarget: (target?: string) => void
+  setCommentTarget: (target?: CommentAnnotation) => void
 }
 
 export interface HighlightStartMarker {
-  rid: string
+  id: string
+  tid: string
   start: number
 }
 export interface HighlightMarker extends HighlightStartMarker {

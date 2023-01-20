@@ -17,6 +17,7 @@
 import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
+  SubmissionAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import {
@@ -33,20 +34,20 @@ import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs as setGivenNodeAttrs } from '../lib/utils'
 import { ReactViewComponentProps } from './ReactView'
 
-export type SubmissionAttachment = {
-  id: string
-  name: string
-  type: SubmissionAttachmentType
-  link: string
-}
+// export type SubmissionAttachment = {
+//   id: string
+//   name: string
+//   type: SubmissionAttachmentType
+//   link: string
+// }
 
-export type SubmissionAttachmentType = {
-  id: string
-  label?: string
-}
+// export type SubmissionAttachmentType = {
+//   id: string
+//   label?: string
+// }
 
 export interface FigureProps {
-  externalFiles?: SubmissionAttachment[]
+  getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -56,19 +57,17 @@ export interface FigureProps {
   mediaAlternativesEnabled?: boolean
 }
 
-const WEB_FORMAT_QUERY = 'format=jpg'
-export const addFormatQuery = (url?: string) => {
-  if (url) {
-    const join = url.includes('?') ? '&' : '?'
-    return url + join + WEB_FORMAT_QUERY
-  }
+export const WEB_FORMAT_QUERY = 'format=jpg'
+export const addFormatQuery = (url: string) => {
+  const join = url.includes('?') ? '&' : '?'
+  return url + join + WEB_FORMAT_QUERY
 }
 
 const FigureComponent = ({
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
-  externalFiles,
+  getAttachments,
   submissionId,
   modelMap,
 }: FigureProps) => {
@@ -93,15 +92,14 @@ const FigureComponent = ({
       let url = imageExternalFile?.url
       if (!imageExternalFile?.url.includes('https://')) {
         const attachmentId = imageExternalFile?.url.replace('attachment:', '')
-        url = externalFiles?.find((file) => file.id === attachmentId)
-          ?.link as string
+        url = getAttachments()?.find((file) => file.id === attachmentId)?.link || ''
       }
 
-      return addFormatQuery(url) // these links are always provided with url query, it's safe to assume we need to use amp here
-    }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+      return addFormatQuery(url || '') // these links are always provided with url query, it's safe to assume we need to use amp here
+    }, [nodeAttrs.src, getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const { isSupportedImageType, fileName } = useMemo(() => {
-      const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)$/gi
+      const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
       let attachmentFileName = nodeAttrs.src
 
       if (nodeAttrs.contentType) {
@@ -116,7 +114,7 @@ const FigureComponent = ({
       }
 
       if (imageExternalFile) {
-        const imageExternalFileRef = externalFiles?.find((file) => {
+        const imageExternalFileRef = getAttachments()?.find((file) => {
           if (imageExternalFile.url.includes('https://')) {
             return file.link === imageExternalFile.url
           } else {
@@ -133,13 +131,13 @@ const FigureComponent = ({
         isSupportedImageType: imageFileRegex.test(attachmentFileName),
         fileName: attachmentFileName,
       }
-    }, [nodeAttrs.src, externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [nodeAttrs.src, getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length) {
         figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
           if (exRef && typeof exRef.ref === 'undefined') {
-            const ref = externalFiles?.find((file) => {
+            const ref = getAttachments()?.find((file) => {
               // in the new implementation ExternalFileRef url will be attachment id LEAN-988
               if (exRef.url.includes('https://')) {
                 return file.link === exRef.url
@@ -159,13 +157,13 @@ const FigureComponent = ({
           }
         })
       }
-    }, [externalFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
       if (figure?.attrs?.externalFileReferences?.length && contentDOM) {
         figure?.attrs?.externalFileReferences?.map((exRef: ExternalFileRef) => {
           if (exRef) {
-            const file = externalFiles?.find((file) => {
+            const file = getAttachments()?.find((file) => {
               if (exRef.url.includes('https://')) {
                 return file.link === exRef.url
               } else {
@@ -228,11 +226,14 @@ const FigureComponent = ({
                 submissionId={submissionId}
                 onUploadClick={onUploadClick}
                 setFigureAttrs={setFigureAttrs}
-                externalFiles={externalFiles}
+                getAttachments={getAttachments}
                 modelMap={modelMap}
                 mediaAlternativesEnabled={mediaAlternativesEnabled}
                 canReplaceFile={can?.replaceFile}
                 canDownloadFile={can?.downloadFiles}
+                onDetachClick={() => {
+                  console.log('Detach not implemented for Figure View')
+                }}
               />
 
               <img

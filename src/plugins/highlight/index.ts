@@ -28,7 +28,7 @@ import {
 
 export const highlightKey = new PluginKey<HighlightPluginState>('highlight')
 
-export const SET_COMMENT_TARGET = 'SET_COMMENT_TARGET'
+export const SET_COMMENT = 'SET_COMMENT'
 
 export const hasHighlightTarget = (comment: CommentAnnotation) =>
   comment.target.startsWith('MPHighlight:')
@@ -37,11 +37,9 @@ export const getHighlightTarget = (
   comment: CommentAnnotation,
   state: ManuscriptEditorState
 ) => {
-  if (hasHighlightTarget(comment)) {
-    return highlightKey
-      .getState(state)
-      ?.highlights.find((item) => item.rid === comment.target)
-  }
+  return highlightKey
+    .getState(state)
+    ?.highlights.find((item) => item.id === comment._id)
 }
 
 export const selectedHighlights = (state: ManuscriptEditorState) => {
@@ -93,8 +91,8 @@ export default (props: HighlightPluginProps) => {
         const meta = tr.getMeta(highlightKey)
 
         if (meta) {
-          if (SET_COMMENT_TARGET in meta) {
-            props.setCommentTarget(meta[SET_COMMENT_TARGET])
+          if (SET_COMMENT in meta) {
+            props.setCommentTarget(meta[SET_COMMENT])
           }
         }
 

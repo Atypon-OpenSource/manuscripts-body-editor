@@ -49,7 +49,7 @@ const getFileType = (fileName: string) => {
 }
 
 interface DropdownProps {
-  externalFiles?: SubmissionAttachment[]
+  getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
@@ -60,16 +60,15 @@ interface OptionsProps extends DropdownProps {
   url: string
   submissionId: string
   canDownloadFile?: boolean
+  onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
+  canEditArticle?: boolean
 }
 
-interface FilesDropdownProps extends DropdownProps {
+export interface FilesDropdownProps extends DropdownProps {
   canUploadFile?: boolean
-  addFigureExFileRef: (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => void
+  canEditArticle?: boolean
+  addFigureExFileRef: (link: string) => void
 }
 
 const isFileValidForFigure = (
@@ -86,26 +85,26 @@ const isFileValidForFigure = (
 }
 
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
-  externalFiles,
   modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   addFigureExFileRef,
   canReplaceFile,
   canUploadFile,
+  getAttachments,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
   const { otherFiles, supplementFiles } = useFiles(
     modelMap,
-    externalFiles?.map((f) => ({ ...f })) || [],
+    getAttachments().map((f) => ({ ...f })) || [],
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
   const onFileClick = useCallback(
     (e, file: SubmissionAttachment) => {
       toggleOpen(e)
-      addFigureExFileRef('imageRepresentation', file.link, file.id)
+      addFigureExFileRef(file.link)
     },
     [addFigureExFileRef, toggleOpen]
   )
@@ -190,18 +189,20 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 
 export const OptionsDropdown: React.FC<OptionsProps> = ({
   url,
-  externalFiles,
   modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
+  onDetachClick,
   canReplaceFile,
   canDownloadFile,
+  canEditArticle,
   setFigureAttrs,
+  getAttachments,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const { otherFiles } = useFiles(
     modelMap,
-    externalFiles?.map((f) => ({ ...f })) || [],
+    getAttachments().map((f) => ({ ...f })) || [],
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   )
 
@@ -213,6 +214,12 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
       setFigureAttrs({
         src: addFormatQuery(otherFiles[index].link),
         label: otherFiles[index].link,
+        externalFileReferences: [
+          {
+            kind: 'imageRepresentation',
+            url: addFormatQuery(otherFiles[index].link),
+          },
+        ],
       })
     },
     [otherFiles, setFigureAttrs]
@@ -256,6 +263,9 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
+          <ListItemButton onClick={onDetachClick} disabled={!canEditArticle}>
+            Detach
+          </ListItemButton>
         </OptionsDropdownList>
       )}
     </DropdownWrapper>

@@ -19,8 +19,10 @@ import {
   isInGraphicalAbstractSection,
 } from '@manuscripts/transform'
 
-import { FilesDropdown } from '../components/views/FilesDropdown'
-import { ExternalFileRef } from '../lib/external-files'
+import {
+  FilesDropdown,
+  FilesDropdownProps,
+} from '../components/views/FilesDropdown'
 import { createOnUploadHandler } from '../lib/figure-file-upload'
 import { getMatchingChild, setNodeAttrs } from '../lib/utils'
 import BlockView from './block_view'
@@ -56,32 +58,19 @@ export class FigureElementView extends BlockView<
       (node) => node.type === node.type.schema.nodes.figure
     )
 
-    const imageExternalFile = figure?.attrs.externalFileReferences?.find(
-      (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
-    ) || { url: '' }
-
-    return imageExternalFile?.url.trim().length < 1
+    return !figure?.attrs.src
   }
 
-  public addFigureExFileRef = (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => {
+  public addAttachmentSrc = (publicUrl: string) => {
     const {
       state: { tr, schema },
       dispatch,
     } = this.view
 
     if (!this.isEmptyFigure()) {
+      // If there is already a figure inside, we then create a new one. This is product logic.
       const figure = schema.nodes.figure.createAndFill(
         {
-          externalFileReferences: [
-            {
-              url: `attachment:${attachmentId}`,
-              kind: 'imageRepresentation',
-            },
-          ],
           src: publicUrl,
         },
         []
@@ -106,12 +95,6 @@ export class FigureElementView extends BlockView<
         dispatch
       )({
         src: publicUrl,
-        externalFileReferences: [
-          {
-            url: `attachment:${attachmentId}`,
-            kind: 'imageRepresentation',
-          },
-        ],
       })
     }
   }
@@ -165,8 +148,7 @@ export class FigureElementView extends BlockView<
       const uploadAttachmentHandler = createOnUploadHandler(
         this.props.uploadAttachment,
         this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
-        'imageRepresentation',
-        this.addFigureExFileRef
+        this.addAttachmentSrc
       )
       const input = document.createElement('input')
       input.accept = 'image/*'
@@ -179,12 +161,12 @@ export class FigureElementView extends BlockView<
     }
 
     if (this.props.dispatch && this.props.theme) {
-      const componentProps = {
-        externalFiles: this.props.externalFiles,
-        modelMap: this.props.externalFiles,
+      const componentProps: FilesDropdownProps = {
+        getAttachments: this.props.getAttachments,
+        modelMap: this.props.modelMap,
         onUploadClick: this.envokeFileInput,
         mediaAlternativesEnabled: this.props.mediaAlternativesEnabled,
-        addFigureExFileRef: this.addFigureExFileRef,
+        addFigureExFileRef: this.addAttachmentSrc,
         canReplaceFile: this.props.capabilities?.replaceFile,
         canUploadFile: this.props.capabilities?.uploadFile,
       }

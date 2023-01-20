@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -37,7 +38,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  setCommentTarget?: (commentTarget?: string) => void
+  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
 }
 
 interface SuppressOption {

@@ -40,7 +40,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
 export default (
   props: EditableBlockProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  componentProps: { [key: string]: unknown },
+  componentProps: object,
   node: ManuscriptNode,
   getPos: () => number,
   view: ManuscriptEditorView,

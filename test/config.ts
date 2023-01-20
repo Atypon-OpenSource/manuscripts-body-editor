@@ -16,7 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { Manuscript, Model } from '@manuscripts/json-schema'
+import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
@@ -43,8 +43,9 @@ export interface Props {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
-  setCommentTarget: (commentTarget?: string) => void
   capabilities?: Capabilities
+  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+
   getAttachment: (id: string) => Blob
   putAttachment: (file: File) => Promise<string>
 }
