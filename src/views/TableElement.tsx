@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { FigureNode } from '@manuscripts/manuscript-transform'
 import { FileSectionItem, SubmissionAttachment } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
@@ -75,12 +75,8 @@ const TableElement = ({
     }, [contentDOM])
 
     useEffect(() => {
-      const {
-        suppressCaption,
-        suppressHeader,
-        suppressFooter,
-        suppressTitle,
-      } = viewProps.node.attrs
+      const { suppressCaption, suppressHeader, suppressFooter, suppressTitle } =
+        viewProps.node.attrs
       if (content.current) {
         content.current.classList.toggle('suppress-caption', suppressCaption)
         content.current.classList.toggle('suppress-header', suppressHeader)

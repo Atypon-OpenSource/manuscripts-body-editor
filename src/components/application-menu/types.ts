@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptEditorState } from '@manuscripts/manuscript-transform'
+import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Transaction } from 'prosemirror-state'
 
 export type Dispatch = (tr: Transaction) => void

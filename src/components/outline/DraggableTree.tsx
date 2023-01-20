@@ -21,7 +21,7 @@ import {
   nodeTitle,
   nodeTitlePlaceholder,
   Selected,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import * as React from 'react'
 import {

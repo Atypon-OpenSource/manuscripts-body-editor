@@ -18,8 +18,7 @@ import {
   InlineFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
@@ -29,9 +28,7 @@ interface PluginState {
   labels: Map<string, string>
 }
 
-export const footnotesKey = new PluginKey<PluginState, ManuscriptSchema>(
-  'footnotes'
-)
+export const footnotesKey = new PluginKey<PluginState>('footnotes')
 
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const nodes: [InlineFootnoteNode, number][] = []
@@ -58,19 +55,19 @@ const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   })
 }
 
-const labelWidget = (label: string, id: string) => (
-  view: EditorView
-): Element => {
-  const element = document.createElement('span')
-  element.className = 'footnote-label'
-  element.textContent = label
+const labelWidget =
+  (label: string, id: string) =>
+  (view: EditorView): Element => {
+    const element = document.createElement('span')
+    element.className = 'footnote-label'
+    element.textContent = label
 
-  element.addEventListener('click', () => {
-    scrollToInlineFootnote(id, view)
-  })
+    element.addEventListener('click', () => {
+      scrollToInlineFootnote(id, view)
+    })
 
-  return element
-}
+    return element
+  }
 
 /**
  * This plugin provides support of footnotes related behaviours:
@@ -105,7 +102,7 @@ const labelWidget = (label: string, id: string) => (
  *
  */
 export default () => {
-  return new Plugin<PluginState, ManuscriptSchema>({
+  return new Plugin<PluginState>({
     key: footnotesKey,
 
     state: {

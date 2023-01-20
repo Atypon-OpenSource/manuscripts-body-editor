@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { ManuscriptSchema, schema } from '@manuscripts/manuscript-transform'
-import { Command, toggleMark } from 'prosemirror-commands'
+import { schema } from '@manuscripts/transform'
+import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { wrapInList } from 'prosemirror-schema-list'
+import { Command } from 'prosemirror-state'
 import {
   addColumnAfter,
   addColumnBefore,
@@ -63,8 +64,7 @@ export default (
   contentEditable?: boolean
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
-  const wrap = (command: Command<ManuscriptSchema>) => () =>
-    editor.doCommand(command)
+  const wrap = (command: Command) => () => editor.doCommand(command)
 
   let menus = [
     {

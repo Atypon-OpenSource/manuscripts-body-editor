@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode, nodeNames } from '@manuscripts/manuscript-transform'
 import {
   CountRequirement,
   Manuscript,
   Model,
   Section,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { ManuscriptNode, nodeNames } from '@manuscripts/transform'
 import * as Comlink from 'comlink'
 import React, { createContext } from 'react'
 

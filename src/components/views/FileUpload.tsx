@@ -52,6 +52,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       if (file) {
         const response = await uploadAttachment(designation, file)
         if (response?.data?.uploadAttachment) {
+          // eslint-disable-next-line no-unsafe-optional-chaining
           const { link, id } = response.data?.uploadAttachment
           addFigureExFileRef(relation, link, id)
         }

@@ -15,12 +15,6 @@
  */
 
 import {
-  hasObjectType,
-  isElementNodeType,
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import {
   FigureLayout,
   FigureStyle,
   Manuscript,
@@ -29,8 +23,13 @@ import {
   PageLayout,
   ParagraphStyle,
   TableStyle,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  hasObjectType,
+  isElementNodeType,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 const isParagraphStyle = hasObjectType<ParagraphStyle>(
@@ -113,7 +112,7 @@ export default (props: Props) => {
     }
   }
 
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     appendTransaction: (transactions, oldState, newState) => {
       // get the transaction from the new state
       const tr = newState.tr

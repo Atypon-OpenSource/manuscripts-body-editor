@@ -23,7 +23,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 
 import { Dispatch } from '../commands'

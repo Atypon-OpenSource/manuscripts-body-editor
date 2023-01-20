@@ -19,10 +19,8 @@ import { parseDoc, setupEditor } from '../../../testing/setup-editor'
 import deletedFootnoteJson from './__fixtures__/deleted-footnote.json'
 import insertedFootnoteJson from './__fixtures__/inserted-footnote.json'
 
-jest.mock('@manuscripts/manuscript-transform', () => {
-  const mockTransformOriginal = jest.requireActual(
-    '@manuscripts/manuscript-transform'
-  )
+jest.mock('@manuscripts/transform', () => {
+  const mockTransformOriginal = jest.requireActual('@manuscripts/transform')
   return {
     ...mockTransformOriginal,
     // Inline footnotes require the id of the footnote when created thus
@@ -49,6 +47,7 @@ describe('footnotes plugin', () => {
     expect(view.state.tr.selection.toJSON()).toEqual(
       insertedFootnoteJson.selection
     )
+    view.destroy()
   })
   test('should remove the inline node as well as the footnote on deletion', () => {
     const expectedDoc = parseDoc(deletedFootnoteJson.doc)
@@ -63,5 +62,6 @@ describe('footnotes plugin', () => {
     expect(view.state.tr.selection.toJSON()).toEqual(
       deletedFootnoteJson.selection
     )
+    view.destroy()
   })
 })

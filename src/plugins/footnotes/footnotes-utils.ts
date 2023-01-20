@@ -19,7 +19,7 @@ import {
   isFootnoteNode,
   isFootnotesElementNode,
   ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 
 import { footnotesKey } from './index'
