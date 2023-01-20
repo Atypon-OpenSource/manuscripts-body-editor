@@ -46,11 +46,7 @@ interface AttachableFilesDropdownProps {
   onSelect: (file: SubmissionAttachment) => void
   files: SubmissionAttachment[]
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  addFigureExFileRef: (
-    relation: string,
-    publicUrl: string,
-    attachmentId: string
-  ) => void
+  addFigureExFileRef: (attachmentId: string) => void
 }
 
 export const AttachableFilesDropdown: React.FC<
@@ -128,12 +124,8 @@ export const AttachableFilesDropdown: React.FC<
               uploadAttachment(uploadedFileDesignation, fileToUpload)
                 .then((result) => {
                   if (result?.data?.uploadAttachment) {
-                    const { link, id } = result.data.uploadAttachment
-                    const relation =
-                      uploadedFileDesignation === 'figure'
-                        ? 'imageRepresentation'
-                        : 'dataset'
-                    addFigureExFileRef(relation, link, id)
+                    const { link } = result.data.uploadAttachment
+                    addFigureExFileRef(link)
                     // having the name and the link - add either image represnation or a dataset for the current figure
                   }
                   resetUploadProcess()

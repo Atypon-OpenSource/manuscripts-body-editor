@@ -535,6 +535,7 @@
   border-color: #000 !important;
   border-style: none !important;
   border-width: 0pt !important;
+  position: relative;
   grid-column: 2;
 }
 
@@ -610,13 +611,13 @@
 }
 
 .block-comment-button:active > svg > path {
-  stroke: #F7B314;
-  fill: #FFE0B2;
+  stroke: #f7b314;
+  fill: #ffe0b2;
 }
 
 .selected-comment > svg > path {
-  stroke: #F7B314;
-  fill: #FFE0B2;
+  stroke: #f7b314;
+  fill: #ffe0b2;
 }
 
 .block-comment-button.block-comment {
@@ -624,7 +625,8 @@
   left: 93%;
 }
 
-.block-comment > .comment-icon, .group-comment-icon {
+.block-comment > .comment-icon,
+.group-comment-icon {
   position: absolute;
   top: 16px;
 }
@@ -654,7 +656,8 @@
   left: 100%;
 }
 
-.inline-comment > .comment-icon, .group-comment-icon {
+.inline-comment > .comment-icon,
+.group-comment-icon {
   position: absolute;
   top: 12px;
 }
