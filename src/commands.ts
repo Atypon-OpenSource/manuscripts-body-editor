@@ -978,19 +978,11 @@ export const insertHighlight = (
 }
 
 export const deleteHighlightMarkers =
-<<<<<<< HEAD
   (id: string): Command =>
   (state, dispatch) => {
     const markersToDelete: number[] = []
     highlightKey.getState(state)?.highlights.forEach((highlight) => {
       if (highlight.id === id) {
-=======
-  (rid: string): Command =>
-  (state, dispatch) => {
-    const markersToDelete: number[] = []
-    highlightKey.getState(state)?.highlights.forEach((highlight) => {
-      if (highlight.rid === rid) {
->>>>>>> Remove jupyter config and fix styles
         markersToDelete.push(highlight.start - 1)
         markersToDelete.push(highlight.end)
       }
@@ -1047,12 +1039,7 @@ export function addComment(
 ) {
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
-<<<<<<< HEAD
   const selectionNode = getParentNode(selection)
-=======
-  const { type: selectionNodeType, id: selectionParentId } =
-    getParentNode(selection)
->>>>>>> Remove jupyter config and fix styles
 
   if (viewNode && resolvePos) {
     const viewNode = getParentNode(TextSelection.near(resolvePos))

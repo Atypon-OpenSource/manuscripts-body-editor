@@ -23,10 +23,12 @@ import {
   UserProfile,
 } from '@manuscripts/json-schema'
 import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { ManuscriptNode } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
+
 import { DefaultTheme } from 'styled-components'
 
 import { PopperManager } from '../../lib/popper'
@@ -60,7 +62,6 @@ export default {
   createState: (props: ViewerProps) => {
     return EditorState.create({
       doc: props.doc,
-      schema,
       plugins: plugins(props),
     })
   },

@@ -342,7 +342,6 @@ const buildProps = (
   unmountReactComponent: () => undefined,
   getCitationProvider: () => undefined,
   plugins: [],
-  removeAttachment: async () => undefined,
   deleteModel: async (id) => {
     modelMap.delete(id)
     return id
@@ -358,6 +357,8 @@ const buildProps = (
   submissionId: 'testId',
   updateDesignation: () => new Promise(() => ''),
   uploadAttachment: () => new Promise(() => ''),
+  getAttachments: () => [],
+  setSelectedComment: () => undefined,
   theme: {},
 })
 

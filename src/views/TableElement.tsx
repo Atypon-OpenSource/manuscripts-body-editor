@@ -21,7 +21,6 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs } from '../lib/utils'
-import { Mutable } from '../types'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import {
