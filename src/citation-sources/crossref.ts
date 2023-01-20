@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import { BibliographyItem } from '@manuscripts/json-schema'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
 import axios, { CancelToken } from 'axios'
 
 interface SearchResults {

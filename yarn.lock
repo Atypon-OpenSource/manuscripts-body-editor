@@ -1515,8 +1515,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@../manuscripts-style-guide":
+"@manuscripts/style-guide@^1.0.0":
   version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.0.tgz#8dac4e128101c4d372039091c829008380798306"
+  integrity sha512-mae8T2kB2N8GAKAMl/IwfMY0wacJ1brPtxNLgRPCJiHaFLMmbLjpCojeuAQuPQR1mU4YgQWSYZgaMa5tZOqI9g==
   dependencies:
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"

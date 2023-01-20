@@ -18,7 +18,12 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { BibliographyItem, CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Manuscript,
+  Model,
+} from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'

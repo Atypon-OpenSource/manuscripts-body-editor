@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { BibliographyItem, CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Manuscript,
+  Model,
+} from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
@@ -72,7 +76,6 @@ export default (props: PluginProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?

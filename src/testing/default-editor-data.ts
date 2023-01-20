@@ -15,7 +15,6 @@
  */
 
 import {
-  CommentAnnotation,
   BibliographyItem,
   Manuscript,
   Model,
@@ -108,7 +107,7 @@ const defaultViewerProps: ViewerProps = {
   submissionId: 'test-submission-id',
   updateDesignation: async () => undefined,
   uploadAttachment: async () => undefined,
-  getAttachments: () => []
+  getAttachments: () => [],
 }
 
 export const defaultEditorProps: EditorProps = {
@@ -148,8 +147,8 @@ export const defaultEditorProps: EditorProps = {
     retrySync: (_componentIDs: string[]) => Promise.resolve(),
     handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
       undefined,
-    setCommentTarget: (commentTarget?: CommentAnnotation) => undefined,
-    setSelectedComment: (id?: string) => undefined,
+    setCommentTarget: () => undefined,
+    setSelectedComment: () => undefined,
     components: {},
     environment: undefined,
   },

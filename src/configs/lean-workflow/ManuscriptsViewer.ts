@@ -22,6 +22,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/json-schema'
+import { SubmissionAttachment } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
@@ -33,7 +34,6 @@ import { PopperManager } from '../../lib/popper'
 import { CreateView } from '../../useEditor'
 import plugins from './viewer-plugins-lw'
 import views from './viewer-views-lw'
-import { SubmissionAttachment } from '@manuscripts/style-guide'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }

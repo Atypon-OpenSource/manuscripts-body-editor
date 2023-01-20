@@ -352,14 +352,14 @@ const buildProps = (
   removeLibraryItem: () => undefined,
   retrySync: async () => undefined,
   setCommentTarget: () => undefined,
-  setSelectedComment: (id?: string) => undefined,
+  setSelectedComment: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
   submissionId: 'testId',
   updateDesignation: () => new Promise(() => ''),
   uploadAttachment: () => new Promise(() => ''),
   theme: {},
-  getAttachments: () => []
+  getAttachments: () => [],
 })
 
 describe('editor view', () => {

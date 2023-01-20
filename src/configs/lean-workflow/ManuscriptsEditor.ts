@@ -16,7 +16,11 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { CommentAnnotation, BibliographyItem, Model } from '@manuscripts/json-schema'
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Model,
+} from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Capabilities } from '@manuscripts/style-guide'
 import { Build, schema } from '@manuscripts/transform'
