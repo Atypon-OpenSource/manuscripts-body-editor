@@ -724,6 +724,8 @@
 
 .ProseMirror .bib-item {
   counter-increment: bib_item;
+  position: relative;
+  margin-right: 40px;
 }
 
 .ProseMirror .csl-bib-body {

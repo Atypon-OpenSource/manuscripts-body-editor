@@ -680,3 +680,29 @@
   bottom: 38px;
   display: inline-flex;
 }
+
+.bib-item:hover > .bibliography-double-button {
+  visibility: visible;
+}
+
+.bibliography-double-button {
+  display: inline-flex;
+  flex-direction: column;
+  position: absolute;
+  top: -50%;
+  left: 100%;
+  width: 36px;
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.bibliography-edit-button {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #e2e2e2;
+  border-radius: 32px 32px 0 0;
+}
