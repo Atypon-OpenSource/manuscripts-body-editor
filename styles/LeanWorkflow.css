@@ -603,19 +603,6 @@
   position: static;
 }
 
-
-.bibliography-comment > .group-comment-icon {
-  top: -5px;
-  left: 9px;
-}
-
-.block-comment-button.bibliography-comment {
-  display: grid;
-  top: -7%;
-  left: 1%;
-  margin-top: 12px;
-}
-
 .block-comment-button {
   cursor: pointer;
   position: relative;
@@ -656,12 +643,12 @@
 
 .figure-comment > .comment-icon {
   position: absolute;
-  top: 4px;
+  top: 6px;
 }
 
 .figure-comment > .group-comment-icon {
   top: 0;
-  left: 10px;
+  left: 7px;
 }
 
 .block-comment-button.inline-comment {
@@ -698,7 +685,7 @@
   visibility: visible;
 }
 
-.bibliography-double-button{
+.bibliography-double-button {
   display: inline-flex;
   flex-direction: column;
   position: absolute;
@@ -709,17 +696,13 @@
   cursor: pointer;
 }
 
-.bibliography-edit-button, .bibliography-comment-button {
+.bibliography-edit-button {
   display: inline-flex;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
   height: 40px;
-  background: #FFFFFF;
-  border: 1px solid #E2E2E2;
+  background: #ffffff;
+  border: 1px solid #e2e2e2;
   border-radius: 32px 32px 0 0;
-}
-
-.bibliography-comment-button{
-  border-radius: 0 0 32px 32px;
 }
