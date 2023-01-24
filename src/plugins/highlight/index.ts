@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorState,
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation } from '@manuscripts/json-schema'
+import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -30,10 +26,7 @@ import {
   HighlightPluginState,
 } from './types'
 
-export const highlightKey = new PluginKey<
-  HighlightPluginState,
-  ManuscriptSchema
->('highlight')
+export const highlightKey = new PluginKey<HighlightPluginState>('highlight')
 
 export const SET_COMMENT = 'SET_COMMENT'
 
@@ -89,7 +82,7 @@ const buildPluginState = (doc: ManuscriptNode): HighlightPluginState => {
  * This plugin creates a decoration around each highlight marker start and end pair, and keeps a map of all the highlights.
  */
 export default (props: HighlightPluginProps) => {
-  return new Plugin<HighlightPluginState, ManuscriptSchema>({
+  return new Plugin<HighlightPluginState>({
     key: highlightKey,
     state: {
       init: (tr, state) => buildPluginState(state.doc),

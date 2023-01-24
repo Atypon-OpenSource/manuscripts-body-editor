@@ -27,7 +27,7 @@ import { EditableBlockProps } from '../../views/editable_block'
 import equation from '../../views/equation_editable'
 import equationElement from '../../views/equation_element_editable'
 import figureElement from '../../views/figure_element_extended_editable'
-import extendedFigure from '../../views/figure_extended_editable'
+import figure from '../../views/figure_extended_editable'
 import { FigureProps } from '../../views/FigureComponent'
 import footnote from '../../views/footnote_editable'
 import footnotesElement from '../../views/footnotes_element'
@@ -61,7 +61,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props),
     equation: equation(props),
     equation_element: equationElement(props),
-    figure: extendedFigure(props, dispatch),
+    figure: figure(props, dispatch),
     figure_element: figureElement(props, dispatch),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),

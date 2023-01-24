@@ -15,16 +15,12 @@
  */
 
 import {
-  generateID,
-  ManuscriptNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import {
   Manuscript,
   ManuscriptKeyword,
   Model,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { generateID, ManuscriptNode } from '@manuscripts/transform'
 import {
   NodeSelection,
   Plugin,
@@ -34,7 +30,7 @@ import {
 
 export const keywordsKey = new PluginKey('keywords')
 
-const keywordsInserted = (transactions: Transaction[]): boolean =>
+const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
   transactions.some((tr) => {
     const meta = tr.getMeta(keywordsKey)
 
@@ -62,7 +58,7 @@ interface Props {
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
 export default (props: Props) => {
-  return new Plugin<undefined, ManuscriptSchema>({
+  return new Plugin<undefined>({
     key: keywordsKey,
 
     appendTransaction(transactions, oldState, newState) {

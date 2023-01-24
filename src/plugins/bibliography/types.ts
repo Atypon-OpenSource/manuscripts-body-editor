@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { BibliographyItem, Model } from '@manuscripts/json-schema'
 import { CitationNodes, CitationProvider } from '@manuscripts/library'
-import { BibliographyItem, Model } from '@manuscripts/manuscripts-json-schema'
 
 export interface CiteProcCitation {
   citationItems: Array<{ id: string }>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { createPlaceholderContent } from '../lib/placeholder'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class PlaceholderView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public ignoreMutation = () => true
 
   public initialise = () => {

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { ThemeProvider } from 'styled-components'
@@ -43,7 +40,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
 export default (
   props: EditableBlockProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  componentProps: unknown,
+  componentProps: object,
   node: ManuscriptNode,
   getPos: () => number,
   view: ManuscriptEditorView,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { allowedHref } from '../lib/url'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class LinkView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public initialise = () => {
     this.createDOM()
     this.updateContents()

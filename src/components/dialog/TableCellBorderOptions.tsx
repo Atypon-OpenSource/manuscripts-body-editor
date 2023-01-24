@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Color } from '@manuscripts/manuscripts-json-schema'
+import { Color } from '@manuscripts/json-schema'
 import { ColorField } from '@manuscripts/style-guide'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'

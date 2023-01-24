@@ -15,20 +15,15 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../../lib/smooth-scroll'
 
-import { CitationProvider } from '@manuscripts/library'
-import {
-  Build,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   CommentAnnotation,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { CitationProvider } from '@manuscripts/library'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -40,7 +35,7 @@ import views from './editor-views-lw'
 import { ViewerProps } from './ManuscriptsViewer'
 
 export interface EditorProps extends ViewerProps {
-  plugins?: Array<Plugin<ManuscriptSchema>>
+  plugins?: Plugin[]
   getCitationProvider: () => CitationProvider | undefined
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
@@ -60,36 +55,33 @@ export interface EditorProps extends ViewerProps {
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
-  jupyterConfig: {
-    url: string
-    token: string
-    disabled: boolean
-  }
 }
 
 export default {
   createState: (props: EditorProps) => {
-    return EditorState.create<ManuscriptSchema>({
+    return EditorState.create({
       doc: props.doc,
       schema,
       plugins: plugins(props),
     })
   },
 
-  createView: (props: EditorProps): CreateView => (el, state, dispatch) =>
-    new EditorView(el, {
-      state,
-      editable: () => !!props.capabilities?.editArticle,
-      scrollMargin: {
-        top: 100,
-        bottom: 100,
-        left: 0,
-        right: 0,
-      },
-      dispatchTransaction: dispatch,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nodeViews: views(props, dispatch) as any,
-      attributes: props.attributes,
-      transformPasted,
-    }),
+  createView:
+    (props: EditorProps): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        state,
+        editable: () => !!props.capabilities?.editArticle,
+        scrollMargin: {
+          top: 100,
+          bottom: 100,
+          left: 0,
+          right: 0,
+        },
+        dispatchTransaction: dispatch,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeViews: views(props, dispatch) as any,
+        attributes: props.attributes,
+        transformPasted,
+      }),
 }

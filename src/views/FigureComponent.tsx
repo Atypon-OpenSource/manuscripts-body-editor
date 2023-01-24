@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-// PLEASE NOTE: React views for the editor nodes are depercated. This is kept for historical purposes and possible (but not likely) change of direction on the project
-
-import {
-  FigureNode,
-  isInGraphicalAbstractSection,
-} from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   SubmissionAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
+import {
+  FigureNode,
+  isInGraphicalAbstractSection,
+} from '@manuscripts/transform'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -87,14 +85,14 @@ const FigureComponent = ({
       if (nodeAttrs.src) {
         return nodeAttrs.src
       }
-      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-        (file) => file && file.kind === 'imageRepresentation'
-      )
+      const imageExternalFile = {
+        url: 'test',
+      }
       // in the new implementation ExternalFileRef url will be attachment id LEAN-988
       let url = imageExternalFile?.url
       if (!imageExternalFile?.url.includes('https://')) {
         const attachmentId = imageExternalFile?.url.replace('attachment:', '')
-        url = getAttachments()?.find((file) => file.id === attachmentId)?.link
+        url = getAttachments()?.find((file) => file.id === attachmentId)?.link || ''
       }
 
       return addFormatQuery(url || '') // these links are always provided with url query, it's safe to assume we need to use amp here
@@ -111,9 +109,9 @@ const FigureComponent = ({
         }
       }
 
-      const imageExternalFile = nodeAttrs.externalFileReferences?.find(
-        (file) => file && file.kind === 'imageRepresentation'
-      )
+      const imageExternalFile = {
+        url: 'test',
+      }
 
       if (imageExternalFile) {
         const imageExternalFileRef = getAttachments()?.find((file) => {
@@ -151,6 +149,7 @@ const FigureComponent = ({
             if (ref) {
               setFigureAttrs({
                 externalFileReferences: [
+                  // eslint-disable-next-line no-unsafe-optional-chaining
                   ...figure?.attrs.externalFileReferences,
                 ],
               })

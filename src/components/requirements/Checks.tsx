@@ -20,7 +20,7 @@ import {
   ManuscriptNode,
   nodeTitle,
   nodeTitlePlaceholder,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import React from 'react'
 import styled from 'styled-components'
 

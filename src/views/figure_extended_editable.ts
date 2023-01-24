@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import {
-  isInGraphicalAbstractSection,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   SubmissionAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
+import {
+  isInGraphicalAbstractSection,
+  ManuscriptEditorView,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -43,7 +43,6 @@ import ReactSubView from './ReactSubView'
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 interface FigureProps {
-  externalFiles?: SubmissionAttachment[]
   getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
@@ -158,9 +157,6 @@ export class FigureEditableView extends FigureView<
         this.setFigureAttrs({
           src: '',
         })
-
-        // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
-        // this.updateFigureModel(newAttrs) // can the model take the attributes same way as PM model has?
       }
     }
   }
@@ -316,19 +312,6 @@ export class FigureEditableView extends FigureView<
     return element
   }
 
-  // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // public updateFigureModel = (newAttrs: { [key: string]: any }) => {
-  //   const { id } = this.node.attrs
-  //   const model = this.props.getModel<Figure>(id)
-  //   if (model) {
-  //     return this.props.saveModel<Figure & ModelAttachment>({
-  //       ...model,
-  //       ...newAttrs,
-  //     })
-  //   }
-  // }
-
   public updateFigure = async (file: File) => {
     // const { id } = this.node.attrs
 
@@ -339,17 +322,6 @@ export class FigureEditableView extends FigureView<
 
     const contentType = file.type
     const src = window.URL.createObjectURL(file)
-
-    // final modelMap is not supposed to be editable from the editor anymore. saveModel shouldn't be used in views anymore
-    // await this.updateFigureModel({
-    //   contentType,
-    //   src,
-    //   attachment: {
-    //     id: 'image',
-    //     type: contentType,
-    //     data: file,
-    //   },
-    // })
 
     const { selection, tr } = this.view.state
 

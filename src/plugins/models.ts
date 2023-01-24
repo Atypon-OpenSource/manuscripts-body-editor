@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
-import { Model } from '@manuscripts/manuscripts-json-schema'
+import { Model } from '@manuscripts/json-schema'
+import { Build } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 
 export const modelsKey = new PluginKey('models')
@@ -33,7 +33,7 @@ interface Props {
  * This plugin allows commands that don't otherwise have access to the database to insert, remove or update models, by dispatching the model in a transaction.
  */
 export default (props: Props) => {
-  return new Plugin<Record<string, unknown>, ManuscriptSchema>({
+  return new Plugin<Record<string, unknown>>({
     key: modelsKey,
 
     state: {

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { Manuscript } from '@manuscripts/json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
+import { parse } from '@manuscripts/title-editor'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
   Selected,
-} from '@manuscripts/manuscript-transform'
-import { Manuscript } from '@manuscripts/manuscripts-json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
-import { parse } from '@manuscripts/title-editor'
+} from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 
 import { useDebounce } from '../hooks/use-debounce'
