@@ -351,7 +351,7 @@ const buildProps = (
   filterLibraryItems: async () => [],
   removeLibraryItem: () => undefined,
   retrySync: async () => undefined,
-  setCommentTarget: () => undefined,
+  setComment: () => undefined,
   setSelectedComment: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
