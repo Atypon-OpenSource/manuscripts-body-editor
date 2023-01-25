@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/json-schema'
+import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
   loadCitationStyle,
 } from '@manuscripts/library'
-import { DEFAULT_BUNDLE, ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  buildComment,
+  DEFAULT_BUNDLE,
+  ManuscriptNodeView,
+} from '@manuscripts/transform'
 
+import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -39,7 +44,11 @@ const createBibliography = async (items: BibliographyItem[]) => {
   return contents
 }
 
-export class BibliographyItemView<PropsType extends BaseNodeProps>
+interface BibliographyItemProps extends BaseNodeProps {
+  setComment: (comment?: CommentAnnotation) => void
+}
+
+export class BibliographyItemView<PropsType extends BibliographyItemProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -76,6 +85,27 @@ export class BibliographyItemView<PropsType extends BaseNodeProps>
       try {
         const fragment = sanitize(bibliography.outerHTML)
         this.dom.appendChild(fragment)
+
+        const doubleButton = document.createElement('div')
+        const editButton = document.createElement('div')
+        const commentButton = document.createElement('div')
+
+        doubleButton.className = 'bibliography-double-button'
+        editButton.className = 'bibliography-edit-button'
+        commentButton.className = 'bibliography-comment-button'
+
+        commentButton.addEventListener('click', () => {
+          this.props.setComment(
+            buildComment(this.node.attrs.id) as CommentAnnotation
+          )
+        })
+
+        // TODO:: add event listener for edit button
+
+        editButton.innerHTML = editIcon
+        commentButton.innerHTML = commentIcon
+        doubleButton.append(editButton, commentButton)
+        this.dom.appendChild(doubleButton)
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors

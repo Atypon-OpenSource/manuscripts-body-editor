@@ -45,7 +45,7 @@ export interface EditorProps extends ViewerProps {
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   removeLibraryItem: (id: string) => void
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
 
