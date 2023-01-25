@@ -603,6 +603,19 @@
   position: static;
 }
 
+
+.bibliography-comment > .group-comment-icon {
+  top: -5px;
+  left: 9px;
+}
+
+.block-comment-button.bibliography-comment {
+  display: grid;
+  top: -7%;
+  left: 1%;
+  margin-top: 12px;
+}
+
 .block-comment-button {
   cursor: pointer;
   position: relative;
