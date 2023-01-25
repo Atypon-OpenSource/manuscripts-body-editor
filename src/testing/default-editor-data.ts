@@ -15,25 +15,25 @@
  */
 
 import {
+  BibliographyItem,
+  Manuscript,
+  Model,
+  UserProfile,
+} from '@manuscripts/json-schema'
+import {
   ActualManuscriptNode,
   Build,
   ManuscriptEditorView,
   schema,
-} from '@manuscripts/manuscript-transform'
-import {
-  BibliographyItem,
-  CommentAnnotation,
-  Manuscript,
-  Model,
-  UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
-import { RxAttachment } from '@manuscripts/rxdb'
+} from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
+import { ReactElement, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
+import { DefaultTheme } from 'styled-components'
 
-import { EditorProps } from '../components/Editor'
-import { ViewerProps } from '../components/Viewer'
+import { EditorProps } from '../configs/lean-workflow/ManuscriptsEditor'
+import { ViewerProps } from '../configs/lean-workflow/ManuscriptsViewer'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 
@@ -44,6 +44,8 @@ type TestData = {
   DOC: ActualManuscriptNode
   MODEL_MAP: Map<string, Model>
 }
+
+const theme: DefaultTheme = {}
 
 export const TEST_DATA: TestData = {
   MANUSCRIPT: {
@@ -88,9 +90,6 @@ const defaultViewerProps: ViewerProps = {
   getModel: <T extends Model>(id: string) => {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },
-  allAttachments: (_id: string) => {
-    return Promise.resolve([] as RxAttachment<Model>[])
-  },
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   getLibraryItem: (_id: string) => undefined,
   locale: 'en-GB',
@@ -99,13 +98,16 @@ const defaultViewerProps: ViewerProps = {
   projectID: 'test-project-id',
   getCurrentUser: () => TEST_DATA.USER,
   history: createBrowserHistory(),
-  renderReactComponent: ReactDOM.render,
+  renderReactComponent: (child: ReactNode, container: HTMLElement) => {
+    ReactDOM.render(child as ReactElement, container)
+  },
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
   components: {},
-}
-
-export const MOCKS = {
-  putAttachment: jest.fn(() => Promise.resolve(new RxAttachment<Model>())),
+  theme,
+  submissionId: 'test-submission-id',
+  updateDesignation: async () => undefined,
+  uploadAttachment: async () => undefined,
+  getAttachments: () => [],
 }
 
 export const defaultEditorProps: EditorProps = {
@@ -139,19 +141,14 @@ export const defaultEditorProps: EditorProps = {
     matchLibraryItemByIdentifier: (_item: BibliographyItem) => undefined,
     filterLibraryItems: (_query: string) => Promise.resolve([]),
     removeLibraryItem: () => undefined,
-    putAttachment: MOCKS.putAttachment,
     removeAttachment: (_id: string, _attachmentID: string) => Promise.resolve(),
     subscribe: () => undefined,
     setView: () => undefined,
     retrySync: (_componentIDs: string[]) => Promise.resolve(),
     handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
       undefined,
-    setComment: (_comment?: CommentAnnotation) => undefined,
-    jupyterConfig: {
-      url: 'http://test-jupyter-url',
-      token: 'test-jupyter-token',
-      disabled: false,
-    },
+    setComment: () => undefined,
+    setSelectedComment: () => undefined,
     components: {},
     environment: undefined,
   },

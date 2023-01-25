@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Citation,
   CitationItem,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
@@ -36,7 +36,8 @@ export interface CitationViewProps extends BaseNodeProps {
 
 export class CitationView<PropsType extends CitationViewProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected popperContainer?: HTMLDivElement
 
   public showPopper = () => {

@@ -16,14 +16,6 @@
 
 import projectDump from '@manuscripts/examples/data/project-dump.json'
 import {
-  ActualManuscriptNode,
-  Decoder,
-  generateID,
-  hasObjectType,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
   Figure,
   FigureElement,
   ListElement,
@@ -35,14 +27,20 @@ import {
   Table,
   TableElement,
   UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import {
+  ActualManuscriptNode,
+  Decoder,
+  generateID,
+  hasObjectType,
+  schema,
+} from '@manuscripts/transform'
 // eslint-disable-next-line import/no-unresolved
-import { RxAttachment } from '@manuscripts/rxdb/typings/rx-attachment'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import { EditorProps } from '../../components/Editor'
+import { EditorProps } from '../../configs/lean-workflow/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
@@ -332,7 +330,6 @@ const buildProps = (
 ): EditorProps => ({
   doc,
   getModel: <T extends Model>(id: string) => modelMap.get(id) as T | undefined,
-  allAttachments: async () => [],
   getManuscript: () => manuscript,
   getLibraryItem: () => undefined,
   locale: 'en-US',
@@ -345,8 +342,6 @@ const buildProps = (
   unmountReactComponent: () => undefined,
   getCitationProvider: () => undefined,
   plugins: [],
-  putAttachment: async () => ({} as RxAttachment<Model>),
-  removeAttachment: async () => undefined,
   deleteModel: async (id) => {
     modelMap.delete(id)
     return id
@@ -355,18 +350,16 @@ const buildProps = (
   saveModel: async <T extends Model>() => ({} as T),
   filterLibraryItems: async () => [],
   removeLibraryItem: () => undefined,
-  subscribe: () => undefined,
-  setView: () => undefined,
   retrySync: async () => undefined,
-  handleStateChange: () => undefined,
   setComment: () => undefined,
-  jupyterConfig: {
-    url: '',
-    token: '',
-    disabled: false,
-  },
+  setSelectedComment: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
+  submissionId: 'testId',
+  updateDesignation: () => new Promise(() => ''),
+  uploadAttachment: () => new Promise(() => ''),
+  theme: {},
+  getAttachments: () => [],
 })
 
 describe('editor view', () => {
@@ -380,12 +373,12 @@ describe('editor view', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode()
 
-    const state = EditorState.create<ManuscriptSchema>({
+    const state = EditorState.create({
       doc,
       schema,
     })
 
-    const view = new EditorView(undefined, { state })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
@@ -408,13 +401,13 @@ describe('editor view', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
-    const state = EditorState.create<ManuscriptSchema>({
+    const state = EditorState.create({
       doc,
       schema,
       plugins: plugins(buildProps(doc, modelMap)),
     })
 
-    const view = new EditorView(undefined, { state })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 

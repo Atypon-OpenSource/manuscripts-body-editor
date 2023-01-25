@@ -15,24 +15,21 @@
  */
 
 import {
-  buildTargets,
-  isInGraphicalAbstractSection,
-  ManuscriptSchema,
-  Target,
-} from '@manuscripts/manuscript-transform'
-import {
   AuxiliaryObjectReference,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  buildTargets,
+  isInGraphicalAbstractSection,
+  Target,
+} from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-export const objectsKey = new PluginKey<Map<string, Target>, ManuscriptSchema>(
-  'objects'
-)
+export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 interface Props {
   getManuscript: () => Manuscript
@@ -43,7 +40,7 @@ interface Props {
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
-  return new Plugin<Map<string, Target>, ManuscriptSchema>({
+  return new Plugin<Map<string, Target>>({
     key: objectsKey,
 
     state: {
@@ -77,9 +74,8 @@ export default (props: Props) => {
             if (id) {
               const target = targets.get(id)
               const resolvedPos = state.doc.resolve(pos)
-              const isInGraphicalAbstract = isInGraphicalAbstractSection(
-                resolvedPos
-              )
+              const isInGraphicalAbstract =
+                isInGraphicalAbstractSection(resolvedPos)
 
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
@@ -117,9 +113,8 @@ export default (props: Props) => {
 
       newState.doc.descendants((node, pos) => {
         if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference = props.getModel<AuxiliaryObjectReference>(
-            node.attrs.rid
-          )
+          const auxiliaryObjectReference =
+            props.getModel<AuxiliaryObjectReference>(node.attrs.rid)
 
           // TODO: handle missing objects?
           // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395

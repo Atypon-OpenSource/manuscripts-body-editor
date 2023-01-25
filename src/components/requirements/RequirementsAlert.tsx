@@ -15,13 +15,13 @@
  */
 
 import AttentionOrange from '@manuscripts/assets/react/AttentionOrange'
+import { Tip } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   isNodeType,
   ManuscriptNode,
   SectionNode,
-} from '@manuscripts/manuscript-transform'
-import { Tip } from '@manuscripts/style-guide'
+} from '@manuscripts/transform'
 import React, { useContext, useEffect, useState } from 'react'
 
 import { RequirementsContext } from './RequirementsProvider'

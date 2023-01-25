@@ -20,18 +20,17 @@ import { MenuItem, MenuPointer, MenuSpec } from './types'
 
 const initialPointer = [-1, -1, -1] as MenuPointer
 
-const transformPointer = (depth: number, index: number) => (
-  pointer: MenuPointer
-) =>
-  pointer.map((pointerPart, i) => {
-    if (i === depth) {
-      return index
-    }
-    if (i > depth) {
-      return -1
-    }
-    return pointerPart
-  }) as MenuPointer
+const transformPointer =
+  (depth: number, index: number) => (pointer: MenuPointer) =>
+    pointer.map((pointerPart, i) => {
+      if (i === depth) {
+        return index
+      }
+      if (i > depth) {
+        return -1
+      }
+      return pointerPart
+    }) as MenuPointer
 
 export const prevValidItem = (menu: MenuItem[], current: number): number => {
   const prevIndex = current - 1

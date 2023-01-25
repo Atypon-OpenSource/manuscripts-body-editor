@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptSlice } from '@manuscripts/manuscript-transform'
+import { ManuscriptSlice } from '@manuscripts/transform'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -24,6 +24,7 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
     firstChild.type === firstChild.type.schema.nodes.paragraph &&
     firstChild.textContent === ''
   ) {
+    // @ts-ignore
     slice.content = slice.content.cut(firstChild.nodeSize)
   }
 }
@@ -32,6 +33,7 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
 const removeIDs = (slice: ManuscriptSlice) => {
   slice.content.descendants((node) => {
     if (node.attrs.id) {
+      // @ts-ignore
       node.attrs.id = null
     }
   })

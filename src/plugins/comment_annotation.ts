@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  getModelsByType,
-  ManuscriptNode,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { getModelsByType, ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { SET_COMMENT } from './highlight'
 
-export const commentAnnotation = new PluginKey<DecorationSet, ManuscriptSchema>(
+export const commentAnnotation = new PluginKey<DecorationSet>(
   'comment_annotation'
 )
 
@@ -80,11 +71,16 @@ type Comment = {
  * This plugin creates a icon decoration for both inline and block comment.
  */
 export default (props: CommentAnnotationProps) => {
-  return new Plugin<DecorationSet, ManuscriptSchema>({
+  return new Plugin<DecorationSet>({
     key: commentAnnotation,
     state: {
-      init: (tr) =>
-        commentsState(props.modelMap, props.setSelectedComment, tr.doc),
+      init: (tr) => {
+        if (tr.doc) {
+          return commentsState(props.modelMap, props.setSelectedComment, tr.doc)
+        } else {
+          return new DecorationSet()
+        }
+      },
       apply: (tr) => {
         const meta = tr.getMeta(commentAnnotation)
 
@@ -195,15 +191,15 @@ const getCommentIcon = (
     setSelectedComment(undefined)
   }
 
-  const groupCommentIcon =
-    (count > 1 &&
-      ` <svg class="group-comment-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    const groupCommentIcon =
+      (count > 1 &&
+        ` <svg class="group-comment-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="12" height="12" rx="6" fill="#F7B314"></rect>
           <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${count}</text>
       </svg>`) ||
-    ''
+      ''
 
-  element.innerHTML = `
+    element.innerHTML = `
       <svg class="comment-icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.0625 2.9375V7.3125L1.4375 11.6875H12.8125C13.7794 11.6875 14.5625 10.9044 14.5625 9.9375V2.9375C14.5625 1.97062 13.7794 1.1875 12.8125 1.1875H5.8125C4.84562 1.1875 4.0625 1.97062 4.0625 2.9375Z"
                 fill="#FFFCDB" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -212,5 +208,5 @@ const getCommentIcon = (
       </svg>
       ${groupCommentIcon}
   `
-  return element
-}
+    return element
+  }

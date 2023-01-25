@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { Build } from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  Manuscript,
-  Model,
-} from '@manuscripts/manuscripts-json-schema'
-import persist from '@manuscripts/plugin-persist'
+import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
+import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
@@ -36,6 +30,7 @@ import keywords from '../src/plugins/keywords'
 import models from '../src/plugins/models'
 import objects from '../src/plugins/objects'
 import paragraphs from '../src/plugins/paragraphs'
+import persist from '../src/plugins/persist'
 import placeholder from '../src/plugins/placeholder'
 import sections from '../src/plugins/sections'
 import styles from '../src/plugins/styles'
@@ -65,7 +60,6 @@ export default (props: PluginProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     elements(),

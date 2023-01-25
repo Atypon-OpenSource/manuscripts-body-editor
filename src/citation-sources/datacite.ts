@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { convertCSLToBibliographyItem } from '@manuscripts/library'
-import { Build, generateID } from '@manuscripts/manuscript-transform'
 import {
   BibliographicDate,
   BibliographicName,
   BibliographyItem,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { convertCSLToBibliographyItem } from '@manuscripts/library'
+import { Build, generateID } from '@manuscripts/transform'
 import axios from 'axios'
 
 interface Creator {

@@ -29,7 +29,7 @@ import inlineEquation from './inline_equation'
 import inlineFootnote, { InlineFootnoteProps } from './inline_footnote'
 import keywordsElement from './keywords_element'
 import link from './link'
-import listing, { ListingViewProps } from './listing'
+import listing from './listing'
 import listingElement from './listing_element'
 import orderedList from './ordered_list'
 import paragraph from './paragraph'
@@ -42,8 +42,7 @@ import tocElement from './toc_element'
 
 type ViewerProps = CitationViewProps &
   CrossReferenceViewProps &
-  InlineFootnoteProps &
-  ListingViewProps
+  InlineFootnoteProps
 
 export default (props: ViewerProps) => ({
   bibliography_element: bibliographyElement(props),

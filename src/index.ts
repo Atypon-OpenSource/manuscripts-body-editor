@@ -32,8 +32,6 @@ export {
   RequirementsContext,
   RequirementsProvider,
 } from './components/requirements/RequirementsProvider'
-export { Editor } from './components/Editor'
-export { Viewer } from './components/Viewer'
 export { default as getMenus } from './menus'
 export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'

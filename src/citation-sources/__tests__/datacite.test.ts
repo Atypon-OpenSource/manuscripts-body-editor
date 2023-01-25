@@ -59,6 +59,7 @@ describe('datacite', () => {
     mockClient
       .onGet('https://api.datacite.org/dois/10.5255%2Fukda-sn-6926-1')
       .reply(async (requestConfig) => {
+        // @ts-ignore
         expect(requestConfig.headers.Accept).toBe(
           'application/vnd.citationstyles.csl+json'
         )

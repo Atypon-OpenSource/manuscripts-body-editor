@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/transform'
 
 import { buildText, countCharacters, countWords } from '../statistics'
 
@@ -38,8 +38,7 @@ const node = schema.nodeFromJSON({
           content: [
             {
               type: 'text',
-              text:
-                'Every conscious movement a person makes, whether lifting a pencil or playing a violin, begins in the brain.',
+              text: 'Every conscious movement a person makes, whether lifting a pencil or playing a violin, begins in the brain.',
             },
           ],
         },
@@ -48,8 +47,7 @@ const node = schema.nodeFromJSON({
           content: [
             {
               type: 'text',
-              text:
-                'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
+              text: 'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
             },
           ],
         },

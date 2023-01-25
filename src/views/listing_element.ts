@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class ListingElementView<PropsType extends BaseNodeProps>
   extends BlockView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public elementType = 'figure'
 
   public updateContents = () => {
