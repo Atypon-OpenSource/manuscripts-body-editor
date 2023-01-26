@@ -26,16 +26,16 @@ import {
 } from '@manuscripts/library'
 import {
   Build,
+  buildComment,
   DEFAULT_BUNDLE,
   ManuscriptNodeView,
-  buildComment,
 } from '@manuscripts/transform'
+import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import React from 'react'
 
 const createBibliography = async (items: BibliographyItem[]) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
