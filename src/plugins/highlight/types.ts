@@ -17,7 +17,7 @@ import { CommentAnnotation } from '@manuscripts/json-schema'
 import { DecorationSet } from 'prosemirror-view'
 
 export interface HighlightPluginProps {
-  setCommentTarget: (target?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
 }
 
 export interface HighlightStartMarker {

@@ -147,7 +147,7 @@ export const defaultEditorProps: EditorProps = {
     retrySync: (_componentIDs: string[]) => Promise.resolve(),
     handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
       undefined,
-    setCommentTarget: () => undefined,
+    setComment: () => undefined,
     setSelectedComment: () => undefined,
     components: {},
     environment: undefined,

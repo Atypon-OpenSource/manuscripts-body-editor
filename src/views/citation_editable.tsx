@@ -106,7 +106,7 @@ export class CitationEditableView extends CitationView<
         removeLibraryItem={removeLibraryItem}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
-        setCommentTarget={this.props.setCommentTarget}
+        setComment={this.props.setComment}
         handleCancel={this.handleCancel}
         handleClose={this.handleClose}
         handleRemove={this.handleRemove}
@@ -120,7 +120,7 @@ export class CitationEditableView extends CitationView<
     ) : (
       <CitationViewer
         items={items}
-        setCommentTarget={this.props.setCommentTarget}
+        setComment={this.props.setComment}
         scheduleUpdate={this.props.popper.update}
       />
     )
