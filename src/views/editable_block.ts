@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Build, nodeNames } from '@manuscripts/manuscript-transform'
-import { CommentAnnotation, Model } from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, nodeNames } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -33,7 +33,7 @@ export interface EditableBlockProps extends BaseNodeProps {
   capabilities?: Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
+  setComment?: (comment?: CommentAnnotation) => void
   dispatch?: Dispatch
   theme?: DefaultTheme
 }
@@ -157,10 +157,10 @@ export const EditableBlock = <
     }
 
     public createMenu = () => {
-      const { setCommentTarget } = this.props
+      const { setComment } = this.props
 
       return new ContextMenu(this.node, this.view, this.getPos, {
-        setCommentTarget,
+        setComment,
       })
     }
   }

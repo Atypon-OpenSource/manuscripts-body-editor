@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/transform'
 
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'

@@ -31,12 +31,8 @@ export class TableElementView<
   }
 
   public updateContents = () => {
-    const {
-      suppressCaption,
-      suppressTitle,
-      suppressHeader,
-      suppressFooter,
-    } = this.node.attrs
+    const { suppressCaption, suppressTitle, suppressHeader, suppressFooter } =
+      this.node.attrs
 
     this.dom.classList.toggle('suppress-caption', suppressCaption)
     this.dom.classList.toggle(

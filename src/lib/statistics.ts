@@ -15,7 +15,7 @@
  */
 
 import wordCount from '@iarna/word-count'
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
+import { ManuscriptNode } from '@manuscripts/transform'
 import GraphemeSplitter from 'grapheme-splitter'
 
 const splitter = new GraphemeSplitter()

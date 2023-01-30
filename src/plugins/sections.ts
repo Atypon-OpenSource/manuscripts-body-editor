@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
+import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import {
   isGraphicalAbstractSectionNode,
-  isSectionNode,
   isSectionTitleNode,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+} from '@manuscripts/transform'
 import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
@@ -75,44 +73,48 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 }
 
 export default () => {
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     filterTransaction: (tr) => {
       return preventGraphicalAbstractTitleEdit(tr)
     },
-    appendTransaction: (transactions, oldState, newState) => {
-      const positionsToInsert: number[] = []
+    /*
+      This is commented because after recent major dependencies update it somehow doesn't work well with the new track changes: RangeError due to paragraph adding into the title.
+      It is also a bit fuzzy how it will affect the history.
+    */
+    // appendTransaction: (transactions, oldState, newState) => {
+    //   const positionsToInsert: number[] = []
 
-      const tr = newState.tr
+    //   const tr = newState.tr
 
-      // if (!transactions.some(tr => tr.docChanged)) return null
+    //   // if (!transactions.some(tr => tr.docChanged)) return null
 
-      newState.doc.descendants((node, pos) => {
-        if (!isSectionNode(node)) {
-          return false
-        }
+    //   newState.doc.descendants((node, pos) => {
+    //     if (!isSectionNode(node)) {
+    //       return false
+    //     }
 
-        // add a paragraph to sections with only titles
-        if (node.childCount === 1) {
-          const childNode = node.child(0)
+    //     // add a paragraph to sections with only titles
+    //     if (node.childCount === 1) {
+    //       const childNode = node.child(0)
 
-          if (childNode.type === childNode.type.schema.nodes.section_title) {
-            positionsToInsert.push(pos + node.nodeSize - 1)
-          }
-        }
-      })
+    //       if (childNode.type === childNode.type.schema.nodes.section_title) {
+    //         positionsToInsert.push(pos + node.nodeSize - 1)
+    //       }
+    //     }
+    //   })
 
-      // return the transaction if something changed
-      if (positionsToInsert.length) {
-        // execute the inserts in reverse order so the positions don't change
-        positionsToInsert.reverse()
+    //   // return the transaction if something changed
+    //   if (positionsToInsert.length) {
+    //     // execute the inserts in reverse order so the positions don't change
+    //     positionsToInsert.reverse()
 
-        for (const pos of positionsToInsert) {
-          const paragraph = newState.schema.nodes.paragraph.create()
-          tr.insert(pos, paragraph)
-        }
-        tr.setMeta('origin', 'sections')
-        return tr
-      }
-    },
+    //     for (const pos of positionsToInsert) {
+    //       const paragraph = newState.schema.nodes.paragraph.create()
+    //       tr.insert(pos, paragraph)
+    //     }
+    //     tr.setMeta('origin', 'sections')
+    //     return tr
+    //   }
+    // },
   })
 }

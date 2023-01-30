@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
-} from '@manuscripts/manuscript-transform'
-import { CommentAnnotation } from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/transform'
 import { Fragment, Slice } from 'prosemirror-model'
 
 import { addComment, createBlock } from '../commands'
@@ -38,7 +38,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  setCommentTarget?: (commentTarget?: CommentAnnotation) => void
+  setComment?: (comment?: CommentAnnotation) => void
 }
 
 interface SuppressOption {
@@ -282,9 +282,9 @@ export class ContextMenu {
       )
     }
 
-    const { setCommentTarget } = this.actions
+    const { setComment } = this.actions
 
-    if (setCommentTarget) {
+    if (setComment) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(

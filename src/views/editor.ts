@@ -30,7 +30,7 @@ import inlineEquation from './inline_equation_editable'
 import inlineFootnote from './inline_footnote_editable'
 import keywordsElement from './keywords_element_editable'
 import link from './link_editable'
-import listing, { ListingEditableProps } from './listing_editable'
+import listing from './listing_editable'
 import listingElement from './listing_element_editable'
 import orderedList from './ordered_list_editable'
 import paragraph from './paragraph_editable'
@@ -42,9 +42,7 @@ import sectionTitle from './section_title_editable'
 import tableElement from './table_element_editable'
 import tocElement from './toc_element_editable'
 
-type EditorProps = EditableBlockProps &
-  CitationEditableProps &
-  ListingEditableProps
+type EditorProps = EditableBlockProps & CitationEditableProps
 
 export default (props: EditorProps) => ({
   bibliography_element: bibliographyElement(props),

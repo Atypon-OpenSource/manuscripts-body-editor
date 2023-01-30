@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/manuscript-transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { ExternalFileRef } from '../lib/external-files'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -22,7 +22,8 @@ import { createNodeView } from './creators'
 
 export class FigureView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   protected container: HTMLElement
 
   public initialise = () => {

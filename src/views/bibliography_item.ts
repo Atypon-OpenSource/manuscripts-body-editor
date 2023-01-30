@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
   loadCitationStyle,
 } from '@manuscripts/library'
 import {
+  buildComment,
   DEFAULT_BUNDLE,
   ManuscriptNodeView,
-} from '@manuscripts/manuscript-transform'
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/transform'
 
+import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -32,10 +34,8 @@ import { createNodeView } from './creators'
 const createBibliography = async (items: BibliographyItem[]) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
   const citationStyle = await loadCitationStyle(styleOpts)
-  const [
-    bibmeta,
-    bibliographyItems,
-  ] = CitationProvider.makeBibliographyFromCitations(items, citationStyle)
+  const [bibmeta, bibliographyItems] =
+    CitationProvider.makeBibliographyFromCitations(items, citationStyle)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors)
@@ -44,9 +44,14 @@ const createBibliography = async (items: BibliographyItem[]) => {
   return contents
 }
 
-export class BibliographyItemView<PropsType extends BaseNodeProps>
+interface BibliographyItemProps extends BaseNodeProps {
+  setComment: (comment?: CommentAnnotation) => void
+}
+
+export class BibliographyItemView<PropsType extends BibliographyItemProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView {
+  implements ManuscriptNodeView
+{
   public initialise = () => {
     this.createDOM()
     this.updateContents()
@@ -80,6 +85,27 @@ export class BibliographyItemView<PropsType extends BaseNodeProps>
       try {
         const fragment = sanitize(bibliography.outerHTML)
         this.dom.appendChild(fragment)
+
+        const doubleButton = document.createElement('div')
+        const editButton = document.createElement('div')
+        const commentButton = document.createElement('div')
+
+        doubleButton.className = 'bibliography-double-button'
+        editButton.className = 'bibliography-edit-button'
+        commentButton.className = 'bibliography-comment-button'
+
+        commentButton.addEventListener('click', () => {
+          this.props.setComment(
+            buildComment(this.node.attrs.id) as CommentAnnotation
+          )
+        })
+
+        // TODO:: add event listener for edit button
+
+        editButton.innerHTML = editIcon
+        commentButton.innerHTML = commentIcon
+        doubleButton.append(editButton, commentButton)
+        this.dom.appendChild(doubleButton)
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors

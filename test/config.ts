@@ -16,24 +16,15 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import {
-  Build,
-  ManuscriptNode,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
-import {
-  CommentAnnotation,
-  Manuscript,
-  Model,
-} from '@manuscripts/manuscripts-json-schema'
+import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
+import { PopperManager } from '../src'
 import { transformPasted } from '../src/lib/paste'
-import { PopperManager } from '../src/lib/popper'
 import { CreateView } from '../src/useEditor'
 import plugins from './plugins'
 import views from './views'
@@ -53,7 +44,7 @@ export interface Props {
   deleteModel: (id: string) => Promise<string>
   retrySync: (componentIDs: string[]) => Promise<void>
   capabilities?: Capabilities
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
 
   getAttachment: (id: string) => Blob
   putAttachment: (file: File) => Promise<string>
@@ -61,24 +52,26 @@ export interface Props {
 
 export default {
   createState: (props: Props) =>
-    EditorState.create<ManuscriptSchema>({
+    EditorState.create({
       doc: props.doc,
       schema,
       plugins: plugins(props),
     }),
 
-  createView: (props: Props): CreateView => (el, state, dispatch) =>
-    new EditorView(el, {
-      state,
-      editable: () => !!props.capabilities?.editArticle,
-      scrollMargin: {
-        top: 100,
-        bottom: 100,
-        left: 0,
-        right: 0,
-      },
-      dispatchTransaction: dispatch,
-      nodeViews: views(props, dispatch),
-      transformPasted,
-    }),
+  createView:
+    (props: Props): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        state,
+        editable: () => !!props.capabilities?.editArticle,
+        scrollMargin: {
+          top: 100,
+          bottom: 100,
+          left: 0,
+          right: 0,
+        },
+        dispatchTransaction: dispatch,
+        nodeViews: views(props),
+        transformPasted,
+      }),
 }

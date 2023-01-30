@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-import '@babel/polyfill'
-
+// @ts-ignore
 import projectDump from '@manuscripts/examples/data/project-dump.json'
-import {
-  Build,
-  Decoder,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
-import {
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { Build, Decoder } from '@manuscripts/transform'
 import { uniqueId } from 'lodash'
+import { Node } from 'prosemirror-model'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { MemoryRouter } from 'react-router'
@@ -36,10 +28,10 @@ import { ThemeProvider } from 'styled-components'
 import {
   ApplicationMenus,
   getMenus,
+  PopperManager,
   useApplicationMenus,
   useEditor,
 } from '../src'
-import { PopperManager } from '../src/lib/popper'
 import config, { Props } from './config'
 import { theme } from './theme'
 
@@ -53,10 +45,7 @@ const buildModelMap = (models: Model[]): Map<string, Model> => {
 
 const EditorComponent: React.FC<Props> = (props) => {
   const initState = config.createState(props)
-  const editor = useEditor<ManuscriptSchema>(
-    initState,
-    config.createView(props)
-  )
+  const editor = useEditor(initState, config.createView(props))
   const { onRender } = editor
   const menus = useApplicationMenus(getMenus(editor, () => null))
 
@@ -80,6 +69,8 @@ const start = async () => {
   const decoder = new Decoder(modelMap)
   const doc = decoder.createArticleNode()
   const ancestorDoc = decoder.createArticleNode()
+
+  console.log((doc as Node).attrs)
 
   const getModel = <T extends Model>(id: string) =>
     modelMap.get(id) as T | undefined
@@ -115,7 +106,7 @@ const start = async () => {
     getManuscript: () => manuscript,
     projectID: 'my-project',
     retrySync: () => Promise.resolve(),
-    setCommentTarget: () => undefined,
+    setComment: () => undefined,
     getAttachment: () => new File([], 'my-file.png'),
     putAttachment: (file: File) => {
       console.log('uploading ', file)

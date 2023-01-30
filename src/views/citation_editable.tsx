@@ -15,16 +15,13 @@
  */
 
 import {
-  Build,
-  buildEmbeddedCitationItem,
-} from '@manuscripts/manuscript-transform'
-import {
   BibliographyItem,
   Citation,
   CitationItem,
   Model,
   ObjectTypes,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { Build, buildEmbeddedCitationItem } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
@@ -109,7 +106,7 @@ export class CitationEditableView extends CitationView<
         removeLibraryItem={removeLibraryItem}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
-        setCommentTarget={this.props.setCommentTarget}
+        setComment={this.props.setComment}
         handleCancel={this.handleCancel}
         handleClose={this.handleClose}
         handleRemove={this.handleRemove}
@@ -123,7 +120,7 @@ export class CitationEditableView extends CitationView<
     ) : (
       <CitationViewer
         items={items}
-        setCommentTarget={this.props.setCommentTarget}
+        setComment={this.props.setComment}
         scheduleUpdate={this.props.popper.update}
       />
     )
@@ -158,18 +155,26 @@ export class CitationEditableView extends CitationView<
     const { saveModel } = this.props
 
     const citation = this.getCitation()
-
-    citation.embeddedCitationItems = citation.embeddedCitationItems.filter(
+    const embeddedCitationItems = citation.embeddedCitationItems.filter(
       (item) => item.bibliographyItem !== id
     )
 
+    citation.embeddedCitationItems = embeddedCitationItems
     await saveModel(citation)
 
-    this.props.popper.destroy()
+    if (embeddedCitationItems.length > 0) {
+      window.setTimeout(() => {
+        this.showPopper() // redraw the popper
+      }, 100)
+    } else {
+      const { tr } = this.view.state
+      const pos = this.getPos()
 
-    window.setTimeout(() => {
-      this.showPopper() // redraw the popper
-    }, 100)
+      tr.delete(pos, pos + 1)
+      this.view.dispatch(tr)
+    }
+
+    this.props.popper.destroy()
   }
 
   private updatePopper = () => {
@@ -181,11 +186,8 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleCite = async (items: Array<Build<BibliographyItem>>) => {
-    const {
-      matchLibraryItemByIdentifier,
-      saveModel,
-      setLibraryItem,
-    } = this.props
+    const { matchLibraryItemByIdentifier, saveModel, setLibraryItem } =
+      this.props
 
     const citation = this.getCitation()
 
@@ -213,11 +215,8 @@ export class CitationEditableView extends CitationView<
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
-    const {
-      matchLibraryItemByIdentifier,
-      saveModel,
-      setLibraryItem,
-    } = this.props
+    const { matchLibraryItemByIdentifier, saveModel, setLibraryItem } =
+      this.props
 
     const newItems: BibliographyItem[] = []
 

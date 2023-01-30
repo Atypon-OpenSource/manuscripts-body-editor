@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { CitationProvider } from '@manuscripts/library'
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   CommentAnnotation,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { CitationProvider } from '@manuscripts/library'
+import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
@@ -55,8 +54,8 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
-  plugins?: Array<Plugin<ManuscriptSchema>>
+  setComment: (comment?: CommentAnnotation) => void
+  plugins?: Array<Plugin<null>>
 }
 
 export default (props: PluginProps) => {
@@ -68,7 +67,7 @@ export default (props: PluginProps) => {
     getManuscript,
     modelMap,
     saveModel,
-    setCommentTarget,
+    setComment,
   } = props
 
   const plugins = props.plugins || []
@@ -77,7 +76,6 @@ export default (props: PluginProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
@@ -97,7 +95,7 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    highlights({ setCommentTarget }),
+    highlights({ setComment }),
   ]
 }
 

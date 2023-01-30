@@ -17,7 +17,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { Manuscript, Model } from '@manuscripts/manuscripts-json-schema'
+import { Manuscript, Model } from '@manuscripts/json-schema'
 
 import elements from './elements'
 import objects from './objects'

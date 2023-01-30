@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes } from '@manuscripts/library'
-import { ManuscriptNode } from '@manuscripts/manuscript-transform'
-import { BibliographyItem } from '@manuscripts/manuscripts-json-schema'
+import { ManuscriptNode } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
 import { BibliographyProps } from './types'
@@ -29,22 +29,21 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
  * the items not always being available, depending on how fast the page renders, as a
  * fallback the bibliography items are also retrieved from the modelsMap.
  */
-export const getBibliographyItemFn = (props: BibliographyProps) => (
-  id: string
-) => {
-  const libraryItem = props.getLibraryItem(id)
-  if (libraryItem) {
-    return libraryItem
+export const getBibliographyItemFn =
+  (props: BibliographyProps) => (id: string) => {
+    const libraryItem = props.getLibraryItem(id)
+    if (libraryItem) {
+      return libraryItem
+    }
+    return props.getModel<BibliographyItem>(id)
   }
-  return props.getModel<BibliographyItem>(id)
-}
 
 export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
   getBibliographyItem: (id: string) => BibliographyItem | undefined
 ) => {
-  const decorations: Array<Decoration<{ missing: true }>> = []
+  const decorations: Decoration[] = []
 
   let hasMissingItems = false
 

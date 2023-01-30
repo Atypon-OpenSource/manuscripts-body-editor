@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/manuscript-transform'
+import { schema } from '@manuscripts/transform'
 import { Slice } from 'prosemirror-model'
 
 import { transformPasted } from '../paste'
@@ -35,8 +35,7 @@ test('transformPasted handler', () => {
         content: [
           {
             type: 'text',
-            text:
-              'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
+            text: 'These rhythmic patterns then sum together to create the signals that muscles need to carry out the movements.',
           },
         ],
       },

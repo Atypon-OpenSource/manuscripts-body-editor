@@ -18,14 +18,14 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { CitationProvider } from '@manuscripts/library'
-import { Build, ManuscriptSchema } from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   CommentAnnotation,
   Manuscript,
   Model,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
+import { CitationProvider } from '@manuscripts/library'
+import { Build, ManuscriptSchema } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
@@ -56,7 +56,7 @@ interface PluginProps {
   getManuscript: () => Manuscript
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setCommentTarget: (commentTarget?: CommentAnnotation) => void
+  setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
@@ -70,7 +70,7 @@ export default (props: PluginProps) => {
     getManuscript,
     modelMap,
     saveModel,
-    setCommentTarget,
+    setComment,
     setSelectedComment,
   } = props
 
@@ -96,11 +96,11 @@ export default (props: PluginProps) => {
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
-    comment_annotation({ setCommentTarget, setSelectedComment, modelMap }),
+    comment_annotation({ setComment, setSelectedComment, modelMap }),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    highlights({ setCommentTarget }),
+    highlights({ setComment }),
     track_changes_ui(),
   ]
 }

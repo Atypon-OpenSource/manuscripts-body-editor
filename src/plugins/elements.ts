@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  isSectionNodeType,
-  ManuscriptSchema,
-} from '@manuscripts/manuscript-transform'
+import { isSectionNodeType } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -27,7 +24,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
  * This is useful for paragraphs and lists, for example, which may be nested inside top-level elements of the same node type.
  */
 export default () => {
-  return new Plugin<null, ManuscriptSchema>({
+  return new Plugin<null>({
     props: {
       decorations: (state) => {
         const { section } = state.schema.nodes
@@ -37,7 +34,11 @@ export default () => {
         // TODO: only calculate these when something changes
 
         state.doc.descendants((node, pos, parent) => {
-          if (isSectionNodeType(parent.type) && node.type !== section) {
+          if (
+            parent &&
+            isSectionNodeType(parent.type) &&
+            node.type !== section
+          ) {
             decorations.push(
               Decoration.node(
                 pos,

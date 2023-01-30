@@ -23,7 +23,7 @@ import {
   ManuscriptNodeType,
   nodeNames,
   SectionTitleNode,
-} from '@manuscripts/manuscript-transform'
+} from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
@@ -379,15 +379,13 @@ const buildOptions = (
     view && view.focus()
   }
 
-  const convertListType = (
-    nodeType: ManuscriptNodeType,
-    list: NodeWithPosition
-  ) => () => {
-    tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
+  const convertListType =
+    (nodeType: ManuscriptNodeType, list: NodeWithPosition) => () => {
+      tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
 
-    dispatch(tr.scrollIntoView())
-    view && view.focus()
-  }
+      dispatch(tr.scrollIntoView())
+      view && view.focus()
+    }
 
   const parentElementType = parentElement.node.type
 

@@ -15,20 +15,15 @@
  */
 
 import 'prosemirror-view/style/prosemirror.css'
-import '../../lib/smooth-scroll'
 
-import {
-  ManuscriptNode,
-  ManuscriptSchema,
-  schema,
-} from '@manuscripts/manuscript-transform'
 import {
   BibliographyItem,
   Manuscript,
   Model,
   UserProfile,
-} from '@manuscripts/manuscripts-json-schema'
+} from '@manuscripts/json-schema'
 import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -64,20 +59,22 @@ export interface ViewerProps {
 
 export default {
   createState: (props: ViewerProps) => {
-    return EditorState.create<ManuscriptSchema>({
+    return EditorState.create({
       doc: props.doc,
       schema,
       plugins: plugins(props),
     })
   },
 
-  createView: (props: ViewerProps): CreateView => (el, state, dispatch) =>
-    new EditorView<ManuscriptSchema>(el, {
-      editable: () => false,
-      state,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nodeViews: views(props, dispatch) as any,
-      dispatchTransaction: dispatch,
-      attributes: props.attributes,
-    }),
+  createView:
+    (props: ViewerProps): CreateView =>
+    (el, state, dispatch) =>
+      new EditorView(el, {
+        editable: () => false,
+        state,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeViews: views(props, dispatch) as any,
+        dispatchTransaction: dispatch,
+        attributes: props.attributes,
+      }),
 }
