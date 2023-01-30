@@ -317,7 +317,7 @@ const OptionsButton = styled(IconButton)`
   visibility: hidden;
   background: white;
   position: absolute;
-  top: 8px;
+  top: -4px;
   right: 4%;
 
   &:hover {
