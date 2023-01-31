@@ -14,86 +14,116 @@
  * limitations under the License.
  */
 
-import {
-  trackChangesPluginKey,
-  TrackChangesState,
-  TrackedChange,
-} from '@manuscripts/track-changes-plugin'
-import { EditorState, Plugin } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
+import { CHANGE_STATUS, trackCommands } from '@manuscripts/track-changes-plugin'
+import { Plugin, PluginKey } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+
+import { PopperManager } from '../lib/popper'
+
+const POPOVER_ID = 'track-changes-control-popover'
 
 const ACCEPT_BUTTON_XLINK = '#track-changes-action-accept'
 
 const REJECT_BUTTON_XLINK = '#track-changes-action-reject'
 
-const BASE_CLASS = 'track-changes'
+const trackChangesControlsKey = new PluginKey<PopperManager>('track-changes-ui')
 
-enum CLASSES {
-  focused = 'focused',
-  control = 'control',
-}
+const UPDATE_POPOVER = 'UPDATE_POPOVER'
 
 const createControl = (
-  change: TrackedChange,
-  action: string,
-  xLink: string
+  view: EditorView,
+  changeId: string,
+  status: CHANGE_STATUS
 ) => {
-  return `
-        <button type="button" data-action="${action}" data-changeid="${change.id}">
-          <svg><use href="${xLink}"></use></svg>
-        </button>
-      `
-}
-const getClassnames = (...types: Array<CLASSES | null>): string[] => {
-  return [BASE_CLASS].concat(
-    types.filter(Boolean).map((type) => `${BASE_CLASS}--${type}`)
-  )
-}
+  const xLink =
+    (status === CHANGE_STATUS.rejected && REJECT_BUTTON_XLINK) ||
+    ACCEPT_BUTTON_XLINK
+  const button = document.createElement('button')
 
-const addClassnamesToEl = (
-  el: HTMLElement,
-  ...types: Array<CLASSES | null>
-) => {
-  getClassnames(...types).forEach((classname) => el.classList.add(classname))
-}
-
-const createControls = (change: TrackedChange) => {
-  return Decoration.widget(change.to, () => {
-    const el = document.createElement('div')
-    addClassnamesToEl(el, CLASSES.control)
-    el.dataset.changeid = change.id
-    el.innerHTML =
-      createControl(change, 'reject', REJECT_BUTTON_XLINK) +
-      createControl(change, 'accept', ACCEPT_BUTTON_XLINK)
-    return el
-  })
-}
-const decorateChanges = (state: EditorState): Decoration[] => {
-  const pluginState = trackChangesPluginKey.getState(state)
-
-  if (!pluginState) {
-    return []
+  button.innerHTML = `<svg><use href="${xLink}"></use></svg>`
+  button.onclick = () => {
+    trackCommands.setChangeStatuses(status, [changeId])(
+      view.state,
+      view.dispatch
+    )
+    const popover = trackChangesControlsKey.getState(view.state)
+    popover?.destroy()
   }
 
-  const { pending } = pluginState.changeSet
+  return button
+}
 
-  return pending.reduce((decorations, change) => {
-    if (change.id === null) {
-      return decorations
-    }
+const createControls = (view: EditorView, changeId: string) => {
+  const el = document.createElement('div')
+  el.classList.add('track-changes-inline-control')
+  el.id = POPOVER_ID
+  el.dataset.changeid = changeId
 
-    return [...decorations, createControls(change)]
-  }, [] as Decoration[])
+  el.appendChild(createControl(view, changeId, CHANGE_STATUS.rejected))
+  el.appendChild(createControl(view, changeId, CHANGE_STATUS.accepted))
+  return el
 }
 
 /**
- * This plugin adds decoration
+ * This plugin show popover control for the pending node that we track.
+ * to accept or reject them
  */
 export default () =>
-  new Plugin<TrackChangesState>({
+  new Plugin<PopperManager>({
+    key: trackChangesControlsKey,
+    state: {
+      init: () => {
+        return new PopperManager()
+      },
+      apply: (tr, value, state) => {
+        const meta = tr.getMeta(trackChangesControlsKey)
+        if (meta && UPDATE_POPOVER in meta) {
+          return meta[UPDATE_POPOVER]
+        }
+
+        const popover = trackChangesControlsKey.getState(state)
+        return popover || new PopperManager()
+      },
+    },
     props: {
-      decorations: (state) => {
-        return DecorationSet.create(state.doc, decorateChanges(state))
+      handleDOMEvents: {
+        mouseover: (view, event) => {
+          const target = event.target as HTMLElement | null
+          const trackStatus = target?.getAttribute('data-track-status')
+
+          if (target && trackStatus === 'pending') {
+            const changeId = target.getAttribute('data-track-id') as string
+            const controllerDom = createControls(view, changeId)
+            const popover = trackChangesControlsKey.getState(view.state)
+
+            popover?.show(target, controllerDom, 'auto', false)
+            controllerDom.addEventListener('mouseleave', () => {
+              popover?.destroy()
+            })
+            updateState(view, popover)
+          }
+        },
+        mouseout: (view, event) => {
+          const target = event.target as HTMLElement | null
+          const trackStatus = target?.getAttribute('data-track-status')
+
+          if (target && trackStatus === 'pending') {
+            const controllerDom = document.querySelector(`#${POPOVER_ID}`)
+
+            if (controllerDom && !controllerDom.matches(':hover')) {
+              const popover = trackChangesControlsKey.getState(view.state)
+              popover?.destroy()
+            }
+          }
+        },
       },
     },
   })
+
+const updateState = (view: EditorView, popover?: PopperManager) => {
+  view.dispatch(
+    view.state.tr.setMeta(trackChangesControlsKey, {
+      [UPDATE_POPOVER]: popover,
+    })
+  )
+}

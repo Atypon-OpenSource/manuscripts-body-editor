@@ -1,7 +1,6 @@
 .popper {
   color: #353535;
   font-family: "PT Sans", sans-serif;
-  min-width: 100px;
   position: absolute;
   width: auto;
   z-index: 5;
@@ -216,4 +215,38 @@
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   height: auto;
   width: 600px;
+}
+
+.popper .track-changes-inline-control {
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
+}
+
+.popper .track-changes-inline-control > button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  color: #353535;
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.popper .track-changes-inline-control > button:hover {
+  background: #f2fbfc !important;
+}
+
+.popper .track-changes-inline-control > button > svg {
+  display: inline-flex;
+  width: 1.2em;
+  height: 1.2em;
 }
