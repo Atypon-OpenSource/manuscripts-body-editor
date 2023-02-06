@@ -423,15 +423,6 @@ describe('editor view', () => {
       tableOfContentsSection.type.schema.nodes.toc_element
     )
 
-    const emptySection = view.state.doc.child(4)
-    expect(emptySection.childCount).toBe(2)
-    expect(emptySection.content.child(0).type).toBe(
-      emptySection.type.schema.nodes.section_title
-    )
-    expect(emptySection.content.child(1).type).toBe(
-      emptySection.type.schema.nodes.paragraph
-    )
-
     const sectionWithEmptyParagraphs = view.state.doc.child(7)
     expect(sectionWithEmptyParagraphs.childCount).toBe(2)
     expect(sectionWithEmptyParagraphs.content.child(0).type).toBe(

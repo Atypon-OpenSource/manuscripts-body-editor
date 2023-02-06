@@ -88,8 +88,14 @@ export class CitationView<PropsType extends CitationViewProps>
   public ignoreMutation = () => true
 
   public selectNode = () => {
-    this.showPopper()
-    this.dom.classList.add('ProseMirror-selectednode')
+    const isDeleted = !!this.node.attrs.dataTracked?.find(
+      ({ operation }: { operation: string }) => operation === 'delete'
+    )
+
+    if (!isDeleted) {
+      this.showPopper()
+      this.dom.classList.add('ProseMirror-selectednode')
+    }
   }
 
   public deselectNode = () => {
