@@ -520,19 +520,7 @@ export class ContextMenu {
     )
   }
 
-  private parentAttrs = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.parent.attrs
-  }
-
-  private getParentPos = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.before()
-  }
-
-  private isListType = (type: string) =>
+    private isListType = (type: string) =>
     ['bullet_list', 'ordered_list'].includes(type)
 
   private buildSuppressOptions = () => {
