@@ -68,7 +68,7 @@
     "@manuscripts/eslint-config": "^0.5.1",
     "@manuscripts/examples": "^0.1.0",
     "@manuscripts/library": "^1.0.1",
-    "@manuscripts/style-guide": "^1.0.0",
+    "@manuscripts/style-guide": "^1.0.1",
     "@manuscripts/transform": "^1.0.1",
     "@reach/tabs": "^0.11.2",
     "@types/codemirror": "^5.60.5",
