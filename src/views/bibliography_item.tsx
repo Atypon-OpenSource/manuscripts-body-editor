@@ -150,6 +150,7 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
 
         editButton.addEventListener('click', () => {
           this.showPopper(this.node.attrs.id)
+          this.popperContainer = undefined
         })
 
         editButton.innerHTML = editIcon
