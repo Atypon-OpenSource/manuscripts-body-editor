@@ -56,10 +56,8 @@ export class ContextMenu {
 
   private suppressibleAttrs: Map<string, string> = new Map([
     ['suppressCaption', 'Caption'],
-    ['suppressTitle', 'Title'],
     ['suppressHeader', 'Header'],
-    ['suppressFooter', 'Footer'],
-    // ['titleSuppressed', 'Heading'],
+    ['suppressFooter', 'Footer']
   ])
 
   public constructor(
@@ -522,19 +520,7 @@ export class ContextMenu {
     )
   }
 
-  private parentAttrs = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.parent.attrs
-  }
-
-  private getParentPos = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.before()
-  }
-
-  private isListType = (type: string) =>
+    private isListType = (type: string) =>
     ['bullet_list', 'ordered_list'].includes(type)
 
   private buildSuppressOptions = () => {
@@ -555,26 +541,6 @@ export class ContextMenu {
           getPos: this.getPos,
         })
       }
-    }
-
-    switch (this.node.type.name) {
-      case 'section':
-        items.push({
-          attr: 'titleSuppressed',
-          attrs,
-          label: 'Heading',
-          getPos: this.getPos,
-        })
-        break
-
-      case 'section_title':
-        items.push({
-          attr: 'titleSuppressed',
-          attrs: this.parentAttrs(),
-          label: 'Heading',
-          getPos: this.getParentPos,
-        })
-        break
     }
 
     return items
