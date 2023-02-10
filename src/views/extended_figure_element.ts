@@ -78,12 +78,12 @@ export class FigureElementView extends BlockView<
 
       let node_position = 0
       this.node.forEach((node, pos) => {
-        if (node.type === node.type.schema.nodes.figcaption) {
-          node_position = pos
+        if (node.type === node.type.schema.nodes.figure) {
+          node_position = pos + node.nodeSize
         }
       })
 
-      dispatch(tr.insert(this.getPos() + node_position, figure))
+      dispatch(tr.insert(this.getPos() + node_position + 1, figure))
     } else {
       const figure = getMatchingChild(
         this.node,
