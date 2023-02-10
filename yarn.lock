@@ -1515,10 +1515,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.1.tgz#e956e412ebcb65b868e0c89af86157411efcc43c"
-  integrity sha512-hfdgLwRUfPHoIf0weIm9Ej02IGrPW0oiX/p940xp1RUDftUZhO7L3kXGtVA7pduITJwQjCQuNDdbJPUvusBlrg==
+"@manuscripts/style-guide@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.2.tgz#35bddf76773a4d2fcd34bce9a6b90dd0bf4348a0"
+  integrity sha512-UhxR/eBHAOponOL+lAL+hA5+MxKywT4cEfCkIyLNhqsdN7PCw9uPLs29QJHLfRJN/R2VUqCJB5cvwUNUspbqSw==
   dependencies:
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"
@@ -1533,10 +1533,10 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/title-editor/-/title-editor-1.0.0.tgz#714d34ce7ebf2f4fec2d15c12f181dcccea3f554"
   integrity sha512-FHN+/TD5XDbCxXcrbZ2ZtwCYZZKX1czbdvwPTGLWSW1eTQfJVPXM4Tte6Ul1bjbI5HHk7b9suzKvGCqxdc/GYQ==
 
-"@manuscripts/track-changes-plugin@^0.4.5":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-0.4.6.tgz#14b57aa664774439f449179b79b39c0c25f94e66"
-  integrity sha512-9qSp2L0QHehPjpg7OJYuuH5DgWh7jqZh/az9xeICZxO//qbHvjp2hXaUlVzV1OXWAZ5ZRjK+LRmCgjNHy4u5ug==
+"@manuscripts/track-changes-plugin@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.0.0.tgz#aeddc919b26042d6876ce7968b2c9ce986c81f1e"
+  integrity sha512-oXPdVY6GhkA9dCEm/k4dduem0jPH+iPjpe6RMq/AafzrL9Zrj8y5GaLM+STB8PJJQ3BIRc15woHmk87emN8AyA==
   dependencies:
     debug "^4.3.4"
 
