@@ -521,7 +521,7 @@
   padding: 4pt !important;
   gap: 4pt !important;
 
-  grid-template-columns: repeat(3, auto) !important;
+  grid-template-columns: auto !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 }
 
@@ -536,7 +536,7 @@
   border-style: none !important;
   border-width: 0pt !important;
   position: relative;
-  grid-column: 2;
+  grid-column: 1;
 }
 
 .ProseMirror .figure-block > figcaption .figure-label {
@@ -602,7 +602,6 @@
 .tools-static {
   position: static;
 }
-
 
 .bibliography-comment > .group-comment-icon {
   top: -5px;
@@ -698,7 +697,7 @@
   visibility: visible;
 }
 
-.bibliography-double-button{
+.bibliography-double-button {
   display: inline-flex;
   flex-direction: column;
   position: absolute;
@@ -709,17 +708,18 @@
   cursor: pointer;
 }
 
-.bibliography-edit-button, .bibliography-comment-button {
+.bibliography-edit-button,
+.bibliography-comment-button {
   display: inline-flex;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
   height: 40px;
-  background: #FFFFFF;
-  border: 1px solid #E2E2E2;
+  background: #ffffff;
+  border: 1px solid #e2e2e2;
   border-radius: 32px 32px 0 0;
 }
 
-.bibliography-comment-button{
+.bibliography-comment-button {
   border-radius: 0 0 32px 32px;
 }
