@@ -170,17 +170,6 @@ const FigureElement = ({
       }
     }, [contentDOM])
 
-    useEffect(() => {
-      const { suppressCaption, suppressTitle } = viewProps.node.attrs
-      if (content.current) {
-        content.current.classList.toggle('suppress-caption', suppressCaption)
-        content.current.classList.toggle(
-          'suppress-title',
-          suppressTitle === undefined ? true : suppressTitle
-        )
-      }
-    }, [viewProps.node.attrs])
-
     const { fileInputRef, onUploadClick } = useFileInputRef()
 
     const { addFigureExFileRef } = useFigureSelection(viewProps)
