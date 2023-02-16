@@ -33,11 +33,9 @@ const UPDATE_POPOVER = 'UPDATE_POPOVER'
 const createControl = (
   view: EditorView,
   changeId: string,
-  status: CHANGE_STATUS
+  status: CHANGE_STATUS,
+  xLink: string
 ) => {
-  const xLink =
-    (status === CHANGE_STATUS.rejected && REJECT_BUTTON_XLINK) ||
-    ACCEPT_BUTTON_XLINK
   const button = document.createElement('button')
 
   button.innerHTML = `<svg><use href="${xLink}"></use></svg>`
@@ -59,8 +57,12 @@ const createControls = (view: EditorView, changeId: string) => {
   el.id = POPOVER_ID
   el.dataset.changeid = changeId
 
-  el.appendChild(createControl(view, changeId, CHANGE_STATUS.rejected))
-  el.appendChild(createControl(view, changeId, CHANGE_STATUS.accepted))
+  el.appendChild(
+    createControl(view, changeId, CHANGE_STATUS.rejected, REJECT_BUTTON_XLINK)
+  )
+  el.appendChild(
+    createControl(view, changeId, CHANGE_STATUS.accepted, ACCEPT_BUTTON_XLINK)
+  )
   return el
 }
 
