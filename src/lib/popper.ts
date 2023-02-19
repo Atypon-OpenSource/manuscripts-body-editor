@@ -24,7 +24,8 @@ export class PopperManager {
     contents: HTMLElement,
     placement: Popper.Placement = 'bottom',
     showArrow = true,
-    modifiers: Popper.Modifiers = {}
+    modifiers: Popper.Modifiers = {},
+    parentNode?: HTMLElement | null
   ) {
     if (this.activePopper) {
       return this.destroy()
@@ -49,7 +50,7 @@ export class PopperManager {
       }
 
       container.appendChild(contents)
-      document.body.appendChild(container)
+      ;(parentNode || document.body).appendChild(container)
 
       this.activePopper = new Popper(target, container, {
         placement,

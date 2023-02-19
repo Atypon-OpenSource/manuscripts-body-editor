@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CHANGE_STATUS, trackCommands } from '@manuscripts/track-changes-plugin'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
@@ -26,27 +25,25 @@ const ACCEPT_BUTTON_XLINK = '#track-changes-action-accept'
 
 const REJECT_BUTTON_XLINK = '#track-changes-action-reject'
 
-const trackChangesControlsKey = new PluginKey<PopperManager>('track-changes-ui')
+export const trackChangesControlsKey = new PluginKey<PopperManager>(
+  'track-changes-ui'
+)
+
+export const DESTROY_POPOVER = 'DESTROY_POPOVER'
 
 const UPDATE_POPOVER = 'UPDATE_POPOVER'
 
 const createControl = (
   view: EditorView,
   changeId: string,
-  status: CHANGE_STATUS,
+  status: string,
   xLink: string
 ) => {
   const button = document.createElement('button')
+  button.setAttribute('data-action', status)
+  button.setAttribute('data-changeid', changeId)
 
   button.innerHTML = `<svg><use href="${xLink}"></use></svg>`
-  button.onclick = () => {
-    trackCommands.setChangeStatuses(status, [changeId])(
-      view.state,
-      view.dispatch
-    )
-    const popover = trackChangesControlsKey.getState(view.state)
-    popover?.destroy()
-  }
 
   return button
 }
@@ -57,12 +54,8 @@ const createControls = (view: EditorView, changeId: string) => {
   el.id = POPOVER_ID
   el.dataset.changeid = changeId
 
-  el.appendChild(
-    createControl(view, changeId, CHANGE_STATUS.rejected, REJECT_BUTTON_XLINK)
-  )
-  el.appendChild(
-    createControl(view, changeId, CHANGE_STATUS.accepted, ACCEPT_BUTTON_XLINK)
-  )
+  el.appendChild(createControl(view, changeId, 'reject', REJECT_BUTTON_XLINK))
+  el.appendChild(createControl(view, changeId, 'accept', ACCEPT_BUTTON_XLINK))
   return el
 }
 
@@ -84,6 +77,12 @@ export default () =>
         }
 
         const popover = trackChangesControlsKey.getState(state)
+
+        // TODO:: remove this when moving onClick callback from article-editor
+        if (meta && DESTROY_POPOVER in meta) {
+          popover?.destroy()
+        }
+
         return popover || new PopperManager()
       },
     },
@@ -98,7 +97,14 @@ export default () =>
             const controllerDom = createControls(view, changeId)
             const popover = trackChangesControlsKey.getState(view.state)
 
-            popover?.show(target, controllerDom, 'auto', false)
+            popover?.show(
+              target,
+              controllerDom,
+              'auto',
+              false,
+              undefined,
+              document.getElementById('editor')
+            )
             controllerDom.addEventListener('mouseleave', () => {
               popover?.destroy()
             })
