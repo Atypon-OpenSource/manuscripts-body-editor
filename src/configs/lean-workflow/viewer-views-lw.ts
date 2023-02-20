@@ -38,6 +38,7 @@ import inlineFootnote, {
 } from '../../views/inline_footnote'
 import keywordsElement from '../../views/keywords_element'
 import link from '../../views/link'
+import metaSection from '../../views/meta_section'
 import orderedList from '../../views/ordered_list'
 import paragraph from '../../views/paragraph'
 import placeholder from '../../views/placeholder'
@@ -80,4 +81,5 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
+  comment_list: metaSection(),
 })
