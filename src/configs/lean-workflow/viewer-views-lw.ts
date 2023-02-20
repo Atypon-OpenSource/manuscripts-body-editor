@@ -81,5 +81,5 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
-  comment_list: metaSection(),
+  comment_list: metaSection,
 })

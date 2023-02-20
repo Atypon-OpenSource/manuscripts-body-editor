@@ -81,6 +81,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_label: sectionLabel(props),
     table_element: tableElement(props),
     toc_element: tocElement(props),
-    comment_list: metaSection(),
+    comment_list: metaSection,
   }
 }
