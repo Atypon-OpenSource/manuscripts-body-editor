@@ -57,7 +57,7 @@ export class ContextMenu {
   private suppressibleAttrs: Map<string, string> = new Map([
     ['suppressCaption', 'Caption'],
     ['suppressHeader', 'Header'],
-    ['suppressFooter', 'Footer']
+    ['suppressFooter', 'Footer'],
   ])
 
   public constructor(
@@ -520,7 +520,7 @@ export class ContextMenu {
     )
   }
 
-    private isListType = (type: string) =>
+  private isListType = (type: string) =>
     ['bullet_list', 'ordered_list'].includes(type)
 
   private buildSuppressOptions = () => {
