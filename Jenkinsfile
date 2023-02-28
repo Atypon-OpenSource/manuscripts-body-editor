@@ -1,5 +1,5 @@
 #!groovy
-node {
+node("cisc01") {
     REFSPEC="+refs/pull/*:refs/remotes/origin/pr/*"
     stage("Checkout") {
         if (params != null && params.ghprbPullId == null) {
