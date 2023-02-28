@@ -33,6 +33,7 @@ import footnote from '../../views/footnote_editable'
 import footnotesElement from '../../views/footnotes_element'
 import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
+import keyword from '../../views/keyword'
 import keywordsElement from '../../views/keywords_element'
 import link from '../../views/link_editable'
 import listing from '../../views/listing_editable'
@@ -68,6 +69,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props),
+    keyword: keyword(props),
     keywords_element: keywordsElement(props),
     link: link(props),
     listing: listing(props),
