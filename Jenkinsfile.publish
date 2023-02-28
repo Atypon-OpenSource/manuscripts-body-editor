@@ -1,5 +1,5 @@
 #!groovy
-node("cisc01") {
+node("cisc04") {
     stage("Checkout") {
         VARS = checkout scm
         echo "VARS: $VARS"
