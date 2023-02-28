@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { sanitize } from '../lib/dompurify'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
+import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
