@@ -34,6 +34,7 @@ import {
 import { findDOMNode } from 'react-dom'
 
 import { ContextMenu } from '../../lib/context-menu'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
@@ -197,6 +198,8 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { node, requirementsNode, items, isSelected } = tree
 
+    const isDeletedItem = isDeleted(node)
+
     const mightDrop = item && isOverCurrent && canDrop
 
     return connectDropTarget(
@@ -241,7 +244,9 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   )}
 
                   <OutlineItemLinkText
-                    className={`outline-text-${node.type.name}`}
+                    className={`outline-text-${node.type.name} ${
+                      isDeletedItem && 'deleted'
+                    }`}
                   >
                     {this.itemText(node)}
                   </OutlineItemLinkText>
