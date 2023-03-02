@@ -1,12 +1,13 @@
 pipeline {
     agent {
         docker {
-            image 'node:18-alpine'
-            args '--userns=host'
+            image 'node:18'
+            args '--userns=host \
+                  -v /home/ci/.cache/yarn:/.cache/yarn'
         }
     }
     stages {
-        stage("Build") {
+        stage('Build') {
             steps {
                 sh 'node -v'
                 sh 'yarn install --non-interactive --frozen-lockfile'
