@@ -12,7 +12,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'node -v'
                 sh 'yarn install --non-interactive --frozen-lockfile'
                 sh 'yarn typecheck'
                 sh 'yarn test'
@@ -24,7 +23,9 @@ pipeline {
                 expression { params.PUBLISH == true }
             }
             steps {
-               sh 'npx @manuscripts/publish'
+                withCredentials([string(credentialsId: 'NPM_TOKEN_MANUSCRIPTS_OSS', variable: 'NPM_TOKEN')]) {
+                    sh 'npx @manuscripts/publish'
+                }
             }
         }
     }
