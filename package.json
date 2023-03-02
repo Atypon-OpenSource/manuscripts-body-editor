@@ -52,7 +52,7 @@
     "@manuscripts/data": "^0.1.12",
     "@manuscripts/eslint-config": "^0.5.1",
     "@manuscripts/library": "^1.0.1",
-    "@manuscripts/transform": "^1.0.1",
+    "@manuscripts/transform": "^1.0.1-LEAN-2070",
     "@manuscripts/json-schema": "^1.0.0",
     "@manuscripts/title-editor": "^1.0.0",
     "@manuscripts/track-changes-plugin": "^1.0.0",
@@ -138,7 +138,7 @@
   "peerDependencies": {
     "@manuscripts/assets": "^0.6.1",
     "@manuscripts/library": "^1.0.0",
-    "@manuscripts/transform": "^1.0.1",
+    "@manuscripts/transform": "^1.0.1-LEAN-2070",
     "@manuscripts/track-changes-plugin": "^1.0.0",
     "@manuscripts/style-guide": "^1.0.2",
     "react": ">=16.11.0",
