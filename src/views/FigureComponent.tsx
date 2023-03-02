@@ -92,14 +92,16 @@ const FigureComponent = ({
       let url = imageExternalFile?.url
       if (!imageExternalFile?.url.includes('https://')) {
         const attachmentId = imageExternalFile?.url.replace('attachment:', '')
-        url = getAttachments()?.find((file) => file.id === attachmentId)?.link || ''
+        url =
+          getAttachments()?.find((file) => file.id === attachmentId)?.link || ''
       }
 
       return addFormatQuery(url || '') // these links are always provided with url query, it's safe to assume we need to use amp here
     }, [nodeAttrs.src, getAttachments]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const { isSupportedImageType, fileName } = useMemo(() => {
-      const imageFileRegex = /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
+      const imageFileRegex =
+        /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp|tif|tiff)(\?format=jpg)?$/gi
       let attachmentFileName = nodeAttrs.src
 
       if (nodeAttrs.contentType) {
