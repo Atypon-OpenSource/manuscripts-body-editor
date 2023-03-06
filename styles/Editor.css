@@ -291,6 +291,10 @@
   word-wrap: break-word;
 }
 
+.ProseMirror .caption-title:not(.empty-node) {
+  font-weight: bold;
+}
+
 .ProseMirror .caption-description {
   margin: 0;
 }
@@ -300,7 +304,7 @@
 }
 
 .ProseMirror .caption-title.empty-node::before {
-  content: 'Title...';
+  content: 'Caption Title...';
 }
 
 .ProseMirror .caption-description.empty-node::before {

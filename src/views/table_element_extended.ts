@@ -136,14 +136,8 @@ export class TableElementView extends BlockView<
   }
 
   public updateContents = () => {
-    const { suppressCaption, suppressTitle, suppressHeader, suppressFooter } =
+    const { suppressHeader, suppressFooter } =
       this.node.attrs
-
-    this.dom.classList.toggle('suppress-caption', suppressCaption)
-    this.dom.classList.toggle(
-      'suppress-title',
-      suppressTitle === undefined ? true : suppressTitle
-    )
 
     this.dom.classList.toggle('suppress-header', suppressHeader)
     this.dom.classList.toggle('suppress-footer', suppressFooter)
