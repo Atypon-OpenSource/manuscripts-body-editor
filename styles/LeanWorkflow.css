@@ -521,7 +521,7 @@
   padding: 4pt !important;
   gap: 4pt !important;
 
-  grid-template-columns: auto !important;
+  grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 }
 
@@ -536,7 +536,7 @@
   border-style: none !important;
   border-width: 0pt !important;
   position: relative;
-  grid-column: 1;
+  grid-column: 1/-1;
 }
 
 .ProseMirror .figure-block > figcaption .figure-label {
