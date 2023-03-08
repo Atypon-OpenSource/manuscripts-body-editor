@@ -39,12 +39,8 @@ export class FigureElementView<
   }
 
   public updateContents = () => {
-    const {
-      figureStyle,
-      figureLayout,
-      alignment,
-      sizeFraction,
-    } = this.node.attrs
+    const { figureStyle, figureLayout, alignment, sizeFraction } =
+      this.node.attrs
 
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
