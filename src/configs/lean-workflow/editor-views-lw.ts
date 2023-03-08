@@ -37,6 +37,7 @@ import keywordsElement from '../../views/keywords_element_editable'
 import link from '../../views/link_editable'
 import listing from '../../views/listing_editable'
 import listingElement from '../../views/listing_element_editable'
+import metaSection from '../../views/meta_section'
 import orderedList from '../../views/ordered_list_editable'
 import paragraph from '../../views/paragraph_editable'
 import placeholder from '../../views/placeholder'
@@ -80,5 +81,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_label: sectionLabel(props),
     table_element: tableElement(props),
     toc_element: tocElement(props),
+    comment_list: metaSection,
   }
 }

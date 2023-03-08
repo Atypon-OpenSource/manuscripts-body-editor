@@ -40,28 +40,18 @@ export class FigureElementView<
 
   public updateContents = () => {
     const {
-      suppressCaption,
-      suppressTitle,
       figureStyle,
       figureLayout,
       alignment,
       sizeFraction,
     } = this.node.attrs
 
-    this.dom.classList.toggle('suppress-caption', suppressCaption)
-    this.dom.classList.toggle(
-      'suppress-title',
-      suppressTitle === undefined ? true : suppressTitle
-    )
-
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
     }
 
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
-
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
-
     this.contentDOM.setAttribute('data-alignment', alignment)
 
     if (sizeFraction > 1) {
