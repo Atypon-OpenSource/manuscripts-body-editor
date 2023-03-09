@@ -469,7 +469,17 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
 
       // @TODO fix duplicated ids by cloning a node with a cleared id attribute
       // duplicated ids occurr when track changes are enabled and deletion is reverted and kept alongside with the newly inserted content
-      const tr = props.view.state.tr.insert(insertPos, source.node)
+
+      const newNode = source.node.type.schema.nodes[
+        source.node.type.name
+      ].create(
+        {
+          ...source.node.attrs,
+          id: '',
+        },
+        source.node?.content
+      )
+      const tr = props.view.state.tr.insert(insertPos, newNode)
 
       sourcePos = tr.mapping.map(sourcePos)
 
