@@ -723,3 +723,46 @@
 .bibliography-comment-button {
   border-radius: 0 0 32px 32px;
 }
+
+.keywords {
+  margin: 0 0 36px;
+}
+
+.keywords h1 {
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 16px;
+  margin: 0 0 4px;
+  padding: 0;
+}
+
+.keywords-list {
+  margin: 0;
+}
+
+.keywords-list span {
+  display: inline-block;
+  color: #353535;
+  background-color: #f2f2f2;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  padding: 4px;
+  border: 1px solid #f2f2f2;
+  border-radius: 6px;
+}
+
+.keywords-list span:hover {
+  background-color: #f2fbfc;
+  border-color: #f2fbfc;
+}
+
+.keywords-list span.selected {
+  background-color: #f2fbfc;
+  border-color: #bce7f6;
+}

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -28,30 +27,16 @@ export class KeywordsElementView<
 
   public stopEvent = () => true
 
-  public updateContents = () => {
-    try {
-      const fragment = sanitize(this.node.attrs.contents)
-      this.element.innerHTML = ''
-      this.element.appendChild(fragment)
-    } catch (e) {
-      console.error(e) // tslint:disable-line:no-console
-      // TODO: improve the UI for presenting offline/import errors
-      window.alert(
-        'There was an error loading the HTML purifier, please reload to try again'
-      )
-    }
-
-    this.element.setAttribute(
-      'data-paragraph-style',
-      this.node.attrs.paragraphStyle
-    )
-  }
-
   public createElement = () => {
     this.element = document.createElement('div')
-    this.element.className = 'block'
-    this.element.setAttribute('id', this.node.attrs.id)
+    this.element.classList.add('block')
     this.dom.appendChild(this.element)
+
+    this.contentDOM = document.createElement('div')
+    this.contentDOM.classList.add('keywords-list')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+
+    this.element.appendChild(this.contentDOM)
   }
 }
 
