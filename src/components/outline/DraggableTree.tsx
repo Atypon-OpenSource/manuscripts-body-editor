@@ -34,6 +34,7 @@ import {
 import { findDOMNode } from 'react-dom'
 
 import { ContextMenu } from '../../lib/context-menu'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
@@ -198,6 +199,8 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { node, requirementsNode, items, isSelected } = tree
 
+    const isDeletedItem = isDeleted(node)
+
     const mightDrop = item && isOverCurrent && canDrop
 
     return connectDropTarget(
@@ -242,7 +245,9 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   )}
 
                   <OutlineItemLinkText
-                    className={`outline-text-${node.type.name}`}
+                    className={`outline-text-${node.type.name} ${
+                      isDeletedItem && 'deleted'
+                    }`}
                   >
                     {this.itemText(node)}
                   </OutlineItemLinkText>
@@ -462,6 +467,8 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
 
       let sourcePos = source.pos - 1
 
+      // @TODO fix duplicated ids by cloning a node with a cleared id attribute
+      // duplicated ids occurr when track changes are enabled and deletion is reverted and kept alongside with the newly inserted content
       const tr = props.view.state.tr.insert(insertPos, source.node)
 
       sourcePos = tr.mapping.map(sourcePos)
