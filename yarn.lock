@@ -1545,10 +1545,10 @@
   dependencies:
     debug "^4.3.4"
 
-"@manuscripts/transform@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.0.1.tgz#1eccad9924beef97a5b6ae9e944ca9704f09b2a7"
-  integrity sha512-cI89dy3vY2+81TjiHRE6cxK4EDJbI21np0ueUeZGK+8wA4/8+QVh0pj1qdt+ZCiSV2XYh7epXQV9WAwajTYQ1g==
+"@manuscripts/transform@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.1.tgz#2d343a82d94d330690c6d64e94d88f2c32648f87"
+  integrity sha512-FzKE+eWUYpy9PYzLAnPMd3N9bL1+ujJviddps7Irvo5o4/T0izFSGHzWs3BifHG5SaOVS5qR6tYZKI2f06TZdA==
   dependencies:
     debug "^4.3.4"
     mathjax-full "^3.2.2"
