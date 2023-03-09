@@ -1533,10 +1533,10 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/title-editor/-/title-editor-1.0.0.tgz#714d34ce7ebf2f4fec2d15c12f181dcccea3f554"
   integrity sha512-FHN+/TD5XDbCxXcrbZ2ZtwCYZZKX1czbdvwPTGLWSW1eTQfJVPXM4Tte6Ul1bjbI5HHk7b9suzKvGCqxdc/GYQ==
 
-"@manuscripts/track-changes-plugin@^0.4.5":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-0.4.6.tgz#14b57aa664774439f449179b79b39c0c25f94e66"
-  integrity sha512-9qSp2L0QHehPjpg7OJYuuH5DgWh7jqZh/az9xeICZxO//qbHvjp2hXaUlVzV1OXWAZ5ZRjK+LRmCgjNHy4u5ug==
+"@manuscripts/track-changes-plugin@1.0.1-LEAN-1697":
+  version "1.0.1-LEAN-1697"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.0.1-LEAN-1697.tgz#686e9a7ff73b4e4982da609e1b83850f656beb87"
+  integrity sha512-+AQP77wrgB1k+nSZutJJyB8k9wAIEmOg7DpXOj6EOBqUgqLU/GKkTNfRf9KecIPFaNhnX97sQwNi2uQ3rfKFZQ==
   dependencies:
     debug "^4.3.4"
 
