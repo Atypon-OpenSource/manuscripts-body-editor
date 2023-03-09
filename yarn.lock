@@ -1198,6 +1198,11 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
+"@inline-svg-unique-id/react@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@inline-svg-unique-id/react/-/react-1.2.3.tgz#7b682183d1d2a4cb9e1ace10569c1d4b45589604"
+  integrity sha512-Tf6u4pTdkeN4BLuh4aHNFDrKxUoiNbCglou3IDem7x0KRCt/rrhRgLljx85X2k5aAUdLvDhQcpeKVePFarF+8w==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -1467,10 +1472,10 @@
     make-plural "^6.2.2"
     messageformat-parser "^4.1.3"
 
-"@manuscripts/assets@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.1.tgz#c1d1c88b3e3c030177b8bbff0f6d6e352a045992"
-  integrity sha512-neLPcFNE8XcstDR1bj85xlAcB9IpBMOk0oaRzXxD/HeO8N63eqcOCzTMiGz239t+wk4oRnqAHzPbRQTYngdC2A==
+"@manuscripts/assets@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.2.tgz#ae54a9945aabc4b0ed60c96be6edf1855adfbe41"
+  integrity sha512-r9Mo/mcNV23vVbqCUOYVyLDfnp0e5Yaub7K9l1T3QP41a5+FUOOURb7i+wJsLoQnBDx4jueztqrxskZdKQciKQ==
 
 "@manuscripts/comment-editor@^1.0.0":
   version "1.0.0"
@@ -1515,10 +1520,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.2.tgz#35bddf76773a4d2fcd34bce9a6b90dd0bf4348a0"
-  integrity sha512-UhxR/eBHAOponOL+lAL+hA5+MxKywT4cEfCkIyLNhqsdN7PCw9uPLs29QJHLfRJN/R2VUqCJB5cvwUNUspbqSw==
+"@manuscripts/style-guide@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.4.tgz#a1edb3ba0817cccb82e159959915fa612a4b86b1"
+  integrity sha512-lo2GgQHcpHceq93V+ow0am75l3QmnDIFtpakGEyrzAxnUYitNW3vb21lcrnKHrV28g+6q59xZ2ujG7TL7wpAPw==
   dependencies:
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"
@@ -1540,10 +1545,10 @@
   dependencies:
     debug "^4.3.4"
 
-"@manuscripts/transform@^1.0.1-LEAN-2070":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.0.tgz#61edc4bf8a9beb7221a708d80920e93abf69ebc1"
-  integrity sha512-I5gUUSoQfXNFh18Gtrt7MP6AHFbFL6mcmpX16ZlgTGUfSRF6HjkM7gcRN4Wy0GppOHLjed/qHs2JZVXnCIKgFw==
+"@manuscripts/transform@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.1.tgz#2d343a82d94d330690c6d64e94d88f2c32648f87"
+  integrity sha512-FzKE+eWUYpy9PYzLAnPMd3N9bL1+ujJviddps7Irvo5o4/T0izFSGHzWs3BifHG5SaOVS5qR6tYZKI2f06TZdA==
   dependencies:
     debug "^4.3.4"
     mathjax-full "^3.2.2"
