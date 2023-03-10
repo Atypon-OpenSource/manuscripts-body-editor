@@ -17,6 +17,16 @@
 import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 
+export function isRejectedInsert(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, status }) => operation === 'insert' && status == 'rejected'
+    )
+  }
+  return false
+}
+
 export function isDeleted(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
