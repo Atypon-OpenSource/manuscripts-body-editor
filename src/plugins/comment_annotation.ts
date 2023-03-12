@@ -43,9 +43,9 @@ export const commentScroll = (
     commentIcon.classList.add('selected-comment')
     commentCard.forEach((node) => node.classList.add('selected-comment'))
     element?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
+      behavior: 'auto',
+      block: 'start',
+      inline: 'start',
     })
   }
 }
