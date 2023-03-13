@@ -172,5 +172,4 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps & 
 
   public ignoreMutation = () => true
 }
-alert("ya rab");
 export default createNodeView(BibliographyItemView)
