@@ -42,6 +42,13 @@ export default class BlockView<T extends BaseNodeProps>
 
   public initialise = () => {
     this.createDOM()
+    // if (this.node.attrs.dataTracked?.length) {
+    //   // this.node.attrs.dataTracked[0].status === 'rejected' &&
+    //   // this.node.attrs.dataTracked[0].operation === 'insert'
+    //   console.log('detected rejected inserted')
+    //   console.log(this.node.attrs.dataTracked)
+    //   return
+    // }
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
     this.createElement()
     this.createGutter(
@@ -67,6 +74,21 @@ export default class BlockView<T extends BaseNodeProps>
   public updateAttributes = () => {
     if (!this.contentDOM) {
       return
+    }
+
+    if (this.node.attrs.dataTracked?.length) {
+      console.log(this.node.attrs.dataTracked[0])
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
     }
 
     for (const [key, target] of Object.entries(this.viewAttributes)) {
