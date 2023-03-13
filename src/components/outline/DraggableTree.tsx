@@ -34,7 +34,7 @@ import {
 import { findDOMNode } from 'react-dom'
 
 import { ContextMenu } from '../../lib/context-menu'
-import { isDeleted } from '../../lib/track-changes-utils'
+import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
@@ -201,7 +201,13 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const isDeletedItem = isDeleted(node)
 
+    const isRejectedItem = isRejectedInsert(node)
+
     const mightDrop = item && isOverCurrent && canDrop
+
+    if (isRejectedItem) {
+      return null
+    }
 
     return connectDropTarget(
       <div>
