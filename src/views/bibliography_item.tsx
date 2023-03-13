@@ -76,7 +76,6 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps & 
       setLibraryItem,
       removeLibraryItem,
       renderReactComponent,
-      capabilities,
       modelMap,
       components: { ReferencesEditor },
     } = this.props
@@ -173,5 +172,5 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps & 
 
   public ignoreMutation = () => true
 }
-
+alert("ya rab");
 export default createNodeView(BibliographyItemView)
