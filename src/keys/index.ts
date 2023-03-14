@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { baseKeymap } from 'prosemirror-commands'
 import { keymap } from 'prosemirror-keymap'
 
+import base from './base'
 import highlightKeymap from './highlight'
 import listKeymap from './list'
 import miscKeymap from './misc'
@@ -26,6 +26,6 @@ export default [
   keymap(listKeymap),
   keymap(miscKeymap),
   keymap(titleKeymap),
-  keymap(baseKeymap),
+  keymap(base),
   keymap(highlightKeymap),
 ]
