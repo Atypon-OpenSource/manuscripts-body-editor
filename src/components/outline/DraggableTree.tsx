@@ -110,6 +110,7 @@ const isExcluded = (nodeType: ManuscriptNodeType) => {
     nodes.figure,
     nodes.footnotes_element,
     nodes.bibliography_element,
+    nodes.keywords_section,
   ]
 
   return excludedTypes.includes(nodeType)
