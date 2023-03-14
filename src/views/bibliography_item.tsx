@@ -79,6 +79,22 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
       components: { ReferencesEditor },
     } = this.props
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSave = async (data: any) => {
+      const ref = await saveModel({
+        ...data,
+      })
+
+      this.view.dispatch(
+        this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
+          id: ref._id,
+          containerTitle: ref['container-title'],
+          doi: ref.DOI,
+          ...ref,
+        })
+      )
+    }
+
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
       this.popperContainer.className = 'references'
@@ -87,7 +103,7 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
     renderReactComponent(
       <ReferencesEditor
         filterLibraryItems={filterLibraryItems}
-        saveModel={saveModel}
+        saveModel={handleSave}
         deleteModel={deleteModel}
         setLibraryItem={setLibraryItem}
         removeLibraryItem={removeLibraryItem}
@@ -112,26 +128,14 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
   }
 
   public updateContents = async () => {
-    const attrs = { ...this.node.attrs }
-
-    delete attrs.paragraphStyle
-    delete attrs.dataTracked
-
-    attrs['_id'] = this.node.attrs.id
-    delete attrs.id
-
-    if (attrs.doi) {
-      attrs['DOI'] = attrs.doi
-      delete attrs.doi
-    }
-
-    const reference = attrs
+    const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
     if (reference) {
       const bibliography = await createBibliography([
         reference,
       ] as BibliographyItem[])
       try {
         const fragment = sanitize(bibliography.outerHTML)
+        this.dom.innerHTML = ''
         this.dom.appendChild(fragment)
 
         const doubleButton = document.createElement('div')

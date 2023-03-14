@@ -21,7 +21,11 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
-import { Build, buildEmbeddedCitationItem } from '@manuscripts/transform'
+import {
+  Build,
+  buildEmbeddedCitationItem,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
@@ -90,6 +94,37 @@ export class CitationEditableView extends CitationView<
       this.props.popper.update()
     }
 
+    const findPosition = (doc: ManuscriptNode, id: string) => {
+      let nodePos: number | undefined = undefined
+
+      doc.descendants((node, pos) => {
+        if (node.attrs.id === id) {
+          nodePos = pos
+        }
+      })
+
+      return nodePos
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSave = async (data: any) => {
+      const ref = await saveModel({
+        ...data,
+      })
+
+      const pos = findPosition(this.view.state.doc, ref._id)
+      if (pos) {
+        this.view.dispatch(
+          this.view.state.tr.setNodeMarkup(pos, undefined, {
+            id: ref._id,
+            containerTitle: ref['container-title'],
+            doi: ref.DOI,
+            ...ref,
+          })
+        )
+      }
+    }
+
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
       this.popperContainer.className = 'citation-editor'
@@ -98,7 +133,7 @@ export class CitationEditableView extends CitationView<
     const component = capabilities?.editArticle ? (
       <CitationEditor
         items={items}
-        saveModel={saveModel}
+        saveModel={handleSave}
         deleteModel={deleteModel}
         modelMap={modelMap}
         setLibraryItem={setLibraryItem}
