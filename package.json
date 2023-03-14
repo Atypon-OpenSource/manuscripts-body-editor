@@ -57,7 +57,7 @@
     "@manuscripts/json-schema": "^1.0.0",
     "@manuscripts/title-editor": "^1.0.0",
     "@manuscripts/track-changes-plugin": "^1.0.0",
-    "@manuscripts/style-guide": "^1.0.4-LEAN-2205-1",
+    "@manuscripts/style-guide": "^1.0.4-LEAN-2205",
     "@manuscripts/examples": "^0.1.0",
     "@reach/tabs": "^0.11.2",
     "@types/codemirror": "^5.60.5",
