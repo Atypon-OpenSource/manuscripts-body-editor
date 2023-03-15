@@ -36,6 +36,7 @@ import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 
 const createBibliography = async (items: BibliographyItem[]) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
@@ -61,7 +62,7 @@ interface BibliographyItemViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
+export class BibliographyItemView<PropsType extends BibliographyItemViewProps & EditableBlockProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -156,7 +157,9 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        this.dom.appendChild(doubleButton)
+        
+        if (this.props.capabilities?.seeReferencesButtons)
+          this.dom.appendChild(doubleButton)
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors
@@ -169,5 +172,4 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
 
   public ignoreMutation = () => true
 }
-
 export default createNodeView(BibliographyItemView)
