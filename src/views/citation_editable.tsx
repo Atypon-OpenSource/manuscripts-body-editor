@@ -106,11 +106,10 @@ export class CitationEditableView extends CitationView<
       return nodePos
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSave = async (data: any) => {
+    const handleSave = async (data: Partial<BibliographyItem>) => {
       const ref = await saveModel({
         ...data,
-      })
+      } as BibliographyItem)
 
       const pos = findPosition(this.view.state.doc, ref._id)
       if (pos) {

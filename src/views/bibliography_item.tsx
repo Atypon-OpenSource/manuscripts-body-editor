@@ -79,11 +79,10 @@ export class BibliographyItemView<PropsType extends BibliographyItemViewProps>
       components: { ReferencesEditor },
     } = this.props
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSave = async (data: any) => {
+    const handleSave = async (data: Partial<BibliographyItem>) => {
       const ref = await saveModel({
         ...data,
-      })
+      } as BibliographyItem)
 
       this.view.dispatch(
         this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
