@@ -27,6 +27,7 @@ import footnote from './footnote'
 import footnotesElement from './footnotes_element'
 import inlineEquation from './inline_equation'
 import inlineFootnote, { InlineFootnoteProps } from './inline_footnote'
+import keyword from './keyword'
 import keywordsElement from './keywords_element'
 import link from './link'
 import listing from './listing'
@@ -58,6 +59,7 @@ export default (props: ViewerProps) => ({
   footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  keyword: keyword(props),
   keywords_element: keywordsElement(props),
   link: link(props),
   listing: listing(props),

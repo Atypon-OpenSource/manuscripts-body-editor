@@ -28,6 +28,7 @@ import footnote from './footnote_editable'
 import footnotesElement from './footnotes_element_editable'
 import inlineEquation from './inline_equation_editable'
 import inlineFootnote from './inline_footnote_editable'
+import keyword from './keyword'
 import keywordsElement from './keywords_element_editable'
 import link from './link_editable'
 import listing from './listing_editable'
@@ -58,6 +59,7 @@ export default (props: EditorProps) => ({
   footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  keyword: keyword(props),
   keywords_element: keywordsElement(props),
   link: link(props),
   listing: listing(props),

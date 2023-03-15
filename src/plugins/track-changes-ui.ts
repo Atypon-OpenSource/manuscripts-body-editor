@@ -58,15 +58,19 @@ const addClassnamesToEl = (
 }
 
 const createControls = (change: TrackedChange) => {
-  return Decoration.widget(change.to, () => {
-    const el = document.createElement('div')
-    addClassnamesToEl(el, CLASSES.control)
-    el.dataset.changeid = change.id
-    el.innerHTML =
-      createControl(change, 'reject', REJECT_BUTTON_XLINK) +
-      createControl(change, 'accept', ACCEPT_BUTTON_XLINK)
-    return el
-  })
+  return Decoration.widget(
+    change.to,
+    () => {
+      const el = document.createElement('div')
+      addClassnamesToEl(el, CLASSES.control)
+      el.dataset.changeid = change.id
+      el.innerHTML =
+        createControl(change, 'reject', REJECT_BUTTON_XLINK) +
+        createControl(change, 'accept', ACCEPT_BUTTON_XLINK)
+      return el
+    },
+    { side: -1 }
+  )
 }
 const decorateChanges = (state: EditorState): Decoration[] => {
   const pluginState = trackChangesPluginKey.getState(state)

@@ -105,7 +105,7 @@ export class FigureEditableView extends FigureView<
     // When in PM doc we replace attachment id with a real uri. So the src like 'https://lw.com/image.jpg'
 
     const imageFileRegex =
-      /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
+      /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp|tif|tiff)(\?format=jpg)?$/gi
     const src = this.node.attrs.src
     if (this.node.attrs.contentType && src) {
       return {

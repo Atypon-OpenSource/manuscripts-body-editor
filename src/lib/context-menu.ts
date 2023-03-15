@@ -55,7 +55,6 @@ export class ContextMenu {
   private readonly actions: Actions
 
   private suppressibleAttrs: Map<string, string> = new Map([
-    ['suppressCaption', 'Caption'],
     ['suppressHeader', 'Header'],
     ['suppressFooter', 'Footer'],
   ])
@@ -529,7 +528,7 @@ export class ContextMenu {
     let attrs = this.node.attrs
     // TODO:: this is just a hacky workaround, we should remove it when add suppressTitle to manuscripts-examples
     if (this.node.attrs.suppressTitle === undefined) {
-      attrs = Object.assign(this.node.attrs, { suppressTitle: true })
+      attrs = Object.assign(this.node.attrs, { suppressTitle: false })
     }
 
     for (const [attr, label] of this.suppressibleAttrs.entries()) {

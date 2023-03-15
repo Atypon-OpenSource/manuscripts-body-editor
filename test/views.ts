@@ -26,6 +26,7 @@ import figure from '../src/views/figure'
 import figureElement from '../src/views/figure_element'
 import inlineEquation from '../src/views/inline_equation_editable'
 import inlineFootnote from '../src/views/inline_footnote_editable'
+import keyword from '../src/views/keyword'
 import keywordsElement from '../src/views/keywords_element_editable'
 import link from '../src/views/link_editable'
 import orderedList from '../src/views/ordered_list_editable'
@@ -51,6 +52,7 @@ export default (props: ViewProps) => ({
   figure_element: figureElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  keyword: keyword(props),
   keywords_element: keywordsElement(props),
   link: link(props),
   ordered_list: orderedList(props),
