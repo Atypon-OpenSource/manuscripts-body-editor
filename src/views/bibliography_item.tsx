@@ -62,9 +62,7 @@ interface BibliographyItemViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export class BibliographyItemView<
-    PropsType extends BibliographyItemViewProps & EditableBlockProps
-  >
+export class BibliographyItemView<PropsType extends BibliographyItemViewProps & EditableBlockProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -162,10 +160,9 @@ export class BibliographyItemView<
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-
-        if (this.props.capabilities?.seeReferencesButtons) {
+        
+        if (this.props.capabilities?.seeReferencesButtons)
           this.dom.appendChild(doubleButton)
-        }
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors
