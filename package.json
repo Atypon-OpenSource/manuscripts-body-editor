@@ -56,10 +56,6 @@
     "@manuscripts/json-schema": "^1.0.0",
     "@manuscripts/title-editor": "^1.0.0",
     "@manuscripts/track-changes-plugin": "^1.0.1",
-<<<<<<< HEAD
-    "@inline-svg-unique-id/react": "^1.2.3",
-=======
->>>>>>> b2b51d2c71dc90ad0e86cdd2787024b454f0edcd
     "@manuscripts/style-guide": "^1.0.5",
     "@manuscripts/examples": "^0.1.0",
     "@inline-svg-unique-id/react": "^1.2.3",
