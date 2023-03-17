@@ -42,13 +42,6 @@ export default class BlockView<T extends BaseNodeProps>
 
   public initialise = () => {
     this.createDOM()
-    // if (this.node.attrs.dataTracked?.length) {
-    //   // this.node.attrs.dataTracked[0].status === 'rejected' &&
-    //   // this.node.attrs.dataTracked[0].operation === 'insert'
-    //   console.log('detected rejected inserted')
-    //   console.log(this.node.attrs.dataTracked)
-    //   return
-    // }
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
     this.createElement()
     this.createGutter(
