@@ -1198,6 +1198,11 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
+"@inline-svg-unique-id/react@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@inline-svg-unique-id/react/-/react-1.2.3.tgz#7b682183d1d2a4cb9e1ace10569c1d4b45589604"
+  integrity sha512-Tf6u4pTdkeN4BLuh4aHNFDrKxUoiNbCglou3IDem7x0KRCt/rrhRgLljx85X2k5aAUdLvDhQcpeKVePFarF+8w==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -1533,10 +1538,10 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/title-editor/-/title-editor-1.0.0.tgz#714d34ce7ebf2f4fec2d15c12f181dcccea3f554"
   integrity sha512-FHN+/TD5XDbCxXcrbZ2ZtwCYZZKX1czbdvwPTGLWSW1eTQfJVPXM4Tte6Ul1bjbI5HHk7b9suzKvGCqxdc/GYQ==
 
-"@manuscripts/track-changes-plugin@1.0.1-LEAN-1697":
-  version "1.0.1-LEAN-1697"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.0.1-LEAN-1697.tgz#686e9a7ff73b4e4982da609e1b83850f656beb87"
-  integrity sha512-+AQP77wrgB1k+nSZutJJyB8k9wAIEmOg7DpXOj6EOBqUgqLU/GKkTNfRf9KecIPFaNhnX97sQwNi2uQ3rfKFZQ==
+"@manuscripts/track-changes-plugin@^1.0.1":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.1.0.tgz#b225aab5055799961bf241c8ff9ab7f1c8852dd6"
+  integrity sha512-WFd5jypV+CxjMit28/8PlBR6mZu06Mp1rMGYKFb+eVZhX6pMZpUrnijp+lw+TPEtxcCerV7gF//Hx4rEc4ZUHw==
   dependencies:
     debug "^4.3.4"
 
