@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-// import { BaseNodeProps } from './base_node_view'
-import { Manuscript, Model, Section } from '@manuscripts/json-schema'
-import { Build } from '@manuscripts/transform'
-
 import { Dispatch } from '../commands'
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
-import { AnyElement } from '../components/keywords/ElementStyle'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNonEditableNodeView } from './creators'
@@ -28,8 +23,6 @@ import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
 export interface KeywordsElementProps {
-  modelMap: Map<string, Model>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   dispatch?: Dispatch
 }
 
@@ -54,28 +47,15 @@ export class KeywordsElementView extends BlockView<
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
-    const modelMapArray = Array.from(this.props.modelMap, function (entry) {
-      return entry[1]
-    })
-    const target: AnyElement | Section | Manuscript = modelMapArray.find(
-      (model) => {
-        return model.objectType === 'MPManuscript'
-      }
-    ) as Manuscript
+  }
 
-    const componentProps = {
-      props: {
-        modelMap: this.props.modelMap,
-        saveModel: this.props.saveModel,
-        target,
-        keywordsListElement: this.contentDOM,
-      },
-    }
+  public updateContents = () => {
+    this.editingTools?.remove()
 
     this.editingTools = ReactSubView(
       this.props,
       AddKeywordInline,
-      componentProps,
+      {},
       this.node,
       this.getPos,
       this.view,

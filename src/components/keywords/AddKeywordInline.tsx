@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Keyword, Manuscript, Model, Section } from '@manuscripts/json-schema'
+import { Keyword } from '@manuscripts/json-schema'
 import { Category, Dialog } from '@manuscripts/style-guide'
-import { Build, buildKeyword } from '@manuscripts/transform'
+import {
+  Build,
+  buildKeyword,
+  KeywordNode,
+  ManuscriptEditorView,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import React, {
   ChangeEvent,
   useCallback,
@@ -25,7 +31,6 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
-import { AnyElement } from './ElementStyle'
 import { PlusIcon } from './Icons'
 
 const AddNewKeyword = styled.div`
@@ -81,33 +86,37 @@ const PlusIconWrapper = styled.span`
   padding: 0 8px 0 0;
 `
 
-interface AddKeywordInlineProps {
-  modelMap: Map<string, Model>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  target: AnyElement | Section | Manuscript
-  keywordsListElement: HTMLDivElement
+interface KeywordEntry {
+  id: string
+  contents: string
 }
 
 export const AddKeywordInline: React.FC<{
-  props: AddKeywordInlineProps
-}> = ({ props }) => {
+  viewProps: {
+    view: ManuscriptEditorView
+    getPos: () => number
+    node: ManuscriptNode
+  }
+}> = ({ viewProps }) => {
   const nodeRef = useRef<HTMLDivElement>(null)
-  const { target, modelMap, saveModel, keywordsListElement } = props
   const [newKeyword, setNewKeyword] = useState<string>('')
   const [isAddingNewKeyword, setIsAddingNewKeyword] = useState<boolean>(false)
   const [isExistingKeywordError, setIsExistingKeywordError] =
     useState<boolean>(false)
+  const { node, getPos, view } = viewProps
 
-  const keywordIDs = target.keywordIDs || []
-  const keywords: Keyword[] = []
-  for (const model of modelMap.values()) {
-    if (model._id.startsWith('MPKeyword:')) {
-      keywords.push(model as Keyword)
+  const keywords: KeywordEntry[] = []
+  node.content.descendants((descNode) => {
+    if (descNode.type === descNode.type.schema.nodes.keyword) {
+      keywords.push({
+        id: descNode.attrs.id,
+        contents: descNode.attrs.contents,
+      })
     }
-  }
+  })
 
   const handleClickOutside = useCallback(
-    async (event: Event) => {
+    (event: Event) => {
       if (
         nodeRef.current &&
         !nodeRef.current.contains(event.target as Node) &&
@@ -137,7 +146,7 @@ export const AddKeywordInline: React.FC<{
 
   const isExistingKeyword = () => {
     const keywordClean = newKeyword.trim()
-    return keywords.some((keyword) => keyword.name === keywordClean)
+    return keywords.some((keyword) => keyword.contents === keywordClean)
   }
 
   const handleCancel = () => {
@@ -145,22 +154,21 @@ export const AddKeywordInline: React.FC<{
     setNewKeyword('')
   }
 
-  const handleAddKeyword = async () => {
+  const handleAddKeyword = () => {
     const keyword: Build<Keyword> = buildKeyword(newKeyword)
 
     if (!isExistingKeyword()) {
-      await saveModel<AnyElement | Section | Manuscript>({
-        ...target,
-        keywordIDs: [...keywordIDs, keyword._id],
-      })
+      const keywordNode = node.type.schema.nodes.keyword.create(
+        {
+          id: keyword._id,
+          contents: keyword.name,
+          comments: [],
+        },
+        node.type.schema.text(keyword.name)
+      ) as KeywordNode
 
-      await saveModel<Keyword>(keyword)
-
-      const newKeywordElement = document.createElement('span')
-      newKeywordElement.classList.add('keyword')
-      newKeywordElement.setAttribute('id', keyword._id)
-      newKeywordElement.textContent = keyword.name
-      keywordsListElement.appendChild(newKeywordElement)
+      const nodePosition = getPos() + node.nodeSize - 1
+      view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
 
       setIsAddingNewKeyword(false)
       setNewKeyword('')
