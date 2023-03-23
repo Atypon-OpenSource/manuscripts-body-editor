@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CommentAnnotation, Model, ObjectTypes } from '@manuscripts/json-schema'
-import { getModelsByType, ManuscriptNode, schema } from '@manuscripts/transform'
+import { CommentAnnotation } from '@manuscripts/json-schema'
+import { CommentNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -56,7 +56,6 @@ const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
 interface CommentAnnotationProps {
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
-  modelMap: Map<string, Model>
 }
 
 type Comment = {
@@ -76,7 +75,7 @@ export default (props: CommentAnnotationProps) => {
     state: {
       init: (tr) => {
         if (tr.doc) {
-          return commentsState(props.modelMap, props.setSelectedComment, tr.doc)
+          return commentsState(props.setSelectedComment, tr.doc)
         } else {
           return new DecorationSet()
         }
@@ -90,7 +89,7 @@ export default (props: CommentAnnotationProps) => {
           }
         }
 
-        return commentsState(props.modelMap, props.setSelectedComment, tr.doc)
+        return commentsState(props.setSelectedComment, tr.doc)
       },
     },
     props: {
@@ -105,20 +104,24 @@ export default (props: CommentAnnotationProps) => {
 }
 
 const commentsState = (
-  modelMap: Map<string, Model>,
   setSelectedComment: (id?: string) => void,
   doc: ManuscriptNode
 ): DecorationSet => {
-  const comments = getModelsByType<CommentAnnotation>(
-    modelMap,
-    ObjectTypes.CommentAnnotation
-  ).filter((comment) => !comment.target.includes(ObjectTypes.CommentAnnotation))
+  const comments: CommentNode['attrs'][] = []
+  doc.descendants((node) => {
+    if (node.type === schema.nodes.comment_list) {
+      node.descendants((comment) => {
+        comments.push(comment.attrs as CommentNode['attrs'])
+      })
+      return false
+    }
+  })
 
-  const commentsMap = comments.reduce((map, { _id, target, selector }) => {
+  const commentsMap = comments.reduce((map, { id, target, selector }) => {
     if (!isHighlightComment({ selector })) {
-      const commentId = selector ? _id : target
+      const commentId = selector ? id : target
       map.set(commentId, {
-        id: _id,
+        id,
         target,
         location: selector ? 'point' : 'block',
         count: (map.get(commentId)?.count || 0) + 1,

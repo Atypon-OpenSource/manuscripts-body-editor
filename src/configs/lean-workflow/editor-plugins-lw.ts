@@ -96,7 +96,7 @@ export default (props: PluginProps) => {
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
-    comment_annotation({ setComment, setSelectedComment, modelMap }),
+    comment_annotation({ setComment, setSelectedComment }),
     paragraphs(),
     placeholder(),
     tableEditing(),
