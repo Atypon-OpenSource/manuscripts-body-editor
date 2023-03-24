@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
+import { Model } from '@manuscripts/json-schema'
+import { Build } from '@manuscripts/transform'
+import { DefaultTheme } from 'styled-components'
+
 import { Dispatch } from '../commands'
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
-import { createNonEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
+import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
 export interface KeywordsElementProps {
   dispatch?: Dispatch
+  theme?: DefaultTheme
+  retrySync: (componentIDs: string[]) => Promise<void>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
 }
 
 export class KeywordsElementView extends BlockView<
-  BaseNodeProps & EditableBlockProps & KeywordsElementProps
+  BaseNodeProps & KeywordsElementProps
 > {
   private element: HTMLElement
   public editingTools: HTMLDivElement
@@ -68,4 +74,4 @@ export class KeywordsElementView extends BlockView<
   }
 }
 
-export default createNonEditableNodeView(KeywordsElementView)
+export default createNodeView(KeywordsElementView)

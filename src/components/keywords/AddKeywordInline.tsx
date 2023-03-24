@@ -18,7 +18,6 @@ import { Category, Dialog } from '@manuscripts/style-guide'
 import {
   Build,
   buildKeyword,
-  KeywordNode,
   ManuscriptEditorView,
   ManuscriptNode,
 } from '@manuscripts/transform'
@@ -165,7 +164,7 @@ export const AddKeywordInline: React.FC<{
           comments: [],
         },
         node.type.schema.text(keyword.name)
-      ) as KeywordNode
+      )
 
       const nodePosition = getPos() + node.nodeSize - 1
       view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
