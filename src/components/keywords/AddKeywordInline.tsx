@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Keyword } from '@manuscripts/json-schema'
-import { Category, Dialog } from '@manuscripts/style-guide'
+import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
 import {
   Build,
   buildKeyword,
@@ -29,8 +29,6 @@ import React, {
   useState,
 } from 'react'
 import styled from 'styled-components'
-
-import { PlusIcon } from './Icons'
 
 const AddNewKeyword = styled.div`
   position: relative;
