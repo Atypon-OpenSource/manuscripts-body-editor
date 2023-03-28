@@ -20,6 +20,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
+import { DeleteKeyword } from '../components/keywords/DeleteKeyword'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -36,7 +37,8 @@ export class KeywordsElementView extends BlockView<
   BaseNodeProps & KeywordsElementProps
 > {
   private element: HTMLElement
-  public editingTools: HTMLDivElement
+  public addingTools: HTMLDivElement
+  public deleteTools: HTMLDivElement
 
   public ignoreMutation = () => true
 
@@ -56,9 +58,9 @@ export class KeywordsElementView extends BlockView<
   }
 
   public updateContents = () => {
-    this.editingTools?.remove()
+    this.addingTools?.remove()
 
-    this.editingTools = ReactSubView(
+    this.addingTools = ReactSubView(
       this.props,
       AddKeywordInline,
       {},
@@ -68,8 +70,24 @@ export class KeywordsElementView extends BlockView<
       'keywords-editor'
     )
 
-    if (this.editingTools) {
-      this.element.appendChild(this.editingTools)
+    if (this.addingTools) {
+      this.element.appendChild(this.addingTools)
+    }
+
+    this.deleteTools?.remove()
+
+    this.deleteTools = ReactSubView(
+      this.props,
+      DeleteKeyword,
+      {},
+      this.node,
+      this.getPos,
+      this.view,
+      'keywords-delete'
+    )
+
+    if (this.deleteTools) {
+      this.element.appendChild(this.deleteTools)
     }
   }
 }

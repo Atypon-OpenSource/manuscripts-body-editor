@@ -744,7 +744,7 @@
   display: inline;
 }
 
-.keywords-list span {
+.keywords-list span.keyword {
   display: inline-block;
   color: #353535;
   background-color: #f2f2f2;
@@ -753,19 +753,29 @@
   line-height: 16px;
   margin-right: 4px;
   margin-bottom: 4px;
-  padding: 4px;
+  padding: 4px 8px;
   border: 1px solid #f2f2f2;
   border-radius: 6px;
 }
 
-.keywords-list span:hover {
+.keywords-list span.keyword:hover {
   background-color: #f2fbfc;
   border-color: #f2fbfc;
 }
 
-.keywords-list span.selected {
+.keywords-list span.keyword.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
+}
+
+.keywords-list span.delete-keyword {
+  cursor: pointer;
+  margin: 0 0 0 8px;
+  opacity: 0.5;
+}
+
+.keywords-list span.delete-keyword:hover {
+  opacity: 1;
 }
 
 .keywords-list .ProseMirror-trailingBreak {

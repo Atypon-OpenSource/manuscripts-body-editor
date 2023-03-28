@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Keyword } from '@manuscripts/json-schema'
-import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
+import { Category, Dialog /*PlusIcon*/ } from '@manuscripts/style-guide'
 import {
   Build,
   buildKeyword,
@@ -205,9 +205,7 @@ export const AddKeywordInline: React.FC<{
             handleAddKeyword()
           }}
         >
-          <PlusIconWrapper>
-            <PlusIcon />
-          </PlusIconWrapper>
+          <PlusIconWrapper>{/* <PlusIcon /> */}</PlusIconWrapper>
           {`Create keyword "${newKeyword}"`}
         </CreateKeywordButton>
       </CreateKeywordButtonWrapper>

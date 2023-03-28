@@ -19,6 +19,10 @@ import { ManuscriptNodeView } from '@manuscripts/transform'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
+// import { CloseIcon } from '@manuscripts/style-guide/'
+import ReactDOM from 'react-dom'
+import { createElement } from 'react'
 export class KeywordView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
@@ -32,9 +36,17 @@ export class KeywordView<PropsType extends BaseNodeProps>
 
   public updateContents = () => {
     try {
+      const closeIconWrapper = document.createElement('span')
+      closeIconWrapper.classList.add('delete-keyword')
+      ReactDOM.render(
+        createElement(CloseIconDark, { height: 8, width: 8, color: '#353535' }),
+        closeIconWrapper
+      )
+
       const fragment = sanitize(this.node.attrs.contents)
       this.dom.innerHTML = ''
       this.dom.appendChild(fragment)
+      this.dom.appendChild(closeIconWrapper)
     } catch (e) {
       console.error(e) // tslint:disable-line:no-console
       // TODO: improve the UI for presenting offline/import errors
@@ -48,8 +60,6 @@ export class KeywordView<PropsType extends BaseNodeProps>
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
     this.dom.setAttribute('id', this.node.attrs.id)
-
-    this.contentDOM = this.dom
   }
 }
 
