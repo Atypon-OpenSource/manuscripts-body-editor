@@ -55,15 +55,11 @@ export class KeywordsElementView extends BlockView<
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
-  }
-
-  public updateContents = () => {
-    this.addingTools?.remove()
 
     this.addingTools = ReactSubView(
       this.props,
       AddKeywordInline,
-      {},
+      { getUpdatedNode: () => this.node },
       this.node,
       this.getPos,
       this.view,
@@ -74,12 +70,10 @@ export class KeywordsElementView extends BlockView<
       this.element.appendChild(this.addingTools)
     }
 
-    this.deleteTools?.remove()
-
     this.deleteTools = ReactSubView(
       this.props,
       DeleteKeyword,
-      {},
+      { getUpdatedNode: () => this.node },
       this.node,
       this.getPos,
       this.view,

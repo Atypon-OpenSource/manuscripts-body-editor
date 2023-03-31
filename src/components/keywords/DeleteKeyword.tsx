@@ -23,40 +23,70 @@ export const DeleteKeyword: React.FC<{
     getPos: () => number
     node: ManuscriptNode
   }
-}> = ({ viewProps }) => {
+  getUpdatedNode: () => ManuscriptNode
+}> = ({ viewProps, getUpdatedNode }) => {
   const [isDeletingKeyword, setIsDeletingKeyword] = useState<boolean>(false)
-  const { node, getPos, view } = viewProps
+  const [keywordToDelete, setKeywordToDelete] = useState<string>('')
+  const [keywordToDeleteId, setKeywordToDeleteId] = useState<string>('')
+  const { getPos, view } = viewProps
 
-  const keywords: ManuscriptNode[] = []
-  node.content.descendants((descNode) => {
-    if (descNode.type === descNode.type.schema.nodes.keyword) {
-      keywords.push(descNode)
-    }
-  })
+  const getKeywords = (node: ManuscriptNode) => {
+    const keywords: ManuscriptNode[] = []
+    node.content.descendants((descNode) => {
+      if (descNode.type === descNode.type.schema.nodes.keyword) {
+        keywords.push(descNode)
+      }
+    })
+    return keywords
+  }
 
   const handleClick = (event: Event) => {
     const clickTarget = event.target as HTMLElement
     const deleteIcon = clickTarget.closest('.delete-keyword')
 
-    console.log('event', event)
     if (deleteIcon) {
-      console.log(deleteIcon.parentElement)
-    }
-    console.log(keywords)
-    console.log(view.state.doc.resolve(getPos()))
-    if (true) {
-      handleDelete()
-    } else {
-      handleCancel()
+      const keywordId = deleteIcon.parentElement?.getAttribute('id') || ''
+      const keywordContent = deleteIcon.parentElement?.textContent || ''
+      setKeywordToDeleteId(keywordId)
+      setKeywordToDelete(keywordContent)
+      setIsDeletingKeyword(true)
     }
   }
 
   const handleCancel = () => {
-    setIsDeletingKeyword(false)
+    resetState()
   }
 
   const handleDelete = () => {
+    if (keywordToDeleteId) {
+      const keywords = getKeywords(getUpdatedNode())
+      const keywordIndex = keywords.findIndex(
+        (element) => element.attrs.id === keywordToDeleteId
+      )
+      const keywordPosition = keywords.reduce(
+        (acc, element, index) =>
+          index < keywordIndex ? acc + element.nodeSize : acc,
+        0
+      )
+      const elementSize = keywords[keywordIndex].nodeSize
+      const elementPosition = view.state.doc.resolve(
+        getPos() + keywordPosition + 1
+      )
+
+      view.dispatch(
+        view.state.tr.delete(
+          elementPosition.pos,
+          elementPosition.pos + elementSize
+        )
+      )
+      resetState()
+    }
+  }
+
+  const resetState = () => {
     setIsDeletingKeyword(false)
+    setKeywordToDeleteId('')
+    // setKeywordToDelete('')
   }
 
   useEffect(() => {
@@ -69,10 +99,12 @@ export const DeleteKeyword: React.FC<{
 
   const actions = {
     primary: {
-      action: () => {
-        setIsDeletingKeyword(false)
-      },
-      title: 'OK',
+      action: handleCancel,
+      title: 'Cancel',
+    },
+    secondary: {
+      action: handleDelete,
+      title: 'Delete',
     },
   }
 
@@ -81,8 +113,9 @@ export const DeleteKeyword: React.FC<{
       isOpen={isDeletingKeyword}
       actions={actions}
       category={Category.confirmation}
-      header={'Keyword already exists'}
-      message={`You can’t add this keyword because it already exists. You can add another one.`}
+      header={'Delete Keyword'}
+      message={`Are you sure you want to delete "${keywordToDelete}" keyword?
+      `}
     />
   )
 }

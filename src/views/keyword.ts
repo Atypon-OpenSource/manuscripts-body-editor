@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
+import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
 import { ManuscriptNodeView } from '@manuscripts/transform'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
-// import { CloseIcon } from '@manuscripts/style-guide/'
-import ReactDOM from 'react-dom'
-import { createElement } from 'react'
 export class KeywordView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
