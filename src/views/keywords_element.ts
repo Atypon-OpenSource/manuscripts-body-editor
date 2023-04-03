@@ -17,6 +17,7 @@
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlock } from './editable_block'
 
 export class KeywordsElementView<
   PropsType extends BaseNodeProps
@@ -40,4 +41,4 @@ export class KeywordsElementView<
   }
 }
 
-export default createNodeView(KeywordsElementView)
+export default createNodeView(EditableBlock(KeywordsElementView))
