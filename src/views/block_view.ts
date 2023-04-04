@@ -69,6 +69,21 @@ export default class BlockView<T extends BaseNodeProps>
       return
     }
 
+    if (this.node.attrs.dataTracked?.length) {
+      console.log(this.node.attrs.dataTracked[0])
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
+
     for (const [key, target] of Object.entries(this.viewAttributes)) {
       if (key in this.node.attrs) {
         const value = this.node.attrs[key]
