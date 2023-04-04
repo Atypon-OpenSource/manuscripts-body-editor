@@ -210,7 +210,9 @@ export const AddKeywordInline: React.FC<{
             handleAddKeyword()
           }}
         >
-          <PlusIconWrapper>{<PlusIcon />}</PlusIconWrapper>
+          <PlusIconWrapper>
+            <PlusIcon />
+          </PlusIconWrapper>
           {`Create keyword "${newKeyword}"`}
         </CreateKeywordButton>
       </CreateKeywordButtonWrapper>
