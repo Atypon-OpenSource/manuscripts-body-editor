@@ -741,6 +741,7 @@
 
 .keywords-list {
   margin: 0;
+  display: inline;
 }
 
 .keywords-list span {
@@ -765,6 +766,16 @@
 .keywords-list span.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
+}
+
+.keywords-list .ProseMirror-trailingBreak {
+  display: none;
+}
+
+.keywords-editor {
+  position: static;
+  display: inline-block;
+  width: auto;
 }
 
 .ProseMirror .inserted.pending {
