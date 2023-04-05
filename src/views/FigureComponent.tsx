@@ -101,7 +101,7 @@ const FigureComponent = ({
 
     const { isSupportedImageType, fileName } = useMemo(() => {
       const imageFileRegex =
-        /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp)(\?format=jpg)?$/gi
+        /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp|tif|tiff)(\?format=jpg)?$/gi
       let attachmentFileName = nodeAttrs.src
 
       if (nodeAttrs.contentType) {

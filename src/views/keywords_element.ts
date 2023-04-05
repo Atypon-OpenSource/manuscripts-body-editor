@@ -14,44 +14,63 @@
  * limitations under the License.
  */
 
-import { sanitize } from '../lib/dompurify'
+import { Model } from '@manuscripts/json-schema'
+import { Build } from '@manuscripts/transform'
+import { DefaultTheme } from 'styled-components'
+
+import { Dispatch } from '../commands'
+import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import ReactSubView from './ReactSubView'
 
-export class KeywordsElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export interface KeywordsElementProps {
+  dispatch?: Dispatch
+  theme?: DefaultTheme
+  retrySync: (componentIDs: string[]) => Promise<void>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+}
+
+export class KeywordsElementView extends BlockView<
+  BaseNodeProps & KeywordsElementProps
+> {
   private element: HTMLElement
+  public editingTools: HTMLDivElement
 
   public ignoreMutation = () => true
 
   public stopEvent = () => true
 
-  public updateContents = () => {
-    try {
-      const fragment = sanitize(this.node.attrs.contents)
-      this.element.innerHTML = ''
-      this.element.appendChild(fragment)
-    } catch (e) {
-      console.error(e) // tslint:disable-line:no-console
-      // TODO: improve the UI for presenting offline/import errors
-      window.alert(
-        'There was an error loading the HTML purifier, please reload to try again'
-      )
-    }
-
-    this.element.setAttribute(
-      'data-paragraph-style',
-      this.node.attrs.paragraphStyle
-    )
-  }
-
   public createElement = () => {
     this.element = document.createElement('div')
-    this.element.className = 'block'
-    this.element.setAttribute('id', this.node.attrs.id)
+    this.element.classList.add('block')
     this.dom.appendChild(this.element)
+
+    this.contentDOM = document.createElement('div')
+    this.contentDOM.classList.add('keywords-list')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.setAttribute('contenteditable', 'false')
+
+    this.element.appendChild(this.contentDOM)
+  }
+
+  public updateContents = () => {
+    this.editingTools?.remove()
+
+    this.editingTools = ReactSubView(
+      this.props,
+      AddKeywordInline,
+      {},
+      this.node,
+      this.getPos,
+      this.view,
+      'keywords-editor'
+    )
+
+    if (this.editingTools) {
+      this.element.appendChild(this.editingTools)
+    }
   }
 }
 

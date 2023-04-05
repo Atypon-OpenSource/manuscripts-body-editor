@@ -55,11 +55,8 @@ export class ContextMenu {
   private readonly actions: Actions
 
   private suppressibleAttrs: Map<string, string> = new Map([
-    ['suppressCaption', 'Caption'],
-    ['suppressTitle', 'Title'],
     ['suppressHeader', 'Header'],
     ['suppressFooter', 'Footer'],
-    // ['titleSuppressed', 'Heading'],
   ])
 
   public constructor(
@@ -522,18 +519,6 @@ export class ContextMenu {
     )
   }
 
-  private parentAttrs = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.parent.attrs
-  }
-
-  private getParentPos = () => {
-    const $pos = this.resolvePos()
-
-    return $pos.before()
-  }
-
   private isListType = (type: string) =>
     ['bullet_list', 'ordered_list'].includes(type)
 
@@ -543,7 +528,7 @@ export class ContextMenu {
     let attrs = this.node.attrs
     // TODO:: this is just a hacky workaround, we should remove it when add suppressTitle to manuscripts-examples
     if (this.node.attrs.suppressTitle === undefined) {
-      attrs = Object.assign(this.node.attrs, { suppressTitle: true })
+      attrs = Object.assign(this.node.attrs, { suppressTitle: false })
     }
 
     for (const [attr, label] of this.suppressibleAttrs.entries()) {
@@ -555,26 +540,6 @@ export class ContextMenu {
           getPos: this.getPos,
         })
       }
-    }
-
-    switch (this.node.type.name) {
-      case 'section':
-        items.push({
-          attr: 'titleSuppressed',
-          attrs,
-          label: 'Heading',
-          getPos: this.getPos,
-        })
-        break
-
-      case 'section_title':
-        items.push({
-          attr: 'titleSuppressed',
-          attrs: this.parentAttrs(),
-          label: 'Heading',
-          getPos: this.getParentPos,
-        })
-        break
     }
 
     return items

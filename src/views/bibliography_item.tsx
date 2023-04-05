@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
+import {
+  BibliographyItem,
+  CommentAnnotation,
+  Model,
+} from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
   loadCitationStyle,
 } from '@manuscripts/library'
 import {
+  Build,
   buildComment,
   DEFAULT_BUNDLE,
   ManuscriptNodeView,
 } from '@manuscripts/transform'
+import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 
 const createBibliography = async (items: BibliographyItem[]) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
@@ -44,14 +51,73 @@ const createBibliography = async (items: BibliographyItem[]) => {
   return contents
 }
 
-interface BibliographyItemProps extends BaseNodeProps {
+interface BibliographyItemViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  deleteModel: (id: string) => Promise<string>
+  setLibraryItem: (item: BibliographyItem) => void
+  removeLibraryItem: (id: string) => void
+  modelMap: Map<string, Model>
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export class BibliographyItemView<PropsType extends BibliographyItemProps>
+export class BibliographyItemView<
+    PropsType extends BibliographyItemViewProps & EditableBlockProps
+  >
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
+  protected popperContainer?: HTMLDivElement
+
+  public showPopper = (referenceID: string) => {
+    const {
+      filterLibraryItems,
+      saveModel,
+      deleteModel,
+      setLibraryItem,
+      removeLibraryItem,
+      renderReactComponent,
+      modelMap,
+      components: { ReferencesEditor },
+    } = this.props
+
+    const handleSave = async (data: Partial<BibliographyItem>) => {
+      const ref = await saveModel({
+        ...data,
+      } as BibliographyItem)
+
+      this.view.dispatch(
+        this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
+          id: ref._id,
+          containerTitle: ref['container-title'],
+          doi: ref.DOI,
+          ...ref,
+        })
+      )
+    }
+
+    if (!this.popperContainer) {
+      this.popperContainer = document.createElement('div')
+      this.popperContainer.className = 'references'
+    }
+
+    renderReactComponent(
+      <ReferencesEditor
+        filterLibraryItems={filterLibraryItems}
+        saveModel={handleSave}
+        deleteModel={deleteModel}
+        setLibraryItem={setLibraryItem}
+        removeLibraryItem={removeLibraryItem}
+        modelMap={modelMap}
+        referenceID={referenceID}
+      />,
+      this.popperContainer
+    )
+
+    this.props.popper.show(this.dom, this.popperContainer, 'right')
+  }
+
   public initialise = () => {
     this.createDOM()
     this.updateContents()
@@ -64,26 +130,14 @@ export class BibliographyItemView<PropsType extends BibliographyItemProps>
   }
 
   public updateContents = async () => {
-    const attrs = { ...this.node.attrs }
-
-    delete attrs.paragraphStyle
-    delete attrs.dataTracked
-
-    attrs['_id'] = this.node.attrs.id
-    delete attrs.id
-
-    if (attrs.doi) {
-      attrs['DOI'] = attrs.doi
-      delete attrs.doi
-    }
-
-    const reference = attrs
+    const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
     if (reference) {
       const bibliography = await createBibliography([
         reference,
       ] as BibliographyItem[])
       try {
         const fragment = sanitize(bibliography.outerHTML)
+        this.dom.innerHTML = ''
         this.dom.appendChild(fragment)
 
         const doubleButton = document.createElement('div')
@@ -100,12 +154,17 @@ export class BibliographyItemView<PropsType extends BibliographyItemProps>
           )
         })
 
-        // TODO:: add event listener for edit button
+        editButton.addEventListener('click', () => {
+          this.showPopper(this.node.attrs.id)
+          this.popperContainer = undefined
+        })
 
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        this.dom.appendChild(doubleButton)
+        if (this.props.capabilities?.seeReferencesButtons) {
+          this.dom.appendChild(doubleButton)
+        }
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors
@@ -118,5 +177,4 @@ export class BibliographyItemView<PropsType extends BibliographyItemProps>
 
   public ignoreMutation = () => true
 }
-
 export default createNodeView(BibliographyItemView)

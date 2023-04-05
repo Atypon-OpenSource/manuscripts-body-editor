@@ -34,6 +34,7 @@ import {
 import { findDOMNode } from 'react-dom'
 
 import { ContextMenu } from '../../lib/context-menu'
+import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
@@ -110,6 +111,7 @@ const isExcluded = (nodeType: ManuscriptNodeType) => {
     nodes.figure,
     nodes.footnotes_element,
     nodes.bibliography_element,
+    nodes.keywords_section,
   ]
 
   return excludedTypes.includes(nodeType)
@@ -197,7 +199,15 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { node, requirementsNode, items, isSelected } = tree
 
+    const isDeletedItem = isDeleted(node)
+
+    const isRejectedItem = isRejectedInsert(node)
+
     const mightDrop = item && isOverCurrent && canDrop
+
+    if (isRejectedItem) {
+      return null
+    }
 
     return connectDropTarget(
       <div>
@@ -241,7 +251,9 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   )}
 
                   <OutlineItemLinkText
-                    className={`outline-text-${node.type.name}`}
+                    className={`outline-text-${node.type.name} ${
+                      isDeletedItem && 'deleted'
+                    }`}
                   >
                     {this.itemText(node)}
                   </OutlineItemLinkText>
@@ -461,7 +473,19 @@ const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
 
       let sourcePos = source.pos - 1
 
-      const tr = props.view.state.tr.insert(insertPos, source.node)
+      // @TODO fix duplicated ids by cloning a node with a cleared id attribute
+      // duplicated ids occurr when track changes are enabled and deletion is reverted and kept alongside with the newly inserted content
+
+      const newNode = source.node.type.schema.nodes[
+        source.node.type.name
+      ].create(
+        {
+          ...source.node.attrs,
+          id: '',
+        },
+        source.node?.content
+      )
+      const tr = props.view.state.tr.insert(insertPos, newNode)
 
       sourcePos = tr.mapping.map(sourcePos)
 

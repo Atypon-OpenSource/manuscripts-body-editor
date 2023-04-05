@@ -78,12 +78,12 @@ export class FigureElementView extends BlockView<
 
       let node_position = 0
       this.node.forEach((node, pos) => {
-        if (node.type === node.type.schema.nodes.figcaption) {
-          node_position = pos
+        if (node.type === node.type.schema.nodes.figure) {
+          node_position = pos + node.nodeSize
         }
       })
 
-      dispatch(tr.insert(this.getPos() + node_position, figure))
+      dispatch(tr.insert(this.getPos() + node_position + 1, figure))
     } else {
       const figure = getMatchingChild(
         this.node,
@@ -105,29 +105,15 @@ export class FigureElementView extends BlockView<
   }
 
   public updateContents = () => {
-    const {
-      suppressCaption,
-      suppressTitle,
-      figureStyle,
-      figureLayout,
-      alignment,
-      sizeFraction,
-    } = this.node.attrs
-
-    this.dom.classList.toggle('suppress-caption', suppressCaption)
-    this.dom.classList.toggle(
-      'suppress-title',
-      suppressTitle === undefined ? true : suppressTitle
-    )
+    const { figureStyle, figureLayout, alignment, sizeFraction } =
+      this.node.attrs
 
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
     }
 
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
-
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
-
     this.contentDOM.setAttribute('data-alignment', alignment)
 
     if (sizeFraction > 1) {

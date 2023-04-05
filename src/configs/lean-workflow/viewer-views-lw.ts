@@ -36,8 +36,10 @@ import inlineEquation from '../../views/inline_equation'
 import inlineFootnote, {
   InlineFootnoteProps,
 } from '../../views/inline_footnote'
+import keyword from '../../views/keyword'
 import keywordsElement from '../../views/keywords_element'
 import link from '../../views/link'
+import metaSection from '../../views/meta_section'
 import orderedList from '../../views/ordered_list'
 import paragraph from '../../views/paragraph'
 import placeholder from '../../views/placeholder'
@@ -69,6 +71,7 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   footnotes_element: footnotesElement(props),
   inline_equation: inlineEquation(props),
   inline_footnote: inlineFootnote(props),
+  keyword: keyword(props),
   keywords_element: keywordsElement(props),
   link: link(props),
   ordered_list: orderedList(props),
@@ -80,4 +83,5 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
+  comment_list: metaSection,
 })
