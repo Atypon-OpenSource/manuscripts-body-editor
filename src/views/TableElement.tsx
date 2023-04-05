@@ -146,11 +146,7 @@ const TableElement = ({
                   dataset.ref.displayName ||
                   dataset.ref.filename
                 }
-                handleChangeDesignation={(typeId: string, name: string) =>
-                  updateDesignation(typeId, name)
-                }
                 externalFile={dataset.ref}
-                showDesignationActions={true}
               />
             </AlternativesList>
           )}
