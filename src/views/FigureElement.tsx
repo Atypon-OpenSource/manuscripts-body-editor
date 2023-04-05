@@ -17,17 +17,14 @@
 
 import {
   AttachIcon,
-  Designation,
   DropdownContainer,
-  getDesignationName,
   RoundIconButton,
-  SelectDialogDesignation,
   SubmissionAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -37,7 +34,7 @@ import {
 import { FilesDropdown } from '../components/views/FilesDropdown'
 import { FileUpload } from '../components/views/FileUpload'
 import { getAllowedForInFigure } from '../lib/external-files'
-import { getFileExtension } from '../lib/utils'
+// import { getFileExtension } from '../lib/utils'
 import EditableBlock from './EditableBlock'
 import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
@@ -45,7 +42,7 @@ import { ReactViewComponentProps } from './ReactView'
 interface AttachableFilesDropdownProps {
   onSelect: (file: SubmissionAttachment) => void
   files: SubmissionAttachment[]
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   addFigureExFileRef: (attachmentId: string) => void
 }
 
@@ -56,17 +53,13 @@ export const AttachableFilesDropdown: React.FC<
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const allowedFiles = useMemo(() => getAllowedForInFigure(files), [files])
-  const [isOpenDesignationSelector, toggleDesignationSelector] =
-    useState<boolean>(false)
-
-  const [fileToUpload, setFileToUpload] = useState<File | null>(null)
-  const [uploadedFileDesignation, setUploadedFileDesignation] =
-    useState<string>('')
+  // const [fileToUpload, setFileToUpload] = useState<File | null>(null)
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e && e.target && e.target.files ? e.target.files[0] : ''
     if (file) {
-      setFileToUpload(file)
-      toggleDesignationSelector(true)
+      // HOVNO: TADY MUSI NECO BEJT !!!
+      // setFileToUpload(file)
+      // toggleDesignationSelector(true)
     }
   }
 
@@ -76,12 +69,11 @@ export const AttachableFilesDropdown: React.FC<
     }
   }
 
-  const resetUploadProcess = () => {
-    toggleDesignationSelector(false)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }
+  // const resetUploadProcess = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.value = ''
+  //   }
+  // }
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -113,7 +105,7 @@ export const AttachableFilesDropdown: React.FC<
         value={''}
         ref={fileInputRef}
       />
-      {fileToUpload && (
+      {/* {fileToUpload && (
         <SelectDialogDesignation
           isOpen={isOpenDesignationSelector}
           fileExtension={getFileExtension(fileToUpload)}
@@ -139,7 +131,7 @@ export const AttachableFilesDropdown: React.FC<
             setUploadedFileDesignation(getDesignationName(designation))
           }}
         />
-      )}
+      )} */}
     </DropdownWrapper>
   )
 }
@@ -181,7 +173,6 @@ const FigureElement = ({
             fileInputRef={fileInputRef}
             uploadAttachment={uploadAttachment}
             addFigureExFileRef={addFigureExFileRef}
-            designation={'figure'}
             accept={'image/*'}
             relation={'imageRepresentation'}
           />

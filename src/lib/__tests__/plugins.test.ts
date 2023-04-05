@@ -356,7 +356,6 @@ const buildProps = (
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
   submissionId: 'testId',
-  updateDesignation: () => new Promise(() => ''),
   uploadAttachment: () => new Promise(() => ''),
   theme: {},
   getAttachments: () => [],

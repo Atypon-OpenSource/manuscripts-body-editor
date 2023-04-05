@@ -67,9 +67,7 @@ export class TableElementView extends BlockView<
           dataset.ref.filename ||
           dataset.ref.displayName ||
           dataset.ref.filename,
-        handleChangeDesignation: this.props.updateDesignation,
         externalFile: dataset.ref,
-        showDesignationActions: true,
       }
       this.reactBottomTools = ReactSubView(
         this.props,
@@ -88,7 +86,6 @@ export class TableElementView extends BlockView<
 
     if (
       this.props.mediaAlternativesEnabled &&
-      this.props.capabilities?.changeDesignation &&
       this.props.getAttachments()
     ) {
       const addFigureExFileRef = () => {

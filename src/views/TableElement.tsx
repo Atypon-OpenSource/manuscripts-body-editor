@@ -33,7 +33,6 @@ import {
 import { ReactViewComponentProps } from './ReactView'
 
 const TableElement = ({
-  updateDesignation,
   uploadAttachment,
   capabilities: can,
   mediaAlternativesEnabled,
@@ -104,7 +103,6 @@ const TableElement = ({
       if (!figure) {
         return
       }
-      const prevAttrs = { ...figure.attrs }
       setTableAttrs({
         externalFileReferences: addExternalFileRef(
           figure?.attrs.externalFileReferences,
@@ -113,15 +111,11 @@ const TableElement = ({
           { ref: file }
         ),
       })
-      updateDesignation('dataset', file.name).catch(() => {
-        setTableAttrs(prevAttrs)
-      })
     }
     return (
       <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
           {mediaAlternativesEnabled &&
-            can?.changeDesignation &&
             getAttachments() && (
               <AttachableFilesDropdown
                 files={getAttachments()}

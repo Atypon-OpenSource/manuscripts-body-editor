@@ -22,7 +22,6 @@ import {
 } from '@manuscripts/style-guide'
 import {
   FigureNode,
-  isInGraphicalAbstractSection,
 } from '@manuscripts/transform'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
@@ -50,10 +49,8 @@ export interface FigureProps {
   getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
-  isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
 }
 
@@ -78,9 +75,6 @@ const FigureComponent = ({
     contentDOM,
   }) => {
     const figure = viewProps.node
-    const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
-    const isInGraphicalAbstract = isInGraphicalAbstractSection(resolvedPos)
-
     const src = useMemo(() => {
       if (nodeAttrs.src) {
         return nodeAttrs.src
@@ -212,9 +206,6 @@ const FigureComponent = ({
             fileInputRef={fileInputRef}
             uploadAttachment={uploadAttachment}
             addFigureExFileRef={addFigureExFileRef}
-            designation={
-              isInGraphicalAbstract ? 'graphical-abstract-image' : 'figure'
-            }
             accept={'image/*'}
             relation={'imageRepresentation'}
           />

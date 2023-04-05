@@ -21,7 +21,6 @@ import {
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import {
-  isInGraphicalAbstractSection,
   ManuscriptEditorView,
   ManuscriptNode,
 } from '@manuscripts/transform'
@@ -46,8 +45,7 @@ interface FigureProps {
   getAttachments: () => SubmissionAttachment[]
   modelMap: Map<string, Model>
   submissionId: string
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
@@ -145,11 +143,6 @@ export class FigureEditableView extends FigureView<
     }
   }
 
-  private isInGraphicalAbstract = () => {
-    const resolvedPos = this.view.state.doc.resolve(this.getPos())
-    return isInGraphicalAbstractSection(resolvedPos)
-  }
-
   private detachImageRef = () => {
     if (this.node) {
       const ref = this.getAttachment(this.node.attrs.src)
@@ -181,7 +174,6 @@ export class FigureEditableView extends FigureView<
       if (this.props.capabilities?.editArticle) {
         const uploadAttachmentHandler = createOnUploadHandler(
           this.props.uploadAttachment,
-          this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
           this.addAttachmentSrc
         )
         const input = document.createElement('input')

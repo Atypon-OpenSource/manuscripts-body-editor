@@ -105,7 +105,6 @@ const defaultViewerProps: ViewerProps = {
   components: {},
   theme,
   submissionId: 'test-submission-id',
-  updateDesignation: async () => undefined,
   uploadAttachment: async () => undefined,
   getAttachments: () => [],
 }
