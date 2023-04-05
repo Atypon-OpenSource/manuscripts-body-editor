@@ -20,11 +20,7 @@ import {
   FileAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
-import {
-  isInGraphicalAbstractSection,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -45,8 +41,8 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 interface FigureProps {
   getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  submissionId: string
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
@@ -144,11 +140,6 @@ export class FigureEditableView extends FigureView<
     }
   }
 
-  private isInGraphicalAbstract = () => {
-    const resolvedPos = this.view.state.doc.resolve(this.getPos())
-    return isInGraphicalAbstractSection(resolvedPos)
-  }
-
   private detachImageRef = () => {
     if (this.node) {
       const ref = this.getAttachment(this.node.attrs.src)
@@ -180,7 +171,6 @@ export class FigureEditableView extends FigureView<
       if (this.props.capabilities?.editArticle) {
         const uploadAttachmentHandler = createOnUploadHandler(
           this.props.uploadAttachment,
-          this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
           this.addAttachmentSrc
         )
         const input = document.createElement('input')
