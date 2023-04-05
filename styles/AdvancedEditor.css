@@ -651,6 +651,7 @@
 .block-comment-button.figure-comment {
   position: absolute;
   right: 3%;
+  z-index: 10;
 }
 
 .figure-comment > .comment-icon {
