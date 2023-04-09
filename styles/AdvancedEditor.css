@@ -742,6 +742,7 @@
 
 .keywords-list {
   margin: 0;
+  display: inline;
 }
 
 .keywords-list span {
@@ -766,4 +767,39 @@
 .keywords-list span.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
+}
+
+.keywords-list .ProseMirror-trailingBreak {
+  display: none;
+}
+
+.keywords-editor {
+  position: static;
+  display: inline-block;
+  width: auto;
+}
+
+.ProseMirror .inserted.pending {
+  background: #ddf3fa;
+  text-decoration: none;
+}
+.ProseMirror .inserted.accepted {
+  background: #bffca7;
+  text-decoration: none;
+}
+.ProseMirror .inserted.rejected {
+  display: none;
+}
+.ProseMirror .deleted.pending {
+  background: #ddf3fa;
+}
+.ProseMirror .deleted.accepted {
+  background: #bffca7;
+}
+.ProseMirror .deleted.rejected {
+  text-decoration: none;
+}
+.ProseMirror
+  .block-container[data-track-status='rejected'][data-track-op='insert'] {
+  display: none;
 }

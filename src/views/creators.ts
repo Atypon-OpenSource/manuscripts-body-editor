@@ -25,9 +25,15 @@ export const createNodeView =
   <T extends BaseNodeView<BaseNodeProps>, PropsT extends BaseNodeProps>(
     type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
   ) =>
-  (props: PropsT): NodeViewCreator<T> =>
+  (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> =>
   (node, view, getPos, decorations) => {
-    const nodeView = new type(props, node, view, getPos, decorations)
+    const nodeView = new type(
+      { ...props, dispatch },
+      node,
+      view,
+      getPos,
+      decorations
+    )
 
     nodeView.initialise()
 

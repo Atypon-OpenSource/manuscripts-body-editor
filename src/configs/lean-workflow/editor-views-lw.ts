@@ -34,7 +34,9 @@ import footnotesElement from '../../views/footnotes_element'
 import inlineEquation from '../../views/inline_equation_editable'
 import inlineFootnote from '../../views/inline_footnote_editable'
 import keyword from '../../views/keyword'
-import keywordsElement from '../../views/keywords_element'
+import keywordsElement, {
+  KeywordsElementProps,
+} from '../../views/keywords_element'
 import link from '../../views/link_editable'
 import listing from '../../views/listing_editable'
 import listingElement from '../../views/listing_element_editable'
@@ -52,7 +54,8 @@ import tocElement from '../../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps &
   CitationEditableProps &
-  FigureProps & { theme: DefaultTheme }
+  FigureProps &
+  KeywordsElementProps & { theme: DefaultTheme }
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
@@ -71,7 +74,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props),
     keyword: keyword(props),
-    keywords_element: keywordsElement(props),
+    keywords_element: keywordsElement(props, dispatch),
     link: link(props),
     listing: listing(props),
     listing_element: listingElement(props),
