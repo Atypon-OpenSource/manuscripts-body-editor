@@ -25,13 +25,21 @@ import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import plugins from './configs/lean-workflow/editor-plugins-lw'
+import views from './configs/lean-workflow/editor-views-lw'
+import { EditorProps } from './configs/lean-workflow/ManuscriptsEditor'
+
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
   dispatch: (tr: Transaction) => EditorState
 ) => EditorView
 
-const useEditor = (initialState: EditorState, createView: CreateView) => {
+const useEditor = (
+  initialState: EditorState,
+  createView: CreateView,
+  props: EditorProps
+) => {
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
@@ -137,6 +145,28 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
     }
   }, [history, focusNodeWithId])
 
+  const updateEditorProps = useCallback(
+    (updatedProps: Partial<EditorProps>) => {
+      if (!view.current) {
+        return
+      }
+
+      const newProps = { ...props, ...updatedProps }
+
+      view.current.updateState(
+        view.current.state.reconfigure({
+          plugins: plugins(newProps),
+        })
+      )
+
+      view.current.setProps({
+        editable: () => !!newProps.capabilities?.editArticle,
+        nodeViews: views(newProps, view.current?.dispatch),
+      })
+    },
+    [props]
+  )
+
   return {
     // ordinary use:
     state,
@@ -148,6 +178,7 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
     replaceView,
     view: view.current,
     dispatch,
+    updateEditorProps,
   }
 }
 
