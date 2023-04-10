@@ -651,6 +651,7 @@
 .block-comment-button.figure-comment {
   position: absolute;
   right: 3%;
+  z-index: 10;
 }
 
 .figure-comment > .comment-icon {
@@ -741,6 +742,7 @@
 
 .keywords-list {
   margin: 0;
+  display: inline;
 }
 
 .keywords-list span {
@@ -765,6 +767,16 @@
 .keywords-list span.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
+}
+
+.keywords-list .ProseMirror-trailingBreak {
+  display: none;
+}
+
+.keywords-editor {
+  position: static;
+  display: inline-block;
+  width: auto;
 }
 
 .block-keywords_element > .block {

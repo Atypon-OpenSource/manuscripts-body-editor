@@ -996,7 +996,7 @@ export const deleteHighlightMarkers =
       .forEach((pos) => {
         tr.delete(pos, pos + 1)
       })
-    tr.setMeta('addToHistory', false)
+    tr.setMeta('track-changes-skip-tracking', true)
     dispatch && dispatch(tr)
     return true
   }

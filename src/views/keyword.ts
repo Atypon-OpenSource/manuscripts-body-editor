@@ -19,11 +19,12 @@ import { ManuscriptNodeView } from '@manuscripts/transform'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-
 export class KeywordView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
+  public ignoreMutation = () => true
+
   public initialise = () => {
     this.createDOM()
     this.updateContents()
