@@ -73,7 +73,7 @@ const useEditor = (
     if (!el) {
       return
     }
-    view.current = createView(el, state, dispatch)
+    view.current = createView(el, view.current?.state || state, dispatch)
     setState(view.current.state)
     setViewElement(el)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
