@@ -20,6 +20,7 @@ import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
 import { sanitize } from '../lib/dompurify'
+import { isDeleted, isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 export class KeywordView<PropsType extends BaseNodeProps>
@@ -34,24 +35,30 @@ export class KeywordView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    try {
-      const closeIconWrapper = document.createElement('span')
-      closeIconWrapper.classList.add('delete-keyword')
-      ReactDOM.render(
-        createElement(CloseIconDark, { height: 8, width: 8, color: '#353535' }),
-        closeIconWrapper
-      )
+    if (!isDeleted(this.node) && !isRejectedInsert(this.node)) {
+      try {
+        const closeIconWrapper = document.createElement('span')
+        closeIconWrapper.classList.add('delete-keyword')
+        ReactDOM.render(
+          createElement(CloseIconDark, {
+            height: 8,
+            width: 8,
+            color: '#353535',
+          }),
+          closeIconWrapper
+        )
 
-      const fragment = sanitize(this.node.attrs.contents)
-      this.dom.innerHTML = ''
-      this.dom.appendChild(fragment)
-      this.dom.appendChild(closeIconWrapper)
-    } catch (e) {
-      console.error(e) // tslint:disable-line:no-console
-      // TODO: improve the UI for presenting offline/import errors
-      window.alert(
-        'There was an error loading the HTML purifier, please reload to try again'
-      )
+        const fragment = sanitize(this.node.attrs.contents)
+        this.dom.innerHTML = ''
+        this.dom.appendChild(fragment)
+        this.dom.appendChild(closeIconWrapper)
+      } catch (e) {
+        console.error(e) // tslint:disable-line:no-console
+        // TODO: improve the UI for presenting offline/import errors
+        window.alert(
+          'There was an error loading the HTML purifier, please reload to try again'
+        )
+      }
     }
   }
 

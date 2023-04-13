@@ -30,6 +30,8 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
+import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+
 const AddNewKeyword = styled.div`
   position: relative;
   display: inline-block;
@@ -106,7 +108,11 @@ export const AddKeywordInline: React.FC<{
   const getKeywords = (node: ManuscriptNode) => {
     const keywords: KeywordEntry[] = []
     node.content.descendants((descNode) => {
-      if (descNode.type === descNode.type.schema.nodes.keyword) {
+      if (
+        descNode.type === descNode.type.schema.nodes.keyword &&
+        !isDeleted(descNode) &&
+        !isRejectedInsert(descNode)
+      ) {
         keywords.push({
           id: descNode.attrs.id,
           contents: descNode.attrs.contents,
