@@ -46,3 +46,12 @@ export function isPendingInsert(node: ProsemirrorNode) {
   }
   return false
 }
+
+export function getChangeClasses(node: ProsemirrorNode) {
+  const classes: string[] = []
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    changes.forEach(({ operation, status }) => classes.push(operation, status))
+  }
+  return classes
+}

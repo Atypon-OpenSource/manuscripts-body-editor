@@ -21,6 +21,7 @@ import ReactDOM from 'react-dom'
 
 import { sanitize } from '../lib/dompurify'
 import {
+  getChangeClasses,
   isDeleted,
   isPendingInsert,
   isRejectedInsert,
@@ -71,15 +72,9 @@ export class KeywordView<PropsType extends BaseNodeProps>
   }
 
   protected createDOM = () => {
-    if (
-      !isDeleted(this.node) &&
-      !isRejectedInsert(this.node) &&
-      !isPendingInsert(this.node)
-    ) {
-      this.dom = document.createElement('span')
-      this.dom.classList.add('keyword')
-      this.dom.setAttribute('id', this.node.attrs.id)
-    }
+    this.dom = document.createElement('span')
+    this.dom.classList.add('keyword', ...getChangeClasses(this.node))
+    this.dom.setAttribute('id', this.node.attrs.id)
   }
 }
 
