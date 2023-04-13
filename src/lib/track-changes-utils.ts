@@ -51,7 +51,9 @@ export function getChangeClasses(node: ProsemirrorNode) {
   const classes: string[] = []
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
-    changes.forEach(({ operation, status }) => classes.push(operation, status))
+    changes.forEach(({ operation, status }) =>
+      classes.push(operation === 'insert' ? 'inserted' : 'deleted', status)
+    )
   }
   return classes
 }

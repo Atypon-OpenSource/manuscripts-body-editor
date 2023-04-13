@@ -40,12 +40,15 @@ export class KeywordView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    if (
-      !isDeleted(this.node) &&
-      !isRejectedInsert(this.node) &&
-      !isPendingInsert(this.node)
-    ) {
-      try {
+    try {
+      const fragment = sanitize(this.node.attrs.contents)
+      this.dom.innerHTML = ''
+      this.dom.appendChild(fragment)
+      if (
+        !isDeleted(this.node) &&
+        !isRejectedInsert(this.node) &&
+        !isPendingInsert(this.node)
+      ) {
         const closeIconWrapper = document.createElement('span')
         closeIconWrapper.classList.add('delete-keyword')
         ReactDOM.render(
@@ -56,18 +59,14 @@ export class KeywordView<PropsType extends BaseNodeProps>
           }),
           closeIconWrapper
         )
-
-        const fragment = sanitize(this.node.attrs.contents)
-        this.dom.innerHTML = ''
-        this.dom.appendChild(fragment)
         this.dom.appendChild(closeIconWrapper)
-      } catch (e) {
-        console.error(e) // tslint:disable-line:no-console
-        // TODO: improve the UI for presenting offline/import errors
-        window.alert(
-          'There was an error loading the HTML purifier, please reload to try again'
-        )
       }
+    } catch (e) {
+      console.error(e) // tslint:disable-line:no-console
+      // TODO: improve the UI for presenting offline/import errors
+      window.alert(
+        'There was an error loading the HTML purifier, please reload to try again'
+      )
     }
   }
 
