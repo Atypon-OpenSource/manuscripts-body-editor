@@ -36,3 +36,13 @@ export function isDeleted(node: ProsemirrorNode) {
   }
   return false
 }
+
+export function isPendingInsert(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, status }) => operation === 'insert' && status == 'pending'
+    )
+  }
+  return false
+}

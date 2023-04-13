@@ -20,7 +20,11 @@ import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
 import { sanitize } from '../lib/dompurify'
-import { isDeleted, isRejectedInsert } from '../lib/track-changes-utils'
+import {
+  isDeleted,
+  isPendingInsert,
+  isRejectedInsert,
+} from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 export class KeywordView<PropsType extends BaseNodeProps>
@@ -35,7 +39,11 @@ export class KeywordView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    if (!isDeleted(this.node) && !isRejectedInsert(this.node)) {
+    if (
+      !isDeleted(this.node) &&
+      !isRejectedInsert(this.node) &&
+      !isPendingInsert(this.node)
+    ) {
       try {
         const closeIconWrapper = document.createElement('span')
         closeIconWrapper.classList.add('delete-keyword')
@@ -63,7 +71,11 @@ export class KeywordView<PropsType extends BaseNodeProps>
   }
 
   protected createDOM = () => {
-    if (!isDeleted(this.node) && !isRejectedInsert(this.node)) {
+    if (
+      !isDeleted(this.node) &&
+      !isRejectedInsert(this.node) &&
+      !isPendingInsert(this.node)
+    ) {
       this.dom = document.createElement('span')
       this.dom.classList.add('keyword')
       this.dom.setAttribute('id', this.node.attrs.id)
