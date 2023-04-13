@@ -17,8 +17,6 @@ import { Category, Dialog } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
-
 export const DeleteKeyword: React.FC<{
   viewProps: {
     view: ManuscriptEditorView
@@ -35,11 +33,7 @@ export const DeleteKeyword: React.FC<{
   const getKeywords = (node: ManuscriptNode) => {
     const keywords: ManuscriptNode[] = []
     node.content.descendants((descNode) => {
-      if (
-        descNode.type === descNode.type.schema.nodes.keyword &&
-        !isDeleted(descNode) &&
-        !isRejectedInsert(descNode)
-      ) {
+      if (descNode.type === descNode.type.schema.nodes.keyword) {
         keywords.push(descNode)
       }
     })
