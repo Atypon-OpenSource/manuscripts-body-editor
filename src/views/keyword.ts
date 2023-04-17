@@ -35,15 +35,13 @@ export class KeywordView<PropsType extends BaseNodeProps>
   public ignoreMutation = () => true
 
   public initialise = () => {
+    this.createDOM()
     this.updateContents()
   }
 
   public updateContents = () => {
     try {
-      this.dom = document.createElement('span')
-      this.dom.classList.add('keyword', ...getChangeClasses(this.node))
-      this.dom.setAttribute('id', this.node.attrs.id)
-
+      this.dom.className = ['keyword', ...getChangeClasses(this.node)].join(' ')
       const fragment = sanitize(this.node.attrs.contents)
       this.dom.innerHTML = ''
       this.dom.appendChild(fragment)
@@ -71,6 +69,12 @@ export class KeywordView<PropsType extends BaseNodeProps>
         'There was an error loading the HTML purifier, please reload to try again'
       )
     }
+  }
+
+  protected createDOM = () => {
+    this.dom = document.createElement('span')
+    this.dom.classList.add('keyword', ...getChangeClasses(this.node))
+    this.dom.setAttribute('id', this.node.attrs.id)
   }
 }
 
