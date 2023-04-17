@@ -88,7 +88,7 @@ export class TableElementView extends BlockView<
 
     if (
       this.props.mediaAlternativesEnabled &&
-      this.props.capabilities?.changeDesignation &&
+      this.props.getCapabilities().changeDesignation &&
       this.props.getAttachments()
     ) {
       const addFigureExFileRef = () => {

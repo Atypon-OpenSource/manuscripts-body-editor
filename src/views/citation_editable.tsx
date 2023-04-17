@@ -55,13 +55,15 @@ export class CitationEditableView extends CitationView<
       setLibraryItem,
       removeLibraryItem,
       getLibraryItem,
-      capabilities,
+      getCapabilities,
       projectID,
       renderReactComponent,
       saveModel,
       deleteModel,
       modelMap,
     } = this.props
+
+    const capabilities = getCapabilities()
 
     const citation = this.getCitation()
 

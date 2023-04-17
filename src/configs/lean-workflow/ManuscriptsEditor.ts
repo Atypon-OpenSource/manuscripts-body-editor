@@ -54,7 +54,7 @@ export interface EditorProps extends ViewerProps {
   submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  capabilities?: Capabilities
+  getCapabilities: () => Capabilities
 }
 
 export default {
@@ -71,7 +71,7 @@ export default {
     (el, state, dispatch) =>
       new EditorView(el, {
         state,
-        editable: () => !!props.capabilities?.editArticle,
+        editable: () => props.getCapabilities().editArticle,
         scrollMargin: {
           top: 100,
           bottom: 100,
