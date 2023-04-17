@@ -43,7 +43,4 @@ export * from './lib/utils'
 export * from './lib/external-files'
 export { default as useEditor } from './useEditor'
 export { default as ManuscriptsViewer } from './configs/lean-workflow/ManuscriptsViewer'
-export {
-  EditorProps,
-  default as ManuscriptsEditor,
-} from './configs/lean-workflow/ManuscriptsEditor'
+export { default as ManuscriptsEditor } from './configs/lean-workflow/ManuscriptsEditor'
