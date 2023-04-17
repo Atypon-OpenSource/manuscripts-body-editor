@@ -769,6 +769,11 @@
   border-color: #bce7f6;
 }
 
+.keywords-list .keyword.deleted.pending,
+.keywords-list .keyword.deleted.accepted {
+  text-decoration: line-through;
+}
+
 .keywords-list span.delete-keyword {
   cursor: pointer;
   margin: 0 0 0 8px;
