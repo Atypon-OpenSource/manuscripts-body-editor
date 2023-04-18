@@ -1672,10 +1672,10 @@
     deepmerge "^4.2.2"
     js-beautify "^1.14.7"
 
-"@manuscripts/library@1.0.2-vite-support":
-  version "1.0.2-vite-support"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.0.2-vite-support.tgz#f7e816781c961161571e4ceac68c451e0093ae75"
-  integrity sha512-twqN5YgN3ds+qFvlNtLrT0ouoNLyV/o+CIOx6ss4E7+NKZUrutgF4H8qfFiPh7bbkFfhWy/QFMYpM8xf2FQjnA==
+"@manuscripts/library@1.0.2-vite-support-2":
+  version "1.0.2-vite-support-2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.0.2-vite-support-2.tgz#59e8bc994a999bc1cceb8bd20c291306b4de606d"
+  integrity sha512-biBLa1t/mNeCdHjl6FDC2cMfTAoFjNY15fx2hI0iHZRVJdnYsd3JoOkHxUbsP8Uzb2Fw1CTK+53fad9pUrHLxw==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/json-schema" "^1.0.0"
@@ -1759,10 +1759,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@1.1.4-vite-support":
-  version "1.1.4-vite-support"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.4-vite-support.tgz#d649888d911db012eb042fea15a9c3cdf872fedb"
-  integrity sha512-NPQqZzDJr4wF5rbp9MAoiwW/pR7aQWXRg6td/qQqA8TAQMj6lWQHuR0lShctlK7JRwI/hcDZZ+eJVBYW6hxEBg==
+"@manuscripts/transform@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.4.tgz#3754516c90fdc6c769298577e4a599381f5d3ae8"
+  integrity sha512-cdR0poIcMipsib9RBOPvo6OWB86rYvVGKEjC/5PZ0M7tIUggk4eKSw+lw3Q0eS6e3pKusj/7fWAQgTyB7Dhd3Q==
   dependencies:
     "@manuscripts/json-schema" "^1.0.0"
     debug "^4.3.4"
