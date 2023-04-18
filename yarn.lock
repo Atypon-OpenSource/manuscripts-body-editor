@@ -1672,10 +1672,10 @@
     deepmerge "^4.2.2"
     js-beautify "^1.14.7"
 
-"@manuscripts/library@1.0.2-vite-support-2":
-  version "1.0.2-vite-support-2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.0.2-vite-support-2.tgz#59e8bc994a999bc1cceb8bd20c291306b4de606d"
-  integrity sha512-biBLa1t/mNeCdHjl6FDC2cMfTAoFjNY15fx2hI0iHZRVJdnYsd3JoOkHxUbsP8Uzb2Fw1CTK+53fad9pUrHLxw==
+"@manuscripts/library@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.0.3.tgz#b985314e59072d17b18242c7e7b406ee91b10650"
+  integrity sha512-j2V8jUfsfx63SStgQa55j4rlg+8O9Zu0VZsZjIA5LD36Us4HbW6faZZzZwjbknwh5CktPgW1XSSEvl0MtQw6qw==
   dependencies:
     "@manuscripts/data" "^0.1.12"
     "@manuscripts/json-schema" "^1.0.0"
