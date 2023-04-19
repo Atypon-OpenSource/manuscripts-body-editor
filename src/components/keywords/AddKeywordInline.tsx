@@ -30,6 +30,8 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
+import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+
 const AddNewKeyword = styled.div`
   position: relative;
   display: inline-block;
@@ -94,23 +96,31 @@ export const AddKeywordInline: React.FC<{
     getPos: () => number
     node: ManuscriptNode
   }
-}> = ({ viewProps }) => {
+  getUpdatedNode: () => ManuscriptNode
+}> = ({ viewProps, getUpdatedNode }) => {
   const nodeRef = useRef<HTMLDivElement>(null)
   const [newKeyword, setNewKeyword] = useState<string>('')
   const [isAddingNewKeyword, setIsAddingNewKeyword] = useState<boolean>(false)
   const [isExistingKeywordError, setIsExistingKeywordError] =
     useState<boolean>(false)
-  const { node, getPos, view } = viewProps
+  const { getPos, view } = viewProps
 
-  const keywords: KeywordEntry[] = []
-  node.content.descendants((descNode) => {
-    if (descNode.type === descNode.type.schema.nodes.keyword) {
-      keywords.push({
-        id: descNode.attrs.id,
-        contents: descNode.attrs.contents,
-      })
-    }
-  })
+  const getKeywords = (node: ManuscriptNode) => {
+    const keywords: KeywordEntry[] = []
+    node.content.descendants((descNode) => {
+      if (
+        descNode.type === descNode.type.schema.nodes.keyword &&
+        !isDeleted(descNode) &&
+        !isRejectedInsert(descNode)
+      ) {
+        keywords.push({
+          id: descNode.attrs.id,
+          contents: descNode.attrs.contents,
+        })
+      }
+    })
+    return keywords
+  }
 
   const handleClickOutside = useCallback(
     (event: Event) => {
@@ -143,6 +153,7 @@ export const AddKeywordInline: React.FC<{
 
   const isExistingKeyword = () => {
     const keywordClean = newKeyword.trim()
+    const keywords: KeywordEntry[] = getKeywords(getUpdatedNode())
     return keywords.some((keyword) => keyword.contents === keywordClean)
   }
 
@@ -155,6 +166,7 @@ export const AddKeywordInline: React.FC<{
     const keyword: Build<Keyword> = buildKeyword(newKeyword)
 
     if (!isExistingKeyword()) {
+      const node = getUpdatedNode()
       const keywordNode = node.type.schema.nodes.keyword.create(
         {
           id: keyword._id,
@@ -163,7 +175,6 @@ export const AddKeywordInline: React.FC<{
         },
         node.type.schema.text(keyword.name)
       )
-
       const nodePosition = getPos() + node.nodeSize - 1
       view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
 
