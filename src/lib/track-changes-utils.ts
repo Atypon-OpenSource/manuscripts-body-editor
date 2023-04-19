@@ -36,3 +36,24 @@ export function isDeleted(node: ProsemirrorNode) {
   }
   return false
 }
+
+export function isPendingInsert(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, status }) => operation === 'insert' && status == 'pending'
+    )
+  }
+  return false
+}
+
+export function getChangeClasses(node: ProsemirrorNode) {
+  const classes: string[] = []
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    changes.forEach(({ operation, status }) =>
+      classes.push(operation === 'insert' ? 'inserted' : 'deleted', status)
+    )
+  }
+  return classes
+}
