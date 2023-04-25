@@ -131,7 +131,7 @@
   "peerDependencies": {
     "@manuscripts/assets": "^0.6.2",
     "@manuscripts/library": "^1.0.3",
-    "@manuscripts/style-guide": "^1.0.7-LEAN-2306",
+    "@manuscripts/style-guide": "^1.0.8",
     "@manuscripts/track-changes-plugin": "^1.2.0",
     "@manuscripts/transform": "^1.1.5",
     "prosemirror-commands": "^1.5.0",
