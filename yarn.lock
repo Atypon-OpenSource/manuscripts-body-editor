@@ -1679,10 +1679,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.8.tgz#cc1c3149ff82847536d82bb24769f57a10dfa703"
-  integrity sha512-u8hUFc2yeKR59SmidsO/dZ6h1E+rsfVOLIcVMbSjLCniCP3CKkPfvTpIiukkZABEiTcdZbpA2wpHQByLCJICqQ==
+"@manuscripts/style-guide@^1.0.8-LEAN-2066":
+  version "1.0.8-LEAN-2066"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.0.8-LEAN-2066.tgz#db511440df848b2815ebefb80950b439e2cf2b63"
+  integrity sha512-xLnyvpRaO9kQPTnWLUWjfrA3q7TiB0l9uMZBsduDPo8Xg7FUtAYExuMAb1Jf7yBsm5Mkghf4EINrUU418/aABQ==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1691,7 +1691,7 @@
     "@manuscripts/comment-editor" "^1.0.1"
     "@manuscripts/json-schema" "^1.0.0"
     "@manuscripts/title-editor" "^1.1.0"
-    "@manuscripts/transform" "^1.1.1"
+    "@manuscripts/transform" "^1.1.5-LEAN-2066-90da5e5"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1752,10 +1752,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@1.1.5-LEAN-2066-90da5e5":
-  version "1.1.5-LEAN-2066-90da5e5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.5-LEAN-2066-90da5e5.tgz#c625da1246151e225c4446ed85c56a7db98ffa0d"
-  integrity sha512-vjY4A5uZRLStyh5rFgjXGNPY9fGH0xswnSZ/fC+H3jTPFB39e8cUEcO3FSCgD6KiPgkNmCKgAozIKatBZLUawA==
+"@manuscripts/transform@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.2.tgz#5097b173b8bdf5df090a589c9b826875b9308a77"
+  integrity sha512-107Bzoas0x0l1AIFOusklqbFbWu/1Fuse7d4Hsljsib6Etc0Eye7EcqR8wKYr/cvOBOtkP3UUa1L2l2WnzbH1A==
   dependencies:
     "@manuscripts/json-schema" "^1.0.0"
     debug "^4.3.4"
@@ -1766,10 +1766,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@^1.1.1", "@manuscripts/transform@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.2.tgz#5097b173b8bdf5df090a589c9b826875b9308a77"
-  integrity sha512-107Bzoas0x0l1AIFOusklqbFbWu/1Fuse7d4Hsljsib6Etc0Eye7EcqR8wKYr/cvOBOtkP3UUa1L2l2WnzbH1A==
+"@manuscripts/transform@^1.1.5-LEAN-2066-90da5e5":
+  version "1.1.5-LEAN-2066-90da5e5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.1.5-LEAN-2066-90da5e5.tgz#c625da1246151e225c4446ed85c56a7db98ffa0d"
+  integrity sha512-vjY4A5uZRLStyh5rFgjXGNPY9fGH0xswnSZ/fC+H3jTPFB39e8cUEcO3FSCgD6KiPgkNmCKgAozIKatBZLUawA==
   dependencies:
     "@manuscripts/json-schema" "^1.0.0"
     debug "^4.3.4"
