@@ -333,7 +333,10 @@ export class ContextMenu {
       )
     }
 
-    if (nodeType !== nodes.bibliography_element) {
+    if (
+      nodeType !== nodes.bibliography_element &&
+      nodeType !== nodes.keywords_element
+    ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           const nodeName = nodeNames.get(nodeType) || ''
