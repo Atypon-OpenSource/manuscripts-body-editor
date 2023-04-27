@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
+import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
 import { ManuscriptNodeView } from '@manuscripts/transform'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
 import { sanitize } from '../lib/dompurify'
+import {
+  getChangeClasses,
+  isDeleted,
+  isPendingInsert,
+  isRejectedInsert,
+} from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 export class KeywordView<PropsType extends BaseNodeProps>
@@ -32,9 +41,27 @@ export class KeywordView<PropsType extends BaseNodeProps>
 
   public updateContents = () => {
     try {
+      this.dom.className = ['keyword', ...getChangeClasses(this.node)].join(' ')
       const fragment = sanitize(this.node.attrs.contents)
       this.dom.innerHTML = ''
       this.dom.appendChild(fragment)
+      if (
+        !isDeleted(this.node) &&
+        !isRejectedInsert(this.node) &&
+        !isPendingInsert(this.node)
+      ) {
+        const closeIconWrapper = document.createElement('span')
+        closeIconWrapper.classList.add('delete-keyword')
+        ReactDOM.render(
+          createElement(CloseIconDark, {
+            height: 8,
+            width: 8,
+            color: '#353535',
+          }),
+          closeIconWrapper
+        )
+        this.dom.appendChild(closeIconWrapper)
+      }
     } catch (e) {
       console.error(e) // tslint:disable-line:no-console
       // TODO: improve the UI for presenting offline/import errors
@@ -46,10 +73,8 @@ export class KeywordView<PropsType extends BaseNodeProps>
 
   protected createDOM = () => {
     this.dom = document.createElement('span')
-    this.dom.classList.add('keyword')
+    this.dom.classList.add('keyword', ...getChangeClasses(this.node))
     this.dom.setAttribute('id', this.node.attrs.id)
-
-    this.contentDOM = this.dom
   }
 }
 
