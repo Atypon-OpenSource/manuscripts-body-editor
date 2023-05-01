@@ -51,7 +51,7 @@ export const commentScroll = (
 }
 
 export const isThereSelector = (selector: unknown) =>
-  selector && Object.keys(selector).length
+  !!(selector && Object.keys(selector).length)
 
 export const isHighlightComment = (
   comment: Pick<CommentAnnotation, 'selector'>
