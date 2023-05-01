@@ -18,6 +18,7 @@ import { sectionLevel } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlock } from './editable_block'
 
 export class SectionTitleView<
   PropsType extends BaseNodeProps
@@ -41,4 +42,4 @@ export class SectionTitleView<
   }
 }
 
-export default createNodeView(SectionTitleView)
+export default createNodeView(EditableBlock(SectionTitleView))

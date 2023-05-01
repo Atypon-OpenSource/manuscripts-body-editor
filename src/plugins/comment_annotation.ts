@@ -133,6 +133,10 @@ const commentsState = (
   const decorations: Decoration[] = []
 
   doc.descendants((node, pos) => {
+    if (node.type === schema.nodes.comment_list) {
+      return false
+    }
+
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
     if (targetComment) {

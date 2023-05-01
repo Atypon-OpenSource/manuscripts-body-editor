@@ -794,13 +794,16 @@
   width: auto;
 }
 
-.block-keywords_element > .block {
-  align-self: end;
+.keywords > .block {
+  align-self: center;
 }
 
-.block-keywords_element > .block-gutter {
-  text-align: end;
+.keywords > .block-gutter {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
 }
+
 
 .ProseMirror .inserted.pending {
   background: #ddf3fa;
