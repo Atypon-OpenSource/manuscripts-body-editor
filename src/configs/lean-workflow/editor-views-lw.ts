@@ -47,7 +47,6 @@ import placeholder from '../../views/placeholder'
 import placeholderElement from '../../views/placeholder_element_editable'
 import pullquoteElement from '../../views/pullquote_element_editable'
 import sectionLabel from '../../views/section_label'
-import sectionTitlePlain from '../../views/section_title'
 import sectionTitle from '../../views/section_title_editable'
 import tableElement from '../../views/table_element_extended_editable'
 import tocElement from '../../views/toc_element_editable'
@@ -84,7 +83,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     placeholder_element: placeholderElement(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
-    section_title_plain: sectionTitlePlain(props),
+    section_title_plain: sectionTitle(props),
     section_label: sectionLabel(props),
     table_element: tableElement(props),
     toc_element: tocElement(props),
