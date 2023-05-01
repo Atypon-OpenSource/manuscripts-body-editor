@@ -50,8 +50,15 @@ export const commentScroll = (
   }
 }
 
-const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
-  comment.selector && comment.selector.from !== comment.selector.to
+export const isThereSelector = (selector: unknown) =>
+  selector && Object.keys(selector).length
+
+export const isHighlightComment = (
+  comment: Pick<CommentAnnotation, 'selector'>
+) =>
+  comment.selector &&
+  isThereSelector(comment.selector) &&
+  comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -119,11 +126,11 @@ const commentsState = (
 
   const commentsMap = comments.reduce((map, { id, target, selector }) => {
     if (!isHighlightComment({ selector })) {
-      const commentId = selector ? id : target
+      const commentId = isThereSelector(selector) ? id : target
       map.set(commentId, {
         id,
         target,
-        location: selector ? 'point' : 'block',
+        location: isThereSelector(selector) ? 'point' : 'block',
         count: (map.get(commentId)?.count || 0) + 1,
       })
     }
