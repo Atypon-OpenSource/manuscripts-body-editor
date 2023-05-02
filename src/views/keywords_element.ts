@@ -15,6 +15,7 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
@@ -27,6 +28,7 @@ import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
 export interface KeywordsElementProps {
+  getCapabilities: () => Capabilities
   dispatch?: Dispatch
   theme?: DefaultTheme
   retrySync: (componentIDs: string[]) => Promise<void>

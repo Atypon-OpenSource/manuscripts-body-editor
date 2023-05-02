@@ -127,10 +127,9 @@ export class FigureElementView extends BlockView<
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
-    if (
-      this.props.capabilities?.editArticle &&
-      this.props.capabilities?.uploadFile
-    ) {
+    const capabilities = this.props.getCapabilities()
+
+    if (capabilities.editArticle && capabilities.uploadFile) {
       const uploadAttachmentHandler = createOnUploadHandler(
         this.props.uploadAttachment,
         this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
@@ -153,8 +152,8 @@ export class FigureElementView extends BlockView<
         onUploadClick: this.envokeFileInput,
         mediaAlternativesEnabled: this.props.mediaAlternativesEnabled,
         addFigureExFileRef: this.addAttachmentSrc,
-        canReplaceFile: this.props.capabilities?.replaceFile,
-        canUploadFile: this.props.capabilities?.uploadFile,
+        canReplaceFile: capabilities.replaceFile,
+        canUploadFile: capabilities.uploadFile,
       }
       this.reactTools = ReactSubView(
         this.props,
