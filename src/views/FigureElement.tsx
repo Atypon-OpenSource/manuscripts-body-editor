@@ -19,10 +19,10 @@ import {
   AttachIcon,
   Designation,
   DropdownContainer,
+  FileAttachment,
   getDesignationName,
   RoundIconButton,
   SelectDialogDesignation,
-  FileAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
