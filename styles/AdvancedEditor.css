@@ -794,6 +794,14 @@
   width: auto;
 }
 
+.block-keywords_element > .block {
+  align-self: end;
+}
+
+.block-keywords_element > .block-gutter {
+  text-align: end;
+}
+
 .ProseMirror .inserted.pending {
   background: #ddf3fa;
   text-decoration: none;
