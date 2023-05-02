@@ -22,7 +22,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/json-schema'
-import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { FileAttachment } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
@@ -30,10 +30,10 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import { DefaultTheme } from 'styled-components'
 
-import { PopperManager } from '../../lib/popper'
-import { CreateView } from '../../useEditor'
-import plugins from './viewer-plugins-lw'
-import views from './viewer-views-lw'
+import { PopperManager } from '../lib/popper'
+import { CreateView } from '../useEditor'
+import plugins from './viewer-plugins'
+import views from './viewer-views'
 
 export interface ViewerProps {
   attributes?: { [key: string]: string }
@@ -51,10 +51,9 @@ export interface ViewerProps {
   unmountReactComponent: (container: HTMLElement) => void
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   theme: DefaultTheme
-  submissionId: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  getAttachments: () => SubmissionAttachment[]
+  getAttachments: () => FileAttachment[]
 }
 
 export default {

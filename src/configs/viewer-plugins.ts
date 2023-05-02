@@ -19,8 +19,8 @@ import 'prosemirror-tables/style/tables.css'
 
 import { Manuscript, Model } from '@manuscripts/json-schema'
 
-import elements from '../../plugins/elements'
-import objects from '../../plugins/objects'
+import elements from '../plugins/elements'
+import objects from '../plugins/objects'
 
 interface PluginProps {
   getModel: <T extends Model>(id: string) => T | undefined

@@ -15,7 +15,7 @@
  */
 
 import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
-import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { FileAttachment } from '@manuscripts/style-guide'
 import {
   BibliographySectionNode,
   buildCitation,
@@ -199,7 +199,7 @@ export const createBlock = (
 }
 
 export const insertFileAsFigure = (
-  file: SubmissionAttachment,
+  file: FileAttachment,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {

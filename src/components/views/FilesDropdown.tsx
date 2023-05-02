@@ -26,7 +26,7 @@ import {
   IconButton,
   IconTextButton,
   RoundIconButton,
-  SubmissionAttachment,
+  FileAttachment,
   UploadIcon,
   useDropdown,
   useFiles,
@@ -37,7 +37,7 @@ import styled from 'styled-components'
 import { addFormatQuery } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
 
-const getIcon = (file: SubmissionAttachment) => {
+const getIcon = (file: FileAttachment) => {
   const fileExtension = file.name.split('.').pop() || ''
   const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
   return fileTypesWithIconMap.get(fileType)
@@ -49,7 +49,7 @@ const getFileType = (fileName: string) => {
 }
 
 interface DropdownProps {
-  getAttachments: () => SubmissionAttachment[]
+  getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
@@ -58,7 +58,6 @@ interface DropdownProps {
 
 interface OptionsProps extends DropdownProps {
   url: string
-  submissionId: string
   canDownloadFile?: boolean
   onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
@@ -102,7 +101,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   )
 
   const onFileClick = useCallback(
-    (e, file: SubmissionAttachment) => {
+    (e, file: FileAttachment) => {
       toggleOpen(e)
       addFigureExFileRef(file.link)
     },

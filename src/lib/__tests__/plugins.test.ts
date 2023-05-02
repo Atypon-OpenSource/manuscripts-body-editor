@@ -40,7 +40,7 @@ import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import { EditorProps } from '../../configs/lean-workflow/ManuscriptsEditor'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
@@ -355,7 +355,6 @@ const buildProps = (
   setSelectedComment: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
-  submissionId: 'testId',
   updateDesignation: () => new Promise(() => ''),
   uploadAttachment: () => new Promise(() => ''),
   theme: {},
