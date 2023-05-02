@@ -162,7 +162,7 @@ export class BibliographyItemView<
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        if (this.props.capabilities?.seeReferencesButtons) {
+        if (this.props.getCapabilities().seeReferencesButtons) {
           this.dom.appendChild(doubleButton)
         }
       } catch (e) {

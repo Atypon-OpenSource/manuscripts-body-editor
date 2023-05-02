@@ -30,7 +30,7 @@ type Constructor<T> = new (...args: any[]) => T
 const isNotNull = <T>(a: T | null): a is T => a !== null
 
 export interface EditableBlockProps extends BaseNodeProps {
-  capabilities?: Capabilities
+  getCapabilities: () => Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment?: (comment?: CommentAnnotation) => void
@@ -51,7 +51,7 @@ export const EditableBlock = <
       [this.createSyncWarningButton()].filter(isNotNull)
 
     public createSyncWarningButton = (): HTMLElement | null => {
-      if (!this.props.capabilities?.editArticle) {
+      if (!this.props.getCapabilities()?.editArticle) {
         return null
       }
 
@@ -112,7 +112,7 @@ export const EditableBlock = <
 
     public createAddButton = (after: boolean): HTMLElement | null => {
       if (
-        !this.props.capabilities?.editArticle ||
+        !this.props.getCapabilities()?.editArticle ||
         this.node.type === this.node.type.schema.nodes.keywords_element
       ) {
         return null
@@ -139,7 +139,7 @@ export const EditableBlock = <
     }
 
     public createEditButton = (): HTMLElement | null => {
-      if (!this.props.capabilities?.editArticle) {
+      if (!this.props.getCapabilities()?.editArticle) {
         return null
       }
 

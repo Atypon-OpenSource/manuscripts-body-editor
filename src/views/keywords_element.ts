@@ -15,6 +15,7 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
@@ -28,6 +29,7 @@ import ReactSubView from './ReactSubView'
 import { EditableBlock } from './editable_block'
 
 export interface KeywordsElementProps {
+  getCapabilities: () => Capabilities
   dispatch?: Dispatch
   theme?: DefaultTheme
   retrySync: (componentIDs: string[]) => Promise<void>
