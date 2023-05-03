@@ -26,7 +26,6 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { EditableBlock } from './editable_block'
 
 export interface KeywordsElementProps {
   getCapabilities: () => Capabilities
@@ -89,4 +88,4 @@ export class KeywordsElementView extends BlockView<
   }
 }
 
-export default createNodeView(EditableBlock(KeywordsElementView))
+export default createNodeView(KeywordsElementView)

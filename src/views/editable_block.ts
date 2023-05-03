@@ -113,7 +113,7 @@ export const EditableBlock = <
     public createAddButton = (after: boolean): HTMLElement | null => {
       if (
         !this.props.getCapabilities()?.editArticle ||
-        this.node.type === this.node.type.schema.nodes.keywords_element
+        this.node.type === this.node.type.schema.nodes.section_title_plain
       ) {
         return null
       }

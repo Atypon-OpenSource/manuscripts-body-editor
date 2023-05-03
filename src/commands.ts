@@ -1037,13 +1037,6 @@ export function addComment(
   viewNode?: ManuscriptNode,
   resolvePos?: ResolvedPos
 ) {
-  if (
-    viewNode &&
-    viewNode.type === viewNode.type.schema.nodes.keywords_element
-  ) {
-    return addBlockComment(viewNode, state, dispatch)
-  }
-
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
   const selectionNode = getParentNode(selection)
@@ -1088,7 +1081,7 @@ const isAllowedType = (type: NodeType) =>
   type === type.schema.nodes.section ||
   type === type.schema.nodes.footnotes_section ||
   type === type.schema.nodes.bibliography_section ||
-  type === type.schema.nodes.keywords_element ||
+  type === type.schema.nodes.keywords_section ||
   type === type.schema.nodes.paragraph ||
   type === type.schema.nodes.figure_element ||
   type === type.schema.nodes.table_element

@@ -794,12 +794,14 @@
   width: auto;
 }
 
-.block-keywords_element > .block {
-  align-self: end;
+.block-section_title_plain > .block {
+  align-self: center;
 }
 
-.block-keywords_element > .block-gutter {
-  text-align: end;
+.block-section_title_plain > .block-gutter {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .ProseMirror .inserted.pending {

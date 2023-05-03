@@ -15,7 +15,7 @@
  */
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import { CommentNode, ManuscriptNode, schema } from '@manuscripts/transform'
-import { NodeType } from 'prosemirror-model'
+import { Node as ProsemirrorNode, NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -110,6 +110,17 @@ export default (props: CommentAnnotationProps) => {
   })
 }
 
+const getNodePosition = (node: ProsemirrorNode, pos: number) => {
+  switch (node.type) {
+    case node.type.schema.nodes.bibliography_item:
+      return pos
+    case node.type.schema.nodes.keywords_section:
+      return pos + 2
+    default:
+      return pos + 1
+  }
+}
+
 const commentsState = (
   setSelectedComment: (id?: string) => void,
   doc: ManuscriptNode
@@ -143,8 +154,7 @@ const commentsState = (
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
     if (targetComment) {
-      const position =
-        node.type === node.type.schema.nodes.bibliography_item ? pos : pos + 1
+      const position = getNodePosition(node, pos)
 
       decorations.push(
         Decoration.widget(
