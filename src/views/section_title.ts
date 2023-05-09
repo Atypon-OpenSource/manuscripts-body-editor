@@ -19,6 +19,11 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
+const isSpecialSection = (category: string) =>
+  category === 'MPSectionCategory:abstracts' ||
+  category === 'MPSectionCategory:body' ||
+  category === 'MPSectionCategory:backmatter'
+
 export class SectionTitleView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
@@ -26,17 +31,24 @@ export class SectionTitleView<
   public elementType = 'h1'
 
   public updateContents = () => {
-    if (this.node.childCount) {
-      this.contentDOM.classList.remove('empty-node')
-    } else {
-      this.contentDOM.classList.add('empty-node')
+    const $pos = this.view.state.doc.resolve(this.getPos())
 
-      const $pos = this.view.state.doc.resolve(this.getPos())
+    if (isSpecialSection($pos.parent.attrs.category)) {
+      this.dom = document.createDocumentFragment() as unknown as HTMLElement
+      return
+    }
 
-      this.contentDOM.setAttribute(
-        'data-placeholder',
-        `${sectionLevel($pos.depth)} heading`
-      )
+    if ($pos.parent.attrs.catgeroy) {
+      if (this.node.childCount) {
+        this.contentDOM.classList.remove('empty-node')
+      } else {
+        this.contentDOM.classList.add('empty-node')
+
+        this.contentDOM.setAttribute(
+          'data-placeholder',
+          `${sectionLevel($pos.depth)} heading`
+        )
+      }
     }
   }
 }
