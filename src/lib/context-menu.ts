@@ -16,6 +16,7 @@
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import {
+  isInBibliographySection,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -74,27 +75,11 @@ export class ContextMenu {
   public showAddMenu = (target: Element, after: boolean) => {
     let _after = after
     const { nodes } = this.view.state.schema
-    const { childNodes } = this.view.dom
-    const isBibliographySection = [...childNodes].some((section: ChildNode) => {
-      if (section.nodeType === Node.ELEMENT_NODE) {
-        const sectionEl = section as Element
-        return (
-          section?.childNodes[0]?.pmViewDesc?.node === this.node &&
-          sectionEl.classList.contains('bibliography')
-        )
-      }
-      return false
-    })
-    // we don`t want to add section after 'REFERENCES'
-    _after =
-      this.node.type === nodes.bibliography_element || isBibliographySection
-        ? false
-        : _after
-
     const menu = document.createElement('div')
     menu.className = 'menu'
-
     const $pos = this.resolvePos()
+    // we don`t want to add section after 'REFERENCES'
+    _after = isInBibliographySection($pos) ? false : _after
     const insertPos = _after ? $pos.after($pos.depth) : $pos.before($pos.depth)
     const endPos = $pos.end()
     const insertableTypes = this.insertableTypes(_after, insertPos, endPos)
@@ -459,7 +444,6 @@ export class ContextMenu {
         id: this.node.attrs.id,
       })
     )
-
     popper.destroy()
   }
 
