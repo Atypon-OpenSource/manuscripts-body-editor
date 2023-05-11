@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
+import { isSectionNode, SectionNode } from '@manuscripts/transform'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
+
 import { sectionLevel } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-const isSpecialSection = (category: string) =>
-  category === 'MPSectionCategory:abstracts' ||
-  category === 'MPSectionCategory:body' ||
-  category === 'MPSectionCategory:backmatter'
+export const isSpecialSection = (node: ProsemirrorNode) => {
+  if (isSectionNode(node)) {
+    const { attrs } = node as SectionNode
+    return (
+      attrs.category === 'MPSectionCategory:abstracts' ||
+      attrs.category === 'MPSectionCategory:body' ||
+      attrs.category === 'MPSectionCategory:backmatter'
+    )
+  }
+}
 
 export class SectionTitleView<
   PropsType extends BaseNodeProps
@@ -33,22 +42,20 @@ export class SectionTitleView<
   public updateContents = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
 
-    if (isSpecialSection($pos.parent.attrs.category)) {
+    if (isSpecialSection($pos.parent)) {
       this.dom = document.createDocumentFragment() as unknown as HTMLElement
       return
     }
 
-    if ($pos.parent.attrs.catgeroy) {
-      if (this.node.childCount) {
-        this.contentDOM.classList.remove('empty-node')
-      } else {
-        this.contentDOM.classList.add('empty-node')
+    if (this.node.childCount) {
+      this.contentDOM.classList.remove('empty-node')
+    } else {
+      this.contentDOM.classList.add('empty-node')
 
-        this.contentDOM.setAttribute(
-          'data-placeholder',
-          `${sectionLevel($pos.depth)} heading`
-        )
-      }
+      this.contentDOM.setAttribute(
+        'data-placeholder',
+        `${sectionLevel($pos.depth)} heading`
+      )
     }
   }
 }
