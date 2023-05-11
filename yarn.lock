@@ -1765,6 +1765,20 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
+"@manuscripts/transform@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.1.tgz#e1ea939d4de4ed219f4f9536914e9219a08e5ea3"
+  integrity sha512-OxcbRUS3O2aOz+d0GfqOx+Ex02fqdciK9FotvPTuGjK+oNv1iysbNzTuLaw9gBPliPtXUYJ8s3vqqoToyMmQsw==
+  dependencies:
+    "@manuscripts/json-schema" "^2.0.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
