@@ -35,7 +35,7 @@ import { ReactViewComponentProps } from './ReactView'
 const TableElement = ({
   updateDesignation,
   uploadAttachment,
-  capabilities: can,
+  getCapabilities,
   mediaAlternativesEnabled,
   getAttachments,
 }: FigureProps) => {
@@ -117,6 +117,9 @@ const TableElement = ({
         setTableAttrs(prevAttrs)
       })
     }
+
+    const can = getCapabilities()
+
     return (
       <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">

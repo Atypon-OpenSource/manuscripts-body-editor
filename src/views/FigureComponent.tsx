@@ -39,7 +39,7 @@ export interface FigureProps {
   modelMap: Map<string, Model>
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  capabilities?: Capabilities
+  getCapabilities: () => Capabilities
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
 }
@@ -52,7 +52,7 @@ export const addFormatQuery = (url: string) => {
 
 const FigureComponent = ({
   uploadAttachment,
-  capabilities: can,
+  getCapabilities,
   mediaAlternativesEnabled,
   getAttachments,
   modelMap,
@@ -190,6 +190,8 @@ const FigureComponent = ({
     )
 
     const { fileInputRef, onUploadClick } = useFileInputRef()
+
+    const can = getCapabilities()
 
     return (
       <Container>

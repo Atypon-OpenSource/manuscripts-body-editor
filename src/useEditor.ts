@@ -24,7 +24,6 @@ import {
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
@@ -65,7 +64,7 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
     if (!el) {
       return
     }
-    view.current = createView(el, state, dispatch)
+    view.current = createView(el, view.current?.state || state, dispatch)
     setState(view.current.state)
     setViewElement(el)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
