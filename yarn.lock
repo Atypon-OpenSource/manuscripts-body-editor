@@ -1672,6 +1672,14 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
+"@manuscripts/json-schema@^2.0.1-LEAN-2416":
+  version "2.0.1-LEAN-2416"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.0.1-LEAN-2416.tgz#5c8f24bdc48827c88d98dcced3cf148312fc9d1e"
+  integrity sha512-ONZV8iR9drLX8zlF+28i79XBMDXJDgaO+YQ0Xb8s14mS6qTeouCG+kFLuwAP5CkBM4qBbUNWzy0zOXXhTIwoFg==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+
 "@manuscripts/library@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.1.tgz#1248ea15fb326b5203fa51e9131bea26c8568326"
@@ -1686,7 +1694,7 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.1.2":
+"@manuscripts/style-guide@^1.1.2-LEAN-2416":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.2.tgz#51de4d1c32b249aa61ad53824173bdd78c3bea58"
   integrity sha512-/fVZH7VXT4GfxZGncSbPw0F3/nmphtDg2t5wFCiTPY3aAS3CltBqBdwzprLcrFT7chTcWz6K6BfdF6wPahxzwQ==
@@ -1779,6 +1787,20 @@
   integrity sha512-LcatsFDB/Sf1U3FyMgPWljyDKpgfB34qw81Hn/GdELLNgCoO1jUDOY7WQ2KW78BdtvqDUSu5eR4zKP3vKyiw5w==
   dependencies:
     "@manuscripts/json-schema" "^2.0.1"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.2.4-LEAN-2357":
+  version "1.2.4-LEAN-2357"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.4-LEAN-2357.tgz#f8fdc296f64b7fd7a36a9f62f869712d9df102ad"
+  integrity sha512-lImwQfikuz+2bmHFFAh5Tn9ggcsKrOWwhtNuDxigBllMxhostFdxlpUt1g2ACHU0fY9O8HtTFKRyTzmhnTSPew==
+  dependencies:
+    "@manuscripts/json-schema" "^2.0.1-LEAN-2416"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
