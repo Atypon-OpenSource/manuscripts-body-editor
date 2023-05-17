@@ -1656,14 +1656,6 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/examples/-/examples-0.1.1.tgz#96b385e64df8b8cd14d9e47d2d69da366491e64b"
   integrity sha512-f30/rqu/DeJVt2reNYmqt9iJk2WVtMRXL+PbKeoa+smJUNIdSKvSlPUdtTP1ymSS920FPeVa8bc9dB1z9aH3Lw==
 
-"@manuscripts/json-schema@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.0.0.tgz#9ce776eaa6d2216eb3dfbd2024368d9c60e85570"
-  integrity sha512-l/HjcDLCVbMZBa+i3Xqkdt4dl88rcbPNGJ2H5SAo1vRUsLjxfo68GFObG5Y7KmJKGCgf/IY9k/1Q4YTSK3IQ1w==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
 "@manuscripts/json-schema@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.0.1.tgz#7c10e146710784d007217e09ffe4ee6defe012db"
@@ -1680,14 +1672,14 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.1.tgz#1248ea15fb326b5203fa51e9131bea26c8568326"
-  integrity sha512-EB5ig7y5exRfcoV0IJuq1+cM1CC6VWmHT8NevrDV8vzuqjbguYSRQZ+x6ncQ9PPIIpEcnoWRN/+sfJKqAH9DiQ==
+"@manuscripts/library@^1.1.1-LEAN-2416":
+  version "1.1.1-LEAN-2416"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.1-LEAN-2416.tgz#6d26e224619638d9661b228609018a7f765046f1"
+  integrity sha512-O4lC9O3UWUHAFSYfzzlGmnjWyA2oDrfIueo9v6qCOf+0Vl55NpeV6xKf4w8LD+oiz/viXjJuMjUiiBt34GoCNQ==
   dependencies:
     "@manuscripts/data" "^1.0.2"
-    "@manuscripts/json-schema" "^2.0.1"
-    "@manuscripts/transform" "^1.2.1"
+    "@manuscripts/json-schema" "^2.0.1-LEAN-2416"
+    "@manuscripts/transform" "^1.2.4-LEAN-2357"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
@@ -1766,20 +1758,6 @@
     prosemirror-state "^1.4.2"
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
-
-"@manuscripts/transform@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.1.tgz#e1ea939d4de4ed219f4f9536914e9219a08e5ea3"
-  integrity sha512-OxcbRUS3O2aOz+d0GfqOx+Ex02fqdciK9FotvPTuGjK+oNv1iysbNzTuLaw9gBPliPtXUYJ8s3vqqoToyMmQsw==
-  dependencies:
-    "@manuscripts/json-schema" "^2.0.0"
-    debug "^4.3.4"
-    jszip "^3.10.1"
-    mathjax-full "^3.2.2"
-    mime "^3.0.0"
-    prosemirror-model "^1.18.3"
-    uuid "^9.0.0"
-    w3c-xmlserializer "^4.0.0"
 
 "@manuscripts/transform@^1.2.3":
   version "1.2.3"
