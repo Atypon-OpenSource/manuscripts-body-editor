@@ -20,6 +20,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/json-schema'
+import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   Build,
@@ -108,6 +109,7 @@ const defaultViewerProps: ViewerProps = {
   updateDesignation: async () => undefined,
   uploadAttachment: async () => undefined,
   getAttachments: () => [],
+  getCapabilities: () => getAllPermitted(),
 }
 
 export const defaultEditorProps: EditorProps = {

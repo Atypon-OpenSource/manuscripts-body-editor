@@ -28,6 +28,7 @@ import {
   TableElement,
   UserProfile,
 } from '@manuscripts/json-schema'
+import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   Decoder,
@@ -360,6 +361,7 @@ const buildProps = (
   uploadAttachment: () => new Promise(() => ''),
   theme: {},
   getAttachments: () => [],
+  getCapabilities: () => getAllPermitted(),
 })
 
 describe('editor view', () => {

@@ -42,7 +42,7 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
       event.preventDefault()
     }
 
-    if (!this.props.capabilities?.editArticle) {
+    if (!this.props.getCapabilities().editArticle) {
       return
     }
 

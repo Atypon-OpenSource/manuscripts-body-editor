@@ -23,7 +23,7 @@ import { InlineEquationView } from './inline_equation'
 
 export class InlineEquationEditableView extends InlineEquationView<EditableBlockProps> {
   public selectNode = async () => {
-    if (!this.props.capabilities?.editArticle) {
+    if (!this.props.getCapabilities().editArticle) {
       return
     }
 

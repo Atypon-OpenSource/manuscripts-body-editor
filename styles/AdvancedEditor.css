@@ -794,6 +794,16 @@
   width: auto;
 }
 
+.block-section_title_plain > .block {
+  align-self: center;
+}
+
+.block-section_title_plain > .block-gutter {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .ProseMirror .inserted.pending {
   background: #ddf3fa;
   text-decoration: none;

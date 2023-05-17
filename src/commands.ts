@@ -1081,6 +1081,7 @@ const isAllowedType = (type: NodeType) =>
   type === type.schema.nodes.section ||
   type === type.schema.nodes.footnotes_section ||
   type === type.schema.nodes.bibliography_section ||
+  type === type.schema.nodes.keywords_section ||
   type === type.schema.nodes.paragraph ||
   type === type.schema.nodes.figure_element ||
   type === type.schema.nodes.table_element

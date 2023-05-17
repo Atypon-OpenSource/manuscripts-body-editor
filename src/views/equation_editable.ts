@@ -23,7 +23,7 @@ import { EquationView } from './equation'
 
 export class EquationEditableView extends EquationView<EditableBlockProps> {
   public selectNode = async () => {
-    if (!this.props.capabilities?.editArticle) {
+    if (!this.props.getCapabilities().editArticle) {
       return
     }
 
