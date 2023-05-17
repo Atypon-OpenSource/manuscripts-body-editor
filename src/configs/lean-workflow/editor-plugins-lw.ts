@@ -44,6 +44,7 @@ import paragraphs from '../../plugins/paragraphs'
 import persist from '../../plugins/persist'
 import placeholder from '../../plugins/placeholder'
 import sections from '../../plugins/sections'
+import table_editing_fix from '../../plugins/tables-cursor-fix'
 import toc from '../../plugins/toc'
 import track_changes_ui from '../../plugins/track-changes-ui'
 import rules from '../../rules'
@@ -84,6 +85,7 @@ export default (props: PluginProps) => {
     history(),
     models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
+    table_editing_fix(),
     elements(),
     persist(),
     sections(),
