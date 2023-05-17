@@ -61,7 +61,6 @@ export const loadCSLStyle = async (cslIdentifier: string): Promise<string> => {
   if (!basename) {
     throw new Error(`No style name in ${cslIdentifier}`)
   }
-  // short path `@manuscripts/data/dist/csl/styles/${basename[0]}.json` does not work locally
   const result = await import(
     `../../../node_modules/@manuscripts/data/dist/csl/styles/${basename[0]}.json`
   )
