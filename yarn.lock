@@ -1759,6 +1759,20 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
+"@manuscripts/transform@1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.4.tgz#9ff6e9119bd0ac78d57f9eb1ef3070e75dfc2ee2"
+  integrity sha512-WiUvPR7PMtEk2VJa5gPiwCISUCo/BR1/LXgoG5plIM66EsEn6TfcfefnwyKkv7jegt7+3OckNEIjAOWMtqdS8g==
+  dependencies:
+    "@manuscripts/json-schema" "^2.0.1"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
 "@manuscripts/transform@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.1.tgz#e1ea939d4de4ed219f4f9536914e9219a08e5ea3"
