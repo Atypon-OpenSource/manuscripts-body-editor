@@ -153,7 +153,7 @@ const FigureElement = ({
   modelMap,
   uploadAttachment,
   getAttachments,
-  capabilities: can,
+  getCapabilities,
   mediaAlternativesEnabled,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
@@ -173,6 +173,8 @@ const FigureElement = ({
     const { fileInputRef, onUploadClick } = useFileInputRef()
 
     const { addFigureExFileRef } = useFigureSelection(viewProps)
+
+    const can = getCapabilities()
 
     return (
       <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>

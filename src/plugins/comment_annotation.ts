@@ -15,7 +15,7 @@
  */
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import { CommentNode, ManuscriptNode, schema } from '@manuscripts/transform'
-import { NodeType } from 'prosemirror-model'
+import { Node as ProsemirrorNode, NodeType } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -50,8 +50,15 @@ export const commentScroll = (
   }
 }
 
-const isHighlightComment = (comment: Pick<CommentAnnotation, 'selector'>) =>
-  comment.selector && comment.selector.from !== comment.selector.to
+export const isThereSelector = (selector: unknown) =>
+  !!(selector && Object.keys(selector).length)
+
+export const isHighlightComment = (
+  comment: Pick<CommentAnnotation, 'selector'>
+) =>
+  comment.selector &&
+  isThereSelector(comment.selector) &&
+  comment.selector.from !== comment.selector.to
 
 interface CommentAnnotationProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -103,6 +110,17 @@ export default (props: CommentAnnotationProps) => {
   })
 }
 
+const getNodePosition = (node: ProsemirrorNode, pos: number) => {
+  switch (node.type) {
+    case node.type.schema.nodes.bibliography_item:
+      return pos
+    case node.type.schema.nodes.keywords_section:
+      return pos + 2
+    default:
+      return pos + 1
+  }
+}
+
 const commentsState = (
   setSelectedComment: (id?: string) => void,
   doc: ManuscriptNode
@@ -119,11 +137,11 @@ const commentsState = (
 
   const commentsMap = comments.reduce((map, { id, target, selector }) => {
     if (!isHighlightComment({ selector })) {
-      const commentId = selector ? id : target
+      const commentId = isThereSelector(selector) ? id : target
       map.set(commentId, {
         id,
         target,
-        location: selector ? 'point' : 'block',
+        location: isThereSelector(selector) ? 'point' : 'block',
         count: (map.get(commentId)?.count || 0) + 1,
       })
     }
@@ -136,8 +154,7 @@ const commentsState = (
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
     if (targetComment) {
-      const position =
-        node.type === node.type.schema.nodes.bibliography_item ? pos : pos + 1
+      const position = getNodePosition(node, pos)
 
       decorations.push(
         Decoration.widget(
@@ -188,8 +205,8 @@ const getCommentIcon =
     element.classList.add('block-comment-button', elementClass)
 
     element.onclick = () => {
+      setSelectedComment(commentId)
       commentScroll(commentId, 'inspector')
-      setSelectedComment(undefined)
     }
 
     const groupCommentIcon =

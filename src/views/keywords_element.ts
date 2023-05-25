@@ -15,6 +15,7 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
@@ -25,9 +26,9 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { EditableBlock } from './editable_block'
 
 export interface KeywordsElementProps {
+  getCapabilities: () => Capabilities
   dispatch?: Dispatch
   theme?: DefaultTheme
   retrySync: (componentIDs: string[]) => Promise<void>
@@ -87,4 +88,4 @@ export class KeywordsElementView extends BlockView<
   }
 }
 
-export default createNodeView(EditableBlock(KeywordsElementView))
+export default createNodeView(KeywordsElementView)

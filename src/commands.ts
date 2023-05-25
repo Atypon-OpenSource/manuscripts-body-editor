@@ -29,6 +29,7 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isInBibliographySection,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -556,7 +557,7 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   const pos = findPosAfterParentSection(state.selection.$from)
-  if (pos === null) {
+  if (pos === null || isInBibliographySection(state.selection.$from)) {
     return false
   }
   // check if another graphical abstract already exists
@@ -584,7 +585,6 @@ export const insertGraphicalAbstract = (
     const selection = TextSelection.create(tr.doc, pos + 2)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
-
   return true
 }
 
@@ -593,12 +593,11 @@ export const insertSection =
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     const pos = findPosAfterParentSection(state.selection.$from)
 
-    if (pos === null) {
+    if (pos === null || isInBibliographySection(state.selection.$from)) {
       return false
     }
 
     const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
-
     const tr = state.tr.insert(
       pos + adjustment,
       state.schema.nodes.section.createAndFill() as SectionNode
@@ -1037,13 +1036,6 @@ export function addComment(
   viewNode?: ManuscriptNode,
   resolvePos?: ResolvedPos
 ) {
-  if (
-    viewNode &&
-    viewNode.type === viewNode.type.schema.nodes.keywords_element
-  ) {
-    return addBlockComment(viewNode, state, dispatch)
-  }
-
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
   const selectionNode = getParentNode(selection)
@@ -1088,7 +1080,7 @@ const isAllowedType = (type: NodeType) =>
   type === type.schema.nodes.section ||
   type === type.schema.nodes.footnotes_section ||
   type === type.schema.nodes.bibliography_section ||
-  type === type.schema.nodes.keywords_element ||
+  type === type.schema.nodes.keywords_section ||
   type === type.schema.nodes.paragraph ||
   type === type.schema.nodes.figure_element ||
   type === type.schema.nodes.table_element

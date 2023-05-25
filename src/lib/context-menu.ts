@@ -16,6 +16,7 @@
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import {
+  isInBibliographySection,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -72,21 +73,21 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
+    let _after = after
+    const { nodes } = this.view.state.schema
     const menu = document.createElement('div')
     menu.className = 'menu'
-
     const $pos = this.resolvePos()
-    const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
+    // we don`t want to add section after 'REFERENCES'
+    _after = isInBibliographySection($pos) ? false : _after
+    const insertPos = _after ? $pos.after($pos.depth) : $pos.before($pos.depth)
     const endPos = $pos.end()
-
-    const insertableTypes = this.insertableTypes(after, insertPos, endPos)
-
-    const { nodes } = this.view.state.schema
+    const insertableTypes = this.insertableTypes(_after, insertPos, endPos)
 
     if (this.showMenuSection(insertableTypes, ['section', 'subsection'])) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const labelPosition = after ? 'After' : 'Before'
+          const labelPosition = _after ? 'After' : 'Before'
           const sectionTitle = $pos.node($pos.depth).child(0).textContent
           const itemTitle = sectionTitle
             ? `“${this.trimTitle(sectionTitle, 30)}”`
@@ -98,7 +99,7 @@ export class ContextMenu {
           if (insertableTypes.section) {
             section.appendChild(
               this.createMenuItem(itemLabel, () => {
-                this.addBlock(nodes.section, after, insertPos)
+                this.addBlock(nodes.section, _after, insertPos)
                 popper.destroy()
               })
             )
@@ -111,7 +112,7 @@ export class ContextMenu {
 
             section.appendChild(
               this.createMenuItem(subItemLabel, () => {
-                this.addBlock(nodes.section, after, endPos)
+                this.addBlock(nodes.section, _after, endPos)
                 popper.destroy()
               })
             )
@@ -132,7 +133,7 @@ export class ContextMenu {
           if (insertableTypes.paragraphElement) {
             section.appendChild(
               this.createMenuItem('Paragraph', () => {
-                this.addBlock(nodes.paragraph, after)
+                this.addBlock(nodes.paragraph, _after)
                 popper.destroy()
               })
             )
@@ -141,7 +142,7 @@ export class ContextMenu {
           if (insertableTypes.orderedList) {
             section.appendChild(
               this.createMenuItem('Numbered List', () => {
-                this.addBlock(nodes.ordered_list, after)
+                this.addBlock(nodes.ordered_list, _after)
                 popper.destroy()
               })
             )
@@ -150,7 +151,7 @@ export class ContextMenu {
           if (insertableTypes.bulletList) {
             section.appendChild(
               this.createMenuItem('Bullet List', () => {
-                this.addBlock(nodes.bullet_list, after)
+                this.addBlock(nodes.bullet_list, _after)
                 popper.destroy()
               })
             )
@@ -172,7 +173,7 @@ export class ContextMenu {
           if (insertableTypes.figureElement) {
             section.appendChild(
               this.createMenuItem('Figure Panel', () => {
-                this.addBlock(nodes.figure_element, after)
+                this.addBlock(nodes.figure_element, _after)
                 popper.destroy()
               })
             )
@@ -181,7 +182,7 @@ export class ContextMenu {
           if (insertableTypes.tableElement) {
             section.appendChild(
               this.createMenuItem('Table', () => {
-                this.addBlock(nodes.table_element, after)
+                this.addBlock(nodes.table_element, _after)
                 popper.destroy()
               })
             )
@@ -190,7 +191,7 @@ export class ContextMenu {
           if (insertableTypes.equationElement) {
             section.appendChild(
               this.createMenuItem('Equation', () => {
-                this.addBlock(nodes.equation_element, after)
+                this.addBlock(nodes.equation_element, _after)
                 popper.destroy()
               })
             )
@@ -199,7 +200,7 @@ export class ContextMenu {
           if (insertableTypes.listingElement) {
             section.appendChild(
               this.createMenuItem('Listing', () => {
-                this.addBlock(nodes.listing_element, after)
+                this.addBlock(nodes.listing_element, _after)
                 popper.destroy()
               })
             )
@@ -219,7 +220,7 @@ export class ContextMenu {
           if (insertableTypes.blockquoteElement) {
             section.appendChild(
               this.createMenuItem('Block Quote', () => {
-                this.addBlock(nodes.blockquote_element, after)
+                this.addBlock(nodes.blockquote_element, _after)
                 popper.destroy()
               })
             )
@@ -228,7 +229,7 @@ export class ContextMenu {
           if (insertableTypes.pullquoteElement) {
             section.appendChild(
               this.createMenuItem('Pull Quote', () => {
-                this.addBlock(nodes.pullquote_element, after)
+                this.addBlock(nodes.pullquote_element, _after)
                 popper.destroy()
               })
             )
@@ -280,7 +281,6 @@ export class ContextMenu {
     }
 
     const { setComment } = this.actions
-
     if (setComment) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -296,7 +296,6 @@ export class ContextMenu {
     }
 
     const suppressOptions = this.buildSuppressOptions()
-
     if (suppressOptions.length) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -335,7 +334,7 @@ export class ContextMenu {
 
     if (
       nodeType !== nodes.bibliography_element &&
-      nodeType !== nodes.keywords_element
+      nodeType !== nodes.section_title_plain
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -388,9 +387,7 @@ export class ContextMenu {
     }
 
     const $position = doc.resolve(position)
-
     const index = $position.index()
-
     return $position.parent.canReplaceWith(index, index, nodeType)
   }
 
@@ -447,7 +444,6 @@ export class ContextMenu {
         id: this.node.attrs.id,
       })
     )
-
     popper.destroy()
   }
 

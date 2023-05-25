@@ -52,7 +52,7 @@ const buildIssuedDate = (dates: Date[]): BibliographicDate | undefined => {
     return {
       _id: generateID(ObjectTypes.BibliographicDate),
       objectType: ObjectTypes.BibliographicDate,
-      'date-parts': [issued.date.split('-')],
+      'date-parts': [issued.date.split('-')] as [[string, string]],
     }
   }
 }
