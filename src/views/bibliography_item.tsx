@@ -141,20 +141,22 @@ export class BibliographyItemView<
         this.dom.appendChild(fragment)
 
         const doubleButton = document.createElement('div')
-        const editButton = document.createElement('div')
-        const commentButton = document.createElement('div')
+        const editButton = document.createElement('button')
+        const commentButton = document.createElement('button')
 
         doubleButton.className = 'bibliography-double-button'
         editButton.className = 'bibliography-edit-button'
         commentButton.className = 'bibliography-comment-button'
 
-        commentButton.addEventListener('click', () => {
+        commentButton.addEventListener('click', (e) => {
+          e.preventDefault()
           this.props.setComment(
             buildComment(this.node.attrs.id) as CommentAnnotation
           )
         })
 
-        editButton.addEventListener('click', () => {
+        editButton.addEventListener('click', (e) => {
+          e.preventDefault()
           this.showPopper(this.node.attrs.id)
           this.popperContainer = undefined
         })
@@ -164,6 +166,9 @@ export class BibliographyItemView<
         doubleButton.append(editButton, commentButton)
         if (this.props.getCapabilities().seeReferencesButtons) {
           this.dom.appendChild(doubleButton)
+        }
+        if (this.props.getCapabilities().editArticle) {
+          editButton.disabled = true
         }
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console

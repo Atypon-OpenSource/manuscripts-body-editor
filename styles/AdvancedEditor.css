@@ -700,6 +700,8 @@
 
 .bibliography-double-button {
   display: inline-flex;
+  text-decoration: none;
+  color: inherit;
   flex-direction: column;
   position: absolute;
   top: -50%;
@@ -711,14 +713,19 @@
 
 .bibliography-edit-button,
 .bibliography-comment-button {
+  text-decoration: none;
   display: inline-flex;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
   height: 40px;
   background: #ffffff;
+  color: inherit;
   border: 1px solid #e2e2e2;
   border-radius: 32px 32px 0 0;
+}
+.bibliography-double-button button:disabled svg {
+  opacity: 0.25;
 }
 
 .bibliography-comment-button {
