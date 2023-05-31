@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { FileAttachment } from '@manuscripts/style-guide'
 import React, { ChangeEvent, useCallback } from 'react'
 
 export interface FileUploadProps {
@@ -24,7 +24,7 @@ export interface FileUploadProps {
   uploadAttachment: (
     designation: string,
     file: File
-  ) => Promise<{ data?: { uploadAttachment?: SubmissionAttachment } }>
+  ) => Promise<{ data?: { uploadAttachment?: FileAttachment } }>
   addFigureExFileRef: (
     relation: string,
     publicUrl: string,

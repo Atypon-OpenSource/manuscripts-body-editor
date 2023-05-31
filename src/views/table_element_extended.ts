@@ -62,7 +62,6 @@ export class TableElementView extends BlockView<
 
     if (figure && dataset?.ref) {
       const props = {
-        submissionId: this.props.submissionId,
         title:
           dataset.ref.filename ||
           dataset.ref.displayName ||

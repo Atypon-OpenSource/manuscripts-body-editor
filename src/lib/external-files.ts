@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SubmissionAttachment } from '@manuscripts/style-guide'
+import { FileAttachment } from '@manuscripts/style-guide'
 
 /**
  * A helper to check for existing external files of 'imageRepresentation' kind and replace/add it when needed.
@@ -26,7 +26,7 @@ const excludedDesignations = ['main-manuscript', 'metadata']
 export interface ExternalFileRef {
   url: string
   kind?: string
-  ref?: SubmissionAttachment
+  ref?: FileAttachment
 }
 export const addExternalFileRef = (
   externalFileReferences: ExternalFileRef[] | undefined,
@@ -45,7 +45,7 @@ export const removeExternalFileRef = (
 ) => {
   return externalFileReferences?.filter((item) => item.url !== url)
 }
-export const getAllowedForInFigure = (files: SubmissionAttachment[]) =>
+export const getAllowedForInFigure = (files: FileAttachment[]) =>
   files.filter(
     (file) => file.type.label && !excludedDesignations.includes(file.type.label)
   )
