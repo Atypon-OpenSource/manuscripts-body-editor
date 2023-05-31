@@ -205,8 +205,8 @@ const getCommentIcon =
     element.classList.add('block-comment-button', elementClass)
 
     element.onclick = () => {
+      setSelectedComment(commentId)
       commentScroll(commentId, 'inspector')
-      setSelectedComment(undefined)
     }
 
     const groupCommentIcon =
