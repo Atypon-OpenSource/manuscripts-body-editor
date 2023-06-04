@@ -33,8 +33,8 @@ import { ReactElement, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { DefaultTheme } from 'styled-components'
 
-import { EditorProps } from '../configs/lean-workflow/ManuscriptsEditor'
-import { ViewerProps } from '../configs/lean-workflow/ManuscriptsViewer'
+import { EditorProps } from '../configs/ManuscriptsEditor'
+import { ViewerProps } from '../configs/ManuscriptsViewer'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 
@@ -105,7 +105,6 @@ const defaultViewerProps: ViewerProps = {
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
   components: {},
   theme,
-  submissionId: 'test-submission-id',
   updateDesignation: async () => undefined,
   uploadAttachment: async () => undefined,
   getAttachments: () => [],

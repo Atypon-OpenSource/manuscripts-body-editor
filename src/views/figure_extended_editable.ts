@@ -17,7 +17,7 @@
 import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
-  SubmissionAttachment,
+  FileAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import {
@@ -43,9 +43,8 @@ import ReactSubView from './ReactSubView'
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 interface FigureProps {
-  getAttachments: () => SubmissionAttachment[]
+  getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
-  submissionId: string
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
@@ -102,7 +101,7 @@ export class FigureEditableView extends FigureView<
   }
 
   public getFileData = () => {
-    // When in PM doc we replace attachment id with a real uri. So the src like 'https://lw.com/image.jpg'
+    // When in PM doc we replace attachment id with a real uri. So the src like 'https://example.com/image.jpg'
 
     const imageFileRegex =
       /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp|tif|tiff)(\?format=jpg)?$/gi
@@ -247,7 +246,6 @@ export class FigureEditableView extends FigureView<
           mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
           setFigureAttrs: this.setFigureAttrs,
           can: this.props.capabilities,
-          submissionId: this.props.submissionId,
         }
 
         this.reactTools = ReactSubView(

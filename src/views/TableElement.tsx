@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FileSectionItem, SubmissionAttachment } from '@manuscripts/style-guide'
+import { FileAttachment, FileSectionItem } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -100,7 +100,7 @@ const TableElement = ({
       [figure, viewProps, dispatch]
     )
 
-    const handleSelectedFile = (file: SubmissionAttachment) => {
+    const handleSelectedFile = (file: FileAttachment) => {
       if (!figure) {
         return
       }

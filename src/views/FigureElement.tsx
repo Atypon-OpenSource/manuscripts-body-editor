@@ -19,10 +19,10 @@ import {
   AttachIcon,
   Designation,
   DropdownContainer,
+  FileAttachment,
   getDesignationName,
   RoundIconButton,
   SelectDialogDesignation,
-  SubmissionAttachment,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
@@ -43,8 +43,8 @@ import { FigureProps } from './FigureComponent'
 import { ReactViewComponentProps } from './ReactView'
 
 interface AttachableFilesDropdownProps {
-  onSelect: (file: SubmissionAttachment) => void
-  files: SubmissionAttachment[]
+  onSelect: (file: FileAttachment) => void
+  files: FileAttachment[]
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   addFigureExFileRef: (attachmentId: string) => void
 }

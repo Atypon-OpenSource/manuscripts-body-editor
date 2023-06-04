@@ -18,48 +18,46 @@ import 'prosemirror-view/style/prosemirror.css'
 
 import {
   BibliographyItem,
-  Manuscript,
+  CommentAnnotation,
   Model,
-  UserProfile,
 } from '@manuscripts/json-schema'
-import { Capabilities, SubmissionAttachment } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { History } from 'history'
-import { EditorState } from 'prosemirror-state'
+import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
+import { Build, schema } from '@manuscripts/transform'
+import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
-import { DefaultTheme } from 'styled-components'
 
-import { PopperManager } from '../../lib/popper'
-import { CreateView } from '../../useEditor'
-import plugins from './viewer-plugins-lw'
-import views from './viewer-views-lw'
+import { transformPasted } from '../lib/paste'
+import { CreateView } from '../useEditor'
+import plugins from './editor-plugins'
+import views from './editor-views'
+import { ViewerProps } from './ManuscriptsViewer'
 
-export interface ViewerProps {
-  attributes?: { [key: string]: string }
-  doc: ManuscriptNode
-  getModel: <T extends Model>(id: string) => T | undefined
-  getManuscript: () => Manuscript
-  getLibraryItem: (id: string) => BibliographyItem | undefined
-  locale: string
-  modelMap: Map<string, Model>
-  popper: PopperManager
-  projectID: string
-  getCurrentUser: () => UserProfile
-  history: History
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
-  unmountReactComponent: (container: HTMLElement) => void
+export interface EditorProps extends ViewerProps {
+  plugins?: Plugin[]
+  getCitationProvider: () => CitationProvider | undefined
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
+  deleteModel: (id: string) => Promise<string>
+  setLibraryItem: (item: BibliographyItem) => void
+  matchLibraryItemByIdentifier: (
+    item: BibliographyItem
+  ) => BibliographyItem | undefined
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
+  removeLibraryItem: (id: string) => void
+  setComment: (comment?: CommentAnnotation) => void
+  setSelectedComment: (id?: string) => void
+  retrySync: (componentIDs: string[]) => Promise<void>
+
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-  theme: DefaultTheme
-  submissionId: string
+  environment?: string
   updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  getAttachments: () => SubmissionAttachment[]
   getCapabilities: () => Capabilities
 }
 
 export default {
-  createState: (props: ViewerProps) => {
+  createState: (props: EditorProps) => {
     return EditorState.create({
       doc: props.doc,
       schema,
@@ -68,14 +66,21 @@ export default {
   },
 
   createView:
-    (props: ViewerProps): CreateView =>
+    (props: EditorProps): CreateView =>
     (el, state, dispatch) =>
       new EditorView(el, {
-        editable: () => false,
         state,
+        editable: () => props.getCapabilities().editArticle,
+        scrollMargin: {
+          top: 100,
+          bottom: 100,
+          left: 0,
+          right: 0,
+        },
+        dispatchTransaction: dispatch,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         nodeViews: views(props, dispatch) as any,
-        dispatchTransaction: dispatch,
         attributes: props.attributes,
+        transformPasted,
       }),
 }
