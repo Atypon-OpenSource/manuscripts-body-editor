@@ -41,7 +41,6 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 interface FigureProps {
   getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
-  submissionId: string
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   capabilities?: Capabilities
   isInGraphicalAbstract?: boolean
