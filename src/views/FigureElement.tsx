@@ -18,8 +18,8 @@
 import {
   AttachIcon,
   DropdownContainer,
-  RoundIconButton,
   FileAttachment,
+  RoundIconButton,
   useDropdown,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'

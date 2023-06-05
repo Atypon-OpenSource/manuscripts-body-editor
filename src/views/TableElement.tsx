@@ -139,6 +139,7 @@ const TableElement = ({
                   dataset.ref.displayName ||
                   dataset.ref.filename
                 }
+                fileSection={dataset.ref.fileSection}
                 externalFile={dataset.ref}
               />
             </AlternativesList>
