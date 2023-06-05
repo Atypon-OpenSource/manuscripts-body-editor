@@ -105,7 +105,7 @@ const defaultViewerProps: ViewerProps = {
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
   components: {},
   theme,
-  updateDesignation: async () => undefined,
+  submissionId: 'test-submission-id',
   uploadAttachment: async () => undefined,
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),

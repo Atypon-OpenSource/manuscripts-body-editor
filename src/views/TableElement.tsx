@@ -33,7 +33,6 @@ import {
 import { ReactViewComponentProps } from './ReactView'
 
 const TableElement = ({
-  updateDesignation,
   uploadAttachment,
   getCapabilities,
   mediaAlternativesEnabled,
@@ -104,7 +103,6 @@ const TableElement = ({
       if (!figure) {
         return
       }
-      const prevAttrs = { ...figure.attrs }
       setTableAttrs({
         externalFileReferences: addExternalFileRef(
           figure?.attrs.externalFileReferences,
@@ -113,9 +111,6 @@ const TableElement = ({
           { ref: file }
         ),
       })
-      updateDesignation('dataset', file.name).catch(() => {
-        setTableAttrs(prevAttrs)
-      })
     }
 
     const can = getCapabilities()
@@ -123,20 +118,18 @@ const TableElement = ({
     return (
       <EditableBlock canWrite={!!can?.editArticle} viewProps={viewProps}>
         <FigureWrapper contentEditable="false">
-          {mediaAlternativesEnabled &&
-            can?.changeDesignation &&
-            getAttachments() && (
-              <AttachableFilesDropdown
-                files={getAttachments()}
-                onSelect={handleSelectedFile}
-                uploadAttachment={uploadAttachment}
-                addFigureExFileRef={(publicUrl) => {
-                  if (figure) {
-                    setTableAttrs({ src: publicUrl })
-                  }
-                }}
-              />
-            )}
+          {mediaAlternativesEnabled && getAttachments() && (
+            <AttachableFilesDropdown
+              files={getAttachments()}
+              onSelect={handleSelectedFile}
+              uploadAttachment={uploadAttachment}
+              addFigureExFileRef={(publicUrl) => {
+                if (figure) {
+                  setTableAttrs({ src: publicUrl })
+                }
+              }}
+            />
+          )}
           <div contentEditable="true" ref={content}></div>
           {figure && dataset?.ref && (
             <AlternativesList>
@@ -146,11 +139,8 @@ const TableElement = ({
                   dataset.ref.displayName ||
                   dataset.ref.filename
                 }
-                handleChangeDesignation={(typeId: string, name: string) =>
-                  updateDesignation(typeId, name)
-                }
+                fileSection={dataset.ref.fileSection}
                 externalFile={dataset.ref}
-                showDesignationActions={true}
               />
             </AlternativesList>
           )}
