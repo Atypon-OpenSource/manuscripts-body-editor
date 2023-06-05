@@ -18,11 +18,9 @@ import React, { ChangeEvent, useCallback } from 'react'
 
 export interface FileUploadProps {
   fileInputRef: React.RefObject<HTMLInputElement>
-  designation: string
   accept: string
   relation: string
   uploadAttachment: (
-    designation: string,
     file: File
   ) => Promise<{ data?: { uploadAttachment?: FileAttachment } }>
   addFigureExFileRef: (
@@ -34,7 +32,6 @@ export interface FileUploadProps {
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   fileInputRef,
-  designation,
   relation,
   accept,
   uploadAttachment,
@@ -50,7 +47,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files && e.target.files[0]
       if (file) {
-        const response = await uploadAttachment(designation, file)
+        const response = await uploadAttachment(file)
         if (response?.data?.uploadAttachment) {
           // eslint-disable-next-line no-unsafe-optional-chaining
           const { link, id } = response.data?.uploadAttachment
@@ -59,7 +56,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         resetUpload()
       }
     },
-    [uploadAttachment, designation, resetUpload, addFigureExFileRef, relation]
+    [uploadAttachment, resetUpload, addFigureExFileRef, relation]
   )
 
   return (

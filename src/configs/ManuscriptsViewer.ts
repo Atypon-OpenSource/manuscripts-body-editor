@@ -51,8 +51,8 @@ export interface ViewerProps {
   unmountReactComponent: (container: HTMLElement) => void
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   theme: DefaultTheme
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  submissionId: string
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getAttachments: () => FileAttachment[]
   getCapabilities: () => Capabilities
 }

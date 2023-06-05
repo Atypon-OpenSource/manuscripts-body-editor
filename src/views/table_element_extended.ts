@@ -66,7 +66,6 @@ export class TableElementView extends BlockView<
           dataset.ref.filename ||
           dataset.ref.displayName ||
           dataset.ref.filename,
-        handleChangeDesignation: this.props.updateDesignation,
         externalFile: dataset.ref,
         showDesignationActions: true,
       }
@@ -85,11 +84,7 @@ export class TableElementView extends BlockView<
       }
     }
 
-    if (
-      this.props.mediaAlternativesEnabled &&
-      this.props.getCapabilities().changeDesignation &&
-      this.props.getAttachments()
-    ) {
+    if (this.props.mediaAlternativesEnabled && this.props.getAttachments()) {
       const addFigureExFileRef = () => {
         // This is not active implementation but maybe used later on
         //   if (figure) {
