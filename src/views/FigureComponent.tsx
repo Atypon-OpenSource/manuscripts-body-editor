@@ -34,9 +34,7 @@ import { ReactViewComponentProps } from './ReactView'
 export interface FigureProps {
   getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
-  submissionId: string
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-
   getCapabilities: () => Capabilities
   mediaAlternativesEnabled?: boolean
 }

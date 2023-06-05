@@ -356,7 +356,6 @@ const buildProps = (
   setSelectedComment: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
-  submissionId: 'testId',
   uploadAttachment: () => new Promise(() => ''),
   theme: {},
   getAttachments: () => [],
