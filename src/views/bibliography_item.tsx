@@ -167,9 +167,7 @@ export class BibliographyItemView<
         if (this.props.getCapabilities().seeReferencesButtons) {
           this.dom.appendChild(doubleButton)
         }
-        if (this.props.getCapabilities().editArticle) {
-          editButton.disabled = true
-        }
+        editButton.disabled = !this.props.getCapabilities().editArticle
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors
