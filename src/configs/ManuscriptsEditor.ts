@@ -28,10 +28,10 @@ import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
-import { transformPasted } from '../../lib/paste'
-import { CreateView } from '../../useEditor'
-import plugins from './editor-plugins-lw'
-import views from './editor-views-lw'
+import { transformPasted } from '../lib/paste'
+import { CreateView } from '../useEditor'
+import plugins from './editor-plugins'
+import views from './editor-views'
 import { ViewerProps } from './ManuscriptsViewer'
 
 export interface EditorProps extends ViewerProps {
@@ -51,9 +51,7 @@ export interface EditorProps extends ViewerProps {
 
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
-  submissionId: string
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
 }
 

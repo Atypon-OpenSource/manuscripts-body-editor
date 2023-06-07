@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  FigureNode,
-  isInGraphicalAbstractSection,
-} from '@manuscripts/transform'
+import { FigureNode } from '@manuscripts/transform'
 
 import {
   FilesDropdown,
@@ -99,11 +96,6 @@ export class FigureElementView extends BlockView<
     }
   }
 
-  private isInGraphicalAbstract = () => {
-    const resolvedPos = this.view.state.doc.resolve(this.getPos())
-    return isInGraphicalAbstractSection(resolvedPos)
-  }
-
   public updateContents = () => {
     const { figureStyle, figureLayout, alignment, sizeFraction } =
       this.node.attrs
@@ -132,7 +124,6 @@ export class FigureElementView extends BlockView<
     if (capabilities.editArticle && capabilities.uploadFile) {
       const uploadAttachmentHandler = createOnUploadHandler(
         this.props.uploadAttachment,
-        this.isInGraphicalAbstract() ? 'graphical-abstract-image' : 'figure',
         this.addAttachmentSrc
       )
       const input = document.createElement('input')

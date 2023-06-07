@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Model } from '@manuscripts/json-schema'
-import { Capabilities, SubmissionAttachment } from '@manuscripts/style-guide'
+import { Capabilities, FileAttachment } from '@manuscripts/style-guide'
 import React, { SyntheticEvent } from 'react'
 
 import { EditableBlockProps } from '../../views/editable_block'
@@ -22,10 +22,9 @@ import { OptionsDropdown } from './FilesDropdown'
 
 export interface FigureOptionsSubviewProps {
   src: string
-  submissionId: string
   onUploadClick: (e: SyntheticEvent | Event) => void
   onDetachClick: () => void
-  getAttachments: () => SubmissionAttachment[]
+  getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
   mediaAlternativesEnabled: boolean
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
@@ -36,7 +35,6 @@ const FigureOptionsSubview: React.FC<
   EditableBlockProps & FigureOptionsSubviewProps
 > = ({
   src,
-  submissionId,
   onUploadClick,
   onDetachClick,
   setFigureAttrs,
@@ -48,7 +46,6 @@ const FigureOptionsSubview: React.FC<
   return (
     <OptionsDropdown
       url={src}
-      submissionId={submissionId}
       onUploadClick={onUploadClick}
       setFigureAttrs={setFigureAttrs}
       getAttachments={getAttachments}
