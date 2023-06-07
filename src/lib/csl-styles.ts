@@ -62,7 +62,7 @@ export const loadCSLStyle = async (cslIdentifier: string): Promise<string> => {
     throw new Error(`No style name in ${cslIdentifier}`)
   }
   const result = await import(
-    `../../../node_modules/@manuscripts/data/dist/csl/styles/${basename[0]}.json`
+    `@manuscripts/data/dist/csl/styles/${basename[0]}.json`
   )
 
   const styles = (result.default || result) as Record<string, string> // no 'default' version is for compatibility with webpack based apps
