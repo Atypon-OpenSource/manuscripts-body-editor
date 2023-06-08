@@ -15,6 +15,7 @@
  */
 
 import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
+import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -28,7 +29,10 @@ import {
 } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-export class KeywordView<PropsType extends BaseNodeProps>
+export interface Props extends BaseNodeProps {
+  getCapabilities: () => Capabilities
+}
+export class KeywordView<PropsType extends Props>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -46,6 +50,7 @@ export class KeywordView<PropsType extends BaseNodeProps>
       this.dom.innerHTML = ''
       this.dom.appendChild(fragment)
       if (
+        this.props.getCapabilities().editArticle &&
         !isDeleted(this.node) &&
         !isRejectedInsert(this.node) &&
         !isPendingInsert(this.node)
