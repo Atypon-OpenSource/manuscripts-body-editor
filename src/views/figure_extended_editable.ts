@@ -292,9 +292,9 @@ export class FigureEditableView extends FigureView<
         </div>
       `
     } else {
-      instructions.textContent = 'Click to select an image file !'
+      instructions.textContent = 'Click to select an image file'
     }
-    //instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
+    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
     element.appendChild(instructions)
 
     return element

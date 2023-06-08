@@ -99,6 +99,17 @@ export const EditableBlock = <
       return warningButton
     }
 
+    // public createCommentButton = () => {
+    //   const commentButton = document.createElement('button')
+    //   commentButton.classList.add('action-button')
+    //   commentButton.textContent = '💬'
+    //   commentButton.addEventListener('click', async () => {
+    //     await this.createComment(this.node.attrs.id)
+    //   })
+
+    //   return commentButton
+    // }
+
     public createAddButton = (after: boolean): HTMLElement | null => {
       if (
         !this.props.getCapabilities()?.editArticle ||

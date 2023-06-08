@@ -102,8 +102,8 @@ export class FigureEditableView extends FigureView<EditableBlockProps> {
     element.classList.add('placeholder')
 
     const instructions = document.createElement('div')
-    instructions.textContent = 'Click to select an image file!'
-    //instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
+    instructions.textContent = 'Click to select an image file'
+    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
     element.appendChild(instructions)
 
     return element
