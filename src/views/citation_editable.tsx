@@ -148,7 +148,7 @@ export class CitationEditableView extends CitationView<
         handleRemove={this.handleRemove}
         updatePopper={this.updatePopper}
         handleCite={this.handleCite}
-        // canEdit={capabilities.editArticle}
+        canEdit={capabilities.editCitationsAndRefs}
         citation={citation}
         updateCitation={updateCitation}
         projectID={projectID}
