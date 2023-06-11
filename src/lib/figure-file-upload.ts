@@ -15,15 +15,14 @@
  */
 
 export function createOnUploadHandler(
-  uploadAttachment: (designation: string, file: File) => Promise<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  designation: string,
+  uploadAttachment: (file: File) => Promise<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   addAttachmentSrc: (link: string) => void
 ) {
   return async function (e: Event) {
     const target = e.target as HTMLInputElement
     const file = target.files && target.files[0]
     if (file) {
-      const response = await uploadAttachment(designation, file)
+      const response = await uploadAttachment(file)
       if (response) {
         const { link } = response
         addAttachmentSrc(link)

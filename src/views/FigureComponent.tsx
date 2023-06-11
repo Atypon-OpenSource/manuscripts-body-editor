@@ -17,13 +17,10 @@
 import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
-  SubmissionAttachment,
+  FileAttachment,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
-import {
-  FigureNode,
-  isInGraphicalAbstractSection,
-} from '@manuscripts/transform'
+import { FigureNode } from '@manuscripts/transform'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -34,26 +31,11 @@ import { addExternalFileRef, ExternalFileRef } from '../lib/external-files'
 import { setNodeAttrs as setGivenNodeAttrs } from '../lib/utils'
 import { ReactViewComponentProps } from './ReactView'
 
-// export type SubmissionAttachment = {
-//   id: string
-//   name: string
-//   type: SubmissionAttachmentType
-//   link: string
-// }
-
-// export type SubmissionAttachmentType = {
-//   id: string
-//   label?: string
-// }
-
 export interface FigureProps {
-  getAttachments: () => SubmissionAttachment[]
+  getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
-  submissionId: string
-  uploadAttachment: (designation: string, file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  updateDesignation: (designation: string, name: string) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
-  isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
 }
 
@@ -68,7 +50,6 @@ const FigureComponent = ({
   getCapabilities,
   mediaAlternativesEnabled,
   getAttachments,
-  submissionId,
   modelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
@@ -78,9 +59,6 @@ const FigureComponent = ({
     contentDOM,
   }) => {
     const figure = viewProps.node
-    const resolvedPos = viewProps.view.state.doc.resolve(viewProps.getPos())
-    const isInGraphicalAbstract = isInGraphicalAbstractSection(resolvedPos)
-
     const src = useMemo(() => {
       if (nodeAttrs.src) {
         return nodeAttrs.src
@@ -214,9 +192,6 @@ const FigureComponent = ({
             fileInputRef={fileInputRef}
             uploadAttachment={uploadAttachment}
             addFigureExFileRef={addFigureExFileRef}
-            designation={
-              isInGraphicalAbstract ? 'graphical-abstract-image' : 'figure'
-            }
             accept={'image/*'}
             relation={'imageRepresentation'}
           />
@@ -227,7 +202,6 @@ const FigureComponent = ({
             <UnstyledButton type="button" onClick={onUploadClick}>
               <OptionsDropdown
                 url={src}
-                submissionId={submissionId}
                 onUploadClick={onUploadClick}
                 setFigureAttrs={setFigureAttrs}
                 getAttachments={getAttachments}
