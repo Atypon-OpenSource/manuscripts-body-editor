@@ -176,7 +176,7 @@ export const AddKeywordInline: React.FC<{
         node.type.schema.text(keyword.name)
       )
       const nodePosition = getPos() + node.nodeSize - 1
-      view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
+      view.dispatch(view.state.tr.insert(nodePosition - 1, keywordNode))
 
       setIsAddingNewKeyword(false)
       setNewKeyword('')

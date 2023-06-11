@@ -784,8 +784,8 @@
   opacity: 1;
 }
 
-.keywords-list .ProseMirror-trailingBreak {
-  display: none;
+.keywords-list > div {
+  display: inline;
 }
 
 .keywords-editor {
@@ -794,14 +794,14 @@
   width: auto;
 }
 
-.block-section_title_plain > .block {
-  align-self: center;
-}
-
-.block-section_title_plain > .block-gutter {
-  margin-top: 0;
+.keywords > .block-section_title > .block-gutter {
   display: flex;
   justify-content: flex-end;
+  margin-top: 0;
+}
+
+.keywords > .block-section_title > .block {
+  align-items: center;
 }
 
 .ProseMirror .inserted.pending {
