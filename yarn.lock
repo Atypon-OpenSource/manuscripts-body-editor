@@ -1678,7 +1678,7 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.1.7-LEAN-2192-v8":
+"@manuscripts/style-guide@1.1.7-LEAN-2192-v8":
   version "1.1.7-LEAN-2192-v8"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.7-LEAN-2192-v8.tgz#6e7b9953acd3be1fdd3a31f4bf6e731cf64a9877"
   integrity sha512-SlwhICKBapeCpZJ+lMsilAVODmqLwc31+dsQFCB2YIjYBop68ax2lB66DlEZ/Q1oyAJwxHcff8FHd6fcaNXBLg==
