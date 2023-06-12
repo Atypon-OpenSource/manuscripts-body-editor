@@ -34,7 +34,7 @@
     "@manuscripts/library": "^1.1.2",
     "@manuscripts/style-guide": "^1.1.7",
     "@manuscripts/title-editor": "^1.1.0",
-    "@manuscripts/track-changes-plugin": "^1.5.0",
+    "@manuscripts/track-changes-plugin": "1.5.1-LEAN-2431",
     "@manuscripts/transform": "^1.2.5",
     "astrocite-eutils": "^0.16.4",
     "axios": "^1.2.2",
