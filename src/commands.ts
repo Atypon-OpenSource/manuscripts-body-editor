@@ -1036,13 +1036,6 @@ export function addComment(
   viewNode?: ManuscriptNode,
   resolvePos?: ResolvedPos
 ) {
-  if (
-    viewNode &&
-    viewNode.type === viewNode.type.schema.nodes.keywords_section
-  ) {
-    return addBlockComment(viewNode, state, dispatch)
-  }
-
   const { selection } = state
   const isThereTextSelected = selection.content().size > 0
   const selectionNode = getParentNode(selection)
