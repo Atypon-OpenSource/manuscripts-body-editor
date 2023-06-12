@@ -1751,7 +1751,7 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@1.2.5", "@manuscripts/transform@^1.2.5":
+"@manuscripts/transform@^1.2.5":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.5.tgz#f5e1867992e58fba41fdb0a3c4f67f74ae855372"
   integrity sha512-Oe/AdoGRNnTH/6jlZIstohUK6azK2gDugXw1Swgy54yVlPYwqpK+064NpdARXRVrwFyCcWXJt7tqbPvFh96dpA==
