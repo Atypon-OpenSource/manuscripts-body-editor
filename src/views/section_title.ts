@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
+import { isSectionNode, SectionNode } from '@manuscripts/transform'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
+
 import { sectionLevel } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+
+export const isSpecialSection = (node: ProsemirrorNode) => {
+  if (isSectionNode(node)) {
+    const { attrs } = node as SectionNode
+    return (
+      attrs.category === 'MPSectionCategory:abstracts' ||
+      attrs.category === 'MPSectionCategory:body' ||
+      attrs.category === 'MPSectionCategory:backmatter'
+    )
+  }
+}
 
 export class SectionTitleView<
   PropsType extends BaseNodeProps
@@ -26,12 +40,17 @@ export class SectionTitleView<
   public elementType = 'h1'
 
   public updateContents = () => {
+    const $pos = this.view.state.doc.resolve(this.getPos())
+
+    if (isSpecialSection($pos.parent)) {
+      this.dom = document.createDocumentFragment() as unknown as HTMLElement
+      return
+    }
+
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-
-      const $pos = this.view.state.doc.resolve(this.getPos())
 
       this.contentDOM.setAttribute(
         'data-placeholder',

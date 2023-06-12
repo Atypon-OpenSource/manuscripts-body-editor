@@ -36,6 +36,7 @@ import { findDOMNode } from 'react-dom'
 import { ContextMenu } from '../../lib/context-menu'
 import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
+import { isSpecialSection } from '../../views/section_title'
 import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
   Outline,
@@ -217,55 +218,63 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
             style={this.topPreviewStyles(mightDrop, dragPosition)}
           />
 
-          {connectDragSource(
-            <div>
-              <OutlineItem
-                isSelected={isSelected}
-                depth={depth}
-                onContextMenu={this.handleContextMenu}
-              >
-                {items.length ? (
-                  <OutlineItemArrow onClick={this.toggle}>
-                    {open ? (
-                      <StyledTriangleExpanded />
-                    ) : (
-                      <StyledTriangleCollapsed />
-                    )}
-                  </OutlineItemArrow>
-                ) : (
-                  <OutlineItemNoArrow />
-                )}
-
-                <OutlineItemLink to={`#${node.attrs.id || ''}`}>
-                  {connectDragPreview(
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <OutlineItemIcon>
-                        {nodeTypeIcon(node.type)}
-                      </OutlineItemIcon>
-                    </span>
-                  )}
-
-                  <OutlineItemLinkText
-                    className={`outline-text-${node.type.name} ${
-                      isDeletedItem && 'deleted'
-                    }`}
+          {!isSpecialSection(node) && (
+            <>
+              {connectDragSource(
+                <div>
+                  <OutlineItem
+                    isSelected={isSelected}
+                    depth={depth}
+                    onContextMenu={this.handleContextMenu}
                   >
-                    {this.itemText(node)}
-                  </OutlineItemLinkText>
+                    {items.length ? (
+                      <OutlineItemArrow onClick={this.toggle}>
+                        {open ? (
+                          <StyledTriangleExpanded />
+                        ) : (
+                          <StyledTriangleCollapsed />
+                        )}
+                      </OutlineItemArrow>
+                    ) : (
+                      <OutlineItemNoArrow />
+                    )}
 
-                  <RequirementsAlert node={requirementsNode || node} />
-                </OutlineItemLink>
-              </OutlineItem>
-            </div>
+                    <OutlineItemLink to={`#${node.attrs.id || ''}`}>
+                      {connectDragPreview(
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <OutlineItemIcon>
+                            {nodeTypeIcon(node.type)}
+                          </OutlineItemIcon>
+                        </span>
+                      )}
+
+                      <OutlineItemLinkText
+                        className={`outline-text-${node.type.name} ${
+                          isDeletedItem && 'deleted'
+                        }`}
+                      >
+                        {this.itemText(node)}
+                      </OutlineItemLinkText>
+
+                      <RequirementsAlert node={requirementsNode || node} />
+                    </OutlineItemLink>
+                  </OutlineItem>
+                </div>
+              )}
+            </>
           )}
 
           {items.length ? (
-            <div style={{ display: open ? '' : 'none' }}>
+            <div
+              style={{
+                display: open || isSpecialSection(node) ? '' : 'none',
+              }}
+            >
               {items.map((subtree) => (
                 <DraggableTree
                   {...this.props}
