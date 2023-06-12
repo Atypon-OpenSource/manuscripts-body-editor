@@ -17,9 +17,9 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
+import { isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { isRejectedInsert } from '../lib/track-changes-utils'
 
 export class InlineEquationView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>

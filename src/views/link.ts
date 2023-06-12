@@ -16,10 +16,10 @@
 
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
+import { isRejectedInsert } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { isRejectedInsert } from '../lib/track-changes-utils'
 
 export class LinkView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
