@@ -1678,7 +1678,7 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.1.6":
+"@manuscripts/style-guide@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.6.tgz#606c72cb9f761b1b74900879aecca476eb23e719"
   integrity sha512-r+TRBqXnRoghXtAg5VPxeJ8U+XYKKhuRBY6XnnmaQc6g2nikZRoi97byEzlfrKw2Tl98NMREBC/jT7qL9fb2jQ==
