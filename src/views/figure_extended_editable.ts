@@ -35,7 +35,6 @@ import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import { addFormatQuery } from './FigureComponent'
 import ReactSubView from './ReactSubView'
-import { Attrs } from 'prosemirror-model'
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
