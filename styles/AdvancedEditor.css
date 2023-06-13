@@ -1,4 +1,10 @@
-.ProseMirror > section > section > section > section > section > section:not(.toc) {
+.ProseMirror
+  > section
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc) {
   counter-increment: section-5;
   counter-reset: section-6;
 }
@@ -28,7 +34,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -41,7 +48,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -84,7 +92,8 @@
 }
 
 .ProseMirror
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '. ' attr(data-placeholder);
@@ -114,7 +123,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc) {
+  > section
+  > section:not(.toc) {
   counter-increment: section-6;
   counter-reset: section-7;
 }
@@ -146,7 +156,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -160,7 +171,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -187,13 +199,19 @@
   display: inline;
 }
 
-.ProseMirror > section > section > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '. ';
 }
 
 .ProseMirror
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '. '
@@ -221,7 +239,8 @@
 .ProseMirror
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -231,7 +250,8 @@
 .ProseMirror
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -259,7 +279,8 @@
 .ProseMirror
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -269,7 +290,8 @@
 .ProseMirror
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -304,7 +326,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -315,7 +338,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -323,7 +347,13 @@
     attr(data-placeholder);
 }
 
-.ProseMirror > section > section > section > section > section > section:not(.toc) {
+.ProseMirror
+  > section
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc) {
   counter-increment: section-5;
   counter-reset: section-6;
 }
@@ -353,7 +383,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -366,7 +397,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -392,13 +424,19 @@
   display: inline;
 }
 
-.ProseMirror > section > section > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '. ';
 }
 
 .ProseMirror
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '. '
@@ -411,7 +449,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc) {
+  > section
+  > section:not(.toc) {
   counter-increment: section-6;
   counter-reset: section-7;
 }
@@ -443,7 +482,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -457,7 +497,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -494,7 +535,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -505,7 +547,8 @@
   > section
   > section
   > section
-  > section > section:not(.toc)
+  > section
+  > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
@@ -824,6 +867,8 @@
 .ProseMirror .deleted.rejected {
   text-decoration: none;
 }
+.ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
   display: none;

@@ -104,6 +104,20 @@ export class FigureElementView extends BlockView<
       throw new Error('No contentDOM')
     }
 
+    if (this.node.attrs.dataTracked?.length) {
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
+
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
     this.contentDOM.setAttribute('data-alignment', alignment)

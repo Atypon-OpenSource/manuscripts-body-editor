@@ -35,6 +35,7 @@ import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import { addFormatQuery } from './FigureComponent'
 import ReactSubView from './ReactSubView'
+import { Attrs } from 'prosemirror-model'
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
 
@@ -95,17 +96,15 @@ export class FigureEditableView extends FigureView<
     this.dom.appendChild(this.contentDOM)
   }
 
-  public getFileData = () => {
+  public getFileData = (attrs = this.node.attrs) => {
     // When in PM doc we replace attachment id with a real uri. So the src like 'https://example.com/image.jpg'
 
     const imageFileRegex =
       /[^\s]+(.*?)\.(jpg|jpeg|png|gif|svg|webp|tif|tiff)(\?format=jpg)?$/gi
-    const src = this.node.attrs.src
-    if (this.node.attrs.contentType && src) {
+    const src = attrs.src
+    if (attrs.contentType && src) {
       return {
-        isSupportedImageType: this.node.attrs.contentType.startsWith(
-          'image/'
-        ) as boolean,
+        isSupportedImageType: attrs.contentType.startsWith('image/') as boolean,
         fileName: src,
         url: addFormatQuery(src) as string,
       }
@@ -152,7 +151,35 @@ export class FigureEditableView extends FigureView<
   }
 
   public updateContents = () => {
-    const { isSupportedImageType, fileName, url } = this.getFileData()
+    let attrs = this.node.attrs
+
+    if (this.node.attrs.dataTracked?.length) {
+      /*
+        if track-status is 'rejected' and operation is 'set_attrs' then find old attribute in
+        the this.node.attrs.dataTracked[x].oldAttrs and use them in the display      
+      */
+
+      if (
+        this.node.attrs.dataTracked[0].status === 'rejected' &&
+        this.node.attrs.dataTracked[0].operation === 'set_attrs'
+      ) {
+        attrs = this.node.attrs.dataTracked[0].oldAttrs
+      }
+
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
+
+    const { isSupportedImageType, fileName, url } = this.getFileData(attrs)
 
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
