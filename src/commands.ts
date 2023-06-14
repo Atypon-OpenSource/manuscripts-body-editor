@@ -1080,10 +1080,24 @@ const isAllowedType = (type: NodeType) =>
   type === type.schema.nodes.section ||
   type === type.schema.nodes.footnotes_section ||
   type === type.schema.nodes.bibliography_section ||
-  type === type.schema.nodes.keywords_section ||
+  type === type.schema.nodes.keywords_group ||
   type === type.schema.nodes.paragraph ||
   type === type.schema.nodes.figure_element ||
   type === type.schema.nodes.table_element
+
+const getNode = (node: ManuscriptNode) => {
+  if (node.type === node.type.schema.nodes.keywords_section) {
+    let keywordGroup
+    node.descendants((child) => {
+      if (child.type === node.type.schema.nodes.keywords_group) {
+        keywordGroup = child
+        return false
+      }
+    })
+    return keywordGroup || node
+  }
+  return node
+}
 
 const addBlockComment = (
   node: ManuscriptNode,
@@ -1093,7 +1107,7 @@ const addBlockComment = (
   const {
     attrs: { id },
     type,
-  } = node
+  } = getNode(node)
   const comment = buildComment(id)
   const tr = state.tr.setMeta(commentAnnotation, {
     [SET_COMMENT]: comment,
