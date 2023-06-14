@@ -24,20 +24,24 @@ export const DeleteKeyword: React.FC<{
     node: ManuscriptNode
   }
   getUpdatedNode: () => ManuscriptNode
-}> = ({ viewProps, getUpdatedNode }) => {
+}> = ({ viewProps }) => {
   const [isDeletingKeyword, setIsDeletingKeyword] = useState<boolean>(false)
   const [keywordToDelete, setKeywordToDelete] = useState<string>('')
   const [keywordToDeleteId, setKeywordToDeleteId] = useState<string>('')
-  const { getPos, view } = viewProps
+  const { getPos, view, node } = viewProps
 
-  const getKeywords = (node: ManuscriptNode) => {
-    const keywords: ManuscriptNode[] = []
-    node.content.descendants((descNode) => {
-      if (descNode.type === descNode.type.schema.nodes.keyword) {
-        keywords.push(descNode)
+  const getKeywords = () => {
+    let position = 0,
+      elementSize = 0
+
+    node.descendants((node, pos) => {
+      if (node.attrs.id === keywordToDeleteId) {
+        position = pos + getPos()
+        elementSize = node.nodeSize
+        return false
       }
     })
-    return keywords
+    return { pos: position, to: position + elementSize + 1 }
   }
 
   const handleClick = (event: Event) => {
@@ -59,26 +63,8 @@ export const DeleteKeyword: React.FC<{
 
   const handleDelete = () => {
     if (keywordToDeleteId) {
-      const keywords = getKeywords(getUpdatedNode())
-      const keywordIndex = keywords.findIndex(
-        (element) => element.attrs.id === keywordToDeleteId
-      )
-      const keywordPosition = keywords.reduce(
-        (acc, element, index) =>
-          index < keywordIndex ? acc + element.nodeSize : acc,
-        0
-      )
-      const elementSize = keywords[keywordIndex].nodeSize
-      const elementPosition = view.state.doc.resolve(
-        getPos() + keywordPosition + 1
-      )
-
-      view.dispatch(
-        view.state.tr.delete(
-          elementPosition.pos,
-          elementPosition.pos + elementSize
-        )
-      )
+      const { pos, to } = getKeywords()
+      view.dispatch(view.state.tr.delete(pos, to))
       resetState()
     }
   }
