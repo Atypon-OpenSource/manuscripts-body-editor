@@ -68,7 +68,7 @@ export class KeywordsElementView extends BlockView<
       'keywords-editor'
     )
 
-    if (this.addingTools) {
+    if (this.addingTools && this.props.getCapabilities().editArticle) {
       this.element.appendChild(this.addingTools)
     }
 
