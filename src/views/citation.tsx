@@ -20,13 +20,29 @@ import {
   CitationItem,
   ObjectTypes,
 } from '@manuscripts/json-schema'
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { CitationProvider, loadCitationStyle } from '@manuscripts/library'
+import { DEFAULT_BUNDLE, ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+
+const createCitation = async (
+  citations: Map<string, BibliographyItem>,
+  citation: Citation
+) => {
+  const styleOpts = { bundleID: DEFAULT_BUNDLE }
+  const citationStyle = await loadCitationStyle(styleOpts)
+  const citationText = CitationProvider.makeCitationCluster(
+    citations,
+    citation,
+    citationStyle
+  )
+
+  return citationText
+}
 
 export interface CitationViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -127,7 +143,17 @@ export class CitationView<PropsType extends CitationViewProps>
     return this
   }
 
-  public updateContents = () => {
+  public updateContents = async () => {
+    const citations = new Map()
+    this.props.modelMap?.forEach((value) => {
+      if (value.objectType === 'MPBibliographyItem') {
+        citations.set(value._id, value)
+      }
+    })
+    const nodeModel = this.props.getModel(this.node.attrs.rid)
+    const citationText = await createCitation(citations, nodeModel as Citation)
+    console.log('Citation text', citationText, this.node)
+
     const fragment = sanitize(this.node.attrs.contents, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
     })

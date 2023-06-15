@@ -30,6 +30,7 @@ export interface BaseNodeProps {
     container: HTMLElement
   ) => void
   unmountReactComponent: (container: HTMLElement) => void
+  modelMap?: Map<string, Model>
 }
 
 export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
