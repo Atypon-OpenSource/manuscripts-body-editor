@@ -17,6 +17,7 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
+import { isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -30,23 +31,27 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    const { SVGRepresentation } = this.node.attrs
+    if (!isRejectedInsert(this.node)) {
+      const { SVGRepresentation } = this.node.attrs
 
-    while (this.dom.hasChildNodes()) {
-      this.dom.removeChild(this.dom.firstChild as ChildNode)
-    }
+      while (this.dom.hasChildNodes()) {
+        this.dom.removeChild(this.dom.firstChild as ChildNode)
+      }
 
-    if (SVGRepresentation) {
-      const fragment = sanitize(SVGRepresentation, {
-        USE_PROFILES: { svg: true },
-      })
-      this.dom.appendChild(fragment)
+      if (SVGRepresentation) {
+        const fragment = sanitize(SVGRepresentation, {
+          USE_PROFILES: { svg: true },
+        })
+        this.dom.appendChild(fragment)
+      } else {
+        const placeholder = document.createElement('div')
+        placeholder.className = 'equation-placeholder'
+        placeholder.textContent = '<Equation>'
+
+        this.dom.appendChild(placeholder)
+      }
     } else {
-      const placeholder = document.createElement('div')
-      placeholder.className = 'equation-placeholder'
-      placeholder.textContent = '<Equation>'
-
-      this.dom.appendChild(placeholder)
+      this.dom.innerHTML = ''
     }
   }
 
@@ -54,8 +59,10 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
 
   protected createDOM = () => {
     this.dom = document.createElement('span')
-    this.dom.classList.add('equation')
-    this.dom.setAttribute('id', this.node.attrs.id)
+    if (!isRejectedInsert(this.node)) {
+      this.dom.classList.add('equation')
+      this.dom.setAttribute('id', this.node.attrs.id)
+    }
   }
 }
 
