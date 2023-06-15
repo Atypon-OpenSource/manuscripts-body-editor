@@ -1664,10 +1664,10 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.2-LEAN-2143":
-  version "1.1.2-LEAN-2143"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.2-LEAN-2143.tgz#d9cf765129011187f90d57c7078a119ad9e7cfd1"
-  integrity sha512-U86IP4+7riM26+4Py+WrbUq2vEo2EZVw+gD4a8S5stcrMuNXlnKAzaeV0nuCV2pisLXubxHeOFCRh1KTx68Yww==
+"@manuscripts/library@^1.1.2-LEAN-2143-v3":
+  version "1.1.2-LEAN-2143-v3"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.2-LEAN-2143-v3.tgz#569fcd4e0e9d4bfc630a68d4341a43e627a9e78d"
+  integrity sha512-gMOdgI9SJGV3LL2EGA5Np+KLkCC/JUxpsQk5Hvu92+m487DP9d8SZHVG86XaADhsOwjxkpC0kGKttqNN9NQJjQ==
   dependencies:
     "@manuscripts/data" "^1.0.2"
     "@manuscripts/json-schema" "^2.0.2"
