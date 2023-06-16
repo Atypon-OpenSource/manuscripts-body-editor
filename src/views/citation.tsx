@@ -30,7 +30,7 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 const createCitation = async (
-  citations: Map<string, BibliographyItem>,
+  citations: BibliographyItem[],
   citation: Citation
 ) => {
   const styleOpts = { bundleID: DEFAULT_BUNDLE }
@@ -144,10 +144,10 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = async () => {
-    const citations = new Map()
+    const citations: BibliographyItem[] = []
     this.props.modelMap?.forEach((value) => {
       if (value.objectType === 'MPBibliographyItem') {
-        citations.set(value._id, value)
+        citations.push(value as BibliographyItem)
       }
     })
     const nodeModel = this.props.getModel(this.node.attrs.rid)
