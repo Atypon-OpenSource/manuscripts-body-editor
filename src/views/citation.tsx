@@ -41,7 +41,7 @@ const createCitation = async (
     citationStyle
   )
 
-  return citationText
+  return citationText !== '[NO_PRINTED_FORM]' ? citationText : ''
 }
 
 export interface CitationViewProps extends BaseNodeProps {
@@ -151,7 +151,12 @@ export class CitationView<PropsType extends CitationViewProps>
       }
     })
     const nodeModel = this.props.getModel(this.node.attrs.rid)
-    const citationText = await createCitation(citations, nodeModel as Citation)
+    let citationText = ''
+    try {
+      citationText = await createCitation(citations, nodeModel as Citation)
+    } catch (e) {
+      citationText = this.node.attrs.contents
+    }
 
     const fragment = sanitize(citationText, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
