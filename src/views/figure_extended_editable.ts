@@ -167,7 +167,7 @@ export class FigureEditableView extends FigureView<
         this.createImage(isSupportedImageType, url) ||
         this.createPlaceholder(isSupportedImageType, fileName)
 
-      if (this.props.capabilities?.editArticle) {
+      if (this.props.getCapabilities()?.editArticle) {
         const uploadAttachmentHandler = createOnUploadHandler(
           this.props.uploadAttachment,
           this.addAttachmentSrc
@@ -225,7 +225,11 @@ export class FigureEditableView extends FigureView<
       this.container.innerHTML = ''
       this.container.appendChild(img)
 
-      if (this.props.dispatch && this.props.theme && this.props.capabilities) {
+      if (
+        this.props.dispatch &&
+        this.props.theme &&
+        this.props.getCapabilities()
+      ) {
         const componentProps: FigureOptionsSubviewProps = {
           src: url,
           onUploadClick: this.envokeFileInput,
@@ -234,7 +238,7 @@ export class FigureEditableView extends FigureView<
           onDetachClick: this.detachImageRef,
           mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
           setFigureAttrs: this.setFigureAttrs,
-          can: this.props.capabilities,
+          can: this.props.getCapabilities(),
         }
 
         this.reactTools = ReactSubView(
@@ -284,7 +288,7 @@ export class FigureEditableView extends FigureView<
           </div>
           <div>
             ${
-              this.props.capabilities?.editArticle
+              this.props.getCapabilities()?.editArticle
                 ? 'Click to add image'
                 : 'No image here yet…'
             }

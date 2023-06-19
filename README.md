@@ -6,4 +6,4 @@ A React + ProseMirror editor for manuscripts.
 
 `yarn add @manuscripts/body-editor`
 
-# 1
+# 2
