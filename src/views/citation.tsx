@@ -152,9 +152,8 @@ export class CitationView<PropsType extends CitationViewProps>
     })
     const nodeModel = this.props.getModel(this.node.attrs.rid)
     const citationText = await createCitation(citations, nodeModel as Citation)
-    console.log('Citation text', citationText, this.node)
 
-    const fragment = sanitize(this.node.attrs.contents, {
+    const fragment = sanitize(citationText, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
     })
     this.dom.innerHTML = ''
