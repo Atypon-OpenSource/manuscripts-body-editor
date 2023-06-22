@@ -1735,10 +1735,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.5.0.tgz#15dfa2c7800083e18e85d7b95e82dc489a69804c"
-  integrity sha512-8npcIEdIBvLn3Gozj7MynE4bKJkR8uaXqSk7Wi3epXvCDM/od4wUdVtVX93i1Fbu4zO2Kj9+rhWzgedIkCKTHQ==
+"@manuscripts/track-changes-plugin@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.5.2.tgz#8e4cb2f3aefbc3bfbee05ed166bed13ce26fa3e2"
+  integrity sha512-TK0Kg2omuY/nUKhFqDFmbF+7tPGaZ8R7BYIjfG7W40MEpM0SjZeH9JkeA+T4dnJ2+vn/WSMd6y8f9TIJvPHEKQ==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
