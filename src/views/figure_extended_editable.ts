@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import prettyBytes from 'pretty-bytes'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -45,6 +46,7 @@ interface FigureProps {
   capabilities?: Capabilities
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
+  getDoc: () => ProsemirrorNode
 }
 
 export class FigureEditableView extends FigureView<
@@ -265,6 +267,7 @@ export class FigureEditableView extends FigureView<
           mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
           setFigureAttrs: this.setFigureAttrs,
           can: this.props.getCapabilities(),
+          getDoc: this.props.getDoc,
         }
 
         this.reactTools = ReactSubView(
