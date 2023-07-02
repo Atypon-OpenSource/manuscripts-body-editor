@@ -1678,10 +1678,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.1.7-LEAN-2192-v10":
-  version "1.1.7-LEAN-2192-v10"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.7-LEAN-2192-v10.tgz#d74dbc6a3e4aac7efb338c285aef4cb32b989f0d"
-  integrity sha512-4sV/ZfB2iGFql10Jnh/GkCu2rdgPrw8Nsq21I9jgayhn21cWlj8fUtJRbyXO/QUMNocOOz+DSLrMX5ED03AbAw==
+"@manuscripts/style-guide@1.1.9-LEAN-2192-v11":
+  version "1.1.9-LEAN-2192-v11"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.9-LEAN-2192-v11.tgz#43ab27a70e46e599a58246b4058bb30047d6e456"
+  integrity sha512-yviBYAIgsUtKJOYabQjZH1i4rtWk2HT0YfHDYegFHgJjfAe/JbwVyiPVKtk+TWtFFCLbRz5rfxvJA2o9NNBuJQ==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1735,10 +1735,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.5.2.tgz#8e4cb2f3aefbc3bfbee05ed166bed13ce26fa3e2"
-  integrity sha512-TK0Kg2omuY/nUKhFqDFmbF+7tPGaZ8R7BYIjfG7W40MEpM0SjZeH9JkeA+T4dnJ2+vn/WSMd6y8f9TIJvPHEKQ==
+"@manuscripts/track-changes-plugin@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.6.1.tgz#bb6d3e7cb9620fc636436f6e6b173849d15952a9"
+  integrity sha512-lu93qvlvm8PcDb5UjzEQTd5qUndr0tGTsOcyuMNyIGAZt1n/5AP6ydrx1bmu0FLptdOV9Ey1ReQLtrSbhqTGzQ==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
