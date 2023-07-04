@@ -22,7 +22,6 @@ import {
 import {
   CitationProvider,
   createBibliographyElementContents,
-  loadCitationStyle,
 } from '@manuscripts/library'
 import {
   Build,
@@ -33,6 +32,7 @@ import {
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
+import { loadCitationStyle } from '../lib/csl-styles'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

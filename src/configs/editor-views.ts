@@ -83,7 +83,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     placeholder_element: placeholderElement(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
-    section_title_plain: sectionTitle(props),
     section_label: sectionLabel(props),
     table_element: tableElement(props),
     toc_element: tocElement(props),
