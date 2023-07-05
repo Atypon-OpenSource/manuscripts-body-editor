@@ -62,6 +62,7 @@ interface OptionsProps extends DropdownProps {
   onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   canEditArticle?: boolean
+  disabled: boolean
 }
 
 export interface FilesDropdownProps extends DropdownProps {
@@ -197,6 +198,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   canEditArticle,
   setFigureAttrs,
   getAttachments,
+  disabled,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const { otherFiles } = useFiles(
@@ -226,7 +228,11 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 
   return (
     <DropdownWrapper ref={wrapperRef}>
-      <OptionsButton className={'options-button'} onClick={toggleOpen}>
+      <OptionsButton
+        className={'options-button'}
+        onClick={toggleOpen}
+        disabled={disabled}
+      >
         <GutterIconNormal />
       </OptionsButton>
       {isOpen && (

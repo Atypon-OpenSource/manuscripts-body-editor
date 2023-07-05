@@ -29,6 +29,7 @@ export interface FigureOptionsSubviewProps {
   mediaAlternativesEnabled: boolean
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   can: Capabilities
+  disabled: boolean
 }
 // ReactViewComponentProps
 const FigureOptionsSubview: React.FC<
@@ -42,10 +43,12 @@ const FigureOptionsSubview: React.FC<
   modelMap,
   mediaAlternativesEnabled,
   can,
+  disabled,
 }) => {
   return (
     <OptionsDropdown
       url={src}
+      disabled={disabled}
       onUploadClick={onUploadClick}
       setFigureAttrs={setFigureAttrs}
       getAttachments={getAttachments}

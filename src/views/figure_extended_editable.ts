@@ -232,6 +232,7 @@ export class FigureEditableView extends FigureView<
       ) {
         const componentProps: FigureOptionsSubviewProps = {
           src: url,
+          disabled: !isSupportedImageType,
           onUploadClick: this.envokeFileInput,
           getAttachments: this.props.getAttachments,
           modelMap: this.props.modelMap,
