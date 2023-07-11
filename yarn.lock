@@ -1751,10 +1751,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@1.3.0-LEAN-2505":
-  version "1.3.0-LEAN-2505"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.0-LEAN-2505.tgz#d9b36a86bac8d49091c6e447d894162210543f90"
-  integrity sha512-44sIr1lZuqmkP2QhJoZHcCOJsVRniKK9VjjIDMvxxPeoD9pR4mvcJ1a1VAnbV6t6CewsXkef1SAJzY26qNj4WA==
+"@manuscripts/transform@1.3.0-LEAN-2505-1":
+  version "1.3.0-LEAN-2505-1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.0-LEAN-2505-1.tgz#c228827be146f8c765f8198b104cab26c3b34095"
+  integrity sha512-M0GklfktD+9EF91plu8gUldoRH2WLN36+VaHUv0shdi2fFeFAjHfnGC7CcSR9+woIYJ+c+a4RCBEYxNW4tHQtw==
   dependencies:
     "@manuscripts/json-schema" "^2.0.2"
     debug "^4.3.4"
