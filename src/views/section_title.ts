@@ -43,10 +43,10 @@ export class SectionTitleView<
     const $pos = this.view.state.doc.resolve(this.getPos())
 
     if (isSpecialSection($pos.parent)) {
-      this.dom = document.createDocumentFragment() as unknown as HTMLElement
+      this.dom = document.createElement('div')
       return
     }
-
+    this.dom
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
