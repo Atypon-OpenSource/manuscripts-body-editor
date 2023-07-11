@@ -44,9 +44,9 @@ export class SectionTitleView<
 
     if (isSpecialSection($pos.parent)) {
       this.dom = document.createElement('div')
+      this.dom.classList.add('no-title')
       return
     }
-    this.dom
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
