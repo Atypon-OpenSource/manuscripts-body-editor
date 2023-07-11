@@ -22,7 +22,6 @@ import {
 import {
   CitationProvider,
   createBibliographyElementContents,
-  loadCitationStyle,
 } from '@manuscripts/library'
 import {
   Build,
@@ -33,6 +32,7 @@ import {
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
+import { loadCitationStyle } from '../lib/csl-styles'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -141,20 +141,22 @@ export class BibliographyItemView<
         this.dom.appendChild(fragment)
 
         const doubleButton = document.createElement('div')
-        const editButton = document.createElement('div')
-        const commentButton = document.createElement('div')
+        const editButton = document.createElement('button')
+        const commentButton = document.createElement('button')
 
         doubleButton.className = 'bibliography-double-button'
         editButton.className = 'bibliography-edit-button'
         commentButton.className = 'bibliography-comment-button'
 
-        commentButton.addEventListener('click', () => {
+        commentButton.addEventListener('click', (e) => {
+          e.preventDefault()
           this.props.setComment(
             buildComment(this.node.attrs.id) as CommentAnnotation
           )
         })
 
-        editButton.addEventListener('click', () => {
+        editButton.addEventListener('click', (e) => {
+          e.preventDefault()
           this.showPopper(this.node.attrs.id)
           this.popperContainer = undefined
         })
@@ -165,6 +167,7 @@ export class BibliographyItemView<
         if (this.props.getCapabilities().seeReferencesButtons) {
           this.dom.appendChild(doubleButton)
         }
+        editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
       } catch (e) {
         console.error(e) // tslint:disable-line:no-console
         // TODO: improve the UI for presenting offline/import errors

@@ -1678,10 +1678,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.1.7":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.7.tgz#53912a58de4454715f49428311fb8f473c69c093"
-  integrity sha512-ST5ii0vhfQ7MQQikzpm1BE2IO/h4PG9oCHTK9AWVGjYQlk2PxDFcvmlOIOPQEuZlUIfPlrHObvBxAqZys3H0aQ==
+"@manuscripts/style-guide@^1.1.11":
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.11.tgz#1fc99745847466e3c2b6ffd8cb3de3b51242da6a"
+  integrity sha512-8jzskdtmrqux+cHO230r13AZrjJUW/Op+Oh/q++wRuIVoZq0fQlvU9IDP0M6nFx9XbTtFdZBiBMvak8Gerg2Ww==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1690,7 +1690,7 @@
     "@manuscripts/comment-editor" "^1.0.1"
     "@manuscripts/json-schema" "^2.0.2"
     "@manuscripts/title-editor" "^1.1.0"
-    "@manuscripts/transform" "^1.2.5"
+    "@manuscripts/transform" "^1.3.0"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1735,10 +1735,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.5.0.tgz#15dfa2c7800083e18e85d7b95e82dc489a69804c"
-  integrity sha512-8npcIEdIBvLn3Gozj7MynE4bKJkR8uaXqSk7Wi3epXvCDM/od4wUdVtVX93i1Fbu4zO2Kj9+rhWzgedIkCKTHQ==
+"@manuscripts/track-changes-plugin@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.6.1.tgz#bb6d3e7cb9620fc636436f6e6b173849d15952a9"
+  integrity sha512-lu93qvlvm8PcDb5UjzEQTd5qUndr0tGTsOcyuMNyIGAZt1n/5AP6ydrx1bmu0FLptdOV9Ey1ReQLtrSbhqTGzQ==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1755,6 +1755,20 @@
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.2.5.tgz#f5e1867992e58fba41fdb0a3c4f67f74ae855372"
   integrity sha512-Oe/AdoGRNnTH/6jlZIstohUK6azK2gDugXw1Swgy54yVlPYwqpK+064NpdARXRVrwFyCcWXJt7tqbPvFh96dpA==
+  dependencies:
+    "@manuscripts/json-schema" "^2.0.2"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.0.tgz#c086636a1f21fdb420975d6a3df2c592b6049868"
+  integrity sha512-XetXBAsLgfRakUT7Tl7Ba3pyUo2gKT+WESHY2ZYDy1HM63fVCFPRLccXGzztFboJ5m6OZZyjG4H0xw7tMGHuTQ==
   dependencies:
     "@manuscripts/json-schema" "^2.0.2"
     debug "^4.3.4"

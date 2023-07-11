@@ -100,9 +100,10 @@ export const EditableBlock = <
     }
 
     public createAddButton = (after: boolean): HTMLElement | null => {
+      const $pos = this.view.state.doc.resolve(this.getPos())
       if (
         !this.props.getCapabilities()?.editArticle ||
-        this.node.type === this.node.type.schema.nodes.section_title_plain
+        $pos.parent.type === this.node.type.schema.nodes.keywords_section
       ) {
         return null
       }
