@@ -26,8 +26,12 @@ import {
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
-import React, { CSSProperties } from 'react'
-import Select, { OptionProps } from 'react-select'
+import React from 'react'
+import Select, {
+  CSSObjectWithLabel,
+  GroupProps,
+  OnChangeValue,
+} from 'react-select'
 import styled from 'styled-components'
 
 import { findClosestParentElement } from '../../lib/hierarchy'
@@ -627,7 +631,7 @@ const Group = styled.div`
   }
 `
 
-const StyledSelect = styled(Select)`
+const StyledSelect = styled(Select<Option, false>)`
   z-index: 3;
 
   & > div:hover {
@@ -663,20 +667,18 @@ export const LevelSelector: React.FunctionComponent<{
       options={options}
       value={
         options.length === 1
-          ? options[0]
+          ? (options[0] as Option | undefined)
           : findSelectedOption(options as GroupedOptions)
       }
       components={{
-        Group: (props: OptionProps<Options, false>) => (
-          <Group ref={props.innerRef} {...props.innerProps}>
-            {props.children}
-          </Group>
+        Group: (props: GroupProps<Option, false>) => (
+          <Group {...(props.innerProps as any)}>{props.children}</Group>
         ),
         GroupHeading: () => null,
-        Option: (props: OptionProps<Options, false>) => {
+        Option: (props) => {
           const data = props.data as Option
 
-          const style: CSSProperties = props.getStyles('option', props)
+          const style = props.getStyles('option', props)
 
           style.display = 'flex'
           style.fontSize = 16
@@ -706,7 +708,7 @@ export const LevelSelector: React.FunctionComponent<{
           return (
             <OptionContainer
               ref={props.innerRef}
-              {...props.innerProps}
+              {...(props.innerProps as any)}
               style={style}
             >
               <OptionIcon>{nodeTypeIcon(data.nodeType)}</OptionIcon>
@@ -715,13 +717,13 @@ export const LevelSelector: React.FunctionComponent<{
           )
         },
       }}
-      onChange={(value: Option | null) => {
+      onChange={(value: OnChangeValue<Option, false>) => {
         if (value && value.action) {
           value.action()
         }
       }}
       styles={{
-        control: (styles: CSSProperties): CSSProperties => ({
+        control: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
           ...styles,
           backgroundColor: '#fff',
           borderWidth: 1,
@@ -736,26 +738,28 @@ export const LevelSelector: React.FunctionComponent<{
           textOverflow: 'ellipsis',
           cursor: 'pointer',
         }),
-        indicatorSeparator: (): CSSProperties => ({
+        indicatorSeparator: (): CSSObjectWithLabel => ({
           display: 'none',
         }),
-        dropdownIndicator: (styles: CSSProperties): CSSProperties => ({
+        dropdownIndicator: (
+          styles: CSSObjectWithLabel
+        ): CSSObjectWithLabel => ({
           ...styles,
           padding: '0 4px',
         }),
-        menu: (styles: CSSProperties): CSSProperties => ({
+        menu: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
           ...styles,
           width: 'auto',
         }),
-        singleValue: (styles: CSSProperties): CSSProperties => ({
+        singleValue: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
           ...styles,
           padding: 0,
         }),
-        valueContainer: (styles: CSSProperties): CSSProperties => ({
+        valueContainer: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
           ...styles,
           padding: '1px 8px',
         }),
-        container: (styles: CSSProperties): CSSProperties => ({
+        container: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
           ...styles,
           border: 'none',
         }),
