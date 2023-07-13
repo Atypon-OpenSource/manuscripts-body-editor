@@ -1637,10 +1637,10 @@
     react-dom "^17.0.2"
     react-select "^3.1.0"
 
-"@manuscripts/data@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/data/-/data-1.0.2.tgz#daf61fe1dfa47503afb4ca0f72540091e6576caf"
-  integrity sha512-mEZM3bkHYGkgz7DK92+6jhOlqmufoKqAK166YlO7GswKspzcg1bM+2+T8O9QuMhYGcma1mnC93EwLPhOFJ5Vjw==
+"@manuscripts/data@1.0.2-LEAN-2500v2":
+  version "1.0.2-LEAN-2500v2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/data/-/data-1.0.2-LEAN-2500v2.tgz#a4c8a2a8602ab90ee4b7cd7ff6bd5ee961a5c42f"
+  integrity sha512-E455z6mVrTAfVe8qGDeo+1yxul48hguyhvm2Vz4d6KA7NgBW61+epkOyzUBVSAFjN3QWHCcAQQT2otJY56j4rg==
 
 "@manuscripts/eslint-config@^0.5.1":
   version "0.5.1"
@@ -1664,12 +1664,12 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.2.tgz#57d994da64aeb2755a18669850dbfc14820917f9"
-  integrity sha512-8ovklbmqoCwnoYSp48aZhoMz6lY9jEPQI811kZ7lsb13oi4ffnwx0g0h1DGSS2bY60+dTH5YpfKri4NSVr/FsA==
+"@manuscripts/library@^1.1.2-LEAN-2500":
+  version "1.1.2-LEAN-2500"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.2-LEAN-2500.tgz#3264ac4d4583f63bdc40ff46f69b9d6f8fb23759"
+  integrity sha512-t0hmePr01ku8r8IRZR0ci9i1fNTvpPIcpFAi6p6yb38K3NT95bprcSfJBom+uaKoPH+XfOkWFq73hpngrEzROQ==
   dependencies:
-    "@manuscripts/data" "^1.0.2"
+    "@manuscripts/data" "1.0.2-LEAN-2500v2"
     "@manuscripts/json-schema" "^2.0.2"
     "@manuscripts/transform" "^1.2.5"
     astrocite-bibtex "^0.16.4"
