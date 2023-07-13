@@ -26,7 +26,7 @@ import {
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import Select, {
   CSSObjectWithLabel,
   GroupProps,
@@ -672,13 +672,15 @@ export const LevelSelector: React.FunctionComponent<{
       }
       components={{
         Group: (props: GroupProps<Option, false>) => (
-          <Group {...(props.innerProps as any)}>{props.children}</Group>
+          <Group {...props.innerProps} ref={null}>
+            {props.children}
+          </Group>
         ),
         GroupHeading: () => null,
         Option: (props) => {
           const data = props.data as Option
 
-          const style = props.getStyles('option', props)
+          const style = props.getStyles('option', props) as CSSProperties
 
           style.display = 'flex'
           style.fontSize = 16
@@ -706,11 +708,7 @@ export const LevelSelector: React.FunctionComponent<{
           }
 
           return (
-            <OptionContainer
-              ref={props.innerRef}
-              {...(props.innerProps as any)}
-              style={style}
-            >
+            <OptionContainer {...props.innerProps} ref={null} style={style}>
               <OptionIcon>{nodeTypeIcon(data.nodeType)}</OptionIcon>
               <OptionLabel>{data.label}</OptionLabel>
             </OptionContainer>
