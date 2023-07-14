@@ -30,7 +30,7 @@
     "@iarna/word-count": "^1.1.2",
     "@manuscripts/assets": "^0.6.2",
     "@manuscripts/comment-editor": "^1.0.2",
-    "@manuscripts/json-schema": "^2.0.2",
+    "@manuscripts/json-schema": "^2.0.2-LEAN-2501-v2",
     "@manuscripts/library": "^1.1.2",
     "@manuscripts/style-guide": "^1.1.12",
     "@manuscripts/title-editor": "^1.1.0",
