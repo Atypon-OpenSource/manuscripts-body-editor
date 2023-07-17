@@ -29,11 +29,16 @@ import {
   RoundIconButton,
   UploadIcon,
   useDropdown,
-  useFiles,
 } from '@manuscripts/style-guide'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import React, { SyntheticEvent, useCallback } from 'react'
 import styled from 'styled-components'
 
+import {
+  getFigures,
+  getOtherFiles,
+  getSupplementFiles,
+} from '../../lib/files-maps'
 import { addFormatQuery } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
 
@@ -54,6 +59,7 @@ interface DropdownProps {
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
   canReplaceFile?: boolean
+  getDoc: () => ProsemirrorNode
 }
 
 interface OptionsProps extends DropdownProps {
@@ -91,14 +97,22 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   canReplaceFile,
   canUploadFile,
   getAttachments,
+  getDoc,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const attachments = getAttachments().map((f) => ({ ...f })) || []
+  const doc = getDoc()
+  const figures: string[] = getFigures(doc, attachments)
 
-  const { otherFiles, supplementFiles } = useFiles(
+  const supplementFiles = getSupplementFiles(
     modelMap,
-    getAttachments().map((f) => ({ ...f })) || [],
+    attachments,
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  )
+  ).filter((item) => !figures.includes(item.id))
+
+  const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
+    isFileValidForFigure(fileName, mediaAlternativesEnabled)
+  ).filter((item) => !figures.includes(item.id))
 
   const onFileClick = useCallback(
     (e, file: FileAttachment) => {
@@ -197,13 +211,22 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   canEditArticle,
   setFigureAttrs,
   getAttachments,
+  getDoc,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const { otherFiles } = useFiles(
+  const attachments = getAttachments().map((f) => ({ ...f })) || []
+  const doc = getDoc()
+  const figures: string[] = getFigures(doc, attachments)
+
+  const supplementFiles = getSupplementFiles(
     modelMap,
-    getAttachments().map((f) => ({ ...f })) || [],
+    attachments,
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  )
+  ).filter((item) => !figures.includes(item.id))
+
+  const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
+    isFileValidForFigure(fileName, mediaAlternativesEnabled)
+  ).filter((item) => !figures.includes(item.id))
 
   const onDownloadClick = useCallback(() => window.location.assign(url), [url])
 

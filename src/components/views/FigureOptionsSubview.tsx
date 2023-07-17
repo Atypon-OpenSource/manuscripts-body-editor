@@ -15,6 +15,7 @@
  */
 import { Model } from '@manuscripts/json-schema'
 import { Capabilities, FileAttachment } from '@manuscripts/style-guide'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import React, { SyntheticEvent } from 'react'
 
 import { EditableBlockProps } from '../../views/editable_block'
@@ -29,6 +30,7 @@ export interface FigureOptionsSubviewProps {
   mediaAlternativesEnabled: boolean
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   can: Capabilities
+  getDoc: () => ProsemirrorNode
 }
 // ReactViewComponentProps
 const FigureOptionsSubview: React.FC<
@@ -42,6 +44,7 @@ const FigureOptionsSubview: React.FC<
   modelMap,
   mediaAlternativesEnabled,
   can,
+  getDoc,
 }) => {
   return (
     <OptionsDropdown
@@ -55,6 +58,7 @@ const FigureOptionsSubview: React.FC<
       canReplaceFile={can?.replaceFile}
       canDownloadFile={can?.downloadFiles}
       canEditArticle={can?.editArticle}
+      getDoc={getDoc}
     />
   )
 }
