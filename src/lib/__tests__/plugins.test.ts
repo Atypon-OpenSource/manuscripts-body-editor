@@ -348,6 +348,7 @@ const buildProps = (
   theme: {},
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
+  getDoc: () => doc,
 })
 
 describe('editor view', () => {
