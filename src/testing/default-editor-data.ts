@@ -108,6 +108,7 @@ const defaultViewerProps: ViewerProps = {
   uploadAttachment: async () => undefined,
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
+  getDoc: () => TEST_DATA.DOC,
 }
 
 export const defaultEditorProps: EditorProps = {
