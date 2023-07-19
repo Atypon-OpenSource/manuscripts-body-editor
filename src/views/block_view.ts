@@ -58,7 +58,6 @@ export default class BlockView<T extends BaseNodeProps>
     }
 
     if (this.node.attrs.dataTracked?.length) {
-      console.log(this.node.attrs.dataTracked[0])
       this.dom.setAttribute(
         'data-track-status',
         this.node.attrs.dataTracked[0].status

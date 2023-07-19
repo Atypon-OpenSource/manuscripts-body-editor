@@ -130,6 +130,7 @@ const FigureElement = ({
   getAttachments,
   getCapabilities,
   mediaAlternativesEnabled,
+  getDoc,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -170,6 +171,7 @@ const FigureElement = ({
             addFigureExFileRef={addFigureExFileRef}
             canReplaceFile={can?.replaceFile}
             canUploadFile={can?.uploadFile}
+            getDoc={getDoc}
           />
 
           <div contentEditable="true" ref={content}></div>

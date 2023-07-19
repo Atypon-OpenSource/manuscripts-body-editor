@@ -91,6 +91,12 @@
             ]
           }
         ]
+      },
+      {
+        "attrs": {
+          "id": "COMMENT_LIST"
+        },
+        "type": "comment_list"
       }
     ]
   },
