@@ -228,11 +228,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
 
   return (
     <DropdownWrapper ref={wrapperRef}>
-      <OptionsButton
-        className={'options-button'}
-        onClick={toggleOpen}
-        disabled={disabled}
-      >
+      <OptionsButton className={'options-button'} onClick={toggleOpen}>
         <GutterIconNormal />
       </OptionsButton>
       {isOpen && (
@@ -242,11 +238,14 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
           onClick={toggleOpen}
           top={5}
         >
-          <ListItemButton onClick={onDownloadClick} disabled={!canDownloadFile}>
+          <ListItemButton
+            onClick={onDownloadClick}
+            disabled={disabled || !canDownloadFile}
+          >
             Download
           </ListItemButton>
           <NestedDropdown
-            disabled={!canReplaceFile}
+            disabled={!canReplaceFile || disabled}
             parentToggleOpen={toggleOpen}
             buttonText={'Replace'}
             moveLeft
@@ -268,7 +267,10 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
-          <ListItemButton onClick={onDetachClick} disabled={!canEditArticle}>
+          <ListItemButton
+            onClick={onDetachClick}
+            disabled={disabled || !canEditArticle}
+          >
             Detach
           </ListItemButton>
         </OptionsDropdownList>
