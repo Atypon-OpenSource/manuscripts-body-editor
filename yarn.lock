@@ -1773,21 +1773,7 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@^1.3.1":
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.1.tgz#a885dc1c633a17c484e7cf815dea1740447cdbae"
-  integrity sha512-Cb5Q0tuo3yAyYPUWMbQxh3aIfthHQqMUq6od4VyRMAfoN+TymPWOak3T8s73cleIsGHY1tN5FZqP2n83D8M6DA==
-  dependencies:
-    "@manuscripts/json-schema" "^2.0.2"
-    debug "^4.3.4"
-    jszip "^3.10.1"
-    mathjax-full "^3.2.2"
-    mime "^3.0.0"
-    prosemirror-model "^1.18.3"
-    uuid "^9.0.0"
-    w3c-xmlserializer "^4.0.0"
-
-"@manuscripts/transform@^1.3.3":
+"@manuscripts/transform@^1.3.1", "@manuscripts/transform@^1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.3.tgz#e2cf403f91b8987a518b4a2cc78e12b9c8a827cd"
   integrity sha512-jouWJ69KjnzLRKeoRUUEJQ9gbv+25H+ykJY0u1ceEoeQQpFxCFGGQhet04HDmV0Vhj1aCRgCoIznovfu/LEzpw==
