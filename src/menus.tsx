@@ -43,7 +43,6 @@ import {
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
-  insertKeywordsSection,
   insertLink,
   insertSection,
   insertTOCSection,
@@ -321,12 +320,6 @@ export default (
           label: 'Table of Contents',
           enable: isCommandValid(insertTOCSection),
           run: wrap(insertTOCSection),
-        },
-        {
-          id: 'insert-keywords',
-          label: 'Keywords',
-          enable: isCommandValid(insertKeywordsSection),
-          run: wrap(insertKeywordsSection),
         },
         {
           id: 'insert-bibliography',
