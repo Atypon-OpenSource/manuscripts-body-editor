@@ -61,7 +61,6 @@ import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-import { keywordsKey } from './plugins/keywords'
 import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
@@ -525,33 +524,6 @@ export const insertInlineFootnote =
     return true
   }
 
-export const insertKeywordsSection = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  // TODO: use SectionCategory for title and to enforce uniqueness
-  if (getChildOfType(state.doc, state.schema.nodes.keywords_section)) {
-    return false
-  }
-
-  const section = state.schema.nodes.keywords_section.createAndFill({}, [
-    state.schema.nodes.section_title.create({}, state.schema.text('Keywords')),
-  ]) as BibliographySectionNode
-
-  const pos = 0
-
-  const tr = state.tr
-
-  tr.insert(pos, section).setMeta(keywordsKey, { keywordsInserted: true })
-
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
-}
-
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -964,7 +936,11 @@ export const insertHighlight = (
     .insert(from, fromNode)
     .insert(to + 1, toNode)
     .setMeta(highlightKey, {
-      [SET_COMMENT]: { ...comment, selector: { from, to } },
+      [SET_COMMENT]: {
+        ...comment,
+        selector: { from, to },
+        originalText: state.tr.doc.textBetween(from, to, '\n'),
+      },
     })
 
   tr.setMeta('addToHistory', false)

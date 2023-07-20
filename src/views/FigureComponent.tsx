@@ -21,6 +21,7 @@ import {
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
+import { ProsemirrorNode } from '@remirror/pm'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -37,6 +38,7 @@ export interface FigureProps {
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
   mediaAlternativesEnabled?: boolean
+  getDoc: () => ProsemirrorNode
 }
 
 export const WEB_FORMAT_QUERY = 'format=jpg'
@@ -51,6 +53,7 @@ const FigureComponent = ({
   mediaAlternativesEnabled,
   getAttachments,
   modelMap,
+  getDoc,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
@@ -212,6 +215,7 @@ const FigureComponent = ({
                 onDetachClick={() => {
                   console.log('Detach not implemented for Figure View')
                 }}
+                getDoc={getDoc}
               />
 
               <img

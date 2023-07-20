@@ -25,6 +25,7 @@ import {
 import { Capabilities, FileAttachment } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -54,6 +55,7 @@ export interface ViewerProps {
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getAttachments: () => FileAttachment[]
   getCapabilities: () => Capabilities
+  getDoc: () => ProsemirrorNode
 }
 
 export default {
