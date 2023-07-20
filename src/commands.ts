@@ -936,7 +936,11 @@ export const insertHighlight = (
     .insert(from, fromNode)
     .insert(to + 1, toNode)
     .setMeta(highlightKey, {
-      [SET_COMMENT]: { ...comment, selector: { from, to } },
+      [SET_COMMENT]: {
+        ...comment,
+        selector: { from, to },
+        originalText: state.tr.doc.textBetween(from, to, '\n'),
+      },
     })
 
   tr.setMeta('addToHistory', false)
