@@ -29,15 +29,19 @@ import { BibliographyItem } from '@manuscripts/json-schema'
 
 export const bibliographyKey = new PluginKey('bibliography')
 
+const styleOpts = { bundleID: DEFAULT_BUNDLE }
+let citationStyle: string
+;(async function () {
+  citationStyle = await loadCitationStyle(styleOpts)
+})()
+
 /**
  * This plugin generates labels for inline citations using citeproc-js.
  * The citation labels are regenerated when any relevant content changes.
  */
-export default async (props: BibliographyProps) => {
+export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
 
-  const styleOpts = { bundleID: DEFAULT_BUNDLE }
-  const citationStyle = await loadCitationStyle(styleOpts)
   // const createCitation = (
   //   citations: BibliographyItem[],
   //   citation: Citation
