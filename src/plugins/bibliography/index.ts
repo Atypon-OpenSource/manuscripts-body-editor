@@ -20,7 +20,12 @@ import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
 import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
-import { BibliographyProps, PluginState } from './types'
+import { BibliographyProps, CiteProcCitation, PluginState } from './types'
+
+import { CitationProvider, loadCitationStyle } from '@manuscripts/library'
+import { DEFAULT_BUNDLE } from '@manuscripts/transform'
+
+import { BibliographyItem, Citation } from '@manuscripts/json-schema'
 
 export const bibliographyKey = new PluginKey('bibliography')
 
@@ -28,8 +33,47 @@ export const bibliographyKey = new PluginKey('bibliography')
  * This plugin generates labels for inline citations using citeproc-js.
  * The citation labels are regenerated when any relevant content changes.
  */
-export default (props: BibliographyProps) => {
+export default async (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
+
+  const styleOpts = { bundleID: DEFAULT_BUNDLE }
+  const citationStyle = await loadCitationStyle(styleOpts)
+  // const createCitation = (
+  //   citations: BibliographyItem[],
+  //   citation: Citation
+  // ) => {
+  //   const citationText = CitationProvider.makeCitationCluster(
+  //     citations,
+  //     citation,
+  //     citationStyle
+  //   )
+
+  //   return citationText !== '[NO_PRINTED_FORM]' ? citationText : ''
+  // }
+
+  const rebuildCitations = (
+    citations: CiteProcCitation[],
+    bibliographyItems: BibliographyItem[]
+  ) => {
+    const generatedCitations = CitationProvider.rebuildCitations(
+      citations,
+      bibliographyItems,
+      citationStyle
+    )
+
+    return generatedCitations
+  }
+
+  const getBibliographyItems = () => {
+    const bibliographyItems: BibliographyItem[] = []
+    props.modelMap?.forEach((value) => {
+      if (value.objectType === 'MPBibliographyItem') {
+        bibliographyItems.push(value as BibliographyItem)
+      }
+    })
+
+    return bibliographyItems
+  }
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
@@ -63,11 +107,23 @@ export default (props: BibliographyProps) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const citationProvider = props.getCitationProvider()
+      // const nodeModel = props.getModel(this.node.attrs.rid)
+      // let citationText = ''
+      // try {
+      //   citationText = createCitation(citations, nodeModel as Citation)
+      // } catch (e) {
+      //   citationText = this.node.attrs.contents
+      // }
 
-      if (!citationProvider) {
-        return null
-      }
+      // const fragment = sanitize(citationText, {
+      //   ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
+      // })
+
+      // const citationProvider = props.getCitationProvider()
+
+      // if (!citationProvider) {
+      //   return null
+      // }
 
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
@@ -90,9 +146,10 @@ export default (props: BibliographyProps) => {
       const { selection } = tr
 
       try {
-        const generatedCitations = citationProvider
-          .rebuildProcessorState(citations, 'html')
-          .map((item) => item[2]) // id, noteIndex, output
+        const generatedCitations = rebuildCitations(
+          citations,
+          getBibliographyItems()
+        ).map((item) => item[2]) // id, noteIndex, output
 
         citationNodes.forEach(([node, pos], index) => {
           let contents = generatedCitations[index]

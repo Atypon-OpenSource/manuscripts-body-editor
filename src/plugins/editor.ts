@@ -90,6 +90,7 @@ export default (props: PluginProps) => {
       getCitationProvider,
       getLibraryItem,
       getModel,
+      modelMap,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),
