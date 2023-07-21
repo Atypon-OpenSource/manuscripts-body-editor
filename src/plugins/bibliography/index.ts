@@ -25,7 +25,7 @@ import { BibliographyProps, CiteProcCitation, PluginState } from './types'
 import { CitationProvider, loadCitationStyle } from '@manuscripts/library'
 import { DEFAULT_BUNDLE } from '@manuscripts/transform'
 
-import { BibliographyItem, Citation } from '@manuscripts/json-schema'
+import { BibliographyItem } from '@manuscripts/json-schema'
 
 export const bibliographyKey = new PluginKey('bibliography')
 
