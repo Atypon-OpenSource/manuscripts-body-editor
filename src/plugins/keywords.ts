@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Manuscript,
-  Model,
-  ObjectTypes,
-} from '@manuscripts/json-schema'
+import { Manuscript, Model, ObjectTypes } from '@manuscripts/json-schema'
 import { generateID, ManuscriptNode } from '@manuscripts/transform'
 import {
   NodeSelection,
@@ -35,7 +31,6 @@ const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
 
     return meta && meta.keywordsInserted
   })
-
 
 interface Props {
   getManuscript: () => Manuscript
@@ -72,7 +67,6 @@ export default (props: Props) => {
 
       if (keywordsElements.length) {
         for (const { node, pos } of keywordsElements) {
-
           tr.setNodeMarkup(pos, undefined, {
             ...node.attrs,
             id: node.attrs.id || generateID(ObjectTypes.KeywordsElement),
