@@ -75,7 +75,7 @@ const addEmptySection = () => {
     objectType: ObjectTypes.Section,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     priority: nextPriority(),
@@ -95,7 +95,7 @@ const addSectionWithEmptyParagraphs = () => {
     objectType: ObjectTypes.ParagraphElement,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     elementType: 'p',
@@ -111,7 +111,7 @@ const addSectionWithEmptyParagraphs = () => {
     objectType: ObjectTypes.ParagraphElement,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     elementType: 'p',
@@ -127,7 +127,7 @@ const addSectionWithEmptyParagraphs = () => {
     objectType: ObjectTypes.Section,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     title: 'A section containing empty paragraphs',
     elementIDs: [firstParagraphID, secondParagraphID],
     manuscriptID,
@@ -147,7 +147,7 @@ const addSectionWithEquationInList = () => {
     objectType: ObjectTypes.ListElement,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     elementType: 'ol',
@@ -163,7 +163,7 @@ const addSectionWithEquationInList = () => {
     objectType: ObjectTypes.Section,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     title: 'A section containing a list',
     elementIDs: [orderedListID],
     manuscriptID,
@@ -183,7 +183,7 @@ const addSectionWithFigure = () => {
     objectType: ObjectTypes.Figure,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
   }
@@ -197,7 +197,7 @@ const addSectionWithFigure = () => {
     objectType: ObjectTypes.FigureElement,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     elementType: 'figure',
@@ -213,7 +213,7 @@ const addSectionWithFigure = () => {
     objectType: ObjectTypes.Section,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     title: 'A section containing a figure',
     elementIDs: [figureElementID],
     manuscriptID,
@@ -233,7 +233,7 @@ const addSectionWithTable = () => {
     objectType: ObjectTypes.Table,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     contents: `<table xmlns="http://www.w3.org/1999/xhtml"></table>`,
@@ -248,7 +248,7 @@ const addSectionWithTable = () => {
     objectType: ObjectTypes.TableElement,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     manuscriptID,
     containerID,
     elementType: 'table',
@@ -264,7 +264,7 @@ const addSectionWithTable = () => {
     objectType: ObjectTypes.Section,
     createdAt: 0,
     updatedAt: 0,
-    sessionID: 'test',
+
     title: 'A section containing a table',
     elementIDs: [tableElementID],
     manuscriptID,
