@@ -53,7 +53,7 @@ const preventTitleEdit = (tr: Transaction) => {
   if (tr.getMeta('track-changes-skip-tracking')) {
     return dontPrevent
   }
-  
+
   const hasReplaceAroundSteps = tr.steps.some(
     (step) => step instanceof ReplaceAroundStep
   )
