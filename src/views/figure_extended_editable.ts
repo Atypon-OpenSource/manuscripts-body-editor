@@ -270,7 +270,7 @@ export class FigureEditableView extends FigureView<
           can: this.props.getCapabilities(),
           getDoc: this.props.getDoc,
         }
-
+        this.reactTools?.remove()
         this.reactTools = ReactSubView(
           this.props,
           FigureOptionsSubview,
