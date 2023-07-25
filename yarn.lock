@@ -1570,10 +1570,10 @@
     react-dom "^17.0.2"
     react-select "^5.7.3"
 
-"@manuscripts/data@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@manuscripts/data/-/data-1.0.3.tgz#d0d8c4fb18878432b8ef82ad57fd2171fe9f21c2"
-  integrity sha512-hUNck6dqGfJXaFTAe5GZrs3XCjc7vF8ySUkocOWsACd9D5BABkD1McZFMdGX0UO0icFuJ2s0IVdud2CCyemwUA==
+"@manuscripts/data@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/data/-/data-1.0.4.tgz#0220da86299d96243ace2ba932fd32e7f6643344"
+  integrity sha512-LDPyUqXUwhcYoaOPXVpKNCj4FHl6Gcu/AohAMdgubDTkhK18Xm48uSwN9GVNvEGmY3BwivbSEaP/uaPQaLG4Rg==
 
 "@manuscripts/eslint-config@^0.5.1":
   version "0.5.1"
@@ -1597,14 +1597,14 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.3.tgz#8a4dcd2cced5411e2000d6757a8524e31672c41d"
-  integrity sha512-11jaXe0u2Nhle2E2Ujb1hEiWJtEjJOHu+0bJLaF1CAFDUtn/PuYtppaaGJ93oqmWLiDP0ls84ErQoxSSpvGJQA==
+"@manuscripts/library@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.4.tgz#d621ca54b8a7a2226573eae6ab9a18eb6b1315d4"
+  integrity sha512-sTJrIAXF9arO7/cuE2wEwcfQtq1x6H6JYQeSlrQDTg7GKkadsopAxSixKo07tpQTKRCiKKduWhC/iRVwmpjSnA==
   dependencies:
-    "@manuscripts/data" "^1.0.3"
+    "@manuscripts/data" "^1.0.4"
     "@manuscripts/json-schema" "^2.1.0"
-    "@manuscripts/transform" "^1.3.4"
+    "@manuscripts/transform" "^1.3.5"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
@@ -1688,6 +1688,20 @@
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.4.tgz#f78b73ecc667606d64f3e3194bda14516a372d8b"
   integrity sha512-NJY+LMDBBEFllSJsh/x6ygnDMY2bK1y3qTvFHEZTZO0Pty2N0dUDPtd2l95fv7F5THlCcCLlBRFXAI1Q0TJ2Sw==
+  dependencies:
+    "@manuscripts/json-schema" "^2.1.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.5.tgz#5acbff3ec7345aadec77343cfbb13935004e14ff"
+  integrity sha512-rRrhuNqcDdO+rELkQN4r3RpXANDI9p7h2p7A/4QrkGJhT328DjByb2CuG4m/qKvd5EZ1GUGYdnBr2s324fYjQg==
   dependencies:
     "@manuscripts/json-schema" "^2.1.0"
     debug "^4.3.4"
