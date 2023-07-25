@@ -45,12 +45,10 @@ const preventTitleEdit = (tr: Transaction) => {
     return dontPrevent
   }
   const meta = tr.getMeta(highlightKey)
-  if (meta) {
-    if (SET_COMMENT in meta) {
-      return dontPrevent
-    }
-  }
-  if (tr.getMeta('track-changes-skip-tracking')) {
+  if (
+    (meta && SET_COMMENT in meta) ||
+    tr.getMeta('track-changes-skip-tracking')
+  ) {
     return dontPrevent
   }
 
