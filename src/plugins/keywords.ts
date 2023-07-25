@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { ObjectTypes } from '@manuscripts/json-schema'
 import { generateID, ManuscriptNode } from '@manuscripts/transform'
 import {
   NodeSelection,
@@ -32,15 +32,10 @@ const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
     return meta && meta.keywordsInserted
   })
 
-interface Props {
-  getManuscript: () => Manuscript
-  getModel: <T extends Model>(id: string) => T | undefined
-}
-
 /**
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
-export default (props: Props) => {
+export default () => {
   return new Plugin<undefined>({
     key: keywordsKey,
 
