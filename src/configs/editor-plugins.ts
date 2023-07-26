@@ -90,7 +90,7 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
-    keywords({ getManuscript, getModel }),
+    keywords(),
     bibliography({
       getCitationProvider,
       getLibraryItem,

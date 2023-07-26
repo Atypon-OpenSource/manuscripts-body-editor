@@ -17,23 +17,38 @@
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import {
   isGraphicalAbstractSectionNode,
+  isKeywordsSectionNode,
   isSectionTitleNode,
 } from '@manuscripts/transform'
 import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
+import { highlightKey, SET_COMMENT } from './highlight'
+
 /**
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
  */
 
-const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
-  // Prevent graphical abstract section title from being changed
+const preventTitleEdit = (tr: Transaction) => {
+  /*
+   Prevent 
+   - graphical abstract section title and 
+   - keywords section title 
+   from being changed/removed
+  */
   let dontPrevent = true
 
   const isInRange = (start: number, end: number, position: number) =>
     position >= start && position <= end
 
   if (tr.getMeta('origin') === trackChangesPluginKey) {
+    return dontPrevent
+  }
+  const meta = tr.getMeta(highlightKey)
+  if (
+    (meta && SET_COMMENT in meta) ||
+    tr.getMeta('track-changes-skip-tracking')
+  ) {
     return dontPrevent
   }
 
@@ -49,8 +64,15 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 
       step.getMap().forEach((fromA, toA) => {
         tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
-          // detecting if there is a change inside the title of the graphical abstract section and preventing that change
-          if (isGraphicalAbstractSectionNode(node)) {
+          /* detecting if there is a change inside the title of 
+           - the graphical abstract section OR
+           - the keywords section
+           and preventing that change
+           */
+          if (
+            isGraphicalAbstractSectionNode(node) ||
+            isKeywordsSectionNode(node)
+          ) {
             node.descendants((childNode, childPos) => {
               const inDocPos = nodePos + childPos
               if (
@@ -75,7 +97,7 @@ const preventGraphicalAbstractTitleEdit = (tr: Transaction) => {
 export default () => {
   return new Plugin<null>({
     filterTransaction: (tr) => {
-      return preventGraphicalAbstractTitleEdit(tr)
+      return preventTitleEdit(tr)
     },
     /*
       This is commented because after recent major dependencies update it somehow doesn't work well with the new track changes: RangeError due to paragraph adding into the title.
