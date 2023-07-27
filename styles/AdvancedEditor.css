@@ -653,7 +653,8 @@
 
 .block-comment-button.bibliography-comment {
   display: grid;
-  top: -7%;
+  position: absolute;
+  top: 4%;
   left: 1%;
   margin-top: 12px;
 }
@@ -747,7 +748,7 @@
   color: inherit;
   flex-direction: column;
   position: absolute;
-  top: -50%;
+  top: 10%;
   left: 100%;
   width: 36px;
   visibility: hidden;
