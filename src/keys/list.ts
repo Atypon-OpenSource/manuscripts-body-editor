@@ -31,7 +31,7 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
   'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
   'Shift-Tab': liftListItem(schema.nodes.list_item), // outdent, same as Mod-[
-  Tab: sinkListItem(schema.nodes.list_item), // indent, same as Mod-]
+  Tab: wrapInList(schema.nodes.list_item), // indent, same as Mod-]
 }
 
 export default listKeymap
