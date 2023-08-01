@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import { buildCitationNodes, buildCitations } from '@manuscripts/library'
+import { BibliographyItem } from '@manuscripts/json-schema'
+import {
+  buildCitationNodes,
+  buildCitations,
+  CitationProvider,
+  loadCitationStyle,
+} from '@manuscripts/library'
+import { DEFAULT_BUNDLE } from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
 import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
 import { BibliographyProps, CiteProcCitation, PluginState } from './types'
-
-import { CitationProvider, loadCitationStyle } from '@manuscripts/library'
-import { DEFAULT_BUNDLE } from '@manuscripts/transform'
-
-import { BibliographyItem } from '@manuscripts/json-schema'
 
 export const bibliographyKey = new PluginKey('bibliography')
 

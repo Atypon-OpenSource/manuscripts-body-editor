@@ -95,6 +95,7 @@ export default (props: PluginProps) => {
       getCitationProvider,
       getLibraryItem,
       getModel,
+      modelMap,
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
