@@ -23,32 +23,33 @@ import {
   CitationProvider,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import {
-  Build,
-  buildComment,
-  DEFAULT_BUNDLE,
-  ManuscriptNodeView,
-} from '@manuscripts/transform'
+import { Build, buildComment, ManuscriptNodeView } from '@manuscripts/transform'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
-import { loadCitationStyle } from '../lib/csl-styles'
+import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
-const createBibliography = async (items: BibliographyItem[]) => {
-  const styleOpts = { bundleID: DEFAULT_BUNDLE }
-  const citationStyle = await loadCitationStyle(styleOpts)
+const createBibliography = async (
+  items: BibliographyItem[],
+  cslProps: CSLProps
+) => {
+  const { style, locale, lang } = cslProps
+
+  if (!style) {
+    throw new Error(`CSL Style not found`)
+  }
+
   const [bibmeta, bibliographyItems] =
-    CitationProvider.makeBibliographyFromCitations(items, citationStyle)
+    CitationProvider.makeBibliographyFromCitations(items, style, locale, lang)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors)
   }
-  const contents = createBibliographyElementContents(bibliographyItems)
-  return contents
+  return createBibliographyElementContents(bibliographyItems)
 }
 
 interface BibliographyItemViewProps extends BaseNodeProps {
@@ -132,9 +133,10 @@ export class BibliographyItemView<
   public updateContents = async () => {
     const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
     if (reference) {
-      const bibliography = await createBibliography([
-        reference,
-      ] as BibliographyItem[])
+      const bibliography = await createBibliography(
+        [reference],
+        this.props.cslProps
+      )
       try {
         const fragment = sanitize(bibliography.outerHTML)
         this.dom.innerHTML = ''

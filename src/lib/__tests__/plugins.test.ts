@@ -361,6 +361,11 @@ const buildProps = (
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
   getDoc: () => doc,
+  cslProps: {
+    style: '',
+    locale: '',
+    lang: '',
+  },
 })
 
 describe('editor view', () => {

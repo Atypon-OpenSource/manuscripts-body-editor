@@ -33,6 +33,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { PopperManager } from '../lib/popper'
 import { CreateView } from '../useEditor'
+import { CSLProps } from './ManuscriptsEditor'
 import plugins from './viewer-plugins'
 import views from './viewer-views'
 
@@ -56,6 +57,7 @@ export interface ViewerProps {
   getAttachments: () => FileAttachment[]
   getCapabilities: () => Capabilities
   getDoc: () => ProsemirrorNode
+  cslProps: CSLProps
 }
 
 export default {

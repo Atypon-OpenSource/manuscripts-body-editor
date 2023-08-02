@@ -19,12 +19,14 @@ import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 
+import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
   popper: PopperManager
   getModel: <T extends Model>(id: string) => T | undefined
+  cslProps: CSLProps
   renderReactComponent: (
     child: React.ReactElement,
     container: HTMLElement
