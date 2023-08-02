@@ -166,7 +166,10 @@ export class BibliographyItemView<
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        if (this.props.getCapabilities().seeReferencesButtons) {
+        if (
+          this.props.getCapabilities().seeReferencesButtons &&
+          !this.dom.querySelector('.bibliography-double-button')
+        ) {
           this.dom.appendChild(doubleButton)
         }
         editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs

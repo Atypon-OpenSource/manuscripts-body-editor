@@ -654,9 +654,8 @@
 .block-comment-button.bibliography-comment {
   display: grid;
   position: absolute;
-  top: 4%;
+  top: -10%;
   left: 1%;
-  margin-top: 12px;
 }
 
 .block-comment-button {
@@ -742,13 +741,18 @@
   visibility: visible;
 }
 
+.bib-item {
+  margin-bottom: 12px;
+  min-height: 80px;
+}
+
 .bibliography-double-button {
   display: inline-flex;
   text-decoration: none;
   color: inherit;
   flex-direction: column;
   position: absolute;
-  top: 10%;
+  top: 0;
   left: 100%;
   width: 36px;
   visibility: hidden;
