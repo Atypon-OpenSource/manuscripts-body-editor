@@ -260,6 +260,7 @@ export class FigureEditableView extends FigureView<
       ) {
         const componentProps: FigureOptionsSubviewProps = {
           src: url,
+          disabled: !isSupportedImageType,
           onUploadClick: this.envokeFileInput,
           getAttachments: this.props.getAttachments,
           modelMap: this.props.modelMap,
@@ -269,7 +270,7 @@ export class FigureEditableView extends FigureView<
           can: this.props.getCapabilities(),
           getDoc: this.props.getDoc,
         }
-
+        this.reactTools?.remove()
         this.reactTools = ReactSubView(
           this.props,
           FigureOptionsSubview,
