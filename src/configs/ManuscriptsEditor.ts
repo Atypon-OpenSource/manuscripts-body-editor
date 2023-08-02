@@ -37,7 +37,6 @@ import { ViewerProps } from './ManuscriptsViewer'
 export type CSLProps = {
   style?: string
   locale?: string
-  lang: string
 }
 
 export interface EditorProps extends ViewerProps {

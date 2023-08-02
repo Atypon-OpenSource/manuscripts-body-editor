@@ -112,7 +112,6 @@ const defaultViewerProps: ViewerProps = {
   cslProps: {
     style: '',
     locale: '',
-    lang: '',
   },
 }
 

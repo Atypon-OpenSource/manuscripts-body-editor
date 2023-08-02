@@ -37,14 +37,14 @@ const createBibliography = async (
   items: BibliographyItem[],
   cslProps: CSLProps
 ) => {
-  const { style, locale, lang } = cslProps
+  const { style, locale } = cslProps
 
   if (!style) {
     throw new Error(`CSL Style not found`)
   }
 
   const [bibmeta, bibliographyItems] =
-    CitationProvider.makeBibliographyFromCitations(items, style, locale, lang)
+    CitationProvider.makeBibliographyFromCitations(items, style, locale)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors)

@@ -364,7 +364,6 @@ const buildProps = (
   cslProps: {
     style: '',
     locale: '',
-    lang: '',
   },
 })
 
