@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import collab from 'prosemirror-collab'
 import {
   Command,
   EditorState,
@@ -21,16 +22,29 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
+import { Step } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { EditorProps } from './configs/ManuscriptsEditor'
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
   dispatch: (tr: Transaction) => EditorState
 ) => EditorView
 
-const useEditor = (initialState: EditorState, createView: CreateView) => {
+// @TODO move type to quarterback plugin or styleguide BEFORE MERGING
+export abstract class StepsCollabProvider {
+  steps: Step[]
+  currentVersion: number
+  stepClientIDs: number[]
+}
+
+const useEditor = (
+  initialState: EditorState,
+  createView: CreateView,
+  editorProps: EditorProps
+) => {
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
@@ -44,6 +58,22 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
 
       const nextState = view.current.state.apply(tr)
       view.current.updateState(nextState)
+
+      if (editorProps.stepsCollabProvider) {
+        const sendable = collab.sendableSteps(nextState)
+        if (sendable) {
+          editorProps.stepsCollabProvider.snedSteps(
+            sendable.version,
+            sendable.steps,
+            sendable.clientID
+          )
+        }
+
+        // this collab part is  to be implemementd
+        // editorProps.stepsCollabProvider.onNewSteps((steps, clientIDs) => { //
+        //   collab.receiveTransaction(view.current, steps, clientIDs)
+        // })
+      }
 
       // TODO: this part should be debounced??
       setState(nextState)

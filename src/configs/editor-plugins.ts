@@ -26,6 +26,7 @@ import {
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
+import collab from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
@@ -48,6 +49,7 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
+import { StepsCollabProvider } from '../useEditor'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
@@ -60,6 +62,7 @@ interface PluginProps {
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
+  stepsCollabProvider: StepsCollabProvider
 }
 
 export default (props: PluginProps) => {
@@ -77,7 +80,7 @@ export default (props: PluginProps) => {
 
   const plugins = props.plugins || []
 
-  return [
+  const allPlugins = [
     rules,
     ...keys,
     dropCursor(),
@@ -105,6 +108,14 @@ export default (props: PluginProps) => {
     highlights({ setComment }),
     track_changes_ui(),
   ]
+
+  if (props.stepsCollabProvider) {
+    allPlugins.push(
+      collab.collab({ version: props.stepsCollabProvider.currentVersion })
+    )
+  }
+
+  return allPlugins
 }
 
 // for tables
