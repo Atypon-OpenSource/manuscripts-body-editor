@@ -24,26 +24,25 @@ import {
   ParagraphElement,
   Section,
   Table,
-  TableElement,
+  TableElement, TOCElement,
   UserProfile,
 } from '@manuscripts/json-schema'
-import { getAllPermitted } from '@manuscripts/style-guide'
+import {getAllPermitted} from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   Decoder,
-  generateID,
   hasObjectType,
   schema,
 } from '@manuscripts/transform'
 // eslint-disable-next-line import/no-unresolved
-import { createMemoryHistory } from 'history'
-import { EditorState } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
+import {createMemoryHistory} from 'history'
+import {EditorState} from 'prosemirror-state'
+import {EditorView} from 'prosemirror-view'
 
-import { EditorProps } from '../../configs/ManuscriptsEditor'
+import {EditorProps} from '../../configs/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
-import { PopperManager } from '../popper'
-import { getMatchingDescendant } from '../utils'
+import {PopperManager} from '../popper'
+import {getMatchingDescendant} from '../utils'
 
 const manuscript: Manuscript = {
   _id: 'MPManuscript:test-manuscript',
@@ -61,6 +60,10 @@ const isSection = hasObjectType<Section>(ObjectTypes.Section)
 const nextPriority = () => {
   const rootSections = models.filter(isSection).filter((model) => model.path.length === 1)
   return rootSections.length
+}
+
+const generateID = (type: ObjectTypes): string => {
+  return type + ':model-' + models.length
 }
 
 const addEmptySection = () => {
@@ -260,6 +263,43 @@ const addSectionWithTable = () => {
   models.push(section)
 }
 
+const addSectionWithTableOfContents = () => {
+  const tocElementID = generateID(ObjectTypes.TOCElement)
+
+  const tocElement: TOCElement = {
+    _id: tocElementID,
+    objectType: ObjectTypes.TOCElement,
+    createdAt: 0,
+    updatedAt: 0,
+    manuscriptID: manuscript._id,
+    containerID: manuscript.containerID,
+    elementType: 'div',
+    contents: '<div>Table of Contents</div>'
+  }
+
+  models.push(tocElement)
+
+  const sectionID = generateID(ObjectTypes.Section)
+
+  const section: Section = {
+    _id: sectionID,
+    objectType: ObjectTypes.Section,
+    createdAt: 0,
+    updatedAt: 0,
+    title: 'Table of Contents',
+    elementIDs: [tocElementID],
+    manuscriptID: manuscript._id,
+    containerID: manuscript.containerID,
+    priority: nextPriority(),
+    path: [sectionID],
+  }
+
+  models.push(section)
+}
+
+// add toc section
+addSectionWithTableOfContents()
+
 // add 3 empty sections
 addEmptySection()
 addEmptySection()
@@ -355,13 +395,16 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const emptySection = view.state.doc.child(0)
+    const tableOfContentsSection = view.state.doc.child(0)
+    expect(tableOfContentsSection.content.child(1).attrs.contents).toBe('<div>Table of Contents</div>')
+
+    const emptySection = view.state.doc.child(1)
     expect(emptySection.childCount).toBe(1)
 
-    const sectionWithEmptyParagraphs = view.state.doc.child(3)
+    const sectionWithEmptyParagraphs = view.state.doc.child(4)
     expect(sectionWithEmptyParagraphs.childCount).toBe(3)
 
-    const sectionWithList = view.state.doc.child(6)
+    const sectionWithList = view.state.doc.child(7)
     expect(sectionWithList.childCount).toBe(2)
   })
 
@@ -379,7 +422,12 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const sectionWithEmptyParagraphs = view.state.doc.child(3)
+    const tableOfContentsSection = view.state.doc.child(0)
+    expect(
+      tableOfContentsSection.content.child(1).attrs.contents
+    ).toMatchSnapshot()
+
+    const sectionWithEmptyParagraphs = view.state.doc.child(4)
     expect(sectionWithEmptyParagraphs.childCount).toBe(2)
     expect(sectionWithEmptyParagraphs.content.child(0).type).toBe(
       sectionWithEmptyParagraphs.type.schema.nodes.section_title
@@ -389,7 +437,7 @@ describe('editor view', () => {
     )
     expect(sectionWithEmptyParagraphs.content.child(1).textContent).toBe('')
 
-    const sectionWithList = view.state.doc.child(6)
+    const sectionWithList = view.state.doc.child(7)
     expect(sectionWithList.childCount).toBe(2)
     expect(sectionWithList.content.child(0).type).toBe(
       sectionWithList.type.schema.nodes.section_title
@@ -410,7 +458,7 @@ describe('editor view', () => {
 
     expect(inlineEquation!.attrs.id).toMatch(/^MPInlineMathFragment:/)
 
-    const sectionWithFigure = view.state.doc.child(7)
+    const sectionWithFigure = view.state.doc.child(8)
     expect(sectionWithFigure.childCount).toBe(2)
     expect(sectionWithFigure.content.child(0).type).toBe(
       sectionWithFigure.type.schema.nodes.section_title
@@ -428,7 +476,7 @@ describe('editor view', () => {
       figureElement.type.schema.nodes.figcaption
     )
 
-    const sectionWithTable = view.state.doc.child(8)
+    const sectionWithTable = view.state.doc.child(9)
     expect(sectionWithTable.childCount).toBe(2)
     expect(sectionWithTable.content.child(0).type).toBe(
       sectionWithTable.type.schema.nodes.section_title
