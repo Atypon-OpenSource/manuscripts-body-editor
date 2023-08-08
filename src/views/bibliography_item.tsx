@@ -127,18 +127,20 @@ export class BibliographyItemView<
     this.dom = document.createElement('div')
     this.dom.className = 'bib-item'
     this.dom.setAttribute('id', this.node.attrs.id)
+    this.dom.setAttribute('contenteditable', 'false')
+    this.contentDOM = document.createElement('div')
+    this.dom.appendChild(this.contentDOM)
   }
 
   public updateContents = async () => {
     const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
-    if (reference) {
+    if (reference && this.contentDOM) {
       const bibliography = await createBibliography([
         reference,
       ] as BibliographyItem[])
       try {
         const fragment = sanitize(bibliography.outerHTML)
-        this.dom.innerHTML = ''
-        this.dom.appendChild(fragment)
+        this.contentDOM.appendChild(fragment)
 
         const doubleButton = document.createElement('div')
         const editButton = document.createElement('button')
@@ -164,7 +166,10 @@ export class BibliographyItemView<
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        if (this.props.getCapabilities().seeReferencesButtons) {
+        if (
+          this.props.getCapabilities().seeReferencesButtons &&
+          !this.dom.querySelector('.bibliography-double-button')
+        ) {
           this.dom.appendChild(doubleButton)
         }
         editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
