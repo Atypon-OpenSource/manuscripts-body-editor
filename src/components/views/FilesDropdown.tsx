@@ -68,6 +68,7 @@ interface OptionsProps extends DropdownProps {
   onDetachClick: () => void
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   canEditArticle?: boolean
+  disabled: boolean
 }
 
 export interface FilesDropdownProps extends DropdownProps {
@@ -211,6 +212,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   canEditArticle,
   setFigureAttrs,
   getAttachments,
+  disabled,
   getDoc,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
@@ -259,11 +261,14 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
           onClick={toggleOpen}
           top={5}
         >
-          <ListItemButton onClick={onDownloadClick} disabled={!canDownloadFile}>
+          <ListItemButton
+            onClick={onDownloadClick}
+            disabled={disabled || !canDownloadFile}
+          >
             Download
           </ListItemButton>
           <NestedDropdown
-            disabled={!canReplaceFile}
+            disabled={!canReplaceFile || disabled}
             parentToggleOpen={toggleOpen}
             buttonText={'Replace'}
             moveLeft
@@ -285,7 +290,10 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
               </>
             }
           />
-          <ListItemButton onClick={onDetachClick} disabled={!canEditArticle}>
+          <ListItemButton
+            onClick={onDetachClick}
+            disabled={disabled || !canEditArticle}
+          >
             Detach
           </ListItemButton>
         </OptionsDropdownList>
