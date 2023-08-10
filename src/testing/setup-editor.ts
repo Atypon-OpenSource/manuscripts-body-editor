@@ -58,6 +58,7 @@ export function setupEditor() {
       left: 0,
       right: 0,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     nodeViews: createNodeViews(props) as any,
   })
 

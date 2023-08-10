@@ -24,25 +24,25 @@ import {
   ParagraphElement,
   Section,
   Table,
-  TableElement, TOCElement,
+  TableElement,
+  TOCElement,
   UserProfile,
 } from '@manuscripts/json-schema'
-import {getAllPermitted} from '@manuscripts/style-guide'
+import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   Decoder,
   hasObjectType,
   schema,
 } from '@manuscripts/transform'
-// eslint-disable-next-line import/no-unresolved
-import {createMemoryHistory} from 'history'
-import {EditorState} from 'prosemirror-state'
-import {EditorView} from 'prosemirror-view'
+import { createMemoryHistory } from 'history'
+import { EditorState } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 
-import {EditorProps} from '../../configs/ManuscriptsEditor'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
-import {PopperManager} from '../popper'
-import {getMatchingDescendant} from '../utils'
+import { PopperManager } from '../popper'
+import { getMatchingDescendant } from '../utils'
 
 const manuscript: Manuscript = {
   _id: 'MPManuscript:test-manuscript',
@@ -50,15 +50,17 @@ const manuscript: Manuscript = {
   title: 'Example Manuscript',
   containerID: 'MPProject:test-project',
   createdAt: 0,
-  updatedAt: 0
+  updatedAt: 0,
 }
 
-const models: Model[] = [manuscript];
+const models: Model[] = [manuscript]
 
 const isSection = hasObjectType<Section>(ObjectTypes.Section)
 
 const nextPriority = () => {
-  const rootSections = models.filter(isSection).filter((model) => model.path.length === 1)
+  const rootSections = models
+    .filter(isSection)
+    .filter((model) => model.path.length === 1)
   return rootSections.length
 }
 
@@ -274,7 +276,7 @@ const addSectionWithTableOfContents = () => {
     manuscriptID: manuscript._id,
     containerID: manuscript.containerID,
     elementType: 'div',
-    contents: '<div>Table of Contents</div>'
+    contents: '<div>Table of Contents</div>',
   }
 
   models.push(tocElement)
@@ -319,9 +321,11 @@ addSectionWithFigure()
 // add section with table
 addSectionWithTable()
 
-const modelMap = new Map(models.map((model) => {
+const modelMap = new Map(
+  models.map((model) => {
     return [model._id, model]
-  }));
+  })
+)
 
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
@@ -396,7 +400,9 @@ describe('editor view', () => {
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
     const tableOfContentsSection = view.state.doc.child(0)
-    expect(tableOfContentsSection.content.child(1).attrs.contents).toBe('<div>Table of Contents</div>')
+    expect(tableOfContentsSection.content.child(1).attrs.contents).toBe(
+      '<div>Table of Contents</div>'
+    )
 
     const emptySection = view.state.doc.child(1)
     expect(emptySection.childCount).toBe(1)
@@ -455,8 +461,6 @@ describe('editor view', () => {
     )
 
     expect(inlineEquation).not.toBeUndefined()
-
-    expect(inlineEquation!.attrs.id).toMatch(/^MPInlineMathFragment:/)
 
     const sectionWithFigure = view.state.doc.child(8)
     expect(sectionWithFigure.childCount).toBe(2)

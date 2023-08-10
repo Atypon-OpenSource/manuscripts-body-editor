@@ -28,42 +28,44 @@ export default () => {
   return new Plugin<null>({
     appendTransaction(transactions, oldState, newState) {
       // only scan if nodes have changed
-      if (!transactions.some((tx) => tx.docChanged || tx.getMeta('update'))) {
+      if (!transactions.some((transaction) => transaction.docChanged)) {
         return null
       }
       const newTr = newState.tr
       const diffStart = oldState.doc.content.findDiffStart(newState.doc.content)
       const diffEnd = oldState.doc.content.findDiffEnd(newState.doc.content)
       const ids = new Set<string>()
-      const start = diffStart || 0
-      const end = diffEnd ? diffEnd.b : newState.doc.nodeSize - 2
-      let endOfList = 0;
-      let endOfFootnote = 0;
-      newState.doc.nodesBetween(start, end, (node, pos) => {
-        const { id } = node.attrs
-
-        // Block nodes inside list or footnote nodes don't need ids
-        if (isListNode(node)) {
-          endOfList = Math.max(endOfList, pos + node.nodeSize)
-        } else if (isFootnoteNode(node)) {
-          endOfFootnote = Math.max(endOfFootnote, pos + node.nodeSize)
-        }
-        const insideList = pos <= endOfList
-        const insideFootnote = pos <= endOfFootnote
-        if (
-          'id' in node.attrs &&
-          ((!insideList && !insideFootnote) || node.isInline) &&
-          (!id || id.length === 0 || ids.has(id))
-        ) {
-          const newId = generateNodeID(node.type)
-          const updatedAttrs = { ...node.attrs, id: newId }
-          newTr.setNodeMarkup(pos, undefined, updatedAttrs, node.marks)
-          ids.add(newId)
-        }
-      })
-      skipTracking(newTr)
-      newTr.setMeta('origin', 'persist')
-      return newTr
+      if (diffStart || diffEnd) {
+        const start = diffStart || 0
+        const end = diffEnd ? diffEnd.b : newState.doc.nodeSize - 2
+        let endOfList = 0,
+          endOfFootnote = 0
+        newState.doc.nodesBetween(start, end, (node, pos) => {
+          const { id } = node.attrs
+          // Block nodes inside list or footnote nodes don't need ids
+          if (isListNode(node)) {
+            endOfList = Math.max(endOfList, pos + node.nodeSize)
+          } else if (isFootnoteNode(node)) {
+            endOfFootnote = Math.max(endOfFootnote, pos + node.nodeSize)
+          }
+          const insideList = pos <= endOfList
+          const insideFootnote = pos <= endOfFootnote
+          if (
+            'id' in node.attrs &&
+            ((!insideList && !insideFootnote) || node.isInline) &&
+            (!id || id.length === 0 || ids.has(id))
+          ) {
+            const newId = generateNodeID(node.type)
+            const updatedAttrs = { ...node.attrs, id: newId }
+            newTr.setNodeMarkup(pos, undefined, updatedAttrs, node.marks)
+            ids.add(newId)
+          }
+        })
+        skipTracking(newTr)
+        newTr.setMeta('origin', 'persist')
+        return newTr
+      }
+      return null
     },
   })
 }
