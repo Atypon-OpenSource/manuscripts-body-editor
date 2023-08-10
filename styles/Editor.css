@@ -1,0 +1,949 @@
+.ProseMirror.manuscript-editor {
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: 'PT Sans', sans-serif;
+  background: #fff;
+  color: #353535;
+  margin-bottom: 100px;
+  overflow-wrap: anywhere;
+}
+
+/*
+  Disable the "Font" formatting options in Safari's context menu for editable content.
+  Note: this is a deprecated CSS property that isn't widely supported,
+  so it'll probably stop working at some point in the future.
+*/
+.ProseMirror.manuscript-editor[contenteditable='true'] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror .ProseMirror-selectednode {
+  outline: none;
+}
+
+.ProseMirror hr {
+  padding: 2px 10px;
+  border: none;
+  margin: 1em 0;
+}
+
+.ProseMirror hr:after {
+  content: '';
+  display: block;
+  height: 1px;
+  background-color: #e2e2e2;
+  line-height: 2px;
+}
+
+.ProseMirror h1 {
+  font-family: 'PT Sans', sans-serif;
+}
+
+.ProseMirror p.block {
+  margin: 0;
+}
+
+.ProseMirror blockquote {
+  padding: 16px 0 16px 32px !important;
+  border-left: 5px solid #e2e2e2;
+}
+
+.ProseMirror blockquote p:first-of-type {
+  margin-top: 0;
+}
+
+.ProseMirror blockquote p:last-of-type {
+  margin-bottom: 0;
+}
+
+.ProseMirror blockquote footer {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #777;
+}
+
+.ProseMirror blockquote footer:before {
+  content: '— ';
+}
+
+.ProseMirror .pullquote {
+  padding: 32px 0 32px 32px !important;
+  border-top: 5px solid #e2e2e2;
+  border-bottom: 5px solid #e2e2e2;
+}
+
+.ProseMirror .pullquote p {
+  font-style: italic;
+  line-height: 1.2;
+  font-size: 32px;
+}
+
+.ProseMirror .pullquote p i {
+  font-style: normal;
+}
+
+.ProseMirror .pullquote p:first-of-type {
+  margin-top: 0;
+}
+
+.ProseMirror .pullquote p:first-of-type:before {
+  content: open-quote;
+  display: block;
+  font-size: 2em;
+  margin-right: 8px;
+  color: #777;
+  line-height: 0;
+  position: relative;
+  top: 0.5em;
+  left: -0.5em;
+}
+
+.ProseMirror .pullquote p:last-of-type {
+  margin-bottom: 0;
+}
+
+.ProseMirror .pullquote footer {
+  margin-top: 24px;
+  margin-left: 8px;
+  font-size: 18px;
+  color: #777;
+}
+
+.ProseMirror .pullquote footer:before {
+  content: '— ';
+}
+
+.ProseMirror img {
+  cursor: default;
+}
+
+.ProseMirror .suppress-footer tr:last-of-type,
+.ProseMirror .suppress-header tr:first-of-type {
+  display: none;
+}
+
+.ProseMirror td {
+  padding: 10px;
+}
+.ProseMirror th {
+  padding: 10px;
+}
+
+.ProseMirror tr:first-of-type th {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  background: #f2f2f2;
+  text-align: left;
+  font-weight: bold;
+}
+
+.ProseMirror tr:last-of-type td {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.ProseMirror .suppress-header tr:nth-of-type(2) td {
+  border-top: 1px solid #000;
+}
+
+.ProseMirror .suppress-footer tr:nth-last-of-type(2) td {
+  border-bottom: 1px solid #000;
+}
+
+.ProseMirror tr:not(:first-of-type):not(:last-of-type) td:not(:last-child) {
+  border-right: 1px solid #000;
+}
+
+.ProseMirror sup,
+.ProseMirror sub {
+  line-height: 0;
+}
+
+.ProseMirror .citation,
+.ProseMirror .cross-reference {
+  font-weight: bold;
+  background-color: #ddf3fa;
+  border-radius: 5px;
+  color: #353535;
+  padding: 0 2px;
+  cursor: pointer;
+}
+
+.ProseMirror .cross-reference {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ProseMirror .citation.ProseMirror-selectednode,
+.ProseMirror .cross-reference.ProseMirror-selectednode {
+  background-color: #bce7f6;
+}
+
+.ProseMirror .figure-block {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  display: grid;
+  gap: 20px 40px;
+  margin: 16px 0 0;
+  box-sizing: border-box;
+  justify-self: center;
+  position: relative;
+}
+
+.ProseMirror .figure-block:hover .options-button {
+  visibility: visible;
+}
+
+.ProseMirror .block:focus-within .figure-block,
+.ProseMirror .block:hover .figure-block {
+  border-color: #e2e2e2;
+}
+
+.ProseMirror .figure-block[data-alignment='left'] {
+  justify-self: flex-start;
+}
+
+.ProseMirror .figure-block[data-alignment='right'] {
+  justify-self: flex-end;
+}
+
+.ProseMirror .figure-block .expanded-listing .executable-attachments {
+  display: block;
+}
+
+.ProseMirror .figure-block figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.ProseMirror .figure-block > .listing {
+  /*grid-row: listing;*/
+  grid-column-start: 1;
+  grid-column-end: -1;
+  /*margin-top: 0;*/
+  padding: 0;
+  min-height: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.ProseMirror .figure-block > figcaption {
+  /*grid-row: caption;*/
+  grid-column-start: 1;
+  grid-column-end: -1;
+  margin-top: 0;
+}
+
+.ProseMirror .figure-caption {
+  display: none;
+}
+
+.ProseMirror .figure.placeholder {
+  align-items: center;
+  border-radius: 16px;
+  border: 1px dashed #e2e2e2;
+  color: #6e6e6e;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 32px;
+  min-height: 100px;
+  white-space: normal;
+}
+
+.ProseMirror .figure.placeholder.over {
+  border-color: #bce7f6;
+}
+
+.ProseMirror .figure-image {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ProseMirror .figure-embed {
+  width: 640px;
+  max-width: 90%;
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.ProseMirror .figure-embed .figure-embed-object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+}
+
+.ProseMirror figcaption {
+  background: white;
+  font-size: 14px;
+  margin-top: 1em;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.ProseMirror .caption-title:not(.empty-node) {
+  font-weight: bold;
+}
+
+.ProseMirror .caption-description {
+  margin: 0;
+}
+
+.ProseMirror .suppress-title .caption-description {
+  display: inline;
+}
+
+.ProseMirror .caption-title.empty-node::before {
+  content: 'Caption Title...';
+}
+
+.ProseMirror .caption-description.empty-node::before {
+  content: 'Caption...';
+}
+
+.ProseMirror .suppress-caption .caption-description {
+  display: none;
+}
+
+.ProseMirror .suppress-caption figcaption > .figure-label {
+  display: none !important;
+}
+
+.ProseMirror .suppress-title .caption-title {
+  display: none;
+}
+
+.ProseMirror .figure-label {
+  font-weight: bold;
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.ProseMirror .executable-container {
+  width: 100%;
+  position: relative;
+  padding: 0 24px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ProseMirror .executable-body {
+  display: none;
+}
+
+.ProseMirror .expanded-listing .executable-body {
+  display: flex;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.ProseMirror .executable-main {
+  flex: 1;
+}
+
+.ProseMirror .executable-actions {
+  display: flex;
+  flex-direction: column;
+  margin-right: 8px;
+}
+
+.ProseMirror .executable-action {
+  position: relative;
+  border: 1px solid #e2e2e2;
+  border-radius: 50%;
+  background: white;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  width: 28px;
+  padding: 0;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.ProseMirror .executable-action:hover {
+  border-color: #bce7f6;
+}
+
+.ProseMirror .executable-executing .execute-listing {
+  border: none;
+}
+
+.ProseMirror .executable-executing .execute-listing:before {
+  position: absolute;
+  content: '';
+  height: 100%;
+  width: 100%;
+  border: 1px dashed #bce7f6;
+  top: -2px;
+  left: -2px;
+  border-radius: inherit;
+  animation: executable-action-spin 10s linear infinite;
+}
+
+@keyframes executable-action-spin {
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+.ProseMirror .executable-outputs {
+  font-size: 90%;
+  font-family: Monaco, monospace;
+  margin-top: 16px;
+  white-space: normal;
+  background: black;
+  color: #36b260;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 15em;
+}
+
+.ProseMirror .executable-output {
+  margin: 0 16px;
+}
+
+.ProseMirror .executable-output:first-of-type {
+  margin-top: 8px;
+}
+
+.ProseMirror .executable-output:last-of-type {
+  margin-bottom: 8px;
+}
+
+.ProseMirror .executable-outputs .executable-output-error {
+  color: #f35143;
+}
+
+.ProseMirror .executable-attachments {
+  font-size: 14px;
+  font-family: 'PT Sans', sans-serif;
+  margin-top: 16px;
+  display: none;
+}
+
+.ProseMirror .executable-attachment {
+  border: 1px solid #e2e2e2;
+  padding: 4px 12px;
+  margin-bottom: 4px;
+}
+
+.ProseMirror .executable-attachment-type {
+  font-size: 12px;
+  color: #6e6e6e;
+}
+
+.ProseMirror .toggle-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 2px;
+  background: transparent;
+  width: 100%;
+}
+
+.ProseMirror .block:focus-within .expanded-listing .toggle-container::after,
+.ProseMirror .block:hover .expanded-listing .toggle-container::after {
+  content: '';
+  position: absolute;
+  border-bottom: 1px solid #e2e2e2;
+  bottom: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.ProseMirror .figure-block .executable-has-contents .toggle-container,
+.ProseMirror .figure-block .expanded-listing .toggle-container,
+.ProseMirror .block:focus-within .toggle-container,
+.ProseMirror .block:hover .toggle-container {
+  display: flex;
+}
+
+.ProseMirror .toggle-listing {
+  border: none;
+  background: #fff;
+  font-size: 12px;
+  color: inherit;
+  font-family: 'PT Sans', sans-serif;
+  z-index: 1;
+  cursor: pointer;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.ProseMirror .toggle-icon {
+  margin-right: 4px;
+}
+
+.ProseMirror .CodeMirror {
+  min-width: 500px;
+  height: auto;
+  border: 1px solid #e2e2e2;
+}
+
+.ProseMirror .CodeMirror-scroll {
+  max-height: 400px;
+  min-height: 4em;
+  width: 100%;
+}
+
+.ProseMirror .CodeMirror-placeholder {
+  color: #999 !important;
+}
+
+.ProseMirror.manuscript-editor section.bibliography {
+  overflow-wrap: normal;
+}
+
+.ProseMirror section.title-suppressed > .block-section_title {
+  display: none;
+}
+
+.ProseMirror section.generated-label > .block-section_label {
+  display: none;
+}
+
+.ProseMirror section.page-break-before::before {
+  content: '';
+  display: block;
+  border-top: 2px dashed #aaa;
+  margin: 16px 64px;
+}
+
+.ProseMirror section.page-break-after::after {
+  content: '';
+  display: block;
+  border-bottom: 2px dashed #ccc;
+  margin: 16px 64px;
+}
+
+.ProseMirror section > section > section > section h1 {
+  font-size: 100%;
+}
+
+.ProseMirror .placeholder-text {
+  color: #c9c9c9;
+  margin: 0;
+}
+
+.ProseMirror .empty-node::before {
+  position: absolute;
+  color: #c9c9c9;
+  cursor: text;
+  pointer-events: none;
+}
+
+.ProseMirror .empty-node:hover::before {
+  color: #6e6e6e;
+}
+
+.ProseMirror .empty-node[data-placeholder]::before {
+  content: attr(data-placeholder); /* TODO: innerHTML? */
+}
+
+.ProseMirror table {
+  line-height: 1.2;
+  margin: 16px 0 0;
+}
+
+.ProseMirror tr:first-of-type {
+  counter-reset: header_counter;
+}
+
+.ProseMirror tr:first-of-type th {
+  counter-increment: header_counter;
+}
+
+.ProseMirror tr:last-of-type {
+  counter-reset: footer_counter;
+}
+
+.ProseMirror tr:last-of-type td {
+  counter-increment: footer_counter;
+}
+
+.ProseMirror
+  .block-table_element:not(.suppress-header)
+  tr:first-of-type
+  th.empty-node::before {
+  content: 'Header ' counter(header_counter);
+}
+
+.ProseMirror
+  .block-table_element:not(.suppress-footer)
+  tr:last-of-type
+  td.empty-node::before {
+  content: 'Footer ' counter(footer_counter);
+}
+
+/* TODO: UI for code -> table */
+.ProseMirror .block-table_element .listing {
+  display: none;
+}
+
+.ProseMirror code {
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 0.25em 0.65em;
+  background: #f2f2f2;
+}
+
+.ProseMirror .block-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px auto 52px;
+}
+
+.ProseMirror .block-container:hover {
+  z-index: 2;
+}
+
+.ProseMirror .block-container > .block {
+  padding: 0 12px;
+  margin: 0;
+}
+
+.ProseMirror .block-container.block-figure_element > .block {
+  display: grid;
+}
+
+.ProseMirror .block-container > h1.block {
+  display: flex;
+}
+
+.ProseMirror .block-container > .block.fit-to-page {
+  margin: 0 -60px 0 -52px;
+  padding: 0;
+}
+
+.ProseMirror .block-container > .block.fit-to-page .figure-block {
+  padding: 0 !important;
+}
+
+.ProseMirror .action-gutter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ProseMirror .action-button {
+  display: none;
+  border: none;
+  background: none;
+  font-size: inherit;
+  cursor: pointer;
+  background-size: contain;
+}
+
+.ProseMirror .has-sync-error .action-button {
+  display: initial;
+  outline: 0;
+}
+
+.ProseMirror .block-gutter {
+  position: relative;
+  cursor: ns-resize;
+  opacity: 0;
+  transition: 0.2s all;
+  margin-top: 16px;
+}
+
+.ProseMirror .block-container:hover .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror.popper-open [data-balloon-pos]::before,
+.ProseMirror.popper-open [data-balloon-pos]::after {
+  display: none !important;
+}
+
+.ProseMirror .block-gutter-spacer {
+  flex: 1;
+}
+
+.ProseMirror .equation {
+  position: relative;
+  cursor: context-menu;
+  line-height: 1em;
+}
+
+.ProseMirror .equation,
+.ProseMirror .listing {
+  display: flex;
+  min-height: 34px;
+  padding: 0;
+  margin: 16px auto 0;
+  max-width: 100%;
+  overflow-x: auto;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.ProseMirror .equation svg {
+  max-width: 100%;
+}
+
+.ProseMirror figcaption .equation,
+.ProseMirror p .equation {
+  display: inline;
+  vertical-align: baseline;
+  margin: 0 5px;
+}
+
+.ProseMirror figcaption .equation-placeholder,
+.ProseMirror p .equation-placeholder {
+  display: inline;
+}
+
+.ProseMirror .code-placeholder,
+.ProseMirror .equation-placeholder,
+.ProseMirror .caption-placeholder {
+  color: #c9c9c9;
+}
+
+.ProseMirror .equation .equation-placeholder {
+  text-align: center;
+}
+
+.ProseMirror .block {
+  counter-reset: bib_item;
+}
+
+.ProseMirror .bib-item {
+  counter-increment: bib_item;
+  position: relative;
+  margin-right: 40px;
+}
+
+.ProseMirror .csl-bib-body {
+  white-space: normal;
+}
+
+.ProseMirror .csl-entry {
+  display: table-row;
+}
+
+.ProseMirror .csl-left-margin {
+  padding-right: 1ch;
+  display: none;
+}
+
+.ProseMirror .csl-right-inline::before {
+  content: counter(bib_item) '. ';
+}
+
+.ProseMirror .csl-entry a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ProseMirror .csl-entry a:hover {
+  text-decoration: underline;
+}
+
+.ProseMirror pre {
+  cursor: pointer;
+  display: block;
+  /*min-height: 34px;*/
+  padding: 5px;
+  width: auto;
+  min-width: 200px;
+  max-width: 100%;
+  overflow-x: auto;
+  line-height: 1;
+  font-size: 14px;
+}
+
+.ProseMirror .conflict {
+  background-color: #ddf3fa;
+}
+
+.ProseMirror .conflict-chevron {
+  background-color: #ddf3fa;
+  color: #353535;
+  border-radius: 6px 0 0 6px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.ProseMirror .conflict-chevron-open {
+  transform: rotate(180deg);
+}
+
+.ProseMirror .conflict-reject,
+.ProseMirror .conflict-accept {
+  background-color: #ddf3fa;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+.ProseMirror .conflict-reject:hover,
+.ProseMirror .conflict-accept:hover {
+  cursor: pointer;
+}
+
+.ProseMirror .conflict-reject {
+  color: #f35143;
+}
+
+.ProseMirror .conflict-accept {
+  background-color: #dff0d7;
+  border-radius: 0 6px 6px 0;
+  color: #36b260;
+}
+
+.ProseMirror .placeholder-item {
+  display: flex;
+  flex-wrap: wrap;
+  cursor: help;
+  font-family: 'PT Sans', sans-serif;
+  color: #f35143;
+  background-color: #fff1f0;
+  border: solid 1px #f5c1b7;
+  border-radius: 4px;
+  align-items: center;
+  white-space: normal;
+}
+
+.ProseMirror .placeholder-item-icon {
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ProseMirror .placeholder-item-message {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+}
+
+.ProseMirror .placeholder-item-link {
+  color: inherit;
+}
+
+.ProseMirror .add-block,
+.ProseMirror .edit-block {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /*z-index: 2;*/
+  cursor: pointer;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.ProseMirror .add-block {
+  /* GutterAddIconNormal */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAABLUlEQVRYR+2VsUoEMRCG/8nG4jw4BF9BsNLKJGxzL3E+g2Bjqe8ggj6Eha0PoGCVm92ttPAtBCsVlh1Zq/W4M2tOPJRsmWRmvnwzYQkr/mjF9ZEAkoFkYCkDzrkDACNmPot9ztEA1to9EbkDsK6Uypl5GgMRDWCMGQO4bosS0aQoitsE8H8NiAgRkXRvGJqBeTHzDAWH0Fp7DOAIwEs3gYgMiWgDQC0iz0T0OrO/JSKnVVWdfNWaIIAx5tPNv9tnrfWm9/5pUVwfgEMA50RUdpM0TTNQSm23ayLyRkSPM/trWZZdMPPVUgYWBYdmoK+poIEE8CcMANgvy/Kmb9+756JnIM/znbqu79tkWutd7/3DrwK0xZxzEwADZr6MKf7xJ40N/Km4BJAMJAPJwDufn30jVGW7WQAAAABJRU5ErkJggg==');
+}
+
+.ProseMirror .add-block:hover {
+  /* GutterAddIconHighlight */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAABQElEQVRYR+2TsUoDURBF712SIgpBsDNJJ1iIVkE3jT8RfyCyBmws9R9E0D4mNha2foCClZtopYU/sLtlwMoEs29kU2Ul8cUXISjvlQ/uzJ0zd4g5P865P6wBS8ASmIlAoeHXhchHnntqes7GBkrNdjlW6h7AAjOshDXXNzFhbuCisxOLumFSwWE13Nu+swb+LwERIUkZnbCkycA4zThC2hCutNpHjOVQIO+jBQguArIkxIDgm4j0vjRYheAkqleOv1uN3kDjITX5T/fsML8ceOvdSTqtgUKrc4A4PhPyMVVEkANkbfhH9gG8pglJVsDzyHOvZyIwSazLwLSktASsgb9BAM5u6G3dTrv3dFhNVACKl08bavDxnMidTHYzqJVfTEoZhzBpVmz6VSjkgn33yqT58IJNhb+lswYsAUvAEvgEb+GZIzw23E0AAAAASUVORK5CYII=');
+}
+
+.ProseMirror .edit-block {
+  /* GutterIconNormal */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAAYElEQVRIS2NkoBJgpJI5DCPVIAsLC89///7NAoUjExNT2okTJ7bjClO8YWRmZvb4////MiDNjIyMT06dOiU7sAZRzWukpDH6pCOqeW001sCROxprFGZaqiXIwZfXhraLAIz+YBsOHHIxAAAAAElFTkSuQmCC');
+}
+
+.ProseMirror .edit-block:hover {
+  /* GutterIconHighlight */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAAX0lEQVRIS2NkoBJgpJI5DCPVIJm5xz3//2OcBQpHRqb/aU+SLbfjClO8YSQ9+8Tj/wz/ZcAGMTA+eZpqITuwBlHNa6SkMfqkI6p5bTTWwJE7GmsUZlqqJcjBl9eGtosAsyRaG0sNHWYAAAAASUVORK5CYII=');
+}
+
+.ProseMirror .sync-warning-button {
+  width: 32px;
+  height: 24px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAGiUlEQVRoQ9WZfWwURRTA39s7GqgYi0FiP262lt4uETAG/hO/UFQUI6ARA/EzYDRqQFCj0u52u9tK4gcJJIgmEFESCIQgGBEMonxE/wNNAMPuFexuvxJFwdhY0nZnzH5cvbtee3t3e1jnr712Zt77zXvz5s0bhP95w1LozxhgR6uwBBg86M6PcDDWYOxGBBa2vJIAWJrwDgC+naYsgxYi69KYBzC1+DwE7nA2RTnK5tU0GUfChAjdApYmHAPAOz0l2S5gUAaIi/3fx4lk3DVmAbpapt5ms+j3ruoM+sdRVu18D3DYhQhlzncEB+dUN57/ISyIUC1gaeJBAJjvK7eZSPpLzrelipsB4UUXDNhXvGQsGHMAplo/HTFyxvMcGIxy/fVVjb+Yzs/ulpv4QVrWBghRzzr2DF5uOxsGRGgWMFVxDyI85vv6p0Qynk1V0NSEzxDwKY8P9vCS/viYAejQ6uIMojoAorO+CINiTLqQSFUwSJ9CgEKxQNDVzWWl/wQgH/8ebZ8Uorx3yBfZ8o0waZGKsQ+JbLxcjApFAbS38pVoj2/PJ8ZnOyuqFONioRBFAViq8AEgrvGFHyWSPjeIIpYqHAfEO/yQ+z6R9TeCjMvWp2CAS0ptxV+Rsm4AnOCGRkrv55sSQzlQZ2v8VpviJ8CwApGtJpKxL6mA1Vz/AHCRQ37I7bvW7q+apLRfLgSiYABLFTVAaPTj+ile0menKmBpwjYAfMZbZbafyMai9HNBPIkAs7zxrJmXDOWqAfyq3DDxCnd9DyBMdIVSWESa9P1pAKp4FBC8xI3BMSLrd6edC83CYsbhXo+PXZ5AL8WmKL/15gtRkAVMVXgLEdf5q3s2JhkzMy8rVg4A99LTIuoAEHfDIYM3Y7L+bskBOtbXTGC95RYgTnaFIV1GGhM7MwXnAnD6d6jikwxhu78QF2M0Wo3Kz/35QORtAVONr0TkNvi+bxJbr0MFaCEATAHOiogXEID3N/QrRDI2lQyAKRC1IqKFAJWe2dnzMdnYkk1gEAs440wt/gIC95G/ID3E1gkqMBgUIi8LdGjicgbgKswARhUWFIApN5dZEbs9uSjA6HNETmwLHSDT3IzRVbyc2DiSoKAAznhLE1YD4Hp/rkTM1qdlc8tssgJbwGqJLwXG7UhuOJz4N4mt6ewLA8AJDLS3vBsRK7ywCk/wsr47iBUCAbghTxNOA+J0z33YWl4yvDA6QsvHAq4VVLEREDR/gc4S2ZgRGoDVLC4EDrxUgEHvePpHZa5DJ1+AzMORo/ThmqbEgVwQgSxgav8e+xCwQJUvgL8XhgpiDGBYelLQHkgvVLHAiVchAN2KMHkwAlYyQeQo3FPTpH83mhVyWsDSRGcCL49hbD2RjddymdX36VFzoZHmMFVxAyKs9PfaN7xk3FcwQFdr/SybRk76kaGfRa7U1jaYPaUEcC5JnD3eSpZgIpw9u7qh7dRIMke1gKkJBxDwIX/wx0TS3eJUkJYrnR41gmnCFgBc7vf5gkj6wrwB0i/gjEa5gbpkoSoIgHOhoTZuY4gVCOzV1AtNrvFeoWDcBUDk3GSb0ZkjFcJGtICpibsRwC0+MWDbecl4OpfgMP9vacIOAFzqzcl2EslYFjgKlaoIlQ+g5wHcabdYxkb2gKwWSPNfYHuJZPglw+Aq9CjTavsjzPXdMhv3Vyrn2oOP9npamujc8h7xrbCVSMaKzDmGAeRTqBp1I6rCPkD0Nl+WO3EQmNQo6BSMaeQKyYyCwwAsVdgEiG5ZHAAOEUn33rnybKYmXEbA6/w99CcvGW6ilm8zNeEwAs7z1gE28rK+KnWONADnJAzrMSLDDYdVq4OCdDaLcykH3/pu1Be1gaQWwtIALFV8DxBe9zsX/RzkhFJnrpqGxE9BFc7WLy0XA7aOSMbaZL8hgMxCFVB7Pmlq+7oYwWGN7WyOL6Ac96W3n9Kz4SEAUxWaEVH2+gTLBMNSMMg8liqcSd5HgIFEZL3FGecC+NfFiwgwyf0jZY/GmozPg0x8tfqYqrgEEXb58n6P2foU59rpArjHPuV+9H3/fKzRiJfiVb0YWGeROyKCAYBT3UVmeEtMPnfaBTBbhNuR4QnPx1gnQ9hajLBSjUWAFQDoPt0mn2s9F2KAlia0IWJdqYSHOi8Dg8i6OLQHnI8OZWo95aInEOHGUIWFPhnriuLAnGRmnHGQVZUPYPm9HMfNoiE8P4WpO8eAUmSnuGv6jqSWc/4B25M8XvM2js0AAAAASUVORK5CYII=');
+}
+
+.ProseMirror .sync-warning-button:hover {
+  filter: brightness(120%);
+}
+
+.ProseMirror .sync-warning-button:focus {
+  filter: brightness(80%);
+}
+
+.ProseMirror [tabindex]:focus {
+  outline: none;
+}
+
+.ProseMirror .manuscript-toc {
+  white-space: normal;
+}
+
+.ProseMirror a.link {
+  color: #0d79d0;
+  cursor: pointer;
+}
+
+.ProseMirror a.link:hover {
+  color: #0b6bb8;
+}
+
+.ProseMirror .citation-missing {
+  background-color: red;
+  color: white;
+  padding: 2px;
+}
+
+.ProseMirror .citation-empty {
+  height: 1em;
+  width: 1ch;
+  border: 2px solid red;
+}
+
+.ProseMirror .bibliography-missing {
+  padding: 8px;
+  color: red;
+  border: 2px solid red;
+  border-radius: 4px;
+  margin: 16px 64px;
+}
+
+.ProseMirror .footnote::before {
+  content: attr(contents);
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  vertical-align: super;
+  font-size: 75%;
+}
+
+.ProseMirror .footnote-label {
+  vertical-align: super;
+  font-size: 75%;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.graphical-abstract .listing {
+  display: none;
+}
