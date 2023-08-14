@@ -41,7 +41,6 @@ import { EditorView } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import plugins from '../../plugins/editor'
-import metaSection from '../../views/meta_section'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 
@@ -396,10 +395,7 @@ describe('editor view', () => {
       schema,
     })
 
-    const view = new EditorView(null, {
-      state,
-      nodeViews: { meta_section: metaSection },
-    })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
@@ -428,10 +424,7 @@ describe('editor view', () => {
       plugins: plugins(buildProps(doc, modelMap)),
     })
 
-    const view = new EditorView(null, {
-      state,
-      nodeViews: { meta_section: metaSection },
-    })
+    const view = new EditorView(null, { state })
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
