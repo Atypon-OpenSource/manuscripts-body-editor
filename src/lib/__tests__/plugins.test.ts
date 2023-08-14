@@ -370,6 +370,7 @@ const buildProps = (
   retrySync: async () => undefined,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
+  setEditorSelectedSuggestion: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
   uploadAttachment: () => new Promise(() => ''),

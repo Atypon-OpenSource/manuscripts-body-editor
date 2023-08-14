@@ -150,6 +150,7 @@ export const defaultEditorProps: EditorProps = {
       undefined,
     setComment: () => undefined,
     setSelectedComment: () => undefined,
+    setEditorSelectedSuggestion: () => undefined,
     components: {},
     environment: undefined,
   },

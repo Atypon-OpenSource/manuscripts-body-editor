@@ -59,6 +59,7 @@ interface PluginProps {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
+  setEditorSelectedSuggestion: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
@@ -73,6 +74,7 @@ export default (props: PluginProps) => {
     saveModel,
     setComment,
     setSelectedComment,
+    setEditorSelectedSuggestion,
   } = props
 
   const plugins = props.plugins || []
@@ -103,7 +105,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights({ setComment }),
-    track_changes_ui(),
+    track_changes_ui({ setEditorSelectedSuggestion }),
   ]
 }
 

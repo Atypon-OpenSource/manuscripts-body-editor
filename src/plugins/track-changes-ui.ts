@@ -20,7 +20,7 @@ import {
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
 import { EditorState, Plugin } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 const ACCEPT_BUTTON_XLINK = '#track-changes-action-accept'
 
@@ -90,12 +90,36 @@ const decorateChanges = (state: EditorState): Decoration[] => {
   }, [] as Decoration[])
 }
 
+const getTrackElement = (element: HTMLElement) => {
+  return element.dataset.trackId ? element : element.closest('[data-track-id]')
+}
+
+const getTrackId = (element: Element) => {
+  return element.getAttribute('data-track-id')
+}
+
+interface TrackChangesProps {
+  setEditorSelectedSuggestion: (id?: string) => void
+}
+
 /**
  * This plugin adds decoration
  */
-export default () =>
+export default (props: TrackChangesProps) =>
   new Plugin<TrackChangesState>({
     props: {
+      handleClick(view: EditorView, pos: number, event: MouseEvent) {
+        const targetElement = event.target as HTMLElement
+        const trackElement = getTrackElement(targetElement)
+        if (trackElement) {
+          const trackId = getTrackId(trackElement)
+          if (trackId) {
+            props.setEditorSelectedSuggestion(trackId)
+          }
+        } else {
+          props.setEditorSelectedSuggestion(undefined)
+        }
+      },
       decorations: (state) => {
         return DecorationSet.create(state.doc, decorateChanges(state))
       },
