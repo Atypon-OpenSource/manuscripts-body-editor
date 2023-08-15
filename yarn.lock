@@ -1570,11 +1570,6 @@
     react-dom "^17.0.2"
     react-select "^5.7.3"
 
-"@manuscripts/data@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@manuscripts/data/-/data-1.0.4.tgz#0220da86299d96243ace2ba932fd32e7f6643344"
-  integrity sha512-LDPyUqXUwhcYoaOPXVpKNCj4FHl6Gcu/AohAMdgubDTkhK18Xm48uSwN9GVNvEGmY3BwivbSEaP/uaPQaLG4Rg==
-
 "@manuscripts/eslint-config@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@manuscripts/eslint-config/-/eslint-config-0.5.1.tgz#dd68abc2976aed76296258aa81581f661d24ee56"
@@ -1592,24 +1587,23 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.5.tgz#af6545fa01a69030ad7a180b3770299aaca8b5cd"
-  integrity sha512-9QLIrzx0E8dcKZSI8hx3Ic1+2Pn/DkQthpOYywPCTbRDejQvUmOOo7eCLqSWuvpRApSVlc1cVkOIMthZM3ugfg==
+"@manuscripts/library@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.6.tgz#b1649c62a6a0f3ed14516088b729ca0e160976a1"
+  integrity sha512-v6hMNm1k5DtZu9X8LpXbEeJWFmHDOm00gSPlXtvKTyFec7whfjKD/7mRTJak15tIVlVfvYBVHpgnotI00tclvQ==
   dependencies:
-    "@manuscripts/data" "^1.0.4"
     "@manuscripts/json-schema" "^2.1.0"
-    "@manuscripts/transform" "^1.3.9"
+    "@manuscripts/transform" "^1.3.10"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.1.18":
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.18.tgz#70a1f74702d2cfda4221d3abe1f447c028a0c0b5"
-  integrity sha512-YFvmgFjdoh3Pocg+F1XaA5qfy3WllB0sCpZLlnv0vpmwCznP5eDkZMI4vRbbmYCVOwvCLLGiCnaX8Y7O+kWRhg==
+"@manuscripts/style-guide@^1.1.19":
+  version "1.1.19"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.1.19.tgz#c098fda6ef85b8d87c4aa7ff8281f0af5e317bfb"
+  integrity sha512-4DFZv3H3RVLZpx0N4TVywWld9AFtvRzm7C69ASlULNddK8dZutOmwcclwxWwqMK7a/CgKVDwqLVtc+IGt76J7w==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1618,7 +1612,7 @@
     "@manuscripts/comment-editor" "^1.0.3"
     "@manuscripts/json-schema" "^2.1.0"
     "@manuscripts/title-editor" "^1.1.0"
-    "@manuscripts/transform" "^1.3.9"
+    "@manuscripts/transform" "^1.3.10"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1679,10 +1673,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^1.3.9":
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.9.tgz#6317cf2ce1942cd1aaaa6e3dd544397fb416716f"
-  integrity sha512-HIWrFbcq5WvhPWTcKd+yjvsZwI2aQ0IfoYdv0b0YMY7tw3WHCpI31bJSiGRuPrzCIiX36LVI8bKqJ8+QwF1ReQ==
+"@manuscripts/transform@^1.3.10":
+  version "1.3.10"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.10.tgz#fa0cefc6beb3f6f7729c368ec976bfe83bb01c54"
+  integrity sha512-t5bB1AMCDW0O+ojqJHDw9XgtB0qJU+LDOUMYimnlKf2DL8UmV9LGDLppzAXobgKnygrVHQiCBhiES7rDwe85Nw==
   dependencies:
     "@manuscripts/json-schema" "^2.1.0"
     debug "^4.3.4"
