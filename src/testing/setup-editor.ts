@@ -58,7 +58,8 @@ export function setupEditor() {
       left: 0,
       right: 0,
     },
-    nodeViews: createNodeViews(props),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nodeViews: createNodeViews(props) as any,
   })
 
   return ProsemirrorTestChain.of(view as TestEditorView)
