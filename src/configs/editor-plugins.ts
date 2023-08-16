@@ -59,7 +59,7 @@ interface PluginProps {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
-  setEditorSelectedSuggestion: (id?: string) => void
+  setEditorSelectedSuggestion?: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 

@@ -21,6 +21,7 @@ import {
 } from '@manuscripts/track-changes-plugin'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { ManuscriptNode } from '@manuscripts/transform'
 
 const ACCEPT_BUTTON_XLINK = '#track-changes-action-accept'
 
@@ -90,16 +91,18 @@ const decorateChanges = (state: EditorState): Decoration[] => {
   }, [] as Decoration[])
 }
 
-const getTrackElement = (element: HTMLElement) => {
-  return element.dataset.trackId ? element : element.closest('[data-track-id]')
-}
-
-const getTrackId = (element: Element) => {
-  return element.getAttribute('data-track-id')
+const getTrackChangesData = (node: ManuscriptNode) => {
+  const trackChangesMark = node.marks.find(
+    (mark) =>
+      (mark.type.name === 'tracked_insert' ||
+        mark.type.name === 'tracked_delete') &&
+      mark.attrs.dataTracked
+  )
+  return trackChangesMark?.attrs?.dataTracked
 }
 
 interface TrackChangesProps {
-  setEditorSelectedSuggestion: (id?: string) => void
+  setEditorSelectedSuggestion?: (id?: string) => void
 }
 
 /**
@@ -109,15 +112,15 @@ export default (props: TrackChangesProps) =>
   new Plugin<TrackChangesState>({
     props: {
       handleClick(view: EditorView, pos: number, event: MouseEvent) {
-        const targetElement = event.target as HTMLElement
-        const trackElement = getTrackElement(targetElement)
-        if (trackElement) {
-          const trackId = getTrackId(trackElement)
-          if (trackId) {
-            props.setEditorSelectedSuggestion(trackId)
+        if (props.setEditorSelectedSuggestion) {
+          const nodeClicked = view.state.doc.nodeAt(pos)
+          const trackChangesData =
+            nodeClicked && getTrackChangesData(nodeClicked)
+          if (trackChangesData) {
+            props.setEditorSelectedSuggestion(trackChangesData.id)
+          } else {
+            props.setEditorSelectedSuggestion(undefined)
           }
-        } else {
-          props.setEditorSelectedSuggestion(undefined)
         }
       },
       decorations: (state) => {
