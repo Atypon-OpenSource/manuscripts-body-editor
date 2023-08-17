@@ -205,6 +205,7 @@ const FigureComponent = ({
             <UnstyledButton type="button" onClick={onUploadClick}>
               <OptionsDropdown
                 url={src}
+                disabled={false}
                 onUploadClick={onUploadClick}
                 setFigureAttrs={setFigureAttrs}
                 getAttachments={getAttachments}
