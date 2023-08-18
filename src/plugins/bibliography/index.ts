@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { buildCitationNodes, buildCitations } from '@manuscripts/library'
+import { BibliographyItem } from '@manuscripts/json-schema'
+import {
+  buildCitationNodes,
+  buildCitations,
+  CitationProvider,
+} from '@manuscripts/library'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
@@ -30,6 +35,22 @@ export const bibliographyKey = new PluginKey('bibliography')
  */
 export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
+  const { style, locale } = props.cslProps
+
+  // if (!style) {
+  //   throw new Error(`CSL Style not found`)
+  // }
+
+  const getBibliographyItems = () => {
+    const bibliographyItems: BibliographyItem[] = []
+    props.modelMap?.forEach((value) => {
+      if (value.objectType === 'MPBibliographyItem') {
+        bibliographyItems.push(value as BibliographyItem)
+      }
+    })
+
+    return bibliographyItems
+  }
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
@@ -63,11 +84,11 @@ export default (props: BibliographyProps) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const citationProvider = props.getCitationProvider()
+      // const citationProvider = props.getCitationProvider()
 
-      if (!citationProvider) {
-        return null
-      }
+      // if (!citationProvider) {
+      //   return null
+      // }
 
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
@@ -90,9 +111,13 @@ export default (props: BibliographyProps) => {
       const { selection } = tr
 
       try {
-        const generatedCitations = citationProvider
-          .rebuildProcessorState(citations, 'html')
-          .map((item) => item[2]) // id, noteIndex, output
+        const generatedCitations = CitationProvider.rebuildProcessorState(
+          citations,
+          getBibliographyItems(),
+          style,
+          locale,
+          'html'
+        ).map((item) => item[2]) // id, noteIndex, output
 
         citationNodes.forEach(([node, pos], index) => {
           let contents = generatedCitations[index]
