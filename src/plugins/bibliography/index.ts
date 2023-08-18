@@ -114,7 +114,7 @@ export default (props: BibliographyProps) => {
         const generatedCitations = CitationProvider.rebuildProcessorState(
           citations,
           getBibliographyItems(),
-          style,
+          style || '',
           locale,
           'html'
         ).map((item) => item[2]) // id, noteIndex, output
