@@ -26,7 +26,7 @@ import {
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
-import collab from 'prosemirror-collab'
+import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
@@ -111,7 +111,7 @@ export default (props: PluginProps) => {
 
   if (props.stepsCollabProvider) {
     allPlugins.push(
-      collab.collab({ version: props.stepsCollabProvider.currentVersion })
+      collab({ version: props.stepsCollabProvider.currentVersion })
     )
   }
 

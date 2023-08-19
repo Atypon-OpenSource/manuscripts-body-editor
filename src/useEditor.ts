@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import collab from 'prosemirror-collab'
+import { receiveTransaction, sendableSteps } from 'prosemirror-collab'
 import {
   Command,
   EditorState,
@@ -26,6 +26,7 @@ import { Step } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+
 import { EditorProps } from './configs/ManuscriptsEditor'
 export type CreateView = (
   element: HTMLDivElement,
@@ -35,9 +36,17 @@ export type CreateView = (
 
 // @TODO move type to quarterback plugin or styleguide BEFORE MERGING
 export abstract class StepsCollabProvider {
-  steps: Step[]
+  readonly steps: Step[]
   currentVersion: number
   stepClientIDs: number[]
+  abstract sendSteps(
+    version: number,
+    steps: readonly Step[],
+    clientID: string | number
+  ): Promise<void>
+  abstract onNewSteps(
+    listener: (steps: Step[], clientIDs: string[]) => void
+  ): void
 }
 
 const useEditor = (
@@ -50,6 +59,17 @@ const useEditor = (
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
   const history = useHistory()
 
+  // Receiving steps from the backend
+
+  if (editorProps.stepsCollabProvider) {
+    editorProps.stepsCollabProvider.onNewSteps((steps, clientIDs) => {
+      if (state) {
+        // @TODO: make sure received steps are ignored by the quarterback plugin
+        receiveTransaction(state, steps, clientIDs)
+      }
+    })
+  }
+
   const dispatch = useCallback(
     (tr: Transaction) => {
       if (!view.current) {
@@ -60,19 +80,14 @@ const useEditor = (
       view.current.updateState(nextState)
 
       if (editorProps.stepsCollabProvider) {
-        const sendable = collab.sendableSteps(nextState)
+        const sendable = sendableSteps(nextState)
         if (sendable) {
-          editorProps.stepsCollabProvider.snedSteps(
+          editorProps.stepsCollabProvider.sendSteps(
             sendable.version,
             sendable.steps,
             sendable.clientID
           )
         }
-
-        // this collab part is  to be implemementd
-        // editorProps.stepsCollabProvider.onNewSteps((steps, clientIDs) => { //
-        //   collab.receiveTransaction(view.current, steps, clientIDs)
-        // })
       }
 
       // TODO: this part should be debounced??
