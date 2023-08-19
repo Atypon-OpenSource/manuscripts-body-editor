@@ -23,32 +23,33 @@ import {
   CitationProvider,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import {
-  Build,
-  buildComment,
-  DEFAULT_BUNDLE,
-  ManuscriptNodeView,
-} from '@manuscripts/transform'
+import { Build, buildComment, ManuscriptNodeView } from '@manuscripts/transform'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
-import { loadCitationStyle } from '../lib/csl-styles'
+import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
-const createBibliography = async (items: BibliographyItem[]) => {
-  const styleOpts = { bundleID: DEFAULT_BUNDLE }
-  const citationStyle = await loadCitationStyle(styleOpts)
+const createBibliography = async (
+  items: BibliographyItem[],
+  cslProps: CSLProps
+) => {
+  const { style, locale } = cslProps
+
+  if (!style) {
+    throw new Error(`CSL Style not found`)
+  }
+
   const [bibmeta, bibliographyItems] =
-    CitationProvider.makeBibliographyFromCitations(items, citationStyle)
+    CitationProvider.makeBibliographyFromCitations(items, style, locale)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors)
   }
-  const contents = createBibliographyElementContents(bibliographyItems)
-  return contents
+  return createBibliographyElementContents(bibliographyItems)
 }
 
 interface BibliographyItemViewProps extends BaseNodeProps {
@@ -127,18 +128,21 @@ export class BibliographyItemView<
     this.dom = document.createElement('div')
     this.dom.className = 'bib-item'
     this.dom.setAttribute('id', this.node.attrs.id)
+    this.dom.setAttribute('contenteditable', 'false')
+    this.contentDOM = document.createElement('div')
+    this.dom.appendChild(this.contentDOM)
   }
 
   public updateContents = async () => {
     const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
-    if (reference) {
-      const bibliography = await createBibliography([
-        reference,
-      ] as BibliographyItem[])
+    if (reference && this.contentDOM) {
+      const bibliography = await createBibliography(
+        [reference],
+        this.props.cslProps
+      )
       try {
         const fragment = sanitize(bibliography.outerHTML)
-        this.dom.innerHTML = ''
-        this.dom.appendChild(fragment)
+        this.contentDOM.appendChild(fragment)
 
         const doubleButton = document.createElement('div')
         const editButton = document.createElement('button')
@@ -164,7 +168,10 @@ export class BibliographyItemView<
         editButton.innerHTML = editIcon
         commentButton.innerHTML = commentIcon
         doubleButton.append(editButton, commentButton)
-        if (this.props.getCapabilities().seeReferencesButtons) {
+        if (
+          this.props.getCapabilities().seeReferencesButtons &&
+          !this.dom.querySelector('.bibliography-double-button')
+        ) {
           this.dom.appendChild(doubleButton)
         }
         editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
