@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { receiveTransaction, sendableSteps } from 'prosemirror-collab'
+import {
+  getVersion,
+  receiveTransaction,
+  sendableSteps,
+} from 'prosemirror-collab'
 import {
   Command,
   EditorState,
@@ -36,17 +40,26 @@ export type CreateView = (
 
 // @TODO move type to quarterback plugin or styleguide BEFORE MERGING
 export abstract class CollabProvider {
-  readonly steps: Step[]
   currentVersion: number
-  stepClientIDs: number[]
+  protected newStepsListener: (
+    steps: Step[],
+    clientIDs: string[],
+    sinceVersion: number
+  ) => void
   abstract sendSteps(
     version: number,
     steps: readonly Step[],
     clientID: string | number
   ): Promise<void>
-  abstract onNewSteps(
-    listener: (steps: Step[], clientIDs: string[]) => void
-  ): void
+  abstract onNewSteps(listener: CollabProvider['newStepsListener']): void
+  abstract stepsSince(version: number): Promise<
+    | {
+        steps: Step[]
+        clientIDs: string[]
+        version: number
+      }
+    | undefined
+  >
 }
 
 const useEditor = (
@@ -58,14 +71,52 @@ const useEditor = (
   const [state, setState] = useState<EditorState>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
   const history = useHistory()
+  const { collabProvider } = editorProps
 
-  // Receiving steps from the backend
-  console.log(editorProps.collabProvider)
-  if (editorProps.collabProvider) {
-    editorProps.collabProvider.onNewSteps((steps, clientIDs) => {
-      if (state) {
+  // Receiving steps from backend
+  if (collabProvider) {
+    collabProvider.onNewSteps(async (steps, clientIDs, sinceVersion) => {
+      if (state && view.current) {
         // @TODO: make sure received steps are ignored by the quarterback plugin
-        receiveTransaction(state, steps, clientIDs)
+        // receiveTransaction(state, steps, clientIDs)
+        const localVersion = getVersion(view.current.state)
+
+        console.log('localVersion: ' + localVersion)
+
+        let applicableSteps: Step[]
+        let applicableCliendIDs: string[]
+        if (localVersion === sinceVersion) {
+          // ASSUMPTION WARNING - INCREMENTAL VERSIONS need to be confirmed
+          // ASSUMPTION WARNING - collab doesn't need any steps if version matches with backend
+          // @TODO FIND OUT PRECISELY HOW VERSION NUMBER IS CALCULATED
+          applicableSteps = []
+          applicableCliendIDs = []
+        } else if (localVersion === sinceVersion + 1) {
+          /*
+            This is an optimisation so we won't call "stepsSince" every time, because it would create a lot of
+            back and forth on the network otherwise. Eventsource will always sent the steps from the last version and
+            since we don't support offline editing, in most cases the client will make use of those steps because it will be just 1 version behind.
+            A set of steps is normally about 1KB so it's ok to send them even if they'd end up not used.
+          */
+          applicableSteps = steps
+          applicableCliendIDs = clientIDs
+        } else {
+          const since = await collabProvider.stepsSince(localVersion)
+          if (!since) {
+            return // probably a connection fail, so we stop preparing an update and will just wait for the next invocation
+          }
+          applicableSteps = since.steps
+          applicableCliendIDs = since.clientIDs
+        }
+
+        view.current.dispatch(
+          receiveTransaction(
+            // has to be called for the collab to increment version and drop buffered steps
+            view.current.state,
+            applicableSteps,
+            applicableCliendIDs
+          )
+        )
       }
     })
   }
@@ -79,10 +130,10 @@ const useEditor = (
       const nextState = view.current.state.apply(tr)
       view.current.updateState(nextState)
 
-      if (editorProps.collabProvider) {
+      if (collabProvider) {
         const sendable = sendableSteps(nextState)
         if (sendable) {
-          editorProps.collabProvider.sendSteps(
+          collabProvider.sendSteps(
             sendable.version,
             sendable.steps,
             sendable.clientID
