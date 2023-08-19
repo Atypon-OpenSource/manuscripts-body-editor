@@ -35,7 +35,7 @@ export type CreateView = (
 ) => EditorView
 
 // @TODO move type to quarterback plugin or styleguide BEFORE MERGING
-export abstract class StepsCollabProvider {
+export abstract class CollabProvider {
   readonly steps: Step[]
   currentVersion: number
   stepClientIDs: number[]
@@ -60,9 +60,9 @@ const useEditor = (
   const history = useHistory()
 
   // Receiving steps from the backend
-
-  if (editorProps.stepsCollabProvider) {
-    editorProps.stepsCollabProvider.onNewSteps((steps, clientIDs) => {
+  console.log(editorProps.collabProvider)
+  if (editorProps.collabProvider) {
+    editorProps.collabProvider.onNewSteps((steps, clientIDs) => {
       if (state) {
         // @TODO: make sure received steps are ignored by the quarterback plugin
         receiveTransaction(state, steps, clientIDs)
@@ -79,10 +79,10 @@ const useEditor = (
       const nextState = view.current.state.apply(tr)
       view.current.updateState(nextState)
 
-      if (editorProps.stepsCollabProvider) {
+      if (editorProps.collabProvider) {
         const sendable = sendableSteps(nextState)
         if (sendable) {
-          editorProps.stepsCollabProvider.sendSteps(
+          editorProps.collabProvider.sendSteps(
             sendable.version,
             sendable.steps,
             sendable.clientID

@@ -49,7 +49,7 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
-import { StepsCollabProvider } from '../useEditor'
+import { CollabProvider } from '../useEditor'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
@@ -62,7 +62,7 @@ interface PluginProps {
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
-  stepsCollabProvider: StepsCollabProvider
+  collabProvider?: CollabProvider
 }
 
 export default (props: PluginProps) => {
@@ -109,10 +109,8 @@ export default (props: PluginProps) => {
     track_changes_ui(),
   ]
 
-  if (props.stepsCollabProvider) {
-    allPlugins.push(
-      collab({ version: props.stepsCollabProvider.currentVersion })
-    )
+  if (props.collabProvider) {
+    allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
   }
 
   return allPlugins

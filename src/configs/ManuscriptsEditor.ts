@@ -29,7 +29,7 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
 import { transformPasted } from '../lib/paste'
-import { CreateView, StepsCollabProvider } from '../useEditor'
+import { CreateView, CollabProvider } from '../useEditor'
 import plugins from './editor-plugins'
 import views from './editor-views'
 import { ViewerProps } from './ManuscriptsViewer'
@@ -59,7 +59,7 @@ export interface EditorProps extends ViewerProps {
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
   cslProps: CSLProps
-  stepsCollabProvider: StepsCollabProvider
+  collabProvider?: CollabProvider
 }
 
 export default {
