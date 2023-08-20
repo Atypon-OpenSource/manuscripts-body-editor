@@ -33,6 +33,7 @@ import keywordsElement from './keywords_element_editable'
 import link from './link_editable'
 import listing from './listing_editable'
 import listingElement from './listing_element_editable'
+import metaSection from './meta_section'
 import orderedList from './ordered_list_editable'
 import paragraph from './paragraph_editable'
 import placeholder from './placeholder'
@@ -73,4 +74,5 @@ export default (props: EditorProps) => ({
   section_label: sectionLabel(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
+  meta_section: metaSection,
 })

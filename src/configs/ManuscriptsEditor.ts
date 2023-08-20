@@ -34,6 +34,11 @@ import plugins from './editor-plugins'
 import views from './editor-views'
 import { ViewerProps } from './ManuscriptsViewer'
 
+export type CSLProps = {
+  style?: string
+  locale?: string
+}
+
 export interface EditorProps extends ViewerProps {
   plugins?: Plugin[]
   getCitationProvider: () => CitationProvider | undefined
@@ -53,6 +58,7 @@ export interface EditorProps extends ViewerProps {
   environment?: string
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
+  cslProps: CSLProps
 }
 
 export default {
