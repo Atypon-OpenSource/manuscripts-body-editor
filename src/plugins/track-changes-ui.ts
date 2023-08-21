@@ -19,9 +19,9 @@ import {
   TrackChangesState,
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
+import { ManuscriptNode } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
-import { ManuscriptNode } from '@manuscripts/transform'
 
 const ACCEPT_BUTTON_XLINK = '#track-changes-action-accept'
 
@@ -111,7 +111,7 @@ interface TrackChangesProps {
 export default (props: TrackChangesProps) =>
   new Plugin<TrackChangesState>({
     props: {
-      handleClick(view: EditorView, pos: number, event: MouseEvent) {
+      handleClick(view: EditorView, pos: number) {
         if (props.setEditorSelectedSuggestion) {
           const nodeClicked = view.state.doc.nodeAt(pos)
           const trackChangesData =
