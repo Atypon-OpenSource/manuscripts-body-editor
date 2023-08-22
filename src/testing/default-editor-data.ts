@@ -109,6 +109,10 @@ const defaultViewerProps: ViewerProps = {
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
   getDoc: () => TEST_DATA.DOC,
+  cslProps: {
+    style: '',
+    locale: '',
+  },
 }
 
 export const defaultEditorProps: EditorProps = {
@@ -152,5 +156,6 @@ export const defaultEditorProps: EditorProps = {
     setSelectedComment: () => undefined,
     components: {},
     environment: undefined,
+    cslStyle: '',
   },
 }
