@@ -31,6 +31,20 @@ export class EquationElementView<
       'suppress-title',
       suppressTitle === undefined ? true : suppressTitle
     )
+
+    if (this.node.attrs.dataTracked?.length) {
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
   }
 }
 

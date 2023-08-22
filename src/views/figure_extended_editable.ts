@@ -141,7 +141,8 @@ export class FigureEditableView extends FigureView<
 
   private detachImageRef = () => {
     if (this.node) {
-      const ref = this.getAttachment(this.node.attrs.src)
+      const src = this.node.attrs.src == '' ? this.node.attrs.dataTracked[0]?.oldAttrs.src : this.node.attrs.src 
+      const ref = this.getAttachment(src)
 
       if (ref) {
         this.setFigureAttrs({
@@ -165,6 +166,7 @@ export class FigureEditableView extends FigureView<
         this.node.attrs.dataTracked[0].operation === 'set_attrs'
       ) {
         attrs = this.node.attrs.dataTracked[0].oldAttrs
+        
       }
 
       this.dom.setAttribute(
@@ -175,6 +177,7 @@ export class FigureEditableView extends FigureView<
         'data-track-op',
         this.node.attrs.dataTracked[0].operation
       )
+      
     } else {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-type')
