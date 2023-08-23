@@ -88,6 +88,7 @@ const defaultViewerProps: ViewerProps = {
     tabindex: '2',
   },
   doc: TEST_DATA.DOC,
+  getCitationProvider: () => undefined,
   getModel: <T extends Model>(id: string) => {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },

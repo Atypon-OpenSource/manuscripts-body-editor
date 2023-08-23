@@ -18,20 +18,29 @@ import {
   BibliographyItem,
   Citation,
   CitationItem,
+  Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
+import {
+  buildCitationNodes,
+  buildCitations,
+  CitationProvider,
+} from '@manuscripts/library'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
+import { getBibliographyItemFn } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CitationViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
+  getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
+  modelMap: Map<string, Model>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
@@ -39,6 +48,49 @@ export class CitationView<PropsType extends CitationViewProps>
   implements ManuscriptNodeView
 {
   protected popperContainer?: HTMLDivElement
+
+  // private getBibliographyItem = () => getBibliographyItemFn(this.props)
+  getBibliographyItem = getBibliographyItemFn(this.props)
+
+  private getBibliographyItems = () => {
+    const bibliographyItems: BibliographyItem[] = []
+    this.props.modelMap?.forEach((value) => {
+      if (value.objectType === 'MPBibliographyItem') {
+        bibliographyItems.push(value as BibliographyItem)
+      }
+    })
+
+    return bibliographyItems
+  }
+
+  private createCitation = (citationId: string) => {
+    const { style, locale } = this.props.cslProps
+    const citationNodes = buildCitationNodes(
+      this.view.state.doc,
+      this.props.getModel
+    )
+    const citations = buildCitations(citationNodes, (id: string) =>
+      this.getBibliographyItem(id)
+    )
+    const generatedCitations = CitationProvider.rebuildProcessorState(
+      citations,
+      this.getBibliographyItems(),
+      style || '',
+      locale,
+      'html'
+    ).map((item) => item[2]) // id, noteIndex, output
+
+    citationNodes.forEach(([node, pos], index) => {
+      let contents = generatedCitations[index]
+
+      if (contents === '[NO_PRINTED_FORM]') {
+        contents = ''
+      }
+      console.log('generated', citationId, node, pos, contents)
+    })
+
+    // return citationText
+  }
 
   public showPopper = () => {
     const {
@@ -134,6 +186,7 @@ export class CitationView<PropsType extends CitationViewProps>
     this.dom.innerHTML = ''
     this.dom.appendChild(fragment)
     this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
+    this.createCitation(this.node.attrs.rid)
   }
 
   public getCitation = () => {

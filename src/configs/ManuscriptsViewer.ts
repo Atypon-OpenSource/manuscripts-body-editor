@@ -22,6 +22,7 @@ import {
   Model,
   UserProfile,
 } from '@manuscripts/json-schema'
+import { CitationProvider } from '@manuscripts/library'
 import { Capabilities, FileAttachment } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
@@ -40,6 +41,7 @@ import views from './viewer-views'
 export interface ViewerProps {
   attributes?: { [key: string]: string }
   doc: ManuscriptNode
+  getCitationProvider: () => CitationProvider | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
