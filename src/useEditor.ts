@@ -31,6 +31,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { EditorProps } from './configs/ManuscriptsEditor'
+import {
+  TrackChangesStatus,
+  trackChangesPluginKey,
+} from '@manuscripts/track-changes-plugin'
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
@@ -50,8 +54,8 @@ const useEditor = (
 
   // Receiving steps from backend
   if (collabProvider) {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
-      console.log('onNewSteps')
       if (state && view.current) {
         // @TODO: make sure received steps are ignored by the quarterback plugin
         const localVersion = getVersion(view.current.state)
@@ -68,13 +72,8 @@ const useEditor = (
         //   )
         // }
 
-        console.log('localVersion: ' + localVersion)
-        console.log('sinceVersion: ' + newVersion)
-
         const since = await collabProvider.stepsSince(localVersion)
 
-        console.log('since: ')
-        console.log(since)
         if (since?.steps && since.clientIDs) {
           view.current.dispatch(
             receiveTransaction(
@@ -85,7 +84,7 @@ const useEditor = (
             )
           )
         } else {
-          console.log('Inconsistent new steps event from the authority.')
+          console.warn('Inconsistent new steps event from the authority.')
         }
       }
     })
@@ -100,7 +99,13 @@ const useEditor = (
       const nextState = view.current.state.apply(tr)
       view.current.updateState(nextState)
 
-      if (collabProvider) {
+      const trackState = trackChangesPluginKey.getState(view.current.state)
+
+      if (
+        collabProvider &&
+        trackState &&
+        trackState.status !== TrackChangesStatus.viewSnapshots
+      ) {
         const sendable = sendableSteps(nextState)
         if (sendable) {
           collabProvider.sendSteps(
