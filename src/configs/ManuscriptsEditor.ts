@@ -29,10 +29,11 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
 import { transformPasted } from '../lib/paste'
-import { CreateView, CollabProvider } from '../useEditor'
+import { CreateView } from '../useEditor'
 import plugins from './editor-plugins'
 import views from './editor-views'
 import { ViewerProps } from './ManuscriptsViewer'
+import { CollabProvider } from '../classes/collabProvider'
 
 export type CSLProps = {
   style?: string

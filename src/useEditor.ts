@@ -26,7 +26,6 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { Step } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -37,30 +36,6 @@ export type CreateView = (
   state: EditorState,
   dispatch: (tr: Transaction) => EditorState
 ) => EditorView
-
-// @TODO move type to quarterback plugin or styleguide BEFORE MERGING
-export abstract class CollabProvider {
-  currentVersion: number
-  protected newStepsListener: (
-    steps: Step[],
-    clientIDs: string[],
-    sinceVersion: number
-  ) => void
-  abstract sendSteps(
-    version: number,
-    steps: readonly Step[],
-    clientID: string | number
-  ): Promise<void>
-  abstract onNewSteps(listener: CollabProvider['newStepsListener']): void
-  abstract stepsSince(version: number): Promise<
-    | {
-        steps: Step[]
-        clientIDs: string[]
-        version: number
-      }
-    | undefined
-  >
-}
 
 const useEditor = (
   initialState: EditorState,
@@ -75,48 +50,43 @@ const useEditor = (
 
   // Receiving steps from backend
   if (collabProvider) {
-    collabProvider.onNewSteps(async (steps, clientIDs, sinceVersion) => {
+    collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
+      console.log('onNewSteps')
       if (state && view.current) {
         // @TODO: make sure received steps are ignored by the quarterback plugin
-        // receiveTransaction(state, steps, clientIDs)
         const localVersion = getVersion(view.current.state)
 
+        // @TODO - save unconfirmed verison and compare it with newVersion to check if we can consume this update and don't have to call collabProvider.stepsSince
+        // if (newVersion == lastLocalUnconfirmed) {
+        //   view.current.dispatch(
+        //     receiveTransaction(
+        //       // has to be called for the collab to increment version and drop buffered steps
+        //       view.current.state,
+        //       steps,
+        //       clientIDs
+        //     )
+        //   )
+        // }
+
         console.log('localVersion: ' + localVersion)
+        console.log('sinceVersion: ' + newVersion)
 
-        let applicableSteps: Step[]
-        let applicableCliendIDs: string[]
-        if (localVersion === sinceVersion) {
-          // ASSUMPTION WARNING - INCREMENTAL VERSIONS need to be confirmed
-          // ASSUMPTION WARNING - collab doesn't need any steps if version matches with backend
-          // @TODO FIND OUT PRECISELY HOW VERSION NUMBER IS CALCULATED
-          applicableSteps = []
-          applicableCliendIDs = []
-        } else if (localVersion === sinceVersion + 1) {
-          /*
-            This is an optimisation so we won't call "stepsSince" every time, because it would create a lot of
-            back and forth on the network otherwise. Eventsource will always sent the steps from the last version and
-            since we don't support offline editing, in most cases the client will make use of those steps because it will be just 1 version behind.
-            A set of steps is normally about 1KB so it's ok to send them even if they'd end up not used.
-          */
-          applicableSteps = steps
-          applicableCliendIDs = clientIDs
-        } else {
-          const since = await collabProvider.stepsSince(localVersion)
-          if (!since) {
-            return // probably a connection fail, so we stop preparing an update and will just wait for the next invocation
-          }
-          applicableSteps = since.steps
-          applicableCliendIDs = since.clientIDs
-        }
+        const since = await collabProvider.stepsSince(localVersion)
 
-        view.current.dispatch(
-          receiveTransaction(
-            // has to be called for the collab to increment version and drop buffered steps
-            view.current.state,
-            applicableSteps,
-            applicableCliendIDs
+        console.log('since: ')
+        console.log(since)
+        if (since?.steps && since.clientIDs) {
+          view.current.dispatch(
+            receiveTransaction(
+              // has to be called for the collab to increment version and drop buffered steps
+              view.current.state,
+              since?.steps,
+              since.clientIDs
+            )
           )
-        )
+        } else {
+          console.log('Inconsistent new steps event from the authority.')
+        }
       }
     })
   }

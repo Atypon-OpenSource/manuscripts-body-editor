@@ -34,6 +34,7 @@ export {
 } from './components/requirements/RequirementsProvider'
 export { default as getMenus } from './menus'
 export { ChangeReceiver } from './types'
+export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
 export { toolbar } from './toolbar'
 export * from './plugins/highlight'

@@ -49,7 +49,7 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
-import { CollabProvider } from '../useEditor'
+import { CollabProvider } from '../classes/collabProvider'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
