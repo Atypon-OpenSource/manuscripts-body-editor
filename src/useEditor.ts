@@ -15,6 +15,10 @@
  */
 
 import {
+  trackChangesPluginKey,
+  TrackChangesStatus,
+} from '@manuscripts/track-changes-plugin'
+import {
   getVersion,
   receiveTransaction,
   sendableSteps,
@@ -31,10 +35,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { EditorProps } from './configs/ManuscriptsEditor'
-import {
-  TrackChangesStatus,
-  trackChangesPluginKey,
-} from '@manuscripts/track-changes-plugin'
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
@@ -54,7 +54,7 @@ const useEditor = (
 
   // Receiving steps from backend
   if (collabProvider) {
-    // eslint-disable-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
       if (state && view.current) {
         // @TODO: make sure received steps are ignored by the quarterback plugin

@@ -32,6 +32,7 @@ import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
+import { CollabProvider } from '../classes/collabProvider'
 import keys from '../keys'
 import auxiliary_object_order from '../plugins/auxiliary_object_order'
 import bibliography from '../plugins/bibliography'
@@ -49,7 +50,6 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
-import { CollabProvider } from '../classes/collabProvider'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
