@@ -62,6 +62,31 @@ export default (props: BibliographyProps) => {
           getBibliographyItem(id)
         )
 
+        try {
+          const generatedCitations = CitationProvider.rebuildProcessorState(
+            citations,
+            getBibliographyItems(),
+            style || '',
+            locale,
+            'html'
+          ).map((item) => item[2]) // id, noteIndex, output
+
+          citationNodes.forEach(([node, pos], index) => {
+            let contents = generatedCitations[index]
+
+            if (contents === '[NO_PRINTED_FORM]') {
+              contents = ''
+            }
+
+            instance.tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              contents,
+            })
+          })
+        } catch (error) {
+          console.error(error) // tslint:disable-line:no-console
+        }
+
         return {
           citationNodes,
           citations,

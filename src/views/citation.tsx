@@ -22,8 +22,8 @@ import {
   ObjectTypes,
 } from '@manuscripts/json-schema'
 import {
-  buildCitationNodes,
-  buildCitations,
+  // buildCitationNodes,
+  // buildCitations,
   CitationProvider,
 } from '@manuscripts/library'
 import { ManuscriptNodeView } from '@manuscripts/transform'
@@ -52,47 +52,47 @@ export class CitationView<PropsType extends CitationViewProps>
   // private getBibliographyItem = () => getBibliographyItemFn(this.props)
   getBibliographyItem = getBibliographyItemFn(this.props)
 
-  private getBibliographyItems = () => {
-    const bibliographyItems: BibliographyItem[] = []
-    this.props.modelMap?.forEach((value) => {
-      if (value.objectType === 'MPBibliographyItem') {
-        bibliographyItems.push(value as BibliographyItem)
-      }
-    })
+  // private getBibliographyItems = () => {
+  //   const bibliographyItems: BibliographyItem[] = []
+  //   this.props.modelMap?.forEach((value) => {
+  //     if (value.objectType === 'MPBibliographyItem') {
+  //       bibliographyItems.push(value as BibliographyItem)
+  //     }
+  //   })
 
-    return bibliographyItems
-  }
+  //   return bibliographyItems
+  // }
 
-  private createCitation = (citationId: string) => {
-    const { style, locale } = this.props.cslProps
-    const citationNodes = buildCitationNodes(
-      this.view.state.doc,
-      this.props.getModel
-    )
-    const citations = buildCitations(citationNodes, (id: string) =>
-      this.getBibliographyItem(id)
-    )
-    const generatedCitations = CitationProvider.rebuildProcessorState(
-      citations,
-      this.getBibliographyItems(),
-      style || '',
-      locale,
-      'html'
-    ).map((item) => item[2]) // id, noteIndex, output
+  // private createCitation = (citationId: string) => {
+  //   const { style, locale } = this.props.cslProps
+  //   const citationNodes = buildCitationNodes(
+  //     this.view.state.doc,
+  //     this.props.getModel
+  //   )
+  //   const citations = buildCitations(citationNodes, (id: string) =>
+  //     this.getBibliographyItem(id)
+  //   )
+  //   const generatedCitations = CitationProvider.rebuildProcessorState(
+  //     citations,
+  //     this.getBibliographyItems(),
+  //     style || '',
+  //     locale,
+  //     'html'
+  //   ).map((item) => item[2]) // id, noteIndex, output
 
-    let contents = ''
-    citationNodes.forEach(([node, pos], index) => {
-      if (node.attrs.rid === citationId) {
-        contents = generatedCitations[index]
-      }
-    })
+  //   let contents = ''
+  //   citationNodes.forEach(([node, pos], index) => {
+  //     if (node.attrs.rid === citationId) {
+  //       contents = generatedCitations[index]
+  //     }
+  //   })
 
-    if (contents === '[NO_PRINTED_FORM]') {
-      contents = ''
-    }
+  //   if (contents === '[NO_PRINTED_FORM]') {
+  //     contents = ''
+  //   }
 
-    return contents
-  }
+  //   return contents
+  // }
 
   public showPopper = () => {
     const {
@@ -177,8 +177,8 @@ export class CitationView<PropsType extends CitationViewProps>
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
     this.dom = dom as HTMLElement
     this.contentDOM = (contentDOM as HTMLElement) || undefined
-    const citationText = this.createCitation(this.node.attrs.rid)
-    console.log('generated', citationText, this.node)
+    // const citationText = this.createCitation(this.node.attrs.rid)
+    // console.log('generated', citationText, this.node)
     this.updateContents()
     return this
   }
