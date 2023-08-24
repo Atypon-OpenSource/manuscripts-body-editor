@@ -16,7 +16,7 @@
 import AddIconHighlight from '@manuscripts/assets/react/AddIconHighlight'
 import GutterIconNormal from '@manuscripts/assets/react/GutterIconNormal'
 import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
-import { Model } from '@manuscripts/json-schema'
+import { Model, ObjectTypes, Supplement } from '@manuscripts/json-schema'
 import {
   AttachIcon,
   DropdownList,
@@ -41,6 +41,7 @@ import {
 } from '../../lib/files-maps'
 import { addFormatQuery } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
+import { getModelsByType } from '@manuscripts/transform'
 
 const getIcon = (file: FileAttachment) => {
   const fileExtension = file.name.split('.').pop() || ''
@@ -72,6 +73,7 @@ interface OptionsProps extends DropdownProps {
 }
 
 export interface FilesDropdownProps extends DropdownProps {
+  deleteModel: (id: string) => Promise<string>
   canUploadFile?: boolean
   canEditArticle?: boolean
   addFigureExFileRef: (link: string) => void
@@ -92,6 +94,7 @@ const isFileValidForFigure = (
 
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   modelMap,
+  deleteModel,
   mediaAlternativesEnabled,
   onUploadClick,
   addFigureExFileRef,
@@ -114,7 +117,18 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
     isFileValidForFigure(fileName, mediaAlternativesEnabled)
   ).filter((item) => !figures.includes(item.id))
-
+  
+  const removeFromSupplements = async (file:FileAttachment) => {
+    const model = getModelsByType<Supplement>(
+      modelMap,
+      ObjectTypes.Supplement
+    ).find(({ href }) => href?.replace('attachment:', '') === file.id)
+    if (!model) {
+      return
+    }
+    await deleteModel(model._id)
+  }
+  
   const onFileClick = useCallback(
     (e, file: FileAttachment) => {
       toggleOpen(e)
@@ -124,7 +138,11 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   )
 
   const onSupplementsClick = useCallback(
-    (e) => onFileClick(e, supplementFiles[e.currentTarget.id]),
+    (e) => {
+      const file = supplementFiles[e.currentTarget.id]
+      onFileClick(e, file)
+      removeFromSupplements(file) 
+    },
     [onFileClick, supplementFiles]
   )
 
