@@ -84,12 +84,6 @@ export default (props: BibliographyProps) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      // const citationProvider = props.getCitationProvider()
-
-      // if (!citationProvider) {
-      //   return null
-      // }
-
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
       ) as PluginState

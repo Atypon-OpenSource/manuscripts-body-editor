@@ -80,16 +80,18 @@ export class CitationView<PropsType extends CitationViewProps>
       'html'
     ).map((item) => item[2]) // id, noteIndex, output
 
+    let contents = ''
     citationNodes.forEach(([node, pos], index) => {
-      let contents = generatedCitations[index]
-
-      if (contents === '[NO_PRINTED_FORM]') {
-        contents = ''
+      if (node.attrs.rid === citationId) {
+        contents = generatedCitations[index]
       }
-      console.log('generated', citationId, node, pos, contents)
     })
 
-    // return citationText
+    if (contents === '[NO_PRINTED_FORM]') {
+      contents = ''
+    }
+
+    return contents
   }
 
   public showPopper = () => {
@@ -175,6 +177,8 @@ export class CitationView<PropsType extends CitationViewProps>
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
     this.dom = dom as HTMLElement
     this.contentDOM = (contentDOM as HTMLElement) || undefined
+    const citationText = this.createCitation(this.node.attrs.rid)
+    console.log('generated', citationText, this.node)
     this.updateContents()
     return this
   }
@@ -186,7 +190,6 @@ export class CitationView<PropsType extends CitationViewProps>
     this.dom.innerHTML = ''
     this.dom.appendChild(fragment)
     this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
-    this.createCitation(this.node.attrs.rid)
   }
 
   public getCitation = () => {
