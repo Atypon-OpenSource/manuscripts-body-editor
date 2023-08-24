@@ -21,11 +21,7 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
-import {
-  // buildCitationNodes,
-  // buildCitations,
-  CitationProvider,
-} from '@manuscripts/library'
+import { CitationProvider } from '@manuscripts/library'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
@@ -49,50 +45,7 @@ export class CitationView<PropsType extends CitationViewProps>
 {
   protected popperContainer?: HTMLDivElement
 
-  // private getBibliographyItem = () => getBibliographyItemFn(this.props)
   getBibliographyItem = getBibliographyItemFn(this.props)
-
-  // private getBibliographyItems = () => {
-  //   const bibliographyItems: BibliographyItem[] = []
-  //   this.props.modelMap?.forEach((value) => {
-  //     if (value.objectType === 'MPBibliographyItem') {
-  //       bibliographyItems.push(value as BibliographyItem)
-  //     }
-  //   })
-
-  //   return bibliographyItems
-  // }
-
-  // private createCitation = (citationId: string) => {
-  //   const { style, locale } = this.props.cslProps
-  //   const citationNodes = buildCitationNodes(
-  //     this.view.state.doc,
-  //     this.props.getModel
-  //   )
-  //   const citations = buildCitations(citationNodes, (id: string) =>
-  //     this.getBibliographyItem(id)
-  //   )
-  //   const generatedCitations = CitationProvider.rebuildProcessorState(
-  //     citations,
-  //     this.getBibliographyItems(),
-  //     style || '',
-  //     locale,
-  //     'html'
-  //   ).map((item) => item[2]) // id, noteIndex, output
-
-  //   let contents = ''
-  //   citationNodes.forEach(([node, pos], index) => {
-  //     if (node.attrs.rid === citationId) {
-  //       contents = generatedCitations[index]
-  //     }
-  //   })
-
-  //   if (contents === '[NO_PRINTED_FORM]') {
-  //     contents = ''
-  //   }
-
-  //   return contents
-  // }
 
   public showPopper = () => {
     const {
@@ -177,8 +130,6 @@ export class CitationView<PropsType extends CitationViewProps>
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
     this.dom = dom as HTMLElement
     this.contentDOM = (contentDOM as HTMLElement) || undefined
-    // const citationText = this.createCitation(this.node.attrs.rid)
-    // console.log('generated', citationText, this.node)
     this.updateContents()
     return this
   }

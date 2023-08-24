@@ -36,6 +36,7 @@ export const bibliographyKey = new PluginKey('bibliography')
 export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
   const { style, locale } = props.cslProps
+  let citationsInitialised = false
 
   // if (!style) {
   //   throw new Error(`CSL Style not found`)
@@ -61,30 +62,32 @@ export default (props: BibliographyProps) => {
         const citations = buildCitations(citationNodes, (id: string) =>
           getBibliographyItem(id)
         )
+        if (!citationsInitialised) {
+          try {
+            citationsInitialised = true
+            const generatedCitations = CitationProvider.rebuildProcessorState(
+              citations,
+              getBibliographyItems(),
+              style || '',
+              locale,
+              'html'
+            ).map((item) => item[2]) // id, noteIndex, output
 
-        try {
-          const generatedCitations = CitationProvider.rebuildProcessorState(
-            citations,
-            getBibliographyItems(),
-            style || '',
-            locale,
-            'html'
-          ).map((item) => item[2]) // id, noteIndex, output
+            citationNodes.forEach(([node, pos], index) => {
+              let contents = generatedCitations[index]
 
-          citationNodes.forEach(([node, pos], index) => {
-            let contents = generatedCitations[index]
+              if (contents === '[NO_PRINTED_FORM]') {
+                contents = ''
+              }
 
-            if (contents === '[NO_PRINTED_FORM]') {
-              contents = ''
-            }
-
-            instance.tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              contents,
+              instance.tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                contents,
+              })
             })
-          })
-        } catch (error) {
-          console.error(error) // tslint:disable-line:no-console
+          } catch (error) {
+            console.error(error) // tslint:disable-line:no-console
+          }
         }
 
         return {
