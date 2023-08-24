@@ -143,6 +143,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
+      <>Lorem ipsum</>
       <FilesButton>
         <AttachIcon />
       </FilesButton>
