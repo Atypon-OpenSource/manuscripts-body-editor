@@ -136,7 +136,10 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
-    const fragment = sanitize(this.node.attrs.contents, {
+    const contents =
+      this.props.generatedCitations.get(this.node.attrs.rid) ||
+      this.node.attrs.contents
+    const fragment = sanitize(contents, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
     })
     this.dom.innerHTML = ''

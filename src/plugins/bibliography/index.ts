@@ -37,10 +37,6 @@ export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
   const { style, locale } = props.cslProps
 
-  // if (!style) {
-  //   throw new Error(`CSL Style not found`)
-  // }
-
   const getBibliographyItems = () => {
     const bibliographyItems: BibliographyItem[] = []
     props.modelMap?.forEach((value) => {
