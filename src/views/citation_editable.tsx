@@ -44,6 +44,7 @@ export interface CitationEditableProps extends CitationViewProps {
   ) => BibliographyItem | undefined
   setLibraryItem: (item: BibliographyItem) => void
   removeLibraryItem: (id: string) => void
+  generatedCitations: Map<string, string>
 }
 
 export class CitationEditableView extends CitationView<

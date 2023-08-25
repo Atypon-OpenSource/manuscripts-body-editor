@@ -60,6 +60,7 @@ export interface ViewerProps {
   getCapabilities: () => Capabilities
   getDoc: () => ProsemirrorNode
   cslProps: CSLProps
+  generatedCitations: Map<string, string>
 }
 
 export default {

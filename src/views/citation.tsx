@@ -37,6 +37,7 @@ export interface CitationViewProps extends BaseNodeProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
   modelMap: Map<string, Model>
+  generatedCitations: Map<string, string>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
