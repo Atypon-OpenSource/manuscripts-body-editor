@@ -756,7 +756,6 @@
   left: 100%;
   width: 36px;
   visibility: hidden;
-  cursor: pointer;
 }
 
 .bibliography-edit-button,
@@ -771,6 +770,7 @@
   color: inherit;
   border: 1px solid #e2e2e2;
   border-radius: 32px 32px 0 0;
+  cursor: pointer;
 }
 .bibliography-double-button button:disabled svg {
   opacity: 0.25;
