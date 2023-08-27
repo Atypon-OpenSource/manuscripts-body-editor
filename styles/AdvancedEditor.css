@@ -885,3 +885,7 @@
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
   display: none;
 }
+
+.ProseMirror .track-block-node {
+  display: block;
+}

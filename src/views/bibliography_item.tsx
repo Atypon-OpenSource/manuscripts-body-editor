@@ -23,7 +23,12 @@ import {
   CitationProvider,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import { Build, buildComment, ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  Build,
+  buildComment,
+  encode,
+  ManuscriptNodeView,
+} from '@manuscripts/transform'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
@@ -74,28 +79,19 @@ export class BibliographyItemView<
   public showPopper = (referenceID: string) => {
     const {
       filterLibraryItems,
-      saveModel,
-      deleteModel,
+      saveTrackModel,
+      deleteTrackModel,
       setLibraryItem,
       removeLibraryItem,
       renderReactComponent,
-      modelMap,
+      getTrackModelMap,
       components: { ReferencesEditor },
     } = this.props
 
     const handleSave = async (data: Partial<BibliographyItem>) => {
-      const ref = await saveModel({
+      await saveTrackModel({
         ...data,
       } as BibliographyItem)
-
-      this.view.dispatch(
-        this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
-          id: ref._id,
-          containerTitle: ref['container-title'],
-          doi: ref.DOI,
-          ...ref,
-        })
-      )
     }
 
     if (!this.popperContainer) {
@@ -103,11 +99,13 @@ export class BibliographyItemView<
       this.popperContainer.className = 'references'
     }
 
+    const modelMap = getTrackModelMap()
+
     renderReactComponent(
       <ReferencesEditor
         filterLibraryItems={filterLibraryItems}
         saveModel={handleSave}
-        deleteModel={deleteModel}
+        deleteModel={deleteTrackModel}
         setLibraryItem={setLibraryItem}
         removeLibraryItem={removeLibraryItem}
         modelMap={modelMap}
@@ -134,7 +132,10 @@ export class BibliographyItemView<
   }
 
   public updateContents = async () => {
-    const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
+    const reference = encode(
+      this.view.state.doc.resolve(this.getPos()).parent
+    ).get(this.node.attrs.id) as BibliographyItem | undefined
+
     if (reference && this.contentDOM) {
       const bibliography = await createBibliography(
         [reference],
@@ -142,7 +143,13 @@ export class BibliographyItemView<
       )
       try {
         const fragment = sanitize(bibliography.outerHTML)
-        this.contentDOM.appendChild(fragment)
+
+        const oldBibliography = this.contentDOM.querySelector('.csl-bib-body')
+        if (oldBibliography) {
+          this.contentDOM.replaceChild(fragment, oldBibliography)
+        } else {
+          this.contentDOM.appendChild(fragment)
+        }
 
         const doubleButton = document.createElement('div')
         const editButton = document.createElement('button')

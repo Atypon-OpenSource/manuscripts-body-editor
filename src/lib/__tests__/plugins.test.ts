@@ -347,6 +347,9 @@ const buildProps = (
 ): EditorProps => ({
   doc,
   getModel: <T extends Model>(id: string) => modelMap.get(id) as T | undefined,
+  saveTrackModel: (model: Model) => new Promise(() => model),
+  deleteTrackModel: (id: string) => new Promise(() => id),
+  getTrackModelMap: () => new Map<string, Model>(),
   getManuscript: () => manuscript,
   getLibraryItem: () => undefined,
   locale: 'en-US',

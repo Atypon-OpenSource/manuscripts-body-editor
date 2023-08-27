@@ -91,6 +91,9 @@ const defaultViewerProps: ViewerProps = {
   getModel: <T extends Model>(id: string) => {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },
+  saveTrackModel: (model: Model) => new Promise(() => model),
+  deleteTrackModel: (id: string) => new Promise(() => id),
+  getTrackModelMap: () => new Map<string, Model>(),
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   getLibraryItem: (_id: string) => undefined,
   locale: 'en-GB',

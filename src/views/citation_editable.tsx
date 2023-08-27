@@ -25,6 +25,7 @@ import {
   Build,
   buildEmbeddedCitationItem,
   ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
@@ -240,7 +241,30 @@ export class CitationEditableView extends CitationView<
         setLibraryItem(item as BibliographyItem)
 
         // save the new item
-        await saveModel(item)
+        const { doc, tr } = this.view.state
+        const {
+          _id: id,
+          DOI: doi,
+          ['container-title']: containerTitle,
+          ...restAttr
+        } = item
+
+        doc.descendants((node, pos) => {
+          if (node.type === schema.nodes.bibliography_element) {
+            this.view.dispatch(
+              tr.insert(
+                pos + 1,
+                schema.nodes.bibliography_item.create({
+                  id,
+                  doi,
+                  containerTitle,
+                  ...restAttr,
+                })
+              )
+            )
+            return false
+          }
+        })
       }
 
       citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))

@@ -15,10 +15,12 @@
  */
 
 import {
+  NodeChange,
   trackChangesPluginKey,
   TrackChangesState,
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
+import { schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -72,6 +74,11 @@ const createControls = (change: TrackedChange) => {
     { side: -1 }
   )
 }
+
+const filterInlineNodes = (change: TrackedChange) =>
+  (change as NodeChange).nodeType !== schema.nodes.bibliography_item.name ||
+  (change as NodeChange).nodeType !== schema.nodes.citation.name
+
 const decorateChanges = (state: EditorState): Decoration[] => {
   const pluginState = trackChangesPluginKey.getState(state)
 
@@ -81,7 +88,7 @@ const decorateChanges = (state: EditorState): Decoration[] => {
 
   const { pending } = pluginState.changeSet
 
-  return pending.reduce((decorations, change) => {
+  return pending.filter(filterInlineNodes).reduce((decorations, change) => {
     if (change.id === null) {
       return decorations
     }
