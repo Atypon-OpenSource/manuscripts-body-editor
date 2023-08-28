@@ -112,8 +112,6 @@ export default (props: CommentAnnotationProps) => {
 
 const getNodePosition = (node: ProsemirrorNode, pos: number) => {
   switch (node.type) {
-    case node.type.schema.nodes.bibliography_item:
-      return pos
     case node.type.schema.nodes.keywords_section:
       return pos + 2
     default:

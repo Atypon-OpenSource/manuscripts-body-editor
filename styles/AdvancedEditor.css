@@ -653,9 +653,9 @@
 
 .block-comment-button.bibliography-comment {
   display: grid;
-  top: -7%;
+  position: absolute;
+  top: -10%;
   left: 1%;
-  margin-top: 12px;
 }
 
 .block-comment-button {
@@ -741,17 +741,21 @@
   visibility: visible;
 }
 
+.bib-item {
+  margin-bottom: 12px;
+  min-height: 80px;
+}
+
 .bibliography-double-button {
   display: inline-flex;
   text-decoration: none;
   color: inherit;
   flex-direction: column;
   position: absolute;
-  top: -50%;
+  top: 0;
   left: 100%;
   width: 36px;
   visibility: hidden;
-  cursor: pointer;
 }
 
 .bibliography-edit-button,
@@ -766,6 +770,7 @@
   color: inherit;
   border: 1px solid #e2e2e2;
   border-radius: 32px 32px 0 0;
+  cursor: pointer;
 }
 .bibliography-double-button button:disabled svg {
   opacity: 0.25;
