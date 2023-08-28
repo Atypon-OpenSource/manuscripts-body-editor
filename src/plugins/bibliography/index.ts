@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/json-schema'
 import {
+  buildBibliographyItems,
   buildCitationNodes,
   buildCitations,
   CitationProvider,
@@ -37,17 +37,6 @@ export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
   const { style, locale } = props.cslProps
 
-  const getBibliographyItems = () => {
-    const bibliographyItems: BibliographyItem[] = []
-    props.modelMap?.forEach((value) => {
-      if (value.objectType === 'MPBibliographyItem') {
-        bibliographyItems.push(value as BibliographyItem)
-      }
-    })
-
-    return bibliographyItems
-  }
-
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
@@ -58,9 +47,15 @@ export default (props: BibliographyProps) => {
           getBibliographyItem(id)
         )
 
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => getBibliographyItem(id)
+        )
+
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
 
@@ -70,11 +65,17 @@ export default (props: BibliographyProps) => {
         const citations = buildCitations(citationNodes, (id: string) =>
           getBibliographyItem(id)
         )
+
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => getBibliographyItem(id)
+        )
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
     },
@@ -84,9 +85,8 @@ export default (props: BibliographyProps) => {
         oldState
       ) as PluginState
 
-      const { citationNodes, citations } = bibliographyKey.getState(
-        newState
-      ) as PluginState
+      const { citationNodes, citations, bibliographyItems } =
+        bibliographyKey.getState(newState) as PluginState
 
       const bibliographyInserted = transactions.some((tr) => {
         const meta = tr.getMeta(bibliographyKey)
@@ -112,7 +112,7 @@ export default (props: BibliographyProps) => {
       try {
         const generatedCitations = CitationProvider.rebuildProcessorState(
           citations,
-          getBibliographyItems(),
+          bibliographyItems,
           style || '',
           locale,
           'html'

@@ -29,6 +29,7 @@ export interface CiteProcCitation {
 export interface PluginState {
   citationNodes: CitationNodes
   citations: CiteProcCitation[]
+  bibliographyItems: BibliographyItem[]
 }
 
 export interface BibliographyProps {
