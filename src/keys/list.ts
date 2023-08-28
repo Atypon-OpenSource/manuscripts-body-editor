@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import { ManuscriptEditorState, schema } from '@manuscripts/transform'
 import {
   liftListItem,
   sinkListItem,
@@ -22,7 +22,22 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 
+import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
+
+// TODO:: remove this command when quarterback start supporting list_item and the operation on the list
+const ignoreTrackChanges = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  sinkListItem(schema.nodes.list_item)(state, (tr) => {
+    if (dispatch) {
+      tr.setMeta('track-changes-skip-tracking', true)
+      dispatch(tr)
+    }
+  })
+  return true
+}
 
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
@@ -31,7 +46,7 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
   'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
   'Shift-Tab': liftListItem(schema.nodes.list_item), // outdent, same as Mod-[
-  Tab: wrapInList(schema.nodes.list_item), // indent, same as Mod-]
+  Tab: ignoreTrackChanges, // indent, same as Mod-]
 }
 
 export default listKeymap
