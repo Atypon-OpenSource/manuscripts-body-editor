@@ -21,23 +21,23 @@ import {
   splitListItem,
   wrapInList,
 } from 'prosemirror-schema-list'
+import { Command } from 'prosemirror-state'
 
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-const ignoreTrackChanges = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  sinkListItem(schema.nodes.list_item)(state, (tr) => {
-    if (dispatch) {
-      tr.setMeta('track-changes-skip-tracking', true)
-      dispatch(tr)
-    }
-  })
-  return true
-}
+
+const ignoreTrackChanges =
+  (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    command(state, (tr) => {
+      if (dispatch) {
+        tr.setMeta('track-changes-skip-tracking', true)
+        dispatch(tr)
+      }
+    })
+    return true
+  }
 
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
@@ -45,8 +45,7 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Mod-]': sinkListItem(schema.nodes.list_item),
   'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
   'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
-  'Shift-Tab': liftListItem(schema.nodes.list_item), // outdent, same as Mod-[
-  Tab: ignoreTrackChanges, // indent, same as Mod-]
+  'Shift-Tab': ignoreTrackChanges(liftListItem(schema.nodes.list_item)), // outdent, same as Mod-[
+  Tab: ignoreTrackChanges(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
 }
-
 export default listKeymap
