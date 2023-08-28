@@ -92,9 +92,18 @@ export default (props: BibliographyProps) => {
         const meta = tr.getMeta(bibliographyKey)
         return meta && meta.bibliographyInserted
       })
+
+      const initCitations = transactions.some((tr) => {
+        const meta = tr.getMeta(bibliographyKey)
+        return meta && meta.initCitations
+      })
       // This equality is trigged by such things as the addition of createdAt, updatedAt,
       // sessionID, _rev when the models are simply persisted to the PouchDB without modifications
-      if (isEqual(citations, oldCitations) && !bibliographyInserted) {
+      if (
+        isEqual(citations, oldCitations) &&
+        !bibliographyInserted &&
+        !initCitations
+      ) {
         return null
       }
       const { tr } = newState

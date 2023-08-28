@@ -381,7 +381,6 @@ const buildProps = (
     style: '',
     locale: '',
   },
-  generatedCitations: new Map(),
 })
 
 describe('editor view', () => {

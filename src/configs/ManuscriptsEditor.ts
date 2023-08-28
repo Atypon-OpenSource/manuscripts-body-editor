@@ -59,7 +59,6 @@ export interface EditorProps extends ViewerProps {
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
   cslProps: CSLProps
-  generatedCitations: Map<string, string>
 }
 
 export default {

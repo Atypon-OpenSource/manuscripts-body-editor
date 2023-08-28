@@ -37,7 +37,6 @@ export interface CitationViewProps extends BaseNodeProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
   modelMap: Map<string, Model>
-  generatedCitations: Map<string, string>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
@@ -136,10 +135,7 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
-    const contents =
-      this.props.generatedCitations.get(this.node.attrs.rid) ||
-      this.node.attrs.contents
-    const fragment = sanitize(contents, {
+    const fragment = sanitize(this.node.attrs.contents, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
     })
     this.dom.innerHTML = ''

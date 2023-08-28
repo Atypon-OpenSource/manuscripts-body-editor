@@ -114,7 +114,6 @@ const defaultViewerProps: ViewerProps = {
     style: '',
     locale: '',
   },
-  generatedCitations: new Map(),
 }
 
 export const defaultEditorProps: EditorProps = {
@@ -159,6 +158,5 @@ export const defaultEditorProps: EditorProps = {
     components: {},
     environment: undefined,
     cslStyle: '',
-    generatedCitations: new Map(),
   },
 }
