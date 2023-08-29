@@ -18,25 +18,20 @@ import {
   BibliographyItem,
   Citation,
   CitationItem,
-  Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
-import { CitationProvider } from '@manuscripts/library'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
-import { getBibliographyItemFn } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CitationViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-  getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
-  modelMap: Map<string, Model>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
@@ -44,8 +39,6 @@ export class CitationView<PropsType extends CitationViewProps>
   implements ManuscriptNodeView
 {
   protected popperContainer?: HTMLDivElement
-
-  getBibliographyItem = getBibliographyItemFn(this.props)
 
   public showPopper = () => {
     const {

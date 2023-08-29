@@ -1595,10 +1595,10 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.6-LEAN-2143-v4":
-  version "1.1.6-LEAN-2143-v4"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.6-LEAN-2143-v4.tgz#67aea2729733ca6b645e96fd3134944527ac89ca"
-  integrity sha512-Oy7kQB7U9Xd/LQVtb/XRutS6UUST5PEVLUg77e226KqZu4Tu7L7FFSQp5w7uL1wZAtRnwAi8M7dmVOFOTs/4Kw==
+"@manuscripts/library@^1.1.6-LEAN-2143-v5":
+  version "1.1.6-LEAN-2143-v5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.6-LEAN-2143-v5.tgz#45b63f9146f6bea1b35cd0a804040229c3490468"
+  integrity sha512-Lrq1YvgXVwB5yI35pvk5hC/glfUTcnKT6MGAEkd59O3SMfDpzAZvngyajBK5Dz2olLbhGneo7X2oPxmYf7nWWA==
   dependencies:
     "@manuscripts/json-schema" "^2.1.0"
     "@manuscripts/transform" "^1.3.10"
