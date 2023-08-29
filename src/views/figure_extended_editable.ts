@@ -141,7 +141,11 @@ export class FigureEditableView extends FigureView<
 
   private detachImageRef = () => {
     if (this.node) {
-      const ref = this.getAttachment(this.node.attrs.src)
+      const src =
+        this.node.attrs.src == ''
+          ? this.node.attrs.dataTracked[0]?.oldAttrs.src
+          : this.node.attrs.src
+      const ref = this.getAttachment(src)
 
       if (ref) {
         this.setFigureAttrs({
