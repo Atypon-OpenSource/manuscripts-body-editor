@@ -23,9 +23,10 @@ import ReactDOM from 'react-dom'
 import { sanitize } from '../lib/dompurify'
 import {
   getChangeClasses,
-  isDeleted,
-  isPendingInsert,
-  isRejectedInsert,
+  // isDeleted,
+  // isPendingInsert,
+  // isRejectedInsert,
+  isPending,
 } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -39,40 +40,45 @@ export class KeywordView<PropsType extends Props>
   public ignoreMutation = () => true
 
   public initialise = () => {
-    this.createDOM()
+    // this.createDOM()
     this.updateContents()
   }
 
   public updateContents = () => {
-    try {
-      this.dom.className = ['keyword', ...getChangeClasses(this.node)].join(' ')
-      const fragment = sanitize(this.node.attrs.contents)
-      this.dom.innerHTML = ''
-      this.dom.appendChild(fragment)
-      if (
-        this.props.getCapabilities().editArticle &&
-        !isDeleted(this.node) &&
-        !isRejectedInsert(this.node) &&
-        !isPendingInsert(this.node)
-      ) {
-        const closeIconWrapper = document.createElement('span')
-        closeIconWrapper.classList.add('delete-keyword')
-        ReactDOM.render(
-          createElement(CloseIconDark, {
-            height: 8,
-            width: 8,
-            color: '#353535',
-          }),
-          closeIconWrapper
+    if (!isPending(this.node)) {
+      this.createDOM()
+      try {
+        this.dom.className = ['keyword', ...getChangeClasses(this.node)].join(
+          ' '
         )
-        this.dom.appendChild(closeIconWrapper)
+        const fragment = sanitize(this.node.attrs.contents)
+        this.dom.innerHTML = ''
+        this.dom.appendChild(fragment)
+        if (
+          this.props.getCapabilities().editArticle
+          // !isDeleted(this.node) &&
+          // !isRejectedInsert(this.node) &&
+          // !isPendingInsert(this.node)
+        ) {
+          const closeIconWrapper = document.createElement('span')
+          closeIconWrapper.classList.add('delete-keyword')
+          ReactDOM.render(
+            createElement(CloseIconDark, {
+              height: 8,
+              width: 8,
+              color: '#353535',
+            }),
+            closeIconWrapper
+          )
+          this.dom.appendChild(closeIconWrapper)
+        }
+      } catch (e) {
+        console.error(e) // tslint:disable-line:no-console
+        // TODO: improve the UI for presenting offline/import errors
+        window.alert(
+          'There was an error loading the HTML purifier, please reload to try again'
+        )
       }
-    } catch (e) {
-      console.error(e) // tslint:disable-line:no-console
-      // TODO: improve the UI for presenting offline/import errors
-      window.alert(
-        'There was an error loading the HTML purifier, please reload to try again'
-      )
     }
   }
 
