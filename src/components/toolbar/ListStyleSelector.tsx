@@ -123,7 +123,7 @@ const StylesBlock: React.FC<{
   <StyleBlock onClick={() => onClick(style.type)}>
     {style.items.map((style, index) => (
       <BlockItem key={index}>
-        <span>{style}</span>
+        <Label>{style}</Label>
         <Block />
       </BlockItem>
     ))}
@@ -157,4 +157,12 @@ const Block = styled.div`
   height: 3px;
   width: ${(props) => props.theme.grid.unit * 14}px;
   background: ${(props) => props.theme.colors.border.tertiary};
+`
+
+const Label = styled.div`
+  font-family: Lato, serif;
+  font-size: ${(props) => props.theme.font.size.small};
+  font-weight: ${(props) => props.theme.font.weight.normal};
+  line-height: ${(props) => props.theme.font.lineHeight.small};
+  font-style: normal;
 `

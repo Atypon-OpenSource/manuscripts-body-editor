@@ -42,14 +42,13 @@ export const OrderListSelector: React.FC<{
       if (!dispatch) {
         return
       }
-      wrapInList(schema.nodes.ordered_list, { 'html-type': type })(
+      wrapInList(schema.nodes.ordered_list, { listStyleType: type })(
         state,
         dispatch
       )
-      // TODO:: check selection
-      // dispatch(view.state.tr.setNodeAttribute('html-type', type))
+      view && view.focus()
     },
-    [dispatch, state]
+    [dispatch, state, view]
   )
 
   return (
@@ -70,11 +69,11 @@ export const OrderListSelector: React.FC<{
         disabled={disabled}
         updateListType={updateListType}
         list={[
-          { items: ['1.', '2.', '3.'], type: 'disc' },
-          { items: ['A.', 'B.', 'C.'], type: 'upper-alpha' },
-          { items: ['a.', 'b.', 'c.'], type: 'lower-alpha' },
-          { items: ['I.', 'II.', 'III.'], type: 'upper-roman' },
-          { items: ['i.', 'ii.', 'iii.'], type: 'lower-roman' },
+          { items: ['1.', '2.', '3.'], type: 'order' },
+          { items: ['A.', 'B.', 'C.'], type: 'alpha-upper' },
+          { items: ['a.', 'b.', 'c.'], type: 'alpha-lower' },
+          { items: ['I.', 'II.', 'III.'], type: 'roman-upper' },
+          { items: ['i.', 'ii.', 'iii.'], type: 'roman-lower' },
         ]}
       />
     </ToolbarItem>
