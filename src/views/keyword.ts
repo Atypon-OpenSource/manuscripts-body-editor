@@ -25,7 +25,6 @@ import {
   getChangeClasses,
   isDeleted,
   isPending,
-  // isPendingInsert,
   isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -40,7 +39,6 @@ export class KeywordView<PropsType extends Props>
   public ignoreMutation = () => true
 
   public initialise = () => {
-    // this.createDOM()
     this.updateContents()
   }
 
