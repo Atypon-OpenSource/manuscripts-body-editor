@@ -23,9 +23,9 @@ import ReactDOM from 'react-dom'
 import { sanitize } from '../lib/dompurify'
 import {
   getChangeClasses,
-  // isDeleted,
+  isDeleted,
   // isPendingInsert,
-  // isRejectedInsert,
+  isRejectedInsert,
   isPending,
 } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -48,16 +48,18 @@ export class KeywordView<PropsType extends Props>
     if (!isPending(this.node)) {
       this.createDOM()
       try {
-        this.dom.className = ['keyword', ...getChangeClasses(this.node)].join(
-          ' '
-        )
+        this.dom.className = [
+          'keyword',
+          'no-tracking',
+          ...getChangeClasses(this.node),
+        ].join(' ')
         const fragment = sanitize(this.node.attrs.contents)
         this.dom.innerHTML = ''
         this.dom.appendChild(fragment)
         if (
-          this.props.getCapabilities().editArticle
-          // !isDeleted(this.node) &&
-          // !isRejectedInsert(this.node) &&
+          this.props.getCapabilities().editArticle &&
+          !isDeleted(this.node) &&
+          !isRejectedInsert(this.node)
           // !isPendingInsert(this.node)
         ) {
           const closeIconWrapper = document.createElement('span')
