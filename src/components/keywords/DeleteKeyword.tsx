@@ -16,6 +16,7 @@
 import { Category, Dialog } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
+
 import { keywordsKey } from '../../'
 
 export const DeleteKeyword: React.FC<{

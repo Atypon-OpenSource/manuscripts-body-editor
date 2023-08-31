@@ -24,9 +24,9 @@ import { sanitize } from '../lib/dompurify'
 import {
   getChangeClasses,
   isDeleted,
+  isPending,
   // isPendingInsert,
   isRejectedInsert,
-  isPending,
 } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
