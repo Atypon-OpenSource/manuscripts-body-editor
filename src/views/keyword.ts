@@ -83,7 +83,6 @@ export class KeywordView<PropsType extends Props>
       }
     } else {
       if (this.dom) {
-        this.createDOM()
         try {
           this.dom.className = [
             'keyword',
