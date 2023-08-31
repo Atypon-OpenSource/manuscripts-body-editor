@@ -81,6 +81,26 @@ export class KeywordView<PropsType extends Props>
           'There was an error loading the HTML purifier, please reload to try again'
         )
       }
+    } else {
+      if (this.dom) {
+        this.createDOM()
+        try {
+          this.dom.className = [
+            'keyword',
+            'no-tracking',
+            ...getChangeClasses(this.node),
+          ].join(' ')
+          const fragment = sanitize(this.node.attrs.contents)
+          this.dom.innerHTML = ''
+          this.dom.appendChild(fragment)
+        } catch (e) {
+          console.error(e) // tslint:disable-line:no-console
+          // TODO: improve the UI for presenting offline/import errors
+          window.alert(
+            'There was an error loading the HTML purifier, please reload to try again'
+          )
+        }
+      }
     }
   }
 
