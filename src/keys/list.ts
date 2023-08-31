@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptEditorState, schema } from '@manuscripts/transform'
+import { NodeType } from 'prosemirror-model'
 import {
   liftListItem,
   sinkListItem,
@@ -38,14 +39,31 @@ const ignoreTrackChanges =
     })
     return true
   }
+// TODO:: remove this command when quarterback start supporting list_item and the operation on the list
+// this command is for fixing the issue of unlisting the first-level item when clicking on shift-tab
+const contraolLiftListItem =
+  (nodeType: NodeType): EditorAction =>
+  (state, dispatch) => {
+    const { $from } = state.selection
+    const listItem = $from.node($from.depth - 1)
 
+    //the minimum depth of the first-level (un-nested) list item is 5
+    const isNested = listItem && listItem.type === nodeType && $from.depth > 5
+
+    if (isNested) {
+      return liftListItem(nodeType)(state, dispatch)
+    } else {
+      return false
+    }
+  }
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
   'Mod-[': liftListItem(schema.nodes.list_item),
   'Mod-]': sinkListItem(schema.nodes.list_item),
   'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
   'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
-  'Shift-Tab': ignoreTrackChanges(liftListItem(schema.nodes.list_item)), // outdent, same as Mod-[
+  'Shift-Tab': ignoreTrackChanges(contraolLiftListItem(schema.nodes.list_item)),
   Tab: ignoreTrackChanges(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
 }
+
 export default listKeymap
