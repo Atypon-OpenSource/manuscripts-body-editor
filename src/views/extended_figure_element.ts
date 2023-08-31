@@ -161,6 +161,7 @@ export class FigureElementView extends BlockView<
         canReplaceFile: capabilities.replaceFile,
         canUploadFile: capabilities.uploadFile,
         getDoc: this.props.getDoc,
+        getModelMap: this.props.getModelMap,
       }
       this.reactTools = ReactSubView(
         this.props,

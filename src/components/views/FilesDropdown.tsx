@@ -30,6 +30,7 @@ import {
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { getModelsByType } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import React, { SyntheticEvent, useCallback } from 'react'
 import styled from 'styled-components'
@@ -41,7 +42,6 @@ import {
 } from '../../lib/files-maps'
 import { addFormatQuery } from '../../views/FigureComponent'
 import { DropdownWrapper } from '../../views/FigureElement'
-import { getModelsByType } from '@manuscripts/transform'
 
 const getIcon = (file: FileAttachment) => {
   const fileExtension = file.name.split('.').pop() || ''
@@ -61,6 +61,7 @@ interface DropdownProps {
   onUploadClick: (e: SyntheticEvent) => void
   canReplaceFile?: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 
 interface OptionsProps extends DropdownProps {
@@ -93,7 +94,6 @@ const isFileValidForFigure = (
 }
 
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
-  modelMap,
   deleteModel,
   mediaAlternativesEnabled,
   onUploadClick,
@@ -102,14 +102,16 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   canUploadFile,
   getAttachments,
   getDoc,
+  getModelMap,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const attachments = getAttachments().map((f) => ({ ...f })) || []
   const doc = getDoc()
+  const actualModelMap = getModelMap()
   const figures: string[] = getFigures(doc, attachments)
 
   const supplementFiles = getSupplementFiles(
-    modelMap,
+    actualModelMap,
     attachments,
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   ).filter((item) => !figures.includes(item.id))
@@ -117,18 +119,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
     isFileValidForFigure(fileName, mediaAlternativesEnabled)
   ).filter((item) => !figures.includes(item.id))
-  
-  const removeFromSupplements = async (file:FileAttachment) => {
-    const model = getModelsByType<Supplement>(
-      modelMap,
-      ObjectTypes.Supplement
-    ).find(({ href }) => href?.replace('attachment:', '') === file.id)
-    if (!model) {
-      return
-    }
-    await deleteModel(model._id)
-  }
-  
+
   const onFileClick = useCallback(
     (e, file: FileAttachment) => {
       toggleOpen(e)
@@ -140,9 +131,22 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   const onSupplementsClick = useCallback(
     (e) => {
       const file = supplementFiles[e.currentTarget.id]
+
+      const removeFromSupplements = async (file: FileAttachment) => {
+        const model = getModelsByType<Supplement>(
+          actualModelMap,
+          ObjectTypes.Supplement
+        ).find(({ href }) => href?.replace('attachment:', '') === file.id)
+        if (!model) {
+          return
+        }
+        await deleteModel(model._id)
+      }
+
       onFileClick(e, file)
-      removeFromSupplements(file) 
+      removeFromSupplements(file)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onFileClick, supplementFiles]
   )
 
@@ -221,7 +225,6 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 
 export const OptionsDropdown: React.FC<OptionsProps> = ({
   url,
-  modelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   onDetachClick,
@@ -232,14 +235,16 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   getAttachments,
   disabled,
   getDoc,
+  getModelMap,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const attachments = getAttachments().map((f) => ({ ...f })) || []
   const doc = getDoc()
   const figures: string[] = getFigures(doc, attachments)
+  const actualModelMap = getModelMap()
 
   const supplementFiles = getSupplementFiles(
-    modelMap,
+    actualModelMap,
     attachments,
     (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
   ).filter((item) => !figures.includes(item.id))

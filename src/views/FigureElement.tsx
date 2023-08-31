@@ -132,6 +132,7 @@ const FigureElement = ({
   getCapabilities,
   mediaAlternativesEnabled,
   getDoc,
+  getModelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -174,6 +175,7 @@ const FigureElement = ({
             canReplaceFile={can?.replaceFile}
             canUploadFile={can?.uploadFile}
             getDoc={getDoc}
+            getModelMap={getModelMap}
           />
 
           <div contentEditable="true" ref={content}></div>

@@ -58,6 +58,7 @@ export interface ViewerProps {
   getAttachments: () => FileAttachment[]
   getCapabilities: () => Capabilities
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
   cslProps: CSLProps
 }
 

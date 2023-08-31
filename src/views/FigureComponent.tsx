@@ -40,6 +40,7 @@ export interface FigureProps {
   getCapabilities: () => Capabilities
   mediaAlternativesEnabled?: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 
 export const WEB_FORMAT_QUERY = 'format=jpg'
@@ -55,6 +56,7 @@ const FigureComponent = ({
   getAttachments,
   modelMap,
   getDoc,
+  getModelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
@@ -218,6 +220,7 @@ const FigureComponent = ({
                   console.log('Detach not implemented for Figure View')
                 }}
                 getDoc={getDoc}
+                getModelMap={getModelMap}
               />
 
               <img
