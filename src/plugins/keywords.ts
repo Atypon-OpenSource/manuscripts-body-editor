@@ -32,6 +32,13 @@ const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
     return meta && meta.keywordsInserted
   })
 
+const keywordDeleted = (transactions: readonly Transaction[]): boolean =>
+  transactions.some((tr) => {
+    const metaDeleted = tr.getMeta('keywordDeleted')
+
+    return metaDeleted
+  })
+
 /**
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
@@ -40,7 +47,7 @@ export default () => {
     key: keywordsKey,
 
     appendTransaction(transactions, oldState, newState) {
-      if (!keywordsInserted(transactions)) {
+      if (!keywordsInserted(transactions) && !keywordDeleted(transactions)) {
         return
       }
 
