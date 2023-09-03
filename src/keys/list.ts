@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import {
@@ -22,7 +23,7 @@ import {
   splitListItem,
   wrapInList,
 } from 'prosemirror-schema-list'
-import { Command } from 'prosemirror-state'
+import { Command, EditorState, Transaction } from 'prosemirror-state'
 
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
@@ -33,29 +34,35 @@ const ignoreTrackChanges =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     command(state, (tr) => {
       if (dispatch) {
-        tr.setMeta('track-changes-skip-tracking', true)
+        skipTracking(tr)
         dispatch(tr)
       }
     })
     return true
   }
-// TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-// this command is for fixing the issue of unlisting the first-level item when clicking on shift-tab
-const contraolLiftListItem =
-  (nodeType: NodeType): EditorAction =>
-  (state, dispatch) => {
-    const { $from } = state.selection
-    const listItem = $from.node($from.depth - 1)
-
-    //the minimum depth of the first-level (un-nested) list item is 5
-    const isNested = listItem && listItem.type === nodeType && $from.depth > 5
-
-    if (isNested) {
-      return liftListItem(nodeType)(state, dispatch)
-    } else {
+const contraolLiftListItem = (itemType: NodeType): Command => {
+  return function (state: EditorState, dispatch?: (tr: Transaction) => void) {
+    const { $from, $to } = state.selection
+    const range = $from.blockRange(
+      $to,
+      (node) => node.childCount > 0 && node.firstChild?.type == itemType
+    )
+    if (!range) {
+      return false
+    }
+    if (!dispatch) {
+      return true
+    }
+    if ($from.node(range.depth - 1).type == itemType) {
+      // Inside a parent list
+      return liftListItem(itemType)(state, dispatch)
+    } // Outer list node
+    else {
       return false
     }
   }
+}
+
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
   'Mod-[': liftListItem(schema.nodes.list_item),
