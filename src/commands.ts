@@ -61,7 +61,6 @@ import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
@@ -389,13 +388,14 @@ export const insertInlineCitation = (
   const node = state.schema.nodes.citation.create({
     rid: citation._id,
     selectedText: selectedText(),
+    embeddedCitationItems: [],
   })
 
   const pos = state.selection.to
 
   const { tr } = state
 
-  tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
+  tr.insert(pos, node)
 
   if (needsBibliography(state)) {
     tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
@@ -443,13 +443,11 @@ export const insertInlineEquation = (
 
   const sourcePos = state.selection.from - 1
 
-  const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [inlineMathFragment] })
-    .replaceSelectionWith(
-      state.schema.nodes.inline_equation.create({
-        id: inlineMathFragment._id,
-      })
-    )
+  const tr = state.tr.replaceSelectionWith(
+    state.schema.nodes.inline_equation.create({
+      id: inlineMathFragment._id,
+    })
+  )
 
   if (dispatch) {
     const selection = NodeSelection.create(

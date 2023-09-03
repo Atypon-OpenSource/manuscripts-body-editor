@@ -26,9 +26,7 @@ import { SyncError } from '../types'
 export interface BaseNodeProps {
   popper: PopperManager
   getModel: <T extends Model>(id: string) => T | undefined
-  saveTrackModel(model: Model): Promise<Model>
-  deleteTrackModel(id: string): Promise<string>
-  getTrackModelMap(): Map<string, Model>
+  getModelMap: () => Map<string, Model>
   cslProps: CSLProps
   renderReactComponent: (
     child: React.ReactElement,

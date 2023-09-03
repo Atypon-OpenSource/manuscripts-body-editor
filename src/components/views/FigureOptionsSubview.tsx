@@ -42,7 +42,7 @@ const FigureOptionsSubview: React.FC<
   onDetachClick,
   setFigureAttrs,
   getAttachments,
-  modelMap,
+  getModelMap,
   mediaAlternativesEnabled,
   can,
   disabled,
@@ -55,7 +55,7 @@ const FigureOptionsSubview: React.FC<
       onUploadClick={onUploadClick}
       setFigureAttrs={setFigureAttrs}
       getAttachments={getAttachments}
-      modelMap={modelMap}
+      getModelMap={getModelMap}
       onDetachClick={onDetachClick}
       mediaAlternativesEnabled={mediaAlternativesEnabled}
       canReplaceFile={can?.replaceFile}

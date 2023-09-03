@@ -44,9 +44,6 @@ export interface EditorProps extends ViewerProps {
   getCitationProvider: () => CitationProvider | undefined
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
-  saveTrackModel(model: Model): Promise<Model>
-  deleteTrackModel(id: string): Promise<string>
-  getTrackModelMap(): Map<string, Model>
   setLibraryItem: (item: BibliographyItem) => void
   matchLibraryItemByIdentifier: (
     item: BibliographyItem

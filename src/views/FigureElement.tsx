@@ -125,7 +125,7 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  modelMap,
+  getModelMap,
   uploadAttachment,
   getAttachments,
   getCapabilities,
@@ -165,7 +165,7 @@ const FigureElement = ({
 
           <FilesDropdown
             getAttachments={getAttachments}
-            modelMap={modelMap}
+            getModelMap={getModelMap}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}
             addFigureExFileRef={addFigureExFileRef}

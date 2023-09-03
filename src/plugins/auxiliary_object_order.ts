@@ -26,7 +26,7 @@ import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { modelsKey as modelMapKey } from './models'
 
 interface Props {
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
 }
 
 type AuxiliaryObjectsOrder = {
@@ -47,11 +47,11 @@ export default (props: Props) =>
   new Plugin<AuxiliaryObjectsOrder>({
     key: modelsKey,
     state: {
-      init: () => getAuxiliaryObjects(props.modelMap),
+      init: () => getAuxiliaryObjects(props.getModelMap()),
       apply: (tr, value, oldState, newState) => {
         const state = modelsKey.getState(newState)
         if (!state) {
-          return getAuxiliaryObjects(props.modelMap)
+          return getAuxiliaryObjects(props.getModelMap())
         }
         return state
       },
@@ -63,7 +63,7 @@ export default (props: Props) =>
       let state = modelsKey.getState(newState) as AuxiliaryObjectsOrder
 
       if (!state) {
-        state = getAuxiliaryObjects(props.modelMap)
+        state = getAuxiliaryObjects(props.getModelMap())
       }
 
       const elementsOrder = getElementsOrder(newState.doc).reduce(

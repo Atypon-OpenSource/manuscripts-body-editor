@@ -42,12 +42,9 @@ export interface ViewerProps {
   doc: ManuscriptNode
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  saveTrackModel(model: Model): Promise<Model>
-  deleteTrackModel(id: string): Promise<string>
-  getTrackModelMap(): Map<string, Model>
   getLibraryItem: (id: string) => BibliographyItem | undefined
   locale: string
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
   popper: PopperManager
   projectID: string
   getCurrentUser: () => UserProfile

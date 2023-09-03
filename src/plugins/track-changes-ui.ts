@@ -75,9 +75,13 @@ const createControls = (change: TrackedChange) => {
   )
 }
 
-const filterInlineNodes = (change: TrackedChange) =>
-  (change as NodeChange).nodeType !== schema.nodes.bibliography_item.name ||
-  (change as NodeChange).nodeType !== schema.nodes.citation.name
+const filterInlineNodes = (change: TrackedChange) => {
+  const { nodeType } = change as NodeChange
+  return !(
+    nodeType === schema.nodes.bibliography_item.name ||
+    nodeType === schema.nodes.citation.name
+  )
+}
 
 const decorateChanges = (state: EditorState): Decoration[] => {
   const pluginState = trackChangesPluginKey.getState(state)

@@ -64,7 +64,6 @@ interface BibliographyItemViewProps extends BaseNodeProps {
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void
   removeLibraryItem: (id: string) => void
-  modelMap: Map<string, Model>
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -79,19 +78,33 @@ export class BibliographyItemView<
   public showPopper = (referenceID: string) => {
     const {
       filterLibraryItems,
-      saveTrackModel,
-      deleteTrackModel,
+      deleteModel,
       setLibraryItem,
       removeLibraryItem,
       renderReactComponent,
-      getTrackModelMap,
+      getModelMap,
       components: { ReferencesEditor },
     } = this.props
 
     const handleSave = async (data: Partial<BibliographyItem>) => {
-      await saveTrackModel({
-        ...data,
-      } as BibliographyItem)
+      const {
+        _id: id,
+        DOI: doi,
+        ['container-title']: containerTitle,
+        ...rest
+      } = data
+      // TODO:: remove this and use saveModel when implement tracking attributes LEAN-2721
+      this.view.dispatch(
+        this.view.state.tr
+          .setNodeMarkup(this.getPos(), undefined, {
+            id,
+            doi,
+            containerTitle,
+            ...rest,
+            dataTracked: this.node.attrs.dataTracked,
+          })
+          .setMeta('track-changes-skip-tracking', true)
+      )
     }
 
     if (!this.popperContainer) {
@@ -99,16 +112,14 @@ export class BibliographyItemView<
       this.popperContainer.className = 'references'
     }
 
-    const modelMap = getTrackModelMap()
-
     renderReactComponent(
       <ReferencesEditor
         filterLibraryItems={filterLibraryItems}
         saveModel={handleSave}
-        deleteModel={deleteTrackModel}
+        deleteModel={deleteModel}
         setLibraryItem={setLibraryItem}
         removeLibraryItem={removeLibraryItem}
-        modelMap={modelMap}
+        getModelMap={getModelMap}
         referenceID={referenceID}
       />,
       this.popperContainer

@@ -55,7 +55,7 @@ const getFileType = (fileName: string) => {
 
 interface DropdownProps {
   getAttachments: () => FileAttachment[]
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
   canReplaceFile?: boolean
@@ -91,7 +91,7 @@ const isFileValidForFigure = (
 }
 
 export const FilesDropdown: React.FC<FilesDropdownProps> = ({
-  modelMap,
+  getModelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   addFigureExFileRef,
@@ -100,6 +100,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   getAttachments,
   getDoc,
 }) => {
+  const modelMap = getModelMap()
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const attachments = getAttachments().map((f) => ({ ...f })) || []
   const doc = getDoc()
@@ -203,7 +204,7 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
 
 export const OptionsDropdown: React.FC<OptionsProps> = ({
   url,
-  modelMap,
+  getModelMap,
   mediaAlternativesEnabled,
   onUploadClick,
   onDetachClick,
@@ -215,6 +216,7 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
   disabled,
   getDoc,
 }) => {
+  const modelMap = getModelMap()
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const attachments = getAttachments().map((f) => ({ ...f })) || []
   const doc = getDoc()

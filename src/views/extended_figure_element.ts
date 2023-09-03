@@ -153,7 +153,7 @@ export class FigureElementView extends BlockView<
     if (this.props.dispatch && this.props.theme) {
       const componentProps: FilesDropdownProps = {
         getAttachments: this.props.getAttachments,
-        modelMap: this.props.modelMap,
+        getModelMap: this.props.getModelMap,
         onUploadClick: this.envokeFileInput,
         mediaAlternativesEnabled: this.props.mediaAlternativesEnabled,
         addFigureExFileRef: this.addAttachmentSrc,
