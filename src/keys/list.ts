@@ -28,7 +28,6 @@ import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-
 const skipTrackingChanges =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     command(state, (tr) => {
