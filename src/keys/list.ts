@@ -24,7 +24,6 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
-
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
 
