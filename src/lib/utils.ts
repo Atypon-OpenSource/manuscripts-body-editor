@@ -102,11 +102,11 @@ export const setNodeAttrs =
   ) =>
   (attrs: Node['attrs']) => {
     const { selection, tr } = viewProps.view.state
-    tr.setNodeMarkup(pos || viewProps.getPos() + 1, undefined, {
-      // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
-      ...attrs,
-    }).setSelection(selection.map(tr.doc, tr.mapping))
+    let _pos = pos && viewProps.getPos() // if pos is passed we want to get actual value of pos
+    _pos = _pos || viewProps.getPos() + 1 // if pos is not passed we want to get the next position
+    // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
 
+    tr.setNodeMarkup(_pos, undefined, {...attrs}).setSelection(selection.map(tr.doc, tr.mapping))
     dispatch(tr)
   }
 
