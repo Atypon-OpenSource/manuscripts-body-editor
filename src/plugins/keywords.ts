@@ -31,11 +31,11 @@ import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
 import {
+  // isRejectedInsert,
+  getChangeClasses,
   // isDeleted,
   isPending,
   isTracked,
-  // isRejectedInsert,
-  getChangeClasses,
 } from '../lib/track-changes-utils'
 
 export const keywordsKey = new PluginKey('keywords')
