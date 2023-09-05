@@ -15,7 +15,7 @@
  */
 
 import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
-import { Keyword, Model, ObjectTypes } from '@manuscripts/json-schema'
+import { Model, ObjectTypes } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import type { KeywordNode } from '@manuscripts/transform'
 import { generateID, ManuscriptNode } from '@manuscripts/transform'
@@ -32,7 +32,8 @@ import ReactDOM from 'react-dom'
 
 import {
   // isDeleted,
-  // isPending,
+  isPending,
+  isTracked,
   // isRejectedInsert,
   getChangeClasses,
 } from '../lib/track-changes-utils'
@@ -48,79 +49,67 @@ interface KeyworsProps {
   getCapabilities: () => Capabilities
 }
 
-type KeywordNodes = Array<[KeywordNode, number, Keyword]>
+type KeywordNodes = Array<[KeywordNode, number]>
 
 const isKeywordnNode = (node: ManuscriptNode): node is KeywordNode =>
   node.type === node.type.schema.nodes.keyword
 
-const buildKeywordNodes = (
-  doc: ManuscriptNode,
-  getModel: <T extends Model>(id: string) => T | undefined
-): KeywordNodes => {
+const buildKeywordNodes = (doc: ManuscriptNode): KeywordNodes => {
   const keywordNodes: KeywordNodes = []
 
   doc.descendants((node: Node, pos: number) => {
     if (isKeywordnNode(node)) {
-      const keyword = getModel<Keyword>(node.attrs.id)
-
-      if (keyword) {
-        keywordNodes.push([node, pos, keyword])
-      }
+      keywordNodes.push([node, pos])
     }
   })
 
   return keywordNodes
 }
 
-const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
+const keywordsUpdated = (transactions: readonly Transaction[]): boolean =>
   transactions.some((tr) => {
-    const meta = tr.getMeta(keywordsKey)
-
-    return meta && meta.keywordsInserted
-  })
-
-const keywordDeleted = (transactions: readonly Transaction[]): boolean =>
-  transactions.some((tr) => {
-    const metaDeleted = tr.getMeta('keywordDeleted')
+    const metaDeleted = tr.getMeta('keywordsUpdated')
 
     return metaDeleted
   })
 
 const buildDecorations = (
-  doc: ManuscriptNode,
   keywordNodes: KeywordNodes,
   getCapabilities: () => Capabilities
 ) => {
   const decorations: Decoration[] = []
   console.log('keywordNodes', keywordNodes)
-  for (const [node, pos, keyword] of keywordNodes) {
+  for (const [node, pos] of keywordNodes) {
+    const nodeClasses = [...getChangeClasses(node)]
+    if (!isTracked(node)) {
+      nodeClasses.push('no-tracking')
+    }
     const classesDecoration = Decoration.node(pos, pos + node.nodeSize, {
-      class: ['keyword', 'no-tracking', ...getChangeClasses(node)].join(' '),
-    }) // todo: add no-tracking only if there's no tracking ins/del element
-    console.log(keyword, classesDecoration, getCapabilities)
-    // if (true) {
-    // add no-tracking class here???
-    const removeIconDecoration = Decoration.widget(
-      pos + node.nodeSize - 1,
-      () => {
-        const closeIconWrapper = document.createElement('span')
-        closeIconWrapper.classList.add('delete-keyword')
-        ReactDOM.render(
-          createElement(CloseIconDark, {
-            height: 8,
-            width: 8,
-            color: '#353535',
-          }),
-          closeIconWrapper
-        )
-        return closeIconWrapper
-      },
-      { side: -1 }
-    )
-    decorations.push(removeIconDecoration)
-    // }
+      class: nodeClasses.join(' '),
+    })
+    decorations.push(classesDecoration)
+
+    if (!isPending(node) && getCapabilities().editArticle) {
+      const removeIconDecoration = Decoration.widget(
+        pos + node.nodeSize - 1,
+        () => {
+          const closeIconWrapper = document.createElement('span')
+          closeIconWrapper.classList.add('delete-keyword')
+          ReactDOM.render(
+            createElement(CloseIconDark, {
+              height: 8,
+              width: 8,
+              color: '#353535',
+            }),
+            closeIconWrapper
+          )
+          return closeIconWrapper
+        },
+        { side: -1 }
+      )
+      decorations.push(removeIconDecoration)
+    }
   }
-  console.log('decorations', decorations)
   return decorations
 }
 
@@ -132,7 +121,7 @@ export default (props: KeyworsProps) => {
     key: keywordsKey,
     state: {
       init(config, instance): PluginState {
-        const keywordNodes = buildKeywordNodes(instance.doc, props.getModel)
+        const keywordNodes = buildKeywordNodes(instance.doc)
 
         return {
           keywordNodes,
@@ -140,7 +129,7 @@ export default (props: KeyworsProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const keywordNodes = buildKeywordNodes(newState.doc, props.getModel)
+        const keywordNodes = buildKeywordNodes(newState.doc)
 
         return {
           keywordNodes,
@@ -149,7 +138,7 @@ export default (props: KeyworsProps) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      if (!keywordsInserted(transactions) && !keywordDeleted(transactions)) {
+      if (!keywordsUpdated(transactions)) {
         return
       }
 
@@ -191,7 +180,7 @@ export default (props: KeyworsProps) => {
         const { keywordNodes } = keywordsKey.getState(state)
         return DecorationSet.create(
           state.doc,
-          buildDecorations(state.doc, keywordNodes, props.getCapabilities)
+          buildDecorations(keywordNodes, props.getCapabilities)
         )
       },
     },

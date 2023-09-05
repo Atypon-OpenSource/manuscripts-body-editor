@@ -65,3 +65,13 @@ export function getChangeClasses(node: ProsemirrorNode) {
   }
   return classes
 }
+
+export function isTracked(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation }) => operation === 'insert' || operation === 'delete'
+    )
+  }
+  return false
+}
