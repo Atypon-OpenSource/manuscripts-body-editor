@@ -35,10 +35,12 @@ import { ReactViewComponentProps } from './ReactView'
 export interface FigureProps {
   getAttachments: () => FileAttachment[]
   modelMap: Map<string, Model>
+  deleteModel: (id: string) => Promise<string>
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
   mediaAlternativesEnabled?: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 
 export const WEB_FORMAT_QUERY = 'format=jpg'
@@ -54,6 +56,7 @@ const FigureComponent = ({
   getAttachments,
   modelMap,
   getDoc,
+  getModelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     nodeAttrs,
@@ -217,6 +220,7 @@ const FigureComponent = ({
                   console.log('Detach not implemented for Figure View')
                 }}
                 getDoc={getDoc}
+                getModelMap={getModelMap}
               />
 
               <img

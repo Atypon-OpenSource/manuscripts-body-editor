@@ -32,6 +32,7 @@ export interface FigureOptionsSubviewProps {
   can: Capabilities
   disabled: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 // ReactViewComponentProps
 const FigureOptionsSubview: React.FC<
@@ -47,6 +48,7 @@ const FigureOptionsSubview: React.FC<
   can,
   disabled,
   getDoc,
+  getModelMap,
 }) => {
   return (
     <OptionsDropdown
@@ -62,6 +64,7 @@ const FigureOptionsSubview: React.FC<
       canDownloadFile={can?.downloadFiles}
       canEditArticle={can?.editArticle}
       getDoc={getDoc}
+      getModelMap={getModelMap}
     />
   )
 }
