@@ -24,11 +24,12 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
+
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-const skipTrackingChanges =
+export const skipTrackingChanges =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     command(state, (tr) => {
       if (dispatch) {
@@ -66,8 +67,8 @@ const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
   'Mod-[': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent
   'Mod-]': skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent
-  'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
-  'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
+  'Mod-Alt-o': skipTrackingChanges(wrapInList(schema.nodes.ordered_list)),
+  'Mod-Alt-k': skipTrackingChanges(wrapInList(schema.nodes.bullet_list)),
   'Shift-Tab': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
   Tab: skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
 }

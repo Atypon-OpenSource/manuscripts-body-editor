@@ -50,6 +50,7 @@ import {
 } from './commands'
 import { MenuSpec } from './components/application-menu'
 import { DialogNames } from './components/dialog'
+import { skipTrackingChanges } from './keys/list'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -157,7 +158,7 @@ export default (
           },
           // active: blockActive(schema.nodes.ordered_list),
           enable: isCommandValid(wrapInList(schema.nodes.ordered_list)),
-          run: wrap(wrapInList(schema.nodes.ordered_list)),
+          run: skipTrackingChanges(wrap(wrapInList(schema.nodes.ordered_list))),
         },
         {
           id: 'insert-bullet-list',
@@ -168,7 +169,7 @@ export default (
           },
           // active: blockActive(schema.nodes.bullet_list),
           enable: isCommandValid(wrapInList(schema.nodes.bullet_list)),
-          run: wrap(wrapInList(schema.nodes.bullet_list)),
+          run: skipTrackingChanges(wrap(wrapInList(schema.nodes.bullet_list))),
         },
         {
           role: 'separator',
