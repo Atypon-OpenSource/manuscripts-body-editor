@@ -851,6 +851,10 @@
   opacity: 1;
 }
 
+.keywords-list .deleted.accepted span.delete-keyword {
+  display: none;
+}
+
 .keywords-list > div {
   display: inline;
 }

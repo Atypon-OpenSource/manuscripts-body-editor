@@ -31,9 +31,8 @@ import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
 import {
-  // isRejectedInsert,
   getChangeClasses,
-  // isDeleted,
+  isDeleted,
   isPending,
   isTracked,
 } from '../lib/track-changes-utils'
@@ -78,7 +77,7 @@ const buildDecorations = (
   getCapabilities: () => Capabilities
 ) => {
   const decorations: Decoration[] = []
-  console.log('keywordNodes', keywordNodes)
+
   for (const [node, pos] of keywordNodes) {
     const nodeClasses = [...getChangeClasses(node)]
     if (!isTracked(node)) {
@@ -89,7 +88,7 @@ const buildDecorations = (
     })
     decorations.push(classesDecoration)
 
-    if (!isPending(node) && getCapabilities().editArticle) {
+    if (!isPending(node) && !isDeleted(node) && getCapabilities().editArticle) {
       const removeIconDecoration = Decoration.widget(
         pos + node.nodeSize - 1,
         () => {
