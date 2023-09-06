@@ -88,6 +88,12 @@ const defaultViewerProps: ViewerProps = {
     tabindex: '2',
   },
   doc: TEST_DATA.DOC,
+  deleteModel: (id: string) => {
+    return new Promise((resolve) => {
+      TEST_DATA.MODEL_MAP.delete(id)
+      resolve(id)
+    })
+  },
   getModel: <T extends Model>(id: string) => {
     return TEST_DATA.MODEL_MAP.get(id) as T | undefined
   },
@@ -109,6 +115,7 @@ const defaultViewerProps: ViewerProps = {
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
   getDoc: () => TEST_DATA.DOC,
+  getModelMap: () => TEST_DATA.MODEL_MAP,
   cslProps: {
     style: '',
     locale: '',
