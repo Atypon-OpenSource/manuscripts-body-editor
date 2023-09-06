@@ -824,7 +824,9 @@
   border-radius: 6px;
 }
 
-.keywords-list span.keyword:hover {
+.keywords-list span.keyword:hover,
+.keywords-list span.keyword:hover ins,
+.keywords-list span.keyword:hover del {
   background-color: #f2fbfc;
   border-color: #f2fbfc;
 }
@@ -847,6 +849,10 @@
 
 .keywords-list span.delete-keyword:hover {
   opacity: 1;
+}
+
+.keywords-list .deleted.accepted span.delete-keyword {
+  display: none;
 }
 
 .keywords-list > div {

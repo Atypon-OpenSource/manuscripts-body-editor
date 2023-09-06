@@ -25,6 +25,7 @@ import {
   Model,
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
@@ -60,6 +61,7 @@ interface PluginProps {
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion?: (id?: string) => void
+  getCapabilities: () => Capabilities
   plugins?: Array<Plugin<ManuscriptSchema>>
 }
 
@@ -75,6 +77,7 @@ export default (props: PluginProps) => {
     setComment,
     setSelectedComment,
     setEditorSelectedSuggestion,
+    getCapabilities,
   } = props
 
   const plugins = props.plugins || []
@@ -92,7 +95,7 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
-    keywords(),
+    keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
       getLibraryItem,

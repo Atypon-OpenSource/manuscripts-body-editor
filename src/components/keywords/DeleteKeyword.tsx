@@ -49,8 +49,8 @@ export const DeleteKeyword: React.FC<{
     const deleteIcon = clickTarget.closest('.delete-keyword')
 
     if (deleteIcon) {
-      const keywordId = deleteIcon.parentElement?.getAttribute('id') || ''
-      const keywordContent = deleteIcon.parentElement?.textContent || ''
+      const keywordId = deleteIcon.closest('.keyword')?.getAttribute('id') || ''
+      const keywordContent = deleteIcon.closest('.keyword')?.textContent || ''
       setKeywordToDeleteId(keywordId)
       setKeywordToDelete(keywordContent)
       setIsDeletingKeyword(true)
@@ -66,7 +66,7 @@ export const DeleteKeyword: React.FC<{
       const { pos, to } = getKeywords()
       if (view.dispatch) {
         view.dispatch(
-          view.state.tr.delete(pos, to).setMeta('keywordDeleted', true)
+          view.state.tr.delete(pos, to).setMeta('keywordsUpdated', true)
         )
       }
       resetState()
