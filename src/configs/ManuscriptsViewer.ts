@@ -40,6 +40,7 @@ import views from './viewer-views'
 export interface ViewerProps {
   attributes?: { [key: string]: string }
   doc: ManuscriptNode
+  deleteModel: (id: string) => Promise<string>
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
@@ -57,6 +58,7 @@ export interface ViewerProps {
   getAttachments: () => FileAttachment[]
   getCapabilities: () => Capabilities
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
   cslProps: CSLProps
 }
 

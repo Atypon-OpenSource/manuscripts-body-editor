@@ -154,12 +154,14 @@ export class FigureElementView extends BlockView<
       const componentProps: FilesDropdownProps = {
         getAttachments: this.props.getAttachments,
         modelMap: this.props.modelMap,
+        deleteModel: this.props.deleteModel,
         onUploadClick: this.envokeFileInput,
         mediaAlternativesEnabled: this.props.mediaAlternativesEnabled,
         addFigureExFileRef: this.addAttachmentSrc,
         canReplaceFile: capabilities.replaceFile,
         canUploadFile: capabilities.uploadFile,
         getDoc: this.props.getDoc,
+        getModelMap: this.props.getModelMap,
       }
       this.reactTools = ReactSubView(
         this.props,

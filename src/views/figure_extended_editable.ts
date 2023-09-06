@@ -47,6 +47,7 @@ interface FigureProps {
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 
 export class FigureEditableView extends FigureView<
@@ -273,6 +274,7 @@ export class FigureEditableView extends FigureView<
           setFigureAttrs: this.setFigureAttrs,
           can: this.props.getCapabilities(),
           getDoc: this.props.getDoc,
+          getModelMap: this.props.getModelMap,
         }
         this.reactTools?.remove()
         this.reactTools = ReactSubView(
