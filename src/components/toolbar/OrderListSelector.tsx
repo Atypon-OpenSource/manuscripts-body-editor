@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 import OrderedList from '@manuscripts/assets/react/ToolbarIconOrderedList'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
+  ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
+import { NodeRange } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
-import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorState, Selection, Transaction } from 'prosemirror-state'
 import React, { useCallback, useMemo } from 'react'
 
 import { ListButton, ListStyleSelector } from './ListStyleSelector'
@@ -37,16 +40,48 @@ export const OrderListSelector: React.FC<{
 }> = ({ state, dispatch, view, title, active, run, enable }) => {
   const disabled = useMemo(() => enable && !enable(state), [state.selection]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const updateListType = useCallback(
+  const dropDownDisabled = useMemo(() => {
+    const { $from, $to } = state.selection
+    const range = $from.blockRange($to)
+    return !!(
+      enable &&
+      !enable(state) &&
+      range &&
+      !schema.nodes.ordered_list.compatibleContent(
+        $from.node(range.depth - 1).type
+      )
+    )
+  }, [state.selection]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   *  When choosing a list type will do one of these options:
+   *  * if text is selected will wrap it with an order list
+   *  * if the selection is on list will change just the list type and
+   *    **in case it's nested list will change just the lists at the same level**
+   */
+  const onClickListType = useCallback(
     (type) => {
       if (!dispatch) {
         return
       }
-      wrapInList(schema.nodes.ordered_list, { listStyleType: type })(
-        state,
-        dispatch
-      )
-      view && view.focus()
+
+      const { $from, $to } = state.selection
+      const range = $from.blockRange($to)
+      const targetNode =
+        range &&
+        schema.nodes.ordered_list.compatibleContent(
+          $from.node(range.depth - 1).type
+        )
+
+      if (!targetNode) {
+        wrapInList(schema.nodes.ordered_list, { listStyleType: type })(
+          state,
+          dispatch
+        )
+        view && view.focus()
+      } else {
+        updateListStyle(state, dispatch, range, type)
+      }
     },
     [dispatch, state, view]
   )
@@ -66,8 +101,8 @@ export const OrderListSelector: React.FC<{
         <OrderedList />
       </ListButton>
       <ListStyleSelector
-        disabled={disabled}
-        updateListType={updateListType}
+        disabled={dropDownDisabled}
+        onClickListType={onClickListType}
         list={[
           { items: ['1.', '2.', '3.'], type: 'order' },
           { items: ['A.', 'B.', 'C.'], type: 'alpha-upper' },
@@ -77,5 +112,75 @@ export const OrderListSelector: React.FC<{
         ]}
       />
     </ToolbarItem>
+  )
+}
+
+/**
+ *  Will use node depth as an indicator for the list level, and `sharedDepth` will
+ *  give us all depths for the selection so we can find the parent list
+ *  After that will look at the nodes in the parent list and just update
+ *  the list that had the same level to the target level user has selected
+ */
+const updateListStyle = (
+  state: ManuscriptEditorState,
+  dispatch: (tr: Transaction) => void,
+  range: NodeRange,
+  type: string
+) => {
+  const { $from } = state.selection
+  const tr = state.tr
+  const targetLevel = range.depth - 1
+  const selectionDepth = $from.sharedDepth(state.selection.to)
+  const parentListDepth =
+    [...Array(selectionDepth)].findIndex((_, index) => {
+      const node = $from.node(index + 1)
+      return (
+        node.type === schema.nodes.ordered_list ||
+        node.type === schema.nodes.bullet_list
+      )
+    }) + 1
+  const parentListNode = $from.node(parentListDepth)
+  const parentListPos = $from.before(parentListDepth)
+
+  if (parentListDepth === targetLevel) {
+    replaceToOrderList(
+      parentListPos,
+      parentListPos + parentListNode.nodeSize,
+      parentListNode
+    )
+  } else {
+    parentListNode.descendants((node, pos) => {
+      if (
+        (node.type === schema.nodes.ordered_list ||
+          node.type === schema.nodes.bullet_list) &&
+        state.doc.resolve(parentListPos + pos + node.nodeSize).depth ===
+          targetLevel
+      ) {
+        replaceToOrderList(
+          parentListPos + pos,
+          parentListPos + pos + node.nodeSize,
+          node
+        )
+      }
+    })
+  }
+
+  function replaceToOrderList(from: number, to: number, node: ManuscriptNode) {
+    tr.replaceRangeWith(
+      from,
+      to,
+      schema.nodes.ordered_list.create(
+        {
+          ...node.attrs,
+          listStyleType: type,
+        },
+        node.content,
+        node.marks
+      )
+    )
+  }
+
+  dispatch(
+    skipTracking(tr).setSelection(Selection.near(tr.doc.resolve($from.pos)))
   )
 }

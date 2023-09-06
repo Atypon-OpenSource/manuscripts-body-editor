@@ -80,9 +80,9 @@ type ListStyle = { items: [string, string, string]; type: string }
 
 export const ListStyleSelector: React.FC<{
   disabled?: boolean
-  updateListType: (type: string) => void
+  onClickListType: (type: string) => void
   list: ListStyle[]
-}> = ({ disabled, updateListType, list }) => {
+}> = ({ disabled, onClickListType, list }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
   return (
@@ -94,7 +94,11 @@ export const ListStyleSelector: React.FC<{
         <DropdownList direction={'right'} top={6} onClick={toggleOpen}>
           <ListContainer>
             {list.map((style, index) => (
-              <StylesBlock onClick={updateListType} key={index} style={style} />
+              <StylesBlock
+                onClick={onClickListType}
+                key={index}
+                style={style}
+              />
             ))}
           </ListContainer>
         </DropdownList>
