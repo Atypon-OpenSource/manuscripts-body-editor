@@ -102,7 +102,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   public handleDecorations = (decorations: readonly Decoration[]) => {
     this.decorations = decorations
 
-    if (decorations && this.dom) {
+    if (decorations) {
       const syncErrorDecoration = decorations.find(
         (decoration) => decoration.spec.syncErrors
       )
