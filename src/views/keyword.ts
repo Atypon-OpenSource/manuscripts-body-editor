@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-// import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
-// import { createElement } from 'react'
-// import ReactDOM from 'react-dom'
-// import { sanitize } from '../lib/dompurify'
-// import {
-//   getChangeClasses,
-//   isDeleted,
-//   isPending,
-//   isRejectedInsert,
-// } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 export interface Props extends BaseNodeProps {
