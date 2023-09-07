@@ -121,7 +121,7 @@ export const OrderListSelector: React.FC<{
  *  After that will look at the nodes in the parent list and just update
  *  the list that had the same level to the target level user has selected
  */
-const updateListStyle = (
+export const updateListStyle = (
   state: ManuscriptEditorState,
   dispatch: (tr: Transaction) => void,
   range: NodeRange,

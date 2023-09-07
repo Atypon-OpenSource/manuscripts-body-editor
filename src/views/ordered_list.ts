@@ -49,6 +49,8 @@ export class OrderedListView<
 
 export const orderedListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
+  const type = (node.attrs.listStyleType as JatsStyleType) || 'order'
+  dom.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
 }
 
 export default createNodeOrElementView(
