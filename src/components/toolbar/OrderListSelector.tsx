@@ -67,13 +67,13 @@ export const OrderListSelector: React.FC<{
 
       const { $from, $to } = state.selection
       const range = $from.blockRange($to)
-      const targetNode =
+      const isListNode =
         range &&
         schema.nodes.ordered_list.compatibleContent(
           $from.node(range.depth - 1).type
         )
 
-      if (!targetNode) {
+      if (!isListNode) {
         wrapInList(schema.nodes.ordered_list, { listStyleType: type })(
           state,
           dispatch
