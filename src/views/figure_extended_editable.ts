@@ -47,6 +47,7 @@ interface FigureProps {
   isInGraphicalAbstract?: boolean
   mediaAlternativesEnabled?: boolean
   getDoc: () => ProsemirrorNode
+  getModelMap: () => Map<string, Model>
 }
 
 export class FigureEditableView extends FigureView<
@@ -141,7 +142,11 @@ export class FigureEditableView extends FigureView<
 
   private detachImageRef = () => {
     if (this.node) {
-      const ref = this.getAttachment(this.node.attrs.src)
+      const src =
+        this.node.attrs.src == ''
+          ? this.node.attrs.dataTracked[0]?.oldAttrs.src
+          : this.node.attrs.src
+      const ref = this.getAttachment(src)
 
       if (ref) {
         this.setFigureAttrs({
@@ -269,6 +274,7 @@ export class FigureEditableView extends FigureView<
           setFigureAttrs: this.setFigureAttrs,
           can: this.props.getCapabilities(),
           getDoc: this.props.getDoc,
+          getModelMap: this.props.getModelMap,
         }
         this.reactTools?.remove()
         this.reactTools = ReactSubView(

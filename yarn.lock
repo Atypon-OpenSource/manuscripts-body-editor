@@ -1579,14 +1579,6 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@2.1.1-LEAN-2712":
-  version "2.1.1-LEAN-2712"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.1.1-LEAN-2712.tgz#87327a8fad321b10574ac049704bbb2fc2c5a0cc"
-  integrity sha512-+DuJDj6jldFfjm2KeJOzpLtSRWWYPYGyGCJ1scPyJIKZuwcp1FMWgY/ebX4OQp0GNbLQ+Oe6sAOXfHlAma/ILQ==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
 "@manuscripts/json-schema@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.1.0.tgz#2665dd90fd9d230ec188a2405efe8abf74145d39"
@@ -1603,18 +1595,10 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/json-schema@^2.1.1-LEAN-2712":
-  version "2.1.1-LEAN-2715-v6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.1.1-LEAN-2715-v6.tgz#4f0377d117677bb198cf01b16beb6dcee98d589c"
-  integrity sha512-qfKq7PNrBAfxT7BdG3d31LAmvNYvbBEUIcOI2YJ+s9lXVT7LoNxMcoxab1fGsdNAGdMEc+Z1gQ2fdiqo6Z6MNg==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
-"@manuscripts/library@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.6.tgz#b1649c62a6a0f3ed14516088b729ca0e160976a1"
-  integrity sha512-v6hMNm1k5DtZu9X8LpXbEeJWFmHDOm00gSPlXtvKTyFec7whfjKD/7mRTJak15tIVlVfvYBVHpgnotI00tclvQ==
+"@manuscripts/library@^1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.7.tgz#88fda9f3dcb8c64a2eca4a43224393419654f8f3"
+  integrity sha512-yrCB2FOVoAFuAFUJSz/xbBHHUy+aLr03cZhKOpnOyiG0aOl83YONYDUVsFaQs7KoBvo05BYTwyktDC8vKZqXTA==
   dependencies:
     "@manuscripts/json-schema" "^2.1.0"
     "@manuscripts/transform" "^1.3.10"
@@ -1624,10 +1608,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.2.1.tgz#f0c90191a0f030381489aad11ffd1e689ca48be6"
-  integrity sha512-hf80n0koYaVmRsAtJtvsCsfkoge1gLVBzB/xjPq/jK3bq012sggdrqfezCLrSP07Jp8Vw1U9N+Ws0WYpEFlJAw==
+"@manuscripts/style-guide@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.1.tgz#6b879fa8179c36b68474ad72fe1b5188a7356017"
+  integrity sha512-c21pVE/37CavzQesqhreT++3b6JSMUGcEEe0ifbpFAEt9ZMj/JZoLmJ0tA18r1Z8cgoepUmKhFNu+KpHD9piJA==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1696,20 +1680,6 @@
     prosemirror-state "^1.4.2"
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
-
-"@manuscripts/transform@1.3.11-LEAN-2712":
-  version "1.3.11-LEAN-2712"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.11-LEAN-2712.tgz#f0734d71284512260f75ec55098d6a33d391507f"
-  integrity sha512-C0z31vKnDhSorQyHtaCOO4E2rt/Nhy1pz8OvFyDrcFE34OZKRs5FnVdz4HqlG607cMUWf6tOgr1/9UhnXRb69Q==
-  dependencies:
-    "@manuscripts/json-schema" "^2.1.1-LEAN-2712"
-    debug "^4.3.4"
-    jszip "^3.10.1"
-    mathjax-full "^3.2.2"
-    mime "^3.0.0"
-    prosemirror-model "^1.18.3"
-    uuid "^9.0.0"
-    w3c-xmlserializer "^4.0.0"
 
 "@manuscripts/transform@^1.3.10":
   version "1.3.10"

@@ -48,6 +48,7 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
+import { CSLProps } from './ManuscriptsEditor'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
@@ -59,7 +60,9 @@ interface PluginProps {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
+  setEditorSelectedSuggestion?: (id?: string) => void
   plugins?: Array<Plugin<ManuscriptSchema>>
+  cslProps: CSLProps
 }
 
 export default (props: PluginProps) => {
@@ -73,6 +76,8 @@ export default (props: PluginProps) => {
     saveModel,
     setComment,
     setSelectedComment,
+    cslProps,
+    setEditorSelectedSuggestion,
   } = props
 
   const plugins = props.plugins || []
@@ -95,6 +100,7 @@ export default (props: PluginProps) => {
       getCitationProvider,
       getLibraryItem,
       getModel,
+      cslProps,
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
@@ -103,7 +109,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights({ setComment }),
-    track_changes_ui(),
+    track_changes_ui({ setEditorSelectedSuggestion }),
   ]
 }
 
