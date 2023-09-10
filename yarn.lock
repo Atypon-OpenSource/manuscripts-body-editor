@@ -1595,6 +1595,14 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
+"@manuscripts/json-schema@^2.1.1-LEAN-2712":
+  version "2.1.1-LEAN-2715-v6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.1.1-LEAN-2715-v6.tgz#4f0377d117677bb198cf01b16beb6dcee98d589c"
+  integrity sha512-qfKq7PNrBAfxT7BdG3d31LAmvNYvbBEUIcOI2YJ+s9lXVT7LoNxMcoxab1fGsdNAGdMEc+Z1gQ2fdiqo6Z6MNg==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+
 "@manuscripts/library@^1.1.7":
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.7.tgz#88fda9f3dcb8c64a2eca4a43224393419654f8f3"
@@ -1680,6 +1688,20 @@
     prosemirror-state "^1.4.2"
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
+
+"@manuscripts/transform@1.3.11-LEAN-2712":
+  version "1.3.11-LEAN-2712"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.11-LEAN-2712.tgz#f0734d71284512260f75ec55098d6a33d391507f"
+  integrity sha512-C0z31vKnDhSorQyHtaCOO4E2rt/Nhy1pz8OvFyDrcFE34OZKRs5FnVdz4HqlG607cMUWf6tOgr1/9UhnXRb69Q==
+  dependencies:
+    "@manuscripts/json-schema" "^2.1.1-LEAN-2712"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
 
 "@manuscripts/transform@^1.3.10":
   version "1.3.10"

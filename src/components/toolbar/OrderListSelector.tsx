@@ -26,6 +26,7 @@ import { wrapInList } from 'prosemirror-schema-list'
 import { EditorState, Selection, Transaction } from 'prosemirror-state'
 import React, { useCallback, useMemo } from 'react'
 
+import { skipTrackingChanges } from '../../keys/list'
 import { ListButton, ListStyleSelector } from './ListStyleSelector'
 import { ToolbarItem } from './ManuscriptToolbar'
 
@@ -74,10 +75,9 @@ export const OrderListSelector: React.FC<{
         )
 
       if (!isListNode) {
-        wrapInList(schema.nodes.ordered_list, { listStyleType: type })(
-          state,
-          dispatch
-        )
+        skipTrackingChanges(
+          wrapInList(schema.nodes.ordered_list, { listStyleType: type })
+        )(state, dispatch)
         view && view.focus()
       } else {
         updateListStyle(state, dispatch, range, type)
