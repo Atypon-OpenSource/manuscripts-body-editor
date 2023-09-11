@@ -14,24 +14,63 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { ManuscriptEditorState, schema } from '@manuscripts/transform'
+import { NodeType } from 'prosemirror-model'
 import {
   liftListItem,
   sinkListItem,
   splitListItem,
   wrapInList,
 } from 'prosemirror-schema-list'
+import { Command, EditorState, Transaction } from 'prosemirror-state'
 
+import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
+
+// TODO:: remove this command when quarterback start supporting list_item and the operation on the list
+const skipTrackingChanges =
+  (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    command(state, (tr) => {
+      if (dispatch) {
+        skipTracking(tr)
+        dispatch(tr)
+      }
+    })
+    return true
+  }
+// Lift the list item if it's inside a parent list.
+const liftToOuterList = (itemType: NodeType): Command => {
+  return function (state: EditorState, dispatch?: (tr: Transaction) => void) {
+    const { $from, $to } = state.selection
+    const range = $from.blockRange(
+      $to,
+      (node) => node.childCount > 0 && node.firstChild?.type == itemType
+    )
+    if (!range) {
+      return false
+    }
+    if (!dispatch) {
+      return true
+    }
+    if ($from.node(range.depth - 1).type == itemType) {
+      // Inside a parent list
+      return liftListItem(itemType)(state, dispatch)
+    } // Outer list node
+    else {
+      return false
+    }
+  }
+}
 
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
-  'Mod-[': liftListItem(schema.nodes.list_item),
-  'Mod-]': sinkListItem(schema.nodes.list_item),
+  'Mod-[': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent
+  'Mod-]': skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent
   'Mod-Alt-o': wrapInList(schema.nodes.ordered_list),
   'Mod-Alt-k': wrapInList(schema.nodes.bullet_list),
-  'Shift-Tab': liftListItem(schema.nodes.list_item), // outdent, same as Mod-[
-  Tab: sinkListItem(schema.nodes.list_item), // indent, same as Mod-]
+  'Shift-Tab': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
+  Tab: skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
 }
 
 export default listKeymap
