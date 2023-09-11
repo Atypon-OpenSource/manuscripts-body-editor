@@ -840,6 +840,9 @@
 .keywords-list .keyword.deleted.accepted {
   text-decoration: line-through;
 }
+.keywords-list .keyword .track-changes--control {
+  top: 0;
+}
 
 .keywords-list span.delete-keyword {
   cursor: pointer;
