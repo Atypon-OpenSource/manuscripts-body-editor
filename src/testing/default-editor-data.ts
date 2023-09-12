@@ -100,7 +100,6 @@ const defaultViewerProps: ViewerProps = {
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   getLibraryItem: (_id: string) => undefined,
   locale: 'en-GB',
-  getModelMap: () => new Map<string, Model>(),
   popper: new PopperManager(),
   projectID: 'test-project-id',
   getCurrentUser: () => TEST_DATA.USER,

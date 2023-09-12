@@ -45,7 +45,6 @@ export interface ViewerProps {
   getManuscript: () => Manuscript
   getLibraryItem: (id: string) => BibliographyItem | undefined
   locale: string
-  getModelMap: () => Map<string, Model>
   popper: PopperManager
   projectID: string
   getCurrentUser: () => UserProfile
