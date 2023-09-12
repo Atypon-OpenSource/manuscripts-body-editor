@@ -30,6 +30,7 @@ import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
+import { CSLProps } from '../configs/ManuscriptsEditor'
 import keys from '../keys'
 import rules from '../rules'
 import bibliography from './bibliography'
@@ -55,6 +56,7 @@ interface PluginProps {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   plugins?: Array<Plugin<null>>
+  cslProps: CSLProps
 }
 
 export default (props: PluginProps) => {
@@ -65,6 +67,7 @@ export default (props: PluginProps) => {
     getManuscript,
     getModelMap,
     setComment,
+    cslProps,
   } = props
 
   const plugins = props.plugins || []
@@ -86,6 +89,7 @@ export default (props: PluginProps) => {
       getCitationProvider,
       getLibraryItem,
       getModel,
+      cslProps,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),

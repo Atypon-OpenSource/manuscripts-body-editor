@@ -125,12 +125,13 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  getModelMap,
+  deleteModel,
   uploadAttachment,
   getAttachments,
   getCapabilities,
   mediaAlternativesEnabled,
   getDoc,
+  getModelMap,
 }: FigureProps) => {
   const Component: React.FC<ReactViewComponentProps<FigureNode>> = ({
     contentDOM,
@@ -165,13 +166,14 @@ const FigureElement = ({
 
           <FilesDropdown
             getAttachments={getAttachments}
-            getModelMap={getModelMap}
+            deleteModel={(id: string) => deleteModel(id)}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}
             addFigureExFileRef={addFigureExFileRef}
             canReplaceFile={can?.replaceFile}
             canUploadFile={can?.uploadFile}
             getDoc={getDoc}
+            getModelMap={getModelMap}
           />
 
           <div contentEditable="true" ref={content}></div>

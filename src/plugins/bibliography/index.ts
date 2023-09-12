@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { buildCitationNodes, buildCitations } from '@manuscripts/library'
+import {
+  buildBibliographyItems,
+  buildCitationNodes,
+  buildCitations,
+  CitationProvider,
+} from '@manuscripts/library'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
@@ -30,6 +35,7 @@ export const bibliographyKey = new PluginKey('bibliography')
  */
 export default (props: BibliographyProps) => {
   const getBibliographyItem = getBibliographyItemFn(props)
+  const { style, locale } = props.cslProps
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
@@ -41,9 +47,15 @@ export default (props: BibliographyProps) => {
           getBibliographyItem(id)
         )
 
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => getBibliographyItem(id)
+        )
+
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
 
@@ -53,46 +65,58 @@ export default (props: BibliographyProps) => {
         const citations = buildCitations(citationNodes, (id: string) =>
           getBibliographyItem(id)
         )
+
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => getBibliographyItem(id)
+        )
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const citationProvider = props.getCitationProvider()
-
-      if (!citationProvider) {
-        return null
-      }
-
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
       ) as PluginState
 
-      const { citationNodes, citations } = bibliographyKey.getState(
-        newState
-      ) as PluginState
+      const { citationNodes, citations, bibliographyItems } =
+        bibliographyKey.getState(newState) as PluginState
 
       const bibliographyInserted = transactions.some((tr) => {
         const meta = tr.getMeta(bibliographyKey)
         return meta && meta.bibliographyInserted
       })
+
+      const initCitations = transactions.some((tr) => {
+        const meta = tr.getMeta(bibliographyKey)
+        return meta && meta.initCitations
+      })
       // This equality is trigged by such things as the addition of createdAt, updatedAt,
       // sessionID, _rev when the models are simply persisted to the PouchDB without modifications
-      if (isEqual(citations, oldCitations) && !bibliographyInserted) {
+      if (
+        isEqual(citations, oldCitations) &&
+        !bibliographyInserted &&
+        !initCitations
+      ) {
         return null
       }
       const { tr } = newState
       const { selection } = tr
 
       try {
-        const generatedCitations = citationProvider
-          .rebuildProcessorState(citations, 'html')
-          .map((item) => item[2]) // id, noteIndex, output
+        const generatedCitations = CitationProvider.rebuildProcessorState(
+          citations,
+          bibliographyItems,
+          style || '',
+          locale,
+          'html'
+        ).map((item) => item[2]) // id, noteIndex, output
 
         citationNodes.forEach(([node, pos], index) => {
           let contents = generatedCitations[index]

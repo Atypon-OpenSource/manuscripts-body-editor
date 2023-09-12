@@ -30,6 +30,7 @@ import {
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
+import { bibliographyKey } from '../plugins/bibliography'
 import { CitationView, CitationViewProps } from './citation'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -242,6 +243,7 @@ export class CitationEditableView extends CitationView<
     const { matchLibraryItemByIdentifier, setLibraryItem } = this.props
 
     const citation = this.getCitation()
+    let triggerUpdate = false
 
     for (const item of items) {
       const existingItem = matchLibraryItemByIdentifier(
@@ -251,6 +253,7 @@ export class CitationEditableView extends CitationView<
       if (existingItem) {
         item._id = existingItem._id
       } else {
+        triggerUpdate = true
         // add the item to the model map so it's definitely available
         setLibraryItem(item as BibliographyItem)
 
@@ -261,6 +264,14 @@ export class CitationEditableView extends CitationView<
     }
 
     this.saveCitation(citation)
+
+    if (triggerUpdate) {
+      this.view.dispatch(
+        this.view.state.tr.setMeta(bibliographyKey, {
+          bibliographyInserted: true,
+        })
+      )
+    }
 
     this.handleClose()
   }

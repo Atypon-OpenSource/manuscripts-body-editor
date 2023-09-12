@@ -378,6 +378,7 @@ const buildProps = (
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),
   getDoc: () => doc,
+  getModelMap: () => modelMap,
   cslProps: {
     style: '',
     locale: '',
