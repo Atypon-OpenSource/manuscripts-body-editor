@@ -24,6 +24,7 @@ import {
   Model,
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
@@ -56,6 +57,7 @@ interface PluginProps {
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
+  getCapabilities: () => Capabilities
   plugins?: Array<Plugin<null>>
   cslProps: CSLProps
 }
@@ -70,6 +72,7 @@ export default (props: PluginProps) => {
     modelMap,
     saveModel,
     setComment,
+    getCapabilities,
     cslProps,
   } = props
 
@@ -88,7 +91,7 @@ export default (props: PluginProps) => {
     toc({ modelMap }),
     footnotes(),
     styles({ getModel, getManuscript, modelMap }),
-    keywords(),
+    keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
       getLibraryItem,
