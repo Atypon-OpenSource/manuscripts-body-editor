@@ -889,3 +889,7 @@
 .ProseMirror .track-block-node {
   display: block;
 }
+
+.ProseMirror .track-inline-node {
+  display: inline;
+}
