@@ -89,7 +89,7 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public updateContents = () => {
-    this.dom.textContent = this.node.attrs.label
+    this.dom.textContent = this.node.attrs.customLabel || this.node.attrs.label
     this.dom.addEventListener('click', this.handleClick)
   }
 
