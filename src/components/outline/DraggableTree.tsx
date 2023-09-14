@@ -289,7 +289,6 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
           <OutlineDropPreview
             depth={depth}
             style={this.bottomPreviewStyles(mightDrop, dragPosition)}
-            className="OutlineDropPreview_after"
           />
         </Outline>
       </div>
