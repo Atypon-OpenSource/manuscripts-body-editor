@@ -15,6 +15,7 @@
  */
 
 import {
+  BibliographyElement,
   BibliographyItem,
   Citation,
   CitationItem,
@@ -190,7 +191,8 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleRemove = async (id: string) => {
-    const { saveModel } = this.props
+    console.log(' Handle remove')
+    const { saveModel, modelMap, getModel } = this.props
 
     const citation = this.getCitation()
     const embeddedCitationItems = citation.embeddedCitationItems.filter(
@@ -199,6 +201,39 @@ export class CitationEditableView extends CitationView<
 
     citation.embeddedCitationItems = embeddedCitationItems
     await saveModel(citation)
+    console.log(' updated citation')
+    console.log(citation)
+
+    let bibliographyElementID = ''
+    const citedBibliographyItems: string[] = []
+
+    for (const model of modelMap.values()) {
+      if (model.objectType === ObjectTypes.BibliographyElement) {
+        bibliographyElementID = model._id
+      } else if (model.objectType === ObjectTypes.Citation) {
+        const citation = getModel<Citation>(model._id)
+        citation &&
+          citation.embeddedCitationItems.map((citationItem: CitationItem) => {
+            citedBibliographyItems.push(citationItem.bibliographyItem)
+          })
+      }
+    }
+
+    console.log(`citedBibliographyItems`)
+    console.log(citedBibliographyItems)
+    const uniqueArray = [...new Set(citedBibliographyItems)]
+
+    const bibliographyElement = getModel<BibliographyElement>(
+      bibliographyElementID
+    )
+
+    if (bibliographyElement) {
+      bibliographyElement.containedObjectIDs = uniqueArray
+      await saveModel(bibliographyElement)
+
+      console.log('saved bibliography element - after remove')
+      console.log(bibliographyElement)
+    }
 
     if (embeddedCitationItems.length > 0) {
       window.setTimeout(() => {
@@ -224,11 +259,30 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleCite = async (items: Array<Build<BibliographyItem>>) => {
-    const { matchLibraryItemByIdentifier, saveModel, setLibraryItem } =
-      this.props
+    console.log(' Handle cite')
+    const {
+      matchLibraryItemByIdentifier,
+      saveModel,
+      setLibraryItem,
+      modelMap,
+      getModel,
+    } = this.props
 
     const citation = this.getCitation()
     let triggerUpdate = false
+
+    let bibliographyElementID = ''
+
+    for (const model of modelMap.values()) {
+      if (model.objectType === ObjectTypes.BibliographyElement) {
+        bibliographyElementID = model._id
+        break
+      }
+    }
+
+    const bibliographyElement = getModel<BibliographyElement>(
+      bibliographyElementID
+    )
 
     for (const item of items) {
       const existingItem = matchLibraryItemByIdentifier(
@@ -247,9 +301,20 @@ export class CitationEditableView extends CitationView<
       }
 
       citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))
+
+      if (bibliographyElement) {
+        !bibliographyElement.containedObjectIDs?.includes(item._id) &&
+          bibliographyElement.containedObjectIDs?.push(item._id)
+      }
     }
 
     await saveModel(citation)
+    console.log('updated citation')
+    console.log(citation)
+
+    await saveModel(bibliographyElement!)
+    console.log('saved bibliography element - after cite')
+    console.log(bibliographyElement)
 
     if (triggerUpdate) {
       this.view.dispatch(

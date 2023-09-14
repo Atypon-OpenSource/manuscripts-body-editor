@@ -382,6 +382,7 @@ export const insertInlineCitation = (
   embeddedCitationItems: string[] = []
 ) => {
   const citation = buildCitation(
+    //
     state.selection.$anchor.parent.attrs.id,
     embeddedCitationItems
   )
