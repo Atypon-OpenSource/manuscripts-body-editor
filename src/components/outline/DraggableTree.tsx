@@ -144,7 +144,6 @@ export const buildTree: TreeBuilder = ({
   parent,
 }): TreeItem => {
   const items: TreeItem[] = []
-
   const startPos = pos + 1 // TODO: don't increment this?
   const endPos = pos + node.nodeSize
   const isSelected = selected ? node.attrs.id === selected.node.attrs.id : false
@@ -206,7 +205,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const mightDrop = item && isOverCurrent && canDrop
 
-    if (isRejectedItem) {
+    if (isRejectedItem || node.attrs.id === 'META_SECTION') {
       return null
     }
 
@@ -281,7 +280,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                   key={subtree.node.attrs.id}
                   tree={subtree}
                   view={view}
-                  depth={depth + 1}
+                  depth={isSpecialSection(node) ? depth : depth + 1}
                 />
               ))}
             </div>
@@ -290,6 +289,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
           <OutlineDropPreview
             depth={depth}
             style={this.bottomPreviewStyles(mightDrop, dragPosition)}
+            className="OutlineDropPreview_after"
           />
         </Outline>
       </div>
