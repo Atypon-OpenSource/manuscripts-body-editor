@@ -59,9 +59,26 @@ const addClassnamesToEl = (
   getClassnames(...types).forEach((classname) => el.classList.add(classname))
 }
 
+const geControlsPosition = (change: TrackedChange) => {
+  const NODE_OFFSET: { [key: string]: number } = {
+    'text-change': 0,
+    'wrap-change': 0,
+    'mark-change': 0,
+    'node-attr-change': 0,
+    'node-change-keyword': 1,
+  }
+
+  const offset =
+    (change.type === 'node-change'
+      ? NODE_OFFSET[`${change.type}-${change.nodeType}`]
+      : NODE_OFFSET[change.type]) || 0
+
+  return change.to - offset
+}
+
 const createControls = (change: TrackedChange) => {
   return Decoration.widget(
-    change.to,
+    geControlsPosition(change),
     () => {
       const el = document.createElement('div')
       addClassnamesToEl(el, CLASSES.control)
