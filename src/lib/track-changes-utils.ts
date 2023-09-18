@@ -47,6 +47,14 @@ export function isPendingInsert(node: ProsemirrorNode) {
   return false
 }
 
+export function isPending(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(({ status }) => status == 'pending')
+  }
+  return false
+}
+
 export function getChangeClasses(node: ProsemirrorNode) {
   const classes: string[] = []
   if (node.attrs.dataTracked) {
@@ -56,4 +64,14 @@ export function getChangeClasses(node: ProsemirrorNode) {
     )
   }
   return classes
+}
+
+export function isTracked(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation }) => operation === 'insert' || operation === 'delete'
+    )
+  }
+  return false
 }
