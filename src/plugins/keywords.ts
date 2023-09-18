@@ -14,33 +14,130 @@
  * limitations under the License.
  */
 
-import { ObjectTypes } from '@manuscripts/json-schema'
+import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
+import { Model, ObjectTypes } from '@manuscripts/json-schema'
+import { Capabilities } from '@manuscripts/style-guide'
+import type { KeywordNode } from '@manuscripts/transform'
 import { generateID, ManuscriptNode } from '@manuscripts/transform'
+import { Node } from 'prosemirror-model'
 import {
   NodeSelection,
   Plugin,
   PluginKey,
   Transaction,
 } from 'prosemirror-state'
+import { Decoration, DecorationSet } from 'prosemirror-view'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
+
+import {
+  getChangeClasses,
+  isDeleted,
+  isPending,
+  isTracked,
+} from '../lib/track-changes-utils'
 
 export const keywordsKey = new PluginKey('keywords')
 
-const keywordsInserted = (transactions: readonly Transaction[]): boolean =>
-  transactions.some((tr) => {
-    const meta = tr.getMeta(keywordsKey)
+interface PluginState {
+  keywordNodes: KeywordNodes
+}
 
-    return meta && meta.keywordsInserted
+interface KeyworsProps {
+  getModel: <T extends Model>(id: string) => T | undefined
+  getCapabilities: () => Capabilities
+}
+
+type KeywordNodes = Array<[KeywordNode, number]>
+
+const isKeywordnNode = (node: ManuscriptNode): node is KeywordNode =>
+  node.type === node.type.schema.nodes.keyword
+
+const buildKeywordNodes = (doc: ManuscriptNode): KeywordNodes => {
+  const keywordNodes: KeywordNodes = []
+
+  doc.descendants((node: Node, pos: number) => {
+    if (isKeywordnNode(node)) {
+      keywordNodes.push([node, pos])
+    }
   })
+
+  return keywordNodes
+}
+
+const keywordsUpdated = (transactions: readonly Transaction[]): boolean =>
+  transactions.some((tr) => {
+    const metaDeleted = tr.getMeta('keywordsUpdated')
+
+    return metaDeleted
+  })
+
+const buildDecorations = (
+  keywordNodes: KeywordNodes,
+  getCapabilities: () => Capabilities
+) => {
+  const decorations: Decoration[] = []
+
+  for (const [node, pos] of keywordNodes) {
+    const nodeClasses = [...getChangeClasses(node)]
+    if (!isTracked(node)) {
+      nodeClasses.push('no-tracking')
+    }
+    const classesDecoration = Decoration.node(pos, pos + node.nodeSize, {
+      class: nodeClasses.join(' '),
+    })
+    decorations.push(classesDecoration)
+
+    if (!isPending(node) && !isDeleted(node) && getCapabilities().editArticle) {
+      const removeIconDecoration = Decoration.widget(
+        pos + node.nodeSize - 1,
+        () => {
+          const closeIconWrapper = document.createElement('span')
+          closeIconWrapper.classList.add('delete-keyword')
+          ReactDOM.render(
+            createElement(CloseIconDark, {
+              height: 8,
+              width: 8,
+              color: '#353535',
+            }),
+            closeIconWrapper
+          )
+          return closeIconWrapper
+        },
+        { side: -1 }
+      )
+      decorations.push(removeIconDecoration)
+    }
+  }
+  return decorations
+}
 
 /**
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
-export default () => {
-  return new Plugin<undefined>({
+export default (props: KeyworsProps) => {
+  return new Plugin<PluginState>({
     key: keywordsKey,
+    state: {
+      init(config, instance): PluginState {
+        const keywordNodes = buildKeywordNodes(instance.doc)
+
+        return {
+          keywordNodes,
+        }
+      },
+
+      apply(tr, value, oldState, newState): PluginState {
+        const keywordNodes = buildKeywordNodes(newState.doc)
+
+        return {
+          keywordNodes,
+        }
+      },
+    },
 
     appendTransaction(transactions, oldState, newState) {
-      if (!keywordsInserted(transactions)) {
+      if (!keywordsUpdated(transactions)) {
         return
       }
 
@@ -76,6 +173,15 @@ export default () => {
         tr.setMeta('origin', keywordsKey)
         return tr
       }
+    },
+    props: {
+      decorations(state) {
+        const { keywordNodes } = keywordsKey.getState(state)
+        return DecorationSet.create(
+          state.doc,
+          buildDecorations(keywordNodes, props.getCapabilities)
+        )
+      },
     },
   })
 }

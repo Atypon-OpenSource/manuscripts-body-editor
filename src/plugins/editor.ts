@@ -24,12 +24,14 @@ import {
   Model,
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
+import { CSLProps } from '../configs/ManuscriptsEditor'
 import keys from '../keys'
 import rules from '../rules'
 import bibliography from './bibliography'
@@ -55,7 +57,9 @@ interface PluginProps {
   modelMap: Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
+  getCapabilities: () => Capabilities
   plugins?: Array<Plugin<null>>
+  cslProps: CSLProps
 }
 
 export default (props: PluginProps) => {
@@ -68,6 +72,8 @@ export default (props: PluginProps) => {
     modelMap,
     saveModel,
     setComment,
+    getCapabilities,
+    cslProps,
   } = props
 
   const plugins = props.plugins || []
@@ -85,11 +91,12 @@ export default (props: PluginProps) => {
     toc({ modelMap }),
     footnotes(),
     styles({ getModel, getManuscript, modelMap }),
-    keywords(),
+    keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
       getLibraryItem,
       getModel,
+      cslProps,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),
