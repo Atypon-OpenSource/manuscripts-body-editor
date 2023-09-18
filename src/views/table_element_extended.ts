@@ -13,26 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { FileSectionItem } from '@manuscripts/style-guide'
-import { Node } from 'prosemirror-model'
 
-import { ExternalFileRef } from '../lib/external-files'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureProps } from './FigureComponent'
-import {
-  AttachableFilesDropdown,
-  isFigureNode,
-  isTableNode,
-} from './FigureElement'
-import ReactSubView from './ReactSubView'
 
 export class TableElementView extends BlockView<
   EditableBlockProps & FigureProps
 > {
-  private reactTools: HTMLElement
-  private reactBottomTools: HTMLElement
   public elementType = 'figure'
 
   public createElement = () => {
@@ -40,93 +29,6 @@ export class TableElementView extends BlockView<
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.contentDOM)
-  }
-
-  public getFigure = () => {
-    let figure: Node | undefined
-    this.node.content.descendants((node) => {
-      if (isTableNode(node) || isFigureNode(node)) {
-        figure = node
-      }
-    })
-    return figure
-  }
-
-  public createReactViews = () => {
-    const figure = this.getFigure()
-    const dataset =
-      figure &&
-      figure.attrs?.externalFileReferences?.find(
-        (file: ExternalFileRef) => file.kind === 'dataset'
-      )
-
-    if (figure && dataset?.ref) {
-      const props = {
-        title:
-          dataset.ref.filename ||
-          dataset.ref.displayName ||
-          dataset.ref.filename,
-        externalFile: dataset.ref,
-        showDesignationActions: true,
-      }
-      this.reactBottomTools = ReactSubView(
-        this.props,
-        FileSectionItem,
-        props,
-        this.node,
-        this.getPos,
-        this.view,
-        'tools-bottom tools-static'
-      )
-
-      if (this.reactBottomTools) {
-        this.dom.appendChild(this.reactBottomTools)
-      }
-    }
-
-    if (this.props.mediaAlternativesEnabled && this.props.getAttachments()) {
-      const addFigureExFileRef = () => {
-        // This is not active implementation but maybe used later on
-        //   if (figure) {
-        //     const newAttrs: Node['attrs'] = {
-        //       externalFileReferences: addExternalFileRef(
-        //         figure?.attrs.externalFileReferences,
-        //         attachmentId,
-        //         relation
-        //       ),
-        //     }
-        //     if (relation == 'imageRepresentation') {
-        //       newAttrs.src = publicUrl
-        //     }
-        //     setNodeAttrs(
-        //       figure,
-        //       { getPos: this.getPos, node: this.node, view: this.view },
-        //       this.view.dispatch
-        //     )(newAttrs)
-        //   }
-        console.error(
-          'Not supported at the moment. Requires reimplementation withtout external file references'
-        )
-      }
-      const componentProps = {
-        files: this.props.getAttachments(),
-        handleSelectedFile: () => null,
-        uploadAttachment: this.props.uploadAttachment,
-        addFigureExFileRef: addFigureExFileRef,
-      }
-      this.reactTools = ReactSubView(
-        this.props,
-        AttachableFilesDropdown,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view
-      )
-
-      if (this.reactTools) {
-        this.dom.appendChild(this.reactTools)
-      }
-    }
   }
 
   public updateContents = () => {
