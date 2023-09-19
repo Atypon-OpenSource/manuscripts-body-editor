@@ -50,8 +50,6 @@ const TrackChangesItems: React.FC<TCRevieItemsProps> = ({ node }) => {
       <ChangesStyled>
         <div>TO BE IMPLEMENTED:</div>
         <div>CITTC-110 - LEAN-2843</div>
-        <br />
-        <div>{JSON.stringify(node.attrs)}</div>
       </ChangesStyled>
     </>
   )
