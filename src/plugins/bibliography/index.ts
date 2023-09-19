@@ -147,7 +147,12 @@ export default (props: BibliographyProps) => {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
-          buildDecorations(state.doc, citationNodes, getBibliographyItem)
+          buildDecorations(
+            state.doc,
+            citationNodes,
+            getBibliographyItem,
+            props.popper
+          )
         )
       },
     },

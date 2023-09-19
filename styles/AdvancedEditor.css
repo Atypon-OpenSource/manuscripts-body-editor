@@ -905,3 +905,13 @@
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
   display: none;
 }
+
+.track-changes-review {
+  display: inline-block;
+  height: 36px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.track-changes-review:hover path {
+  stroke: #1a9bc7;
+}

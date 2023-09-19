@@ -33,6 +33,7 @@ import { tableEditing } from 'prosemirror-tables'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import keys from '../keys'
+import { PopperManager } from '../lib/popper'
 import rules from '../rules'
 import bibliography from './bibliography'
 import elements from './elements'
@@ -60,6 +61,7 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Array<Plugin<null>>
   cslProps: CSLProps
+  popper: PopperManager
 }
 
 export default (props: PluginProps) => {
@@ -74,6 +76,7 @@ export default (props: PluginProps) => {
     setComment,
     getCapabilities,
     cslProps,
+    popper,
   } = props
 
   const plugins = props.plugins || []
@@ -97,6 +100,7 @@ export default (props: PluginProps) => {
       getLibraryItem,
       getModel,
       cslProps,
+      popper,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),

@@ -18,7 +18,12 @@ import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes } from '@manuscripts/library'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
+import { TrackChangesReview } from '../../components/track-changes/TrackChangesReview'
+import { PopperManager } from '../../lib/popper'
+import { isPending } from '../../lib/track-changes-utils'
 import { BibliographyProps } from './types'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
@@ -41,7 +46,8 @@ export const getBibliographyItemFn =
 export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
-  getBibliographyItem: (id: string) => BibliographyItem | undefined
+  getBibliographyItem: (id: string) => BibliographyItem | undefined,
+  popper: PopperManager
 ) => {
   const decorations: Decoration[] = []
 
@@ -65,6 +71,27 @@ export const buildDecorations = (
         Decoration.node(pos, pos + node.nodeSize, {
           class: 'citation-empty',
         })
+      )
+    }
+    if (isPending(node)) {
+      decorations.push(
+        Decoration.widget(
+          pos + node.nodeSize,
+          () => {
+            const el = document.createElement('span')
+            el.classList.add('track-changes-review')
+            ReactDOM.render(
+              createElement(TrackChangesReview, {
+                node,
+                popper,
+                target: el,
+              }),
+              el
+            )
+            return el
+          },
+          { side: -1 }
+        )
       )
     }
   }

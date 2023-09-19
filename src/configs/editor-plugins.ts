@@ -33,6 +33,7 @@ import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
+import { PopperManager } from '../lib/popper'
 import auxiliary_object_order from '../plugins/auxiliary_object_order'
 import bibliography from '../plugins/bibliography'
 import comment_annotation from '../plugins/comment_annotation'
@@ -65,6 +66,7 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Array<Plugin<ManuscriptSchema>>
   cslProps: CSLProps
+  popper: PopperManager
 }
 
 export default (props: PluginProps) => {
@@ -81,6 +83,7 @@ export default (props: PluginProps) => {
     cslProps,
     setEditorSelectedSuggestion,
     getCapabilities,
+    popper,
   } = props
 
   const plugins = props.plugins || []
@@ -104,6 +107,7 @@ export default (props: PluginProps) => {
       getLibraryItem,
       getModel,
       cslProps,
+      popper,
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
