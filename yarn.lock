@@ -1587,13 +1587,13 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@1.1.8-LEAN-2744-0":
-  version "1.1.8-LEAN-2744-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.8-LEAN-2744-0.tgz#9031ce36487d6177dbdbb46d1b2396cb4e77ecd4"
-  integrity sha512-4TD4+LvnPwKn5i1DfyCd+GxQGcsYVXJj8OZBI8otQ7CzVoT+8DBOHfxPDlCd5Mar+AlJteOrOywveTag1Q218Q==
+"@manuscripts/library@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.8.tgz#2df525ce6f735830b63fa4328bfd4deee0c55980"
+  integrity sha512-3N7UWPPwvwxBLKzdHb17o1M4m3exHpq6ko2Tq8QvKVTGPFkOhkJ6RaHDyHV5vIuwEzJcMj3qsKfPiXmJNGctxA==
   dependencies:
     "@manuscripts/json-schema" "^2.1.2"
-    "@manuscripts/transform" "1.3.11-LEAN-2745"
+    "@manuscripts/transform" "^1.3.12"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
@@ -1679,6 +1679,20 @@
   integrity sha512-zJ/1LjVIORWTvKub7Zmsog2lRMBgTeau8Bo3PyRRXKdOlrRrWRhw/PXrTZA762TdAEDExWK+sHej0xRJgmrRkA==
   dependencies:
     "@manuscripts/json-schema" "^2.1.1"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.3.12":
+  version "1.3.12"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.3.12.tgz#6a8f12d52bf0a07f19af75443fd44be717c4e33d"
+  integrity sha512-1BtymdpBgtyYN4kiIXyVgWo4lGHET1wEuDH5w7UNJrZ9CglOzQlGBPSo13PK+ZxV1iDMBjDg9bGYjjW2udhAbw==
+  dependencies:
+    "@manuscripts/json-schema" "^2.1.2"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
