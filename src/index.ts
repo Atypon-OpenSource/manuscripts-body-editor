@@ -43,6 +43,7 @@ export {
   isHighlightComment,
 } from './plugins/comment_annotation'
 export * from './plugins/keywords'
+export { isMetaNode } from './plugins/track-changes-ui'
 export * from './lib/utils'
 export * from './lib/external-files'
 export { default as useEditor } from './useEditor'

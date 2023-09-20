@@ -59,7 +59,6 @@ interface BibliographyItemViewProps extends BaseNodeProps {
   deleteModel: (id: string) => Promise<string>
   setLibraryItem: (item: BibliographyItem) => void
   removeLibraryItem: (id: string) => void
-  modelMap: Map<string, Model>
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -73,30 +72,14 @@ export class BibliographyItemView<
 
   public showPopper = (referenceID: string) => {
     const {
-      filterLibraryItems,
       saveModel,
       deleteModel,
       setLibraryItem,
       removeLibraryItem,
       renderReactComponent,
-      modelMap,
+      getModelMap,
       components: { ReferencesEditor },
     } = this.props
-
-    const handleSave = async (data: Partial<BibliographyItem>) => {
-      const ref = await saveModel({
-        ...data,
-      } as BibliographyItem)
-
-      this.view.dispatch(
-        this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
-          id: ref._id,
-          containerTitle: ref['container-title'],
-          doi: ref.DOI,
-          ...ref,
-        })
-      )
-    }
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
@@ -105,12 +88,11 @@ export class BibliographyItemView<
 
     renderReactComponent(
       <ReferencesEditor
-        filterLibraryItems={filterLibraryItems}
-        saveModel={handleSave}
+        saveModel={saveModel}
         deleteModel={deleteModel}
         setLibraryItem={setLibraryItem}
         removeLibraryItem={removeLibraryItem}
-        modelMap={modelMap}
+        getModelMap={getModelMap}
         referenceID={referenceID}
       />,
       this.popperContainer
@@ -134,7 +116,8 @@ export class BibliographyItemView<
   }
 
   public updateContents = async () => {
-    const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
+    const reference = this.getNodeModel<BibliographyItem>()
+
     if (reference && this.contentDOM) {
       const bibliography = await createBibliography(
         [reference],
@@ -142,7 +125,13 @@ export class BibliographyItemView<
       )
       try {
         const fragment = sanitize(bibliography.outerHTML)
-        this.contentDOM.appendChild(fragment)
+
+        const oldBibliography = this.contentDOM.querySelector('.csl-bib-body')
+        if (oldBibliography) {
+          this.contentDOM.replaceChild(fragment, oldBibliography)
+        } else {
+          this.contentDOM.appendChild(fragment)
+        }
 
         const doubleButton = document.createElement('div')
         const editButton = document.createElement('button')
@@ -161,7 +150,7 @@ export class BibliographyItemView<
 
         editButton.addEventListener('click', (e) => {
           e.preventDefault()
-          this.showPopper(this.node.attrs.id)
+          this.showPopper(reference._id)
           this.popperContainer = undefined
         })
 

@@ -61,7 +61,6 @@ import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
@@ -362,19 +361,6 @@ export const insertLink = (
   return true
 }
 
-const needsBibliography = (state: ManuscriptEditorState) =>
-  !bibliographyKey.getState(state).citations.length &&
-  !getChildOfType(state.tr.doc, state.schema.nodes.bibliography_section)
-
-const createBibliographySection = (state: ManuscriptEditorState) =>
-  state.schema.nodes.bibliography_section.createAndFill(
-    {},
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Bibliography')
-    )
-  ) as ManuscriptNode
-
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
@@ -389,20 +375,14 @@ export const insertInlineCitation = (
   const node = state.schema.nodes.citation.create({
     rid: citation._id,
     selectedText: selectedText(),
+    embeddedCitationItems: [],
   })
 
   const pos = state.selection.to
 
   const { tr } = state
 
-  tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
-
-  if (needsBibliography(state)) {
-    tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
-      bibliographyKey,
-      { bibliographyInserted: true }
-    )
-  }
+  tr.insert(pos, node)
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
@@ -443,13 +423,11 @@ export const insertInlineEquation = (
 
   const sourcePos = state.selection.from - 1
 
-  const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [inlineMathFragment] })
-    .replaceSelectionWith(
-      state.schema.nodes.inline_equation.create({
-        id: inlineMathFragment._id,
-      })
-    )
+  const tr = state.tr.replaceSelectionWith(
+    state.schema.nodes.inline_equation.create({
+      id: inlineMathFragment._id,
+    })
+  )
 
   if (dispatch) {
     const selection = NodeSelection.create(

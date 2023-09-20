@@ -15,11 +15,12 @@
  */
 
 import {
+  NodeChange,
   trackChangesPluginKey,
   TrackChangesState,
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
-import { ManuscriptNode } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
@@ -90,6 +91,17 @@ const createControls = (change: TrackedChange) => {
     { side: -1 }
   )
 }
+
+export const isMetaNode = (nodeType: string) =>
+  nodeType === schema.nodes.bibliography_item.name ||
+  nodeType === schema.nodes.citation.name ||
+  nodeType === schema.nodes.affiliation.name ||
+  nodeType === schema.nodes.contributor.name ||
+  nodeType === schema.nodes.manuscript.name
+
+const excludeMetaNode = (change: TrackedChange) =>
+  !isMetaNode((change as NodeChange).nodeType)
+
 const decorateChanges = (state: EditorState): Decoration[] => {
   const pluginState = trackChangesPluginKey.getState(state)
 
@@ -99,7 +111,7 @@ const decorateChanges = (state: EditorState): Decoration[] => {
 
   const { pending } = pluginState.changeSet
 
-  return pending.reduce((decorations, change) => {
+  return pending.filter(excludeMetaNode).reduce((decorations, change) => {
     if (change.id === null) {
       return decorations
     }

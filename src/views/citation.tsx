@@ -20,6 +20,7 @@ import {
   CitationItem,
   ObjectTypes,
 } from '@manuscripts/json-schema'
+import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
@@ -137,7 +138,33 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public getCitation = () => {
-    const citation = this.props.getModel<Citation>(this.node.attrs.rid)
+    const attrs = this.node.attrs
+    let model = this.props.getModel<Citation>(attrs.rid)
+
+    if (!model && attrs.dataTracked) {
+      const change = attrs.dataTracked.find(
+        ({ id }: TrackedAttrs) =>
+          !!this.props.getModel(`${attrs.rid}:dataTracked:${id}`)
+      )
+
+      if (change && change.status === CHANGE_STATUS.rejected) {
+        model = {
+          _id: attrs.rid,
+          objectType: ObjectTypes.Citation,
+          embeddedCitationItems: change.oldAttrs.embeddedCitationItems,
+        } as Citation
+      } else {
+        model = this.props.getModel(`${attrs.rid}:dataTracked:${change.id}`)
+      }
+    }
+
+    const citation =
+      model ||
+      ({
+        _id: attrs.rid,
+        objectType: ObjectTypes.Citation,
+        embeddedCitationItems: this.node.attrs.embeddedCitationItems,
+      } as Citation)
 
     if (!citation) {
       throw new Error('Citation not found')

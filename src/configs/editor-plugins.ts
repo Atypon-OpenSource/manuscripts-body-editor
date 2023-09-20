@@ -39,7 +39,6 @@ import comment_annotation from '../plugins/comment_annotation'
 import elements from '../plugins/elements'
 import highlights from '../plugins/highlight'
 import keywords from '../plugins/keywords'
-import models from '../plugins/models'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -57,7 +56,7 @@ interface PluginProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
@@ -69,13 +68,11 @@ interface PluginProps {
 
 export default (props: PluginProps) => {
   const {
-    deleteModel,
     getCitationProvider,
     getLibraryItem,
     getModel,
     getManuscript,
-    modelMap,
-    saveModel,
+    getModelMap,
     setComment,
     setSelectedComment,
     cslProps,
@@ -91,13 +88,12 @@ export default (props: PluginProps) => {
     dropCursor(),
     // gapCursor(),
     history(),
-    models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     table_editing_fix(),
     elements(),
     persist(),
     sections(),
-    toc({ modelMap }),
+    toc({ getModelMap }),
     keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
@@ -106,7 +102,7 @@ export default (props: PluginProps) => {
       cslProps,
     }),
     objects({ getManuscript, getModel }),
-    auxiliary_object_order({ modelMap }),
+    auxiliary_object_order({ getModelMap }),
     comment_annotation({ setComment, setSelectedComment }),
     paragraphs(),
     placeholder(),
