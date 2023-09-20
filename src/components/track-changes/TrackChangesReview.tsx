@@ -16,7 +16,7 @@
 
 import TrackChangesReviewIcon from '@manuscripts/assets/react/TrackChangesReviewIcon'
 import { ManuscriptNode } from '@manuscripts/transform'
-import React, { createElement } from 'react'
+import React, { createElement, useState } from 'react'
 import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 
@@ -43,7 +43,7 @@ interface TCRevieItemsProps {
   node: ManuscriptNode
 }
 
-const TrackChangesItems: React.FC<TCRevieItemsProps> = ({ node }) => {
+const TrackChangesItems: React.FC<TCRevieItemsProps> = () => {
   return (
     <>
       <TitleStyled>Changes</TitleStyled>
@@ -60,16 +60,47 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
   popper,
   target,
 }) => {
+  const [clickedOutside, setClickedOutside] = useState(false)
+  const [isPopperOpen, setIsPopperOpen] = useState(false)
+  const addPopperEventListeners = () => {
+    const mouseListener: EventListener = () => {
+      window.requestAnimationFrame(() => {
+        window.removeEventListener('mousedown', mouseListener)
+        window.removeEventListener('keydown', keyListener)
+        popper.destroy()
+        setClickedOutside(true)
+        setIsPopperOpen(false)
+      })
+    }
+
+    const keyListener: EventListener = (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') {
+        window.removeEventListener('keydown', keyListener)
+        window.removeEventListener('mousedown', mouseListener)
+        popper.destroy()
+        setIsPopperOpen(false)
+      }
+    }
+
+    window.addEventListener('mousedown', mouseListener)
+    window.addEventListener('keydown', keyListener)
+  }
+
   const handleClick = () => {
-    const popperContainer = document.createElement('div')
-    popperContainer.classList.add('track-changes-review')
-    ReactDOM.render(
-      createElement(TrackChangesItems, {
-        node,
-      }),
-      popperContainer
-    )
-    popper.show(target, popperContainer, 'top-end')
+    if (!clickedOutside && !isPopperOpen) {
+      const popperContainer = document.createElement('div')
+      popperContainer.classList.add('track-changes-review')
+      ReactDOM.render(
+        createElement(TrackChangesItems, {
+          node,
+        }),
+        popperContainer
+      )
+      popper.show(target, popperContainer, 'top-end')
+      addPopperEventListeners()
+      setIsPopperOpen(true)
+    }
+    setClickedOutside(false)
   }
   return <TrackChangesReviewIcon width={36} height={36} onClick={handleClick} />
 }
