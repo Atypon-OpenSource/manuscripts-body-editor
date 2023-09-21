@@ -19,47 +19,76 @@ import 'prosemirror-view/style/prosemirror.css'
 import {
   BibliographyItem,
   CommentAnnotation,
+  Manuscript,
   Model,
+  UserProfile,
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
-import { Capabilities } from '@manuscripts/style-guide'
-import { Build, schema } from '@manuscripts/transform'
+import {
+  Capabilities,
+  FileAttachment,
+  FileManagement,
+} from '@manuscripts/style-guide'
+import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
+import { DefaultTheme } from 'styled-components'
 
 import { transformPasted } from '../lib/paste'
+import { PopperManager } from '../lib/popper'
 import { CreateView } from '../useEditor'
+import { History } from 'history'
 import plugins from './editor-plugins'
 import views from './editor-views'
-import { ViewerProps } from './ManuscriptsViewer'
 
 export type CSLProps = {
   style?: string
   locale?: string
 }
 
-export interface EditorProps extends ViewerProps {
+export interface EditorProps {
+  attributes?: { [key: string]: string }
+  locale: string
+  theme: DefaultTheme
   plugins?: Plugin[]
-  getCitationProvider: () => CitationProvider | undefined
+  getCurrentUser: () => UserProfile
+
+  projectID: string
+  doc: ManuscriptNode
+  getModelMap: () => Map<string, Model>
+  getManuscript: () => Manuscript
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
+
+  getFiles: () => FileAttachment[]
+  fileManagement: FileManagement
+
+  popper: PopperManager
+  history: History
+
+  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
+  unmountReactComponent: (container: HTMLElement) => void
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
+
+  getCapabilities: () => Capabilities
+  cslProps: CSLProps
+
+  //TODO cleanup
+  getCitationProvider: () => CitationProvider | undefined
+  getLibraryItem: (id: string) => BibliographyItem | undefined
   setLibraryItem: (item: BibliographyItem) => void
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
   filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   removeLibraryItem: (id: string) => void
+
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
-
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   environment?: string
-  uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
-  getCapabilities: () => Capabilities
-  cslProps: CSLProps
 }
 
 export default {
@@ -84,8 +113,7 @@ export default {
           right: 0,
         },
         dispatchTransaction: dispatch,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        nodeViews: views(props, dispatch) as any,
+        nodeViews: views(props, dispatch),
         attributes: props.attributes,
         transformPasted,
       }),

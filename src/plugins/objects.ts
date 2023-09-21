@@ -32,14 +32,18 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 interface Props {
+  getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
-  getModel: <T extends Model>(id: string) => T | undefined
 }
 
 /**
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
+  const getModel = <T>(id: string): T => {
+    return props.getModelMap().get(id) as T
+  }
+
   return new Plugin<Map<string, Target>>({
     key: objectsKey,
 
@@ -113,8 +117,9 @@ export default (props: Props) => {
 
       newState.doc.descendants((node, pos) => {
         if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference =
-            props.getModel<AuxiliaryObjectReference>(node.attrs.rid)
+          const auxiliaryObjectReference = getModel<AuxiliaryObjectReference>(
+            node.attrs.rid
+          )
 
           // TODO: handle missing objects?
           // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395

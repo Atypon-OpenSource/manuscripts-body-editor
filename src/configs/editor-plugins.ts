@@ -52,67 +52,45 @@ import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
 interface PluginProps {
+  getModelMap: () => Map<string, Model>
+  getManuscript: () => Manuscript
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
-  getModel: <T extends Model>(id: string) => T | undefined
-  getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion?: (id?: string) => void
   getCapabilities: () => Capabilities
-  plugins?: Array<Plugin<ManuscriptSchema>>
+  plugins?: Plugin<ManuscriptSchema>[]
   cslProps: CSLProps
 }
 
 export default (props: PluginProps) => {
-  const {
-    deleteModel,
-    getCitationProvider,
-    getLibraryItem,
-    getModel,
-    getManuscript,
-    modelMap,
-    saveModel,
-    setComment,
-    setSelectedComment,
-    cslProps,
-    setEditorSelectedSuggestion,
-    getCapabilities,
-  } = props
-
   const plugins = props.plugins || []
-
   return [
     rules,
     ...keys,
     dropCursor(),
     // gapCursor(),
     history(),
-    models({ saveModel, deleteModel }), // NOTE: this should come first
+    models(props), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     table_editing_fix(),
     elements(),
     persist(),
     sections(),
-    toc({ modelMap }),
-    keywords({ getModel, getCapabilities }),
-    bibliography({
-      getCitationProvider,
-      getLibraryItem,
-      getModel,
-      cslProps,
-    }),
-    objects({ getManuscript, getModel }),
-    auxiliary_object_order({ modelMap }),
-    comment_annotation({ setComment, setSelectedComment }),
+    toc(props),
+    keywords(props),
+    bibliography(props),
+    objects(props),
+    auxiliary_object_order(props),
+    comment_annotation(props),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    highlights({ setComment }),
-    track_changes_ui({ setEditorSelectedSuggestion }),
+    highlights(props),
+    track_changes_ui(props),
   ]
 }
 

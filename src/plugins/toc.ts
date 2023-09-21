@@ -135,7 +135,7 @@ const buildHeadingStyles = (modelMap: Map<string, Model>) => {
 }
 
 interface Props {
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
 }
 
 /**
@@ -170,7 +170,7 @@ export default (props: Props) => {
 
           list.setAttribute('data-paragraph-style', node.attrs.paragraphStyle)
 
-          const headingStyles = buildHeadingStyles(props.modelMap)
+          const headingStyles = buildHeadingStyles(props.getModelMap())
 
           buildTOCList(headingStyles, list, newState.doc)
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import {
   buildBibliographyItems,
   buildCitationNodes,
@@ -24,7 +25,7 @@ import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
+import { buildDecorations } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
 export const bibliographyKey = new PluginKey('bibliography')
@@ -34,14 +35,25 @@ export const bibliographyKey = new PluginKey('bibliography')
  * The citation labels are regenerated when any relevant content changes.
  */
 export default (props: BibliographyProps) => {
-  const getBibliographyItem = getBibliographyItemFn(props)
   const { style, locale } = props.cslProps
+
+  const getModel = <T>(id: string): T => {
+    return props.getModelMap().get(id) as T
+  }
+
+  const getBibliographyItem = (id: string) => {
+    const libraryItem = props.getLibraryItem(id)
+    if (libraryItem) {
+      return libraryItem
+    }
+    return getModel<BibliographyItem>(id)
+  }
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
-        const citationNodes = buildCitationNodes(instance.doc, props.getModel)
+        const citationNodes = buildCitationNodes(instance.doc, getModel)
 
         const citations = buildCitations(citationNodes, (id: string) =>
           getBibliographyItem(id)
@@ -60,7 +72,7 @@ export default (props: BibliographyProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const citationNodes = buildCitationNodes(newState.doc, props.getModel)
+        const citationNodes = buildCitationNodes(newState.doc, getModel)
 
         const citations = buildCitations(citationNodes, (id: string) =>
           getBibliographyItem(id)

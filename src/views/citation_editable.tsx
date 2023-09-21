@@ -35,10 +35,9 @@ import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
 export interface CitationEditableProps extends CitationViewProps {
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
-  modelMap: Map<string, Model>
+  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
@@ -59,9 +58,9 @@ export class CitationEditableView extends CitationView<
       getCapabilities,
       projectID,
       renderReactComponent,
+      getModelMap,
       saveModel,
       deleteModel,
-      modelMap,
     } = this.props
 
     const capabilities = getCapabilities()
@@ -137,7 +136,7 @@ export class CitationEditableView extends CitationView<
         items={items}
         saveModel={handleSave}
         deleteModel={deleteModel}
-        modelMap={modelMap}
+        modelMap={getModelMap()}
         setLibraryItem={setLibraryItem}
         filterLibraryItems={filterLibraryItems}
         removeLibraryItem={removeLibraryItem}
@@ -243,7 +242,7 @@ export class CitationEditableView extends CitationView<
         setLibraryItem(item as BibliographyItem)
 
         // save the new item
-        await saveModel(item)
+        await saveModel(item as BibliographyItem)
       }
 
       citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))

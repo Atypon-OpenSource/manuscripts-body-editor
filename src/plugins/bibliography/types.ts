@@ -35,6 +35,6 @@ export interface PluginState {
 export interface BibliographyProps {
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
-  getModel: <T extends Model>(id: string) => T | undefined
+  getModelMap: () => Map<string, Model>
   cslProps: CSLProps
 }

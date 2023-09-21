@@ -14,14 +14,38 @@
  * limitations under the License.
  */
 
-import { BaseNodeProps } from './base_node_view'
+import { Model } from '@manuscripts/json-schema'
+import {
+  Capabilities,
+  FileAttachment,
+  FileManagement,
+  isModelFile,
+} from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
+
+import {
+  FigureElementOptions,
+  FigureElementOptionsProps,
+} from '../components/views/FigureDropdown'
+import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
+import ReactSubView from './ReactSubView'
 
-export class FigureElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+interface FigureElementProps {
+  fileManagement: FileManagement
+  getFiles: () => FileAttachment[]
+  getModelMap: () => Map<string, Model>
+  getCapabilities: () => Capabilities
+  deleteModel: (id: string) => Promise<string>
+}
+
+export class FigureElementView extends BlockView<
+  EditableBlockProps & FigureElementProps
+> {
   private container: HTMLElement
+  private reactTools: HTMLElement
 
   public ignoreMutation = () => true
 
@@ -34,7 +58,6 @@ export class FigureElementView<
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
-
     this.container.appendChild(this.contentDOM)
   }
 
@@ -44,6 +67,20 @@ export class FigureElementView<
 
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
+    }
+
+    if (this.node.attrs.dataTracked?.length) {
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
     }
 
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
@@ -60,6 +97,73 @@ export class FigureElementView<
     }
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
+
+    const handleUpload = () => {}
+
+    const handleAdd = async (file: FileAttachment) => {
+      const {
+        state: { tr, schema, selection },
+        dispatch,
+      } = this.view
+
+      const src = file.id
+      const figure = getMatchingChild(
+        this.node,
+        (node) => node.type === schema.nodes.figure
+      )
+
+      if (figure?.attrs.src) {
+        // If there is already a figure inside, we then create a new one. This is product logic.
+        const figure = schema.nodes.figure.createAndFill(
+          {
+            src,
+          },
+          []
+        ) as FigureNode
+
+        let position = 0
+        this.node.forEach((node, pos) => {
+          if (node.type === schema.nodes.figure) {
+            position = pos + node.nodeSize
+          }
+        })
+
+        dispatch(tr.insert(this.getPos() + position + 1, figure))
+      } else if (figure) {
+        tr.setNodeMarkup(this.getPos() + 1, undefined, {
+          ...figure.attrs,
+          src,
+        }).setSelection(selection.map(tr.doc, tr.mapping))
+
+        dispatch(tr)
+      }
+
+      if (isModelFile(file)) {
+        await this.props.deleteModel(file.modelId)
+      }
+    }
+
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: FigureElementOptionsProps = {
+        can: this.props.getCapabilities(),
+        files: this.props.getFiles(),
+        modelMap: this.props.getModelMap(),
+        handleUpload,
+        handleAdd,
+      }
+      this.reactTools = ReactSubView(
+        this.props,
+        FigureElementOptions,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view
+      )
+    }
+    if (this.reactTools) {
+      //TODO
+      this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+    }
   }
 }
 

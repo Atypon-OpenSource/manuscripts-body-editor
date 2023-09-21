@@ -15,7 +15,7 @@
  */
 
 import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
-import { Model, ObjectTypes } from '@manuscripts/json-schema'
+import { ObjectTypes } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import type { KeywordNode } from '@manuscripts/transform'
 import { generateID, ManuscriptNode } from '@manuscripts/transform'
@@ -43,21 +43,20 @@ interface PluginState {
   keywordNodes: KeywordNodes
 }
 
-interface KeyworsProps {
-  getModel: <T extends Model>(id: string) => T | undefined
+interface KeywordsProps {
   getCapabilities: () => Capabilities
 }
 
 type KeywordNodes = Array<[KeywordNode, number]>
 
-const isKeywordnNode = (node: ManuscriptNode): node is KeywordNode =>
+const isKeywordNode = (node: ManuscriptNode): node is KeywordNode =>
   node.type === node.type.schema.nodes.keyword
 
 const buildKeywordNodes = (doc: ManuscriptNode): KeywordNodes => {
   const keywordNodes: KeywordNodes = []
 
   doc.descendants((node: Node, pos: number) => {
-    if (isKeywordnNode(node)) {
+    if (isKeywordNode(node)) {
       keywordNodes.push([node, pos])
     }
   })
@@ -115,7 +114,7 @@ const buildDecorations = (
 /**
  * This plugin updates the contents of a Keywords element in the document (if present) when keywords are modified in the manuscript metadata.
  */
-export default (props: KeyworsProps) => {
+export default (props: KeywordsProps) => {
   return new Plugin<PluginState>({
     key: keywordsKey,
     state: {

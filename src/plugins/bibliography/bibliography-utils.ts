@@ -19,24 +19,8 @@ import { CitationNodes } from '@manuscripts/library'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
-import { BibliographyProps } from './types'
-
 export const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
-
-/**
- * Since the library collection is only updated _after_ the models have been saved thus
- * the items not always being available, depending on how fast the page renders, as a
- * fallback the bibliography items are also retrieved from the modelsMap.
- */
-export const getBibliographyItemFn =
-  (props: BibliographyProps) => (id: string) => {
-    const libraryItem = props.getLibraryItem(id)
-    if (libraryItem) {
-      return libraryItem
-    }
-    return props.getModel<BibliographyItem>(id)
-  }
 
 export const buildDecorations = (
   doc: ManuscriptNode,

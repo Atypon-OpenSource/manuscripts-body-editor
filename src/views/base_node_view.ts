@@ -24,8 +24,8 @@ import { PopperManager } from '../lib/popper'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
+  getModelMap: () => Map<string, Model>
   popper: PopperManager
-  getModel: <T extends Model>(id: string) => T | undefined
   cslProps: CSLProps
   renderReactComponent: (
     child: React.ReactElement,
