@@ -15,13 +15,8 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
-import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import {
-  encode,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
-import { Attrs, Node } from 'prosemirror-model'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import { Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
@@ -119,44 +114,5 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
 
       this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
     }
-  }
-
-  /**
-   * This will get model that are inlined with the state of track changes,
-   * if it's rejected will return old node attributes.
-   */
-  public getNodeModel = <T extends Model>(): undefined | T => {
-    const nodeId = this.node.attrs.id || this.node.attrs.rid
-    let model = this.props.getModel(nodeId)
-
-    if (!model) {
-      const change = this.node.attrs.dataTracked?.find(
-        ({ id }: TrackedAttrs) =>
-          !!this.props.getModel(`${nodeId}:dataTracked:${id}`)
-      )
-
-      if (change && change.status === CHANGE_STATUS.rejected) {
-        model = encode(
-          this.view.state.doc
-            .resolve(this.getPos())
-            .parent.type.create({}, [this.node.type.create(change.oldAttrs)])
-        ).get(nodeId)
-      } else {
-        model = encode(this.view.state.doc.resolve(this.getPos()).parent).get(
-          nodeId
-        )
-      }
-
-      if (model && change) {
-        model = { ...model, _id: `${nodeId}:dataTracked:${change.id}` }
-      }
-    }
-
-    return model as T
-  }
-
-  public updateInlineNode = (attrs: Attrs) => {
-    const { tr } = this.view.state
-    this.view.dispatch(tr.setNodeMarkup(this.getPos(), undefined, attrs))
   }
 }

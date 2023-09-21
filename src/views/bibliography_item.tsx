@@ -29,6 +29,10 @@ import React from 'react'
 import { commentIcon, editIcon } from '../assets'
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
+import {
+  getNodeModel,
+  getReferencesModelMap,
+} from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -54,11 +58,8 @@ const createBibliography = async (
 
 interface BibliographyItemViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
-  setLibraryItem: (item: BibliographyItem) => void
-  removeLibraryItem: (id: string) => void
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -74,10 +75,7 @@ export class BibliographyItemView<
     const {
       saveModel,
       deleteModel,
-      setLibraryItem,
-      removeLibraryItem,
       renderReactComponent,
-      getModelMap,
       components: { ReferencesEditor },
     } = this.props
 
@@ -90,9 +88,7 @@ export class BibliographyItemView<
       <ReferencesEditor
         saveModel={saveModel}
         deleteModel={deleteModel}
-        setLibraryItem={setLibraryItem}
-        removeLibraryItem={removeLibraryItem}
-        getModelMap={getModelMap}
+        modelMap={getReferencesModelMap(this.view.state.doc)}
         referenceID={referenceID}
       />,
       this.popperContainer
@@ -116,7 +112,7 @@ export class BibliographyItemView<
   }
 
   public updateContents = async () => {
-    const reference = this.getNodeModel<BibliographyItem>()
+    const reference = getNodeModel<BibliographyItem>(this.node)
 
     if (reference && this.contentDOM) {
       const bibliography = await createBibliography(
@@ -150,7 +146,7 @@ export class BibliographyItemView<
 
         editButton.addEventListener('click', (e) => {
           e.preventDefault()
-          this.showPopper(reference._id)
+          this.showPopper(this.node.attrs.id)
           this.popperContainer = undefined
         })
 
