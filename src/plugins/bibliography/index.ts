@@ -124,11 +124,11 @@ export default (props: BibliographyProps) => {
           if (contents === '[NO_PRINTED_FORM]') {
             contents = ''
           }
-          console.log(node, pos)
-          // tr.setNodeMarkup(pos, undefined, {
-          //   ...node.attrs,
-          //   contents,
-          // })
+
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            contents,
+          })
         })
 
         // create a new NodeSelection
