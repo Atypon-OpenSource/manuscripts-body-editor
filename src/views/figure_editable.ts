@@ -31,6 +31,7 @@ import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import ReactSubView from './ReactSubView'
 import {createElement} from "react";
+import ReactDOM from "react-dom";
 
 export interface FigureProps {
   fileManagement: FileManagement
@@ -257,8 +258,6 @@ export class FigureEditableView extends FigureView<
   }
 
   private createImg = (src: string) => {
-    const separator = src.includes('?') ? '&' : '?'
-    src += separator + FORMAT_PARAM
     const img = document.createElement('img')
     img.classList.add('figure-image')
     img.src = src
