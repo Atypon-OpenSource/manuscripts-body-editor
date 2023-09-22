@@ -18,7 +18,7 @@ import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
-  FileManagement,
+  FileManagement, UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 
@@ -30,8 +30,7 @@ import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import ReactSubView from './ReactSubView'
-
-const FORMAT_PARAM = 'format=jpg'
+import {createElement} from "react";
 
 export interface FigureProps {
   fileManagement: FileManagement
@@ -102,8 +101,8 @@ export class FigureEditableView extends FigureView<
 
     const capabilities = this.props.getCapabilities()
 
-    const img =
-      file && file.link ? this.createImg(file.link) : this.createPlaceholder()
+    const link = this.props.fileManagement.previewLink(file)
+    const img = link ? this.createImg(link) : file.name ? this.createUnsupportedFormat(file.name) : this.createPlaceholder()
 
     const handleDownload = () => {
       this.props.fileManagement.download(file)
@@ -216,6 +215,45 @@ export class FigureEditableView extends FigureView<
     }).setSelection(selection.map(tr.doc, tr.mapping))
 
     this.view.dispatch(tr)
+  }
+
+  private createUnsupportedFormat = (name: string) => {
+    const element = document.createElement('div')
+    element.classList.add('figure', 'placeholder')
+
+    const instructions = document.createElement('div')
+    instructions.classList.add('instructions')
+
+    const iconContainer = document.createElement('div')
+    ReactDOM.render(
+      createElement(UnsupportedFormatFileIcon, { className: 'icon' }),
+      iconContainer,
+      () => {
+        const target = instructions.querySelector('.unsupported-icon-wrapper')
+        if (target) {
+          target.innerHTML = iconContainer.innerHTML
+        }
+      }
+    )
+
+    instructions.innerHTML = `
+        <div>
+          <div class="unsupported-icon-wrapper"></div>
+          <div>${name}</div>
+          <div class="unsupported-format-label">
+            Unsupported file format
+          </div>
+          <div>
+            ${
+      this.props.getCapabilities()?.editArticle
+        ? 'Click to add image'
+        : 'No image here yet…'
+    }
+          </div>
+        </div>
+      `
+
+    return element
   }
 
   private createImg = (src: string) => {
