@@ -540,7 +540,7 @@ export const insertGraphicalAbstract = (
   }
 
   const section = state.schema.nodes.graphical_abstract_section.createAndFill(
-    {},
+    { category: 'MPSectionCategory:abstract-graphical' },
     [
       state.schema.nodes.section_title.create(
         {},
