@@ -31,6 +31,7 @@ import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
+import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
 interface FigureElementProps {
@@ -98,7 +99,11 @@ export class FigureElementView extends BlockView<
 
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
-    const handleUpload = () => {}
+    const can = this.props.getCapabilities()
+
+    let handleUpload = () => {
+      //noop
+    }
 
     const handleAdd = async (file: FileAttachment) => {
       const {
@@ -143,9 +148,18 @@ export class FigureElementView extends BlockView<
       }
     }
 
+    if (can.uploadFile) {
+      const upload = async (file: File) => {
+        const result = await this.props.fileManagement.upload(file)
+        await handleAdd(result)
+      }
+
+      handleUpload = figureUploader(upload)
+    }
+
     if (this.props.dispatch && this.props.theme) {
       const componentProps: FigureElementOptionsProps = {
-        can: this.props.getCapabilities(),
+        can: can,
         files: this.props.getFiles(),
         modelMap: this.props.getModelMap(),
         handleUpload,
@@ -159,9 +173,7 @@ export class FigureElementView extends BlockView<
         this.getPos,
         this.view
       )
-    }
-    if (this.reactTools) {
-      //TODO
+      this.reactTools?.remove()
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
   }

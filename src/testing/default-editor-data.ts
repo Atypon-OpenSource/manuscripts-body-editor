@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Manuscript,
-  Model,
-  UserProfile,
-} from '@manuscripts/json-schema'
+import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
 import { ActualManuscriptNode, Build, schema } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'

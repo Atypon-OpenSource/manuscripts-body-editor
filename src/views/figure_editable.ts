@@ -18,9 +18,12 @@ import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
-  FileManagement, UnsupportedFormatFileIcon,
+  FileManagement,
+  UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
 import {
   FigureOptions,
@@ -29,9 +32,8 @@ import {
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
+import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-import {createElement} from "react";
-import ReactDOM from "react-dom";
 
 export interface FigureProps {
   fileManagement: FileManagement
@@ -100,17 +102,21 @@ export class FigureEditableView extends FigureView<
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const capabilities = this.props.getCapabilities()
+    const can = this.props.getCapabilities()
 
-    const link = this.props.fileManagement.previewLink(file)
-    const img = link ? this.createImg(link) : file.name ? this.createUnsupportedFormat(file.name) : this.createPlaceholder()
+    const link = file && this.props.fileManagement.previewLink(file)
+    const img = link
+      ? this.createImg(link)
+      : file
+      ? this.createUnsupportedFormat(file.name)
+      : this.createPlaceholder()
 
     const handleDownload = () => {
       this.props.fileManagement.download(file)
     }
 
     let handleUpload = () => {
-      //
+      //noop
     }
 
     const handleReplace = (file: FileAttachment) => {
@@ -121,25 +127,13 @@ export class FigureEditableView extends FigureView<
       this.setSrc('')
     }
 
-    if (capabilities.uploadFile) {
+    if (can.uploadFile) {
       const upload = async (file: File) => {
         const result = await this.props.fileManagement.upload(file)
         this.setSrc(result.id)
       }
 
-      const handleFileChange = async (e: Event) => {
-        const target = e.target as HTMLInputElement
-        if (target && target.files && target.files.length) {
-          await upload(target.files[0])
-        }
-      }
-
-      const input = document.createElement('input')
-      input.accept = 'image/*'
-      input.type = 'file'
-      input.addEventListener('change', handleFileChange)
-
-      handleUpload = () => input.click()
+      handleUpload = figureUploader(upload)
 
       img.addEventListener('click', handleUpload)
 
@@ -184,7 +178,7 @@ export class FigureEditableView extends FigureView<
 
     if (this.props.dispatch && this.props.theme) {
       const componentProps: FigureOptionsProps = {
-        can: capabilities,
+        can,
         files,
         modelMap: this.props.getModelMap(),
         handleDownload,
@@ -201,8 +195,6 @@ export class FigureEditableView extends FigureView<
         this.getPos,
         this.view
       )
-    }
-    if (this.reactTools) {
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
   }
@@ -246,10 +238,10 @@ export class FigureEditableView extends FigureView<
           </div>
           <div>
             ${
-      this.props.getCapabilities()?.editArticle
-        ? 'Click to add image'
-        : 'No image here yet…'
-    }
+              this.props.getCapabilities()?.editArticle
+                ? 'Click to add image'
+                : 'No image here yet…'
+            }
           </div>
         </div>
       `

@@ -30,6 +30,7 @@ import {
   FileManagement,
 } from '@manuscripts/style-guide'
 import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
+import { History } from 'history'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
@@ -38,7 +39,6 @@ import { DefaultTheme } from 'styled-components'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import { CreateView } from '../useEditor'
-import { History } from 'history'
 import plugins from './editor-plugins'
 import views from './editor-views'
 

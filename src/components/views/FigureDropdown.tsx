@@ -21,11 +21,11 @@ import {
   AttachIcon,
   Capabilities,
   DropdownList,
-  extensionsWithFileTypesMap,
   FileAttachment,
-  fileTypesWithIconMap,
+  getFileIcon,
   IconButton,
   IconTextButton,
+  isImageFile,
   RoundIconButton,
   UploadIcon,
   useDropdown,
@@ -33,12 +33,6 @@ import {
 } from '@manuscripts/style-guide'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
-
-const getIcon = (file: FileAttachment) => {
-  const fileExtension = file.name.split('.').pop() || ''
-  const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
-  return fileTypesWithIconMap.get(fileType)
-}
 
 export interface FigureDropdownProps {
   can: Capabilities
@@ -88,9 +82,9 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             buttonText={'Supplements'}
             list={
               <>
-                {supplements.map((file) => (
+                {supplements.filter(isImageFile).map((file) => (
                   <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
-                    {getIcon(file)}
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -103,9 +97,9 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             buttonText={'Other files'}
             list={
               <>
-                {otherFiles.map((file) => (
+                {otherFiles.filter(isImageFile).map((file) => (
                   <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
-                    {getIcon(file)}
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -159,17 +153,17 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
             moveLeft
             list={
               <>
-                {otherFiles.map((file, index) => (
+                {otherFiles.filter(isImageFile).map((file, index) => (
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
                     onClick={() => handleReplace(file)}
                   >
-                    {getIcon(file)}
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
-                <UploadButton onClick={handleUpload}>
+                <UploadButton onClick={handleUpload} disabled={!can.uploadFile}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
               </>
