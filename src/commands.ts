@@ -29,6 +29,7 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isInAbstractsSection,
   isInBibliographySection,
   isSectionNodeType,
   ManuscriptEditorState,
@@ -529,7 +530,11 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   const pos = findPosAfterParentSection(state.selection.$from)
-  if (pos === null || isInBibliographySection(state.selection.$from)) {
+  if (
+    pos === null ||
+    isInBibliographySection(state.selection.$from) ||
+    !isInAbstractsSection(state.selection.$from)
+  ) {
     return false
   }
   // check if another graphical abstract already exists
