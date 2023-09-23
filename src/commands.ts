@@ -56,7 +56,11 @@ import { findWrapping } from 'prosemirror-transform'
 import { findParentNode } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  getMatchingDescendant,
+} from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
@@ -539,7 +543,10 @@ export const insertGraphicalAbstract = (
   }
   // check if another graphical abstract already exists
   if (
-    getChildOfType(state.doc, state.schema.nodes.graphical_abstract_section)
+    !!getMatchingDescendant(
+      state.doc,
+      (node) => node.type === state.schema.nodes.graphical_abstract_section
+    )
   ) {
     return false
   }
