@@ -101,7 +101,7 @@ export class CitationEditableView extends CitationView<
     }
 
     const handleSave = async (data: Partial<BibliographyItem>) => {
-      if (data._id && findPosition(this.view.state.doc, data._id)) {
+      if (data._id && !findPosition(this.view.state.doc, data._id)) {
         this.insertBibliographyNode(this.view, data as Build<BibliographyItem>)
       } else {
         await saveModel({
