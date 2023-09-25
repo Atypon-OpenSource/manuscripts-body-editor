@@ -29,6 +29,7 @@ import {
 import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
 import { OrderListSelector } from './components/toolbar/OrderListSelector'
 import icons from './icons'
+import { skipTrackingChanges } from './keys/list'
 
 export const toolbar: ToolbarConfig = {
   style: {
@@ -76,13 +77,13 @@ export const toolbar: ToolbarConfig = {
       content: icons.bullet_list,
       active: blockActive(schema.nodes.bullet_list),
       enable: wrapInList(schema.nodes.bullet_list),
-      run: wrapInList(schema.nodes.bullet_list),
+      run: skipTrackingChanges(wrapInList(schema.nodes.bullet_list)),
     },
     ordered_list: {
       title: 'Wrap in ordered list',
       active: blockActive(schema.nodes.ordered_list),
       enable: wrapInList(schema.nodes.ordered_list),
-      run: wrapInList(schema.nodes.ordered_list),
+      run: skipTrackingChanges(wrapInList(schema.nodes.ordered_list)),
       Component: OrderListSelector,
     },
   },
