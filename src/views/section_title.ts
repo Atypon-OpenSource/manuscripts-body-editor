@@ -51,10 +51,12 @@ export class SectionTitleView<
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-
+      // the first level is hidden
+      // other levels are shifted by 1
+      const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
       this.contentDOM.setAttribute(
         'data-placeholder',
-        `${sectionLevel($pos.depth)} heading`
+        `${sectionLevel(level)} heading`
       )
     }
   }
