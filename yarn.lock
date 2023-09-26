@@ -1587,6 +1587,14 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
+"@manuscripts/json-schema@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0.tgz#8507707f00c0e6cead4f4e2f2e1797f9bccec4af"
+  integrity sha512-2ooif0jtIld5bA44DHPpsNbDvdoQWaFcNXiBlc7OQ0znY37e5juMipknEtNTvdHCtHpzBkrLJt7k77bBT7VaVQ==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+
 "@manuscripts/library@^1.1.8":
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.8.tgz#2df525ce6f735830b63fa4328bfd4deee0c55980"
@@ -1600,10 +1608,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.3.2-LEAN-2585-0":
-  version "1.3.2-LEAN-2585-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.2-LEAN-2585-0.tgz#dff0ce91633a58155c1ac45601c37d863fbbe63c"
-  integrity sha512-29wnpvlE8DKa/JxmVkutGrAx42Y/yFR/dwUGCAPfF5m5HW+UW3X1hWrpd4tgzTzZWiqsPrDQBvSKzu2S6tdtYQ==
+"@manuscripts/style-guide@1.3.3-LEAN-2585-0":
+  version "1.3.3-LEAN-2585-0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.3-LEAN-2585-0.tgz#0a245e2cdcdefc05e838fdd670136392961cea6f"
+  integrity sha512-8sf3fSYVgtSspJo5+KbD6fxh5B9Pl7u+imhuSPoFgo9A4v4DQmraveAhKNGDZ4O9OZYvbKYy7VHPYhJEIHr6wA==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1612,7 +1620,7 @@
     "@manuscripts/comment-editor" "^1.0.3"
     "@manuscripts/json-schema" "^2.1.2"
     "@manuscripts/title-editor" "^1.1.0"
-    "@manuscripts/transform" "^1.3.12"
+    "@manuscripts/transform" "^1.4.1"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1679,6 +1687,20 @@
   integrity sha512-1BtymdpBgtyYN4kiIXyVgWo4lGHET1wEuDH5w7UNJrZ9CglOzQlGBPSo13PK+ZxV1iDMBjDg9bGYjjW2udhAbw==
   dependencies:
     "@manuscripts/json-schema" "^2.1.2"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.1.tgz#e910d09720ae8e4a599532f005da51bbbf359db0"
+  integrity sha512-4OfN2iQ48rHYOhHHW8TR2rw13Uj1jjeGxW8HLPkdF5wiZUsz/lwHiQVgIfwaCQ0do506DEjOyYq3GWIO7gMNmw==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
