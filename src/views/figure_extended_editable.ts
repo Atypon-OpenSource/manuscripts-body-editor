@@ -80,6 +80,7 @@ export class FigureEditableView extends FigureView<
 
     this.createDOM()
     this.updateContents()
+    
   }
 
   // TODO: load/subscribe to the figure style object from the database and use it here?
@@ -150,7 +151,7 @@ export class FigureEditableView extends FigureView<
 
       if (ref) {
         this.setFigureAttrs({
-          src: '',
+          src: ''
         })
       }
     }
@@ -167,7 +168,9 @@ export class FigureEditableView extends FigureView<
 
       if (
         this.node.attrs.dataTracked[0].status === 'rejected' &&
-        this.node.attrs.dataTracked[0].operation === 'set_attrs'
+        this.node.attrs.dataTracked[0].operation === 'set_attrs' &&
+        this.dom.hasAttribute("data-track-status") &&
+        this.dom.hasAttribute('data-track-op')
       ) {
         attrs = this.node.attrs.dataTracked[0].oldAttrs
       }
@@ -213,7 +216,6 @@ export class FigureEditableView extends FigureView<
         this.envokeFileInput = () => {
           input.click()
         }
-
         img.addEventListener('click', this.envokeFileInput)
 
         img.addEventListener('mouseenter', () => {
@@ -361,6 +363,7 @@ export class FigureEditableView extends FigureView<
 
     this.view.dispatch(tr)
   }
+
 }
 
 export default createEditableNodeView(FigureEditableView)
