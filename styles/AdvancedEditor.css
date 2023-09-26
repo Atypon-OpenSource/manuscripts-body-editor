@@ -809,12 +809,25 @@
   line-height: 16px;
   margin-right: 4px;
   margin-bottom: 4px;
-  padding: 4px 8px;
   border: 1px solid #f2f2f2;
+  border-radius: 6px;
+  position: relative;
+}
+
+.keywords-list span.keyword.no-tracking {
+  padding: 4px 8px;
+}
+
+.keywords-list span.keyword ins,
+.keywords-list span.keyword del {
+  display: inline-block;
+  padding: 4px 8px;
   border-radius: 6px;
 }
 
-.keywords-list span.keyword:hover {
+.keywords-list span.keyword:hover,
+.keywords-list span.keyword:hover ins,
+.keywords-list span.keyword:hover del {
   background-color: #f2fbfc;
   border-color: #f2fbfc;
 }
@@ -828,6 +841,9 @@
 .keywords-list .keyword.deleted.accepted {
   text-decoration: line-through;
 }
+.keywords-list .keyword .track-changes--control {
+  top: 0;
+}
 
 .keywords-list span.delete-keyword {
   cursor: pointer;
@@ -837,6 +853,10 @@
 
 .keywords-list span.delete-keyword:hover {
   opacity: 1;
+}
+
+.keywords-list .deleted.accepted span.delete-keyword {
+  display: none;
 }
 
 .keywords-list > div {

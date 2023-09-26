@@ -25,6 +25,7 @@ import {
   Model,
 } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { Capabilities } from '@manuscripts/style-guide'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
@@ -48,6 +49,7 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
+import { CSLProps } from './ManuscriptsEditor'
 
 interface PluginProps {
   deleteModel: (id: string) => Promise<string>
@@ -60,7 +62,9 @@ interface PluginProps {
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion?: (id?: string) => void
+  getCapabilities: () => Capabilities
   plugins?: Array<Plugin<ManuscriptSchema>>
+  cslProps: CSLProps
 }
 
 export default (props: PluginProps) => {
@@ -74,7 +78,9 @@ export default (props: PluginProps) => {
     saveModel,
     setComment,
     setSelectedComment,
+    cslProps,
     setEditorSelectedSuggestion,
+    getCapabilities,
   } = props
 
   const plugins = props.plugins || []
@@ -92,11 +98,12 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc({ modelMap }),
-    keywords(),
+    keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
       getLibraryItem,
       getModel,
+      cslProps,
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),
