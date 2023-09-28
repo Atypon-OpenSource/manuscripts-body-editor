@@ -1595,23 +1595,23 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@1.1.8-LIT-537312-0":
-  version "1.1.8-LIT-537312-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.8-LIT-537312-0.tgz#4fbb39ae564059166ed7f0b6968c3fca3e816aa0"
-  integrity sha512-wznoJhK4dMpFkrAP9ucVgsOQu1A7n6avW92S7JYkg0RjOFjr3sGf/CcMwwMP95RPk9KR9Zz3SiB/S88P9U1rVQ==
+"@manuscripts/library@1.1.8-LIT-537312-1":
+  version "1.1.8-LIT-537312-1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.8-LIT-537312-1.tgz#d5855249ed95e6705f73b94a6871cf067d85d9af"
+  integrity sha512-S0HSIkbxsfHho/vKfAq8AzCZwG+XNXuqm9RXTmvujntJxmQmtibzKJ3GouDWkgeFSWzPwqXWX3ulG5ANuNLTVg==
   dependencies:
     "@manuscripts/json-schema" "^2.1.2"
-    "@manuscripts/transform" "1.4.1-LIT-537312-0"
+    "@manuscripts/transform" "1.4.1-LIT-537312-2"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.3.3-LIT-537312-0":
-  version "1.3.3-LIT-537312-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.3-LIT-537312-0.tgz#bef3021d1727971b40fc68051cf87482ccdc5a7a"
-  integrity sha512-AUiFUFEVIcbHlpmfW/JBnEVZijohMsT5pAekInLZjWaE2B/JoRE2BNQuOBgKnPXVXdW0V1RbPsszvBjrx8719A==
+"@manuscripts/style-guide@1.3.3-LIT-537312-1":
+  version "1.3.3-LIT-537312-1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.3-LIT-537312-1.tgz#8d254c8b733b4d85434f7146e3277e79f5e02865"
+  integrity sha512-C9lYXdHO+S2I87fAhB1uKF+0zlqMavZelK+L+mnQp7tqhD+5yLITKe1QPqjZO+njcjvOqB9d5nc3qAjujDm32g==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1620,7 +1620,7 @@
     "@manuscripts/comment-editor" "^1.0.3"
     "@manuscripts/json-schema" "^2.1.2"
     "@manuscripts/title-editor" "^1.1.0"
-    "@manuscripts/transform" "1.4.1-LIT-537312-0"
+    "@manuscripts/transform" "1.4.1-LIT-537312-2"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1681,10 +1681,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@1.4.1-LIT-537312-0":
-  version "1.4.1-LIT-537312-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.1-LIT-537312-0.tgz#33d37ca9f8a8d0f15b30a397a3076e58bb4a320c"
-  integrity sha512-I7/OuxKTkxeVz84ZKZZ6690ujCfVvzaC5TTx5CtOYNWojFi5Su/JZ3yVkrQrS+ZyUta9pX1MF9xLbPCnVuxVEw==
+"@manuscripts/transform@1.4.1-LIT-537312-2":
+  version "1.4.1-LIT-537312-2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.1-LIT-537312-2.tgz#a9d6fb7d775048171d5bc441d0bda585be114e78"
+  integrity sha512-LeB/AgjQI3J15MlJMLjDkISlWIX2K7qowX4kEFNw+ZNWNJeX0QKQik9+9p6+mHrHTlnS7BltVGktWhb/K6dYRw==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
