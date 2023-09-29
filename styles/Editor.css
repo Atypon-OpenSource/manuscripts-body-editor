@@ -947,3 +947,8 @@
 .graphical-abstract .listing {
   display: none;
 }
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 30px !important;
+}
