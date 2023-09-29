@@ -21,6 +21,7 @@ import {
   Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
+import { matchLibraryItemByIdentifier } from '@manuscripts/library'
 import {
   Build,
   buildEmbeddedCitationItem,
@@ -54,7 +55,6 @@ export class CitationEditableView extends CitationView<
       getCapabilities,
       projectID,
       renderReactComponent,
-      saveModel,
       deleteModel,
     } = this.props
 
@@ -104,8 +104,18 @@ export class CitationEditableView extends CitationView<
       if (data._id && !findPosition(this.view.state.doc, data._id)) {
         this.insertBibliographyNode(this.view, data as Build<BibliographyItem>)
       } else {
-        await saveModel({
-          ...data,
+        const {
+          _id: id,
+          'container-title': containerTitle,
+          DOI: doi,
+          ...rest
+        } = data as BibliographyItem
+
+        this.updateNodeAttrs({
+          id,
+          containerTitle,
+          doi,
+          ...rest,
         })
       }
     }
@@ -206,14 +216,16 @@ export class CitationEditableView extends CitationView<
   }
 
   private handleCite = async (items: Array<Build<BibliographyItem>>) => {
-    const { matchLibraryItemByIdentifier } = this.props
-
     const citation = this.getCitation()
     let triggerUpdate = false
 
     for (const item of items) {
       const existingItem = matchLibraryItemByIdentifier(
-        item as BibliographyItem
+        item as BibliographyItem,
+        getReferencesModelMap(this.view.state.doc) as Map<
+          string,
+          BibliographyItem
+        >
       )
 
       if (existingItem) {
@@ -266,20 +278,32 @@ export class CitationEditableView extends CitationView<
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
-    const { matchLibraryItemByIdentifier, saveModel } = this.props
-
     const newItems: BibliographyItem[] = []
 
     for (const item of items) {
       const existingItem = matchLibraryItemByIdentifier(
-        item as BibliographyItem
+        item as BibliographyItem,
+        getReferencesModelMap(this.view.state.doc) as Map<
+          string,
+          BibliographyItem
+        >
       )
 
       if (!existingItem) {
-        // save the new item
-        const newItem = await saveModel(item as BibliographyItem)
+        const {
+          _id: id,
+          'container-title': containerTitle,
+          DOI: doi,
+          ...rest
+        } = item as BibliographyItem
 
-        newItems.push(newItem)
+        this.updateNodeAttrs({
+          id,
+          containerTitle,
+          doi,
+          ...rest,
+        })
+        newItems.push(item as BibliographyItem)
       }
     }
 
