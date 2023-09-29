@@ -158,7 +158,7 @@ export class FigureEditableView extends FigureView<
   }
 
   public updateContents = () => {
-    let attrs = this.node.attrs
+    let attrs = { ...this.node.attrs }
 
     if (this.node.attrs.dataTracked?.length) {
       /*
