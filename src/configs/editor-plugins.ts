@@ -48,6 +48,7 @@ import sections from '../plugins/sections'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
+import tracking_mark from '../plugins/tracking-mark'
 import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
@@ -65,6 +66,10 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Array<Plugin<ManuscriptSchema>>
   cslProps: CSLProps
+  renderReactComponent: (
+    child: React.ReactElement,
+    container: HTMLElement
+  ) => void
 }
 
 export default (props: PluginProps) => {
@@ -81,6 +86,7 @@ export default (props: PluginProps) => {
     cslProps,
     setEditorSelectedSuggestion,
     getCapabilities,
+    renderReactComponent,
   } = props
 
   const plugins = props.plugins || []
@@ -113,6 +119,9 @@ export default (props: PluginProps) => {
     tableEditing(),
     highlights({ setComment }),
     track_changes_ui({ setEditorSelectedSuggestion }),
+    tracking_mark({
+      renderReactComponent,
+    }),
   ]
 }
 

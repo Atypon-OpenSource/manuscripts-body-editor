@@ -742,6 +742,7 @@
 }
 
 .bib-item {
+  display: flex;
   margin-bottom: 12px;
   min-height: 80px;
 }
@@ -877,6 +878,20 @@
 
 .keywords > .block-section_title > .block {
   align-items: center;
+}
+
+.attrs-track-mark:hover, .attrs-track-mark:has(.attrs-popper-button-active) {
+  background: #a3eaff !important;
+}
+
+.attrs-popper-button-active, .attrs-track-mark:hover .attrs-popper-button {
+  display: inline-flex;
+}
+
+.attrs-popper-button,.attrs-popper-button-active {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .ProseMirror .inserted.pending {
