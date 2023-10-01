@@ -88,7 +88,7 @@ export class BibliographyItemView<
       <ReferencesEditor
         saveModel={saveModel}
         deleteModel={deleteModel}
-        modelMap={getReferencesModelMap(this.view.state.doc)}
+        modelMap={getReferencesModelMap(this.view.state.doc, true)}
         referenceID={referenceID}
       />,
       this.popperContainer

@@ -101,7 +101,10 @@ const cleanData = <T extends Model>(model: T) =>
  * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
  * as it's easier to deal with the manuscript Models for both references list & citation popup view
  */
-export const getNodeModel = <T extends Model>(node: ManuscriptNode): T => {
+export const getNodeModel = <T extends Model>(
+  node: ManuscriptNode,
+  excludeDeletedNode?: boolean
+): T | undefined => {
   const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
     a.updatedAt > b.updatedAt ? a : b
   const mapNodeToModel = (attrs: Attrs, nodeType: NodeType): T => {
@@ -135,6 +138,16 @@ export const getNodeModel = <T extends Model>(node: ManuscriptNode): T => {
   const nodeChange = (dataTracked as TrackedAttrs[] | undefined)?.reduce(
     getLatest
   )
+
+  if (
+    nodeChange &&
+    excludeDeletedNode &&
+    nodeChange.operation === CHANGE_OPERATION.delete &&
+    nodeChange.status !== CHANGE_STATUS.rejected
+  ) {
+    return undefined
+  }
+
   const isRejected =
     nodeChange &&
     nodeChange.operation === CHANGE_OPERATION.set_node_attributes &&
@@ -146,14 +159,17 @@ export const getNodeModel = <T extends Model>(node: ManuscriptNode): T => {
 /**
  * Return model map that are built primarily from PM document
  */
-export const getReferencesModelMap = (doc: ManuscriptNode) => {
+export const getReferencesModelMap = (
+  doc: ManuscriptNode,
+  excludeDeletedNode?: boolean
+) => {
   const modelMap = new Map<string, Model>()
   doc.descendants((node) => {
     if (
       node.type === schema.nodes.bibliography_item ||
       node.type === schema.nodes.citation
     ) {
-      const model = getNodeModel(node)
+      const model = getNodeModel(node, excludeDeletedNode)
       if (model) {
         modelMap.set(model._id, model)
       }

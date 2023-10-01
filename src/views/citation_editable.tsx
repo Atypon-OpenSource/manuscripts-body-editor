@@ -130,7 +130,7 @@ export class CitationEditableView extends CitationView<
         items={items}
         saveModel={handleSave}
         deleteModel={deleteModel}
-        modelMap={getReferencesModelMap(this.view.state.doc)}
+        modelMap={getReferencesModelMap(this.view.state.doc, true)}
         insertBibliographyNode={(item: Build<BibliographyItem>) =>
           this.insertBibliographyNode(this.view, item)
         }
