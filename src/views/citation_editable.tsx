@@ -290,19 +290,8 @@ export class CitationEditableView extends CitationView<
       )
 
       if (!existingItem) {
-        const {
-          _id: id,
-          'container-title': containerTitle,
-          DOI: doi,
-          ...rest
-        } = item as BibliographyItem
+        await this.insertBibliographyNode(this.view, item)
 
-        this.updateNodeAttrs({
-          id,
-          containerTitle,
-          doi,
-          ...rest,
-        })
         newItems.push(item as BibliographyItem)
       }
     }
