@@ -73,11 +73,26 @@ export class BibliographyItemView<
 
   public showPopper = (referenceID: string) => {
     const {
-      saveModel,
       deleteModel,
       renderReactComponent,
       components: { ReferencesEditor },
     } = this.props
+
+    const handleSave = async (data: Partial<BibliographyItem>) => {
+      const {
+        _id: id,
+        'container-title': containerTitle,
+        DOI: doi,
+        ...rest
+      } = data as BibliographyItem
+
+      this.updateNodeAttrs({
+        id,
+        containerTitle,
+        doi,
+        ...rest,
+      })
+    }
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
@@ -86,7 +101,7 @@ export class BibliographyItemView<
 
     renderReactComponent(
       <ReferencesEditor
-        saveModel={saveModel}
+        saveModel={handleSave}
         deleteModel={deleteModel}
         modelMap={getReferencesModelMap(this.view.state.doc, true)}
         referenceID={referenceID}

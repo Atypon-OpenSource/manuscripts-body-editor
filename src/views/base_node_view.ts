@@ -15,7 +15,11 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import {
+  isMetaNode,
+  ManuscriptEditorView,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import { Attrs, Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 
@@ -119,9 +123,12 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   public updateNodeAttrs = (attrs: Attrs) => {
     this.view.state.doc.descendants((node, pos) => {
       if (node.attrs.id === attrs.id) {
-        this.view.dispatch(
-          this.view.state.tr.setNodeMarkup(pos, undefined, attrs)
-        )
+        const tr = this.view.state.tr.setNodeMarkup(pos, undefined, attrs)
+        if (isMetaNode(node.type.name)) {
+          tr.setMeta('track-changes-update-meta-node', true)
+        }
+
+        this.view.dispatch(tr)
       }
     })
   }
