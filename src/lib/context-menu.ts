@@ -93,7 +93,7 @@ export class ContextMenu {
             ? `“${this.trimTitle(sectionTitle, 30)}”`
             : 'This Section'
           const itemLabel = `New ${sectionLevel(
-            $pos.depth
+            $pos.depth - 1
           )} ${labelPosition} ${itemTitle}`
 
           if (insertableTypes.section) {
@@ -107,7 +107,7 @@ export class ContextMenu {
 
           if (insertableTypes.subsection) {
             const subItemLabel = `New ${sectionLevel(
-              $pos.depth + 1
+              $pos.depth
             )} to ${itemTitle}`
 
             section.appendChild(
