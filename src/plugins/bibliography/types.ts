@@ -37,4 +37,5 @@ export interface BibliographyProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   cslProps: CSLProps
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }

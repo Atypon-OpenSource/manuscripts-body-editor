@@ -60,6 +60,7 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Array<Plugin<null>>
   cslProps: CSLProps
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }
 
 export default (props: PluginProps) => {
@@ -74,6 +75,7 @@ export default (props: PluginProps) => {
     setComment,
     getCapabilities,
     cslProps,
+    setCiteprocCitations,
   } = props
 
   const plugins = props.plugins || []
@@ -97,6 +99,7 @@ export default (props: PluginProps) => {
       getLibraryItem,
       getModel,
       cslProps,
+      setCiteprocCitations,
     }),
     objects({ getManuscript, getModel }),
     paragraphs(),

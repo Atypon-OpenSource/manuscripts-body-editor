@@ -32,6 +32,7 @@ export interface CitationViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
   getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
+  citeprocCitations: Map<string, string>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
@@ -128,9 +129,13 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
-    const fragment = sanitize(this.node.attrs.contents, {
-      ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
-    })
+    const fragment = sanitize(
+      this.props.citeprocCitations.get(this.node.attrs.rid) ||
+        this.node.attrs.contents,
+      {
+        ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
+      }
+    )
     this.dom.innerHTML = ''
     this.dom.appendChild(fragment)
     this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
