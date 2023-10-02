@@ -130,8 +130,11 @@ export class CitationView<PropsType extends CitationViewProps>
 
   public updateContents = () => {
     const citeprocCitations = this.props.getCiteprocCitations()
+    const citeprocContent = citeprocCitations?.get(this.node.attrs.rid)
     const fragment = sanitize(
-      citeprocCitations?.get(this.node.attrs.rid) || this.node.attrs.contents,
+      citeprocContent && citeprocContent !== '[NO_PRINTED_FORM]'
+        ? citeprocContent
+        : this.node.attrs.contents,
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }

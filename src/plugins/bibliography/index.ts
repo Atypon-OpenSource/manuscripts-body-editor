@@ -122,19 +122,6 @@ export default (props: BibliographyProps) => {
         ) // id, noteIndex, output
         props.setCiteprocCitations(generatedCitations)
 
-        // citationNodes.forEach(([node, pos], index) => {
-        //   // let contents = generatedCitations[index]
-        //   // if (contents === '[NO_PRINTED_FORM]') {
-        //   //   contents = ''
-        //   // }
-        //   // tr.setNodeMarkup(pos, undefined, {
-        //   //   ...node.attrs,
-        //   //   // contents,
-        //   // })
-        // })
-
-        // create a new NodeSelection
-        // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
