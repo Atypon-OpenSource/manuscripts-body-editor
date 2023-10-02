@@ -130,7 +130,7 @@ export class CitationView<PropsType extends CitationViewProps>
 
   public updateContents = () => {
     const fragment = sanitize(
-      this.props.citeprocCitations.get(this.node.attrs.rid) ||
+      this.props.citeprocCitations?.get(this.node.attrs.rid) ||
         this.node.attrs.contents,
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
