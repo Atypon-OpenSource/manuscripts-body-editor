@@ -173,7 +173,7 @@ export class FigureEditableView extends FigureView<
         lastChange.status === 'rejected' &&
         lastChange.operation === 'set_attrs'
       ) {
-        attrs = lastChange.oldAttrs
+        attrs = { ...lastChange.oldAttrs }
       }
 
       this.dom.setAttribute('data-track-status', lastChange.status)
