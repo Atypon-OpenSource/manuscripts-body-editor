@@ -60,8 +60,8 @@ export interface ViewerProps {
   getDoc: () => ProsemirrorNode
   getModelMap: () => Map<string, Model>
   cslProps: CSLProps
-  citeprocCitations: Map<string, string>
   setCiteprocCitations: (citations: Map<string, string>) => void
+  getCiteprocCitations: () => Map<string, string>
 }
 
 export default {

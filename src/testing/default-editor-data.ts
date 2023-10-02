@@ -120,8 +120,8 @@ const defaultViewerProps: ViewerProps = {
     style: '',
     locale: '',
   },
-  citeprocCitations: new Map<string, string>(),
   setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map<string, string>(),
 }
 
 export const defaultEditorProps: EditorProps = {
