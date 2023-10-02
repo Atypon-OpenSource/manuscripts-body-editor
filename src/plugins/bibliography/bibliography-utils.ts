@@ -23,7 +23,7 @@ import ReactDOM from 'react-dom'
 
 import { TrackChangesReview } from '../../components/track-changes/TrackChangesReview'
 import { PopperManager } from '../../lib/popper'
-import { isPending } from '../../lib/track-changes-utils'
+import { isPendingSetAttrs } from '../../lib/track-changes-utils'
 import { BibliographyProps } from './types'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
@@ -73,7 +73,7 @@ export const buildDecorations = (
         })
       )
     }
-    if (isPending(node)) {
+    if (isPendingSetAttrs(node)) {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize,

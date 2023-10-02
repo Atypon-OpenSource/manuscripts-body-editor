@@ -25,6 +25,7 @@ import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -128,6 +129,8 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
+    const nodeClasses = ['citation', ...getChangeClasses(this.node)]
+    this.dom.className = nodeClasses.join(' ')
     const fragment = sanitize(this.node.attrs.contents, {
       ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
     })
