@@ -879,14 +879,14 @@
   align-items: center;
 }
 
-.ProseMirror .inserted.pending,
-.ProseMirror .set_attrs.pending {
-  background: #ddf3fa;
-  text-decoration: none;
-}
 .ProseMirror .inserted.accepted,
 .ProseMirror .set_attrs.accepted {
   background: #bffca7;
+  text-decoration: none;
+}
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending {
+  background: #ddf3fa;
   text-decoration: none;
 }
 .ProseMirror .inserted.rejected {
