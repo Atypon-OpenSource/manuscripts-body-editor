@@ -15,8 +15,6 @@
  */
 import { getMarkStyle, TrackAttrsButton } from '@manuscripts/style-guide'
 import {
-  CHANGE_OPERATION,
-  CHANGE_STATUS,
   NodeAttrChange,
   NodeChange,
   trackChangesPluginKey,
@@ -80,17 +78,16 @@ const buildDecorations = (state: EditorState, props: TrackingMarkProps) => {
   const decorations: Decoration[] = []
 
   metaNodeChanges.map((change) => {
-    const style = getMarkStyle(change.dataTracked)
-    const showAttrsPopper =
-      change.dataTracked.status === CHANGE_STATUS.pending &&
-      change.dataTracked.operation === CHANGE_OPERATION.set_node_attributes
+    const { style, className, showAttrsPopper } = getMarkStyle(
+      change.dataTracked
+    )
 
     decorations.push(
       Decoration.node(
         change.from,
         change.to,
         {
-          class: showAttrsPopper ? 'attrs-track-mark' : undefined,
+          class: className,
           style: `background: ${style.background}; text-decoration: ${style.textDecoration}; display: ${style.display}; position: relative;`,
         },
         { id: change.id }
