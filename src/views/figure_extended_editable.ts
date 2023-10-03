@@ -135,6 +135,7 @@ export class FigureEditableView extends FigureView<
   addAttachmentSrc = (link: string) => {
     if (this.node) {
       this.setFigureAttrs({
+        id: this.node.attrs.id,
         src: link,
       })
     }
@@ -151,6 +152,7 @@ export class FigureEditableView extends FigureView<
 
       if (ref) {
         this.setFigureAttrs({
+          id: this.node.attrs.id,
           src: '',
         })
       }
@@ -158,7 +160,7 @@ export class FigureEditableView extends FigureView<
   }
 
   public updateContents = () => {
-    let attrs = { ...this.node.attrs }
+    let attrs = this.node.attrs
 
     if (this.node.attrs.dataTracked?.length) {
       /*
@@ -173,7 +175,7 @@ export class FigureEditableView extends FigureView<
         lastChange.status === 'rejected' &&
         lastChange.operation === 'set_attrs'
       ) {
-        attrs = { ...lastChange.oldAttrs }
+        attrs = lastChange.oldAttrs
       }
 
       this.dom.setAttribute('data-track-status', lastChange.status)
