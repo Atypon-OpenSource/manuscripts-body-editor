@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model } from '@manuscripts/json-schema'
+import { Manuscript } from '@manuscripts/json-schema'
 import {
   buildTargets,
   isInGraphicalAbstractSection,
@@ -27,7 +27,6 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 interface Props {
-  getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
 }
 
@@ -35,9 +34,6 @@ interface Props {
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
-  const getModel = <T>(id: string): T => {
-    return props.getModelMap().get(id) as T
-  }
 
   return new Plugin<Map<string, Target>>({
     key: objectsKey,
@@ -98,51 +94,6 @@ export default (props: Props) => {
 
         return DecorationSet.create(state.doc, decorations)
       },
-    },
-    appendTransaction: (transactions, oldState, newState) => {
-      const targets = objectsKey.getState(newState)
-
-      if (!targets) {
-        return
-      }
-
-      let updated = 0
-
-      const tr = newState.tr
-
-      newState.doc.descendants((node, pos) => {
-        if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference = getModel<AuxiliaryObjectReference>(
-            node.attrs.rid
-          )
-
-          // TODO: handle missing objects?
-          // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395
-          if (
-            auxiliaryObjectReference &&
-            auxiliaryObjectReference.referencedObject
-          ) {
-            const target = targets.get(
-              auxiliaryObjectReference.referencedObject
-            )
-
-            if (target && target.label && target.label !== node.attrs.label) {
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                label: target.label,
-              })
-
-              updated++
-            }
-          }
-        }
-      })
-
-      if (updated) {
-        skipTracking(tr)
-        tr.setMeta('origin', objectsKey)
-        return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
-      }
     },
   })
 }
