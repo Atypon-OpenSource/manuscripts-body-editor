@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  AuxiliaryObjectReference,
-  Manuscript,
-  Model,
-} from '@manuscripts/json-schema'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { Manuscript, Model } from '@manuscripts/json-schema'
 import {
   buildTargets,
   isInGraphicalAbstractSection,

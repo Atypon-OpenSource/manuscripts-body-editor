@@ -1,60 +1,325 @@
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
+/* LVL 1 */
+/* 
+This level is actually hidden in the editor 
+Next levels are shifted 'up' by 1
+*/
+.ProseMirror 
   > section:not(.toc) {
-  counter-increment: section-5;
-  counter-reset: section-6;
+    counter-increment: level_1 0;
+}
+
+.ProseMirror 
+  > section 
+    > .block-section_title > h1 {
+      font-size: 16pt !important;
+      font-style: normal !important;
+      font-weight: bold !important;
+      color: #000 !important;
+      text-align: left;
+      margin-top: 8pt !important;
+      margin-bottom: 5pt !important;
+      line-height: 1.5;
+      text-indent: 0pt;
+      display: inline;
+}
+
+/* LVL 2 */
+.ProseMirror 
+  > section 
+    > section:not(.toc) {
+      counter-increment: level_1;
+      counter-reset: level_2;
+}
+.ProseMirror 
+  > section 
+    > section 
+      > .block-section_title > h1 {
+        font-size: 16pt !important;
+        font-style: normal !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        text-align: left;
+        margin-top: 8pt !important;
+        margin-bottom: 5pt !important;
+        line-height: 1.5;
+        text-indent: 0pt;
+        display: inline;
+}
+.ProseMirror 
+  > section 
+    > section:not(.toc) 
+      > .block-section_title > h1::before {
+        content: counter(level_1, decimal) '. ';
 }
 
 .ProseMirror
   > section
+    > section:not(.toc)
+      > .block-section_title > h1.empty-node[data-placeholder]::before {
+        content: counter(level_1, decimal) '. ' attr(data-placeholder);
+}
+/* LVL 3 */
+.ProseMirror 
+  > section 
+    > section 
+      > section:not(.toc) {
+        counter-increment: level_2;
+        counter-reset: level_3;
+}
+.ProseMirror 
+  > section 
+    > section 
+      > section 
+        > .block-section_title > h1 {
+          font-size: 14pt !important;
+          font-style: normal !important;
+          font-weight: bold !important;
+          color: #000 !important;
+          text-align: left;
+          margin-top: 8pt !important;
+          margin-bottom: 5pt !important;
+          line-height: 1.5;
+          text-indent: 0pt;
+          display: inline;
+}
+.ProseMirror
   > section
+    > section
+      > section:not(.toc)
+        > .block-section_title > h1::before {
+          content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ';
+}
+.ProseMirror
   > section
+    > section
+      > section:not(.toc)
+        > .block-section_title > h1.empty-node[data-placeholder]::before {
+          content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ' attr(data-placeholder);
+}
+/* LVL 4 */
+.ProseMirror 
+  > section 
+    > section 
+      > section 
+        > section:not(.toc) {
+          counter-increment: level_3;
+          counter-reset: level_4;
+}
+.ProseMirror
   > section
+    > section
+      > section
+        > section
+          > .block-section_title > h1 {
+            font-size: 12pt !important;
+            font-style: normal !important;
+            font-weight: bold !important;
+            color: #000 !important;
+            text-align: left;
+            margin-top: 8pt !important;
+            margin-bottom: 5pt !important;
+            line-height: 1.5;
+            text-indent: 0pt;
+            display: inline;
+}
+.ProseMirror
   > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
+    > section
+      > section
+        > section:not(.toc)
+          > .block-section_title > h1::before {
+            content: counter(level_1, decimal) '.' 
+              counter(level_2, decimal) '.'
+              counter(level_3, decimal) '. ';
 }
 
 .ProseMirror
   > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '. ';
+    > section
+      > section
+        > section:not(.toc)
+          > .block-section_title > h1.empty-node[data-placeholder]::before {
+            content: counter(level_1, decimal) '.' 
+              counter(level_2, decimal) '.'
+              counter(level_3, decimal) '. ' 
+              attr(data-placeholder);
+}
+/* LVL 5 */
+.ProseMirror 
+  > section 
+    > section 
+      > section 
+        > section 
+          > section:not(.toc) {
+            counter-increment: level_4;
+            counter-reset: level_5;
 }
 
 .ProseMirror
   > section
+    > section
+      > section
+        > section
+          > section
+            > .block-section_title > h1 {
+              font-size: 12pt !important;
+              font-style: normal !important;
+              font-weight: bold !important;
+              color: #000 !important;
+              text-align: left;
+              margin-top: 8pt !important;
+              margin-bottom: 5pt !important;
+              line-height: 1.5;
+              text-indent: 0pt;
+              display: inline;
+}
+.ProseMirror
   > section
+    > section
+      > section
+        > section
+          > section:not(.toc)
+            > .block-section_title > h1::before {
+              content: counter(level_1, decimal) '.' 
+                counter(level_2, decimal) '.'
+                counter(level_3, decimal) '.' 
+                counter(level_4, decimal) '. ';
+}
+.ProseMirror
   > section
+    > section
+      > section
+        > section
+          > section:not(.toc)
+            > .block-section_title > h1.empty-node[data-placeholder]::before {
+              content: counter(level_1, decimal) '.' 
+                counter(level_2, decimal) '.'
+                counter(level_3, decimal) '.' 
+                counter(level_4, decimal) '. '
+                attr(data-placeholder);
+}
+/* LVL 6 */
+.ProseMirror
   > section
+    > section
+      > section
+        > section
+          > section
+            > section:not(.toc) {
+              counter-increment: level_5;
+              counter-reset: level_6;
+}
+.ProseMirror
   > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '. ' attr(data-placeholder);
+    > section
+      > section
+        > section
+          > section
+            > section
+              > .block-section_title > h1 {
+                font-size: 12pt !important;
+                font-style: normal !important;
+                font-weight: bold !important;
+                color: #000 !important;
+                text-align: left;
+                margin-top: 8pt !important;
+                margin-bottom: 5pt !important;
+                line-height: 1.5;
+                text-indent: 0pt;
+                display: inline;
+}
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section:not(.toc)
+              > .block-section_title > h1::before {
+                content: counter(level_1, decimal) '.' 
+                  counter(level_2, decimal) '.'
+                  counter(level_3, decimal) '.' 
+                  counter(level_4, decimal) '.'
+                  counter(level_5, decimal) '. ';
+}
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section:not(.toc)
+              > .block-section_title > h1.empty-node[data-placeholder]::before {
+                content: counter(level_1, decimal) '.' 
+                  counter(level_2, decimal) '.'
+                  counter(level_3, decimal) '.'  
+                  counter(level_4, decimal) '.'
+                  counter(level_5, decimal) '. ' 
+                  attr(data-placeholder);
+}
+/* LVL 7 */
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section
+              > section:not(.toc) {
+                counter-increment: level_6;
+                counter-reset: level_7;
+}
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section
+              > .block-section_title > h1 {
+                font-size: 12pt !important;
+                font-style: normal !important;
+                font-weight: bold !important;
+                color: #000 !important;
+                text-align: left;
+                margin-top: 8pt !important;
+                margin-bottom: 5pt !important;
+                line-height: 1.5;
+                text-indent: 0pt;
+                display: inline;
+}
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section
+              > section:not(.toc)
+                > .block-section_title > h1::before {
+                  content: counter(level_1, decimal) '.' 
+                    counter(level_2, decimal) '.'
+                    counter(level_3, decimal) '.' 
+                    counter(level_4, decimal) '.'
+                    counter(level_5, decimal) '.' 
+                    counter(level_6, decimal) '. ';
+}
+.ProseMirror
+  > section
+    > section
+      > section
+        > section
+          > section
+            > section
+              > section:not(.toc)
+                > .block-section_title > h1.empty-node[data-placeholder]::before {
+                  content: counter(level_1, decimal) '.' 
+                    counter(level_2, decimal) '.'
+                    counter(level_3, decimal) '.' 
+                    counter(level_4, decimal) '.'
+                    counter(level_5, decimal) '.' 
+                    counter(level_6, decimal) '. '
+                    attr(data-placeholder);
 }
 
 .ProseMirror p.block {
@@ -67,493 +332,6 @@
   margin-bottom: 10pt !important;
   line-height: 2 !important;
   text-indent: 0pt !important;
-}
-
-.ProseMirror > section > section:not(.toc) {
-  counter-increment: section-1;
-  counter-reset: section-2;
-}
-
-.ProseMirror > section > .block-section_title > h1 {
-  font-size: 16pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror > section > section:not(.toc) > .block-section_title > h1::before {
-  content: counter(section-1, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '. ' attr(data-placeholder);
-}
-
-.ProseMirror > section > section:not(.toc) {
-  counter-increment: section-1;
-  counter-reset: section-2;
-}
-
-.ProseMirror > section > .block-section_title > h1 {
-  font-size: 16pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc) {
-  counter-increment: section-6;
-  counter-reset: section-7;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 10pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '.' counter(section-6, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '.' counter(section-6, decimal) '. '
-    attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section:not(.toc) {
-  counter-increment: section-2;
-  counter-reset: section-3;
-}
-
-.ProseMirror > section > section > .block-section_title > h1 {
-  font-size: 14pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '. '
-    attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section > section:not(.toc) {
-  counter-increment: section-3;
-  counter-reset: section-4;
-}
-
-.ProseMirror > section > section > section > .block-section_title > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '. ' attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section > section:not(.toc) {
-  counter-increment: section-3;
-  counter-reset: section-4;
-}
-
-.ProseMirror > section > section > section > .block-section_title > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '. ' attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section > section > section:not(.toc) {
-  counter-increment: section-4;
-  counter-reset: section-5;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '. '
-    attr(data-placeholder);
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc) {
-  counter-increment: section-5;
-  counter-reset: section-6;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '. ' attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section:not(.toc) {
-  counter-increment: section-2;
-  counter-reset: section-3;
-}
-
-.ProseMirror > section > section > .block-section_title > h1 {
-  font-size: 14pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '. '
-    attr(data-placeholder);
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc) {
-  counter-increment: section-6;
-  counter-reset: section-7;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 10pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '.' counter(section-6, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '.'
-    counter(section-5, decimal) '.' counter(section-6, decimal) '. '
-    attr(data-placeholder);
-}
-
-.ProseMirror > section > section > section > section > section:not(.toc) {
-  counter-increment: section-4;
-  counter-reset: section-5;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '. ';
-}
-
-.ProseMirror
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(section-1, decimal) '.' counter(section-2, decimal) '.'
-    counter(section-3, decimal) '.' counter(section-4, decimal) '. '
-    attr(data-placeholder);
 }
 
 .ProseMirror .figure-block {
