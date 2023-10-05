@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getMarkStyle, TrackAttrsButton } from '@manuscripts/style-guide'
+import { getMarkDecoration } from '@manuscripts/style-guide'
 import {
+  CHANGE_OPERATION,
+  CHANGE_STATUS,
   NodeAttrChange,
   NodeChange,
   trackChangesPluginKey,
@@ -22,15 +24,9 @@ import {
 import { schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-import React from 'react'
-
-type RenderReactComponent = (
-  child: React.ReactElement,
-  container: HTMLElement
-) => void
 
 type TrackingMarkProps = {
-  renderReactComponent: RenderReactComponent
+  addAttrsTrackingButton: (changeId: string) => HTMLDivElement
 }
 
 /**
@@ -78,27 +74,21 @@ const buildDecorations = (state: EditorState, props: TrackingMarkProps) => {
   const decorations: Decoration[] = []
 
   metaNodeChanges.map((change) => {
-    const { style, className, showAttrsPopper } = getMarkStyle(
-      change.dataTracked
-    )
+    const markDecoration = getMarkDecoration(change.dataTracked)
 
     decorations.push(
-      Decoration.node(
-        change.from,
-        change.to,
-        {
-          class: className,
-          style: `background: ${style.background}; text-decoration: ${style.textDecoration}; display: ${style.display}; position: relative;`,
-        },
-        { id: change.id }
-      )
+      Decoration.node(change.from, change.to, markDecoration, { id: change.id })
     )
 
-    if (change.type === 'node-attr-change' && showAttrsPopper) {
+    if (
+      change.type === 'node-attr-change' &&
+      change.dataTracked.status === CHANGE_STATUS.pending &&
+      change.dataTracked.operation === CHANGE_OPERATION.set_node_attributes
+    ) {
       decorations.push(
         Decoration.widget(
           change.from + 1,
-          addAttrsTrackingButton(change, props),
+          props.addAttrsTrackingButton(change.id),
           { key: change.id }
         )
       )
@@ -106,15 +96,4 @@ const buildDecorations = (state: EditorState, props: TrackingMarkProps) => {
   })
 
   return decorations
-}
-
-const addAttrsTrackingButton = (
-  change: NodeAttrChange,
-  props: TrackingMarkProps
-) => {
-  const el = document.createElement('div')
-
-  props.renderReactComponent(<TrackAttrsButton changeId={change.id} />, el)
-
-  return el
 }

@@ -66,10 +66,7 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Array<Plugin<ManuscriptSchema>>
   cslProps: CSLProps
-  renderReactComponent: (
-    child: React.ReactElement,
-    container: HTMLElement
-  ) => void
+  addAttrsTrackingButton: (changeId: string) => HTMLDivElement
 }
 
 export default (props: PluginProps) => {
@@ -86,7 +83,7 @@ export default (props: PluginProps) => {
     cslProps,
     setEditorSelectedSuggestion,
     getCapabilities,
-    renderReactComponent,
+    addAttrsTrackingButton,
   } = props
 
   const plugins = props.plugins || []
@@ -120,7 +117,7 @@ export default (props: PluginProps) => {
     highlights({ setComment }),
     track_changes_ui({ setEditorSelectedSuggestion }),
     tracking_mark({
-      renderReactComponent,
+      addAttrsTrackingButton,
     }),
   ]
 }

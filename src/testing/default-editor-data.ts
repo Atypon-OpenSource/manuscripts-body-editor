@@ -162,6 +162,7 @@ export const defaultEditorProps: EditorProps = {
     setComment: () => undefined,
     setSelectedComment: () => undefined,
     setEditorSelectedSuggestion: () => undefined,
+    addAttrsTrackingButton: () => document.createElement('div'),
     components: {},
     environment: undefined,
     cslStyle: '',
