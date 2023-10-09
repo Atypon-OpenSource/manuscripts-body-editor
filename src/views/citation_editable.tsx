@@ -18,7 +18,6 @@ import {
   BibliographyItem,
   Citation,
   CitationItem,
-  Model,
   ObjectTypes,
 } from '@manuscripts/json-schema'
 import { matchLibraryItemByIdentifier } from '@manuscripts/library'
@@ -39,8 +38,6 @@ import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
 export interface CitationEditableProps extends CitationViewProps {
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  deleteModel: (id: string) => Promise<string>
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
@@ -55,7 +52,6 @@ export class CitationEditableView extends CitationView<
       getCapabilities,
       projectID,
       renderReactComponent,
-      deleteModel,
     } = this.props
 
     const capabilities = getCapabilities()
@@ -129,7 +125,7 @@ export class CitationEditableView extends CitationView<
       <CitationEditor
         items={items}
         saveModel={handleSave}
-        deleteModel={deleteModel}
+        deleteModel={this.deleteNode}
         modelMap={getReferencesModelMap(this.view.state.doc, true)}
         insertBibliographyNode={(item: Build<BibliographyItem>) =>
           this.insertBibliographyNode(this.view, item)

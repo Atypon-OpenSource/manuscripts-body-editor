@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import {
-  BibliographyItem,
-  CommentAnnotation,
-  Model,
-} from '@manuscripts/json-schema'
+import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import { Build, buildComment, ManuscriptNodeView } from '@manuscripts/transform'
+import { buildComment, ManuscriptNodeView } from '@manuscripts/transform'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
@@ -58,8 +54,6 @@ const createBibliography = async (
 
 interface BibliographyItemViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  deleteModel: (id: string) => Promise<string>
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -73,7 +67,6 @@ export class BibliographyItemView<
 
   public showPopper = (referenceID: string) => {
     const {
-      deleteModel,
       renderReactComponent,
       components: { ReferencesEditor },
     } = this.props
@@ -102,7 +95,7 @@ export class BibliographyItemView<
     renderReactComponent(
       <ReferencesEditor
         saveModel={handleSave}
-        deleteModel={deleteModel}
+        deleteModel={this.deleteNode}
         modelMap={getReferencesModelMap(this.view.state.doc, true)}
         referenceID={referenceID}
       />,

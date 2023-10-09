@@ -132,4 +132,12 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
       }
     })
   }
+
+  public deleteNode = (id: string) => {
+    this.view.state.doc.descendants((node, pos) => {
+      if ((node.attrs.id || node.attrs.rid) === id) {
+        this.view.dispatch(this.view.state.tr.delete(pos, pos + node.nodeSize))
+      }
+    })
+  }
 }
