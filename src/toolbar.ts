@@ -27,6 +27,7 @@ import {
   markActive,
 } from './commands'
 import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
+import { OrderListSelector } from './components/toolbar/OrderListSelector'
 import icons from './icons'
 import { skipTrackingChanges } from './keys/list'
 
@@ -80,10 +81,10 @@ export const toolbar: ToolbarConfig = {
     },
     ordered_list: {
       title: 'Wrap in ordered list',
-      content: icons.ordered_list,
       active: blockActive(schema.nodes.ordered_list),
       enable: wrapInList(schema.nodes.ordered_list),
       run: skipTrackingChanges(wrapInList(schema.nodes.ordered_list)),
+      Component: OrderListSelector,
     },
   },
   inline: {
