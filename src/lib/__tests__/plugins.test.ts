@@ -374,7 +374,6 @@ const buildProps = (
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
   uploadAttachment: () => new Promise(() => ''),
-  addAttrsTrackingButton: () => document.createElement('div'),
   theme: {},
   getAttachments: () => [],
   getCapabilities: () => getAllPermitted(),

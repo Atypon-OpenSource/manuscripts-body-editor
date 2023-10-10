@@ -25,28 +25,21 @@ import { schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-type TrackingMarkProps = {
-  addAttrsTrackingButton: (changeId: string) => HTMLDivElement
-}
-
 /**
  * This plugin adds tracking marks for PM node that has just attributes without content
  * Like: (bibliography_item, citation, equation, inline_equation, figure)
  */
-export default (props: TrackingMarkProps) =>
+export default () =>
   new Plugin<DecorationSet>({
     state: {
       init: (tr, state) => {
-        return DecorationSet.create(state.doc, buildDecorations(state, props))
+        return DecorationSet.create(state.doc, buildDecorations(state))
       },
       apply: (tr, decorationSet, oldState, newState) => {
         const meta = tr.getMeta('track-changes-set-change-statuses')
 
         if (meta) {
-          return DecorationSet.create(
-            newState.doc,
-            buildDecorations(newState, props)
-          )
+          return DecorationSet.create(newState.doc, buildDecorations(newState))
         }
 
         return decorationSet
@@ -54,12 +47,12 @@ export default (props: TrackingMarkProps) =>
     },
     props: {
       decorations: (state) => {
-        return DecorationSet.create(state.doc, buildDecorations(state, props))
+        return DecorationSet.create(state.doc, buildDecorations(state))
       },
     },
   })
 
-const buildDecorations = (state: EditorState, props: TrackingMarkProps) => {
+const buildDecorations = (state: EditorState) => {
   const changeSet = trackChangesPluginKey.getState(state)?.changeSet
 
   if (!changeSet) {
@@ -86,14 +79,46 @@ const buildDecorations = (state: EditorState, props: TrackingMarkProps) => {
       change.dataTracked.operation === CHANGE_OPERATION.set_node_attributes
     ) {
       decorations.push(
-        Decoration.widget(
-          change.from + 1,
-          props.addAttrsTrackingButton(change.id),
-          { key: change.id }
-        )
+        Decoration.widget(change.from + 1, addAttrsTrackingButton(change), {
+          key: change.id,
+        })
       )
     }
   })
 
   return decorations
 }
+
+const addAttrsTrackingButton = (change: NodeAttrChange) => {
+  const el = document.createElement('button')
+  el.className = 'attrs-popper-button'
+  el.value = change.id
+  el.innerHTML = editIcon
+
+  return el
+}
+
+const editIcon = `
+ <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 2L14 4L9 9L6 10L7 7L12 2Z"
+      stroke="#353535"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M13 10V11.5C13 12.328 12.328 13 11.5 13H4.5C3.672 13 3 12.328 3 11.5V4.5C3 3.672 3.672 3 4.5 3H6"
+      stroke="#353535"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+`
