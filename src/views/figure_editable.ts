@@ -176,7 +176,8 @@ export class FigureEditableView extends FigureView<
     this.container.innerHTML = ''
     this.container.appendChild(img)
 
-    if (this.props.dispatch && this.props.theme) {
+    this.reactTools?.remove()
+    if (this.props.dispatch && this.props.theme && file) {
       const componentProps: FigureOptionsProps = {
         can,
         files,
@@ -186,7 +187,6 @@ export class FigureEditableView extends FigureView<
         handleDetach,
         handleReplace,
       }
-      this.reactTools?.remove()
       this.reactTools = ReactSubView(
         this.props,
         FigureOptions,

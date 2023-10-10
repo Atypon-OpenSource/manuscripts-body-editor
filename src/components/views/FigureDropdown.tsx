@@ -61,7 +61,9 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const { supplements, otherFiles } = useFiles(modelMap, files)
+  let { supplements, otherFiles } = useFiles(modelMap, files)
+  supplements = supplements.filter(isImageFile)
+  otherFiles = otherFiles.filter(isImageFile)
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
@@ -77,12 +79,12 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
           top={7}
         >
           <NestedDropdown
-            disabled={!can.editArticle || supplements.length < 1}
+            disabled={!can.replaceFile || supplements.length < 1}
             parentToggleOpen={toggleOpen}
             buttonText={'Supplements'}
             list={
               <>
-                {supplements.filter(isImageFile).map((file) => (
+                {supplements.map((file) => (
                   <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
                     {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
@@ -97,7 +99,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             buttonText={'Other files'}
             list={
               <>
-                {otherFiles.filter(isImageFile).map((file) => (
+                {otherFiles.map((file) => (
                   <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
                     {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
@@ -126,7 +128,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const { otherFiles } = useFiles(modelMap, files)
+  const otherFiles = useFiles(modelMap, files).otherFiles.filter(isImageFile)
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -153,7 +155,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
             moveLeft
             list={
               <>
-                {otherFiles.filter(isImageFile).map((file, index) => (
+                {otherFiles.map((file, index) => (
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
