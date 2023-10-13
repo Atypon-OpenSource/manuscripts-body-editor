@@ -99,24 +99,12 @@ export class CitationEditableView extends CitationView<
       this.props.popper.update()
     }
 
-    const findPosition = (doc: ManuscriptNode, id: string) => {
-      let nodePos: number | undefined = undefined
-
-      doc.descendants((node, pos) => {
-        if (node.attrs.id === id) {
-          nodePos = pos
-        }
-      })
-
-      return nodePos
-    }
-
     const handleSave = async (data: Partial<BibliographyItem>) => {
       const ref = await saveModel({
         ...data,
       } as BibliographyItem)
 
-      const pos = findPosition(this.view.state.doc, ref._id)
+      const pos = this.findPosition(this.view.state.doc, ref._id)
       if (pos) {
         this.view.dispatch(
           this.view.state.tr.setNodeMarkup(pos, undefined, {
@@ -168,6 +156,18 @@ export class CitationEditableView extends CitationView<
     renderReactComponent(component, this.popperContainer)
 
     this.props.popper.show(this.dom, this.popperContainer, 'right')
+  }
+
+  private findPosition = (doc: ManuscriptNode, id: string) => {
+    let nodePos: number | undefined = undefined
+
+    doc.descendants((node, pos) => {
+      if (node.attrs.id === id && node.attrs.rid === id) {
+        nodePos = pos
+      }
+    })
+
+    return nodePos
   }
 
   private handleClose = () => {
@@ -252,6 +252,13 @@ export class CitationEditableView extends CitationView<
     }
 
     await saveModel(citation)
+
+    const pos = this.findPosition(this.view.state.doc, this.node.attrs.rid)
+    if (pos) {
+      this.view.state.tr.setNodeMarkup(pos, undefined, {
+        ...this.node.attrs,
+      })
+    }
 
     if (triggerUpdate) {
       this.view.dispatch(
