@@ -14,20 +14,43 @@
  * limitations under the License.
  */
 
+import { ListElement } from '@manuscripts/json-schema'
 import { ManuscriptNode } from '@manuscripts/transform'
 
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
+type JatsStyleType = NonNullable<ListElement['listStyleType']>
+
+export const JATS_HTML_LIST_STYLE_MAPPING: {
+  [key in JatsStyleType]: string
+} = {
+  bullet: 'disc',
+  order: 'decimal',
+  'alpha-lower': 'lower-alpha',
+  'alpha-upper': 'upper-alpha',
+  'roman-lower': 'lower-roman',
+  'roman-upper': 'upper-roman',
+}
+
 export class OrderedListView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'ol'
+
+  public updateContents = () => {
+    if (this.contentDOM) {
+      const type = (this.node.attrs.listStyleType as JatsStyleType) || 'order'
+      this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
+    }
+  }
 }
 
 export const orderedListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
+  const type = (node.attrs.listStyleType as JatsStyleType) || 'order'
+  dom.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
 }
 
 export default createNodeOrElementView(

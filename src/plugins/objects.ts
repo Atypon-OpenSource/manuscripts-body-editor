@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  AuxiliaryObjectReference,
-  Manuscript,
-  Model,
-} from '@manuscripts/json-schema'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { Manuscript, Model } from '@manuscripts/json-schema'
 import {
   buildTargets,
   isInGraphicalAbstractSection,
@@ -99,50 +94,6 @@ export default (props: Props) => {
 
         return DecorationSet.create(state.doc, decorations)
       },
-    },
-    appendTransaction: (transactions, oldState, newState) => {
-      const targets = objectsKey.getState(newState)
-
-      if (!targets) {
-        return
-      }
-
-      let updated = 0
-
-      const tr = newState.tr
-
-      newState.doc.descendants((node, pos) => {
-        if (node.type === newState.schema.nodes.cross_reference) {
-          const auxiliaryObjectReference =
-            props.getModel<AuxiliaryObjectReference>(node.attrs.rid)
-
-          // TODO: handle missing objects?
-          // https://gitlab.com/mpapp-private/manuscripts-frontend/issues/395
-          if (
-            auxiliaryObjectReference &&
-            auxiliaryObjectReference.referencedObject
-          ) {
-            const target = targets.get(
-              auxiliaryObjectReference.referencedObject
-            )
-
-            if (target && target.label && target.label !== node.attrs.label) {
-              tr.setNodeMarkup(pos, undefined, {
-                ...node.attrs,
-                label: target.label,
-              })
-
-              updated++
-            }
-          }
-        }
-      })
-
-      if (updated) {
-        skipTracking(tr)
-        tr.setMeta('origin', objectsKey)
-        return tr.setSelection(newState.selection.map(tr.doc, tr.mapping))
-      }
     },
   })
 }

@@ -39,4 +39,5 @@ export interface BibliographyProps {
   getModel: <T extends Model>(id: string) => T | undefined
   cslProps: CSLProps
   popper: PopperManager
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }

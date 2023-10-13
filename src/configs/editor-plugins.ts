@@ -67,6 +67,7 @@ interface PluginProps {
   plugins?: Array<Plugin<ManuscriptSchema>>
   cslProps: CSLProps
   popper: PopperManager
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }
 
 export default (props: PluginProps) => {
@@ -84,6 +85,7 @@ export default (props: PluginProps) => {
     setEditorSelectedSuggestion,
     getCapabilities,
     popper,
+    setCiteprocCitations,
   } = props
 
   const plugins = props.plugins || []
@@ -108,6 +110,7 @@ export default (props: PluginProps) => {
       getModel,
       cslProps,
       popper,
+      setCiteprocCitations,
     }),
     objects({ getManuscript, getModel }),
     auxiliary_object_order({ modelMap }),

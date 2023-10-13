@@ -383,6 +383,8 @@ const buildProps = (
     style: '',
     locale: '',
   },
+  setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map(),
 })
 
 describe('editor view', () => {
