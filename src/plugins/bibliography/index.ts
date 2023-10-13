@@ -85,9 +85,8 @@ export default (props: BibliographyProps) => {
         oldState
       ) as PluginState
 
-      const { citations, bibliographyItems } = bibliographyKey.getState(
-        newState
-      ) as PluginState
+      const { citationNodes, citations, bibliographyItems } =
+        bibliographyKey.getState(newState) as PluginState
 
       const bibliographyInserted = transactions.some((tr) => {
         const meta = tr.getMeta(bibliographyKey)
@@ -121,6 +120,12 @@ export default (props: BibliographyProps) => {
           ).map((item) => [item[0], item[2]])
         ) // id, noteIndex, output
         props.setCiteprocCitations(generatedCitations)
+
+        citationNodes.forEach(([node, pos]) => {
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+          })
+        })
 
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
