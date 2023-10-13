@@ -85,8 +85,9 @@ export default (props: BibliographyProps) => {
         oldState
       ) as PluginState
 
-      const { citationNodes, citations, bibliographyItems } =
-        bibliographyKey.getState(newState) as PluginState
+      const { citations, bibliographyItems } = bibliographyKey.getState(
+        newState
+      ) as PluginState
 
       const bibliographyInserted = transactions.some((tr) => {
         const meta = tr.getMeta(bibliographyKey)
