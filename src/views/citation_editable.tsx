@@ -253,12 +253,12 @@ export class CitationEditableView extends CitationView<
 
     await saveModel(citation)
 
-    const pos = this.findPosition(this.view.state.doc, this.node.attrs.rid)
-    if (pos) {
+    const pos = this.getPos()
+    this.view.dispatch(
       this.view.state.tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
       })
-    }
+    )
 
     if (triggerUpdate) {
       this.view.dispatch(
