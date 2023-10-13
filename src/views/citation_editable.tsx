@@ -202,6 +202,13 @@ export class CitationEditableView extends CitationView<
     citation.embeddedCitationItems = embeddedCitationItems
     await saveModel(citation)
 
+    const pos = this.getPos()
+    this.view.dispatch(
+      this.view.state.tr.setNodeMarkup(pos, undefined, {
+        ...this.node.attrs,
+      })
+    )
+
     if (embeddedCitationItems.length > 0) {
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
