@@ -26,14 +26,14 @@ import styles from './styles'
 interface PluginProps {
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
 }
 
 export default (props: PluginProps) => {
-  const { getModel, getManuscript, modelMap } = props
+  const { getModel, getManuscript, getModelMap } = props
   return [
     elements(),
-    styles({ getModel, getManuscript, modelMap }),
+    styles({ getModel, getManuscript, getModelMap }),
     objects({ getModel, getManuscript }),
   ]
 }
