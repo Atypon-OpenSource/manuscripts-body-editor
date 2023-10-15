@@ -20,6 +20,7 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
@@ -115,3 +116,8 @@ export const setNodeAttrs =
 export const getFileExtension = (file: File) => {
   return file.name.split('.').pop() || ''
 }
+
+export const isMetaNode = (nodeType: string) =>
+  nodeType === schema.nodes.bibliography_item.name ||
+  nodeType === schema.nodes.affiliation.name ||
+  nodeType === schema.nodes.contributor.name

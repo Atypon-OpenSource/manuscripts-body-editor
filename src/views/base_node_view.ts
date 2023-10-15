@@ -15,16 +15,13 @@
  */
 
 import { Model } from '@manuscripts/json-schema'
-import {
-  isMetaNode,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Attrs, Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
+import { isMetaNode } from '../lib/utils'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
