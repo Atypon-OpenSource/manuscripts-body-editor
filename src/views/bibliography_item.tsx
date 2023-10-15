@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import {
-  BibliographyItem,
-  CommentAnnotation,
-  Model,
-} from '@manuscripts/json-schema'
+import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import {
   CitationProvider,
   createBibliographyElementContents,
 } from '@manuscripts/library'
-import { Build, buildComment, ManuscriptNodeView } from '@manuscripts/transform'
+import { buildComment, ManuscriptNodeView } from '@manuscripts/transform'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
+import {
+  getNodeModel,
+  getReferencesModelMap,
+} from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -54,12 +54,6 @@ const createBibliography = async (
 
 interface BibliographyItemViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  deleteModel: (id: string) => Promise<string>
-  setLibraryItem: (item: BibliographyItem) => void
-  removeLibraryItem: (id: string) => void
-  modelMap: Map<string, Model>
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -73,29 +67,24 @@ export class BibliographyItemView<
 
   public showPopper = (referenceID: string) => {
     const {
-      filterLibraryItems,
-      saveModel,
-      deleteModel,
-      setLibraryItem,
-      removeLibraryItem,
       renderReactComponent,
-      modelMap,
       components: { ReferencesEditor },
     } = this.props
 
     const handleSave = async (data: Partial<BibliographyItem>) => {
-      const ref = await saveModel({
-        ...data,
-      } as BibliographyItem)
+      const {
+        _id: id,
+        'container-title': containerTitle,
+        DOI: doi,
+        ...rest
+      } = data as BibliographyItem
 
-      this.view.dispatch(
-        this.view.state.tr.setNodeMarkup(this.getPos(), undefined, {
-          id: ref._id,
-          containerTitle: ref['container-title'],
-          doi: ref.DOI,
-          ...ref,
-        })
-      )
+      this.updateNodeAttrs({
+        id,
+        containerTitle,
+        doi,
+        ...rest,
+      })
     }
 
     if (!this.popperContainer) {
@@ -105,12 +94,9 @@ export class BibliographyItemView<
 
     renderReactComponent(
       <ReferencesEditor
-        filterLibraryItems={filterLibraryItems}
         saveModel={handleSave}
-        deleteModel={deleteModel}
-        setLibraryItem={setLibraryItem}
-        removeLibraryItem={removeLibraryItem}
-        modelMap={modelMap}
+        deleteModel={this.deleteNode}
+        modelMap={getReferencesModelMap(this.view.state.doc, true)}
         referenceID={referenceID}
       />,
       this.popperContainer
@@ -134,7 +120,8 @@ export class BibliographyItemView<
   }
 
   public updateContents = async () => {
-    const reference = this.props.getModel<BibliographyItem>(this.node.attrs.id)
+    const reference = getNodeModel<BibliographyItem>(this.node)
+
     if (reference && this.contentDOM) {
       const bibliography = await createBibliography(
         [reference],
@@ -142,7 +129,13 @@ export class BibliographyItemView<
       )
       try {
         const fragment = sanitize(bibliography.outerHTML)
-        this.contentDOM.appendChild(fragment)
+
+        const oldBibliography = this.contentDOM.querySelector('.csl-bib-body')
+        if (oldBibliography) {
+          this.contentDOM.replaceChild(fragment, oldBibliography)
+        } else {
+          this.contentDOM.appendChild(fragment)
+        }
 
         const doubleButton = document.createElement('div')
         const editButton = document.createElement('button')
