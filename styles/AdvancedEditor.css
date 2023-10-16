@@ -658,10 +658,6 @@ Next levels are shifted 'up' by 1
   align-items: center;
 }
 
-.attrs-track-mark:hover, .attrs-track-mark:has(.attrs-popper-button-active) {
-  background: #a3eaff !important;
-}
-
 .attrs-popper-button-active, .attrs-track-mark:hover .attrs-popper-button {
   display: inline-flex;
 }
