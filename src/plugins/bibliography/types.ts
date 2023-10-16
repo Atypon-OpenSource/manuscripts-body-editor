@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BibliographyItem, Model } from '@manuscripts/json-schema'
+import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes, CitationProvider } from '@manuscripts/library'
 
 import { CSLProps } from '../../configs/ManuscriptsEditor'
@@ -36,7 +36,6 @@ export interface PluginState {
 export interface BibliographyProps {
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
-  getModel: <T extends Model>(id: string) => T | undefined
   cslProps: CSLProps
   popper: PopperManager
 }

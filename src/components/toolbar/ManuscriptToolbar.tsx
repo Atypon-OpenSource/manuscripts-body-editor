@@ -26,7 +26,7 @@ import styled from 'styled-components'
 import { toolbar } from '../../toolbar'
 import { LevelSelector } from './LevelSelector'
 
-const ToolbarItem = styled.div`
+export const ToolbarItem = styled.div`
   display: inline-flex;
   position: relative;
 `
@@ -92,10 +92,19 @@ export const ToolbarGroup = styled.div`
 
 export interface ToolbarButtonConfig {
   title: string
-  content: React.ReactNode
+  content?: React.ReactNode
   active?: (state: EditorState) => boolean
   run: (state: EditorState, dispatch: (tr: Transaction) => void) => void
   enable?: (state: EditorState) => boolean
+  Component?: React.JSXElementConstructor<{
+    state: ManuscriptEditorState
+    dispatch: (tr: Transaction) => void
+    view?: ManuscriptEditorView
+    title: string
+    active?: (state: EditorState) => boolean
+    run: (state: EditorState, dispatch: (tr: Transaction) => void) => void
+    enable?: (state: EditorState) => boolean
+  }>
 }
 
 export interface ToolbarConfig {
@@ -132,22 +141,32 @@ export const ManuscriptToolbar: React.FunctionComponent<{
                 }
               } // Excluding 'Add Footnote' menu if footnotes are disabled in the config
             ) // footnote check is temporal change. Footnotes is supposed to be a non-optional feature once fully ready for production
-            .map(([itemKey, item]) => (
-              <ToolbarItem key={itemKey}>
-                <ToolbarButton
-                  title={item.title}
-                  data-active={item.active && item.active(state)}
-                  disabled={item.enable && !item.enable(state)}
-                  onMouseDown={(event) => {
-                    event.preventDefault()
-                    item.run(state, dispatch)
-                    view && view.focus()
-                  }}
-                >
-                  {item.content}
-                </ToolbarButton>
-              </ToolbarItem>
-            ))}
+            .map(([itemKey, item]) =>
+              item.Component ? (
+                <item.Component
+                  key={itemKey}
+                  state={state}
+                  dispatch={dispatch}
+                  view={view}
+                  {...item}
+                />
+              ) : (
+                <ToolbarItem key={itemKey}>
+                  <ToolbarButton
+                    title={item.title}
+                    data-active={item.active && item.active(state)}
+                    disabled={item.enable && !item.enable(state)}
+                    onMouseDown={(event) => {
+                      event.preventDefault()
+                      item.run(state, dispatch)
+                      view && view.focus()
+                    }}
+                  >
+                    {item.content}
+                  </ToolbarButton>
+                </ToolbarItem>
+              )
+            )}
         </ToolbarGroup>
       ))}
     </ToolbarContainer>
