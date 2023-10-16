@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getMarkDecoration } from '@manuscripts/style-guide'
 import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
   NodeAttrChange,
   NodeChange,
   trackChangesPluginKey,
+  TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { EditorState, Plugin } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
+import { Decoration, DecorationAttrs, DecorationSet } from 'prosemirror-view'
 
 /**
  * This plugin adds tracking marks for PM node that has just attributes without content
@@ -122,3 +122,62 @@ const editIcon = `
     />
   </svg>
 `
+
+export const getMarkDecoration = (dataTracked: TrackedAttrs) => {
+  const style: {
+    background?: string
+    textDecoration?: string
+    display?: string
+  } = {}
+  let className = undefined
+
+  const { status, operation } = dataTracked
+
+  if (
+    (operation === CHANGE_OPERATION.delete ||
+      operation === CHANGE_OPERATION.insert ||
+      operation === CHANGE_OPERATION.set_node_attributes) &&
+    status === CHANGE_STATUS.pending
+  ) {
+    style.background = '#ddf3fa'
+  }
+
+  if (
+    (operation === CHANGE_OPERATION.insert ||
+      operation === CHANGE_OPERATION.set_node_attributes) &&
+    status === CHANGE_STATUS.accepted
+  ) {
+    style.background = '#bffca7'
+  }
+
+  if (
+    operation === CHANGE_OPERATION.delete &&
+    status === CHANGE_STATUS.pending
+  ) {
+    style.textDecoration = 'line-through'
+  }
+
+  if (
+    (operation === CHANGE_OPERATION.insert &&
+      status === CHANGE_STATUS.rejected) ||
+    (operation === CHANGE_OPERATION.delete && status === CHANGE_STATUS.accepted)
+  ) {
+    style.display = 'none'
+  }
+
+  const showAttrsPopper =
+    status === CHANGE_STATUS.pending &&
+    operation === CHANGE_OPERATION.set_node_attributes
+
+  if (showAttrsPopper) {
+    className = 'attrs-track-mark'
+  }
+
+  return {
+    class: className,
+    style: `background: ${style.background};
+   text-decoration: ${style.textDecoration};
+   display: ${style.display};
+   position: relative;`,
+  } as DecorationAttrs
+}
