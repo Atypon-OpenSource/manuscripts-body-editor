@@ -21,7 +21,6 @@ import {
   buildCitations,
   CitationProvider,
 } from '@manuscripts/library'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
