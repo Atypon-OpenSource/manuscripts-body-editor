@@ -29,6 +29,7 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isInAbstractsSection,
   isInBibliographySection,
   isSectionNodeType,
   ManuscriptEditorState,
@@ -55,13 +56,16 @@ import { findWrapping } from 'prosemirror-transform'
 import { findParentNode } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  getMatchingDescendant,
+} from './lib/utils'
 import { bibliographyKey } from './plugins/bibliography'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
 import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-import { INSERT, modelsKey } from './plugins/models'
 // import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
@@ -389,13 +393,14 @@ export const insertInlineCitation = (
   const node = state.schema.nodes.citation.create({
     rid: citation._id,
     selectedText: selectedText(),
+    embeddedCitationItems: [],
   })
 
   const pos = state.selection.to
 
   const { tr } = state
 
-  tr.setMeta(modelsKey, { [INSERT]: [citation] }).insert(pos, node)
+  tr.insert(pos, node)
 
   if (needsBibliography(state)) {
     tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
@@ -443,13 +448,11 @@ export const insertInlineEquation = (
 
   const sourcePos = state.selection.from - 1
 
-  const tr = state.tr
-    .setMeta(modelsKey, { [INSERT]: [inlineMathFragment] })
-    .replaceSelectionWith(
-      state.schema.nodes.inline_equation.create({
-        id: inlineMathFragment._id,
-      })
-    )
+  const tr = state.tr.replaceSelectionWith(
+    state.schema.nodes.inline_equation.create({
+      id: inlineMathFragment._id,
+    })
+  )
 
   if (dispatch) {
     const selection = NodeSelection.create(
@@ -529,18 +532,25 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   const pos = findPosAfterParentSection(state.selection.$from)
-  if (pos === null || isInBibliographySection(state.selection.$from)) {
+  if (
+    pos === null ||
+    isInBibliographySection(state.selection.$from) ||
+    !isInAbstractsSection(state.selection.$from)
+  ) {
     return false
   }
   // check if another graphical abstract already exists
   if (
-    getChildOfType(state.doc, state.schema.nodes.graphical_abstract_section)
+    !!getMatchingDescendant(
+      state.doc,
+      (node) => node.type === state.schema.nodes.graphical_abstract_section
+    )
   ) {
     return false
   }
 
   const section = state.schema.nodes.graphical_abstract_section.createAndFill(
-    {},
+    { category: 'MPSectionCategory:abstract-graphical' },
     [
       state.schema.nodes.section_title.create(
         {},

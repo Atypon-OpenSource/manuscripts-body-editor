@@ -56,7 +56,6 @@ const getFileType = (fileName: string) => {
 
 interface DropdownProps {
   getAttachments: () => FileAttachment[]
-  modelMap: Map<string, Model>
   mediaAlternativesEnabled?: boolean
   onUploadClick: (e: SyntheticEvent) => void
   canReplaceFile?: boolean

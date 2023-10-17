@@ -34,7 +34,6 @@ import { ReactViewComponentProps } from './ReactView'
 
 export interface FigureProps {
   getAttachments: () => FileAttachment[]
-  modelMap: Map<string, Model>
   deleteModel: (id: string) => Promise<string>
   uploadAttachment: (file: File) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
   getCapabilities: () => Capabilities
@@ -54,7 +53,6 @@ const FigureComponent = ({
   getCapabilities,
   mediaAlternativesEnabled,
   getAttachments,
-  modelMap,
   getDoc,
   getModelMap,
 }: FigureProps) => {
@@ -212,7 +210,6 @@ const FigureComponent = ({
                 onUploadClick={onUploadClick}
                 setFigureAttrs={setFigureAttrs}
                 getAttachments={getAttachments}
-                modelMap={modelMap}
                 mediaAlternativesEnabled={mediaAlternativesEnabled}
                 canReplaceFile={can?.replaceFile}
                 canDownloadFile={can?.downloadFiles}

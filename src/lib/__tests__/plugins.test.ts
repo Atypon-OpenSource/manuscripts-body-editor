@@ -350,7 +350,6 @@ const buildProps = (
   getManuscript: () => manuscript,
   getLibraryItem: () => undefined,
   locale: 'en-US',
-  modelMap,
   popper: new PopperManager(),
   projectID: '',
   getCurrentUser: () => userProfile,

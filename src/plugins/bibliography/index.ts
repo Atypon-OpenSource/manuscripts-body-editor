@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import { BibliographyItem } from '@manuscripts/json-schema'
 import {
   buildBibliographyItems,
   buildCitationNodes,
   buildCitations,
   CitationProvider,
 } from '@manuscripts/library'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
+import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
 export const bibliographyKey = new PluginKey('bibliography')
@@ -34,22 +36,26 @@ export const bibliographyKey = new PluginKey('bibliography')
  * The citation labels are regenerated when any relevant content changes.
  */
 export default (props: BibliographyProps) => {
-  const getBibliographyItem = getBibliographyItemFn(props)
   const { style, locale } = props.cslProps
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
-        const citationNodes = buildCitationNodes(instance.doc, props.getModel)
+        const referencesModelMap = getReferencesModelMap(instance.doc)
+        const citationNodes = buildCitationNodes(
+          instance.doc,
+          referencesModelMap
+        )
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
           citationNodes,
-          (id: string) => getBibliographyItem(id)
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         return {
@@ -60,15 +66,20 @@ export default (props: BibliographyProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const citationNodes = buildCitationNodes(newState.doc, props.getModel)
+        const referencesModelMap = getReferencesModelMap(newState.doc)
+        const citationNodes = buildCitationNodes(
+          newState.doc,
+          referencesModelMap
+        )
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
           citationNodes,
-          (id: string) => getBibliographyItem(id)
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
@@ -136,7 +147,11 @@ export default (props: BibliographyProps) => {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
-          buildDecorations(state.doc, citationNodes, getBibliographyItem)
+          buildDecorations(
+            state.doc,
+            citationNodes,
+            getReferencesModelMap(state.doc)
+          )
         )
       },
     },

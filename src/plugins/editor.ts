@@ -39,7 +39,6 @@ import elements from './elements'
 import footnotes from './footnotes'
 import highlights from './highlight'
 import keywords from './keywords'
-import models from './models'
 import objects from './objects'
 import paragraphs from './paragraphs'
 import persist from './persist'
@@ -54,7 +53,7 @@ interface PluginProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   setComment: (comment?: CommentAnnotation) => void
   getCapabilities: () => Capabilities
@@ -65,13 +64,11 @@ interface PluginProps {
 
 export default (props: PluginProps) => {
   const {
-    deleteModel,
     getCitationProvider,
     getLibraryItem,
     getModel,
     getManuscript,
-    modelMap,
-    saveModel,
+    getModelMap,
     setComment,
     getCapabilities,
     cslProps,
@@ -85,19 +82,17 @@ export default (props: PluginProps) => {
     ...keys,
     dropCursor(),
     history(),
-    models({ saveModel, deleteModel }), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     elements(),
     persist(),
     sections(),
-    toc({ modelMap }),
+    toc({ getModelMap }),
     footnotes(),
-    styles({ getModel, getManuscript, modelMap }),
+    styles({ getModel, getManuscript, getModelMap }),
     keywords({ getModel, getCapabilities }),
     bibliography({
       getCitationProvider,
       getLibraryItem,
-      getModel,
       cslProps,
       setCiteprocCitations,
     }),
