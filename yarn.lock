@@ -1688,7 +1688,21 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^1.4.3", "@manuscripts/transform@^1.4.5":
+"@manuscripts/transform@1.4.4":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.4.tgz#d3729ca848b047c819308fc5800b39e610dc7751"
+  integrity sha512-AZ+BdfiTJWQiGJThe8nf67C7hKAyyDHHDqFcUMwN9sgKoWqfaoebcF315qMp050a5uhfMZsz9fFpT4RrXqTERQ==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.4.3":
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.5.tgz#1377cc246d584c1354d0787d738464ae5e2287c5"
   integrity sha512-rVbF6doZoAr+WfXjqPJXVF5GVFgISK/9YXwzoVc+mEvJwahTtoU1dBvYX6x5bzm3BoEhbC/AVbbAdG82LYhn9A==
