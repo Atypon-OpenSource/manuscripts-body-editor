@@ -25,6 +25,7 @@ import { DOMSerializer } from 'prosemirror-model'
 import React from 'react'
 
 import { sanitize } from '../lib/dompurify'
+import { getNodeModel } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -137,7 +138,7 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public getCitation = () => {
-    const citation = this.props.getModel<Citation>(this.node.attrs.rid)
+    const citation = getNodeModel<Citation>(this.node)
 
     if (!citation) {
       throw new Error('Citation not found')

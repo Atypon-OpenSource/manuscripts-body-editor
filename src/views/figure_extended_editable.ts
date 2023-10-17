@@ -165,7 +165,7 @@ export class FigureEditableView extends FigureView<
     if (this.node.attrs.dataTracked?.length) {
       /*
         if track-status is 'rejected' and operation is 'set_attrs' then find old attribute in
-        the this.node.attrs.dataTracked[x].oldAttrs and use them in the display      
+        the this.node.attrs.dataTracked[x].oldAttrs and use them in the display
       */
 
       const lastChange =
@@ -268,7 +268,6 @@ export class FigureEditableView extends FigureView<
           disabled: !isSupportedImageType,
           onUploadClick: this.envokeFileInput,
           getAttachments: this.props.getAttachments,
-          modelMap: this.props.modelMap,
           onDetachClick: this.detachImageRef,
           mediaAlternativesEnabled: !!this.props.mediaAlternativesEnabled,
           setFigureAttrs: this.setFigureAttrs,
