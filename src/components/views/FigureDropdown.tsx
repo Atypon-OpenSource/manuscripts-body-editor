@@ -41,10 +41,10 @@ export interface FigureDropdownProps {
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
-  handleDownload: () => void
-  handleUpload: () => void
-  handleDetach: () => void
-  handleReplace: (file: FileAttachment) => void
+  handleDownload?: () => void
+  handleUpload?: () => void
+  handleDetach?: () => void
+  handleReplace?: (file: FileAttachment) => void
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -130,6 +130,11 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
 
   const otherFiles = useFiles(modelMap, files).otherFiles.filter(isImageFile)
 
+  const showDownload = handleDownload && can.downloadFiles
+  const showUpload = handleUpload && can.uploadFile
+  const showDetach = handleDetach && can.editArticle
+  const showReplace = handleReplace && can.replaceFile
+
   return (
     <DropdownWrapper ref={wrapperRef}>
       <OptionsButton className={'options-button'} onClick={toggleOpen}>
@@ -142,14 +147,11 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
           onClick={toggleOpen}
           top={5}
         >
-          <ListItemButton
-            onClick={handleDownload}
-            disabled={!can.downloadFiles}
-          >
+          <ListItemButton onClick={handleDownload} disabled={!showDownload}>
             Download
           </ListItemButton>
           <NestedDropdown
-            disabled={!can.replaceFile}
+            disabled={!showReplace}
             parentToggleOpen={toggleOpen}
             buttonText={'Replace'}
             moveLeft
@@ -159,19 +161,19 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
-                    onClick={() => handleReplace(file)}
+                    onClick={() => handleReplace && handleReplace(file)}
                   >
                     {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
-                <UploadButton onClick={handleUpload} disabled={!can.uploadFile}>
+                <UploadButton onClick={handleUpload} disabled={!showUpload}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
               </>
             }
           />
-          <ListItemButton onClick={handleDetach} disabled={!can.editArticle}>
+          <ListItemButton onClick={handleDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
         </OptionsDropdownList>

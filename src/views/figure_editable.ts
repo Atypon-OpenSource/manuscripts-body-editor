@@ -96,7 +96,7 @@ export class FigureEditableView extends FigureView<
 
     const src = attrs.src
     const files = this.props.getFiles()
-    const file = files.filter((f) => f.id === src)[0]
+    const file = src && files.filter((f) => f.id === src)[0]
 
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
@@ -111,20 +111,25 @@ export class FigureEditableView extends FigureView<
       ? this.createUnsupportedFormat(file.name)
       : this.createPlaceholder()
 
-    const handleDownload = () => {
-      this.props.fileManagement.download(file)
-    }
+    let handleDownload
+    let handleUpload
+    let handleReplace
+    let handleDetach
 
-    let handleUpload = () => {
-      //noop
-    }
+    if (src) {
+      if (file) {
+        handleDownload = () => {
+          this.props.fileManagement.download(file)
+        }
+      }
 
-    const handleReplace = (file: FileAttachment) => {
-      this.setSrc(file.id)
-    }
+      handleReplace = (file: FileAttachment) => {
+        this.setSrc(file.id)
+      }
 
-    const handleDetach = () => {
-      this.setSrc('')
+      handleDetach = () => {
+        this.setSrc('')
+      }
     }
 
     if (can.uploadFile) {
@@ -177,7 +182,7 @@ export class FigureEditableView extends FigureView<
     this.container.appendChild(img)
 
     this.reactTools?.remove()
-    if (this.props.dispatch && this.props.theme && file) {
+    if (this.props.dispatch && this.props.theme) {
       const componentProps: FigureOptionsProps = {
         can,
         files,
