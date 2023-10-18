@@ -16,8 +16,8 @@
 
 import OutlineIconManuscript from '@manuscripts/assets/react/OutlineIconManuscript'
 import { Manuscript, Project } from '@manuscripts/json-schema'
+import { parse, schema } from '@manuscripts/title-editor'
 import { nodeTitlePlaceholder } from '@manuscripts/transform'
-import { ParseOptions, Schema } from 'prosemirror-model'
 import React from 'react'
 
 import {
@@ -30,11 +30,10 @@ import {
   OutlineItemPlaceholder,
   StyledTriangleCollapsed,
 } from './Outline'
+
 interface Props {
   project: Project
   manuscript: Manuscript
-  parse: (contents: string, options?: ParseOptions) => Node
-  schema: Schema
 }
 
 const titleText = (value: string) => {
@@ -48,7 +47,6 @@ const titleText = (value: string) => {
 export const OutlineManuscript: React.FunctionComponent<Props> = ({
   project,
   manuscript,
-  schema,
 }) => (
   <Outline>
     <OutlineItem isSelected={false} depth={0}>
