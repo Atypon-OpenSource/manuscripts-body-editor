@@ -40,7 +40,7 @@ import { nodeTypeIcon } from '../../node-type-icons'
 const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
-      return (!depth ? '' : 'sub'.repeat(depth - 1)) + 'section heading'
+      return (depth > 0 ? '' : 'sub'.repeat(depth - 1)) + 'section heading'
 
     default:
       return nodeNames.get(nodeType) || nodeType.name
