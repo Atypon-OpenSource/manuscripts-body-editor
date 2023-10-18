@@ -17,6 +17,7 @@
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
+import articleTitle from '../views/article_title_editable'
 import bibliographyElement from '../views/bibliography_element_editable'
 import bibliographyItem from '../views/bibliography_item_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
@@ -87,5 +88,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     table_element: tableElement(props),
     toc_element: tocElement(props),
     meta_section: metaSection,
+    article_title: articleTitle(props),
   }
 }

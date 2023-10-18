@@ -40,6 +40,7 @@ import pullquoteElement from './pullquote_element'
 import sectionTitle from './section_title'
 import tableElement from './table_element'
 import tocElement from './toc_element'
+import articleTitle from './article_title'
 
 type ViewerProps = CitationViewProps &
   CrossReferenceViewProps &
@@ -72,4 +73,5 @@ export default (props: ViewerProps) => ({
   section_title: sectionTitle(props),
   table_element: tableElement(props),
   toc_element: tocElement(props),
+  title: articleTitle(props),
 })

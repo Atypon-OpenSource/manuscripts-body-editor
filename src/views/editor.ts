@@ -43,6 +43,7 @@ import sectionLabel from './section_label'
 import sectionTitle from './section_title_editable'
 import tableElement from './table_element_editable'
 import tocElement from './toc_element_editable'
+import articleTitle from './article_title'
 
 type EditorProps = EditableBlockProps & CitationEditableProps
 
@@ -75,4 +76,5 @@ export default (props: EditorProps) => ({
   table_element: tableElement(props),
   toc_element: tocElement(props),
   meta_section: metaSection,
+  article_title: articleTitle(props)
 })

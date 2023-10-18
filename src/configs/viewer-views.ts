@@ -48,6 +48,7 @@ import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title'
 import tableElement from '../views/table_element'
 import tocElement from '../views/toc_element'
+import articleTitle from '../views/article_title'
 
 type ViewerProps = CitationViewProps &
   CrossReferenceViewProps &
@@ -82,4 +83,5 @@ export default (props: ViewerProps, dispatch: Dispatch) => ({
   table_element: tableElement(props),
   toc_element: tocElement(props),
   meta_section: metaSection,
+  article_title: articleTitle(props)
 })
