@@ -16,16 +16,18 @@
 
 import { Model } from '@manuscripts/json-schema'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
-import { Node } from 'prosemirror-model'
+import { Attrs, Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
+import { isMetaNode } from '../lib/utils'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
   popper: PopperManager
   getModel: <T extends Model>(id: string) => T | undefined
+  getModelMap: () => Map<string, Model>
   cslProps: CSLProps
   renderReactComponent: (
     child: React.ReactElement,
@@ -113,5 +115,26 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
 
       this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
     }
+  }
+
+  public updateNodeAttrs = (attrs: Attrs) => {
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.attrs.id === attrs.id) {
+        const tr = this.view.state.tr.setNodeMarkup(pos, undefined, attrs)
+        if (isMetaNode(node.type.name)) {
+          tr.setMeta('track-changes-update-meta-node', true)
+        }
+
+        this.view.dispatch(tr)
+      }
+    })
+  }
+
+  public deleteNode = (id: string) => {
+    this.view.state.doc.descendants((node, pos) => {
+      if ((node.attrs.id || node.attrs.rid) === id) {
+        this.view.dispatch(this.view.state.tr.delete(pos, pos + node.nodeSize))
+      }
+    })
   }
 }
