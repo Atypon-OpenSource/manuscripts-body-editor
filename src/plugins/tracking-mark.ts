@@ -79,7 +79,7 @@ const buildDecorations = (state: EditorState) => {
       change.dataTracked.operation === CHANGE_OPERATION.set_node_attributes
     ) {
       decorations.push(
-        Decoration.widget(change.from + 1, addAttrsTrackingButton(change), {
+        Decoration.widget(change.from + 1, getAttrsTrackingButton(change), {
           key: change.id,
         })
       )
@@ -89,7 +89,7 @@ const buildDecorations = (state: EditorState) => {
   return decorations
 }
 
-const addAttrsTrackingButton = (change: NodeAttrChange) => {
+export const getAttrsTrackingButton = (change: NodeAttrChange) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'
   el.value = change.id
@@ -123,12 +123,15 @@ const editIcon = `
   </svg>
 `
 
-export const getMarkDecoration = (dataTracked: TrackedAttrs) => {
+export const getMarkDecoration = (
+  dataTracked: TrackedAttrs,
+  htmlNode?: HTMLElement
+) => {
   const style: {
     background?: string
     textDecoration?: string
     display?: string
-  } = {}
+  } = htmlNode?.style || {}
   let className = undefined
 
   const { status, operation } = dataTracked
@@ -171,6 +174,9 @@ export const getMarkDecoration = (dataTracked: TrackedAttrs) => {
 
   if (showAttrsPopper) {
     className = 'attrs-track-mark'
+    if (htmlNode) {
+      htmlNode.className = 'attrs-track-mark'
+    }
   }
 
   return {
