@@ -47,6 +47,7 @@ import sections from '../plugins/sections'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import track_changes_ui from '../plugins/track-changes-ui'
+import tracking_mark from '../plugins/tracking-mark'
 import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
@@ -108,6 +109,7 @@ export default (props: PluginProps) => {
     tableEditing(),
     highlights({ setComment }),
     track_changes_ui({ setEditorSelectedSuggestion }),
+    tracking_mark(),
   ]
 }
 
