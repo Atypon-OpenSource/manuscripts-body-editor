@@ -44,6 +44,7 @@ declare module 'citeproc' {
 
   interface BibliographyMetadata {
     bibliography_errors: string[]
+    entry_ids: string[]
   }
 
   type Bibliography = string[]

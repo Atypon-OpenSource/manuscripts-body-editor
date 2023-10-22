@@ -156,13 +156,15 @@ export default (props: BibliographyProps) => {
     },
     props: {
       decorations(state) {
-        const { citationNodes } = bibliographyKey.getState(state)
+        const { citationNodes, bibliographyItems } =
+          bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
           buildDecorations(
             state.doc,
             citationNodes,
-            getReferencesModelMap(state.doc)
+            getReferencesModelMap(state.doc),
+            bibliographyItems
           )
         )
       },

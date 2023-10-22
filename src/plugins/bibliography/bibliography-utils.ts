@@ -37,7 +37,8 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
 export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
-  referencesModelMap: Map<string, Model>
+  referencesModelMap: Map<string, Model>,
+  bibliographyItems: BibliographyItem[]
 ) => {
   const decorations: Decoration[] = []
 
@@ -86,6 +87,25 @@ export const buildDecorations = (
             el.textContent = `The bibliography could not be generated, due to a missing library item.`
             return el
           })
+        )
+      }
+    })
+  }
+
+  // Update the condition
+  if (bibliographyItems.length) {
+    console.log('Push a decoration to trigger bibliography element update ^^^^')
+    doc.descendants((node, pos) => {
+      if (isBibliographyElement(node)) {
+        decorations.push(
+          Decoration.node(
+            pos,
+            pos + node.nodeSize,
+            {},
+            {
+              bibliographyItems,
+            }
+          )
         )
       }
     })
