@@ -520,6 +520,7 @@ Next levels are shifted 'up' by 1
 }
 
 .bib-item {
+  display: flex;
   margin-bottom: 12px;
   min-height: 80px;
 }
@@ -655,6 +656,38 @@ Next levels are shifted 'up' by 1
 
 .keywords > .block-section_title > .block {
   align-items: center;
+}
+
+.attrs-popper-button-active, .attrs-track-mark:hover .attrs-popper-button {
+  display: inline-flex;
+}
+
+.attrs-popper-button {
+  display: none;
+  background: #fff
+}
+
+.attrs-popper-button:hover {
+  background: #f2fbfc;
+}
+
+.attrs-popper-button:hover path {
+  stroke: #1a9bc7;
+}
+
+.attrs-popper-button,.attrs-popper-button-active {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  border: solid 1px #e2e2e2;
+  align-items: center;
+  justify-content: space-around;
+  margin: 2px;
+  cursor: pointer;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .ProseMirror .inserted.pending {

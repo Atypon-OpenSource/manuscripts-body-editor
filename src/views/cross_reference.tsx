@@ -23,6 +23,8 @@ import { objectsKey } from '../plugins/objects'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
+
 export interface CrossReferenceViewProps extends BaseNodeProps {
   history: History
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -89,7 +91,9 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public updateContents = () => {
-    this.dom.textContent = this.node.attrs.label
+    const nodeClasses = ['cross-reference', ...getChangeClasses(this.node)]
+    this.dom.className = nodeClasses.join(' ')
+    this.dom.textContent = this.node.attrs.customLabel || this.node.attrs.label
     this.dom.addEventListener('click', this.handleClick)
   }
 
