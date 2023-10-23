@@ -135,6 +135,7 @@ export class FigureEditableView extends FigureView<
   addAttachmentSrc = (link: string) => {
     if (this.node) {
       this.setFigureAttrs({
+        id: this.node.attrs.id,
         src: link,
       })
     }
@@ -144,12 +145,14 @@ export class FigureEditableView extends FigureView<
     if (this.node) {
       const src =
         this.node.attrs.src == ''
-          ? this.node.attrs.dataTracked[0]?.oldAttrs.src
+          ? this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+              ?.oldAttrs.src
           : this.node.attrs.src
       const ref = this.getAttachment(src)
 
       if (ref) {
         this.setFigureAttrs({
+          id: this.node.attrs.id,
           src: '',
         })
       }
@@ -165,21 +168,18 @@ export class FigureEditableView extends FigureView<
         the this.node.attrs.dataTracked[x].oldAttrs and use them in the display
       */
 
+      const lastChange =
+        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+
       if (
-        this.node.attrs.dataTracked[0].status === 'rejected' &&
-        this.node.attrs.dataTracked[0].operation === 'set_attrs'
+        lastChange.status === 'rejected' &&
+        lastChange.operation === 'set_attrs'
       ) {
-        attrs = this.node.attrs.dataTracked[0].oldAttrs
+        attrs = lastChange.oldAttrs
       }
 
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
+      this.dom.setAttribute('data-track-status', lastChange.status)
+      this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-type')
