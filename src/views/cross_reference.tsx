@@ -19,11 +19,10 @@ import { ManuscriptNodeView, Target } from '@manuscripts/transform'
 import { History } from 'history'
 import React from 'react'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { objectsKey } from '../plugins/objects'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-
-import { getChangeClasses } from '../lib/track-changes-utils'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
   history: History
