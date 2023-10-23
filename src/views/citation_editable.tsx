@@ -188,13 +188,6 @@ export class CitationEditableView extends CitationView<
 
     this.updateInlineNode(citation)
 
-    const pos = this.getPos()
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(pos, undefined, {
-        ...this.node.attrs,
-      })
-    )
-
     if (embeddedCitationItems.length > 0) {
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
@@ -243,13 +236,6 @@ export class CitationEditableView extends CitationView<
     }
 
     this.updateInlineNode(citation)
-
-    const pos = this.getPos()
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(pos, undefined, {
-        ...this.node.attrs,
-      })
-    )
 
     if (triggerUpdate) {
       this.view.dispatch(
