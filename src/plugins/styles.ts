@@ -42,7 +42,7 @@ const isFigureLayout = hasObjectType<FigureLayout>(ObjectTypes.FigureLayout)
 interface Props {
   getModel: <T extends Model>(id: string) => T | undefined
   getManuscript: () => Manuscript
-  modelMap: Map<string, Model>
+  getModelMap: () => Map<string, Model>
 }
 
 /**
@@ -50,7 +50,7 @@ interface Props {
  */
 export default (props: Props) => {
   const chooseDefaultFigureStyle = (): string | undefined => {
-    for (const model of props.modelMap.values()) {
+    for (const model of props.getModelMap().values()) {
       if (isFigureStyle(model) && model.prototype === 'MPFigureStyle:default') {
         return model._id
       }
@@ -58,7 +58,7 @@ export default (props: Props) => {
   }
 
   const chooseDefaultFigureLayout = (): string | undefined => {
-    for (const model of props.modelMap.values()) {
+    for (const model of props.getModelMap().values()) {
       if (
         isFigureLayout(model) &&
         model.prototype === 'MPFigureLayout:default'
@@ -69,7 +69,7 @@ export default (props: Props) => {
   }
 
   const chooseDefaultTableStyle = (): string | undefined => {
-    for (const model of props.modelMap.values()) {
+    for (const model of props.getModelMap().values()) {
       if (isTableStyle(model) && model.prototype === 'MPTableStyle:default') {
         return model._id
       }
@@ -77,7 +77,7 @@ export default (props: Props) => {
   }
 
   const chooseDefaultTOCStyle = (): string | undefined => {
-    for (const model of props.modelMap.values()) {
+    for (const model of props.getModelMap().values()) {
       if (
         isParagraphStyle(model) &&
         model.prototype === 'MPParagraphStyle:toc'

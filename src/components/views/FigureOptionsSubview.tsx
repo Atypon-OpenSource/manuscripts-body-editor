@@ -26,7 +26,6 @@ export interface FigureOptionsSubviewProps {
   onUploadClick: (e: SyntheticEvent | Event) => void
   onDetachClick: () => void
   getAttachments: () => FileAttachment[]
-  modelMap: Map<string, Model>
   mediaAlternativesEnabled: boolean
   setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
   can: Capabilities
@@ -43,7 +42,6 @@ const FigureOptionsSubview: React.FC<
   onDetachClick,
   setFigureAttrs,
   getAttachments,
-  modelMap,
   mediaAlternativesEnabled,
   can,
   disabled,
@@ -57,7 +55,6 @@ const FigureOptionsSubview: React.FC<
       onUploadClick={onUploadClick}
       setFigureAttrs={setFigureAttrs}
       getAttachments={getAttachments}
-      modelMap={modelMap}
       onDetachClick={onDetachClick}
       mediaAlternativesEnabled={mediaAlternativesEnabled}
       canReplaceFile={can?.replaceFile}

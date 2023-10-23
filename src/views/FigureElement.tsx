@@ -125,7 +125,6 @@ export const isFigureNode = (node: Node) =>
   node.type === node.type.schema.nodes.figure
 
 const FigureElement = ({
-  modelMap,
   deleteModel,
   uploadAttachment,
   getAttachments,
@@ -167,7 +166,6 @@ const FigureElement = ({
 
           <FilesDropdown
             getAttachments={getAttachments}
-            modelMap={modelMap}
             deleteModel={(id: string) => deleteModel(id)}
             onUploadClick={onUploadClick}
             mediaAlternativesEnabled={mediaAlternativesEnabled}
