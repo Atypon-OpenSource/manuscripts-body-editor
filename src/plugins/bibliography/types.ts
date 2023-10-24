@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BibliographyItem, Model } from '@manuscripts/json-schema'
+import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes, CitationProvider } from '@manuscripts/library'
 
 import { CSLProps } from '../../configs/ManuscriptsEditor'

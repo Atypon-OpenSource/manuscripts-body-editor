@@ -18,9 +18,10 @@ import {
   ButtonGroup,
   PrimaryButton,
   SecondaryButton,
+  TextArea,
 } from '@manuscripts/style-guide'
 import { Target } from '@manuscripts/transform'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -46,29 +47,38 @@ const Items = styled.div`
 `
 
 const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
+  position: relative;
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 4}px;
+  background-color: ${(props) =>
+    props.isSelected
+      ? props.theme.colors.background.selected
+      : props.theme.colors.background.primary};
   transition: background-color 0.1s;
-  border: 2px solid
+  border: solid
     ${(props) =>
       props.isSelected
         ? props.theme.colors.brand.medium
         : props.theme.colors.border.secondary};
-  box-shadow: ${(props) => props.theme.shadow.dropShadow};
-  border-radius: ${(props) => props.theme.grid.radius.small};
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
+  border-width: 1px 0;
+  margin-top: -1px;
+  z-index: ${(props) => (props.isSelected ? '1' : '0')};
+
+  &:first-child {
+    margin-top: 0;
+  }
 
   &:hover {
-    border-color: ${(props) => props.theme.colors.background.fifth};
+    background-color: ${(props) => props.theme.colors.background.selected};
   }
 `
 
 const Label = styled.span`
-  font-weight: ${(props) => props.theme.font.weight.bold};
+  color: ${(props) => props.theme.colors.text.primary};
 `
 
 const Caption = styled.span`
-  font-style: italic;
+  color: ${(props) => props.theme.colors.text.secondary};
 `
 
 const Heading = styled.div`
@@ -82,6 +92,20 @@ const Heading = styled.div`
 const Empty = styled.div`
   margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
   color: ${(props) => props.theme.colors.text.tertiary};
+`
+const DefaultLabelWrapper = styled.div`
+  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
+`
+
+const CustomTextArea = styled(TextArea)`
+  width: 100%;
+  height: 75px;
+  color: ${(props) => props.theme.colors.text.secondary};
+  background-color: ${(props) =>
+    props.theme.colors.background.primary} !important;
+  border: 1px solid ${(props) => props.theme.colors.border.secondary};
+  border-radius: ${(props) => props.theme.grid.radius.small};
+  padding: ${(props) => props.theme.grid.unit * 2}px;
 `
 
 // trim a caption, avoiding cutting words
@@ -97,63 +121,80 @@ const trimmedCaption = (caption: string, limit: number): string => {
 
 interface Props {
   targets: Target[]
-  handleSelect: (id: string) => void
+  handleSelect: (id: string, customLabel?: string) => void
   handleCancel: () => void
+  currentTargetId?: string
+  currentCustomLabel?: string
 }
 
-interface State {
-  selectedItem: string | null
-}
+export const CrossReferenceItems: React.FC<Props> = ({
+  targets,
+  handleSelect,
+  handleCancel,
+  currentTargetId,
+  currentCustomLabel,
+}) => {
+  const [selectedItem, setSelectedItem] = useState<string>('')
+  const customTextRef = useRef<HTMLTextAreaElement>(null)
 
-export class CrossReferenceItems extends React.Component<Props, State> {
-  public state: Readonly<State> = {
-    selectedItem: null,
-  }
+  useEffect(() => {
+    if (currentTargetId) {
+      setSelectedItem(currentTargetId)
+    }
+  }, [currentTargetId])
 
-  public render() {
-    const { targets, handleCancel, handleSelect } = this.props
+  return (
+    <Container>
+      <Heading>Insert Cross-reference</Heading>
 
-    return (
-      <Container>
-        <Heading>Insert Cross-reference</Heading>
-
-        <Items>
-          {targets.length ? (
-            targets.map((target) => (
-              <CrossReferenceItem
-                key={target.id}
-                isSelected={this.state.selectedItem === target.id}
-                onMouseDown={() =>
-                  this.setState({
-                    selectedItem: target.id,
-                  })
-                }
-              >
+      <Items>
+        {targets.length ? (
+          targets.map((target) => (
+            <CrossReferenceItem
+              key={target.id}
+              isSelected={selectedItem === target.id}
+              onMouseDown={() => setSelectedItem(target.id)}
+            >
+              <DefaultLabelWrapper>
                 <Label>{target.label}</Label>
                 <Caption>
                   {target.caption && ': ' + trimmedCaption(target.caption, 200)}
                 </Caption>
-              </CrossReferenceItem>
-            ))
-          ) : (
-            <Empty>No cross-reference targets available.</Empty>
-          )}
-        </Items>
+              </DefaultLabelWrapper>
+              {selectedItem === target.id && (
+                <CustomTextArea
+                  ref={customTextRef}
+                  placeholder={'Or type custom text'}
+                  defaultValue={
+                    currentTargetId &&
+                    currentTargetId === selectedItem &&
+                    currentCustomLabel
+                      ? currentCustomLabel
+                      : ''
+                  }
+                />
+              )}
+            </CrossReferenceItem>
+          ))
+        ) : (
+          <Empty>No cross-reference targets available.</Empty>
+        )}
+      </Items>
 
-        <Actions>
-          <ButtonGroup>
-            <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-            <PrimaryButton
-              onClick={() =>
-                this.state.selectedItem && handleSelect(this.state.selectedItem)
-              }
-              disabled={!this.state.selectedItem}
-            >
-              Insert
-            </PrimaryButton>
-          </ButtonGroup>
-        </Actions>
-      </Container>
-    )
-  }
+      <Actions>
+        <ButtonGroup>
+          <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+          <PrimaryButton
+            onClick={() =>
+              selectedItem &&
+              handleSelect(selectedItem, customTextRef.current?.value)
+            }
+            disabled={!selectedItem}
+          >
+            Insert
+          </PrimaryButton>
+        </ButtonGroup>
+      </Actions>
+    </Container>
+  )
 }

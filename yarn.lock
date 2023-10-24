@@ -1579,15 +1579,7 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.1.2.tgz#80fc5d3c951d7a5586f625a651c704a3f9d2d5b5"
-  integrity sha512-WTOlz0uES3yBal7YziM0ZMkfyNXJtkTDKwBCffXaayh+FoqtKQBD4hrmrcxN4LWNYmmYB+lSdm/JB4Y9DmjgDQ==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
-"@manuscripts/json-schema@^2.2.0":
+"@manuscripts/json-schema@^2.1.2", "@manuscripts/json-schema@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0.tgz#8507707f00c0e6cead4f4e2f2e1797f9bccec4af"
   integrity sha512-2ooif0jtIld5bA44DHPpsNbDvdoQWaFcNXiBlc7OQ0znY37e5juMipknEtNTvdHCtHpzBkrLJt7k77bBT7VaVQ==
@@ -1595,10 +1587,10 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@^1.1.11":
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.11.tgz#a15eb9240e77af5dc2fea6dd7112dd3c452bc3d2"
-  integrity sha512-cykVfhC0TS8JbOs37ap9YL+Y6oM7twB274fU3DssIcgT/pQ2AL56xSAWI970Kq3UVNYbDBLnx6JaTdg9S2VPVQ==
+"@manuscripts/library@^1.1.12":
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.12.tgz#38d036fff86aeb9f140d0011dc9b22e8f75ffc2a"
+  integrity sha512-wSML0Fhj464JQlnlRQTyl2wz7LyDsm4fywa3BXCNE4HhaLvEhWBcdazZxQZ5+EZoW15BmwBLH6C2215/Kt/vNw==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     "@manuscripts/transform" "^1.4.3"
@@ -1665,10 +1657,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.6.1.tgz#bb6d3e7cb9620fc636436f6e6b173849d15952a9"
-  integrity sha512-lu93qvlvm8PcDb5UjzEQTd5qUndr0tGTsOcyuMNyIGAZt1n/5AP6ydrx1bmu0FLptdOV9Ey1ReQLtrSbhqTGzQ==
+"@manuscripts/track-changes-plugin@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.1.tgz#9ca69033b0a56a7c89e99c16b2aab7568c465cb3"
+  integrity sha512-ueijHAVqLmvlVjXJAzmD9XCP5b05pW+wE5bvg9ZC6Ml2+X3gmOYjovZ6ViCdkqkNXGeVoUk00sGQ9qYJmXpKlg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1681,10 +1673,24 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^1.4.3", "@manuscripts/transform@^1.4.4":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.4.tgz#d3729ca848b047c819308fc5800b39e610dc7751"
-  integrity sha512-AZ+BdfiTJWQiGJThe8nf67C7hKAyyDHHDqFcUMwN9sgKoWqfaoebcF315qMp050a5uhfMZsz9fFpT4RrXqTERQ==
+"@manuscripts/transform@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.3.tgz#2c7d033b57320c388293ecaa178e791beeed55c4"
+  integrity sha512-sceyLkRujlcUWMoNry4fe/v8rg5xEmd1imz/7WaFGMdQcnC/yToI7OAbw157pE3hK4ZKmR199VV6p28XiZKHuQ==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.6.tgz#6faf0129923938342d09a9217c2d02bf9c2967cb"
+  integrity sha512-G/HvH5gQejiyKW0lY7Qzwpvj9ZE0PQgmDNmaVhN79x5YVEspU1QykjvWReRE9DerQHVl9Sho23FYuJKve0bwXg==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"

@@ -21,6 +21,7 @@ import {
   buildCitations,
   CitationProvider,
 } from '@manuscripts/library'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
@@ -55,13 +56,14 @@ export default (props: BibliographyProps) => {
       init(config, instance): PluginState {
         const citationNodes = buildCitationNodes(instance.doc, getModel)
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
           citationNodes,
-          (id: string) => getBibliographyItem(id)
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         return {
@@ -74,13 +76,14 @@ export default (props: BibliographyProps) => {
       apply(tr, value, oldState, newState): PluginState {
         const citationNodes = buildCitationNodes(newState.doc, getModel)
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
           citationNodes,
-          (id: string) => getBibliographyItem(id)
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
@@ -149,6 +152,7 @@ export default (props: BibliographyProps) => {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
         tr.setMeta('origin', bibliographyKey)
+        skipTracking(tr)
         return tr
       } catch (error) {
         console.error(error) // tslint:disable-line:no-console
@@ -159,7 +163,11 @@ export default (props: BibliographyProps) => {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
-          buildDecorations(state.doc, citationNodes, getBibliographyItem)
+          buildDecorations(
+            state.doc,
+            citationNodes,
+            getReferencesModelMap(state.doc)
+          )
         )
       },
     },

@@ -19,6 +19,7 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
 import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'

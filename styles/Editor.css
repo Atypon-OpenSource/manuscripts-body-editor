@@ -178,6 +178,11 @@
   color: inherit;
 }
 
+.ProseMirror .cross-reference.deleted.pending,
+.ProseMirror .cross-reference.deleted.accepted {
+  text-decoration: line-through;
+}
+
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {
   background-color: #bce7f6;
