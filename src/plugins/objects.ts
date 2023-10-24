@@ -34,7 +34,6 @@ interface Props {
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
-
   return new Plugin<Map<string, Target>>({
     key: objectsKey,
 

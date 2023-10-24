@@ -89,6 +89,8 @@ export interface EditorProps {
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   environment?: string
+  setCiteprocCitations: (citations: Map<string, string>) => void
+  getCiteprocCitations: () => Map<string, string>
 }
 
 export default {

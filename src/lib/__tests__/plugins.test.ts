@@ -374,9 +374,9 @@ const buildProps = (
   theme: {},
   getFiles: () => [],
   fileManagement: {
-    download: () => {},
+    download: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
     //@ts-ignore
-    upload: () => {},
+    upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
   getModelMap: () => modelMap,
@@ -384,6 +384,8 @@ const buildProps = (
     style: '',
     locale: '',
   },
+  setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map(),
 })
 
 describe('editor view', () => {

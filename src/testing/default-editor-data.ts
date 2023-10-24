@@ -90,8 +90,8 @@ export const defaultEditorProps: EditorProps = {
   getFiles: () => [],
   fileManagement: {
     // @ts-ignore
-    upload: () => {},
-    download: () => {},
+    upload: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+    download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
   getModelMap: () => TEST_DATA.MODEL_MAP,
@@ -130,4 +130,6 @@ export const defaultEditorProps: EditorProps = {
   setEditorSelectedSuggestion: () => undefined,
   components: {},
   environment: undefined,
+  setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map<string, string>(),
 }

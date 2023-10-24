@@ -64,6 +64,7 @@ interface PluginProps {
   getCapabilities: () => Capabilities
   plugins?: Plugin<ManuscriptSchema>[]
   cslProps: CSLProps
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }
 
 export default (props: PluginProps) => {
@@ -90,7 +91,7 @@ export default (props: PluginProps) => {
     tableEditing(),
     highlights(props),
     track_changes_ui(props),
-    tracking_mark()
+    tracking_mark(),
   ]
 }
 
