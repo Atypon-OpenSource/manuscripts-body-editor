@@ -70,7 +70,7 @@ export const buildDecorations = (
         })
       )
     }
-    if (isPendingSetAttrs(node)) {
+    if (isPendingSetAttrs(node) && citation.embeddedCitationItems.length) {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize,
