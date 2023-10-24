@@ -19,6 +19,7 @@ import { ManuscriptNodeView, Target } from '@manuscripts/transform'
 import { History } from 'history'
 import React from 'react'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { objectsKey } from '../plugins/objects'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -89,7 +90,9 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public updateContents = () => {
-    this.dom.textContent = this.node.attrs.label
+    const nodeClasses = ['cross-reference', ...getChangeClasses(this.node)]
+    this.dom.className = nodeClasses.join(' ')
+    this.dom.textContent = this.node.attrs.customLabel || this.node.attrs.label
     this.dom.addEventListener('click', this.handleClick)
   }
 
@@ -101,7 +104,7 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   public ignoreMutation = () => true
 
   public getAuxiliaryObjectReference = (id: string) =>
-    this.props.getModel<AuxiliaryObjectReference>(id)
+    this.props.getModelMap().get(id) as AuxiliaryObjectReference
 
   public createDOM = () => {
     this.dom = document.createElement('span')

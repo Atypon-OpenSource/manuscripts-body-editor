@@ -33,14 +33,10 @@ export class EquationElementView<
     )
 
     if (this.node.attrs.dataTracked?.length) {
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
+      const lastChange =
+        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+      this.dom.setAttribute('data-track-status', lastChange.status)
+      this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-type')
