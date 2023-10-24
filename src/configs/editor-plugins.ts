@@ -74,7 +74,6 @@ export default (props: PluginProps) => {
     dropCursor(),
     // gapCursor(),
     history(),
-    models(props), // NOTE: this should come first
     ...plugins, // TODO: should these run after persist?
     table_editing_fix(),
     elements(),
@@ -91,6 +90,7 @@ export default (props: PluginProps) => {
     tableEditing(),
     highlights(props),
     track_changes_ui(props),
+    tracking_mark()
   ]
 }
 

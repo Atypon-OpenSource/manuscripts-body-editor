@@ -138,8 +138,7 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public getCitation = () => {
-    const modelMap = this.props.getModelMap()
-    const citation = modelMap.get(this.node.attrs.rid) as Citation
+    const citation = getNodeModel<Citation>(this.node)
 
     if (!citation) {
       throw new Error('Citation not found')

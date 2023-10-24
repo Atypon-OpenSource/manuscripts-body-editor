@@ -120,8 +120,8 @@ export class BibliographyItemView<
   }
 
   public updateContents = async () => {
-    const modelMap = this.props.getModelMap()
-    const reference = modelMap.get(this.node.attrs.id) as BibliographyItem
+    const reference = getNodeModel<BibliographyItem>(this.node)
+
     if (reference && this.contentDOM) {
       const bibliography = await createBibliography(
         [reference],

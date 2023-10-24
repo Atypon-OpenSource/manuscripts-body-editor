@@ -26,7 +26,7 @@ import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import { buildDecorations } from './bibliography-utils'
+import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
 export const bibliographyKey = new PluginKey('bibliography')
@@ -38,23 +38,15 @@ export const bibliographyKey = new PluginKey('bibliography')
 export default (props: BibliographyProps) => {
   const { style, locale } = props.cslProps
 
-  const getModel = <T>(id: string): T => {
-    return props.getModelMap().get(id) as T
-  }
-
-  const getBibliographyItem = (id: string) => {
-    const libraryItem = props.getLibraryItem(id)
-    if (libraryItem) {
-      return libraryItem
-    }
-    return getModel<BibliographyItem>(id)
-  }
-
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
-        const citationNodes = buildCitationNodes(instance.doc, getModel)
+        const referencesModelMap = getReferencesModelMap(instance.doc)
+        const citationNodes = buildCitationNodes(
+          instance.doc,
+          referencesModelMap
+        )
 
         const citations = buildCitations(
           citationNodes,
@@ -74,7 +66,11 @@ export default (props: BibliographyProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const citationNodes = buildCitationNodes(newState.doc, getModel)
+        const referencesModelMap = getReferencesModelMap(newState.doc)
+        const citationNodes = buildCitationNodes(
+          newState.doc,
+          referencesModelMap
+        )
 
         const citations = buildCitations(
           citationNodes,
