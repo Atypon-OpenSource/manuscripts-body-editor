@@ -41,6 +41,8 @@ export interface CitationEditableProps extends CitationViewProps {
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
+  setCiteprocCitations: (citations: Map<string, string>) => void
+  getCiteprocCitations: () => Map<string, string>
 }
 
 export class CitationEditableView extends CitationView<

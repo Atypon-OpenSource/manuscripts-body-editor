@@ -36,4 +36,5 @@ export interface BibliographyProps {
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   cslProps: CSLProps
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }

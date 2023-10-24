@@ -214,7 +214,7 @@ export const insertFileAsFigure = (
   }
   const figure = state.schema.nodes.figure.createAndFill({
     label: file.name,
-    src: file.link,
+    src: file.id,
     embedURL: { default: undefined },
     originalURL: { default: undefined },
   }) as FigureNode
@@ -541,7 +541,7 @@ export const insertGraphicalAbstract = (
   }
   // check if another graphical abstract already exists
   if (
-    !!getMatchingDescendant(
+    getMatchingDescendant(
       state.doc,
       (node) => node.type === state.schema.nodes.graphical_abstract_section
     )

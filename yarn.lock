@@ -1608,10 +1608,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.3.5-LEAN-2585-0":
-  version "1.3.5-LEAN-2585-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.5-LEAN-2585-0.tgz#90b86e75db449b5404352cac0b5eb437bd66bb53"
-  integrity sha512-Cjnf4bJqqnJ7WPqSR+uyRoXGb2w/v2BOEGr/VHyh2ZoCL2dLUJjreTbrr+w1XIpkuZsvZFyJDAj87sPQE97JQg==
+"@manuscripts/style-guide@^1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.6.tgz#0afd5ef4ffeefa478f885cfcb6f7451081d41c00"
+  integrity sha512-YrpAa7pE4xwrwmO5ckm4yPNk9/eog7FE5UNkntLbHqRuLNFYNyfOcO8uaKJ4v7xR7zDSL5XjZWJlM0BPnvP9Yg==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1665,10 +1665,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.0.tgz#61b588e74929d5687253253c3b8080564fe87ac7"
-  integrity sha512-lpuyXe4lBu47yAW+Eq2V1VIbzqxLtYko6/GypkGXdlXXLkIzCW9d5Nanvtwz7iFCcC30nGZGhry7qjEOVxfhfg==
+"@manuscripts/track-changes-plugin@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.1.tgz#9ca69033b0a56a7c89e99c16b2aab7568c465cb3"
+  integrity sha512-ueijHAVqLmvlVjXJAzmD9XCP5b05pW+wE5bvg9ZC6Ml2+X3gmOYjovZ6ViCdkqkNXGeVoUk00sGQ9qYJmXpKlg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1682,9 +1682,9 @@
     prosemirror-view "^1.29.1"
 
 "@manuscripts/transform@^1.4.3":
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.4.tgz#d3729ca848b047c819308fc5800b39e610dc7751"
-  integrity sha512-AZ+BdfiTJWQiGJThe8nf67C7hKAyyDHHDqFcUMwN9sgKoWqfaoebcF315qMp050a5uhfMZsz9fFpT4RrXqTERQ==
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.5.tgz#1377cc246d584c1354d0787d738464ae5e2287c5"
+  integrity sha512-rVbF6doZoAr+WfXjqPJXVF5GVFgISK/9YXwzoVc+mEvJwahTtoU1dBvYX6x5bzm3BoEhbC/AVbbAdG82LYhn9A==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
@@ -1695,10 +1695,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@^1.4.5":
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.5.tgz#1377cc246d584c1354d0787d738464ae5e2287c5"
-  integrity sha512-rVbF6doZoAr+WfXjqPJXVF5GVFgISK/9YXwzoVc+mEvJwahTtoU1dBvYX6x5bzm3BoEhbC/AVbbAdG82LYhn9A==
+"@manuscripts/transform@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.6.tgz#6faf0129923938342d09a9217c2d02bf9c2967cb"
+  integrity sha512-G/HvH5gQejiyKW0lY7Qzwpvj9ZE0PQgmDNmaVhN79x5YVEspU1QykjvWReRE9DerQHVl9Sho23FYuJKve0bwXg==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
