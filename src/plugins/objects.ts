@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model } from '@manuscripts/json-schema'
+import { Manuscript } from '@manuscripts/json-schema'
 import {
   buildTargets,
   isInGraphicalAbstractSection,
@@ -28,13 +28,13 @@ export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 interface Props {
   getManuscript: () => Manuscript
-  getModel: <T extends Model>(id: string) => T | undefined
 }
 
 /**
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default (props: Props) => {
+
   return new Plugin<Map<string, Target>>({
     key: objectsKey,
 
