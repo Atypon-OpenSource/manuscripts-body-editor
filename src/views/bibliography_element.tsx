@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/json-schema'
+import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import { buildComment } from '@manuscripts/transform'
+import React from 'react'
 
+import { commentIcon, editIcon } from '../assets'
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
 import { bibliographyKey } from '../plugins/bibliography'
+import { getReferencesModelMap } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 
 const createBibliography = async (
   bibliographyItems: BibliographyItem[],
@@ -48,22 +53,68 @@ const createBibliography = async (
   }
 
   let fragment = '<div class="contents">'
-  const index = generatedBibliographyItems[0].indexOf('class="csl-entry"')
   for (let i = 0; i < generatedBibliographyItems.length; i++) {
     generatedBibliographyItems[i] =
-      generatedBibliographyItems[i].slice(0, index) +
-      `id="${bibmeta.entry_ids[i]}"` +
-      generatedBibliographyItems[i].slice(index)
+      `<div id=${bibmeta.entry_ids[i]} class="bib-item">` +
+      '<div class="csl-bib-body">' +
+      generatedBibliographyItems[i] +
+      '</div></div>'
     fragment = fragment + generatedBibliographyItems[i]
   }
 
   return sanitize(fragment + '</div>')
 }
 
+interface BibliographyElementViewProps extends BaseNodeProps {
+  setComment: (comment?: CommentAnnotation) => void
+  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
+}
 export class BibliographyElementBlockView<
-  PropsType extends BaseNodeProps
+  PropsType extends BibliographyElementViewProps & EditableBlockProps
 > extends BlockView<PropsType> {
-  private container: HTMLElement
+  public container: HTMLElement
+  public popperContainer?: HTMLDivElement
+
+  public showPopper = (referenceID: string) => {
+    const {
+      renderReactComponent,
+      components: { ReferencesEditor },
+    } = this.props
+
+    const handleSave = async (data: Partial<BibliographyItem>) => {
+      const {
+        _id: id,
+        'container-title': containerTitle,
+        DOI: doi,
+        ...rest
+      } = data as BibliographyItem
+
+      this.updateNodeAttrs({
+        id,
+        containerTitle,
+        doi,
+        ...rest,
+      })
+    }
+
+    if (!this.popperContainer) {
+      this.popperContainer = document.createElement('div')
+      this.popperContainer.className = 'references'
+    }
+
+    renderReactComponent(
+      <ReferencesEditor
+        saveModel={handleSave}
+        deleteModel={this.deleteNode}
+        modelMap={getReferencesModelMap(this.view.state.doc, true)}
+        referenceID={referenceID}
+      />,
+      this.popperContainer
+    )
+
+    this.props.popper.show(this.dom, this.popperContainer, 'right')
+  }
+
   public stopEvent = () => true
 
   public ignoreMutation = () => true
@@ -78,6 +129,40 @@ export class BibliographyElementBlockView<
       bibliographyItems,
       this.props.cslProps
     )
+
+    const bibItems = bibliographyFragment.querySelectorAll('.bib-item')
+    bibItems.forEach((element) => {
+      const doubleButton = document.createElement('div')
+      const editButton = document.createElement('button')
+      const commentButton = document.createElement('button')
+
+      doubleButton.className = 'bibliography-double-button'
+      editButton.className = 'bibliography-edit-button'
+      commentButton.className = 'bibliography-comment-button'
+
+      commentButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        this.props.setComment(buildComment(element.id) as CommentAnnotation)
+      })
+
+      editButton.addEventListener('click', (e) => {
+        e.preventDefault()
+        this.showPopper(element.id)
+        this.popperContainer = undefined
+      })
+
+      editButton.innerHTML = editIcon
+      commentButton.innerHTML = commentIcon
+      doubleButton.append(editButton, commentButton)
+
+      if (
+        this.props.getCapabilities().seeReferencesButtons &&
+        !element.querySelector('.bibliography-double-button')
+      ) {
+        element.appendChild(doubleButton)
+      }
+      editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
+    })
 
     const oldContent = this.container.querySelector('.contents')
 
