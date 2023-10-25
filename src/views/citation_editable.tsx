@@ -184,7 +184,10 @@ export class CitationEditableView extends CitationView<
       (item) => item.bibliographyItem !== id
     )
 
-    citation.embeddedCitationItems = embeddedCitationItems
+    citation.embeddedCitationItems =
+      embeddedCitationItems.length > 0
+        ? embeddedCitationItems
+        : citation.embeddedCitationItems
 
     this.updateInlineNode(citation)
 
