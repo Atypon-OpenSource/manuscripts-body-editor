@@ -203,6 +203,12 @@ export class CitationEditableView extends CitationView<
       this.view.dispatch(tr)
     }
 
+    this.view.dispatch(
+      this.view.state.tr.setMeta(bibliographyKey, {
+        bibliographyInserted: true,
+      })
+    )
+
     this.props.popper.destroy()
   }
 

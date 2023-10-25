@@ -35,7 +35,7 @@ import ReactDOM from 'react-dom'
 
 import { TrackChangesReview } from '../../components/track-changes/TrackChangesReview'
 import { PopperManager } from '../../lib/popper'
-import { isPendingSetAttrs } from '../../lib/track-changes-utils'
+import { isDeleted, isPendingSetAttrs } from '../../lib/track-changes-utils'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
@@ -70,7 +70,11 @@ export const buildDecorations = (
         })
       )
     }
-    if (isPendingSetAttrs(node) && citation.embeddedCitationItems.length) {
+    if (
+      isPendingSetAttrs(node) &&
+      !isDeleted(node) &&
+      citation.embeddedCitationItems.length
+    ) {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize,
