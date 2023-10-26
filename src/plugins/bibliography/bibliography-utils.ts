@@ -92,7 +92,11 @@ export const buildDecorations = (
             return el
           },
           { side: -1 }
-        )
+        ),
+        Decoration.node(pos, pos + node.nodeSize, {
+          nodeName: 'span',
+          class: 'citation-wrapper',
+        })
       )
     }
   }
