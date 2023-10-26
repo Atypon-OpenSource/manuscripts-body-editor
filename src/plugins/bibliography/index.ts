@@ -23,8 +23,9 @@ import {
 } from '@manuscripts/library'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { DecorationSet } from 'prosemirror-view'
+import { DecorationSet, EditorView } from 'prosemirror-view'
 
 import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
@@ -155,6 +156,17 @@ export default (props: BibliographyProps) => {
       }
     },
     props: {
+      handleClickOn(
+        view: EditorView,
+        pos: number,
+        node: ProsemirrorNode,
+        nodePos: number,
+        event: MouseEvent,
+        direct: boolean
+      ) {
+        console.log(view, pos, node, nodePos, event, direct)
+        return false
+      },
       decorations(state) {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
