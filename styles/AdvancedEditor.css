@@ -658,12 +658,16 @@ Next levels are shifted 'up' by 1
   display: none;
 }
 
+.citation-wrapper {
+  position: relative;
+}
 .track-changes-review {
   display: none;
   height: 36px;
   vertical-align: middle;
   cursor: pointer;
   position: absolute;
+  z-index: 1;
 }
 .track-changes-review:hover path {
   stroke: #1a9bc7;
