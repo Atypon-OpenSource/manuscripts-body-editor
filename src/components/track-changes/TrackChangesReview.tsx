@@ -106,7 +106,7 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
     <TrackChangesReviewIcon
       width={36}
       height={36}
-      onClick={(e) => {
+      onMouseDown={(e) => {
         e.preventDefault()
         e.stopPropagation()
         handleClick()

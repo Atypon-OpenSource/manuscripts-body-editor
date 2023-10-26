@@ -23,9 +23,8 @@ import {
 } from '@manuscripts/library'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { DecorationSet, EditorView } from 'prosemirror-view'
+import { DecorationSet } from 'prosemirror-view'
 
 import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
@@ -156,23 +155,6 @@ export default (props: BibliographyProps) => {
       }
     },
     props: {
-      handleClickOn(
-        view: EditorView,
-        pos: number,
-        node: ProsemirrorNode,
-        nodePos: number,
-        event: MouseEvent
-      ) {
-        const targetElement = event.target as HTMLElement
-        if (
-          node.type === node.type.schema.nodes.citation &&
-          (targetElement.classList?.contains('track-changes-review') ||
-            targetElement.closest('.track-changes-review'))
-        ) {
-          return true
-        }
-        return false
-      },
       decorations(state) {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
