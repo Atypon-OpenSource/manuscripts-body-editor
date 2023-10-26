@@ -102,5 +102,15 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
     }
     setClickedOutside(false)
   }
-  return <TrackChangesReviewIcon width={36} height={36} onClick={handleClick} />
+  return (
+    <TrackChangesReviewIcon
+      width={36}
+      height={36}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        handleClick()
+      }}
+    />
+  )
 }
