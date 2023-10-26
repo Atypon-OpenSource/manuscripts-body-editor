@@ -17,6 +17,7 @@
 import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
 import { buildComment } from '@manuscripts/transform'
+import { Decoration } from 'prosemirror-view'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
@@ -24,6 +25,7 @@ import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
 import { bibliographyKey } from '../plugins/bibliography'
 import { getReferencesModelMap } from '../plugins/bibliography/bibliography-utils'
+import { commentAnnotation } from '../plugins/comment_annotation'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -56,9 +58,10 @@ const createBibliography = async (
   for (let i = 0; i < generatedBibliographyItems.length; i++) {
     generatedBibliographyItems[i] =
       `<div id=${bibmeta.entry_ids[i]} class="bib-item">` +
+      '<div>' +
       '<div class="csl-bib-body">' +
       generatedBibliographyItems[i] +
-      '</div></div>'
+      '</div></div></div>'
     fragment = fragment + generatedBibliographyItems[i]
   }
 
@@ -68,6 +71,9 @@ const createBibliography = async (
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+type WidgetDecoration = Decoration & {
+  type: { toDOM: () => HTMLElement }
 }
 export class BibliographyElementBlockView<
   PropsType extends BibliographyElementViewProps & EditableBlockProps
@@ -125,6 +131,25 @@ export class BibliographyElementBlockView<
       this.view.state
     ).bibliographyItems
 
+    const commentsDecorationSet = commentAnnotation.getState(this.view.state)
+    const commentElementMap: Map<string, HTMLElement> = new Map()
+    if (commentsDecorationSet) {
+      this.node.descendants((node, pos) => {
+        const nodePosition = this.getPos() + pos + 2
+        const commentWidget = commentsDecorationSet.find(
+          nodePosition,
+          nodePosition
+        )
+        if (commentWidget.length) {
+          const commentElement = (
+            commentWidget[0] as WidgetDecoration
+          ).type.toDOM()
+
+          commentElementMap.set(commentElement.id, commentElement)
+        }
+      })
+    }
+
     const bibliographyFragment = await createBibliography(
       bibliographyItems,
       this.props.cslProps
@@ -162,6 +187,11 @@ export class BibliographyElementBlockView<
         element.appendChild(doubleButton)
       }
       editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
+
+      const commentElement = commentElementMap.get(element.id)
+      if (commentElement) {
+        element.childNodes[0].appendChild(commentElement)
+      }
     })
 
     const oldContent = this.container.querySelector('.contents')
