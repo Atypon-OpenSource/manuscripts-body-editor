@@ -30,12 +30,8 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { pickBy } from 'lodash-es'
 import { Attrs, NodeType } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
-import { createElement } from 'react'
-import ReactDOM from 'react-dom'
 
-import { TrackChangesReview } from '../../components/track-changes/TrackChangesReview'
 import { PopperManager } from '../../lib/popper'
-import { isDeleted, isPendingSetAttrs } from '../../lib/track-changes-utils'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
@@ -67,35 +63,6 @@ export const buildDecorations = (
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {
           class: 'citation-empty',
-        })
-      )
-    }
-    if (
-      isPendingSetAttrs(node) &&
-      !isDeleted(node) &&
-      citation.embeddedCitationItems.length
-    ) {
-      decorations.push(
-        Decoration.widget(
-          pos + node.nodeSize,
-          () => {
-            const el = document.createElement('span')
-            el.classList.add('track-changes-review')
-            ReactDOM.render(
-              createElement(TrackChangesReview, {
-                node,
-                popper,
-                target: el,
-              }),
-              el
-            )
-            return el
-          },
-          { side: -1 }
-        ),
-        Decoration.node(pos, pos + node.nodeSize, {
-          nodeName: 'span',
-          class: 'citation-wrapper',
         })
       )
     }
