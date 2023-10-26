@@ -184,14 +184,11 @@ export class CitationEditableView extends CitationView<
       (item) => item.bibliographyItem !== id
     )
 
-    citation.embeddedCitationItems =
-      embeddedCitationItems.length > 0
-        ? embeddedCitationItems
-        : citation.embeddedCitationItems
-
-    this.updateInlineNode(citation)
-
     if (embeddedCitationItems.length > 0) {
+      citation.embeddedCitationItems = embeddedCitationItems
+
+      this.updateInlineNode(citation)
+
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
       }, 100)
