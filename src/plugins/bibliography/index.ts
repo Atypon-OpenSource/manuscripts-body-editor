@@ -161,10 +161,16 @@ export default (props: BibliographyProps) => {
         pos: number,
         node: ProsemirrorNode,
         nodePos: number,
-        event: MouseEvent,
-        direct: boolean
+        event: MouseEvent
       ) {
-        console.log(view, pos, node, nodePos, event, direct)
+        const targetElement = event.target as HTMLElement
+        if (
+          node.type === node.type.schema.nodes.citation &&
+          (targetElement.classList?.contains('track-changes-review') ||
+            targetElement.closest('.track-changes-review'))
+        ) {
+          return true
+        }
         return false
       },
       decorations(state) {
