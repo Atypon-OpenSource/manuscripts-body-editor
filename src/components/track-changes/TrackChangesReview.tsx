@@ -60,16 +60,15 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
   popper,
   target,
 }) => {
-  const [clickedOutside, setClickedOutside] = useState(false)
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const addPopperEventListeners = () => {
-    const mouseListener: EventListener = () => {
+    const mouseListener: EventListener = (event) => {
       window.requestAnimationFrame(() => {
         window.removeEventListener('mousedown', mouseListener)
         window.removeEventListener('keydown', keyListener)
         popper.destroy()
-        setClickedOutside(true)
         setIsPopperOpen(false)
+        event.stopPropagation()
       })
     }
 
@@ -86,8 +85,8 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
     window.addEventListener('keydown', keyListener)
   }
 
-  const handleClick = () => {
-    if (!clickedOutside && !isPopperOpen) {
+  const handleClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    if (!isPopperOpen) {
       const popperContainer = document.createElement('div')
       popperContainer.classList.add('track-changes-review-panel')
       ReactDOM.render(
@@ -99,17 +98,15 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
       popper.show(target, popperContainer, 'top-end')
       addPopperEventListeners()
       setIsPopperOpen(true)
+      e.stopPropagation()
     }
-    setClickedOutside(false)
   }
   return (
     <TrackChangesReviewIcon
       width={36}
       height={36}
       onMouseDown={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        handleClick()
+        handleClick(e)
       }}
     />
   )
