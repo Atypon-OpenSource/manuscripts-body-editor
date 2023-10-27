@@ -89,7 +89,7 @@ export const TrackChangesReview: React.FC<TCReviewProps> = ({
   const handleClick = () => {
     if (!clickedOutside && !isPopperOpen) {
       const popperContainer = document.createElement('div')
-      popperContainer.classList.add('track-changes-review')
+      popperContainer.classList.add('track-changes-review-panel')
       ReactDOM.render(
         createElement(TrackChangesItems, {
           node,
