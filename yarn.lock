@@ -1554,13 +1554,6 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.2.tgz#ae54a9945aabc4b0ed60c96be6edf1855adfbe41"
   integrity sha512-r9Mo/mcNV23vVbqCUOYVyLDfnp0e5Yaub7K9l1T3QP41a5+FUOOURb7i+wJsLoQnBDx4jueztqrxskZdKQciKQ==
 
-"@manuscripts/assets@^0.6.3-LEAN-2850":
-  version "0.6.3-LEAN-2850"
-  resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.3-LEAN-2850.tgz#56bcd63648987c4faa09a0915614310c7774eb55"
-  integrity sha512-fwjloo3HH1V+98k1kTQywS13kk0WKNEY0EhnDSiph46E5SlMcpmKiwfNNJbbDd4xuPctgzmb3GRZnBzhFAF+GA==
-  dependencies:
-    "@inline-svg-unique-id/react" "^1.2.3"
-
 "@manuscripts/comment-editor@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@manuscripts/comment-editor/-/comment-editor-1.0.3.tgz#f76b920d2f37020837f6cd359908b756061276c6"
@@ -1615,10 +1608,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@^1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.5.tgz#8f3174b38e6b7a7276ee63999f9cfd1fdfd7c6ca"
-  integrity sha512-iyTdTETwvMBSkBl1Mg8+3oTCiuogSYHh8TTcGCK4/V8acUXdBcf1DeK70mgi/QLocbNscjzo913BNEf6OCEYOA==
+"@manuscripts/style-guide@^1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.6.tgz#0afd5ef4ffeefa478f885cfcb6f7451081d41c00"
+  integrity sha512-YrpAa7pE4xwrwmO5ckm4yPNk9/eog7FE5UNkntLbHqRuLNFYNyfOcO8uaKJ4v7xR7zDSL5XjZWJlM0BPnvP9Yg==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1672,10 +1665,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.0-LEAN-2850-1":
-  version "1.7.0-LEAN-2850-1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.0-LEAN-2850-1.tgz#bd87b10aa6fd35b8bcd1260c9df0986982db96b3"
-  integrity sha512-fL3R36LhOkrKZt2WtJLZxT9Pt/ITsY90WUdGEr8ruDQyNOyZCAdOhDJJOmVayZ4nu6ptxym3Eoa+32PXCxbBCg==
+"@manuscripts/track-changes-plugin@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.2.tgz#73b4729d5c9216a7f9d295b2a659f2ce3a0b6694"
+  integrity sha512-dmyGroidBysXDadv2BqrLTWfqxpJuG8CCWDp5iqs1B6YGTlW8irkSs06XS1c5QlSdJTPYok5X2yUv+RudHdrfg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1688,10 +1681,24 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^1.4.3", "@manuscripts/transform@^1.4.5":
+"@manuscripts/transform@^1.4.3":
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.5.tgz#1377cc246d584c1354d0787d738464ae5e2287c5"
   integrity sha512-rVbF6doZoAr+WfXjqPJXVF5GVFgISK/9YXwzoVc+mEvJwahTtoU1dBvYX6x5bzm3BoEhbC/AVbbAdG82LYhn9A==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.6.tgz#6faf0129923938342d09a9217c2d02bf9c2967cb"
+  integrity sha512-G/HvH5gQejiyKW0lY7Qzwpvj9ZE0PQgmDNmaVhN79x5YVEspU1QykjvWReRE9DerQHVl9Sho23FYuJKve0bwXg==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
