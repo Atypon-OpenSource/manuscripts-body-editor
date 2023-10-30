@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2023 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export type UploadHandler = (file: File) => Promise<void>
 
-import { createEditableNodeView } from './creators'
-import { PlaceholderView } from './placeholder'
+export const figureUploader = (handler: UploadHandler) => {
+  const handleFileChange = async (e: Event) => {
+    const target = e.target as HTMLInputElement
+    if (target && target.files && target.files.length) {
+      await handler(target.files[0])
+    }
+  }
 
-export default createEditableNodeView(PlaceholderView)
+  const input = document.createElement('input')
+  input.accept = 'image/*'
+  input.type = 'file'
+  input.addEventListener('change', handleFileChange)
+
+  return () => input.click()
+}

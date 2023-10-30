@@ -218,3 +218,12 @@
   height: auto;
   width: 600px;
 }
+
+
+.popper .track-attrs-popper {
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
+  border-radius: 8px;
+  background: #FFF;
+  width: 368px;
+  z-index: 10;
+}

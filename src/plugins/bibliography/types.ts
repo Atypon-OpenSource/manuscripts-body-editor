@@ -38,4 +38,5 @@ export interface BibliographyProps {
   getLibraryItem: (id: string) => BibliographyItem | undefined
   cslProps: CSLProps
   popper: PopperManager
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }

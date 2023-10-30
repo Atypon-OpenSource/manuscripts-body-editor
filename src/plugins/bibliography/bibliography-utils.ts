@@ -66,6 +66,11 @@ export const buildDecorations = (
         })
       )
     }
+    decorations.push(
+      Decoration.node(pos, pos + node.nodeSize, {
+        'data-updated': Date.now().toString(),
+      })
+    )
   }
 
   if (hasMissingItems) {

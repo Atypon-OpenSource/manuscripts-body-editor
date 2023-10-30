@@ -17,16 +17,12 @@
 import {
   isElementNodeType,
   isSectionNodeType,
-  ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
-import { Node } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
-
-import { Dispatch } from '../commands'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -87,35 +83,6 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     }
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
-
-export interface viewProps {
-  node: ManuscriptNode
-  view: ManuscriptEditorView
-  getPos: () => number
-}
-
-export const setNodeAttrs =
-  (
-    figure: Node | undefined,
-    viewProps: viewProps,
-    dispatch: Dispatch,
-    pos?: number
-  ) =>
-  (attrs: Node['attrs']) => {
-    const { selection, tr } = viewProps.view.state
-    // if pos is passed we want to get actual value of pos
-    // if pos is not passed we want to get the next position
-    // figure in accordance with the schema has to be the first element in the fig element this is why +1 is certain
-    const actualPos = pos ? viewProps.getPos() : viewProps.getPos() + 1
-    tr.setNodeMarkup(actualPos, undefined, { ...attrs }).setSelection(
-      selection.map(tr.doc, tr.mapping)
-    )
-    dispatch(tr)
-  }
-
-export const getFileExtension = (file: File) => {
-  return file.name.split('.').pop() || ''
-}
 
 export const isMetaNode = (nodeType: string) =>
   nodeType === schema.nodes.bibliography_item.name ||
