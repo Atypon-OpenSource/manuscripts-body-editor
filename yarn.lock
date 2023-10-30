@@ -1554,6 +1554,13 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.2.tgz#ae54a9945aabc4b0ed60c96be6edf1855adfbe41"
   integrity sha512-r9Mo/mcNV23vVbqCUOYVyLDfnp0e5Yaub7K9l1T3QP41a5+FUOOURb7i+wJsLoQnBDx4jueztqrxskZdKQciKQ==
 
+"@manuscripts/assets@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.4.tgz#37702cfaceb0ce90f41682612771dec9aed33fed"
+  integrity sha512-80GfG1Gm9PodmBf8vA+Uy1Piu3tvagsXjwrJXq2+vo572s+4p269msyQym3gztQGo+810aVmoAaeqYJg0z5/zw==
+  dependencies:
+    "@inline-svg-unique-id/react" "^1.2.3"
+
 "@manuscripts/comment-editor@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@manuscripts/comment-editor/-/comment-editor-1.0.3.tgz#f76b920d2f37020837f6cd359908b756061276c6"

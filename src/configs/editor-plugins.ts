@@ -33,6 +33,7 @@ import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
+import { PopperManager } from '../lib/popper'
 import auxiliary_object_order from '../plugins/auxiliary_object_order'
 import bibliography from '../plugins/bibliography'
 import comment_annotation from '../plugins/comment_annotation'
