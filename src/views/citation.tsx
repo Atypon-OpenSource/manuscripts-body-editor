@@ -22,9 +22,16 @@ import {
 } from '@manuscripts/json-schema'
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
-import React from 'react'
+import React, { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
+import { TrackChangesReview } from '../components/track-changes/TrackChangesReview'
 import { sanitize } from '../lib/dompurify'
+import {
+  getChangeClasses,
+  isDeleted,
+  isPendingSetAttrs,
+} from '../lib/track-changes-utils'
 import { getNodeModel } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -130,6 +137,10 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
+    const citation = this.getCitation()
+    const nodeClasses = ['citation', ...getChangeClasses(this.node)]
+    const citationElement = document.createElement('span')
+    citationElement.className = nodeClasses.join(' ')
     const citeprocCitations = this.props.getCiteprocCitations()
     const citeprocContent = citeprocCitations?.get(this.node.attrs.rid)
     const fragment = sanitize(
@@ -140,9 +151,34 @@ export class CitationView<PropsType extends CitationViewProps>
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
     )
+    citationElement.appendChild(fragment)
+    this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
-    this.dom.appendChild(fragment)
+    this.dom.appendChild(citationElement)
+
+    if (
+      isPendingSetAttrs(this.node) &&
+      !isDeleted(this.node) &&
+      citation.embeddedCitationItems.length
+    ) {
+      this.dom.appendChild(this.renderTrackChangesReview())
+    }
     this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
+  }
+
+  public renderTrackChangesReview = () => {
+    const { popper } = this.props
+    const el = document.createElement('span')
+    el.classList.add('track-changes-review')
+    ReactDOM.render(
+      createElement(TrackChangesReview, {
+        node: this.node,
+        popper,
+        target: el,
+      }),
+      el
+    )
+    return el
   }
 
   public getCitation = () => {

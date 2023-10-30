@@ -149,6 +149,7 @@ export default (props: BibliographyProps) => {
           buildDecorations(
             state.doc,
             citationNodes,
+            props.popper,
             getReferencesModelMap(state.doc)
           )
         )

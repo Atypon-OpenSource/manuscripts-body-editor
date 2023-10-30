@@ -55,12 +55,29 @@ export function isPending(node: ProsemirrorNode) {
   return false
 }
 
-export function getChangeClasses(node: ProsemirrorNode) {
-  const classes: string[] = []
+export function isPendingSetAttrs(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, status }) =>
+        operation === 'set_attrs' && status == 'pending'
+    )
+  }
+  return false
+}
+
+export function getChangeClasses(node: ProsemirrorNode) {
+  const classes: string[] = []
+
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    const operationClasses = new Map([
+      ['insert', 'inserted'],
+      ['delete', 'deleted'],
+      ['set_attrs', 'set_attrs'],
+    ])
     changes.forEach(({ operation, status }) =>
-      classes.push(operation === 'insert' ? 'inserted' : 'deleted', status)
+      classes.push(operationClasses.get(operation) || '', status)
     )
   }
   return classes
@@ -70,7 +87,10 @@ export function isTracked(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(
-      ({ operation }) => operation === 'insert' || operation === 'delete'
+      ({ operation }) =>
+        operation === 'insert' ||
+        operation === 'delete' ||
+        operation === 'set_attrs'
     )
   }
   return false

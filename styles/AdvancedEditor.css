@@ -1,325 +1,296 @@
 /* LVL 1 */
-/* 
-This level is actually hidden in the editor 
+/*
+This level is actually hidden in the editor
 Next levels are shifted 'up' by 1
 */
-.ProseMirror 
-  > section:not(.toc) {
-    counter-increment: level_1 0;
+.ProseMirror > section:not(.toc) {
+  counter-increment: level_1 0;
 }
 
-.ProseMirror 
-  > section 
-    > .block-section_title > h1 {
-      font-size: 16pt !important;
-      font-style: normal !important;
-      font-weight: bold !important;
-      color: #000 !important;
-      text-align: left;
-      margin-top: 8pt !important;
-      margin-bottom: 5pt !important;
-      line-height: 1.5;
-      text-indent: 0pt;
-      display: inline;
+.ProseMirror > section > .block-section_title > h1 {
+  font-size: 16pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 
 /* LVL 2 */
-.ProseMirror 
-  > section 
-    > section:not(.toc) {
-      counter-increment: level_1;
-      counter-reset: level_2;
+.ProseMirror > section > section:not(.toc) {
+  counter-increment: level_1;
+  counter-reset: level_2;
 }
-.ProseMirror 
-  > section 
-    > section 
-      > .block-section_title > h1 {
-        font-size: 16pt !important;
-        font-style: normal !important;
-        font-weight: bold !important;
-        color: #000 !important;
-        text-align: left;
-        margin-top: 8pt !important;
-        margin-bottom: 5pt !important;
-        line-height: 1.5;
-        text-indent: 0pt;
-        display: inline;
+.ProseMirror > section > section > .block-section_title > h1 {
+  font-size: 16pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
-.ProseMirror 
-  > section 
-    > section:not(.toc) 
-      > .block-section_title > h1::before {
-        content: counter(level_1, decimal) '. ';
+.ProseMirror > section > section:not(.toc) > .block-section_title > h1::before {
+  content: counter(level_1, decimal) '. ';
 }
 
 .ProseMirror
   > section
-    > section:not(.toc)
-      > .block-section_title > h1.empty-node[data-placeholder]::before {
-        content: counter(level_1, decimal) '. ' attr(data-placeholder);
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '. ' attr(data-placeholder);
 }
 /* LVL 3 */
-.ProseMirror 
-  > section 
-    > section 
-      > section:not(.toc) {
-        counter-increment: level_2;
-        counter-reset: level_3;
+.ProseMirror > section > section > section:not(.toc) {
+  counter-increment: level_2;
+  counter-reset: level_3;
 }
-.ProseMirror 
-  > section 
-    > section 
-      > section 
-        > .block-section_title > h1 {
-          font-size: 14pt !important;
-          font-style: normal !important;
-          font-weight: bold !important;
-          color: #000 !important;
-          text-align: left;
-          margin-top: 8pt !important;
-          margin-bottom: 5pt !important;
-          line-height: 1.5;
-          text-indent: 0pt;
-          display: inline;
+.ProseMirror > section > section > section > .block-section_title > h1 {
+  font-size: 14pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 .ProseMirror
   > section
-    > section
-      > section:not(.toc)
-        > .block-section_title > h1::before {
-          content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ';
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ';
 }
 .ProseMirror
   > section
-    > section
-      > section:not(.toc)
-        > .block-section_title > h1.empty-node[data-placeholder]::before {
-          content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ' attr(data-placeholder);
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '. '
+    attr(data-placeholder);
 }
 /* LVL 4 */
-.ProseMirror 
-  > section 
-    > section 
-      > section 
-        > section:not(.toc) {
-          counter-increment: level_3;
-          counter-reset: level_4;
+.ProseMirror > section > section > section > section:not(.toc) {
+  counter-increment: level_3;
+  counter-reset: level_4;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > .block-section_title > h1 {
-            font-size: 12pt !important;
-            font-style: normal !important;
-            font-weight: bold !important;
-            color: #000 !important;
-            text-align: left;
-            margin-top: 8pt !important;
-            margin-bottom: 5pt !important;
-            line-height: 1.5;
-            text-indent: 0pt;
-            display: inline;
+  > section
+  > section
+  > section
+  > .block-section_title
+  > h1 {
+  font-size: 12pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section:not(.toc)
-          > .block-section_title > h1::before {
-            content: counter(level_1, decimal) '.' 
-              counter(level_2, decimal) '.'
-              counter(level_3, decimal) '. ';
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '. ';
 }
 
 .ProseMirror
   > section
-    > section
-      > section
-        > section:not(.toc)
-          > .block-section_title > h1.empty-node[data-placeholder]::before {
-            content: counter(level_1, decimal) '.' 
-              counter(level_2, decimal) '.'
-              counter(level_3, decimal) '. ' 
-              attr(data-placeholder);
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '. ' attr(data-placeholder);
 }
 /* LVL 5 */
-.ProseMirror 
-  > section 
-    > section 
-      > section 
-        > section 
-          > section:not(.toc) {
-            counter-increment: level_4;
-            counter-reset: level_5;
+.ProseMirror > section > section > section > section > section:not(.toc) {
+  counter-increment: level_4;
+  counter-reset: level_5;
 }
 
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > .block-section_title > h1 {
-              font-size: 12pt !important;
-              font-style: normal !important;
-              font-weight: bold !important;
-              color: #000 !important;
-              text-align: left;
-              margin-top: 8pt !important;
-              margin-bottom: 5pt !important;
-              line-height: 1.5;
-              text-indent: 0pt;
-              display: inline;
+  > section
+  > section
+  > section
+  > section
+  > .block-section_title
+  > h1 {
+  font-size: 12pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section:not(.toc)
-            > .block-section_title > h1::before {
-              content: counter(level_1, decimal) '.' 
-                counter(level_2, decimal) '.'
-                counter(level_3, decimal) '.' 
-                counter(level_4, decimal) '. ';
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '. ';
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section:not(.toc)
-            > .block-section_title > h1.empty-node[data-placeholder]::before {
-              content: counter(level_1, decimal) '.' 
-                counter(level_2, decimal) '.'
-                counter(level_3, decimal) '.' 
-                counter(level_4, decimal) '. '
-                attr(data-placeholder);
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '. '
+    attr(data-placeholder);
 }
 /* LVL 6 */
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section:not(.toc) {
-              counter-increment: level_5;
-              counter-reset: level_6;
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc) {
+  counter-increment: level_5;
+  counter-reset: level_6;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section
-              > .block-section_title > h1 {
-                font-size: 12pt !important;
-                font-style: normal !important;
-                font-weight: bold !important;
-                color: #000 !important;
-                text-align: left;
-                margin-top: 8pt !important;
-                margin-bottom: 5pt !important;
-                line-height: 1.5;
-                text-indent: 0pt;
-                display: inline;
+  > section
+  > section
+  > section
+  > section
+  > section
+  > .block-section_title
+  > h1 {
+  font-size: 12pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section:not(.toc)
-              > .block-section_title > h1::before {
-                content: counter(level_1, decimal) '.' 
-                  counter(level_2, decimal) '.'
-                  counter(level_3, decimal) '.' 
-                  counter(level_4, decimal) '.'
-                  counter(level_5, decimal) '. ';
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
+    counter(level_5, decimal) '. ';
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section:not(.toc)
-              > .block-section_title > h1.empty-node[data-placeholder]::before {
-                content: counter(level_1, decimal) '.' 
-                  counter(level_2, decimal) '.'
-                  counter(level_3, decimal) '.'  
-                  counter(level_4, decimal) '.'
-                  counter(level_5, decimal) '. ' 
-                  attr(data-placeholder);
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
+    counter(level_5, decimal) '. ' attr(data-placeholder);
 }
 /* LVL 7 */
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section
-              > section:not(.toc) {
-                counter-increment: level_6;
-                counter-reset: level_7;
+  > section
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc) {
+  counter-increment: level_6;
+  counter-reset: level_7;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section
-              > .block-section_title > h1 {
-                font-size: 12pt !important;
-                font-style: normal !important;
-                font-weight: bold !important;
-                color: #000 !important;
-                text-align: left;
-                margin-top: 8pt !important;
-                margin-bottom: 5pt !important;
-                line-height: 1.5;
-                text-indent: 0pt;
-                display: inline;
+  > section
+  > section
+  > section
+  > section
+  > section
+  > .block-section_title
+  > h1 {
+  font-size: 12pt !important;
+  font-style: normal !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  text-align: left;
+  margin-top: 8pt !important;
+  margin-bottom: 5pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
+  display: inline;
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section
-              > section:not(.toc)
-                > .block-section_title > h1::before {
-                  content: counter(level_1, decimal) '.' 
-                    counter(level_2, decimal) '.'
-                    counter(level_3, decimal) '.' 
-                    counter(level_4, decimal) '.'
-                    counter(level_5, decimal) '.' 
-                    counter(level_6, decimal) '. ';
+  > section
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
+    counter(level_5, decimal) '.' counter(level_6, decimal) '. ';
 }
 .ProseMirror
   > section
-    > section
-      > section
-        > section
-          > section
-            > section
-              > section:not(.toc)
-                > .block-section_title > h1.empty-node[data-placeholder]::before {
-                  content: counter(level_1, decimal) '.' 
-                    counter(level_2, decimal) '.'
-                    counter(level_3, decimal) '.' 
-                    counter(level_4, decimal) '.'
-                    counter(level_5, decimal) '.' 
-                    counter(level_6, decimal) '. '
-                    attr(data-placeholder);
+  > section
+  > section
+  > section
+  > section
+  > section
+  > section:not(.toc)
+  > .block-section_title
+  > h1.empty-node[data-placeholder]::before {
+  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
+    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
+    counter(level_5, decimal) '.' counter(level_6, decimal) '. '
+    attr(data-placeholder);
 }
 
 .ProseMirror p.block {
@@ -658,6 +629,9 @@ Next levels are shifted 'up' by 1
   align-items: center;
 }
 
+.ProseMirror .inserted.accepted,
+.ProseMirror .set_attrs.accepted {
+  background: #bffca7;
 .attrs-popper-button-active, .attrs-track-mark:hover .attrs-popper-button {
   display: inline-flex;
 }
@@ -694,15 +668,12 @@ Next levels are shifted 'up' by 1
   background: #ddf3fa;
   text-decoration: none;
 }
-.ProseMirror .inserted.accepted {
-  background: #bffca7;
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending {
   text-decoration: none;
 }
 .ProseMirror .inserted.rejected {
   display: none;
-}
-.ProseMirror .deleted.pending {
-  background: #ddf3fa;
 }
 .ProseMirror .deleted.accepted {
   background: #bffca7;
@@ -710,9 +681,33 @@ Next levels are shifted 'up' by 1
 .ProseMirror .deleted.rejected {
   text-decoration: none;
 }
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending,
+.ProseMirror .deleted.pending {
+  background: #ddf3fa;
+}
 .ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
   display: none;
+}
+
+.citation-wrapper {
+  position: relative;
+}
+.track-changes-review {
+  display: none;
+  height: 36px;
+  vertical-align: middle;
+  cursor: pointer;
+  position: absolute;
+  z-index: 6;
+  margin-left: -5px;
+}
+.track-changes-review:hover path {
+  stroke: #1a9bc7;
+}
+.citation-wrapper:hover .track-changes-review {
+  display: inline-block;
 }

@@ -1554,6 +1554,13 @@
   resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.2.tgz#ae54a9945aabc4b0ed60c96be6edf1855adfbe41"
   integrity sha512-r9Mo/mcNV23vVbqCUOYVyLDfnp0e5Yaub7K9l1T3QP41a5+FUOOURb7i+wJsLoQnBDx4jueztqrxskZdKQciKQ==
 
+"@manuscripts/assets@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/assets/-/assets-0.6.4.tgz#37702cfaceb0ce90f41682612771dec9aed33fed"
+  integrity sha512-80GfG1Gm9PodmBf8vA+Uy1Piu3tvagsXjwrJXq2+vo572s+4p269msyQym3gztQGo+810aVmoAaeqYJg0z5/zw==
+  dependencies:
+    "@inline-svg-unique-id/react" "^1.2.3"
+
 "@manuscripts/comment-editor@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@manuscripts/comment-editor/-/comment-editor-1.0.3.tgz#f76b920d2f37020837f6cd359908b756061276c6"
@@ -1665,10 +1672,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.7.1":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.1.tgz#9ca69033b0a56a7c89e99c16b2aab7568c465cb3"
-  integrity sha512-ueijHAVqLmvlVjXJAzmD9XCP5b05pW+wE5bvg9ZC6Ml2+X3gmOYjovZ6ViCdkqkNXGeVoUk00sGQ9qYJmXpKlg==
+"@manuscripts/track-changes-plugin@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.2.tgz#73b4729d5c9216a7f9d295b2a659f2ce3a0b6694"
+  integrity sha512-dmyGroidBysXDadv2BqrLTWfqxpJuG8CCWDp5iqs1B6YGTlW8irkSs06XS1c5QlSdJTPYok5X2yUv+RudHdrfg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
