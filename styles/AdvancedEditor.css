@@ -632,13 +632,16 @@ Next levels are shifted 'up' by 1
 .ProseMirror .inserted.accepted,
 .ProseMirror .set_attrs.accepted {
   background: #bffca7;
-.attrs-popper-button-active, .attrs-track-mark:hover .attrs-popper-button {
+  text-decoration: none;
+}
+.attrs-popper-button-active,
+.attrs-track-mark:hover .attrs-popper-button {
   display: inline-flex;
 }
 
 .attrs-popper-button {
   display: none;
-  background: #fff
+  background: #fff;
 }
 
 .attrs-popper-button:hover {
@@ -649,7 +652,8 @@ Next levels are shifted 'up' by 1
   stroke: #1a9bc7;
 }
 
-.attrs-popper-button,.attrs-popper-button-active {
+.attrs-popper-button,
+.attrs-popper-button-active {
   width: 27px;
   height: 27px;
   border-radius: 50%;
