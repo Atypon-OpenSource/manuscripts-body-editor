@@ -16,6 +16,11 @@
 
 import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
+import {
+  CHANGE_OPERATION,
+  CHANGE_STATUS,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
 import { buildComment } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 import React from 'react'
@@ -26,6 +31,10 @@ import { sanitize } from '../lib/dompurify'
 import { bibliographyKey } from '../plugins/bibliography'
 import { getReferencesModelMap } from '../plugins/bibliography/bibliography-utils'
 import { commentAnnotation } from '../plugins/comment_annotation'
+import {
+  getAttrsTrackingButton,
+  getMarkDecoration,
+} from '../plugins/tracking-mark'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -133,8 +142,10 @@ export class BibliographyElementBlockView<
 
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
-    if (commentsDecorationSet) {
-      this.node.descendants((node, pos) => {
+    const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
+
+    this.node.descendants((node, pos) => {
+      if (commentsDecorationSet) {
         const nodePosition = this.getPos() + pos + 2
         const commentWidget = commentsDecorationSet.find(
           nodePosition,
@@ -147,8 +158,12 @@ export class BibliographyElementBlockView<
 
           commentElementMap.set(commentElement.id, commentElement)
         }
-      })
-    }
+      }
+      const dataTracked = node.attrs.dataTracked as TrackedAttrs[]
+      if (dataTracked?.length) {
+        dataTrackedMap.set(node.attrs.id, dataTracked[0])
+      }
+    })
 
     const bibliographyFragment = await createBibliography(
       bibliographyItems,
@@ -191,6 +206,22 @@ export class BibliographyElementBlockView<
       const commentElement = commentElementMap.get(element.id)
       if (commentElement) {
         element.childNodes[0].appendChild(commentElement)
+      }
+      const dataTracked = dataTrackedMap.get(element.id)
+      if (dataTracked) {
+        element.classList.add('attrs-track-mark')
+        const decoration = getMarkDecoration(dataTracked)
+
+        decoration.style && element.setAttribute('style', decoration.style)
+
+        if (
+          dataTracked.status === CHANGE_STATUS.pending &&
+          dataTracked.operation === CHANGE_OPERATION.set_node_attributes
+        ) {
+          element.childNodes[0].appendChild(
+            getAttrsTrackingButton(dataTracked.id)
+          )
+        }
       }
     })
 
