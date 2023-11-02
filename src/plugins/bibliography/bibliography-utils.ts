@@ -39,7 +39,7 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
 export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
-  popper: PopperManager,  
+  popper: PopperManager,
   referencesModelMap: Map<string, Model>,
   bibliographyItems: BibliographyItem[]
 ) => {
