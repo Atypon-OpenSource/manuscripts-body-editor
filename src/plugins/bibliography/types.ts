@@ -18,6 +18,7 @@ import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationNodes, CitationProvider } from '@manuscripts/library'
 
 import { CSLProps } from '../../configs/ManuscriptsEditor'
+import { PopperManager } from '../../lib/popper'
 
 export interface CiteProcCitation {
   citationItems: Array<{ id: string }>
@@ -36,4 +37,6 @@ export interface BibliographyProps {
   getCitationProvider: () => CitationProvider | undefined
   getLibraryItem: (id: string) => BibliographyItem | undefined
   cslProps: CSLProps
+  popper: PopperManager
+  setCiteprocCitations: (citations: Map<string, string>) => void
 }

@@ -173,9 +173,19 @@
   cursor: pointer;
 }
 
+.ProseMirror .citation.deleted.pending,
+.ProseMirror .citation.deleted.accepted {
+  text-decoration: line-through;
+}
+
 .ProseMirror .cross-reference {
   text-decoration: none;
   color: inherit;
+}
+
+.ProseMirror .cross-reference.deleted.pending,
+.ProseMirror .cross-reference.deleted.accepted {
+  text-decoration: line-through;
 }
 
 .ProseMirror .citation.ProseMirror-selectednode,

@@ -1,22 +1,25 @@
-.ProseMirror .inserted.pending {
-  background: #ddf3fa;
+.ProseMirror .inserted.accepted,
+.ProseMirror .set_attrs.accepted {
+  background: #bffca7;
   text-decoration: none;
 }
-.ProseMirror .inserted.accepted {
-  background: #bffca7;
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending {
   text-decoration: none;
 }
 .ProseMirror .inserted.rejected {
   display: none;
-}
-.ProseMirror .deleted.pending {
-  background: #ddf3fa;
 }
 .ProseMirror .deleted.accepted {
   background: #bffca7;
 }
 .ProseMirror .deleted.rejected {
   text-decoration: none;
+}
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending,
+.ProseMirror .deleted.pending {
+  background: #ddf3fa;
 }
 .ProseMirror
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
