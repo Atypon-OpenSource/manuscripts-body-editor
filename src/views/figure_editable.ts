@@ -14,136 +14,265 @@
  * limitations under the License.
  */
 
-import { Figure } from '@manuscripts/json-schema'
-import { ModelAttachment } from '@manuscripts/transform'
-import prettyBytes from 'pretty-bytes'
+import { Model } from '@manuscripts/json-schema'
+import {
+  Capabilities,
+  FileAttachment,
+  FileManagement,
+  UnsupportedFormatFileIcon,
+} from '@manuscripts/style-guide'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import { createElement } from 'react'
+import ReactDOM from 'react-dom'
 
+import {
+  FigureOptions,
+  FigureOptionsProps,
+} from '../components/views/FigureDropdown'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
+import { figureUploader } from './figure_uploader'
+import ReactSubView from './ReactSubView'
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10 MB
+export interface FigureProps {
+  fileManagement: FileManagement
+  getFiles: () => FileAttachment[]
+  getModelMap: () => Map<string, Model>
+  getCapabilities: () => Capabilities
+  isInGraphicalAbstract?: boolean
+}
 
-export class FigureEditableView extends FigureView<EditableBlockProps> {
+export class FigureEditableView extends FigureView<
+  EditableBlockProps & FigureProps
+> {
+  public reactTools: HTMLDivElement
+
+  public viewProps: {
+    node: ManuscriptNode
+    getPos: () => number
+    view: ManuscriptEditorView
+  }
+
+  public initialise = () => {
+    this.viewProps = {
+      node: this.node,
+      getPos: this.getPos,
+      view: this.view,
+    }
+
+    this.createDOM()
+    this.updateContents()
+  }
+
   public updateContents = () => {
+    let attrs = this.node.attrs
+
+    if (this.node.attrs.dataTracked?.length) {
+      /*
+        if track-status is 'rejected' and operation is 'set_attrs' then find old attribute in
+        the this.node.attrs.dataTracked[x].oldAttrs and use them in the display
+      */
+
+      if (
+        this.node.attrs.dataTracked[0].status === 'rejected' &&
+        this.node.attrs.dataTracked[0].operation === 'set_attrs'
+      ) {
+        attrs = this.node.attrs.dataTracked[0].oldAttrs
+      }
+
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
+
+    const src = attrs.src
+    const files = this.props.getFiles()
+    const file = src && files.filter((f) => f.id === src)[0]
+
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const media = this.createMedia()
+    const can = this.props.getCapabilities()
 
-    if (media) {
-      this.container.appendChild(media)
-    } else {
-      const img = this.createFigureImage() || this.createFigurePlaceholder()
+    const link = file && this.props.fileManagement.previewLink(file)
+    const img = link
+      ? this.createImg(link)
+      : file
+      ? this.createUnsupportedFormat(file.name)
+      : this.createPlaceholder()
 
-      if (this.props.getCapabilities().editArticle) {
-        const input = document.createElement('input')
-        input.accept = 'image/*'
-        input.type = 'file'
-        input.addEventListener('change', async (event) => {
-          const target = event.target as HTMLInputElement
+    let handleDownload
+    let handleUpload
+    let handleReplace
+    let handleDetach
 
-          if (target.files && target.files.length) {
-            await this.updateFigure(target.files[0])
-          }
-        })
-
-        img.addEventListener('click', () => {
-          input.click()
-        })
-
-        img.addEventListener('mouseenter', () => {
-          img.classList.toggle('over', true)
-        })
-
-        img.addEventListener('mouseleave', () => {
-          img.classList.toggle('over', false)
-        })
-
-        img.addEventListener('dragenter', (event) => {
-          event.preventDefault()
-          img.classList.toggle('over', true)
-        })
-
-        img.addEventListener('dragleave', () => {
-          img.classList.toggle('over', false)
-        })
-
-        img.addEventListener('dragover', (event) => {
-          if (event.dataTransfer && event.dataTransfer.items) {
-            for (const item of event.dataTransfer.items) {
-              if (item.kind === 'file' && item.type.startsWith('image/')) {
-                event.preventDefault()
-                event.dataTransfer.dropEffect = 'copy'
-              }
-            }
-          }
-        })
-
-        img.addEventListener('drop', (event) => {
-          if (event.dataTransfer && event.dataTransfer.files) {
-            event.preventDefault()
-
-            this.updateFigure(event.dataTransfer.files[0]).catch((error) => {
-              console.error(error) // tslint:disable-line:no-console
-            })
-          }
-        })
+    if (src) {
+      if (file) {
+        handleDownload = () => {
+          this.props.fileManagement.download(file)
+        }
       }
 
-      this.container.appendChild(img)
-    }
-  }
+      handleReplace = (file: FileAttachment) => {
+        this.setSrc(file.id)
+      }
 
-  public createFigurePlaceholder = () => {
-    const element = document.createElement('div')
-    element.classList.add('figure')
-    element.classList.add('placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.textContent = 'Click to select an image file'
-    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
-    element.appendChild(instructions)
-
-    return element
-  }
-
-  public updateFigure = async (file: File) => {
-    const { id } = this.node.attrs
-
-    if (file.size > MAX_IMAGE_SIZE) {
-      alert(`The figure image size limit is ${prettyBytes(MAX_IMAGE_SIZE)}`)
-      return
+      handleDetach = () => {
+        this.setSrc('')
+      }
     }
 
-    const contentType = file.type
-    const src = window.URL.createObjectURL(file)
+    if (can.uploadFile) {
+      const upload = async (file: File) => {
+        const result = await this.props.fileManagement.upload(file)
+        this.setSrc(result.id)
+      }
 
-    const model = this.props.getModel<Figure>(id)
+      handleUpload = figureUploader(upload)
 
-    if (model) {
-      await this.props.saveModel<Figure & ModelAttachment>({
-        ...model,
-        contentType,
-        src,
-        attachment: {
-          id: 'image',
-          type: contentType,
-          data: file,
-        },
+      img.addEventListener('click', handleUpload)
+
+      img.addEventListener('mouseenter', () => {
+        img.classList.toggle('over', true)
+      })
+
+      img.addEventListener('mouseleave', () => {
+        img.classList.toggle('over', false)
+      })
+
+      img.addEventListener('dragenter', (event) => {
+        event.preventDefault()
+        img.classList.toggle('over', true)
+      })
+
+      img.addEventListener('dragleave', () => {
+        img.classList.toggle('over', false)
+      })
+
+      img.addEventListener('dragover', (e) => {
+        if (e.dataTransfer && e.dataTransfer.items) {
+          for (const item of e.dataTransfer.items) {
+            if (item.kind === 'file' && item.type.startsWith('image/')) {
+              e.preventDefault()
+              e.dataTransfer.dropEffect = 'copy'
+            }
+          }
+        }
+      })
+
+      img.addEventListener('drop', async (e) => {
+        if (e.dataTransfer && e.dataTransfer.files) {
+          e.preventDefault()
+          await upload(e.dataTransfer.files[0])
+        }
       })
     }
 
+    this.container.innerHTML = ''
+    this.container.appendChild(img)
+
+    this.reactTools?.remove()
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: FigureOptionsProps = {
+        can,
+        files,
+        modelMap: this.props.getModelMap(),
+        handleDownload,
+        handleUpload,
+        handleDetach,
+        handleReplace,
+      }
+      this.reactTools = ReactSubView(
+        this.props,
+        FigureOptions,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view
+      )
+      this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+    }
+  }
+
+  private setSrc = (src: string) => {
     const { selection, tr } = this.view.state
 
     tr.setNodeMarkup(this.getPos(), undefined, {
       ...this.node.attrs,
-      src,
-      contentType,
+      src: src,
     }).setSelection(selection.map(tr.doc, tr.mapping))
 
     this.view.dispatch(tr)
+  }
+
+  private createUnsupportedFormat = (name: string) => {
+    const element = document.createElement('div')
+    element.classList.add('figure', 'placeholder')
+
+    const instructions = document.createElement('div')
+    instructions.classList.add('instructions')
+
+    const iconContainer = document.createElement('div')
+    ReactDOM.render(
+      createElement(UnsupportedFormatFileIcon, { className: 'icon' }),
+      iconContainer,
+      () => {
+        const target = instructions.querySelector('.unsupported-icon-wrapper')
+        if (target) {
+          target.innerHTML = iconContainer.innerHTML
+        }
+      }
+    )
+
+    instructions.innerHTML = `
+        <div>
+          <div class="unsupported-icon-wrapper"></div>
+          <div>${name}</div>
+          <div class="unsupported-format-label">
+            Unsupported file format
+          </div>
+          <div>
+            ${
+              this.props.getCapabilities()?.editArticle
+                ? 'Click to add image'
+                : 'No image here yet…'
+            }
+          </div>
+        </div>
+      `
+
+    return element
+  }
+
+  private createImg = (src: string) => {
+    const img = document.createElement('img')
+    img.classList.add('figure-image')
+    img.src = src
+    return img
+  }
+
+  private createPlaceholder = () => {
+    const element = document.createElement('div')
+    element.classList.add('figure', 'placeholder')
+
+    const instructions = document.createElement('div')
+    instructions.classList.add('instructions')
+    instructions.textContent = 'Click to select an image file'
+
+    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
+    element.appendChild(instructions)
+
+    return element
   }
 }
 

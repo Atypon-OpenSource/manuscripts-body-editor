@@ -25,9 +25,8 @@ import { isMetaNode } from '../lib/utils'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
-  popper: PopperManager
-  getModel: <T extends Model>(id: string) => T | undefined
   getModelMap: () => Map<string, Model>
+  popper: PopperManager
   cslProps: CSLProps
   renderReactComponent: (
     child: React.ReactElement,

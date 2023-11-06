@@ -41,6 +41,8 @@ export interface CitationEditableProps extends CitationViewProps {
   matchLibraryItemByIdentifier: (
     item: BibliographyItem
   ) => BibliographyItem | undefined
+  setCiteprocCitations: (citations: Map<string, string>) => void
+  getCiteprocCitations: () => Map<string, string>
 }
 
 export class CitationEditableView extends CitationView<
@@ -184,11 +186,11 @@ export class CitationEditableView extends CitationView<
       (item) => item.bibliographyItem !== id
     )
 
-    citation.embeddedCitationItems = embeddedCitationItems
-
-    this.updateInlineNode(citation)
-
     if (embeddedCitationItems.length > 0) {
+      citation.embeddedCitationItems = embeddedCitationItems
+
+      this.updateInlineNode(citation)
+
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
       }, 100)
@@ -199,6 +201,12 @@ export class CitationEditableView extends CitationView<
       tr.delete(pos, pos + 1)
       this.view.dispatch(tr)
     }
+
+    this.view.dispatch(
+      this.view.state.tr.setMeta(bibliographyKey, {
+        bibliographyInserted: true,
+      })
+    )
 
     this.props.popper.destroy()
   }

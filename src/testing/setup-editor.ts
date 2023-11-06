@@ -19,8 +19,8 @@ import { ProsemirrorTestChain, TestEditorView } from 'jest-prosemirror'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-import createPlugins from '../plugins/editor'
-import createNodeViews from '../views/editor'
+import createPlugins from '../configs/editor-plugins'
+import createNodeViews from '../configs/editor-views'
 import { defaultEditorProps } from './default-editor-data'
 import { polyfillDom } from './polyfill-dom'
 
@@ -58,8 +58,7 @@ export function setupEditor() {
       left: 0,
       right: 0,
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nodeViews: createNodeViews(props) as any,
+    nodeViews: createNodeViews(props, () => {}), // eslint-disable-line @typescript-eslint/no-empty-function
   })
 
   return ProsemirrorTestChain.of(view as TestEditorView)

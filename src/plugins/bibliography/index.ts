@@ -21,7 +21,6 @@ import {
   buildCitations,
   CitationProvider,
 } from '@manuscripts/library'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
@@ -96,8 +95,9 @@ export default (props: BibliographyProps) => {
         oldState
       ) as PluginState
 
-      const { citationNodes, citations, bibliographyItems } =
-        bibliographyKey.getState(newState) as PluginState
+      const { citations, bibliographyItems } = bibliographyKey.getState(
+        newState
+      ) as PluginState
 
       const bibliographyInserted = transactions.some((tr) => {
         const meta = tr.getMeta(bibliographyKey)
@@ -121,34 +121,21 @@ export default (props: BibliographyProps) => {
       const { selection } = tr
 
       try {
-        const generatedCitations = CitationProvider.rebuildProcessorState(
-          citations,
-          bibliographyItems,
-          style || '',
-          locale,
-          'html'
-        ).map((item) => item[2]) // id, noteIndex, output
+        const generatedCitations = new Map(
+          CitationProvider.rebuildProcessorState(
+            citations,
+            bibliographyItems,
+            style || '',
+            locale,
+            'html'
+          ).map((item) => [item[0], item[2]])
+        ) // id, noteIndex, output
+        props.setCiteprocCitations(generatedCitations)
 
-        citationNodes.forEach(([node, pos], index) => {
-          let contents = generatedCitations[index]
-
-          if (contents === '[NO_PRINTED_FORM]') {
-            contents = ''
-          }
-
-          tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
-            contents,
-          })
-        })
-
-        // create a new NodeSelection
-        // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
         tr.setMeta('origin', bibliographyKey)
-        skipTracking(tr)
         return tr
       } catch (error) {
         console.error(error) // tslint:disable-line:no-console
@@ -162,6 +149,7 @@ export default (props: BibliographyProps) => {
           buildDecorations(
             state.doc,
             citationNodes,
+            props.popper,
             getReferencesModelMap(state.doc)
           )
         )

@@ -104,7 +104,7 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   public ignoreMutation = () => true
 
   public getAuxiliaryObjectReference = (id: string) =>
-    this.props.getModel<AuxiliaryObjectReference>(id)
+    this.props.getModelMap().get(id) as AuxiliaryObjectReference
 
   public createDOM = () => {
     this.dom = document.createElement('span')

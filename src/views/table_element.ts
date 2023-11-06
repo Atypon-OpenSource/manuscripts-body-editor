@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
+import { FigureProps } from './figure_editable'
 
-export class TableElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class TableElementView extends BlockView<
+  EditableBlockProps & FigureProps
+> {
   public elementType = 'figure'
 
   public createElement = () => {
