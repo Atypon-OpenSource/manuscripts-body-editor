@@ -36,6 +36,8 @@ import { useHistory } from 'react-router-dom'
 
 import { EditorProps } from './configs/ManuscriptsEditor'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
+import { bibliographyKey } from './plugins/bibliography'
+
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
@@ -148,6 +150,11 @@ const useEditor = (
     view.current = createView(el, view.current?.state || state, dispatch)
     setState(view.current.state)
     setViewElement(el)
+    view.current.dispatch(
+      view.current.state.tr.setMeta(bibliographyKey, {
+        initCitations: true,
+      })
+    )
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCommandValid = useCallback(

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
 import { ContextMenu } from '../lib/context-menu'
-import { viewProps } from '../lib/utils'
 
 export const Menus: React.FC<{
   openAddMenu: (e: SyntheticEvent) => void
@@ -44,7 +44,7 @@ export const Menus: React.FC<{
 }
 
 export const openMenu =
-  (viewProps: viewProps, edit = false) =>
+  (viewProps: ViewProps, edit = false) =>
   (e: SyntheticEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -60,9 +60,15 @@ export const openMenu =
     }
   }
 
+export interface ViewProps {
+  node: ManuscriptNode
+  view: ManuscriptEditorView
+  getPos: () => number
+}
+
 interface EditableBlockProps {
   canWrite: boolean
-  viewProps: viewProps
+  viewProps: ViewProps
 }
 
 const EditableBlock: React.FC<EditableBlockProps> = ({

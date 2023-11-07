@@ -39,8 +39,8 @@ import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
+import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import plugins from '../../plugins/editor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 
@@ -346,11 +346,9 @@ const buildProps = (
   modelMap: Map<string, Model>
 ): EditorProps => ({
   doc,
-  getModel: <T extends Model>(id: string) => modelMap.get(id) as T | undefined,
   getManuscript: () => manuscript,
   getLibraryItem: () => undefined,
   locale: 'en-US',
-  modelMap,
   popper: new PopperManager(),
   projectID: '',
   getCurrentUser: () => userProfile,
@@ -370,17 +368,24 @@ const buildProps = (
   retrySync: async () => undefined,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
+  setEditorSelectedSuggestion: () => undefined,
   components: {},
   matchLibraryItemByIdentifier: () => undefined,
-  uploadAttachment: () => new Promise(() => ''),
   theme: {},
-  getAttachments: () => [],
+  getFiles: () => [],
+  fileManagement: {
+    download: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
+    //@ts-ignore
+    upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
+  },
   getCapabilities: () => getAllPermitted(),
-  getDoc: () => doc,
+  getModelMap: () => modelMap,
   cslProps: {
     style: '',
     locale: '',
   },
+  setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map(),
 })
 
 describe('editor view', () => {

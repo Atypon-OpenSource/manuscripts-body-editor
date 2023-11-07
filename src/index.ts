@@ -45,7 +45,5 @@ export {
 } from './plugins/comment_annotation'
 export * from './plugins/keywords'
 export * from './lib/utils'
-export * from './lib/external-files'
 export { default as useEditor } from './useEditor'
-export { default as ManuscriptsViewer } from './configs//ManuscriptsViewer'
 export { default as ManuscriptsEditor } from './configs//ManuscriptsEditor'

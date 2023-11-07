@@ -16,7 +16,6 @@
 
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
-import { ExternalFileRef } from '../lib/external-files'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -38,48 +37,18 @@ export class FigureView<PropsType extends BaseNodeProps>
       this.container.removeChild(this.container.firstChild as Node)
     }
 
-    const object =
-      this.createMedia() ||
-      this.createFigureImage() ||
-      this.createFigurePlaceholder()
+    const object = this.createFigureImage() || this.createFigurePlaceholder()
 
     this.container.appendChild(object)
-  }
-
-  public createMedia = () => {
-    const { embedURL } = this.node.attrs
-
-    if (embedURL) {
-      const container = document.createElement('div')
-      container.classList.add('figure-embed')
-
-      const object = document.createElement('iframe')
-      object.classList.add('figure-embed-object')
-      object.setAttribute('src', embedURL)
-      object.setAttribute('height', '100%')
-      object.setAttribute('width', '100%')
-      object.setAttribute('allowfullscreen', 'true')
-      object.setAttribute('sandbox', 'allow-scripts allow-same-origin')
-      container.appendChild(object)
-
-      // TODO: use oEmbed to fetch information for any URL?
-      // TODO: use figure image as preview/click to play?
-
-      return container
-    }
   }
 
   public createFigureImage = () => {
     const { src } = this.node.attrs
 
-    const imageExternalFile = this.node.attrs.externalFileReferences?.find(
-      (file: ExternalFileRef) => file && file.kind === 'imageRepresentation'
-    ) || { url: '' }
-
-    if (src || imageExternalFile.src) {
+    if (src) {
       const element = document.createElement('img')
       element.classList.add('figure-image')
-      element.src = src || imageExternalFile.url
+      element.src = src
       return element
     }
   }
@@ -96,7 +65,6 @@ export class FigureView<PropsType extends BaseNodeProps>
     return element
   }
 
-  // TODO: load/subscribe to the figure style object from the database and use it here?
   protected createDOM = () => {
     this.dom = document.createElement('figure')
     this.dom.setAttribute('id', this.node.attrs.id)

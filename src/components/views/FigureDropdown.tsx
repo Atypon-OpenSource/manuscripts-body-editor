@@ -19,127 +19,51 @@ import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
 import { Model } from '@manuscripts/json-schema'
 import {
   AttachIcon,
+  Capabilities,
   DropdownList,
-  extensionsWithFileTypesMap,
   FileAttachment,
-  FileType,
-  fileTypesWithIconMap,
+  getFileIcon,
   IconButton,
   IconTextButton,
+  isImageFile,
   RoundIconButton,
   UploadIcon,
   useDropdown,
+  useFiles,
 } from '@manuscripts/style-guide'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
-import React, { SyntheticEvent, useCallback } from 'react'
+import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
-import {
-  getFigures,
-  getOtherFiles,
-  getSupplementFiles,
-} from '../../lib/files-maps'
-import { addFormatQuery } from '../../views/FigureComponent'
-import { DropdownWrapper } from '../../views/FigureElement'
-
-const getIcon = (file: FileAttachment) => {
-  const fileExtension = file.name.split('.').pop() || ''
-  const fileType = extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
-  return fileTypesWithIconMap.get(fileType)
-}
-
-const getFileType = (fileName: string) => {
-  const fileExtension = fileName.split('.').pop() || ''
-  return extensionsWithFileTypesMap.get(fileExtension.toLowerCase())
-}
-
-interface DropdownProps {
-  getAttachments: () => FileAttachment[]
+export interface FigureDropdownProps {
+  can: Capabilities
+  files: FileAttachment[]
   modelMap: Map<string, Model>
-  mediaAlternativesEnabled?: boolean
-  onUploadClick: (e: SyntheticEvent) => void
-  canReplaceFile?: boolean
-  getDoc: () => ProsemirrorNode
 }
 
-interface OptionsProps extends DropdownProps {
-  url: string
-  canDownloadFile?: boolean
-  onDetachClick: () => void
-  setFigureAttrs: (attrs: { [p: string]: any }) => void // eslint-disable-line
-  canEditArticle?: boolean
-  disabled: boolean
+export interface FigureOptionsProps extends FigureDropdownProps {
+  handleDownload?: () => void
+  handleUpload?: () => void
+  handleDetach?: () => void
+  handleReplace?: (file: FileAttachment) => void
 }
 
-export interface FilesDropdownProps extends DropdownProps {
-  canUploadFile?: boolean
-  canEditArticle?: boolean
-  addFigureExFileRef: (link: string) => void
+export interface FigureElementOptionsProps extends FigureDropdownProps {
+  handleAdd: (file: FileAttachment) => Promise<void>
+  handleUpload: () => void
 }
 
-const isFileValidForFigure = (
-  fileName: string,
-  mediaAlternativesEnabled?: boolean
-) => {
-  const fileType = getFileType(fileName)
-  if (mediaAlternativesEnabled) {
-    // TODO:: specify other file types for media Alternatives
-    return fileType === FileType.Image
-  } else {
-    return fileType === FileType.Image
-  }
-}
-
-export const FilesDropdown: React.FC<FilesDropdownProps> = ({
+export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
+  can,
+  files,
   modelMap,
-  mediaAlternativesEnabled,
-  onUploadClick,
-  addFigureExFileRef,
-  canReplaceFile,
-  canUploadFile,
-  getAttachments,
-  getDoc,
+  handleAdd,
+  handleUpload,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const attachments = getAttachments().map((f) => ({ ...f })) || []
-  const doc = getDoc()
-  const figures: string[] = getFigures(doc, attachments)
 
-  const supplementFiles = getSupplementFiles(
-    modelMap,
-    attachments,
-    (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  ).filter((item) => !figures.includes(item.id))
-
-  const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
-    isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  ).filter((item) => !figures.includes(item.id))
-
-  const onFileClick = useCallback(
-    (e, file: FileAttachment) => {
-      toggleOpen(e)
-      addFigureExFileRef(file.link)
-    },
-    [addFigureExFileRef, toggleOpen]
-  )
-
-  const onSupplementsClick = useCallback(
-    (e) => onFileClick(e, supplementFiles[e.currentTarget.id]),
-    [onFileClick, supplementFiles]
-  )
-
-  const onOtherFilesClick = useCallback(
-    (e) => onFileClick(e, otherFiles[e.currentTarget.id]),
-    [onFileClick, otherFiles]
-  )
-
-  const onNewFileClick = useCallback(
-    (e: SyntheticEvent) => {
-      onUploadClick(e)
-      toggleOpen(e)
-    },
-    [toggleOpen, onUploadClick]
-  )
+  let { supplements, otherFiles } = useFiles(modelMap, files)
+  supplements = supplements.filter(isImageFile)
+  otherFiles = otherFiles.filter(isImageFile)
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
@@ -155,18 +79,14 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
           top={7}
         >
           <NestedDropdown
-            disabled={supplementFiles.length < 1 || !canReplaceFile}
+            disabled={!can.replaceFile || supplements.length < 1}
             parentToggleOpen={toggleOpen}
             buttonText={'Supplements'}
             list={
               <>
-                {supplementFiles.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={onSupplementsClick}
-                  >
-                    {getIcon(file)}
+                {supplements.map((file) => (
+                  <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -174,25 +94,21 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
             }
           />
           <NestedDropdown
-            disabled={otherFiles.length < 1 || !canReplaceFile}
+            disabled={!can.replaceFile || otherFiles.length < 1}
             parentToggleOpen={toggleOpen}
             buttonText={'Other files'}
             list={
               <>
-                {otherFiles.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={onOtherFilesClick}
-                  >
-                    {getIcon(file)}
+                {otherFiles.map((file) => (
+                  <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
               </>
             }
           />
-          <UploadButton onClick={onNewFileClick} disabled={!canUploadFile}>
+          <UploadButton onClick={handleUpload} disabled={!can.uploadFile}>
             <AddIconHighlight /> New file...
           </UploadButton>
         </DropdownList>
@@ -201,53 +117,23 @@ export const FilesDropdown: React.FC<FilesDropdownProps> = ({
   )
 }
 
-export const OptionsDropdown: React.FC<OptionsProps> = ({
-  url,
+export const FigureOptions: React.FC<FigureOptionsProps> = ({
+  can,
+  files,
   modelMap,
-  mediaAlternativesEnabled,
-  onUploadClick,
-  onDetachClick,
-  canReplaceFile,
-  canDownloadFile,
-  canEditArticle,
-  setFigureAttrs,
-  getAttachments,
-  disabled,
-  getDoc,
+  handleDownload,
+  handleUpload,
+  handleDetach,
+  handleReplace,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const attachments = getAttachments().map((f) => ({ ...f })) || []
-  const doc = getDoc()
-  const figures: string[] = getFigures(doc, attachments)
 
-  const supplementFiles = getSupplementFiles(
-    modelMap,
-    attachments,
-    (fileName) => isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  ).filter((item) => !figures.includes(item.id))
+  const otherFiles = useFiles(modelMap, files).otherFiles.filter(isImageFile)
 
-  const otherFiles = getOtherFiles(supplementFiles, attachments, (fileName) =>
-    isFileValidForFigure(fileName, mediaAlternativesEnabled)
-  ).filter((item) => !figures.includes(item.id))
-
-  const onDownloadClick = useCallback(() => window.location.assign(url), [url])
-
-  const onFileClick = useCallback(
-    (e) => {
-      const index = e.currentTarget.id
-      setFigureAttrs({
-        src: addFormatQuery(otherFiles[index].link),
-        label: otherFiles[index].link,
-        externalFileReferences: [
-          {
-            kind: 'imageRepresentation',
-            url: addFormatQuery(otherFiles[index].link),
-          },
-        ],
-      })
-    },
-    [otherFiles, setFigureAttrs]
-  )
+  const showDownload = handleDownload && can.downloadFiles
+  const showUpload = handleUpload && can.uploadFile
+  const showDetach = handleDetach && can.editArticle
+  const showReplace = handleReplace && can.replaceFile
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -261,14 +147,11 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
           onClick={toggleOpen}
           top={5}
         >
-          <ListItemButton
-            onClick={onDownloadClick}
-            disabled={disabled || !canDownloadFile}
-          >
+          <ListItemButton onClick={handleDownload} disabled={!showDownload}>
             Download
           </ListItemButton>
           <NestedDropdown
-            disabled={!canReplaceFile || disabled}
+            disabled={!showReplace}
             parentToggleOpen={toggleOpen}
             buttonText={'Replace'}
             moveLeft
@@ -278,22 +161,19 @@ export const OptionsDropdown: React.FC<OptionsProps> = ({
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
-                    onClick={onFileClick}
+                    onClick={() => handleReplace && handleReplace(file)}
                   >
-                    {getIcon(file)}
+                    {getFileIcon(file)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
-                <UploadButton onClick={onUploadClick}>
+                <UploadButton onClick={handleUpload} disabled={!showUpload}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
               </>
             }
           />
-          <ListItemButton
-            onClick={onDetachClick}
-            disabled={disabled || !canEditArticle}
-          >
+          <ListItemButton onClick={handleDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
         </OptionsDropdownList>
@@ -332,6 +212,8 @@ const NestedDropdown: React.FC<{
     </DropdownWrapper>
   )
 }
+
+const DropdownWrapper = styled.div``
 
 const OptionsDropdownList = styled(DropdownList)`
   right: 4%;

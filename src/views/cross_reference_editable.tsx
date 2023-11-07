@@ -59,6 +59,8 @@ export class CrossReferenceEditableView extends CrossReferenceView<
         handleSelect={this.handleSelect}
         targets={this.getTargets()}
         handleCancel={this.handleCancel}
+        currentTargetId={auxiliaryObjectReference?.referencedObject}
+        currentCustomLabel={this.node.attrs.customLabel}
       />,
       this.popperContainer
     )
@@ -98,7 +100,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
     }
   }
 
-  public handleSelect = async (rid: string) => {
+  public handleSelect = async (rid: string, customLabel?: string) => {
     const { state } = this.view
 
     const pos = this.getPos()
@@ -114,6 +116,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
     const tr = state.tr.setNodeMarkup(pos, undefined, {
       ...this.node.attrs,
+      customLabel: customLabel || '',
       rid: auxiliaryObjectReference._id,
     })
 

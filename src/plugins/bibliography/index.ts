@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-import { buildCitationNodes, buildCitations } from '@manuscripts/library'
+import { BibliographyItem } from '@manuscripts/json-schema'
+import {
+  buildBibliographyItems,
+  buildCitationNodes,
+  buildCitations,
+  CitationProvider,
+} from '@manuscripts/library'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import { buildDecorations, getBibliographyItemFn } from './bibliography-utils'
+import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
 export const bibliographyKey = new PluginKey('bibliography')
@@ -29,51 +35,67 @@ export const bibliographyKey = new PluginKey('bibliography')
  * The citation labels are regenerated when any relevant content changes.
  */
 export default (props: BibliographyProps) => {
-  const getBibliographyItem = getBibliographyItemFn(props)
+  const { style, locale } = props.cslProps
 
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
-        const citationNodes = buildCitationNodes(instance.doc, props.getModel)
+        const referencesModelMap = getReferencesModelMap(instance.doc)
+        const citationNodes = buildCitationNodes(
+          instance.doc,
+          referencesModelMap
+        )
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
+        )
+
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const citationNodes = buildCitationNodes(newState.doc, props.getModel)
+        const referencesModelMap = getReferencesModelMap(newState.doc)
+        const citationNodes = buildCitationNodes(
+          newState.doc,
+          referencesModelMap
+        )
 
-        const citations = buildCitations(citationNodes, (id: string) =>
-          getBibliographyItem(id)
+        const citations = buildCitations(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
+        )
+
+        const bibliographyItems = buildBibliographyItems(
+          citationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,
           citations,
+          bibliographyItems,
         }
       },
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const citationProvider = props.getCitationProvider()
-
-      if (!citationProvider) {
-        return null
-      }
-
       const { citations: oldCitations } = bibliographyKey.getState(
         oldState
       ) as PluginState
 
-      const { citationNodes, citations } = bibliographyKey.getState(
+      const { citations, bibliographyItems } = bibliographyKey.getState(
         newState
       ) as PluginState
 
@@ -81,34 +103,35 @@ export default (props: BibliographyProps) => {
         const meta = tr.getMeta(bibliographyKey)
         return meta && meta.bibliographyInserted
       })
+
+      const initCitations = transactions.some((tr) => {
+        const meta = tr.getMeta(bibliographyKey)
+        return meta && meta.initCitations
+      })
       // This equality is trigged by such things as the addition of createdAt, updatedAt,
       // sessionID, _rev when the models are simply persisted to the PouchDB without modifications
-      if (isEqual(citations, oldCitations) && !bibliographyInserted) {
+      if (
+        isEqual(citations, oldCitations) &&
+        !bibliographyInserted &&
+        !initCitations
+      ) {
         return null
       }
       const { tr } = newState
       const { selection } = tr
 
       try {
-        const generatedCitations = citationProvider
-          .rebuildProcessorState(citations, 'html')
-          .map((item) => item[2]) // id, noteIndex, output
+        const generatedCitations = new Map(
+          CitationProvider.rebuildProcessorState(
+            citations,
+            bibliographyItems,
+            style || '',
+            locale,
+            'html'
+          ).map((item) => [item[0], item[2]])
+        ) // id, noteIndex, output
+        props.setCiteprocCitations(generatedCitations)
 
-        citationNodes.forEach(([node, pos], index) => {
-          let contents = generatedCitations[index]
-
-          if (contents === '[NO_PRINTED_FORM]') {
-            contents = ''
-          }
-
-          tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
-            contents,
-          })
-        })
-
-        // create a new NodeSelection
-        // as selection.map(tr.doc, tr.mapping) loses the NodeSelection
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
@@ -123,7 +146,12 @@ export default (props: BibliographyProps) => {
         const { citationNodes } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
-          buildDecorations(state.doc, citationNodes, getBibliographyItem)
+          buildDecorations(
+            state.doc,
+            citationNodes,
+            props.popper,
+            getReferencesModelMap(state.doc)
+          )
         )
       },
     },

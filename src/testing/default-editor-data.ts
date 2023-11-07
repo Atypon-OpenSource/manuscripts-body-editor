@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  BibliographyItem,
-  Manuscript,
-  Model,
-  UserProfile,
-} from '@manuscripts/json-schema'
+import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
-import {
-  ActualManuscriptNode,
-  Build,
-  ManuscriptEditorView,
-  schema,
-} from '@manuscripts/transform'
+import { ActualManuscriptNode, Build, schema } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { uniqueId } from 'lodash'
 import { ReactElement, ReactNode } from 'react'
@@ -34,7 +24,6 @@ import ReactDOM from 'react-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import { ViewerProps } from '../configs/ManuscriptsViewer'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 
@@ -78,8 +67,7 @@ export const TEST_DATA: TestData = {
   MODEL_MAP: new Map<string, Model>(),
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const defaultViewerProps: ViewerProps = {
+export const defaultEditorProps: EditorProps = {
   attributes: {
     class: 'manuscript-editor',
     dir: 'ltr',
@@ -88,74 +76,60 @@ const defaultViewerProps: ViewerProps = {
     tabindex: '2',
   },
   doc: TEST_DATA.DOC,
-  getModel: <T extends Model>(id: string) => {
-    return TEST_DATA.MODEL_MAP.get(id) as T | undefined
-  },
-  getManuscript: () => TEST_DATA.MANUSCRIPT,
-  getLibraryItem: (_id: string) => undefined,
   locale: 'en-GB',
-  modelMap: new Map<string, Model>(),
   popper: new PopperManager(),
   projectID: 'test-project-id',
   getCurrentUser: () => TEST_DATA.USER,
+  // @ts-ignore
   history: createBrowserHistory(),
   renderReactComponent: (child: ReactNode, container: HTMLElement) => {
     ReactDOM.render(child as ReactElement, container)
   },
   unmountReactComponent: ReactDOM.unmountComponentAtNode,
-  components: {},
   theme,
-  uploadAttachment: async () => undefined,
-  getAttachments: () => [],
+  getFiles: () => [],
+  fileManagement: {
+    // @ts-ignore
+    upload: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+    download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  },
   getCapabilities: () => getAllPermitted(),
-  getDoc: () => TEST_DATA.DOC,
+  getModelMap: () => TEST_DATA.MODEL_MAP,
+  getManuscript: () => TEST_DATA.MANUSCRIPT,
   cslProps: {
     style: '',
     locale: '',
   },
-}
-
-export const defaultEditorProps: EditorProps = {
-  ...defaultViewerProps,
-  ...{
-    autoFocus: undefined,
-    getCitationProvider: () => undefined,
-    plugins: [],
-    saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => {
-      const id = model._id ?? ''
-      const oldModel = TEST_DATA.MODEL_MAP.get(id) ?? {}
-      const updatedModel = {
-        createdAt: Date.now() / 1000,
-        updatedAt: Date.now() / 1000,
-        _id: uniqueId(),
-        ...oldModel,
-        ...model,
-      } as T
-      TEST_DATA.MODEL_MAP.set(id, updatedModel)
-      return Promise.resolve(updatedModel)
-    },
-    deleteModel: (id: string) => {
-      TEST_DATA.MODEL_MAP.delete(id)
-      return Promise.resolve(id)
-    },
-    getModel: <T extends Model>(id: string) => {
-      return TEST_DATA.MODEL_MAP.get(id) as T | undefined
-    },
-    getLibraryItem: (_id: string) => undefined,
-    setLibraryItem: (_item: BibliographyItem) => undefined,
-    matchLibraryItemByIdentifier: (_item: BibliographyItem) => undefined,
-    filterLibraryItems: (_query: string) => Promise.resolve([]),
-    removeLibraryItem: () => undefined,
-    removeAttachment: (_id: string, _attachmentID: string) => Promise.resolve(),
-    subscribe: () => undefined,
-    setView: () => undefined,
-    retrySync: (_componentIDs: string[]) => Promise.resolve(),
-    handleStateChange: (_view: ManuscriptEditorView, _docChanged: boolean) =>
-      undefined,
-    setComment: () => undefined,
-    setSelectedComment: () => undefined,
-    components: {},
-    environment: undefined,
-    cslStyle: '',
+  getCitationProvider: () => undefined,
+  plugins: [],
+  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => {
+    const id = model._id ?? ''
+    const oldModel = TEST_DATA.MODEL_MAP.get(id) ?? {}
+    const updatedModel = {
+      createdAt: Date.now() / 1000,
+      updatedAt: Date.now() / 1000,
+      _id: uniqueId(),
+      ...oldModel,
+      ...model,
+    } as T
+    TEST_DATA.MODEL_MAP.set(id, updatedModel)
+    return Promise.resolve(updatedModel)
   },
+  deleteModel: (id: string) => {
+    TEST_DATA.MODEL_MAP.delete(id)
+    return Promise.resolve(id)
+  },
+  getLibraryItem: () => undefined,
+  setLibraryItem: () => undefined,
+  matchLibraryItemByIdentifier: () => undefined,
+  filterLibraryItems: () => Promise.resolve([]),
+  removeLibraryItem: () => undefined,
+  retrySync: () => Promise.resolve(),
+  setComment: () => undefined,
+  setSelectedComment: () => undefined,
+  setEditorSelectedSuggestion: () => undefined,
+  components: {},
+  environment: undefined,
+  setCiteprocCitations: () => undefined,
+  getCiteprocCitations: () => new Map<string, string>(),
 }

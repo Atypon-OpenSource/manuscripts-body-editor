@@ -40,7 +40,7 @@ import { nodeTypeIcon } from '../../node-type-icons'
 const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
-      return 'sub'.repeat(depth - 1) + 'section heading'
+      return (depth > 0 ? 'sub'.repeat(depth - 1) : '') + 'section heading'
 
     default:
       return nodeNames.get(nodeType) || nodeType.name
@@ -81,7 +81,7 @@ interface NodeWithPosition {
 const buildOption = (props: SelectorOptionProps): Option => ({
   ...props,
   icon: nodeTypeIcon(props.nodeType),
-  label: titleCase(optionName(props.nodeType, props.value)),
+  label: titleCase(optionName(props.nodeType, props.depth)),
   isDisabled: Boolean(props.isDisabled),
   isSelected: Boolean(props.isSelected),
   isFocused: Boolean(props.isFocused),
@@ -398,11 +398,9 @@ const buildOptions = (
       const sectionDepth = Math.max(1, $from.depth - 1)
       const parentSectionDepth = sectionDepth - 1
       const minimumDepth = Math.max(1, parentSectionDepth)
-
       const beforeSection = $from.before(sectionDepth)
       const $beforeSection = doc.resolve(beforeSection)
       const sectionOffset = $beforeSection.parentOffset
-
       const typeOptions: Option[] = [
         buildOption({
           nodeType: nodes.paragraph,
@@ -427,15 +425,17 @@ const buildOptions = (
 
       const sectionOptions: Option[] = []
 
-      for (let depth = 1; depth < sectionDepth; depth++) {
+      // Section lvl 1 is hidden, we will start from level 2
+      for (let depth = 2; depth < sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNodeType(node.type)) {
+          const indentLevel = depth - 1
           sectionOptions.push(
             buildOption({
               nodeType: nodes.section,
               value: depth,
-              depth,
+              depth: indentLevel,
               action: promoteSection(depth),
               isDisabled: depth < minimumDepth,
             })
@@ -447,7 +447,7 @@ const buildOptions = (
         buildOption({
           nodeType: nodes.section,
           value: parentSectionDepth + 1,
-          depth: parentSectionDepth + 1,
+          depth: parentSectionDepth,
           isDisabled: true,
           isSelected: true,
         })
@@ -510,16 +510,17 @@ const buildOptions = (
       ]
 
       const sectionOptions: Option[] = []
-
-      for (let depth = 1; depth <= sectionDepth; depth++) {
+      // Section level 1 is hidden, we will start from level 2
+      for (let depth = 2; depth <= sectionDepth; depth++) {
         const node = $from.node(depth)
 
         if (isSectionNodeType(node.type)) {
+          const indentLevel = depth - 1
           sectionOptions.push(
             buildOption({
               nodeType: nodes.section,
               value: depth,
-              depth,
+              depth: indentLevel,
               action: promoteParagraphToSection(depth),
               isDisabled: depth < minimumDepth,
             })
