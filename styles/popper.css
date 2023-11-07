@@ -1,6 +1,6 @@
 .popper {
   color: #353535;
-  font-family: "PT Sans", sans-serif;
+  font-family: 'PT Sans', sans-serif;
   min-width: 100px;
   position: absolute;
   width: auto;
@@ -15,7 +15,7 @@
   border: 5px solid transparent;
 }
 
-.popper[x-placement="bottom"] .popper-arrow {
+.popper[x-placement='bottom'] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
   border-bottom-color: #e2e2e2;
@@ -23,7 +23,7 @@
   margin: 0 5px;
 }
 
-.popper[x-placement="top"] .popper-arrow {
+.popper[x-placement='top'] .popper-arrow {
   bottom: -5px;
   left: calc(50% - 5px);
   border-top-color: #e2e2e2;
@@ -31,7 +31,7 @@
   margin: 0 5px;
 }
 
-.popper[x-placement="left"] .popper-arrow {
+.popper[x-placement='left'] .popper-arrow {
   right: -5px;
   top: calc(50% - 5px);
   border-left-color: #e2e2e2;
@@ -39,7 +39,7 @@
   margin: 5px 0;
 }
 
-.popper[x-placement="right"] .popper-arrow {
+.popper[x-placement='right'] .popper-arrow {
   left: -5px;
   top: calc(50% - 5px);
   border-right-color: #e2e2e2;
@@ -47,7 +47,7 @@
   margin: 5px 0;
 }
 
-.popper[x-placement="bottom-start"] .popper-arrow {
+.popper[x-placement='bottom-start'] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
   border-bottom-color: #e2e2e2;
@@ -134,7 +134,8 @@
 
 .popper .citation-editor,
 .popper .cross-reference-editor,
-.popper .citation-references {
+.popper .citation-references,
+.popper .track-changes-review-panel {
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;

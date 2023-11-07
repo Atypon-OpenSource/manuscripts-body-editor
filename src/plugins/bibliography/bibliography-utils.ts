@@ -31,12 +31,15 @@ import { pickBy } from 'lodash-es'
 import { Attrs, NodeType } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
+import { PopperManager } from '../../lib/popper'
+
 export const isBibliographyElement = (node: ManuscriptNode) =>
   node.type === node.type.schema.nodes.bibliography_element
 
 export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
+  popper: PopperManager,
   referencesModelMap: Map<string, Model>
 ) => {
   const decorations: Decoration[] = []
