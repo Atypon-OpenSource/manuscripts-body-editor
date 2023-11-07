@@ -35,6 +35,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { EditorProps } from './configs/ManuscriptsEditor'
+import { useDoWithDebounce } from './lib/use-do-with-debounce'
 export type CreateView = (
   element: HTMLDivElement,
   state: EditorState,
@@ -90,6 +91,8 @@ const useEditor = (
     })
   }
 
+  const debounce = useDoWithDebounce()
+
   const dispatch = useCallback(
     (tr: Transaction) => {
       if (!view.current) {
@@ -116,8 +119,15 @@ const useEditor = (
         }
       }
 
-      // TODO: this part should be debounced??
-      setState(nextState)
+      debounce(
+        () => {
+          setState(nextState)
+        },
+        1000,
+        !tr.isGeneric
+      )
+
+      // need to communicate updates of the body-editor the article-editor
 
       return state
     },
