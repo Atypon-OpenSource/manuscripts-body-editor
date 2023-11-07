@@ -1602,25 +1602,10 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-<<<<<<< HEAD
-"@manuscripts/json-schema@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0.tgz#8507707f00c0e6cead4f4e2f2e1797f9bccec4af"
-  integrity sha512-2ooif0jtIld5bA44DHPpsNbDvdoQWaFcNXiBlc7OQ0znY37e5juMipknEtNTvdHCtHpzBkrLJt7k77bBT7VaVQ==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
-"@manuscripts/library@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.6.tgz#b1649c62a6a0f3ed14516088b729ca0e160976a1"
-  integrity sha512-v6hMNm1k5DtZu9X8LpXbEeJWFmHDOm00gSPlXtvKTyFec7whfjKD/7mRTJak15tIVlVfvYBVHpgnotI00tclvQ==
-=======
 "@manuscripts/library@^1.1.12":
   version "1.1.12"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.1.12.tgz#38d036fff86aeb9f140d0011dc9b22e8f75ffc2a"
   integrity sha512-wSML0Fhj464JQlnlRQTyl2wz7LyDsm4fywa3BXCNE4HhaLvEhWBcdazZxQZ5+EZoW15BmwBLH6C2215/Kt/vNw==
->>>>>>> 7b30b9dcee6b82f2f10b604f102a55b57ac09577
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     "@manuscripts/transform" "^1.4.3"
@@ -1707,20 +1692,6 @@
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.5.tgz#1377cc246d584c1354d0787d738464ae5e2287c5"
   integrity sha512-rVbF6doZoAr+WfXjqPJXVF5GVFgISK/9YXwzoVc+mEvJwahTtoU1dBvYX6x5bzm3BoEhbC/AVbbAdG82LYhn9A==
-  dependencies:
-    "@manuscripts/json-schema" "^2.2.0"
-    debug "^4.3.4"
-    jszip "^3.10.1"
-    mathjax-full "^3.2.2"
-    mime "^3.0.0"
-    prosemirror-model "^1.18.3"
-    uuid "^9.0.0"
-    w3c-xmlserializer "^4.0.0"
-
-"@manuscripts/transform@^1.4.6":
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.4.6.tgz#6faf0129923938342d09a9217c2d02bf9c2967cb"
-  integrity sha512-G/HvH5gQejiyKW0lY7Qzwpvj9ZE0PQgmDNmaVhN79x5YVEspU1QykjvWReRE9DerQHVl9Sho23FYuJKve0bwXg==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
