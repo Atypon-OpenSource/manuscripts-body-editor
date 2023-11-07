@@ -16,14 +16,10 @@
 import { useRef } from 'react'
 
 export const useDoWithDebounce = () => {
-  const debounced = useRef(() => undefined)
+  const debounced = useRef<() => void>(() => undefined)
   const timeout = useRef<number>()
 
-  const doWithDebounce = (
-    fn: () => undefined,
-    interval = 1000,
-    flush = false
-  ) => {
+  const doWithDebounce = (fn: () => void, interval = 1000, flush = false) => {
     debounced.current = fn
 
     if (flush) {
