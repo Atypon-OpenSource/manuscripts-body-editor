@@ -25,6 +25,7 @@ import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
+import { isDeleted } from '../../lib/track-changes-utils'
 import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
@@ -52,8 +53,11 @@ export default (props: BibliographyProps) => {
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
+        const filteredCitationNodes = citationNodes.filter(
+          (node) => !isDeleted(node[0])
+        )
         const bibliographyItems = buildBibliographyItems(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
@@ -76,8 +80,11 @@ export default (props: BibliographyProps) => {
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
+        const filteredCitationNodes = citationNodes.filter(
+          (node) => !isDeleted(node[0])
+        )
         const bibliographyItems = buildBibliographyItems(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
         // TODO: return the previous state if nothing has changed, to aid comparison?
