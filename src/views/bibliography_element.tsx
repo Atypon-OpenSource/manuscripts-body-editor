@@ -161,7 +161,8 @@ export class BibliographyElementBlockView<
       }
       const dataTracked = node.attrs.dataTracked as TrackedAttrs[]
       if (dataTracked?.length) {
-        dataTrackedMap.set(node.attrs.id, dataTracked[0])
+        const lastChange = dataTracked[dataTracked.length - 1]
+        dataTrackedMap.set(node.attrs.id, lastChange)
       }
     })
 
