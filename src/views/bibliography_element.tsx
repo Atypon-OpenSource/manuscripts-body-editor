@@ -49,32 +49,28 @@ const createBibliography = async (
   )
   const getLibraryItem = (id: string) => bibliographyItemsMap.get(id)
 
+  const { style = '', locale } = cslProps
   const provider = new CitationProvider({
     getLibraryItem,
-    citationStyle: cslProps.style || '',
-    locale: cslProps.locale,
+    citationStyle: style,
+    locale,
   })
 
-  const bibliography = provider.makeBibliography(bibliographyItems)
-
-  const [bibmeta, generatedBibliographyItems] = bibliography
+  const [bibmeta, generatedBibliographyItems] =
+    provider.makeBibliography(bibliographyItems)
 
   if (bibmeta.bibliography_errors.length) {
     console.error(bibmeta.bibliography_errors) // tslint:disable-line:no-console
   }
 
-  let fragment = '<div class="contents">'
-  for (let i = 0; i < generatedBibliographyItems.length; i++) {
-    generatedBibliographyItems[i] =
-      `<div id=${bibmeta.entry_ids[i]} class="bib-item">` +
-      '<div>' +
-      '<div class="csl-bib-body">' +
-      generatedBibliographyItems[i] +
-      '</div></div></div>'
-    fragment = fragment + generatedBibliographyItems[i]
-  }
+  const bibliographyFragment = generatedBibliographyItems
+    .map(
+      (item, i) =>
+        `<div id=${bibmeta.entry_ids[i]} class="bib-item"><div><div class="csl-bib-body">${item}</div></div></div>`
+    )
+    .join('')
 
-  return sanitize(fragment + '</div>')
+  return sanitize(`<div class="contents">${bibliographyFragment}</div>`)
 }
 
 interface BibliographyElementViewProps extends BaseNodeProps {
@@ -135,7 +131,9 @@ export class BibliographyElementBlockView<
   public ignoreMutation = () => true
 
   public updateContents = async () => {
-    console.log('Update contents')
+    // @TODO remove this line.
+    console.log('Update contents ^^')
+
     const bibliographyItems: BibliographyItem[] = bibliographyKey.getState(
       this.view.state
     ).bibliographyItems
@@ -159,7 +157,9 @@ export class BibliographyElementBlockView<
           commentElementMap.set(commentElement.id, commentElement)
         }
       }
+
       const dataTracked = node.attrs.dataTracked as TrackedAttrs[]
+
       if (dataTracked?.length) {
         const lastChange = dataTracked[dataTracked.length - 1]
         dataTrackedMap.set(node.attrs.id, lastChange)
@@ -170,8 +170,8 @@ export class BibliographyElementBlockView<
       bibliographyItems,
       this.props.cslProps
     )
-
     const bibItems = bibliographyFragment.querySelectorAll('.bib-item')
+
     bibItems.forEach((element) => {
       const doubleButton = document.createElement('div')
       const editButton = document.createElement('button')
@@ -202,13 +202,17 @@ export class BibliographyElementBlockView<
       ) {
         element.appendChild(doubleButton)
       }
+
       editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
 
       const commentElement = commentElementMap.get(element.id)
+
       if (commentElement) {
         element.childNodes[0].appendChild(commentElement)
       }
+
       const dataTracked = dataTrackedMap.get(element.id)
+
       if (dataTracked) {
         element.classList.add('attrs-track-mark')
         const decoration = getMarkDecoration(dataTracked)
