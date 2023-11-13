@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArticleTitleView } from './article_title'
 import { createEditableNodeView } from './creators'
+import { TitleView } from './title'
 
-export default createEditableNodeView(ArticleTitleView)
+export default createEditableNodeView(TitleView)

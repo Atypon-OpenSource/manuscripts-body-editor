@@ -17,7 +17,6 @@
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import articleTitle from '../views/article_title_editable'
 import bibliographyElement from '../views/bibliography_element_editable'
 import bibliographyItem from '../views/bibliography_item_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
@@ -49,6 +48,7 @@ import pullquoteElement from '../views/pullquote_element_editable'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
+import articleTitle from '../views/title'
 import tocElement from '../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps &
