@@ -47,7 +47,6 @@ import { getMatchingDescendant } from '../utils'
 const manuscript: Manuscript = {
   _id: 'MPManuscript:test-manuscript',
   objectType: 'MPManuscript',
-  title: 'Example Manuscript',
   containerID: 'MPProject:test-project',
   createdAt: 0,
   updatedAt: 0,
