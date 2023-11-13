@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Manuscript } from '@manuscripts/json-schema'
+import { Manuscript, Title } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { parse } from '@manuscripts/title-editor'
 import {
@@ -29,6 +29,7 @@ import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 
 interface Props {
   manuscript: Manuscript
+  title: Title
   selected: Selected | null
   doc: ManuscriptNode | null
   capabilities?: Capabilities
@@ -45,7 +46,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
   const debouncedProps = useDebounce(props, 500)
 
   useEffect(() => {
-    const { doc, view, manuscript, selected } = debouncedProps
+    const { doc, view, selected, title } = debouncedProps
 
     if (doc) {
       const { items } = buildTree({
@@ -55,7 +56,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
         selected,
       })
 
-      const node = parse(manuscript.title || '')
+      const node = parse(title.articleTitle || '')
 
       const tree = {
         node,
