@@ -1586,15 +1586,15 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@2.2.0-LEAN-2852-3":
-  version "2.2.0-LEAN-2852-3"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0-LEAN-2852-3.tgz#a221e8e6a54e468cd08b3820df7d295d1cedb539"
-  integrity sha512-TwBxmrieCJIS8TynqyfDnasfBOsJqvJRzU+5qvW/vvtidO4Z831aZtqzkdbUIP5Z6RuNWg+Wwr4w/yjPnAC6gQ==
+"@manuscripts/json-schema@2.2.0-LEAN-2852-5":
+  version "2.2.0-LEAN-2852-5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0-LEAN-2852-5.tgz#6adfa6391d3b742dfba41ed1d62f67c462264203"
+  integrity sha512-lMe/Yuc+hvi1Qyo/ujghbAsLyBmFABk8u4SjEH9pZzWWTY6vfHkdGkHZgpa0u8vqnl9hoPng1omcSYyaC6iWcQ==
   dependencies:
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/json-schema@^2.2.0":
+"@manuscripts/json-schema@^2.1.2", "@manuscripts/json-schema@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.0.tgz#8507707f00c0e6cead4f4e2f2e1797f9bccec4af"
   integrity sha512-2ooif0jtIld5bA44DHPpsNbDvdoQWaFcNXiBlc7OQ0znY37e5juMipknEtNTvdHCtHpzBkrLJt7k77bBT7VaVQ==
@@ -1694,6 +1694,20 @@
   integrity sha512-6NVYOPoUpuqxIo3Rnkb3SiflV78nkzpBttNxFboWV5Xkw3m0gnlDoig4v6wJzZQ2lP/cScsnuJUZfYqj+jNOQg==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@1.5.0-LEAN-2852-8":
+  version "1.5.0-LEAN-2852-9"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.5.0-LEAN-2852-9.tgz#62a289627c4b0c38b7be0e838d4a71ce63fd8e57"
+  integrity sha512-YmasRNslGif3NaW+beF8wRtHbKLJif51YzHF/AYCFLIxbq/pL4ngfcRsu3fM9zQnqecig81n2wr9XcKbZMZ5gg==
+  dependencies:
+    "@manuscripts/json-schema" "2.2.0-LEAN-2852-5"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"

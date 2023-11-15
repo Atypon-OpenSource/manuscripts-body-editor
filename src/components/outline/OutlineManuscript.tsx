@@ -15,7 +15,7 @@
  */
 
 import OutlineIconManuscript from '@manuscripts/assets/react/OutlineIconManuscript'
-import { Manuscript, Project, Title } from '@manuscripts/json-schema'
+import { Manuscript, Project, Titles } from '@manuscripts/json-schema'
 import { parse, schema } from '@manuscripts/title-editor'
 import { nodeTitlePlaceholder } from '@manuscripts/transform'
 import React from 'react'
@@ -34,7 +34,7 @@ import {
 interface Props {
   project: Project
   manuscript: Manuscript
-  title: Title
+  titles: Titles
 }
 
 const titleText = (value: string) => {
@@ -48,7 +48,7 @@ const titleText = (value: string) => {
 export const OutlineManuscript: React.FunctionComponent<Props> = ({
   project,
   manuscript,
-  title,
+  titles,
 }) => (
   <Outline>
     <OutlineItem isSelected={false} depth={0}>
@@ -64,8 +64,8 @@ export const OutlineManuscript: React.FunctionComponent<Props> = ({
         </OutlineItemIcon>
 
         <OutlineItemLinkText className={'outline-text-title'}>
-          {title.articleTitle ? (
-            titleText(title.articleTitle)
+          {titles.title ? (
+            titleText(titles.title)
           ) : (
             <OutlineItemPlaceholder>
               {nodeTitlePlaceholder(schema.nodes.title)}
