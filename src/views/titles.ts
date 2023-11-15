@@ -20,7 +20,7 @@ import { isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TitleView<PropsType extends BaseNodeProps>
+export class TitlesView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -30,7 +30,7 @@ export class TitleView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    const titleText = this.node.attrs.articleTitle
+    const titleText = this.node.attrs.title
 
     if (!isRejectedInsert(this.node)) {
       const titleElement = document.createElement('div')
@@ -49,4 +49,4 @@ export class TitleView<PropsType extends BaseNodeProps>
   }
 }
 
-export default createNodeView(TitleView)
+export default createNodeView(TitlesView)
