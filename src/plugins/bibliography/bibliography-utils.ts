@@ -41,7 +41,7 @@ export const buildDecorations = (
   citationNodes: CitationNodes,
   popper: PopperManager,
   referencesModelMap: Map<string, Model>,
-  bibliographyItems: BibliographyItem[]
+  triggerUpdate?: boolean
 ) => {
   const decorations: Decoration[] = []
 
@@ -100,8 +100,8 @@ export const buildDecorations = (
     })
   }
 
-  // Update the condition
-  if (bibliographyItems.length) {
+  // Trigger bibliography element update
+  if (triggerUpdate) {
     console.log('Push a decoration to trigger bibliography element update ^^^^')
     doc.descendants((node, pos) => {
       if (isBibliographyElement(node)) {
@@ -111,7 +111,7 @@ export const buildDecorations = (
             pos + node.nodeSize,
             {},
             {
-              bibliographyItems,
+              triggerUpdate: true,
             }
           )
         )

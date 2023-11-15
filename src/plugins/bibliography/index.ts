@@ -87,12 +87,17 @@ export default (props: BibliographyProps) => {
           filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
+
+        const meta = tr.getMeta(bibliographyKey)
+        const triggerUpdate = meta && meta.triggerUpdate
+
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,
           citations,
           bibliographyItems,
+          triggerUpdate,
         }
       },
     },
@@ -142,6 +147,9 @@ export default (props: BibliographyProps) => {
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
+        tr.setMeta(bibliographyKey, {
+          triggerUpdate: true,
+        })
         tr.setMeta('origin', bibliographyKey)
         return tr
       } catch (error) {
@@ -150,8 +158,7 @@ export default (props: BibliographyProps) => {
     },
     props: {
       decorations(state) {
-        const { citationNodes, bibliographyItems } =
-          bibliographyKey.getState(state)
+        const { citationNodes, triggerUpdate } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
           buildDecorations(
@@ -159,7 +166,7 @@ export default (props: BibliographyProps) => {
             citationNodes,
             props.popper,
             getReferencesModelMap(state.doc),
-            bibliographyItems
+            triggerUpdate
           )
         )
       },
