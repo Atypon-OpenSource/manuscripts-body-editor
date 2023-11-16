@@ -102,7 +102,6 @@ export const buildDecorations = (
 
   // Trigger bibliography element update
   if (triggerUpdate) {
-    console.log('Push a decoration to trigger bibliography element update ^^^^')
     doc.descendants((node, pos) => {
       if (isBibliographyElement(node)) {
         decorations.push(

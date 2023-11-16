@@ -131,9 +131,6 @@ export class BibliographyElementBlockView<
   public ignoreMutation = () => true
 
   public updateContents = async () => {
-    // @TODO remove this line.
-    console.log('Update contents ^^')
-
     const bibliographyItems: BibliographyItem[] = bibliographyKey.getState(
       this.view.state
     ).bibliographyItems
