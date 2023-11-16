@@ -48,14 +48,15 @@ export default (props: BibliographyProps) => {
           referencesModelMap
         )
 
-        const citations = buildCitations(
-          citationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
         const filteredCitationNodes = citationNodes.filter(
           (node) => !isDeleted(node[0])
         )
+
+        const citations = buildCitations(
+          filteredCitationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
+        )
+
         const bibliographyItems = buildBibliographyItems(
           filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
@@ -75,14 +76,15 @@ export default (props: BibliographyProps) => {
           referencesModelMap
         )
 
-        const citations = buildCitations(
-          citationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
         const filteredCitationNodes = citationNodes.filter(
           (node) => !isDeleted(node[0])
         )
+
+        const citations = buildCitations(
+          filteredCitationNodes,
+          (id: string) => referencesModelMap.get(id) as BibliographyItem
+        )
+
         const bibliographyItems = buildBibliographyItems(
           filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
