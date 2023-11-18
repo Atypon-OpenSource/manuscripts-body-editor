@@ -46,7 +46,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
   const debouncedProps = useDebounce(props, 500)
 
   useEffect(() => {
-    const { doc, view, selected, titles } = debouncedProps
+    const { doc, view, selected } = debouncedProps
 
     if (doc) {
       const { items } = buildTree({
@@ -56,7 +56,7 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
         selected,
       })
 
-      const node = parse(titles.title || '')
+      const node = parse(doc.content.firstChild?.textContent || '')
 
       const tree = {
         node,
