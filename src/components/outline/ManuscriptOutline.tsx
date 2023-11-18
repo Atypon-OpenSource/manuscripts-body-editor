@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Manuscript, Titles } from '@manuscripts/json-schema'
+import { Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { parse } from '@manuscripts/title-editor'
 import {
@@ -29,7 +29,6 @@ import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
 
 interface Props {
   manuscript: Manuscript
-  titles: Titles
   selected: Selected | null
   doc: ManuscriptNode | null
   capabilities?: Capabilities
