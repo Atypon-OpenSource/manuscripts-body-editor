@@ -607,9 +607,12 @@ export const insertBibliographySection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (getChildOfType(state.doc, state.schema.nodes.bibliography_section)) {
-    return false
-  }
+  if (getMatchingDescendant(
+    state.doc,
+    (node) => node.type === state.schema.nodes.bibliography_section
+)) {
+    return false;
+}
 
   const section = state.schema.nodes.bibliography_section.createAndFill({}, [
     state.schema.nodes.section_title.create(
