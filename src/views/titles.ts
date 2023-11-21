@@ -36,12 +36,8 @@ export class TitlesView<PropsType extends BaseNodeProps>
       const titleElement = document.createElement('div')
       titleElement.textContent = titleText
 
-      const blockContainer = document.createElement('div')
-      blockContainer.classList.add('block-container')
-      blockContainer.appendChild(titleElement)
-
       this.dom.innerHTML = ''
-      this.dom.appendChild(blockContainer)
+      this.dom.appendChild(titleElement)
     } else {
       this.dom.innerHTML = ''
     }
