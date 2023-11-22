@@ -750,10 +750,6 @@
   display: table-cell;
 }
 
-/* .ProseMirror .csl-right-inline {
-  display: table-cell;
-} */
-
 .ProseMirror .csl-entry a {
   color: inherit;
   text-decoration: none;

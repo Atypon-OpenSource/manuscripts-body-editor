@@ -100,7 +100,12 @@ export const buildDecorations = (
     })
   }
 
-  // Trigger bibliography element update
+  /**
+   * Use decorations to trigger bibliography element update.
+   * This is a way to communicate from the plugin to the bibliography element node without actually changing the node.
+   * We had to do that due to the absence of an actual node change.
+   * @TODO Look for a neater solution (using non-trackable attributes on bibliography_element is a proposed solution)
+   */
   if (triggerUpdate) {
     doc.descendants((node, pos) => {
       if (isBibliographyElement(node)) {
