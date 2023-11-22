@@ -32,6 +32,8 @@ export const MenuList = styled.div`
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   color: #353535;
   min-width: 150px;
+  max-height: 70vh;
+  overflow-y: auto;
   padding: 4px 0;
   white-space: nowrap;
   width: auto;
