@@ -394,7 +394,7 @@ describe('editor view', () => {
     window.document.body.appendChild(root)
   })
 
-  test.skip('loads without plugins', () => {
+  test('loads without plugins', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode()
 
@@ -422,7 +422,7 @@ describe('editor view', () => {
     expect(sectionWithList.childCount).toBe(2)
   })
 
-  test.skip('loads with plugins', () => {
+  test('loads with plugins', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
