@@ -45,6 +45,7 @@ export class TitlesView<PropsType extends BaseNodeProps>
 
   protected createDOM = () => {
     this.dom = document.createElement('div')
+    this.dom.classList.add('article-title')
     this.contentDOM = this.dom
   }
 }
