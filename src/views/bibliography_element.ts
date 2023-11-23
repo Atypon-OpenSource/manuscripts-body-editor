@@ -29,6 +29,8 @@ export class BibliographyElementBlockView<
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.setAttribute('contenteditable', 'false')
+    this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.contentDOM)
   }
 }

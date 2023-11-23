@@ -366,9 +366,16 @@ export const insertLink = (
   return true
 }
 
-const needsBibliography = (state: ManuscriptEditorState) =>
-  !bibliographyKey.getState(state).citations.length &&
-  !getChildOfType(state.tr.doc, state.schema.nodes.bibliography_section)
+const needsBibliography = (state: ManuscriptEditorState) => {
+  const biblioExists = getChildOfType(
+    state.tr.doc,
+    state.schema.nodes.bibliography_section,
+    true
+  )
+
+  const citationsExists = bibliographyKey.getState(state).citations.length
+  return !citationsExists && !biblioExists
+}
 
 const createBibliographySection = (state: ManuscriptEditorState) =>
   state.schema.nodes.bibliography_section.createAndFill(
@@ -401,13 +408,6 @@ export const insertInlineCitation = (
   const { tr } = state
 
   tr.insert(pos, node)
-
-  if (needsBibliography(state)) {
-    tr.insert(tr.doc.content.size, createBibliographySection(state)).setMeta(
-      bibliographyKey,
-      { bibliographyInserted: true }
-    )
-  }
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
