@@ -14,36 +14,44 @@
  * limitations under the License.
  */
 
+// import { ListElement } from '@manuscripts/json-schema'
+// import { ManuscriptNode } from '@manuscripts/transform'
+
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNodeView } from '@manuscripts/transform'
-import { DOMSerializer } from 'prosemirror-model'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
+// import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { ManuscriptNodeView } from '@manuscripts/transform'
+
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
-export class AffiliationView<PropsType extends Props>
+export class ContributorsSectionView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
-  public stopEvent = () => true
-  public ignoreMutation = () => true
-  
   public initialise = () => {
-    // const toDOM = this.node.type.spec.toDOM
-    // if (toDOM) {
-    //   const { dom, contentDOM } = DOMSerializer.renderSpec(document, toDOM(this.node))
-    //   this.dom = dom as HTMLElement
-    //   this.contentDOM = (contentDOM as HTMLElement) || undefined
-    // }
-    // this.updateContents()
+    console.log('initialise...')
+    this.createDOM()
+    this.updateContents()
+    console.log(this)
   }
-  
+  public createDOM = () => {
+    console.log('createDOM...')
+    // this.dom = document.createElement('div')
+    // this.dom.className = 'contriburs_section'
+    // this.dom.setAttribute('id', this.node.attrs.id)
+    // this.dom.setAttribute('contenteditable', 'false')
+    // this.contentDOM = document.createElement('div')
+    // this.dom.appendChild(this.contentDOM)
+  }
   public updateContents = () => {
-    let {institution, addressLine1, country} = this.node.attrs
-    let complexInstitutionName = Array.from([institution, addressLine1, country]).filter(Boolean).join(', ')  
-    this.dom.innerHTML = complexInstitutionName
+    console.log('updateContents...')
+    console.log(this)
+    if (this.contentDOM) {
+      
+    }
   }
 }
 
-export default createNodeView(AffiliationView)
+export default createNodeView(ContributorsSectionView)
