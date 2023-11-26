@@ -1615,10 +1615,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.3.7-LEAN-2585-0":
-  version "1.3.7-LEAN-2585-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.3.7-LEAN-2585-0.tgz#8abc5c739114da653356d5a10165c2433932104a"
-  integrity sha512-9dlZHme1BIqR5Et6HopQBhVoWcwH/YZswvR+YLGoG5ywXuSiYtfx7qja3CHEjD8iYj/fFK0d27Uyba1R3IONMw==
+"@manuscripts/style-guide@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.4.0.tgz#2df1bd69968d24ea2ba72d6939316b57bf27a8cc"
+  integrity sha512-I8RBWUZcUogophzApZ/j7/sO3UJo1grIzw1fXUU+qi9gIcjgUrxNinghOqjrdVq+EQ2KQzcQjFH8AsKifIy3yg==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
