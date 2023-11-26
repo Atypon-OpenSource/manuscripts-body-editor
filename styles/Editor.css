@@ -962,3 +962,11 @@
 .ProseMirror ol {
   padding-left: 30px !important;
 }
+.article-titles {
+  cursor: text;
+  font-family: "PT Serif", serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.43;
+  padding-left: 65px;
+}
