@@ -16,7 +16,6 @@
 
 import { Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { parse } from '@manuscripts/title-editor'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -48,24 +47,12 @@ export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
     const { doc, view, selected } = debouncedProps
 
     if (doc) {
-      const { items } = buildTree({
+      const tree = buildTree({
         node: doc,
         pos: 0,
         index: 0,
         selected,
       })
-
-      const node = parse(doc.content.firstChild?.textContent || '')
-
-      const tree = {
-        node,
-        requirementsNode: doc,
-        pos: 0,
-        endPos: 0,
-        index: 0,
-        isSelected: !selected,
-        items,
-      }
 
       setValues({ tree, view, editArticle: !!props.capabilities?.editArticle })
     } else {

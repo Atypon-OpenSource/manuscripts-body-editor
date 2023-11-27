@@ -15,6 +15,6 @@
  */
 
 import { createEditableNodeView } from './creators'
-import { TitlesView } from './titles'
+import { TitleView } from './title'
 
-export default createEditableNodeView(TitlesView)
+export default createEditableNodeView(TitleView)
