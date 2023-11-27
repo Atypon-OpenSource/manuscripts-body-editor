@@ -299,23 +299,6 @@ export class CitationEditableView extends CitationView<
 
     view.dispatch(newTr)
     return false
-
-    // doc.descendants((node, pos) => {
-    //   if (node.type === schema.nodes.bibliography_element) {
-    //     view.dispatch(
-    //       tr.insert(
-    //         pos + 1,
-    //         schema.nodes.bibliography_item.create({
-    //           id: item._id,
-    //           doi,
-    //           containerTitle,
-    //           ...restAttr,
-    //         })
-    //       )
-    //     )
-    //     return false
-    //   }
-    // })
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
