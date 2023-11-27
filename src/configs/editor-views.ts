@@ -49,6 +49,7 @@ import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
 import tocElement from '../views/toc_element_editable'
+import title from '../views/title_editable'
 
 type EditorProps = EditableBlockProps &
   CitationEditableProps &
@@ -57,6 +58,7 @@ type EditorProps = EditableBlockProps &
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
+    title: title(props),
     bibliography_item: bibliographyItem(props),
     bibliography_element: bibliographyElement(props),
     blockquote_element: blockquoteElement(props),

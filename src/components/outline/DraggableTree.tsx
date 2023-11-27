@@ -19,7 +19,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeTitle,
-  nodeTitlePlaceholder,
+  nodeTitlePlaceholder, schema,
   Selected,
 } from '@manuscripts/transform'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
@@ -52,6 +52,17 @@ import {
 } from './Outline'
 
 export type DropSide = 'before' | 'after' | null
+
+const excludedTypes = [
+  schema.nodes.table,
+  schema.nodes.figure,
+  schema.nodes.footnotes_element,
+  schema.nodes.bibliography_element,
+  schema.nodes.keywords_section,
+  schema.nodes.title,
+]
+
+const childrenExcludedTypes = [schema.nodes.pullquote_element, schema.nodes.blockquote_element]
 
 interface DragSourceProps {
   tree: TreeItem
@@ -88,7 +99,6 @@ export interface TreeItem {
   pos: number
   endPos: number
   parent?: ManuscriptNode
-  requirementsNode?: ManuscriptNode | null
 }
 
 interface Props {
@@ -104,25 +114,11 @@ interface State {
 }
 
 const isExcluded = (nodeType: ManuscriptNodeType) => {
-  const { nodes } = nodeType.schema
-
-  const excludedTypes = [
-    nodes.table,
-    nodes.figure,
-    nodes.footnotes_element,
-    nodes.bibliography_element,
-    nodes.keywords_section,
-  ]
-
   return excludedTypes.includes(nodeType)
 }
 
 const isChildrenExcluded = (nodeType: ManuscriptNodeType) => {
-  const { nodes } = nodeType.schema
-
-  const excludedTypes = [nodes.pullquote_element, nodes.blockquote_element]
-
-  return excludedTypes.includes(nodeType)
+  return childrenExcludedTypes.includes(nodeType)
 }
 
 interface TreeBuilderOptions {
