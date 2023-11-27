@@ -1702,10 +1702,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@1.5.0-LIT-528106":
-  version "1.5.0-LIT-528106"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.5.0-LIT-528106.tgz#3e5a9cbabdf2515fffc34f04852b5aaf2cbe7f67"
-  integrity sha512-MMOpJ7RdN0+CFUSKpWlFMn6wwv4OIa3Eqx8QUMxv/8wc5hxVcpL0TOdiB/AcN5xfUmZrz2pl3HEMZlGndO/DJQ==
+"@manuscripts/transform@1.5.0-LIT-528106-2":
+  version "1.5.0-LIT-528106-2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.5.0-LIT-528106-2.tgz#df66c3ef64076b404a96b60951c9e753b1b1f53d"
+  integrity sha512-CALQaChjWsk59C3AYYvKNBaZ73h12JxnblgIa9HEWb26lG5Uwe27EaOetG1JeCqmfDRktaZnkWw8l06EfzNd4g==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
     debug "^4.3.4"
