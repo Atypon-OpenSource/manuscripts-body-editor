@@ -291,9 +291,8 @@ export class CitationEditableView extends CitationView<
     if (bibElement && pos) {
       newTr = tr.insert(pos + 1, bibItem)
     } else {
-      bibElement = createBibliographySection(bibItem)
       newTr = tr
-        .insert(tr.doc.content.size, bibElement)
+        .insert(tr.doc.content.size, createBibliographySection(bibItem))
         .setMeta(bibliographyKey, { bibliographyInserted: true })
     }
 
