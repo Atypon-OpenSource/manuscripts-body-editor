@@ -16,13 +16,13 @@
 
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNodeView } from '@manuscripts/transform'
-import { DOMSerializer } from 'prosemirror-model'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { DOMSerializer } from 'prosemirror-model'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
-export class AffiliationView<PropsType extends Props>
+export class ContributorView<PropsType extends Props>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -40,10 +40,9 @@ export class AffiliationView<PropsType extends Props>
   }
   
   public updateContents = () => {
-    let {institution, addressLine1, country} = this.node.attrs
-    let complexInstitutionName = Array.from([institution, addressLine1, country]).filter(Boolean).join(', ')  
-    this.dom.innerHTML = complexInstitutionName
+    const bName = this.node.attrs.bibliographicName
+    this.dom.innerHTML = bName.given + ' ' + bName.family
   }
 }
 
-export default createNodeView(AffiliationView)
+export default createNodeView(ContributorView)

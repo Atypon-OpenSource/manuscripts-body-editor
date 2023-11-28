@@ -50,6 +50,7 @@ import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
 import tocElement from '../views/toc_element_editable'
 import affiliation from '../views/affiliation'
+import contributor from '../views/contributor'
 
 type EditorProps = EditableBlockProps &
   CitationEditableProps &
@@ -89,5 +90,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     meta_section: metaSection,
 
     affiliation: affiliation(props),
+    contributor: contributor(props),
   }
 }
