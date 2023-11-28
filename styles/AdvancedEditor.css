@@ -715,3 +715,27 @@ Next levels are shifted 'up' by 1
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
 }
+
+.contributors {
+  white-space: initial;
+  margin-bottom: 24px;
+  margin-top: 24px;
+}
+
+.contributors .tools-panel {
+  position: initial;
+}
+
+.contributors table {
+  line-height: initial;
+  width: inherit;
+}
+
+.contributors tr th, .contributors tr td {
+  border: none !important;
+  background: none !important;
+}
+
+.contributors th, .contributors td {
+  padding: initial;
+}
