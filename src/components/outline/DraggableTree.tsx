@@ -64,7 +64,10 @@ const excludedTypes = [
   schema.nodes.title,
 ]
 
-const childrenExcludedTypes = [schema.nodes.pullquote_element, schema.nodes.blockquote_element]
+const childrenExcludedTypes = [
+  schema.nodes.pullquote_element,
+  schema.nodes.blockquote_element,
+]
 
 interface DragSourceProps {
   tree: TreeItem

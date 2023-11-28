@@ -14,42 +14,19 @@
  * limitations under the License.
  */
 
-import {ManuscriptNodeView} from '@manuscripts/transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
-import { BaseNodeView } from './base_node_view'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import React from "react";
-import {EditableBlockProps} from "./editable_block";
 
-export interface TitleViewProps extends EditableBlockProps {
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
-export class TitleView<PropsType extends TitleViewProps>
+export class TitleView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
-  public metadata: HTMLElement
 
   public initialise = () => {
     this.createDOM()
-    this.updateContents()
-  }
-
-  public updateContents = () => {
-    const can = this.props.getCapabilities()
-    const MetadataContainer = this.props.components['MetadataContainer']
-
-    this.props.unmountReactComponent(this.metadata)
-    this.props.renderReactComponent(
-      <MetadataContainer
-        allowInvitingAuthors={false}
-        showAuthorEditButton={true}
-        disableEditButton={!can.editMetadata}
-      />,
-      this.metadata
-    )
   }
 
   protected createDOM = () => {
@@ -59,10 +36,6 @@ export class TitleView<PropsType extends TitleViewProps>
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('article-titles')
     this.dom.appendChild(this.contentDOM)
-
-    this.metadata = document.createElement('div')
-    this.metadata.classList.add('metadata')
-    this.dom.appendChild(this.metadata)
   }
 }
 
