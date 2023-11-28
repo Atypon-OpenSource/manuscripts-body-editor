@@ -50,7 +50,7 @@ export class CitationEditableView extends CitationView<
 > {
   public showPopper = () => {
     const {
-      components: { CitationEditor, CitationViewer },
+      components: { CitationEditor, CitationViewer, DetachableMetadata },
       getCapabilities,
       projectID,
       renderReactComponent,

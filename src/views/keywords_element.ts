@@ -26,6 +26,7 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import ReactDOM from 'react-dom'
 
 export interface KeywordsElementProps {
   getCapabilities: () => Capabilities
@@ -57,6 +58,26 @@ export class KeywordsElementView extends BlockView<
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
+
+    const {
+      components: { DetachableMetadata },
+      subscribeStore,
+    } = this.props
+
+    this.metadata = ReactSubView(
+      this.props,
+      DetachableMetadata,
+      { subscribe: subscribeStore },
+      this.node,
+      this.getPos,
+      this.view,
+      'metadata-container'
+    )
+
+    if (this.metadata) {
+      // console.log(DetachableMetadata)
+      this.element.appendChild(this.metadata)
+    }
 
     this.addingTools = ReactSubView(
       this.props,

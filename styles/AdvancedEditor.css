@@ -715,3 +715,11 @@ Next levels are shifted 'up' by 1
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
 }
+
+.tools-panel.metadata-container {
+  position: relative;
+}
+
+.tools-panel.metadata-container header {
+  padding: 0;
+}
