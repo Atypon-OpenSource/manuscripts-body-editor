@@ -730,7 +730,3 @@ Next levels are shifted 'up' by 1
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
 }
-[data-cy="author-container"] table .gonusi {
-  font-weight: 400;
-  padding-right: 10pt;
-}
