@@ -19,7 +19,8 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeTitle,
-  nodeTitlePlaceholder, schema,
+  nodeTitlePlaceholder,
+  schema,
   Selected,
 } from '@manuscripts/transform'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
