@@ -26,7 +26,7 @@ Next levels are shifted 'up' by 1
   counter-reset: level_2;
 }
 .ProseMirror > section > section > .block-section_title > h1 {
-  font-size: 16pt !important;
+  font-size: 15.75pt !important;
   font-style: normal !important;
   font-weight: bold !important;
   color: #353535 !important;
