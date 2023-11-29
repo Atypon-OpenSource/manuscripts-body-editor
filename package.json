@@ -28,7 +28,6 @@
   "dependencies": {
     "@iarna/word-count": "^1.1.2",
     "@manuscripts/assets": "^0.6.4",
-    "@manuscripts/comment-editor": "^1.0.3",
     "@manuscripts/json-schema": "^2.2.0",
     "@manuscripts/library": "1.2.0",
     "@manuscripts/style-guide": "1.4.0-LEAN-3050-0",
