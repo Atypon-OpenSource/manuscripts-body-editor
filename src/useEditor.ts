@@ -105,7 +105,7 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
         if (node.attrs.id === id) {
           currentView.focus()
 
-          const selection = node.isAtom
+          const selection = !node.isAtom
             ? NodeSelection.create(state.tr.doc, pos)
             : TextSelection.near(state.tr.doc.resolve(pos + 1))
 
