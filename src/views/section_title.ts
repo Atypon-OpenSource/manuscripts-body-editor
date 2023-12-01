@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import { isSectionNode, SectionNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 
 import { sectionLevel } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import {isKeywordsSectionNode} from "@manuscripts/transform";
 
 export const isSpecialSection = (node: ProsemirrorNode) => {
-  if (isSectionNode(node)) {
-    const { attrs } = node as SectionNode
-    return (
-      attrs.category === 'MPSectionCategory:abstracts' ||
-      attrs.category === 'MPSectionCategory:body' ||
-      attrs.category === 'MPSectionCategory:backmatter'
-    )
-  }
+  const type = node.type
+  const nodes = type.schema.nodes
+  return type === nodes.abstracts || type === nodes.body || type === nodes.backmatter
 }
 
 export class SectionTitleView<
@@ -49,7 +44,7 @@ export class SectionTitleView<
     }
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
-    } else {
+    } else if (!isKeywordsSectionNode($pos.parent)) {
       this.contentDOM.classList.add('empty-node')
       // the first level is hidden
       // other levels are shifted by 1
