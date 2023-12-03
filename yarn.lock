@@ -1602,13 +1602,13 @@
     ajv "^8.12.0"
     deepmerge "^4.3.1"
 
-"@manuscripts/library@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.2.0.tgz#2608388893293c6aa302cc7e2ca944feffe1502c"
-  integrity sha512-CfgzGc7YNzm81d1qG1RINMERppi6DH8oWb3M9wMzLk+Vn+CYCxH1rzxEK2UMOg2UADahVwCfzJJxWhkhvJWQeA==
+"@manuscripts/library@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.2.1.tgz#f6544e4fbe293304121c26ff7d548d9197b63a33"
+  integrity sha512-nSvE1AvXGJTNIy0nQWb4gcsjwqDtCI1WU+UuP0/oZTY8G5EyLvL33tZDV5+B0a2GHL9PpWAZlOe1EEIeIUTGgw==
   dependencies:
     "@manuscripts/json-schema" "^2.2.0"
-    "@manuscripts/transform" "1.5.0"
+    "@manuscripts/transform" "1.5.2"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
@@ -1672,10 +1672,10 @@
     react-dom "^17.0.2"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@^1.7.2":
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.2.tgz#73b4729d5c9216a7f9d295b2a659f2ce3a0b6694"
-  integrity sha512-dmyGroidBysXDadv2BqrLTWfqxpJuG8CCWDp5iqs1B6YGTlW8irkSs06XS1c5QlSdJTPYok5X2yUv+RudHdrfg==
+"@manuscripts/track-changes-plugin@^1.7.3":
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.3.tgz#e19a0d8bd3b3482f5c4316ee4865e6e57811e7c4"
+  integrity sha512-VOXffxaRw0O80GKauOASb4wFNfwNP2bZ8JOVo0wuH1sUQFPpklSbxMBO/d5u+TNFgOTM1jUmvHxaQJpjnklJjg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1687,20 +1687,6 @@
     prosemirror-state "^1.4.2"
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
-
-"@manuscripts/transform@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-1.5.0.tgz#3426e528facebac96fdd9c02a66909539363e36a"
-  integrity sha512-6NVYOPoUpuqxIo3Rnkb3SiflV78nkzpBttNxFboWV5Xkw3m0gnlDoig4v6wJzZQ2lP/cScsnuJUZfYqj+jNOQg==
-  dependencies:
-    "@manuscripts/json-schema" "^2.2.0"
-    debug "^4.3.4"
-    jszip "^3.10.1"
-    mathjax-full "^3.2.2"
-    mime "^3.0.0"
-    prosemirror-model "^1.18.3"
-    uuid "^9.0.0"
-    w3c-xmlserializer "^4.0.0"
 
 "@manuscripts/transform@1.5.2":
   version "1.5.2"
