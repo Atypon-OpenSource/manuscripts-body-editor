@@ -407,22 +407,22 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const tableOfContentsSection = view.state.doc.child(1)
+    const tableOfContentsSection = view.state.doc.child(0)
     expect(tableOfContentsSection.content.child(1).attrs.contents).toBe(
       '<div>Table of Contents</div>'
     )
 
     const emptySection = view.state.doc.child(1)
-    expect(emptySection.childCount).toBe(2)
+    expect(emptySection.childCount).toBe(1)
 
     const sectionWithEmptyParagraphs = view.state.doc.child(4)
-    expect(sectionWithEmptyParagraphs.childCount).toBe(1)
+    expect(sectionWithEmptyParagraphs.childCount).toBe(3)
 
     const sectionWithList = view.state.doc.child(7)
-    expect(sectionWithList.childCount).toBe(3)
+    expect(sectionWithList.childCount).toBe(2)
   })
 
-  test.skip('loads with plugins', () => {
+  test('loads with plugins', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
