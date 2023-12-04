@@ -37,7 +37,6 @@ import { ContextMenu } from '../../lib/context-menu'
 import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { isSpecialSection } from '../../views/section_title'
-import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
   Outline,
   OutlineDropPreview,
@@ -197,7 +196,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { open, dragPosition } = this.state
 
-    const { node, requirementsNode, items, isSelected } = tree
+    const { node, items, isSelected } = tree
 
     const isDeletedItem = isDeleted(node)
 
@@ -259,8 +258,6 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
                       >
                         {this.itemText(node)}
                       </OutlineItemLinkText>
-
-                      <RequirementsAlert node={requirementsNode || node} />
                     </OutlineItemLink>
                   </OutlineItem>
                 </div>
