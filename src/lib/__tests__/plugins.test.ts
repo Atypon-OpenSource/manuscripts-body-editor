@@ -422,7 +422,7 @@ describe('editor view', () => {
     expect(sectionWithList.childCount).toBe(3)
   })
 
-  test.skip('loads with plugins', () => {
+  test('loads with plugins', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
@@ -436,13 +436,14 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const tableOfContentsSection = view.state.doc.child(0)
+    const tableOfContentsSection = view.state.doc.child(1)
     expect(
       tableOfContentsSection.content.child(1).attrs.contents
     ).toMatchSnapshot()
 
-    const sectionWithEmptyParagraphs = view.state.doc.child(4)
+    const sectionWithEmptyParagraphs = view.state.doc.child(5)
     expect(sectionWithEmptyParagraphs.childCount).toBe(2)
+
     expect(sectionWithEmptyParagraphs.content.child(0).type).toBe(
       sectionWithEmptyParagraphs.type.schema.nodes.section_title
     )
