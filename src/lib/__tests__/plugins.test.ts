@@ -436,7 +436,7 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const tableOfContentsSection = view.state.doc.child(1)
+    const tableOfContentsSection = view.state.doc.child(0)
     expect(
       tableOfContentsSection.content.child(1).attrs.contents
     ).toMatchSnapshot()
