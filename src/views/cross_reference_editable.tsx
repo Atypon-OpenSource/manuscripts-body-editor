@@ -112,8 +112,6 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       rids
     )
 
-    await this.props.saveModel(auxiliaryObjectReference)
-
     const tr = state.tr.setNodeMarkup(pos, undefined, {
       ...this.node.attrs,
       customLabel: customLabel || '',
