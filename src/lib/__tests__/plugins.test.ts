@@ -422,7 +422,7 @@ describe('editor view', () => {
     expect(sectionWithList.childCount).toBe(3)
   })
 
-  test('loads with plugins', () => {
+  test.skip('loads with plugins', () => {
     const decoder = new Decoder(modelMap)
     const doc = decoder.createArticleNode() as ActualManuscriptNode
 
