@@ -83,7 +83,11 @@ export const toolbar: ToolbarConfig = {
       title: 'Wrap in ordered list',
       active: blockActive(schema.nodes.ordered_list),
       enable: wrapInList(schema.nodes.ordered_list),
-      run: skipTrackingChanges(wrapInList(schema.nodes.ordered_list)),
+      run: skipTrackingChanges(
+        wrapInList(schema.nodes.ordered_list, {
+          listStyleType: 'order',
+        })
+      ),
       Component: OrderListSelector,
     },
   },
