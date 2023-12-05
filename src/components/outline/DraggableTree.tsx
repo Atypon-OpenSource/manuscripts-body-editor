@@ -105,13 +105,14 @@ interface State {
 
 const isExcluded = (nodeType: ManuscriptNodeType) => {
   const { nodes } = nodeType.schema
-
   const excludedTypes = [
     nodes.table,
     nodes.figure,
     nodes.footnotes_element,
     nodes.bibliography_element,
     nodes.keywords_section,
+    nodes.affiliations_section,
+    nodes.contributors_section,
   ]
 
   return excludedTypes.includes(nodeType)
@@ -119,9 +120,7 @@ const isExcluded = (nodeType: ManuscriptNodeType) => {
 
 const isChildrenExcluded = (nodeType: ManuscriptNodeType) => {
   const { nodes } = nodeType.schema
-
   const excludedTypes = [nodes.pullquote_element, nodes.blockquote_element]
-
   return excludedTypes.includes(nodeType)
 }
 
