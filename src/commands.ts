@@ -41,6 +41,7 @@ import {
   ManuscriptResolvedPos,
   ManuscriptTextSelection,
   ManuscriptTransaction,
+  schema,
   SectionNode,
   TOCSectionNode,
 } from '@manuscripts/transform'
@@ -53,7 +54,7 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { findParentNode } from 'prosemirror-utils'
+import { findChildrenByType, findParentNode } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import {
@@ -471,7 +472,7 @@ export const insertInlineFootnote =
 
     const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
 
-    let selectionPos: number
+    let selectionPos = undefined
 
     if (footnotesElementAndPos === undefined) {
       // create a new footnotes section if needed
@@ -483,12 +484,18 @@ export const insertInlineFootnote =
         ) as FootnotesElementNode,
       ]) as FootnotesSectionNode
 
-      const insideEndPos = tr.doc.content.size
+      const backmatterPosition = findChildrenByType(
+        tr.doc,
+        schema.nodes.backmatter
+      ).at(0)?.pos
 
-      // TODO: insert bibliography section before footnotes section
-      tr.insert(insideEndPos, footnotesSection)
-      // inside footnote inside element inside section
-      selectionPos = insideEndPos + footnotesSection.nodeSize
+      if (backmatterPosition) {
+        // TODO: insert bibliography section before footnotes section
+        tr.insert(backmatterPosition + 1, footnotesSection)
+
+        // inside footnote inside element inside section
+        selectionPos = backmatterPosition + footnotesSection.nodeSize
+      }
     } else {
       const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
         footnotesElementAndPos,
@@ -498,7 +505,7 @@ export const insertInlineFootnote =
       selectionPos = selectPos
     }
 
-    if (dispatch) {
+    if (dispatch && selectionPos) {
       // set selection inside new footnote
       const selection = TextSelection.create(tr.doc, selectionPos)
       dispatch(tr.setSelection(selection).scrollIntoView())
