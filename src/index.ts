@@ -25,13 +25,6 @@ export {
   ManuscriptToolbar,
   ToolbarButtonConfig,
 } from './components/toolbar/ManuscriptToolbar'
-export { Checks } from './components/requirements/Checks'
-export { Statistics } from './components/requirements/Statistics'
-export {
-  RequirementsAlerts,
-  RequirementsContext,
-  RequirementsProvider,
-} from './components/requirements/RequirementsProvider'
 export { default as getMenus } from './menus'
 export { ChangeReceiver } from './types'
 export { PopperManager } from './lib/popper'

@@ -19,7 +19,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeTitle,
-  nodeTitlePlaceholder,
+  nodeTitlePlaceholder, schema,
   Selected,
 } from '@manuscripts/transform'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
@@ -37,7 +37,6 @@ import { ContextMenu } from '../../lib/context-menu'
 import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { isSpecialSection } from '../../views/section_title'
-import { RequirementsAlert } from '../requirements/RequirementsAlert'
 import {
   Outline,
   OutlineDropPreview,
@@ -53,6 +52,22 @@ import {
 } from './Outline'
 
 export type DropSide = 'before' | 'after' | null
+
+const excludedTypes = [
+  schema.nodes.table,
+  schema.nodes.figure,
+  schema.nodes.footnotes_element,
+  schema.nodes.bibliography_element,
+  schema.nodes.keywords_section,
+  schema.nodes.affiliations_section,
+  schema.nodes.contributors_section,
+  schema.nodes.title,
+]
+
+const childrenExcludedTypes = [
+  schema.nodes.pullquote_element,
+  schema.nodes.blockquote_element,
+]
 
 interface DragSourceProps {
   tree: TreeItem
@@ -89,7 +104,6 @@ export interface TreeItem {
   pos: number
   endPos: number
   parent?: ManuscriptNode
-  requirementsNode?: ManuscriptNode | null
 }
 
 interface Props {
@@ -105,25 +119,11 @@ interface State {
 }
 
 const isExcluded = (nodeType: ManuscriptNodeType) => {
-  const { nodes } = nodeType.schema
-
-  const excludedTypes = [
-    nodes.table,
-    nodes.figure,
-    nodes.footnotes_element,
-    nodes.bibliography_element,
-    nodes.keywords_section,
-  ]
-
   return excludedTypes.includes(nodeType)
 }
 
 const isChildrenExcluded = (nodeType: ManuscriptNodeType) => {
-  const { nodes } = nodeType.schema
-
-  const excludedTypes = [nodes.pullquote_element, nodes.blockquote_element]
-
-  return excludedTypes.includes(nodeType)
+  return childrenExcludedTypes.includes(nodeType)
 }
 
 interface TreeBuilderOptions {
@@ -197,7 +197,7 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     const { open, dragPosition } = this.state
 
-    const { node, requirementsNode, items, isSelected } = tree
+    const { node, items, isSelected } = tree
 
     const isDeletedItem = isDeleted(node)
 
@@ -211,86 +211,86 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     return connectDropTarget(
       <div>
-        <Outline style={this.outlineStyles(isDragging)}>
-          <OutlineDropPreview
-            depth={depth}
-            style={this.topPreviewStyles(mightDrop, dragPosition)}
-          />
+        {node.type.name !== 'titles' && (
+          <Outline style={this.outlineStyles(isDragging)}>
+            <OutlineDropPreview
+              depth={depth}
+              style={this.topPreviewStyles(mightDrop, dragPosition)}
+            />
 
-          {!isSpecialSection(node) && (
-            <>
-              {connectDragSource(
-                <div>
-                  <OutlineItem
-                    isSelected={isSelected}
-                    depth={depth}
-                    onContextMenu={this.handleContextMenu}
-                  >
-                    {items.length ? (
-                      <OutlineItemArrow onClick={this.toggle}>
-                        {open ? (
-                          <StyledTriangleExpanded />
-                        ) : (
-                          <StyledTriangleCollapsed />
-                        )}
-                      </OutlineItemArrow>
-                    ) : (
-                      <OutlineItemNoArrow />
-                    )}
-
-                    <OutlineItemLink to={`#${node.attrs.id || ''}`}>
-                      {connectDragPreview(
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <OutlineItemIcon>
-                            {nodeTypeIcon(node.type)}
-                          </OutlineItemIcon>
-                        </span>
+            {!isSpecialSection(node) && (
+              <>
+                {connectDragSource(
+                  <div>
+                    <OutlineItem
+                      isSelected={isSelected}
+                      depth={depth}
+                      onContextMenu={this.handleContextMenu}
+                    >
+                      {items.length ? (
+                        <OutlineItemArrow onClick={this.toggle}>
+                          {open ? (
+                            <StyledTriangleExpanded />
+                          ) : (
+                            <StyledTriangleCollapsed />
+                          )}
+                        </OutlineItemArrow>
+                      ) : (
+                        <OutlineItemNoArrow />
                       )}
 
-                      <OutlineItemLinkText
-                        className={`outline-text-${node.type.name} ${
-                          isDeletedItem && 'deleted'
-                        }`}
-                      >
-                        {this.itemText(node)}
-                      </OutlineItemLinkText>
+                      <OutlineItemLink to={`#${node.attrs.id || ''}`}>
+                        {connectDragPreview(
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <OutlineItemIcon>
+                              {nodeTypeIcon(node.type)}
+                            </OutlineItemIcon>
+                          </span>
+                        )}
 
-                      <RequirementsAlert node={requirementsNode || node} />
-                    </OutlineItemLink>
-                  </OutlineItem>
-                </div>
-              )}
-            </>
-          )}
+                        <OutlineItemLinkText
+                          className={`outline-text-${node.type.name} ${
+                            isDeletedItem && 'deleted'
+                          }`}
+                        >
+                          {this.itemText(node)}
+                        </OutlineItemLinkText>
+                      </OutlineItemLink>
+                    </OutlineItem>
+                  </div>
+                )}
+              </>
+            )}
 
-          {items.length ? (
-            <div
-              style={{
-                display: open || isSpecialSection(node) ? '' : 'none',
-              }}
-            >
-              {items.map((subtree) => (
-                <DraggableTree
-                  {...this.props}
-                  key={subtree.node.attrs.id}
-                  tree={subtree}
-                  view={view}
-                  depth={isSpecialSection(node) ? depth : depth + 1}
-                />
-              ))}
-            </div>
-          ) : null}
+            {items.length ? (
+              <div
+                style={{
+                  display: open || isSpecialSection(node) ? '' : 'none',
+                }}
+              >
+                {items.map((subtree) => (
+                  <DraggableTree
+                    {...this.props}
+                    key={subtree.node.attrs.id}
+                    tree={subtree}
+                    view={view}
+                    depth={isSpecialSection(node) ? depth : depth + 1}
+                  />
+                ))}
+              </div>
+            ) : null}
 
-          <OutlineDropPreview
-            depth={depth}
-            style={this.bottomPreviewStyles(mightDrop, dragPosition)}
-          />
-        </Outline>
+            <OutlineDropPreview
+              depth={depth}
+              style={this.bottomPreviewStyles(mightDrop, dragPosition)}
+            />
+          </Outline>
+        )}
       </div>
     )
   }

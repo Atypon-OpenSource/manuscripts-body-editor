@@ -99,18 +99,6 @@
         "content": [
           {
             "attrs": {
-              "id": "AFFILIATION_LIST"
-            },
-            "type": "affiliation_list"
-          },
-          {
-            "attrs": {
-              "id": "CONTRIBUTOR_LIST"
-            },
-            "type": "contributor_list"
-          },
-          {
-            "attrs": {
               "id": "COMMENT_LIST"
             },
             "type": "comment_list"

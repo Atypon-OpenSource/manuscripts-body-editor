@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import * as Comlink from 'comlink'
+import { createEditableNodeView } from './creators'
+import { TitleView } from './title'
 
-import { countCharacters, countWords } from './statistics'
-
-Comlink.expose({ countWords, countCharacters })
+export default createEditableNodeView(TitleView)
