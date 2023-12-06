@@ -16,10 +16,7 @@
 
 import OutlineIconManuscript from '@manuscripts/assets/react/OutlineIconManuscript'
 import { Manuscript, Project } from '@manuscripts/json-schema'
-import {
-  ManuscriptNode,
-  nodeTitle,
-} from '@manuscripts/transform'
+import { ManuscriptNode, nodeTitle } from '@manuscripts/transform'
 import React from 'react'
 
 import {
