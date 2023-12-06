@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-import { BaseNodeProps } from './base_node_view'
-import BlockView from './block_view'
+import { ManuscriptNodeView } from '@manuscripts/transform'
+
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class BibliographyElementBlockView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
-  public stopEvent = () => true
+export class TitleView<PropsType extends BaseNodeProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView
+{
+  public contentDOM: HTMLElement
 
-  public ignoreMutation = () => true
+  public initialise = () => {
+    this.createDOM()
+  }
 
-  public createElement = () => {
+  protected createDOM = () => {
+    this.dom = document.createElement('div')
+    this.dom.classList.add('manuscript-title')
+
     this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.contentDOM.setAttribute('contenteditable', 'false')
-    this.dom.setAttribute('contenteditable', 'false')
+    this.contentDOM.classList.add('article-titles')
     this.dom.appendChild(this.contentDOM)
   }
 }
 
-export default createNodeView(BibliographyElementBlockView)
+export default createNodeView(TitleView)

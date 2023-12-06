@@ -42,9 +42,10 @@ export function* iterateChildren(
 
 export const getMatchingChild = (
   parent: ManuscriptNode,
-  matcher: (node: ManuscriptNode) => boolean
+  matcher: (node: ManuscriptNode) => boolean,
+  deep = false
 ): ManuscriptNode | undefined => {
-  for (const node of iterateChildren(parent)) {
+  for (const node of iterateChildren(parent, deep)) {
     if (matcher(node)) {
       return node
     }
@@ -64,8 +65,10 @@ export const getMatchingDescendant = (
 
 export const getChildOfType = (
   parent: ManuscriptNode,
-  nodeType: ManuscriptNodeType
-): boolean => !!getMatchingChild(parent, (node) => node.type === nodeType)
+  nodeType: ManuscriptNodeType,
+  deep = false
+): boolean =>
+  !!getMatchingChild(parent, (node) => node.type.name === nodeType.name, deep)
 
 export const findParentNodeWithId = findParentNode((node) => 'id' in node.attrs)
 
