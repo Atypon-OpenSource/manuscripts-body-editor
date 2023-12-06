@@ -22,8 +22,8 @@ import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
 export interface ContributorsSectionProps extends EditableBlockProps {
-  components: Record<string, React.ComponentType<any>>
-  subscribeStore: any
+  components: Record<string, React.ComponentType<unknown>>
+  subscribeStore: unknown
 }
 
 export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
@@ -49,7 +49,7 @@ export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
 
     this.metadata = ReactSubView(
       this.props,
-      MetadataContainer as React.FC<any>,
+      MetadataContainer as React.FC<unknown>,
       {
         allowInvitingAuthors: false,
         showAuthorEditButton: true,
