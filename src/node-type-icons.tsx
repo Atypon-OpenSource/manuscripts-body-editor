@@ -24,7 +24,6 @@ import SectionIcon from '@manuscripts/assets/react/OutlineIconSection'
 import TableIcon from '@manuscripts/assets/react/OutlineIconTable'
 import BulletListIcon from '@manuscripts/assets/react/OutlineIconUnorderedList'
 import { BlockQuoteIcon, PullQuoteIcon } from '@manuscripts/style-guide'
-import { schema as titleSchema } from '@manuscripts/title-editor'
 import { ManuscriptNodeType, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import React from 'react'
@@ -35,6 +34,7 @@ const icons: Map<
   ManuscriptNodeType,
   React.FunctionComponent<React.SVGAttributes<SVGElement>>
 > = new Map([
+  [nodes.manuscript, ManuscriptIcon],
   [nodes.bibliography_section, SectionIcon],
   [nodes.blockquote_element, BlockQuoteIcon],
   [nodes.bullet_list, BulletListIcon],
@@ -54,10 +54,6 @@ const icons: Map<
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType) => {
-  if (nodeType === titleSchema.nodes.title) {
-    return <ManuscriptIcon />
-  }
-
   const Icon = icons.get(nodeType as ManuscriptNodeType)
 
   return Icon ? <Icon /> : null

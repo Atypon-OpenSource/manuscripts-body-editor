@@ -521,7 +521,7 @@ export const insertGraphicalAbstract = (
   }
   // check if another graphical abstract already exists
   if (
-    getMatchingDescendant(
+    !!getMatchingDescendant(
       state.doc,
       (node) => node.type === state.schema.nodes.graphical_abstract_section
     )
@@ -607,7 +607,12 @@ export const insertBibliographySection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (getChildOfType(state.doc, state.schema.nodes.bibliography_section)) {
+  if (
+    getMatchingDescendant(
+      state.doc,
+      (node) => node.type === state.schema.nodes.bibliography_section
+    )
+  ) {
     return false
   }
 

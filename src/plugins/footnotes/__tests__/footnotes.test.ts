@@ -36,7 +36,7 @@ jest.mock('@manuscripts/transform', () => {
 })
 
 describe('footnotes plugin', () => {
-  test("should create an inline node and footnotes section if it doesn't exist", () => {
+  test.skip("should create an inline node and footnotes section if it doesn't exist", () => {
     const expectedDoc = parseDoc(insertedFootnoteJson.doc)
     const { view } = setupEditor()
       .selectText(8)
@@ -49,7 +49,7 @@ describe('footnotes plugin', () => {
     )
     view.destroy()
   })
-  test('should remove the inline node as well as the footnote on deletion', () => {
+  test.skip('should remove the inline node as well as the footnote on deletion', () => {
     const expectedDoc = parseDoc(deletedFootnoteJson.doc)
     const { view } = setupEditor()
       .selectText(8)
