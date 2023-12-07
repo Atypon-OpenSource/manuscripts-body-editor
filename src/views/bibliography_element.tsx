@@ -240,11 +240,13 @@ export class BibliographyElementBlockView<
     this.container.classList.add('block')
     this.container.contentEditable = 'false'
 
+    this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
 
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.setAttribute('contenteditable', 'false')
     this.contentDOM.hidden = true
 
     this.container.appendChild(this.contentDOM)
