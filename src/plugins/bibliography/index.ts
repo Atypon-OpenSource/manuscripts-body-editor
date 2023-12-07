@@ -25,7 +25,7 @@ import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { isRejectedInsert } from '../../lib/track-changes-utils'
 import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
@@ -49,7 +49,7 @@ export default (props: BibliographyProps) => {
         )
 
         const filteredCitationNodes = citationNodes.filter(
-          (node) => !isDeleted(node[0]) && !isRejectedInsert(node[0])
+          (node) => !isRejectedInsert(node[0])
         )
 
         const citations = buildCitations(
@@ -77,7 +77,7 @@ export default (props: BibliographyProps) => {
         )
 
         const filteredCitationNodes = citationNodes.filter(
-          (node) => !isDeleted(node[0]) && !isRejectedInsert(node[0])
+          (node) => !isRejectedInsert(node[0])
         )
 
         const citations = buildCitations(
