@@ -519,9 +519,11 @@ export const insertGraphicalAbstract = (
   ) {
     return false
   }
+
   // check if another graphical abstract already exists
+  // getMatchingDescendant returns node or undefined
   if (
-    !getMatchingDescendant(
+    getMatchingDescendant(
       state.doc,
       (node) => node.type === state.schema.nodes.graphical_abstract_section
     )
