@@ -59,9 +59,9 @@ const excludedTypes = [
   schema.nodes.figure,
   schema.nodes.footnotes_element,
   schema.nodes.bibliography_element,
-  schema.nodes.keywords_section,
-  schema.nodes.affiliations_section,
-  schema.nodes.contributors_section,
+  schema.nodes.keyword,
+  schema.nodes.affiliations,
+  schema.nodes.contributors,
   schema.nodes.title,
 ]
 
