@@ -1045,7 +1045,7 @@ const getParentNode = (selection: Selection) => {
   const parentNode = findParentNodeWithId(selection)
   let node = parentNode?.node as ManuscriptNode
 
-  if (node.type === node.type.schema.nodes.table && parentNode) {
+  if (node?.type === node.type.schema.nodes.table) {
     const findTableElement = findParentNode(
       (node) => node.type === node.type.schema.nodes.table_element
     )
