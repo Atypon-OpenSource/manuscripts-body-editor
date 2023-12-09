@@ -48,11 +48,10 @@ export default () => {
           } else if (isFootnoteNode(node)) {
             endOfFootnote = Math.max(endOfFootnote, pos + node.nodeSize)
           }
-          const insideList = pos <= endOfList
           const insideFootnote = pos <= endOfFootnote
           if (
             'id' in node.attrs &&
-            ((!insideList && !insideFootnote) || node.isInline) &&
+            (!insideFootnote || node.isInline) &&
             (!id || id.length === 0 || ids.has(id))
           ) {
             const newId = generateNodeID(node.type)

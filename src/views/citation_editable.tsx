@@ -27,7 +27,8 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
-import { TextSelection } from 'prosemirror-state'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { TextSelection, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
@@ -44,6 +45,12 @@ export interface CitationEditableProps extends CitationViewProps {
   setCiteprocCitations: (citations: Map<string, string>) => void
   getCiteprocCitations: () => Map<string, string>
 }
+
+const createBibliographySection = (bibItem?: ProsemirrorNode) =>
+  schema.nodes.bibliography_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('Bibliography')),
+    schema.nodes.bibliography_element.create({}, bibItem ? [bibItem] : []),
+  ]) as ManuscriptNode
 
 export class CitationEditableView extends CitationView<
   CitationEditableProps & EditableBlockProps
@@ -263,22 +270,34 @@ export class CitationEditableView extends CitationView<
     const { doc, tr } = view.state
     const { DOI: doi, ['container-title']: containerTitle, ...restAttr } = item
 
-    doc.descendants((node, pos) => {
+    let bibElement: ProsemirrorNode | null = null
+    let pos: number | null = null
+    doc.descendants((node, nodePos) => {
       if (node.type === schema.nodes.bibliography_element) {
-        view.dispatch(
-          tr.insert(
-            pos + 1,
-            schema.nodes.bibliography_item.create({
-              id: item._id,
-              doi,
-              containerTitle,
-              ...restAttr,
-            })
-          )
-        )
-        return false
+        bibElement = node
+        pos = nodePos
       }
     })
+
+    let newTr: Transaction
+
+    const bibItem = schema.nodes.bibliography_item.create({
+      id: item._id,
+      doi,
+      containerTitle,
+      ...restAttr,
+    })
+
+    if (bibElement && pos) {
+      newTr = tr.insert(pos + 1, bibItem)
+    } else {
+      newTr = tr
+        .insert(tr.doc.content.size, createBibliographySection(bibItem))
+        .setMeta(bibliographyKey, { bibliographyInserted: true })
+    }
+
+    view.dispatch(newTr)
+    return false
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {

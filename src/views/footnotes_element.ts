@@ -22,6 +22,16 @@ export class FootnotesElementView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'div'
+
+  onUpdateContent() {
+    this.checkEditability()
+  }
+
+  checkEditability = () => {
+    const editable = this.node.childCount ? 'true' : 'false'
+    this.contentDOM?.setAttribute('contenteditable', editable)
+    this.dom?.setAttribute('contenteditable', editable)
+  }
 }
 
 export default createNodeOrElementView(FootnotesElementView, 'div')

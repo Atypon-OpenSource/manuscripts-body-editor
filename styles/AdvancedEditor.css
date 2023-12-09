@@ -26,18 +26,21 @@ Next levels are shifted 'up' by 1
   counter-reset: level_2;
 }
 .ProseMirror > section > section > .block-section_title > h1 {
-  font-size: 16pt !important;
+  font-size: 15.75pt !important;
   font-style: normal !important;
   font-weight: bold !important;
-  color: #000 !important;
+  color: #353535 !important;
   text-align: left;
   margin-top: 8pt !important;
   margin-bottom: 5pt !important;
-  line-height: 1.5;
+  line-height: 24pt;
   text-indent: 0pt;
   display: inline;
 }
-.ProseMirror > section > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror > section[data-category="MPSectionCategory:body"] {
+  counter-reset: level_1;
+}
+.ProseMirror > section[data-category="MPSectionCategory:body"] > section:not(.toc) > .block-section_title > h1::before {
   content: counter(level_1, decimal) '. ';
 }
 
@@ -54,14 +57,14 @@ Next levels are shifted 'up' by 1
   counter-reset: level_3;
 }
 .ProseMirror > section > section > section > .block-section_title > h1 {
-  font-size: 14pt !important;
+  font-size: 13.5pt !important;
   font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
+  font-weight: 700 !important;
+  color: #353535 !important;
   text-align: left;
   margin-top: 8pt !important;
   margin-bottom: 5pt !important;
-  line-height: 1.5;
+  line-height: 24pt;
   text-indent: 0pt;
   display: inline;
 }
@@ -292,12 +295,24 @@ Next levels are shifted 'up' by 1
     counter(level_5, decimal) '.' counter(level_6, decimal) '. '
     attr(data-placeholder);
 }
+[data-category="MPSectionCategory:backmatter"]::before {
+  content: '';
+  border-bottom: 1px dashed #C9C9C9;
+  display: block;
+  margin: 11pt 49pt;
+
+}
+.ProseMirror section[data-category="MPSectionCategory:backmatter"] .block-section_title > h1 {
+  font-size: 13.5pt !important;
+  color: #6E6E6E !important;
+}
+
 
 .ProseMirror p.block {
   font-size: 12pt !important;
   font-style: normal !important;
   font-weight: normal !important;
-  color: #000 !important;
+  color: #353535 !important;
   text-align: left !important;
   margin-top: 10pt !important;
   margin-bottom: 10pt !important;
@@ -714,4 +729,28 @@ Next levels are shifted 'up' by 1
 }
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
+}
+
+.contributors {
+  white-space: initial;
+  margin-bottom: 24px;
+  margin-top: 24px;
+}
+
+.contributors .tools-panel {
+  position: initial;
+}
+
+.contributors table {
+  line-height: initial;
+  width: inherit;
+}
+
+.contributors tr th, .contributors tr td {
+  border: none !important;
+  background: none !important;
+}
+
+.contributors th, .contributors td {
+  padding: initial;
 }
