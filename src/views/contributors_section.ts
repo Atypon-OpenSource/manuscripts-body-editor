@@ -26,6 +26,12 @@ export interface ContributorsSectionProps extends EditableBlockProps {
   subscribeStore: unknown
 }
 
+interface AuthorsViewProps {
+  showAuthorEditButton: boolean
+  disableEditButton?: boolean
+  subscribe: (fn: (state: unknown, prev: unknown) => void) => () => void
+}
+
 export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
@@ -43,15 +49,14 @@ export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
     const can = this.props.getCapabilities()
 
     const {
-      components: { MetadataContainer },
+      components: { AuthorsInlineViewContainer },
       subscribeStore,
     } = this.props
 
     this.metadata = ReactSubView(
       this.props,
-      MetadataContainer as React.FC<unknown>,
+      AuthorsInlineViewContainer as React.FC<AuthorsViewProps>,
       {
-        allowInvitingAuthors: false,
         showAuthorEditButton: true,
         disableEditButton: !can.editMetadata,
         subscribe: subscribeStore,
