@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "1.5.9",
+  "version": "1.5.9-LEAN-2995",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -33,7 +33,7 @@
     "@manuscripts/style-guide": "1.4.5",
     "@manuscripts/title-editor": "^1.1.0",
     "@manuscripts/track-changes-plugin": "^1.7.3",
-    "@manuscripts/transform": "1.5.4",
+    "@manuscripts/transform": "1.5.4-LEAN-2995",
     "astrocite-eutils": "^0.16.4",
     "axios": "^1.2.2",
     "codemirror": "^5.58.1",
