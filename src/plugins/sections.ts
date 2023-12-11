@@ -57,13 +57,14 @@ const preventTitleEdit = (tr: Transaction) => {
   )
 
   if (!hasReplaceAroundSteps) {
-    tr.steps.forEach((step) => {
+    tr.steps.forEach((step, i) => {
       if (!(step instanceof ReplaceStep)) {
         return
       }
 
+      const currentDoc = tr.docs[i]
       step.getMap().forEach((fromA, toA) => {
-        tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
+        currentDoc.nodesBetween(fromA, toA, (node, nodePos) => {
           /* detecting if there is a change inside the title of 
            - the graphical abstract section OR
            - the keywords section
