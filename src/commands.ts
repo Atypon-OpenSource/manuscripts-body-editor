@@ -54,7 +54,7 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { findChildrenByType, findParentNode } from 'prosemirror-utils'
+import {findChildrenByType, findParentNodeOfType} from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import {
@@ -487,7 +487,7 @@ export const insertInlineFootnote =
       const backmatterPosition = findChildrenByType(
         tr.doc,
         schema.nodes.backmatter
-      ).at(0)?.pos
+      )[0]?.pos
 
       if (backmatterPosition) {
         // TODO: insert bibliography section before footnotes section
@@ -1017,23 +1017,29 @@ export function addComment(
   resolvePos?: ResolvedPos
 ) {
   const { selection } = state
-  const isThereTextSelected = selection.content().size > 0
-  const selectionNode = getParentNode(selection)
+  const hasText = selection.content().size > 0
+  const parent = getParentNode(selection)
+  if (!parent) {
+    return false
+  }
 
   if (viewNode && resolvePos) {
     const viewNode = getParentNode(TextSelection.near(resolvePos))
+    if (!viewNode) {
+      return false
+    }
 
-    if (isThereTextSelected && selectionNode.attrs.id === viewNode.attrs.id) {
+    if (hasText && parent.attrs.id === viewNode.attrs.id) {
       return addHighlightComment(viewNode, state, dispatch)
     } else {
       return addBlockComment(viewNode, state, dispatch)
     }
   } else {
-    if (isThereTextSelected) {
-      return addHighlightComment(selectionNode, state, dispatch)
+    if (hasText) {
+      return addHighlightComment(parent, state, dispatch)
     } else {
       // TODO:: add block comment for the selection parent node or what!!!
-      return addBlockComment(selectionNode, state, dispatch)
+      return addBlockComment(parent, state, dispatch)
     }
   }
 }
@@ -1043,13 +1049,10 @@ export function addComment(
  */
 const getParentNode = (selection: Selection) => {
   const parentNode = findParentNodeWithId(selection)
-  let node = parentNode?.node as ManuscriptNode
+  const node = parentNode?.node
 
-  if (node?.type === node.type.schema.nodes.table) {
-    const findTableElement = findParentNode(
-      (node) => node.type === node.type.schema.nodes.table_element
-    )
-    node = findTableElement(selection)?.node as ManuscriptNode
+  if (node?.type === schema.nodes.table) {
+    return findParentNodeOfType(schema.nodes.table_element)(selection)?.node
   }
 
   return node
@@ -1057,24 +1060,18 @@ const getParentNode = (selection: Selection) => {
 
 // TODO:: remove this check when we allow all type of block node to have comment
 const isAllowedType = (type: NodeType) =>
-  type === type.schema.nodes.section ||
-  type === type.schema.nodes.footnotes_section ||
-  type === type.schema.nodes.bibliography_section ||
-  type === type.schema.nodes.keywords_group ||
-  type === type.schema.nodes.paragraph ||
-  type === type.schema.nodes.figure_element ||
-  type === type.schema.nodes.table_element
+  type === schema.nodes.section ||
+  type === schema.nodes.footnotes_section ||
+  type === schema.nodes.bibliography_section ||
+  type === schema.nodes.keyword_group ||
+  type === schema.nodes.paragraph ||
+  type === schema.nodes.figure_element ||
+  type === schema.nodes.table_element
 
 const getNode = (node: ManuscriptNode) => {
-  if (node.type === node.type.schema.nodes.keywords_section) {
-    let keywordGroup
-    node.descendants((child) => {
-      if (child.type === node.type.schema.nodes.keywords_group) {
-        keywordGroup = child
-        return false
-      }
-    })
-    return keywordGroup || node
+  if (node.type === schema.nodes.keywords) {
+    const keywordGroups = findChildrenByType(node, schema.nodes.keyword_group, true)
+    return keywordGroups.length ? keywordGroups[0].node : node
   }
   return node
 }
@@ -1113,7 +1110,7 @@ const addHighlightComment = (
   } = node
   const comment = buildComment(id) as CommentAnnotation
 
-  if (type === state.schema.nodes.paragraph) {
+  if (type === schema.nodes.paragraph) {
     const { $anchor, $head } = state.selection
     const isAllTextSelected =
       ($anchor.textOffset === 0 && $head.textOffset === 0) ||

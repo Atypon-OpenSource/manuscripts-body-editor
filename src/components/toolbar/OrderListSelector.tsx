@@ -24,7 +24,7 @@ import {
 import { NodeRange } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import { EditorState, Selection, Transaction } from 'prosemirror-state'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 
 import { skipTrackingChanges } from '../../keys/list'
 import { ListButton, ListStyleSelector } from './ListStyleSelector'
@@ -39,20 +39,7 @@ export const OrderListSelector: React.FC<{
   run: (state: EditorState, dispatch: (tr: Transaction) => void) => void
   enable?: (state: EditorState) => boolean
 }> = ({ state, dispatch, view, title, active, run, enable }) => {
-  const disabled = useMemo(() => enable && !enable(state), [state.selection]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const dropDownDisabled = useMemo(() => {
-    const { $from, $to } = state.selection
-    const range = $from.blockRange($to)
-    return !!(
-      enable &&
-      !enable(state) &&
-      range &&
-      !schema.nodes.ordered_list.compatibleContent(
-        $from.node(range.depth - 1).type
-      )
-    )
-  }, [state.selection]) // eslint-disable-line react-hooks/exhaustive-deps
+  const isEnabled = !enable || enable(state)
 
   /**
    *  When choosing a list type will do one of these options:
@@ -91,7 +78,7 @@ export const OrderListSelector: React.FC<{
       <ListButton
         title={title}
         data-active={active && active(state)}
-        disabled={disabled}
+        disabled={!isEnabled}
         onMouseDown={(event) => {
           event.preventDefault()
           run(state, dispatch)
@@ -101,7 +88,7 @@ export const OrderListSelector: React.FC<{
         <OrderedList />
       </ListButton>
       <ListStyleSelector
-        disabled={dropDownDisabled}
+        disabled={!isEnabled}
         onClickListType={onClickListType}
         list={[
           { items: ['1.', '2.', '3.'], type: 'order' },

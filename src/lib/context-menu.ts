@@ -21,6 +21,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
+  schema,
 } from '@manuscripts/transform'
 import { Fragment, Slice } from 'prosemirror-model'
 
@@ -28,6 +29,10 @@ import { addComment, createBlock } from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
+
+const listTypes = [schema.nodes.ordered_list, schema.nodes.bullet_list]
+
+const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -254,9 +259,9 @@ export class ContextMenu {
     const $pos = this.resolvePos()
     const nodeType = this.node.type
 
-    const { nodes } = this.view.state.schema
+    const nodes = schema.nodes
 
-    if (this.isListType(nodeType.name)) {
+    if (listTypes.includes(nodeType)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (nodeType === nodes.bullet_list) {
@@ -333,8 +338,8 @@ export class ContextMenu {
     }
 
     if (
-      nodeType !== nodes.bibliography_element &&
-      $pos.parent.type !== nodes.keywords_section
+      !readonlyTypes.includes(nodeType) &&
+      !readonlyTypes.includes($pos.parent.type)
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -517,9 +522,6 @@ export class ContextMenu {
       })
     )
   }
-
-  private isListType = (type: string) =>
-    ['bullet_list', 'ordered_list'].includes(type)
 
   private buildSuppressOptions = () => {
     const items: SuppressOption[] = []
