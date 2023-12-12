@@ -22,6 +22,7 @@ import bibliographyItem from '../views/bibliography_item_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
 import citation, { CitationEditableProps } from '../views/citation_editable'
+import contributorsSection from '../views/contributors_section'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
 import equation from '../views/equation_editable'
@@ -48,6 +49,7 @@ import pullquoteElement from '../views/pullquote_element_editable'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
+import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps &
@@ -57,12 +59,14 @@ type EditorProps = EditableBlockProps &
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
+    title: title(props, dispatch),
     bibliography_item: bibliographyItem(props),
     bibliography_element: bibliographyElement(props),
     blockquote_element: blockquoteElement(props),
     bullet_list: bulletList(props),
     citation: citation(props),
     cross_reference: crossReference(props),
+    contributors_section: contributorsSection(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),

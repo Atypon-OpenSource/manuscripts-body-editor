@@ -40,7 +40,8 @@ export const buildDecorations = (
   doc: ManuscriptNode,
   citationNodes: CitationNodes,
   popper: PopperManager,
-  referencesModelMap: Map<string, Model>
+  referencesModelMap: Map<string, Model>,
+  triggerUpdate?: boolean
 ) => {
   const decorations: Decoration[] = []
 
@@ -94,6 +95,29 @@ export const buildDecorations = (
             el.textContent = `The bibliography could not be generated, due to a missing library item.`
             return el
           })
+        )
+      }
+    })
+  }
+
+  /**
+   * Use decorations to trigger bibliography element update.
+   * This is a way to communicate from the plugin to the bibliography element node without actually changing the node.
+   * We had to do that due to the absence of an actual node change.
+   * @TODO Look for a neater solution (using non-trackable attributes on bibliography_element is a proposed solution)
+   */
+  if (triggerUpdate) {
+    doc.descendants((node, pos) => {
+      if (isBibliographyElement(node)) {
+        decorations.push(
+          Decoration.node(
+            pos,
+            pos + node.nodeSize,
+            {},
+            {
+              triggerUpdate: true,
+            }
+          )
         )
       }
     })

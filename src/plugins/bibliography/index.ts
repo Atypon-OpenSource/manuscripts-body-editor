@@ -25,6 +25,7 @@ import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
+import { isRejectedInsert } from '../../lib/track-changes-utils'
 import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
 import { BibliographyProps, PluginState } from './types'
 
@@ -47,13 +48,17 @@ export default (props: BibliographyProps) => {
           referencesModelMap
         )
 
+        const filteredCitationNodes = citationNodes.filter(
+          (node) => !isRejectedInsert(node[0])
+        )
+
         const citations = buildCitations(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
@@ -71,21 +76,30 @@ export default (props: BibliographyProps) => {
           referencesModelMap
         )
 
+        const filteredCitationNodes = citationNodes.filter(
+          (node) => !isRejectedInsert(node[0])
+        )
+
         const citations = buildCitations(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
 
         const bibliographyItems = buildBibliographyItems(
-          citationNodes,
+          filteredCitationNodes,
           (id: string) => referencesModelMap.get(id) as BibliographyItem
         )
+
+        const meta = tr.getMeta(bibliographyKey)
+        const triggerUpdate = meta && meta.triggerUpdate
+
         // TODO: return the previous state if nothing has changed, to aid comparison?
 
         return {
           citationNodes,
           citations,
           bibliographyItems,
+          triggerUpdate,
         }
       },
     },
@@ -135,6 +149,9 @@ export default (props: BibliographyProps) => {
         if (selection instanceof NodeSelection) {
           tr.setSelection(NodeSelection.create(tr.doc, selection.from))
         }
+        tr.setMeta(bibliographyKey, {
+          triggerUpdate: true,
+        })
         tr.setMeta('origin', bibliographyKey)
         return tr
       } catch (error) {
@@ -143,14 +160,15 @@ export default (props: BibliographyProps) => {
     },
     props: {
       decorations(state) {
-        const { citationNodes } = bibliographyKey.getState(state)
+        const { citationNodes, triggerUpdate } = bibliographyKey.getState(state)
         return DecorationSet.create(
           state.doc,
           buildDecorations(
             state.doc,
             citationNodes,
             props.popper,
-            getReferencesModelMap(state.doc)
+            getReferencesModelMap(state.doc),
+            triggerUpdate
           )
         )
       },
