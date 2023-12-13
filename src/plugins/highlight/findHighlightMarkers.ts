@@ -21,24 +21,41 @@ import { HighlightMarker, HighlightStartMarker } from './types'
 export function findHighlightMarkers(doc: PMNode) {
   const markers: HighlightMarker[] = []
   let current: HighlightStartMarker | undefined
+
+  function isCommentNode(node: PMNode) {
+    return node.type.name === 'comment'
+  }
+
   doc.descendants((node, pos) => {
+    const commentIds: string[] = []
+
+    doc.descendants((node) => {
+      if (isCommentNode(node)) {
+        commentIds.push(node.attrs.id)
+      }
+    })
+
     if (isHighlightMarkerNode(node)) {
       const { position, tid, id } = node.attrs
-      if (position === 'start') {
-        current = {
-          start: pos + 1,
-          id,
-          tid,
+
+      if (commentIds.includes(id)) {
+        if (position === 'start') {
+          current = {
+            start: pos + 1,
+            id,
+            tid,
+          }
+        } else if (position === 'end' && current) {
+          markers.push({
+            ...current,
+            text: doc.textBetween(current.start, pos, '\n'),
+            end: pos,
+          })
+          current = undefined
         }
-      } else if (position === 'end' && current) {
-        markers.push({
-          ...current,
-          text: doc.textBetween(current.start, pos, '\n'),
-          end: pos,
-        })
-        current = undefined
       }
     }
   })
+
   return markers
 }
