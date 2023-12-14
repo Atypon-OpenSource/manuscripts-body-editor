@@ -79,7 +79,7 @@ const buildDecorations = (state: EditorState) => {
       change.dataTracked.operation === CHANGE_OPERATION.set_node_attributes
     ) {
       decorations.push(
-        Decoration.widget(change.from + 1, getAttrsTrackingButton(change), {
+        Decoration.widget(change.from + 1, getAttrsTrackingButton(change.id), {
           key: change.id,
         })
       )
@@ -89,10 +89,10 @@ const buildDecorations = (state: EditorState) => {
   return decorations
 }
 
-export const getAttrsTrackingButton = (change: NodeAttrChange) => {
+export const getAttrsTrackingButton = (changeID: string) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'
-  el.value = change.id
+  el.value = changeID
   el.innerHTML = editIcon
 
   return el
