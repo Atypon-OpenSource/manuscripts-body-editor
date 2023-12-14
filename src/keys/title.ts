@@ -17,6 +17,7 @@
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
+  isInGraphicalAbstractSection,
 } from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
@@ -140,6 +141,10 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
   }
 
   if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
+    return false
+  }
+
+  if (isInGraphicalAbstractSection($cursor)) {
     return false
   }
 

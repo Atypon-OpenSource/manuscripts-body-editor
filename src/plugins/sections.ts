@@ -20,7 +20,7 @@ import {
   isKeywordsSectionNode,
   isSectionTitleNode,
 } from '@manuscripts/transform'
-import { Plugin, Transaction } from 'prosemirror-state'
+import { EditorState, Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
 import { highlightKey, SET_COMMENT } from './highlight'
@@ -29,7 +29,7 @@ import { highlightKey, SET_COMMENT } from './highlight'
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
  */
 
-const preventTitleEdit = (tr: Transaction) => {
+const preventTitleEdit = (tr: Transaction, state: EditorState) => {
   /*
    Prevent 
    - graphical abstract section title and 
@@ -57,13 +57,16 @@ const preventTitleEdit = (tr: Transaction) => {
   )
 
   if (!hasReplaceAroundSteps) {
-    tr.steps.forEach((step) => {
+    tr.steps.forEach((step, i) => {
       if (!(step instanceof ReplaceStep)) {
         return
       }
 
+      // console.log(state.selection)
+
+      const currentDoc = tr.docs[i]
       step.getMap().forEach((fromA, toA) => {
-        tr.doc.nodesBetween(fromA, toA, (node, nodePos) => {
+        currentDoc.nodesBetween(fromA, toA, (node, nodePos) => {
           /* detecting if there is a change inside the title of 
            - the graphical abstract section OR
            - the keywords section
@@ -75,6 +78,7 @@ const preventTitleEdit = (tr: Transaction) => {
           ) {
             node.descendants((childNode, childPos) => {
               const inDocPos = nodePos + childPos
+
               if (
                 isSectionTitleNode(childNode) &&
                 (isInRange(inDocPos, inDocPos + childNode.nodeSize, toA) ||
@@ -96,8 +100,8 @@ const preventTitleEdit = (tr: Transaction) => {
 
 export default () => {
   return new Plugin<null>({
-    filterTransaction: (tr) => {
-      return preventTitleEdit(tr)
+    filterTransaction: (tr, state) => {
+      return preventTitleEdit(tr, state)
     },
     /*
       This is commented because after recent major dependencies update it somehow doesn't work well with the new track changes: RangeError due to paragraph adding into the title.

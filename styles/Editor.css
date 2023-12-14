@@ -731,12 +731,8 @@
   text-align: center;
 }
 
-.ProseMirror .block {
-  counter-reset: bib_item;
-}
 
 .ProseMirror .bib-item {
-  counter-increment: bib_item;
   position: relative;
   margin-right: 40px;
 }
@@ -751,11 +747,7 @@
 
 .ProseMirror .csl-left-margin {
   padding-right: 1ch;
-  display: none;
-}
-
-.ProseMirror .csl-right-inline::before {
-  content: counter(bib_item) '. ';
+  display: table-cell;
 }
 
 .ProseMirror .csl-entry a {
@@ -961,4 +953,12 @@
 .ProseMirror ul,
 .ProseMirror ol {
   padding-left: 30px !important;
+}
+.article-titles {
+  cursor: text;
+  font-family: "PT Serif", serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.43;
+  padding-left: 65px;
 }
