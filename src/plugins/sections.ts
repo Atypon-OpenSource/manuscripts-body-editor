@@ -29,7 +29,7 @@ import { highlightKey, SET_COMMENT } from './highlight'
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
  */
 
-const preventTitleEdit = (tr: Transaction, state: EditorState) => {
+const preventTitleEdit = (tr: Transaction) => {
   /*
    Prevent 
    - graphical abstract section title and 
@@ -100,8 +100,8 @@ const preventTitleEdit = (tr: Transaction, state: EditorState) => {
 
 export default () => {
   return new Plugin<null>({
-    filterTransaction: (tr, state) => {
-      return preventTitleEdit(tr, state)
+    filterTransaction: (tr) => {
+      return preventTitleEdit(tr)
     },
     /*
       This is commented because after recent major dependencies update it somehow doesn't work well with the new track changes: RangeError due to paragraph adding into the title.
