@@ -20,7 +20,7 @@ import {
   isKeywordsSectionNode,
   isSectionTitleNode,
 } from '@manuscripts/transform'
-import { EditorState, Plugin, Transaction } from 'prosemirror-state'
+import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
 import { highlightKey, SET_COMMENT } from './highlight'

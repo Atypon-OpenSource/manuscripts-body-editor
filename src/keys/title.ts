@@ -15,9 +15,9 @@
  */
 
 import {
+  isInGraphicalAbstractSection,
   ManuscriptEditorState,
   ManuscriptEditorView,
-  isInGraphicalAbstractSection,
 } from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
