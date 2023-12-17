@@ -16,24 +16,27 @@
 
 // https://citeproc-js.readthedocs.io/en/latest/running.html#introduction
 // https://github.com/citation-style-language/schema
+// https://github.com/Zettlr/Zettlr/blob/dd2cbda72d9499edae6a1d95fb977794bde1ed4e/source/citeproc.d.ts
 
 declare module 'citeproc' {
   interface Citation {
-    citationItems: Array<{ id: string }>
+    citationItems: Array<{ id: string; prefix?: string; suffix?: string }>
     properties?: {
+      mode?: string
       noteIndex?: number
+      infix?: string
     }
   }
 
   type VariableWrapper = (
-    params: {
-      context: string
-      itemData: CSL.Data
-      variableNames: [string]
-    },
-    prePunct: string,
-    str: string,
-    postPunct: string
+      params: {
+        context: string
+        itemData: CSL.Data
+        variableNames: [string]
+      },
+      prePunct: string,
+      str: string,
+      postPunct: string
   ) => string
 
   interface SystemOptions {
@@ -43,6 +46,13 @@ declare module 'citeproc' {
   }
 
   interface BibliographyMetadata {
+    maxoffset: number
+    entryspacing: number
+    linespacing: number
+    hangingindent: boolean
+    ['second-field-align']: boolean
+    bibstart: string
+    bibend: string
     bibliography_errors: string[]
     entry_ids: string[]
   }
@@ -51,28 +61,64 @@ declare module 'citeproc' {
 
   export class Engine {
     constructor(
-      sys: SystemOptions,
-      style: string | Style,
-      lang?: string,
-      forceLang?: boolean
+        sys: SystemOptions,
+        style: string | Style,
+        lang?: string,
+        forceLang?: boolean
     )
 
+    public updateItems(idList: Array<string | number>): void
+
+    public updateUncitedItems(idList: Array<string | number>): void
+
+    /**
+     * Rebuilds the processor from scratch, based on a cached list of
+     * citation objects. In a dynamic application, once the internal state of
+     * processor is established, citations should edited with individual
+     * invocations of ``processCitationCluster()``.
+     *
+     * Returns an array of ``[citationID,noteIndex,string]`` triples in
+     * document order, where ``string`` is the fully disambiguated citation
+     * cluster for the given document position.
+     *
+     * @param citations An array of citation input objects in document order. Each
+     * citation object must be in the following form, with correct
+     * values for ``citationID``, for each ``id``, and for ``noteIndex``.
+     * Set ``noteIndex`` to ``0`` for in-text citations.
+     * Default is to return an empty document update array.
+     * ```json
+     * {
+     *   "citationID": "CITATION-1",
+     *   "citationItems": [
+     *     {
+     *         "id": "ITEM-1"
+     *     }
+     *   ],
+     *   "properties": {
+     *     "noteIndex": 1
+     *   }
+     * }
+     * ```
+     * @param mode One of ``text``, ``html`` or ``rtf``. The default is ``html``.
+     After invocation, the processor is returned to its previous output mode setting.
+     * @param uncitedItemIDs An array of item IDs for uncited items to be included in
+     the document bibliography, if any.
+     */
     public rebuildProcessorState(
-      citations: Citation[],
-      mode?: string,
-      uncitedItemIDs?: string[]
+        citations: Citation[],
+        mode?: 'text' | 'html' | 'rtf',
+        uncitedItemIDs?: string[]
     ): Array<[string, number, string]> // id, noteIndex, output
 
     public makeBibliography(): [BibliographyMetadata, Bibliography]
   }
 
   export function getLocaleNames(
-    style: string | Record<string, unknown>,
-    preferredLocale: string
+      style: string | Record<string, unknown>,
+      preferredLocale: string
   ): string[]
 
   type Locale = Record<string, unknown>
-  type Style = Record<string, unknown>
 
   type Node = {
     name: string

@@ -37,10 +37,10 @@ Next levels are shifted 'up' by 1
   text-indent: 0pt;
   display: inline;
 }
-.ProseMirror > section[data-category="MPSectionCategory:body"] {
+.ProseMirror > :nth-child(6) {
   counter-reset: level_1;
 }
-.ProseMirror > section[data-category="MPSectionCategory:body"] > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror > :nth-child(6) > section:not(.toc) > .block-section_title > h1::before {
   content: counter(level_1, decimal) '. ';
 }
 

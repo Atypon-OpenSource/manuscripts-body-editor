@@ -15,163 +15,113 @@
  */
 
 import { BibliographyItem } from '@manuscripts/json-schema'
-import {
-  buildBibliographyItems,
-  buildCitationNodes,
-  buildCitations,
-  CitationProvider,
-} from '@manuscripts/library'
-import { isEqual } from 'lodash-es'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { CitationProvider } from '@manuscripts/library'
+import { isCitationNode, ManuscriptNode } from '@manuscripts/transform'
+import CiteProc from 'citeproc'
+import { isEqual } from 'lodash'
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
+import { CSLProps } from '../../configs/ManuscriptsEditor'
+import { PopperManager } from '../../lib/popper'
 import { isRejectedInsert } from '../../lib/track-changes-utils'
-import { buildDecorations, getReferencesModelMap } from './bibliography-utils'
-import { BibliographyProps, PluginState } from './types'
+import {
+  buildCitations,
+  buildDecorations,
+  CitationNodes,
+  getBibliographyItemModelMap,
+} from './bibliography-utils'
 
-export const bibliographyKey = new PluginKey('bibliography')
+export const bibliographyKey = new PluginKey<PluginState>('bibliography')
+
+export interface PluginState {
+  citationNodes: CitationNodes
+  citations: CiteProc.Citation[]
+  bibliographyItems: Map<string, BibliographyItem>
+  renderedCitations: Map<string, string>
+  provider: CitationProvider
+  refresh?: boolean
+}
+
+export interface BibliographyProps {
+  cslProps: CSLProps
+  popper: PopperManager
+}
 
 /**
  * This plugin generates labels for inline citations using citeproc-js.
  * The citation labels are regenerated when any relevant content changes.
  */
 export default (props: BibliographyProps) => {
-  const { style, locale } = props.cslProps
-
   return new Plugin<PluginState>({
     key: bibliographyKey,
     state: {
       init(config, instance): PluginState {
-        const referencesModelMap = getReferencesModelMap(instance.doc)
-        const citationNodes = buildCitationNodes(
-          instance.doc,
-          referencesModelMap
-        )
-
-        const filteredCitationNodes = citationNodes.filter(
-          (node) => !isRejectedInsert(node[0])
-        )
-
-        const citations = buildCitations(
-          filteredCitationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
-        const bibliographyItems = buildBibliographyItems(
-          filteredCitationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
-        return {
-          citationNodes,
-          citations,
-          bibliographyItems,
-        }
+        return buildBibliographyPluginState(instance.doc, props.cslProps)
       },
-
-      apply(tr, value, oldState, newState): PluginState {
-        const referencesModelMap = getReferencesModelMap(newState.doc)
-        const citationNodes = buildCitationNodes(
-          newState.doc,
-          referencesModelMap
-        )
-
-        const filteredCitationNodes = citationNodes.filter(
-          (node) => !isRejectedInsert(node[0])
-        )
-
-        const citations = buildCitations(
-          filteredCitationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
-        const bibliographyItems = buildBibliographyItems(
-          filteredCitationNodes,
-          (id: string) => referencesModelMap.get(id) as BibliographyItem
-        )
-
-        const meta = tr.getMeta(bibliographyKey)
-        const triggerUpdate = meta && meta.triggerUpdate
-
-        // TODO: return the previous state if nothing has changed, to aid comparison?
-
-        return {
-          citationNodes,
-          citations,
-          bibliographyItems,
-          triggerUpdate,
+      apply(tr, value): PluginState {
+        if (!tr.steps.length) {
+          return value
         }
+        return buildBibliographyPluginState(tr.doc, props.cslProps, value)
       },
-    },
-
-    appendTransaction(transactions, oldState, newState) {
-      const { citations: oldCitations } = bibliographyKey.getState(
-        oldState
-      ) as PluginState
-
-      const { citations, bibliographyItems } = bibliographyKey.getState(
-        newState
-      ) as PluginState
-
-      const bibliographyInserted = transactions.some((tr) => {
-        const meta = tr.getMeta(bibliographyKey)
-        return meta && meta.bibliographyInserted
-      })
-
-      const initCitations = transactions.some((tr) => {
-        const meta = tr.getMeta(bibliographyKey)
-        return meta && meta.initCitations
-      })
-      // This equality is trigged by such things as the addition of createdAt, updatedAt,
-      // sessionID, _rev when the models are simply persisted to the PouchDB without modifications
-      if (
-        isEqual(citations, oldCitations) &&
-        !bibliographyInserted &&
-        !initCitations
-      ) {
-        return null
-      }
-      const { tr } = newState
-      const { selection } = tr
-
-      try {
-        const generatedCitations = new Map(
-          CitationProvider.rebuildProcessorState(
-            citations,
-            bibliographyItems,
-            style || '',
-            locale,
-            'html'
-          ).map((item) => [item[0], item[2]])
-        ) // id, noteIndex, output
-        props.setCiteprocCitations(generatedCitations)
-
-        if (selection instanceof NodeSelection) {
-          tr.setSelection(NodeSelection.create(tr.doc, selection.from))
-        }
-        tr.setMeta(bibliographyKey, {
-          triggerUpdate: true,
-        })
-        tr.setMeta('origin', bibliographyKey)
-        return tr
-      } catch (error) {
-        console.error(error) // tslint:disable-line:no-console
-      }
     },
     props: {
       decorations(state) {
-        const { citationNodes, triggerUpdate } = bibliographyKey.getState(state)
-        return DecorationSet.create(
-          state.doc,
-          buildDecorations(
-            state.doc,
-            citationNodes,
-            props.popper,
-            getReferencesModelMap(state.doc),
-            triggerUpdate
-          )
-        )
+        const bib = getBibliographyPluginState(state)
+        return DecorationSet.create(state.doc, buildDecorations(bib, state.doc))
       },
     },
   })
+}
+
+const buildBibliographyPluginState = (
+  doc: ManuscriptNode,
+  csl: CSLProps,
+  $old?: PluginState
+): PluginState => {
+  const nodes: CitationNodes = []
+  doc.descendants((node, pos) => {
+    if (isCitationNode(node) && !isRejectedInsert(node)) {
+      nodes.push([node, pos])
+    }
+  })
+
+  const modelMap = getBibliographyItemModelMap(doc)
+
+  const citations = buildCitations(nodes)
+
+  const $new: Partial<PluginState> = {
+    citationNodes: nodes,
+    citations,
+    bibliographyItems: modelMap,
+  }
+
+  //TODO remove. There should always be a csl style
+  if (!csl.style) {
+    return $new as PluginState
+  }
+
+  if ($old && isEqual(citations, $old.citations)) {
+    $new.provider = $old.provider
+    $new.renderedCitations = $old.renderedCitations
+  } else {
+    const provider = new CitationProvider({
+      getLibraryItem: (id: string) => modelMap.get(id),
+      citationStyle: csl.style || '',
+      locale: csl.locale,
+    })
+
+    //create new citations since CitationProviders modifies the ones passed
+    const citationTexts = provider.rebuildState(buildCitations(nodes))
+
+    $new.provider = provider
+    $new.renderedCitations = new Map(citationTexts.map((i) => [i[0], i[2]]))
+  }
+
+  return $new as PluginState
+}
+
+export const getBibliographyPluginState = (state: EditorState) => {
+  return bibliographyKey.getState(state) as PluginState
 }

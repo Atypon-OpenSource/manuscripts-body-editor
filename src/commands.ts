@@ -18,13 +18,10 @@ import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
 import {
   BibliographySectionNode,
-  buildCitation,
   buildComment,
   buildInlineMathFragment,
   FigureNode,
   FootnoteNode,
-  FootnotesElementNode,
-  FootnotesSectionNode,
   generateID,
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
@@ -54,7 +51,7 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import {findChildrenByType, findParentNodeOfType} from 'prosemirror-utils'
+import { findChildrenByType, findParentNodeOfType } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import {
@@ -65,9 +62,7 @@ import {
 import { bibliographyKey } from './plugins/bibliography'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { footnotesKey } from './plugins/footnotes'
-import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-// import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
@@ -370,18 +365,12 @@ export const insertLink = (
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  view?: ManuscriptEditorView,
-  embeddedCitationItems: string[] = []
+  view?: ManuscriptEditorView
 ) => {
-  const citation = buildCitation(
-    state.selection.$anchor.parent.attrs.id,
-    embeddedCitationItems
-  )
-
   const node = state.schema.nodes.citation.create({
-    rid: citation._id,
+    id: generateID(ObjectTypes.Citation),
+    rids: [],
     selectedText: selectedText(),
-    embeddedCitationItems: [],
   })
 
   const pos = state.selection.to
@@ -403,7 +392,7 @@ export const insertCrossReference = (
   dispatch?: Dispatch
 ) => {
   const node = state.schema.nodes.cross_reference.create({
-    rid: null,
+    rids: [],
   })
 
   const pos = state.selection.to
@@ -455,54 +444,41 @@ export const insertInlineFootnote =
     }) as FootnoteNode
 
     const insertedAt = state.selection.to
-    const thisFootnoteNumbering = footnotesUtils.getNewFootnoteNumbering(
-      insertedAt,
-      state
-    )
 
-    const inlineFootnote = state.schema.nodes.inline_footnote.create({
-      rid: footnote.attrs.id,
-      contents: thisFootnoteNumbering.toString(),
+    const node = state.schema.nodes.inline_footnote.create({
+      rids: [footnote.attrs.id],
     }) as InlineFootnoteNode
 
     const tr = state.tr
 
     // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
-    tr.insert(insertedAt, inlineFootnote)
+    tr.insert(insertedAt, node)
 
-    const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
+    const elements = findChildrenByType(tr.doc, schema.nodes.footnotes_element)
 
     let selectionPos = undefined
 
-    if (footnotesElementAndPos === undefined) {
+    if (!elements.length) {
       // create a new footnotes section if needed
-      const footnotesSection = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
-        state.schema.nodes.footnotes_element.create(
+      const section = state.schema.nodes.footnotes_section.create({}, [
+        state.schema.nodes.section_title.create(
           {},
-          footnote
-        ) as FootnotesElementNode,
-      ]) as FootnotesSectionNode
+          state.schema.text('Notes')
+        ),
+        state.schema.nodes.footnotes_element.create({}, footnote),
+      ])
 
-      const backmatterPosition = findChildrenByType(
-        tr.doc,
-        schema.nodes.backmatter
-      )[0]?.pos
+      const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
 
-      if (backmatterPosition) {
-        // TODO: insert bibliography section before footnotes section
-        tr.insert(backmatterPosition + 1, footnotesSection)
+      tr.insert(backmatter.pos + 1, section)
 
-        // inside footnote inside element inside section
-        selectionPos = backmatterPosition + footnotesSection.nodeSize
-      }
+      // inside footnote inside element inside section
+      selectionPos = backmatter.pos + section.nodeSize
     } else {
-      const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
-        footnotesElementAndPos,
-        thisFootnoteNumbering
-      )
-      tr.insert(footnotePos, footnote)
-      selectionPos = selectPos
+      const element = elements[0]
+      const pos = element.pos + element.node.nodeSize - 1
+      tr.insert(pos, footnote)
+      selectionPos = pos + 2
     }
 
     if (dispatch && selectionPos) {
@@ -1070,7 +1046,11 @@ const isAllowedType = (type: NodeType) =>
 
 const getNode = (node: ManuscriptNode) => {
   if (node.type === schema.nodes.keywords) {
-    const keywordGroups = findChildrenByType(node, schema.nodes.keyword_group, true)
+    const keywordGroups = findChildrenByType(
+      node,
+      schema.nodes.keyword_group,
+      true
+    )
     return keywordGroups.length ? keywordGroups[0].node : node
   }
   return node

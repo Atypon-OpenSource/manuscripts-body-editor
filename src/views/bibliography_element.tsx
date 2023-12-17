@@ -15,7 +15,6 @@
  */
 
 import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
-import { CitationProvider } from '@manuscripts/library'
 import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
@@ -26,10 +25,8 @@ import { Decoration } from 'prosemirror-view'
 import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
-import { CSLProps } from '../configs/ManuscriptsEditor'
 import { sanitize } from '../lib/dompurify'
-import { bibliographyKey } from '../plugins/bibliography'
-import { getReferencesModelMap } from '../plugins/bibliography/bibliography-utils'
+import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
   getAttrsTrackingButton,
@@ -39,39 +36,6 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
-
-const createBibliography = async (
-  bibliographyItems: BibliographyItem[],
-  cslProps: CSLProps
-) => {
-  const bibliographyItemsMap = new Map(
-    bibliographyItems.map((item: BibliographyItem) => [item._id, item])
-  )
-  const getLibraryItem = (id: string) => bibliographyItemsMap.get(id)
-
-  const { style = '', locale } = cslProps
-  const provider = new CitationProvider({
-    getLibraryItem,
-    citationStyle: style,
-    locale,
-  })
-
-  const [bibmeta, generatedBibliographyItems] =
-    provider.makeBibliography(bibliographyItems)
-
-  if (bibmeta.bibliography_errors.length) {
-    console.error(bibmeta.bibliography_errors) // tslint:disable-line:no-console
-  }
-
-  const bibliographyFragment = generatedBibliographyItems
-    .map(
-      (item, i) =>
-        `<div id=${bibmeta.entry_ids[i]} class="bib-item"><div><div class="csl-bib-body">${item}</div></div></div>`
-    )
-    .join('')
-
-  return sanitize(`<div class="contents">${bibliographyFragment}</div>`)
-}
 
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -85,6 +49,8 @@ export class BibliographyElementBlockView<
 > extends BlockView<PropsType> {
   public container: HTMLElement
   public popperContainer?: HTMLDivElement
+
+  public gutterButtons = (): HTMLElement[] => []
 
   public showPopper = (referenceID: string) => {
     const {
@@ -113,11 +79,13 @@ export class BibliographyElementBlockView<
       this.popperContainer.className = 'references'
     }
 
+    const bib = getBibliographyPluginState(this.view.state)
+
     renderReactComponent(
       <ReferencesEditor
         saveModel={handleSave}
         deleteModel={this.deleteNode}
-        modelMap={getReferencesModelMap(this.view.state.doc, true)}
+        modelMap={bib.bibliographyItems}
         referenceID={referenceID}
       />,
       this.popperContainer
@@ -131,10 +99,7 @@ export class BibliographyElementBlockView<
   public ignoreMutation = () => true
 
   public updateContents = async () => {
-    const bibliographyItems: BibliographyItem[] = bibliographyKey.getState(
-      this.view.state
-    ).bibliographyItems
-
+    const bib = getBibliographyPluginState(this.view.state)
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
     const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
@@ -163,13 +128,22 @@ export class BibliographyElementBlockView<
       }
     })
 
-    const bibliographyFragment = await createBibliography(
-      bibliographyItems,
-      this.props.cslProps
-    )
-    const bibItems = bibliographyFragment.querySelectorAll('.bib-item')
+    const can = this.props.getCapabilities()
 
-    bibItems.forEach((element) => {
+    const wrapper = document.createElement('div')
+    wrapper.classList.add('contents')
+
+    console.log('updateContents')
+
+    const [meta, bibliography] = bib.provider.makeBibliography()
+
+    for (let i = 0; i < bibliography.length; i++) {
+      const id = meta.entry_ids[i]
+      const fragment = bibliography[i]
+      const element = sanitize(
+        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
+      ).firstElementChild as Element
+
       const doubleButton = document.createElement('div')
       const editButton = document.createElement('button')
       const commentButton = document.createElement('button')
@@ -194,18 +168,18 @@ export class BibliographyElementBlockView<
       doubleButton.append(editButton, commentButton)
 
       if (
-        this.props.getCapabilities().seeReferencesButtons &&
+        can.seeReferencesButtons &&
         !element.querySelector('.bibliography-double-button')
       ) {
         element.appendChild(doubleButton)
       }
 
-      editButton.disabled = !this.props.getCapabilities().editCitationsAndRefs
+      editButton.disabled = !can.editCitationsAndRefs
 
       const commentElement = commentElementMap.get(element.id)
 
       if (commentElement) {
-        element.childNodes[0].appendChild(commentElement)
+        element.appendChild(commentElement)
       }
 
       const dataTracked = dataTrackedMap.get(element.id)
@@ -220,19 +194,18 @@ export class BibliographyElementBlockView<
           dataTracked.status === CHANGE_STATUS.pending &&
           dataTracked.operation === CHANGE_OPERATION.set_node_attributes
         ) {
-          element.childNodes[0].appendChild(
-            getAttrsTrackingButton(dataTracked.id)
-          )
+          element.appendChild(getAttrsTrackingButton(dataTracked.id))
         }
       }
-    })
+      wrapper.append(element)
+    }
 
     const oldContent = this.container.querySelector('.contents')
 
     if (oldContent) {
-      this.container.replaceChild(bibliographyFragment, oldContent)
+      this.container.replaceChild(wrapper, oldContent)
     } else {
-      this.container.appendChild(bibliographyFragment)
+      this.container.appendChild(wrapper)
     }
   }
   public createElement = () => {
@@ -242,14 +215,6 @@ export class BibliographyElementBlockView<
 
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
-
-    this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.contentDOM.setAttribute('contenteditable', 'false')
-    this.contentDOM.hidden = true
-
-    this.container.appendChild(this.contentDOM)
   }
 }
 

@@ -18,10 +18,10 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
 import bibliographyElement from '../views/bibliography_element_editable'
-import bibliographyItem from '../views/bibliography_item_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
-import citation, { CitationEditableProps } from '../views/citation_editable'
+import { CitationViewProps } from '../views/citation'
+import citation from '../views/citation_editable'
 import contributorsSection from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
@@ -53,14 +53,13 @@ import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
 
 type EditorProps = EditableBlockProps &
-  CitationEditableProps &
+  CitationViewProps &
   FigureProps &
   KeywordsElementProps & { theme: DefaultTheme }
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
-    bibliography_item: bibliographyItem(props),
     bibliography_element: bibliographyElement(props),
     blockquote_element: blockquoteElement(props),
     bullet_list: bulletList(props),

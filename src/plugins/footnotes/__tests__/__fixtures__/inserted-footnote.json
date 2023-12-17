@@ -44,7 +44,9 @@
                 {
                   "type": "inline_footnote",
                   "attrs": {
-                    "rid": "MOCKED_ID",
+                    "rids": [
+                      "MOCKED_ID"
+                    ],
                     "contents": "1",
                     "dataTracked": null
                   }
