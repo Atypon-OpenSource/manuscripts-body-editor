@@ -40,7 +40,6 @@ import keywordsElement, {
 import link from '../views/link_editable'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
-import metaSection from '../views/meta_section'
 import orderedList from '../views/ordered_list_editable'
 import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
@@ -51,6 +50,7 @@ import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
+import empty from "../views/empty";
 
 type EditorProps = EditableBlockProps &
   CitationViewProps &
@@ -88,6 +88,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_label: sectionLabel(props),
     table_element: tableElement(props),
     toc_element: tocElement(props),
-    meta_section: metaSection,
+    comments: empty('comments'),
   }
 }

@@ -125,7 +125,7 @@ const commentsState = (
 ): DecorationSet => {
   const comments: CommentNode['attrs'][] = []
   doc.descendants((node) => {
-    if (node.type === schema.nodes.comment_list) {
+    if (node.type === schema.nodes.comments) {
       node.descendants((comment) => {
         comments.push(comment.attrs as CommentNode['attrs'])
       })
