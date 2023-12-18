@@ -62,8 +62,6 @@ const preventTitleEdit = (tr: Transaction) => {
         return
       }
 
-      // console.log(state.selection)
-
       const currentDoc = tr.docs[i]
       step.getMap().forEach((fromA, toA) => {
         currentDoc.nodesBetween(fromA, toA, (node, nodePos) => {
