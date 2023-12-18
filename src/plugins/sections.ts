@@ -76,6 +76,7 @@ const preventTitleEdit = (tr: Transaction) => {
           ) {
             node.descendants((childNode, childPos) => {
               const inDocPos = nodePos + childPos
+
               if (
                 isSectionTitleNode(childNode) &&
                 (isInRange(inDocPos, inDocPos + childNode.nodeSize, toA) ||

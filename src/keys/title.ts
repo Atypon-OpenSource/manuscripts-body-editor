@@ -15,6 +15,7 @@
  */
 
 import {
+  isInGraphicalAbstractSection,
   ManuscriptEditorState,
   ManuscriptEditorView,
 } from '@manuscripts/transform'
@@ -140,6 +141,10 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
   }
 
   if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
+    return false
+  }
+
+  if (isInGraphicalAbstractSection($cursor)) {
     return false
   }
 
