@@ -146,7 +146,7 @@ export class CitationView<PropsType extends CitationViewProps>
     const fragment = sanitize(
       citeprocContent && citeprocContent !== '[NO_PRINTED_FORM]'
         ? citeprocContent
-        : this.node.attrs.contents,
+        : ' ',
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
