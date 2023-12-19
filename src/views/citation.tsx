@@ -98,7 +98,8 @@ export class CitationView<PropsType extends CitationViewProps>
 
   public selectNode = () => {
     const isDeleted = !!this.node.attrs.dataTracked?.find(
-      ({ operation }: { operation: string }) => operation === 'delete'
+      ({ operation, status }: { operation: string; status: string }) =>
+        operation === 'delete' && status !== 'rejected'
     )
 
     if (!isDeleted) {
