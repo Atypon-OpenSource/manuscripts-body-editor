@@ -152,9 +152,10 @@ export const buildTree: TreeBuilder = ({
   if (!isChildrenExcluded(node.type)) {
     node.forEach((childNode, offset, childIndex) => {
       if (
-        (!childNode.isAtom || isElementNodeType(childNode.type) || isSpecialSection(childNode)) &&
-        childNode.attrs.id &&
-        !isExcluded(childNode.type)
+        isSpecialSection(childNode) ||
+        ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
+          childNode.attrs.id &&
+          !isExcluded(childNode.type))
       ) {
         items.push(
           buildTree({
