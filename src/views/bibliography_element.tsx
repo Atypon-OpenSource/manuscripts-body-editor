@@ -133,8 +133,6 @@ export class BibliographyElementBlockView<
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
 
-    console.log('updateContents')
-
     const [meta, bibliography] = bib.provider.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {

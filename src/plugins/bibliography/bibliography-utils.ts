@@ -176,14 +176,6 @@ const getEffectiveAttrs = (node: ManuscriptNode): Attrs | undefined => {
     getLatest
   )
 
-  if (
-    nodeChange &&
-    nodeChange.operation === CHANGE_OPERATION.delete &&
-    nodeChange.status !== CHANGE_STATUS.rejected
-  ) {
-    return undefined
-  }
-
   const isRejected =
     nodeChange &&
     nodeChange.operation === CHANGE_OPERATION.set_node_attributes &&

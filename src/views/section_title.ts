@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-import { Node as ProsemirrorNode } from 'prosemirror-model'
-
 import { sectionLevel } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-
-export const isSpecialSection = (node: ProsemirrorNode) => {
-  const type = node.type
-  const nodes = type.schema.nodes
-  return (
-    type === nodes.abstracts || type === nodes.body || type === nodes.backmatter
-  )
-}
 
 export class SectionTitleView<
   PropsType extends BaseNodeProps
@@ -38,10 +28,7 @@ export class SectionTitleView<
   public updateContents = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
 
-    if (isSpecialSection($pos.parent)) {
-      this.dom = document.createElement('div')
-      this.dom.classList.add('no-title')
-    } else if (this.node.childCount) {
+    if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
