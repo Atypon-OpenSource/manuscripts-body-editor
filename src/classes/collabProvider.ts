@@ -26,7 +26,8 @@ export abstract class CollabProvider {
   abstract sendSteps(
     version: number,
     steps: readonly Step[],
-    clientID: string | number
+    clientID: string | number,
+    flush?: boolean
   ): Promise<void>
   abstract onNewSteps(listener: CollabProvider['newStepsListener']): void
   abstract stepsSince(version: number): Promise<

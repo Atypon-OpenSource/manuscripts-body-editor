@@ -116,7 +116,8 @@ const useEditor = (
           collabProvider.sendSteps(
             sendable.version,
             sendable.steps,
-            sendable.clientID
+            sendable.clientID,
+            !tr.isGeneric
           )
         }
       }
@@ -125,7 +126,7 @@ const useEditor = (
         () => {
           setState(nextState)
         },
-        1000,
+        200,
         !tr.isGeneric
       )
 
