@@ -26,6 +26,7 @@ import {
   isSectionNodeType,
   isTOCSectionNode,
   ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 
@@ -66,54 +67,63 @@ const buildTOCList = (
 
   let index = sectionNumberingStyle ? sectionNumberingStyle.startIndex : 1
 
-  for (const childNode of iterateChildren(node)) {
-    if (isSectionNodeType(childNode.type) && !isTOCSectionNode(childNode)) {
-      const numbering = numberingScheme === 'none' ? '' : `${prefix}${index}`
+  node.forEach((child) => {
+    if (child.type === schema.nodes.body) {
+      for (const childNode of iterateChildren(child)) {
+        if (isSectionNodeType(childNode.type) && !isTOCSectionNode(childNode)) {
+          const numbering =
+            numberingScheme === 'none' ? '' : `${prefix}${index}`
 
-      const firstChildNode = childNode.child(0)
+          const firstChildNode = childNode.child(0)
 
-      if (
-        firstChildNode.type === firstChildNode.type.schema.nodes.section_title
-      ) {
-        const item = document.createElement('li')
-        item.classList.add('manuscript-toc-list-item')
-        item.setAttribute('data-referenced-section', childNode.attrs.id)
-        item.setAttribute('data-referenced-section-path-length', String(depth))
+          if (
+            firstChildNode.type ===
+            firstChildNode.type.schema.nodes.section_title
+          ) {
+            const item = document.createElement('li')
+            item.classList.add('manuscript-toc-list-item')
+            item.setAttribute('data-referenced-section', childNode.attrs.id)
+            item.setAttribute(
+              'data-referenced-section-path-length',
+              String(depth)
+            )
 
-        item.textContent = `${numbering ? `${numbering}${suffix}` : ''} ${
-          firstChildNode.textContent || 'Untitled Section'
-        }` // TODO: numbering and markup
+            item.textContent = `${numbering ? `${numbering}${suffix}` : ''} ${
+              firstChildNode.textContent || 'Untitled Section'
+            }` // TODO: numbering and markup
 
-        list.appendChild(item)
-      }
+            list.appendChild(item)
+          }
 
-      const childSection = getMatchingChild(childNode, (node) =>
-        isSectionNodeType(node.type)
-      )
-
-      if (childSection) {
-        const paragraphStyle = headingStyles.get(`heading${depth + 1}`)
-
-        // TODO: exclude if no paragraphStyle?
-        if (!paragraphStyle || paragraphStyle.partOfTOC) {
-          const sublist = document.createElement('ul')
-          buildTOCList(
-            headingStyles,
-            sublist,
-            childNode,
-            depth + 1,
-            numbering ? `${numbering}.` : ''
+          const childSection = getMatchingChild(childNode, (node) =>
+            isSectionNodeType(node.type)
           )
 
-          const item = document.createElement('li')
-          item.appendChild(sublist)
-          list.appendChild(item)
+          if (childSection) {
+            const paragraphStyle = headingStyles.get(`heading${depth + 1}`)
+
+            // TODO: exclude if no paragraphStyle?
+            if (!paragraphStyle || paragraphStyle.partOfTOC) {
+              const sublist = document.createElement('ul')
+              buildTOCList(
+                headingStyles,
+                sublist,
+                childNode,
+                depth + 1,
+                numbering ? `${numbering}.` : ''
+              )
+
+              const item = document.createElement('li')
+              item.appendChild(sublist)
+              list.appendChild(item)
+            }
+          }
+
+          index++ // TODO: don't increment if excluded from numbering
         }
       }
-
-      index++ // TODO: don't increment if excluded from numbering
     }
-  }
+  })
 }
 
 const isParagraphStyle = hasObjectType<ParagraphStyle>(

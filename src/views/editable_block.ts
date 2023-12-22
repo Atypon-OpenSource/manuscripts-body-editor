@@ -16,7 +16,7 @@
 
 import { CommentAnnotation, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Build, nodeNames } from '@manuscripts/transform'
+import { Build, nodeNames, schema } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -101,10 +101,8 @@ export const EditableBlock = <
 
     public createAddButton = (after: boolean): HTMLElement | null => {
       const $pos = this.view.state.doc.resolve(this.getPos())
-      if (
-        !this.props.getCapabilities()?.editArticle ||
-        $pos.parent.type === this.node.type.schema.nodes.keywords_section
-      ) {
+      const hasAccess = this.props.getCapabilities()?.editArticle
+      if (!hasAccess || $pos.parent.type === schema.nodes.keywords) {
         return null
       }
 

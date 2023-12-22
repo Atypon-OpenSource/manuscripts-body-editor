@@ -112,7 +112,7 @@ export default (props: CommentAnnotationProps) => {
 
 const getNodePosition = (node: ProsemirrorNode, pos: number) => {
   switch (node.type) {
-    case node.type.schema.nodes.keywords_section:
+    case schema.nodes.keywords:
       return pos + 2
     default:
       return pos + 1
@@ -125,7 +125,7 @@ const commentsState = (
 ): DecorationSet => {
   const comments: CommentNode['attrs'][] = []
   doc.descendants((node) => {
-    if (node.type === schema.nodes.comment_list) {
+    if (node.type === schema.nodes.comments) {
       node.descendants((comment) => {
         comments.push(comment.attrs as CommentNode['attrs'])
       })
