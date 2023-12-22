@@ -27,9 +27,9 @@ export interface ContributorsProps extends EditableBlockProps {
 }
 
 interface AuthorsViewProps {
-    showAuthorEditButton: boolean
-    disableEditButton?: boolean
-    subscribe: (fn: (state: unknown, prev: unknown) => void) => () => void
+  showAuthorEditButton: boolean
+  disableEditButton?: boolean
+  subscribe: (fn: (state: unknown, prev: unknown) => void) => () => void
 }
 
 export class ContributorsView<PropsType extends ContributorsProps>

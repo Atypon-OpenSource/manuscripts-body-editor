@@ -29,14 +29,14 @@ declare module 'citeproc' {
   }
 
   type VariableWrapper = (
-      params: {
-        context: string
-        itemData: CSL.Data
-        variableNames: [string]
-      },
-      prePunct: string,
-      str: string,
-      postPunct: string
+    params: {
+      context: string
+      itemData: CSL.Data
+      variableNames: [string]
+    },
+    prePunct: string,
+    str: string,
+    postPunct: string
   ) => string
 
   interface SystemOptions {
@@ -61,10 +61,10 @@ declare module 'citeproc' {
 
   export class Engine {
     constructor(
-        sys: SystemOptions,
-        style: string | Style,
-        lang?: string,
-        forceLang?: boolean
+      sys: SystemOptions,
+      style: string | Style,
+      lang?: string,
+      forceLang?: boolean
     )
 
     public updateItems(idList: Array<string | number>): void
@@ -105,17 +105,17 @@ declare module 'citeproc' {
      the document bibliography, if any.
      */
     public rebuildProcessorState(
-        citations: Citation[],
-        mode?: 'text' | 'html' | 'rtf',
-        uncitedItemIDs?: string[]
+      citations: Citation[],
+      mode?: 'text' | 'html' | 'rtf',
+      uncitedItemIDs?: string[]
     ): Array<[string, number, string]> // id, noteIndex, output
 
     public makeBibliography(): [BibliographyMetadata, Bibliography]
   }
 
   export function getLocaleNames(
-      style: string | Record<string, unknown>,
-      preferredLocale: string
+    style: string | Record<string, unknown>,
+    preferredLocale: string
   ): string[]
 
   type Locale = Record<string, unknown>

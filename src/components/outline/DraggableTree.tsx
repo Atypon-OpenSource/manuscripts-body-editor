@@ -160,8 +160,7 @@ export const buildTree: TreeBuilder = ({
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
-          childNode.attrs.id
-          )
+          childNode.attrs.id)
       ) {
         items.push(
           buildTree({
@@ -221,79 +220,83 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
 
     return connectDropTarget(
       <div>
-      <Outline style={this.outlineStyles(isDragging)}>
-        <OutlineDropPreview
-          depth={depth}
-          style={this.topPreviewStyles(mightDrop, dragPosition)}
-        />
+        <Outline style={this.outlineStyles(isDragging)}>
+          <OutlineDropPreview
+            depth={depth}
+            style={this.topPreviewStyles(mightDrop, dragPosition)}
+          />
 
-        {!isTop &&
-          connectDragSource(
-            <div>
-            <OutlineItem
-              isSelected={isSelected}
-              depth={depth}
-              onContextMenu={this.handleContextMenu}
-            >
-              {items.length ? (
-                <OutlineItemArrow onClick={this.toggle}>
-                  {open ? (
-                    <StyledTriangleExpanded />
-                  ) : (
-                    <StyledTriangleCollapsed />
-                  )}
-                </OutlineItemArrow>
-              ) : (
-                <OutlineItemNoArrow />
-              )}
-
-              <OutlineItemLink to={`#${node.attrs.id || ''}`}>
-                {connectDragPreview(
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
-                  </span>
-                )}
-
-                <OutlineItemLinkText
-                  className={`outline-text-${node.type.name} ${
-                    isDeletedItem && 'deleted'
-                  }`}
+          {!isTop &&
+            connectDragSource(
+              <div>
+                <OutlineItem
+                  isSelected={isSelected}
+                  depth={depth}
+                  onContextMenu={this.handleContextMenu}
                 >
-                  {this.itemText(node)}
-                </OutlineItemLinkText>
-              </OutlineItemLink>
-            </OutlineItem>
+                  {items.length ? (
+                    <OutlineItemArrow onClick={this.toggle}>
+                      {open ? (
+                        <StyledTriangleExpanded />
+                      ) : (
+                        <StyledTriangleCollapsed />
+                      )}
+                    </OutlineItemArrow>
+                  ) : (
+                    <OutlineItemNoArrow />
+                  )}
+
+                  <OutlineItemLink to={`#${node.attrs.id || ''}`}>
+                    {connectDragPreview(
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <OutlineItemIcon>
+                          {nodeTypeIcon(node.type)}
+                        </OutlineItemIcon>
+                      </span>
+                    )}
+
+                    <OutlineItemLinkText
+                      className={`outline-text-${node.type.name} ${
+                        isDeletedItem && 'deleted'
+                      }`}
+                    >
+                      {this.itemText(node)}
+                    </OutlineItemLinkText>
+                  </OutlineItemLink>
+                </OutlineItem>
+              </div>
+            )}
+
+          {items.length ? (
+            <div
+              style={{
+                display: open || isTop ? '' : 'none',
+              }}
+            >
+              {items.map((subtree) => (
+                <DraggableTree
+                  {...this.props}
+                  key={subtree.node.attrs.id}
+                  tree={subtree}
+                  view={view}
+                  depth={isTop ? depth : depth + 1}
+                />
+              ))}
             </div>
+          ) : (
+            ''
           )}
 
-        {items.length ? (
-          <div
-            style={{
-              display: open || isTop ? '' : 'none',
-            }}
-          >
-            {items.map((subtree) => (
-              <DraggableTree
-                {...this.props}
-                key={subtree.node.attrs.id}
-                tree={subtree}
-                view={view}
-                depth={isTop ? depth : depth + 1}
-              />
-            ))}
-          </div>
-        ) : ''}
-
-        <OutlineDropPreview
-          depth={depth}
-          style={this.bottomPreviewStyles(mightDrop, dragPosition)}
-        />
-      </Outline>
+          <OutlineDropPreview
+            depth={depth}
+            style={this.bottomPreviewStyles(mightDrop, dragPosition)}
+          />
+        </Outline>
       </div>
     )
   }

@@ -25,6 +25,7 @@ import citation from '../views/citation_editable'
 import contributorsSection from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
+import empty from '../views/empty'
 import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
 import figure, { FigureProps } from '../views/figure_editable'
@@ -50,7 +51,6 @@ import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
-import empty from "../views/empty";
 
 type EditorProps = EditableBlockProps &
   CitationViewProps &

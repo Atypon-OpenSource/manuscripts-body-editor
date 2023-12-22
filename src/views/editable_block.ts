@@ -16,7 +16,7 @@
 
 import { CommentAnnotation, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import {Build, nodeNames, schema} from '@manuscripts/transform'
+import { Build, nodeNames, schema } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'

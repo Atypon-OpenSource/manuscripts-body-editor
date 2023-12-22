@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CrossReferenceNode, ManuscriptNodeView} from '@manuscripts/transform'
+import { CrossReferenceNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { History } from 'history'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
