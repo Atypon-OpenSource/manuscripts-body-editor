@@ -17,7 +17,6 @@
 import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
 import {
-  BibliographySectionNode,
   buildComment,
   buildInlineMathFragment,
   FigureNode,
@@ -26,7 +25,6 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
-  isInAbstractsSection,
   isInBibliographySection,
   isSectionNodeType,
   ManuscriptEditorState,
@@ -40,7 +38,6 @@ import {
   ManuscriptTransaction,
   schema,
   SectionNode,
-  TOCSectionNode,
 } from '@manuscripts/transform'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
@@ -54,14 +51,8 @@ import { findWrapping } from 'prosemirror-transform'
 import { findChildrenByType, findParentNodeOfType } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
-import {
-  findParentNodeWithId,
-  getChildOfType,
-  getMatchingDescendant,
-} from './lib/utils'
-import { bibliographyKey } from './plugins/bibliography'
+import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
-import { footnotesKey } from './plugins/footnotes'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
 
@@ -456,15 +447,12 @@ export const insertInlineFootnote =
 
     const elements = findChildrenByType(tr.doc, schema.nodes.footnotes_element)
 
-    let selectionPos = undefined
+    let selectionPos
 
     if (!elements.length) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create(
-          {},
-          state.schema.text('Notes')
-        ),
+        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
         state.schema.nodes.footnotes_element.create({}, footnote),
       ])
 
@@ -473,7 +461,7 @@ export const insertInlineFootnote =
       tr.insert(backmatter.pos + 1, section)
 
       // inside footnote inside element inside section
-      selectionPos = backmatter.pos + section.nodeSize
+      selectionPos = backmatter.pos + section.nodeSize - 3
     } else {
       const element = elements[0]
       const pos = element.pos + element.node.nodeSize - 1
@@ -494,42 +482,28 @@ export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const pos = findPosAfterParentSection(state.selection.$from)
-  if (
-    pos === null ||
-    isInBibliographySection(state.selection.$from) ||
-    !isInAbstractsSection(state.selection.$from)
-  ) {
-    return false
-  }
-
   // check if another graphical abstract already exists
-  // getMatchingDescendant returns node or undefined
-  if (
-    getMatchingDescendant(
-      state.doc,
-      (node) => node.type === state.schema.nodes.graphical_abstract_section
-    )
-  ) {
+  if (getChildOfType(state.doc, schema.nodes.graphical_abstract_section)) {
     return false
   }
 
-  const section = state.schema.nodes.graphical_abstract_section.createAndFill(
+  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+
+  const section = schema.nodes.graphical_abstract_section.createAndFill(
     { category: 'MPSectionCategory:abstract-graphical' },
     [
-      state.schema.nodes.section_title.create(
-        {},
-        state.schema.text('Graphical Abstract')
-      ),
+      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
       createAndFillFigureElement(state),
     ]
   ) as GraphicalAbstractSectionNode
+
+  const pos = abstracts.pos + abstracts.node.nodeSize + 1
 
   const tr = state.tr.insert(pos, section)
 
   if (dispatch) {
     // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + 2)
+    const selection = TextSelection.create(tr.doc, pos + 1)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
@@ -559,99 +533,18 @@ export const insertSection =
     return true
   }
 
-export const insertFootnotesSection = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  if (getChildOfType(state.doc, state.schema.nodes.footnotes_section)) {
-    return false
-  }
-
-  const section = state.schema.nodes.footnotes_section.createAndFill({}, [
-    state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
-    state.schema.nodes.footnotes_element.create(),
-  ]) as BibliographySectionNode
-
-  const pos = state.tr.doc.content.size
-
-  const tr = state.tr
-
-  tr.insert(pos, section).setMeta(footnotesKey, {
-    footnotesElementInserted: true,
-  })
-
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
-}
-
 export const insertBibliographySection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (
-    getMatchingDescendant(
-      state.doc,
-      (node) => node.type === state.schema.nodes.bibliography_section
-    )
-  ) {
-    return false
-  }
-
-  const section = state.schema.nodes.bibliography_section.createAndFill({}, [
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Bibliography')
-    ),
-  ]) as BibliographySectionNode
-
-  const pos = state.tr.doc.content.size
-
-  const tr = state.tr
-
-  tr.insert(pos, section).setMeta(bibliographyKey, {
-    bibliographyInserted: true,
-  })
-
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
+  return false
 }
 
 export const insertTOCSection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (getChildOfType(state.doc, state.schema.nodes.toc_section)) {
-    return false
-  }
-
-  const section = state.schema.nodes.toc_section.createAndFill({}, [
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Table of Contents')
-    ),
-  ]) as TOCSectionNode
-
-  const pos = 0
-
-  const tr = state.tr.insert(pos, section) /*.setMeta(tocKey, {
-    tocInserted: true,
-  })*/
-
-  if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
-  }
-
-  return true
+  return false
 }
 
 /**
