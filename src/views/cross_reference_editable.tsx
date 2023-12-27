@@ -15,7 +15,7 @@
  */
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { buildAuxiliaryObjectReference, Target } from '@manuscripts/transform'
+import { CrossReferenceNode, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React from 'react'
 
@@ -33,19 +33,11 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   public selectNode = () => {
     const { getCapabilities, renderReactComponent } = this.props
 
+    const xref = this.node as CrossReferenceNode
+    const rids = xref.attrs.rids
     const can = getCapabilities()
 
-    const { rid } = this.node.attrs
-
-    const auxiliaryObjectReference = rid
-      ? this.getAuxiliaryObjectReference(rid)
-      : null
-
-    if (
-      !can?.editArticle ||
-      auxiliaryObjectReference?.referencedObject ||
-      auxiliaryObjectReference?.referencedObjects
-    ) {
+    if (!can?.editArticle || rids.length) {
       return
     }
 
@@ -59,7 +51,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
         handleSelect={this.handleSelect}
         targets={this.getTargets()}
         handleCancel={this.handleCancel}
-        currentTargetId={auxiliaryObjectReference?.referencedObject}
+        currentTargetId={rids[0]}
         currentCustomLabel={this.node.attrs.customLabel}
       />,
       this.popperContainer
@@ -87,7 +79,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   }
 
   public handleCancel = () => {
-    if (!this.node.attrs.rid) {
+    if (!this.node.attrs.rids.length) {
       const { state } = this.view
 
       const pos = this.getPos()
@@ -104,18 +96,11 @@ export class CrossReferenceEditableView extends CrossReferenceView<
     const { state } = this.view
 
     const pos = this.getPos()
-    const $pos = state.doc.resolve(pos)
-
-    const rids = rid.trim().split(/\s+/)
-    const auxiliaryObjectReference = buildAuxiliaryObjectReference(
-      $pos.parent.attrs.id,
-      rids
-    )
 
     const tr = state.tr.setNodeMarkup(pos, undefined, {
       ...this.node.attrs,
       customLabel: customLabel || '',
-      rid: auxiliaryObjectReference._id,
+      rids: [rid],
     })
 
     const selection = TextSelection.create(tr.doc, pos)

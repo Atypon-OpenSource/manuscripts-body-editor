@@ -17,7 +17,7 @@
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import {
   isGraphicalAbstractSectionNode,
-  isKeywordsSectionNode,
+  isKeywordsNode,
   isSectionTitleNode,
 } from '@manuscripts/transform'
 import { Plugin, Transaction } from 'prosemirror-state'
@@ -31,9 +31,9 @@ import { highlightKey, SET_COMMENT } from './highlight'
 
 const preventTitleEdit = (tr: Transaction) => {
   /*
-   Prevent 
-   - graphical abstract section title and 
-   - keywords section title 
+   Prevent
+   - graphical abstract section title and
+   - keywords section title
    from being changed/removed
   */
   let dontPrevent = true
@@ -65,17 +65,15 @@ const preventTitleEdit = (tr: Transaction) => {
       const currentDoc = tr.docs[i]
       step.getMap().forEach((fromA, toA) => {
         currentDoc.nodesBetween(fromA, toA, (node, nodePos) => {
-          /* detecting if there is a change inside the title of 
+          /* detecting if there is a change inside the title of
            - the graphical abstract section OR
            - the keywords section
            and preventing that change
            */
-          if (
-            isGraphicalAbstractSectionNode(node) ||
-            isKeywordsSectionNode(node)
-          ) {
+          if (isGraphicalAbstractSectionNode(node) || isKeywordsNode(node)) {
             node.descendants((childNode, childPos) => {
               const inDocPos = nodePos + childPos
+
               if (
                 isSectionTitleNode(childNode) &&
                 (isInRange(inDocPos, inDocPos + childNode.nodeSize, toA) ||

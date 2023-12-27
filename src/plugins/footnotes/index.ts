@@ -16,6 +16,7 @@
 
 import {
   InlineFootnoteNode,
+  isFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
 } from '@manuscripts/transform'
@@ -39,7 +40,9 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   doc.descendants((node, pos) => {
     if (isInlineFootnoteNode(node)) {
       nodes.push([node, pos])
-      labels.set(node.attrs.rid, String(++index))
+      node.attrs.rids.forEach((rid) => {
+        labels.set(rid, String(++index))
+      })
     }
   })
 
@@ -48,7 +51,8 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
-    if (node.attrs.rid === rid) {
+    const footnote = node as InlineFootnoteNode
+    if (footnote.attrs.rids.includes(rid)) {
       const selection = NodeSelection.create(view.state.doc, pos)
       view.dispatch(view.state.tr.setSelection(selection).scrollIntoView())
     }
@@ -131,11 +135,15 @@ export default () => {
       const { tr } = newState
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
-        const contents = labels.get(node.attrs.rid)
+        const footnote = node as InlineFootnoteNode
+        const contents = footnote.attrs.rids
+          .map((rid) => labels.get(rid))
+          .join('')
 
-        if (node.attrs.contents !== contents) {
+        if (footnote.attrs.contents !== contents) {
           tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
+            ...footnote.attrs,
+            rids: footnote.attrs.rids,
             contents,
           })
         }
@@ -151,18 +159,16 @@ export default () => {
         const { labels } = footnotesKey.getState(state) as PluginState
         if (labels) {
           state.doc.descendants((node, pos) => {
-            const { id } = node.attrs
-
-            if (labels.has(id)) {
-              decorations.push(
-                Decoration.widget(
-                  pos + 2,
-                  labelWidget(labels.get(id) as string, id),
-                  {
+            if (isFootnoteNode(node)) {
+              const id = node.attrs.id
+              const label = labels.get(id)
+              if (label) {
+                decorations.push(
+                  Decoration.widget(pos + 2, labelWidget(label, id), {
                     side: -1,
-                  }
+                  })
                 )
-              )
+              }
             }
           })
         }
