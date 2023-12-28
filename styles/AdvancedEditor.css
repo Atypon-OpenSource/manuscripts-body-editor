@@ -549,10 +549,13 @@ Next levels are shifted 'up' by 1
   margin: 0 0 36px;
 }
 
-.keywords h1 {
-  font-size: 12px;
-  font-style: italic;
-  font-weight: 400;
+.ProseMirror > .keywords > .block-section_title > h1 {
+    color: #353535 !important;
+    font-size: 12px !important;
+    font-style: italic !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    margin-top: 4px !important;
 }
 
 .keywords-list {
