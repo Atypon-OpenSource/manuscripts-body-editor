@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation, Model } from '@manuscripts/json-schema'
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import {
   Build,
@@ -43,8 +43,7 @@ const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
 export interface EditableBlockProps extends BaseNodeProps {
   getCapabilities: () => Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setComment?: (comment?: CommentAnnotation) => void
+  setComment: (comment: CommentAnnotation) => void
   dispatch?: Dispatch
   theme?: DefaultTheme
 }

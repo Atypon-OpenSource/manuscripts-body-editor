@@ -28,11 +28,6 @@ export interface BaseNodeProps {
   getModelMap: () => Map<string, Model>
   popper: PopperManager
   cslProps: CSLProps
-  renderReactComponent: (
-    child: React.ReactElement,
-    container: HTMLElement
-  ) => void
-  unmountReactComponent: (container: HTMLElement) => void
 }
 
 export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
@@ -131,7 +126,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
 
   public deleteNode = (id: string) => {
     this.view.state.doc.descendants((node, pos) => {
-      if ((node.attrs.id || node.attrs.rid) === id) {
+      if (node.attrs.id === id) {
         this.view.dispatch(this.view.state.tr.delete(pos, pos + node.nodeSize))
       }
     })
