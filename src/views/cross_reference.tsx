@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import { AuxiliaryObjectReference } from '@manuscripts/json-schema'
-import { ManuscriptNodeView, Target } from '@manuscripts/transform'
+import { CrossReferenceNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { History } from 'history'
-import React from 'react'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { objectsKey } from '../plugins/objects'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
   history: History
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
@@ -41,52 +37,15 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public handleClick = () => {
-    const auxiliaryObjectReference = this.getAuxiliaryObjectReference(
-      this.node.attrs.rid
-    )
-
-    if (auxiliaryObjectReference) {
-      if (auxiliaryObjectReference.referencedObjects) {
-        this.showPopper(auxiliaryObjectReference.referencedObjects)
-      } else {
-        this.props.history.push({
-          pathname: this.props.history.location.pathname,
-          hash: '#' + auxiliaryObjectReference.referencedObject,
-        })
-      }
+    const xref = this.node as CrossReferenceNode
+    const rids = xref.attrs.rids
+    if (!rids.length) {
+      return
     }
-  }
-
-  public showPopper = (referencedObjects: string[]) => {
-    const {
-      components: { ReferencesViewer },
-      renderReactComponent,
-    } = this.props
-
-    if (!this.popperContainer) {
-      this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'citation-references'
-    }
-
-    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
-    const items: { label: string; referencedObject: string }[] = []
-
-    referencedObjects.map((referencedObject) => {
-      const target = targets.get(referencedObject)
-      if (target && target.label) {
-        items.push({
-          label: target.label,
-          referencedObject,
-        })
-      }
+    this.props.history.push({
+      pathname: this.props.history.location.pathname,
+      hash: '#' + rids[0],
     })
-
-    renderReactComponent(
-      <ReferencesViewer items={items} history={this.props.history} />,
-      this.popperContainer
-    )
-
-    this.props.popper.show(this.dom, this.popperContainer, 'right')
   }
 
   public updateContents = () => {
@@ -102,9 +61,6 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public ignoreMutation = () => true
-
-  public getAuxiliaryObjectReference = (id: string) =>
-    this.props.getModelMap().get(id) as AuxiliaryObjectReference
 
   public createDOM = () => {
     this.dom = document.createElement('span')

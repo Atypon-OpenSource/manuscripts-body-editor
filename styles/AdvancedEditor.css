@@ -3,11 +3,11 @@
 This level is actually hidden in the editor
 Next levels are shifted 'up' by 1
 */
-.ProseMirror > section:not(.toc) {
+.ProseMirror > div.body > section:not(.toc) {
   counter-increment: level_1 0;
 }
 
-.ProseMirror > section > .block-section_title > h1 {
+.ProseMirror > div > .block-section_title > h1 {
   font-size: 16pt !important;
   font-style: normal !important;
   font-weight: bold !important;
@@ -21,11 +21,11 @@ Next levels are shifted 'up' by 1
 }
 
 /* LVL 2 */
-.ProseMirror > section > section:not(.toc) {
+.ProseMirror > div.body > section:not(.toc) {
   counter-increment: level_1;
   counter-reset: level_2;
 }
-.ProseMirror > section > section > .block-section_title > h1 {
+.ProseMirror > div > section > .block-section_title > h1 {
   font-size: 15.75pt !important;
   font-style: normal !important;
   font-weight: bold !important;
@@ -37,26 +37,26 @@ Next levels are shifted 'up' by 1
   text-indent: 0pt;
   display: inline;
 }
-.ProseMirror > section[data-category="MPSectionCategory:body"] {
+.ProseMirror > div.body {
   counter-reset: level_1;
 }
-.ProseMirror > section[data-category="MPSectionCategory:body"] > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror > div.body > section:not(.toc) > .block-section_title > h1::before {
   content: counter(level_1, decimal) '. ';
 }
 
 .ProseMirror
-  > section
+  > div.body
   > section:not(.toc)
   > .block-section_title
   > h1.empty-node[data-placeholder]::before {
   content: counter(level_1, decimal) '. ' attr(data-placeholder);
 }
 /* LVL 3 */
-.ProseMirror > section > section > section:not(.toc) {
+.ProseMirror > div.body > section > section:not(.toc) {
   counter-increment: level_2;
   counter-reset: level_3;
 }
-.ProseMirror > section > section > section > .block-section_title > h1 {
+.ProseMirror > div > section > section > .block-section_title > h1 {
   font-size: 13.5pt !important;
   font-style: normal !important;
   font-weight: 700 !important;
@@ -69,7 +69,7 @@ Next levels are shifted 'up' by 1
   display: inline;
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section:not(.toc)
   > .block-section_title
@@ -77,7 +77,7 @@ Next levels are shifted 'up' by 1
   content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ';
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section:not(.toc)
   > .block-section_title
@@ -86,12 +86,12 @@ Next levels are shifted 'up' by 1
     attr(data-placeholder);
 }
 /* LVL 4 */
-.ProseMirror > section > section > section > section:not(.toc) {
+.ProseMirror > div.body > section > section > section:not(.toc) {
   counter-increment: level_3;
   counter-reset: level_4;
 }
 .ProseMirror
-  > section
+  > div
   > section
   > section
   > section
@@ -109,7 +109,7 @@ Next levels are shifted 'up' by 1
   display: inline;
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section:not(.toc)
@@ -120,7 +120,7 @@ Next levels are shifted 'up' by 1
 }
 
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section:not(.toc)
@@ -130,13 +130,13 @@ Next levels are shifted 'up' by 1
     counter(level_3, decimal) '. ' attr(data-placeholder);
 }
 /* LVL 5 */
-.ProseMirror > section > section > section > section > section:not(.toc) {
+.ProseMirror > div.body > section > section > section > section:not(.toc) {
   counter-increment: level_4;
   counter-reset: level_5;
 }
 
 .ProseMirror
-  > section
+  > div
   > section
   > section
   > section
@@ -155,7 +155,7 @@ Next levels are shifted 'up' by 1
   display: inline;
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -166,7 +166,7 @@ Next levels are shifted 'up' by 1
     counter(level_3, decimal) '.' counter(level_4, decimal) '. ';
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -179,7 +179,7 @@ Next levels are shifted 'up' by 1
 }
 /* LVL 6 */
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -189,7 +189,7 @@ Next levels are shifted 'up' by 1
   counter-reset: level_6;
 }
 .ProseMirror
-  > section
+  > div
   > section
   > section
   > section
@@ -209,7 +209,7 @@ Next levels are shifted 'up' by 1
   display: inline;
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -222,7 +222,7 @@ Next levels are shifted 'up' by 1
     counter(level_5, decimal) '. ';
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -236,7 +236,7 @@ Next levels are shifted 'up' by 1
 }
 /* LVL 7 */
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -247,7 +247,7 @@ Next levels are shifted 'up' by 1
   counter-reset: level_7;
 }
 .ProseMirror
-  > section
+  > div
   > section
   > section
   > section
@@ -267,7 +267,7 @@ Next levels are shifted 'up' by 1
   display: inline;
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -281,7 +281,7 @@ Next levels are shifted 'up' by 1
     counter(level_5, decimal) '.' counter(level_6, decimal) '. ';
 }
 .ProseMirror
-  > section
+  > div.body
   > section
   > section
   > section
@@ -295,14 +295,14 @@ Next levels are shifted 'up' by 1
     counter(level_5, decimal) '.' counter(level_6, decimal) '. '
     attr(data-placeholder);
 }
-[data-category="MPSectionCategory:backmatter"]::before {
+.ProseMirror div.backmatter::before {
   content: '';
   border-bottom: 1px dashed #C9C9C9;
   display: block;
   margin: 11pt 49pt;
 
 }
-.ProseMirror section[data-category="MPSectionCategory:backmatter"] .block-section_title > h1 {
+.ProseMirror div.backmatter .block-section_title > h1 {
   font-size: 13.5pt !important;
   color: #6E6E6E !important;
 }
@@ -549,15 +549,13 @@ Next levels are shifted 'up' by 1
   margin: 0 0 36px;
 }
 
-.keywords h1 {
-  color: #353535;
-  font-family: Lato, sans-serif;
-  font-size: 12px;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 16px;
-  margin: 0 0 4px;
-  padding: 0;
+.ProseMirror > .keywords > .block-section_title > h1 {
+    color: #353535 !important;
+    font-size: 12px !important;
+    font-style: italic !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    margin-top: 4px !important;
 }
 
 .keywords-list {
@@ -577,6 +575,7 @@ Next levels are shifted 'up' by 1
   border: 1px solid #f2f2f2;
   border-radius: 6px;
   position: relative;
+  cursor: default;
 }
 
 .keywords-list span.keyword.no-tracking {

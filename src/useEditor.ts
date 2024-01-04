@@ -27,7 +27,6 @@ import {
   Command,
   EditorState,
   NodeSelection,
-  TextSelection,
   Transaction,
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -186,9 +185,7 @@ const useEditor = (
         if (node.attrs.id === id) {
           currentView.focus()
 
-          const selection = node.isAtom
-            ? NodeSelection.create(state.tr.doc, pos)
-            : TextSelection.near(state.tr.doc.resolve(pos + 1))
+          const selection = NodeSelection.create(state.tr.doc, pos)
 
           currentView.dispatch(state.tr.setSelection(selection))
           const dom = currentView.domAtPos(pos + 1)

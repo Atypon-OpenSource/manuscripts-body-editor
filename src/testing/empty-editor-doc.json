@@ -5,31 +5,45 @@
   },
   "content": [
     {
-      "type": "section",
+      "type": "body",
       "attrs": {
-        "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71",
-        "category": "",
-        "titleSuppressed": false
+        "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71"
       },
       "content": [
         {
-          "type": "section_title"
-        },
-        {
-          "type": "paragraph",
+          "type": "section",
           "attrs": {
-            "id": "MPParagraphElement:08E4B001-BB01-4666-9E33-9355AEC3CFC3",
-            "paragraphStyle": "MPParagraphStyle:51671E8C-C9EE-461D-B6FF-756817829B3F",
-            "placeholder": ""
+            "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71",
+            "category": "",
+            "titleSuppressed": false
           },
           "content": [
             {
-              "type": "text",
-              "text": "test"
+              "type": "section_title"
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:08E4B001-BB01-4666-9E33-9355AEC3CFC3",
+                "paragraphStyle": "MPParagraphStyle:51671E8C-C9EE-461D-B6FF-756817829B3F",
+                "placeholder": ""
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "test"
+                }
+              ]
             }
           ]
         }
       ]
+    },
+    {
+      "type": "backmatter",
+      "attrs": {
+        "id": "MPSection:05EA736A-BBE3-4904-B2F5-59E861208BA9"
+      }
     }
   ]
 }

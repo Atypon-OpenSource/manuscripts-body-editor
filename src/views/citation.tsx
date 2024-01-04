@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  BibliographyItem,
-  Citation,
-  CitationItem,
-  ObjectTypes,
-} from '@manuscripts/json-schema'
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { BibliographyItem, ObjectTypes } from '@manuscripts/json-schema'
+import { CitationNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import React, { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -32,15 +27,14 @@ import {
   isDeleted,
   isPendingSetAttrs,
 } from '../lib/track-changes-utils'
-import { getNodeModel } from '../plugins/bibliography/bibliography-utils'
+import { getBibliographyPluginState } from '../plugins/bibliography'
+import { getCitation } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CitationViewProps extends BaseNodeProps {
   components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-  getLibraryItem: (id: string) => BibliographyItem | undefined
   projectID: string
-  getCiteprocCitations: () => Map<string, string>
 }
 
 export class CitationView<PropsType extends CitationViewProps>
@@ -52,30 +46,11 @@ export class CitationView<PropsType extends CitationViewProps>
   public showPopper = () => {
     const {
       components: { CitationViewer },
-      getLibraryItem,
       projectID,
       renderReactComponent,
     } = this.props
 
-    const citation = this.getCitation()
-
-    const items = citation.embeddedCitationItems.map(
-      (citationItem: CitationItem): BibliographyItem => {
-        const libraryItem = getLibraryItem(citationItem.bibliographyItem)
-
-        if (!libraryItem) {
-          const placeholderItem = {
-            _id: citationItem.bibliographyItem,
-            objectType: ObjectTypes.BibliographyItem,
-            title: '[missing library item]',
-          }
-
-          return placeholderItem as BibliographyItem
-        }
-
-        return libraryItem
-      }
-    )
+    const items = this.getBibliographyItems()
 
     if (!this.popperContainer) {
       this.popperContainer = document.createElement('div')
@@ -138,24 +113,23 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public updateContents = () => {
+    const bib = getBibliographyPluginState(this.view.state)
+
     const citation = this.getCitation()
-    const nodeClasses = ['citation', ...getChangeClasses(this.node)]
-    const citationElement = document.createElement('span')
-    citationElement.className = nodeClasses.join(' ')
-    const citeprocCitations = this.props.getCiteprocCitations()
-    const citeprocContent = citeprocCitations?.get(this.node.attrs.rid)
+    const classes = ['citation', ...getChangeClasses(this.node)]
+    const element = document.createElement('span')
+    element.className = classes.join(' ')
+    const text = bib.renderedCitations.get(citation._id)
     const fragment = sanitize(
-      citeprocContent && citeprocContent !== '[NO_PRINTED_FORM]'
-        ? citeprocContent
-        : ' ',
+      text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
     )
-    citationElement.appendChild(fragment)
+    element.appendChild(fragment)
     this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
-    this.dom.appendChild(citationElement)
+    this.dom.appendChild(element)
 
     if (
       isPendingSetAttrs(this.node) &&
@@ -164,7 +138,7 @@ export class CitationView<PropsType extends CitationViewProps>
     ) {
       this.dom.appendChild(this.renderTrackChangesReview())
     }
-    this.setDomAttrs(this.node, this.dom, ['rid', 'contents', 'selectedText'])
+    this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
 
   public renderTrackChangesReview = () => {
@@ -183,13 +157,33 @@ export class CitationView<PropsType extends CitationViewProps>
   }
 
   public getCitation = () => {
-    const citation = getNodeModel<Citation>(this.node)
-
+    const citation = getCitation(this.node as CitationNode)
     if (!citation) {
       throw new Error('Citation not found')
     }
 
     return citation
+  }
+
+  public getBibliographyItems = (): BibliographyItem[] => {
+    const bib = getBibliographyPluginState(this.view.state)
+
+    const citation = this.node as CitationNode
+    return citation.attrs.rids.map((rid) => {
+      const item = bib.bibliographyItems.get(rid)
+
+      if (!item) {
+        const placeholder = {
+          _id: rid,
+          objectType: ObjectTypes.BibliographyItem,
+          title: '[missing library item]',
+        }
+
+        return placeholder as BibliographyItem
+      }
+
+      return item
+    })
   }
 }
 

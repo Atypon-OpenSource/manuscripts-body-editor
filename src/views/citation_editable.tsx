@@ -17,34 +17,19 @@
 import {
   BibliographyItem,
   Citation,
-  CitationItem,
   ObjectTypes,
 } from '@manuscripts/json-schema'
-import { matchLibraryItemByIdentifier } from '@manuscripts/library'
-import {
-  Build,
-  buildEmbeddedCitationItem,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { findMatchingBibliographyItem } from '@manuscripts/library'
+import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 
-import { bibliographyKey } from '../plugins/bibliography'
-import { getReferencesModelMap } from '../plugins/bibliography/bibliography-utils'
+import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView, CitationViewProps } from './citation'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
-
-export interface CitationEditableProps extends CitationViewProps {
-  matchLibraryItemByIdentifier: (
-    item: BibliographyItem
-  ) => BibliographyItem | undefined
-  setCiteprocCitations: (citations: Map<string, string>) => void
-  getCiteprocCitations: () => Map<string, string>
-}
 
 const createBibliographySection = (bibItem?: ProsemirrorNode) =>
   schema.nodes.bibliography_section.createAndFill({}, [
@@ -53,7 +38,7 @@ const createBibliographySection = (bibItem?: ProsemirrorNode) =>
   ]) as ManuscriptNode
 
 export class CitationEditableView extends CitationView<
-  CitationEditableProps & EditableBlockProps
+  CitationViewProps & EditableBlockProps
 > {
   public showPopper = () => {
     const {
@@ -66,29 +51,10 @@ export class CitationEditableView extends CitationView<
     const capabilities = getCapabilities()
 
     const citation = this.getCitation()
-
-    const items = citation.embeddedCitationItems.map(
-      (citationItem: CitationItem): BibliographyItem => {
-        const libraryItem = getReferencesModelMap(this.view.state.doc).get(
-          citationItem.bibliographyItem
-        ) as BibliographyItem
-
-        if (!libraryItem) {
-          const placeholderItem = {
-            _id: citationItem.bibliographyItem,
-            objectType: ObjectTypes.BibliographyItem,
-            title: '[missing library item]',
-          }
-
-          return placeholderItem as BibliographyItem
-        }
-
-        return libraryItem
-      }
-    )
+    const items = this.getBibliographyItems()
 
     const updateCitation = async (data: Partial<Citation>) => {
-      this.updateInlineNode({ ...citation, ...data })
+      this.updateNode({ ...citation, ...data })
 
       this.props.popper.update()
     }
@@ -130,15 +96,17 @@ export class CitationEditableView extends CitationView<
       this.popperContainer.className = 'citation-editor'
     }
 
+    const bib = getBibliographyPluginState(this.view.state)
+
     const component = capabilities?.editArticle ? (
       <CitationEditor
         items={items}
         saveModel={handleSave}
         deleteModel={this.deleteNode}
-        modelMap={getReferencesModelMap(this.view.state.doc, true)}
         insertBibliographyNode={(item: Build<BibliographyItem>) =>
           this.insertBibliographyNode(this.view, item)
         }
+        modelMap={bib.bibliographyItems}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
         setComment={this.props.setComment}
@@ -189,14 +157,14 @@ export class CitationEditableView extends CitationView<
 
   private handleRemove = async (id: string) => {
     const citation = this.getCitation()
-    const embeddedCitationItems = citation.embeddedCitationItems.filter(
-      (item) => item.bibliographyItem !== id
+    const items = citation.embeddedCitationItems.filter(
+      (i) => i.bibliographyItem !== id
     )
 
-    if (embeddedCitationItems.length > 0) {
-      citation.embeddedCitationItems = embeddedCitationItems
+    if (items.length > 0) {
+      citation.embeddedCitationItems = items
 
-      this.updateInlineNode(citation)
+      this.updateNode(citation)
 
       window.setTimeout(() => {
         this.showPopper() // redraw the popper
@@ -209,12 +177,6 @@ export class CitationEditableView extends CitationView<
       this.view.dispatch(tr)
     }
 
-    this.view.dispatch(
-      this.view.state.tr.setMeta(bibliographyKey, {
-        bibliographyInserted: true,
-      })
-    )
-
     this.props.popper.destroy()
   }
 
@@ -226,39 +188,31 @@ export class CitationEditableView extends CitationView<
     }, 100)
   }
 
-  private handleCite = async (items: Array<Build<BibliographyItem>>) => {
+  private handleCite = async (items: Build<BibliographyItem>[]) => {
+    const bib = getBibliographyPluginState(this.view.state)
+
     const citation = this.getCitation()
-    let triggerUpdate = false
 
     for (const item of items) {
-      const existingItem = matchLibraryItemByIdentifier(
+      const existingItem = findMatchingBibliographyItem(
         item as BibliographyItem,
-        getReferencesModelMap(this.view.state.doc) as Map<
-          string,
-          BibliographyItem
-        >
+        bib.bibliographyItems
       )
 
       if (existingItem) {
         item._id = existingItem._id
       } else {
-        triggerUpdate = true
-
-        await this.insertBibliographyNode(this.view, item)
+        this.insertBibliographyNode(this.view, item)
       }
 
-      citation.embeddedCitationItems.push(buildEmbeddedCitationItem(item._id))
+      citation.embeddedCitationItems.push({
+        _id: '_',
+        objectType: ObjectTypes.CitationItem,
+        bibliographyItem: item._id,
+      })
     }
 
-    this.updateInlineNode(citation)
-
-    if (triggerUpdate) {
-      this.view.dispatch(
-        this.view.state.tr.setMeta(bibliographyKey, {
-          bibliographyInserted: true,
-        })
-      )
-    }
+    this.updateNode(citation)
 
     this.handleClose()
   }
@@ -291,9 +245,7 @@ export class CitationEditableView extends CitationView<
     if (bibElement && pos) {
       newTr = tr.insert(pos + 1, bibItem)
     } else {
-      newTr = tr
-        .insert(tr.doc.content.size, createBibliographySection(bibItem))
-        .setMeta(bibliographyKey, { bibliographyInserted: true })
+      newTr = tr.insert(tr.doc.content.size, createBibliographySection(bibItem))
     }
 
     view.dispatch(newTr)
@@ -301,19 +253,18 @@ export class CitationEditableView extends CitationView<
   }
 
   private importItems = async (items: Array<Build<BibliographyItem>>) => {
+    const bib = getBibliographyPluginState(this.view.state)
+
     const newItems: BibliographyItem[] = []
 
     for (const item of items) {
-      const existingItem = matchLibraryItemByIdentifier(
+      const existingItem = findMatchingBibliographyItem(
         item as BibliographyItem,
-        getReferencesModelMap(this.view.state.doc) as Map<
-          string,
-          BibliographyItem
-        >
+        bib.bibliographyItems
       )
 
       if (!existingItem) {
-        await this.insertBibliographyNode(this.view, item)
+        this.insertBibliographyNode(this.view, item)
 
         newItems.push(item as BibliographyItem)
       }
@@ -322,15 +273,13 @@ export class CitationEditableView extends CitationView<
     return newItems
   }
 
-  private updateInlineNode = (citation: Citation) => {
+  private updateNode = (citation: Citation) => {
+    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
     const { tr } = this.view.state
     this.view.dispatch(
       tr.setNodeMarkup(this.getPos(), undefined, {
-        rid: citation._id,
-        embeddedCitationItems: citation.embeddedCitationItems.map((item) => ({
-          id: item._id,
-          bibliographyItem: item.bibliographyItem,
-        })),
+        id: citation._id,
+        rids,
       })
     )
   }

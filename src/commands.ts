@@ -17,19 +17,14 @@
 import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
 import {
-  BibliographySectionNode,
-  buildCitation,
   buildComment,
   buildInlineMathFragment,
   FigureNode,
   FootnoteNode,
-  FootnotesElementNode,
-  FootnotesSectionNode,
   generateID,
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
-  isInAbstractsSection,
   isInBibliographySection,
   isSectionNodeType,
   ManuscriptEditorState,
@@ -41,8 +36,8 @@ import {
   ManuscriptResolvedPos,
   ManuscriptTextSelection,
   ManuscriptTransaction,
+  schema,
   SectionNode,
-  TOCSectionNode,
 } from '@manuscripts/transform'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import {
@@ -53,20 +48,12 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { findParentNode } from 'prosemirror-utils'
+import { findChildrenByType, findParentNodeOfType } from 'prosemirror-utils'
 
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
-import {
-  findParentNodeWithId,
-  getChildOfType,
-  getMatchingDescendant,
-} from './lib/utils'
-import { bibliographyKey } from './plugins/bibliography'
+import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
-import { footnotesKey } from './plugins/footnotes'
-import * as footnotesUtils from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
-// import { tocKey } from './plugins/toc'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
@@ -369,18 +356,12 @@ export const insertLink = (
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  view?: ManuscriptEditorView,
-  embeddedCitationItems: string[] = []
+  view?: ManuscriptEditorView
 ) => {
-  const citation = buildCitation(
-    state.selection.$anchor.parent.attrs.id,
-    embeddedCitationItems
-  )
-
   const node = state.schema.nodes.citation.create({
-    rid: citation._id,
+    id: generateID(ObjectTypes.Citation),
+    rids: [],
     selectedText: selectedText(),
-    embeddedCitationItems: [],
   })
 
   const pos = state.selection.to
@@ -402,7 +383,7 @@ export const insertCrossReference = (
   dispatch?: Dispatch
 ) => {
   const node = state.schema.nodes.cross_reference.create({
-    rid: null,
+    rids: [],
   })
 
   const pos = state.selection.to
@@ -454,51 +435,41 @@ export const insertInlineFootnote =
     }) as FootnoteNode
 
     const insertedAt = state.selection.to
-    const thisFootnoteNumbering = footnotesUtils.getNewFootnoteNumbering(
-      insertedAt,
-      state
-    )
 
-    const inlineFootnote = state.schema.nodes.inline_footnote.create({
-      rid: footnote.attrs.id,
-      contents: thisFootnoteNumbering.toString(),
+    const node = state.schema.nodes.inline_footnote.create({
+      rids: [footnote.attrs.id],
     }) as InlineFootnoteNode
 
     const tr = state.tr
 
     // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
-    tr.insert(insertedAt, inlineFootnote)
+    tr.insert(insertedAt, node)
 
-    const footnotesElementAndPos = footnotesUtils.findFootnotesElement(tr.doc)
+    const elements = findChildrenByType(tr.doc, schema.nodes.footnotes_element)
 
-    let selectionPos: number
+    let selectionPos
 
-    if (footnotesElementAndPos === undefined) {
+    if (!elements.length) {
       // create a new footnotes section if needed
-      const footnotesSection = state.schema.nodes.footnotes_section.create({}, [
+      const section = state.schema.nodes.footnotes_section.create({}, [
         state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
-        state.schema.nodes.footnotes_element.create(
-          {},
-          footnote
-        ) as FootnotesElementNode,
-      ]) as FootnotesSectionNode
+        state.schema.nodes.footnotes_element.create({}, footnote),
+      ])
 
-      const insideEndPos = tr.doc.content.size
+      const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
 
-      // TODO: insert bibliography section before footnotes section
-      tr.insert(insideEndPos, footnotesSection)
+      tr.insert(backmatter.pos + 1, section)
+
       // inside footnote inside element inside section
-      selectionPos = insideEndPos + footnotesSection.nodeSize
+      selectionPos = backmatter.pos + section.nodeSize - 3
     } else {
-      const [footnotePos, selectPos] = footnotesUtils.getNewFootnoteElementPos(
-        footnotesElementAndPos,
-        thisFootnoteNumbering
-      )
-      tr.insert(footnotePos, footnote)
-      selectionPos = selectPos
+      const element = elements[0]
+      const pos = element.pos + element.node.nodeSize - 1
+      tr.insert(pos, footnote)
+      selectionPos = pos + 2
     }
 
-    if (dispatch) {
+    if (dispatch && selectionPos) {
       // set selection inside new footnote
       const selection = TextSelection.create(tr.doc, selectionPos)
       dispatch(tr.setSelection(selection).scrollIntoView())
@@ -511,42 +482,28 @@ export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const pos = findPosAfterParentSection(state.selection.$from)
-  if (
-    pos === null ||
-    isInBibliographySection(state.selection.$from) ||
-    !isInAbstractsSection(state.selection.$from)
-  ) {
-    return false
-  }
-
   // check if another graphical abstract already exists
-  // getMatchingDescendant returns node or undefined
-  if (
-    getMatchingDescendant(
-      state.doc,
-      (node) => node.type === state.schema.nodes.graphical_abstract_section
-    )
-  ) {
+  if (getChildOfType(state.doc, schema.nodes.graphical_abstract_section)) {
     return false
   }
 
-  const section = state.schema.nodes.graphical_abstract_section.createAndFill(
+  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+
+  const section = schema.nodes.graphical_abstract_section.createAndFill(
     { category: 'MPSectionCategory:abstract-graphical' },
     [
-      state.schema.nodes.section_title.create(
-        {},
-        state.schema.text('Graphical Abstract')
-      ),
+      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
       createAndFillFigureElement(state),
     ]
   ) as GraphicalAbstractSectionNode
+
+  const pos = abstracts.pos + abstracts.node.nodeSize + 1
 
   const tr = state.tr.insert(pos, section)
 
   if (dispatch) {
     // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + 2)
+    const selection = TextSelection.create(tr.doc, pos + 1)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
@@ -576,99 +533,18 @@ export const insertSection =
     return true
   }
 
-export const insertFootnotesSection = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  if (getChildOfType(state.doc, state.schema.nodes.footnotes_section)) {
-    return false
-  }
-
-  const section = state.schema.nodes.footnotes_section.createAndFill({}, [
-    state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
-    state.schema.nodes.footnotes_element.create(),
-  ]) as BibliographySectionNode
-
-  const pos = state.tr.doc.content.size
-
-  const tr = state.tr
-
-  tr.insert(pos, section).setMeta(footnotesKey, {
-    footnotesElementInserted: true,
-  })
-
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
-}
-
 export const insertBibliographySection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (
-    getMatchingDescendant(
-      state.doc,
-      (node) => node.type === state.schema.nodes.bibliography_section
-    )
-  ) {
-    return false
-  }
-
-  const section = state.schema.nodes.bibliography_section.createAndFill({}, [
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Bibliography')
-    ),
-  ]) as BibliographySectionNode
-
-  const pos = state.tr.doc.content.size
-
-  const tr = state.tr
-
-  tr.insert(pos, section).setMeta(bibliographyKey, {
-    bibliographyInserted: true,
-  })
-
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-
-  return true
+  return false
 }
 
 export const insertTOCSection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (getChildOfType(state.doc, state.schema.nodes.toc_section)) {
-    return false
-  }
-
-  const section = state.schema.nodes.toc_section.createAndFill({}, [
-    state.schema.nodes.section_title.create(
-      {},
-      state.schema.text('Table of Contents')
-    ),
-  ]) as TOCSectionNode
-
-  const pos = 0
-
-  const tr = state.tr.insert(pos, section) /*.setMeta(tocKey, {
-    tocInserted: true,
-  })*/
-
-  if (dispatch) {
-    dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
-    )
-  }
-
-  return true
+  return false
 }
 
 /**
@@ -1010,23 +886,29 @@ export function addComment(
   resolvePos?: ResolvedPos
 ) {
   const { selection } = state
-  const isThereTextSelected = selection.content().size > 0
-  const selectionNode = getParentNode(selection)
+  const hasText = selection.content().size > 0
+  const parent = getParentNode(selection)
+  if (!parent) {
+    return false
+  }
 
   if (viewNode && resolvePos) {
     const viewNode = getParentNode(TextSelection.near(resolvePos))
+    if (!viewNode) {
+      return false
+    }
 
-    if (isThereTextSelected && selectionNode.attrs.id === viewNode.attrs.id) {
+    if (hasText && parent.attrs.id === viewNode.attrs.id) {
       return addHighlightComment(viewNode, state, dispatch)
     } else {
       return addBlockComment(viewNode, state, dispatch)
     }
   } else {
-    if (isThereTextSelected) {
-      return addHighlightComment(selectionNode, state, dispatch)
+    if (hasText) {
+      return addHighlightComment(parent, state, dispatch)
     } else {
       // TODO:: add block comment for the selection parent node or what!!!
-      return addBlockComment(selectionNode, state, dispatch)
+      return addBlockComment(parent, state, dispatch)
     }
   }
 }
@@ -1036,13 +918,10 @@ export function addComment(
  */
 const getParentNode = (selection: Selection) => {
   const parentNode = findParentNodeWithId(selection)
-  let node = parentNode?.node as ManuscriptNode
+  const node = parentNode?.node
 
-  if (node.type === node.type.schema.nodes.table && parentNode) {
-    const findTableElement = findParentNode(
-      (node) => node.type === node.type.schema.nodes.table_element
-    )
-    node = findTableElement(selection)?.node as ManuscriptNode
+  if (node?.type === schema.nodes.table) {
+    return findParentNodeOfType(schema.nodes.table_element)(selection)?.node
   }
 
   return node
@@ -1050,24 +929,22 @@ const getParentNode = (selection: Selection) => {
 
 // TODO:: remove this check when we allow all type of block node to have comment
 const isAllowedType = (type: NodeType) =>
-  type === type.schema.nodes.section ||
-  type === type.schema.nodes.footnotes_section ||
-  type === type.schema.nodes.bibliography_section ||
-  type === type.schema.nodes.keywords_group ||
-  type === type.schema.nodes.paragraph ||
-  type === type.schema.nodes.figure_element ||
-  type === type.schema.nodes.table_element
+  type === schema.nodes.section ||
+  type === schema.nodes.footnotes_section ||
+  type === schema.nodes.bibliography_section ||
+  type === schema.nodes.keyword_group ||
+  type === schema.nodes.paragraph ||
+  type === schema.nodes.figure_element ||
+  type === schema.nodes.table_element
 
 const getNode = (node: ManuscriptNode) => {
-  if (node.type === node.type.schema.nodes.keywords_section) {
-    let keywordGroup
-    node.descendants((child) => {
-      if (child.type === node.type.schema.nodes.keywords_group) {
-        keywordGroup = child
-        return false
-      }
-    })
-    return keywordGroup || node
+  if (node.type === schema.nodes.keywords) {
+    const keywordGroups = findChildrenByType(
+      node,
+      schema.nodes.keyword_group,
+      true
+    )
+    return keywordGroups.length ? keywordGroups[0].node : node
   }
   return node
 }
@@ -1106,7 +983,7 @@ const addHighlightComment = (
   } = node
   const comment = buildComment(id) as CommentAnnotation
 
-  if (type === state.schema.nodes.paragraph) {
+  if (type === schema.nodes.paragraph) {
     const { $anchor, $head } = state.selection
     const isAllTextSelected =
       ($anchor.textOffset === 0 && $head.textOffset === 0) ||
