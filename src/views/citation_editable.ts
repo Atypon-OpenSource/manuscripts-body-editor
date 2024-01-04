@@ -79,7 +79,8 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
 
   public showPopper = () => {
     const can = this.props.getCapabilities()
-    const rids = this.node.attrs.rids
+    const citation = this.getCitation()
+    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
     const bib = getBibliographyPluginState(this.view.state)
     const items = Array.from(bib.bibliographyItems.values())
 
@@ -175,10 +176,13 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     const bib = getBibliographyPluginState(this.view.state)
 
     const citation = this.getCitation()
+    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
+
+    items = items.filter((i) => !rids.includes(i._id))
 
     for (const item of items) {
       const existingItem = findMatchingBibliographyItem(
-        item as BibliographyItem,
+        item,
         bib.bibliographyItems
       )
 

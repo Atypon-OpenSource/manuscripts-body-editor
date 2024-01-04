@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 import { BibliographyItem } from '@manuscripts/json-schema'
-import {
-  ReferencesEditor,
-  ReferencesEditorProps,
-} from '@manuscripts/style-guide'
+import { ReferencesModal, ReferencesModalProps } from '@manuscripts/style-guide'
 import React, { useState } from 'react'
 
 //The purpose of this component is to make items stateful, so that
 //the component refreshes on updates
-export const ReferencesEditorWrapper: React.FC<ReferencesEditorProps> = (
-  props
-) => {
+
+export type ReferencesEditorProps = Omit<
+  ReferencesModalProps,
+  'isOpen' | 'handleCancel'
+>
+
+export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
+  const [isOpen, setOpen] = useState(true)
   const [items, setItems] = useState(props.items)
 
   const handleSave = (item: BibliographyItem) => {
@@ -47,8 +49,10 @@ export const ReferencesEditorWrapper: React.FC<ReferencesEditorProps> = (
   }
 
   return (
-    <ReferencesEditor
+    <ReferencesModal
       {...props}
+      isOpen={isOpen}
+      handleCancel={() => setOpen(false)}
       items={items}
       handleSave={handleSave}
       handleDelete={handleDelete}

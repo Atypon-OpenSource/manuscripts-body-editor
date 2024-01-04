@@ -69,31 +69,6 @@ const search = (
   }
 }
 
-// const fetch = async (item: Partial<BibliographyItem>) => {
-//   if (!item.DOI) {
-//     throw new Error('The item does not have a DOI')
-//   }
-//   // This is safe as it's only resolving Crossref DOIs.
-//   const response = await axios.get<CSL.Data>(
-//     `https://api.crossref.org/works/${encodeURIComponent(
-//       item.DOI
-//     )}/transform/application/vnd.citationstyles.csl+json`,
-//     {
-//       headers: {},
-//     }
-//   )
-//
-//   if (response.status === 404) {
-//     throw new Error('An item with this DOI could not be found.')
-//   }
-//
-//   if (response.status !== 200) {
-//     throw new Error('There was a problem fetching this DOI.')
-//   }
-//
-//   return convertCSLToBibliographyItem(response.data)
-// }
-
 export const crossref: BibliographyItemSource = {
   id: 'crossref',
   label: 'External sources',

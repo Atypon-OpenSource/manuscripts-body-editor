@@ -15,7 +15,6 @@
  */
 
 import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
-import { ReferencesEditorProps } from '@manuscripts/style-guide'
 import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
@@ -41,7 +40,7 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { ReferencesEditorWrapper } from './ReferencesEditorWrapper'
+import { ReferencesEditor, ReferencesEditorProps } from './ReferencesEditor'
 
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -71,7 +70,7 @@ export class BibliographyElementBlockView<
 
     this.editor = ReactSubView(
       this.props,
-      ReferencesEditorWrapper,
+      ReferencesEditor,
       componentProps,
       this.node,
       this.getPos,
