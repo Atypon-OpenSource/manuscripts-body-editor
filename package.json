@@ -20,6 +20,7 @@
     "lint:fix": "eslint src --fix --ext .ts,.tsx --max-warnings=0",
     "prebuild": "rimraf dist",
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
+    "prepare": "husky install",
     "preversion": "concurrently 'yarn:typecheck' 'yarn:lint' 'yarn:test'",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
