@@ -18,26 +18,22 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import {
-  BibliographyItem,
-  CommentAnnotation,
-  Manuscript,
-  Model,
-} from '@manuscripts/json-schema'
-import { CitationProvider } from '@manuscripts/library'
+import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
+import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
+import { CollabProvider } from '../classes/collabProvider'
 import keys from '../keys'
 import { PopperManager } from '../lib/popper'
-import auxiliary_object_order from '../plugins/auxiliary_object_order'
 import bibliography from '../plugins/bibliography'
 import comment_annotation from '../plugins/comment_annotation'
 import elements from '../plugins/elements'
+import footnotes from '../plugins/footnotes'
 import highlights from '../plugins/highlight'
 import keywords from '../plugins/keywords'
 import objects from '../plugins/objects'
@@ -57,8 +53,6 @@ interface PluginProps {
   getManuscript: () => Manuscript
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
-  getCitationProvider: () => CitationProvider | undefined
-  getLibraryItem: (id: string) => BibliographyItem | undefined
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion?: (id?: string) => void
@@ -66,12 +60,12 @@ interface PluginProps {
   plugins?: Plugin<ManuscriptSchema>[]
   cslProps: CSLProps
   popper: PopperManager
-  setCiteprocCitations: (citations: Map<string, string>) => void
+  collabProvider?: CollabProvider
 }
 
 export default (props: PluginProps) => {
   const plugins = props.plugins || []
-  return [
+  const allPlugins = [
     rules,
     ...keys,
     dropCursor(),
@@ -86,7 +80,6 @@ export default (props: PluginProps) => {
     keywords(props),
     bibliography(props),
     objects(props),
-    auxiliary_object_order(props),
     comment_annotation(props),
     paragraphs(),
     placeholder(),
@@ -94,7 +87,14 @@ export default (props: PluginProps) => {
     highlights(props),
     track_changes_ui(props),
     tracking_mark(),
+    footnotes(),
   ]
+
+  if (props.collabProvider) {
+    allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
+  }
+
+  return allPlugins
 }
 
 // for tables

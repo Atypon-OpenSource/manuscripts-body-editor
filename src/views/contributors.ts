@@ -21,7 +21,7 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export interface ContributorsSectionProps extends EditableBlockProps {
+export interface ContributorsProps extends EditableBlockProps {
   components: Record<string, React.ComponentType<unknown>>
   subscribeStore: unknown
 }
@@ -32,7 +32,7 @@ interface AuthorsViewProps {
   subscribe: (fn: (state: unknown, prev: unknown) => void) => () => void
 }
 
-export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
+export class ContributorsView<PropsType extends ContributorsProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -77,4 +77,4 @@ export class ContributorsSectionView<PropsType extends ContributorsSectionProps>
   public stopEvent = () => true
 }
 
-export default createNodeView(ContributorsSectionView)
+export default createNodeView(ContributorsView)

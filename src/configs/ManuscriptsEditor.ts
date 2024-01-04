@@ -17,13 +17,11 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import {
-  BibliographyItem,
   CommentAnnotation,
   Manuscript,
   Model,
   UserProfile,
 } from '@manuscripts/json-schema'
-import { CitationProvider } from '@manuscripts/library'
 import {
   Capabilities,
   FileAttachment,
@@ -36,6 +34,7 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import { DefaultTheme } from 'styled-components'
 
+import { CollabProvider } from '../classes/collabProvider'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import { CreateView } from '../useEditor'
@@ -74,23 +73,12 @@ export interface EditorProps {
   getCapabilities: () => Capabilities
   cslProps: CSLProps
 
-  //TODO cleanup
-  getCitationProvider: () => CitationProvider | undefined
-  getLibraryItem: (id: string) => BibliographyItem | undefined
-  setLibraryItem: (item: BibliographyItem) => void
-  matchLibraryItemByIdentifier: (
-    item: BibliographyItem
-  ) => BibliographyItem | undefined
-  filterLibraryItems: (query: string) => Promise<BibliographyItem[]>
-  removeLibraryItem: (id: string) => void
-
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   environment?: string
-  setCiteprocCitations: (citations: Map<string, string>) => void
-  getCiteprocCitations: () => Map<string, string>
+  collabProvider?: CollabProvider
 }
 
 export default {

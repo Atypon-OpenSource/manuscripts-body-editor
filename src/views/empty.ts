@@ -17,12 +17,10 @@
 /**
  * empty section that represents prosemirror meta node
  */
-export default () => {
-  const dom = document.createElement('section')
-  dom.setAttribute('data-type', 'meta')
+export default (type: string) => () => {
+  const dom = document.createElement('div')
+  dom.setAttribute('data-type', type)
   dom.setAttribute('contenteditable', 'false')
-
   dom.style.display = 'inline'
-
   return { dom }
 }

@@ -13,8 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { useRef } from 'react'
 
-import { BibliographyItemView } from './bibliography_item'
-import { createEditableNodeView } from './creators'
+export const useDoWithDebounce = () => {
+  const debounced = useRef<() => void>(() => undefined)
+  const timeout = useRef<number>()
 
-export default createEditableNodeView(BibliographyItemView)
+  const doWithDebounce = (fn: () => void, interval = 1000, flush = false) => {
+    debounced.current = fn
+
+    if (flush) {
+      fn()
+      debounced.current = () => undefined
+      window.clearTimeout(timeout.current)
+    }
+
+    window.clearTimeout(timeout.current)
+    timeout.current = window.setTimeout(() => {
+      debounced.current()
+      timeout.current = 0
+    }, interval)
+  }
+
+  return doWithDebounce
+}
