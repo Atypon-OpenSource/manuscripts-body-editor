@@ -25,7 +25,7 @@ export function findHighlightMarkers(doc: PMNode) {
   const commentIds: string[] = []
 
   doc.descendants((node, pos) => {
-    if (node.type.name === schema.nodes.comment_list.name) {
+    if (node.type.name === schema.nodes.comments.name) {
       node.content.forEach(({ attrs }) => {
         commentIds.push(attrs.id)
       })
