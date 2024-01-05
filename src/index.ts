@@ -25,7 +25,7 @@ export {
   ManuscriptToolbar,
   ToolbarButtonConfig,
 } from './components/toolbar/ManuscriptToolbar'
-export { default as getMenus } from './menus'
+export * from './menus'
 export { ChangeReceiver } from './types'
 export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
@@ -38,5 +38,4 @@ export {
 } from './plugins/comment_annotation'
 export * from './plugins/keywords'
 export * from './lib/utils'
-export { default as useEditor } from './useEditor'
-export { default as ManuscriptsEditor } from './configs//ManuscriptsEditor'
+export * from './useEditor'

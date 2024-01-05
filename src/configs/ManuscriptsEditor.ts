@@ -35,9 +35,9 @@ import React from 'react'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
+import { Dispatch } from '../commands'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
-import { CreateView } from '../useEditor'
 import plugins from './editor-plugins'
 import views from './editor-views'
 
@@ -81,30 +81,30 @@ export interface EditorProps {
   collabProvider?: CollabProvider
 }
 
-export default {
-  createState: (props: EditorProps) => {
-    return EditorState.create({
-      doc: props.doc,
-      schema,
-      plugins: plugins(props),
-    })
-  },
+export const createEditorState = (props: EditorProps) =>
+  EditorState.create({
+    doc: props.doc,
+    schema,
+    plugins: plugins(props),
+  })
 
-  createView:
-    (props: EditorProps): CreateView =>
-    (el, state, dispatch) =>
-      new EditorView(el, {
-        state,
-        editable: () => props.getCapabilities().editArticle,
-        scrollMargin: {
-          top: 100,
-          bottom: 100,
-          left: 0,
-          right: 0,
-        },
-        dispatchTransaction: dispatch,
-        nodeViews: views(props, dispatch),
-        attributes: props.attributes,
-        transformPasted,
-      }),
-}
+export const createEditorView = (
+  props: EditorProps,
+  root: HTMLElement,
+  state: EditorState,
+  dispatch: Dispatch
+) =>
+  new EditorView(root, {
+    state,
+    editable: () => props.getCapabilities().editArticle,
+    scrollMargin: {
+      top: 100,
+      bottom: 100,
+      left: 0,
+      right: 0,
+    },
+    dispatchTransaction: dispatch,
+    nodeViews: views(props, dispatch),
+    attributes: props.attributes,
+    transformPasted,
+  })
