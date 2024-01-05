@@ -79,6 +79,9 @@ export interface EditorProps {
   retrySync: (componentIDs: string[]) => Promise<void>
   environment?: string
   collabProvider?: CollabProvider
+
+  openAuthorEditing: () => void
+  selectAuthorForEditing: (authorId: string) => void
 }
 
 export default {

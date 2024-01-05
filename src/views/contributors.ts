@@ -20,61 +20,53 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import BlockView from './block_view'
 
 export interface ContributorsProps extends EditableBlockProps {
   components: Record<string, React.ComponentType<unknown>>
   subscribeStore: unknown
 }
 
-interface AuthorsViewProps {
-  showAuthorEditButton: boolean
-  disableEditButton?: boolean
-  subscribe: (fn: (state: unknown, prev: unknown) => void) => () => void
-}
+export class Contributors<
+  PropsType extends ContributorsProps
+> extends BlockView<PropsType> {
+  // public initialise = () => {
+  //   // this.createDOM()
+  // }
 
-export class ContributorsView<PropsType extends ContributorsProps>
-  extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView
-{
-  private metadata: HTMLDivElement
+  // public updateContents = () => {
+  //   console.log(this)
+  // }
 
-  public initialise = () => {
-    this.createDOM()
-  }
-
-  protected createDOM = () => {
-    this.dom = document.createElement('div')
-    this.dom.classList.add('contributors')
-
-    const can = this.props.getCapabilities()
-
-    const {
-      components: { AuthorsInlineViewContainer },
-      subscribeStore,
-    } = this.props
-
-    this.metadata = ReactSubView(
-      this.props,
-      AuthorsInlineViewContainer as React.FC<AuthorsViewProps>,
-      {
-        showAuthorEditButton: true,
-        disableEditButton: !can.editMetadata,
-        subscribe: subscribeStore,
-      },
-      this.node,
-      this.getPos,
-      this.view,
-      'metadata-container'
-    )
-
-    if (this.metadata) {
-      this.dom.appendChild(this.metadata)
-    }
-  }
+  // public createDOM = () => {
+  //   this.dom = document.createElement('div')
+  //   this.dom.classList.add('contributors')
+  //   const can = this.props.getCapabilities()
+  //   const {
+  //     components: { AuthorsInlineViewContainer },
+  //     subscribeStore,
+  //   } = this.props
+  //   this.metadata = ReactSubView(
+  //     this.props,
+  //     AuthorsInlineViewContainer as React.FC<AuthorsViewProps>,
+  //     {
+  //       showAuthorEditButton: true,
+  //       disableEditButton: !can.editMetadata,
+  //       subscribe: subscribeStore,
+  //     },
+  //     this.node,
+  //     this.getPos,
+  //     this.view,
+  //     'metadata-container'
+  //   )
+  //   if (this.metadata) {
+  //     this.dom.appendChild(this.metadata)
+  //   }
+  // }
 
   public ignoreMutation = () => true
 
   public stopEvent = () => true
 }
 
-export default createNodeView(ContributorsView)
+export default createNodeView(Contributors)

@@ -40,7 +40,11 @@ Next levels are shifted 'up' by 1
 .ProseMirror > div.body {
   counter-reset: level_1;
 }
-.ProseMirror > div.body > section:not(.toc) > .block-section_title > h1::before {
+.ProseMirror
+  > div.body
+  > section:not(.toc)
+  > .block-section_title
+  > h1::before {
   content: counter(level_1, decimal) '. ';
 }
 
@@ -90,13 +94,7 @@ Next levels are shifted 'up' by 1
   counter-increment: level_3;
   counter-reset: level_4;
 }
-.ProseMirror
-  > div
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
+.ProseMirror > div > section > section > section > .block-section_title > h1 {
   font-size: 12pt !important;
   font-style: normal !important;
   font-weight: bold !important;
@@ -297,16 +295,14 @@ Next levels are shifted 'up' by 1
 }
 .ProseMirror div.backmatter::before {
   content: '';
-  border-bottom: 1px dashed #C9C9C9;
+  border-bottom: 1px dashed #c9c9c9;
   display: block;
   margin: 11pt 49pt;
-
 }
 .ProseMirror div.backmatter .block-section_title > h1 {
   font-size: 13.5pt !important;
-  color: #6E6E6E !important;
+  color: #6e6e6e !important;
 }
-
 
 .ProseMirror p.block {
   font-size: 12pt !important;
@@ -550,12 +546,12 @@ Next levels are shifted 'up' by 1
 }
 
 .ProseMirror > .keywords > .block-section_title > h1 {
-    color: #353535 !important;
-    font-size: 12px !important;
-    font-style: italic !important;
-    font-weight: 400 !important;
-    line-height: 16px !important;
-    margin-top: 4px !important;
+  color: #353535 !important;
+  font-size: 12px !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: 16px !important;
+  margin-top: 4px !important;
 }
 
 .keywords-list {
@@ -745,11 +741,38 @@ Next levels are shifted 'up' by 1
   width: inherit;
 }
 
-.contributors tr th, .contributors tr td {
+.contributors tr th,
+.contributors tr td {
   border: none !important;
   background: none !important;
 }
 
-.contributors th, .contributors td {
+.contributors th,
+.contributors td {
   padding: initial;
+}
+
+.contributor {
+  display: inline-flex;
+  background: transparent;
+  border: 0;
+  font-size: 1rem;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.contributor:not(:disabled):hover {
+  text-decoration: underline;
+  cursor: pointer !important;
+}
+.contributor:not(:disabled):focus {
+  text-decoration: underline;
+  cursor: pointer !important;
+}
+.contributor::after {
+  content: ', ';
+}
+.contributor:last-child::after {
+  content: '';
 }
