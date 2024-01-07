@@ -21,11 +21,13 @@ import 'prosemirror-tables/style/tables.css'
 import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { Build, ManuscriptSchema } from '@manuscripts/transform'
+import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
 import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
+import { CollabProvider } from '../classes/collabProvider'
 import keys from '../keys'
 import { PopperManager } from '../lib/popper'
 import bibliography from '../plugins/bibliography'
@@ -58,11 +60,12 @@ interface PluginProps {
   plugins?: Plugin<ManuscriptSchema>[]
   cslProps: CSLProps
   popper: PopperManager
+  collabProvider?: CollabProvider
 }
 
 export default (props: PluginProps) => {
   const plugins = props.plugins || []
-  return [
+  const allPlugins = [
     rules,
     ...keys,
     dropCursor(),
@@ -86,6 +89,12 @@ export default (props: PluginProps) => {
     tracking_mark(),
     footnotes(),
   ]
+
+  if (props.collabProvider) {
+    allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
+  }
+
+  return allPlugins
 }
 
 // for tables
