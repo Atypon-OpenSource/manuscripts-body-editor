@@ -49,6 +49,7 @@ import pullquoteElement from '../views/pullquote_element_editable'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
+import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
 
@@ -87,6 +88,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
     table_element: tableElement(props),
+    table_element_footer: tableElementFooter(props),
     toc_element: tocElement(props),
     comments: empty('comments'),
   }
