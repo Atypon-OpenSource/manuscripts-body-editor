@@ -122,6 +122,8 @@ export const useEditor = (props: EditorProps) => {
         200,
         !tr.isGeneric
       )
+
+      return nextState
     },
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
@@ -205,13 +207,11 @@ export const useEditor = (props: EditorProps) => {
   }, [history, focusNodeWithId])
 
   return {
-    // ordinary use:
     state,
     onRender,
     isCommandValid,
     doCommand,
     replaceState,
-    // advanced use:
     view: view.current,
     dispatch,
   }
