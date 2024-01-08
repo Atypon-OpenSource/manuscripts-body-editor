@@ -15,6 +15,15 @@
  */
 
 import {
+  trackChangesPluginKey,
+  TrackChangesStatus,
+} from '@manuscripts/track-changes-plugin'
+import {
+  getVersion,
+  receiveTransaction,
+  sendableSteps,
+} from 'prosemirror-collab'
+import {
   Command,
   EditorState,
   NodeSelection,
@@ -24,6 +33,8 @@ import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { EditorProps } from './configs/ManuscriptsEditor'
+import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { bibliographyKey } from './plugins/bibliography'
 
 export type CreateView = (
@@ -32,11 +43,56 @@ export type CreateView = (
   dispatch: (tr: Transaction) => EditorState
 ) => EditorView
 
-const useEditor = (initialState: EditorState, createView: CreateView) => {
+const useEditor = (
+  initialState: EditorState,
+  createView: CreateView,
+  editorProps: EditorProps
+) => {
   const view = useRef<EditorView>()
   const [state, setState] = useState<EditorState>(initialState)
   const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
   const history = useHistory()
+  const { collabProvider } = editorProps
+
+  // Receiving steps from backend
+  if (collabProvider) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
+      if (state && view.current) {
+        // @TODO: make sure received steps are ignored by the quarterback plugin
+        const localVersion = getVersion(view.current.state)
+
+        // @TODO - save unconfirmed verison and compare it with newVersion to check if we can consume this update and don't have to call collabProvider.stepsSince
+        // if (newVersion == lastLocalUnconfirmed) {
+        //   view.current.dispatch(
+        //     receiveTransaction(
+        //       // has to be called for the collab to increment version and drop buffered steps
+        //       view.current.state,
+        //       steps,
+        //       clientIDs
+        //     )
+        //   )
+        // }
+
+        const since = await collabProvider.stepsSince(localVersion)
+
+        if (since?.steps && since.clientIDs) {
+          view.current.dispatch(
+            receiveTransaction(
+              // has to be called for the collab to increment version and drop buffered steps
+              view.current.state,
+              since?.steps,
+              since.clientIDs
+            )
+          )
+        } else {
+          console.warn('Inconsistent new steps event from the authority.')
+        }
+      }
+    })
+  }
+
+  const debounce = useDoWithDebounce()
 
   const dispatch = useCallback(
     (tr: Transaction) => {
@@ -47,8 +103,33 @@ const useEditor = (initialState: EditorState, createView: CreateView) => {
       const nextState = view.current.state.apply(tr)
       view.current.updateState(nextState)
 
-      // TODO: this part should be debounced??
-      setState(nextState)
+      const trackState = trackChangesPluginKey.getState(view.current.state)
+
+      if (
+        collabProvider &&
+        trackState &&
+        trackState.status !== TrackChangesStatus.viewSnapshots
+      ) {
+        const sendable = sendableSteps(nextState)
+        if (sendable) {
+          collabProvider.sendSteps(
+            sendable.version,
+            sendable.steps,
+            sendable.clientID,
+            !tr.isGeneric
+          )
+        }
+      }
+
+      debounce(
+        () => {
+          setState(nextState)
+        },
+        200,
+        !tr.isGeneric
+      )
+
+      // need to communicate updates of the body-editor the article-editor
 
       return state
     },

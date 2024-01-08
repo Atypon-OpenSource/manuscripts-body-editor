@@ -34,6 +34,7 @@ import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import { DefaultTheme } from 'styled-components'
 
+import { CollabProvider } from '../classes/collabProvider'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import { CreateView } from '../useEditor'
@@ -77,6 +78,7 @@ export interface EditorProps {
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   environment?: string
+  collabProvider?: CollabProvider
 }
 
 export default {
