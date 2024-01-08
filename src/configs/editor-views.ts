@@ -74,7 +74,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props),
-    keyword: keyword(props),
+    keyword: keyword(props, dispatch),
     keywords_element: keywordsElement(props, dispatch),
     link: link(props),
     listing: listing(props),
