@@ -66,7 +66,7 @@ export class KeywordView
         .querySelector('svg') as SVGElement
       svg.classList.add('delete-keyword')
       svg.addEventListener('click', this.showConfirmationDialog)
-      keyword.appendChild(icon)
+      keyword.appendChild(svg)
     }
 
     this.dom.innerHTML = ''
