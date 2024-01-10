@@ -15,7 +15,6 @@
  */
 import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
 import { ContributorNode, isContributorNode } from '@manuscripts/transform'
-import React from 'react'
 
 import { affiliationsKey } from '../plugins/affiliations'
 import { TrackableAttributes } from '../types'
@@ -25,8 +24,6 @@ import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
 export interface ContributorsProps extends EditableBlockProps {
-  components: Record<string, React.ComponentType<unknown>>
-  subscribeStore: unknown
   getCapabilities: () => Capabilities
   openAuthorEditing: () => void
   selectAuthorForEditing: (authorId: string) => void

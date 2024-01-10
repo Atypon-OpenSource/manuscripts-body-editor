@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react'
-
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
-export interface ContributorsProps extends EditableBlockProps {
-  components: Record<string, React.ComponentType<unknown>>
-  subscribeStore: unknown
-}
-
 export class Affiliations<
-  PropsType extends ContributorsProps
+  PropsType extends EditableBlockProps
 > extends BlockView<PropsType> {
   public ignoreMutation = () => true
   public stopEvent = () => true
