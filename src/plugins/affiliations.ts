@@ -24,6 +24,7 @@ import {
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+import { isDeleted } from '../lib/track-changes-utils'
 
 interface PluginState {
   indexedAffiliationIds: Map<string, number> // key is authore id
@@ -37,6 +38,9 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const contributors: Array<[ContributorNode, number]> = []
   const affiliations: Array<[AffiliationNode, number]> = []
   doc.descendants((node, pos) => {
+    if (isDeleted(node)) {
+      return
+    }
     if (isAffiliationNode(node)) {
       affiliations.push([node, pos])
     }
@@ -91,10 +95,7 @@ export default () => {
         const allNodes: Array<[ProsemirrorNode, number]> = []
 
         state.doc.descendants((node, pos) => {
-          if (isAffiliationNode(node)) {
-            allNodes.push([node, pos])
-          }
-          if (isContributorNode(node)) {
+          if (isAffiliationNode(node) || isContributorNode(node)) {
             allNodes.push([node, pos])
           }
         })
