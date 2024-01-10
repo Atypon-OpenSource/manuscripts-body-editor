@@ -74,7 +74,7 @@ export default (props: PluginProps) => {
     elements(),
     persist(),
     sections(),
-    toc(props),
+    toc(),
     keywords(props),
     bibliography(props),
     objects(props),

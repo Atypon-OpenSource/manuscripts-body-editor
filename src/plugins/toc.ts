@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Model, ObjectTypes } from '@manuscripts/json-schema'
+import { ObjectTypes } from '@manuscripts/json-schema'
 import {
   generateID,
   isSectionNodeType,
@@ -75,14 +75,10 @@ const buildTOCList = (
   })
 }
 
-interface Props {
-  getModelMap: () => Map<string, Model>
-}
-
 /**
  * This plugin generates the content for a Table of Contents element, if present
  */
-export default (props: Props) => {
+export default () => {
   return new Plugin<null>({
     key: tocKey,
 
