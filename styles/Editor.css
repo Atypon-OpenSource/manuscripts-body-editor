@@ -961,3 +961,7 @@
   line-height: 1.43;
   padding-left: 65px;
 }
+div[style*="background-color: rgba(249, 2, 2, 0.53)"] {
+  background-color: #ffe08b !important;
+}
+
