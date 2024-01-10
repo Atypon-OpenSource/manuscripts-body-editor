@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { isHighlightMarkerNode } from '@manuscripts/transform'
+import { isHighlightMarkerNode, schema } from '@manuscripts/transform'
 import { Node as PMNode } from 'prosemirror-model'
 
 import { HighlightMarker, HighlightStartMarker } from './types'
@@ -21,9 +21,19 @@ import { HighlightMarker, HighlightStartMarker } from './types'
 export function findHighlightMarkers(doc: PMNode) {
   const markers: HighlightMarker[] = []
   let current: HighlightStartMarker | undefined
+
+  const commentIds: string[] = []
+
   doc.descendants((node, pos) => {
+    if (node.type.name === schema.nodes.comments.name) {
+      node.content.forEach(({ attrs }) => {
+        commentIds.push(attrs.id)
+      })
+    }
+
     if (isHighlightMarkerNode(node)) {
       const { position, tid, id } = node.attrs
+
       if (position === 'start') {
         current = {
           start: pos + 1,
@@ -40,5 +50,6 @@ export function findHighlightMarkers(doc: PMNode) {
       }
     }
   })
-  return markers
+
+  return markers.filter((marker) => commentIds.includes(marker.id))
 }

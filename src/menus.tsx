@@ -55,9 +55,9 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
-import useEditor from './useEditor'
+import { useEditor } from './useEditor'
 
-export default (
+export const getMenus = (
   editor: ReturnType<typeof useEditor>,
   handleOpenDialog: (dialog: DialogNames) => void,
   footnotesEnabled?: boolean,

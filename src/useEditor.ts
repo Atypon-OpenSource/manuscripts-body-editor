@@ -33,26 +33,20 @@ import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { EditorProps } from './configs/ManuscriptsEditor'
+import {
+  createEditorState,
+  createEditorView,
+  EditorProps,
+} from './configs/ManuscriptsEditor'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
-import { bibliographyKey } from './plugins/bibliography'
 
-export type CreateView = (
-  element: HTMLDivElement,
-  state: EditorState,
-  dispatch: (tr: Transaction) => EditorState
-) => EditorView
-
-const useEditor = (
-  initialState: EditorState,
-  createView: CreateView,
-  editorProps: EditorProps
-) => {
+export const useEditor = (props: EditorProps) => {
   const view = useRef<EditorView>()
-  const [state, setState] = useState<EditorState>(initialState)
-  const [viewElement, setViewElement] = useState<HTMLDivElement | null>(null)
+  const [state, setState] = useState<EditorState>(() =>
+    createEditorState(props)
+  )
   const history = useHistory()
-  const { collabProvider } = editorProps
+  const { collabProvider } = props
 
   // Receiving steps from backend
   if (collabProvider) {
@@ -129,32 +123,22 @@ const useEditor = (
         !tr.isGeneric
       )
 
-      // need to communicate updates of the body-editor the article-editor
-
-      return state
+      return nextState
     },
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const replaceView = (state: EditorState, createView: CreateView) => {
-    if (viewElement && view.current) {
-      view.current.destroy()
-      view.current = createView(viewElement, state, dispatch)
-      setState(view.current.state)
-    }
-  }
   const onRender = useCallback((el: HTMLDivElement | null) => {
     if (!el) {
       return
     }
-    view.current = createView(el, view.current?.state || state, dispatch)
-    setState(view.current.state)
-    setViewElement(el)
-    view.current.dispatch(
-      view.current.state.tr.setMeta(bibliographyKey, {
-        initCitations: true,
-      })
+    view.current = createEditorView(
+      props,
+      el,
+      view.current?.state || state,
+      dispatch
     )
+    setState(view.current.state)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isCommandValid = useCallback(
@@ -223,17 +207,12 @@ const useEditor = (
   }, [history, focusNodeWithId])
 
   return {
-    // ordinary use:
     state,
     onRender,
     isCommandValid,
     doCommand,
     replaceState,
-    // advanced use:
-    replaceView,
     view: view.current,
     dispatch,
   }
 }
-
-export default useEditor
