@@ -17,15 +17,14 @@
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
+import affiliation from '../views/affiliation'
+import affiliationsSection from '../views/affiliations'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
 import { CitationViewProps } from '../views/citation'
 import citation from '../views/citation_editable'
 import contributorsSection from '../views/contributors'
-import affiliationsSection from '../views/affiliations'
-import contributor from '../views/contributor'
-import affiliation from '../views/affiliation'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
 import empty from '../views/empty'
@@ -70,7 +69,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props),
     contributors: contributorsSection(props, dispatch),
     affiliations: affiliationsSection(props, dispatch),
-    // contributor: contributor(props, dispatch),
     affiliation: affiliation(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),

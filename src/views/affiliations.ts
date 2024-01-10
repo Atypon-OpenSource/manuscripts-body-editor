@@ -15,10 +15,9 @@
  */
 import React from 'react'
 
+import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
-import BlockView from './block_view'
-import { affiliationsKey } from '../plugins/affiliations'
 
 export interface ContributorsProps extends EditableBlockProps {
   components: Record<string, React.ComponentType<unknown>>

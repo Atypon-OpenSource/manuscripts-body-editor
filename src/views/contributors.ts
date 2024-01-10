@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
 import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 import React from 'react'
 
+import { affiliationsKey } from '../plugins/affiliations'
+import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
-import BlockView from './block_view'
-import { affiliationsKey } from '../plugins/affiliations'
-import {
-  Capabilities,
-  PrimaryButton,
-  SecondaryButton,
-} from '@manuscripts/style-guide'
 import ReactSubView from './ReactSubView'
 
 export interface ContributorsProps extends EditableBlockProps {
@@ -88,6 +84,20 @@ export class Contributors<
     container.classList.add('contributor')
     container.setAttribute('id', node.attrs.id)
     container.setAttribute('contenteditable', 'false')
+
+    if (node.attrs.dataTracked?.length) {
+      container.setAttribute(
+        'data-track-status',
+        node.attrs.dataTracked[0].status
+      )
+      container.setAttribute(
+        'data-track-op',
+        node.attrs.dataTracked[0].operation
+      )
+    } else {
+      container.removeAttribute('data-track-status')
+      container.removeAttribute('data-track-type')
+    }
 
     const can = this.props.getCapabilities()
 

@@ -17,12 +17,13 @@
 import {
   AffiliationNode,
   ContributorNode,
-  ManuscriptNode,
   isAffiliationNode,
   isContributorNode,
+  ManuscriptNode,
 } from '@manuscripts/transform'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { Plugin, PluginKey } from 'prosemirror-state'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 
 interface PluginState {
   indexedAffiliationIds: Map<string, number> // key is authore id
@@ -64,7 +65,6 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   return {
     indexedAffiliationIds,
     contributors,
-    affiliations,
   }
 }
 
@@ -84,20 +84,20 @@ export default () => {
       },
     },
 
-    // appendTransaction(transactions, oldState, newState) {
-    //   const { tr } = newState
-    //   return tr
-    // },
-
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const { contributors, affiliations } = affiliationsKey.getState(
-          state
-        ) as PluginState
+        const allNodes: Array<[ProsemirrorNode, number]> = []
 
-        const allNodes = [...contributors, ...affiliations]
+        state.doc.descendants((node, pos) => {
+          if (isAffiliationNode(node)) {
+            allNodes.push([node, pos])
+          }
+          if (isContributorNode(node)) {
+            allNodes.push([node, pos])
+          }
+        })
 
         if (allNodes.length) {
           allNodes.forEach(([node, pos]) => {

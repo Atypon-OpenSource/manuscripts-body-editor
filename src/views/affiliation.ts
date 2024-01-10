@@ -17,9 +17,9 @@
 import { Capabilities } from '@manuscripts/style-guide'
 import { AffiliationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
+import { affiliationsKey } from '../plugins/affiliations'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { affiliationsKey } from '../plugins/affiliations'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
@@ -28,28 +28,43 @@ export class AffiliationView<PropsType extends BaseNodeProps>
   implements ManuscriptNodeView
 {
   public initialise = () => {
-    console.log(this)
     this.createDOM()
   }
 
   public updateContents = () => {
-    console.log(this)
-  }
-
-  protected createDOM = () => {
     const attrs = this.node.attrs as AffiliationNode['attrs']
 
     const pluginState = affiliationsKey.getState(this.view.state)
 
-    this.dom = document.createElement('div')
-    this.dom.classList.add('affiliation')
-    this.dom.setAttribute('id', attrs.id)
     this.dom.innerHTML = this.formatAddress(attrs)
     if (pluginState?.indexedAffiliationIds) {
       const order = pluginState.indexedAffiliationIds.get(attrs.id)
-      this.dom.innerHTML = order + ' ' + this.dom.innerHTML
-      this.dom.setAttribute('style', 'order: ' + order)
+      this.dom.innerHTML = order
+        ? order + ' ' + this.dom.innerHTML
+        : this.dom.innerHTML
+      this.dom.setAttribute('style', 'order: ' + (order || 0))
     }
+
+    if (this.node.attrs.dataTracked?.length) {
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+      this.dom.setAttribute(
+        'data-track-op',
+        this.node.attrs.dataTracked[0].operation
+      )
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
+  }
+
+  protected createDOM = () => {
+    this.dom = document.createElement('div')
+    this.dom.classList.add('affiliation')
+    this.dom.setAttribute('id', this.node.attrs.id)
+    this.updateContents()
   }
 
   public ignoreMutation = () => true
