@@ -356,12 +356,7 @@ const buildProps = (
   unmountReactComponent: () => undefined,
   getCitationProvider: () => undefined,
   plugins: [],
-  deleteModel: async (id) => {
-    modelMap.delete(id)
-    return id
-  },
   setLibraryItem: () => undefined,
-  saveModel: async <T extends Model>() => ({} as T),
   filterLibraryItems: async () => [],
   removeLibraryItem: () => undefined,
   retrySync: async () => undefined,

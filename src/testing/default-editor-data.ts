@@ -16,9 +16,8 @@
 
 import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
-import { ActualManuscriptNode, Build, schema } from '@manuscripts/transform'
+import { ActualManuscriptNode, schema } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
-import { uniqueId } from 'lodash'
 import { ReactElement, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { DefaultTheme } from 'styled-components'
@@ -102,23 +101,6 @@ export const defaultEditorProps: EditorProps = {
   },
   getCitationProvider: () => undefined,
   plugins: [],
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => {
-    const id = model._id ?? ''
-    const oldModel = TEST_DATA.MODEL_MAP.get(id) ?? {}
-    const updatedModel = {
-      createdAt: Date.now() / 1000,
-      updatedAt: Date.now() / 1000,
-      _id: uniqueId(),
-      ...oldModel,
-      ...model,
-    } as T
-    TEST_DATA.MODEL_MAP.set(id, updatedModel)
-    return Promise.resolve(updatedModel)
-  },
-  deleteModel: (id: string) => {
-    TEST_DATA.MODEL_MAP.delete(id)
-    return Promise.resolve(id)
-  },
   getLibraryItem: () => undefined,
   setLibraryItem: () => undefined,
   matchLibraryItemByIdentifier: () => undefined,

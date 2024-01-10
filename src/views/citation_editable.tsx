@@ -101,12 +101,12 @@ export class CitationEditableView extends CitationView<
     const component = capabilities?.editArticle ? (
       <CitationEditor
         items={items}
-        saveModel={handleSave}
-        deleteModel={this.deleteNode}
+        saveNode={handleSave}
+        deleteNode={this.deleteNode}
         insertBibliographyNode={(item: Build<BibliographyItem>) =>
           this.insertBibliographyNode(this.view, item)
         }
-        modelMap={bib.bibliographyItems}
+        bibliographyItems={bib.bibliographyItems}
         importItems={this.importItems}
         selectedText={this.node.attrs.selectedText}
         setComment={this.props.setComment}

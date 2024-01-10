@@ -185,19 +185,19 @@ const getEffectiveAttrs = (node: ManuscriptNode): Attrs | undefined => {
 }
 
 /**
- * Return model map that are built primarily from PM document
+ * Return BibliographyItem model that are built primarily from PM document
  */
 export const getBibliographyItemModelMap = (doc: ManuscriptNode) => {
-  const modelMap = new Map<string, BibliographyItem>()
+  const bibliographyItemMap = new Map<string, BibliographyItem>()
   doc.descendants((node) => {
     if (node.type === schema.nodes.bibliography_item) {
       const model = getBibliographyItem(node as BibliographyItemNode)
       if (model) {
-        modelMap.set(model._id, model)
+        bibliographyItemMap.set(model._id, model)
       }
     }
   })
-  return modelMap
+  return bibliographyItemMap
 }
 
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>

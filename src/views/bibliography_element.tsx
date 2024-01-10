@@ -83,9 +83,9 @@ export class BibliographyElementBlockView<
 
     renderReactComponent(
       <ReferencesEditor
-        saveModel={handleSave}
-        deleteModel={this.deleteNode}
-        modelMap={bib.bibliographyItems}
+        saveNode={handleSave}
+        deleteNode={this.deleteNode}
+        bibliographyItems={bib.bibliographyItems}
         referenceID={referenceID}
       />,
       this.popperContainer

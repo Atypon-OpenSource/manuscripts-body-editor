@@ -19,7 +19,6 @@ import {
   Capabilities,
   FileAttachment,
   FileManagement,
-  isModelFile,
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
 
@@ -39,7 +38,6 @@ interface FigureElementProps {
   getFiles: () => FileAttachment[]
   getModelMap: () => Map<string, Model>
   getCapabilities: () => Capabilities
-  deleteModel: (id: string) => Promise<string>
 }
 
 export class FigureElementView extends BlockView<
@@ -141,10 +139,6 @@ export class FigureElementView extends BlockView<
         }).setSelection(selection.map(tr.doc, tr.mapping))
 
         dispatch(tr)
-      }
-
-      if (isModelFile(file)) {
-        await this.props.deleteModel(file.modelId)
       }
     }
 

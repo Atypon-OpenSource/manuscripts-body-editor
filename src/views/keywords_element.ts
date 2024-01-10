@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Build } from '@manuscripts/transform'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -32,7 +30,6 @@ export interface KeywordsElementProps {
   dispatch?: Dispatch
   theme?: DefaultTheme
   retrySync: (componentIDs: string[]) => Promise<void>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
 }
 
 export class KeywordsElementView extends BlockView<
