@@ -20,6 +20,7 @@ import { AffiliationNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { affiliationsKey } from '../plugins/affiliations'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { TrackableAttributes } from '../types'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
@@ -32,7 +33,7 @@ export class AffiliationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    const attrs = this.node.attrs as AffiliationNode['attrs']
+    const attrs = this.node.attrs as TrackableAttributes<AffiliationNode>
 
     const pluginState = affiliationsKey.getState(this.view.state)
 
@@ -45,15 +46,9 @@ export class AffiliationView<PropsType extends BaseNodeProps>
       this.dom.setAttribute('style', 'order: ' + (order || 0))
     }
 
-    if (this.node.attrs.dataTracked?.length) {
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
+    if (attrs.dataTracked?.length) {
+      this.dom.setAttribute('data-track-status', attrs.dataTracked[0].status)
+      this.dom.setAttribute('data-track-op', attrs.dataTracked[0].operation)
     } else {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-type')

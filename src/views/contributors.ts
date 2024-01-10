@@ -18,6 +18,7 @@ import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 import React from 'react'
 
 import { affiliationsKey } from '../plugins/affiliations'
+import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -79,21 +80,16 @@ export class Contributors<
 
   buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
     const pluginState = affiliationsKey.getState(this.view.state)
+    const attrs = node.attrs as TrackableAttributes<ContributorNode>
 
     const container = document.createElement('button')
     container.classList.add('contributor')
-    container.setAttribute('id', node.attrs.id)
+    container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
 
-    if (node.attrs.dataTracked?.length) {
-      container.setAttribute(
-        'data-track-status',
-        node.attrs.dataTracked[0].status
-      )
-      container.setAttribute(
-        'data-track-op',
-        node.attrs.dataTracked[0].operation
-      )
+    if (attrs.dataTracked?.length) {
+      container.setAttribute('data-track-status', attrs.dataTracked[0].status)
+      container.setAttribute('data-track-op', attrs.dataTracked[0].operation)
     } else {
       container.removeAttribute('data-track-status')
       container.removeAttribute('data-track-type')
@@ -102,7 +98,6 @@ export class Contributors<
     const can = this.props.getCapabilities()
 
     const disableEditButton = !can.editMetadata
-    const attrs = node.attrs as ContributorNode['attrs']
 
     const { bibliographicName, isCorresponding, email, id } = attrs
 
@@ -215,7 +210,7 @@ export class Contributors<
     const state = affiliationsKey.getState(this.view.state)
     if (state?.contributors) {
       const isThereJointContributor = state.contributors.find(
-        (contributor) => contributor.isJointContributor
+        ([contributor]) => contributor.attrs.isJointContributor
       )
       if (isThereJointContributor) {
         const element = document.createElement('p')

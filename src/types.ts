@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -21,6 +22,7 @@ import {
   ManuscriptNodeView,
   ManuscriptTransaction,
 } from '@manuscripts/transform'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
 export type EditorAction = (
@@ -49,4 +51,8 @@ export type ChangeReceiver = (
 
 export interface SyncError {
   _id: string
+}
+
+export type TrackableAttributes<T extends ProsemirrorNode> = T['attrs'] & {
+  dataTracked?: TrackedAttrs[]
 }
