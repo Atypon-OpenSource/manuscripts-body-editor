@@ -15,18 +15,15 @@
  */
 
 import { Capabilities } from '@manuscripts/style-guide'
-import {
-  AffiliationNode,
-  ContributorNode,
-  ManuscriptNodeView,
-} from '@manuscripts/transform'
+import { AffiliationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { affiliationsKey } from '../plugins/affiliations'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
-export class Affiliation<PropsType extends BaseNodeProps>
+export class AffiliationView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
@@ -40,17 +37,48 @@ export class Affiliation<PropsType extends BaseNodeProps>
   }
 
   protected createDOM = () => {
-    const { institution } = this.node.attrs as AffiliationNode['attrs']
+    const attrs = this.node.attrs as AffiliationNode['attrs']
+
+    const pluginState = affiliationsKey.getState(this.view.state)
 
     this.dom = document.createElement('div')
     this.dom.classList.add('affiliation')
-    this.dom.setAttribute('id', this.node.attrs.id)
-    this.dom.innerHTML = institution
+    this.dom.setAttribute('id', attrs.id)
+    this.dom.innerHTML = this.formatAddress(attrs)
+    if (pluginState?.indexedAffiliationIds) {
+      const order = pluginState.indexedAffiliationIds.get(attrs.id)
+      this.dom.innerHTML = order + ' ' + this.dom.innerHTML
+      this.dom.setAttribute('style', 'order: ' + order)
+    }
   }
 
   public ignoreMutation = () => true
 
   public stopEvent = () => true
+
+  public formatAddress = (affiliation: AffiliationNode['attrs']): string => {
+    const {
+      department,
+      institution,
+      addressLine1,
+      city,
+      county,
+      country,
+      postCode,
+    } = affiliation
+
+    return [
+      department,
+      institution,
+      addressLine1,
+      city,
+      county,
+      country,
+      postCode,
+    ]
+      .filter(Boolean)
+      .join(', ')
+  }
 }
 
-export default createNodeView(Affiliation)
+export default createNodeView(AffiliationView)

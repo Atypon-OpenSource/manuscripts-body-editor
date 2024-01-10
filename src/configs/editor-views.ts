@@ -70,7 +70,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props),
     contributors: contributorsSection(props, dispatch),
     affiliations: affiliationsSection(props, dispatch),
-    contributor: contributor(props, dispatch),
+    // contributor: contributor(props, dispatch),
     affiliation: affiliation(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),

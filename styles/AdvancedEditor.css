@@ -728,28 +728,16 @@ Next levels are shifted 'up' by 1
 
 .contributors {
   white-space: initial;
-  margin-bottom: 24px;
   margin-top: 24px;
+  align-items: center;
+  display: flex;
+}
+.contributors-list {
+  flex: 1 0 auto;
 }
 
 .contributors .tools-panel {
   position: initial;
-}
-
-.contributors table {
-  line-height: initial;
-  width: inherit;
-}
-
-.contributors tr th,
-.contributors tr td {
-  border: none !important;
-  background: none !important;
-}
-
-.contributors th,
-.contributors td {
-  padding: initial;
 }
 
 .contributor {
@@ -775,4 +763,43 @@ Next levels are shifted 'up' by 1
 }
 .contributor:last-child::after {
   content: '';
+}
+
+.block-affiliations {
+  margin-top: 16px;
+  color: #6e6e6e;
+  margin-bottom: 24px;
+}
+.affiliation {
+  line-height: 1.2;
+}
+.block-affiliations .block {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.contributors-legend {
+  margin: 16px 0 0 0;
+}
+
+.contributor-legend .symbol {
+  display: inline-block;
+  font-size: 0.75em;
+  line-height: 1;
+  vertical-align: top;
+}
+
+.contributors .tools-panel {
+  align-items: center;
+  display: flex;
+  margin-left: 8px;
+}
+
+.contributor-note {
+  display: inline-block;
+  font-size: 0.75em;
+  margin: 0 2px;
+  line-height: 1;
+  vertical-align: top;
 }

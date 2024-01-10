@@ -18,6 +18,7 @@ import React from 'react'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import BlockView from './block_view'
+import { affiliationsKey } from '../plugins/affiliations'
 
 export interface ContributorsProps extends EditableBlockProps {
   components: Record<string, React.ComponentType<unknown>>
@@ -28,15 +29,7 @@ export class Affiliations<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
   public ignoreMutation = () => true
-
   public stopEvent = () => true
-
-  // {isThereJointContributor && (
-  //   <LegendWrapper>
-  //     <Legend>†</Legend>
-  //     These authors contributed equally to this work.
-  //   </LegendWrapper>
-  // )}
 }
 
 export default createNodeView(Affiliations)

@@ -37,6 +37,7 @@ import footnotes from '../plugins/footnotes'
 import highlights from '../plugins/highlight'
 import keywords from '../plugins/keywords'
 import objects from '../plugins/objects'
+import affiliations from '../plugins/affiliations'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
@@ -80,6 +81,7 @@ export default (props: PluginProps) => {
     keywords(props),
     bibliography(props),
     objects(props),
+    affiliations(),
     comment_annotation(props),
     paragraphs(),
     placeholder(),

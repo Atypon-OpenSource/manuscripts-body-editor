@@ -13,56 +13,209 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 import React from 'react'
 
-import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
-import ReactSubView from './ReactSubView'
 import BlockView from './block_view'
+import { affiliationsKey } from '../plugins/affiliations'
+import {
+  Capabilities,
+  PrimaryButton,
+  SecondaryButton,
+} from '@manuscripts/style-guide'
+import ReactSubView from './ReactSubView'
 
 export interface ContributorsProps extends EditableBlockProps {
   components: Record<string, React.ComponentType<unknown>>
   subscribeStore: unknown
+  getCapabilities: () => Capabilities
+  openAuthorEditing: () => void
+  selectAuthorForEditing: (authorId: string) => void
 }
 
 export class Contributors<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
-  // public initialise = () => {
-  //   // this.createDOM()
-  // }
+  public initialise = () => {
+    this.createDOM()
+    this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
+    this.createElement()
+    this.createGutter(
+      'action-gutter',
+      this.actionGutterButtons().filter(Boolean)
+    )
+    this.updateContents()
+  }
 
-  // public updateContents = () => {
-  //   console.log(this)
-  // }
+  public updateContents = () => {
+    this.updateClasses()
+    this.updateAttributes()
+    this.container.innerHTML = ''
+    this.buildAuthors()
+    this.createEditButton()
+    this.createLegend()
+  }
 
-  // public createDOM = () => {
-  //   this.dom = document.createElement('div')
-  //   this.dom.classList.add('contributors')
-  //   const can = this.props.getCapabilities()
-  //   const {
-  //     components: { AuthorsInlineViewContainer },
-  //     subscribeStore,
-  //   } = this.props
-  //   this.metadata = ReactSubView(
-  //     this.props,
-  //     AuthorsInlineViewContainer as React.FC<AuthorsViewProps>,
-  //     {
-  //       showAuthorEditButton: true,
-  //       disableEditButton: !can.editMetadata,
-  //       subscribe: subscribeStore,
-  //     },
-  //     this.node,
-  //     this.getPos,
-  //     this.view,
-  //     'metadata-container'
-  //   )
-  //   if (this.metadata) {
-  //     this.dom.appendChild(this.metadata)
-  //   }
-  // }
+  buildAuthors = () => {
+    const authors: ContributorNode[] = []
+    const authorsWrapper = document.createElement('div')
+    authorsWrapper.classList.add('contributors-list')
+
+    this.node.content?.forEach((node) => {
+      if (isContributorNode(node)) {
+        authors.push(node)
+      }
+    })
+
+    authors
+      .sort((a, b) => Number(a.attrs.priority) - Number(b.attrs.priority))
+      .forEach((author, i) => {
+        const jointAuthors = this.isJointFirstAuthor(authors, i)
+        authorsWrapper.appendChild(this.buildAuthor(author, jointAuthors))
+      })
+    this.container.appendChild(authorsWrapper)
+  }
+
+  container: HTMLElement
+  inner: HTMLElement
+
+  buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
+    const pluginState = affiliationsKey.getState(this.view.state)
+
+    const container = document.createElement('button')
+    container.classList.add('contributor')
+    container.setAttribute('id', node.attrs.id)
+    container.setAttribute('contenteditable', 'false')
+
+    const can = this.props.getCapabilities()
+
+    const disableEditButton = !can.editMetadata
+    const attrs = node.attrs as ContributorNode['attrs']
+
+    const { bibliographicName, isCorresponding, email, id } = attrs
+
+    container.addEventListener('click', (e) => {
+      e.preventDefault()
+      if (!disableEditButton) {
+        this.props.openAuthorEditing()
+        this.props.selectAuthorForEditing(id)
+      }
+    })
+
+    const name = this.buildNameLiteral(bibliographicName)
+    container.innerHTML = isCorresponding && email ? `${name} (${email})` : name
+
+    let noteText = ''
+    if (pluginState?.indexedAffiliationIds) {
+      attrs.affiliations.map((af) => {
+        const index = pluginState?.indexedAffiliationIds.get(af)
+        if (index) {
+          noteText += index.toString()
+        }
+      })
+    }
+
+    if (isJointFirstAuthor) {
+      container.appendChild(this.createNote('†', 'Joint contributor'))
+    }
+
+    if (noteText) {
+      container.appendChild(this.createNote(noteText))
+    }
+
+    if (attrs.isCorresponding) {
+      container.appendChild(this.createNote('*', 'Corresponding author'))
+    }
+
+    return container
+  }
+
+  createNote(text = '', title = '') {
+    const el = document.createElement('span')
+    el.innerHTML = text
+    if (title) {
+      el.setAttribute('title', title)
+    }
+    el.classList.add('contributor-note')
+    return el
+  }
+
+  initials = (given: string): string =>
+    given
+      ? given
+          .trim()
+          .split(' ')
+          .map((part) => part.substr(0, 1).toUpperCase() + '.')
+          .join('')
+      : ''
+
+  buildNameLiteral = ({ given = '', family = '', suffix = '' }) => {
+    if (!given && !family) {
+      return 'Unknown Author'
+    }
+    return [this.initials(given), family, suffix]
+      .filter((part) => part)
+      .join(' ')
+  }
+
+  public isJointFirstAuthor = (authors: ContributorNode[], index: number) => {
+    const author = index === 0 ? authors[index] : authors[index - 1]
+
+    return Boolean(author.attrs.isJointContributor)
+  }
+
+  public createElement = () => {
+    this.inner = document.createElement('div')
+    this.inner.classList.add('authors-container', 'block')
+    this.dom.appendChild(this.inner)
+
+    this.container = document.createElement('div')
+    this.container.classList.add('contributors')
+    this.inner.appendChild(this.container)
+  }
+
+  public createDOM = () => {
+    this.dom = document.createElement('div')
+    this.dom.classList.add('block-container', `block-${this.node.type.name}`)
+  }
+
+  createEditButton = () => {
+    const can = this.props.getCapabilities()
+    // this.props.openAuthorEditing
+    const button = ReactSubView(
+      this.props,
+      SecondaryButton,
+      {
+        mini: true,
+        onClick: this.props.openAuthorEditing,
+        className: 'edit-authors-button',
+        disabled: !can.editMetadata,
+        children: 'Edit Authors',
+      },
+      this.node,
+      this.getPos,
+      this.view
+    )
+    this.container.appendChild(button)
+  }
+
+  createLegend = () => {
+    const state = affiliationsKey.getState(this.view.state)
+    if (state?.contributors) {
+      const isThereJointContributor = state.contributors.find(
+        (contributor) => contributor.isJointContributor
+      )
+      if (isThereJointContributor) {
+        const element = document.createElement('p')
+        element.classList.add('contributors-legend')
+        element.innerHTML =
+          '<span class="symbol">†</span>These authors contributed equally to this work.'
+        this.container.appendChild(element)
+      }
+    }
+  }
 
   public ignoreMutation = () => true
 
