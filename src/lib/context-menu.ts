@@ -21,9 +21,9 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
+  Nodes,
   schema,
 } from '@manuscripts/transform'
-import { Fragment, Slice } from 'prosemirror-model'
 
 import { addComment, createBlock } from '../commands'
 import { PopperManager } from './popper'
@@ -47,11 +47,10 @@ interface Actions {
   setComment?: (comment?: CommentAnnotation) => void
 }
 
-interface SuppressOption {
-  attr: string
-  attrs: { [key: string]: boolean }
-  getPos: () => number
-  label: string
+type InsertableNodes = Nodes | 'subsection'
+
+const hasAny = <T>(set: Set<T>, ...items: T[]) => {
+  return items.some((i) => set.has(i))
 }
 
 export class ContextMenu {
@@ -59,11 +58,6 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
-
-  private suppressibleAttrs: Map<string, string> = new Map([
-    ['suppressHeader', 'Header'],
-    ['suppressFooter', 'Footer'],
-  ])
 
   public constructor(
     node: ManuscriptNode,
@@ -78,46 +72,55 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
-    let _after = after
-    const { nodes } = this.view.state.schema
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
     // we don`t want to add section after 'REFERENCES'
-    _after = isInBibliographySection($pos) ? false : _after
-    const insertPos = _after ? $pos.after($pos.depth) : $pos.before($pos.depth)
+    if (isInBibliographySection($pos)) {
+      after = false
+    }
+    const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
     const endPos = $pos.end()
-    const insertableTypes = this.insertableTypes(_after, insertPos, endPos)
+    const types = this.insertableTypes(after, insertPos, endPos)
 
-    if (this.showMenuSection(insertableTypes, ['section', 'subsection'])) {
+    const insertNode = (type: ManuscriptNodeType, pos?: number) => {
+      const { state, dispatch } = this.view
+
+      if (pos === undefined) {
+        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+      }
+
+      createBlock(type, pos, state, dispatch)
+    }
+
+    if (hasAny(types, 'section', 'subsection')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const labelPosition = _after ? 'After' : 'Before'
           const sectionTitle = $pos.node($pos.depth).child(0).textContent
           const itemTitle = sectionTitle
             ? `“${this.trimTitle(sectionTitle, 30)}”`
             : 'This Section'
-          const itemLabel = `New ${sectionLevel(
-            $pos.depth - 1
-          )} ${labelPosition} ${itemTitle}`
 
-          if (insertableTypes.section) {
+          if (types.has('section')) {
+            const labelPosition = after ? 'After' : 'Before'
+            const level = sectionLevel($pos.depth - 1)
+            const label = `New ${level} ${labelPosition} ${itemTitle}`
+
             section.appendChild(
-              this.createMenuItem(itemLabel, () => {
-                this.addBlock(nodes.section, _after, insertPos)
+              this.createMenuItem(label, () => {
+                insertNode(schema.nodes.section, insertPos)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.subsection) {
-            const subItemLabel = `New ${sectionLevel(
-              $pos.depth
-            )} to ${itemTitle}`
+          if (types.has('subsection')) {
+            const level = sectionLevel($pos.depth)
+            const label = `New ${level} to ${itemTitle}`
 
             section.appendChild(
-              this.createMenuItem(subItemLabel, () => {
-                this.addBlock(nodes.section, _after, endPos)
+              this.createMenuItem(label, () => {
+                insertNode(schema.nodes.section, endPos)
                 popper.destroy()
               })
             )
@@ -126,37 +129,31 @@ export class ContextMenu {
       )
     }
 
-    if (
-      this.showMenuSection(insertableTypes, [
-        'paragraph',
-        'orderedList',
-        'bulletList',
-      ])
-    ) {
+    if (hasAny(types, 'paragraph', 'ordered_list', 'bullet_list')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (insertableTypes.paragraphElement) {
+          if (types.has('paragraph')) {
             section.appendChild(
               this.createMenuItem('Paragraph', () => {
-                this.addBlock(nodes.paragraph, _after)
+                insertNode(schema.nodes.paragraph)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.orderedList) {
+          if (types.has('ordered_list')) {
             section.appendChild(
               this.createMenuItem('Numbered List', () => {
-                this.addBlock(nodes.ordered_list, _after)
+                insertNode(schema.nodes.ordered_list)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.bulletList) {
+          if (types.has('bullet_list')) {
             section.appendChild(
               this.createMenuItem('Bullet List', () => {
-                this.addBlock(nodes.bullet_list, _after)
+                insertNode(schema.nodes.bullet_list)
                 popper.destroy()
               })
             )
@@ -165,47 +162,31 @@ export class ContextMenu {
       )
     }
 
-    if (
-      this.showMenuSection(insertableTypes, [
-        'figure',
-        'tableElement',
-        'equationElement',
-        'listingElement',
-      ])
-    ) {
+    if (hasAny(types, 'figure_element', 'table_element', 'equation_element')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (insertableTypes.figureElement) {
+          if (types.has('figure_element')) {
             section.appendChild(
               this.createMenuItem('Figure Panel', () => {
-                this.addBlock(nodes.figure_element, _after)
+                insertNode(schema.nodes.figure_element)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.tableElement) {
+          if (types.has('table_element')) {
             section.appendChild(
               this.createMenuItem('Table', () => {
-                this.addBlock(nodes.table_element, _after)
+                insertNode(schema.nodes.table_element)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.equationElement) {
+          if (types.has('equation_element')) {
             section.appendChild(
               this.createMenuItem('Equation', () => {
-                this.addBlock(nodes.equation_element, _after)
-                popper.destroy()
-              })
-            )
-          }
-
-          if (insertableTypes.listingElement) {
-            section.appendChild(
-              this.createMenuItem('Listing', () => {
-                this.addBlock(nodes.listing_element, _after)
+                insertNode(schema.nodes.equation_element)
                 popper.destroy()
               })
             )
@@ -214,27 +195,22 @@ export class ContextMenu {
       )
     }
 
-    if (
-      this.showMenuSection(insertableTypes, [
-        'blockquoteElement',
-        'pullquoteElement',
-      ])
-    ) {
+    if (hasAny(types, 'blockquote_element', 'pullquote_element')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (insertableTypes.blockquoteElement) {
+          if (types.has('blockquote_element')) {
             section.appendChild(
               this.createMenuItem('Block Quote', () => {
-                this.addBlock(nodes.blockquote_element, _after)
+                insertNode(schema.nodes.blockquote_element)
                 popper.destroy()
               })
             )
           }
 
-          if (insertableTypes.pullquoteElement) {
+          if (types.has('pullquote_element')) {
             section.appendChild(
               this.createMenuItem('Pull Quote', () => {
-                this.addBlock(nodes.pullquote_element, _after)
+                insertNode(schema.nodes.pullquote_element)
                 popper.destroy()
               })
             )
@@ -257,26 +233,24 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const nodeType = this.node.type
+    const type = this.node.type
 
-    const nodes = schema.nodes
-
-    if (listTypes.includes(nodeType)) {
+    if (listTypes.includes(type)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (nodeType === nodes.bullet_list) {
+          if (type === schema.nodes.bullet_list) {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(nodes.ordered_list)
+                this.changeNodeType(schema.nodes.ordered_list)
                 popper.destroy()
               })
             )
           }
 
-          if (nodeType === nodes.ordered_list) {
+          if (type === schema.nodes.ordered_list) {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
-                this.changeNodeType(nodes.bullet_list)
+                this.changeNodeType(schema.nodes.bullet_list)
                 popper.destroy()
               })
             )
@@ -300,54 +274,17 @@ export class ContextMenu {
       )
     }
 
-    const suppressOptions = this.buildSuppressOptions()
-    if (suppressOptions.length) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          for (const option of suppressOptions) {
-            // TODO: parent node attrs
-            const label = option.attrs[option.attr]
-              ? `Show ${option.label}`
-              : `Hide ${option.label}`
-
-            section.appendChild(
-              this.createMenuItem(label, () => {
-                this.toggleNodeAttr(option)
-                popper.destroy()
-              })
-            )
-          }
-        })
-      )
-    }
-
-    if (nodeType === nodes.paragraph && $pos.parent.type === nodes.section) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          section.appendChild(
-            this.createMenuItem(
-              `Split to New ${sectionLevel($pos.depth)}`,
-              () => {
-                this.splitSection()
-                popper.destroy()
-              }
-            )
-          )
-        })
-      )
-    }
-
     if (
-      !readonlyTypes.includes(nodeType) &&
+      !readonlyTypes.includes(type) &&
       !readonlyTypes.includes($pos.parent.type)
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const nodeName = nodeNames.get(nodeType) || ''
+          const nodeName = nodeNames.get(type) || ''
 
           section.appendChild(
             this.createMenuItem(`Delete ${nodeName}`, () => {
-              this.deleteNode(nodeType)
+              this.deleteNode(type)
               popper.destroy()
             })
           )
@@ -362,38 +299,6 @@ export class ContextMenu {
     })
 
     this.addPopperEventListeners()
-  }
-
-  private addBlock = (
-    nodeType: ManuscriptNodeType,
-    after: boolean,
-    position?: number
-  ) => {
-    const { state, dispatch } = this.view
-
-    if (position === undefined) {
-      position = after ? this.getPos() + this.node.nodeSize : this.getPos()
-    }
-
-    createBlock(nodeType, position, state, dispatch)
-  }
-
-  private canAddBlock = (
-    nodeType: ManuscriptNodeType,
-    after: boolean,
-    position?: number
-  ) => {
-    const {
-      state: { doc },
-    } = this.view
-
-    if (position === undefined) {
-      position = after ? this.getPos() + this.node.nodeSize : this.getPos()
-    }
-
-    const $position = doc.resolve(position)
-    const index = $position.index()
-    return $position.parent.canReplaceWith(index, index, nodeType)
   }
 
   private createMenuItem = (contents: string, handler: EventListener) => {
@@ -420,28 +325,45 @@ export class ContextMenu {
     after: boolean,
     insertPos: number,
     endPos: number
-  ) => {
-    const { nodes } = this.view.state.schema
+  ): Set<InsertableNodes> => {
+    const { nodes } = schema
 
-    return {
-      section: this.canAddBlock(nodes.section, after, insertPos),
-      subsection: this.canAddBlock(nodes.section, after, endPos),
-      paragraphElement: this.canAddBlock(nodes.paragraph, after),
-      orderedList: this.canAddBlock(nodes.ordered_list, after),
-      bulletList: this.canAddBlock(nodes.bullet_list, after),
-      figureElement: this.canAddBlock(nodes.figure_element, after),
-      tableElement: this.canAddBlock(nodes.table_element, after),
-      equationElement: this.canAddBlock(nodes.equation_element, after),
-      listingElement: this.canAddBlock(nodes.listing_element, after),
-      blockquoteElement: this.canAddBlock(nodes.blockquote_element, after),
-      pullquoteElement: this.canAddBlock(nodes.pullquote_element, after),
+    const insertable = new Set<InsertableNodes>()
+
+    const doc = this.view.state.doc
+
+    const getPos = (pos?: number) => {
+      if (pos === undefined) {
+        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+      }
+      return pos
     }
-  }
 
-  private showMenuSection = (
-    insertableTypes: { [key: string]: boolean },
-    types: string[]
-  ) => types.some((type) => insertableTypes[type])
+    const canInsertAt = (type: ManuscriptNodeType, pos?: number) => {
+      const $pos = doc.resolve(getPos(pos))
+      const index = $pos.index()
+      return $pos.parent.canReplaceWith(index, index, type)
+    }
+
+    const checkNode = (node: Nodes, pos?: number) => {
+      canInsertAt(nodes[node], pos) && insertable.add(node)
+    }
+
+    if (canInsertAt(nodes.section, endPos)) {
+      insertable.add('subsection')
+    }
+    checkNode('section', insertPos)
+    checkNode('paragraph')
+    checkNode('ordered_list')
+    checkNode('bullet_list')
+    checkNode('figure_element')
+    checkNode('table_element')
+    checkNode('equation_element')
+    checkNode('blockquote_element')
+    checkNode('pullquote_element')
+
+    return insertable
+  }
 
   private changeNodeType = (nodeType: ManuscriptNodeType) => {
     this.view.dispatch(
@@ -493,61 +415,6 @@ export class ContextMenu {
 
   private resolvePos = () => this.view.state.doc.resolve(this.getPos())
 
-  private splitSection = () => {
-    const { schema, tr } = this.view.state
-
-    const from = this.getPos()
-    const to = from + this.node.nodeSize
-
-    const slice = new Slice(
-      Fragment.from([
-        schema.nodes.section.create(),
-        schema.nodes.section.create({}, [
-          schema.nodes.section_title.create(),
-          this.node,
-        ]),
-      ]),
-      1,
-      1
-    )
-
-    this.view.dispatch(tr.replaceRange(from, to, slice))
-  }
-
-  private toggleNodeAttr = (option: SuppressOption) => {
-    const { getPos, attr, attrs } = option
-
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(getPos(), undefined, {
-        ...attrs,
-        [attr]: !attrs[attr],
-      })
-    )
-  }
-
-  private buildSuppressOptions = () => {
-    const items: SuppressOption[] = []
-
-    let attrs = this.node.attrs
-    // TODO:: this is just a hacky workaround, we should remove it when add suppressTitle to manuscripts-examples
-    if (this.node.attrs.suppressTitle === undefined) {
-      attrs = Object.assign(this.node.attrs, { suppressTitle: false })
-    }
-
-    for (const [attr, label] of this.suppressibleAttrs.entries()) {
-      if (attr in attrs) {
-        items.push({
-          attr,
-          attrs,
-          label,
-          getPos: this.getPos,
-        })
-      }
-    }
-
-    return items
-  }
-
   private addPopperEventListeners = () => {
     const mouseListener: EventListener = () => {
       window.requestAnimationFrame(() => {
@@ -568,6 +435,6 @@ export class ContextMenu {
   }
 
   private trimTitle = (title: string, max: number) => {
-    return title.length > max ? title.substr(0, max) + '…' : title
+    return title.length > max ? title.substring(0, max) + '…' : title
   }
 }

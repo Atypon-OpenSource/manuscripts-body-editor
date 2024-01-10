@@ -16,20 +16,15 @@
 
 export * from './citation-sources'
 export * from './commands'
-export * from './components/application-menu'
-export { DialogController, DialogNames } from './components/dialog'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { OutlineManuscript } from './components/outline/OutlineManuscript'
-export {
-  ManuscriptToolbar,
-  ToolbarButtonConfig,
-} from './components/toolbar/ManuscriptToolbar'
+export { LevelSelector } from './components/toolbar/LevelSelector'
 export * from './menus'
 export { ChangeReceiver } from './types'
 export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
-export { toolbar } from './toolbar'
+export * from './toolbar'
 export * from './plugins/highlight'
 export {
   commentScroll,

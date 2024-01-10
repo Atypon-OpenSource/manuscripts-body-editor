@@ -17,41 +17,59 @@
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { wrapInList } from 'prosemirror-schema-list'
+import { EditorState } from 'prosemirror-state'
+import { ReactNode } from 'react'
 
 import {
   addComment,
   blockActive,
   canInsert,
+  Dispatch,
   insertBlock,
   insertInlineCitation,
   markActive,
 } from './commands'
-import { ToolbarConfig } from './components/toolbar/ManuscriptToolbar'
-import { OrderListSelector } from './components/toolbar/OrderListSelector'
 import icons from './icons'
-import { skipTrackingChanges } from './keys/list'
+import { skipCommandTracking } from './keys/list'
+
+export interface ToolbarButtonConfig {
+  title: string
+  content: ReactNode
+  isActive?: (state: EditorState) => boolean
+  run: (state: EditorState, dispatch: Dispatch, attrs?: any) => void
+  isEnabled: (state: EditorState) => boolean
+  options?: {
+    [key: string]: (state: EditorState, dispatch: Dispatch, attrs?: any) => void
+  }
+}
+
+export interface ToolbarConfig {
+  [key: string]: {
+    [key: string]: ToolbarButtonConfig
+  }
+}
 
 export const toolbar: ToolbarConfig = {
   style: {
     bold: {
       title: 'Toggle bold',
       content: icons.bold,
-      active: markActive(schema.marks.bold),
-      enable: toggleMark(schema.marks.bold),
+      isActive: markActive(schema.marks.bold),
+      isEnabled: toggleMark(schema.marks.bold),
       run: toggleMark(schema.marks.bold),
     },
     italic: {
       title: 'Toggle italic',
       content: icons.italic,
-      active: markActive(schema.marks.italic),
-      enable: toggleMark(schema.marks.italic),
+      isActive: markActive(schema.marks.italic),
+      isEnabled: toggleMark(schema.marks.italic),
       run: toggleMark(schema.marks.italic),
     },
     underline: {
       title: 'Toggle underline',
       content: icons.underline,
-      active: markActive(schema.marks.underline),
-      enable: toggleMark(schema.marks.underline),
+      isActive: markActive(schema.marks.underline),
+      isEnabled: toggleMark(schema.marks.underline),
       run: toggleMark(schema.marks.underline),
     },
   },
@@ -59,15 +77,15 @@ export const toolbar: ToolbarConfig = {
     subscript: {
       title: 'Toggle subscript',
       content: icons.subscript,
-      active: markActive(schema.marks.subscript),
-      enable: toggleMark(schema.marks.subscript),
+      isActive: markActive(schema.marks.subscript),
+      isEnabled: toggleMark(schema.marks.subscript),
       run: toggleMark(schema.marks.subscript),
     },
     superscript: {
       title: 'Toggle superscript',
       content: icons.superscript,
-      active: markActive(schema.marks.superscript),
-      enable: toggleMark(schema.marks.superscript),
+      isActive: markActive(schema.marks.superscript),
+      isEnabled: toggleMark(schema.marks.superscript),
       run: toggleMark(schema.marks.superscript),
     },
   },
@@ -75,33 +93,60 @@ export const toolbar: ToolbarConfig = {
     bullet_list: {
       title: 'Wrap in bullet list',
       content: icons.bullet_list,
-      active: blockActive(schema.nodes.bullet_list),
-      enable: wrapInList(schema.nodes.bullet_list),
-      run: skipTrackingChanges(wrapInList(schema.nodes.bullet_list)),
+      isActive: blockActive(schema.nodes.bullet_list),
+      isEnabled: wrapInList(schema.nodes.bullet_list),
+      run: skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
     },
     ordered_list: {
       title: 'Wrap in ordered list',
-      active: blockActive(schema.nodes.ordered_list),
-      enable: wrapInList(schema.nodes.ordered_list),
-      run: skipTrackingChanges(
+      content: icons.ordered_list,
+      isActive: blockActive(schema.nodes.ordered_list),
+      isEnabled: wrapInList(schema.nodes.ordered_list),
+      run: skipCommandTracking(
         wrapInList(schema.nodes.ordered_list, {
           listStyleType: 'order',
         })
       ),
-      Component: OrderListSelector,
+      options: {
+        'order': skipCommandTracking(
+          wrapInList(schema.nodes.ordered_list, {
+            listStyleType: 'order',
+          })
+        ),
+        'alpha-upper': skipCommandTracking(
+          wrapInList(schema.nodes.ordered_list, {
+            listStyleType: 'alpha-upper',
+          })
+        ),
+        'alpha-lower': skipCommandTracking(
+          wrapInList(schema.nodes.ordered_list, {
+            listStyleType: 'alpha-lower',
+          })
+        ),
+        'roman-upper': skipCommandTracking(
+          wrapInList(schema.nodes.ordered_list, {
+            listStyleType: 'roman-upper',
+          })
+        ),
+        'roman-lower': skipCommandTracking(
+          wrapInList(schema.nodes.ordered_list, {
+            listStyleType: 'roman-lower',
+          })
+        ),
+      },
     },
   },
   inline: {
     citation: {
       title: 'Insert citation',
       content: icons.citation,
-      enable: canInsert(schema.nodes.citation),
+      isEnabled: canInsert(schema.nodes.citation),
       run: insertInlineCitation,
     },
-    highlight: {
+    comment: {
       title: 'Insert comment',
       content: icons.highlight,
-      enable: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
+      isEnabled: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
       run: addComment,
     },
   },
@@ -109,26 +154,20 @@ export const toolbar: ToolbarConfig = {
     figure_element: {
       title: 'Insert figure',
       content: icons.figure_element,
-      enable: canInsert(schema.nodes.figure_element),
+      isEnabled: canInsert(schema.nodes.figure_element),
       run: insertBlock(schema.nodes.figure_element),
     },
     table_element: {
       title: 'Insert table',
       content: icons.table_element,
-      enable: canInsert(schema.nodes.table_element),
+      isEnabled: canInsert(schema.nodes.table_element),
       run: insertBlock(schema.nodes.table_element),
     },
     equation_element: {
       title: 'Insert equation',
       content: icons.equation_element,
-      enable: canInsert(schema.nodes.equation_element),
+      isEnabled: canInsert(schema.nodes.equation_element),
       run: insertBlock(schema.nodes.equation_element),
-    },
-    listing_element: {
-      title: 'Insert listing',
-      content: icons.listing_element,
-      enable: canInsert(schema.nodes.listing_element),
-      run: insertBlock(schema.nodes.listing_element),
     },
   },
 }
