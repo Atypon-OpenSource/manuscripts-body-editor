@@ -943,6 +943,10 @@
   font-size: 14px;
 }
 
+.ProseMirror .table-footer > div:first-child {
+  padding-top: 8px;
+}
+
 .ProseMirror .table-footer > div:not(:first-child)::before {
   content: '';
   border-bottom: 1px dashed #C9C9C9;
@@ -951,12 +955,12 @@
 }
 
 .ProseMirror .table-footer > div {
-  counter-reset: footnote;
+  counter-reset: table_footnote;
 }
 
 .ProseMirror .table-footer > div > div > p::before {
-  counter-increment: footnote;
-  content: counter(footnote);
+  counter-increment: table_footnote;
+  content: counter(table_footnote);
   display: inline-block;
   position: relative;
   cursor: pointer;
