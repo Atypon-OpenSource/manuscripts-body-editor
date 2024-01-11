@@ -27,7 +27,7 @@ export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {
     setItems((s) => {
       const copy = [...s]
       const index = copy.findIndex((i) => i._id === item._id)
-      if (index) {
+      if (index >= 0) {
         copy[index] = item
       } else {
         copy.push(item)
