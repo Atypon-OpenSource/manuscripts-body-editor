@@ -162,22 +162,13 @@ export class ContextMenu {
       )
     }
 
-    if (hasAny(types, 'figure_element', 'table_element', 'equation_element')) {
+    if (hasAny(types, 'figure_element', 'equation_element')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (types.has('figure_element')) {
             section.appendChild(
               this.createMenuItem('Figure Panel', () => {
                 insertNode(schema.nodes.figure_element)
-                popper.destroy()
-              })
-            )
-          }
-
-          if (types.has('table_element')) {
-            section.appendChild(
-              this.createMenuItem('Table', () => {
-                insertNode(schema.nodes.table_element)
                 popper.destroy()
               })
             )
