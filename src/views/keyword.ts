@@ -26,7 +26,7 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-const icon =
+const deleteIcon =
   '<svg width="8px" height="8px" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\n' +
   '    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n' +
   '        <g fill="#6E6E6E">\n' +
@@ -62,7 +62,7 @@ export class KeywordView
 
     if (can.editArticle) {
       const svg = new DOMParser()
-        .parseFromString(icon, 'image/svg+xml')
+        .parseFromString(deleteIcon, 'image/svg+xml')
         .querySelector('svg') as SVGElement
       svg.classList.add('delete-keyword')
       svg.addEventListener('click', this.showConfirmationDialog)
@@ -77,10 +77,17 @@ export class KeywordView
     this.dialog?.remove()
 
     const keyword = this.node as KeywordNode
+    const pos = this.getPos()
+
+    const handleDelete = () => {
+      const tr = this.view.state.tr
+      tr.delete(pos, pos + keyword.nodeSize)
+      this.view.dispatch(tr)
+    }
 
     const componentProps: DeleteKeywordDialogProps = {
       keyword: keyword.textContent,
-      handleDelete: () => this.deleteNode(keyword.attrs.id),
+      handleDelete: handleDelete,
     }
 
     this.dialog = ReactSubView(
