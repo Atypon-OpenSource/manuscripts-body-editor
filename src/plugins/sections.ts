@@ -41,6 +41,11 @@ const preventTitleEdit = (tr: Transaction) => {
   const isInRange = (start: number, end: number, position: number) =>
     position >= start && position <= end
 
+  // Click on 'Delete section' in the context menu should not be prevented
+  if (tr.getMeta('fromContextMenu')) {
+    return dontPrevent
+  }
+
   if (tr.getMeta('origin') === trackChangesPluginKey) {
     return dontPrevent
   }
@@ -80,7 +85,7 @@ const preventTitleEdit = (tr: Transaction) => {
                   isInRange(inDocPos, inDocPos + childNode.nodeSize, fromA))
               ) {
                 dontPrevent = false
-                return false
+                return dontPrevent
               }
             })
           }

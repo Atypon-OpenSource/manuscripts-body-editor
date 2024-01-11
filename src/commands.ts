@@ -489,7 +489,8 @@ export const insertGraphicalAbstract = (
   }
 
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
-
+  // Insert Graphical abstract at the end of abstracts section
+  const pos = abstracts.pos + abstracts.node.content.size + 1
   const section = schema.nodes.graphical_abstract_section.createAndFill(
     { category: 'MPSectionCategory:abstract-graphical' },
     [
@@ -497,8 +498,6 @@ export const insertGraphicalAbstract = (
       createAndFillFigureElement(state),
     ]
   ) as GraphicalAbstractSectionNode
-
-  const pos = abstracts.pos + abstracts.node.nodeSize + 1
 
   const tr = state.tr.insert(pos, section)
 
