@@ -22,7 +22,6 @@ import {
   ManuscriptNodeView,
   ManuscriptTransaction,
 } from '@manuscripts/transform'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
 export type EditorAction = (
@@ -53,6 +52,6 @@ export interface SyncError {
   _id: string
 }
 
-export type TrackableAttributes<T extends ProsemirrorNode> = T['attrs'] & {
+export type TrackableAttributes<T extends ManuscriptNode> = T['attrs'] & {
   dataTracked?: TrackedAttrs[]
 }

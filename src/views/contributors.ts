@@ -29,7 +29,7 @@ export interface ContributorsProps extends EditableBlockProps {
   selectAuthorForEditing: (authorId: string) => void
 }
 
-export class Contributors<
+export class ContributorsView<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
   public initialise = () => {
@@ -224,4 +224,4 @@ export class Contributors<
   public stopEvent = () => true
 }
 
-export default createNodeView(Contributors)
+export default createNodeView(ContributorsView)

@@ -84,7 +84,12 @@ export default () => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        return buildPluginState(newState.doc)
+        const prevPluginState = affiliationsKey.getState(oldState)
+        if (!tr.docChanged && prevPluginState) {
+          return prevPluginState
+        } else {
+          return buildPluginState(newState.doc)
+        }
       },
     },
 

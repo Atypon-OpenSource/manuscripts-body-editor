@@ -17,11 +17,11 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 
-export class Affiliations<
+export class AffiliationsView<
   PropsType extends EditableBlockProps
 > extends BlockView<PropsType> {
   public ignoreMutation = () => true
   public stopEvent = () => true
 }
 
-export default createNodeView(Affiliations)
+export default createNodeView(AffiliationsView)
