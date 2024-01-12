@@ -639,11 +639,6 @@ Next levels are shifted 'up' by 1
   align-items: center;
 }
 
-.ProseMirror .inserted.accepted,
-.ProseMirror .set_attrs.accepted {
-  background: #bffca7;
-  text-decoration: none;
-}
 .attrs-popper-button-active,
 .attrs-track-mark:hover .attrs-popper-button {
   display: inline-flex;
@@ -678,23 +673,57 @@ Next levels are shifted 'up' by 1
   right: 0;
 }
 
+.ProseMirror span.highlight {
+  background-color: var(--highlight-bg-color);
+}
+
+.ProseMirror {
+  --pending-bg-color: #e6f7fc;
+  --accepted-bg-color: #d1edaf;
+  --deleted-color: #f35143;
+  --highlight-bg-color: #ffeebf;
+  --selection-bg-color: #bce7f6;
+}
+
+.ProseMirror ::selection {
+  background: var(--selection-bg-color);
+}
+
 .ProseMirror .inserted.pending {
-  background: #ddf3fa;
+  background: var(--pending-bg-color);
   text-decoration: none;
 }
-.ProseMirror .inserted.pending,
-.ProseMirror .set_attrs.pending {
+.ProseMirror .inserted.accepted {
+  background: var(--accepted-bg-color);
   text-decoration: none;
 }
 .ProseMirror .inserted.rejected {
   display: none;
 }
+
+.ProseMirror .set_attrs.pending {
+  background: var(--pending-bg-color);
+  text-decoration: none;
+}
+.ProseMirror .set_attrs.accepted {
+  background: var(--accepted-bg-color);
+  text-decoration: none;
+}
+
+.ProseMirror .deleted.pending {
+  background: var(--pending-bg-color);
+  color: var(--deleted-color);
+  text-decoration: line-through;
+}
 .ProseMirror .deleted.accepted {
-  background: #bffca7;
+  background: var(--accepted-bg-color);
+  color: var(--deleted-color);
+  text-decoration: line-through;
 }
 .ProseMirror .deleted.rejected {
   text-decoration: none;
 }
+
 .affiliation[data-track-status='pending'],
 .contributor[data-track-status='pending'],
 .ProseMirror .inserted.pending,
