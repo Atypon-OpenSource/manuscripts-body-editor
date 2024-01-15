@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * This plugin handles indexing of affiliations that are supposed to be index in accordance with their order in the document.
+ * It also provides that information to components that display that indexing.
+ */
+
 import {
   AffiliationNode,
   ContributorNode,
