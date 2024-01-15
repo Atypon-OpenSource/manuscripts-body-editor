@@ -33,7 +33,7 @@ import { EditableBlockProps } from './editable_block'
 
 const createBibliographySection = (bibItem?: ProsemirrorNode) =>
   schema.nodes.bibliography_section.createAndFill({}, [
-    schema.nodes.section_title.create({}, schema.text('Bibliography')),
+    schema.nodes.section_title.create({}, schema.text('References')),
     schema.nodes.bibliography_element.create({}, bibItem ? [bibItem] : []),
   ]) as ManuscriptNode
 
