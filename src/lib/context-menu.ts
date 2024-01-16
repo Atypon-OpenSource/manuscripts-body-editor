@@ -186,22 +186,13 @@ export class ContextMenu {
       )
     }
 
-    if (hasAny(types, 'blockquote_element', 'pullquote_element')) {
+    if (hasAny(types, 'blockquote_element')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (types.has('blockquote_element')) {
             section.appendChild(
               this.createMenuItem('Block Quote', () => {
                 insertNode(schema.nodes.blockquote_element)
-                popper.destroy()
-              })
-            )
-          }
-
-          if (types.has('pullquote_element')) {
-            section.appendChild(
-              this.createMenuItem('Pull Quote', () => {
-                insertNode(schema.nodes.pullquote_element)
                 popper.destroy()
               })
             )
