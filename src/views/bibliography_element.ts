@@ -64,8 +64,8 @@ export class BibliographyElementBlockView<
       items: Array.from(bib.bibliographyItems.values()),
       citationCounts: bib.citationCounts,
       item: bib.bibliographyItems.get(id),
-      handleSave: this.handleSave,
-      handleDelete: this.handleDelete,
+      onSave: this.handleSave,
+      onDelete: this.handleDelete,
     }
 
     this.editor = ReactSubView(

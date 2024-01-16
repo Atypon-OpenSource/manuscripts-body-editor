@@ -23,7 +23,7 @@ export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {
   const [items, setItems] = useState(props.items)
 
   const handleSave = (item: BibliographyItem) => {
-    props.handleSave(item)
+    props.onSave(item)
     setItems((s) => {
       const copy = [...s]
       const index = copy.findIndex((i) => i._id === item._id)
@@ -37,7 +37,7 @@ export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {
   }
 
   const handleDelete = (item: BibliographyItem) => {
-    props.handleDelete(item)
+    props.onDelete(item)
     setItems((s) => s.filter((i) => i._id !== item._id))
   }
 
@@ -45,8 +45,8 @@ export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {
     <CitationEditor
       {...props}
       items={items}
-      handleSave={handleSave}
-      handleDelete={handleDelete}
+      onSave={handleSave}
+      onDelete={handleDelete}
     />
   )
 }

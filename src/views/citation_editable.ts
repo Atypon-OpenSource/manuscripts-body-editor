@@ -37,6 +37,7 @@ import { TextSelection } from 'prosemirror-state'
 import { findChildren, findChildrenByType } from 'prosemirror-utils'
 
 import { crossref } from '../citation-sources'
+import { isDeleted } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { CitationEditorWrapper } from './CitationEditorWrapper'
@@ -55,12 +56,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   private editor: HTMLElement
 
   public selectNode = () => {
-    const isDeleted = !!this.node.attrs.dataTracked?.find(
-      ({ operation, status }: { operation: string; status: string }) =>
-        operation === 'delete' && status !== 'rejected'
-    )
-
-    if (!isDeleted) {
+    if (!isDeleted(this.node)) {
       this.showPopper()
       this.dom.classList.add('ProseMirror-selectednode')
     }
@@ -85,17 +81,19 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     const items = Array.from(bib.bibliographyItems.values())
 
     if (can.editArticle) {
+      const query = this.node.attrs.selectedText
       const componentProps: CitationEditorProps = {
+        query,
         rids,
         items,
         citationCounts: bib.citationCounts,
         sources: [crossref],
-        handleCite: this.handleCite,
-        handleUncite: this.handleUncite,
-        handleSave: this.handleSave,
-        handleDelete: this.handleDelete,
-        handleComment: this.handleComment,
-        handleCancel: this.handleCancel,
+        onCite: this.handleCite,
+        onUncite: this.handleUncite,
+        onSave: this.handleSave,
+        onDelete: this.handleDelete,
+        onComment: this.handleComment,
+        onCancel: this.handleCancel,
         canEdit: can.editCitationsAndRefs,
       }
 

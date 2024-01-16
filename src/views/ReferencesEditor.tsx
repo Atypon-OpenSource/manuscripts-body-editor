@@ -22,7 +22,7 @@ import React, { useState } from 'react'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
-  'isOpen' | 'handleCancel'
+  'isOpen' | 'onCancel'
 >
 
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
@@ -30,7 +30,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [items, setItems] = useState(props.items)
 
   const handleSave = (item: BibliographyItem) => {
-    props.handleSave(item)
+    props.onSave(item)
     setItems((s) => {
       const copy = [...s]
       const index = copy.findIndex((i) => i._id === item._id)
@@ -44,7 +44,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   }
 
   const handleDelete = (item: BibliographyItem) => {
-    props.handleDelete(item)
+    props.onDelete(item)
     setItems((s) => s.filter((i) => i._id !== item._id))
   }
 
@@ -52,10 +52,10 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
     <ReferencesModal
       {...props}
       isOpen={isOpen}
-      handleCancel={() => setOpen(false)}
+      onCancel={() => setOpen(false)}
       items={items}
-      handleSave={handleSave}
-      handleDelete={handleDelete}
+      onSave={handleSave}
+      onDelete={handleDelete}
     />
   )
 }
