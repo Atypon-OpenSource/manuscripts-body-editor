@@ -951,7 +951,7 @@
   content: '';
   border-bottom: 1px dashed #C9C9C9;
   display: block;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .ProseMirror .table-footer > div {
@@ -974,11 +974,11 @@
   margin-top: 0px;
 }
 
-/* .ProseMirror .table-footer > div > div > p:focus {
+.ProseMirror .table-footer > div > div.footnote-selected {
   padding: 8px 0 8px 0;
   border: 1px solid #bce7f6;
   background-color: #f2fbfc;
-} */
+}
 
 .ProseMirror .footnote-label {
   vertical-align: super;
