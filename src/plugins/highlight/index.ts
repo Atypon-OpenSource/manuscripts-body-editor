@@ -71,7 +71,6 @@ const buildPluginState = (doc: ManuscriptNode): HighlightPluginState => {
       Decoration.inline(h.start, h.end, {
         nodeName: 'span',
         class: 'highlight',
-        style: `background: rgba(250, 224, 150, 0.6)`,
       })
     )
   )
