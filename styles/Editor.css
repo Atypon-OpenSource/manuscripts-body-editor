@@ -958,7 +958,7 @@
   counter-reset: table_footnote;
 }
 
-.ProseMirror .table-footer > div > div > p::before {
+.ProseMirror .table-footer > div p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -969,12 +969,12 @@
   margin-right: 4px;
 }
 
-.ProseMirror .table-footer > div > div > p {
+.ProseMirror .table-footer > div p {
   margin-bottom: 0px;
   margin-top: 0px;
 }
 
-.ProseMirror .table-footer > div > div.footnote-selected {
+.ProseMirror .table-footer .footnote-selected {
   padding: 8px 0 8px 0;
   border: 1px solid #bce7f6;
   background-color: #f2fbfc;
