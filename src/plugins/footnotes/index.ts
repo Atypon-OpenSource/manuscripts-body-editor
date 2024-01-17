@@ -19,9 +19,11 @@ import {
   isFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { findParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 interface PluginState {
@@ -155,6 +157,28 @@ export default () => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
+
+        const paragraph = findParentNodeOfType(schema.nodes.paragraph)(
+          state.selection
+        )
+
+        const generalFootnoteParent = findParentNodeOfType(
+          schema.nodes.table_element_footer
+        )(state.selection)
+
+        const isGeneralFootnoteNode = paragraph && generalFootnoteParent
+
+        if (isGeneralFootnoteNode) {
+          decorations.push(
+            Decoration.node(
+              paragraph.pos,
+              paragraph.pos + paragraph.node.nodeSize,
+              {
+                class: 'footnote-selected',
+              }
+            )
+          )
+        }
 
         const { labels } = footnotesKey.getState(state) as PluginState
         if (labels) {
