@@ -15,7 +15,9 @@
  */
 import { BibliographyItem } from '@manuscripts/json-schema'
 import { ReferencesModal, ReferencesModalProps } from '@manuscripts/style-guide'
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
+
+import { arrayReducer } from '../lib/array-reducer'
 
 //The purpose of this component is to make items stateful, so that
 //the component refreshes on updates
@@ -25,27 +27,26 @@ export type ReferencesEditorProps = Omit<
   'isOpen' | 'onCancel'
 >
 
+const itemsReducer = arrayReducer<BibliographyItem>((a, b) => a._id === b._id)
+
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [isOpen, setOpen] = useState(true)
-  const [items, setItems] = useState(props.items)
+  const [items, dispatch] = useReducer(itemsReducer, props.items)
 
   const handleSave = (item: BibliographyItem) => {
     props.onSave(item)
-    setItems((s) => {
-      const copy = [...s]
-      const index = copy.findIndex((i) => i._id === item._id)
-      if (index >= 0) {
-        copy[index] = item
-      } else {
-        copy.push(item)
-      }
-      return copy
+    dispatch({
+      type: 'update',
+      items: [item],
     })
   }
 
   const handleDelete = (item: BibliographyItem) => {
     props.onDelete(item)
-    setItems((s) => s.filter((i) => i._id !== item._id))
+    dispatch({
+      type: 'delete',
+      item: item,
+    })
   }
 
   return (

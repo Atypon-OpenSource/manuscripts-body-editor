@@ -15,36 +15,56 @@
  */
 import { BibliographyItem } from '@manuscripts/json-schema'
 import { CitationEditor, CitationEditorProps } from '@manuscripts/style-guide'
-import React, { useState } from 'react'
+import React, { useReducer } from 'react'
 
-//The purpose of this component is to make items stateful, so that
+import { arrayReducer } from '../lib/array-reducer'
+
+//The purpose of this component is to make items/rids stateful, so that
 //the component refreshes on updates
+
+const itemsReducer = arrayReducer<BibliographyItem>((a, b) => a._id === b._id)
+const ridsReducer = arrayReducer<string>()
+
 export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {
-  const [items, setItems] = useState(props.items)
+  const [items, dispatchItems] = useReducer(itemsReducer, props.items)
+  const [rids, dispatchRids] = useReducer(ridsReducer, props.rids)
 
   const handleSave = (item: BibliographyItem) => {
     props.onSave(item)
-    setItems((s) => {
-      const copy = [...s]
-      const index = copy.findIndex((i) => i._id === item._id)
-      if (index >= 0) {
-        copy[index] = item
-      } else {
-        copy.push(item)
-      }
-      return copy
+    dispatchItems({
+      type: 'update',
+      items: [item],
     })
   }
-
   const handleDelete = (item: BibliographyItem) => {
     props.onDelete(item)
-    setItems((s) => s.filter((i) => i._id !== item._id))
+    dispatchItems({
+      type: 'delete',
+      item,
+    })
+  }
+  const handleCite = (items: BibliographyItem[]) => {
+    props.onCite(items)
+    dispatchRids({
+      type: 'update',
+      items: items.map((i) => i._id),
+    })
+  }
+  const handleUncite = (rid: string) => {
+    props.onUncite(rid)
+    dispatchRids({
+      type: 'delete',
+      item: rid,
+    })
   }
 
   return (
     <CitationEditor
       {...props}
+      rids={rids}
       items={items}
+      onCite={handleCite}
+      onUncite={handleUncite}
       onSave={handleSave}
       onDelete={handleDelete}
     />
