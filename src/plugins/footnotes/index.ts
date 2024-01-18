@@ -23,8 +23,10 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash-es'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { findParentNodeOfType } from 'prosemirror-utils'
+import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+
+import { findParentNodeWithIdValue } from '../../lib/utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -161,15 +163,21 @@ export default () => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
-        const parent = findParentNodeOfType(schema.nodes.footnote)(
-          state.selection
-        )
-        if (parent) {
-          decorations.push(
-            Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
-              class: 'footnote-selected',
-            })
-          )
+
+        const isInTableElementFooter = hasParentNodeOfType(
+          schema.nodes.table_element_footer
+        )(state.selection)
+
+        if (isInTableElementFooter) {
+          const parent = findParentNodeWithIdValue(state.selection)
+          if (parent) {
+            decorations.push(
+              // Add a class for styling selected table element footnotes
+              Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+                class: 'footnote-selected',
+              })
+            )
+          }
         }
 
         const { labels } = footnotesKey.getState(state) as PluginState
