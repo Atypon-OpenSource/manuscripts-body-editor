@@ -31,7 +31,8 @@ export class TableElementFooterView<PropsType extends BaseNodeProps>
     this.dom = document.createElement('div')
     this.dom.classList.add('table-footer')
     this.dom.setAttribute('id', this.node.attrs.id)
-    this.contentDOM = this.dom
+    this.contentDOM = document.createElement('div')
+    this.dom.appendChild(this.contentDOM)
   }
 }
 
