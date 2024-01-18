@@ -36,10 +36,10 @@ export interface ToolbarButtonConfig {
   title: string
   content: ReactNode
   isActive?: (state: EditorState) => boolean
-  run: (state: EditorState, dispatch: Dispatch, attrs?: any) => void
+  run: (state: EditorState, dispatch: Dispatch) => void
   isEnabled: (state: EditorState) => boolean
   options?: {
-    [key: string]: (state: EditorState, dispatch: Dispatch, attrs?: any) => void
+    [key: string]: (state: EditorState, dispatch: Dispatch) => void
   }
 }
 
@@ -108,7 +108,7 @@ export const toolbar: ToolbarConfig = {
         })
       ),
       options: {
-        'order': skipCommandTracking(
+        order: skipCommandTracking(
           wrapInList(schema.nodes.ordered_list, {
             listStyleType: 'order',
           })
