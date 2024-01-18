@@ -181,8 +181,8 @@ export default () => {
         }
 
         const { labels } = footnotesKey.getState(state) as PluginState
-        if (labels) {
-          state.doc.descendants((node, pos) => {
+        state.doc.descendants((node, pos) => {
+          if (labels) {
             if (isFootnoteNode(node)) {
               const id = node.attrs.id
               const label = labels.get(id)
@@ -194,8 +194,15 @@ export default () => {
                 )
               }
             }
-          })
-        }
+          }
+          if (node.type === schema.nodes.footnotes_element) {
+            decorations.push(
+              Decoration.node(pos, pos + node.nodeSize, {
+                class: 'footnote-element',
+              })
+            )
+          }
+        })
 
         return DecorationSet.create(state.doc, decorations)
       },

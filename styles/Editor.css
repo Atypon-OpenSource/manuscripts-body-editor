@@ -943,22 +943,22 @@
   font-size: 14px;
 }
 
-.ProseMirror .table-footer > div:first-child {
+.ProseMirror .table-footer .footnote-element:first-child {
   padding-top: 8px;
 }
 
-.ProseMirror .table-footer > div:not(:first-child)::before {
+.ProseMirror .table-footer .footnote-element:not(:first-child)::before {
   content: '';
   border-bottom: 1px dashed #C9C9C9;
   display: block;
   margin-bottom: 8px;
 }
 
-.ProseMirror .table-footer > div {
+.ProseMirror .table-footer .footnote-element {
   counter-reset: table_footnote;
 }
 
-.ProseMirror .table-footer > div p::before {
+.ProseMirror .table-footer .footnote-element p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -969,12 +969,12 @@
   margin-right: 4px;
 }
 
-.ProseMirror .table-footer > div p {
+.ProseMirror .table-footer .footnote-element p {
   margin-bottom: 0px;
   margin-top: 0px;
 }
 
-.ProseMirror .table-footer .footnote-selected {
+.ProseMirror .table-footer .footnote-element .footnote-selected {
   padding: 8px 0 8px 0;
   border: 1px solid #bce7f6;
   background-color: #f2fbfc;
