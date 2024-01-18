@@ -458,7 +458,9 @@ export class ContextMenu {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
-          this.view.state.tr.delete($pos.before(), $pos.after())
+          this.view.state.tr
+            .setMeta('fromContextMenu', true)
+            .delete($pos.before(), $pos.after())
         )
 
         break

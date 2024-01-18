@@ -36,6 +36,5 @@ export {
   isThereSelector,
   isHighlightComment,
 } from './plugins/comment_annotation'
-export * from './plugins/keywords'
 export * from './lib/utils'
 export * from './useEditor'

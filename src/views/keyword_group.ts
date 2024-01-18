@@ -21,7 +21,6 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
-import { DeleteKeyword } from '../components/keywords/DeleteKeyword'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -35,12 +34,11 @@ export interface KeywordsElementProps {
   saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
 }
 
-export class KeywordsElementView extends BlockView<
+export class KeywordGroupView extends BlockView<
   BaseNodeProps & KeywordsElementProps
 > {
   private element: HTMLElement
-  public addingTools: HTMLDivElement
-  public deleteTools: HTMLDivElement
+  private addingTools: HTMLDivElement
 
   public ignoreMutation = () => true
 
@@ -48,44 +46,32 @@ export class KeywordsElementView extends BlockView<
 
   public createElement = () => {
     this.element = document.createElement('div')
-    this.element.classList.add('block')
+    this.element.classList.add('block', 'keyword-group-container')
     this.dom.appendChild(this.element)
 
     this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('keywords-list')
+    this.contentDOM.classList.add('keyword-group')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
 
-    this.addingTools = ReactSubView(
-      this.props,
-      AddKeywordInline,
-      { getUpdatedNode: () => this.node },
-      this.node,
-      this.getPos,
-      this.view,
-      'keywords-editor'
-    )
-
-    if (this.addingTools && this.props.getCapabilities().editArticle) {
-      this.element.appendChild(this.addingTools)
+    if (this.props.getCapabilities().editArticle) {
+      this.addingTools = ReactSubView(
+        this.props,
+        AddKeywordInline,
+        { getUpdatedNode: () => this.node },
+        this.node,
+        this.getPos,
+        this.view,
+        'keywords-editor'
+      )
     }
 
-    this.deleteTools = ReactSubView(
-      this.props,
-      DeleteKeyword,
-      { getUpdatedNode: () => this.node },
-      this.node,
-      this.getPos,
-      this.view,
-      'keywords-delete'
-    )
-
-    if (this.deleteTools) {
-      this.element.appendChild(this.deleteTools)
+    if (this.addingTools) {
+      this.element.appendChild(this.addingTools)
     }
   }
 }
 
-export default createNodeView(KeywordsElementView)
+export default createNodeView(KeywordGroupView)
