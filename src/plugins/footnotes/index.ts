@@ -39,8 +39,12 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   let index = 0
   const labels = new Map<string, string>()
 
-  doc.descendants((node, pos) => {
-    if (isInlineFootnoteNode(node)) {
+  doc.descendants((node, pos, parentNode) => {
+    if (
+      isInlineFootnoteNode(node) &&
+      parentNode &&
+      parentNode.type !== schema.nodes.table_cell
+    ) {
       nodes.push([node, pos])
       node.attrs.rids.forEach((rid) => {
         labels.set(rid, String(++index))
