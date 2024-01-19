@@ -25,7 +25,8 @@ import {
   canInsert,
   Dispatch,
   insertBlock,
-  insertInlineCitation, insertList,
+  insertInlineCitation,
+  insertList,
   markActive,
 } from './commands'
 import icons from './icons'

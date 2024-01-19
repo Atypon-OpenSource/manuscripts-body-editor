@@ -26,7 +26,8 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
-  isInBibliographySection, isListNode,
+  isInBibliographySection,
+  isListNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -53,7 +54,7 @@ import { findWrapping } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
-  NodeWithPos
+  NodeWithPos,
 } from 'prosemirror-utils'
 
 import { skipCommandTracking } from './keys/list'
