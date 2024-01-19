@@ -38,4 +38,5 @@ export {
 } from './plugins/comment_annotation'
 export * from './plugins/keywords'
 export * from './lib/utils'
+export * from './lib/track-changes-utils'
 export * from './useEditor'

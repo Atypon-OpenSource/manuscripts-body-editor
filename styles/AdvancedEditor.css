@@ -742,8 +742,12 @@ Next levels are shifted 'up' by 1
 
 .affiliation[data-track-status='pending'][data-track-op='delete'],
 .contributor[data-track-status='pending'][data-track-op='delete'] {
-  text-decoration: line-through;
   background: #e6f7fc;
+  pointer-events: none;
+}
+
+.contributor[data-track-status='pending'][data-track-op='delete'] .name {
+  text-decoration: line-through;
 }
 
 .citation-wrapper {
@@ -770,13 +774,15 @@ Next levels are shifted 'up' by 1
   margin-top: 24px;
   align-items: center;
   display: flex;
+  justify-content: space-between;
 }
 .contributors-list {
-  flex: 1 0 auto;
+  flex: 0 1 auto;
 }
 
 .contributors .tools-panel {
   position: initial;
+  flex: 1;
 }
 
 .contributor {
@@ -787,12 +793,17 @@ Next levels are shifted 'up' by 1
   text-decoration: none;
   color: inherit;
   outline: none;
+  padding: 0;
+  margin: 0 6px;
 }
-
 .contributor:not(:disabled):hover {
-  text-decoration: underline;
   cursor: pointer !important;
 }
+.contributor:not(:disabled) .name:hover,
+.contributor:not(:disabled):hover .name {
+  text-decoration: underline;
+}
+
 .contributor:not(:disabled):focus {
   text-decoration: underline;
   cursor: pointer !important;

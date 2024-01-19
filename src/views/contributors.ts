@@ -107,14 +107,17 @@ export class ContributorsView<
     })
 
     const name = this.buildNameLiteral(bibliographicName)
-    container.innerHTML = isCorresponding && email ? `${name} (${email})` : name
+    container.innerHTML =
+      isCorresponding && email
+        ? `<span class="name">${name} (${email})</span>`
+        : `<span class="name">${name}</span>`
 
-    let noteText = ''
+    const noteText: string[] = []
     if (pluginState?.indexedAffiliationIds) {
       attrs.affiliations.map((af) => {
         const index = pluginState?.indexedAffiliationIds.get(af)
         if (index) {
-          noteText += index.toString()
+          noteText.push(index.toString())
         }
       })
     }
@@ -124,7 +127,7 @@ export class ContributorsView<
     }
 
     if (noteText) {
-      container.appendChild(this.createNote(noteText))
+      container.appendChild(this.createNote(noteText.join(',')))
     }
 
     if (attrs.isCorresponding) {
