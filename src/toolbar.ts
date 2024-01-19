@@ -16,7 +16,6 @@
 
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
-import { wrapInList } from 'prosemirror-schema-list'
 import { EditorState } from 'prosemirror-state'
 import { ReactNode } from 'react'
 
@@ -26,11 +25,10 @@ import {
   canInsert,
   Dispatch,
   insertBlock,
-  insertInlineCitation,
+  insertInlineCitation, insertList,
   markActive,
 } from './commands'
 import icons from './icons'
-import { skipCommandTracking } from './keys/list'
 
 export interface ToolbarButtonConfig {
   title: string
@@ -94,45 +92,21 @@ export const toolbar: ToolbarConfig = {
       title: 'Wrap in bullet list',
       content: icons.bullet_list,
       isActive: blockActive(schema.nodes.bullet_list),
-      isEnabled: wrapInList(schema.nodes.bullet_list),
-      run: skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
+      isEnabled: insertList(schema.nodes.bullet_list),
+      run: insertList(schema.nodes.bullet_list),
     },
     ordered_list: {
       title: 'Wrap in ordered list',
       content: icons.ordered_list,
       isActive: blockActive(schema.nodes.ordered_list),
-      isEnabled: wrapInList(schema.nodes.ordered_list),
-      run: skipCommandTracking(
-        wrapInList(schema.nodes.ordered_list, {
-          listStyleType: 'order',
-        })
-      ),
+      isEnabled: insertList(schema.nodes.ordered_list, 'order'),
+      run: insertList(schema.nodes.ordered_list, 'order'),
       options: {
-        order: skipCommandTracking(
-          wrapInList(schema.nodes.ordered_list, {
-            listStyleType: 'order',
-          })
-        ),
-        'alpha-upper': skipCommandTracking(
-          wrapInList(schema.nodes.ordered_list, {
-            listStyleType: 'alpha-upper',
-          })
-        ),
-        'alpha-lower': skipCommandTracking(
-          wrapInList(schema.nodes.ordered_list, {
-            listStyleType: 'alpha-lower',
-          })
-        ),
-        'roman-upper': skipCommandTracking(
-          wrapInList(schema.nodes.ordered_list, {
-            listStyleType: 'roman-upper',
-          })
-        ),
-        'roman-lower': skipCommandTracking(
-          wrapInList(schema.nodes.ordered_list, {
-            listStyleType: 'roman-lower',
-          })
-        ),
+        order: insertList(schema.nodes.ordered_list, 'order'),
+        'alpha-upper': insertList(schema.nodes.ordered_list, 'alpha-upper'),
+        'alpha-lower': insertList(schema.nodes.ordered_list, 'alpha-lower'),
+        'roman-upper': insertList(schema.nodes.ordered_list, 'roman-upper'),
+        'roman-lower': insertList(schema.nodes.ordered_list, 'roman-lower'),
       },
     },
   },
