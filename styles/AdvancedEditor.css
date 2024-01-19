@@ -793,24 +793,28 @@ Next levels are shifted 'up' by 1
   text-decoration: none;
   color: inherit;
   outline: none;
-  padding: 0;
+  padding: 4px 5px;
   margin: 0 6px;
 }
 .contributor:not(:disabled):hover {
   cursor: pointer !important;
+  background-color: #d9f6ff;
 }
 .contributor:not(:disabled) .name:hover,
 .contributor:not(:disabled):hover .name {
   text-decoration: underline;
 }
 
+.contributor-note:last-child {
+  margin: 0;
+}
+
 .contributor:not(:disabled):focus {
-  text-decoration: underline;
   cursor: pointer !important;
 }
 .contributor:after {
   content: ', ';
-  margin-right: -3px;
+  margin-right: -9px;
 }
 .contributor:last-child::after {
   content: '';
