@@ -808,8 +808,9 @@ Next levels are shifted 'up' by 1
   text-decoration: underline;
   cursor: pointer !important;
 }
-.contributor::after {
+.contributor:after {
   content: ', ';
+  margin-right: -3px;
 }
 .contributor:last-child::after {
   content: '';
