@@ -29,7 +29,7 @@ import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-export const skipTrackingChanges =
+export const skipCommandTracking =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     command(state, (tr) => {
       if (dispatch) {
@@ -65,12 +65,12 @@ const liftToOuterList = (itemType: NodeType): Command => {
 
 const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
-  'Mod-[': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent
-  'Mod-]': skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent
-  'Mod-Alt-o': skipTrackingChanges(wrapInList(schema.nodes.ordered_list)),
-  'Mod-Alt-k': skipTrackingChanges(wrapInList(schema.nodes.bullet_list)),
-  'Shift-Tab': skipTrackingChanges(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
-  Tab: skipTrackingChanges(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
+  'Mod-[': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent
+  'Mod-]': skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent
+  'Mod-Alt-o': skipCommandTracking(wrapInList(schema.nodes.ordered_list)),
+  'Mod-Alt-k': skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
+  'Shift-Tab': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
+  Tab: skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
 }
 
 export default listKeymap
