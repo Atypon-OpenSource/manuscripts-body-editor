@@ -1591,10 +1591,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.5.0.tgz#f92b0421848829ee9dbe5dd204771694c6c754a1"
-  integrity sha512-XtS1isV4+MMc9g3wQ3uxOOTVYgtQd+DKluWRdce2vSEdf7ulF+AFKufuTphGx4RM0JrVp9tAsuH5lzLFve+m/g==
+"@manuscripts/style-guide@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.5.1.tgz#4377b2a9b57cde321c6f67f35fc71cd9360e9ec8"
+  integrity sha512-Eah+nbKuFEWNw6u1x3HKhcj+dOw1D7shOiFIin20fB59u1V/GdYCSpqxER3McZMXFibGx7bgxKxVkWRDe8p7aw==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1650,6 +1650,20 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.0.tgz#0363436b5284f1e4ff1a688e27e0d82592818fa5"
   integrity sha512-A2kpcaYg+niH0Sgl/QeBlTICHyhVQ2i+T2HkHjS3ONOJl8odL4QvWVVsrEYrSt8phQZTC2SKa1ZNUAYaSCsxlQ==
+  dependencies:
+    "@manuscripts/json-schema" "2.2.1"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.1.tgz#a62b0a3a13c5c8922a13654b6b801b545aa09be0"
+  integrity sha512-pif1LXBbT4P2MuTNeRXs847CfrpqrXPc3BeUM/3bLzU/MgZqfLdQtdrbxHLzbg9FSdMvlAnNSzTDWCCgtQD1rg==
   dependencies:
     "@manuscripts/json-schema" "2.2.1"
     debug "^4.3.4"
