@@ -939,6 +939,57 @@
   font-size: 75%;
 }
 
+.ProseMirror .table-footer  {
+  font-size: 14px;
+  padding-top: 10px;
+}
+
+.ProseMirror .table-footer .footnote-element:not(:first-child)::before {
+  content: '';
+  border-bottom: 1px dashed #C9C9C9;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.ProseMirror .table-footer .footnote-element {
+  counter-reset: table_footnote;
+}
+
+.ProseMirror .table-footer .footnote-element p::before {
+  counter-increment: table_footnote;
+  content: counter(table_footnote);
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  vertical-align: super;
+  font-size: 75%;
+  margin-right: 4px;
+}
+
+.ProseMirror .table-footer p {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 4px;
+}
+
+.ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
+  background-color: #f2fbfc;
+}
+.ProseMirror .table-footer .footnote-element .footnote-selected {
+  border: 1px solid #bce7f6;
+}
+.table-footer > div:has(> p.footnote-selected) > p {
+  border-left: 1px solid #bce7f6;
+  border-right: 1px solid #bce7f6;
+}
+.table-footer > div:has(> p.footnote-selected) > p:first-child {
+  border-top: 1px solid #bce7f6;
+}
+.table-footer > div:has(> p.footnote-selected) > p:last-child {
+  border-bottom: 1px solid #bce7f6;
+}
+
+
 .ProseMirror .footnote-label {
   vertical-align: super;
   font-size: 75%;
@@ -965,4 +1016,3 @@
 div[style*="background-color: rgba(249, 2, 2, 0.53)"] {
   background-color: #ffe08b !important;
 }
-
