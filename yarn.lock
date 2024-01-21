@@ -1591,10 +1591,10 @@
     fontoxpath "^3.28.2"
     prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.5.0-LEAN-3074-1":
-  version "1.5.0-LEAN-3074-1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.5.0-LEAN-3074-1.tgz#7735399a7e46a9d2145aa25be5c795170697feba"
-  integrity sha512-kgMN47VIp+HsWoYSjQLkYWtiQG7OtjGhFy0hwDcKzfYVC+eNAOPuA6/dP3ewRgMw9ujMmpQ121vW7WOPlXxo5w==
+"@manuscripts/style-guide@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.6.0.tgz#24fe3cd856adce273c88a76a532b37afbb0c9f68"
+  integrity sha512-1ddySE/LqV+lVeVd+uBwzOXN52fUuevmVmgks/GIvRARiNFmMcPxtICNLLQ2/cWqVzN97rNBBi8dzpdRx/D/4A==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
@@ -1650,6 +1650,20 @@
   version "2.0.1-LEAN-3074-0"
   resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.1-LEAN-3074-0.tgz#75b07f7091acf32c98feb2628cd8419e07710d92"
   integrity sha512-tmv96EsNuKvqJZ2m0B+xTdSinLnbSMQbss8qcdG5MPKi2rMlas3EAVcnTjm51bxnKyj20stZEEYZAAIAOJLrDw==
+  dependencies:
+    "@manuscripts/json-schema" "2.2.1"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.1.tgz#a62b0a3a13c5c8922a13654b6b801b545aa09be0"
+  integrity sha512-pif1LXBbT4P2MuTNeRXs847CfrpqrXPc3BeUM/3bLzU/MgZqfLdQtdrbxHLzbg9FSdMvlAnNSzTDWCCgtQD1rg==
   dependencies:
     "@manuscripts/json-schema" "2.2.1"
     debug "^4.3.4"
@@ -6927,11 +6941,6 @@ prettier@^2.8.1:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.2.tgz#c4ea1b5b454d7c4b59966db2e06ed7eec5dfd160"
   integrity sha512-BtRV9BcncDyI2tsuS19zzhzoxD8Dh8LiCx7j7tHzrkz8GFXAexeWFdi22mjE1d16dftH2qNaytVxqiRTGlMfpw==
-
-pretty-bytes@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
-  integrity sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
 
 pretty-format@^27.0.2:
   version "27.5.1"
