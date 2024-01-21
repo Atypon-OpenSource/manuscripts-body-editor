@@ -1570,14 +1570,6 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.1.tgz#cd0618ff8bc40e40bdd3640eb76765c6b57f6d43"
-  integrity sha512-Oo5AXJQbNEvSq4Bu6zNwuhIS77tV0J8ryIDUPLlo5Zpiui8g2ctg2nWkNVPsgSUmoUG8t7Hj6o7G+pwMnDWB7A==
-  dependencies:
-    ajv "^8.12.0"
-    deepmerge "^4.3.1"
-
 "@manuscripts/json-schema@^2.2.2":
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.2.tgz#cad24ce72a58e84d7023f3d1ec65a7f0fbc21bd4"
@@ -1598,16 +1590,16 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.6.0-LEAN-3074-0":
-  version "1.6.0-LEAN-3074-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.6.0-LEAN-3074-0.tgz#81af65a573d1a8c63ed0b5e8bbf8095f93ebba63"
-  integrity sha512-Nug3x8+RAcKGJIPvGRAZgHuy6b1RuR1vPFzsSiH0j/9HmRE4EzWHTh2l44ilfYsQ+RnI0tSNmAhjRxX2al3sXw==
+"@manuscripts/style-guide@1.6.0-LEAN-3074-1":
+  version "1.6.0-LEAN-3074-1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.6.0-LEAN-3074-1.tgz#a9eba2a582f303be636021b2bda88dab5ef0db9e"
+  integrity sha512-Fsk92zifHwUx4BEDhUQLVlLLzd/sks4LcXFDoI+xZjrkDQ+6Wm9zsHMiFKOlFrCAW0XdOSIdrbDa7BWNdaEOlg==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"
     "@manuscripts/assets" "^0.6.2"
-    "@manuscripts/json-schema" "2.2.1"
+    "@manuscripts/json-schema" "^2.2.2"
     "@manuscripts/transform" "2.0.3-LEAN-3074-0"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
