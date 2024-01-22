@@ -943,12 +943,6 @@
   font-size: 14px;
   padding-top: 8px;
 }
-
-.ProseMirror .table-footer p {
-  margin-bottom: 0px;
-  margin-top: 0px;
-}
-
 .ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
   padding: 4px;
