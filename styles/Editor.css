@@ -939,6 +939,14 @@
   font-size: 75%;
 }
 
+.ProseMirror .table-footer {
+  font-size: 14px;
+}
+.ProseMirror .table-footer p {
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
 .ProseMirror .table-footer  {
   font-size: 14px;
   padding-top: 8px;
@@ -947,14 +955,17 @@
 .ProseMirror .table-footer p {
   margin-bottom: 0px;
   margin-top: 0px;
-  padding: 4px;
 }
 
 .ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
+  padding: 4px;
 }
 .ProseMirror .table-footer .footnote-element .footnote-selected {
   border: 1px solid #bce7f6;
+}
+.table-footer > div > p {
+  padding-bottom: 10px;
 }
 .table-footer > div:has(> p.footnote-selected) > p {
   border-left: 1px solid #bce7f6;
