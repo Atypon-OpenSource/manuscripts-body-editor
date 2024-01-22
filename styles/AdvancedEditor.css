@@ -724,32 +724,6 @@ Next levels are shifted 'up' by 1
   text-decoration: none;
 }
 
-.affiliation[data-track-status='pending'],
-.contributor[data-track-status='pending'],
-.ProseMirror .inserted.pending,
-.ProseMirror .set_attrs.pending,
-.ProseMirror .deleted.pending {
-  background: #ddf3fa;
-}
-.ProseMirror .affiliation[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror .contributor[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror
-  .block-container[data-track-status='rejected'][data-track-op='insert'] {
-  display: none;
-}
-
-.affiliation[data-track-status='pending'][data-track-op='delete'],
-.contributor[data-track-status='pending'][data-track-op='delete'] {
-  background: #e6f7fc;
-  pointer-events: none;
-}
-
-.contributor[data-track-status='pending'][data-track-op='delete'] .name {
-  text-decoration: line-through;
-}
-
 .citation-wrapper {
   position: relative;
 }
@@ -767,6 +741,43 @@ Next levels are shifted 'up' by 1
 }
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
+}
+
+.affiliation[data-track-status='pending'],
+.contributor[data-track-status='pending'],
+.ProseMirror .inserted.pending,
+.ProseMirror .set_attrs.pending,
+.ProseMirror .deleted.pending {
+  background: #ddf3fa;
+}
+.ProseMirror .affiliation[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror .contributor[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror
+  .block-container[data-track-status='rejected'][data-track-op='insert'] {
+  display: none;
+}
+
+.contributor[data-track-op='delete']:not([data-track-status='rejected']) .name,
+.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
+  text-decoration: line-through;
+  pointer-events: none;
+  color: var(--deleted-color);
+}
+
+.contributor[data-track-op='delete']:not([data-track-status='rejected']) {
+  color: var(--deleted-color);
+}
+
+.affiliation[data-track-status='pending'],
+.contributor[data-track-status='pending'] {
+  background: var(--pending-bg-color);
+}
+
+.affiliation[data-track-status='accepted'],
+.contributor[data-track-status='accepted'] {
+  background: var(--accepted-bg-color);
 }
 
 .contributors {
@@ -796,10 +807,12 @@ Next levels are shifted 'up' by 1
   padding: 4px 5px;
   margin: 0 6px;
 }
+
 .contributor:not(:disabled):hover {
   cursor: pointer !important;
   background-color: #d9f6ff;
 }
+
 .contributor:not(:disabled) .name:hover,
 .contributor:not(:disabled):hover .name {
   text-decoration: underline;
@@ -812,27 +825,14 @@ Next levels are shifted 'up' by 1
 .contributor:not(:disabled):focus {
   cursor: pointer !important;
 }
+
 .contributor:after {
   content: ', ';
+  color: #353535;
   margin-right: -9px;
 }
 .contributor:last-child::after {
   content: '';
-}
-
-.block-affiliations {
-  margin-top: 16px;
-  color: #6e6e6e;
-  margin-bottom: 24px;
-}
-.affiliation {
-  line-height: 1.2;
-}
-.block-affiliations .block {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .contributors-legend {
@@ -858,4 +858,21 @@ Next levels are shifted 'up' by 1
   margin: 0 1px;
   line-height: 1;
   vertical-align: top;
+}
+
+.block-affiliations {
+  margin-top: 16px;
+  color: #6e6e6e;
+  margin-bottom: 24px;
+}
+
+.affiliation {
+  line-height: 1.2;
+}
+
+.block-affiliations .block {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
 }
