@@ -226,10 +226,15 @@ export class CitationEditableView extends CitationView<
 
     let bibElement: ProsemirrorNode | null = null
     let pos: number | null = null
+    let backmatterEnd: number | null = null
     doc.descendants((node, nodePos) => {
       if (node.type === schema.nodes.bibliography_element) {
         bibElement = node
         pos = nodePos
+        return true
+      }
+      if (node.type === schema.nodes.backmatter) {
+        backmatterEnd = nodePos + node.nodeSize
       }
     })
 
@@ -245,7 +250,11 @@ export class CitationEditableView extends CitationView<
     if (bibElement && pos) {
       newTr = tr.insert(pos + 1, bibItem)
     } else {
-      newTr = tr.insert(tr.doc.content.size, createBibliographySection(bibItem))
+      const bibSec = createBibliographySection(bibItem)
+      newTr = tr.insert(
+        backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
+        bibSec
+      )
     }
 
     view.dispatch(newTr)
