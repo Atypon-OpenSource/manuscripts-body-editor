@@ -16,12 +16,7 @@
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import {
-  Build,
-  ManuscriptNodeType,
-  nodeNames,
-  schema,
-} from '@manuscripts/transform'
+import { ManuscriptNodeType, nodeNames, schema } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { DefaultTheme } from 'styled-components'
