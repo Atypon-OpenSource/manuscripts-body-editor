@@ -836,6 +836,7 @@ Next levels are shifted 'up' by 1
 }
 .contributor:last-child::after {
   content: '';
+  margin-right: 0;
 }
 
 .contributors-legend {
