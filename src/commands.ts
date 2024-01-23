@@ -363,9 +363,7 @@ export const insertLink = (
 
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  view?: ManuscriptEditorView
+  dispatch?: Dispatch
 ) => {
   const node = state.schema.nodes.citation.create({
     id: generateID(ObjectTypes.Citation),
@@ -613,21 +611,11 @@ export const insertList =
     }
   }
 
-export const insertBibliographySection = (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  state: ManuscriptEditorState,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dispatch?: Dispatch
-) => {
+export const insertBibliographySection = () => {
   return false
 }
 
-export const insertTOCSection = (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  state: ManuscriptEditorState,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dispatch?: Dispatch
-) => {
+export const insertTOCSection = () => {
   return false
 }
 

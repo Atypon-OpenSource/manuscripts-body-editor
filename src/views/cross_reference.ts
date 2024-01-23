@@ -29,8 +29,6 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
-  protected popperContainer?: HTMLDivElement
-
   public selectNode = () => {
     // TODO: navigate to referenced item?
     // TODO: show a list of referenced items?
