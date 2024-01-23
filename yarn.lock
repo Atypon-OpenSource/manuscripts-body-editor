@@ -1579,7 +1579,16 @@
     deepmerge "^4.3.1"
     uuid "^9.0.0"
 
-"@manuscripts/library@1.3.2":
+"@manuscripts/json-schema@^2.2.2-LEAN-3092":
+  version "2.2.2-LEAN-3092"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.2-LEAN-3092.tgz#8ffceea74bf135e7799539d20bc07c3c946f7ff6"
+  integrity sha512-Ompm2gPweHNZ5UOuYQ7UsMxOAlIb2zwZ8XCw3IGjk/VLCNwvKyczNkY2v5mqAQSr4wg4DwWrnc9Gkt4pAeeUqA==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+    uuid "^9.0.0"
+
+"@manuscripts/library@1.3.2", "@manuscripts/library@^1.3.2":
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.2.tgz#ce7984a5073a96b1b48485fccbd3656acc230d47"
   integrity sha512-V02zF+t9Y3O9D3druRNYr1AwMAEwE/4/+udbx6rU4PxWmHwscyVBk3FtVpfZtDTV+UaUrzXCu6wrMaP98yFvkQ==
@@ -1656,6 +1665,20 @@
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@2.0.4-LEAN-3092":
+  version "2.0.4-LEAN-3092"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.4-LEAN-3092.tgz#7430999bd7c4bfe50854425f81b7cc5975cbdbb8"
+  integrity sha512-afJR9KsCgRxud9W2eZf19Oq/oIs2H2kezhx0Lqyi52ns4+Cj/bmcXJSoxti4c5RmBmtXRHsjal++fuH1NIcYTQ==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.2-LEAN-3092"
+    "@manuscripts/library" "^1.3.2"
+    debug "^4.3.4"
+    jszip "^3.10.1"
     mime "^3.0.0"
     prosemirror-model "^1.18.3"
     uuid "^9.0.0"

@@ -17,6 +17,8 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
+import { convertMathMLToSVG } from '../lib/mathml-to-svg'
+import { convertTeXToSVG } from '../lib/tex-to-svg'
 import { isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -32,14 +34,19 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
 
   public updateContents = () => {
     if (!isRejectedInsert(this.node)) {
-      const { SVGRepresentation } = this.node.attrs
+      const { contents, format } = this.node.attrs
 
       while (this.dom.hasChildNodes()) {
         this.dom.removeChild(this.dom.firstChild as ChildNode)
       }
 
-      if (SVGRepresentation) {
-        const fragment = sanitize(SVGRepresentation, {
+      const svgContent =
+        format === 'tex'
+          ? convertTeXToSVG(contents, true)
+          : convertMathMLToSVG(contents, true)
+
+      if (svgContent) {
+        const fragment = sanitize(svgContent, {
           USE_PROFILES: { svg: true },
         })
         this.dom.appendChild(fragment)

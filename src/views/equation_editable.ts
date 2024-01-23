@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { convertTeXToSVG } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { createEditableNodeView } from './creators'
@@ -32,23 +31,14 @@ export class EquationEditableView extends EquationView<EditableBlockProps> {
     const placeholder = 'Enter LaTeX equation, e.g. "a^2 = \\sqrt{b^2 + c^2}"'
 
     const input = await createEditor({
-      value: this.node.attrs.TeXRepresentation || '',
+      value: this.node.attrs.contents || '',
       mode: 'stex',
       placeholder,
       autofocus: true,
     })
 
     input.on('changes', async () => {
-      const TeXRepresentation = input.getValue()
-
-      const SVGStringRepresentation = await convertTeXToSVG(
-        TeXRepresentation,
-        true
-      )
-
-      if (!SVGStringRepresentation) {
-        throw new Error('No SVG output from MathJax')
-      }
+      const contents = input.getValue()
 
       const pos = this.getPos()
 
@@ -56,8 +46,8 @@ export class EquationEditableView extends EquationView<EditableBlockProps> {
 
       tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
-        TeXRepresentation,
-        SVGStringRepresentation,
+        contents,
+        format: 'tex',
       }).setSelection(NodeSelection.create(tr.doc, pos))
 
       this.view.dispatch(tr)
