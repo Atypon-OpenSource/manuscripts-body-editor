@@ -188,7 +188,7 @@ export class ContributorsView<
 
   createEditButton = () => {
     const can = this.props.getCapabilities()
-    // this.props.openAuthorEditing
+
     const button = ReactSubView(
       this.props,
       SecondaryButton,
