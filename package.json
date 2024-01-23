@@ -36,6 +36,7 @@
     "@manuscripts/transform": "2.0.4-LEAN-3093",
     "astrocite-eutils": "^0.16.4",
     "axios": "^1.2.2",
+    "mathjax-full": "^3.2.2",
     "codemirror": "^5.58.1",
     "dompurify": "^2.4.1",
     "grapheme-splitter": "^1.0.4",
