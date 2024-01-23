@@ -16,112 +16,61 @@
 
 import { BibliographyItem } from '@manuscripts/json-schema'
 import { convertCSLToBibliographyItem } from '@manuscripts/library'
-import axios, { CancelToken } from 'axios'
+import {
+  BibliographyItemSearchResponse,
+  BibliographyItemSource,
+  Job,
+} from '@manuscripts/style-guide'
+import { buildBibliographyItem } from '@manuscripts/transform'
+import axios from 'axios'
 
-interface SearchResults {
-  items: BibliographyItem[]
-  total: number
+type CrossrefResponse = {
+  message: {
+    items: CSL.Data[]
+    'total-results': number
+  }
 }
 
-// TODO: restore request URLs once this Crossref API issue is fixed:
-// https://github.com/CrossRef/rest-api-doc/issues/413
-
-const search = async (
+const search = (
   query: string,
-  rows: number,
-  mailto: string,
-  tokenSource?: CancelToken
-): Promise<SearchResults> => {
-  // if the query is just a DOI, fetch that single record
-  if (query.trim().match(/^10\.\S+\/\S+$/)) {
-    return searchByDOI(query.trim(), mailto)
-  }
+  limit: number
+): Job<BibliographyItemSearchResponse> => {
+  const controller = new AbortController()
 
-  const response = await axios.get<{
-    message: {
-      items: CSL.Data[]
-      'total-results': number
-    }
-  }>(`https://api.crossref.org/works?mailto=${mailto}`, {
-    params: {
-      filter: 'type:journal-article',
-      query,
-      rows,
-    },
-    cancelToken: tokenSource,
-  })
+  const response = axios
+    .get<CrossrefResponse>(`https://api.crossref.org/works`, {
+      params: {
+        filter: 'type:journal-article',
+        query,
+        rows: limit,
+      },
+      signal: controller.signal,
+    })
+    .then((r) => {
+      if (r.status !== 200) {
+        throw new Error('There was a problem searching for this query.')
+      }
 
-  if (response.status !== 200) {
-    throw new Error('There was a problem searching for this query.')
-  }
+      const items = r.data.message.items
+      const total = r.data.message['total-results']
 
-  const {
-    message: { items, 'total-results': total },
-  } = response.data
+      return {
+        items: items.map((i) =>
+          buildBibliographyItem(convertCSLToBibliographyItem(i))
+        ) as BibliographyItem[],
+        total,
+      }
+    })
 
   return {
-    items: items.map(convertCSLToBibliographyItem) as BibliographyItem[],
-    total,
+    response: response,
+    cancel: () => controller.abort(),
+    isCancelled: controller.signal.aborted,
   }
 }
 
-const searchByDOI = async (
-  doi: string,
-  mailto: string
-): Promise<SearchResults> => {
-  const response = await axios.get<{ message: CSL.Data }>(
-    `https://api.crossref.org/works/${encodeURIComponent(doi)}?mailto=${mailto}`
-  )
-
-  if (response.status === 404) {
-    throw new Error('An item with this DOI could not be found.')
-  }
-
-  if (response.status !== 200) {
-    throw new Error('There was a problem searching for this DOI.')
-  }
-
-  const { message } = response.data
-
-  const item = convertCSLToBibliographyItem(message) as BibliographyItem
-
-  return {
-    items: [item],
-    total: 1,
-  }
+export const crossref: BibliographyItemSource = {
+  id: 'crossref',
+  label: 'External sources',
+  search,
 }
-
-const fetch = async (item: Partial<BibliographyItem>) => {
-  if (!item.DOI) {
-    throw new Error('The item does not have a DOI')
-  }
-  // This is safe as it's only resolving Crossref DOIs.
-  const response = await axios.get<CSL.Data>(
-    `https://api.crossref.org/works/${encodeURIComponent(
-      item.DOI
-    )}/transform/application/vnd.citationstyles.csl+json`,
-    {
-      headers: {},
-    }
-  )
-
-  if (response.status === 404) {
-    throw new Error('An item with this DOI could not be found.')
-  }
-
-  if (response.status !== 200) {
-    throw new Error('There was a problem fetching this DOI.')
-  }
-
-  return convertCSLToBibliographyItem(response.data)
-}
-
-export const crossref: {
-  fetch: (item: Partial<BibliographyItem>) => Promise<Partial<BibliographyItem>>
-  search: (
-    query: string,
-    rows: number,
-    mailto: string,
-    tokenSource?: CancelToken
-  ) => Promise<SearchResults>
-} = { fetch, search }

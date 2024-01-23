@@ -27,11 +27,10 @@ import {
   FileAttachment,
   FileManagement,
 } from '@manuscripts/style-guide'
-import { Build, ManuscriptNode, schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import React from 'react'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
@@ -57,7 +56,6 @@ export interface EditorProps {
   doc: ManuscriptNode
   getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
 
   getFiles: () => FileAttachment[]
@@ -65,10 +63,6 @@ export interface EditorProps {
 
   popper: PopperManager
   history: History
-
-  renderReactComponent: (child: React.ReactNode, container: HTMLElement) => void
-  unmountReactComponent: (container: HTMLElement) => void
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 
   getCapabilities: () => Capabilities
   cslProps: CSLProps

@@ -22,7 +22,6 @@ import affiliationsSection from '../views/affiliations'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
-import { CitationViewProps } from '../views/citation'
 import citation from '../views/citation_editable'
 import contributorsSection from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
@@ -37,9 +36,7 @@ import footnotesElement from '../views/footnotes_element'
 import inlineEquation from '../views/inline_equation_editable'
 import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
-import keywordsElement, {
-  KeywordsElementProps,
-} from '../views/keywords_element'
+import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
@@ -51,22 +48,20 @@ import pullquoteElement from '../views/pullquote_element_editable'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
+import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
 
-type EditorProps = EditableBlockProps &
-  CitationViewProps &
-  FigureProps &
-  KeywordsElementProps & { theme: DefaultTheme }
+type EditorProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
-    bibliography_element: bibliographyElement(props),
+    bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     bullet_list: bulletList(props),
-    citation: citation(props),
-    cross_reference: crossReference(props),
+    citation: citation(props, dispatch),
+    cross_reference: crossReference(props, dispatch),
     contributors: contributorsSection(props, dispatch),
     affiliations: affiliationsSection(props, dispatch),
     affiliation: affiliation(props, dispatch),
@@ -78,9 +73,9 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     footnotes_element: footnotesElement(props),
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props),
-    keyword: keyword(props),
-    keywords_element: keywordsElement(props, dispatch),
-    link: link(props),
+    keyword: keyword(props, dispatch),
+    keyword_group: keywordGroup(props, dispatch),
+    link: link(props, dispatch),
     listing: listing(props),
     listing_element: listingElement(props),
     ordered_list: orderedList(props),
@@ -91,6 +86,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
     table_element: tableElement(props),
+    table_element_footer: tableElementFooter(props),
     toc_element: tocElement(props),
     comments: empty('comments'),
   }

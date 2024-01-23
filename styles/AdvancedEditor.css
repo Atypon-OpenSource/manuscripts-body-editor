@@ -541,10 +541,6 @@ Next levels are shifted 'up' by 1
   border-radius: 0 0 32px 32px;
 }
 
-.keywords {
-  margin: 0 0 36px;
-}
-
 .ProseMirror > .keywords > .block-section_title > h1 {
   color: #353535 !important;
   font-size: 12px !important;
@@ -554,12 +550,7 @@ Next levels are shifted 'up' by 1
   margin-top: 4px !important;
 }
 
-.keywords-list {
-  margin: 0;
-  display: inline;
-}
-
-.keywords-list span.keyword {
+.keywords .keyword {
   display: inline-block;
   color: #353535;
   background-color: #f2f2f2;
@@ -568,62 +559,68 @@ Next levels are shifted 'up' by 1
   line-height: 16px;
   margin-right: 4px;
   margin-bottom: 4px;
-  border: 1px solid #f2f2f2;
+  border: 1px solid transparent;
   border-radius: 6px;
   position: relative;
   cursor: default;
-}
-
-.keywords-list span.keyword.no-tracking {
   padding: 4px 8px;
 }
 
-.keywords-list span.keyword ins,
-.keywords-list span.keyword del {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 6px;
+.keywords .keyword ins,
+.keywords .keyword del {
+  background-color: inherit !important;
 }
 
-.keywords-list span.keyword:hover,
-.keywords-list span.keyword:hover ins,
-.keywords-list span.keyword:hover del {
-  background-color: #f2fbfc;
-  border-color: #f2fbfc;
+.keywords .keyword:hover {
+  background-color: #f2fbfc !important;
 }
 
-.keywords-list span.keyword.selected {
+.keywords .keyword.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
 }
 
-.keywords-list .keyword.deleted.pending,
-.keywords-list .keyword.deleted.accepted {
+.keywords .keyword.deleted.pending,
+.keywords .keyword.deleted.accepted {
   text-decoration: line-through;
 }
-.keywords-list .keyword .track-changes--control {
+
+.keywords .keyword .track-changes--control {
   top: 0;
 }
 
-.keywords-list span.delete-keyword {
+.keywords .delete-keyword {
   cursor: pointer;
   margin: 0 0 0 8px;
   opacity: 0.5;
 }
 
-.keywords-list span.delete-keyword:hover {
+.keywords .delete-keyword:hover {
   opacity: 1;
 }
 
-.keywords-list .deleted.accepted span.delete-keyword {
+.keywords .deleted .delete-keyword {
   display: none;
 }
 
-.keywords-list > div {
+.keywords .deleted.rejected .delete-keyword {
   display: inline;
 }
 
-.keywords-editor {
+.keywords .inserted.pending .delete-keyword {
+  display: none;
+}
+
+.keywords .keyword-group-container {
+  position: relative;
+  margin: 0 0 36px !important;
+}
+
+.keywords .keyword-group {
+  display: inline;
+}
+
+.keywords .keywords-editor {
   position: static;
   display: inline-block;
   width: auto;
@@ -637,6 +634,16 @@ Next levels are shifted 'up' by 1
 
 .keywords > .block-section_title > .block {
   align-items: center;
+}
+
+.keywords .block-comment-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.keywords .block-comment-button .comment-icon {
+  top: 8px;
 }
 
 .attrs-popper-button-active,
@@ -759,6 +766,9 @@ Next levels are shifted 'up' by 1
   display: none;
 }
 
+.contributor[data-track-op='delete']:not([data-track-status='rejected']) {
+  pointer-events: none;
+}
 .contributor[data-track-op='delete']:not([data-track-status='rejected']) .name,
 .affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
   text-decoration: line-through;

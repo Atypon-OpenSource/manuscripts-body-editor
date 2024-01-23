@@ -20,7 +20,7 @@ import 'prosemirror-tables/style/tables.css'
 
 import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Build, ManuscriptSchema } from '@manuscripts/transform'
+import { ManuscriptSchema } from '@manuscripts/transform'
 import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
@@ -36,7 +36,6 @@ import comment_annotation from '../plugins/comment_annotation'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import highlights from '../plugins/highlight'
-import keywords from '../plugins/keywords'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -52,7 +51,6 @@ import { CSLProps } from './ManuscriptsEditor'
 interface PluginProps {
   getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
   deleteModel: (id: string) => Promise<string>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
@@ -78,7 +76,6 @@ export default (props: PluginProps) => {
     persist(),
     sections(),
     toc(props),
-    keywords(props),
     bibliography(props),
     objects(props),
     affiliations(),

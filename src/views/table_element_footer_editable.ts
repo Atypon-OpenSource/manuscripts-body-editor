@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-export { ApplicationMenus } from './ApplicationMenu'
-export { useApplicationMenus } from './useApplicationMenus'
-export type { MenuSpec } from './types'
+import { createEditableNodeView } from './creators'
+import { TableElementFooterView } from './table_element_footer'
+
+export default createEditableNodeView(TableElementFooterView)

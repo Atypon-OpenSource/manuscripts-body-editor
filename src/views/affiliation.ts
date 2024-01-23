@@ -41,7 +41,7 @@ export class AffiliationView<PropsType extends BaseNodeProps>
     if (pluginState?.indexedAffiliationIds) {
       const order = pluginState.indexedAffiliationIds.get(attrs.id)
       this.dom.innerHTML = order
-        ? order + ' ' + this.dom.innerHTML
+        ? `<b>${order}</b> ${this.dom.innerHTML}`
         : this.dom.innerHTML
       this.dom.setAttribute('style', 'order: ' + (order || 0))
     }

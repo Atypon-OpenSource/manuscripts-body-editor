@@ -1570,41 +1570,41 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.1.tgz#cd0618ff8bc40e40bdd3640eb76765c6b57f6d43"
-  integrity sha512-Oo5AXJQbNEvSq4Bu6zNwuhIS77tV0J8ryIDUPLlo5Zpiui8g2ctg2nWkNVPsgSUmoUG8t7Hj6o7G+pwMnDWB7A==
+"@manuscripts/json-schema@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.2.tgz#cad24ce72a58e84d7023f3d1ec65a7f0fbc21bd4"
+  integrity sha512-Vs2U+duO/8f5wk7GmWtHgEnbselFiue1hgJKZRGbw6tF6dLR75Ui2YmRcA5asnQPfin47ekuen9M9GV2JfNkDw==
   dependencies:
     ajv "^8.12.0"
     deepmerge "^4.3.1"
+    uuid "^9.0.0"
 
-"@manuscripts/library@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.0.tgz#a5ffa838d32516ed5c69513fe2ef535a8104ec32"
-  integrity sha512-tLJD68GvmcpEcPJGAhmuQL50bCYbz+NeEWmddsf/AALStwgRTwurQx+bZoE8ZRjxyflyBE7cma7EX8ss/WqPmQ==
+"@manuscripts/library@1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.2.tgz#ce7984a5073a96b1b48485fccbd3656acc230d47"
+  integrity sha512-V02zF+t9Y3O9D3druRNYr1AwMAEwE/4/+udbx6rU4PxWmHwscyVBk3FtVpfZtDTV+UaUrzXCu6wrMaP98yFvkQ==
   dependencies:
-    "@manuscripts/json-schema" "2.2.1"
-    "@manuscripts/transform" "2.0.0"
+    "@manuscripts/json-schema" "^2.2.2"
     astrocite-bibtex "^0.16.4"
     astrocite-ris "^0.16.4"
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
-    prosemirror-model "^1.18.3"
 
-"@manuscripts/style-guide@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.5.0.tgz#f92b0421848829ee9dbe5dd204771694c6c754a1"
-  integrity sha512-XtS1isV4+MMc9g3wQ3uxOOTVYgtQd+DKluWRdce2vSEdf7ulF+AFKufuTphGx4RM0JrVp9tAsuH5lzLFve+m/g==
+"@manuscripts/style-guide@1.7.0-LEAN-3083":
+  version "1.7.0-LEAN-3083"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.0-LEAN-3083.tgz#58cac15ce8cd0f84e6516d585b927db7f3d50297"
+  integrity sha512-yznV5AsT+uKgVZQ9TBHQLRk7kBqehnqNku1bXbA8tXf5fTbyGSxQ6tqCx2HOLXqz/cKhb0kK83PjIsXm3rgTxw==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
     "@formatjs/intl-utils" "^2.2.0"
     "@manuscripts/assets" "^0.6.2"
-    "@manuscripts/json-schema" "2.2.1"
-    "@manuscripts/transform" "2.0.0"
+    "@manuscripts/json-schema" "^2.2.2"
+    "@manuscripts/transform" "2.0.4"
     "@reach/tabs" "^0.11.2"
     date-fns "^2.29.3"
     formik "^2.2.9"
+    fuzzysort "^2.0.4"
     lodash-es "^4.17.21"
     prosemirror-commands "^1.5.0"
     prosemirror-history "^1.3.0"
@@ -1646,12 +1646,13 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.0.tgz#0363436b5284f1e4ff1a688e27e0d82592818fa5"
-  integrity sha512-A2kpcaYg+niH0Sgl/QeBlTICHyhVQ2i+T2HkHjS3ONOJl8odL4QvWVVsrEYrSt8phQZTC2SKa1ZNUAYaSCsxlQ==
+"@manuscripts/transform@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.4.tgz#340777265162dd1ff810133bcedb3b2a24995f16"
+  integrity sha512-Gx5MQ2HWw6/e88rJ7Id3e3kyaoWMx60crLntf/gJ/eZ9i93Es9UfPaZpXX4WqSAc2x3z7dMJ9JWwTfQSFXsRvg==
   dependencies:
-    "@manuscripts/json-schema" "2.2.1"
+    "@manuscripts/json-schema" "^2.2.2"
+    "@manuscripts/library" "1.3.2"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
@@ -1660,12 +1661,13 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@2.0.1-LEAN-3083-5":
-  version "2.0.1-LEAN-3083-5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.1-LEAN-3083-5.tgz#989fa808f1dba0faa2fd4ba0990a155ff6800c12"
-  integrity sha512-JW7chMjmJT8SG5ATeHzhnUcB3ivQWXZBKF0rU2gtqBPvWuPL4An1ccgX+09QLs/E90ztBYcJVBZs2egjv1mw9Q==
+"@manuscripts/transform@2.0.4-LEAN-3083":
+  version "2.0.4-LEAN-3083"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.0.4-LEAN-3083.tgz#b607fe4ee47d2a00df738288180282ff9fd1202d"
+  integrity sha512-lhSalR+sKi9nEdr37BdHwTkweyQ5qHxykCx4zJYaMWd+MmDGzUKUJ7EvbhIT36BL3VY7FYrDiAjbjJrmrfj2rQ==
   dependencies:
-    "@manuscripts/json-schema" "2.2.1"
+    "@manuscripts/json-schema" "^2.2.2"
+    "@manuscripts/library" "1.3.2"
     debug "^4.3.4"
     jszip "^3.10.1"
     mathjax-full "^3.2.2"
@@ -4495,6 +4497,11 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
+fuzzysort@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/fuzzysort/-/fuzzysort-2.0.4.tgz#a21d1ce8947eaf2797dc3b7c28c36db9d1165f84"
+  integrity sha512-Api1mJL+Ad7W7vnDZnWq5pGaXJjyencT+iKGia2PlHUcSsSzWwIQ3S1isiMpwpavjYtGd2FzhUIhnnhOULZgDw==
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
@@ -6941,11 +6948,6 @@ prettier@^2.8.1:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.2.tgz#c4ea1b5b454d7c4b59966db2e06ed7eec5dfd160"
   integrity sha512-BtRV9BcncDyI2tsuS19zzhzoxD8Dh8LiCx7j7tHzrkz8GFXAexeWFdi22mjE1d16dftH2qNaytVxqiRTGlMfpw==
-
-pretty-bytes@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
-  integrity sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==
 
 pretty-format@^27.0.2:
   version "27.5.1"

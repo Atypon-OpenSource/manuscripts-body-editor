@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -542,7 +542,7 @@ const buildOptions = (
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
-    case parentElementType.schema.nodes.bullet_list: {
+    case schema.nodes.bullet_list: {
       return [
         {
           options: [
@@ -650,7 +650,7 @@ const findSelectedOption = (options: GroupedOptions): Option | undefined => {
   }
 }
 
-export const LevelSelector: React.FunctionComponent<{
+export const LevelSelector: React.FC<{
   state: ManuscriptEditorState
   dispatch: (tr: Transaction) => void
   view?: ManuscriptEditorView

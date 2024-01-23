@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+import { LinkNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
-import React from 'react'
 
 import { LinkForm, LinkValue } from '../components/views/LinkForm'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { LinkView } from './link'
+import ReactSubView from './ReactSubView'
 
 export class LinkEditableView extends LinkView<EditableBlockProps> {
   protected popperContainer: HTMLDivElement
@@ -57,81 +58,76 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
       text: this.node.textContent,
     }
 
-    this.props.renderReactComponent(
-      <LinkForm
-        value={originalValue}
-        handleCancel={() => {
-          const tr = this.view.state.tr
+    const componentProps = {
+      value: originalValue,
+      handleCancel: this.handleCancel,
+      handleRemove: this.handleRemove,
+      handleSave: this.handleSave,
+    }
 
-          const pos = this.getPos()
-
-          tr.setSelection(TextSelection.create(tr.doc, pos))
-
-          this.view.focus()
-
-          this.view.dispatch(tr)
-
-          this.closeForm()
-        }}
-        handleRemove={() => {
-          const { tr } = this.view.state
-
-          const pos = this.getPos()
-          const to = pos + this.node.nodeSize
-
-          tr.replaceWith(pos, to, this.node.content).setSelection(
-            TextSelection.create(tr.doc, pos)
-          )
-
-          this.view.focus()
-
-          this.view.dispatch(tr)
-
-          this.closeForm()
-        }}
-        handleSave={(data: LinkValue) => {
-          const tr = this.view.state.tr
-
-          const pos = this.getPos()
-
-          if (
-            data.href !== originalValue.href ||
-            data.title !== originalValue.title
-          ) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...this.node.attrs,
-              href: data.href,
-              title: data.title,
-            })
-          }
-
-          if (data.text !== originalValue.text) {
-            tr.insertText(data.text, pos + 1, pos + this.node.nodeSize - 1)
-          }
-
-          tr.setSelection(TextSelection.create(tr.doc, pos))
-
-          this.view.focus()
-
-          this.view.dispatch(tr)
-
-          this.closeForm()
-        }}
-      />,
-      this.popperContainer
+    this.popperContainer = ReactSubView(
+      this.props,
+      LinkForm,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')
   }
 
-  private closeForm = () => {
-    // this.view.focus()
+  private handleCancel = () => {
+    const tr = this.view.state.tr
+    const pos = this.getPos()
+    tr.setSelection(TextSelection.create(tr.doc, pos))
+    this.view.focus()
+    this.view.dispatch(tr)
+    this.closeForm()
+  }
 
-    this.props.popper.destroy()
+  private handleRemove = () => {
+    const tr = this.view.state.tr
+    const pos = this.getPos()
+    const to = pos + this.node.nodeSize
+    tr.replaceWith(pos, to, this.node.content).setSelection(
+      TextSelection.create(tr.doc, pos)
+    )
+    this.view.focus()
+    this.view.dispatch(tr)
+    this.closeForm()
+  }
 
-    if (this.popperContainer) {
-      this.props.unmountReactComponent(this.popperContainer)
+  private handleSave = (value: LinkValue) => {
+    const tr = this.view.state.tr
+
+    const link = this.node as LinkNode
+    const pos = this.getPos()
+
+    if (value.href !== link.attrs.href || value.title !== link.attrs.title) {
+      tr.setNodeMarkup(pos, undefined, {
+        ...this.node.attrs,
+        href: value.href,
+        title: value.title,
+      })
     }
+
+    if (value.text !== link.textContent) {
+      tr.insertText(value.text, pos + 1, pos + this.node.nodeSize - 1)
+    }
+
+    tr.setSelection(TextSelection.create(tr.doc, pos))
+
+    this.view.focus()
+
+    this.view.dispatch(tr)
+
+    this.closeForm()
+  }
+
+  private closeForm = () => {
+    this.props.popper.destroy()
+    this.popperContainer?.remove()
   }
 }
 

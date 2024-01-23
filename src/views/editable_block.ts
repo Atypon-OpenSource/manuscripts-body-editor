@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation, Model } from '@manuscripts/json-schema'
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { Build, nodeNames, schema } from '@manuscripts/transform'
+import { ManuscriptNodeType, nodeNames, schema } from '@manuscripts/transform'
+import { ResolvedPos } from 'prosemirror-model'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -29,11 +31,14 @@ type Constructor<T> = new (...args: any[]) => T
 
 const isNotNull = <T>(a: T | null): a is T => a !== null
 
+const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
+  return !!findParentNodeOfTypeClosestToPos($pos, type)
+}
+
 export interface EditableBlockProps extends BaseNodeProps {
   getCapabilities: () => Capabilities
   retrySync: (componentIDs: string[]) => Promise<void>
-  saveModel: <T extends Model>(model: T | Build<T> | Partial<T>) => Promise<T>
-  setComment?: (comment?: CommentAnnotation) => void
+  setComment: (comment: CommentAnnotation) => void
   dispatch?: Dispatch
   theme?: DefaultTheme
 }
@@ -45,7 +50,7 @@ export const EditableBlock = <
 ) => {
   return class extends Base {
     public gutterButtons = (): HTMLElement[] =>
-      [this.createAddButton(true), this.createEditButton()].filter(isNotNull)
+      [this.createAddButton(), this.createEditButton()].filter(isNotNull)
 
     public actionGutterButtons = (): HTMLElement[] =>
       [this.createSyncWarningButton()].filter(isNotNull)
@@ -99,12 +104,18 @@ export const EditableBlock = <
       return warningButton
     }
 
-    public createAddButton = (after: boolean): HTMLElement | null => {
-      const $pos = this.view.state.doc.resolve(this.getPos())
+    public createAddButton = (): HTMLElement | null => {
       const hasAccess = this.props.getCapabilities()?.editArticle
-      if (!hasAccess || $pos.parent.type === schema.nodes.keywords) {
+      if (!hasAccess) {
         return null
       }
+
+      const $pos = this.view.state.doc.resolve(this.getPos())
+      if (hasParent($pos, schema.nodes.keywords)) {
+        return null
+      }
+
+      const after = !hasParent($pos, schema.nodes.bibliography_section)
 
       const button = document.createElement('a')
       button.classList.add('add-block')
@@ -120,7 +131,7 @@ export const EditableBlock = <
         event.stopPropagation()
 
         const menu = this.createMenu()
-        menu.showAddMenu(event.currentTarget as HTMLAnchorElement, after)
+        menu.showAddMenu(event.currentTarget as Element, after)
       })
 
       return button
@@ -141,7 +152,7 @@ export const EditableBlock = <
         event.stopPropagation()
 
         const menu = this.createMenu()
-        menu.showEditMenu(event.currentTarget as HTMLAnchorElement)
+        menu.showEditMenu(event.currentTarget as Element)
       })
 
       return button

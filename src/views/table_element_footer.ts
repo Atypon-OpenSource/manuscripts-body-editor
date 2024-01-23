@@ -1,5 +1,5 @@
 /*!
- * © 2023 Atypon Systems LLC
+ * © 2019 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import BlockView from './block_view'
+
+import { ManuscriptNodeView } from '@manuscripts/transform'
+
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 
-export class AffiliationsView<
-  PropsType extends EditableBlockProps
-> extends BlockView<PropsType> {
-  public ignoreMutation = () => true
-  public stopEvent = () => true
+export class TableElementFooterView<PropsType extends BaseNodeProps>
+  extends BaseNodeView<PropsType>
+  implements ManuscriptNodeView
+{
+  public initialise = () => {
+    this.createDOM()
+  }
 
-  public createElement = () => {
-    this.contentDOM = document.createElement(this.elementType)
-    this.contentDOM.className = 'block'
-    this.contentDOM.setAttribute('contenteditable', 'false')
+  public createDOM = () => {
+    this.dom = document.createElement('div')
+    this.dom.classList.add('table-footer')
+    this.dom.setAttribute('id', this.node.attrs.id)
+    this.contentDOM = document.createElement('div')
     this.dom.appendChild(this.contentDOM)
   }
 }
 
-export default createNodeView(AffiliationsView)
+export default createNodeView(TableElementFooterView)

@@ -20,9 +20,12 @@ import {
   CHANGE_STATUS,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
-import { buildComment } from '@manuscripts/transform'
+import {
+  BibliographyItemNode,
+  buildComment,
+  Decoder,
+} from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
-import React from 'react'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
@@ -36,10 +39,11 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
+import ReactSubView from './ReactSubView'
+import { ReferencesEditor, ReferencesEditorProps } from './ReferencesEditor'
 
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 type WidgetDecoration = Decoration & {
   type: { toDOM: () => HTMLElement }
@@ -47,51 +51,34 @@ type WidgetDecoration = Decoration & {
 export class BibliographyElementBlockView<
   PropsType extends BibliographyElementViewProps & EditableBlockProps
 > extends BlockView<PropsType> {
-  public container: HTMLElement
-  public popperContainer?: HTMLDivElement
+  private container: HTMLElement
+  private editor: HTMLDivElement
+  private decoder = new Decoder(new Map())
 
   public gutterButtons = (): HTMLElement[] => []
 
-  public showPopper = (referenceID: string) => {
-    const {
-      renderReactComponent,
-      components: { ReferencesEditor },
-    } = this.props
-
-    const handleSave = async (data: Partial<BibliographyItem>) => {
-      const {
-        _id: id,
-        'container-title': containerTitle,
-        DOI: doi,
-        ...rest
-      } = data as BibliographyItem
-
-      this.updateNodeAttrs({
-        id,
-        containerTitle,
-        doi,
-        ...rest,
-      })
-    }
-
-    if (!this.popperContainer) {
-      this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'references'
-    }
-
+  public showPopper = (id: string) => {
     const bib = getBibliographyPluginState(this.view.state)
 
-    renderReactComponent(
-      <ReferencesEditor
-        saveModel={handleSave}
-        deleteModel={this.deleteNode}
-        modelMap={bib.bibliographyItems}
-        referenceID={referenceID}
-      />,
-      this.popperContainer
+    const componentProps: ReferencesEditorProps = {
+      items: Array.from(bib.bibliographyItems.values()),
+      citationCounts: bib.citationCounts,
+      item: bib.bibliographyItems.get(id),
+      onSave: this.handleSave,
+      onDelete: this.handleDelete,
+    }
+
+    this.editor = ReactSubView(
+      this.props,
+      ReferencesEditor,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'references-modal'
     )
 
-    this.props.popper.show(this.dom, this.popperContainer, 'right')
+    this.props.popper.show(this.dom, this.editor, 'right')
   }
 
   public stopEvent = () => true
@@ -158,7 +145,6 @@ export class BibliographyElementBlockView<
       editButton.addEventListener('click', (e) => {
         e.preventDefault()
         this.showPopper(element.id)
-        this.popperContainer = undefined
       })
 
       editButton.innerHTML = editIcon
@@ -206,6 +192,7 @@ export class BibliographyElementBlockView<
       this.container.appendChild(wrapper)
     }
   }
+
   public createElement = () => {
     this.container = document.createElement('div')
     this.container.classList.add('block')
@@ -213,6 +200,15 @@ export class BibliographyElementBlockView<
 
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
+  }
+
+  private handleSave = (item: BibliographyItem) => {
+    const node = this.decoder.decode(item) as BibliographyItemNode
+    this.updateNodeAttrs(node.attrs)
+  }
+
+  private handleDelete = (item: BibliographyItem) => {
+    return this.deleteNode(item._id)
   }
 }
 
