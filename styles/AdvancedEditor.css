@@ -680,10 +680,6 @@ Next levels are shifted 'up' by 1
   right: 0;
 }
 
-.ProseMirror span.highlight {
-  background-color: var(--highlight-bg-color);
-}
-
 .ProseMirror {
   --pending-bg-color: #e6f7fc;
   --accepted-bg-color: #d1edaf;
