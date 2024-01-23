@@ -47,7 +47,7 @@ import ReactSubView from './ReactSubView'
 
 const createBibliographySection = (node: ManuscriptNode) =>
   schema.nodes.bibliography_section.createAndFill({}, [
-    schema.nodes.section_title.create({}, schema.text('Bibliography')),
+    schema.nodes.section_title.create({}, schema.text('References')),
     schema.nodes.bibliography_element.create({}, node ? [node] : []),
   ]) as ManuscriptNode
 
@@ -214,19 +214,27 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   private insertBibliographyNode(item: BibliographyItem) {
     const { doc, tr } = this.view.state
 
-    const elements = findChildrenByType(
+    const biblioSection = findChildrenByType(
       doc,
       schema.nodes.bibliography_element,
       true
     )
 
+    const backmatter = findChildrenByType(doc, schema.nodes.backmatter, true)
+    const backmatterEnd = backmatter[0]
+      ? backmatter[0].node.nodeSize + backmatter[0].pos
+      : 0
+
     const node = this.decoder.decode(item) as BibliographyItemNode
 
-    if (elements.length) {
-      this.view.dispatch(tr.insert(elements[0].pos + 1, node))
+    if (biblioSection.length) {
+      this.view.dispatch(tr.insert(biblioSection[0].pos + 1, node))
     } else {
       this.view.dispatch(
-        tr.insert(tr.doc.content.size, createBibliographySection(node))
+        tr.insert(
+          backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
+          createBibliographySection(node)
+        )
       )
     }
 
