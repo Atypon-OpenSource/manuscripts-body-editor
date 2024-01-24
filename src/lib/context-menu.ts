@@ -44,7 +44,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  setComment?: (comment?: CommentAnnotation) => void
+  setComment?: (comment: CommentAnnotation) => void
 }
 
 type InsertableNodes = Nodes | 'subsection'
