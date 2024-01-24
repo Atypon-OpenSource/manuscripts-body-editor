@@ -490,10 +490,12 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   // check if another graphical abstract already exists
-  if (getChildOfType(state.doc, schema.nodes.graphical_abstract_section)) {
+  // parameter 'deep' must equal true to search the whole document
+  if (
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+  ) {
     return false
   }
-
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
