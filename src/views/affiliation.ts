@@ -17,11 +17,11 @@
 import { Capabilities } from '@manuscripts/style-guide'
 import { AffiliationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { affiliationsKey } from '../plugins/affiliations'
 import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { getActualAttrs } from '../lib/track-changes-utils'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }

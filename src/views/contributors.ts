@@ -16,13 +16,13 @@
 import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
 import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { affiliationsKey } from '../plugins/affiliations'
 import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { getActualAttrs } from '../lib/track-changes-utils'
 
 export interface ContributorsProps extends EditableBlockProps {
   getCapabilities: () => Capabilities

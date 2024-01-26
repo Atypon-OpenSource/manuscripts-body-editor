@@ -17,6 +17,7 @@
 import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
+
 import { TrackableAttributes } from '../types'
 
 export function isRejectedInsert(node: ProsemirrorNode) {

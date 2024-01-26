@@ -29,12 +29,12 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-import { getActualAttrs } from '../lib/track-changes-utils'
 
 export interface FigureProps {
   fileManagement: FileManagement
