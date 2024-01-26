@@ -15,7 +15,9 @@
  */
 
 import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { TrackableAttributes } from '../types'
 
 export function isRejectedInsert(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
@@ -94,4 +96,16 @@ export function isTracked(node: ProsemirrorNode) {
     )
   }
   return false
+}
+
+export function getActualAttrs<T extends ManuscriptNode>(node: T) {
+  const attrs = node.attrs as TrackableAttributes<T>
+  if (
+    attrs.dataTracked &&
+    attrs.dataTracked[0].status === 'rejected' &&
+    attrs.dataTracked[0].operation === 'set_attrs'
+  ) {
+    return attrs.dataTracked[0].oldAttrs as T['attrs']
+  }
+  return attrs
 }

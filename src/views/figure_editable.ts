@@ -34,6 +34,7 @@ import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+import { getActualAttrs } from '../lib/track-changes-utils'
 
 export interface FigureProps {
   fileManagement: FileManagement
@@ -66,20 +67,13 @@ export class FigureEditableView extends FigureView<
   }
 
   public updateContents = () => {
-    let attrs = this.node.attrs
+    const attrs = getActualAttrs(this.node)
 
     if (this.node.attrs.dataTracked?.length) {
       /*
         if track-status is 'rejected' and operation is 'set_attrs' then find old attribute in
         the this.node.attrs.dataTracked[x].oldAttrs and use them in the display
       */
-
-      if (
-        this.node.attrs.dataTracked[0].status === 'rejected' &&
-        this.node.attrs.dataTracked[0].operation === 'set_attrs'
-      ) {
-        attrs = this.node.attrs.dataTracked[0].oldAttrs
-      }
 
       this.dom.setAttribute(
         'data-track-status',

@@ -18,7 +18,6 @@
  * This plugin handles indexing of affiliations that are supposed to be index in accordance with their order in the document.
  * It also provides that information to components that display that indexing.
  */
-
 import {
   AffiliationNode,
   ContributorNode,
@@ -30,11 +29,12 @@ import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isDeleted } from '../lib/track-changes-utils'
+import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
 
 interface PluginState {
   indexedAffiliationIds: Map<string, number> // key is authore id
-  contributors: Array<[ContributorNode, number]>
+  contributors: Map<string, [ContributorNode, number]>
+  affiliations: Array<[AffiliationNode, number]>
 }
 
 export const affiliationsKey = new PluginKey<PluginState>('affiliations')
@@ -42,6 +42,7 @@ export const affiliationsKey = new PluginKey<PluginState>('affiliations')
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const contributors: Array<[ContributorNode, number]> = []
   const affiliations: Array<[AffiliationNode, number]> = []
+
   doc.descendants((node, pos) => {
     if (isDeleted(node)) {
       return
@@ -57,12 +58,13 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const iAffiliations = new Set<string>()
 
   contributors
-    .map(([node]) => node)
-    .sort((a, b) => {
-      return Number(a.attrs.priority) - Number(b.attrs.priority)
+    .sort(([a], [b]) => {
+      return (
+        Number(getActualAttrs(a).priority) - Number(getActualAttrs(b).priority)
+      )
     })
-    .forEach((author) => {
-      author.attrs.affiliations.forEach((aff) => {
+    .forEach(([author]) => {
+      getActualAttrs(author).affiliations.forEach((aff) => {
         iAffiliations.add(aff)
       })
     })
@@ -73,7 +75,11 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   return {
     indexedAffiliationIds,
-    contributors,
+    contributors: contributors.reduce((acc, [node, pos]) => {
+      acc.set(node.attrs.id, [node, pos])
+      return acc
+    }, new Map() as Map<string, [ContributorNode, number]>),
+    affiliations,
   }
 }
 
@@ -96,6 +102,32 @@ export default () => {
           return buildPluginState(newState.doc)
         }
       },
+    },
+
+    appendTransaction(transactions, oldState, newState) {
+      const { affiliations, indexedAffiliationIds } = affiliationsKey.getState(
+        newState
+      ) as PluginState
+
+      const oldPluginState = affiliationsKey.getState(oldState) as PluginState
+
+      const orphanAffiliations: [AffiliationNode, number][] = []
+
+      const { tr } = newState
+
+      for (const [id] of oldPluginState.indexedAffiliationIds.entries()) {
+        if (!indexedAffiliationIds.has(id)) {
+          const affiliation = affiliations.find(
+            ([node]) => node.attrs.id === id
+          )
+          if (affiliation) {
+            orphanAffiliations.push(affiliation)
+            tr.delete(affiliation[1], affiliation[1] + affiliation[0].nodeSize)
+          }
+        }
+      }
+
+      return tr
     },
 
     props: {

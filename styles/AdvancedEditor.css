@@ -765,8 +765,13 @@ Next levels are shifted 'up' by 1
 .contributor[data-track-op='delete']:not([data-track-status='rejected']) .name,
 .affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
   text-decoration: line-through;
-  pointer-events: none;
   color: var(--deleted-color);
+}
+
+.contributor[data-track-op='delete']:not([data-track-status='rejected']),
+.contributor[data-track-op='delete']:not([data-track-status='rejected']) .name,
+.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
+  pointer-events: none;
 }
 
 .contributor[data-track-op='delete']:not([data-track-status='rejected']) {

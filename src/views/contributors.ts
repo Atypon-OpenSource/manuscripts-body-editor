@@ -22,6 +22,7 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { getActualAttrs } from '../lib/track-changes-utils'
 
 export interface ContributorsProps extends EditableBlockProps {
   getCapabilities: () => Capabilities
@@ -66,6 +67,9 @@ export class ContributorsView<
     authors
       .sort((a, b) => Number(a.attrs.priority) - Number(b.attrs.priority))
       .forEach((author, i) => {
+        if (getActualAttrs(author).role !== 'author') {
+          return
+        }
         const jointAuthors = this.isJointFirstAuthor(authors, i)
         authorsWrapper.appendChild(this.buildAuthor(author, jointAuthors))
       })
@@ -78,6 +82,8 @@ export class ContributorsView<
   buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
     const pluginState = affiliationsKey.getState(this.view.state)
     const attrs = node.attrs as TrackableAttributes<ContributorNode>
+
+    const displayAttr = getActualAttrs(node)
 
     const container = document.createElement('button')
     container.classList.add('contributor')
@@ -96,7 +102,7 @@ export class ContributorsView<
 
     const disableEditButton = !can.editMetadata
 
-    const { bibliographicName, isCorresponding, email, id } = attrs
+    const { bibliographicName, isCorresponding, email, id } = displayAttr
 
     container.addEventListener('click', (e) => {
       e.preventDefault()
@@ -114,7 +120,7 @@ export class ContributorsView<
 
     const noteText: string[] = []
     if (pluginState?.indexedAffiliationIds) {
-      attrs.affiliations.map((af) => {
+      displayAttr.affiliations.map((af) => {
         const index = pluginState?.indexedAffiliationIds.get(af)
         if (index) {
           noteText.push(index.toString())
@@ -130,7 +136,7 @@ export class ContributorsView<
       container.appendChild(this.createNote(noteText.join(',')))
     }
 
-    if (attrs.isCorresponding) {
+    if (displayAttr.isCorresponding) {
       container.appendChild(this.createNote('*', 'Corresponding author'))
     }
 
@@ -209,7 +215,7 @@ export class ContributorsView<
   createLegend = () => {
     const state = affiliationsKey.getState(this.view.state)
     if (state?.contributors) {
-      const isThereJointContributor = state.contributors.find(
+      const isThereJointContributor = [...state.contributors.values()].find(
         ([contributor]) => contributor.attrs.isJointContributor
       )
       if (isThereJointContributor) {

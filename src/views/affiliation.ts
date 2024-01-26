@@ -21,6 +21,7 @@ import { affiliationsKey } from '../plugins/affiliations'
 import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { getActualAttrs } from '../lib/track-changes-utils'
 export interface Props extends BaseNodeProps {
   getCapabilities: () => Capabilities
 }
@@ -37,7 +38,9 @@ export class AffiliationView<PropsType extends BaseNodeProps>
 
     const pluginState = affiliationsKey.getState(this.view.state)
 
-    this.dom.innerHTML = this.formatAddress(attrs)
+    this.dom.innerHTML = this.formatAddress(
+      getActualAttrs(this.node as AffiliationNode)
+    )
     if (pluginState?.indexedAffiliationIds) {
       const order = pluginState.indexedAffiliationIds.get(attrs.id)
       this.dom.innerHTML = order
