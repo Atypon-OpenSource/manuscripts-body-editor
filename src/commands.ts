@@ -478,6 +478,7 @@ export const insertInlineFootnote =
         footnotesSection.node,
         schema.nodes.footnotes_element
       )
+      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
       const pos =
         footnotesSection.pos +
         footnoteElement[0].pos +
