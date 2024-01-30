@@ -26,7 +26,7 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
