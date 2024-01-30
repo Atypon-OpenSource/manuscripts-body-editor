@@ -215,7 +215,7 @@ export class ContributorsView<
   createLegend = () => {
     const state = affiliationsKey.getState(this.view.state)
     if (state?.contributors) {
-      const isThereJointContributor = [...state.contributors.values()].find(
+      const isThereJointContributor = state.contributors.find(
         ([contributor]) => contributor.attrs.isJointContributor
       )
       if (isThereJointContributor) {

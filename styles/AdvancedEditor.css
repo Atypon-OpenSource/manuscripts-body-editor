@@ -821,11 +821,6 @@ Next levels are shifted 'up' by 1
   background-color: #d9f6ff;
 }
 
-.contributor:not(:disabled) .name:hover,
-.contributor:not(:disabled):hover .name {
-  text-decoration: underline;
-}
-
 .contributor-note:last-child {
   margin: 0;
 }

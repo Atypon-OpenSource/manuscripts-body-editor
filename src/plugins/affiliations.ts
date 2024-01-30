@@ -16,7 +16,7 @@
 
 /**
  * This plugin handles indexing of affiliations that are supposed to be index in accordance with their order in the document.
- * It also provides that information to components that display that indexing.
+ * It also provides that information to components that display that indexing. Additionally it deletes affiliations that have been detached and not used anymore.
  */
 import {
   AffiliationNode,
@@ -26,14 +26,14 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
 
 interface PluginState {
   indexedAffiliationIds: Map<string, number> // key is authore id
-  contributors: Map<string, [ContributorNode, number]>
+  contributors: Array<[ContributorNode, number]>
   affiliations: Array<[AffiliationNode, number]>
 }
 
@@ -75,10 +75,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   return {
     indexedAffiliationIds,
-    contributors: contributors.reduce((acc, [node, pos]) => {
-      acc.set(node.attrs.id, [node, pos])
-      return acc
-    }, new Map() as Map<string, [ContributorNode, number]>),
+    contributors,
     affiliations,
   }
 }
@@ -105,15 +102,24 @@ export default () => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { affiliations, indexedAffiliationIds } = affiliationsKey.getState(
+      const { indexedAffiliationIds } = affiliationsKey.getState(
         newState
       ) as PluginState
 
       const oldPluginState = affiliationsKey.getState(oldState) as PluginState
 
-      const orphanAffiliations: [AffiliationNode, number][] = []
-
       const { tr } = newState
+
+      const affiliations: Array<[AffiliationNode, number]> = []
+
+      newState.doc.descendants((node, pos) => {
+        if (isDeleted(node)) {
+          return
+        }
+        if (isAffiliationNode(node)) {
+          affiliations.push([node, pos])
+        }
+      })
 
       for (const [id] of oldPluginState.indexedAffiliationIds.entries()) {
         if (!indexedAffiliationIds.has(id)) {
@@ -121,11 +127,12 @@ export default () => {
             ([node]) => node.attrs.id === id
           )
           if (affiliation) {
-            orphanAffiliations.push(affiliation)
             tr.delete(affiliation[1], affiliation[1] + affiliation[0].nodeSize)
           }
         }
       }
+
+      tr.setMeta('origin', 'affiliations')
 
       return tr
     },
