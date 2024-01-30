@@ -1590,10 +1590,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.0.tgz#7b67a86569a963ec11e5ad2c2fce080f7c54957f"
-  integrity sha512-7f+x2v0rhv9OWUnOqo6oHmAZ75ljgtrEJ21/n5TdKjHT3f9gH5Cat5WnITTetmTtgcmCWrRJa2uMfXkJo9Teqw==
+"@manuscripts/style-guide@1.7.1-LEAN-3281-0":
+  version "1.7.1-LEAN-3281-0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.1-LEAN-3281-0.tgz#fcb5c82be048a50889f87e70e8c2e60307c32730"
+  integrity sha512-tJKvXs9R3rt7//imAWATBQ+OyYz/GJi/nBrdO+bizN1v23SRmbXw2P1Uo8KAqgPf89ZJJZNCwOYJz4CizJkCkg==
   dependencies:
     "@apollo/client" "^3.7.3"
     "@formatjs/intl-relativetimeformat" "^4.5.9"
