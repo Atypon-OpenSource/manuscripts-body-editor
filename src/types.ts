@@ -32,7 +32,7 @@ export type EditorAction = (
 export type NodeViewCreator<T extends ManuscriptNodeView> = (
   node: ManuscriptNode,
   view: ManuscriptEditorView,
-  getPos: boolean | (() => number),
+  getPos: () => number | undefined,
   decorations: readonly Decoration[]
 ) => T
 
