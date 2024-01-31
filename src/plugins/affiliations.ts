@@ -29,7 +29,11 @@ import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
+import {
+  getActualAttrs,
+  isDeleted,
+  isPendingInsert,
+} from '../lib/track-changes-utils'
 
 interface PluginState {
   indexedAffiliationIds: Map<string, number> // key is authore id
@@ -107,9 +111,7 @@ export default () => {
       ) as PluginState
 
       const oldPluginState = affiliationsKey.getState(oldState) as PluginState
-
       const { tr } = newState
-
       const affiliations: Array<[AffiliationNode, number]> = []
 
       newState.doc.descendants((node, pos) => {
@@ -126,7 +128,7 @@ export default () => {
           const affiliation = affiliations.find(
             ([node]) => node.attrs.id === id
           )
-          if (affiliation) {
+          if (affiliation && !isPendingInsert(affiliation[0])) {
             tr.delete(affiliation[1], affiliation[1] + affiliation[0].nodeSize)
           }
         }
