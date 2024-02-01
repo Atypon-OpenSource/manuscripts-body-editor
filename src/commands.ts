@@ -452,11 +452,14 @@ export const insertInlineFootnote =
     // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
     tr.insert(insertedAt, node)
 
-    const elements = findChildrenByType(tr.doc, schema.nodes.footnotes_element)
+    const footnotesSection = findChildrenByType(
+      tr.doc,
+      schema.nodes.footnotes_section
+    )[0]
 
     let selectionPos
 
-    if (!elements.length) {
+    if (!footnotesSection) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
         state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
@@ -470,8 +473,17 @@ export const insertInlineFootnote =
       // inside footnote inside element inside section
       selectionPos = backmatter.pos + section.nodeSize - 3
     } else {
-      const element = elements[0]
-      const pos = element.pos + element.node.nodeSize - 1
+      // Look for footnote element inside the footnotes section to exclude tables footnote elements
+      const footnoteElement = findChildrenByType(
+        footnotesSection.node,
+        schema.nodes.footnotes_element
+      )
+      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
+      const pos =
+        footnotesSection.pos +
+        footnoteElement[0].pos +
+        footnoteElement[0].node.nodeSize -
+        1
       tr.insert(pos, footnote)
       selectionPos = pos + 2
     }
@@ -490,10 +502,12 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   // check if another graphical abstract already exists
-  if (getChildOfType(state.doc, schema.nodes.graphical_abstract_section)) {
+  // parameter 'deep' must equal true to search the whole document
+  if (
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+  ) {
     return false
   }
-
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1

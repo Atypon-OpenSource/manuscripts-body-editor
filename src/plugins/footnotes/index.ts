@@ -21,7 +21,7 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
-import { isEqual } from 'lodash-es'
+import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
