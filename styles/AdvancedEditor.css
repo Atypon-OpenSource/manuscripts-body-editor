@@ -784,3 +784,8 @@ Next levels are shifted 'up' by 1
 .contributors th, .contributors td {
   padding: initial;
 }
+
+.keywords-delete {
+  display: inline;
+  position: unset;
+}
