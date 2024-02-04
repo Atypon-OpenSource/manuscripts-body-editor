@@ -27,6 +27,7 @@ export class AffiliationsView<
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
     this.contentDOM.setAttribute('contenteditable', 'false')
+    this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.contentDOM)
   }
 }
