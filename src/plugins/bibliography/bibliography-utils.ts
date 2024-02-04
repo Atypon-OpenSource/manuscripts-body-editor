@@ -148,7 +148,7 @@ export const getCitation = (node: CitationNode): Citation | undefined => {
 export const getBibliographyItem = (
   node: BibliographyItemNode
 ): BibliographyItem | undefined => {
-  const attrs = getEffectiveAttrs(node)
+  const attrs = getEffectiveAttrs(node, true)
   if (!attrs) {
     return undefined
   }
@@ -170,11 +170,24 @@ const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
  * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
  * as it's easier to deal with the manuscript Models for both references list & citation popup view
  */
-const getEffectiveAttrs = (node: ManuscriptNode): Attrs | undefined => {
+const getEffectiveAttrs = (
+  node: ManuscriptNode,
+  excludeDeletedNode?: boolean
+): Attrs | undefined => {
   const { dataTracked, ...attrs } = node.attrs
   const nodeChange = (dataTracked as TrackedAttrs[] | undefined)?.reduce(
     getLatest
   )
+
+  const isDeleted =
+    nodeChange &&
+    nodeChange.operation === CHANGE_OPERATION.delete &&
+    nodeChange.status !== CHANGE_STATUS.rejected
+
+  // Exclude deleted nodes
+  if (isDeleted && excludeDeletedNode) {
+    return undefined
+  }
 
   const isRejected =
     nodeChange &&
