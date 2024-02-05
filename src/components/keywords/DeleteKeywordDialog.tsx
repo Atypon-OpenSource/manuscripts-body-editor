@@ -62,7 +62,7 @@ export const DeleteKeywordDialog: React.FC<DeleteKeywordDialogProps> = ({
 
   return (
     <>
-      <IconButton size={16} onClick={() => setOpen(true)}>
+      <IconButton size={18} onClick={() => setOpen(true)}>
         <DeleteIcon />
       </IconButton>
       <Dialog
