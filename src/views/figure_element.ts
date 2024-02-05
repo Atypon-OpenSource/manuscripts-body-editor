@@ -155,7 +155,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        modelMap: this.props.getModelMap(),
+        doc: this.view.state.doc,
         handleUpload,
         handleAdd,
       }
