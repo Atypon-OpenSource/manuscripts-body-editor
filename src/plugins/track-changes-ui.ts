@@ -100,7 +100,7 @@ const decorateChanges = (state: EditorState): Decoration[] => {
   const { pending } = pluginState.changeSet
 
   return pending.reduce((decorations, change) => {
-    if (change.id === null || change) {
+    if (change.id === null) {
       return decorations
     }
 
