@@ -731,7 +731,6 @@
   text-align: center;
 }
 
-
 .ProseMirror .bib-item {
   position: relative;
   margin-right: 40px;
@@ -1008,7 +1007,7 @@
 }
 .article-titles {
   cursor: text;
-  font-family: "PT Serif", serif;
+  font-family: 'PT Serif', serif;
   font-size: 28px;
   font-weight: 700;
   line-height: 1.43;

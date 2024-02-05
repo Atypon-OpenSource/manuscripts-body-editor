@@ -17,6 +17,8 @@
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
+import affiliation from '../views/affiliation'
+import affiliationsSection from '../views/affiliations'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
@@ -61,6 +63,8 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributorsSection(props, dispatch),
+    affiliations: affiliationsSection(props, dispatch),
+    affiliation: affiliation(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),

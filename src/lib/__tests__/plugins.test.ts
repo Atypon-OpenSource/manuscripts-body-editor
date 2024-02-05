@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   Figure,
   FigureElement,
@@ -388,6 +387,7 @@ describe('editor view', () => {
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
     const tableOfContentsSection = view.state.doc.child(6).child(0)
+
     expect(tableOfContentsSection.content.child(1).attrs.contents).toBe(
       '<div>Table of Contents</div>'
     )
