@@ -27,6 +27,16 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
+const deleteIcon =
+  '<svg width="8px" height="8px" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\n' +
+  '    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n' +
+  '        <g fill="#6E6E6E">\n' +
+  '            <rect id="Rectangle-23-Copy" transform="translate(13.000000, 13.000000) rotate(-45.000000) translate(-13.000000, -13.000000) " x="-3" y="11" width="32" height="4" rx="2"></rect>\n' +
+  '            <rect id="Rectangle-23-Copy-2" transform="translate(13.000000, 13.000000) scale(1, -1) rotate(-45.000000) translate(-13.000000, -13.000000) " x="-3" y="11" width="32" height="4" rx="2"></rect>\n' +
+  '        </g>\n' +
+  '    </g>\n' +
+  '</svg>'
+
 export class KeywordView
   extends BaseNodeView<EditableBlockProps>
   implements ManuscriptNodeView
@@ -49,18 +59,22 @@ export class KeywordView
     keyword.classList.add(...classes)
     keyword.appendChild(this.contentDOM as HTMLElement)
 
-    this.dom.innerHTML = ''
-
     const can = this.props.getCapabilities()
 
     if (can.editArticle) {
-      this.renderConfirmationDialog(keyword)
+      const svg = new DOMParser()
+        .parseFromString(deleteIcon, 'image/svg+xml')
+        .querySelector('svg') as SVGElement
+      svg.classList.add('delete-keyword')
+      svg.addEventListener('click', this.showConfirmationDialog)
+      keyword.appendChild(svg)
     }
 
+    this.dom.innerHTML = ''
     this.dom.appendChild(keyword)
   }
 
-  private renderConfirmationDialog = (keywordDom: HTMLElement) => {
+  private showConfirmationDialog = () => {
     this.dialog?.remove()
 
     const keyword = this.node as KeywordNode
@@ -90,7 +104,7 @@ export class KeywordView
     )
 
     if (this.dialog) {
-      keywordDom.appendChild(this.dialog)
+      this.dom.appendChild(this.dialog)
     }
   }
 }
