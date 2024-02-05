@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { BibliographyItem, ObjectTypes } from '@manuscripts/json-schema'
 import { CitationNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
-import React, { createElement } from 'react'
+import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
 import { TrackChangesReview } from '../components/track-changes/TrackChangesReview'
@@ -32,73 +31,11 @@ import { getCitation } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export interface CitationViewProps extends BaseNodeProps {
-  components: Record<string, React.ComponentType<any>> // eslint-disable-line @typescript-eslint/no-explicit-any
-  projectID: string
-}
-
-export class CitationView<PropsType extends CitationViewProps>
+export class CitationView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
-  protected popperContainer?: HTMLDivElement
-
-  public showPopper = () => {
-    const {
-      components: { CitationViewer },
-      projectID,
-      renderReactComponent,
-    } = this.props
-
-    const items = this.getBibliographyItems()
-
-    if (!this.popperContainer) {
-      this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'citation-editor'
-    }
-
-    renderReactComponent(
-      <CitationViewer
-        items={items}
-        projectID={projectID}
-        scheduleUpdate={this.props.popper.update}
-      />,
-      this.popperContainer
-    )
-
-    this.props.popper.show(this.dom, this.popperContainer, 'right')
-  }
-
   public ignoreMutation = () => true
-
-  public selectNode = () => {
-    const isDeleted = !!this.node.attrs.dataTracked?.find(
-      ({ operation, status }: { operation: string; status: string }) =>
-        operation === 'delete' && status !== 'rejected'
-    )
-
-    if (!isDeleted) {
-      this.showPopper()
-      this.dom.classList.add('ProseMirror-selectednode')
-    }
-  }
-
-  public deselectNode = () => {
-    this.dom.classList.remove('ProseMirror-selectednode')
-    this.props.popper.destroy()
-
-    if (this.popperContainer) {
-      this.props.unmountReactComponent(this.popperContainer)
-    }
-  }
-
-  public destroy = () => {
-    this.props.popper.destroy()
-
-    if (this.popperContainer) {
-      this.props.unmountReactComponent(this.popperContainer)
-    }
-  }
 
   public initialise = () => {
     if (!this.node.type.spec.toDOM) {
@@ -163,27 +100,6 @@ export class CitationView<PropsType extends CitationViewProps>
     }
 
     return citation
-  }
-
-  public getBibliographyItems = (): BibliographyItem[] => {
-    const bib = getBibliographyPluginState(this.view.state)
-
-    const citation = this.node as CitationNode
-    return citation.attrs.rids.map((rid) => {
-      const item = bib.bibliographyItems.get(rid)
-
-      if (!item) {
-        const placeholder = {
-          _id: rid,
-          objectType: ObjectTypes.BibliographyItem,
-          title: '[missing library item]',
-        }
-
-        return placeholder as BibliographyItem
-      }
-
-      return item
-    })
   }
 }
 

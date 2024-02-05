@@ -17,13 +17,13 @@
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { CrossReferenceNode, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
-import React from 'react'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView, CrossReferenceViewProps } from './cross_reference'
 import { EditableBlockProps } from './editable_block'
+import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView<
   CrossReferenceViewProps & EditableBlockProps
@@ -31,7 +31,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   protected popperContainer: HTMLDivElement
 
   public selectNode = () => {
-    const { getCapabilities, renderReactComponent } = this.props
+    const { getCapabilities } = this.props
 
     const xref = this.node as CrossReferenceNode
     const rids = xref.attrs.rids
@@ -41,20 +41,22 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       return
     }
 
-    if (!this.popperContainer) {
-      this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'cross-reference-editor'
+    const componentProps = {
+      handleSelect: this.handleSelect,
+      targets: this.getTargets(),
+      handleCancel: this.handleCancel,
+      currentTargetId: rids[0],
+      currentCustomLabel: this.node.attrs.customLabel,
     }
 
-    renderReactComponent(
-      <CrossReferenceItems
-        handleSelect={this.handleSelect}
-        targets={this.getTargets()}
-        handleCancel={this.handleCancel}
-        currentTargetId={rids[0]}
-        currentCustomLabel={this.node.attrs.customLabel}
-      />,
-      this.popperContainer
+    this.popperContainer = ReactSubView(
+      this.props,
+      CrossReferenceItems,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'cross-reference-editor'
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'right')
@@ -62,10 +64,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
 
   public destroy = () => {
     this.props.popper.destroy()
-
-    if (this.popperContainer) {
-      this.props.unmountReactComponent(this.popperContainer)
-    }
+    this.popperContainer?.remove()
   }
 
   public deselectNode = () => {

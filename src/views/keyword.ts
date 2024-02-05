@@ -14,20 +14,96 @@
  * limitations under the License.
  */
 
-import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { KeywordNode, ManuscriptNodeView } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import {
+  DeleteKeywordDialog,
+  DeleteKeywordDialogProps,
+} from '../components/keywords/DeleteKeywordDialog'
+import { getChangeClasses } from '../lib/track-changes-utils'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-export interface Props extends BaseNodeProps {
-  getCapabilities: () => Capabilities
-}
-export class KeywordView<PropsType extends Props>
-  extends BaseNodeView<PropsType>
+import { EditableBlockProps } from './editable_block'
+import ReactSubView from './ReactSubView'
+
+const deleteIcon =
+  '<svg width="8px" height="8px" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\n' +
+  '    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n' +
+  '        <g fill="#6E6E6E">\n' +
+  '            <rect id="Rectangle-23-Copy" transform="translate(13.000000, 13.000000) rotate(-45.000000) translate(-13.000000, -13.000000) " x="-3" y="11" width="32" height="4" rx="2"></rect>\n' +
+  '            <rect id="Rectangle-23-Copy-2" transform="translate(13.000000, 13.000000) scale(1, -1) rotate(-45.000000) translate(-13.000000, -13.000000) " x="-3" y="11" width="32" height="4" rx="2"></rect>\n' +
+  '        </g>\n' +
+  '    </g>\n' +
+  '</svg>'
+
+export class KeywordView
+  extends BaseNodeView<EditableBlockProps>
   implements ManuscriptNodeView
 {
-  public stopEvent = () => true
-  public ignoreMutation = () => true
+  private dialog: HTMLElement
+
+  public initialise = () => {
+    this.createDOM()
+    this.updateContents()
+  }
+
+  public createDOM = () => {
+    this.dom = document.createElement('span')
+    this.contentDOM = document.createElement('span')
+  }
+
+  public updateContents = () => {
+    const keyword = document.createElement('span')
+    const classes = ['keyword', ...getChangeClasses(this.node)]
+    keyword.classList.add(...classes)
+    keyword.appendChild(this.contentDOM as HTMLElement)
+
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
+      const svg = new DOMParser()
+        .parseFromString(deleteIcon, 'image/svg+xml')
+        .querySelector('svg') as SVGElement
+      svg.classList.add('delete-keyword')
+      svg.addEventListener('click', this.showConfirmationDialog)
+      keyword.appendChild(svg)
+    }
+
+    this.dom.innerHTML = ''
+    this.dom.appendChild(keyword)
+  }
+
+  private showConfirmationDialog = () => {
+    this.dialog?.remove()
+
+    const keyword = this.node as KeywordNode
+    const pos = this.getPos()
+
+    const handleDelete = () => {
+      const tr = this.view.state.tr
+      tr.delete(pos, pos + keyword.nodeSize)
+      this.view.dispatch(tr)
+    }
+
+    const componentProps: DeleteKeywordDialogProps = {
+      keyword: keyword.textContent,
+      handleDelete: handleDelete,
+    }
+
+    this.dialog = ReactSubView(
+      this.props,
+      DeleteKeywordDialog,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'keywords-delete'
+    )
+
+    if (this.dialog) {
+      this.dom.appendChild(this.dialog)
+    }
+  }
 }
 
 export default createNodeView(KeywordView)

@@ -346,25 +346,16 @@ const buildProps = (
 ): EditorProps => ({
   doc,
   getManuscript: () => manuscript,
-  getLibraryItem: () => undefined,
   locale: 'en-US',
   popper: new PopperManager(),
   projectID: '',
   getCurrentUser: () => userProfile,
   history,
-  renderReactComponent: () => undefined,
-  unmountReactComponent: () => undefined,
-  getCitationProvider: () => undefined,
   plugins: [],
-  setLibraryItem: () => undefined,
-  filterLibraryItems: async () => [],
-  removeLibraryItem: () => undefined,
   retrySync: async () => undefined,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
-  components: {},
-  matchLibraryItemByIdentifier: () => undefined,
   theme: {},
   getFiles: () => [],
   fileManagement: {
@@ -378,8 +369,6 @@ const buildProps = (
     style: '',
     locale: '',
   },
-  setCiteprocCitations: () => undefined,
-  getCiteprocCitations: () => new Map(),
 })
 
 describe('editor view', () => {

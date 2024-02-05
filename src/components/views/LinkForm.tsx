@@ -31,8 +31,8 @@ export interface LinkValue {
 }
 
 export const LinkForm: React.FC<{
-  handleCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  handleRemove: (event: React.MouseEvent<HTMLButtonElement>) => void
+  handleCancel: () => void
+  handleRemove: () => void
   handleSave: (value: LinkValue) => void
   value: LinkValue
 }> = ({ handleCancel, handleRemove, handleSave, value }) => {

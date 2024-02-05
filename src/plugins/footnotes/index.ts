@@ -19,10 +19,14 @@ import {
   isFootnoteNode,
   isInlineFootnoteNode,
   ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
-import { isEqual } from 'lodash-es'
+import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+
+import { findParentNodeWithIdValue } from '../../lib/utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -37,8 +41,12 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   let index = 0
   const labels = new Map<string, string>()
 
-  doc.descendants((node, pos) => {
-    if (isInlineFootnoteNode(node)) {
+  doc.descendants((node, pos, parentNode) => {
+    if (
+      isInlineFootnoteNode(node) &&
+      parentNode &&
+      parentNode.type !== schema.nodes.table_cell
+    ) {
       nodes.push([node, pos])
       node.attrs.rids.forEach((rid) => {
         labels.set(rid, String(++index))
@@ -156,9 +164,25 @@ export default () => {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
+        const isInTableElementFooter = hasParentNodeOfType(
+          schema.nodes.table_element_footer
+        )(state.selection)
+
+        if (isInTableElementFooter) {
+          const parent = findParentNodeWithIdValue(state.selection)
+          if (parent) {
+            decorations.push(
+              // Add a class for styling selected table element footnotes
+              Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+                class: 'footnote-selected',
+              })
+            )
+          }
+        }
+
         const { labels } = footnotesKey.getState(state) as PluginState
-        if (labels) {
-          state.doc.descendants((node, pos) => {
+        state.doc.descendants((node, pos) => {
+          if (labels) {
             if (isFootnoteNode(node)) {
               const id = node.attrs.id
               const label = labels.get(id)
@@ -170,8 +194,15 @@ export default () => {
                 )
               }
             }
-          })
-        }
+          }
+          if (node.type === schema.nodes.footnotes_element) {
+            decorations.push(
+              Decoration.node(pos, pos + node.nodeSize, {
+                class: 'footnote-element',
+              })
+            )
+          }
+        })
 
         return DecorationSet.create(state.doc, decorations)
       },

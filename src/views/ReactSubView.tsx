@@ -35,6 +35,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
 }
 /*
   This is to render components that affect the Prosemirror Document indirectly. Such as dropdown buttons, inputs, advanced UX elements etc.
+  MAKE SURE dispatch IS PASSED TO YOUR VIEW
 */
 
 export default (

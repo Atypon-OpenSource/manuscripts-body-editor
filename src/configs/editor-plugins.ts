@@ -35,7 +35,6 @@ import comment_annotation from '../plugins/comment_annotation'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import highlights from '../plugins/highlight'
-import keywords from '../plugins/keywords'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -74,8 +73,7 @@ export default (props: PluginProps) => {
     elements(),
     persist(),
     sections(),
-    toc(),
-    keywords(props),
+    toc(props),
     bibliography(props),
     objects(props),
     comment_annotation(props),

@@ -16,6 +16,7 @@
 
 import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   buildComment,
   buildInlineMathFragment,
@@ -26,6 +27,7 @@ import {
   InlineFootnoteNode,
   isElementNodeType,
   isInBibliographySection,
+  isListNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -40,6 +42,7 @@ import {
   SectionNode,
 } from '@manuscripts/transform'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
+import { wrapInList } from 'prosemirror-schema-list'
 import {
   Command,
   NodeSelection,
@@ -48,8 +51,13 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import { findWrapping } from 'prosemirror-transform'
-import { findChildrenByType, findParentNodeOfType } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNodeOfType,
+  NodeWithPos,
+} from 'prosemirror-utils'
 
+import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
@@ -355,9 +363,7 @@ export const insertLink = (
 
 export const insertInlineCitation = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  view?: ManuscriptEditorView
+  dispatch?: Dispatch
 ) => {
   const node = state.schema.nodes.citation.create({
     id: generateID(ObjectTypes.Citation),
@@ -446,11 +452,14 @@ export const insertInlineFootnote =
     // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
     tr.insert(insertedAt, node)
 
-    const elements = findChildrenByType(tr.doc, schema.nodes.footnotes_element)
+    const footnotesSection = findChildrenByType(
+      tr.doc,
+      schema.nodes.footnotes_section
+    )[0]
 
     let selectionPos
 
-    if (!elements.length) {
+    if (!footnotesSection) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
         state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
@@ -464,8 +473,17 @@ export const insertInlineFootnote =
       // inside footnote inside element inside section
       selectionPos = backmatter.pos + section.nodeSize - 3
     } else {
-      const element = elements[0]
-      const pos = element.pos + element.node.nodeSize - 1
+      // Look for footnote element inside the footnotes section to exclude tables footnote elements
+      const footnoteElement = findChildrenByType(
+        footnotesSection.node,
+        schema.nodes.footnotes_element
+      )
+      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
+      const pos =
+        footnotesSection.pos +
+        footnoteElement[0].pos +
+        footnoteElement[0].node.nodeSize -
+        1
       tr.insert(pos, footnote)
       selectionPos = pos + 2
     }
@@ -484,12 +502,15 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch
 ) => {
   // check if another graphical abstract already exists
-  if (getChildOfType(state.doc, schema.nodes.graphical_abstract_section)) {
+  // parameter 'deep' must equal true to search the whole document
+  if (
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+  ) {
     return false
   }
-
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
-
+  // Insert Graphical abstract at the end of abstracts section
+  const pos = abstracts.pos + abstracts.node.content.size + 1
   const section = schema.nodes.graphical_abstract_section.createAndFill(
     { category: 'MPSectionCategory:abstract-graphical' },
     [
@@ -497,8 +518,6 @@ export const insertGraphicalAbstract = (
       createAndFillFigureElement(state),
     ]
   ) as GraphicalAbstractSectionNode
-
-  const pos = abstracts.pos + abstracts.node.nodeSize + 1
 
   const tr = state.tr.insert(pos, section)
 
@@ -534,21 +553,83 @@ export const insertSection =
     return true
   }
 
-export const insertBibliographySection = (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  state: ManuscriptEditorState,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dispatch?: Dispatch
-) => {
+const findSelectedList = findParentNodeOfType([
+  schema.nodes.ordered_list,
+  schema.nodes.bullet_list,
+])
+
+const findRootList = ($pos: ResolvedPos) => {
+  for (let i = 0; i <= $pos.depth; i++) {
+    const node = $pos.node(i)
+    if (isListNode(node)) {
+      const pos = $pos.start(i)
+      return {
+        node,
+        pos,
+      }
+    }
+  }
+}
+
+//Somewhat expensive logic, should this be in a plugin?
+const findListsAtSameLevel = (doc: ManuscriptNode, list: NodeWithPos) => {
+  const $pos = doc.resolve(list.pos + 1)
+  // find the top-level list. This is an optimization to
+  // avoid traversing the entire document looking for lists
+  const root = findRootList($pos)
+  if (!root) {
+    return [list]
+  }
+  const target = $pos.depth
+  const lists: NodeWithPos[] = []
+  root.node.descendants((node, pos) => {
+    const $pos = doc.resolve(root.pos + pos + 1)
+    if ($pos.depth === target && isListNode(node)) {
+      lists.push({ node, pos: $pos.before(target) })
+    }
+    return $pos.depth <= target
+  })
+  return lists
+}
+
+export const insertList =
+  (type: ManuscriptNodeType, style?: string) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const list = findSelectedList(state.selection)
+
+    if (list) {
+      if (!dispatch) {
+        return true
+      }
+      // list was found: update the type and style
+      // of every list at the same level
+      const nodes = findListsAtSameLevel(state.doc, list)
+      const tr = state.tr
+      for (const { node, pos } of nodes) {
+        tr.setNodeMarkup(
+          pos,
+          type,
+          {
+            ...node.attrs,
+            listStyleType: style,
+          },
+          node.marks
+        )
+      }
+      dispatch(skipTracking(tr))
+      return true
+    } else {
+      // no list found, create new list
+      const command = wrapInList(type, { listStyleType: style })
+      return skipCommandTracking(command)(state, dispatch)
+    }
+  }
+
+export const insertBibliographySection = () => {
   return false
 }
 
-export const insertTOCSection = (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  state: ManuscriptEditorState,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  dispatch?: Dispatch
-) => {
+export const insertTOCSection = () => {
   return false
 }
 
