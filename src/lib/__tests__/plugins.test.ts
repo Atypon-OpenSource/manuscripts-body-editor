@@ -340,10 +340,7 @@ const userProfile: UserProfile = {
 
 const history = createMemoryHistory()
 
-const buildProps = (
-  doc: ActualManuscriptNode,
-  modelMap: Map<string, Model>
-): EditorProps => ({
+const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   doc,
   getManuscript: () => manuscript,
   locale: 'en-US',
@@ -412,7 +409,7 @@ describe('editor view', () => {
     const state = EditorState.create({
       doc,
       schema,
-      plugins: plugins(buildProps(doc, modelMap)),
+      plugins: plugins(buildProps(doc)),
     })
 
     const view = new EditorView(null, { state })
