@@ -16,6 +16,7 @@
 import AddIconHighlight from '@manuscripts/assets/react/AddIconHighlight'
 import GutterIconNormal from '@manuscripts/assets/react/GutterIconNormal'
 import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
+import { Model } from '@manuscripts/json-schema'
 import {
   AttachIcon,
   Capabilities,
@@ -30,14 +31,13 @@ import {
   useDropdown,
   useFiles,
 } from '@manuscripts/style-guide'
-import { ManuscriptNode } from '@manuscripts/transform'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
 export interface FigureDropdownProps {
   can: Capabilities
   files: FileAttachment[]
-  doc: ManuscriptNode
+  filesMap: Map<string, Model>
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
@@ -55,13 +55,13 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
 export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
   can,
   files,
-  doc,
+  filesMap,
   handleAdd,
   handleUpload,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  let { supplements, otherFiles } = useFiles(doc, files)
+  let { supplements, otherFiles } = useFiles(filesMap, files)
   supplements = supplements.filter(isImageFile)
   otherFiles = otherFiles.filter(isImageFile)
 
@@ -120,7 +120,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
   can,
   files,
-  doc,
+  filesMap,
   handleDownload,
   handleUpload,
   handleDetach,
@@ -128,7 +128,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const otherFiles = useFiles(doc, files).otherFiles.filter(isImageFile)
+  const otherFiles = useFiles(filesMap, files).otherFiles.filter(isImageFile)
 
   const showDownload = handleDownload && can.downloadFiles
   const showUpload = handleUpload && can.uploadFile

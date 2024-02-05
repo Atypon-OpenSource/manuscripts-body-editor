@@ -19,7 +19,7 @@ import {
   FileAttachment,
   FileManagement,
 } from '@manuscripts/style-guide'
-import { FigureNode } from '@manuscripts/transform'
+import { encode, FigureNode } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
@@ -153,7 +153,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        doc: this.view.state.doc,
+        filesMap: encode(this.view.state.doc),
         handleUpload,
         handleAdd,
       }

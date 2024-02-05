@@ -20,7 +20,11 @@ import {
   FileManagement,
   UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import {
+  encode,
+  ManuscriptEditorView,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -178,7 +182,7 @@ export class FigureEditableView extends FigureView<
       const componentProps: FigureOptionsProps = {
         can,
         files,
-        doc: this.view.state.doc,
+        filesMap: encode(this.view.state.doc),
         handleDownload,
         handleUpload,
         handleDetach,
