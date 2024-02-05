@@ -15,6 +15,7 @@
  */
 
 import { KeywordNode, ManuscriptNodeView } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 
 import {
   DeleteKeywordDialog,
@@ -81,7 +82,9 @@ export class KeywordView
 
     const handleDelete = () => {
       const tr = this.view.state.tr
-      tr.delete(pos, pos + keyword.nodeSize)
+      tr.setSelection(
+        TextSelection.near(this.view.state.doc.resolve(0))
+      ).delete(pos, pos + keyword.nodeSize + 1)
       this.view.dispatch(tr)
     }
 
