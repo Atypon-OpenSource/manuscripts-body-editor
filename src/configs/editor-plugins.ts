@@ -30,6 +30,7 @@ import { tableEditing } from 'prosemirror-tables'
 import { CollabProvider } from '../classes/collabProvider'
 import keys from '../keys'
 import { PopperManager } from '../lib/popper'
+import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
 import comment_annotation from '../plugins/comment_annotation'
 import elements from '../plugins/elements'
@@ -77,6 +78,7 @@ export default (props: PluginProps) => {
     toc(props),
     bibliography(props),
     objects(props),
+    affiliations(),
     comment_annotation(props),
     paragraphs(),
     placeholder(),
