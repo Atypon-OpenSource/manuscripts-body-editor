@@ -85,5 +85,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     table_element_footer: tableElementFooter(props),
     toc_element: tocElement(props),
     comments: empty('comments'),
+    supplements: empty('supplements'),
   }
 }
