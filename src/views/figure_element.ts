@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
@@ -36,7 +35,6 @@ import ReactSubView from './ReactSubView'
 interface FigureElementProps {
   fileManagement: FileManagement
   getFiles: () => FileAttachment[]
-  getModelMap: () => Map<string, Model>
   getCapabilities: () => Capabilities
 }
 

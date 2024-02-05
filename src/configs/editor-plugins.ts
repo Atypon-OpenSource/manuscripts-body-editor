@@ -18,7 +18,7 @@
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { CommentAnnotation, Manuscript, Model } from '@manuscripts/json-schema'
+import { CommentAnnotation, Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptSchema } from '@manuscripts/transform'
 import { collab } from 'prosemirror-collab'
@@ -48,7 +48,6 @@ import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
 interface PluginProps {
-  getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
@@ -73,7 +72,7 @@ export default (props: PluginProps) => {
     elements(),
     persist(),
     sections(),
-    toc(props),
+    toc(),
     bibliography(props),
     objects(props),
     comment_annotation(props),

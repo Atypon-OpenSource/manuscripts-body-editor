@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Attrs, Node } from 'prosemirror-model'
 import { Decoration, NodeView } from 'prosemirror-view'
@@ -25,7 +24,6 @@ import { isMetaNode } from '../lib/utils'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
-  getModelMap: () => Map<string, Model>
   popper: PopperManager
   cslProps: CSLProps
 }

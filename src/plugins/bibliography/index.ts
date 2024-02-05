@@ -105,7 +105,7 @@ const buildBibliographyPluginState = (
   if (
     $old &&
     isEqual(citations, $old.citations) &&
-    isEqual(modelMap, $old.bibliographyItems)
+    isEqual(bibliographyItemMap, $old.bibliographyItems)
   ) {
     $new.citationCounts = $old.citationCounts
     $new.provider = $old.provider

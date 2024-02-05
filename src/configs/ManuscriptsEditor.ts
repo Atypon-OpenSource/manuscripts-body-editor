@@ -19,7 +19,6 @@ import 'prosemirror-view/style/prosemirror.css'
 import {
   CommentAnnotation,
   Manuscript,
-  Model,
   UserProfile,
 } from '@manuscripts/json-schema'
 import {
@@ -54,7 +53,6 @@ export interface EditorProps {
 
   projectID: string
   doc: ManuscriptNode
-  getModelMap: () => Map<string, Model>
   getManuscript: () => Manuscript
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement

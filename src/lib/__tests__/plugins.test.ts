@@ -364,7 +364,6 @@ const buildProps = (
     upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
-  getModelMap: () => modelMap,
   cslProps: {
     style: '',
     locale: '',

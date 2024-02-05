@@ -87,7 +87,6 @@ export const defaultEditorProps: EditorProps = {
     download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
-  getModelMap: () => TEST_DATA.MODEL_MAP,
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   cslProps: {
     style: '',
