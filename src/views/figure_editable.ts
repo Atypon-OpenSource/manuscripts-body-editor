@@ -36,6 +36,7 @@ import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
+import { buildLightManuscript } from './figure_element'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
@@ -182,7 +183,7 @@ export class FigureEditableView extends FigureView<
       const componentProps: FigureOptionsProps = {
         can,
         files,
-        filesMap: encode(this.view.state.doc),
+        filesMap: encode(buildLightManuscript(this.view.state.doc)),
         handleDownload,
         handleUpload,
         handleDetach,

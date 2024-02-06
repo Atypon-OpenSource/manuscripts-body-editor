@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
+import { ObjectTypes } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
   FileManagement,
 } from '@manuscripts/style-guide'
-import { encode, FigureNode } from '@manuscripts/transform'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  encode,
+  FigureNode,
+  generateID,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
@@ -31,6 +39,37 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+
+export const buildLightManuscript = (doc: ManuscriptNode) => {
+  const figures: ManuscriptNode[] = []
+  const sections: ManuscriptNode[] = []
+  doc.descendants((node) => {
+    if (
+      node.type === schema.nodes.section &&
+      node.attrs.category === 'MPSectionCategory:abstract-graphical'
+    ) {
+      sections.push(node)
+      return false
+    }
+
+    if (
+      node.type === schema.nodes.figure_element ||
+      node.type === schema.nodes.supplements
+    ) {
+      figures.push(node)
+      return false
+    }
+  })
+
+  sections.push(
+    schema.nodes.section.create(
+      { id: generateID(ObjectTypes.Section) },
+      figures
+    )
+  )
+
+  return schema.nodes.manuscript.create({}, sections)
+}
 
 interface FigureElementProps {
   fileManagement: FileManagement
@@ -138,6 +177,8 @@ export class FigureElementView extends BlockView<
 
         dispatch(tr)
       }
+
+      this.deleteSupplementNode(file)
     }
 
     if (can.uploadFile) {
@@ -153,7 +194,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        filesMap: encode(this.view.state.doc),
+        filesMap: encode(buildLightManuscript(this.view.state.doc)),
         handleUpload,
         handleAdd,
       }
@@ -167,6 +208,27 @@ export class FigureElementView extends BlockView<
       )
       this.reactTools?.remove()
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+    }
+  }
+
+  private deleteSupplementNode(file: FileAttachment) {
+    if (file.type.id === 'supplementary') {
+      const tr = this.view.state.tr
+
+      this.view.state.doc.descendants((node, pos) => {
+        if (node.type === schema.nodes.supplements) {
+          node.forEach((child, offset) => {
+            if (
+              child.type === schema.nodes.supplement &&
+              child.attrs.href === file.id
+            ) {
+              tr.delete(pos, pos + offset)
+            }
+          })
+        }
+        return false
+      })
+      this.view.dispatch(skipTracking(tr))
     }
   }
 }
