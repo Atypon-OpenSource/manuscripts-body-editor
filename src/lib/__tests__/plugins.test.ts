@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   Figure,
   FigureElement,
@@ -395,18 +394,19 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const tableOfContentsSection = view.state.doc.child(5).child(0)
+    const tableOfContentsSection = view.state.doc.child(6).child(0)
+
     expect(tableOfContentsSection.content.child(1).attrs.contents).toBe(
       '<div>Table of Contents</div>'
     )
 
-    const emptySection = view.state.doc.child(5).child(1)
+    const emptySection = view.state.doc.child(6).child(1)
     expect(emptySection.childCount).toBe(1)
 
-    const sectionWithEmptyParagraphs = view.state.doc.child(5).child(4)
+    const sectionWithEmptyParagraphs = view.state.doc.child(6).child(4)
     expect(sectionWithEmptyParagraphs.childCount).toBe(3)
 
-    const sectionWithList = view.state.doc.child(5).child(7)
+    const sectionWithList = view.state.doc.child(6).child(7)
     expect(sectionWithList.childCount).toBe(2)
   })
 
@@ -424,12 +424,12 @@ describe('editor view', () => {
 
     view.dispatch(view.state.tr.setMeta('update', true)) // trigger plugins
 
-    const tableOfContentsSection = view.state.doc.child(5).child(0)
+    const tableOfContentsSection = view.state.doc.child(6).child(0)
     expect(
       tableOfContentsSection.content.child(1).attrs.contents
     ).toMatchSnapshot()
 
-    const sectionWithEmptyParagraphs = view.state.doc.child(5).child(4)
+    const sectionWithEmptyParagraphs = view.state.doc.child(6).child(4)
     expect(sectionWithEmptyParagraphs.childCount).toBe(2)
     expect(sectionWithEmptyParagraphs.content.child(0).type).toBe(
       sectionWithEmptyParagraphs.type.schema.nodes.section_title
@@ -439,7 +439,7 @@ describe('editor view', () => {
     )
     expect(sectionWithEmptyParagraphs.content.child(1).textContent).toBe('')
 
-    const sectionWithList = view.state.doc.child(5).child(7)
+    const sectionWithList = view.state.doc.child(6).child(7)
     expect(sectionWithList.childCount).toBe(2)
     expect(sectionWithList.content.child(0).type).toBe(
       sectionWithList.type.schema.nodes.section_title
@@ -458,7 +458,7 @@ describe('editor view', () => {
 
     expect(inlineEquation).not.toBeUndefined()
 
-    const sectionWithFigure = view.state.doc.child(5).child(8)
+    const sectionWithFigure = view.state.doc.child(6).child(8)
     expect(sectionWithFigure.childCount).toBe(2)
     expect(sectionWithFigure.content.child(0).type).toBe(
       sectionWithFigure.type.schema.nodes.section_title
@@ -476,7 +476,7 @@ describe('editor view', () => {
       figureElement.type.schema.nodes.figcaption
     )
 
-    const sectionWithTable = view.state.doc.child(5).child(9)
+    const sectionWithTable = view.state.doc.child(6).child(9)
     expect(sectionWithTable.childCount).toBe(2)
     expect(sectionWithTable.content.child(0).type).toBe(
       sectionWithTable.type.schema.nodes.section_title

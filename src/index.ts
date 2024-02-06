@@ -32,4 +32,5 @@ export {
   isHighlightComment,
 } from './plugins/comment_annotation'
 export * from './lib/utils'
+export * from './lib/track-changes-utils'
 export * from './useEditor'
