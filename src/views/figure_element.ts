@@ -14,62 +14,24 @@
  * limitations under the License.
  */
 
-import { ObjectTypes } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
   FileManagement,
 } from '@manuscripts/style-guide'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
-import {
-  encode,
-  FigureNode,
-  generateID,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { FigureNode, schema } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
   FigureElementOptionsProps,
 } from '../components/views/FigureDropdown'
+import { buildFileMap } from '../lib/build-file-models'
 import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-
-export const buildLightManuscript = (doc: ManuscriptNode) => {
-  const figures: ManuscriptNode[] = []
-  const sections: ManuscriptNode[] = []
-  doc.descendants((node) => {
-    if (
-      node.type === schema.nodes.section &&
-      node.attrs.category === 'MPSectionCategory:abstract-graphical'
-    ) {
-      sections.push(node)
-      return false
-    }
-
-    if (
-      node.type === schema.nodes.figure_element ||
-      node.type === schema.nodes.supplements
-    ) {
-      figures.push(node)
-      return false
-    }
-  })
-
-  sections.push(
-    schema.nodes.section.create(
-      { id: generateID(ObjectTypes.Section) },
-      figures
-    )
-  )
-
-  return schema.nodes.manuscript.create({}, sections)
-}
 
 interface FigureElementProps {
   fileManagement: FileManagement
@@ -194,7 +156,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        filesMap: encode(buildLightManuscript(this.view.state.doc)),
+        filesMap: buildFileMap(this.view.state.doc),
         handleUpload,
         handleAdd,
       }
@@ -228,7 +190,7 @@ export class FigureElementView extends BlockView<
         }
         return false
       })
-      this.view.dispatch(skipTracking(tr))
+      this.view.dispatch(tr)
     }
   }
 }
