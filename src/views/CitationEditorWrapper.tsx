@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 import { BibliographyItem } from '@manuscripts/json-schema'
-import { CitationEditor, CitationEditorProps } from '@manuscripts/style-guide'
+import {
+  arrayReducer,
+  CitationEditor,
+  CitationEditorProps,
+  modelsReducer,
+} from '@manuscripts/style-guide'
 import React, { useReducer } from 'react'
-
-import { arrayReducer } from '../lib/array-reducer'
 
 //The purpose of this component is to make items/rids stateful, so that
 //the component refreshes on updates
 
-const itemsReducer = arrayReducer<BibliographyItem>((a, b) => a._id === b._id)
+const itemsReducer = modelsReducer<BibliographyItem>()
 const ridsReducer = arrayReducer<string>()
 
 export const CitationEditorWrapper: React.FC<CitationEditorProps> = (props) => {

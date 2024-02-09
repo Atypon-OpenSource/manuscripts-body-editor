@@ -13,10 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
-import { ContributorNode, isContributorNode } from '@manuscripts/transform'
+import { Affiliation, Contributor } from '@manuscripts/json-schema'
+import {
+  AuthorsModal,
+  AuthorsModalProps,
+  Capabilities,
+  SecondaryButton,
+} from '@manuscripts/style-guide'
+import {
+  ContributorNode,
+  encode,
+  isContributorNode,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 
 import { getActualAttrs } from '../lib/track-changes-utils'
+import {
+  decode,
+  deleteNode,
+  findChildByID,
+  findChildByType,
+  updateNode,
+} from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
 import { TrackableAttributes } from '../types'
@@ -34,6 +53,10 @@ export interface ContributorsProps extends EditableBlockProps {
 export class ContributorsView<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
+  container: HTMLElement
+  inner: HTMLElement
+  popper?: HTMLElement
+
   public initialise = () => {
     this.createDOM()
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
@@ -90,9 +113,6 @@ export class ContributorsView<
     this.container.appendChild(authorsWrapper)
   }
 
-  container: HTMLElement
-  inner: HTMLElement
-
   buildAuthor = (
     node: ContributorNode,
     isJointFirstAuthor: boolean,
@@ -122,15 +142,11 @@ export class ContributorsView<
 
     const disableEditButton = !can.editMetadata
 
-    const { bibliographicName, isCorresponding, email, id } = displayAttr
+    const { bibliographicName, isCorresponding, email } = displayAttr
 
-    container.addEventListener('click', (e) => {
-      e.preventDefault()
-      if (!disableEditButton) {
-        this.props.openAuthorEditing()
-        this.props.selectAuthorForEditing(id)
-      }
-    })
+    if (!disableEditButton) {
+      container.addEventListener('click', this.handleClick)
+    }
 
     const name = this.buildNameLiteral(bibliographicName)
     container.innerHTML =
@@ -224,7 +240,7 @@ export class ContributorsView<
       SecondaryButton,
       {
         mini: true,
-        onClick: this.props.openAuthorEditing,
+        onClick: this.handleClick,
         className: 'edit-authors-button',
         disabled: !can.editMetadata,
         children: 'Edit Authors',
@@ -250,6 +266,85 @@ export class ContributorsView<
         this.container.appendChild(element)
       }
     }
+  }
+
+  handleClick = (e: Event) => {
+    e.stopPropagation()
+
+    const authorsNode = findChildByType(this.view, schema.nodes.contributors)!
+    const affiliationsNode = findChildByType(
+      this.view,
+      schema.nodes.affiliations
+    )!
+
+    const authorsMap = encode(authorsNode.node)
+    const affiliationsMap = encode(affiliationsNode.node)
+
+    let author = undefined
+    const target = e.target as Element
+    if (target) {
+      const id = target.closest('.contributor')?.getAttribute('id') as string
+      author = authorsMap.get(id) as Contributor
+    }
+
+    const authors = Array.from(authorsMap.values()) as Contributor[]
+    const affiliations = Array.from(affiliationsMap.values()) as Affiliation[]
+
+    const componentProps: AuthorsModalProps = {
+      author,
+      authors,
+      affiliations,
+      onSaveAuthor: this.handleSaveAuthor,
+      onDeleteAuthor: this.handleDeleteAuthor,
+      onSaveAffiliation: this.handleSaveAffiliation,
+    }
+
+    this.popper?.remove()
+
+    this.popper = ReactSubView(
+      this.props,
+      AuthorsModal,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view
+    )
+
+    this.container.appendChild(this.popper)
+  }
+
+  handleSaveAuthor = (author: Contributor) => {
+    const node = decode(author)
+    if (!findChildByID(this.view, node.attrs.id)) {
+      this.insertAuthorNode(node)
+    } else {
+      updateNode(this.view, node)
+    }
+  }
+
+  handleDeleteAuthor = (author: Contributor) => {
+    deleteNode(this.view, author._id)
+  }
+
+  handleSaveAffiliation = (affiliation: Affiliation) => {
+    const node = decode(affiliation)
+    if (!findChildByID(this.view, node.attrs.id)) {
+      this.insertAffiliationNode(node)
+    } else {
+      updateNode(this.view, node)
+    }
+  }
+
+  insertAuthorNode = (node: ManuscriptNode) => {
+    const parent = findChildByType(this.view, schema.nodes.contributors)!
+    const tr = this.view.state.tr
+    this.view.dispatch(tr.insert(parent.pos + 1, node))
+  }
+
+  insertAffiliationNode = (node: ManuscriptNode) => {
+    const parent = findChildByType(this.view, schema.nodes.affiliations)!
+    const tr = this.view.state.tr
+    this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
 
   public ignoreMutation = () => true

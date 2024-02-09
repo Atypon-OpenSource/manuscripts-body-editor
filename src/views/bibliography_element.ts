@@ -20,15 +20,12 @@ import {
   CHANGE_STATUS,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
-import {
-  BibliographyItemNode,
-  buildComment,
-  Decoder,
-} from '@manuscripts/transform'
+import { buildComment } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
+import { decode, deleteNode, updateNode } from '../lib/view'
 import {
   getAttrsTrackingButton,
   getChangeClasses,
@@ -57,7 +54,6 @@ export class BibliographyElementBlockView<
 > extends BlockView<PropsType> {
   private container: HTMLElement
   private editor: HTMLDivElement
-  private decoder = new Decoder(new Map())
 
   public gutterButtons = (): HTMLElement[] => []
 
@@ -227,12 +223,12 @@ export class BibliographyElementBlockView<
   }
 
   private handleSave = (item: BibliographyItem) => {
-    const node = this.decoder.decode(item) as BibliographyItemNode
-    this.updateNodeAttrs(node.attrs)
+    const node = decode(item)
+    updateNode(this.view, node)
   }
 
   private handleDelete = (item: BibliographyItem) => {
-    return this.deleteNode(item._id)
+    deleteNode(this.view, item._id)
   }
 
   private addClickListenerToBibItem = (
