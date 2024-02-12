@@ -79,7 +79,7 @@ doc.addStyleSheet()
 
 export const convertMathMLToSVG = (
   mathml: string,
-  display: boolean
+  display: boolean = true
 ): string | null => {
   const item = doc.convert(mathml, {
     display,

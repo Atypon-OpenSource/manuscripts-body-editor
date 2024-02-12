@@ -17,8 +17,7 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
-import { convertMathMLToSVG } from '../lib/mathml-to-svg'
-import { convertTeXToSVG } from '../lib/tex-to-svg'
+import { renderMath } from '../lib/helpers'
 import { isRejectedInsert } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -39,24 +38,20 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
       while (this.dom.hasChildNodes()) {
         this.dom.removeChild(this.dom.firstChild as ChildNode)
       }
+      renderMath(contents, format).then((svgContent) => {
+        if (svgContent) {
+          const fragment = sanitize(svgContent, {
+            USE_PROFILES: {svg: true},
+          })
+          this.dom.appendChild(fragment)
+        } else {
+          const placeholder = document.createElement('div')
+          placeholder.className = 'equation-placeholder'
+          placeholder.textContent = '<Equation>'
 
-      const svgContent =
-        format === 'tex'
-          ? convertTeXToSVG(contents, true)
-          : convertMathMLToSVG(contents, true)
-
-      if (svgContent) {
-        const fragment = sanitize(svgContent, {
-          USE_PROFILES: { svg: true },
-        })
-        this.dom.appendChild(fragment)
-      } else {
-        const placeholder = document.createElement('div')
-        placeholder.className = 'equation-placeholder'
-        placeholder.textContent = '<Equation>'
-
-        this.dom.appendChild(placeholder)
-      }
+          this.dom.appendChild(placeholder)
+        }
+      })
     } else {
       this.dom.innerHTML = ''
     }

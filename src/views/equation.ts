@@ -17,10 +17,9 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
-import { convertMathMLToSVG } from '../lib/mathml-to-svg'
-import { convertTeXToSVG } from '../lib/tex-to-svg'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import {renderMath} from "../lib/helpers";
 
 export class EquationView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
@@ -38,30 +37,27 @@ export class EquationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    const { contents, format } = this.node.attrs
-
-    //Should this be represented in another way other than SVG?
-    const svgContent =
-      format === 'tex'
-        ? convertTeXToSVG(contents, true)
-        : convertMathMLToSVG(contents, true)
+    const {contents, format} = this.node.attrs
 
     while (this.dom.hasChildNodes()) {
       this.dom.removeChild(this.dom.firstChild as ChildNode)
     }
 
-    if (svgContent) {
-      const fragment = sanitize(svgContent, {
-        USE_PROFILES: { svg: true },
-      })
-      this.dom.appendChild(fragment)
-    } else {
-      const placeholder = document.createElement('div')
-      placeholder.className = 'equation-placeholder'
-      placeholder.textContent = '<Equation>'
+    renderMath(contents, format).then((svgContent) => {
+      if (svgContent) {
+        const fragment = sanitize(svgContent, {
+          USE_PROFILES: {svg: true},
+        })
+        this.dom.appendChild(fragment)
+      } else {
+        const placeholder = document.createElement('div')
+        placeholder.className = 'equation-placeholder'
+        placeholder.textContent = '<Equation>'
 
-      this.dom.appendChild(placeholder)
-    }
+        this.dom.appendChild(placeholder)
+      }
+    })
+
   }
 
   public ignoreMutation = () => true

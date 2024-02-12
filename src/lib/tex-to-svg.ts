@@ -63,7 +63,7 @@ doc.addStyleSheet()
 
 export const convertTeXToSVG = (
   tex: string,
-  display: boolean
+  display: boolean = true
 ): string | null => {
   const item = doc.convert(tex, {
     display,
