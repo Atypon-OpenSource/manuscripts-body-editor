@@ -38,11 +38,10 @@ export default () => {
         if (
           node.isInline ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent)
+          isManuscriptNode(parent) ||
+          !node.type.spec.attrs ||
+          !('id' in node.type.spec.attrs)
         ) {
-          return
-        }
-        if (!node.type.spec.attrs || !('id' in node.type.spec.attrs)) {
           return
         }
         let id = node.attrs.id
