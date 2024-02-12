@@ -362,7 +362,7 @@ export const getEditorMenus = (
       {
         id: 'format-table',
         label: 'Table',
-        isEnabled: isCommandValid(blockActive(schema.nodes.table_body)),
+        isEnabled: isCommandValid(blockActive(schema.nodes.table)),
         submenu: [
           {
             id: 'format-table-add-row-before',
