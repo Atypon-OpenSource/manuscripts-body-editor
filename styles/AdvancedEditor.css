@@ -880,3 +880,7 @@ Next levels are shifted 'up' by 1
   flex-direction: column;
   align-items: flex-start;
 }
+
+* {
+  scroll-behavior: smooth;
+}
