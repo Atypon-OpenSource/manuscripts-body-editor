@@ -16,11 +16,7 @@
 
 import 'regenerator-runtime/runtime'
 
-import { configure } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
 import { v4 as uuid } from 'uuid'
-
-configure({ adapter: new Adapter() })
 
 process.env.API_BASE_URL = 'https://127.0.0.1/'
 

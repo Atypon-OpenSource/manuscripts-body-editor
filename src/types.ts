@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -32,7 +33,7 @@ export type EditorAction = (
 export type NodeViewCreator<T extends ManuscriptNodeView> = (
   node: ManuscriptNode,
   view: ManuscriptEditorView,
-  getPos: boolean | (() => number),
+  getPos: () => number | undefined,
   decorations: readonly Decoration[]
 ) => T
 
@@ -49,4 +50,8 @@ export type ChangeReceiver = (
 
 export interface SyncError {
   _id: string
+}
+
+export type TrackableAttributes<T extends ManuscriptNode> = T['attrs'] & {
+  dataTracked?: TrackedAttrs[]
 }

@@ -553,7 +553,7 @@ const findSelectedList = findParentNodeOfType([
 ])
 
 const findRootList = ($pos: ResolvedPos) => {
-  for (let i = 0; i <= $pos.depth; i++) {
+  for (let i = 0; i < $pos.depth; i++) {
     const node = $pos.node(i)
     if (isListNode(node)) {
       const pos = $pos.start(i)
