@@ -42,6 +42,9 @@ export default () => {
         ) {
           return
         }
+        if (!node.type.spec.attrs || !('id' in node.type.spec.attrs)) {
+          return
+        }
         let id = node.attrs.id
         if (!id || ids.has(id)) {
           id = generateNodeID(node.type)
