@@ -43,6 +43,7 @@ import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
+import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
@@ -82,6 +83,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights(props),
+    track_changes_ui(props),
     footnotes(),
   ]
 
