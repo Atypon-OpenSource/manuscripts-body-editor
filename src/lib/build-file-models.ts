@@ -21,24 +21,34 @@ import {
   schema,
 } from '@manuscripts/transform'
 
+import { getEffectiveAttrs } from '../plugins/bibliography/bibliography-utils'
+
 export const buildFileMap = (doc: ManuscriptNode) => {
   const figures: ManuscriptNode[] = []
+  const supplements: ManuscriptNode[] = []
   const sections: ManuscriptNode[] = []
+  const buildNode = (node: ManuscriptNode, group: ManuscriptNode[]) => {
+    const attrs = getEffectiveAttrs(node, true)
+    if (attrs) {
+      group.push(node.type.create({ ...attrs }, node.content))
+    }
+    return false
+  }
+
   doc.descendants((node) => {
     if (
       node.type === schema.nodes.section &&
       node.attrs.category === 'MPSectionCategory:abstract-graphical'
     ) {
-      sections.push(node)
-      return false
+      return buildNode(node, sections)
     }
 
-    if (
-      node.type === schema.nodes.figure_element ||
-      node.type === schema.nodes.supplements
-    ) {
-      figures.push(node)
-      return false
+    if (node.type === schema.nodes.figure_element) {
+      return buildNode(node, figures)
+    }
+
+    if (node.type === schema.nodes.supplement) {
+      buildNode(node, supplements)
     }
   })
 
@@ -46,6 +56,10 @@ export const buildFileMap = (doc: ManuscriptNode) => {
     schema.nodes.section.create(
       { id: generateID(ObjectTypes.Section) },
       figures
+    ),
+    schema.nodes.supplements.create(
+      { id: generateID(ObjectTypes.Supplement) },
+      supplements
     )
   )
 

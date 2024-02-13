@@ -170,7 +170,7 @@ const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
  * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
  * as it's easier to deal with the manuscript Models for both references list & citation popup view
  */
-const getEffectiveAttrs = (
+export const getEffectiveAttrs = (
   node: ManuscriptNode,
   excludeDeletedNode?: boolean
 ): Attrs | undefined => {

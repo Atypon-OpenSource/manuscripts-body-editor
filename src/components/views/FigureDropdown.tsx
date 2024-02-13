@@ -37,7 +37,7 @@ import styled from 'styled-components'
 export interface FigureDropdownProps {
   can: Capabilities
   files: FileAttachment[]
-  filesMap: Map<string, Model>
+  getFilesMap: () => Map<string, Model>
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
@@ -55,13 +55,13 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
 export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
   can,
   files,
-  filesMap,
+  getFilesMap,
   handleAdd,
   handleUpload,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  let { supplements, otherFiles } = useFiles(filesMap, files)
+  let { supplements, otherFiles } = useFiles(getFilesMap(), files)
   supplements = supplements.filter(isImageFile)
   otherFiles = otherFiles.filter(isImageFile)
 
@@ -120,7 +120,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
   can,
   files,
-  filesMap,
+  getFilesMap,
   handleDownload,
   handleUpload,
   handleDetach,
@@ -128,7 +128,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const otherFiles = useFiles(filesMap, files).otherFiles.filter(isImageFile)
+  const otherFiles = useFiles(getFilesMap(), files).otherFiles.filter(
+    isImageFile
+  )
 
   const showDownload = handleDownload && can.downloadFiles
   const showUpload = handleUpload && can.uploadFile

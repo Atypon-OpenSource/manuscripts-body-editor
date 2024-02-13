@@ -156,7 +156,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        filesMap: buildFileMap(this.view.state.doc),
+        getFilesMap: () => buildFileMap(this.view.state.doc),
         handleUpload,
         handleAdd,
       }
@@ -178,17 +178,12 @@ export class FigureElementView extends BlockView<
       const tr = this.view.state.tr
 
       this.view.state.doc.descendants((node, pos) => {
-        if (node.type === schema.nodes.supplements) {
-          node.forEach((child, offset) => {
-            if (
-              child.type === schema.nodes.supplement &&
-              child.attrs.href === file.id
-            ) {
-              tr.delete(pos, pos + offset)
-            }
-          })
+        if (
+          node.type === schema.nodes.supplement &&
+          node.attrs.href === file.id
+        ) {
+          tr.delete(pos, pos + node.nodeSize)
         }
-        return false
       })
       this.view.dispatch(tr)
     }

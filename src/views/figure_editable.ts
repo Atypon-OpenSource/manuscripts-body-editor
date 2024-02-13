@@ -179,7 +179,7 @@ export class FigureEditableView extends FigureView<
       const componentProps: FigureOptionsProps = {
         can,
         files,
-        filesMap: buildFileMap(this.view.state.doc),
+        getFilesMap: () => buildFileMap(this.view.state.doc),
         handleDownload,
         handleUpload,
         handleDetach,
