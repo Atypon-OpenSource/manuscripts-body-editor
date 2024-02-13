@@ -29,12 +29,12 @@ import { Decoration } from 'prosemirror-view'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
-import { getBibliographyPluginState } from '../plugins/bibliography'
-import { commentAnnotation } from '../plugins/comment_annotation'
 import {
   getAttrsTrackingButton,
   getMarkDecoration,
-} from '../plugins/tracking-mark'
+} from '../lib/track-changes-utils'
+import { getBibliographyPluginState } from '../plugins/bibliography'
+import { commentAnnotation } from '../plugins/comment_annotation'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
