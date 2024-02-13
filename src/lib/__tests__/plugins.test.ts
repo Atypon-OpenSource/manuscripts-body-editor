@@ -483,12 +483,15 @@ describe('editor view', () => {
     )
 
     const tableElement = sectionWithTable.content.child(1)
-    expect(tableElement.childCount).toBe(3)
+    expect(tableElement.childCount).toBe(4)
     expect(tableElement.type).toBe(tableElement.type.schema.nodes.table_element)
     expect(tableElement.content.child(0).type).toBe(
-      tableElement.type.schema.nodes.table
+      tableElement.type.schema.nodes.table_colgroup
     )
     expect(tableElement.content.child(1).type).toBe(
+      tableElement.type.schema.nodes.table
+    )
+    expect(tableElement.content.child(2).type).toBe(
       tableElement.type.schema.nodes.figcaption
     )
   })
