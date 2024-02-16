@@ -159,3 +159,18 @@ export const updateTableInlineFootnoteLabels = (
 
   return tr
 }
+
+export const createFootnoteLabel = (id: string) => {
+  const _id = parseInt(id, 10) + 1 // convert to number starting from 1
+  const START = 96 // ASCII code for 'a' (-1)
+  const RANGE = 26 // number of letters in the alphabet
+  const id1 = _id % RANGE || RANGE
+  const id2 = Math.ceil(_id / RANGE)
+  const label =
+    id2 === 1
+      ? String.fromCharCode(START + id1)
+      : `${String.fromCharCode(START + id2 - 1)}${String.fromCharCode(
+          START + id1
+        )}`
+  return label
+}
