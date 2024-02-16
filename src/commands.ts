@@ -1097,3 +1097,62 @@ export const updateCommentAnnotationState = (
     dispatch(tr)
   }
 }
+
+export const insertTableFootnote = (
+  node: ManuscriptNode,
+  position: number,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const footnote = state.schema.nodes.footnote.createAndFill({
+    id: generateID(ObjectTypes.Footnote),
+    kind: 'footnote',
+  }) as FootnoteNode
+
+  const insertedAt = state.selection.to
+
+  const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
+  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
+    rids: [footnote.attrs.id],
+    contents: inlineFootnotes.length + 1, // I need to revisit this
+  }) as InlineFootnoteNode
+
+  const tr = state.tr
+
+  // insert the inline footnote
+  tr.insert(insertedAt, inlineFootnoteNode)
+
+  const footnoteElement = state.schema.nodes.footnotes_element.create(
+    {},
+    footnote
+  )
+
+  const tableElementFooter = findChildrenByType(
+    node,
+    schema.nodes.table_element_footer
+  )
+
+  let insertionPos
+  if (tableElementFooter.length) {
+    const pos = tableElementFooter[0].pos
+    insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
+    tr.insert(insertionPos, footnoteElement)
+  } else {
+    const tableSize = node.content.firstChild?.nodeSize
+    if (tableSize) {
+      insertionPos = position + tableSize + 2
+      const tableElementFooter = schema.nodes.table_element_footer.create(
+        {
+          id: generateID(ObjectTypes.TableElementFooter),
+        },
+        [footnoteElement]
+      )
+      tr.insert(insertionPos, tableElementFooter)
+    }
+  }
+
+  if (dispatch && insertionPos) {
+    const nodeSelection = NodeSelection.create(tr.doc, insertionPos)
+    dispatch(tr.setSelection(nodeSelection))
+  }
+}
