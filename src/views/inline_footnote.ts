@@ -31,7 +31,7 @@ export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
   public handleClick = () => {
     this.props.history.push({
       ...this.props.history.location,
-      hash: '#' + this.node.attrs.rid,
+      hash: '#' + this.node.attrs.rids[0],
     })
   }
 

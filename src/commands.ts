@@ -475,15 +475,14 @@ export const insertInlineFootnote =
       kind,
     }) as FootnoteNode
 
-    const insertedAt = state.selection.to
-
     const node = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
     }) as InlineFootnoteNode
 
-    const tr = state.tr
+    const insertedAt = state.selection.to
 
-    // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
+    const { tr } = state
+
     tr.insert(insertedAt, node)
 
     const footnotesSection = findChildrenByType(
@@ -495,15 +494,17 @@ export const insertInlineFootnote =
 
     if (!footnotesSection) {
       // create a new footnotes section if needed
+      const sectionTitle = 'Footnotes'
       const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+        state.schema.nodes.section_title.create(
+          {},
+          state.schema.text(sectionTitle)
+        ),
         state.schema.nodes.footnotes_element.create({}, footnote),
       ])
 
       const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
-
       tr.insert(backmatter.pos + 1, section)
-
       // inside footnote inside element inside section
       selectionPos = backmatter.pos + section.nodeSize - 3
     } else {
@@ -512,12 +513,30 @@ export const insertInlineFootnote =
         footnotesSection.node,
         schema.nodes.footnotes_element
       )
-      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
+      // Get position for inserting the footnote
+      let index = 0
+      // TODO:: replace zero with body position
+      state.doc.slice(0, insertedAt).content.descendants((node) => {
+        if (node.type === schema.nodes.inline_footnote) {
+          index++
+          return false
+        }
+      })
+
+      let correctPosition = 0
+      if (index != 0) {
+        footnoteElement[0].node.descendants((node, pos, parent, nodeIndex) => {
+          if (node.type === schema.nodes.footnote) {
+            if (index > nodeIndex) {
+              correctPosition = pos + node.nodeSize
+              return false
+            }
+          }
+        })
+      }
       const pos =
-        footnotesSection.pos +
-        footnoteElement[0].pos +
-        footnoteElement[0].node.nodeSize -
-        1
+        footnotesSection.pos + footnoteElement[0].pos + correctPosition + 2
+
       tr.insert(pos, footnote)
       selectionPos = pos + 2
     }
