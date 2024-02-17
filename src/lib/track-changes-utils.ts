@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  CHANGE_OPERATION,
-  CHANGE_STATUS,
-  TrackedAttrs,
-} from '@manuscripts/track-changes-plugin'
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
-import { DecorationAttrs } from 'prosemirror-view'
 
 import { TrackableAttributes } from '../types'
 
@@ -74,11 +69,11 @@ export function isPendingSetAttrs(node: ProsemirrorNode) {
   return false
 }
 
-export function getChangeClasses(node: ProsemirrorNode) {
+export function getChangeClasses(dataTracked?: TrackedAttrs[]) {
   const classes: string[] = []
 
-  if (node.attrs.dataTracked) {
-    const changes = node.attrs.dataTracked as TrackedAttrs[]
+  if (dataTracked) {
+    const changes = dataTracked as TrackedAttrs[]
     const operationClasses = new Map([
       ['insert', 'inserted'],
       ['delete', 'deleted'],
@@ -149,68 +144,3 @@ const editIcon = `
     />
   </svg>
 `
-
-export const getMarkDecoration = (
-  dataTracked: TrackedAttrs,
-  htmlNode?: HTMLElement
-) => {
-  const style: {
-    background?: string
-    textDecoration?: string
-    display?: string
-  } = htmlNode?.style || {}
-  let className = undefined
-
-  const { status, operation } = dataTracked
-
-  if (
-    (operation === CHANGE_OPERATION.delete ||
-      operation === CHANGE_OPERATION.insert ||
-      operation === CHANGE_OPERATION.set_node_attributes) &&
-    status === CHANGE_STATUS.pending
-  ) {
-    style.background = '#ddf3fa'
-  }
-
-  if (
-    (operation === CHANGE_OPERATION.insert ||
-      operation === CHANGE_OPERATION.set_node_attributes) &&
-    status === CHANGE_STATUS.accepted
-  ) {
-    style.background = '#bffca7'
-  }
-
-  if (
-    operation === CHANGE_OPERATION.delete &&
-    status === CHANGE_STATUS.pending
-  ) {
-    style.textDecoration = 'line-through'
-  }
-
-  if (
-    (operation === CHANGE_OPERATION.insert &&
-      status === CHANGE_STATUS.rejected) ||
-    (operation === CHANGE_OPERATION.delete && status === CHANGE_STATUS.accepted)
-  ) {
-    style.display = 'none'
-  }
-
-  const showAttrsPopper =
-    status === CHANGE_STATUS.pending &&
-    operation === CHANGE_OPERATION.set_node_attributes
-
-  if (showAttrsPopper) {
-    className = 'attrs-track-mark'
-    if (htmlNode) {
-      htmlNode.className = 'attrs-track-mark'
-    }
-  }
-
-  return {
-    class: className,
-    style: `background: ${style.background};
-   text-decoration: ${style.textDecoration};
-   display: ${style.display};
-   position: relative;`,
-  } as DecorationAttrs
-}

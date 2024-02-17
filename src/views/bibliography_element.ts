@@ -31,7 +31,7 @@ import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
 import {
   getAttrsTrackingButton,
-  getMarkDecoration,
+  getChangeClasses,
 } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
@@ -151,8 +151,6 @@ export class BibliographyElementBlockView<
       editButton.className = 'bibliography-edit-button'
       commentButton.className = 'bibliography-comment-button'
 
-      this.addClickListenerToBibItem(element, dataTrackedMap.get(element.id))
-
       commentButton.addEventListener('click', (e) => {
         e.preventDefault()
         this.props.setComment(buildComment(element.id) as CommentAnnotation)
@@ -185,10 +183,10 @@ export class BibliographyElementBlockView<
       const dataTracked = dataTrackedMap.get(element.id)
 
       if (dataTracked) {
-        element.classList.add('attrs-track-mark')
-        const decoration = getMarkDecoration(dataTracked)
-
-        decoration.style && element.setAttribute('style', decoration.style)
+        element.classList.add(
+          'attrs-track-mark',
+          ...getChangeClasses([dataTracked])
+        )
 
         if (
           dataTracked.status === CHANGE_STATUS.pending &&
@@ -196,6 +194,7 @@ export class BibliographyElementBlockView<
         ) {
           element.appendChild(getAttrsTrackingButton(dataTracked.id))
         }
+        this.addClickListenerToBibItem(element, dataTracked)
       }
 
       if (
@@ -237,9 +236,9 @@ export class BibliographyElementBlockView<
 
   private addClickListenerToBibItem = (
     element: Element,
-    dataTracked?: TrackedAttrs
+    dataTracked: TrackedAttrs
   ) => {
-    if (dataTracked && dataTracked.status === 'pending') {
+    if (dataTracked.status === 'pending') {
       element.addEventListener('click', () => {
         this.view.dispatch(
           this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)

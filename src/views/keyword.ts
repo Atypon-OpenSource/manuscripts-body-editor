@@ -54,7 +54,10 @@ export class KeywordView
   }
 
   public updateContents = () => {
-    const classes = ['keyword', ...getChangeClasses(this.node)]
+    const classes = [
+      'keyword',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
     this.dom.className = classes.join(' ')
     this.dom.innerHTML = ''
     this.dom.appendChild(this.contentDOM as HTMLElement)
