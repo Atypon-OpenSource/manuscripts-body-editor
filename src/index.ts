@@ -31,7 +31,7 @@ export {
   isThereSelector,
   isHighlightComment,
 } from './plugins/comment_annotation'
-export { SET_SUGGESTION_ID } from './plugins/selected-suggestion'
+export { SET_SUGGESTION_ID } from './plugins/selected-suggestion-ui'
 export * from './lib/utils'
 export * from './lib/track-changes-utils'
 export * from './useEditor'

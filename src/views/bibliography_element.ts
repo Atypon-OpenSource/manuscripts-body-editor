@@ -38,7 +38,7 @@ import { commentAnnotation } from '../plugins/comment_annotation'
 import {
   selectedSuggestionKey,
   SET_SUGGESTION_ID,
-} from '../plugins/selected-suggestion'
+} from '../plugins/selected-suggestion-ui'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'

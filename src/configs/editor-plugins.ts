@@ -41,7 +41,7 @@ import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
-import track_changes_ui from '../plugins/selected-suggestion'
+import selected_suggestion_ui from '../plugins/selected-suggestion-ui'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
@@ -83,7 +83,7 @@ export default (props: PluginProps) => {
     placeholder(),
     tableEditing(),
     highlights(props),
-    track_changes_ui(props),
+    selected_suggestion_ui(props),
     footnotes(),
   ]
 

@@ -22,7 +22,7 @@ import { Decoration, NodeView } from 'prosemirror-view'
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import { isMetaNode } from '../lib/utils'
-import { SET_SUGGESTION_ID } from '../plugins/selected-suggestion'
+import { SET_SUGGESTION_ID } from '../plugins/selected-suggestion-ui'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
