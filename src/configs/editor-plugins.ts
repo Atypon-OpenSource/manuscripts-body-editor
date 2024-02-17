@@ -41,9 +41,9 @@ import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
+import track_changes_ui from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
-import track_changes_ui from '../plugins/track-changes-ui'
 import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
@@ -53,7 +53,7 @@ interface PluginProps {
   deleteModel: (id: string) => Promise<string>
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
-  setEditorSelectedSuggestion?: (id?: string) => void
+  setEditorSelectedSuggestion: (id?: string) => void
   getCapabilities: () => Capabilities
   plugins?: Plugin<ManuscriptSchema>[]
   cslProps: CSLProps

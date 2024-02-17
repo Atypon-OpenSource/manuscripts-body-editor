@@ -53,9 +53,11 @@ export class AffiliationView<PropsType extends BaseNodeProps>
     }
 
     if (attrs.dataTracked?.length) {
+      this.dom.setAttribute('data-track-id', attrs.dataTracked[0].id)
       this.dom.setAttribute('data-track-status', attrs.dataTracked[0].status)
       this.dom.setAttribute('data-track-op', attrs.dataTracked[0].operation)
     } else {
+      this.dom.removeAttribute('data-track-id')
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-type')
     }
@@ -69,8 +71,6 @@ export class AffiliationView<PropsType extends BaseNodeProps>
   }
 
   public ignoreMutation = () => true
-
-  public stopEvent = () => true
 
   public formatAddress = (affiliation: AffiliationNode['attrs']): string => {
     const {

@@ -35,6 +35,10 @@ import {
 } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
+import {
+  selectedSuggestionKey,
+  SET_SUGGESTION_ID,
+} from '../plugins/selected-suggestion'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -88,12 +92,14 @@ export class BibliographyElementBlockView<
   public updateContents = async () => {
     const bib = getBibliographyPluginState(this.view.state)
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
+    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
     const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
+    let selectedBibItemSuggestion
 
     this.node.descendants((node, pos) => {
+      const nodePosition = this.getPos() + pos + 2
       if (commentsDecorationSet) {
-        const nodePosition = this.getPos() + pos + 2
         const commentWidget = commentsDecorationSet.find(
           nodePosition,
           nodePosition
@@ -112,6 +118,14 @@ export class BibliographyElementBlockView<
       if (dataTracked?.length) {
         const lastChange = dataTracked[dataTracked.length - 1]
         dataTrackedMap.set(node.attrs.id, lastChange)
+      }
+
+      if (
+        dataTracked?.length &&
+        selectedSuggestion?.find(nodePosition, nodePosition + node.nodeSize)
+          .length
+      ) {
+        selectedBibItemSuggestion = node.attrs.id
       }
     })
 
@@ -136,6 +150,8 @@ export class BibliographyElementBlockView<
       doubleButton.className = 'bibliography-double-button'
       editButton.className = 'bibliography-edit-button'
       commentButton.className = 'bibliography-comment-button'
+
+      this.addClickListenerToBibItem(element, dataTrackedMap.get(element.id))
 
       commentButton.addEventListener('click', (e) => {
         e.preventDefault()
@@ -181,6 +197,14 @@ export class BibliographyElementBlockView<
           element.appendChild(getAttrsTrackingButton(dataTracked.id))
         }
       }
+
+      if (
+        selectedBibItemSuggestion &&
+        selectedBibItemSuggestion === element.id
+      ) {
+        element.classList.add('selected-suggestion')
+      }
+
       wrapper.append(element)
     }
 
@@ -209,6 +233,19 @@ export class BibliographyElementBlockView<
 
   private handleDelete = (item: BibliographyItem) => {
     return this.deleteNode(item._id)
+  }
+
+  private addClickListenerToBibItem = (
+    element: Element,
+    dataTracked?: TrackedAttrs
+  ) => {
+    if (dataTracked && dataTracked.status === 'pending') {
+      element.addEventListener('click', () => {
+        this.view.dispatch(
+          this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
+        )
+      })
+    }
   }
 }
 

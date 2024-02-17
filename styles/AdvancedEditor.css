@@ -571,7 +571,7 @@ Next levels are shifted 'up' by 1
   background-color: inherit !important;
 }
 
-.keywords .keyword:hover {
+.keywords .keyword:hover:not(.pending) {
   background-color: #f2fbfc !important;
 }
 
@@ -688,8 +688,19 @@ Next levels are shifted 'up' by 1
   --selection-bg-color: #bce7f6;
 }
 
-.ProseMirror ::selection {
-  background: var(--selection-bg-color);
+.ProseMirror .pending ::selection {
+  background: none;
+}
+
+.selected-suggestion {
+  background: #BCE7F6 !important;
+}
+
+.selected-suggestion {
+  border-width: 2px 0 2px 0 !important;
+  border-color: #20AEDF !important;
+  border-radius: 3px !important;
+  border-style: solid !important;
 }
 
 .ProseMirror .inserted.pending {
