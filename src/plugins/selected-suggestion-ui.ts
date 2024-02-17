@@ -21,8 +21,8 @@ import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 /**
- * This plugin view will handle dom adding event listener to the changed dom view,
- * and clean them up when change it not in pending state
+ * This plugin view will handle adding dom event listener to the changed text/node,
+ * and clean them up when the change it's not in a pending state
  */
 class SuggestionView {
   private view: EditorView
