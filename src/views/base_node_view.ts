@@ -22,7 +22,6 @@ import { Decoration, NodeView } from 'prosemirror-view'
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import { isMetaNode } from '../lib/utils'
-import { SET_SUGGESTION_ID } from '../plugins/selected-suggestion-ui'
 import { SyncError } from '../types'
 
 export interface BaseNodeProps {
@@ -95,7 +94,6 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
 
   public destroy = () => {
     this.props.popper.destroy()
-    this.removeSuggestionClickListener()
   }
 
   public handleDecorations = (decorations: readonly Decoration[]) => {
@@ -133,28 +131,5 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
         this.view.dispatch(this.view.state.tr.delete(pos, pos + node.nodeSize))
       }
     })
-  }
-
-  public addSuggestionClickListener = () => {
-    if (
-      this.node.attrs.dataTracked?.length &&
-      this.node.attrs.dataTracked[0].status === 'pending'
-    ) {
-      this.dom.addEventListener('click', this.suggestionDomClickListener)
-    }
-  }
-
-  public removeSuggestionClickListener = () => {
-    if (
-      this.node.attrs.dataTracked?.length &&
-      this.node.attrs.dataTracked[0].status === 'pending'
-    ) {
-      this.dom.removeEventListener('click', this.suggestionDomClickListener)
-    }
-  }
-
-  public suggestionDomClickListener = () => {
-    const changeId = this.node.attrs.dataTracked[0].id
-    this.view.dispatch(this.view.state.tr.setMeta(SET_SUGGESTION_ID, changeId))
   }
 }
