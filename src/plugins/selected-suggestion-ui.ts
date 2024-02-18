@@ -22,7 +22,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 /**
  * This plugin view will handle adding dom event listener to the changed text/node,
- * and clean them up when the change it's not in a pending state
+ * and clean them up when the change it's not in a pending/accepted state
  */
 class SuggestionView {
   private view: EditorView
@@ -50,7 +50,7 @@ class SuggestionView {
       oldChanges.map((change) => {
         if (
           !newChangeSet.get(change.id) ||
-          newChangeSet.get(change.id)?.dataTracked.status !== 'pending'
+          newChangeSet.get(change.id)?.dataTracked.status === 'rejected'
         ) {
           const dom = view.dom.querySelector(`[data-track-id="${change.id}"]`)
           dom?.removeEventListener('click', this.listener)
@@ -61,7 +61,9 @@ class SuggestionView {
 
   destroy() {
     this.view.dom
-      .querySelectorAll('[data-track-status="pending"]')
+      .querySelectorAll(
+        '[data-track-status="pending"], [data-track-status="accepted"]'
+      )
       .forEach((dom) => {
         if (dom.parentElement?.parentElement?.classList.contains('keyword')) {
           return
@@ -72,7 +74,9 @@ class SuggestionView {
 
   private addEventListener(view: EditorView) {
     view.dom
-      .querySelectorAll('[data-track-status="pending"]')
+      .querySelectorAll(
+        '[data-track-status="pending"], [data-track-status="accepted"]'
+      )
       .forEach((dom) => {
         if (dom.parentElement?.parentElement?.classList.contains('keyword')) {
           return

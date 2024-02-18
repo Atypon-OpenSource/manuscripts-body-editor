@@ -194,6 +194,7 @@ export class BibliographyElementBlockView<
         ) {
           element.appendChild(getAttrsTrackingButton(dataTracked.id))
         }
+
         this.addClickListenerToBibItem(element, dataTracked)
       }
 
@@ -238,7 +239,7 @@ export class BibliographyElementBlockView<
     element: Element,
     dataTracked: TrackedAttrs
   ) => {
-    if (dataTracked.status === 'pending') {
+    if (dataTracked.status !== CHANGE_STATUS.rejected) {
       element.addEventListener('click', () => {
         this.view.dispatch(
           this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)

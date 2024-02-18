@@ -688,7 +688,7 @@ Next levels are shifted 'up' by 1
   --selection-bg-color: #bce7f6;
 }
 
-.ProseMirror .pending ::selection {
+.ProseMirror .accepted .pending ::selection {
   background: none;
 }
 
