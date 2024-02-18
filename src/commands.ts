@@ -197,6 +197,44 @@ export const createBlock = (
   }
 }
 
+export const insertGeneralFootnote = (
+  tableNode: ManuscriptNode,
+  position: number,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const tableElementFooter = findChildrenByType(
+    tableNode,
+    schema.nodes.table_element_footer
+  )
+  console.log(tableElementFooter)
+  const generalNote = state.schema.nodes.paragraph.create()
+  const tr = state.tr
+  let pos
+
+  if (tableElementFooter.length) {
+    pos = position + tableElementFooter[0].pos + 2
+    tr.insert(pos, generalNote as ManuscriptNode)
+  } else {
+    const tableSize = tableNode.content.firstChild?.nodeSize
+    if (tableSize) {
+      pos = position + tableSize
+      const tableElementFooter = schema.nodes.table_element_footer.create(
+        {
+          id: generateID(ObjectTypes.TableElementFooter),
+        },
+        [generalNote]
+      )
+      tr.insert(pos, tableElementFooter)
+    }
+  }
+
+  if (dispatch && pos) {
+    const selection = createSelection(state.schema.nodes.paragraph, pos, tr.doc)
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+}
+
 export const insertFileAsFigure = (
   file: FileAttachment,
   state: ManuscriptEditorState,

@@ -24,8 +24,9 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
+import { findChildrenByType } from 'prosemirror-utils'
 
-import { addComment, createBlock } from '../commands'
+import { addComment, createBlock, insertGeneralFootnote } from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -254,6 +255,36 @@ export class ContextMenu {
           )
         })
       )
+    }
+    if (type === schema.nodes.table_element) {
+      let addGeneralNote = true
+      const tableElementFooter = findChildrenByType(
+        this.node,
+        schema.nodes.table_element_footer
+      )
+      if (tableElementFooter.length) {
+        const paragraphs = findChildrenByType(
+          tableElementFooter[0].node,
+          schema.nodes.paragraph,
+          false
+        )
+        if (paragraphs.length) {
+          addGeneralNote = false
+        }
+      }
+      if (addGeneralNote) {
+        menu.appendChild(
+          this.createMenuSection((section: HTMLElement) => {
+            section.appendChild(
+              this.createMenuItem('Add General Note', () => {
+                const { state, dispatch } = this.view
+                insertGeneralFootnote(this.node, this.getPos(), state, dispatch)
+                popper.destroy()
+              })
+            )
+          })
+        )
+      }
     }
 
     if (
