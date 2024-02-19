@@ -688,8 +688,9 @@ Next levels are shifted 'up' by 1
   --selection-bg-color: #bce7f6;
 }
 
-.ProseMirror .accepted .pending ::selection {
+.selected-suggestion::selection {
   background: none;
+  border: 1px solid salmon;
 }
 
 .selected-suggestion {
