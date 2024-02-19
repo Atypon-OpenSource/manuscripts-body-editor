@@ -263,12 +263,9 @@ export class ContextMenu {
         schema.nodes.table_element_footer
       )
       if (tableElementFooter.length) {
-        const paragraphs = findChildrenByType(
-          tableElementFooter[0].node,
-          schema.nodes.paragraph,
-          false
-        )
-        if (paragraphs.length) {
+        if (
+          tableElementFooter[0].node.firstChild?.type == schema.nodes.paragraph
+        ) {
           addGeneralNote = false
         }
       }
@@ -278,8 +275,13 @@ export class ContextMenu {
             section.appendChild(
               this.createMenuItem('Add General Note', () => {
                 const { state, dispatch } = this.view
-                insertGeneralFootnote(this.node, this.getPos(), state, dispatch)
-                popper.destroy()
+                insertGeneralFootnote(
+                  this.node,
+                  this.getPos(),
+                  state,
+                  dispatch,
+                  tableElementFooter
+                )
               })
             )
           })
