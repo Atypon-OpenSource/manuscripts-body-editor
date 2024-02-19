@@ -690,7 +690,6 @@ Next levels are shifted 'up' by 1
 
 .selected-suggestion::selection {
   background: none;
-  border: 1px solid salmon;
 }
 
 .selected-suggestion {
