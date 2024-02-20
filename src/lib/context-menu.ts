@@ -257,19 +257,15 @@ export class ContextMenu {
       )
     }
     if (type === schema.nodes.table_element) {
-      let addGeneralNote = true
       const tableElementFooter = findChildrenByType(
         this.node,
         schema.nodes.table_element_footer
       )
-      if (tableElementFooter.length) {
-        if (
-          tableElementFooter[0].node.firstChild?.type == schema.nodes.paragraph
-        ) {
-          addGeneralNote = false
-        }
-      }
-      if (addGeneralNote) {
+      const hasGeneralNote =
+        tableElementFooter.length &&
+        tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
+
+      if (!hasGeneralNote) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
