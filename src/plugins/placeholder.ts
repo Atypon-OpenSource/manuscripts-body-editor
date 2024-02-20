@@ -18,7 +18,7 @@ import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-export const placeholderWidget =
+const placeholderWidget =
   (placeholder: string) =>
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
     const element = document.createElement('span')
