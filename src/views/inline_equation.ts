@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { generateNodeID, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
 import { renderMath } from '../lib/helpers'
@@ -38,20 +38,24 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
       while (this.dom.hasChildNodes()) {
         this.dom.removeChild(this.dom.firstChild as ChildNode)
       }
-      renderMath(contents, format).then((svgContent) => {
-        if (svgContent) {
-          const fragment = sanitize(svgContent, {
-            USE_PROFILES: {svg: true},
-          })
-          this.dom.appendChild(fragment)
-        } else {
-          const placeholder = document.createElement('div')
-          placeholder.className = 'equation-placeholder'
-          placeholder.textContent = '<Equation>'
-
-          this.dom.appendChild(placeholder)
-        }
-      })
+      renderMath(contents, format)
+        .then((svgContent) => {
+          if (svgContent) {
+            const fragment = sanitize(svgContent, {
+              USE_PROFILES: { svg: true },
+            })
+            this.dom.appendChild(fragment)
+          } else {
+            const placeholder = document.createElement('div')
+            placeholder.className = 'equation-placeholder'
+            placeholder.textContent = '<Equation>'
+            this.dom.appendChild(placeholder)
+          }
+          return true
+        })
+        .catch((error) => {
+          console.error(error) // tslint:disable-line:no-console
+        })
     } else {
       this.dom.innerHTML = ''
     }
@@ -63,7 +67,7 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
     this.dom = document.createElement('span')
     if (!isRejectedInsert(this.node)) {
       this.dom.classList.add('equation')
-      this.dom.setAttribute('id', this.node.attrs.id)
+      this.dom.setAttribute('id', generateNodeID(this.node.type))
     }
   }
 }

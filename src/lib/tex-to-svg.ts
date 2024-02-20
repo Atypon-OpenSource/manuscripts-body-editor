@@ -61,10 +61,7 @@ const doc = new HTMLDocument<HTMLElement, Text, Document>(document, adaptor, {
 
 doc.addStyleSheet()
 
-export const convertTeXToSVG = (
-  tex: string,
-  display: boolean = true
-): string | null => {
+export const convertTeXToSVG = (tex: string, display = true): string | null => {
   const item = doc.convert(tex, {
     display,
     em: 16,
