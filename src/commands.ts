@@ -1129,5 +1129,4 @@ export const updateCommentAnnotationState = (
   if (dispatch) {
     dispatch(tr)
   }
-  alert("jjj")
 }
