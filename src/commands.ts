@@ -202,7 +202,8 @@ export const insertGeneralFootnote = (
   position: number,
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  tableElementFooter?: NodeWithPos[]
+  tableElementFooter?: NodeWithPos[],
+  view?: ManuscriptEditorView
 ) => {
   const generalNote = state.schema.nodes.paragraph.create()
   const tr = state.tr
@@ -224,6 +225,7 @@ export const insertGeneralFootnote = (
 
   if (dispatch && pos) {
     const selection = createSelection(state.schema.nodes.paragraph, pos, tr.doc)
+    view?.focus()
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 }
@@ -1127,4 +1129,5 @@ export const updateCommentAnnotationState = (
   if (dispatch) {
     dispatch(tr)
   }
+  alert("jjj")
 }
