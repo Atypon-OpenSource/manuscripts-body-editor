@@ -202,7 +202,8 @@ const getCommentIcon =
 
     element.classList.add('block-comment-button', elementClass)
 
-    element.onclick = () => {
+    element.onclick = (e: Event) => {
+      e.stopPropagation()
       setSelectedComment(commentId)
       commentScroll(commentId, 'inspector')
     }

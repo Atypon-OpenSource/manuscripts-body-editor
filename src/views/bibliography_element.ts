@@ -29,12 +29,16 @@ import { Decoration } from 'prosemirror-view'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
+import {
+  getAttrsTrackingButton,
+  getChangeClasses,
+} from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
-  getAttrsTrackingButton,
-  getMarkDecoration,
-} from '../plugins/tracking-mark'
+  selectedSuggestionKey,
+  SET_SUGGESTION_ID,
+} from '../plugins/selected-suggestion-ui'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -88,12 +92,14 @@ export class BibliographyElementBlockView<
   public updateContents = async () => {
     const bib = getBibliographyPluginState(this.view.state)
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
+    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
     const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
+    let selectedBibItemSuggestion
 
     this.node.descendants((node, pos) => {
+      const nodePosition = this.getPos() + pos + 2
       if (commentsDecorationSet) {
-        const nodePosition = this.getPos() + pos + 2
         const commentWidget = commentsDecorationSet.find(
           nodePosition,
           nodePosition
@@ -112,6 +118,14 @@ export class BibliographyElementBlockView<
       if (dataTracked?.length) {
         const lastChange = dataTracked[dataTracked.length - 1]
         dataTrackedMap.set(node.attrs.id, lastChange)
+      }
+
+      if (
+        dataTracked?.length &&
+        selectedSuggestion?.find(nodePosition, nodePosition + node.nodeSize)
+          .length
+      ) {
+        selectedBibItemSuggestion = node.attrs.id
       }
     })
 
@@ -169,10 +183,10 @@ export class BibliographyElementBlockView<
       const dataTracked = dataTrackedMap.get(element.id)
 
       if (dataTracked) {
-        element.classList.add('attrs-track-mark')
-        const decoration = getMarkDecoration(dataTracked)
-
-        decoration.style && element.setAttribute('style', decoration.style)
+        element.classList.add(
+          'attrs-track-mark',
+          ...getChangeClasses([dataTracked])
+        )
 
         if (
           dataTracked.status === CHANGE_STATUS.pending &&
@@ -180,7 +194,17 @@ export class BibliographyElementBlockView<
         ) {
           element.appendChild(getAttrsTrackingButton(dataTracked.id))
         }
+
+        this.addClickListenerToBibItem(element, dataTracked)
       }
+
+      if (
+        selectedBibItemSuggestion &&
+        selectedBibItemSuggestion === element.id
+      ) {
+        element.classList.add('selected-suggestion')
+      }
+
       wrapper.append(element)
     }
 
@@ -209,6 +233,19 @@ export class BibliographyElementBlockView<
 
   private handleDelete = (item: BibliographyItem) => {
     return this.deleteNode(item._id)
+  }
+
+  private addClickListenerToBibItem = (
+    element: Element,
+    dataTracked: TrackedAttrs
+  ) => {
+    if (dataTracked.status !== CHANGE_STATUS.rejected) {
+      element.addEventListener('click', () => {
+        this.view.dispatch(
+          this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
+        )
+      })
+    }
   }
 }
 

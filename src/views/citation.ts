@@ -53,7 +53,10 @@ export class CitationView<PropsType extends BaseNodeProps>
     const bib = getBibliographyPluginState(this.view.state)
 
     const citation = this.getCitation()
-    const classes = ['citation', ...getChangeClasses(this.node)]
+    const classes = [
+      'citation',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
     const element = document.createElement('span')
     element.className = classes.join(' ')
     const text = bib.renderedCitations.get(citation._id)
