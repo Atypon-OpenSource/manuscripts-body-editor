@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { generateNodeID, ManuscriptNodeView } from '@manuscripts/transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
 import { renderMath } from '../lib/helpers'
@@ -67,7 +67,7 @@ export class InlineEquationView<PropsType extends BaseNodeProps>
     this.dom = document.createElement('span')
     if (!isRejectedInsert(this.node)) {
       this.dom.classList.add('equation')
-      this.dom.setAttribute('id', generateNodeID(this.node.type))
+      this.dom.setAttribute('id', this.node.attrs.id)
     }
   }
 }
