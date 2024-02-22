@@ -26,7 +26,12 @@ import {
 } from '@manuscripts/transform'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
-import { addComment, createBlock, insertTableFootnote, insertGeneralFootnote } from '../commands'
+import {
+  addComment,
+  createBlock,
+  insertGeneralFootnote,
+  insertTableFootnote,
+} from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
