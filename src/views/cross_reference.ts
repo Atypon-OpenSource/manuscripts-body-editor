@@ -47,7 +47,10 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public updateContents = () => {
-    const nodeClasses = ['cross-reference', ...getChangeClasses(this.node)]
+    const nodeClasses = [
+      'cross-reference',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
     this.dom.className = nodeClasses.join(' ')
     this.dom.textContent = this.node.attrs.customLabel || this.node.attrs.label
     this.dom.addEventListener('click', this.handleClick)

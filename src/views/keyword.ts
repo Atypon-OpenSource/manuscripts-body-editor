@@ -54,10 +54,13 @@ export class KeywordView
   }
 
   public updateContents = () => {
-    const keyword = document.createElement('span')
-    const classes = ['keyword', ...getChangeClasses(this.node)]
-    keyword.classList.add(...classes)
-    keyword.appendChild(this.contentDOM as HTMLElement)
+    const classes = [
+      'keyword',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
+    this.dom.className = classes.join(' ')
+    this.dom.innerHTML = ''
+    this.dom.appendChild(this.contentDOM as HTMLElement)
 
     const can = this.props.getCapabilities()
 
@@ -67,11 +70,19 @@ export class KeywordView
         .querySelector('svg') as SVGElement
       svg.classList.add('delete-keyword')
       svg.addEventListener('click', this.showConfirmationDialog)
-      keyword.appendChild(svg)
+      this.dom.appendChild(svg)
     }
 
-    this.dom.innerHTML = ''
-    this.dom.appendChild(keyword)
+    if (this.node.attrs.dataTracked?.length) {
+      this.dom.setAttribute('data-track-id', this.node.attrs.dataTracked[0].id)
+      this.dom.setAttribute(
+        'data-track-status',
+        this.node.attrs.dataTracked[0].status
+      )
+    } else {
+      this.dom.removeAttribute('data-track-id')
+      this.dom.removeAttribute('data-track-status')
+    }
   }
 
   private showConfirmationDialog = () => {
