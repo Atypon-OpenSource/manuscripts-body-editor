@@ -18,6 +18,7 @@ import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { affiliationsKey } from '../plugins/affiliations'
+import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
 import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -54,13 +55,24 @@ export class ContributorsView<
   }
 
   buildAuthors = () => {
+    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
+    let selectedAuthor: string | undefined
     const authors: ContributorNode[] = []
     const authorsWrapper = document.createElement('div')
     authorsWrapper.classList.add('contributors-list')
 
-    this.node.content?.forEach((node) => {
+    this.node.content?.forEach((node, offset) => {
       if (isContributorNode(node)) {
         authors.push(node)
+
+        if (
+          selectedSuggestion?.find(
+            this.getPos() + offset + 2,
+            this.getPos() + offset + node.nodeSize + 2
+          ).length
+        ) {
+          selectedAuthor = node.attrs.id
+        }
       }
     })
 
@@ -71,7 +83,9 @@ export class ContributorsView<
           return
         }
         const jointAuthors = this.isJointFirstAuthor(authors, i)
-        authorsWrapper.appendChild(this.buildAuthor(author, jointAuthors))
+        authorsWrapper.appendChild(
+          this.buildAuthor(author, jointAuthors, selectedAuthor)
+        )
       })
     this.container.appendChild(authorsWrapper)
   }
@@ -79,7 +93,11 @@ export class ContributorsView<
   container: HTMLElement
   inner: HTMLElement
 
-  buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
+  buildAuthor = (
+    node: ContributorNode,
+    isJointFirstAuthor: boolean,
+    selectedAuthor?: string
+  ) => {
     const pluginState = affiliationsKey.getState(this.view.state)
     const attrs = node.attrs as TrackableAttributes<ContributorNode>
 
@@ -91,9 +109,11 @@ export class ContributorsView<
     container.setAttribute('contenteditable', 'false')
 
     if (attrs.dataTracked?.length) {
+      container.setAttribute('data-track-id', attrs.dataTracked[0].id)
       container.setAttribute('data-track-status', attrs.dataTracked[0].status)
       container.setAttribute('data-track-op', attrs.dataTracked[0].operation)
     } else {
+      container.removeAttribute('data-track-id')
       container.removeAttribute('data-track-status')
       container.removeAttribute('data-track-type')
     }
@@ -138,6 +158,10 @@ export class ContributorsView<
 
     if (displayAttr.isCorresponding) {
       container.appendChild(this.createNote('*', 'Corresponding author'))
+    }
+
+    if (selectedAuthor && selectedAuthor === attrs.id) {
+      container.classList.add('selected-suggestion')
     }
 
     return container

@@ -27,6 +27,7 @@ import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { findParentNodeWithIdValue } from '../../lib/utils'
+import { placeholderWidget } from '../placeholder'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -182,9 +183,9 @@ export default () => {
 
         const { labels } = footnotesKey.getState(state) as PluginState
         state.doc.descendants((node, pos) => {
-          if (labels) {
-            if (isFootnoteNode(node)) {
-              const id = node.attrs.id
+          if (isFootnoteNode(node)) {
+            const id = node.attrs.id
+            if (labels) {
               const label = labels.get(id)
               if (label) {
                 decorations.push(
@@ -193,6 +194,14 @@ export default () => {
                   })
                 )
               }
+            }
+            if (!node.firstChild?.textContent) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 2,
+                  placeholderWidget('Add new note here')
+                )
+              )
             }
           }
           if (node.type === schema.nodes.footnotes_element) {
