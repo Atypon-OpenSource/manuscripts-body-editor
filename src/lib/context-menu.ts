@@ -280,14 +280,11 @@ export class ContextMenu {
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
               this.createMenuItem('Add General Note', () => {
-                const { state, dispatch } = this.view
                 insertGeneralFootnote(
                   this.node,
                   this.getPos(),
-                  state,
-                  dispatch,
-                  tableElementFooter,
-                  this.view
+                  this.view,
+                  tableElementFooter
                 )
               })
             )

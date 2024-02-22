@@ -200,11 +200,10 @@ export const createBlock = (
 export const insertGeneralFootnote = (
   tableNode: ManuscriptNode,
   position: number,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  tableElementFooter?: NodeWithPos[],
-  view?: ManuscriptEditorView
+  view: ManuscriptEditorView,
+  tableElementFooter?: NodeWithPos[]
 ) => {
+  const { state, dispatch } = view
   const generalNote = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
