@@ -205,7 +205,9 @@ export const insertGeneralFootnote = (
   tableElementFooter?: NodeWithPos[],
   view?: ManuscriptEditorView
 ) => {
-  const generalNote = state.schema.nodes.paragraph.create()
+  const generalNote = state.schema.nodes.paragraph.create({
+    placeholder: 'Add general note here',
+  })
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2

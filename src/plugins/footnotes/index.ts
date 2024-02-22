@@ -211,19 +211,6 @@ export default () => {
               })
             )
           }
-          if (node.type === schema.nodes.table_element_footer) {
-            if (
-              node.firstChild?.type === schema.nodes.paragraph &&
-              !node.firstChild?.textContent
-            ) {
-              decorations.push(
-                Decoration.widget(
-                  pos + 2,
-                  placeholderWidget('Add general note here')
-                )
-              )
-            }
-          }
         })
 
         return DecorationSet.create(state.doc, decorations)

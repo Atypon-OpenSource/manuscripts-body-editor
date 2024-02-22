@@ -261,7 +261,12 @@ export class ContextMenu {
         })
       )
     }
+
     if (type === schema.nodes.table_element) {
+      // Check if the selection is inside the table.
+      const isInTable = hasParentNodeOfType(schema.nodes.table)(
+        this.view.state.selection
+      )
       const tableElementFooter = findChildrenByType(
         this.node,
         schema.nodes.table_element_footer
@@ -289,13 +294,6 @@ export class ContextMenu {
           })
         )
       }
-    }
-
-    if (type === schema.nodes.table_element) {
-      // Check if the selection is inside the table.
-      const isInTable = hasParentNodeOfType(schema.nodes.table)(
-        this.view.state.selection
-      )
 
       if (isInTable) {
         menu.appendChild(
