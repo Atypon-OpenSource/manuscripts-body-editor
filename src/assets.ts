@@ -77,3 +77,28 @@ export const commentIcon = `
     />
   </svg>
 `
+
+export const editAttrsTrackingIcon = `
+ <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 2L14 4L9 9L6 10L7 7L12 2Z"
+      stroke="#353535"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M13 10V11.5C13 12.328 12.328 13 11.5 13H4.5C3.672 13 3 12.328 3 11.5V4.5C3 3.672 3.672 3 4.5 3H6"
+      stroke="#353535"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+`
