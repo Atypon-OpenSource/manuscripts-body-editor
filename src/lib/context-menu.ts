@@ -276,7 +276,8 @@ export class ContextMenu {
                   this.getPos(),
                   state,
                   dispatch,
-                  tableElementFooter
+                  tableElementFooter,
+                  this.view
                 )
               })
             )
