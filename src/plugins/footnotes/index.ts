@@ -28,6 +28,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
+import { addDecorationToUncitedTableFootnotes } from './uncited-table-footnotes'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -210,6 +211,9 @@ export default () => {
                 class: 'footnote-element',
               })
             )
+          }
+          if (node.type === schema.nodes.table_element) {
+            addDecorationToUncitedTableFootnotes(decorations, node, pos)
           }
         })
 
