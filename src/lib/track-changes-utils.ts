@@ -18,6 +18,7 @@ import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 
+import { editAttrsTrackingIcon } from '../assets'
 import { TrackableAttributes } from '../types'
 
 export function isRejectedInsert(node: ProsemirrorNode) {
@@ -69,11 +70,11 @@ export function isPendingSetAttrs(node: ProsemirrorNode) {
   return false
 }
 
-export function getChangeClasses(node: ProsemirrorNode) {
+export function getChangeClasses(dataTracked?: TrackedAttrs[]) {
   const classes: string[] = []
 
-  if (node.attrs.dataTracked) {
-    const changes = node.attrs.dataTracked as TrackedAttrs[]
+  if (dataTracked) {
+    const changes = dataTracked as TrackedAttrs[]
     const operationClasses = new Map([
       ['insert', 'inserted'],
       ['delete', 'deleted'],
@@ -109,4 +110,13 @@ export function getActualAttrs<T extends ManuscriptNode>(node: T) {
     return attrs.dataTracked[0].oldAttrs as T['attrs']
   }
   return attrs
+}
+
+export const getAttrsTrackingButton = (changeID: string) => {
+  const el = document.createElement('button')
+  el.className = 'attrs-popper-button'
+  el.value = changeID
+  el.innerHTML = editAttrsTrackingIcon
+
+  return el
 }

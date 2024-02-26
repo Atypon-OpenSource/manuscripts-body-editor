@@ -546,6 +546,7 @@
 }
 
 .ProseMirror .placeholder-text {
+  font-style: italic;
   color: #c9c9c9;
   margin: 0;
 }
@@ -1013,6 +1014,6 @@
   line-height: 1.43;
   padding-left: 65px;
 }
-div[style*="background-color: rgba(249, 2, 2, 0.53)"] {
-  background-color: #ffe08b !important;
+.highlight {
+  background-color: #ffeebf !important;
 }

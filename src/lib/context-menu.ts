@@ -24,8 +24,9 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
+import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
-import { addComment, createBlock } from '../commands'
+import { addComment, createBlock, insertTableFootnote } from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -254,6 +255,32 @@ export class ContextMenu {
           )
         })
       )
+    }
+
+    if (type === schema.nodes.table_element) {
+      // Check if the selection is inside the table.
+      const isInTable = hasParentNodeOfType(schema.nodes.table)(
+        this.view.state.selection
+      )
+
+      if (isInTable) {
+        menu.appendChild(
+          this.createMenuSection((section: HTMLElement) => {
+            section.appendChild(
+              this.createMenuItem('Add Reference Note', () => {
+                const footnotesElement = findChildrenByType(
+                  this.node,
+                  schema.nodes.footnotes_element
+                )
+                if (!footnotesElement.length) {
+                  const { state, dispatch } = this.view
+                  insertTableFootnote(this.node, this.getPos(), state, dispatch)
+                }
+              })
+            )
+          })
+        )
+      }
     }
 
     if (
