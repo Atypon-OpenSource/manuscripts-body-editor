@@ -26,7 +26,7 @@ import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { uncitedTableFootnoteIcon } from '../../assets'
+import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
@@ -87,7 +87,7 @@ const labelWidget =
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
   element.className = 'unctied-table-footnote'
-  element.innerHTML = uncitedTableFootnoteIcon
+  element.innerHTML = alertIcon
   return element
 }
 
@@ -236,9 +236,10 @@ export default () => {
 
             if (parent?.type === schema.nodes.table_element_footer) {
               tableInlineFootnoteIds = findTableInlineFootnoteIds(
-                node,
                 state.doc.resolve(pos)
               )
+            } else {
+              tableInlineFootnoteIds = undefined
             }
           }
         })

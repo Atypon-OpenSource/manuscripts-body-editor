@@ -14,31 +14,24 @@
  * limitations under the License.
  */
 
-import {
-  InlineFootnoteNode,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { InlineFootnoteNode, schema } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
 
-export const findTableInlineFootnoteIds = (
-  footnoteElement: ManuscriptNode,
-  $pos: ResolvedPos
-) => {
+export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
     $pos,
     (node) => node.type === schema.nodes.table_element
   )?.node.firstChild
 
-  return tableElement
-    ? new Set(
-        findChildren(
+  return new Set(
+    tableElement
+      ? findChildren(
           tableElement,
           (node) => node.type === schema.nodes.inline_footnote
         )
           .map(({ node }) => (node as InlineFootnoteNode).attrs.rids)
           .flat()
-      )
-    : undefined
+      : []
+  )
 }

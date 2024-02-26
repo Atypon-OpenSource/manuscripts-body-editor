@@ -103,7 +103,7 @@ export const editAttrsTrackingIcon = `
   </svg>
 `
 
-export const uncitedTableFootnoteIcon = `
+export const alertIcon = `
   <svg
     width="12"
     height="12"
