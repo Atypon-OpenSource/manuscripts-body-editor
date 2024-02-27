@@ -163,14 +163,14 @@ export const getBibliographyItem = (
   return pickBy(item, (v) => v !== undefined) as BibliographyItem
 }
 
-const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
+export const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
   a.updatedAt > b.updatedAt ? a : b
 
 /**
  * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
  * as it's easier to deal with the manuscript Models for both references list & citation popup view
  */
-const getEffectiveAttrs = (
+export const getEffectiveAttrs = (
   node: ManuscriptNode,
   excludeDeletedNode?: boolean
 ): Attrs | undefined => {
@@ -198,19 +198,19 @@ const getEffectiveAttrs = (
 }
 
 /**
- * Return model map that are built primarily from PM document
+ * Return BibliographyItem model that are built primarily from PM document
  */
 export const getBibliographyItemModelMap = (doc: ManuscriptNode) => {
-  const modelMap = new Map<string, BibliographyItem>()
+  const bibliographyItemMap = new Map<string, BibliographyItem>()
   doc.descendants((node) => {
     if (node.type === schema.nodes.bibliography_item) {
       const model = getBibliographyItem(node as BibliographyItemNode)
       if (model) {
-        modelMap.set(model._id, model)
+        bibliographyItemMap.set(model._id, model)
       }
     }
   })
-  return modelMap
+  return bibliographyItemMap
 }
 
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>

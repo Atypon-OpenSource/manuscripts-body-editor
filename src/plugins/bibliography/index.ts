@@ -87,14 +87,14 @@ const buildBibliographyPluginState = (
     }
   })
 
-  const modelMap = getBibliographyItemModelMap(doc)
+  const bibliographyItemMap = getBibliographyItemModelMap(doc)
 
   const citations = buildCitations(nodes)
 
   const $new: Partial<PluginState> = {
     citationNodes: nodes,
     citations,
-    bibliographyItems: modelMap,
+    bibliographyItems: bibliographyItemMap,
   }
 
   //TODO remove. There should always be a csl style
@@ -105,7 +105,7 @@ const buildBibliographyPluginState = (
   if (
     $old &&
     isEqual(citations, $old.citations) &&
-    isEqual(modelMap, $old.bibliographyItems)
+    isEqual(bibliographyItemMap, $old.bibliographyItems)
   ) {
     $new.citationCounts = $old.citationCounts
     $new.provider = $old.provider
@@ -119,7 +119,7 @@ const buildBibliographyPluginState = (
     })
 
     const provider = new CitationProvider({
-      getLibraryItem: (id: string) => modelMap.get(id),
+      getLibraryItem: (id: string) => bibliographyItemMap.get(id),
       citationStyle: csl.style || '',
       locale: csl.locale,
     })
