@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
@@ -29,6 +28,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import { buildFileMap } from '../lib/build-file-models'
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -39,7 +39,6 @@ import ReactSubView from './ReactSubView'
 export interface FigureProps {
   fileManagement: FileManagement
   getFiles: () => FileAttachment[]
-  getModelMap: () => Map<string, Model>
   getCapabilities: () => Capabilities
   isInGraphicalAbstract?: boolean
 }
@@ -180,7 +179,7 @@ export class FigureEditableView extends FigureView<
       const componentProps: FigureOptionsProps = {
         can,
         files,
-        modelMap: this.props.getModelMap(),
+        getFilesMap: () => buildFileMap(this.view.state.doc),
         handleDownload,
         handleUpload,
         handleDetach,

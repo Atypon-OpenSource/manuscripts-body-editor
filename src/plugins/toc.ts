@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  Model,
-  NumberingStyle,
-  ObjectTypes,
-  ParagraphStyle,
-} from '@manuscripts/json-schema'
+import { ObjectTypes } from '@manuscripts/json-schema'
 import {
   generateID,
-  hasObjectType,
   isSectionNodeType,
   isTOCSectionNode,
   ManuscriptNode,
@@ -30,12 +24,11 @@ import {
 } from '@manuscripts/transform'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 
-import { getMatchingChild, iterateChildren } from '../lib/utils'
+import { iterateChildren } from '../lib/utils'
 
 export const tocKey = new PluginKey('toc')
 
 const buildTOCList = (
-  headingStyles: Map<string, ParagraphStyle>,
   list: HTMLUListElement,
   node: ManuscriptNode,
   depth = 1,
@@ -47,32 +40,12 @@ const buildTOCList = (
     list.classList.add('manuscript-toc-inner-list')
   }
 
-  const paragraphStyle: ParagraphStyle | undefined = headingStyles.get(
-    `heading${depth}`
-  )
-
-  const sectionNumberingStyle: NumberingStyle | undefined = paragraphStyle
-    ? paragraphStyle.sectionNumberingStyle
-    : undefined
-
-  const numberingScheme: string =
-    sectionNumberingStyle && sectionNumberingStyle.numberingScheme
-      ? sectionNumberingStyle.numberingScheme
-      : 'decimal' // TODO: none by default?
-
-  const suffix: string =
-    sectionNumberingStyle && sectionNumberingStyle.suffix !== undefined
-      ? sectionNumberingStyle.suffix
-      : '.' // TODO: none by default?
-
-  let index = sectionNumberingStyle ? sectionNumberingStyle.startIndex : 1
-
+  let index = 1
   node.forEach((child) => {
     if (child.type === schema.nodes.body) {
       for (const childNode of iterateChildren(child)) {
         if (isSectionNodeType(childNode.type) && !isTOCSectionNode(childNode)) {
-          const numbering =
-            numberingScheme === 'none' ? '' : `${prefix}${index}`
+          const numbering = `${prefix}${index}`
 
           const firstChildNode = childNode.child(0)
 
@@ -88,35 +61,11 @@ const buildTOCList = (
               String(depth)
             )
 
-            item.textContent = `${numbering ? `${numbering}${suffix}` : ''} ${
+            item.textContent = `${numbering ? `${numbering}.` : ''} ${
               firstChildNode.textContent || 'Untitled Section'
             }` // TODO: numbering and markup
 
             list.appendChild(item)
-          }
-
-          const childSection = getMatchingChild(childNode, (node) =>
-            isSectionNodeType(node.type)
-          )
-
-          if (childSection) {
-            const paragraphStyle = headingStyles.get(`heading${depth + 1}`)
-
-            // TODO: exclude if no paragraphStyle?
-            if (!paragraphStyle || paragraphStyle.partOfTOC) {
-              const sublist = document.createElement('ul')
-              buildTOCList(
-                headingStyles,
-                sublist,
-                childNode,
-                depth + 1,
-                numbering ? `${numbering}.` : ''
-              )
-
-              const item = document.createElement('li')
-              item.appendChild(sublist)
-              list.appendChild(item)
-            }
           }
 
           index++ // TODO: don't increment if excluded from numbering
@@ -126,32 +75,10 @@ const buildTOCList = (
   })
 }
 
-const isParagraphStyle = hasObjectType<ParagraphStyle>(
-  ObjectTypes.ParagraphStyle
-)
-
-const buildHeadingStyles = (modelMap: Map<string, Model>) => {
-  const styles = new Map<string, ParagraphStyle>()
-
-  for (const model of modelMap.values()) {
-    if (isParagraphStyle(model)) {
-      if (model.name && /^heading\d+$/.test(model.name)) {
-        styles.set(model.name, model)
-      }
-    }
-  }
-
-  return styles
-}
-
-interface Props {
-  getModelMap: () => Map<string, Model>
-}
-
 /**
  * This plugin generates the content for a Table of Contents element, if present
  */
-export default (props: Props) => {
+export default () => {
   return new Plugin<null>({
     key: tocKey,
 
@@ -180,9 +107,7 @@ export default (props: Props) => {
 
           list.setAttribute('data-paragraph-style', node.attrs.paragraphStyle)
 
-          const headingStyles = buildHeadingStyles(props.getModelMap())
-
-          buildTOCList(headingStyles, list, newState.doc)
+          buildTOCList(list, newState.doc)
 
           const contents = list.outerHTML
 
