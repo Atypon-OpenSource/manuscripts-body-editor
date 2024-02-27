@@ -163,7 +163,7 @@ export const getBibliographyItem = (
   return pickBy(item, (v) => v !== undefined) as BibliographyItem
 }
 
-const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
+export const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
   a.updatedAt > b.updatedAt ? a : b
 
 /**

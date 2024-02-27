@@ -15,13 +15,21 @@
  */
 import { ObjectTypes } from '@manuscripts/json-schema'
 import {
+  CHANGE_OPERATION,
+  CHANGE_STATUS,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
+import {
   encode,
   generateID,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 
-import { getEffectiveAttrs } from '../plugins/bibliography/bibliography-utils'
+import {
+  getEffectiveAttrs,
+  getLatest,
+} from '../plugins/bibliography/bibliography-utils'
 
 export const buildFileMap = (doc: ManuscriptNode) => {
   const figures: ManuscriptNode[] = []
@@ -30,6 +38,16 @@ export const buildFileMap = (doc: ManuscriptNode) => {
   const buildNode = (node: ManuscriptNode, group: ManuscriptNode[]) => {
     const attrs = getEffectiveAttrs(node, true)
     if (attrs) {
+      const nodeChange = (
+        node.attrs.dataTracked as TrackedAttrs[] | undefined
+      )?.reduce(getLatest)
+      if (
+        nodeChange &&
+        nodeChange.operation === CHANGE_OPERATION.insert &&
+        nodeChange.status === CHANGE_STATUS.rejected
+      ) {
+        return false
+      }
       group.push(node.type.create({ ...attrs }, node.content))
     }
     return false
