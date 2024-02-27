@@ -135,7 +135,8 @@
 .popper .citation-editor,
 .popper .cross-reference-editor,
 .popper .citation-references,
-.popper .track-changes-review-panel {
+.popper .track-changes-review-panel,
+.popper .table-footnote-editor {
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;
@@ -189,7 +190,8 @@
   height: auto;
 }
 
-.popper .citation-editor {
+.popper .citation-editor,
+.popper .table-footnote-editor {
   width: 600px;
 }
 
@@ -204,7 +206,8 @@
   .popper .citation-editor,
   .popper .cross-reference-editor,
   .popper .equation-editor,
-  .popper .link-editor {
+  .popper .link-editor,
+  .popper .table-footnote-editor {
     min-width: 90%;
     max-width: 90%;
   }

@@ -101,7 +101,8 @@ export default (
       view.dispatch(tr)
     }
 
-    if (!node.attrs || !props.dispatch) {
+    if (!node.attrs) {
+      // || !props.dispatch
       return null
     }
 
