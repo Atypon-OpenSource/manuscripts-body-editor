@@ -339,10 +339,7 @@ const userProfile: UserProfile = {
 
 const history = createMemoryHistory()
 
-const buildProps = (
-  doc: ActualManuscriptNode,
-  modelMap: Map<string, Model>
-): EditorProps => ({
+const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   doc,
   getManuscript: () => manuscript,
   locale: 'en-US',
@@ -351,10 +348,6 @@ const buildProps = (
   getCurrentUser: () => userProfile,
   history,
   plugins: [],
-  deleteModel: async (id) => {
-    modelMap.delete(id)
-    return id
-  },
   retrySync: async () => undefined,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
@@ -367,7 +360,6 @@ const buildProps = (
     upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
-  getModelMap: () => modelMap,
   cslProps: {
     style: '',
     locale: '',
@@ -417,7 +409,7 @@ describe('editor view', () => {
     const state = EditorState.create({
       doc,
       schema,
-      plugins: plugins(buildProps(doc, modelMap)),
+      plugins: plugins(buildProps(doc)),
     })
 
     const view = new EditorView(null, { state })
