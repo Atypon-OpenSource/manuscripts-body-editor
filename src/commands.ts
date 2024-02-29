@@ -839,13 +839,18 @@ export const selectAllIsolating = (
 /**
  * Create a figure containing a 2x2 table with header and footer and a figcaption
  */
-export const createAndFillTableElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.table_element.createChecked({}, [
+export const createAndFillTableElement = (state: ManuscriptEditorState) => {
+  const tableHeader = [
+    state.schema.nodes.table_row.create({}, [
+      state.schema.nodes.table_header.create(),
+      state.schema.nodes.table_header.create(),
+    ]),
+  ]
+  return state.schema.nodes.table_element.createChecked({}, [
     state.schema.nodes.table.create(
       {},
-      state.schema.nodes.table_body.create(
-        {},
-        Array.from([1, 2, 3, 4], () =>
+      tableHeader.concat(
+        Array.from([1, 2, 3], () =>
           state.schema.nodes.table_row.create({}, [
             state.schema.nodes.table_cell.create(),
             state.schema.nodes.table_cell.create(),
@@ -856,6 +861,7 @@ export const createAndFillTableElement = (state: ManuscriptEditorState) =>
     createAndFillFigcaptionElement(state),
     state.schema.nodes.listing.create(),
   ])
+}
 
 const createAndFillFigureElement = (state: ManuscriptEditorState) =>
   state.schema.nodes.figure_element.create({}, [
