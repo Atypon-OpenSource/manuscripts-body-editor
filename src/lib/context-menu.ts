@@ -302,8 +302,13 @@ export class ContextMenu {
                       {
                         notes: footnotes,
                         onAdd: () => {
-                          // adding new table note
-                          console.log('Add')
+                          const { state, dispatch } = this.view
+                          insertTableFootnote(
+                            this.node,
+                            this.getPos(),
+                            state,
+                            dispatch
+                          )
                         },
                         onInsert: (notes: FootnoteNode[]) => {
                           const insertedAt = this.view.state.selection.to

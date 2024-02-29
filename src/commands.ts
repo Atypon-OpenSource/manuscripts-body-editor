@@ -1122,32 +1122,43 @@ export const insertTableFootnote = (
   // insert the inline footnote
   tr.insert(insertedAt, inlineFootnoteNode)
 
-  const footnoteElement = state.schema.nodes.footnotes_element.create(
-    {},
-    footnote
-  )
-
-  const tableElementFooter = findChildrenByType(
-    node,
-    schema.nodes.table_element_footer
-  )
-
   let insertionPos
-  if (tableElementFooter.length) {
-    const pos = tableElementFooter[0].pos
-    insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
-    tr.insert(insertionPos, footnoteElement)
+
+  const footnotes_element = findChildrenByType(
+    node,
+    schema.nodes.footnotes_element
+  )
+  if (footnotes_element) {
+    const pos = footnotes_element[0].pos
+    insertionPos = position + pos + footnotes_element[0].node.nodeSize + 1
+    tr.insert(insertionPos, footnote)
   } else {
-    const tableSize = node.content.firstChild?.nodeSize
-    if (tableSize) {
-      insertionPos = position + tableSize + 2
-      const tableElementFooter = schema.nodes.table_element_footer.create(
-        {
-          id: generateID(ObjectTypes.TableElementFooter),
-        },
-        [footnoteElement]
-      )
-      tr.insert(insertionPos, tableElementFooter)
+    const footnoteElement = state.schema.nodes.footnotes_element.create(
+      {},
+      footnote
+    )
+
+    const tableElementFooter = findChildrenByType(
+      node,
+      schema.nodes.table_element_footer
+    )
+
+    if (tableElementFooter.length) {
+      const pos = tableElementFooter[0].pos
+      insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
+      tr.insert(insertionPos, footnoteElement)
+    } else {
+      const tableSize = node.content.firstChild?.nodeSize
+      if (tableSize) {
+        insertionPos = position + tableSize + 2
+        const tableElementFooter = schema.nodes.table_element_footer.create(
+          {
+            id: generateID(ObjectTypes.TableElementFooter),
+          },
+          [footnoteElement]
+        )
+        tr.insert(insertionPos, tableElementFooter)
+      }
     }
   }
 
