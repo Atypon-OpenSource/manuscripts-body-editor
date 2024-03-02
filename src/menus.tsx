@@ -27,7 +27,6 @@ import {
   addRowBefore,
   deleteColumn,
   deleteRow,
-
 } from 'prosemirror-tables'
 
 import {
