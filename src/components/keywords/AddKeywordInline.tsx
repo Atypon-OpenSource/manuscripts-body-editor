@@ -115,7 +115,7 @@ export const AddKeywordInline: React.FC<{
       ) {
         keywords.push({
           id: descNode.attrs.id,
-          contents: descNode.attrs.contents,
+          contents: descNode.textContent,
         })
       }
     })
