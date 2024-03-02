@@ -1112,9 +1112,12 @@ export const insertTableFootnote = (
   const insertedAt = state.selection.to
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
+  const labels = inlineFootnotes.map(
+    (nodeWithPos) => nodeWithPos.node.attrs.contents
+  )
   const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
     rids: [footnote.attrs.id],
-    contents: inlineFootnotes.length + 1, // I need to revisit this
+    contents: Math.max(...labels) + 1, // I need to revisit this
   }) as InlineFootnoteNode
 
   const tr = state.tr
