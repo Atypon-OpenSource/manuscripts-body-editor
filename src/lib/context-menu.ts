@@ -294,7 +294,7 @@ export class ContextMenu {
                   )
                   if (targetDom.node instanceof Element && this.props) {
                     const popperContainer = ReactSubView(
-                      this.props,
+                      { ...this.props, dispatch: this.view.dispatch },
                       TableFootnotesEditor,
                       {
                         notes: footnotes,
