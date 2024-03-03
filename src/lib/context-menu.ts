@@ -289,9 +289,6 @@ export class ContextMenu {
                   ).map((nodeWithPos) => {
                     return nodeWithPos.node as FootnoteNode
                   })
-                  // const selectedCell = findParentNodeOfType(
-                  //   schema.nodes.table_cell
-                  // )(this.view.state.selection)?.node
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from
                   )
@@ -309,6 +306,7 @@ export class ContextMenu {
                             state,
                             dispatch
                           )
+                          this.props?.popper.destroy()
                         },
                         onInsert: (notes: FootnoteNode[]) => {
                           const insertedAt = this.view.state.selection.to

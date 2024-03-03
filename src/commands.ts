@@ -1117,7 +1117,7 @@ export const insertTableFootnote = (
   )
   const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
     rids: [footnote.attrs.id],
-    contents: Math.max(...labels) + 1, // I need to revisit this
+    contents: labels.length ? Math.max(...labels) + 1 : 1, // I need to revisit this
   }) as InlineFootnoteNode
 
   const tr = state.tr
@@ -1126,14 +1126,15 @@ export const insertTableFootnote = (
   tr.insert(insertedAt, inlineFootnoteNode)
 
   let insertionPos
-
-  const footnotes_element = findChildrenByType(
+  let selectionPos
+  const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
   )
-  if (footnotes_element) {
-    const pos = footnotes_element[0].pos
-    insertionPos = position + pos + footnotes_element[0].node.nodeSize + 1
+  if (footnotesElement.length) {
+    const pos = footnotesElement[0].pos
+    insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
+    selectionPos = insertionPos
     tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
@@ -1149,11 +1150,13 @@ export const insertTableFootnote = (
     if (tableElementFooter.length) {
       const pos = tableElementFooter[0].pos
       insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
+      selectionPos = insertionPos + 1
       tr.insert(insertionPos, footnoteElement)
     } else {
       const tableSize = node.content.firstChild?.nodeSize
       if (tableSize) {
         insertionPos = position + tableSize + 2
+        selectionPos = insertionPos + 2
         const tableElementFooter = schema.nodes.table_element_footer.create(
           {
             id: generateID(ObjectTypes.TableElementFooter),
@@ -1165,8 +1168,8 @@ export const insertTableFootnote = (
     }
   }
 
-  if (dispatch && insertionPos) {
-    const nodeSelection = NodeSelection.create(tr.doc, insertionPos)
+  if (dispatch && selectionPos) {
+    const nodeSelection = NodeSelection.create(tr.doc, selectionPos)
     dispatch(tr.setSelection(nodeSelection))
   }
 }
