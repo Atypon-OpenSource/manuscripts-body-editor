@@ -1126,7 +1126,6 @@ export const insertTableFootnote = (
   tr.insert(insertedAt, inlineFootnoteNode)
 
   let insertionPos
-  let selectionPos
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
@@ -1134,7 +1133,6 @@ export const insertTableFootnote = (
   if (footnotesElement.length) {
     const pos = footnotesElement[0].pos
     insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
-    selectionPos = insertionPos
     tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
@@ -1150,13 +1148,11 @@ export const insertTableFootnote = (
     if (tableElementFooter.length) {
       const pos = tableElementFooter[0].pos
       insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
-      selectionPos = insertionPos + 1
       tr.insert(insertionPos, footnoteElement)
     } else {
       const tableSize = node.content.firstChild?.nodeSize
       if (tableSize) {
         insertionPos = position + tableSize + 2
-        selectionPos = insertionPos + 2
         const tableElementFooter = schema.nodes.table_element_footer.create(
           {
             id: generateID(ObjectTypes.TableElementFooter),
@@ -1168,8 +1164,8 @@ export const insertTableFootnote = (
     }
   }
 
-  if (dispatch && selectionPos) {
-    const nodeSelection = NodeSelection.create(tr.doc, selectionPos)
+  if (dispatch && insertionPos) {
+    const nodeSelection = NodeSelection.create(tr.doc, insertionPos)
     dispatch(tr.setSelection(nodeSelection))
   }
 }
