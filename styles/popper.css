@@ -222,6 +222,10 @@
   width: 600px;
 }
 
+.popper .table-footnote-editor {
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
 
 .popper .track-attrs-popper {
   box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
