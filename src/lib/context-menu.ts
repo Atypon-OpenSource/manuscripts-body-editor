@@ -15,7 +15,7 @@
  */
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
-import { TableFootnotesEditor } from '@manuscripts/style-guide'
+import { TableFootnotesSelector } from '@manuscripts/style-guide'
 import {
   FootnoteNode,
   InlineFootnoteNode,
@@ -295,7 +295,7 @@ export class ContextMenu {
                   if (targetDom.node instanceof Element && this.props) {
                     const popperContainer = ReactSubView(
                       { ...this.props, dispatch: this.view.dispatch },
-                      TableFootnotesEditor,
+                      TableFootnotesSelector,
                       {
                         notes: footnotes,
                         onAdd: () => {
