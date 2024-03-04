@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-import { Model } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
   FileManagement,
-  isModelFile,
 } from '@manuscripts/style-guide'
-import { FigureNode } from '@manuscripts/transform'
+import { FigureNode, schema } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
   FigureElementOptionsProps,
 } from '../components/views/FigureDropdown'
+import { buildFileMap } from '../lib/build-file-models'
 import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -37,9 +36,7 @@ import ReactSubView from './ReactSubView'
 interface FigureElementProps {
   fileManagement: FileManagement
   getFiles: () => FileAttachment[]
-  getModelMap: () => Map<string, Model>
   getCapabilities: () => Capabilities
-  deleteModel: (id: string) => Promise<string>
 }
 
 export class FigureElementView extends BlockView<
@@ -143,9 +140,7 @@ export class FigureElementView extends BlockView<
         dispatch(tr)
       }
 
-      if (isModelFile(file)) {
-        await this.props.deleteModel(file.modelId)
-      }
+      this.deleteSupplementNode(file)
     }
 
     if (can.uploadFile) {
@@ -161,7 +156,7 @@ export class FigureElementView extends BlockView<
       const componentProps: FigureElementOptionsProps = {
         can: can,
         files: this.props.getFiles(),
-        modelMap: this.props.getModelMap(),
+        getFilesMap: () => buildFileMap(this.view.state.doc),
         handleUpload,
         handleAdd,
       }
@@ -175,6 +170,22 @@ export class FigureElementView extends BlockView<
       )
       this.reactTools?.remove()
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+    }
+  }
+
+  private deleteSupplementNode(file: FileAttachment) {
+    if (file.type.id === 'supplementary') {
+      const tr = this.view.state.tr
+
+      this.view.state.doc.descendants((node, pos) => {
+        if (
+          node.type === schema.nodes.supplement &&
+          node.attrs.href === file.id
+        ) {
+          tr.delete(pos, pos + node.nodeSize)
+        }
+      })
+      this.view.dispatch(tr)
     }
   }
 }

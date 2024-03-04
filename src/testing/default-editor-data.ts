@@ -87,7 +87,6 @@ export const defaultEditorProps: EditorProps = {
     download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => getAllPermitted(),
-  getModelMap: () => TEST_DATA.MODEL_MAP,
   getManuscript: () => TEST_DATA.MANUSCRIPT,
   cslProps: {
     style: '',
@@ -95,10 +94,6 @@ export const defaultEditorProps: EditorProps = {
   },
   getCitationProvider: () => undefined,
   plugins: [],
-  deleteModel: (id: string) => {
-    TEST_DATA.MODEL_MAP.delete(id)
-    return Promise.resolve(id)
-  },
   retrySync: () => Promise.resolve(),
   setComment: () => undefined,
   setSelectedComment: () => undefined,

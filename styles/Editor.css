@@ -955,7 +955,7 @@
   counter-reset: table_footnote;
 }
 
-.ProseMirror .table-footer .footnote-element p::before {
+.ProseMirror .table-footer .footnote-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -996,6 +996,18 @@
   font-size: 75%;
   margin-right: 8px;
   cursor: pointer;
+}
+
+.ProseMirror .footnote-element > div:has(.unctied-table-footnote) {
+  position: relative;
+}
+
+.ProseMirror .unctied-table-footnote {
+  display: flex;
+  position: absolute;
+  margin-right: 4px;
+  top: 10%;
+  right: 100%;
 }
 
 .graphical-abstract .listing {
