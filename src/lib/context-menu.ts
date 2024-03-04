@@ -315,7 +315,7 @@ export class ContextMenu {
                               {
                                 rids: notes.map((note) => note.attrs.id),
                                 contents: notes
-                                  .map((_, index) => ++index)
+                                  .map((note) => footnotes.indexOf(note) + 1)
                                   .join(),
                               }
                             ) as InlineFootnoteNode
