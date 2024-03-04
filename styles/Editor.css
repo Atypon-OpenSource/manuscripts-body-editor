@@ -954,6 +954,9 @@
 .ProseMirror .table-footer .footnote-element {
   counter-reset: table_footnote;
 }
+.ProseMirror .table-footer .footnote-element > div {
+  position: relative;
+}
 
 .ProseMirror .table-footer .footnote-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
@@ -975,6 +978,9 @@
   background-color: #f2fbfc;
   padding: 4px;
 }
+.table-footer > div, .footnote-element {
+  position: relative;
+}
 .table-footer > div > p {
   padding-bottom: 10px;
 }
@@ -990,6 +996,16 @@
 }
 .table-footer > div:has(> p.footnote-selected) > p:last-child {
   border-bottom: 1px solid #bce7f6;
+}
+.table-footer .delete-table-footnotes {
+  position: absolute;
+  right: -20px;
+  top: -13px;
+  cursor: pointer;
+  z-index: 1;
+}
+.table-footer .delete-table-footnotes:hover svg path {
+  fill: #353535;
 }
 .ProseMirror .footnote-label {
   vertical-align: super;
