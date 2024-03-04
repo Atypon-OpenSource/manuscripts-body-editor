@@ -83,20 +83,17 @@ const labelWidget =
 
     return element
   }
-  const deleteIconWidget =  () =>
-  {
-   
-   const deleteBtn = document.createElement('span');
-   deleteBtn.className = 'delete-table-footnotes';
- 
-   deleteBtn.innerHTML = deleteIcon;
+const deleteIconWidget = () => {
+  const deleteBtn = document.createElement('span')
+  deleteBtn.className = 'delete-table-footnotes'
 
-   deleteBtn.addEventListener('click', () => {
-    console.log("clicked !")
-  }) 
-   return deleteBtn;
-   
- };
+  deleteBtn.innerHTML = deleteIcon
+
+  deleteBtn.addEventListener('click', () => {
+    console.log('clicked !')
+  })
+  return deleteBtn
+}
 
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
@@ -200,10 +197,7 @@ export default () => {
               Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
                 class: 'footnote-selected',
               }),
-              Decoration.widget(
-                parent.pos,
-                deleteIconWidget()
-              )
+              Decoration.widget(parent.pos, deleteIconWidget())
             )
           }
         }
