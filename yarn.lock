@@ -1530,7 +1530,7 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@^1.7.6-LEAN-3160-0":
+"@manuscripts/style-guide@1.7.6-LEAN-3160-0":
   version "1.7.6-LEAN-3160-0"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.6-LEAN-3160-0.tgz#6b345979499aef9cff60af2649943133f86324ac"
   integrity sha512-o6A64H2SqHB7PJusWGiz00Tnr7F1iraNNxO8ffEEQmGhW1DB/45ekXsCWi9ZWv8yfyTLxScF+6hpO1P3VF6ajg==
