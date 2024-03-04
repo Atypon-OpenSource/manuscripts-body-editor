@@ -26,7 +26,12 @@ import {
 } from '@manuscripts/transform'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
-import { addComment, createBlock, insertTableFootnote } from '../commands'
+import {
+  addComment,
+  createBlock,
+  insertGeneralFootnote,
+  insertTableFootnote,
+} from '../commands'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -262,6 +267,30 @@ export class ContextMenu {
       const isInTable = hasParentNodeOfType(schema.nodes.table)(
         this.view.state.selection
       )
+      const tableElementFooter = findChildrenByType(
+        this.node,
+        schema.nodes.table_element_footer
+      )
+      const hasGeneralNote =
+        tableElementFooter.length &&
+        tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
+
+      if (!hasGeneralNote) {
+        menu.appendChild(
+          this.createMenuSection((section: HTMLElement) => {
+            section.appendChild(
+              this.createMenuItem('Add General Note', () => {
+                insertGeneralFootnote(
+                  this.node,
+                  this.getPos(),
+                  this.view,
+                  tableElementFooter
+                )
+              })
+            )
+          })
+        )
+      }
 
       if (isInTable) {
         menu.appendChild(
