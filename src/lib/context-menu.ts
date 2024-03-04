@@ -29,7 +29,12 @@ import {
 } from '@manuscripts/transform'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
-import { addComment, createBlock, insertGeneralFootnote, insertTableFootnote } from '../commands'
+import {
+  addComment,
+  createBlock,
+  insertGeneralFootnote,
+  insertTableFootnote,
+} from '../commands'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
