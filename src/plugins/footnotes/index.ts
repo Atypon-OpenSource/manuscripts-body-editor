@@ -26,8 +26,10 @@ import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
+import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
+import { findTableInlineFootnoteIds } from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -81,6 +83,13 @@ const labelWidget =
 
     return element
   }
+
+export const uncitedFootnoteWidget = () => () => {
+  const element = document.createElement('span')
+  element.className = 'unctied-table-footnote'
+  element.innerHTML = alertIcon
+  return element
+}
 
 /**
  * This plugin provides support of footnotes related behaviours:
@@ -182,7 +191,9 @@ export default () => {
         }
 
         const { labels } = footnotesKey.getState(state) as PluginState
-        state.doc.descendants((node, pos) => {
+        let tableInlineFootnoteIds: Set<string> | undefined = undefined
+
+        state.doc.descendants((node, pos, parent) => {
           if (isFootnoteNode(node)) {
             const id = node.attrs.id
             if (labels) {
@@ -203,6 +214,18 @@ export default () => {
                 )
               )
             }
+
+            if (
+              tableInlineFootnoteIds &&
+              !tableInlineFootnoteIds.has(node.attrs.id)
+            ) {
+              decorations.push(
+                Decoration.widget(
+                  pos + node.nodeSize - 1,
+                  uncitedFootnoteWidget()
+                )
+              )
+            }
           }
           if (node.type === schema.nodes.footnotes_element) {
             decorations.push(
@@ -210,6 +233,14 @@ export default () => {
                 class: 'footnote-element',
               })
             )
+
+            if (parent?.type === schema.nodes.table_element_footer) {
+              tableInlineFootnoteIds = findTableInlineFootnoteIds(
+                state.doc.resolve(pos)
+              )
+            } else {
+              tableInlineFootnoteIds = undefined
+            }
           }
         })
 
