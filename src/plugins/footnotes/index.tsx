@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Capabilities } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   isFootnoteNode,
@@ -24,20 +25,25 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { NodeSelection, Plugin, PluginKey, TextSelection } from 'prosemirror-state'
+import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  TextSelection,
+} from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
+import {
+  DeleteFootnoteDialog,
+  DeleteFootnoteDialogProps,
+} from '../../components/views/DeleteFootnoteDialog'
 import { findParentNodeWithIdValue } from '../../lib/utils'
+import { EditableBlockProps } from '../../views/editable_block'
+import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
-import ReactSubView from '../../views/ReactSubView'
-import { DeleteFootnoteDialog, DeleteFootnoteDialogProps } from '../../components/views/DeleteFootnoteDialog'
-import { EditableBlockProps } from '../../views/editable_block'
-import { Capabilities } from '@manuscripts/style-guide'
-
-
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -102,46 +108,36 @@ export const uncitedFootnoteWidget = () => () => {
  creating a React component here was the only approach for managing the confirmation dialog related to
   general footnotes since it doesn't have a view.
 */
-const deleteFootnoteWidget = (node: ManuscriptNode,getPos: () => number) => (view:EditorView)  => {
-  
-  const deleteBtn = document.createElement('span')
-  deleteBtn.className = 'delete-table-footnotes'
+const deleteFootnoteWidget =
+  (node: ManuscriptNode, getPos: () => number) => (view: EditorView) => {
+    const deleteBtn = document.createElement('span')
+    deleteBtn.className = 'delete-table-footnotes'
 
-  deleteBtn.innerHTML = deleteIcon
+    deleteBtn.innerHTML = deleteIcon
 
-  deleteBtn.addEventListener('click', () => {
-    const footnteType = 'do test'
-    const handleDelete = () => {
-    console.log ("delete")
-    }
+    deleteBtn.addEventListener('click', () => {
+      const footnteType = 'do test'
+      const handleDelete = () => {
+        console.log('delete')
+      }
 
-    const componentProps: DeleteFootnoteDialogProps = {
-      footnteType: footnteType,
-      handleDelete: handleDelete,
-    }
-   
-    const dialog = ReactSubView(
-      props,
-      DeleteFootnoteDialog,
-      componentProps,
-      node,
-      getPos,
-      view,
-    )
+      const componentProps: DeleteFootnoteDialogProps = {
+        footnteType: footnteType,
+        handleDelete: handleDelete,
+      }
 
-    
-  })
+      const dialog = ReactSubView(
+        props,
+        DeleteFootnoteDialog,
+        componentProps,
+        node,
+        getPos,
+        view
+      )
+    })
 
-  return deleteBtn
-}
-
-
-
-
-
-
-
-
+    return deleteBtn
+  }
 
 /**
  * This plugin provides support of footnotes related behaviours:
@@ -245,9 +241,13 @@ export default () => {
               selectionParentNode.type === schema.nodes.table_element_footer
             ) {
               decorations.push(
-                Decoration.widget(parent.pos, deleteFootnoteWidget(), {
-                  key: parent.node.attrs.id,
-                })
+                Decoration.widget(
+                  parent.pos,
+                  deleteFootnoteWidget(parent.node, () => parent.pos),
+                  {
+                    key: parent.node.attrs.id,
+                  }
+                )
               )
             }
           }
