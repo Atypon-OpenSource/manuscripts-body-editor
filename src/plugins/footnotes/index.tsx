@@ -121,14 +121,14 @@ const deleteFootnoteWidget =
         handleDelete: handleDelete,
       }
 
-      // const dialog = ReactSubView(
-      //   props,
-      //   DeleteFootnoteDialog,
-      //   componentProps,
-      //   node,
-      //   getPos,
-      //   view
-      // )
+      const dialog = ReactSubView(
+        props,
+        DeleteFootnoteDialog,
+        componentProps,
+        node,
+        getPos,
+        view
+      )
     })
 
     return deleteBtn
