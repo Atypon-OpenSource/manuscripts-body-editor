@@ -47,7 +47,7 @@ import toc from '../plugins/toc'
 import rules from '../rules'
 import { CSLProps } from './ManuscriptsEditor'
 
-interface PluginProps {
+export interface PluginProps {
   getManuscript: () => Manuscript
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
@@ -82,7 +82,7 @@ export default (props: PluginProps) => {
     tableEditing(),
     highlights(props),
     selected_suggestion_ui(props),
-    footnotes(),
+    footnotes(props),
   ]
 
   if (props.collabProvider) {

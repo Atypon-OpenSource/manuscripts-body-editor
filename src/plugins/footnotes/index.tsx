@@ -22,11 +22,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import {
-  NodeSelection,
-  Plugin,
-  PluginKey,
-} from 'prosemirror-state'
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
@@ -35,6 +31,8 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../../components/views/DeleteFootnoteDialog'
+import { PluginProps } from '../../configs/editor-plugins'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
@@ -104,7 +102,8 @@ export const uncitedFootnoteWidget = () => () => {
   general footnotes since it doesn't have a view.
 */
 const deleteFootnoteWidget =
-  (node: ManuscriptNode, getPos: () => number) => (view: EditorView) => {
+  (node: ManuscriptNode, pos: number, props: PluginProps) =>
+  (view: EditorView) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-table-footnotes'
 
@@ -121,12 +120,12 @@ const deleteFootnoteWidget =
         handleDelete: handleDelete,
       }
 
-      const dialog = ReactSubView(
-        props,
+      ReactSubView(
+        { ...props, dispatch: view.dispatch } as unknown as EditorProps,
         DeleteFootnoteDialog,
         componentProps,
         node,
-        getPos,
+        () => pos,
         view
       )
     })
@@ -166,7 +165,8 @@ const deleteFootnoteWidget =
  *       },
  *
  */
-export default () => {
+
+export default (props: PluginProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
 
@@ -238,7 +238,7 @@ export default () => {
               decorations.push(
                 Decoration.widget(
                   parent.pos,
-                  deleteFootnoteWidget(parent.node, () => parent.pos),
+                  deleteFootnoteWidget(parent.node, parent.pos, props),
                   {
                     key: parent.node.attrs.id,
                   }
