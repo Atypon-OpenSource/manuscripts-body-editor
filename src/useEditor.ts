@@ -38,8 +38,8 @@ import {
   createEditorView,
   EditorProps,
 } from './configs/ManuscriptsEditor'
-import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { PopperManager } from './lib/popper'
+import { useDoWithDebounce } from './lib/use-do-with-debounce'
 
 export const useEditor = (props: EditorProps) => {
   const view = useRef<EditorView>()

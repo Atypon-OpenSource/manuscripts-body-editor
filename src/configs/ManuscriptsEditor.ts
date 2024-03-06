@@ -35,6 +35,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { Dispatch } from '../commands'
 import { transformPasted } from '../lib/paste'
+import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
 
@@ -56,6 +57,7 @@ export interface EditorProps {
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
 
+  popper?: PopperManager
   history: History
 
   getCapabilities: () => Capabilities
