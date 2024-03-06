@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import { Capabilities } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   isFootnoteNode,
   isInlineFootnoteNode,
-  KeywordNode,
   ManuscriptNode,
-  ManuscriptNodeView,
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
@@ -29,7 +26,6 @@ import {
   NodeSelection,
   Plugin,
   PluginKey,
-  TextSelection,
 } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
@@ -40,7 +36,6 @@ import {
   DeleteFootnoteDialogProps,
 } from '../../components/views/DeleteFootnoteDialog'
 import { findParentNodeWithIdValue } from '../../lib/utils'
-import { EditableBlockProps } from '../../views/editable_block'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
