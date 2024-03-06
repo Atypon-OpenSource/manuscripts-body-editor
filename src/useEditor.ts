@@ -39,9 +39,13 @@ import {
   EditorProps,
 } from './configs/ManuscriptsEditor'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
+import { PopperManager } from './lib/popper'
 
 export const useEditor = (props: EditorProps) => {
   const view = useRef<EditorView>()
+
+  props.popper = new PopperManager()
+
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
