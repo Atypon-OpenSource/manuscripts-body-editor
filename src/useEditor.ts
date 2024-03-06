@@ -37,17 +37,19 @@ import {
   createEditorState,
   createEditorView,
   EditorProps,
+  ExternalProps,
 } from './configs/ManuscriptsEditor'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 
-export const useEditor = (props: EditorProps) => {
+export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
 
+  const props = externalProps as EditorProps
   props.popper = new PopperManager()
 
   const [state, setState] = useState<EditorState>(() =>
-    createEditorState(props)
+    createEditorState(props as EditorProps)
   )
   const history = useHistory()
   const { collabProvider } = props

@@ -57,7 +57,7 @@ export interface EditorProps {
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
 
-  popper?: PopperManager
+  popper: PopperManager
   history: History
 
   getCapabilities: () => Capabilities
@@ -73,6 +73,8 @@ export interface EditorProps {
   openAuthorEditing: () => void
   selectAuthorForEditing: (authorId: string) => void
 }
+
+export type ExternalProps = Omit<EditorProps, 'popper'>
 
 export const createEditorState = (props: EditorProps) =>
   EditorState.create({
