@@ -43,10 +43,10 @@ export class InlineEquationEditableView extends InlineEquationView<EditableBlock
       const pos = this.getPos()
 
       const { tr } = this.view.state
-
+      const format = contents.includes('mml:math') ? 'mathml' : 'tex'
       tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
-        format: 'tex',
+        format,
         contents,
       }).setSelection(NodeSelection.create(tr.doc, pos))
 

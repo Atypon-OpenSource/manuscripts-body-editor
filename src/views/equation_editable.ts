@@ -44,10 +44,11 @@ export class EquationEditableView extends EquationView<EditableBlockProps> {
 
       const { tr } = this.view.state
 
+      const format = contents.includes('mml:math') ? 'mathml' : 'tex'
       tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
         contents,
-        format: 'tex',
+        format,
       }).setSelection(NodeSelection.create(tr.doc, pos))
 
       this.view.dispatch(tr)
