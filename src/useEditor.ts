@@ -36,7 +36,6 @@ import { useHistory } from 'react-router-dom'
 import {
   createEditorState,
   createEditorView,
-  EditorProps,
   ExternalProps,
 } from './configs/ManuscriptsEditor'
 import { PopperManager } from './lib/popper'
@@ -45,11 +44,10 @@ import { useDoWithDebounce } from './lib/use-do-with-debounce'
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
 
-  const props = externalProps as EditorProps
-  props.popper = new PopperManager()
+  const props = { ...externalProps, popper: new PopperManager() }
 
   const [state, setState] = useState<EditorState>(() =>
-    createEditorState(props as EditorProps)
+    createEditorState(props)
   )
   const history = useHistory()
   const { collabProvider } = props
