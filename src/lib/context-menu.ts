@@ -15,7 +15,10 @@
  */
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
+import { TableFootnotesSelector } from '@manuscripts/style-guide'
 import {
+  FootnoteNode,
+  InlineFootnoteNode,
   isInBibliographySection,
   ManuscriptEditorView,
   ManuscriptNode,
@@ -32,6 +35,8 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
+import { EditableBlockProps } from '../views/editable_block'
+import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
 
 const popper = new PopperManager()
@@ -64,17 +69,19 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
-
+  private readonly props?: EditableBlockProps
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
     getPos: () => number,
-    actions: Actions = {}
+    actions: Actions = {},
+    props?: EditableBlockProps
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
     this.actions = actions
+    this.props = props
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
@@ -304,6 +311,64 @@ export class ContextMenu {
                 if (!footnotesElement.length) {
                   const { state, dispatch } = this.view
                   insertTableFootnote(this.node, this.getPos(), state, dispatch)
+                } else {
+                  const footnotes = findChildrenByType(
+                    footnotesElement[0].node,
+                    schema.nodes.footnote
+                  ).map((nodeWithPos) => {
+                    return nodeWithPos.node as FootnoteNode
+                  })
+                  const targetDom = this.view.domAtPos(
+                    this.view.state.selection.from
+                  )
+                  if (targetDom.node instanceof Element && this.props) {
+                    const popperContainer = ReactSubView(
+                      { ...this.props, dispatch: this.view.dispatch },
+                      TableFootnotesSelector,
+                      {
+                        notes: footnotes,
+                        onAdd: () => {
+                          const { state, dispatch } = this.view
+                          insertTableFootnote(
+                            this.node,
+                            this.getPos(),
+                            state,
+                            dispatch
+                          )
+                          this.props?.popper.destroy()
+                        },
+                        onInsert: (notes: FootnoteNode[]) => {
+                          const insertedAt = this.view.state.selection.to
+                          const node =
+                            this.view.state.schema.nodes.inline_footnote.create(
+                              {
+                                rids: notes.map((note) => note.attrs.id),
+                                contents: notes
+                                  .map((note) => footnotes.indexOf(note) + 1)
+                                  .join(),
+                              }
+                            ) as InlineFootnoteNode
+
+                          const tr = this.view.state.tr
+                          tr.insert(insertedAt, node)
+                          this.view.dispatch(tr)
+                          this.props?.popper.destroy()
+                        },
+                        onCancel: () => {
+                          this.props?.popper.destroy()
+                        },
+                      },
+                      this.node,
+                      this.getPos,
+                      this.view,
+                      'table-footnote-editor'
+                    )
+                    this.props?.popper.show(
+                      targetDom.node,
+                      popperContainer,
+                      'bottom-end'
+                    )
+                  }
                 }
               })
             )
