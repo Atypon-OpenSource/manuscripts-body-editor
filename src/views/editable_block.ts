@@ -40,7 +40,7 @@ export interface EditableBlockProps extends BaseNodeProps {
   retrySync: (componentIDs: string[]) => Promise<void>
   setComment: (comment: CommentAnnotation) => void
   dispatch?: Dispatch
-  theme?: DefaultTheme
+  theme: DefaultTheme
 }
 
 export const EditableBlock = <
@@ -161,9 +161,15 @@ export const EditableBlock = <
     public createMenu = () => {
       const { setComment } = this.props
 
-      return new ContextMenu(this.node, this.view, this.getPos, {
-        setComment,
-      })
+      return new ContextMenu(
+        this.node,
+        this.view,
+        this.getPos,
+        {
+          setComment,
+        },
+        this.props
+      )
     }
   }
 }
