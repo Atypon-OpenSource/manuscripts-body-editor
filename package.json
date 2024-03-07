@@ -39,6 +39,7 @@
     "mathjax-full": "^3.2.2",
     "codemirror": "^5.58.1",
     "dompurify": "^2.4.1",
+    "formik": "^2.2.9",
     "grapheme-splitter": "^1.0.4",
     "history": "^4.10.1",
     "popper.js": "^1.16.1",

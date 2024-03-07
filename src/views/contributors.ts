@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Affiliation, Contributor } from '@manuscripts/json-schema'
-import {
-  AuthorsModal,
-  AuthorsModalProps,
-  Capabilities,
-  SecondaryButton,
-} from '@manuscripts/style-guide'
+
+import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
 import {
   ContributorNode,
-  encode,
   isContributorNode,
-  ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 
+import {
+  AuthorsModal,
+  AuthorsModalProps,
+} from '../components/authors/AuthorsModal'
+import { AffiliationAttrs, ContributorAttrs } from '../lib/authors'
 import { getActualAttrs } from '../lib/track-changes-utils'
 import {
-  decode,
   deleteNode,
   findChildByID,
   findChildByType,
-  updateNode,
+  findChildrenByType,
+  updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
@@ -271,24 +269,22 @@ export class ContributorsView<
   handleClick = (e: Event) => {
     e.stopPropagation()
 
-    const authorsNode = findChildByType(this.view, schema.nodes.contributors)!
-    const affiliationsNode = findChildByType(
+    const authors = findChildrenByType(
       this.view,
-      schema.nodes.affiliations
-    )!
+      schema.nodes.contributor
+    ).map((n) => n.node.attrs) as ContributorAttrs[]
 
-    const authorsMap = encode(authorsNode.node)
-    const affiliationsMap = encode(affiliationsNode.node)
+    const affiliations = findChildrenByType(
+      this.view,
+      schema.nodes.affiliation
+    ).map((n) => n.node.attrs) as AffiliationAttrs[]
 
     let author = undefined
     const target = e.target as Element
     if (target) {
       const id = target.closest('.contributor')?.getAttribute('id') as string
-      author = authorsMap.get(id) as Contributor
+      author = authors.filter((a) => a.id === id)[0]
     }
-
-    const authors = Array.from(authorsMap.values()) as Contributor[]
-    const affiliations = Array.from(affiliationsMap.values()) as Affiliation[]
 
     const componentProps: AuthorsModalProps = {
       author,
@@ -313,37 +309,37 @@ export class ContributorsView<
     this.container.appendChild(this.popper)
   }
 
-  handleSaveAuthor = (author: Contributor) => {
-    const node = decode(author)
-    if (!findChildByID(this.view, node.attrs.id)) {
-      this.insertAuthorNode(node)
+  handleSaveAuthor = (author: ContributorAttrs) => {
+    if (!findChildByID(this.view, author.id)) {
+      this.insertAuthorNode(author)
     } else {
-      updateNode(this.view, node)
+      updateNodeAttrs(this.view, author)
     }
   }
 
-  handleDeleteAuthor = (author: Contributor) => {
-    deleteNode(this.view, author._id)
+  handleDeleteAuthor = (author: ContributorAttrs) => {
+    deleteNode(this.view, author.id)
   }
 
-  handleSaveAffiliation = (affiliation: Affiliation) => {
-    const node = decode(affiliation)
-    if (!findChildByID(this.view, node.attrs.id)) {
-      this.insertAffiliationNode(node)
+  handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
+    if (!findChildByID(this.view, affiliation.id)) {
+      this.insertAffiliationNode(affiliation)
     } else {
-      updateNode(this.view, node)
+      updateNodeAttrs(this.view, affiliation)
     }
   }
 
-  insertAuthorNode = (node: ManuscriptNode) => {
+  insertAuthorNode = (attrs: ContributorAttrs) => {
     const parent = findChildByType(this.view, schema.nodes.contributors)!
     const tr = this.view.state.tr
+    const node = schema.nodes.contributor.create(attrs)
     this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
 
-  insertAffiliationNode = (node: ManuscriptNode) => {
+  insertAffiliationNode = (attrs: AffiliationAttrs) => {
     const parent = findChildByType(this.view, schema.nodes.affiliations)!
     const tr = this.view.state.tr
+    const node = schema.nodes.affiliation.create(attrs)
     this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
 

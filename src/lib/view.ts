@@ -20,9 +20,8 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
+import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
-
-import { isMetaNode } from './utils'
 
 const decoder = new Decoder(new Map())
 
@@ -55,13 +54,14 @@ export const updateNode = (
   view: ManuscriptEditorView,
   node: ManuscriptNode
 ) => {
-  const child = findChildByID(view, node.attrs.id)
+  updateNodeAttrs(view, node.attrs)
+}
+
+export const updateNodeAttrs = (view: ManuscriptEditorView, attrs: Attrs) => {
+  const child = findChildByID(view, attrs.id)
   if (child) {
     const pos = child.pos
-    const tr = view.state.tr.setNodeMarkup(pos, undefined, node.attrs)
-    if (isMetaNode(node.type.name)) {
-      tr.setMeta('track-changes-update-meta-node', true)
-    }
+    const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs)
     view.dispatch(tr)
   }
 }
