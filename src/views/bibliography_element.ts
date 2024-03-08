@@ -240,7 +240,7 @@ export class BibliographyElementBlockView<
     dataTracked: TrackedAttrs
   ) => {
     if (dataTracked.status !== CHANGE_STATUS.rejected) {
-      element.addEventListener('click', (e) => {
+      element.addEventListener('click', () => {
         this.view.dispatch(
           this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
         )
