@@ -241,13 +241,9 @@ export class BibliographyElementBlockView<
   ) => {
     if (dataTracked.status !== CHANGE_STATUS.rejected) {
       element.addEventListener('click', (e) => {
-        console.log(e)
-        console.log('CLICK')
-        setTimeout(() => {
-          this.view.dispatch(
-            this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-          )
-        })
+        this.view.dispatch(
+          this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
+        )
       })
     }
   }
