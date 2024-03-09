@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Model } from '@manuscripts/json-schema'
+
 import {
-  Decoder,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
-
-const decoder = new Decoder(new Map())
 
 export const findChildByID = (
   view: ManuscriptEditorView,
@@ -73,8 +70,4 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
   }
-}
-
-export const decode = (model: Model): ManuscriptNode => {
-  return decoder.decode(model) as ManuscriptNode
 }

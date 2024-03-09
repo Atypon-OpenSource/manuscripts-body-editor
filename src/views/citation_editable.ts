@@ -26,18 +26,19 @@ import {
   CitationViewer,
   CitationViewerProps,
 } from '@manuscripts/style-guide'
-import { buildComment, ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  BibliographyItemNode,
+  buildComment,
+  Decoder,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
+import { findChildren, findChildrenByType } from 'prosemirror-utils'
 
 import { crossref } from '../citation-sources'
 import { isDeleted } from '../lib/track-changes-utils'
-import {
-  decode,
-  deleteNode,
-  findChildByID,
-  findChildByType,
-  updateNode,
-} from '../lib/view'
+import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { CitationEditorWrapper } from './CitationEditorWrapper'
@@ -52,6 +53,7 @@ const createBibliographySection = (node: ManuscriptNode) =>
   ]) as ManuscriptNode
 
 export class CitationEditableView extends CitationView<EditableBlockProps> {
+  private decoder = new Decoder(new Map())
   private editor: HTMLElement
 
   public selectNode = () => {
@@ -136,11 +138,11 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   private handleSave = (item: BibliographyItem) => {
-    const node = decode(item)
-    if (item._id && !findChildByID(this.view, item._id)) {
-      this.insertBibliographyNode(node)
+    if (item._id && !this.findPosition(item._id)) {
+      this.insertBibliographyNode(item)
     } else {
-      updateNode(this.view, node)
+      const node = this.decoder.decode(item) as BibliographyItemNode
+      updateNodeAttrs(this.view, node.attrs)
     }
   }
 
@@ -186,8 +188,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       if (existingItem) {
         item._id = existingItem._id
       } else {
-        const node = decode(item)
-        this.insertBibliographyNode(node)
+        this.insertBibliographyNode(item)
       }
 
       citation.embeddedCitationItems.push({
@@ -211,21 +212,25 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     this.props.setComment(comment)
   }
 
-  private insertBibliographyNode(node: ManuscriptNode) {
-    const tr = this.view.state.tr
+  private insertBibliographyNode(item: BibliographyItem) {
+    const { doc, tr } = this.view.state
 
-    const element = findChildByType(
-      this.view,
-      schema.nodes.bibliography_element
+    const biblioSection = findChildrenByType(
+      doc,
+      schema.nodes.bibliography_element,
+      true
     )
 
-    if (element) {
-      this.view.dispatch(tr.insert(element.pos + 1, node))
+    const backmatter = findChildrenByType(doc, schema.nodes.backmatter, true)
+    const backmatterEnd = backmatter[0]
+      ? backmatter[0].node.nodeSize + backmatter[0].pos
+      : 0
+
+    const node = this.decoder.decode(item) as BibliographyItemNode
+
+    if (biblioSection.length) {
+      this.view.dispatch(tr.insert(biblioSection[0].pos + 1, node))
     } else {
-      const backmatter = findChildByType(this.view, schema.nodes.backmatter)
-      const backmatterEnd = backmatter
-        ? backmatter.node.nodeSize + backmatter.pos
-        : 0
       this.view.dispatch(
         tr.insert(
           backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
@@ -246,6 +251,12 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         rids,
       })
     )
+  }
+
+  private findPosition = (id: string) => {
+    const doc = this.view.state.doc
+    const children = findChildren(doc, (n) => n.attrs.id === id)
+    return children.length ? children[0] : undefined
   }
 }
 
