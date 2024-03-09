@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 import { BibliographyItem } from '@manuscripts/json-schema'
-import {
-  modelsReducer,
-  ReferencesModal,
-  ReferencesModalProps,
-} from '@manuscripts/style-guide'
+import { ReferencesModal, ReferencesModalProps } from '@manuscripts/style-guide'
 import React, { useReducer, useState } from 'react'
+
+import { arrayReducer } from '../lib/array-reducer'
 
 //The purpose of this component is to make items stateful, so that
 //the component refreshes on updates
@@ -29,7 +27,7 @@ export type ReferencesEditorProps = Omit<
   'isOpen' | 'onCancel'
 >
 
-const itemsReducer = modelsReducer<BibliographyItem>()
+const itemsReducer = arrayReducer<BibliographyItem>((a, b) => a._id === b._id)
 
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [isOpen, setOpen] = useState(true)
