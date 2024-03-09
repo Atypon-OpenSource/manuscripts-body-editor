@@ -17,8 +17,15 @@
 import { BibliographicName } from '@manuscripts/json-schema'
 import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
 
-export type AffiliationAttrs = AffiliationNode['attrs']
-export type ContributorAttrs = ContributorNode['attrs']
+export type AffiliationAttrs = Omit<
+  AffiliationNode['attrs'],
+  'addressLine2' | 'addressLine3' | 'email' | 'priority'
+>
+
+export type ContributorAttrs = Omit<
+  ContributorNode['attrs'],
+  'userID' | 'invitationID'
+>
 
 export const affiliationLabel = (affiliation: AffiliationAttrs) => {
   const institution = affiliation.institution
@@ -42,3 +49,6 @@ export const initials = (name: BibliographicName): string =>
         .map((part) => part.substring(0, 1).toUpperCase() + '.')
         .join('')
     : ''
+
+export const authorComparator = (a: ContributorAttrs, b: ContributorAttrs) =>
+  a.priority - b.priority

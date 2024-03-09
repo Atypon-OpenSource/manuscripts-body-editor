@@ -269,7 +269,7 @@ export class ContributorsView<
   handleClick = (e: Event) => {
     e.stopPropagation()
 
-    const authors = findChildrenByType(
+    const contributors = findChildrenByType(
       this.view,
       schema.nodes.contributor
     ).map((n) => n.node.attrs) as ContributorAttrs[]
@@ -283,12 +283,12 @@ export class ContributorsView<
     const target = e.target as Element
     if (target) {
       const id = target.closest('.contributor')?.getAttribute('id') as string
-      author = authors.filter((a) => a.id === id)[0]
+      author = contributors.filter((a) => a.id === id)[0]
     }
 
     const componentProps: AuthorsModalProps = {
       author,
-      authors,
+      authors: contributors,
       affiliations,
       onSaveAuthor: this.handleSaveAuthor,
       onDeleteAuthor: this.handleDeleteAuthor,
@@ -313,7 +313,7 @@ export class ContributorsView<
     if (!findChildByID(this.view, author.id)) {
       this.insertAuthorNode(author)
     } else {
-      updateNodeAttrs(this.view, author)
+      updateNodeAttrs(this.view, schema.nodes.contributor, author)
     }
   }
 
@@ -325,11 +325,12 @@ export class ContributorsView<
     if (!findChildByID(this.view, affiliation.id)) {
       this.insertAffiliationNode(affiliation)
     } else {
-      updateNodeAttrs(this.view, affiliation)
+      updateNodeAttrs(this.view, schema.nodes.affiliation, affiliation)
     }
   }
 
   insertAuthorNode = (attrs: ContributorAttrs) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parent = findChildByType(this.view, schema.nodes.contributors)!
     const tr = this.view.state.tr
     const node = schema.nodes.contributor.create(attrs)
@@ -337,6 +338,7 @@ export class ContributorsView<
   }
 
   insertAffiliationNode = (attrs: AffiliationAttrs) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parent = findChildByType(this.view, schema.nodes.affiliations)!
     const tr = this.view.state.tr
     const node = schema.nodes.affiliation.create(attrs)

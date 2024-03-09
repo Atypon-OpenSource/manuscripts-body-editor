@@ -18,9 +18,18 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
+
+const metaNodeTypes = [
+  schema.nodes.bibliography_item,
+  schema.nodes.affiliation,
+  schema.nodes.contributor,
+]
+
+const updateMetaNode = 'track-changes-update-meta-node'
 
 export const findChildByID = (
   view: ManuscriptEditorView,
@@ -51,14 +60,23 @@ export const updateNode = (
   view: ManuscriptEditorView,
   node: ManuscriptNode
 ) => {
-  updateNodeAttrs(view, node.attrs)
+  updateNodeAttrs(view, node.type, node.attrs)
 }
 
-export const updateNodeAttrs = (view: ManuscriptEditorView, attrs: Attrs) => {
+export const updateNodeAttrs = (
+  view: ManuscriptEditorView,
+  type: ManuscriptNodeType,
+  attrs: Attrs
+) => {
+  const copy = { ...attrs }
+  delete copy.dataTracked
   const child = findChildByID(view, attrs.id)
   if (child) {
     const pos = child.pos
     const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs)
+    if (metaNodeTypes.includes(type)) {
+      tr.setMeta(updateMetaNode, true)
+    }
     view.dispatch(tr)
   }
 }

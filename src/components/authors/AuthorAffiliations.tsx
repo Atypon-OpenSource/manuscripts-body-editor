@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import AddAuthor from '@manuscripts/assets/react/AddAuthor'
+import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import { Theme } from '@manuscripts/style-guide'
 import React, { useContext, useMemo } from 'react'
 import CreatableSelect from 'react-select/creatable'
@@ -106,9 +107,18 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
   }
 
   const handleCreate = (institution: string) => {
-    // const affiliation = buildAffiliation(institution) as Affiliation
-    // onSave(affiliation)
-    // onAdd(affiliation)
+    const affiliation: AffiliationAttrs = {
+      id: generateID(ObjectTypes.Affiliation),
+      addressLine1: '',
+      city: '',
+      country: '',
+      county: '',
+      department: '',
+      institution: institution,
+      postCode: '',
+    }
+    onSave(affiliation)
+    onAdd(affiliation)
   }
 
   return (

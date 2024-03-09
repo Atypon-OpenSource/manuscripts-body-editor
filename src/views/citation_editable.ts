@@ -142,7 +142,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.insertBibliographyNode(item)
     } else {
       const node = this.decoder.decode(item) as BibliographyItemNode
-      updateNodeAttrs(this.view, node.attrs)
+      updateNodeAttrs(this.view, node.type, node.attrs)
     }
   }
 

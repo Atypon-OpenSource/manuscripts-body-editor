@@ -17,8 +17,9 @@ import { TextField } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik } from 'formik'
 import React from 'react'
 import styled from 'styled-components'
-import {AffiliationAttrs} from "../../lib/authors";
-import {ChangeHandlingForm} from "./ChangeHandlingForm";
+
+import { AffiliationAttrs } from '../../lib/authors'
+import { ChangeHandlingForm } from './ChangeHandlingForm'
 
 const Row = styled.div`
   display: flex;

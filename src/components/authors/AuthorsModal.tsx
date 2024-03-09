@@ -16,6 +16,11 @@
 
 import AddIcon from '@manuscripts/assets/react/AddIcon'
 import {
+  buildBibliographicName,
+  generateID,
+  ObjectTypes,
+} from '@manuscripts/json-schema'
+import {
   arrayReducer,
   CloseButton,
   ModalBody,
@@ -32,7 +37,11 @@ import { isEqual } from 'lodash'
 import React, { useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
+import {
+  AffiliationAttrs,
+  authorComparator,
+  ContributorAttrs,
+} from '../../lib/authors'
 import { AuthorActions } from './AuthorActions'
 import { AuthorAffiliations } from './AuthorAffiliations'
 import { AuthorDetailsForm } from './AuthorDetailsForm'
@@ -69,7 +78,9 @@ const AuthorForms = styled.div`
 `
 
 const authorsReducer = arrayReducer<ContributorAttrs>((a, b) => a.id === b.id)
-const affiliationsReducer = arrayReducer<AffiliationAttrs>((a, b) => a.id === b.id)
+const affiliationsReducer = arrayReducer<AffiliationAttrs>(
+  (a, b) => a.id === b.id
+)
 
 export interface AuthorsModalProps {
   author?: ContributorAttrs
@@ -92,7 +103,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()
 
-  const [authors, dispatchAuthors] = useReducer(authorsReducer, $authors)
+  const [authors, dispatchAuthors] = useReducer(
+    authorsReducer,
+    $authors.sort(authorComparator)
+  )
   const [affiliations, dispatchAffiliations] = useReducer(
     affiliationsReducer,
     $affiliations
@@ -143,14 +157,24 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleAddAuthor = () => {
-    // const name = buildBibliographicName({ given: '', family: '' })
-    // const author = buildContributor(name, 'author') as Contributor
-    // onSaveAuthor(author)
-    // setSelection(author)
-    // dispatchAuthors({
-    //   type: 'update',
-    //   items: [author],
-    // })
+    const name = buildBibliographicName({ given: '', family: '' })
+    const author: ContributorAttrs = {
+      id: generateID(ObjectTypes.Contributor),
+      role: 'author',
+      affiliations: [],
+      bibliographicName: name,
+      email: '',
+      isCorresponding: false,
+      ORCIDIdentifier: '',
+      priority: authors.length,
+      isJointContributor: false,
+    }
+    onSaveAuthor(author)
+    setSelection(author)
+    dispatchAuthors({
+      type: 'update',
+      items: [author],
+    })
   }
 
   const handleDeleteAuthor = () => {
