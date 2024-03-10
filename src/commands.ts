@@ -54,8 +54,10 @@ import { findWrapping } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
+  flatten,
   NodeWithPos,
 } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
 
 import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
@@ -1135,9 +1137,15 @@ export const updateCommentAnnotationState = (
 export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
+  view: EditorView,
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  tablesFootnoteLabels?: Map<string, number>
 ) => {
+  if (!dispatch) {
+    return
+  }
+
   const footnote = state.schema.nodes.footnote.createAndFill({
     id: generateID(ObjectTypes.Footnote),
     kind: 'footnote',
@@ -1146,28 +1154,42 @@ export const insertTableFootnote = (
   const insertedAt = state.selection.to
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
-  const labels = inlineFootnotes.map(
-    (nodeWithPos) => nodeWithPos.node.attrs.contents
+  const footnoteIndex = inlineFootnotes.findIndex(
+    ({ pos }) => position + pos >= insertedAt
   )
-  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
-    rids: [footnote.attrs.id],
-    contents: labels.length ? Math.max(...labels) + 1 : 1, // I need to revisit this
-  }) as InlineFootnoteNode
 
   const tr = state.tr
 
-  // insert the inline footnote
-  tr.insert(insertedAt, inlineFootnoteNode)
+  let insertionPos = position
 
-  let insertionPos
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
-  )
-  if (footnotesElement.length) {
-    const pos = footnotesElement[0].pos
-    insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
-    tr.insert(insertionPos, footnote)
+  ).at(0)
+
+  if (footnotesElement) {
+    const citedFootnotes = flatten(footnotesElement.node, false).filter(
+      ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
+    )
+    const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
+    const lastChildPos =
+      (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
+    /**
+     *  position of new footnote could be one of these cases:
+     *  * as a first child if we don't have any cited footnote
+     *  * at the end of cited footnotes
+     *  * or add it beside a node with a label value that is greater than the new one
+     */
+    const footnotePos =
+      citedFootnotes.length === 0 || footnoteIndex === 0
+        ? 2
+        : footnoteIndex === -1
+        ? lastChildPos
+        : citedFootnotes.at(footnoteIndex)?.pos || 0
+
+    insertionPos = tr.mapping.map(position + footnotesElement.pos + footnotePos)
+
+    tr.insert(tr.mapping.map(insertionPos), footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
       {},
@@ -1177,16 +1199,16 @@ export const insertTableFootnote = (
     const tableElementFooter = findChildrenByType(
       node,
       schema.nodes.table_element_footer
-    )
+    ).at(0)
 
-    if (tableElementFooter.length) {
-      const pos = tableElementFooter[0].pos
-      insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
+    if (tableElementFooter) {
+      const pos = tableElementFooter.pos
+      insertionPos = position + pos + tableElementFooter.node.nodeSize
       tr.insert(insertionPos, footnoteElement)
     } else {
       const tableSize = node.content.firstChild?.nodeSize
       if (tableSize) {
-        insertionPos = position + tableSize + 2
+        insertionPos = position + tableSize
         const tableElementFooter = schema.nodes.table_element_footer.create(
           {
             id: generateID(ObjectTypes.TableElementFooter),
@@ -1198,8 +1220,15 @@ export const insertTableFootnote = (
     }
   }
 
-  if (dispatch && insertionPos) {
-    const nodeSelection = NodeSelection.create(tr.doc, insertionPos)
-    dispatch(tr.setSelection(nodeSelection))
-  }
+  const textSelection = TextSelection.near(tr.doc.resolve(insertionPos + 1))
+  view.focus()
+  tr.setSelection(textSelection)
+
+  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
+    rids: [footnote.attrs.id],
+    contents:
+      (footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex) + 1,
+  }) as InlineFootnoteNode
+
+  dispatch(tr.insert(insertedAt, inlineFootnoteNode).scrollIntoView())
 }
