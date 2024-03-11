@@ -61,6 +61,8 @@ export interface EditorProps {
   history: History
 
   getCapabilities: () => Capabilities
+  userID: string
+  debug: boolean
   cslProps: CSLProps
 
   setComment: (comment?: CommentAnnotation) => void
