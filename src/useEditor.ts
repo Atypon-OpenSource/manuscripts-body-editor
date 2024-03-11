@@ -118,7 +118,7 @@ export const useEditor = (props: EditorProps) => {
         () => {
           setState(nextState)
         },
-        500,
+        200,
         !tr.isGeneric
       )
 
