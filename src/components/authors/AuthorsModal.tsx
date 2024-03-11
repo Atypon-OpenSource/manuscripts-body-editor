@@ -21,7 +21,6 @@ import {
   ObjectTypes,
 } from '@manuscripts/json-schema'
 import {
-  arrayReducer,
   CloseButton,
   ModalBody,
   ModalContainer,
@@ -37,6 +36,7 @@ import { isEqual } from 'lodash'
 import React, { useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { arrayReducer } from '../../lib/array-reducer'
 import {
   AffiliationAttrs,
   authorComparator,

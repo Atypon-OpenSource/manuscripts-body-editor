@@ -29,11 +29,11 @@ import { Decoration } from 'prosemirror-view'
 
 import { commentIcon, editIcon } from '../assets'
 import { sanitize } from '../lib/dompurify'
-import { deleteNode, updateNode } from '../lib/view'
 import {
   getAttrsTrackingButton,
   getChangeClasses,
 } from '../lib/track-changes-utils'
+import { deleteNode, updateNode } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
