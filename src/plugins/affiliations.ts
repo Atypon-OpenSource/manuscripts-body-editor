@@ -35,7 +35,7 @@ import {
 } from '../lib/track-changes-utils'
 
 interface PluginState {
-  id: string
+  version: string
   indexedAffiliationIds: Map<string, number> // key is authore id
   contributors: Array<[ContributorNode, number]>
   affiliations: Array<[AffiliationNode, number]>
@@ -79,7 +79,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   )
 
   return {
-    id: String(id++),
+    version: String(id++),
     indexedAffiliationIds,
     contributors,
     affiliations,
@@ -147,7 +147,7 @@ export default () => {
         nodes.forEach(([node, pos]) => {
           decorations.push(
             Decoration.node(pos, pos + node.nodeSize, {
-              refresh: aff.id,
+              version: aff.version,
             })
           )
         })

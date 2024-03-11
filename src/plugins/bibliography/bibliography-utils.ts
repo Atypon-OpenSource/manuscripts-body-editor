@@ -70,7 +70,7 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
     }
     decorations.push(
       Decoration.node(pos, pos + node.nodeSize, {
-        id: state.id,
+        version: state.version,
       })
     )
   }
@@ -106,7 +106,7 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
     if (isBibliographyElement(node)) {
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {
-          id: state.id,
+          version: state.version,
         })
       )
     }
