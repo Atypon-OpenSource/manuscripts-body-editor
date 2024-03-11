@@ -23,11 +23,18 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import { findParentNodeOfType, hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { alertIcon } from '../../assets'
+import { alertIcon, deleteIcon } from '../../assets'
+import {
+  DeleteFootnoteDialog,
+  DeleteFootnoteDialogProps,
+} from '../../components/views/DeleteFootnoteDialog'
+import { PluginProps } from '../../configs/editor-plugins'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue } from '../../lib/utils'
+import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
 
@@ -90,6 +97,51 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
+const deleteFootnoteWidget =
+  (
+    node: ManuscriptNode,
+    pos: number,
+    props: PluginProps,
+    id: string,
+    footnoteType: string
+  ) =>
+  (view: EditorView) => {
+    const deleteBtn = document.createElement('span')
+    deleteBtn.className = 'delete-table-footnotes'
+
+    deleteBtn.innerHTML = deleteIcon
+
+    deleteBtn.addEventListener('click', () => {
+      const handleDelete = () => {
+        const tr = view.state.tr
+
+        if (node.attrs.id === id) {
+          node.content.forEach((item) => {
+            if (item.type === schema.nodes.paragraph) {
+              tr.delete(pos, pos + item.nodeSize)
+            }
+          })
+        }
+        view.dispatch(tr)
+      }
+
+      const componentProps: DeleteFootnoteDialogProps = {
+        footnoteType: footnoteType,
+        handleDelete: handleDelete,
+      }
+
+      ReactSubView(
+        { ...props, dispatch: view.dispatch } as unknown as EditorProps,
+        DeleteFootnoteDialog,
+        componentProps,
+        node,
+        () => pos,
+        view
+      )
+    })
+
+    return deleteBtn
+  }
 
 /**
  * This plugin provides support of footnotes related behaviours:
@@ -123,7 +175,8 @@ export const uncitedFootnoteWidget = () => () => {
  *       },
  *
  */
-export default () => {
+
+export default (props: PluginProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
 
@@ -187,6 +240,31 @@ export default () => {
                 class: 'footnote-selected',
               })
             )
+            const root = findParentNodeOfType(
+              schema.nodes.table_element_footer
+            )(state.selection)
+
+            if (root) {
+              if (parent.node.textContent.trim() !== '') {
+                // display the delete icon only if there is a text
+                decorations.push(
+                  Decoration.widget(
+                    parent.pos + 2,
+
+                    deleteFootnoteWidget(
+                      root.node,
+                      root.pos,
+                      props,
+                      root.node.attrs.id,
+                      'general table notes' //pass a variable instead of string after implementing LEAN-3143
+                    ),
+                    {
+                      key: parent.node.attrs.id,
+                    }
+                  )
+                )
+              }
+            }
           }
         }
 

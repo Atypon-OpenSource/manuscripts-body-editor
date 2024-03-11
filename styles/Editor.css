@@ -954,6 +954,19 @@
 .ProseMirror .table-footer .footnote-element {
   counter-reset: table_footnote;
 }
+.table-footer .delete-table-footnotes {
+  position: absolute;
+  right: -20px;
+  top: -13px;
+  cursor: pointer;
+  z-index: 1;
+}
+.table-footer .delete-table-footnotes:hover svg path {
+  fill: #353535;
+}
+.ProseMirror .table-footer .footnote-element .delete-table-footnotes { /* will be removed after implementing LEAN-3143 */
+  display: none !important;
+}
 
 .ProseMirror .table-footer .footnote-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
@@ -974,6 +987,15 @@
 .ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
   padding: 4px;
+}
+.ProseMirror .table-footer .footnote-selected .deleted .delete-table-footnotes {
+  display: none;
+}
+.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-table-footnotes {
+  display: block;
+}
+.table-footer > div {
+  position: relative;
 }
 .table-footer > div > p {
   padding-bottom: 10px;
