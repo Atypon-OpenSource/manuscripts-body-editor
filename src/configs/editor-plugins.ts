@@ -21,8 +21,8 @@ import 'prosemirror-tables/style/tables.css'
 import { CommentAnnotation, Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import {
-  TrackChangesStatus,
   trackChangesPlugin,
+  TrackChangesStatus,
 } from '@manuscripts/track-changes-plugin'
 import { ManuscriptSchema } from '@manuscripts/transform'
 import { collab } from 'prosemirror-collab'
