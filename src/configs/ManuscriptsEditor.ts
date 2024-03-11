@@ -48,7 +48,6 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
   theme: DefaultTheme
-  plugins?: Plugin[]
   getCurrentUser: () => UserProfile
 
   projectID: string
@@ -69,7 +68,6 @@ export interface EditorProps {
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
-  environment?: string
   collabProvider?: CollabProvider
 
   openAuthorEditing: () => void
