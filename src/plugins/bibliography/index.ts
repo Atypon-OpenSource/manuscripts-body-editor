@@ -35,6 +35,7 @@ import {
 export const bibliographyKey = new PluginKey<PluginState>('bibliography')
 
 export interface PluginState {
+  id: string
   citationNodes: CitationNodes
   citations: CiteProc.Citation[]
   bibliographyItems: Map<string, BibliographyItem>
@@ -75,6 +76,7 @@ export default (props: BibliographyProps) => {
   })
 }
 
+let id = 1
 const buildBibliographyPluginState = (
   doc: ManuscriptNode,
   csl: CSLProps,
@@ -107,6 +109,7 @@ const buildBibliographyPluginState = (
     isEqual(citations, $old.citations) &&
     isEqual(bibliographyItemMap, $old.bibliographyItems)
   ) {
+    $new.id = $old.id
     $new.citationCounts = $old.citationCounts
     $new.provider = $old.provider
     $new.renderedCitations = $old.renderedCitations
@@ -127,6 +130,7 @@ const buildBibliographyPluginState = (
     //create new citations since CitationProvider modifies the ones passed
     const citationTexts = provider.rebuildState(buildCitations(nodes))
 
+    $new.id = String(id++)
     $new.citationCounts = citationCounts
     $new.provider = provider
     $new.renderedCitations = new Map(citationTexts.map((i) => [i[0], i[2]]))
