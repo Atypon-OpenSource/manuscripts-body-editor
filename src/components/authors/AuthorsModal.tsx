@@ -44,7 +44,7 @@ import {
 } from '../../lib/authors'
 import { AuthorActions } from './AuthorActions'
 import { AuthorAffiliations } from './AuthorAffiliations'
-import { AuthorDetailsForm } from './AuthorDetailsForm'
+import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
 import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
@@ -82,6 +82,20 @@ const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id
 )
 
+const normalize = (author: ContributorAttrs) => {
+  return {
+    id: author.id,
+    role: author.role,
+    affiliations: author.affiliations || [],
+    bibliographicName: author.bibliographicName,
+    email: author.email || '',
+    isCorresponding: author.isCorresponding || false,
+    ORCIDIdentifier: author.ORCIDIdentifier || '',
+    priority: author.priority,
+    isJointContributor: author.isJointContributor || false,
+  }
+}
+
 export interface AuthorsModalProps {
   author?: ContributorAttrs
   authors: ContributorAttrs[]
@@ -102,6 +116,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isOpen, setOpen] = useState(true)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()
+  const actionsRef = useRef<FormActions>()
 
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
@@ -116,7 +131,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
-    if (values && selection && !isEqual(values, selection)) {
+    if (values && selection && !isEqual(values, normalize(selection))) {
       setShowConfirmationDialog(true)
     } else {
       setSelection(author)
@@ -221,6 +236,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleResetAuthor = () => {
+    actionsRef.current?.reset()
     setShowConfirmationDialog(false)
   }
 
@@ -275,9 +291,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 />
                 <FormLabel>Details</FormLabel>
                 <AuthorDetailsForm
-                  values={selection}
+                  values={normalize(selection)}
                   onChange={handleChangeAuthor}
                   onSave={handleSaveAuthor}
+                  actionsRef={actionsRef}
                 />
                 <FormLabel>Affiliations</FormLabel>
                 <AuthorAffiliations

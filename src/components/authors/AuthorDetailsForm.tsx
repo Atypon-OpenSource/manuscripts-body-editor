@@ -21,8 +21,8 @@ import {
   TextFieldGroupContainer,
   TextFieldLabel,
 } from '@manuscripts/style-guide'
-import { Field, FieldProps, Formik } from 'formik'
-import React from 'react'
+import { Field, FieldProps, Formik, FormikProps } from 'formik'
+import React, { MutableRefObject, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
@@ -46,23 +46,40 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
+export interface FormActions {
+  reset: () => void
+}
+
 interface AuthorDetailsFormProps {
   values: ContributorAttrs
   onChange: (values: ContributorAttrs) => void
   onSave: (values: ContributorAttrs) => void
+  actionsRef?: MutableRefObject<FormActions | undefined>
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   values,
   onChange,
   onSave,
+  actionsRef,
 }) => {
+  const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+
+  if (actionsRef && !actionsRef.current) {
+    actionsRef.current = {
+      reset: () => {
+        formRef.current?.resetForm()
+      },
+    }
+  }
+
   return (
     <Formik<ContributorAttrs>
       initialValues={values}
       onSubmit={onSave}
       enableReinitialize={true}
       validateOnChange={false}
+      innerRef={formRef}
     >
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
@@ -92,11 +109,22 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </TextFieldGroupContainer>
 
+              <Field name={'email'} type={'email'}>
+                {(props: FieldProps) => (
+                  <TextField
+                    id={'email'}
+                    placeholder={'Email address'}
+                    {...props.field}
+                  />
+                )}
+              </Field>
+
               <CheckboxLabel disabled={!isAuthor}>
                 <Field name={'isCorresponding'}>
                   {(props: FieldProps) => (
                     <CheckboxField
                       id={'isCorresponding'}
+                      checked={props.field.value}
                       disabled={!isAuthor}
                       {...props.field}
                     />
@@ -104,18 +132,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
                 <LabelText>Corresponding Author</LabelText>
               </CheckboxLabel>
-
-              {values.isCorresponding && (
-                <Field name={'email'} type={'email'}>
-                  {(props: FieldProps) => (
-                    <TextField
-                      id={'email'}
-                      placeholder={'Email address'}
-                      {...props.field}
-                    />
-                  )}
-                </Field>
-              )}
 
               <CheckboxLabel>
                 <Field name={'role'} type={'checkbox'}>

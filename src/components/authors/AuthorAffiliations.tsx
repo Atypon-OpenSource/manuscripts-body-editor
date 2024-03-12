@@ -16,7 +16,7 @@
 import AddAuthor from '@manuscripts/assets/react/AddAuthor'
 import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import { Theme } from '@manuscripts/style-guide'
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import styled, { ThemeContext } from 'styled-components'
 
@@ -75,6 +75,8 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
   onRemove,
 }) => {
   const theme = useContext(ThemeContext)
+  // this is needed to empty the dropdown after an item is select
+  const [searchText, setSearchText] = useState('')
 
   const affiliationMap = useMemo(
     () => new Map<string, AffiliationAttrs>(affiliations.map((a) => [a.id, a])),
@@ -104,6 +106,7 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
       return
     }
     onAdd(affiliation)
+    setSearchText('')
   }
 
   const handleCreate = (institution: string) => {
@@ -135,13 +138,17 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
         options={options}
         isMulti={false}
         isClearable={true}
+        value={null}
+        inputValue={searchText}
         components={{
           IndicatorsContainer: AddAffiliationIndicator,
         }}
         placeholder="Begin typing to add affiliation"
         noOptionsMessage={() => 'Type the name of an institution'}
         onChange={(i) => i && handleChange(i.value)}
+        onInputChange={setSearchText}
         onCreateOption={(v) => v && handleCreate(v)}
+        isValidNewOption={(t) => !!t}
         styles={{
           control: (provided, state) => ({
             ...provided,
