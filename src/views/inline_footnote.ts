@@ -17,9 +17,9 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { History } from 'history'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { getChangeClasses } from '../lib/track-changes-utils'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History

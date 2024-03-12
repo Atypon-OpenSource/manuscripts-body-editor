@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNodeView, schema } from '@manuscripts/transform'
+import { findChildrenByType } from 'prosemirror-utils'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import { getChangeClasses } from '../lib/track-changes-utils'
-import { findChildrenByType } from 'prosemirror-utils'
 
 export class TableElementFooterView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
