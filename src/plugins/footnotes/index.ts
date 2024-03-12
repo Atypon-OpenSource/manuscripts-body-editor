@@ -102,26 +102,23 @@ const deleteFootnoteWidget =
     node: ManuscriptNode,
     pos: number,
     props: PluginProps,
-    id: string,
     footnoteType: string
   ) =>
   (view: EditorView) => {
     const deleteBtn = document.createElement('span')
-    deleteBtn.className = 'delete-table-footnotes'
+    deleteBtn.className = 'delete-icon'
 
     deleteBtn.innerHTML = deleteIcon
 
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
         const tr = view.state.tr
+        node.content.forEach((item) => {
+          if (item.type === schema.nodes.paragraph) {
+            tr.delete(pos, pos + item.nodeSize + 1)
+          }
+        })
 
-        if (node.attrs.id === id) {
-          node.content.forEach((item) => {
-            if (item.type === schema.nodes.paragraph) {
-              tr.delete(pos, pos + item.nodeSize)
-            }
-          })
-        }
         view.dispatch(tr)
       }
 
@@ -255,7 +252,6 @@ export default (props: PluginProps) => {
                       root.node,
                       root.pos,
                       props,
-                      root.node.attrs.id,
                       'general table notes' //pass a variable instead of string after implementing LEAN-3143
                     ),
                     {

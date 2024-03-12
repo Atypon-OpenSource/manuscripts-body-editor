@@ -954,17 +954,17 @@
 .ProseMirror .table-footer .footnote-element {
   counter-reset: table_footnote;
 }
-.table-footer .delete-table-footnotes {
+.table-footer .delete-icon {
   position: absolute;
   right: -20px;
   top: -13px;
   cursor: pointer;
   z-index: 1;
 }
-.table-footer .delete-table-footnotes:hover svg path {
+.table-footer .delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footer .footnote-element .delete-table-footnotes { /* will be removed after implementing LEAN-3143 */
+.ProseMirror .table-footer .footnote-element .delete-icon { /* will be removed after implementing LEAN-3143 */
   display: none !important;
 }
 
@@ -988,10 +988,10 @@
   background-color: #f2fbfc;
   padding: 4px;
 }
-.ProseMirror .table-footer .footnote-selected .deleted .delete-table-footnotes {
+.ProseMirror .table-footer .footnote-selected .deleted .delete-icon {
   display: none;
 }
-.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-table-footnotes {
+.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
   display: block;
 }
 .table-footer > div {
