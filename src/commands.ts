@@ -197,6 +197,40 @@ export const createBlock = (
   }
 }
 
+export const insertGeneralFootnote = (
+  tableNode: ManuscriptNode,
+  position: number,
+  view: ManuscriptEditorView,
+  tableElementFooter?: NodeWithPos[]
+) => {
+  const { state, dispatch } = view
+  const generalNote = state.schema.nodes.paragraph.create({
+    placeholder: 'Add general note here',
+  })
+  const tr = state.tr
+  const pos = tableElementFooter?.length
+    ? position + tableElementFooter[0].pos + 2
+    : position + (tableNode.content.firstChild?.nodeSize || 0)
+
+  if (tableElementFooter?.length) {
+    tr.insert(pos, generalNote as ManuscriptNode)
+  } else {
+    const tableElementFooter = schema.nodes.table_element_footer.create(
+      {
+        id: generateID(ObjectTypes.TableElementFooter),
+      },
+      [generalNote]
+    )
+    tr.insert(pos, tableElementFooter)
+  }
+
+  if (dispatch && pos) {
+    const selection = createSelection(state.schema.nodes.paragraph, pos, tr.doc)
+    view?.focus()
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+}
+
 export const insertFileAsFigure = (
   file: FileAttachment,
   state: ManuscriptEditorState,
@@ -1114,9 +1148,12 @@ export const insertTableFootnote = (
   const insertedAt = state.selection.to
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
+  const labels = inlineFootnotes.map(
+    (nodeWithPos) => nodeWithPos.node.attrs.contents
+  )
   const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
     rids: [footnote.attrs.id],
-    contents: inlineFootnotes.length + 1, // I need to revisit this
+    contents: labels.length ? Math.max(...labels) + 1 : 1, // I need to revisit this
   }) as InlineFootnoteNode
 
   const tr = state.tr
@@ -1124,32 +1161,42 @@ export const insertTableFootnote = (
   // insert the inline footnote
   tr.insert(insertedAt, inlineFootnoteNode)
 
-  const footnoteElement = state.schema.nodes.footnotes_element.create(
-    {},
-    footnote
-  )
-
-  const tableElementFooter = findChildrenByType(
-    node,
-    schema.nodes.table_element_footer
-  )
-
   let insertionPos
-  if (tableElementFooter.length) {
-    const pos = tableElementFooter[0].pos
-    insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
-    tr.insert(insertionPos, footnoteElement)
+  const footnotesElement = findChildrenByType(
+    node,
+    schema.nodes.footnotes_element
+  )
+  if (footnotesElement.length) {
+    const pos = footnotesElement[0].pos
+    insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
+    tr.insert(insertionPos, footnote)
   } else {
-    const tableSize = node.content.firstChild?.nodeSize
-    if (tableSize) {
-      insertionPos = position + tableSize + 2
-      const tableElementFooter = schema.nodes.table_element_footer.create(
-        {
-          id: generateID(ObjectTypes.TableElementFooter),
-        },
-        [footnoteElement]
-      )
-      tr.insert(insertionPos, tableElementFooter)
+    const footnoteElement = state.schema.nodes.footnotes_element.create(
+      {},
+      footnote
+    )
+
+    const tableElementFooter = findChildrenByType(
+      node,
+      schema.nodes.table_element_footer
+    )
+
+    if (tableElementFooter.length) {
+      const pos = tableElementFooter[0].pos
+      insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
+      tr.insert(insertionPos, footnoteElement)
+    } else {
+      const tableSize = node.content.firstChild?.nodeSize
+      if (tableSize) {
+        insertionPos = position + tableSize + 2
+        const tableElementFooter = schema.nodes.table_element_footer.create(
+          {
+            id: generateID(ObjectTypes.TableElementFooter),
+          },
+          [footnoteElement]
+        )
+        tr.insert(insertionPos, tableElementFooter)
+      }
     }
   }
 
