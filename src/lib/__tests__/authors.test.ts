@@ -130,6 +130,7 @@ describe('affiliationLabel', () => {
     department: 'Dept of Examples',
     institution: 'University of Examples',
     postCode: '',
+    priority: 0,
   }
 
   it('should return the institution name and department', () => {
@@ -147,6 +148,7 @@ describe('affiliationLabel', () => {
       department: '',
       institution: 'University of Examples',
       postCode: '',
+      priority: 0,
     }
     const result = affiliationLabel(affiliation)
     expect(result).toEqual('University of Examples')
@@ -162,6 +164,7 @@ describe('affiliationLabel', () => {
       department: 'Dept of Examples',
       institution: '',
       postCode: '',
+      priority: 0,
     }
     const result = affiliationLabel(affiliation)
     expect(result).toEqual('(unknown institution)')
@@ -177,6 +180,7 @@ describe('affiliationLabel', () => {
       department: '',
       institution: '',
       postCode: '',
+      priority: 0,
     }
     const result = affiliationLabel(affiliation)
     expect(result).toEqual('(unknown institution)')
