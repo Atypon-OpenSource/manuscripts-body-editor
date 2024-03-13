@@ -119,6 +119,7 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
       department: '',
       institution: institution,
       postCode: '',
+      priority: 0,
     }
     onSave(affiliation)
     onAdd(affiliation)

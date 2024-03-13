@@ -19,7 +19,7 @@ import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
 
 export type AffiliationAttrs = Omit<
   AffiliationNode['attrs'],
-  'addressLine2' | 'addressLine3' | 'email' | 'priority'
+  'addressLine2' | 'addressLine3' | 'email'
 >
 
 export type ContributorAttrs = Omit<
