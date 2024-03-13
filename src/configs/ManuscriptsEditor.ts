@@ -28,7 +28,7 @@ import {
 } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
-import { EditorState, Plugin } from 'prosemirror-state'
+import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
 
