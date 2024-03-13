@@ -401,9 +401,6 @@ export const getEditorMenus = (
             isEnabled: isCommandValid(ifInTableBody(deleteColumn)),
             run: doCommand(deleteColumn),
           },
-          {
-            role: 'separator',
-          },
         ],
       },
     ],
