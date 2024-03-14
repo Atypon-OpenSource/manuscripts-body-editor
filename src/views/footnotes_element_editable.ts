@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import { createNodeOrElementView } from './creators'
+import { createNodeView } from './creators'
 import { EditableBlock } from './editable_block'
 import { FootnotesElementView } from './footnotes_element'
 
-export default createNodeOrElementView(
-  EditableBlock(FootnotesElementView),
-  'div'
-)
+export default createNodeView(EditableBlock(FootnotesElementView))

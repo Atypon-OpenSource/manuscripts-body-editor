@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-// import { getChangeClasses } from '../lib/track-changes-utils'
+import { schema } from '@manuscripts/transform'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
-import { createNodeOrElementView } from './creators'
+import { createNodeView } from './creators'
 
 export class FootnotesElementView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'div'
 
-  // The attempt to use this method failed because the footnote element in the table footer was created as a DIV element view instead of using this node view. Consequently, it doesn't trigger this updateContents function.
-
-  // One potential solution is to replace 'createNodeOrElementView' with 'createNodeView'. However, this change will alter the DOM structure of the table footer, potentially introducing additional elements related to block views. Therefore, additional effort will be required to ensure the correct display of the table footer.
-
-  // public updateContents = () => {
-  //   const dataTracked = this.node.attrs.dataTracked
-  //   if (dataTracked?.length) {
-  //     const lastChange = dataTracked[dataTracked.length - 1]
-  //     const classes = getChangeClasses([lastChange])
-  //     this.dom.className = ['footnote-element', ...classes].join(' ')
-
-  //   }
-  // }
+  public updateContents = () => {
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    const inTableFooter = !!findParentNodeOfTypeClosestToPos(
+      $pos,
+      schema.nodes.table_element_footer
+    )
+    if (inTableFooter) {
+      // To set TC classes and discard any other classes related to the block view.
+      this.setTCClasses()
+    }
+  }
 
   onUpdateContent() {
     this.checkEditability()
@@ -47,6 +48,17 @@ export class FootnotesElementView<
     this.contentDOM?.setAttribute('contenteditable', editable)
     this.dom?.setAttribute('contenteditable', editable)
   }
+
+  setTCClasses = () => {
+    const classNames = ['footnote-element']
+    const dataTracked = this.node.attrs.dataTracked
+    if (dataTracked?.length) {
+      const lastChange = dataTracked[dataTracked.length - 1]
+      const changeClasses = getChangeClasses([lastChange])
+      classNames.push(...changeClasses)
+    }
+    this.dom.className = classNames.join(' ')
+  }
 }
 
-export default createNodeOrElementView(FootnotesElementView, 'div')
+export default createNodeView(FootnotesElementView)

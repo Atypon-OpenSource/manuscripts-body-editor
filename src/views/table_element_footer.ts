@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import { ManuscriptNodeView, schema } from '@manuscripts/transform'
-import { findChildrenByType } from 'prosemirror-utils'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -36,29 +33,6 @@ export class TableElementFooterView<PropsType extends BaseNodeProps>
     this.dom.setAttribute('id', this.node.attrs.id)
     this.contentDOM = document.createElement('div')
     this.dom.appendChild(this.contentDOM)
-  }
-
-  // This alternative solution does work, but sometimes I noticed that while it successfully sets the class name directly after any change (approve, reject, etc.), the style isn't reflected until I click on the editing area. This behavior seems unusual to me, although it doesn't occur consistently.
-
-  public updateContents = async () => {
-    if (!this.contentDOM) {
-      return
-    }
-    const footnoteElement = this.contentDOM.querySelector('.footnote-element')
-    if (footnoteElement) {
-      const footnoteElementNode = findChildrenByType(
-        this.node,
-        schema.nodes.footnotes_element
-      )[0].node
-
-      const dataTracked = footnoteElementNode.attrs
-        .dataTracked as TrackedAttrs[]
-      if (footnoteElementNode && dataTracked?.length) {
-        const lastChange = dataTracked[dataTracked.length - 1]
-        const classes = getChangeClasses([lastChange])
-        footnoteElement.className = ['footnote-element', ...classes].join(' ')
-      }
-    }
   }
 }
 export default createNodeView(TableElementFooterView)
