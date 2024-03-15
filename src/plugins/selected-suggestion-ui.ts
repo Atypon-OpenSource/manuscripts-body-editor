@@ -148,8 +148,10 @@ export default (props: SelectedSuggestionProps) =>
         const nodeClicked = view.state.doc.nodeAt(pos)
         const trackChangesData = nodeClicked && getTrackChangesData(nodeClicked)
         if (!trackChangesData) {
-          view.dispatch(view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true))
-          props.setEditorSelectedSuggestion(undefined)
+          if (selectedSuggestionKey.getState(view.state)?.find().length) {
+            view.dispatch(view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true))
+            props.setEditorSelectedSuggestion(undefined)
+          }
         }
       },
       decorations: (state) => selectedSuggestionKey.getState(state),
@@ -172,6 +174,7 @@ const buildSelectedSuggestionDecoration = (
     decorations.push(
       decoration(change.from, change.to, {
         class: 'selected-suggestion',
+        key: change.id,
       })
     )
     props.setEditorSelectedSuggestion(change.id)
