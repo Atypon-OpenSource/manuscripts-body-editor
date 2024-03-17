@@ -58,6 +58,7 @@ import {
 
 import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
@@ -1159,10 +1160,14 @@ export const insertTableFootnote = (
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
-  )
-  if (footnotesElement.length) {
-    const pos = footnotesElement[0].pos
-    insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
+  ).pop()
+  if (
+    footnotesElement &&
+    !isDeleted(footnotesElement.node) &&
+    !isRejectedInsert(footnotesElement.node)
+  ) {
+    const pos = footnotesElement.pos
+    insertionPos = position + pos + footnotesElement.node.nodeSize + 1
     tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
