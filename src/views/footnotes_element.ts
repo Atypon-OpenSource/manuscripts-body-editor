@@ -15,7 +15,6 @@
  */
 
 import { schema } from '@manuscripts/transform'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
@@ -29,11 +28,7 @@ export class FootnotesElementView<
 
   public updateContents = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
-    const inTableFooter = !!findParentNodeOfTypeClosestToPos(
-      $pos,
-      schema.nodes.table_element_footer
-    )
-    if (inTableFooter) {
+    if ($pos.parent.type === schema.nodes.table_element_footer) {
       // To set TC classes and discard any other classes related to the block view.
       this.setTCClasses()
     }
