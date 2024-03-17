@@ -113,12 +113,17 @@ const deleteFootnoteWidget =
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
         const tr = view.state.tr
+
+        // delete general footnotes
         node.content.forEach((item) => {
           if (item.type === schema.nodes.paragraph) {
             tr.delete(pos, pos + item.nodeSize + 1)
           }
         })
-
+        // Check if the node is empty after deleting general notes
+        if (!node.childCount) {
+          tr.delete(pos, pos + node.nodeSize)
+        }
         view.dispatch(tr)
       }
 
@@ -252,7 +257,7 @@ export default (props: PluginProps) => {
                       root.node,
                       root.pos,
                       props,
-                      'general table notes' //pass a variable instead of string after implementing LEAN-3143
+                      'table general note' //pass a variable instead of string after implementing LEAN-3143
                     ),
                     {
                       key: parent.node.attrs.id,
