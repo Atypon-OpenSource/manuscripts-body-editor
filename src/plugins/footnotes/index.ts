@@ -247,7 +247,10 @@ export default (props: PluginProps) => {
             )(state.selection)
 
             if (root) {
-              if (parent.node.textContent.trim() !== '') {
+              if (
+                parent.node.textContent.trim() !== '' &&
+                parent.node.type === schema.nodes.paragraph
+              ) {
                 // display the delete icon only if there is a text
                 decorations.push(
                   Decoration.widget(
