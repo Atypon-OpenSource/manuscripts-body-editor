@@ -23,7 +23,7 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { findParentNodeOfType, hasParentNodeOfType } from 'prosemirror-utils'
+import { findParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -229,11 +229,11 @@ export default (props: PluginProps) => {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const isInTableElementFooter = hasParentNodeOfType(
+        const tableElementFooter = findParentNodeOfType(
           schema.nodes.table_element_footer
         )(state.selection)
 
-        if (isInTableElementFooter) {
+        if (tableElementFooter) {
           const parent = findParentNodeWithIdValue(state.selection)
           if (parent) {
             decorations.push(
@@ -242,32 +242,27 @@ export default (props: PluginProps) => {
                 class: 'footnote-selected',
               })
             )
-            const root = findParentNodeOfType(
-              schema.nodes.table_element_footer
-            )(state.selection)
 
-            if (root) {
-              if (
-                parent.node.textContent.trim() !== '' &&
-                parent.node.type === schema.nodes.paragraph
-              ) {
-                // display the delete icon only if there is a text
-                decorations.push(
-                  Decoration.widget(
-                    parent.pos + 2,
+            if (
+              parent.node.textContent.trim() !== '' &&
+              parent.node.type === schema.nodes.paragraph
+            ) {
+              // display the delete icon only if there is a text
+              decorations.push(
+                Decoration.widget(
+                  parent.pos + 2,
 
-                    deleteFootnoteWidget(
-                      root.node,
-                      root.pos,
-                      props,
-                      'table general note' //pass a variable instead of string after implementing LEAN-3143
-                    ),
-                    {
-                      key: parent.node.attrs.id,
-                    }
-                  )
+                  deleteFootnoteWidget(
+                    tableElementFooter.node,
+                    tableElementFooter.pos,
+                    props,
+                    'table general note' //pass a variable instead of string after implementing LEAN-3143
+                  ),
+                  {
+                    key: parent.node.attrs.id,
+                  }
                 )
-              }
+              )
             }
           }
         }
