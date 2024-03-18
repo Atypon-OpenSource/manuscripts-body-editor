@@ -963,7 +963,7 @@
 .ProseMirror
   .table-footer
   .footnote-element
-  div.block
+  .block
   > div:not(:has(.unctied-table-footnote))
   p::before {
   counter-increment: table_footnote;
@@ -1008,7 +1008,7 @@
   cursor: pointer;
 }
 
-.ProseMirror .footnote-element div.block > div:has(.unctied-table-footnote) {
+.ProseMirror .footnote-element .block > div:has(.unctied-table-footnote) {
   position: relative;
 }
 
