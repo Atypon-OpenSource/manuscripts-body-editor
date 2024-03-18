@@ -17,6 +17,7 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
 import { sanitize } from '../lib/dompurify'
+import { renderMath } from '../lib/helpers'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -36,24 +37,31 @@ export class EquationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    const { SVGStringRepresentation } = this.node.attrs
+    const { contents, format } = this.node.attrs
 
     while (this.dom.hasChildNodes()) {
       this.dom.removeChild(this.dom.firstChild as ChildNode)
     }
 
-    if (SVGStringRepresentation) {
-      const fragment = sanitize(SVGStringRepresentation, {
-        USE_PROFILES: { svg: true },
-      })
-      this.dom.appendChild(fragment)
-    } else {
-      const placeholder = document.createElement('div')
-      placeholder.className = 'equation-placeholder'
-      placeholder.textContent = '<Equation>'
+    renderMath(contents, format)
+      .then((svgContent) => {
+        if (svgContent) {
+          const fragment = sanitize(svgContent, {
+            USE_PROFILES: { svg: true },
+          })
+          this.dom.appendChild(fragment)
+        } else {
+          const placeholder = document.createElement('div')
+          placeholder.className = 'equation-placeholder'
+          placeholder.textContent = '<Equation>'
 
-      this.dom.appendChild(placeholder)
-    }
+          this.dom.appendChild(placeholder)
+        }
+        return true
+      })
+      .catch((error) => {
+        console.error(error) // tslint:disable-line:no-console
+      })
   }
 
   public ignoreMutation = () => true
