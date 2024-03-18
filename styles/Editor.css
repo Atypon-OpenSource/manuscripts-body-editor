@@ -671,6 +671,10 @@
   cursor: ns-resize;
   opacity: 0;
   transition: 0.2s all;
+}
+
+.ProseMirror .block-section_title .block-gutter,
+.ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
 }
 

@@ -1530,10 +1530,17 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
+<<<<<<< HEAD
 "@manuscripts/style-guide@^1.7.11":
   version "1.7.11"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.11.tgz#d27f67240accd557cd33e5eb67fa42cbb7b54178"
   integrity sha512-yufyQjhZC9lDljES/O63c5zcRlVXULcJTwJddI7/1NrVgLSGa5Zz8Ovc8fYLmQmxS9Pa+iqkb3ivHcYl2P9Q7Q==
+=======
+"@manuscripts/style-guide@1.7.10-LEAN-3415-1":
+  version "1.7.10-LEAN-3415-1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.10-LEAN-3415-1.tgz#39ff717c4b2668508110e6cbcab3b1b16e51d9ad"
+  integrity sha512-+H9IzXesIO+VKoh82PEzuobsquq9F0mdEOsQbzTLtwXrLmA6o+AwVN0bF2tlzxEhGQczW9bud9xgR4Ums9zMrg==
+>>>>>>> 7788492 (LEAN-3415: CTC-026 - Citations context menu)
   dependencies:
     "@manuscripts/assets" "^0.6.4"
     "@manuscripts/json-schema" "^2.2.6"
