@@ -19,7 +19,6 @@ import { FileAttachment } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   buildComment,
-  buildInlineMathFragment,
   FigureNode,
   FootnoteNode,
   generateID,
@@ -182,7 +181,6 @@ export const createBlock = (
     case state.schema.nodes.equation_element:
       node = state.schema.nodes.equation_element.create({}, [
         state.schema.nodes.equation.create(),
-        createAndFillFigcaptionElement(state),
       ])
       break
     default:
@@ -443,16 +441,12 @@ export const insertInlineEquation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const inlineMathFragment = buildInlineMathFragment(
-    state.selection.$anchor.parent.attrs.id,
-    selectedText().replace(/^\$/, '').replace(/\$$/, '')
-  )
-
   const sourcePos = state.selection.from - 1
 
   const tr = state.tr.replaceSelectionWith(
     state.schema.nodes.inline_equation.create({
-      id: inlineMathFragment._id,
+      format: 'tex',
+      contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
     })
   )
 
