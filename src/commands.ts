@@ -485,6 +485,7 @@ export const insertInlineFootnote =
 
     const { tr } = state
 
+    // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
     tr.insert(insertedAt, node)
 
     const footnotesSection = findChildrenByType(
@@ -517,7 +518,10 @@ export const insertInlineFootnote =
       )
       // Get position for inserting the footnote
       let index = 0
-      // TODO:: replace zero with body position
+      /* 
+      TODO: Would it be faster to use the footnotes plugin state to get the inline-footnotes, 
+      filter them based on the insertedAt position, and then use the length + 1 as the index?
+      */
       state.doc.slice(0, insertedAt).content.descendants((node) => {
         if (node.type === schema.nodes.inline_footnote) {
           index++

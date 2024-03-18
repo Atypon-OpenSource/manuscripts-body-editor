@@ -35,7 +35,10 @@ import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { createFootnoteLabel } from '../footnotes/footnotes-utils'
 import { placeholderWidget } from '../placeholder'
-import { findTableInlineFootnoteIds } from './footnotes-utils'
+import {
+  createFootnoteLabel,
+  findTableInlineFootnoteIds,
+} from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
