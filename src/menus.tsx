@@ -27,8 +27,6 @@ import {
   addRowBefore,
   deleteColumn,
   deleteRow,
-  mergeCells,
-  splitCell,
 } from 'prosemirror-tables'
 
 import {
@@ -388,35 +386,20 @@ export const getEditorMenus = (
           {
             id: 'format-table-add-column-before',
             label: 'Add Column Before',
-            isEnabled: isCommandValid(addColumnBefore),
+            isEnabled: isCommandValid(ifInTableBody(addColumnBefore)),
             run: doCommand(addColumnBefore),
           },
           {
             id: 'format-table-add-column-after',
             label: 'Add Column After',
-            isEnabled: isCommandValid(addColumnAfter),
+            isEnabled: isCommandValid(ifInTableBody(addColumnAfter)),
             run: doCommand(addColumnAfter),
           },
           {
             id: 'format-table-delete-column',
             label: 'Delete Column',
-            isEnabled: isCommandValid(deleteColumn),
+            isEnabled: isCommandValid(ifInTableBody(deleteColumn)),
             run: doCommand(deleteColumn),
-          },
-          {
-            role: 'separator',
-          },
-          {
-            id: 'merge-cells',
-            label: 'Merge Cells',
-            isEnabled: isCommandValid(mergeCells),
-            run: doCommand(mergeCells),
-          },
-          {
-            id: 'split-cells',
-            label: 'Split Cell',
-            isEnabled: isCommandValid(splitCell),
-            run: doCommand(splitCell),
           },
         ],
       },
