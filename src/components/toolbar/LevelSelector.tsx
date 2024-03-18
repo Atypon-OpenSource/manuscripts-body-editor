@@ -24,7 +24,7 @@ import {
   nodeNames,
   SectionTitleNode,
 } from '@manuscripts/transform'
-import { Fragment } from 'prosemirror-model'
+import { Fragment, Node } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
 import React, { CSSProperties } from 'react'
 import Select, {
@@ -460,12 +460,16 @@ const buildOptions = (
 
       const precedingSections: ManuscriptNode[] = []
 
-      parentSection.nodesBetween(0, $beforeSectionPos.parentOffset, (node) => {
-        if (isSectionNodeType(node.type)) {
-          precedingSections.push(node)
+      parentSection.nodesBetween(
+        0,
+        $beforeSectionPos.parentOffset,
+        (node: Node) => {
+          if (isSectionNodeType(node.type)) {
+            precedingSections.push(node)
+          }
+          return false
         }
-        return false
-      })
+      )
 
       if (precedingSections.length > 0) {
         sectionOptions.push(

@@ -109,7 +109,7 @@ interface SelectedSuggestionProps {
 
 export const SET_SUGGESTION_ID = 'SET_SELECTED_SUGGESTION_ID'
 
-const CLEAR_SUGGESTION_ID = 'CLEAR_SUGGESTION_ID'
+export const CLEAR_SUGGESTION_ID = 'CLEAR_SUGGESTION_ID'
 
 export const selectedSuggestionKey = new PluginKey<DecorationSet>(
   'selected_suggestion'
@@ -134,6 +134,7 @@ export default (props: SelectedSuggestionProps) =>
 
         if (tr.getMeta(CLEAR_SUGGESTION_ID)) {
           props.setEditorSelectedSuggestion(undefined)
+
           return DecorationSet.empty
         }
 
