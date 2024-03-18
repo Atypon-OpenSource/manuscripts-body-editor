@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
+import {
+  Capabilities,
+  ContextMenu,
+  ContextMenuProps,
+  SecondaryButton,
+} from '@manuscripts/style-guide'
+import {
+  CHANGE_OPERATION,
+  CHANGE_STATUS,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
 import {
   ContributorNode,
   isContributorNode,
   schema,
 } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
 
 import {
   AuthorsModal,
@@ -35,7 +46,11 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
-import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
+import {
+  CLEAR_SUGGESTION_ID,
+  selectedSuggestionKey,
+  SET_SUGGESTION_ID,
+} from '../plugins/selected-suggestion-ui'
 import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -51,6 +66,7 @@ export interface ContributorsProps extends EditableBlockProps {
 export class ContributorsView<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
+  contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
   popper?: HTMLElement
@@ -118,10 +134,10 @@ export class ContributorsView<
   ) => {
     const pluginState = affiliationsKey.getState(this.view.state)
     const attrs = node.attrs as TrackableAttributes<ContributorNode>
-
     const displayAttr = getActualAttrs(node)
-
+    const containerWrapper = document.createElement('div')
     const container = document.createElement('button')
+    containerWrapper.classList.add('contributor-wrapper')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
@@ -140,10 +156,13 @@ export class ContributorsView<
 
     const disableEditButton = !can.editMetadata
 
-    const { isCorresponding, email } = displayAttr
+    const { isCorresponding, email, id } = displayAttr
 
     if (!disableEditButton) {
-      container.addEventListener('click', this.handleClick)
+      container.addEventListener('click', () => {
+        const dataTracked = attrs.dataTracked as TrackedAttrs[]
+        this.onClickHandler(id, dataTracked ? dataTracked[0] : undefined)
+      })
     }
 
     const name = authorLabel(displayAttr)
@@ -177,8 +196,9 @@ export class ContributorsView<
     if (selectedAuthor && selectedAuthor === attrs.id) {
       container.classList.add('selected-suggestion')
     }
+    containerWrapper.appendChild(container)
 
-    return container
+    return containerWrapper
   }
 
   createNote(text = '', title = '') {
@@ -220,7 +240,7 @@ export class ContributorsView<
       SecondaryButton,
       {
         mini: true,
-        onClick: this.handleClick,
+        onClick: () => this.handleEdit(''),
         className: 'edit-authors-button',
         disabled: !can.editMetadata,
         children: 'Edit Authors',
@@ -248,8 +268,60 @@ export class ContributorsView<
     }
   }
 
-  handleClick = (e: Event) => {
-    e.stopPropagation()
+  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
+    this.props.popper.destroy()
+    const isSelectedSuggestion = !!selectedSuggestionKey
+      .getState(this.view.state)
+      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
+
+    const { tr, doc } = this.view.state
+    tr.setSelection(NodeSelection.create(doc, this.getPos()))
+
+    if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
+      tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
+    } else {
+      if (isSelectedSuggestion) {
+        tr.setMeta(CLEAR_SUGGESTION_ID, true)
+      }
+    }
+    this.view.dispatch(tr)
+    // Dont show context menu if author is deleted and it is not rejected
+    if (
+      !(
+        dataTracked?.operation === CHANGE_OPERATION.delete &&
+        dataTracked?.status !== CHANGE_STATUS.rejected
+      )
+    ) {
+      this.showContextMenu(elementId)
+    }
+  }
+
+  public showContextMenu = (elementId: string) => {
+    this.props.popper.destroy() // destroy the old context menu
+    const element = document.getElementById(elementId) as Element
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Edit',
+          action: () => this.handleEdit(elementId),
+          icon: 'EditIcon',
+        },
+      ],
+    }
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    this.props.popper.show(element, this.contextMenu, 'right-start')
+  }
+
+  handleEdit = (id: string) => {
+    this.props.popper.destroy()
 
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
       this.view,
@@ -261,12 +333,7 @@ export class ContributorsView<
       schema.nodes.affiliation
     )
 
-    let author = undefined
-    const target = e.target as Element
-    if (target) {
-      const id = target.closest('.contributor')?.getAttribute('id') as string
-      author = contributors.filter((a) => a.id === id)[0]
-    }
+    const author = id ? contributors.filter((a) => a.id === id)[0] : undefined
 
     const componentProps: AuthorsModalProps = {
       author,
@@ -325,10 +392,6 @@ export class ContributorsView<
     const node = schema.nodes.affiliation.create(attrs)
     this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
-
-  public ignoreMutation = () => true
-
-  public stopEvent = () => true
 }
 
 export default createNodeView(ContributorsView)
