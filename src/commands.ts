@@ -54,12 +54,12 @@ import { findWrapping } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
-  flatten,
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { skipCommandTracking } from './keys/list'
+import { getNewFootnotePos } from './lib/footnotes-utils'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
@@ -1138,13 +1138,9 @@ export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
   view: EditorView,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
   tablesFootnoteLabels?: Map<string, number>
 ) => {
-  if (!dispatch) {
-    return
-  }
+  const { state, dispatch } = view
 
   const footnote = state.schema.nodes.footnote.createAndFill({
     id: generateID(ObjectTypes.Footnote),
@@ -1168,28 +1164,14 @@ export const insertTableFootnote = (
   ).at(0)
 
   if (footnotesElement) {
-    const citedFootnotes = flatten(footnotesElement.node, false).filter(
-      ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
+    const footnotePos = getNewFootnotePos(
+      footnotesElement,
+      tablesFootnoteLabels,
+      footnoteIndex
     )
-    const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
-    const lastChildPos =
-      (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
-    /**
-     *  position of new footnote could be one of these cases:
-     *  * as a first child if we don't have any cited footnote
-     *  * at the end of cited footnotes
-     *  * or add it beside a node with a label value that is greater than the new one
-     */
-    const footnotePos =
-      citedFootnotes.length === 0 || footnoteIndex === 0
-        ? 2
-        : footnoteIndex === -1
-        ? lastChildPos
-        : citedFootnotes.at(footnoteIndex)?.pos || 0
-
     insertionPos = tr.mapping.map(position + footnotesElement.pos + footnotePos)
 
-    tr.insert(tr.mapping.map(insertionPos), footnote)
+    tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
       {},
@@ -1199,7 +1181,7 @@ export const insertTableFootnote = (
     const tableElementFooter = findChildrenByType(
       node,
       schema.nodes.table_element_footer
-    ).at(0)
+    )[0]
 
     if (tableElementFooter) {
       const pos = tableElementFooter.pos

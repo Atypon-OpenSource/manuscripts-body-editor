@@ -311,14 +311,7 @@ export class ContextMenu {
                   schema.nodes.footnotes_element
                 ).at(0)
                 if (!footnotesElementWithPos) {
-                  const { state, dispatch } = this.view
-                  insertTableFootnote(
-                    this.node,
-                    this.getPos(),
-                    this.view,
-                    state,
-                    dispatch
-                  )
+                  insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
                   const tablesFootnoteLabels =
                     footnotesKey
@@ -346,13 +339,10 @@ export class ContextMenu {
                       {
                         notes: footnotes,
                         onAdd: () => {
-                          const { state, dispatch } = this.view
                           insertTableFootnote(
                             this.node,
                             this.getPos(),
                             this.view,
-                            state,
-                            dispatch,
                             tablesFootnoteLabels
                           )
                           this.props?.popper.destroy()
