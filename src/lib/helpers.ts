@@ -62,3 +62,13 @@ export const mergeSimilarItems =
       ]
     }, [])
   }
+
+export const renderMath = async (math: string, format: string) => {
+  if (format === 'tex') {
+    const { convertTeXToSVG } = await import('../lib/tex-to-svg')
+    return convertTeXToSVG(math)
+  } else {
+    const { convertMathMLToSVG } = await import('../lib/mathml-to-svg')
+    return convertMathMLToSVG(math)
+  }
+}
