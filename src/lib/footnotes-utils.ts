@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeWithPos } from 'prosemirror-utils'
+import { flatten, NodeWithPos } from 'prosemirror-utils'
 
 /**
  *  position of new footnote could be one of these cases:
@@ -27,26 +27,16 @@ export const getNewFootnotePos = (
   tablesFootnoteLabels: Map<string, number> | undefined,
   footnoteIndex: number
 ) => {
-  // const citedFootnotes = flatten(footnotesElement.node, false).filter(
-  //   ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
-  // )
-  // const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
-  // const lastChildPos =
-  //   (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
-  //
-  // return citedFootnotes.length === 0 || footnoteIndex === 0
-  //   ? 2
-  //   : footnoteIndex === -1
-  //   ? lastChildPos
-  //   : citedFootnotes.at(footnoteIndex)?.pos || 0
-  let newFootnotePos = footnotesElement.pos + footnotesElement.node.nodeSize - 1
+  const citedFootnotes = flatten(footnotesElement.node, false).filter(
+    ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
+  )
+  const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
+  const lastChildPos =
+    (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
 
-  footnotesElement.node.descendants((node, pos, parent, index) => {
-    if (footnoteIndex === ++index) {
-      newFootnotePos = footnotesElement.pos + pos + 1
-      return false
-    }
-  })
-
-  return newFootnotePos
+  return citedFootnotes.length === 0 || footnoteIndex === 0
+    ? 2
+    : footnoteIndex === -1
+    ? lastChildPos
+    : citedFootnotes.at(footnoteIndex)?.pos || 0
 }
