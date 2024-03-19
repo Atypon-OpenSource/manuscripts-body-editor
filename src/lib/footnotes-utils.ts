@@ -30,13 +30,15 @@ export const getNewFootnotePos = (
   const citedFootnotes = flatten(footnotesElement.node, false).filter(
     ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
   )
-  const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
-  const lastChildPos =
-    (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
 
-  return citedFootnotes.length === 0 || footnoteIndex === 0
-    ? 2
-    : footnoteIndex === -1
-    ? lastChildPos
-    : citedFootnotes.at(footnoteIndex)?.pos || 0
+  if (citedFootnotes.length === 0 || footnoteIndex === 0) {
+    return 2
+  }
+
+  if (footnoteIndex === -1) {
+    const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
+    return (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
+  }
+
+  return citedFootnotes.at(footnoteIndex)?.pos || 0
 }
