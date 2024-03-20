@@ -25,13 +25,13 @@ import {
   AuthorsModal,
   AuthorsModalProps,
 } from '../components/authors/AuthorsModal'
-import { AffiliationAttrs, ContributorAttrs } from '../lib/authors'
+import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
 import { getActualAttrs } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
   findChildByType,
-  findChildrenByType,
+  findChildrenAttrsByType,
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
@@ -140,13 +140,13 @@ export class ContributorsView<
 
     const disableEditButton = !can.editMetadata
 
-    const { bibliographicName, isCorresponding, email } = displayAttr
+    const { isCorresponding, email } = displayAttr
 
     if (!disableEditButton) {
       container.addEventListener('click', this.handleClick)
     }
 
-    const name = this.buildNameLiteral(bibliographicName)
+    const name = authorLabel(displayAttr)
     container.innerHTML =
       isCorresponding && email
         ? `<span class="name">${name} (${email})</span>`
@@ -189,24 +189,6 @@ export class ContributorsView<
     }
     el.classList.add('contributor-note')
     return el
-  }
-
-  initials = (given: string): string =>
-    given
-      ? given
-          .trim()
-          .split(' ')
-          .map((part) => part.substr(0, 1).toUpperCase() + '.')
-          .join('')
-      : ''
-
-  buildNameLiteral = ({ given = '', family = '', suffix = '' }) => {
-    if (!given && !family) {
-      return 'Unknown Author'
-    }
-    return [this.initials(given), family, suffix]
-      .filter((part) => part)
-      .join(' ')
   }
 
   public isJointFirstAuthor = (authors: ContributorNode[], index: number) => {
@@ -269,15 +251,15 @@ export class ContributorsView<
   handleClick = (e: Event) => {
     e.stopPropagation()
 
-    const contributors = findChildrenByType(
+    const contributors: ContributorAttrs[] = findChildrenAttrsByType(
       this.view,
       schema.nodes.contributor
-    ).map((n) => n.node.attrs) as ContributorAttrs[]
+    )
 
-    const affiliations = findChildrenByType(
+    const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
       this.view,
       schema.nodes.affiliation
-    ).map((n) => n.node.attrs) as AffiliationAttrs[]
+    )
 
     let author = undefined
     const target = e.target as Element

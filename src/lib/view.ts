@@ -23,6 +23,8 @@ import {
 import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
 
+import {getActualAttrs, isHidden} from './track-changes-utils'
+
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
   schema.nodes.affiliation,
@@ -53,7 +55,16 @@ export const findChildrenByType = (
   type: ManuscriptNodeType
 ): utils.NodeWithPos[] => {
   const doc = view.state.doc
-  return utils.findChildrenByType(doc, type)
+  return utils.findChildrenByType(doc, type).filter((n) => !isHidden(n.node))
+}
+
+export const findChildrenAttrsByType = <T extends Attrs>(
+  view: ManuscriptEditorView,
+  type: ManuscriptNodeType
+): T[] => {
+  return findChildrenByType(view, type).map((n) =>
+    getActualAttrs(n.node)
+  ) as T[]
 }
 
 export const updateNode = (
