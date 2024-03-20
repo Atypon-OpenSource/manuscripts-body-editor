@@ -23,7 +23,7 @@ import {
 import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
 
-import {getActualAttrs, isHidden} from './track-changes-utils'
+import { getActualAttrs, isHidden } from './track-changes-utils'
 
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
