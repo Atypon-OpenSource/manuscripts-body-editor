@@ -111,7 +111,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   }
 
   public updateNodeAttrs = (attrs: Attrs) => {
-    this.view.state.doc.descendants((node: Node, pos: number) => {
+    this.view.state.doc.descendants((node, pos) => {
       if (node.attrs.id === attrs.id) {
         const tr = this.view.state.tr.setNodeMarkup(pos, undefined, attrs)
         if (isMetaNode(node.type.name)) {
@@ -124,7 +124,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   }
 
   public deleteNode = (id: string) => {
-    this.view.state.doc.descendants((node: Node, pos: number) => {
+    this.view.state.doc.descendants((node, pos) => {
       if (node.attrs.id === id) {
         this.view.dispatch(this.view.state.tr.delete(pos, pos + node.nodeSize))
       }
