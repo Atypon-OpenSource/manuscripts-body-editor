@@ -43,7 +43,6 @@ export class CitationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    11
     const bib = getBibliographyPluginState(this.view.state)
 
     const citation = this.getCitation()

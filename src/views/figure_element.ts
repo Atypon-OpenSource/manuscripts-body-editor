@@ -20,7 +20,6 @@ import {
   FileManagement,
 } from '@manuscripts/style-guide'
 import { FigureNode, schema } from '@manuscripts/transform'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
 
 import {
   FigureElementOptions,
@@ -178,7 +177,7 @@ export class FigureElementView extends BlockView<
     if (file.type.id === 'supplementary') {
       const tr = this.view.state.tr
 
-      this.view.state.doc.descendants((node: ProsemirrorNode, pos: number) => {
+      this.view.state.doc.descendants((node, pos) => {
         if (
           node.type === schema.nodes.supplement &&
           node.attrs.href === file.id
