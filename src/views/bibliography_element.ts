@@ -226,10 +226,8 @@ export class BibliographyElementBlockView<
       }
 
       if (can.seeReferencesButtons) {
-        element.addEventListener(
-          'click',
-          () => this.onClickHandler(element.id, dataTracked),
-          false
+        element.addEventListener('click', () =>
+          this.onClickHandler(element.id, dataTracked)
         )
       }
       wrapper.append(element)
