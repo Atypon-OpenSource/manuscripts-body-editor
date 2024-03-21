@@ -60,6 +60,7 @@ const createBibliographySection = (node: ManuscriptNode) =>
 export class CitationEditableView extends CitationView<EditableBlockProps> {
   private decoder = new Decoder(new Map())
   private editor: HTMLElement
+  private contextMenu: HTMLElement
 
   public selectNode = () => {
     if (!isDeleted(this.node)) {
@@ -106,7 +107,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
       ],
     }
-    this.editor = ReactSubView(
+    this.contextMenu = ReactSubView(
       this.props,
       ContextMenu,
       componentProps,
@@ -115,7 +116,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.view,
       'context-menu'
     )
-    this.props.popper.show(this.dom, this.editor, 'right-start')
+    this.props.popper.show(this.dom, this.contextMenu, 'right-start')
   }
 
   public showPopper = () => {
