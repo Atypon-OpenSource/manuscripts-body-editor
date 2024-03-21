@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
-
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
-import { createNodeView } from './creators'
+import { createNodeOrElementView } from './creators'
+import { setTCClasses } from './footnote'
 
 export class FootnotesElementView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'div'
-
-  public updateContents = () => {
-    const $pos = this.view.state.doc.resolve(this.getPos())
-    if ($pos.parent.type === schema.nodes.table_element_footer) {
-      // To set TC classes and discard any other classes related to the block view.
-      this.setTCClasses()
-    }
-  }
 
   onUpdateContent() {
     this.checkEditability()
@@ -43,17 +33,10 @@ export class FootnotesElementView<
     this.contentDOM?.setAttribute('contenteditable', editable)
     this.dom?.setAttribute('contenteditable', editable)
   }
-
-  setTCClasses = () => {
-    const classNames = ['footnote-element']
-    const dataTracked = this.node.attrs.dataTracked
-    if (dataTracked?.length) {
-      const lastChange = dataTracked[dataTracked.length - 1]
-      const changeClasses = getChangeClasses([lastChange])
-      classNames.push(...changeClasses)
-    }
-    this.dom.className = classNames.join(' ')
-  }
 }
 
-export default createNodeView(FootnotesElementView)
+export default createNodeOrElementView(
+  FootnotesElementView,
+  'div',
+  setTCClasses
+)

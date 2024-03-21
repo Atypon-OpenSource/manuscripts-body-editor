@@ -35,4 +35,5 @@ export class TableElementFooterView<PropsType extends BaseNodeProps>
     this.dom.appendChild(this.contentDOM)
   }
 }
+
 export default createNodeView(TableElementFooterView)

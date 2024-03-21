@@ -229,6 +229,11 @@ export default () => {
           }
           if (node.type === schema.nodes.footnotes_element) {
             if (parent?.type === schema.nodes.table_element_footer) {
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  class: 'table-footnotes-element',
+                })
+              )
               tableInlineFootnoteIds = findTableInlineFootnoteIds(
                 state.doc.resolve(pos)
               )
