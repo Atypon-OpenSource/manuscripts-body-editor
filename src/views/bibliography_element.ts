@@ -15,7 +15,7 @@
  */
 
 import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
-import { ContextMenuProps } from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   BibliographyItemNode,
@@ -39,7 +39,6 @@ import {
 } from '../plugins/selected-suggestion-ui'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
-import { ContextMenuWrapper } from './ContextMenuWrapper'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
@@ -56,10 +55,12 @@ export class BibliographyElementBlockView<
 > extends BlockView<PropsType> {
   private container: HTMLElement
   private editor: HTMLDivElement
+  private contextMenu: HTMLDivElement
   private decoder = new Decoder(new Map())
-  private elementWithContextMenu: Element | null = null // for storing element which should have context menu displayed
+  private clickedElementId: string | null = null // for storing element.id which should have context menu displayed
 
   public showPopper = (id: string) => {
+    this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
 
     const componentProps: ReferencesEditorProps = {
@@ -88,7 +89,6 @@ export class BibliographyElementBlockView<
   public ignoreMutation = () => true
 
   private handleEdit = (citationId: string) => {
-    this.props.popper.destroy() // destroy the context menu
     this.showPopper(citationId)
   }
 
@@ -96,45 +96,57 @@ export class BibliographyElementBlockView<
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
 
-  public showContextMenu = (element: Element) => {
+  public showContextMenu = (elementId: string) => {
+    this.props.popper.destroy() // destroy the old context menu
+    this.clickedElementId = null // reset clicked element id
+
+    const element = document.getElementById(elementId) as Element
     const componentProps: ContextMenuProps = {
       actions: [
         {
           label: 'Edit',
-          action: () => this.handleEdit(element.id),
+          action: () => this.handleEdit(elementId),
           icon: 'EditIcon',
         },
         {
           label: 'Comment',
-          action: () => this.handleComment(element.id),
+          action: () => this.handleComment(elementId),
           icon: 'AddComment',
         },
       ],
     }
 
-    this.editor = ReactSubView(
+    this.contextMenu = ReactSubView(
       this.props,
-      ContextMenuWrapper,
+      ContextMenu,
       componentProps,
       this.node,
       this.getPos,
       this.view,
       'context-menu'
     )
-    this.props.popper.show(element, this.editor, 'right-start')
+    this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  private onClickHandler = (element: Element, dataTracked?: TrackedAttrs) => {
-    this.elementWithContextMenu = null
-    this.props.popper.destroy() // destroy the old context menu
-    this.elementWithContextMenu = element
-    this.view.dispatch(this.view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true))
+  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
+    // store clicked element
+    this.clickedElementId = elementId
+    const isSelectedSuggestion = !!selectedSuggestionKey
+      .getState(this.view.state)
+      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
+
     if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
       this.view.dispatch(
-        this.view.state.tr
-          .setMeta(CLEAR_SUGGESTION_ID, false)
-          .setMeta(SET_SUGGESTION_ID, dataTracked.id)
+        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
       )
+    } else {
+      if (isSelectedSuggestion) {
+        this.view.dispatch(
+          this.view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true)
+        )
+      } else {
+        this.showContextMenu(elementId)
+      }
     }
   }
 
@@ -216,13 +228,9 @@ export class BibliographyElementBlockView<
       if (can.seeReferencesButtons) {
         element.addEventListener(
           'click',
-          () => this.onClickHandler(element, dataTracked),
+          () => this.onClickHandler(element.id, dataTracked),
           false
         )
-      }
-      // set current element with corresponding id which should have context menu displayed
-      if (element.id === this.elementWithContextMenu?.id) {
-        this.elementWithContextMenu = element
       }
       wrapper.append(element)
     }
@@ -234,9 +242,9 @@ export class BibliographyElementBlockView<
       this.container.appendChild(wrapper)
     }
 
-    // if there is an element to click after rerender, show ContextMenu
-    if (this.elementWithContextMenu) {
-      this.showContextMenu(this.elementWithContextMenu)
+    // if there is an element which was clicked, show ContextMenu
+    if (this.clickedElementId) {
+      this.showContextMenu(this.clickedElementId)
     }
   }
 

@@ -25,6 +25,7 @@ import {
   CitationEditorProps,
   CitationViewer,
   CitationViewerProps,
+  ContextMenu,
   ContextMenuProps,
 } from '@manuscripts/style-guide'
 import {
@@ -47,7 +48,6 @@ import {
 } from '../plugins/selected-suggestion-ui'
 import { CitationView } from './citation'
 import { CitationEditorWrapper } from './CitationEditorWrapper'
-import { ContextMenuWrapper } from './ContextMenuWrapper'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
@@ -109,7 +109,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     }
     this.editor = ReactSubView(
       this.props,
-      ContextMenuWrapper,
+      ContextMenu,
       componentProps,
       this.node,
       this.getPos,
