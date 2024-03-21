@@ -132,10 +132,7 @@ export default (props: SelectedSuggestionProps) =>
           return buildSelectedSuggestionDecoration(suggestionId, state, props)
         }
 
-        if (
-          tr.getMeta(CLEAR_SUGGESTION_ID) ||
-          tr.getMeta('track-changes-refresh-changes')
-        ) {
+        if (tr.getMeta(CLEAR_SUGGESTION_ID)) {
           props.setEditorSelectedSuggestion(undefined)
           return DecorationSet.empty
         }
