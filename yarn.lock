@@ -1510,7 +1510,7 @@
     eslint-config-prettier "^8.5.0"
     prettier "^2.8.1"
 
-"@manuscripts/json-schema@^2.2.6":
+"@manuscripts/json-schema@^2.2.5", "@manuscripts/json-schema@^2.2.6":
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.6.tgz#383b4f74bcfb6b3795255c092965a0052f8466d1"
   integrity sha512-Lz7zJClr8r6pyzwe1rNc9TBMKXIFpZyyBfylWPZ6Rfxx1NX44iA7ROj1/F2l/Qs9QeP7nXX5k+nR+VqLUf7l/A==
@@ -1519,7 +1519,7 @@
     deepmerge "^4.3.1"
     uuid "^9.0.0"
 
-"@manuscripts/library@^1.3.5":
+"@manuscripts/library@^1.3.4", "@manuscripts/library@^1.3.5":
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.5.tgz#eea1c1343431c8de325ca7280dd04542f57f178e"
   integrity sha512-vI9PQSMGkmlvBBD/Lyqoh8jx+9ML9/4e7Qdrfj1aE+gaZzGR4REj2hWhKhj+PLd2sjBp8lKyWl0XE/gS+4pwLA==
@@ -1530,7 +1530,7 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@^1.7.11":
+"@manuscripts/style-guide@^1.7.10":
   version "1.7.11"
   resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.11.tgz#d27f67240accd557cd33e5eb67fa42cbb7b54178"
   integrity sha512-yufyQjhZC9lDljES/O63c5zcRlVXULcJTwJddI7/1NrVgLSGa5Zz8Ovc8fYLmQmxS9Pa+iqkb3ivHcYl2P9Q7Q==
@@ -1587,10 +1587,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.5.tgz#de7eee323e152b6ed5a39beedf3cbf5aab9c1817"
-  integrity sha512-mANvyXmYnA53Y0IeYvShU+EYkl0qj3cHlXWP6nnrYBfbGGneu4RnwuUsQjlOj2DGLIqHMc6WLX32dosikxtTKQ==
+"@manuscripts/transform@^2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.6.tgz#6ba4d11216f5c3a00d1e9acbff5741045ea8fdd6"
+  integrity sha512-tU9UiMmdY1cGaLS6R1A8VSHvfflCQW5yGLZdw9POW8saGliB59P+NR0q2YahPVA/Glluevw3/QsbkksSmdMc7g==
   dependencies:
     "@manuscripts/json-schema" "^2.2.6"
     "@manuscripts/library" "^1.3.5"
