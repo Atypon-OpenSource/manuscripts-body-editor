@@ -96,8 +96,8 @@ export const toolbar: ToolbarConfig = {
       isEnabled: insertList(schema.nodes.bullet_list),
       run: insertList(schema.nodes.bullet_list),
       options: {
-        bullet: insertList(schema.nodes.ordered_list, 'bullet'),
-        simple: insertList(schema.nodes.ordered_list, 'simple'),
+        bullet: insertList(schema.nodes.bullet_list, 'bullet'),
+        simple: insertList(schema.nodes.bullet_list, 'simple'),
       },
     },
     ordered_list: {
