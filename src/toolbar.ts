@@ -95,6 +95,10 @@ export const toolbar: ToolbarConfig = {
       isActive: blockActive(schema.nodes.bullet_list),
       isEnabled: insertList(schema.nodes.bullet_list),
       run: insertList(schema.nodes.bullet_list),
+      options: {
+        bullet: insertList(schema.nodes.ordered_list, 'bullet'),
+        simple: insertList(schema.nodes.ordered_list, 'simple'),
+      },
     },
     ordered_list: {
       title: 'Wrap in ordered list',
