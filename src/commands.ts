@@ -1146,9 +1146,8 @@ export const insertTableFootnote = (
   const insertedAt = state.selection.to
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
-  const footnoteIndex = inlineFootnotes.findIndex(
-    ({ pos }) => position + pos >= insertedAt
-  )
+  const footnoteIndex =
+    inlineFootnotes.filter(({ pos }) => position + pos >= insertedAt).length - 1
 
   const tr = state.tr
 
@@ -1157,7 +1156,7 @@ export const insertTableFootnote = (
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
-  ).at(0)
+  )[0]
 
   if (footnotesElement) {
     const footnotePos = getNewFootnotePos(

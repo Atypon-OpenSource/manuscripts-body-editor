@@ -36,9 +36,9 @@ export const getNewFootnotePos = (
   }
 
   if (footnoteIndex === -1) {
-    const lastChild = citedFootnotes.at(citedFootnotes.length - 1)
+    const lastChild = citedFootnotes[citedFootnotes.length - 1]
     return (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
   }
 
-  return citedFootnotes.at(footnoteIndex)?.pos || 0
+  return citedFootnotes[footnoteIndex]?.pos || 0
 }

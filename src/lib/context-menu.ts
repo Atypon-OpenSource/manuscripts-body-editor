@@ -15,9 +15,11 @@
  */
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
-import { TableFootnotesSelector } from '@manuscripts/style-guide'
 import {
-  FootnoteNode,
+  FootnoteWithIndex,
+  TableFootnotesSelector,
+} from '@manuscripts/style-guide'
+import {
   InlineFootnoteNode,
   isInBibliographySection,
   ManuscriptEditorView,
@@ -309,7 +311,7 @@ export class ContextMenu {
                 const footnotesElementWithPos = findChildrenByType(
                   this.node,
                   schema.nodes.footnotes_element
-                ).at(0)
+                )[0]
                 if (!footnotesElementWithPos) {
                   insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
@@ -347,7 +349,7 @@ export class ContextMenu {
                           )
                           this.props?.popper.destroy()
                         },
-                        onInsert: (notes: FootnoteNode[]) => {
+                        onInsert: (notes: FootnoteWithIndex[]) => {
                           const insertedAt = this.view.state.selection.to
                           let inlineFootnoteIndex = 1
                           this.view.state.doc
@@ -362,10 +364,10 @@ export class ContextMenu {
                           const node =
                             this.view.state.schema.nodes.inline_footnote.create(
                               {
-                                rids: notes.map((note) => note.attrs.id),
+                                rids: notes.map(({ node }) => node.attrs.id),
                                 contents: notes
-                                  .map(
-                                    (_, index) => inlineFootnoteIndex + index
+                                  .map(({ index }) =>
+                                    index ? index : inlineFootnoteIndex
                                   )
                                   .join(),
                               }
@@ -375,7 +377,7 @@ export class ContextMenu {
 
                           orderTableFootnotes(
                             tr,
-                            notes,
+                            notes.map(({ node }) => node),
                             footnotes,
                             footnotesElementWithPos,
                             this.getPos(),
