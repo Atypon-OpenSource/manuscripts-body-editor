@@ -955,6 +955,7 @@
   counter-reset: table_footnote;
 }
 .table-footer .delete-icon {
+  display: none;
   position: absolute;
   right: -20px;
   top: -13px;
