@@ -147,7 +147,6 @@ const commentsState = (
   }, new Map<string, Omit<Partial<Comment>, 'targetType'>>())
 
   const decorations: Decoration[] = []
-
   doc.descendants((node, pos) => {
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
@@ -189,6 +188,9 @@ const getCommentIcon =
         break
       case schema.nodes.bibliography_item:
         elementClass = 'bibliography-comment'
+        break
+      case schema.nodes.contributor:
+        elementClass = 'contributor-comment'
         break
       default:
         elementClass = 'inline-comment'

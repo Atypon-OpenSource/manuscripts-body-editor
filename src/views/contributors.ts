@@ -13,12 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
-import { ContributorNode, isContributorNode } from '@manuscripts/transform'
+import { CommentAnnotation } from '@manuscripts/json-schema'
+import {
+  Capabilities,
+  ContextMenu,
+  ContextMenuProps,
+  SecondaryButton,
+} from '@manuscripts/style-guide'
+import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import {
+  buildComment,
+  ContributorNode,
+  isContributorNode,
+} from '@manuscripts/transform'
+import { Decoration } from 'prosemirror-view'
 
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { affiliationsKey } from '../plugins/affiliations'
-import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
+import { commentAnnotation } from '../plugins/comment_annotation'
+import {
+  CLEAR_SUGGESTION_ID,
+  selectedSuggestionKey,
+  SET_SUGGESTION_ID,
+} from '../plugins/selected-suggestion-ui'
 import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -30,10 +47,16 @@ export interface ContributorsProps extends EditableBlockProps {
   openAuthorEditing: () => void
   selectAuthorForEditing: (authorId: string) => void
 }
-
+type WidgetDecoration = Decoration & {
+  type: { toDOM: () => HTMLElement }
+}
 export class ContributorsView<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
+  contextMenu: HTMLElement
+  container: HTMLElement
+  inner: HTMLElement
+
   public initialise = () => {
     this.createDOM()
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
@@ -55,6 +78,8 @@ export class ContributorsView<
   }
 
   buildAuthors = () => {
+    const commentsDecorationSet = commentAnnotation.getState(this.view.state)
+    const commentElementMap: Map<string, HTMLElement> = new Map()
     const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
     let selectedAuthor: string | undefined
     const authors: ContributorNode[] = []
@@ -63,6 +88,20 @@ export class ContributorsView<
 
     this.node.content?.forEach((node, offset) => {
       if (isContributorNode(node)) {
+        if (commentsDecorationSet) {
+          const commentWidget = commentsDecorationSet.find(
+            this.getPos() + offset + 2,
+            this.getPos() + offset + 2
+          )
+          if (commentWidget.length) {
+            const commentElement = (
+              commentWidget[0] as WidgetDecoration
+            ).type.toDOM()
+
+            commentElementMap.set(commentElement.id, commentElement)
+          }
+        }
+
         authors.push(node)
 
         if (
@@ -84,18 +123,21 @@ export class ContributorsView<
         }
         const jointAuthors = this.isJointFirstAuthor(authors, i)
         authorsWrapper.appendChild(
-          this.buildAuthor(author, jointAuthors, selectedAuthor)
+          this.buildAuthor(
+            author,
+            jointAuthors,
+            commentElementMap,
+            selectedAuthor
+          )
         )
       })
     this.container.appendChild(authorsWrapper)
   }
 
-  container: HTMLElement
-  inner: HTMLElement
-
   buildAuthor = (
     node: ContributorNode,
     isJointFirstAuthor: boolean,
+    commentElementMap: Map<string, HTMLElement>,
     selectedAuthor?: string
   ) => {
     const pluginState = affiliationsKey.getState(this.view.state)
@@ -103,7 +145,9 @@ export class ContributorsView<
 
     const displayAttr = getActualAttrs(node)
 
+    const containerWrapper = document.createElement('div')
     const container = document.createElement('button')
+    containerWrapper.classList.add('contributor-wrapper')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
@@ -127,8 +171,8 @@ export class ContributorsView<
     container.addEventListener('click', (e) => {
       e.preventDefault()
       if (!disableEditButton) {
-        this.props.openAuthorEditing()
-        this.props.selectAuthorForEditing(id)
+        const dataTracked = attrs.dataTracked as TrackedAttrs[]
+        this.onClickHandler(id, dataTracked ? dataTracked[0] : undefined)
       }
     })
 
@@ -164,7 +208,14 @@ export class ContributorsView<
       container.classList.add('selected-suggestion')
     }
 
-    return container
+    containerWrapper.appendChild(container)
+    const commentElement = commentElementMap.get(attrs.id)
+    commentElement?.classList.add('ProseMirror-widget')
+
+    if (commentElement) {
+      container.after(commentElement)
+    }
+    return containerWrapper
   }
 
   createNote(text = '', title = '') {
@@ -250,6 +301,65 @@ export class ContributorsView<
         this.container.appendChild(element)
       }
     }
+  }
+
+  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
+    const isSelectedSuggestion = !!selectedSuggestionKey
+      .getState(this.view.state)
+      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
+
+    if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
+      this.view.dispatch(
+        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
+      )
+    } else {
+      if (isSelectedSuggestion) {
+        this.view.dispatch(
+          this.view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true)
+        )
+      }
+    }
+
+    this.showContextMenu(elementId)
+  }
+
+  private handleEdit = (id: string) => {
+    this.props.openAuthorEditing()
+    this.props.selectAuthorForEditing(id)
+  }
+
+  private handleComment = (id: string) => {
+    const comment = buildComment(id) as CommentAnnotation
+    this.props.setComment(comment)
+  }
+
+  public showContextMenu = (elementId: string) => {
+    this.props.popper.destroy() // destroy the old context menu
+    const element = document.getElementById(elementId) as Element
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Edit',
+          action: () => this.handleEdit(elementId),
+          icon: 'EditIcon',
+        },
+        {
+          label: 'Comment',
+          action: () => this.handleComment(elementId),
+          icon: 'AddComment',
+        },
+      ],
+    }
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
   public ignoreMutation = () => true
