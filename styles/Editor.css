@@ -986,9 +986,6 @@
   padding: 4px;
 }
 
-.ProseMirror .table-footer .delete-icon, .ProseMirror .table-footer .footnote-selected .deleted .delete-icon {
-  display: none;
-}
 .ProseMirror .table-footer .footnote-selected .delete-icon ,.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
   display: block;
 }

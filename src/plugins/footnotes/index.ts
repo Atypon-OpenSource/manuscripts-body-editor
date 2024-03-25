@@ -130,6 +130,7 @@ const deleteFootnoteWidget =
     pos: number,
     props: PluginProps,
     footnoteType: string,
+    footnoteMessage: string,
     id: string
   ) =>
   (view: EditorView) => {
@@ -177,6 +178,7 @@ const deleteFootnoteWidget =
 
       const componentProps: DeleteFootnoteDialogProps = {
         footnoteType: footnoteType,
+        footnoteMessage: footnoteMessage,
         handleDelete: handleDelete,
       }
 
@@ -339,10 +341,23 @@ export default (props: PluginProps) => {
               node.firstChild?.type === schema.nodes.paragraph
             const isTableFootnote =
               node.firstChild?.type === schema.nodes.footnote
-            const footnoteType =
-              node.type === schema.nodes.footnote
-                ? 'table footnote'
-                : 'table general note'
+
+            const footnote = (() => {
+              switch (node.type) {
+                case schema.nodes.footnote:
+                  return {
+                    type: 'table footnote',
+                    message:
+                      'This action will entirely remove the table footnote from the list  because it will no longer be used.',
+                  }
+                default:
+                  return {
+                    type: 'table general note',
+                    message:
+                      'This action will entirely remove the table general note.',
+                  }
+              }
+            })()
 
             if (isTableFootnote || isGeneralFootnote) {
               decorations.push(
@@ -353,7 +368,8 @@ export default (props: PluginProps) => {
                     node,
                     pos,
                     props,
-                    footnoteType,
+                    footnote.type,
+                    footnote.message,
                     node.attrs.id
                   ),
                   {
