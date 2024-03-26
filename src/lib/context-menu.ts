@@ -38,6 +38,7 @@ import {
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
+import { isDeleted, isRejectedInsert } from './track-changes-utils'
 
 const popper = new PopperManager()
 
@@ -307,13 +308,17 @@ export class ContextMenu {
                 const footnotesElement = findChildrenByType(
                   this.node,
                   schema.nodes.footnotes_element
-                )
-                if (!footnotesElement.length) {
+                ).pop()?.node
+                if (
+                  !footnotesElement ||
+                  isDeleted(footnotesElement) ||
+                  isRejectedInsert(footnotesElement)
+                ) {
                   const { state, dispatch } = this.view
                   insertTableFootnote(this.node, this.getPos(), state, dispatch)
                 } else {
                   const footnotes = findChildrenByType(
-                    footnotesElement[0].node,
+                    footnotesElement,
                     schema.nodes.footnote
                   ).map((nodeWithPos) => {
                     return nodeWithPos.node as FootnoteNode
