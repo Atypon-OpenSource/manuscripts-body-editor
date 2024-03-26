@@ -99,22 +99,23 @@ export class BibliographyElementBlockView<
   public showContextMenu = (elementId: string) => {
     this.props.popper.destroy() // destroy the old context menu
     this.clickedElementId = null // reset clicked element id
-
+    const can = this.props.getCapabilities()
     const element = document.getElementById(elementId) as Element
     const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Edit',
-          action: () => this.handleEdit(elementId),
-          icon: 'EditIcon',
-        },
-        {
-          label: 'Comment',
-          action: () => this.handleComment(elementId),
-          icon: 'AddComment',
-        },
-      ],
+      actions: [],
     }
+    if (can.editCitationsAndRefs) {
+      componentProps.actions.push({
+        label: 'Edit',
+        action: () => this.handleEdit(elementId),
+        icon: 'EditIcon',
+      })
+    }
+    componentProps.actions.push({
+      label: 'Comment',
+      action: () => this.handleComment(elementId),
+      icon: 'AddComment',
+    })
 
     this.contextMenu = ReactSubView(
       this.props,
@@ -230,6 +231,7 @@ export class BibliographyElementBlockView<
           this.onClickHandler(element.id, dataTracked)
         )
       }
+
       wrapper.append(element)
     }
 
