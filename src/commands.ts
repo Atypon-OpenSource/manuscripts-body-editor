@@ -206,10 +206,17 @@ export const insertGeneralFootnote = (
   const generalNote = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
+  const tableColGroup = findChildrenByType(
+    tableNode,
+    schema.nodes.table_colgroup
+  )[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
-    : position + (tableNode.content.firstChild?.nodeSize || 0)
+    : position +
+      (!tableColGroup
+        ? tableNode.content.firstChild?.nodeSize || 0
+        : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
     tr.insert(pos, generalNote as ManuscriptNode)
@@ -1185,16 +1192,27 @@ export const insertTableFootnote = (
       insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
       tr.insert(insertionPos, footnoteElement)
     } else {
-      const tableSize = node.content.firstChild?.nodeSize
-      if (tableSize) {
-        insertionPos = position + tableSize + 2
-        const tableElementFooter = schema.nodes.table_element_footer.create(
-          {
-            id: generateID(ObjectTypes.TableElementFooter),
-          },
-          [footnoteElement]
-        )
+      const tableElementFooter = schema.nodes.table_element_footer.create(
+        {
+          id: generateID(ObjectTypes.TableElementFooter),
+        },
+        [footnoteElement]
+      )
+
+      const tableColGroup = findChildrenByType(
+        node,
+        schema.nodes.table_colgroup
+      )[0]
+      if (tableColGroup) {
+        insertionPos =
+          position + tableColGroup.pos + tableColGroup.node.nodeSize + 2
         tr.insert(insertionPos, tableElementFooter)
+      } else {
+        const tableSize = node.content.firstChild?.nodeSize
+        if (tableSize) {
+          insertionPos = position + tableSize + 2
+          tr.insert(insertionPos, tableElementFooter)
+        }
       }
     }
   }
