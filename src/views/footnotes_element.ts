@@ -17,6 +17,7 @@
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
+import { setTCClasses } from './footnote'
 
 export class FootnotesElementView<
   PropsType extends BaseNodeProps
@@ -34,4 +35,8 @@ export class FootnotesElementView<
   }
 }
 
-export default createNodeOrElementView(FootnotesElementView, 'div')
+export default createNodeOrElementView(
+  FootnotesElementView,
+  'div',
+  setTCClasses
+)

@@ -19,7 +19,6 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
-  schema,
 } from '@manuscripts/transform'
 import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
@@ -86,8 +85,3 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     }
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
-
-export const isMetaNode = (nodeType: string) =>
-  nodeType === schema.nodes.bibliography_item.name ||
-  nodeType === schema.nodes.affiliation.name ||
-  nodeType === schema.nodes.contributor.name
