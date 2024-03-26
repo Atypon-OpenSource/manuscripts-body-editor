@@ -819,12 +819,12 @@ Next levels are shifted 'up' by 1
   display: inline-flex;
   background: transparent;
   border: 0;
+  font-family: 'PT Sans', sans-serif;
   font-size: 1rem;
   text-decoration: none;
   color: inherit;
   outline: none;
-  padding: 4px 5px;
-  margin: 0 6px;
+  padding: 0;
 }
 
 .contributor:not(:disabled):hover {
@@ -843,7 +843,7 @@ Next levels are shifted 'up' by 1
 .contributor:after {
   content: ', ';
   color: #353535;
-  margin-right: -9px;
+  margin-right: 5px;
 }
 .contributor:last-child::after {
   content: '';

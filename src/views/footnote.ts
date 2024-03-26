@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { ManuscriptNode } from '@manuscripts/transform'
+
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -24,4 +27,13 @@ export class FootnoteView<
   public elementType = 'div'
 }
 
-export default createNodeOrElementView(FootnoteView, 'div')
+export const setTCClasses = (node: ManuscriptNode, dom: HTMLElement) => {
+  const dataTracked = node.attrs.dataTracked
+  if (dataTracked?.length) {
+    const lastChange = dataTracked[dataTracked.length - 1]
+    const changeClasses = getChangeClasses([lastChange])
+    dom.classList.add(...changeClasses)
+  }
+}
+
+export default createNodeOrElementView(FootnoteView, 'div', setTCClasses)

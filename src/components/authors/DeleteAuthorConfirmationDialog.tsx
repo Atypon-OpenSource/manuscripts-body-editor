@@ -1,5 +1,5 @@
 /*!
- * © 2023 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,37 @@
  * limitations under the License.
  */
 import { Category, Dialog } from '@manuscripts/style-guide'
-import React, { useState } from 'react'
+import React from 'react'
 
-export interface DeleteFootnoteDialogProps {
-  footnoteType: string
-  footnoteMessage: string
-  handleDelete: () => void
+import { authorLabel, ContributorAttrs } from '../../lib/authors'
+
+export interface DeleteAuthorConfirmationDialogProps {
+  author: ContributorAttrs
+  isOpen: boolean
+  onDelete: () => void
+  onCancel: () => void
 }
 
-export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
-  footnoteType,
-  footnoteMessage,
-  handleDelete,
-}) => {
-  const [isOpen, setOpen] = useState(true)
-
+export const DeleteAuthorConfirmationDialog: React.FC<
+  DeleteAuthorConfirmationDialogProps
+> = ({ isOpen, author, onDelete, onCancel }) => {
+  const label = authorLabel(author)
   return (
     <Dialog
       isOpen={isOpen}
+      category={Category.confirmation}
+      header={'Remove author'}
+      message={`Are you sure you want to remove ${label} from the authors list?`}
       actions={{
-        primary: {
-          action: () => setOpen(false),
-          title: 'Cancel',
-        },
         secondary: {
-          action: () => {
-            setOpen(false)
-            handleDelete()
-          },
+          action: onDelete,
           title: 'Delete',
         },
+        primary: {
+          action: onCancel,
+          title: 'Cancel',
+        },
       }}
-      category={Category.confirmation}
-      header={`Delete ${footnoteType}`}
-      message={`${footnoteMessage}`}
     />
   )
 }

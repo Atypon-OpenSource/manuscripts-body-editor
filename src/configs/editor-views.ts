@@ -23,7 +23,7 @@ import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
 import citation from '../views/citation_editable'
-import contributorsSection from '../views/contributors'
+import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
 import empty from '../views/empty'
@@ -62,7 +62,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     bullet_list: bulletList(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
-    contributors: contributorsSection(props, dispatch),
+    contributors: contributors(props, dispatch),
     affiliations: affiliationsSection(props, dispatch),
     affiliation: affiliation(props, dispatch),
     equation: equation(props),

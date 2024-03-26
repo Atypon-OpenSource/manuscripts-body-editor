@@ -1,5 +1,5 @@
 /*!
- * © 2023 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,33 @@
  * limitations under the License.
  */
 import { Category, Dialog } from '@manuscripts/style-guide'
-import React, { useState } from 'react'
+import React from 'react'
 
-export interface DeleteFootnoteDialogProps {
-  footnoteType: string
-  footnoteMessage: string
-  handleDelete: () => void
+export interface SaveAuthorConfirmationDialogProps {
+  isOpen: boolean
+  onSave: () => void
+  onCancel: () => void
 }
 
-export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
-  footnoteType,
-  footnoteMessage,
-  handleDelete,
-}) => {
-  const [isOpen, setOpen] = useState(true)
-
+export const SaveAuthorConfirmationDialog: React.FC<
+  SaveAuthorConfirmationDialogProps
+> = ({ isOpen, onSave, onCancel }) => {
   return (
     <Dialog
       isOpen={isOpen}
+      category={Category.confirmation}
+      header="You've made changes to this option"
+      message="Would you like to save or discard your changes?"
       actions={{
-        primary: {
-          action: () => setOpen(false),
-          title: 'Cancel',
-        },
         secondary: {
-          action: () => {
-            setOpen(false)
-            handleDelete()
-          },
-          title: 'Delete',
+          action: onCancel,
+          title: 'Discard',
+        },
+        primary: {
+          action: onSave,
+          title: 'Save',
         },
       }}
-      category={Category.confirmation}
-      header={`Delete ${footnoteType}`}
-      message={`${footnoteMessage}`}
     />
   )
 }
