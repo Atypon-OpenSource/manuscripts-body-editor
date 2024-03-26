@@ -24,7 +24,12 @@ export type Delete<T> = {
   item: T
 }
 
-export type Action<T> = Update<T> | Delete<T>
+export type Set<T> = {
+  type: 'set'
+  state: T[]
+}
+
+export type Action<T> = Update<T> | Delete<T> | Set<T>
 
 export const arrayReducer = <T>(
   isEqual: (a: T, b: T) => boolean = (a, b) => a === b
@@ -51,6 +56,8 @@ export const arrayReducer = <T>(
         return handleUpdate(state, action.items)
       case 'delete':
         return handleDelete(state, action.item)
+      case 'set':
+        return action.state
     }
   }
 }
