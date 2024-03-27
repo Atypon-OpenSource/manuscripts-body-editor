@@ -22,13 +22,8 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import {
-  NodeSelection,
-  Plugin,
-  PluginKey,
-  TextSelection,
-} from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { findParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -38,7 +33,6 @@ import {
 } from '../../components/views/DeleteFootnoteDialog'
 import { PluginProps } from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { isDeleted } from '../../lib/track-changes-utils'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
@@ -103,39 +97,17 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
-interface inlineFootnote {
-  node: InlineFootnoteNode | null
-  pos: number | null
-}
-
-const getInlineFootnote = (view: EditorView, id: string): inlineFootnote => {
-  let inlineFootnote: InlineFootnoteNode | null = null
-  let footnotePosition: number | null = null
-
-  view.state.doc.descendants((node, pos) => {
-    const footnote = node as InlineFootnoteNode
-    if (footnote.attrs.rids?.includes(id)) {
-      inlineFootnote = footnote
-      footnotePosition = pos
-      return false
-    }
-  })
-
-  return { node: inlineFootnote, pos: footnotePosition }
-}
-
 const deleteFootnoteWidget =
   (
     node: ManuscriptNode,
     pos: number,
     props: PluginProps,
-    footnoteType: string,
-    footnoteMessage: string,
-    id: string
+    footnoteType: string
   ) =>
   (view: EditorView) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-icon'
+
     deleteBtn.innerHTML = deleteIcon
 
     deleteBtn.addEventListener('click', () => {
@@ -143,42 +115,20 @@ const deleteFootnoteWidget =
         const tr = view.state.tr
 
         // delete general footnotes
-        if (node.type === schema.nodes.table_element_footer) {
-          node.content.forEach((item) => {
-            if (item.type === schema.nodes.paragraph) {
-              tr.delete(pos, pos + item.nodeSize + 1)
-            }
-          })
-          // Check if the node is empty after deleting all notes
-          if (!node.childCount) {
-            tr.setSelection(
-              TextSelection.near(view.state.doc.resolve(0))
-            ).delete(pos, pos + node.nodeSize + 1)
+        node.content.forEach((item) => {
+          if (item.type === schema.nodes.paragraph) {
+            tr.delete(pos, pos + item.nodeSize + 1)
           }
-        }
-        // delete table footnotes
-        if (node.type === schema.nodes.footnote) {
-          const inlineFootnoteResult = getInlineFootnote(view, id)
-
-          tr.setSelection(TextSelection.near(view.state.doc.resolve(0))).delete(
-            pos,
-            pos + node.nodeSize + 1
-          )
-          // delete inline footnotes
-          if (inlineFootnoteResult.node) {
-            const pos = inlineFootnoteResult.pos
-            const nodeSize = inlineFootnoteResult.node.nodeSize
-            if (pos !== null && nodeSize !== null) {
-              tr.delete(pos, pos + nodeSize)
-            }
-          }
+        })
+        // Check if the node is empty after deleting general notes
+        if (!node.childCount) {
+          tr.delete(pos, pos + node.nodeSize)
         }
         view.dispatch(tr)
       }
 
       const componentProps: DeleteFootnoteDialogProps = {
         footnoteType: footnoteType,
-        footnoteMessage: footnoteMessage,
         handleDelete: handleDelete,
       }
 
@@ -279,15 +229,11 @@ export default (props: PluginProps) => {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const isInTableElementFooter = hasParentNodeOfType(
+        const tableElementFooter = findParentNodeOfType(
           schema.nodes.table_element_footer
         )(state.selection)
 
-        const isInTableElement = hasParentNodeOfType(
-          schema.nodes.table_element
-        )(state.selection)
-
-        if (isInTableElementFooter) {
+        if (tableElementFooter) {
           const parent = findParentNodeWithIdValue(state.selection)
           if (parent) {
             decorations.push(
@@ -296,6 +242,25 @@ export default (props: PluginProps) => {
                 class: 'footnote-selected',
               })
             )
+
+            if (parent.node.type === schema.nodes.paragraph) {
+              // display the delete icon only if there is a text
+              decorations.push(
+                Decoration.widget(
+                  parent.pos + 1,
+
+                  deleteFootnoteWidget(
+                    tableElementFooter.node,
+                    tableElementFooter.pos,
+                    props,
+                    'table general note' //pass a variable instead of string after implementing LEAN-3143
+                  ),
+                  {
+                    key: parent.node.attrs.id,
+                  }
+                )
+              )
+            }
           }
         }
 
@@ -336,64 +301,14 @@ export default (props: PluginProps) => {
               )
             }
           }
-          if (isInTableElement) {
-            const isGeneralFootnote =
-              node.firstChild?.type === schema.nodes.paragraph
-            const isTableFootnote = node.type === schema.nodes.footnote
-
-            const footnote = (() => {
-              switch (node.type) {
-                case schema.nodes.footnote:
-                  return {
-                    type: 'table footnote',
-                    message:
-                      'This action will entirely remove the table footnote from the list  because it will no longer be used.',
-                  }
-                default:
-                  return {
-                    type: 'table general note',
-                    message:
-                      'This action will entirely remove the table general note.',
-                  }
-              }
-            })()
-
-            if (isTableFootnote || isGeneralFootnote) {
-              decorations.push(
-                Decoration.widget(
-                  pos + 2,
-
-                  deleteFootnoteWidget(
-                    node,
-                    pos,
-                    props,
-                    footnote.type,
-                    footnote.message,
-                    node.attrs.id
-                  ),
-                  {
-                    key: node.attrs.id,
-                  }
-                )
-              )
-            }
-            if (isDeleted(node)) {
-              decorations.push(
-                // Add a class for styling deleted table and inline footnotes
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'deleted-footnote',
-                })
-              )
-            }
-          }
-
           if (node.type === schema.nodes.footnotes_element) {
+            decorations.push(
+              Decoration.node(pos, pos + node.nodeSize, {
+                class: 'table-footnotes-element',
+              })
+            )
+
             if (parent?.type === schema.nodes.table_element_footer) {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'table-footnotes-element',
-                })
-              )
               tableInlineFootnoteIds = findTableInlineFootnoteIds(
                 state.doc.resolve(pos)
               )
