@@ -23,11 +23,18 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import { findParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { alertIcon } from '../../assets'
+import { alertIcon, deleteIcon } from '../../assets'
+import {
+  DeleteFootnoteDialog,
+  DeleteFootnoteDialogProps,
+} from '../../components/views/DeleteFootnoteDialog'
+import { PluginProps } from '../../configs/editor-plugins'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue } from '../../lib/utils'
+import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
 
@@ -90,6 +97,53 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
+const deleteFootnoteWidget =
+  (
+    node: ManuscriptNode,
+    pos: number,
+    props: PluginProps,
+    footnoteType: string
+  ) =>
+  (view: EditorView) => {
+    const deleteBtn = document.createElement('span')
+    deleteBtn.className = 'delete-icon'
+
+    deleteBtn.innerHTML = deleteIcon
+
+    deleteBtn.addEventListener('click', () => {
+      const handleDelete = () => {
+        const tr = view.state.tr
+
+        // delete general footnotes
+        node.content.forEach((item) => {
+          if (item.type === schema.nodes.paragraph) {
+            tr.delete(pos, pos + item.nodeSize + 1)
+          }
+        })
+        // Check if the node is empty after deleting general notes
+        if (!node.childCount) {
+          tr.delete(pos, pos + node.nodeSize)
+        }
+        view.dispatch(tr)
+      }
+
+      const componentProps: DeleteFootnoteDialogProps = {
+        footnoteType: footnoteType,
+        handleDelete: handleDelete,
+      }
+
+      ReactSubView(
+        { ...props, dispatch: view.dispatch } as unknown as EditorProps,
+        DeleteFootnoteDialog,
+        componentProps,
+        node,
+        () => pos,
+        view
+      )
+    })
+
+    return deleteBtn
+  }
 
 /**
  * This plugin provides support of footnotes related behaviours:
@@ -123,7 +177,8 @@ export const uncitedFootnoteWidget = () => () => {
  *       },
  *
  */
-export default () => {
+
+export default (props: PluginProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
 
@@ -174,11 +229,11 @@ export default () => {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const isInTableElementFooter = hasParentNodeOfType(
+        const tableElementFooter = findParentNodeOfType(
           schema.nodes.table_element_footer
         )(state.selection)
 
-        if (isInTableElementFooter) {
+        if (tableElementFooter) {
           const parent = findParentNodeWithIdValue(state.selection)
           if (parent) {
             decorations.push(
@@ -187,6 +242,24 @@ export default () => {
                 class: 'footnote-selected',
               })
             )
+
+            if (parent.node.type === schema.nodes.paragraph) {
+              decorations.push(
+                Decoration.widget(
+                  parent.pos + 1,
+
+                  deleteFootnoteWidget(
+                    tableElementFooter.node,
+                    tableElementFooter.pos,
+                    props,
+                    'table general note' //pass a variable instead of string after implementing LEAN-3143
+                  ),
+                  {
+                    key: parent.node.attrs.id,
+                  }
+                )
+              )
+            }
           }
         }
 
@@ -228,12 +301,13 @@ export default () => {
             }
           }
           if (node.type === schema.nodes.footnotes_element) {
+            decorations.push(
+              Decoration.node(pos, pos + node.nodeSize, {
+                class: 'table-footnotes-element',
+              })
+            )
+
             if (parent?.type === schema.nodes.table_element_footer) {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'table-footnotes-element',
-                })
-              )
               tableInlineFootnoteIds = findTableInlineFootnoteIds(
                 state.doc.resolve(pos)
               )
