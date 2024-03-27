@@ -1519,6 +1519,15 @@
     deepmerge "^4.3.1"
     uuid "^9.0.0"
 
+"@manuscripts/json-schema@^2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.6.tgz#383b4f74bcfb6b3795255c092965a0052f8466d1"
+  integrity sha512-Lz7zJClr8r6pyzwe1rNc9TBMKXIFpZyyBfylWPZ6Rfxx1NX44iA7ROj1/F2l/Qs9QeP7nXX5k+nR+VqLUf7l/A==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+    uuid "^9.0.0"
+
 "@manuscripts/library@^1.3.3":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.3.tgz#7273bab40fbae1ca332d6ec8404d1557b353d36f"
@@ -1530,14 +1539,25 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.7.8-LEAN-3278":
-  version "1.7.8-LEAN-3278"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.7.8-LEAN-3278.tgz#4f4108010159266995313f8b10801231bbf59ad1"
-  integrity sha512-hrVpIia10LIjeGRZV7UeioDfp7o5y24kjXpZezsnUsZ/gAUgN+oz95vdCTRcBsiWidU2Bpl0uDBB6LbSaFEasg==
+"@manuscripts/library@^1.3.5":
+  version "1.3.5"
+  resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.5.tgz#eea1c1343431c8de325ca7280dd04542f57f178e"
+  integrity sha512-vI9PQSMGkmlvBBD/Lyqoh8jx+9ML9/4e7Qdrfj1aE+gaZzGR4REj2hWhKhj+PLd2sjBp8lKyWl0XE/gS+4pwLA==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.6"
+    astrocite-bibtex "^0.16.4"
+    astrocite-ris "^0.16.4"
+    citeproc "^2.4.62"
+    fontoxpath "^3.28.2"
+
+"@manuscripts/style-guide@1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.8.1.tgz#347c5561e8e18fb62616ebef33b480e3c7ba85f2"
+  integrity sha512-L7zzebewM8p/d+a5Vck90qICfmi0RiWeJwP5atXSMUWhuYnHuGu7ZiPGBBix8xO49the0W6MKGJRfl/TXrBLmQ==
   dependencies:
     "@manuscripts/assets" "^0.6.4"
-    "@manuscripts/json-schema" "^2.2.4"
-    "@manuscripts/transform" "2.1.3"
+    "@manuscripts/json-schema" "^2.2.6"
+    "@manuscripts/transform" "^2.1.6"
     "@reach/tabs" "^0.18.0"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1556,10 +1576,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.5-LEAN-3278":
-  version "1.7.5-LEAN-3278"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.5-LEAN-3278.tgz#befffee106f2f6465ac0714e651114ae68848a93"
-  integrity sha512-DghKOrcO3hgW5Qsuwbjs0qfaezHqZNJyvWtbC/wOObFElmnRvhWL9k+9TOLe4u6liYxWagRxDRYQMRPj/XA1Og==
+"@manuscripts/track-changes-plugin@1.7.8":
+  version "1.7.8"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.8.tgz#dd6e1743310c0860b89f00df753eae81f535ed48"
+  integrity sha512-pENKJRtT1sC/YzRf8ncLzuXn//2pY4LhBTOhBENf1E9fGX2HGXBGErFnW4TDBkudtERFc/WBmZwP0bzHgsJGdg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1584,6 +1604,21 @@
     mathjax-full "^3.2.2"
     mime "^3.0.0"
     prosemirror-model "^1.18.3"
+    uuid "^9.0.0"
+    w3c-xmlserializer "^4.0.0"
+
+"@manuscripts/transform@^2.1.6":
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.8.tgz#495e8771178f9a0cbd1e58aa5e978119e4a42cc9"
+  integrity sha512-ynjnSfwiLX2l5Pw99+7MIKMgFBUfVpk+nqCv22ZvhtOoi0P8ErzO+z9TUTygTwShlt4+fV6ZT/1hFAyAraK+Tw==
+  dependencies:
+    "@manuscripts/json-schema" "^2.2.6"
+    "@manuscripts/library" "^1.3.5"
+    debug "^4.3.4"
+    jszip "^3.10.1"
+    mime "^3.0.0"
+    prosemirror-model "^1.18.3"
+    prosemirror-tables "^1.3.5"
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
@@ -6457,6 +6492,17 @@ prosemirror-tables@^1.3.0, prosemirror-tables@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.3.5.tgz#80f03394f5b9991f9693bcb3a90b6dba6b16254d"
   integrity sha512-JSZ2cCNlApu/ObAhdPyotrjBe2cimniniTpz60YXzbL0kZ+47nEYk2LWbfKU2lKpBkUNquta2PjteoNi4YCluQ==
+  dependencies:
+    prosemirror-keymap "^1.1.2"
+    prosemirror-model "^1.8.1"
+    prosemirror-state "^1.3.1"
+    prosemirror-transform "^1.2.1"
+    prosemirror-view "^1.13.3"
+
+prosemirror-tables@^1.3.5:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.3.7.tgz#9d296bd432d2bc7dca90f14e5c3b5c5f61277f7a"
+  integrity sha512-oEwX1wrziuxMtwFvdDWSFHVUWrFJWt929kVVfHvtTi8yvw+5ppxjXZkMG/fuTdFo+3DXyIPSKfid+Be1npKXDA==
   dependencies:
     prosemirror-keymap "^1.1.2"
     prosemirror-model "^1.8.1"
