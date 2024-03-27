@@ -339,8 +339,7 @@ export default (props: PluginProps) => {
           if (isInTableElement) {
             const isGeneralFootnote =
               node.firstChild?.type === schema.nodes.paragraph
-            const isTableFootnote =
-              node.type === schema.nodes.footnote
+            const isTableFootnote = node.type === schema.nodes.footnote
 
             const footnote = (() => {
               switch (node.type) {
