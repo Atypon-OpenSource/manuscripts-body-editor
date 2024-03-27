@@ -19,7 +19,6 @@ import { FileAttachment } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   buildComment,
-  buildInlineMathFragment,
   FigureNode,
   FootnoteNode,
   generateID,
@@ -59,6 +58,7 @@ import {
 
 import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
@@ -182,7 +182,6 @@ export const createBlock = (
     case state.schema.nodes.equation_element:
       node = state.schema.nodes.equation_element.create({}, [
         state.schema.nodes.equation.create(),
-        createAndFillFigcaptionElement(state),
       ])
       break
     default:
@@ -207,10 +206,17 @@ export const insertGeneralFootnote = (
   const generalNote = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
+  const tableColGroup = findChildrenByType(
+    tableNode,
+    schema.nodes.table_colgroup
+  )[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
-    : position + (tableNode.content.firstChild?.nodeSize || 0)
+    : position +
+      (!tableColGroup
+        ? tableNode.content.firstChild?.nodeSize || 0
+        : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
     tr.insert(pos, generalNote as ManuscriptNode)
@@ -443,16 +449,12 @@ export const insertInlineEquation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const inlineMathFragment = buildInlineMathFragment(
-    state.selection.$anchor.parent.attrs.id,
-    selectedText().replace(/^\$/, '').replace(/\$$/, '')
-  )
-
   const sourcePos = state.selection.from - 1
 
   const tr = state.tr.replaceSelectionWith(
     state.schema.nodes.inline_equation.create({
-      id: inlineMathFragment._id,
+      format: 'tex',
+      contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
     })
   )
 
@@ -873,23 +875,25 @@ export const selectAllIsolating = (
 /**
  * Create a figure containing a 2x2 table with header and footer and a figcaption
  */
-export const createAndFillTableElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.table_element.createChecked({}, [
-    state.schema.nodes.table.create(
-      {},
-      state.schema.nodes.table_body.create(
-        {},
-        Array.from([1, 2, 3, 4], () =>
-          state.schema.nodes.table_row.create({}, [
-            state.schema.nodes.table_cell.create(),
-            state.schema.nodes.table_cell.create(),
-          ])
-        )
-      )
-    ),
+export const createAndFillTableElement = (state: ManuscriptEditorState) => {
+  const emptyTableHeader = state.schema.nodes.table_row.create({}, [
+    state.schema.nodes.table_header.create(),
+    state.schema.nodes.table_header.create(),
+  ])
+
+  const emptyTableRow = state.schema.nodes.table_row.create({}, [
+    state.schema.nodes.table_cell.create(),
+    state.schema.nodes.table_cell.create(),
+  ])
+
+  const tableRows = [emptyTableHeader, ...Array(3).fill(emptyTableRow)]
+
+  return state.schema.nodes.table_element.createChecked({}, [
+    state.schema.nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
     state.schema.nodes.listing.create(),
   ])
+}
 
 const createAndFillFigureElement = (state: ManuscriptEditorState) =>
   state.schema.nodes.figure_element.create({}, [
@@ -1163,10 +1167,14 @@ export const insertTableFootnote = (
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
-  )
-  if (footnotesElement.length) {
-    const pos = footnotesElement[0].pos
-    insertionPos = position + pos + footnotesElement[0].node.nodeSize + 1
+  ).pop()
+  if (
+    footnotesElement &&
+    !isDeleted(footnotesElement.node) &&
+    !isRejectedInsert(footnotesElement.node)
+  ) {
+    const pos = footnotesElement.pos
+    insertionPos = position + pos + footnotesElement.node.nodeSize + 1
     tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
@@ -1184,16 +1192,27 @@ export const insertTableFootnote = (
       insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
       tr.insert(insertionPos, footnoteElement)
     } else {
-      const tableSize = node.content.firstChild?.nodeSize
-      if (tableSize) {
-        insertionPos = position + tableSize + 2
-        const tableElementFooter = schema.nodes.table_element_footer.create(
-          {
-            id: generateID(ObjectTypes.TableElementFooter),
-          },
-          [footnoteElement]
-        )
+      const tableElementFooter = schema.nodes.table_element_footer.create(
+        {
+          id: generateID(ObjectTypes.TableElementFooter),
+        },
+        [footnoteElement]
+      )
+
+      const tableColGroup = findChildrenByType(
+        node,
+        schema.nodes.table_colgroup
+      )[0]
+      if (tableColGroup) {
+        insertionPos =
+          position + tableColGroup.pos + tableColGroup.node.nodeSize + 2
         tr.insert(insertionPos, tableElementFooter)
+      } else {
+        const tableSize = node.content.firstChild?.nodeSize
+        if (tableSize) {
+          insertionPos = position + tableSize + 2
+          tr.insert(insertionPos, tableElementFooter)
+        }
       }
     }
   }

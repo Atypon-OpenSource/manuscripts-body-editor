@@ -42,8 +42,6 @@ export const isBibliographyElement = (node: ManuscriptNode) =>
 
 export type CitationNodes = [CitationNode, number][]
 
-let count = 0
-
 export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
   const decorations: Decoration[] = []
 
@@ -72,7 +70,7 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
     }
     decorations.push(
       Decoration.node(pos, pos + node.nodeSize, {
-        'data-updated': Date.now().toString(),
+        version: state.version,
       })
     )
   }
@@ -81,14 +79,9 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
     doc.descendants((node, pos) => {
       if (isBibliographyElement(node)) {
         decorations.push(
-          Decoration.node(
-            pos,
-            pos + node.nodeSize,
-            {},
-            {
-              missing: true,
-            }
-          )
+          Decoration.node(pos, pos + node.nodeSize, {
+            missing: 'true',
+          })
         )
 
         decorations.push(
@@ -112,14 +105,9 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
   doc.descendants((node, pos) => {
     if (isBibliographyElement(node)) {
       decorations.push(
-        Decoration.node(
-          pos,
-          pos + node.nodeSize,
-          {},
-          {
-            refresh: count++,
-          }
-        )
+        Decoration.node(pos, pos + node.nodeSize, {
+          version: state.version,
+        })
       )
     }
   })

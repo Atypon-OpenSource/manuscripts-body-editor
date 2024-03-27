@@ -120,3 +120,7 @@ export const getAttrsTrackingButton = (changeID: string) => {
 
   return el
 }
+
+export function isHidden(node: ProsemirrorNode) {
+  return isDeleted(node) || isRejectedInsert(node)
+}

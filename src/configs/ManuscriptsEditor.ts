@@ -69,9 +69,6 @@ export interface EditorProps {
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   collabProvider?: CollabProvider
-
-  openAuthorEditing: () => void
-  selectAuthorForEditing: (authorId: string) => void
 }
 
 export const createEditorState = (props: EditorProps) =>

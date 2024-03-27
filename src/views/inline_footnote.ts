@@ -17,6 +17,7 @@
 import { ManuscriptNodeView } from '@manuscripts/transform'
 import { History } from 'history'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -37,6 +38,10 @@ export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
 
   public updateContents = () => {
     this.setDomAttrs(this.node, this.dom)
+    this.dom.className = [
+      'footnote',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ].join(' ')
   }
 
   public initialise = () => {

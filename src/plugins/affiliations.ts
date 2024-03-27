@@ -25,7 +25,6 @@ import {
   isContributorNode,
   ManuscriptNode,
 } from '@manuscripts/transform'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -36,6 +35,7 @@ import {
 } from '../lib/track-changes-utils'
 
 interface PluginState {
+  version: string
   indexedAffiliationIds: Map<string, number> // key is authore id
   contributors: Array<[ContributorNode, number]>
   affiliations: Array<[AffiliationNode, number]>
@@ -43,6 +43,7 @@ interface PluginState {
 
 export const affiliationsKey = new PluginKey<PluginState>('affiliations')
 
+let id = 1
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const contributors: Array<[ContributorNode, number]> = []
   const affiliations: Array<[AffiliationNode, number]> = []
@@ -78,13 +79,12 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   )
 
   return {
+    version: String(id++),
     indexedAffiliationIds,
     contributors,
     affiliations,
   }
 }
-
-let count = 0
 
 export default () => {
   return new Plugin<PluginState>({
@@ -142,28 +142,15 @@ export default () => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
-        const allNodes: Array<[ProsemirrorNode, number]> = []
-
-        state.doc.descendants((node, pos) => {
-          if (isAffiliationNode(node) || isContributorNode(node)) {
-            allNodes.push([node, pos])
-          }
+        const aff = affiliationsKey.getState(state) as PluginState
+        const nodes = [...aff.contributors, ...aff.affiliations]
+        nodes.forEach(([node, pos]) => {
+          decorations.push(
+            Decoration.node(pos, pos + node.nodeSize, {
+              version: aff.version,
+            })
+          )
         })
-
-        if (allNodes.length) {
-          allNodes.forEach(([node, pos]) => {
-            decorations.push(
-              Decoration.node(
-                pos,
-                pos + node.nodeSize,
-                {},
-                {
-                  refresh: count++,
-                }
-              )
-            )
-          })
-        }
 
         return DecorationSet.create(state.doc, decorations)
       },
