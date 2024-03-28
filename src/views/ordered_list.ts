@@ -26,6 +26,7 @@ type JatsStyleType = NonNullable<ListElement['listStyleType']>
 export const JATS_HTML_LIST_STYLE_MAPPING: {
   [key in JatsStyleType]: string
 } = {
+  simple: 'none',
   bullet: 'disc',
   order: 'decimal',
   'alpha-lower': 'lower-alpha',
