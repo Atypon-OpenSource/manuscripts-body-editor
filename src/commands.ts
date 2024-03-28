@@ -1208,12 +1208,12 @@ export const insertTableFootnote = (
       )[0]
       if (tableColGroup) {
         insertionPos =
-          position + tableColGroup.pos + tableColGroup.node.nodeSize + 2
+          position + tableColGroup.pos + tableColGroup.node.nodeSize
         tr.insert(insertionPos, tableElementFooter)
       } else {
         const tableSize = node.content.firstChild?.nodeSize
         if (tableSize) {
-          insertionPos = position + tableSize + 2
+          insertionPos = position + tableSize
           tr.insert(insertionPos, tableElementFooter)
         }
       }
