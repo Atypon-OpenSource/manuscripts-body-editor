@@ -61,6 +61,7 @@ import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
+// import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
 
@@ -542,6 +543,12 @@ export const insertInlineFootnote =
       }
       const pos =
         footnotesSection.pos + footnoteElement[0].pos + correctPosition + 2
+
+      // Ready to use util from footnotes-utils
+      // const newPos = getNewFootnotePos(
+      //   { node: footnoteElement[0].node, pos: footnoteElement[0].pos },
+      //   index
+      // ) + 2
 
       tr.insert(pos, footnote)
       selectionPos = pos + 2

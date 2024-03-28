@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-import { InlineFootnoteNode, schema } from '@manuscripts/transform'
+import {
+  InlineFootnoteNode,
+  isFootnoteNode,
+  schema,
+} from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
+import {
+  findChildren,
+  findParentNodeClosestToPos,
+  NodeWithPos,
+} from 'prosemirror-utils'
+
+// export type nodeWithPos = {
+//   node: FigureElementNode;
+//   pos: number;
+// } | undefined
 
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
@@ -49,4 +62,31 @@ export const createFootnoteLabel = (id: string) => {
           START + id1
         )}`
   return label
+}
+
+export const getNewFootnotePos = (
+  footnotesElementAndPos: NodeWithPos,
+  index: number
+) => {
+  /* The default is at the end of footnotes.
+  Don't worry, if any un cited notes exist, this default value will not be used 
+  and it will fall in the upcoming calculation */
+  let newFootnotePos =
+    footnotesElementAndPos.pos + footnotesElementAndPos.node.nodeSize - 1
+
+  // The footnote with index === 0 (the first one) will be placed at the beginning of the footnotes.
+  if (index === 0) {
+    newFootnotePos = footnotesElementAndPos.pos + 2
+  } else {
+    // Each other footnotes will be placed after the previous one.
+    footnotesElementAndPos.node.descendants((node, pos, parent, nodeIndex) => {
+      if (isFootnoteNode(node)) {
+        if (index > nodeIndex) {
+          console.log(nodeIndex)
+          newFootnotePos = footnotesElementAndPos.pos + pos + node.nodeSize + 2
+        }
+      }
+    })
+  }
+  return newFootnotePos
 }
