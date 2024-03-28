@@ -47,11 +47,6 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
       return
     }
 
-    if (!this.popperContainer) {
-      this.popperContainer = document.createElement('div')
-      this.popperContainer.className = 'link-editor'
-    }
-
     const originalValue: LinkValue = {
       href: this.node.attrs.href,
       title: this.node.attrs.title,
@@ -71,7 +66,8 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
       componentProps,
       this.node,
       this.getPos,
-      this.view
+      this.view,
+      'link-editor'
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')
