@@ -129,8 +129,3 @@ export const orderTableFootnotes = (
     Fragment.fromArray(orderedFootnotes)
   )
 }
-
-export const isMetaNode = (nodeType: string) =>
-  nodeType === schema.nodes.bibliography_item.name ||
-  nodeType === schema.nodes.affiliation.name ||
-  nodeType === schema.nodes.contributor.name
