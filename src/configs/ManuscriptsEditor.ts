@@ -28,7 +28,7 @@ import {
 } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
-import { EditorState, Plugin } from 'prosemirror-state'
+import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
 
@@ -48,7 +48,6 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
   theme: DefaultTheme
-  plugins?: Plugin[]
   getCurrentUser: () => UserProfile
 
   projectID: string
@@ -61,17 +60,15 @@ export interface EditorProps {
   history: History
 
   getCapabilities: () => Capabilities
+  userID: string
+  debug: boolean
   cslProps: CSLProps
 
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
-  environment?: string
   collabProvider?: CollabProvider
-
-  openAuthorEditing: () => void
-  selectAuthorForEditing: (authorId: string) => void
 }
 
 export const createEditorState = (props: EditorProps) =>

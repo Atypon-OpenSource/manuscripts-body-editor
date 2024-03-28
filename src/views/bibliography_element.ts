@@ -33,6 +33,7 @@ import {
   getAttrsTrackingButton,
   getChangeClasses,
 } from '../lib/track-changes-utils'
+import { deleteNode, updateNode } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
@@ -228,11 +229,11 @@ export class BibliographyElementBlockView<
 
   private handleSave = (item: BibliographyItem) => {
     const node = this.decoder.decode(item) as BibliographyItemNode
-    this.updateNodeAttrs(node.attrs)
+    updateNode(this.view, node)
   }
 
   private handleDelete = (item: BibliographyItem) => {
-    return this.deleteNode(item._id)
+    deleteNode(this.view, item._id)
   }
 
   private addClickListenerToBibItem = (

@@ -101,8 +101,7 @@ export const useEditor = (props: EditorProps) => {
 
       if (
         collabProvider &&
-        trackState &&
-        trackState.status !== TrackChangesStatus.viewSnapshots
+        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
       ) {
         const sendable = sendableSteps(nextState)
         if (sendable) {
