@@ -38,6 +38,7 @@ import { findChildren, findChildrenByType } from 'prosemirror-utils'
 
 import { crossref } from '../citation-sources'
 import { isDeleted } from '../lib/track-changes-utils'
+import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { CitationEditorWrapper } from './CitationEditorWrapper'
@@ -141,7 +142,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.insertBibliographyNode(item)
     } else {
       const node = this.decoder.decode(item) as BibliographyItemNode
-      this.updateNodeAttrs(node.attrs)
+      updateNodeAttrs(this.view, node.type, node.attrs)
     }
   }
 
@@ -203,7 +204,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   private handleDelete = (item: BibliographyItem) => {
-    return this.deleteNode(item._id)
+    return deleteNode(this.view, item._id)
   }
 
   private handleComment = () => {

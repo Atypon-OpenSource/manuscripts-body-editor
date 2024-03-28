@@ -16,6 +16,10 @@
 
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
-import { FootnoteView } from './footnote'
+import { FootnoteView, setTCClasses } from './footnote'
 
-export default createNodeOrElementView(EditableBlock(FootnoteView), 'div')
+export default createNodeOrElementView(
+  EditableBlock(FootnoteView),
+  'div',
+  setTCClasses
+)
