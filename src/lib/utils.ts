@@ -85,4 +85,3 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     }
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
-

@@ -33,7 +33,6 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
-import { createFootnoteLabel } from '../footnotes/footnotes-utils'
 import { placeholderWidget } from '../placeholder'
 import {
   createFootnoteLabel,
