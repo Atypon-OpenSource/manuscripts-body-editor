@@ -93,10 +93,8 @@ export const defaultEditorProps: EditorProps = {
     locale: '',
   },
   getCitationProvider: () => undefined,
-  plugins: [],
   retrySync: () => Promise.resolve(),
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
-  environment: undefined,
 }

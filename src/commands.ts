@@ -60,6 +60,7 @@ import { EditorView } from 'prosemirror-view'
 import { skipCommandTracking } from './keys/list'
 import { getNewFootnotePos } from './lib/footnotes-utils'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
@@ -207,10 +208,17 @@ export const insertGeneralFootnote = (
   const generalNote = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
+  const tableColGroup = findChildrenByType(
+    tableNode,
+    schema.nodes.table_colgroup
+  )[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
-    : position + (tableNode.content.firstChild?.nodeSize || 0)
+    : position +
+      (!tableColGroup
+        ? tableNode.content.firstChild?.nodeSize || 0
+        : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
     tr.insert(pos, generalNote as ManuscriptNode)
@@ -1193,6 +1201,12 @@ export const insertTableFootnote = (
           [footnoteElement]
         )
         tr.insert(insertionPos, tableElementFooter)
+      } else {
+        const tableSize = node.content.firstChild?.nodeSize
+        if (tableSize) {
+          insertionPos = position + tableSize + 2
+          tr.insert(insertionPos, tableElementFooter)
+        }
       }
     }
   }

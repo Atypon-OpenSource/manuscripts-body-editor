@@ -20,7 +20,6 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
-  schema,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { Selection, Transaction } from 'prosemirror-state'

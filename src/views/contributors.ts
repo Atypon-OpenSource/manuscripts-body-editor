@@ -13,10 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
-import { ContributorNode, isContributorNode } from '@manuscripts/transform'
 
+import { Capabilities, SecondaryButton } from '@manuscripts/style-guide'
+import {
+  ContributorNode,
+  isContributorNode,
+  schema,
+} from '@manuscripts/transform'
+
+import {
+  AuthorsModal,
+  AuthorsModalProps,
+} from '../components/authors/AuthorsModal'
+import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
 import { getActualAttrs } from '../lib/track-changes-utils'
+import {
+  deleteNode,
+  findChildByID,
+  findChildByType,
+  findChildrenAttrsByType,
+  updateNodeAttrs,
+} from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion-ui'
 import { TrackableAttributes } from '../types'
@@ -34,6 +51,10 @@ export interface ContributorsProps extends EditableBlockProps {
 export class ContributorsView<
   PropsType extends ContributorsProps
 > extends BlockView<PropsType> {
+  container: HTMLElement
+  inner: HTMLElement
+  popper?: HTMLElement
+
   public initialise = () => {
     this.createDOM()
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
@@ -90,9 +111,6 @@ export class ContributorsView<
     this.container.appendChild(authorsWrapper)
   }
 
-  container: HTMLElement
-  inner: HTMLElement
-
   buildAuthor = (
     node: ContributorNode,
     isJointFirstAuthor: boolean,
@@ -122,17 +140,13 @@ export class ContributorsView<
 
     const disableEditButton = !can.editMetadata
 
-    const { bibliographicName, isCorresponding, email, id } = displayAttr
+    const { isCorresponding, email } = displayAttr
 
-    container.addEventListener('click', (e) => {
-      e.preventDefault()
-      if (!disableEditButton) {
-        this.props.openAuthorEditing()
-        this.props.selectAuthorForEditing(id)
-      }
-    })
+    if (!disableEditButton) {
+      container.addEventListener('click', this.handleClick)
+    }
 
-    const name = this.buildNameLiteral(bibliographicName)
+    const name = authorLabel(displayAttr)
     container.innerHTML =
       isCorresponding && email
         ? `<span class="name">${name} (${email})</span>`
@@ -177,24 +191,6 @@ export class ContributorsView<
     return el
   }
 
-  initials = (given: string): string =>
-    given
-      ? given
-          .trim()
-          .split(' ')
-          .map((part) => part.substr(0, 1).toUpperCase() + '.')
-          .join('')
-      : ''
-
-  buildNameLiteral = ({ given = '', family = '', suffix = '' }) => {
-    if (!given && !family) {
-      return 'Unknown Author'
-    }
-    return [this.initials(given), family, suffix]
-      .filter((part) => part)
-      .join(' ')
-  }
-
   public isJointFirstAuthor = (authors: ContributorNode[], index: number) => {
     const author = index === 0 ? authors[index] : authors[index - 1]
 
@@ -224,7 +220,7 @@ export class ContributorsView<
       SecondaryButton,
       {
         mini: true,
-        onClick: this.props.openAuthorEditing,
+        onClick: this.handleClick,
         className: 'edit-authors-button',
         disabled: !can.editMetadata,
         children: 'Edit Authors',
@@ -250,6 +246,85 @@ export class ContributorsView<
         this.container.appendChild(element)
       }
     }
+  }
+
+  handleClick = (e: Event) => {
+    e.stopPropagation()
+
+    const contributors: ContributorAttrs[] = findChildrenAttrsByType(
+      this.view,
+      schema.nodes.contributor
+    )
+
+    const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
+      this.view,
+      schema.nodes.affiliation
+    )
+
+    let author = undefined
+    const target = e.target as Element
+    if (target) {
+      const id = target.closest('.contributor')?.getAttribute('id') as string
+      author = contributors.filter((a) => a.id === id)[0]
+    }
+
+    const componentProps: AuthorsModalProps = {
+      author,
+      authors: contributors,
+      affiliations,
+      onSaveAuthor: this.handleSaveAuthor,
+      onDeleteAuthor: this.handleDeleteAuthor,
+      onSaveAffiliation: this.handleSaveAffiliation,
+    }
+
+    this.popper?.remove()
+
+    this.popper = ReactSubView(
+      this.props,
+      AuthorsModal,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view
+    )
+
+    this.container.appendChild(this.popper)
+  }
+
+  handleSaveAuthor = (author: ContributorAttrs) => {
+    if (!findChildByID(this.view, author.id)) {
+      this.insertAuthorNode(author)
+    } else {
+      updateNodeAttrs(this.view, schema.nodes.contributor, author)
+    }
+  }
+
+  handleDeleteAuthor = (author: ContributorAttrs) => {
+    deleteNode(this.view, author.id)
+  }
+
+  handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
+    if (!findChildByID(this.view, affiliation.id)) {
+      this.insertAffiliationNode(affiliation)
+    } else {
+      updateNodeAttrs(this.view, schema.nodes.affiliation, affiliation)
+    }
+  }
+
+  insertAuthorNode = (attrs: ContributorAttrs) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const parent = findChildByType(this.view, schema.nodes.contributors)!
+    const tr = this.view.state.tr
+    const node = schema.nodes.contributor.create(attrs)
+    this.view.dispatch(tr.insert(parent.pos + 1, node))
+  }
+
+  insertAffiliationNode = (attrs: AffiliationAttrs) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const parent = findChildByType(this.view, schema.nodes.affiliations)!
+    const tr = this.view.state.tr
+    const node = schema.nodes.affiliation.create(attrs)
+    this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
 
   public ignoreMutation = () => true
