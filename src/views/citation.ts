@@ -16,16 +16,9 @@
 
 import { CitationNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
-import { createElement } from 'react'
-import ReactDOM from 'react-dom'
 
-import { TrackChangesReview } from '../components/track-changes/TrackChangesReview'
 import { sanitize } from '../lib/dompurify'
-import {
-  getChangeClasses,
-  isDeleted,
-  isPendingSetAttrs,
-} from '../lib/track-changes-utils'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { getCitation } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -70,30 +63,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
-
-    if (
-      isPendingSetAttrs(this.node) &&
-      !isDeleted(this.node) &&
-      citation.embeddedCitationItems.length
-    ) {
-      this.dom.appendChild(this.renderTrackChangesReview())
-    }
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
-  }
-
-  public renderTrackChangesReview = () => {
-    const { popper } = this.props
-    const el = document.createElement('span')
-    el.classList.add('track-changes-review')
-    ReactDOM.render(
-      createElement(TrackChangesReview, {
-        node: this.node,
-        popper,
-        target: el,
-      }),
-      el
-    )
-    return el
   }
 
   public getCitation = () => {
