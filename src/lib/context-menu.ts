@@ -41,6 +41,7 @@ import { footnotesKey } from '../plugins/footnotes'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
+import { isDeleted, isRejectedInsert } from './track-changes-utils'
 import { orderTableFootnotes } from './utils'
 
 const popper = new PopperManager()
@@ -312,7 +313,11 @@ export class ContextMenu {
                   this.node,
                   schema.nodes.footnotes_element
                 )[0]
-                if (!footnotesElementWithPos) {
+                if (
+                  !footnotesElementWithPos ||
+                  isDeleted(footnotesElementWithPos.node) ||
+                  isRejectedInsert(footnotesElementWithPos.node)
+                ) {
                   insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
                   const tablesFootnoteLabels =

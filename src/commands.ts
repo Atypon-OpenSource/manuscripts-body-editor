@@ -1166,7 +1166,11 @@ export const insertTableFootnote = (
     schema.nodes.footnotes_element
   )[0]
 
-  if (footnotesElement) {
+  if (
+    footnotesElement &&
+    !isDeleted(footnotesElement.node) &&
+    !isRejectedInsert(footnotesElement.node)
+  ) {
     const footnotePos = getNewFootnotePos(
       footnotesElement,
       tablesFootnoteLabels,
@@ -1191,15 +1195,20 @@ export const insertTableFootnote = (
       insertionPos = position + pos + tableElementFooter.node.nodeSize
       tr.insert(insertionPos, footnoteElement)
     } else {
-      const tableSize = node.content.firstChild?.nodeSize
-      if (tableSize) {
-        insertionPos = position + tableSize
-        const tableElementFooter = schema.nodes.table_element_footer.create(
-          {
-            id: generateID(ObjectTypes.TableElementFooter),
-          },
-          [footnoteElement]
-        )
+      const tableElementFooter = schema.nodes.table_element_footer.create(
+        {
+          id: generateID(ObjectTypes.TableElementFooter),
+        },
+        [footnoteElement]
+      )
+
+      const tableColGroup = findChildrenByType(
+        node,
+        schema.nodes.table_colgroup
+      )[0]
+      if (tableColGroup) {
+        insertionPos =
+          position + tableColGroup.pos + tableColGroup.node.nodeSize + 2
         tr.insert(insertionPos, tableElementFooter)
       } else {
         const tableSize = node.content.firstChild?.nodeSize
