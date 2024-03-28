@@ -22,14 +22,22 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import {
+  EditorState,
+  NodeSelection,
+  Plugin,
+  PluginKey,
+} from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
-import { findTableInlineFootnoteIds } from './footnotes-utils'
+import {
+  createFootnoteLabel,
+  findTableInlineFootnoteIds,
+} from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -52,7 +60,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
     ) {
       nodes.push([node, pos])
       node.attrs.rids.forEach((rid) => {
-        labels.set(rid, String(++index))
+        labels.set(rid, createFootnoteLabel(String(index++)))
       })
     }
   })
@@ -63,7 +71,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
     const footnote = node as InlineFootnoteNode
-    if (footnote.attrs.rids.includes(rid)) {
+    if (footnote.attrs.rids?.includes(rid)) {
       const selection = NodeSelection.create(view.state.doc, pos)
       view.dispatch(view.state.tr.setSelection(selection).scrollIntoView())
     }
@@ -247,4 +255,7 @@ export default () => {
       },
     },
   })
+}
+export const getFootnotesPluginState = (state: EditorState) => {
+  return footnotesKey.getState(state) as PluginState
 }

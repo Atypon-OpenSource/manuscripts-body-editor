@@ -162,7 +162,7 @@
 .ProseMirror sub {
   line-height: 0;
 }
-
+.ProseMirror .footnote,
 .ProseMirror .citation,
 .ProseMirror .cross-reference {
   font-weight: bold;
@@ -991,10 +991,18 @@
 .table-footer > div:has(> p.footnote-selected) > p:last-child {
   border-bottom: 1px solid #bce7f6;
 }
+
+.ProseMirror .footnotes-element .block > div p {
+    display: flex;
+}
+.ProseMirror .footnotes-element .block > div p > ins {
+  flex: 1 0 auto;
+}
+
 .ProseMirror .footnote-label {
+  flex: 0 0 auto;
   vertical-align: super;
   font-size: 75%;
-  margin-right: 8px;
   cursor: pointer;
 }
 
