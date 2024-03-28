@@ -71,6 +71,8 @@ export interface EditorProps {
   collabProvider?: CollabProvider
 }
 
+export type ExternalProps = Omit<EditorProps, 'popper'>
+
 export const createEditorState = (props: EditorProps) =>
   EditorState.create({
     doc: props.doc,
