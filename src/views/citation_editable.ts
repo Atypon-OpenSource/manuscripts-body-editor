@@ -64,17 +64,18 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   private contextMenu: HTMLElement
 
   public selectNode = () => {
-    if (!isDeleted(this.node)) {
-      const dataTracked = this.node.attrs.dataTracked
-      const isSelectedSuggestion = !!selectedSuggestionKey
-        .getState(this.view.state)
-        ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
+    const dataTracked = this.node.attrs.dataTracked
+    const isSelectedSuggestion = !!selectedSuggestionKey
+      .getState(this.view.state)
+      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
 
-      if (dataTracked && !isSelectedSuggestion) {
-        this.view.dispatch(
-          this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked[0].id)
-        )
-      } else {
+    this.dom.classList.add('ProseMirror-selectednode')
+    if (dataTracked && !isSelectedSuggestion) {
+      this.view.dispatch(
+        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked[0].id)
+      )
+    } else {
+      if (!isDeleted(this.node)) {
         const citation = this.getCitation()
         const rids = citation.embeddedCitationItems.map(
           (i) => i.bibliographyItem
@@ -85,8 +86,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         } else {
           this.showContextMenu()
         }
-
-        this.dom.classList.add('ProseMirror-selectednode')
       }
     }
   }
@@ -117,7 +116,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.view,
       'context-menu'
     )
-    this.props.popper.show(this.dom, this.contextMenu, 'right-start')
+    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
   }
 
   public showPopper = () => {

@@ -1,11 +1,10 @@
 .popper {
   color: #353535;
   font-family: 'PT Sans', sans-serif;
-  min-width: 100px;
+  /* min-width: 100px; */
   position: absolute;
   width: auto;
   z-index: 5;
-  /*opacity: 0.9;*/
 }
 
 .popper-arrow {
@@ -147,7 +146,7 @@
 
 .popper .context-menu {
   width: auto;
-  top: -16px;
+  top: -12px;
 }
 
 .popper .conflict-dropdown {
