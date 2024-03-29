@@ -25,6 +25,8 @@ import {
   CitationEditorProps,
   CitationViewer,
   CitationViewerProps,
+  ContextMenu,
+  ContextMenuProps,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemNode,
@@ -40,6 +42,10 @@ import { crossref } from '../citation-sources'
 import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
+import {
+  selectedSuggestionKey,
+  SET_SUGGESTION_ID,
+} from '../plugins/selected-suggestion-ui'
 import { CitationView } from './citation'
 import { CitationEditorWrapper } from './CitationEditorWrapper'
 import { createEditableNodeView } from './creators'
@@ -55,16 +61,36 @@ const createBibliographySection = (node: ManuscriptNode) =>
 export class CitationEditableView extends CitationView<EditableBlockProps> {
   private decoder = new Decoder(new Map())
   private editor: HTMLElement
+  private contextMenu: HTMLElement
 
   public selectNode = () => {
-    if (!isDeleted(this.node)) {
-      this.showPopper()
-      this.dom.classList.add('ProseMirror-selectednode')
+    const dataTracked = this.node.attrs.dataTracked
+    const isSelectedSuggestion = !!selectedSuggestionKey
+      .getState(this.view.state)
+      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
+
+    this.dom.classList.add('ProseMirror-selectednode')
+    if (dataTracked && !isSelectedSuggestion) {
+      this.view.dispatch(
+        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked[0].id)
+      )
+    } else {
+      if (!isDeleted(this.node)) {
+        const citation = this.getCitation()
+        const rids = citation.embeddedCitationItems.map(
+          (i) => i.bibliographyItem
+        )
+
+        if (!rids.length) {
+          this.showPopper()
+        } else {
+          this.showContextMenu()
+        }
+      }
     }
   }
 
   public deselectNode = () => {
-    this.editor?.remove()
     this.dom.classList.remove('ProseMirror-selectednode')
     this.props.popper.destroy()
   }
@@ -74,7 +100,27 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     this.props.popper.destroy()
   }
 
+  public showContextMenu = () => {
+    const componentProps: ContextMenuProps = {
+      actions: [
+        { label: 'Edit', action: this.handleEdit, icon: 'EditIcon' },
+        { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
+      ],
+    }
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
+  }
+
   public showPopper = () => {
+    this.props.popper.destroy() // destroy the context menu
     const can = this.props.getCapabilities()
     const citation = this.getCitation()
     const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
@@ -122,10 +168,11 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         'citation-editor'
       )
     }
-
     this.props.popper.show(this.dom, this.editor, 'right')
   }
-
+  private handleEdit = () => {
+    this.showPopper()
+  }
   private handleCancel = () => {
     // move the cursor after this node
     const selection = TextSelection.create(
