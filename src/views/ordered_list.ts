@@ -21,7 +21,7 @@ import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-type JatsStyleType = NonNullable<ListElement['listStyleType']>
+export type JatsStyleType = NonNullable<ListElement['listStyleType']>
 
 export const JATS_HTML_LIST_STYLE_MAPPING: {
   [key in JatsStyleType]: string
