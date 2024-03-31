@@ -36,12 +36,16 @@ import { useHistory } from 'react-router-dom'
 import {
   createEditorState,
   createEditorView,
-  EditorProps,
+  ExternalProps,
 } from './configs/ManuscriptsEditor'
+import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 
-export const useEditor = (props: EditorProps) => {
+export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
+
+  const props = { ...externalProps, popper: new PopperManager() }
+
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
@@ -101,8 +105,7 @@ export const useEditor = (props: EditorProps) => {
 
       if (
         collabProvider &&
-        trackState &&
-        trackState.status !== TrackChangesStatus.viewSnapshots
+        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
       ) {
         const sendable = sendableSteps(nextState)
         if (sendable) {

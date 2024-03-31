@@ -20,6 +20,10 @@ import 'prosemirror-tables/style/tables.css'
 
 import { CommentAnnotation, Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
+import {
+  trackChangesPlugin,
+  TrackChangesStatus,
+} from '@manuscripts/track-changes-plugin'
 import { ManuscriptSchema } from '@manuscripts/transform'
 import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
@@ -57,17 +61,24 @@ export interface PluginProps {
   cslProps: CSLProps
   popper: PopperManager
   collabProvider?: CollabProvider
+  userID: string
+  debug: boolean
 }
 
 export default (props: PluginProps) => {
-  const plugins = props.plugins || []
   const allPlugins = [
     rules,
     ...keys,
     dropCursor(),
     // gapCursor(),
     history(),
-    ...plugins, // TODO: should these run after persist?
+    trackChangesPlugin({
+      userID: props.userID,
+      debug: props.debug,
+      initialStatus: props.getCapabilities().editWithoutTracking
+        ? TrackChangesStatus.disabled
+        : TrackChangesStatus.enabled,
+    }),
     table_editing_fix(),
     elements(),
     persist(),
