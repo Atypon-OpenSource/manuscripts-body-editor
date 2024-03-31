@@ -140,60 +140,6 @@ export const getEditorMenus = (
         role: 'separator',
       },
       {
-        id: 'insert-ordered-list',
-        label: 'Numbered List',
-        shortcut: {
-          mac: 'Option+CommandOrControl+O',
-          pc: 'CommandOrControl+Option+O',
-        },
-        isEnabled: isCommandValid(insertList(schema.nodes.ordered_list)),
-        submenu: [
-          {
-            id: 'ordered-list-context-menu',
-            label: '',
-            isEnabled: true,
-            options: {
-              order: doCommand(insertList(schema.nodes.ordered_list, 'order')),
-              'alpha-upper': doCommand(
-                insertList(schema.nodes.ordered_list, 'alpha-upper')
-              ),
-              'alpha-lower': doCommand(
-                insertList(schema.nodes.ordered_list, 'alpha-lower')
-              ),
-              'roman-upper': doCommand(
-                insertList(schema.nodes.ordered_list, 'roman-upper')
-              ),
-              'roman-lower': doCommand(
-                insertList(schema.nodes.ordered_list, 'roman-lower')
-              ),
-            },
-          },
-        ],
-      },
-      {
-        id: 'insert-bullet-list',
-        label: 'Bullet List',
-        shortcut: {
-          mac: 'Option+CommandOrControl+K',
-          pc: 'CommandOrControl+Option+K',
-        },
-        isEnabled: isCommandValid(insertList(schema.nodes.bullet_list)),
-        submenu: [
-          {
-            id: 'bullet-list-context-menu',
-            label: '',
-            isEnabled: true,
-            options: {
-              bullet: doCommand(insertList(schema.nodes.bullet_list, 'bullet')),
-              simple: doCommand(insertList(schema.nodes.bullet_list, 'simple')),
-            },
-          },
-        ],
-      },
-      {
-        role: 'separator',
-      },
-      {
         id: 'insert-blockquote',
         label: 'Block Quote',
         isEnabled: isCommandValid(canInsert(schema.nodes.blockquote_element)),
@@ -379,6 +325,49 @@ export const getEditorMenus = (
         isActive: markActive(schema.marks.subscript)(state),
         isEnabled: isCommandValid(toggleMark(schema.marks.subscript)),
         run: doCommand(toggleMark(schema.marks.subscript)),
+      },
+      {
+        id: 'insert-bullet-list',
+        label: 'Bullet List',
+        isEnabled: isCommandValid(insertList(schema.nodes.bullet_list)),
+        submenu: [
+          {
+            id: 'bullet-list-context-menu',
+            label: '',
+            isEnabled: true,
+            options: {
+              bullet: doCommand(insertList(schema.nodes.bullet_list, 'bullet')),
+              simple: doCommand(insertList(schema.nodes.bullet_list, 'simple')),
+            },
+          },
+        ],
+      },
+      {
+        id: 'insert-ordered-list',
+        label: 'Numbered List',
+        isEnabled: isCommandValid(insertList(schema.nodes.ordered_list)),
+        submenu: [
+          {
+            id: 'ordered-list-context-menu',
+            label: '',
+            isEnabled: true,
+            options: {
+              order: doCommand(insertList(schema.nodes.ordered_list, 'order')),
+              'alpha-upper': doCommand(
+                insertList(schema.nodes.ordered_list, 'alpha-upper')
+              ),
+              'alpha-lower': doCommand(
+                insertList(schema.nodes.ordered_list, 'alpha-lower')
+              ),
+              'roman-upper': doCommand(
+                insertList(schema.nodes.ordered_list, 'roman-upper')
+              ),
+              'roman-lower': doCommand(
+                insertList(schema.nodes.ordered_list, 'roman-lower')
+              ),
+            },
+          },
+        ],
       },
       {
         role: 'separator',
