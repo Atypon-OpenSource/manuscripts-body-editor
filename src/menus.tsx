@@ -344,7 +344,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-ordered-list',
-        label: 'Numbered List',
+        label: 'Ordered List',
         isEnabled: isCommandValid(insertList(schema.nodes.ordered_list)),
         submenu: [
           {
