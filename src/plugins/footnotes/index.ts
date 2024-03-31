@@ -114,8 +114,10 @@ const getInlineFootnote = (view: EditorView, id: string): inlineFootnote => {
 
   view.state.doc.descendants((node, pos) => {
     const footnote = node as InlineFootnoteNode
+
     if (footnote.attrs.rids?.includes(id)) {
       inlineFootnote = footnote
+
       footnotePosition = pos
       return false
     }
@@ -158,16 +160,16 @@ const deleteFootnoteWidget =
         }
         // delete table footnotes
         if (node.type === schema.nodes.footnote) {
-          const inlineFootnoteResult = getInlineFootnote(view, id)
+          const inlineFootnotes = getInlineFootnote(view, id)
 
           tr.setSelection(TextSelection.near(view.state.doc.resolve(0))).delete(
             pos,
             pos + node.nodeSize + 1
           )
           // delete inline footnotes
-          if (inlineFootnoteResult.node) {
-            const pos = inlineFootnoteResult.pos
-            const nodeSize = inlineFootnoteResult.node.nodeSize
+          if (inlineFootnotes.node) {
+            const pos = inlineFootnotes.pos
+            const nodeSize = inlineFootnotes.node.nodeSize
             if (pos !== null && nodeSize !== null) {
               tr.delete(pos, pos + nodeSize)
             }
@@ -337,10 +339,8 @@ export default (props: PluginProps) => {
             }
           }
           if (isInTableElement) {
-            const isGeneralFootnote =
-              node.firstChild?.type === schema.nodes.paragraph
-            const isTableFootnote =
-              node.firstChild?.type === schema.nodes.footnote
+            const isGeneralFootnote = node.type === schema.nodes.paragraph
+            const isTableFootnote = node.type === schema.nodes.footnote
 
             const footnote = (() => {
               switch (node.type) {
@@ -359,7 +359,7 @@ export default (props: PluginProps) => {
               }
             })()
 
-            if (isTableFootnote || isGeneralFootnote) {
+            if (isTableFootnote) {
               decorations.push(
                 Decoration.widget(
                   pos + 2,
@@ -377,7 +377,29 @@ export default (props: PluginProps) => {
                   }
                 )
               )
+            } else if (
+              isGeneralFootnote &&
+              parent?.type === schema.nodes.table_element_footer
+            ) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 2,
+
+                  deleteFootnoteWidget(
+                    parent,
+                    pos,
+                    props,
+                    footnote.type,
+                    footnote.message,
+                    parent.attrs.id
+                  ),
+                  {
+                    key: parent.attrs.id,
+                  }
+                )
+              )
             }
+
             if (isDeleted(node)) {
               decorations.push(
                 // Add a class for styling deleted table and inline footnotes

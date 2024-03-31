@@ -969,7 +969,7 @@
 .table-footer .delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footer .footnote-element > div:not(:has(.unctied-table-footnote)) p::before  {
+.ProseMirror .table-footer .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -992,9 +992,6 @@
 
 .ProseMirror .table-footer .footnote-selected .delete-icon ,.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
   display: block;
-}
-.ProseMirror table .deleted-footnote::before , .ProseMirror .table-footer .deleted-footnote::before{
-  content: '' !important;
 }
 .table-footer > div > p {
   padding-bottom: 10px;
