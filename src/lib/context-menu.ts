@@ -37,12 +37,15 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
-import { footnotesKey } from '../plugins/footnotes'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
+import {
+  buildTableFootnoteLabels,
+  orderTableFootnotes,
+  updateTableInlineFootnoteLabels,
+} from './footnotes-utils'
 import { PopperManager } from './popper'
 import { isDeleted, isRejectedInsert } from './track-changes-utils'
-import { orderTableFootnotes } from './utils'
 
 const popper = new PopperManager()
 
@@ -320,11 +323,9 @@ export class ContextMenu {
                 ) {
                   insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
-                  const tablesFootnoteLabels =
-                    footnotesKey
-                      .getState(this.view.state)
-                      ?.tablesFootnoteLabels.get(this.node.attrs.id) ||
-                    new Map<string, number>()
+                  const tablesFootnoteLabels = buildTableFootnoteLabels(
+                    this.node
+                  )
 
                   const footnotesWithPos = findChildrenByType(
                     footnotesElementWithPos.node,
@@ -334,7 +335,7 @@ export class ContextMenu {
                   const footnotes = footnotesWithPos.map((nodeWithPos) => ({
                     node: nodeWithPos.node,
                     index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
-                  }))
+                  })) as FootnoteWithIndex[]
 
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from
@@ -351,6 +352,10 @@ export class ContextMenu {
                             this.getPos(),
                             this.view,
                             tablesFootnoteLabels
+                          )
+                          updateTableInlineFootnoteLabels(
+                            this.getPos(),
+                            this.view
                           )
                           this.props?.popper.destroy()
                         },
@@ -380,17 +385,20 @@ export class ContextMenu {
 
                           const tr = this.view.state.tr
 
-                          orderTableFootnotes(
-                            tr,
-                            notes.map(({ node }) => node),
-                            footnotes,
-                            footnotesElementWithPos,
-                            this.getPos(),
-                            inlineFootnoteIndex
-                          )
-
                           tr.insert(insertedAt, node)
                           this.view.dispatch(tr)
+
+                          updateTableInlineFootnoteLabels(
+                            tr.mapping.map(this.getPos()),
+                            this.view
+                          )
+
+                          orderTableFootnotes(
+                            this.view,
+                            footnotesElementWithPos,
+                            this.getPos()
+                          )
+
                           this.props?.popper.destroy()
                         },
                         onCancel: () => {

@@ -15,15 +15,13 @@
  */
 
 import {
-  FootnoteNode,
   isElementNodeType,
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
-import { Fragment } from 'prosemirror-model'
-import { Selection, Transaction } from 'prosemirror-state'
-import { findParentNode, NodeWithPos } from 'prosemirror-utils'
+import { Selection } from 'prosemirror-state'
+import { findParentNode } from 'prosemirror-utils'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -87,45 +85,3 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     }
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
-
-/**
- *  This will make sure un-cited table footnotes are at the end of the list
- *  and order cited footnote based on the position of inline footnote
- */
-export const orderTableFootnotes = (
-  tr: Transaction,
-  notes: FootnoteNode[],
-  footnotes: { node: ManuscriptNode; index: number | undefined }[],
-  footnotesElementWithPos: NodeWithPos,
-  position: number,
-  inlineFootnoteIndex: number
-) => {
-  const selectedNoteMap = new Map(notes.map((note) => [note.attrs.id, note]))
-  const orderedFootnotes = [...footnotes]
-    .map((note) => {
-      if (selectedNoteMap.has(note.node.attrs.id)) {
-        return {
-          ...note,
-          index: inlineFootnoteIndex++,
-        }
-      }
-      if (note.index && note.index <= inlineFootnoteIndex) {
-        return {
-          ...note,
-          index: note.index + 1,
-        }
-      }
-      return note
-    })
-    .sort(({ index: i1 }, { index: i2 }) => (i1 && i2 ? i1 - i2 : -1))
-    .map(({ node }) => node)
-
-  const { node: footnotesElement, pos } = footnotesElementWithPos
-  const footnoteElementPos = position + pos
-
-  tr.replaceWith(
-    footnoteElementPos,
-    footnoteElementPos + footnotesElement.nodeSize,
-    Fragment.fromArray(orderedFootnotes)
-  )
-}

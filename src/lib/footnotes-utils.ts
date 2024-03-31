@@ -14,31 +14,127 @@
  * limitations under the License.
  */
 
-import { flatten, NodeWithPos } from 'prosemirror-utils'
+import { FootnoteWithIndex } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { isFootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
+import { Fragment } from 'prosemirror-model'
+import { findChildrenByType, NodeWithPos } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
 
-/**
- *  position of new footnote could be one of these cases:
- *  * as a first child if we don't have any cited footnote
- *  * at the end of cited footnotes
- *  * or add it beside a node with a label value that is greater than the new one
- */
 export const getNewFootnotePos = (
   footnotesElement: NodeWithPos,
-  tablesFootnoteLabels: Map<string, number> | undefined,
+  tablesFootnoteLabels: Map<string, string | undefined> | undefined,
   footnoteIndex: number
 ) => {
-  const citedFootnotes = flatten(footnotesElement.node, false).filter(
-    ({ node }) => tablesFootnoteLabels?.has(node.attrs.id)
+  let newFootnotePos = footnotesElement.pos + footnotesElement.node.nodeSize - 1
+
+  footnotesElement.node.descendants((node, pos, parent, index) => {
+    if (isFootnoteNode(node)) {
+      if (footnoteIndex === ++index) {
+        newFootnotePos = footnotesElement.pos + pos + (index === 1 ? 2 : 1)
+      }
+    }
+  })
+
+  return newFootnotePos
+}
+
+export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
+  const labels = new Map<string, string | undefined>(
+    findChildrenByType(node, schema.nodes.footnote).map((node) => [
+      node.node.attrs.id,
+      undefined,
+    ])
   )
 
-  if (citedFootnotes.length === 0 || footnoteIndex === 0) {
-    return 2
+  let index = 0
+
+  findChildrenByType(node, schema.nodes.inline_footnote)
+    .map(({ node }) => node.attrs.rids)
+    .flat()
+    .map((rid: string) => {
+      if (!labels.get(rid)) {
+        labels.set(rid, String(++index))
+      }
+    })
+
+  return labels
+}
+
+export const updateTableInlineFootnoteLabels = (
+  tablePos: number,
+  view: EditorView
+) => {
+  const tr = view.state.tr
+  const table = tr.doc.nodeAt(tr.mapping.map(tablePos))
+
+  if (!table) {
+    return
   }
 
-  if (footnoteIndex === -1) {
-    const lastChild = citedFootnotes[citedFootnotes.length - 1]
-    return (lastChild && lastChild.pos + lastChild.node.nodeSize) || 1
-  }
+  const labels = buildTableFootnoteLabels(table)
 
-  return citedFootnotes[footnoteIndex]?.pos || 0
+  findChildrenByType(table, schema.nodes.inline_footnote).map(
+    ({ node, pos }) => {
+      const contents = node.attrs.rids
+        .map((rid: string) => labels.get(rid))
+        .join(',')
+
+      if (contents !== node.attrs.contents) {
+        tr.setNodeMarkup(tablePos + pos + 1, undefined, {
+          ...node.attrs,
+          rids: node.attrs.rids,
+          contents,
+        })
+      }
+    }
+  )
+
+  view.dispatch(skipTracking(tr))
+}
+
+/**
+ *  This will make sure un-cited table footnotes are at the end of the list
+ *  and order cited footnote based on the position of inline footnote
+ */
+export const orderTableFootnotes = (
+  view: EditorView,
+  footnotesElementWithPos: NodeWithPos,
+  position: number
+) => {
+  const tr = view.state.tr
+  const tablesFootnoteLabels = buildTableFootnoteLabels(
+    tr.doc.nodeAt(tr.mapping.map(position)) as ManuscriptNode
+  )
+
+  const footnotes = findChildrenByType(
+    footnotesElementWithPos.node,
+    schema.nodes.footnote
+  ).map((nodeWithPos) => ({
+    node: nodeWithPos.node,
+    index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
+  })) as FootnoteWithIndex[]
+
+  const orderedFootnotes = [...footnotes]
+    .sort((a, b) => {
+      if (a.index !== undefined && b.index !== undefined) {
+        return Number.parseInt(a.index) - Number.parseInt(b.index)
+      } else {
+        return a.index === undefined ? 1 : -1
+      }
+    })
+    .map(({ node }) => node)
+
+  const { node: footnotesElement, pos } = footnotesElementWithPos
+  const footnoteElementPos = position + pos
+
+  view.dispatch(
+    skipTracking(
+      tr.replaceWith(
+        tr.mapping.map(footnoteElementPos),
+        tr.mapping.map(footnoteElementPos + footnotesElement.nodeSize),
+        Fragment.fromArray(orderedFootnotes)
+      )
+    )
+  )
 }

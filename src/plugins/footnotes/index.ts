@@ -34,7 +34,6 @@ import { findTableInlineFootnoteIds } from './footnotes-utils'
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
-  tablesFootnoteLabels: Map<string, Map<string, number>>
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
@@ -45,7 +44,6 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   let index = 0
   const labels = new Map<string, string>()
 
-  const tablesFootnoteLabels = new Map<string, Map<string, number>>()
   doc.descendants((node, pos, parentNode) => {
     if (
       isInlineFootnoteNode(node) &&
@@ -57,26 +55,9 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
         labels.set(rid, String(++index))
       })
     }
-
-    if (node.type === schema.nodes.table_element) {
-      let tableFootnoteIndex = 0,
-        labelsMap = new Map()
-      node.descendants((child, childPos) => {
-        if (isInlineFootnoteNode(child)) {
-          nodes.push([child, pos + childPos + child.nodeSize])
-          child.attrs.rids.map((rid) =>
-            labelsMap.set(rid, ++tableFootnoteIndex)
-          )
-        }
-      })
-      tablesFootnoteLabels.set(node.attrs.id, labelsMap)
-      labelsMap = new Map()
-
-      return false
-    }
   })
 
-  return { nodes, labels, tablesFootnoteLabels }
+  return { nodes, labels }
 }
 
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
@@ -161,31 +142,20 @@ export default () => {
         oldState
       ) as PluginState
 
-      const {
-        nodes: inlineFootnoteNodes,
-        labels,
-        tablesFootnoteLabels,
-      } = footnotesKey.getState(newState) as PluginState
+      const { nodes: inlineFootnoteNodes, labels } = footnotesKey.getState(
+        newState
+      ) as PluginState
 
       if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
         return null
       }
 
-      const updatedLabels = Array.from(tablesFootnoteLabels.values()).reduce(
-        (labels, footnoteLabels) => {
-          Array.from(footnoteLabels.entries()).map(([id, content]) =>
-            labels.set(id, content.toString())
-          )
-          return labels
-        },
-        labels
-      )
       const { tr } = newState
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
-          .map((rid) => updatedLabels.get(rid))
+          .map((rid) => labels.get(rid))
           .join('')
 
         if (footnote.attrs.contents !== contents) {

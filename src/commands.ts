@@ -1142,7 +1142,7 @@ export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
   view: EditorView,
-  tablesFootnoteLabels?: Map<string, number>
+  tablesFootnoteLabels?: Map<string, string | undefined>
 ) => {
   const { state, dispatch } = view
 
@@ -1155,7 +1155,7 @@ export const insertTableFootnote = (
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
   const footnoteIndex =
-    inlineFootnotes.filter(({ pos }) => position + pos >= insertedAt).length - 1
+    inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length + 1
 
   const tr = state.tr
 
@@ -1176,7 +1176,7 @@ export const insertTableFootnote = (
       tablesFootnoteLabels,
       footnoteIndex
     )
-    insertionPos = tr.mapping.map(position + footnotesElement.pos + footnotePos)
+    insertionPos = tr.mapping.map(position + footnotePos)
 
     tr.insert(insertionPos, footnote)
   } else {
@@ -1226,8 +1226,7 @@ export const insertTableFootnote = (
 
   const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
     rids: [footnote.attrs.id],
-    contents:
-      (footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex) + 1,
+    contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
   }) as InlineFootnoteNode
 
   dispatch(tr.insert(insertedAt, inlineFootnoteNode).scrollIntoView())
