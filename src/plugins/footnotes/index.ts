@@ -170,7 +170,7 @@ const deleteFootnoteWidget =
           if (inlineFootnotes.node) {
             const pos = inlineFootnotes.pos
             const nodeSize = inlineFootnotes.node.nodeSize
-            if (pos !== null && nodeSize !== null) {
+            if (pos && nodeSize) {
               tr.delete(pos, pos + nodeSize)
             }
           }
