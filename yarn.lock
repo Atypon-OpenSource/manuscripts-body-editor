@@ -1572,10 +1572,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^2.1.6":
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.8.tgz#495e8771178f9a0cbd1e58aa5e978119e4a42cc9"
-  integrity sha512-ynjnSfwiLX2l5Pw99+7MIKMgFBUfVpk+nqCv22ZvhtOoi0P8ErzO+z9TUTygTwShlt4+fV6ZT/1hFAyAraK+Tw==
+"@manuscripts/transform@2.1.9-LEAN-3321":
+  version "2.1.9-LEAN-3321"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.9-LEAN-3321.tgz#1be53c468173755bf63c32490ce08af48a76b537"
+  integrity sha512-WAVm7lON0NTrCzZP7AtzFo4zGMFMPGXtj4t69viesO6kKVBb46aGmDJjE1KNPlnB8Xlj2CFVtqhL0gioo2pEAQ==
   dependencies:
     "@manuscripts/json-schema" "^2.2.6"
     "@manuscripts/library" "^1.3.5"
@@ -1587,10 +1587,10 @@
     uuid "^9.0.0"
     w3c-xmlserializer "^4.0.0"
 
-"@manuscripts/transform@^2.1.9":
-  version "2.1.9"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.9.tgz#b2ea869e8c88c2463f5dcd1f2dfc92a939df3be0"
-  integrity sha512-QRiQ/XPBc+fjZeL9XSxrQmXZF3hNSaqa+Fjdz0mRLy7szmaM9Gg+pCYD/kXsD0nONktvLw3RKyaH/cG3jFTV6w==
+"@manuscripts/transform@^2.1.6":
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.1.8.tgz#495e8771178f9a0cbd1e58aa5e978119e4a42cc9"
+  integrity sha512-ynjnSfwiLX2l5Pw99+7MIKMgFBUfVpk+nqCv22ZvhtOoi0P8ErzO+z9TUTygTwShlt4+fV6ZT/1hFAyAraK+Tw==
   dependencies:
     "@manuscripts/json-schema" "^2.2.6"
     "@manuscripts/library" "^1.3.5"
