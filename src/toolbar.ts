@@ -93,8 +93,8 @@ export const toolbar: ToolbarConfig = {
       title: 'Wrap in bullet list',
       content: icons.bullet_list,
       isActive: blockActive(schema.nodes.bullet_list),
-      isEnabled: insertList(schema.nodes.bullet_list),
-      run: insertList(schema.nodes.bullet_list),
+      isEnabled: insertList(schema.nodes.bullet_list, 'bullet'),
+      run: insertList(schema.nodes.bullet_list, 'bullet'),
       options: {
         bullet: insertList(schema.nodes.bullet_list, 'bullet'),
         simple: insertList(schema.nodes.bullet_list, 'simple'),
