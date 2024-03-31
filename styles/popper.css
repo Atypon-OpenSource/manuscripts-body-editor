@@ -1,11 +1,10 @@
 .popper {
   color: #353535;
   font-family: 'PT Sans', sans-serif;
-  min-width: 100px;
+  /* min-width: 100px; */
   position: absolute;
   width: auto;
   z-index: 5;
-  /*opacity: 0.9;*/
 }
 
 .popper-arrow {
@@ -136,12 +135,18 @@
 .popper .cross-reference-editor,
 .popper .citation-references,
 .popper .track-changes-review-panel,
-.popper .table-footnote-editor {
+.popper .table-footnote-editor,
+.popper .context-menu {
   background: #fff;
   border: 1px solid #e2e2e2;
   border-radius: 8px;
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   height: auto;
+}
+
+.popper .context-menu {
+  width: auto;
+  top: -12px;
 }
 
 .popper .conflict-dropdown {
