@@ -383,7 +383,7 @@ export default (props: PluginProps) => {
             ) {
               decorations.push(
                 Decoration.widget(
-                  pos + 2,
+                  pos + 1,
 
                   deleteFootnoteWidget(
                     parent,
