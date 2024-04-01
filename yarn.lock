@@ -1530,10 +1530,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.8.1-LEAN-3429-0":
-  version "1.8.1-LEAN-3429-0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.8.1-LEAN-3429-0.tgz#49b1405f1964c1f7456b1a90416d66209b7b93ae"
-  integrity sha512-NyJBdjlBKQ7fNrcgZOYli3QOoIkQpbY1cZ1WpcSpk+7inbrBL1UylcoJz3M2KdQeg6NcHFm8FYqLqYhWZQkVMQ==
+"@manuscripts/style-guide@1.8.2-LEAN-3429-0":
+  version "1.8.2-LEAN-3429-0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.8.2-LEAN-3429-0.tgz#616f82e93b39dd13ef96ef793f3c927f7274ea02"
+  integrity sha512-yJMqoNg9cfq7z8hM1O0YwYOxye3i1Kl/z/32aNxm6LFRNwzX2OYMCUxx599En44bPWcrgvktxx/qAmnctr0KOg==
   dependencies:
     "@manuscripts/assets" "^0.6.4"
     "@manuscripts/json-schema" "^2.2.6"
