@@ -144,18 +144,27 @@ const deleteFootnoteWidget =
       const handleDelete = () => {
         const tr = view.state.tr
 
-        // delete general footnotes
         if (node.type === schema.nodes.table_element_footer) {
+          let isAllGeneralFootnotes = true
+
           node.content.forEach((item) => {
-            if (item.type === schema.nodes.paragraph) {
-              tr.delete(pos, pos + item.nodeSize + 1)
+            if (item.type !== schema.nodes.paragraph) {
+              isAllGeneralFootnotes = false
+
+              return
             }
           })
-          // Check if the node is empty after deleting all notes
-          if (!node.childCount) {
-            tr.setSelection(
-              TextSelection.near(view.state.doc.resolve(0))
-            ).delete(pos, pos + node.nodeSize + 1)
+          if (isAllGeneralFootnotes) {
+            // All child nodes are general footnotes
+            tr.delete(pos, pos + node.nodeSize + 1)
+
+          } else {
+
+            node.content.forEach((item) => {
+              if (item.type === schema.nodes.paragraph) {
+                tr.delete(pos, pos + item.nodeSize + 1)
+              }
+            })
           }
         }
         // delete table footnotes
@@ -170,6 +179,7 @@ const deleteFootnoteWidget =
           if (inlineFootnotes.node) {
             const pos = inlineFootnotes.pos
             const nodeSize = inlineFootnotes.node.nodeSize
+            
             if (pos && nodeSize) {
               tr.delete(pos, pos + nodeSize)
             }
