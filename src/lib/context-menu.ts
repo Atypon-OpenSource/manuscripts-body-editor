@@ -42,7 +42,6 @@ import ReactSubView from '../views/ReactSubView'
 import {
   buildTableFootnoteLabels,
   orderTableFootnotes,
-  updateTableInlineFootnoteLabels,
 } from './footnotes-utils'
 import { PopperManager } from './popper'
 import { isDeleted, isRejectedInsert } from './track-changes-utils'
@@ -352,10 +351,6 @@ export class ContextMenu {
                             this.getPos(),
                             this.view
                           )
-                          updateTableInlineFootnoteLabels(
-                            this.getPos(),
-                            this.view
-                          )
                           this.props?.popper.destroy()
                         },
                         onInsert: (notes: FootnoteWithIndex[]) => {
@@ -386,11 +381,6 @@ export class ContextMenu {
 
                           tr.insert(insertedAt, node)
                           this.view.dispatch(tr)
-
-                          updateTableInlineFootnoteLabels(
-                            tr.mapping.map(this.getPos()),
-                            this.view
-                          )
 
                           orderTableFootnotes(
                             this.view,

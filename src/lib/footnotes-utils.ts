@@ -60,38 +60,6 @@ export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
   return labels
 }
 
-export const updateTableInlineFootnoteLabels = (
-  tablePos: number,
-  view: EditorView
-) => {
-  const tr = view.state.tr
-  const table = tr.doc.nodeAt(tr.mapping.map(tablePos))
-
-  if (!table) {
-    return
-  }
-
-  const labels = buildTableFootnoteLabels(table)
-
-  findChildrenByType(table, schema.nodes.inline_footnote).map(
-    ({ node, pos }) => {
-      const contents = node.attrs.rids
-        .map((rid: string) => labels.get(rid))
-        .join(',')
-
-      if (contents !== node.attrs.contents) {
-        tr.setNodeMarkup(tablePos + pos + 1, undefined, {
-          ...node.attrs,
-          rids: node.attrs.rids,
-          contents,
-        })
-      }
-    }
-  )
-
-  view.dispatch(skipTracking(tr))
-}
-
 /**
  *  This will make sure un-cited table footnotes are at the end of the list
  *  and order cited footnote based on the position of inline footnote

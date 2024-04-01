@@ -34,6 +34,8 @@ import { findTableInlineFootnoteIds } from './footnotes-utils'
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
+  tablesFootnoteLabels: Map<string, Map<string, number>>
+  tablesFootnoteNodes: [InlineFootnoteNode, number][]
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
@@ -43,6 +45,9 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   let index = 0
   const labels = new Map<string, string>()
+
+  const tablesFootnoteLabels = new Map<string, Map<string, number>>()
+  const tablesFootnoteNodes: [InlineFootnoteNode, number][] = []
 
   doc.descendants((node, pos, parentNode) => {
     if (
@@ -55,9 +60,26 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
         labels.set(rid, String(++index))
       })
     }
+
+    if (node.type === schema.nodes.table_element) {
+      let tableFootnoteIndex = 0,
+        labelsMap = new Map()
+      node.descendants((child, childPos) => {
+        if (isInlineFootnoteNode(child)) {
+          tablesFootnoteNodes.push([child, pos + childPos + child.nodeSize])
+          child.attrs.rids.map((rid) =>
+            labelsMap.set(rid, ++tableFootnoteIndex)
+          )
+        }
+      })
+      tablesFootnoteLabels.set(node.attrs.id, labelsMap)
+      labelsMap = new Map()
+
+      return false
+    }
   })
 
-  return { nodes, labels }
+  return { nodes, labels, tablesFootnoteNodes, tablesFootnoteLabels }
 }
 
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
@@ -138,24 +160,42 @@ export default () => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { nodes: oldInlineFootnoteNodes } = footnotesKey.getState(
-        oldState
-      ) as PluginState
+      const {
+        nodes: oldInlineFootnoteNodes,
+        tablesFootnoteNodes: oldTablesFootnoteNodes,
+      } = footnotesKey.getState(oldState) as PluginState
 
-      const { nodes: inlineFootnoteNodes, labels } = footnotesKey.getState(
-        newState
-      ) as PluginState
+      const {
+        nodes: inlineFootnoteNodes,
+        labels,
+        tablesFootnoteNodes,
+        tablesFootnoteLabels,
+      } = footnotesKey.getState(newState) as PluginState
 
-      if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
+      if (
+        isEqual(
+          inlineFootnoteNodes.concat(tablesFootnoteNodes),
+          oldInlineFootnoteNodes.concat(oldTablesFootnoteNodes)
+        )
+      ) {
         return null
       }
 
+      const updatedLabels = Array.from(tablesFootnoteLabels.values()).reduce(
+        (labels, footnoteLabels) => {
+          Array.from(footnoteLabels.entries()).map(([id, content]) =>
+            labels.set(id, content.toString())
+          )
+          return labels
+        },
+        labels
+      )
       const { tr } = newState
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
-          .map((rid) => labels.get(rid))
+          .map((rid) => updatedLabels.get(rid))
           .join('')
 
         if (footnote.attrs.contents !== contents) {
