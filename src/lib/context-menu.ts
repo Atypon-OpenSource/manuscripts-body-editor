@@ -382,10 +382,12 @@ export class ContextMenu {
                           tr.insert(insertedAt, node)
                           this.view.dispatch(tr)
 
-                          orderTableFootnotes(
-                            this.view,
-                            footnotesElementWithPos,
-                            this.getPos()
+                          this.view.dispatch(
+                            orderTableFootnotes(
+                              this.view.state.tr,
+                              footnotesElementWithPos,
+                              this.getPos()
+                            )
                           )
 
                           this.props?.popper.destroy()

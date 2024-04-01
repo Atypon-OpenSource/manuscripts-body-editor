@@ -27,6 +27,7 @@ import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon } from '../../assets'
+import { updateTableInlineFootnoteLabels } from '../../lib/footnotes-utils'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
@@ -34,8 +35,6 @@ import { findTableInlineFootnoteIds } from './footnotes-utils'
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
-  tablesFootnoteLabels: Map<string, Map<string, number>>
-  tablesFootnoteNodes: [InlineFootnoteNode, number][]
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
@@ -45,9 +44,6 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   let index = 0
   const labels = new Map<string, string>()
-
-  const tablesFootnoteLabels = new Map<string, Map<string, number>>()
-  const tablesFootnoteNodes: [InlineFootnoteNode, number][] = []
 
   doc.descendants((node, pos, parentNode) => {
     if (
@@ -60,26 +56,9 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
         labels.set(rid, String(++index))
       })
     }
-
-    if (node.type === schema.nodes.table_element) {
-      let tableFootnoteIndex = 0,
-        labelsMap = new Map()
-      node.descendants((child, childPos) => {
-        if (isInlineFootnoteNode(child)) {
-          tablesFootnoteNodes.push([child, pos + childPos + child.nodeSize])
-          child.attrs.rids.map((rid) =>
-            labelsMap.set(rid, ++tableFootnoteIndex)
-          )
-        }
-      })
-      tablesFootnoteLabels.set(node.attrs.id, labelsMap)
-      labelsMap = new Map()
-
-      return false
-    }
   })
 
-  return { nodes, labels, tablesFootnoteNodes, tablesFootnoteLabels }
+  return { nodes, labels }
 }
 
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
@@ -160,42 +139,24 @@ export default () => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const {
-        nodes: oldInlineFootnoteNodes,
-        tablesFootnoteNodes: oldTablesFootnoteNodes,
-      } = footnotesKey.getState(oldState) as PluginState
+      const { nodes: oldInlineFootnoteNodes } = footnotesKey.getState(
+        oldState
+      ) as PluginState
 
-      const {
-        nodes: inlineFootnoteNodes,
-        labels,
-        tablesFootnoteNodes,
-        tablesFootnoteLabels,
-      } = footnotesKey.getState(newState) as PluginState
+      const { nodes: inlineFootnoteNodes, labels } = footnotesKey.getState(
+        newState
+      ) as PluginState
 
-      if (
-        isEqual(
-          inlineFootnoteNodes.concat(tablesFootnoteNodes),
-          oldInlineFootnoteNodes.concat(oldTablesFootnoteNodes)
-        )
-      ) {
-        return null
+      if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
+        return updateTableInlineFootnoteLabels(transactions, oldState, newState)
       }
 
-      const updatedLabels = Array.from(tablesFootnoteLabels.values()).reduce(
-        (labels, footnoteLabels) => {
-          Array.from(footnoteLabels.entries()).map(([id, content]) =>
-            labels.set(id, content.toString())
-          )
-          return labels
-        },
-        labels
-      )
       const { tr } = newState
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
-          .map((rid) => updatedLabels.get(rid))
+          .map((rid) => labels.get(rid))
           .join('')
 
         if (footnote.attrs.contents !== contents) {

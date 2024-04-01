@@ -1155,8 +1155,15 @@ export const insertTableFootnote = (
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
   const footnoteIndex =
     inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length + 1
+  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
+    rids: [footnote.attrs.id],
+    contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
+  }) as InlineFootnoteNode
 
   const tr = state.tr
+
+  // insert the inline footnote
+  tr.insert(insertedAt, inlineFootnoteNode)
 
   let insertionPos = position
 
@@ -1188,7 +1195,7 @@ export const insertTableFootnote = (
     if (tableElementFooter) {
       const pos = tableElementFooter.pos
       insertionPos = position + pos + tableElementFooter.node.nodeSize
-      tr.insert(insertionPos, footnoteElement)
+      tr.insert(tr.mapping.map(insertionPos), footnoteElement)
     } else {
       const tableElementFooter = schema.nodes.table_element_footer.create(
         {
@@ -1204,25 +1211,22 @@ export const insertTableFootnote = (
       if (tableColGroup) {
         insertionPos =
           position + tableColGroup.pos + tableColGroup.node.nodeSize
-        tr.insert(insertionPos, tableElementFooter)
+        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
         const tableSize = node.content.firstChild?.nodeSize
         if (tableSize) {
           insertionPos = position + tableSize
-          tr.insert(insertionPos, tableElementFooter)
+          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
         }
       }
     }
   }
 
-  const textSelection = TextSelection.near(tr.doc.resolve(insertionPos + 1))
+  dispatch(tr)
+
+  const textSelection = TextSelection.near(
+    view.state.tr.doc.resolve(insertionPos + 1)
+  )
   view.focus()
-  tr.setSelection(textSelection)
-
-  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
-    rids: [footnote.attrs.id],
-    contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
-  }) as InlineFootnoteNode
-
-  dispatch(tr.insert(insertedAt, inlineFootnoteNode).scrollIntoView())
+  dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
