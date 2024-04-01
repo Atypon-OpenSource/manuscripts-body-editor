@@ -1141,8 +1141,7 @@ export const updateCommentAnnotationState = (
 export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
-  view: EditorView,
-  tablesFootnoteLabels?: Map<string, string | undefined>
+  view: EditorView
 ) => {
   const { state, dispatch } = view
 
@@ -1164,18 +1163,14 @@ export const insertTableFootnote = (
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
-  )[0]
+  ).pop()
 
   if (
     footnotesElement &&
     !isDeleted(footnotesElement.node) &&
     !isRejectedInsert(footnotesElement.node)
   ) {
-    const footnotePos = getNewFootnotePos(
-      footnotesElement,
-      tablesFootnoteLabels,
-      footnoteIndex
-    )
+    const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
     insertionPos = tr.mapping.map(position + footnotePos)
 
     tr.insert(insertionPos, footnote)

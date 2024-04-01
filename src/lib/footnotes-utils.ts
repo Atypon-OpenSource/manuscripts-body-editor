@@ -23,7 +23,6 @@ import { EditorView } from 'prosemirror-view'
 
 export const getNewFootnotePos = (
   footnotesElement: NodeWithPos,
-  tablesFootnoteLabels: Map<string, string | undefined> | undefined,
   footnoteIndex: number
 ) => {
   let newFootnotePos = footnotesElement.pos + footnotesElement.node.nodeSize - 1

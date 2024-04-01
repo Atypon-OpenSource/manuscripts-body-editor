@@ -315,7 +315,7 @@ export class ContextMenu {
                 const footnotesElementWithPos = findChildrenByType(
                   this.node,
                   schema.nodes.footnotes_element
-                )[0]
+                ).pop()
                 if (
                   !footnotesElementWithPos ||
                   isDeleted(footnotesElementWithPos.node) ||
@@ -350,8 +350,7 @@ export class ContextMenu {
                           insertTableFootnote(
                             this.node,
                             this.getPos(),
-                            this.view,
-                            tablesFootnoteLabels
+                            this.view
                           )
                           updateTableInlineFootnoteLabels(
                             this.getPos(),
