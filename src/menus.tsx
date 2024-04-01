@@ -327,6 +327,9 @@ export const getEditorMenus = (
         run: doCommand(toggleMark(schema.marks.subscript)),
       },
       {
+        role: 'separator',
+      },
+      {
         id: 'insert-bullet-list',
         label: 'Bullet List',
         isEnabled: isCommandValid(insertList(schema.nodes.bullet_list)),
