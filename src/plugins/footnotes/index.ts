@@ -157,9 +157,7 @@ const deleteFootnoteWidget =
           if (isAllGeneralFootnotes) {
             // All child nodes are general footnotes
             tr.delete(pos, pos + node.nodeSize + 1)
-
           } else {
-
             node.content.forEach((item) => {
               if (item.type === schema.nodes.paragraph) {
                 tr.delete(pos, pos + item.nodeSize + 1)
@@ -179,7 +177,7 @@ const deleteFootnoteWidget =
           if (inlineFootnotes.node) {
             const pos = inlineFootnotes.pos
             const nodeSize = inlineFootnotes.node.nodeSize
-            
+
             if (pos && nodeSize) {
               tr.delete(pos, pos + nodeSize)
             }
