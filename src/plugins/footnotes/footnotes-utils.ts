@@ -16,7 +16,18 @@
 
 import { InlineFootnoteNode, schema } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { ReplaceStep } from 'prosemirror-transform'
+import {
+  findChildren,
+  findChildrenByType,
+  findParentNodeClosestToPos,
+} from 'prosemirror-utils'
+
+import {
+  buildTableFootnoteLabels,
+  orderTableFootnotes,
+} from '../../lib/footnotes-utils'
 
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
@@ -33,5 +44,71 @@ export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
           .map(({ node }) => (node as InlineFootnoteNode).attrs.rids)
           .flat()
       : []
+  )
+}
+
+export const updateTableInlineFootnoteLabels = (
+  transactions: readonly Transaction[],
+  oldState: EditorState,
+  newState: EditorState
+) => {
+  const tableInlineFootnoteChange = transactions.find((tr) =>
+    tr.steps.find((s) => {
+      if (s instanceof ReplaceStep) {
+        const $pos = oldState.doc.resolve((s as ReplaceStep).from)
+        return (
+          $pos.node().type === schema.nodes.table_cell &&
+          $pos.node($pos.depth - 2).type === schema.nodes.table
+        )
+      }
+    })
+  )
+
+  if (!tableInlineFootnoteChange) {
+    return null
+  }
+
+  const step = tableInlineFootnoteChange.steps[0] as ReplaceStep
+
+  const tr = newState.tr
+  const $pos = newState.doc.resolve(step.from)
+  const table = findParentNodeClosestToPos(
+    $pos,
+    (node) => node.type === schema.nodes.table_element
+  )
+
+  const footnotesElementWithPos =
+    table &&
+    findChildrenByType(table.node, schema.nodes.footnotes_element).pop()
+
+  if (!table || !footnotesElementWithPos) {
+    return null
+  }
+
+  const labels = buildTableFootnoteLabels(table.node)
+
+  findChildrenByType(table.node, schema.nodes.inline_footnote).map(
+    ({ node, pos }) => {
+      const contents = node.attrs.rids
+        .map((rid: string) => labels.get(rid))
+        .join(',')
+
+      if (
+        contents !== node.attrs.contents &&
+        tr.doc.nodeAt(tr.mapping.map(table.pos + pos + 1))
+      ) {
+        tr.setNodeMarkup(tr.mapping.map(table.pos + pos + 1), undefined, {
+          ...node.attrs,
+          rids: node.attrs.rids,
+          contents,
+        })
+      }
+    }
+  )
+
+  return orderTableFootnotes(
+    tr,
+    footnotesElementWithPos,
+    tr.mapping.map(table.pos)
   )
 }

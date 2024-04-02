@@ -27,10 +27,12 @@ import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon } from '../../assets'
-import { updateTableInlineFootnoteLabels } from '../../lib/footnotes-utils'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
-import { findTableInlineFootnoteIds } from './footnotes-utils'
+import {
+  findTableInlineFootnoteIds,
+  updateTableInlineFootnoteLabels,
+} from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
