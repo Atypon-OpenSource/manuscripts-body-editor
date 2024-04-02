@@ -37,10 +37,7 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
-import {
-  buildTableFootnoteLabels,
-  orderTableFootnotes,
-} from '../plugins/footnotes/footnotes-utils'
+import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
@@ -381,15 +378,6 @@ export class ContextMenu {
 
                           tr.insert(insertedAt, node)
                           this.view.dispatch(tr)
-
-                          this.view.dispatch(
-                            orderTableFootnotes(
-                              this.view.state.tr,
-                              footnotesElementWithPos,
-                              this.getPos()
-                            )
-                          )
-
                           this.props?.popper.destroy()
                         },
                         onCancel: () => {
