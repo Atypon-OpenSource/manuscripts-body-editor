@@ -21,7 +21,10 @@ import {
   findParentNodeClosestToPos,
 } from 'prosemirror-utils'
 
-import { updateTableInlineFootnoteLabels } from './footnotes/footnotes-utils'
+import {
+  orderTableFootnotes,
+  updateTableInlineFootnoteLabels,
+} from './footnotes/footnotes-utils'
 
 const isInlineFootnoteChange = (
   step: ReplaceStep,
@@ -71,7 +74,14 @@ export default () => {
         return null
       }
 
-      return updateTableInlineFootnoteLabels(tr, table, footnotesElementWithPos)
+      updateTableInlineFootnoteLabels(tr, table)
+      orderTableFootnotes(
+        tr,
+        footnotesElementWithPos,
+        tr.mapping.map(table.pos)
+      )
+
+      return tr
     },
   })
 }

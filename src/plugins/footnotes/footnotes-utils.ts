@@ -134,8 +134,7 @@ export const orderTableFootnotes = (
 
 export const updateTableInlineFootnoteLabels = (
   tr: Transaction,
-  table: ContentNodeWithPos,
-  footnotesElementWithPos: NodeWithPos
+  table: ContentNodeWithPos
 ) => {
   const labels = buildTableFootnoteLabels(table.node)
 
@@ -158,9 +157,5 @@ export const updateTableInlineFootnoteLabels = (
     }
   )
 
-  return orderTableFootnotes(
-    tr,
-    footnotesElementWithPos,
-    tr.mapping.map(table.pos)
-  )
+  return tr
 }
