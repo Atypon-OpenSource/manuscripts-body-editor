@@ -35,6 +35,10 @@ const isInlineFootnoteChange = (
     ? newState.doc.nodeAt(step.from)?.type === schema.nodes.inline_footnote
     : oldState.doc.nodeAt(step.from)?.type === schema.nodes.inline_footnote
 
+/**
+ * update the labels of inline_footnote in the table, in case we delete/insert inline_footnote.
+ * and will reorder the table-footer footnote according to the inline_footnote
+ */
 export default () => {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
