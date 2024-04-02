@@ -30,7 +30,7 @@ const isDeletedOrInserted = (
 ) =>
   step.slice.size > 0
     ? newState.doc.nodeAt(step.from)?.type === schema.nodes.inline_footnote
-    : oldState.doc.nodeAt(step.from)?.type
+    : oldState.doc.nodeAt(step.from)?.type === schema.nodes.inline_footnote
 
 export default () => {
   return new Plugin({
