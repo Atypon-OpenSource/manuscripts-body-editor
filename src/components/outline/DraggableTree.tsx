@@ -28,9 +28,9 @@ import React, { MouseEvent, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
 import { ContextMenu } from '../../lib/context-menu'
-import { nodeTypeIcon } from '../../node-type-icons'
 import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,
   OutlineItem,
@@ -163,7 +163,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isDragging }, dragRef] = useDrag({
     type: 'outline',
     item: tree,
-    canDrag: (monitor) => {
+    canDrag: () => {
       return depth !== 0
     },
     collect: (monitor) => ({
@@ -262,10 +262,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   return (
     <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
       {!isTop && (
-        <OutlineItem
-          depth={depth}
-          onContextMenu={handleContextMenu}
-        >
+        <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (
             <OutlineItemArrow onClick={toggleOpen}>
               {isOpen ? (
@@ -279,9 +276,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
           )}
 
           <OutlineItemLink to={`#${node.attrs.id}`}>
-            <OutlineItemIcon>
-              {nodeTypeIcon(node.type)}
-            </OutlineItemIcon>
+            <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
             <OutlineItemLinkText
               className={`outline-text-${node.type.name} ${
                 isDeletedItem && 'deleted'

@@ -16,10 +16,7 @@
 
 import { Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import {
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 
 import { useDebounce } from '../hooks/use-debounce'
@@ -57,7 +54,5 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
     }
   }, [debouncedProps, props.can])
 
-  return values ? (
-    <DraggableTree {...values} depth={0} />
-  ) : null
+  return values ? <DraggableTree {...values} depth={0} /> : null
 }
