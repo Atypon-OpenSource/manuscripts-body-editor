@@ -19,46 +19,45 @@ import { Capabilities } from '@manuscripts/style-guide'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
-  Selected,
 } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 
 import { useDebounce } from '../hooks/use-debounce'
-import DraggableTree, { buildTree, TreeItem } from './DraggableTree'
+import { buildTree, DraggableTree, TreeItem } from './DraggableTree'
 
-interface Props {
+export interface ManuscriptOutlineProps {
   manuscript: Manuscript
-  selected: Selected | null
   doc: ManuscriptNode | null
-  capabilities?: Capabilities
+  can?: Capabilities
   view?: ManuscriptEditorView
 }
 
-export const ManuscriptOutline: React.FunctionComponent<Props> = (props) => {
+export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
   const [values, setValues] = useState<{
     tree: TreeItem
     view?: ManuscriptEditorView
-    editArticle: boolean
+    can?: Capabilities
   }>()
 
   const debouncedProps = useDebounce(props, 500)
 
   useEffect(() => {
-    const { doc, view, selected } = debouncedProps
+    const { doc, view } = debouncedProps
 
     if (doc) {
       const tree = buildTree({
         node: doc,
         pos: 0,
         index: 0,
-        selected,
       })
 
-      setValues({ tree, view, editArticle: !!props.capabilities?.editArticle })
+      setValues({ tree, view, can: props.can })
     } else {
       setValues(undefined)
     }
-  }, [debouncedProps, props.capabilities?.editArticle])
+  }, [debouncedProps, props.can])
 
-  return values ? <DraggableTree {...values} /> : null
+  return values ? (
+    <DraggableTree {...values} depth={0} />
+  ) : null
 }
