@@ -58,11 +58,11 @@ import {
 import { EditorView } from 'prosemirror-view'
 
 import { skipCommandTracking } from './keys/list'
-import { getNewFootnotePos } from './lib/footnotes-utils'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
+import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
 

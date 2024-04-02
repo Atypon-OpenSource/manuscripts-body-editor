@@ -37,12 +37,12 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
-import { EditableBlockProps } from '../views/editable_block'
-import ReactSubView from '../views/ReactSubView'
 import {
   buildTableFootnoteLabels,
   orderTableFootnotes,
-} from './footnotes-utils'
+} from '../plugins/footnotes/footnotes-utils'
+import { EditableBlockProps } from '../views/editable_block'
+import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
 import { isDeleted, isRejectedInsert } from './track-changes-utils'
 

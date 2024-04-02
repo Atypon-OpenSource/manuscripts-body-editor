@@ -29,10 +29,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 import { alertIcon } from '../../assets'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import { placeholderWidget } from '../placeholder'
-import {
-  findTableInlineFootnoteIds,
-  updateTableInlineFootnoteLabels,
-} from './footnotes-utils'
+import { findTableInlineFootnoteIds } from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -150,7 +147,7 @@ export default () => {
       ) as PluginState
 
       if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
-        return updateTableInlineFootnoteLabels(transactions, oldState, newState)
+        return null
       }
 
       const { tr } = newState
