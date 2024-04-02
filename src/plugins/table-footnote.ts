@@ -42,7 +42,7 @@ export default () => {
             const $pos = oldState.doc.resolve(step.from)
 
             return (
-              $pos.node($pos.depth - 2).type === schema.nodes.table &&
+              $pos.node($pos.depth - 2)?.type === schema.nodes.table &&
               isDeletedOrInserted(step, oldState, newState)
             )
           }
