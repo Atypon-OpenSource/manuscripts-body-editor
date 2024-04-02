@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { schema } from '@manuscripts/transform'
-import { Plugin } from 'prosemirror-state'
+import { EditorState, Plugin } from 'prosemirror-state'
 import { ReplaceStep } from 'prosemirror-transform'
 import {
   findChildrenByType,
@@ -23,16 +23,27 @@ import {
 
 import { updateTableInlineFootnoteLabels } from './footnotes/footnotes-utils'
 
+const isDeletedOrInserted = (
+  step: ReplaceStep,
+  oldState: EditorState,
+  newState: EditorState
+) =>
+  step.slice.size > 0
+    ? newState.doc.nodeAt(step.from)?.type === schema.nodes.inline_footnote
+    : oldState.doc.nodeAt(step.from)?.type
+
 export default () => {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
       const tableInlineFootnoteChange = transactions.find((tr) =>
         tr.steps.find((s) => {
           if (s instanceof ReplaceStep) {
-            const $pos = oldState.doc.resolve((s as ReplaceStep).from)
+            const step = s as ReplaceStep
+            const $pos = oldState.doc.resolve(step.from)
+
             return (
-              $pos.node().type === schema.nodes.table_cell &&
-              $pos.node($pos.depth - 2).type === schema.nodes.table
+              $pos.node($pos.depth - 2).type === schema.nodes.table &&
+              isDeletedOrInserted(step, oldState, newState)
             )
           }
         })
