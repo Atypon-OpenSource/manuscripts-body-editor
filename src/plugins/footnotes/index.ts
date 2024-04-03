@@ -311,6 +311,7 @@ export default (props: PluginProps) => {
 
         const { labels } = footnotesKey.getState(state) as PluginState
         let tableInlineFootnoteIds: Set<string> | undefined = undefined
+        const can = props.getCapabilities()
 
         state.doc.descendants((node, pos, parent) => {
           if (isFootnoteNode(node)) {
@@ -346,75 +347,77 @@ export default (props: PluginProps) => {
               )
             }
           }
-          if (isInTableElement) {
-            const isGeneralFootnote = node.type === schema.nodes.paragraph
-            const isTableFootnote = node.type === schema.nodes.footnote
+          if (can.editArticle) {
+            if (isInTableElement) {
+              const isGeneralFootnote = node.type === schema.nodes.paragraph
+              const isTableFootnote = node.type === schema.nodes.footnote
 
-            const footnote = (() => {
-              switch (node.type) {
-                case schema.nodes.footnote:
-                  return {
-                    type: 'table footnote',
-                    message:
-                      'This action will entirely remove the table footnote from the list  because it will no longer be used.',
-                  }
-                default:
-                  return {
-                    type: 'table general note',
-                    message:
-                      'This action will entirely remove the table general note.',
-                  }
+              const footnote = (() => {
+                switch (node.type) {
+                  case schema.nodes.footnote:
+                    return {
+                      type: 'table footnote',
+                      message:
+                        'This action will entirely remove the table footnote from the list  because it will no longer be used.',
+                    }
+                  default:
+                    return {
+                      type: 'table general note',
+                      message:
+                        'This action will entirely remove the table general note.',
+                    }
+                }
+              })()
+
+              if (isTableFootnote) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 2,
+
+                    deleteFootnoteWidget(
+                      node,
+                      pos,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      node.attrs.id
+                    ),
+                    {
+                      key: node.attrs.id,
+                    }
+                  )
+                )
+              } else if (
+                isGeneralFootnote &&
+                parent?.type === schema.nodes.table_element_footer
+              ) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 1,
+
+                    deleteFootnoteWidget(
+                      parent,
+                      pos,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      parent.attrs.id
+                    ),
+                    {
+                      key: parent.attrs.id,
+                    }
+                  )
+                )
               }
-            })()
 
-            if (isTableFootnote) {
-              decorations.push(
-                Decoration.widget(
-                  pos + 2,
-
-                  deleteFootnoteWidget(
-                    node,
-                    pos,
-                    props,
-                    footnote.type,
-                    footnote.message,
-                    node.attrs.id
-                  ),
-                  {
-                    key: node.attrs.id,
-                  }
+              if (isDeleted(node)) {
+                decorations.push(
+                  // Add a class for styling deleted table and inline footnotes
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: 'deleted-footnote',
+                  })
                 )
-              )
-            } else if (
-              isGeneralFootnote &&
-              parent?.type === schema.nodes.table_element_footer
-            ) {
-              decorations.push(
-                Decoration.widget(
-                  pos + 1,
-
-                  deleteFootnoteWidget(
-                    parent,
-                    pos,
-                    props,
-                    footnote.type,
-                    footnote.message,
-                    parent.attrs.id
-                  ),
-                  {
-                    key: parent.attrs.id,
-                  }
-                )
-              )
-            }
-
-            if (isDeleted(node)) {
-              decorations.push(
-                // Add a class for styling deleted table and inline footnotes
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'deleted-footnote',
-                })
-              )
+              }
             }
           }
 

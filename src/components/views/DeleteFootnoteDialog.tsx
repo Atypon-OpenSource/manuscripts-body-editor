@@ -31,18 +31,19 @@ export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
 
   return (
     <Dialog
+      className="delete-footnote-dialog"
       isOpen={isOpen}
       actions={{
         primary: {
-          action: () => setOpen(false),
-          title: 'Cancel',
-        },
-        secondary: {
           action: () => {
             setOpen(false)
             handleDelete()
           },
           title: 'Delete',
+        },
+        secondary: {
+          action: () => setOpen(false),
+          title: 'Cancel',
         },
       }}
       category={Category.confirmation}
