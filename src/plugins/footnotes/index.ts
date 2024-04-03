@@ -228,6 +228,7 @@ export default (props: PluginProps) => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
+        const can = props.getCapabilities()
 
         const tableElementFooter = findParentNodeOfType(
           schema.nodes.table_element_footer
@@ -242,23 +243,24 @@ export default (props: PluginProps) => {
                 class: 'footnote-selected',
               })
             )
+            if (can.editArticle) {
+              if (parent.node.type === schema.nodes.paragraph) {
+                decorations.push(
+                  Decoration.widget(
+                    parent.pos + 1,
 
-            if (parent.node.type === schema.nodes.paragraph) {
-              decorations.push(
-                Decoration.widget(
-                  parent.pos + 1,
-
-                  deleteFootnoteWidget(
-                    tableElementFooter.node,
-                    tableElementFooter.pos,
-                    props,
-                    'table general note' //pass a variable instead of string after implementing LEAN-3143
-                  ),
-                  {
-                    key: parent.node.attrs.id,
-                  }
+                    deleteFootnoteWidget(
+                      tableElementFooter.node,
+                      tableElementFooter.pos,
+                      props,
+                      'table general note' //pass a variable instead of string after implementing LEAN-3143
+                    ),
+                    {
+                      key: parent.node.attrs.id,
+                    }
+                  )
                 )
-              )
+              }
             }
           }
         }
