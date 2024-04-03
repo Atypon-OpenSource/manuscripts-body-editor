@@ -55,12 +55,14 @@ import {
   findParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
 
 import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { commentAnnotation } from './plugins/comment_annotation'
+import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
 
@@ -1139,9 +1141,10 @@ export const updateCommentAnnotationState = (
 export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  view: EditorView
 ) => {
+  const { state, dispatch } = view
+
   const footnote = state.schema.nodes.footnote.createAndFill({
     id: generateID(ObjectTypes.Footnote),
     kind: 'footnote',
@@ -1150,12 +1153,11 @@ export const insertTableFootnote = (
   const insertedAt = state.selection.to
 
   const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
-  const labels = inlineFootnotes.map(
-    (nodeWithPos) => nodeWithPos.node.attrs.contents
-  )
+  const footnoteIndex =
+    inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length + 1
   const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
     rids: [footnote.attrs.id],
-    contents: labels.length ? Math.max(...labels) + 1 : 1, // I need to revisit this
+    contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
   }) as InlineFootnoteNode
 
   const tr = state.tr
@@ -1163,18 +1165,21 @@ export const insertTableFootnote = (
   // insert the inline footnote
   tr.insert(insertedAt, inlineFootnoteNode)
 
-  let insertionPos
+  let insertionPos = position
+
   const footnotesElement = findChildrenByType(
     node,
     schema.nodes.footnotes_element
   ).pop()
+
   if (
     footnotesElement &&
     !isDeleted(footnotesElement.node) &&
     !isRejectedInsert(footnotesElement.node)
   ) {
-    const pos = footnotesElement.pos
-    insertionPos = position + pos + footnotesElement.node.nodeSize + 1
+    const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
+    insertionPos = tr.mapping.map(position + footnotePos)
+
     tr.insert(insertionPos, footnote)
   } else {
     const footnoteElement = state.schema.nodes.footnotes_element.create(
@@ -1185,12 +1190,12 @@ export const insertTableFootnote = (
     const tableElementFooter = findChildrenByType(
       node,
       schema.nodes.table_element_footer
-    )
+    )[0]
 
-    if (tableElementFooter.length) {
-      const pos = tableElementFooter[0].pos
-      insertionPos = position + pos + tableElementFooter[0].node.nodeSize + 1
-      tr.insert(insertionPos, footnoteElement)
+    if (tableElementFooter) {
+      const pos = tableElementFooter.pos
+      insertionPos = position + pos + tableElementFooter.node.nodeSize
+      tr.insert(tr.mapping.map(insertionPos), footnoteElement)
     } else {
       const tableElementFooter = schema.nodes.table_element_footer.create(
         {
@@ -1205,20 +1210,23 @@ export const insertTableFootnote = (
       )[0]
       if (tableColGroup) {
         insertionPos =
-          position + tableColGroup.pos + tableColGroup.node.nodeSize + 2
-        tr.insert(insertionPos, tableElementFooter)
+          position + tableColGroup.pos + tableColGroup.node.nodeSize
+        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
         const tableSize = node.content.firstChild?.nodeSize
         if (tableSize) {
-          insertionPos = position + tableSize + 2
-          tr.insert(insertionPos, tableElementFooter)
+          insertionPos = position + tableSize
+          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
         }
       }
     }
   }
 
-  if (dispatch && insertionPos) {
-    const nodeSelection = NodeSelection.create(tr.doc, insertionPos)
-    dispatch(tr.setSelection(nodeSelection))
-  }
+  dispatch(tr)
+
+  const textSelection = TextSelection.near(
+    view.state.tr.doc.resolve(insertionPos + 1)
+  )
+  view.focus()
+  dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
