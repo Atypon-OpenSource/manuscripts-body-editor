@@ -38,7 +38,6 @@ import {
 } from '../../components/views/DeleteFootnoteDialog'
 import { PluginProps } from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { isDeleted } from '../../lib/track-changes-utils'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
@@ -407,15 +406,6 @@ export default (props: PluginProps) => {
                       key: parent.attrs.id,
                     }
                   )
-                )
-              }
-
-              if (isDeleted(node)) {
-                decorations.push(
-                  // Add a class for styling deleted table and inline footnotes
-                  Decoration.node(pos, pos + node.nodeSize, {
-                    class: 'deleted-footnote',
-                  })
                 )
               }
             }
