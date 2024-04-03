@@ -15,9 +15,11 @@
  */
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
-import { TableFootnotesSelector } from '@manuscripts/style-guide'
 import {
-  FootnoteNode,
+  FootnoteWithIndex,
+  TableFootnotesSelector,
+} from '@manuscripts/style-guide'
+import {
   InlineFootnoteNode,
   isInBibliographySection,
   ManuscriptEditorView,
@@ -35,6 +37,7 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
+import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
@@ -305,24 +308,31 @@ export class ContextMenu {
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
               this.createMenuItem('Add Reference Note', () => {
-                const footnotesElement = findChildrenByType(
+                const footnotesElementWithPos = findChildrenByType(
                   this.node,
                   schema.nodes.footnotes_element
-                ).pop()?.node
+                ).pop()
                 if (
-                  !footnotesElement ||
-                  isDeleted(footnotesElement) ||
-                  isRejectedInsert(footnotesElement)
+                  !footnotesElementWithPos ||
+                  isDeleted(footnotesElementWithPos.node) ||
+                  isRejectedInsert(footnotesElementWithPos.node)
                 ) {
-                  const { state, dispatch } = this.view
-                  insertTableFootnote(this.node, this.getPos(), state, dispatch)
+                  insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
-                  const footnotes = findChildrenByType(
-                    footnotesElement,
+                  const tablesFootnoteLabels = buildTableFootnoteLabels(
+                    this.node
+                  )
+
+                  const footnotesWithPos = findChildrenByType(
+                    footnotesElementWithPos.node,
                     schema.nodes.footnote
-                  ).map((nodeWithPos) => {
-                    return nodeWithPos.node as FootnoteNode
-                  })
+                  )
+
+                  const footnotes = footnotesWithPos.map((nodeWithPos) => ({
+                    node: nodeWithPos.node,
+                    index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
+                  })) as FootnoteWithIndex[]
+
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from
                   )
@@ -333,28 +343,39 @@ export class ContextMenu {
                       {
                         notes: footnotes,
                         onAdd: () => {
-                          const { state, dispatch } = this.view
                           insertTableFootnote(
                             this.node,
                             this.getPos(),
-                            state,
-                            dispatch
+                            this.view
                           )
                           this.props?.popper.destroy()
                         },
-                        onInsert: (notes: FootnoteNode[]) => {
+                        onInsert: (notes: FootnoteWithIndex[]) => {
                           const insertedAt = this.view.state.selection.to
+                          let inlineFootnoteIndex = 1
+                          this.view.state.doc
+                            .slice(this.getPos(), insertedAt)
+                            .content.descendants((node) => {
+                              if (node.type === schema.nodes.inline_footnote) {
+                                inlineFootnoteIndex++
+                                return false
+                              }
+                            })
+
                           const node =
                             this.view.state.schema.nodes.inline_footnote.create(
                               {
-                                rids: notes.map((note) => note.attrs.id),
+                                rids: notes.map(({ node }) => node.attrs.id),
                                 contents: notes
-                                  .map((note) => footnotes.indexOf(note) + 1)
+                                  .map(({ index }) =>
+                                    index ? index : inlineFootnoteIndex
+                                  )
                                   .join(),
                               }
                             ) as InlineFootnoteNode
 
                           const tr = this.view.state.tr
+
                           tr.insert(insertedAt, node)
                           this.view.dispatch(tr)
                           this.props?.popper.destroy()

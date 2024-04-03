@@ -18,7 +18,6 @@ import { MenuSpec } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
-import { wrapInList } from 'prosemirror-schema-list'
 import { Command } from 'prosemirror-state'
 import {
   addColumnAfter,
@@ -41,10 +40,10 @@ import {
   insertInlineEquation,
   insertInlineFootnote,
   insertLink,
+  insertList,
   insertSection,
   markActive,
 } from './commands'
-import { skipCommandTracking } from './keys/list'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -136,33 +135,6 @@ export const getEditorMenus = (
         label: 'Paragraph',
         isEnabled: isCommandValid(canInsert(schema.nodes.paragraph)),
         run: doCommand(insertBlock(schema.nodes.paragraph)),
-      },
-      {
-        role: 'separator',
-      },
-      {
-        id: 'insert-ordered-list',
-        label: 'Numbered List',
-        shortcut: {
-          mac: 'Option+CommandOrControl+O',
-          pc: 'CommandOrControl+Option+O',
-        },
-        isEnabled: isCommandValid(wrapInList(schema.nodes.ordered_list)),
-        run: doCommand(
-          skipCommandTracking(wrapInList(schema.nodes.ordered_list))
-        ),
-      },
-      {
-        id: 'insert-bullet-list',
-        label: 'Bullet List',
-        shortcut: {
-          mac: 'Option+CommandOrControl+K',
-          pc: 'CommandOrControl+Option+K',
-        },
-        isEnabled: isCommandValid(wrapInList(schema.nodes.bullet_list)),
-        run: doCommand(
-          skipCommandTracking(wrapInList(schema.nodes.bullet_list))
-        ),
       },
       {
         role: 'separator',
@@ -353,6 +325,52 @@ export const getEditorMenus = (
         isActive: markActive(schema.marks.subscript)(state),
         isEnabled: isCommandValid(toggleMark(schema.marks.subscript)),
         run: doCommand(toggleMark(schema.marks.subscript)),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'insert-bullet-list',
+        label: 'Bullet List',
+        isEnabled: isCommandValid(insertList(schema.nodes.bullet_list)),
+        submenu: [
+          {
+            id: 'bullet-list-context-menu',
+            label: '',
+            isEnabled: true,
+            options: {
+              bullet: doCommand(insertList(schema.nodes.bullet_list, 'bullet')),
+              simple: doCommand(insertList(schema.nodes.bullet_list, 'simple')),
+            },
+          },
+        ],
+      },
+      {
+        id: 'insert-ordered-list',
+        label: 'Ordered List',
+        isEnabled: isCommandValid(insertList(schema.nodes.ordered_list)),
+        submenu: [
+          {
+            id: 'ordered-list-context-menu',
+            label: '',
+            isEnabled: true,
+            options: {
+              order: doCommand(insertList(schema.nodes.ordered_list, 'order')),
+              'alpha-upper': doCommand(
+                insertList(schema.nodes.ordered_list, 'alpha-upper')
+              ),
+              'alpha-lower': doCommand(
+                insertList(schema.nodes.ordered_list, 'alpha-lower')
+              ),
+              'roman-upper': doCommand(
+                insertList(schema.nodes.ordered_list, 'roman-upper')
+              ),
+              'roman-lower': doCommand(
+                insertList(schema.nodes.ordered_list, 'roman-lower')
+              ),
+            },
+          },
+        ],
       },
       {
         role: 'separator',
