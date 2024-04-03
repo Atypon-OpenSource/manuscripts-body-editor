@@ -204,7 +204,7 @@ const NestedDropdown: React.FC<{
           moveLeft={moveLeft}
           width={192}
           onClick={(e) => {
-            toggleOpen(e)
+            toggleOpen()
             parentToggleOpen(e)
           }}
         >
