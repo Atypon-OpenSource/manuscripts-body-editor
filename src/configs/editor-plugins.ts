@@ -46,6 +46,7 @@ import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
 import selected_suggestion_ui from '../plugins/selected-suggestion-ui'
+import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
@@ -94,6 +95,7 @@ export default (props: PluginProps) => {
     highlights(props),
     selected_suggestion_ui(props),
     footnotes(props),
+    table_footnote(),
   ]
 
   if (props.collabProvider) {
