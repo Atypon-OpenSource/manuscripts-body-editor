@@ -282,11 +282,21 @@ export class ContextMenu {
         this.node,
         schema.nodes.table_element_footer
       )
+      const generalFootnote = tableElementFooter[0].node.firstChild
+      const isDeletedGeneralFootnote =
+        generalFootnote !== null ? isDeleted(generalFootnote) : false
+
+      const isRejectedGeneralFootnote =
+        generalFootnote !== null ? isRejectedInsert(generalFootnote) : false
       const hasGeneralNote =
         tableElementFooter.length &&
         tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
 
-      if (!hasGeneralNote) {
+      if (
+        !hasGeneralNote ||
+        isDeletedGeneralFootnote ||
+        isRejectedGeneralFootnote
+      ) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(

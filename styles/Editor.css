@@ -951,7 +951,7 @@
   padding-top: 8px;
 }
 
-.ProseMirror .table-footnotes-element:not(:first-child)::before {
+.ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
   content: '';
   border-bottom: 1px dashed #C9C9C9;
   display: block;
@@ -1008,9 +1008,6 @@
 .table-footer > div > p {
   padding-bottom: 10px;
 }
-.ProseMirror .table-footer .footnote-selected {
-  position: relative;
-}
 
 .ProseMirror .table-footnotes-element .footnote-selected {
   border: 1px solid #bce7f6;
@@ -1019,8 +1016,16 @@
   border-left: 1px solid #bce7f6;
   border-right: 1px solid #bce7f6;
 }
+.table-footer > div:has(> p.footnote-selected)  > p:first-child .delete-icon {
+  z-index: 2;
+  display: block;
+} 
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
+  position: relative;
+}
+.table-footer > div:has(> p.footnote-selected) > p:last-of-type {
+  border-bottom: 1px solid #bce7f6;
 }
 .table-footer > div:has(> p.footnote-selected) > p:last-child {
   border-bottom: 1px solid #bce7f6;

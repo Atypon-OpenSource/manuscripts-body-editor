@@ -165,6 +165,7 @@ const deleteFootnoteWidget =
           }
         }
         // delete table footnotes
+        // TO Do : delete parent node "footnotes_element"
         if (node.type === schema.nodes.footnote) {
           const inlineFootnotes = getInlineFootnote(view, id)
 
