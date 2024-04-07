@@ -22,8 +22,13 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { findParentNodeOfType } from 'prosemirror-utils'
+import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  TextSelection,
+} from 'prosemirror-state'
+import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -97,38 +102,92 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
+interface inlineFootnote {
+  node: InlineFootnoteNode | null
+  pos: number | null
+}
+
+const getInlineFootnote = (view: EditorView, id: string): inlineFootnote => {
+  let inlineFootnote: InlineFootnoteNode | null = null
+  let footnotePosition: number | null = null
+
+  view.state.doc.descendants((node, pos) => {
+    const footnote = node as InlineFootnoteNode
+
+    if (footnote.attrs.rids?.includes(id)) {
+      inlineFootnote = footnote
+
+      footnotePosition = pos
+      return false
+    }
+  })
+
+  return { node: inlineFootnote, pos: footnotePosition }
+}
+
 const deleteFootnoteWidget =
   (
     node: ManuscriptNode,
     pos: number,
     props: PluginProps,
-    footnoteType: string
+    footnoteType: string,
+    footnoteMessage: string,
+    id: string
   ) =>
   (view: EditorView) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-icon'
-
     deleteBtn.innerHTML = deleteIcon
 
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
         const tr = view.state.tr
 
-        // delete general footnotes
-        node.content.forEach((item) => {
-          if (item.type === schema.nodes.paragraph) {
-            tr.delete(pos, pos + item.nodeSize + 1)
+        if (node.type === schema.nodes.table_element_footer) {
+          let isAllGeneralFootnotes = true
+
+          node.content.forEach((item) => {
+            if (item.type !== schema.nodes.paragraph) {
+              isAllGeneralFootnotes = false
+
+              return
+            }
+          })
+          if (isAllGeneralFootnotes) {
+            // All child nodes are general footnotes
+            tr.delete(pos, pos + node.nodeSize + 1)
+          } else {
+            node.content.forEach((item) => {
+              if (item.type === schema.nodes.paragraph) {
+                tr.delete(pos, pos + item.nodeSize + 1)
+              }
+            })
           }
-        })
-        // Check if the node is empty after deleting general notes
-        if (!node.childCount) {
-          tr.delete(pos, pos + node.nodeSize)
+        }
+        // delete table footnotes
+        if (node.type === schema.nodes.footnote) {
+          const inlineFootnotes = getInlineFootnote(view, id)
+
+          tr.setSelection(TextSelection.near(view.state.doc.resolve(0))).delete(
+            pos,
+            pos + node.nodeSize + 1
+          )
+          // delete inline footnotes
+          if (inlineFootnotes.node) {
+            const pos = inlineFootnotes.pos
+            const nodeSize = inlineFootnotes.node.nodeSize
+
+            if (pos && nodeSize) {
+              tr.delete(pos, pos + nodeSize)
+            }
+          }
         }
         view.dispatch(tr)
       }
 
       const componentProps: DeleteFootnoteDialogProps = {
         footnoteType: footnoteType,
+        footnoteMessage: footnoteMessage,
         handleDelete: handleDelete,
       }
 
@@ -228,13 +287,16 @@ export default (props: PluginProps) => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
-        const can = props.getCapabilities()
 
-        const tableElementFooter = findParentNodeOfType(
+        const isInTableElementFooter = hasParentNodeOfType(
           schema.nodes.table_element_footer
         )(state.selection)
 
-        if (tableElementFooter) {
+        const isInTableElement = hasParentNodeOfType(
+          schema.nodes.table_element
+        )(state.selection)
+
+        if (isInTableElementFooter) {
           const parent = findParentNodeWithIdValue(state.selection)
           if (parent) {
             decorations.push(
@@ -243,30 +305,12 @@ export default (props: PluginProps) => {
                 class: 'footnote-selected',
               })
             )
-            if (can.editArticle) {
-              if (parent.node.type === schema.nodes.paragraph) {
-                decorations.push(
-                  Decoration.widget(
-                    parent.pos + 1,
-
-                    deleteFootnoteWidget(
-                      tableElementFooter.node,
-                      tableElementFooter.pos,
-                      props,
-                      'table general note' //pass a variable instead of string after implementing LEAN-3143
-                    ),
-                    {
-                      key: parent.node.attrs.id,
-                    }
-                  )
-                )
-              }
-            }
           }
         }
 
         const { labels } = footnotesKey.getState(state) as PluginState
         let tableInlineFootnoteIds: Set<string> | undefined = undefined
+        const can = props.getCapabilities()
 
         state.doc.descendants((node, pos, parent) => {
           if (isFootnoteNode(node)) {
@@ -302,14 +346,78 @@ export default (props: PluginProps) => {
               )
             }
           }
-          if (node.type === schema.nodes.footnotes_element) {
-            decorations.push(
-              Decoration.node(pos, pos + node.nodeSize, {
-                class: 'table-footnotes-element',
-              })
-            )
+          if (can.editArticle) {
+            if (isInTableElement) {
+              const isGeneralFootnote = node.type === schema.nodes.paragraph
+              const isTableFootnote = node.type === schema.nodes.footnote
 
+              const footnote = (() => {
+                switch (node.type) {
+                  case schema.nodes.footnote:
+                    return {
+                      type: 'table footnote',
+                      message:
+                        'This action will entirely remove the table footnote from the list  because it will no longer be used.',
+                    }
+                  default:
+                    return {
+                      type: 'table general note',
+                      message:
+                        'This action will entirely remove the table general note.',
+                    }
+                }
+              })()
+
+              if (isTableFootnote) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 2,
+
+                    deleteFootnoteWidget(
+                      node,
+                      pos,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      node.attrs.id
+                    ),
+                    {
+                      key: node.attrs.id,
+                    }
+                  )
+                )
+              } else if (
+                isGeneralFootnote &&
+                parent?.type === schema.nodes.table_element_footer
+              ) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 1,
+
+                    deleteFootnoteWidget(
+                      parent,
+                      pos,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      parent.attrs.id
+                    ),
+                    {
+                      key: parent.attrs.id,
+                    }
+                  )
+                )
+              }
+            }
+          }
+
+          if (node.type === schema.nodes.footnotes_element) {
             if (parent?.type === schema.nodes.table_element_footer) {
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  class: 'table-footnotes-element',
+                })
+              )
               tableInlineFootnoteIds = findTableInlineFootnoteIds(
                 state.doc.resolve(pos)
               )
