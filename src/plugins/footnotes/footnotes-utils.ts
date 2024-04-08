@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-import { InlineFootnoteNode, schema } from '@manuscripts/transform'
-import { ResolvedPos } from 'prosemirror-model'
-import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
+import { FootnoteWithIndex } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  InlineFootnoteNode,
+  isFootnoteNode,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
+import { Fragment, ResolvedPos } from 'prosemirror-model'
+import { Transaction } from 'prosemirror-state'
+import {
+  ContentNodeWithPos,
+  findChildren,
+  findChildrenByType,
+  findParentNodeClosestToPos,
+  NodeWithPos,
+} from 'prosemirror-utils'
 
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
@@ -34,4 +48,114 @@ export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
           .flat()
       : []
   )
+}
+
+export const getNewFootnotePos = (
+  footnotesElement: NodeWithPos,
+  footnoteIndex: number
+) => {
+  let newFootnotePos = footnotesElement.pos + footnotesElement.node.nodeSize - 1
+
+  footnotesElement.node.descendants((node, pos, parent, index) => {
+    if (isFootnoteNode(node)) {
+      if (footnoteIndex === ++index) {
+        newFootnotePos = footnotesElement.pos + pos + (index === 1 ? 2 : 1)
+      }
+    }
+  })
+
+  return newFootnotePos
+}
+
+export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
+  const labels = new Map<string, string | undefined>(
+    findChildrenByType(node, schema.nodes.footnote).map((node) => [
+      node.node.attrs.id,
+      undefined,
+    ])
+  )
+
+  let index = 0
+
+  findChildrenByType(node, schema.nodes.inline_footnote)
+    .map(({ node }) => node.attrs.rids)
+    .flat()
+    .map((rid: string) => {
+      if (!labels.get(rid)) {
+        labels.set(rid, String(++index))
+      }
+    })
+
+  return labels
+}
+
+/**
+ *  This will make sure un-cited table footnotes are at the end of the list
+ *  and order cited footnote based on the position of inline footnote
+ */
+export const orderTableFootnotes = (
+  tr: Transaction,
+  footnotesElementWithPos: NodeWithPos,
+  position: number
+) => {
+  const tablesFootnoteLabels = buildTableFootnoteLabels(
+    tr.doc.nodeAt(tr.mapping.map(position)) as ManuscriptNode
+  )
+
+  const footnotes = findChildrenByType(
+    footnotesElementWithPos.node,
+    schema.nodes.footnote
+  ).map((nodeWithPos) => ({
+    node: nodeWithPos.node,
+    index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
+  })) as FootnoteWithIndex[]
+
+  const orderedFootnotes = [...footnotes]
+    .sort((a, b) => {
+      if (a.index !== undefined && b.index !== undefined) {
+        return Number.parseInt(a.index) - Number.parseInt(b.index)
+      } else {
+        return a.index === undefined ? 1 : -1
+      }
+    })
+    .map(({ node }) => node)
+
+  const { node: footnotesElement, pos } = footnotesElementWithPos
+  const footnoteElementPos = position + pos
+
+  return skipTracking(
+    tr.replaceWith(
+      tr.mapping.map(footnoteElementPos),
+      tr.mapping.map(footnoteElementPos + footnotesElement.nodeSize),
+      Fragment.fromArray(orderedFootnotes)
+    )
+  )
+}
+
+export const updateTableInlineFootnoteLabels = (
+  tr: Transaction,
+  table: ContentNodeWithPos
+) => {
+  const labels = buildTableFootnoteLabels(table.node)
+
+  findChildrenByType(table.node, schema.nodes.inline_footnote).map(
+    ({ node, pos }) => {
+      const contents = node.attrs.rids
+        .map((rid: string) => labels.get(rid))
+        .join(',')
+
+      if (
+        contents !== node.attrs.contents &&
+        tr.doc.nodeAt(tr.mapping.map(table.pos + pos + 1))
+      ) {
+        tr.setNodeMarkup(tr.mapping.map(table.pos + pos + 1), undefined, {
+          ...node.attrs,
+          rids: node.attrs.rids,
+          contents,
+        })
+      }
+    }
+  )
+
+  return tr
 }
