@@ -993,6 +993,9 @@
   margin-bottom: 0px;
   margin-top: 0px;
 }
+.ProseMirror .table-footer .table-footnotes-element > div {
+  position: relative;
+}
 
 .ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
