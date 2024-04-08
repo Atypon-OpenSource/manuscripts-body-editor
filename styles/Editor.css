@@ -978,6 +978,9 @@
 .table-footer .delete-icon:hover svg path {
   fill: #353535;
 }
+.ProseMirror .table-footer .table-footnotes-element > div {
+  position: relative;
+}
 .table-footnotes-element .delete-icon {
   display: none !important;
 }
