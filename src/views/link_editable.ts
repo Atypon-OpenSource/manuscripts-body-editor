@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-import { LinkNode } from '@manuscripts/transform'
+import { LinkNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { LinkForm, LinkValue } from '../components/views/LinkForm'
+import {
+  LinkForm,
+  LinkFormProps,
+  LinkValue,
+} from '../components/views/LinkForm'
+import {
+  getActualAttrs,
+  getChangeClasses,
+  isDeleted,
+  isRejectedInsert,
+} from '../lib/track-changes-utils'
+import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { LinkView } from './link'
@@ -26,8 +37,39 @@ import ReactSubView from './ReactSubView'
 export class LinkEditableView extends LinkView<EditableBlockProps> {
   protected popperContainer: HTMLDivElement
 
+  public ignoreMutation = () => true
+
+  public initialise = () => {
+    this.createDOM()
+    this.updateContents()
+  }
+
+  public updateContents = () => {
+    if (isRejectedInsert(this.node)) {
+      this.dom.innerHTML = ''
+      return
+    }
+
+    const attrs = getActualAttrs(this.node)
+    const href = attrs.href
+    const title = attrs.title
+
+    const classes = ['link', ...getChangeClasses(this.node.attrs.dataTracked)]
+    this.dom.className = classes.join(' ')
+    this.dom.setAttribute('href', allowedHref(href) ? href : '')
+    this.dom.setAttribute('title', title || '')
+  }
+
+  protected createDOM = () => {
+    this.dom = document.createElement('a')
+    this.dom.addEventListener('click', this.handleClick)
+    this.contentDOM = this.dom
+  }
+
   public selectNode = () => {
-    this.showForm()
+    if (!isDeleted(this.node)) {
+      this.showForm()
+    }
   }
 
   public destroy = () => {
@@ -38,26 +80,24 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
     this.closeForm()
   }
 
-  private showForm = (event?: Event) => {
-    if (event) {
-      event.preventDefault()
-    }
-
+  private showForm = () => {
     if (!this.props.getCapabilities().editArticle) {
       return
     }
 
-    const originalValue: LinkValue = {
-      href: this.node.attrs.href,
-      title: this.node.attrs.title,
+    const attrs = getActualAttrs(this.node)
+
+    const value: LinkValue = {
+      href: attrs.href,
+      title: attrs.title,
       text: this.node.textContent,
     }
 
-    const componentProps = {
-      value: originalValue,
-      handleCancel: this.handleCancel,
-      handleRemove: this.handleRemove,
-      handleSave: this.handleSave,
+    const componentProps: LinkFormProps = {
+      value,
+      onCancel: this.handleCancel,
+      onRemove: this.handleRemove,
+      onSave: this.handleSave,
     }
 
     this.popperContainer = ReactSubView(
@@ -73,6 +113,12 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')
   }
 
+  private handleClick = (e: Event) => {
+    if (this.props.getCapabilities().editArticle) {
+      e.preventDefault()
+    }
+  }
+
   private handleCancel = () => {
     const tr = this.view.state.tr
     const pos = this.getPos()
@@ -85,10 +131,9 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   private handleRemove = () => {
     const tr = this.view.state.tr
     const pos = this.getPos()
-    const to = pos + this.node.nodeSize
-    tr.replaceWith(pos, to, this.node.content).setSelection(
-      TextSelection.create(tr.doc, pos)
-    )
+    tr.delete(pos, pos + this.node.nodeSize)
+    tr.insert(pos, schema.text(this.node.textContent))
+    tr.setSelection(TextSelection.create(tr.doc, pos))
     this.view.focus()
     this.view.dispatch(tr)
     this.closeForm()
@@ -107,17 +152,13 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
         title: value.title,
       })
     }
-
     if (value.text !== link.textContent) {
-      tr.insertText(value.text, pos + 1, pos + this.node.nodeSize - 1)
+      tr.delete(pos + 1, pos + this.node.nodeSize - 1)
+      tr.insert(pos + 1, schema.text(value.text))
     }
-
     tr.setSelection(TextSelection.create(tr.doc, pos))
-
     this.view.focus()
-
     this.view.dispatch(tr)
-
     this.closeForm()
   }
 

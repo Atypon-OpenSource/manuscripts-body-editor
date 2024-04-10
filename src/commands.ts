@@ -378,16 +378,19 @@ export const insertLink = (
     href: matches ? matches[1] : '',
   }
 
-  const range = new NodeRange(
-    state.selection.$from,
-    state.selection.$to,
-    state.selection.$from.depth
-  )
   const { tr } = state
-  const wrapping = findWrapping(range, state.schema.nodes.link, attrs)
 
-  if (wrapping) {
-    tr.wrap(range, wrapping)
+  if (!state.selection.empty) {
+    const range = new NodeRange(
+      state.selection.$from,
+      state.selection.$to,
+      state.selection.$from.depth
+    )
+    const wrapping = findWrapping(range, state.schema.nodes.link, attrs)
+
+    if (wrapping) {
+      tr.wrap(range, wrapping)
+    }
   } else {
     tr.insert(
       state.selection.anchor,
