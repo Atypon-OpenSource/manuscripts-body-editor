@@ -33,7 +33,7 @@ import {
 import { insertTableFootnote } from '../commands'
 import {
   getChangeClasses,
-  // isDeleted,
+  isDeleted,
   // isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
@@ -61,6 +61,9 @@ export class InlineFootnoteView<
     )
 
   public handleClick = () => {
+    if (isDeleted(this.node)) {
+      return
+    }
     const tableElement = this.findParentTableElement()
     if (tableElement) {
       const componentProps = {
