@@ -14,26 +14,78 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  FootnoteWithIndex,
+  TableFootnotesSelector,
+} from '@manuscripts/style-guide'
+import {
+  InlineFootnoteNode,
+  ManuscriptNodeView,
+  schema,
+} from '@manuscripts/transform'
 import { History } from 'history'
+import {
+  ContentNodeWithPos,
+  findChildrenByType,
+  findParentNodeClosestToPos,
+} from 'prosemirror-utils'
 
-import { getChangeClasses } from '../lib/track-changes-utils'
+import { insertTableFootnote } from '../commands'
+import {
+  getChangeClasses,
+  // isDeleted,
+  // isRejectedInsert,
+} from '../lib/track-changes-utils'
+import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
+import ReactSubView from './ReactSubView'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
 }
 
-export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
+export class InlineFootnoteView<
+    PropsType extends InlineFootnoteProps & EditableBlockProps
+  >
   extends BaseNodeView<PropsType>
   implements ManuscriptNodeView
 {
+  protected popperContainer: HTMLDivElement
+
+  public findParentTableElement = () =>
+    findParentNodeClosestToPos(
+      this.view.state.doc.resolve(this.getPos()),
+      (node) => node.type === schema.nodes.table_element
+    )
+
   public handleClick = () => {
-    this.props.history.push({
-      ...this.props.history.location,
-      hash: '#' + this.node.attrs.rid,
-    })
+    const tableElement = this.findParentTableElement()
+    if (tableElement) {
+      const componentProps = {
+        notes: this.getNotes(tableElement),
+        onAdd: this.onAdd,
+        onInsert: this.onUpdate,
+        onCancel: this.destroy,
+        inlineFootnote: this.node,
+      }
+      this.popperContainer = ReactSubView(
+        { ...this.props, dispatch: this.view.dispatch },
+        TableFootnotesSelector,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'table-footnote-editor'
+      )
+      this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
+    } else {
+      this.props.history.push({
+        ...this.props.history.location,
+        hash: '#' + this.node.attrs.rid,
+      })
+    }
   }
 
   public updateContents = () => {
@@ -55,6 +107,57 @@ export class InlineFootnoteView<PropsType extends InlineFootnoteProps>
 
   public createDOM = () => {
     return document.createElement('span')
+  }
+
+  public destroy = () => {
+    this.props.popper.destroy()
+    this.popperContainer?.remove()
+  }
+
+  public getNotes = (tableElement: ContentNodeWithPos) => {
+    const footnotesElement = findChildrenByType(
+      tableElement.node,
+      schema.nodes.footnotes_element
+    ).pop()?.node
+    let footnotes: FootnoteWithIndex[] = []
+    if (footnotesElement) {
+      const tablesFootnoteLabels = buildTableFootnoteLabels(tableElement.node)
+      footnotes = findChildrenByType(footnotesElement, schema.nodes.footnote)
+        // .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
+        .map(({ node }) => ({
+          node: node,
+          index: tablesFootnoteLabels.get(node.attrs.id),
+        })) as FootnoteWithIndex[]
+    }
+    return footnotes
+  }
+
+  public onAdd = () => {
+    const tableElement = this.findParentTableElement()
+    if (tableElement) {
+      insertTableFootnote(tableElement.node, tableElement.pos, this.view, {
+        node: this.node as InlineFootnoteNode,
+        pos: this.getPos(),
+      })
+      this.destroy()
+    }
+  }
+
+  public onUpdate = (notes: FootnoteWithIndex[]) => {
+    const contents = this.node.attrs.contents.split(',')
+    const rids = notes.map((note) => note.node.attrs.id)
+    const { tr } = this.view.state
+    this.view.dispatch(
+      rids.length
+        ? tr.setNodeMarkup(this.getPos(), undefined, {
+            rids,
+            contents: notes
+              .map(({ index }) => (index ? index : Math.max(...contents) + 1))
+              .join(),
+          })
+        : tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+    )
+    this.destroy()
   }
 }
 
