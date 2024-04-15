@@ -724,11 +724,13 @@ Next levels are shifted 'up' by 1
   text-decoration: none;
 }
 
+.ProseMirror .deleted.pending::before,
 .ProseMirror .deleted.pending {
   background: var(--pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
 }
+.ProseMirror .deleted.accepted::before,
 .ProseMirror .deleted.accepted {
   background: var(--accepted-bg-color);
   color: var(--deleted-color);
