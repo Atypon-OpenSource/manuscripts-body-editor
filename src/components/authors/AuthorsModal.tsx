@@ -113,7 +113,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   onDeleteAuthor,
   onSaveAffiliation,
 }) => {
-  console.log(author)
   const [isOpen, setOpen] = useState(true)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()

@@ -132,8 +132,6 @@ export function sanitizeAttrsChange<T extends ProsemirrorNode>(
   return Object.keys(newAttr).reduce((acc, attr) => {
     const key = attr as keyof T['attrs']
     if (!currentAttrs[key] && !newAttr[key]) {
-      // typeof newAttr[key] !== 'boolean' // allows tracking setting false
-
       return acc
     }
     acc[key] = newAttr[key]

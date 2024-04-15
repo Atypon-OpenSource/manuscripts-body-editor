@@ -297,8 +297,11 @@ export class ContributorsView<
       this.insertAuthorNode(author)
     } else {
       const currentAttrs = nodeAndPos.node.attrs as ContributorAttrs
-      const sanitizedAttrs = sanitizeAttrsChange(author, currentAttrs)
-      updateNodeAttrs(this.view, schema.nodes.contributor, sanitizedAttrs)
+      updateNodeAttrs(
+        this.view,
+        schema.nodes.contributor,
+        sanitizeAttrsChange(author, currentAttrs)
+      )
     }
   }
 
