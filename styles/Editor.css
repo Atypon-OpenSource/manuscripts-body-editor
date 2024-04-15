@@ -981,9 +981,7 @@
 .ProseMirror .table-footer .table-footnotes-element > div {
   position: relative;
 }
-.table-footnotes-element .delete-icon {
-  display: none !important;
-}
+
 .ProseMirror .table-footer .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
   content: counter(table_footnote);

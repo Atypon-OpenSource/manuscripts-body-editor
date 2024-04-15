@@ -22,13 +22,11 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
+import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import {
-  NodeSelection,
-  Plugin,
-  PluginKey,
-  TextSelection,
-} from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+  findParentNodeClosestToPos,
+  hasParentNodeOfType,
+} from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -155,7 +153,7 @@ const deleteFootnoteWidget =
           })
           if (isAllGeneralFootnotes && pos) {
             // All child nodes are general footnotes
-            tr.delete(pos, pos + node.nodeSize - 1)
+            tr.delete(pos - 1, pos + node.nodeSize)
           } else {
             node.content.forEach((item) => {
               if (item.type === schema.nodes.paragraph && pos) {
@@ -168,11 +166,20 @@ const deleteFootnoteWidget =
         // TO Do : delete parent node "footnotes_element"
         if (node.type === schema.nodes.footnote && pos) {
           const inlineFootnotes = getInlineFootnote(view, id)
-
-          tr.setSelection(TextSelection.near(view.state.doc.resolve(0))).delete(
-            pos - 1,
-            pos + node.nodeSize
+          console.log(
+            tr.doc.slice(pos - 1, pos + node.nodeSize),
+            tr.doc.nodeAt(pos)
           )
+
+          const nodeWithPos = findParentNodeClosestToPos(
+            tr.doc.resolve(pos),
+            (node) => node.type === schema.nodes.footnote
+          )
+          if (nodeWithPos) {
+            const { pos: fnPos, node: fnNode } = nodeWithPos
+            tr.delete(fnPos, fnPos + fnNode.nodeSize)
+          }
+
           // delete inline footnotes
           if (inlineFootnotes.node) {
             const pos = inlineFootnotes.pos
