@@ -21,7 +21,10 @@ import { BibliographyItemAttrs } from '../../lib/references'
 export interface BibliographyItemSource {
   id: string
   label: string
-  search: (query: string, limit: number) => CancellablePromise<BibliographyItems>
+  search: (
+    query: string,
+    limit: number
+  ) => CancellablePromise<BibliographyItems>
 }
 
 export class CancellablePromise<T> extends Promise<T> {

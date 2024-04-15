@@ -21,7 +21,8 @@ import styled from 'styled-components'
 import { BibliographyItemAttrs } from '../../lib/references'
 import {
   BibliographyItems,
-  BibliographyItemSource, CancellablePromise,
+  BibliographyItemSource,
+  CancellablePromise,
 } from './BibliographyItemSource'
 import { ReferenceSearchResults } from './ReferenceSearchResults'
 import { ReferenceSearchResultsPlaceholder } from './ReferenceSearchResultsPlaceholder'

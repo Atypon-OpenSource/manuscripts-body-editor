@@ -15,6 +15,7 @@
  */
 import AnnotationEdit from '@manuscripts/assets/react/AnnotationEdit'
 import CloseIconDark from '@manuscripts/assets/react/CloseIconDark'
+import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import {
   ButtonGroup,
   Category,
@@ -24,17 +25,16 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
-import React, {useMemo, useReducer, useState} from 'react'
+import React, { useMemo, useReducer, useState } from 'react'
 import styled from 'styled-components'
 
-import {arrayReducer, attrsReducer} from '../../lib/array-reducer'
-import {BibliographyItemAttrs} from '../../lib/references'
-import {BibliographyItemSource} from './BibliographyItemSource'
-import {CitedItem, CitedItems} from './CitationViewer'
-import {ReferenceLine} from './ReferenceLine'
-import {ReferenceSearch} from './ReferenceSearch'
-import {ReferencesModal} from './ReferencesModal'
-import {generateID, ObjectTypes} from "@manuscripts/json-schema";
+import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
+import { BibliographyItemAttrs } from '../../lib/references'
+import { BibliographyItemSource } from './BibliographyItemSource'
+import { CitedItem, CitedItems } from './CitationViewer'
+import { ReferenceLine } from './ReferenceLine'
+import { ReferenceSearch } from './ReferenceSearch'
+import { ReferencesModal } from './ReferencesModal'
 
 const CitedItemActions = styled.div`
   display: flex;
@@ -159,7 +159,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setSearching(false)
     const item: BibliographyItemAttrs = {
       id: generateID(ObjectTypes.BibliographyItem),
-      type: 'article-journal'
+      type: 'article-journal',
     }
     handleSave(item)
     handleCite([item])
