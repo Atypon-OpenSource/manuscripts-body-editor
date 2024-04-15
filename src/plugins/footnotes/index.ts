@@ -138,7 +138,7 @@ const deleteFootnoteWidget =
 
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
-        const tr = view.state.tr
+        let tr = view.state.tr
         const pos = getPos()
 
         if (node.type === schema.nodes.table_element_footer) {
@@ -166,10 +166,6 @@ const deleteFootnoteWidget =
         // TO Do : delete parent node "footnotes_element"
         if (node.type === schema.nodes.footnote && pos) {
           const inlineFootnotes = getInlineFootnote(view, id)
-          console.log(
-            tr.doc.slice(pos - 1, pos + node.nodeSize),
-            tr.doc.nodeAt(pos)
-          )
 
           const nodeWithPos = findParentNodeClosestToPos(
             tr.doc.resolve(pos),
@@ -177,7 +173,7 @@ const deleteFootnoteWidget =
           )
           if (nodeWithPos) {
             const { pos: fnPos, node: fnNode } = nodeWithPos
-            tr.delete(fnPos, fnPos + fnNode.nodeSize)
+            view.dispatch(tr.delete(fnPos, fnPos + fnNode.nodeSize))
           }
 
           // delete inline footnotes
@@ -186,6 +182,7 @@ const deleteFootnoteWidget =
             const nodeSize = inlineFootnotes.node.nodeSize
 
             if (pos && nodeSize) {
+              tr = view.state.tr
               tr.delete(pos, pos + nodeSize)
             }
           }
