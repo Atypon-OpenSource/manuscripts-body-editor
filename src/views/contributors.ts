@@ -291,11 +291,11 @@ export class ContributorsView<
     this.container.appendChild(this.popper)
   }
 
-  handleSaveAuthor = (author: ContributorAttrs) => {
-    if (!findChildByID(this.view, author.id)) {
-      this.insertAuthorNode(author)
+  handleSaveAuthor = (attrs: ContributorAttrs) => {
+    if (!findChildByID(this.view, attrs.id)) {
+      this.insertAuthorNode(attrs)
     } else {
-      updateNodeAttrs(this.view, schema.nodes.contributor, author)
+      updateNodeAttrs(this.view, schema.nodes.contributor, attrs)
     }
   }
 

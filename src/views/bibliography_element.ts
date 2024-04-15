@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { BibliographyItem, CommentAnnotation } from '@manuscripts/json-schema'
+import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import {
-  BibliographyItemNode,
-  buildComment,
-  Decoder,
-} from '@manuscripts/transform'
+import { buildComment, schema } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
+import {
+  ReferencesEditor,
+  ReferencesEditorProps,
+} from '../components/references/ReferencesEditor'
 import { sanitize } from '../lib/dompurify'
+import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, updateNode } from '../lib/view'
+import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
@@ -39,7 +40,6 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { ReferencesEditor, ReferencesEditorProps } from './ReferencesEditor'
 
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -53,7 +53,6 @@ export class BibliographyElementBlockView<
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
-  private decoder = new Decoder(new Map())
   private clickedElementId: string | null = null // for storing element.id which should have context menu displayed
 
   public showPopper = (id: string) => {
@@ -254,13 +253,12 @@ export class BibliographyElementBlockView<
     this.dom.appendChild(this.container)
   }
 
-  private handleSave = (item: BibliographyItem) => {
-    const node = this.decoder.decode(item) as BibliographyItemNode
-    updateNode(this.view, node)
+  private handleSave = (attrs: BibliographyItemAttrs) => {
+    updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
   }
 
-  private handleDelete = (item: BibliographyItem) => {
-    deleteNode(this.view, item._id)
+  private handleDelete = (item: BibliographyItemAttrs) => {
+    deleteNode(this.view, item.id)
   }
 }
 

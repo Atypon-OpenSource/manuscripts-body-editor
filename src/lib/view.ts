@@ -16,7 +16,6 @@
 
 import {
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
@@ -65,13 +64,6 @@ export const findChildrenAttrsByType = <T extends Attrs>(
   return findChildrenByType(view, type).map((n) =>
     getActualAttrs(n.node)
   ) as T[]
-}
-
-export const updateNode = (
-  view: ManuscriptEditorView,
-  node: ManuscriptNode
-) => {
-  updateNodeAttrs(view, node.type, node.attrs)
 }
 
 export const updateNodeAttrs = (

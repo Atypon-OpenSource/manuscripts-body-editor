@@ -14,40 +14,35 @@
  * limitations under the License.
  */
 
+import { CommentAnnotation } from '@manuscripts/json-schema'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
-  BibliographyItem,
-  Citation,
-  CommentAnnotation,
-  ObjectTypes,
-} from '@manuscripts/json-schema'
-import { findMatchingBibliographyItem } from '@manuscripts/library'
-import {
-  CitationEditorProps,
-  CitationViewer,
-  CitationViewerProps,
-  ContextMenu,
-  ContextMenuProps,
-} from '@manuscripts/style-guide'
-import {
-  BibliographyItemNode,
   buildComment,
-  Decoder,
+  CitationNode,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
-import { findChildren, findChildrenByType } from 'prosemirror-utils'
+import { findChildrenByType } from 'prosemirror-utils'
 
-import { crossref } from '../citation-sources'
-import { isDeleted } from '../lib/track-changes-utils'
-import { deleteNode, updateNodeAttrs } from '../lib/view'
+import {
+  CitationEditor,
+  CitationEditorProps,
+} from '../components/references/CitationEditor'
+import {
+  CitationViewer,
+  CitationViewerProps,
+} from '../components/references/CitationViewer'
+import { Crossref } from '../lib/crossref'
+import { BibliographyItemAttrs, CitationAttrs } from '../lib/references'
+import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
+import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import {
   selectedSuggestionKey,
   SET_SUGGESTION_ID,
 } from '../plugins/selected-suggestion-ui'
 import { CitationView } from './citation'
-import { CitationEditorWrapper } from './CitationEditorWrapper'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
@@ -59,7 +54,6 @@ const createBibliographySection = (node: ManuscriptNode) =>
   ]) as ManuscriptNode
 
 export class CitationEditableView extends CitationView<EditableBlockProps> {
-  private decoder = new Decoder(new Map())
   private editor: HTMLElement
   private contextMenu: HTMLElement
 
@@ -76,12 +70,8 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       )
     } else {
       if (!isDeleted(this.node)) {
-        const citation = this.getCitation()
-        const rids = citation.embeddedCitationItems.map(
-          (i) => i.bibliographyItem
-        )
-
-        if (!rids.length) {
+        const attrs = getActualAttrs(this.node) as CitationAttrs
+        if (!attrs.rids.length) {
           this.showPopper()
         } else {
           this.showContextMenu()
@@ -121,10 +111,12 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
 
   public showPopper = () => {
     this.props.popper.destroy() // destroy the context menu
-    const can = this.props.getCapabilities()
-    const citation = this.getCitation()
-    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
     const bib = getBibliographyPluginState(this.view.state)
+    const can = this.props.getCapabilities()
+
+    const attrs: CitationAttrs = getActualAttrs(this.node as CitationNode)
+    const rids = attrs.rids
+
     const items = Array.from(bib.bibliographyItems.values())
 
     if (can.editArticle) {
@@ -134,19 +126,18 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         rids,
         items,
         citationCounts: bib.citationCounts,
-        sources: [crossref],
+        sources: [Crossref],
         onCite: this.handleCite,
         onUncite: this.handleUncite,
         onSave: this.handleSave,
         onDelete: this.handleDelete,
-        onComment: this.handleComment,
         onCancel: this.handleCancel,
         canEdit: can.editCitationsAndRefs,
       }
 
       this.editor = ReactSubView(
         this.props,
-        CitationEditorWrapper,
+        CitationEditor,
         componentProps,
         this.node,
         this.getPos,
@@ -170,9 +161,11 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     }
     this.props.popper.show(this.dom, this.editor, 'right')
   }
+
   private handleEdit = () => {
     this.showPopper()
   }
+
   private handleCancel = () => {
     // move the cursor after this node
     const selection = TextSelection.create(
@@ -184,74 +177,66 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     this.props.popper.destroy()
   }
 
-  private handleSave = (item: BibliographyItem) => {
-    if (item._id && !this.findPosition(item._id)) {
-      this.insertBibliographyNode(item)
+  private handleSave = (attrs: BibliographyItemAttrs) => {
+    if (!findChildByID(this.view, attrs.id)) {
+      this.insertBibliographyNode(attrs)
     } else {
-      const node = this.decoder.decode(item) as BibliographyItemNode
-      updateNodeAttrs(this.view, node.type, node.attrs)
+      updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
     }
   }
 
   private handleUncite = (id: string) => {
-    const citation = this.getCitation()
-    const items = citation.embeddedCitationItems.filter(
-      (i) => i.bibliographyItem !== id
-    )
+    const attrs = getActualAttrs(this.node as CitationNode)
+    const rids = attrs.rids.filter((i) => i !== id)
+    const pos = this.getPos()
+    const tr = this.view.state.tr
 
-    if (items.length > 0) {
-      citation.embeddedCitationItems = items
-
-      this.updateNode(citation)
-
-      window.setTimeout(() => {
-        this.showPopper() // redraw the popper
-      }, 100)
+    if (rids.length > 0) {
+      tr.setNodeMarkup(pos, undefined, {
+        ...attrs,
+        rids,
+      })
     } else {
-      const { tr } = this.view.state
-      const pos = this.getPos()
-
       tr.delete(pos, pos + 1)
-      this.view.dispatch(tr)
     }
 
+    this.view.dispatch(tr)
     this.props.popper.destroy()
   }
 
-  private handleCite = (items: BibliographyItem[]) => {
+  private handleCite = (items: BibliographyItemAttrs[]) => {
     const bib = getBibliographyPluginState(this.view.state)
 
-    const citation = this.getCitation()
-    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
+    const attrs = getActualAttrs(this.node as CitationNode)
+    const rids = [...attrs.rids]
 
-    items = items.filter((i) => !rids.includes(i._id))
+    items = items.filter((i) => !rids.includes(i.id))
 
     for (const item of items) {
-      const existingItem = findMatchingBibliographyItem(
-        item,
-        bib.bibliographyItems
-      )
+      const existingItem = bib.bibliographyItems.get(item.id)
 
       if (existingItem) {
-        item._id = existingItem._id
+        item.id = existingItem.id
       } else {
         this.insertBibliographyNode(item)
       }
 
-      citation.embeddedCitationItems.push({
-        _id: '_',
-        objectType: ObjectTypes.CitationItem,
-        bibliographyItem: item._id,
-      })
+      rids.push(item.id)
     }
 
-    this.updateNode(citation)
+    const tr = this.view.state.tr
+    const pos = this.getPos()
+    tr.setNodeMarkup(pos, undefined, {
+      ...attrs,
+      rids,
+    })
 
+    this.view.dispatch(tr)
     this.handleCancel()
   }
 
-  private handleDelete = (item: BibliographyItem) => {
-    return deleteNode(this.view, item._id)
+  private handleDelete = (item: BibliographyItemAttrs) => {
+    return deleteNode(this.view, item.id)
   }
 
   private handleComment = () => {
@@ -259,7 +244,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     this.props.setComment(comment)
   }
 
-  private insertBibliographyNode(item: BibliographyItem) {
+  private insertBibliographyNode(attrs: BibliographyItemAttrs) {
     const { doc, tr } = this.view.state
 
     const biblioSection = findChildrenByType(
@@ -273,7 +258,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       ? backmatter[0].node.nodeSize + backmatter[0].pos
       : 0
 
-    const node = this.decoder.decode(item) as BibliographyItemNode
+    const node = schema.nodes.bibliography_item.create(attrs)
 
     if (biblioSection.length) {
       this.view.dispatch(tr.insert(biblioSection[0].pos + 1, node))
@@ -287,23 +272,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     }
 
     return false
-  }
-
-  private updateNode = (citation: Citation) => {
-    const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
-    const { tr } = this.view.state
-    this.view.dispatch(
-      tr.setNodeMarkup(this.getPos(), undefined, {
-        id: citation._id,
-        rids,
-      })
-    )
-  }
-
-  private findPosition = (id: string) => {
-    const doc = this.view.state.doc
-    const children = findChildren(doc, (n) => n.attrs.id === id)
-    return children.length ? children[0] : undefined
   }
 }
 

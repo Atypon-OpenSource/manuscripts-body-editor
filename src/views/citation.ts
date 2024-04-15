@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import { CitationNode, ManuscriptNodeView } from '@manuscripts/transform'
+import { ManuscriptNodeView } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { getCitation } from '../plugins/bibliography/bibliography-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -45,14 +44,13 @@ export class CitationView<PropsType extends BaseNodeProps>
   public updateContents = () => {
     const bib = getBibliographyPluginState(this.view.state)
 
-    const citation = this.getCitation()
     const classes = [
       'citation',
       ...getChangeClasses(this.node.attrs.dataTracked),
     ]
     const element = document.createElement('span')
     element.className = classes.join(' ')
-    const text = bib.renderedCitations.get(citation._id)
+    const text = bib.renderedCitations.get(this.node.attrs.id)
     const fragment = sanitize(
       text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
       {
@@ -64,15 +62,6 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
-  }
-
-  public getCitation = () => {
-    const citation = getCitation(this.node as CitationNode)
-    if (!citation) {
-      throw new Error('Citation not found')
-    }
-
-    return citation
   }
 }
 

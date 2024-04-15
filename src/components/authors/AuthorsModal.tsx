@@ -82,19 +82,17 @@ const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id
 )
 
-const normalize = (author: ContributorAttrs) => {
-  return {
-    id: author.id,
-    role: author.role,
-    affiliations: author.affiliations || [],
-    bibliographicName: author.bibliographicName,
-    email: author.email || '',
-    isCorresponding: author.isCorresponding || false,
-    ORCIDIdentifier: author.ORCIDIdentifier || '',
-    priority: author.priority,
-    isJointContributor: author.isJointContributor || false,
-  }
-}
+const normalize = (author: ContributorAttrs) => ({
+  id: author.id,
+  role: author.role,
+  affiliations: author.affiliations || [],
+  bibliographicName: author.bibliographicName,
+  email: author.email || '',
+  isCorresponding: author.isCorresponding || false,
+  ORCIDIdentifier: author.ORCIDIdentifier || '',
+  priority: author.priority,
+  isJointContributor: author.isJointContributor || false,
+})
 
 export interface AuthorsModalProps {
   author?: ContributorAttrs
