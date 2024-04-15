@@ -26,7 +26,7 @@ import {
   AuthorsModalProps,
 } from '../components/authors/AuthorsModal'
 import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
-import { getActualAttrs } from '../lib/track-changes-utils'
+import { getActualAttrs, sanitizeAttrsChange } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -292,10 +292,13 @@ export class ContributorsView<
   }
 
   handleSaveAuthor = (author: ContributorAttrs) => {
-    if (!findChildByID(this.view, author.id)) {
+    const nodeAndPos = findChildByID(this.view, author.id)
+    if (!nodeAndPos) {
       this.insertAuthorNode(author)
     } else {
-      updateNodeAttrs(this.view, schema.nodes.contributor, author)
+      const currentAttrs = nodeAndPos.node.attrs as ContributorAttrs
+      const sanitizedAttrs = sanitizeAttrsChange(author, currentAttrs)
+      updateNodeAttrs(this.view, schema.nodes.contributor, sanitizedAttrs)
     }
   }
 
