@@ -275,24 +275,26 @@ export class ContextMenu {
 
     if (type === schema.nodes.table_element) {
       // Check if the selection is inside the table.
-      const isInTable = hasParentNodeOfType(schema.nodes.table_element)(
+      const isInTable = hasParentNodeOfType(schema.nodes.table)(
         this.view.state.selection
       )
       const tableElementFooter = findChildrenByType(
         this.node,
         schema.nodes.table_element_footer
       )
-      const generalFootnote = tableElementFooter[0]?.node.firstChild
       let isDeletedOrRejected = false
-      if (generalFootnote) {
-        isDeletedOrRejected =
-          isDeleted(generalFootnote) || isRejectedInsert(generalFootnote)
-      }
 
       const hasGeneralNote =
         tableElementFooter.length &&
         tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
 
+      if (hasGeneralNote) {
+        const generalFootnote = tableElementFooter[0]?.node.firstChild
+        if (generalFootnote) {
+          isDeletedOrRejected =
+            isDeleted(generalFootnote) || isRejectedInsert(generalFootnote)
+        }
+      }
       if (!hasGeneralNote || isDeletedOrRejected) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {

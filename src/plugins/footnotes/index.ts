@@ -36,7 +36,7 @@ import {
 } from '../../components/views/DeleteFootnoteDialog'
 import { PluginProps } from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { findParentNodeWithIdValue } from '../../lib/utils'
+import { findParentNodeWithIdValue, getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import { findTableInlineFootnoteIds } from './footnotes-utils'
@@ -142,16 +142,10 @@ const deleteFootnoteWidget =
         const pos = getPos()
 
         if (node.type === schema.nodes.table_element_footer) {
-          let isAllGeneralFootnotes = true
-
-          node.content.forEach((item) => {
-            if (item.type !== schema.nodes.paragraph) {
-              isAllGeneralFootnotes = false
-
-              return
-            }
-          })
-          if (isAllGeneralFootnotes && pos) {
+          if (
+            !getChildOfType(node, schema.nodes.footnotes_element, true) &&
+            pos
+          ) {
             // All child nodes are general footnotes
             tr.delete(pos - 1, pos + node.nodeSize)
           } else {

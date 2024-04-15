@@ -978,11 +978,11 @@
 .table-footer .delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footer .table-footnotes-element > div {
+.ProseMirror .table-footnotes-element > div {
   position: relative;
 }
 
-.ProseMirror .table-footer .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
+.ProseMirror .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
