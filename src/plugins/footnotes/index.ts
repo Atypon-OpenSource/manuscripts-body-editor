@@ -128,13 +128,12 @@ const getInlineFootnote = (view: EditorView, id: string): inlineFootnote => {
 const deleteFootnoteWidget =
   (
     node: ManuscriptNode,
-    pos: number,
     props: PluginProps,
     footnoteType: string,
     footnoteMessage: string,
     id: string
   ) =>
-  (view: EditorView) => {
+  (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-icon'
     deleteBtn.innerHTML = deleteIcon
@@ -142,6 +141,7 @@ const deleteFootnoteWidget =
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
         const tr = view.state.tr
+        const pos = getPos()
 
         if (node.type === schema.nodes.table_element_footer) {
           let isAllGeneralFootnotes = true
@@ -153,25 +153,25 @@ const deleteFootnoteWidget =
               return
             }
           })
-          if (isAllGeneralFootnotes) {
+          if (isAllGeneralFootnotes && pos) {
             // All child nodes are general footnotes
-            tr.delete(pos, pos + node.nodeSize + 1)
+            tr.delete(pos, pos + node.nodeSize - 1)
           } else {
             node.content.forEach((item) => {
-              if (item.type === schema.nodes.paragraph) {
-                tr.delete(pos, pos + item.nodeSize + 1)
+              if (item.type === schema.nodes.paragraph && pos) {
+                tr.delete(pos - 1, pos + item.nodeSize + 1)
               }
             })
           }
         }
         // delete table footnotes
         // TO Do : delete parent node "footnotes_element"
-        if (node.type === schema.nodes.footnote) {
+        if (node.type === schema.nodes.footnote && pos) {
           const inlineFootnotes = getInlineFootnote(view, id)
 
           tr.setSelection(TextSelection.near(view.state.doc.resolve(0))).delete(
-            pos,
-            pos + node.nodeSize + 1
+            pos - 1,
+            pos + node.nodeSize
           )
           // delete inline footnotes
           if (inlineFootnotes.node) {
@@ -197,7 +197,7 @@ const deleteFootnoteWidget =
         DeleteFootnoteDialog,
         componentProps,
         node,
-        () => pos,
+        () => getPos() as number,
         view
       )
     })
@@ -376,7 +376,6 @@ export default (props: PluginProps) => {
 
                     deleteFootnoteWidget(
                       node,
-                      pos,
                       props,
                       footnote.type,
                       footnote.message,
@@ -397,7 +396,6 @@ export default (props: PluginProps) => {
 
                     deleteFootnoteWidget(
                       parent,
-                      pos,
                       props,
                       footnote.type,
                       footnote.message,
