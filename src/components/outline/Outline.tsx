@@ -30,18 +30,9 @@ export const OutlineItemIcon = styled.span`
 `
 
 export const OutlineItem = styled.div<{
-  isSelected: boolean
   depth: number
 }>`
   align-items: center;
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
-  background: ${(props) =>
-    props.isSelected ? props.theme.colors.background.fifth : 'transparent'};
-  border-color: ${(props) =>
-    props.isSelected
-      ? props.theme.colors.border.primary
-      : props.theme.colors.background.fifth};
   color: ${(props) => props.theme.colors.text.primary};
   box-sizing: border-box;
   cursor: pointer;
@@ -60,15 +51,6 @@ export const OutlineItem = styled.div<{
 
   &:hover {
     background: ${(props) => props.theme.colors.background.fifth};
-  }
-`
-
-export const Outline = styled.div`
-  font-size: ${(props) => props.theme.font.size.medium};
-  position: relative;
-
-  & .outline-text-title {
-    font-size: ${(props) => props.theme.font.size.large};
   }
 `
 
@@ -100,27 +82,6 @@ export const OutlineItemNoArrow = styled.span`
   flex-shrink: 0;
 `
 
-export const OutlineDropPreview = styled.div<{ depth: number }>`
-  width: 100%;
-  background: #65a3ff;
-  height: 1px;
-  position: absolute;
-  margin-left: ${(props) => 30 + props.depth * 20}px;
-  z-index: 2;
-
-  &:before {
-    content: '';
-    display: inline-block;
-    width: ${(props) => props.theme.grid.unit}px;
-    height: ${(props) => props.theme.grid.unit}px;
-    border: 1px solid ${(props) => props.theme.colors.brand.default}
-    border-radius: ${(props) => props.theme.grid.radius.small};
-    position: absolute;
-    top: -${(props) => props.theme.grid.unit}px;
-    left: -6px;
-  }
-`
-
 export const OutlineItemLink = styled(Link)`
   flex: 1;
   display: inline-flex;
@@ -129,6 +90,8 @@ export const OutlineItemLink = styled(Link)`
   color: inherit;
   text-decoration: none;
   height: 100%;
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
 
   &:focus,
   &:active {
@@ -145,6 +108,31 @@ export const OutlineItemLinkText = styled.span`
 
   &.deleted {
     text-decoration: line-through;
+  }
+`
+
+export const Outline = styled.div`
+  font-size: ${(props) => props.theme.font.size.medium};
+  position: relative;
+
+  & .outline-text-title {
+    font-size: ${(props) => props.theme.font.size.large};
+  }
+
+  &.dragging {
+    opacity: 0.5;
+  }
+
+  &.drop-before > ${OutlineItem} > ${OutlineItemLink} {
+    border-top-color: ${(props) => props.theme.colors.brand.dark};
+  }
+
+  &.drop-after > ${OutlineItem} > ${OutlineItemLink} {
+    border-bottom-color: ${(props) => props.theme.colors.brand.dark};
+  }
+
+  & .subtree.collapsed {
+    display: none;
   }
 `
 

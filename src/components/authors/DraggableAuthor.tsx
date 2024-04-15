@@ -18,10 +18,11 @@ import CorrespondingAuthorBadge from '@manuscripts/assets/react/CorrespondingAut
 import VerticalEllipsis from '@manuscripts/assets/react/VerticalEllipsis'
 import { Avatar } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
-import { DropTargetMonitor, useDrag, useDrop, XYCoord } from 'react-dnd'
+import { useDrag, useDrop } from 'react-dnd'
 import styled from 'styled-components'
 
 import { authorLabel, ContributorAttrs } from '../../lib/authors'
+import { DropSide, getDropSide } from '../../lib/dnd'
 
 const AuthorContainer = styled.div`
   padding: ${(props) => props.theme.grid.unit * 2}px;
@@ -87,34 +88,7 @@ const DragHandle = styled(VerticalEllipsis)`
   cursor: move;
 `
 
-interface DropPosition {
-  id: string
-  diff: number
-}
-
-const BEFORE = {
-  id: 'before',
-  diff: -0.5,
-}
-
-const AFTER = {
-  id: 'after',
-  diff: 0.5,
-}
-
-const getDropPosition = (element: Element, monitor: DropTargetMonitor) => {
-  const rect = element.getBoundingClientRect()
-
-  // Get vertical middle
-  const middle = (rect.bottom - rect.top) / 2
-
-  const cursor = monitor.getClientOffset() as XYCoord
-
-  return cursor.y > middle + rect.top ? AFTER : BEFORE
-}
-
 interface DragItem {
-  type: 'author'
   author: ContributorAttrs
 }
 
@@ -131,14 +105,14 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
   onClick,
   moveAuthor,
 }) => {
-  const [dropPosition, setDropPosition] = useState<DropPosition>()
+  const [dropSide, setDropSide] = useState<DropSide>()
   const ref = useRef<HTMLDivElement>(null)
 
   const [{ isDragging }, dragRef] = useDrag({
+    type: 'author',
     item: {
-      type: 'author',
       author,
-    } as DragItem,
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -146,31 +120,32 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
 
   const [{ isOver }, dropRef] = useDrop({
     accept: 'author',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
     hover: (item: DragItem, monitor) => {
       if (!ref.current) {
         return
       }
-      const position = getDropPosition(ref.current, monitor)
-      setDropPosition(position)
+      const side = getDropSide(ref.current, monitor)
+      setDropSide(side)
     },
     drop: (item: DragItem, monitor) => {
       if (!ref.current) {
         return
       }
-      const position = getDropPosition(ref.current, monitor)
+      const side = getDropSide(ref.current, monitor)
       const from = item.author.priority as number
       const to = author.priority as number
-      moveAuthor(from, to + position.diff)
+      const diff = side === 'before' ? -0.5 : 0.5
+      moveAuthor(from, to + diff)
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
   })
 
   dragRef(dropRef(ref))
 
   const dragClass = isDragging ? 'dragging' : ''
-  const dropClass = isOver && dropPosition ? `drop-${dropPosition.id}` : ''
+  const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
   const activeClass = isSelected ? 'active' : ''
 
   return (
