@@ -23,10 +23,7 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import {
-  findParentNodeClosestToPos,
-  hasParentNodeOfType,
-} from 'prosemirror-utils'
+import { hasParentNodeOfType } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -100,36 +97,13 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
-interface inlineFootnote {
-  node: InlineFootnoteNode | null
-  pos: number | null
-}
-
-const getInlineFootnote = (view: EditorView, id: string): inlineFootnote => {
-  let inlineFootnote: InlineFootnoteNode | null = null
-  let footnotePosition: number | null = null
-
-  view.state.doc.descendants((node, pos) => {
-    const footnote = node as InlineFootnoteNode
-
-    if (footnote.attrs.rids?.includes(id)) {
-      inlineFootnote = footnote
-
-      footnotePosition = pos
-      return false
-    }
-  })
-
-  return { node: inlineFootnote, pos: footnotePosition }
-}
 
 const deleteFootnoteWidget =
   (
     node: ManuscriptNode,
     props: PluginProps,
     footnoteType: string,
-    footnoteMessage: string,
-    id: string
+    footnoteMessage: string
   ) =>
   (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
@@ -138,7 +112,7 @@ const deleteFootnoteWidget =
 
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
-        let tr = view.state.tr
+        const tr = view.state.tr
         const pos = getPos()
 
         if (node.type === schema.nodes.table_element_footer) {
@@ -154,31 +128,6 @@ const deleteFootnoteWidget =
                 tr.delete(pos - 1, pos + item.nodeSize + 1)
               }
             })
-          }
-        }
-        // delete table footnotes
-        // TO Do : delete parent node "footnotes_element"
-        if (node.type === schema.nodes.footnote && pos) {
-          const inlineFootnotes = getInlineFootnote(view, id)
-
-          const nodeWithPos = findParentNodeClosestToPos(
-            tr.doc.resolve(pos),
-            (node) => node.type === schema.nodes.footnote
-          )
-          if (nodeWithPos) {
-            const { pos: fnPos, node: fnNode } = nodeWithPos
-            view.dispatch(tr.delete(fnPos, fnPos + fnNode.nodeSize))
-          }
-
-          // delete inline footnotes
-          if (inlineFootnotes.node) {
-            const pos = inlineFootnotes.pos
-            const nodeSize = inlineFootnotes.node.nodeSize
-
-            if (pos && nodeSize) {
-              tr = view.state.tr
-              tr.delete(pos, pos + nodeSize)
-            }
           }
         }
         view.dispatch(tr)
@@ -348,7 +297,6 @@ export default (props: PluginProps) => {
           if (can.editArticle) {
             if (isInTableElement) {
               const isGeneralFootnote = node.type === schema.nodes.paragraph
-              const isTableFootnote = node.type === schema.nodes.footnote
 
               const footnote = (() => {
                 switch (node.type) {
@@ -367,24 +315,7 @@ export default (props: PluginProps) => {
                 }
               })()
 
-              if (isTableFootnote) {
-                decorations.push(
-                  Decoration.widget(
-                    pos + 2,
-
-                    deleteFootnoteWidget(
-                      node,
-                      props,
-                      footnote.type,
-                      footnote.message,
-                      node.attrs.id
-                    ),
-                    {
-                      key: node.attrs.id,
-                    }
-                  )
-                )
-              } else if (
+              if (
                 isGeneralFootnote &&
                 parent?.type === schema.nodes.table_element_footer
               ) {
@@ -396,8 +327,7 @@ export default (props: PluginProps) => {
                       parent,
                       props,
                       footnote.type,
-                      footnote.message,
-                      parent.attrs.id
+                      footnote.message
                     ),
                     {
                       key: parent.attrs.id,
