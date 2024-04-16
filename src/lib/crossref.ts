@@ -78,8 +78,8 @@ const parseCSL = (data: CSL.Data): BibliographyItemAttrs => ({
   issued: buildBibliographicDate(data.issued as BibliographicDate),
   containerTitle: data['container-title'],
   doi: data.DOI,
-  volume: String(data.volume),
-  issue: String(data.issue),
+  volume: data.volume ? String(data.volume) : undefined,
+  issue: data.issue ? String(data.issue) : undefined,
   page: data.page,
   title: data.title,
 })
