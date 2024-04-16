@@ -942,10 +942,6 @@
   vertical-align: super;
   font-size: 75%;
 }
-.ProseMirror .deleted.pending.footnote::before, .ProseMirror .deleted.accepted.footnote::before {
-  text-decoration: line-through;
-}
-
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
@@ -960,12 +956,6 @@
 
 .ProseMirror .table-footnotes-element {
   counter-reset: table_footnote;
-}
-.delete-footnote-dialog button:first-child {
-  width: 96px;
-}
-.delete-footnote-dialog button:not(:first-child) {
-  width: 79px;
 }
 .table-footer .delete-icon {
   display: none;
