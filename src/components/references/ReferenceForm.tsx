@@ -514,7 +514,7 @@ export const ReferenceForm: React.FC<{
                   <Label htmlFor={'container-title'}>Container Title</Label>
                 </LabelContainer>
 
-                <Field name={'container-title'}>
+                <Field name={'containerTitle'}>
                   {(props: FieldProps) => (
                     <ReferenceTextArea
                       id={'container-title'}
@@ -562,26 +562,10 @@ export const ReferenceForm: React.FC<{
 
               <FormField>
                 <LabelContainer>
-                  <Label htmlFor={'url'}>URL</Label>
-                </LabelContainer>
-
-                <Field name={'URL'}>
-                  {(props: FieldProps) => (
-                    <ReferenceTextField
-                      type={'url'}
-                      id={'url'}
-                      {...props.field}
-                    />
-                  )}
-                </Field>
-              </FormField>
-
-              <FormField>
-                <LabelContainer>
                   <Label htmlFor={'doi'}>DOI</Label>
                 </LabelContainer>
 
-                <Field name={'DOI'}>
+                <Field name={'doi'}>
                   {(props: FieldProps) => (
                     <ReferenceTextField
                       id={'doi'}
