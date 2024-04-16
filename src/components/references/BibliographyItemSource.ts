@@ -21,15 +21,19 @@ import { BibliographyItemAttrs } from '../../lib/references'
 export interface BibliographyItemSource {
   id: string
   label: string
-  search: (
-    query: string,
-    limit: number
-  ) => CancellablePromise<BibliographyItems>
+  search: (query: string, limit: number) => BibliographyItemSearch
 }
 
-export class CancellablePromise<T> extends Promise<T> {
-  cancel?: () => void
-  isCancelled?: boolean
+export class BibliographyItemSearch extends Promise<BibliographyItems> {
+  controller?: AbortController
+
+  constructor(
+    executor: (resolve: any, reject: any) => void,
+    controller?: AbortController
+  ) {
+    super(executor)
+    this.controller = controller
+  }
 }
 
 export type BibliographyItems = {
@@ -46,9 +50,9 @@ export class DocumentReferenceSource implements BibliographyItemSource {
     this.items = items
   }
 
-  search(query: string, limit: number): CancellablePromise<BibliographyItems> {
+  search(query: string, limit: number): BibliographyItemSearch {
     if (!query) {
-      return CancellablePromise.resolve({
+      return BibliographyItemSearch.resolve({
         items: [...this.items].slice(0, limit),
         total: this.items.length,
       })
@@ -68,7 +72,7 @@ export class DocumentReferenceSource implements BibliographyItemSource {
       threshold: -1000,
     })
 
-    return CancellablePromise.resolve({
+    return BibliographyItemSearch.resolve({
       items: results.map((r) => r.obj.item),
       total: results.total,
     })

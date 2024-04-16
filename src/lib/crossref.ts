@@ -18,14 +18,15 @@ import {
   BibliographicDate,
   buildBibliographicDate,
   buildBibliographicName,
+  generateID,
+  ObjectTypes,
 } from '@manuscripts/json-schema'
 
 import {
-  BibliographyItems,
+  BibliographyItemSearch,
   BibliographyItemSource,
-  CancellablePromise,
 } from '../components/references/BibliographyItemSource'
-import { BibliographyItemAttrs } from './references'
+import {BibliographyItemAttrs} from './references'
 
 type CrossrefResponse = {
   message: {
@@ -34,10 +35,7 @@ type CrossrefResponse = {
   }
 }
 
-const search = (
-  query: string,
-  limit: number
-): CancellablePromise<BibliographyItems> => {
+const search = (query: string, limit: number): BibliographyItemSearch => {
   const controller = new AbortController()
   const params = new URLSearchParams({
     filter: 'type:journal-article',
@@ -45,11 +43,11 @@ const search = (
     rows: String(limit),
   })
 
-  return {
-    ...searchAsync(params, controller),
-    cancel: () => controller.abort(),
-    isCancelled: controller.signal.aborted,
-  }
+  const promise = searchAsync(params, controller)
+
+  return new BibliographyItemSearch((resolve, reject) => {
+    promise.then(resolve).catch(reject)
+  }, controller)
 }
 
 const searchAsync = async (
@@ -74,7 +72,7 @@ const searchAsync = async (
 }
 
 const parseCSL = (data: CSL.Data): BibliographyItemAttrs => ({
-  id: '_',
+  id: generateID(ObjectTypes.BibliographyItem),
   type: data.type,
   author: data.author?.map(buildBibliographicName),
   issued: buildBibliographicDate(data.issued as BibliographicDate),

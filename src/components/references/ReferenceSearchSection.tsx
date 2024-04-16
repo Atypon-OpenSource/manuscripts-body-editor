@@ -20,9 +20,8 @@ import styled from 'styled-components'
 
 import { BibliographyItemAttrs } from '../../lib/references'
 import {
-  BibliographyItems,
+  BibliographyItemSearch,
   BibliographyItemSource,
-  CancellablePromise,
 } from './BibliographyItemSource'
 import { ReferenceSearchResults } from './ReferenceSearchResults'
 import { ReferenceSearchResultsPlaceholder } from './ReferenceSearchResultsPlaceholder'
@@ -53,7 +52,7 @@ export const Arrow = styled(ArrowDownUp)`
 
 type RunningState = {
   type: 'running'
-  promise: CancellablePromise<BibliographyItems>
+  promise: BibliographyItemSearch
 }
 
 type CompletedState = {
@@ -82,8 +81,8 @@ export const ReferenceSearchSection: React.FC<{
     const search = async () => {
       const promise = source.search(query, limit)
       setState((s) => {
-        if (s?.type === 'running' && s.promise.cancel) {
-          s.promise.cancel()
+        if (s?.type === 'running') {
+          s.promise.controller?.abort()
         }
         return {
           type: 'running',
@@ -91,7 +90,7 @@ export const ReferenceSearchSection: React.FC<{
         }
       })
       const response = await promise
-      if (promise.isCancelled) {
+      if (promise.controller?.signal.aborted) {
         return
       }
       setState({
