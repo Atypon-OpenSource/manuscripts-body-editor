@@ -16,14 +16,17 @@
 
 import {
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
 import * as utils from 'prosemirror-utils'
 
-import { getActualAttrs, isHidden } from './track-changes-utils'
+import {
+  getActualAttrs,
+  isHidden,
+  sanitizeAttrsChange,
+} from './track-changes-utils'
 
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
@@ -67,19 +70,14 @@ export const findChildrenAttrsByType = <T extends Attrs>(
   ) as T[]
 }
 
-export const updateNode = (
-  view: ManuscriptEditorView,
-  node: ManuscriptNode
-) => {
-  updateNodeAttrs(view, node.type, node.attrs)
-}
-
 export const updateNodeAttrs = (
   view: ManuscriptEditorView,
   type: ManuscriptNodeType,
-  attrs: Attrs
+  attrs: Attrs,
+  prevAttrs?: Attrs
 ) => {
-  const copy = { ...attrs }
+  const copy = prevAttrs ? sanitizeAttrsChange(attrs, prevAttrs) : { ...attrs }
+  // @ts-ignore attrs readonly - deleting from a copy
   delete copy.dataTracked
   const child = findChildByID(view, attrs.id)
   if (child) {
