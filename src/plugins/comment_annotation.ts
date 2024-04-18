@@ -30,7 +30,7 @@ export const commentScroll = (
   direction: 'editor' | 'inspector',
   isHighlight?: boolean
 ) => {
-  const elementClass = isHighlight ? 'highlight-marker' : 'ProseMirror-widget'
+  const elementClass = isHighlight ? 'highlight-marker' : 'block-comment-button'
   const commentIcon = document.querySelector(`[id="${id}"].${elementClass}`)
   const commentCard = document.querySelectorAll(`.comments-group [id="${id}"]`)
 
