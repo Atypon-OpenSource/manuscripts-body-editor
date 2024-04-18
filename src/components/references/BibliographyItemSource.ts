@@ -28,6 +28,7 @@ export class BibliographyItemSearch extends Promise<BibliographyItems> {
   controller?: AbortController
 
   constructor(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     executor: (resolve: any, reject: any) => void,
     controller?: AbortController
   ) {

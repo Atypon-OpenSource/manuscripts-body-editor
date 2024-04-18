@@ -21,13 +21,13 @@ import {
   generateID,
   ObjectTypes,
 } from '@manuscripts/json-schema'
+import { fixCSLData } from '@manuscripts/library'
 
 import {
   BibliographyItemSearch,
   BibliographyItemSource,
 } from '../components/references/BibliographyItemSource'
-import {BibliographyItemAttrs} from './references'
-import {fixCSLData} from "@manuscripts/library";
+import { BibliographyItemAttrs } from './references'
 
 type CrossrefResponse = {
   message: {
