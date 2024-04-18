@@ -86,7 +86,9 @@ export const updateNodeAttrs = (
       tr.setMeta(updateMetaNode, true)
     }
     view.dispatch(tr)
+    return true
   }
+  return false
 }
 
 export const deleteNode = (view: ManuscriptEditorView, id: string) => {

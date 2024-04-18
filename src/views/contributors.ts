@@ -292,11 +292,9 @@ export class ContributorsView<
   }
 
   handleSaveAuthor = (author: ContributorAttrs) => {
-    const nodeAndPos = findChildByID(this.view, author.id)
-    if (!nodeAndPos) {
+    const update = updateNodeAttrs(this.view, schema.nodes.contributor, author)
+    if (!update) {
       this.insertAuthorNode(author)
-    } else {
-      updateNodeAttrs(this.view, schema.nodes.contributor, author)
     }
   }
 
