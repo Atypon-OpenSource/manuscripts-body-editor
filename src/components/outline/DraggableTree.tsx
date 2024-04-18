@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Capabilities } from '@manuscripts/style-guide'
 import {
   isElementNodeType,
   ManuscriptEditorView,
@@ -21,25 +22,17 @@ import {
   nodeTitle,
   nodeTitlePlaceholder,
   schema,
-  Selected,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
-import * as React from 'react'
-import {
-  ConnectDragPreview,
-  ConnectDragSource,
-  ConnectDropTarget,
-  DragSource,
-  DropTarget,
-} from 'react-dnd'
-import { findDOMNode } from 'react-dom'
+import React, { MouseEvent, useRef, useState } from 'react'
+import { useDrag, useDrop } from 'react-dnd'
 
 import { ContextMenu } from '../../lib/context-menu'
+import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,
-  OutlineDropPreview,
   OutlineItem,
   OutlineItemArrow,
   OutlineItemIcon,
@@ -50,8 +43,6 @@ import {
   StyledTriangleCollapsed,
   StyledTriangleExpanded,
 } from './Outline'
-
-export type DropSide = 'before' | 'after' | null
 
 const excludedTypes = [
   schema.nodes.table,
@@ -69,53 +60,13 @@ const childrenExcludedTypes = [
   schema.nodes.blockquote_element,
 ]
 
-interface DragSourceProps {
-  tree: TreeItem
-  position: DropSide
-}
-
-interface DragObject {
-  tree: TreeItem
-}
-
-interface ConnectedDragSourceProps {
-  connectDragSource: ConnectDragSource
-  connectDragPreview: ConnectDragPreview
-  isDragging: boolean
-  canDrag: boolean
-  item: DragSourceProps
-}
-
-interface ConnectedDropTargetProps {
-  connectDropTarget: ConnectDropTarget
-  // isOver: boolean
-  isOverCurrent: boolean
-  canDrop: boolean
-  itemType: string | symbol | null
-}
-
-type ConnectedProps = ConnectedDragSourceProps & ConnectedDropTargetProps
-
 export interface TreeItem {
   index: number
-  isSelected: boolean
   items: TreeItem[]
   node: ManuscriptNode
   pos: number
   endPos: number
   parent?: ManuscriptNode
-}
-
-interface Props {
-  depth?: number
-  tree: TreeItem
-  view?: ManuscriptEditorView
-  editArticle: boolean
-}
-
-interface State {
-  open: boolean
-  dragPosition: DropSide
 }
 
 const isExcluded = (nodeType: ManuscriptNodeType) => {
@@ -130,7 +81,6 @@ interface TreeBuilderOptions {
   node: ManuscriptNode
   pos: number
   index: number
-  selected: Selected | null
   parent?: ManuscriptNode
 }
 
@@ -144,13 +94,11 @@ export const buildTree: TreeBuilder = ({
   node,
   pos,
   index,
-  selected,
   parent,
 }): TreeItem => {
   const items: TreeItem[] = []
   const startPos = pos + 1 // TODO: don't increment this?
   const endPos = pos + node.nodeSize
-  const isSelected = selected ? node.attrs.id === selected.node.attrs.id : false
 
   if (!isChildrenExcluded(node.type)) {
     node.forEach((childNode, offset, childIndex) => {
@@ -167,7 +115,6 @@ export const buildTree: TreeBuilder = ({
             node: childNode,
             pos: startPos + offset,
             index: childIndex,
-            selected,
             parent: node,
           })
         )
@@ -175,159 +122,29 @@ export const buildTree: TreeBuilder = ({
     })
   }
 
-  return { node, index, items, pos, endPos, parent, isSelected }
+  return { node, index, items, pos, endPos, parent }
 }
 
-class Tree extends React.Component<Props & ConnectedProps, State> {
-  public constructor(props: Props & ConnectedProps) {
-    super(props)
+export interface DraggableTreeProps {
+  depth: number
+  tree: TreeItem
+  view?: ManuscriptEditorView
+  can?: Capabilities
+}
 
-    this.state = {
-      open: !props.depth,
-      dragPosition: null,
-    }
-  }
+export const DraggableTree: React.FC<DraggableTreeProps> = ({
+  tree,
+  view,
+  depth,
+  can,
+}) => {
+  const [dropSide, setDropSide] = useState<DropSide>()
+  const [isOpen, setOpen] = useState(depth === 0)
+  const ref = useRef<HTMLDivElement>(null)
 
-  public render(): React.ReactNode {
-    const {
-      depth = 0,
-      tree,
-      canDrop,
-      connectDragSource,
-      connectDragPreview,
-      connectDropTarget,
-      isDragging,
-      isOverCurrent,
-      item,
-      view,
-    } = this.props
+  const { node, items, parent } = tree
 
-    const { open, dragPosition } = this.state
-
-    const { node, items, isSelected, parent } = tree
-
-    const isDeletedItem = isDeleted(node)
-
-    const isRejectedItem = isRejectedInsert(node)
-
-    const mightDrop = item && isOverCurrent && canDrop
-
-    const isTop = isManuscriptNode(parent)
-
-    if (isRejectedItem) {
-      return null
-    }
-
-    return connectDropTarget(
-      <div>
-        <Outline style={this.outlineStyles(isDragging)}>
-          <OutlineDropPreview
-            depth={depth}
-            style={this.topPreviewStyles(mightDrop, dragPosition)}
-          />
-
-          {!isTop &&
-            connectDragSource(
-              <div>
-                <OutlineItem
-                  isSelected={isSelected}
-                  depth={depth}
-                  onContextMenu={this.handleContextMenu}
-                >
-                  {items.length ? (
-                    <OutlineItemArrow onClick={this.toggle}>
-                      {open ? (
-                        <StyledTriangleExpanded />
-                      ) : (
-                        <StyledTriangleCollapsed />
-                      )}
-                    </OutlineItemArrow>
-                  ) : (
-                    <OutlineItemNoArrow />
-                  )}
-
-                  <OutlineItemLink to={`#${node.attrs.id || ''}`}>
-                    {connectDragPreview(
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <OutlineItemIcon>
-                          {nodeTypeIcon(node.type)}
-                        </OutlineItemIcon>
-                      </span>
-                    )}
-
-                    <OutlineItemLinkText
-                      className={`outline-text-${node.type.name} ${
-                        isDeletedItem && 'deleted'
-                      }`}
-                    >
-                      {this.itemText(node)}
-                    </OutlineItemLinkText>
-                  </OutlineItemLink>
-                </OutlineItem>
-              </div>
-            )}
-
-          {items.length ? (
-            <div
-              style={{
-                display: open || isTop ? '' : 'none',
-              }}
-            >
-              {items.map((subtree) => (
-                <DraggableTree
-                  {...this.props}
-                  key={subtree.node.attrs.id}
-                  tree={subtree}
-                  view={view}
-                  depth={isTop ? depth : depth + 1}
-                />
-              ))}
-            </div>
-          ) : (
-            ''
-          )}
-
-          <OutlineDropPreview
-            depth={depth}
-            style={this.bottomPreviewStyles(mightDrop, dragPosition)}
-          />
-        </Outline>
-      </div>
-    )
-  }
-
-  private outlineStyles = (isDragging: boolean): React.CSSProperties => ({
-    opacity: isDragging ? 0.5 : 1,
-  })
-
-  private bottomPreviewStyles = (
-    mightDrop: boolean,
-    dragPosition: DropSide
-  ): React.CSSProperties => ({
-    bottom: '-1px',
-    visibility: mightDrop && dragPosition === 'after' ? 'visible' : 'hidden',
-  })
-
-  private topPreviewStyles = (
-    mightDrop: boolean,
-    dragPosition: DropSide
-  ): React.CSSProperties => ({
-    top: '0px',
-    visibility: mightDrop && dragPosition === 'before' ? 'visible' : 'hidden',
-  })
-
-  private toggle = () => {
-    this.setState({
-      open: !this.state.open,
-    })
-  }
-
-  private itemText = (node: ManuscriptNode) => {
+  const itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
 
     if (text) {
@@ -339,184 +156,151 @@ class Tree extends React.Component<Props & ConnectedProps, State> {
     return <OutlineItemPlaceholder>{placeholder}</OutlineItemPlaceholder>
   }
 
-  private handleContextMenu: React.EventHandler<React.MouseEvent> = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (!this.props.editArticle) {
-      return false
-    }
-
-    const menu = this.createMenu()
-    if (!menu) {
-      return false
-    }
-
-    menu.showEditMenu(event.currentTarget as HTMLAnchorElement)
+  const toggleOpen = () => {
+    setOpen(!isOpen)
   }
 
-  private createMenu = () => {
-    const { tree, view } = this.props
+  const [{ isDragging }, dragRef] = useDrag({
+    type: 'outline',
+    item: tree,
+    canDrag: () => {
+      return depth !== 0
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
 
+  const [{ isOver }, dropRef] = useDrop({
+    accept: 'outline',
+    canDrop(item: TreeItem, monitor) {
+      if (!ref.current) {
+        return false
+      }
+      if (!tree.parent) {
+        return false
+      }
+      // can't drop on itself
+      if (item.node.attrs.id === tree.node.attrs.id) {
+        return false
+      }
+      // can't drop within itself
+      if (item.pos <= tree.pos && item.endPos >= tree.endPos) {
+        return false
+      }
+
+      const side = getDropSide(ref.current, monitor)
+      const index = side === 'before' ? tree.index : tree.index + 1
+
+      return tree.parent.canReplace(index, index, Fragment.from(item.node))
+    },
+    hover(item, monitor) {
+      if (!ref.current || !monitor.canDrop()) {
+        return
+      }
+      const side = getDropSide(ref.current, monitor)
+      setDropSide(side)
+    },
+    drop(item: TreeItem, monitor) {
+      if (!ref.current || !view) {
+        return
+      }
+
+      const side = getDropSide(ref.current, monitor)
+
+      const pos = side === 'before' ? tree.pos - 1 : tree.endPos - 1
+
+      let sourcePos = item.pos - 1
+
+      const node = item.node.type.schema.nodes[item.node.type.name].create(
+        {
+          ...item.node.attrs,
+          id: '',
+        },
+        item.node.content
+      )
+
+      const tr = view.state.tr.insert(pos, node)
+      sourcePos = tr.mapping.map(sourcePos)
+      tr.delete(sourcePos, sourcePos + item.node.nodeSize)
+      view.dispatch(tr)
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver({ shallow: true }),
+    }),
+  })
+
+  const isDeletedItem = isDeleted(node)
+  const isRejectedItem = isRejectedInsert(node)
+
+  const isTop = isManuscriptNode(parent)
+
+  if (isRejectedItem) {
+    return null
+  }
+
+  const handleContextMenu = (e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!can?.editArticle) {
+      return false
+    }
     if (!view) {
       return null
     }
 
-    // TODO: getPos?
-    return new ContextMenu(tree.node, view, () => tree.pos - 1)
+    const menu = new ContextMenu(tree.node, view, () => tree.pos - 1)
+    menu.showEditMenu(e.currentTarget as HTMLAnchorElement)
   }
+
+  dragRef(dropRef(ref))
+
+  const dragClass = isDragging ? 'dragging' : ''
+  const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
+
+  return (
+    <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
+      {!isTop && (
+        <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
+          {items.length ? (
+            <OutlineItemArrow onClick={toggleOpen}>
+              {isOpen ? (
+                <StyledTriangleExpanded />
+              ) : (
+                <StyledTriangleCollapsed />
+              )}
+            </OutlineItemArrow>
+          ) : (
+            <OutlineItemNoArrow />
+          )}
+
+          <OutlineItemLink to={`#${node.attrs.id}`}>
+            <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
+            <OutlineItemLinkText
+              className={`outline-text-${node.type.name} ${
+                isDeletedItem && 'deleted'
+              }`}
+            >
+              {itemText(node)}
+            </OutlineItemLinkText>
+          </OutlineItemLink>
+        </OutlineItem>
+      )}
+
+      {items.length ? (
+        <div className={`subtree ${isOpen ? '' : 'collapsed'}`}>
+          {items.map((subtree) => (
+            <DraggableTree
+              key={subtree.node.attrs.id}
+              tree={subtree}
+              view={view}
+              depth={!tree.parent ? depth : depth + 1}
+              can={can}
+            />
+          ))}
+        </div>
+      ) : null}
+    </Outline>
+  )
 }
-
-const dragSource = DragSource<Props, ConnectedDragSourceProps, DragObject>(
-  'outline',
-  {
-    // return data about the item that's being dragged, for later use
-    beginDrag(props) {
-      return {
-        tree: props.tree,
-      }
-    },
-
-    canDrag(props) {
-      return props.editArticle && !!props.tree.parent
-    },
-  },
-  (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    connectDragPreview: connect.dragPreview(),
-    isDragging: monitor.isDragging(),
-    canDrag: monitor.canDrag(),
-    item: monitor.getItem(),
-  })
-)
-
-const dropTarget = DropTarget<Props, ConnectedDropTargetProps>(
-  'outline',
-  {
-    canDrop(props, monitor) {
-      const item = monitor.getItem() as DragSourceProps
-
-      if (!props.tree.parent) {
-        return false
-      }
-
-      // can't drop on itself
-      if (item.tree.node.attrs.id === props.tree.node.attrs.id) {
-        return false
-      }
-
-      // can't drop within itself
-      if (
-        item.tree.pos <= props.tree.pos &&
-        item.tree.endPos >= props.tree.endPos
-      ) {
-        return false
-      }
-
-      const index =
-        item.position === 'before' ? props.tree.index : props.tree.index + 1
-
-      // if (index === props.tree.parent.childCount) {
-      //   return props.tree.parent.canAppend(item.tree.node)
-      // }
-      //
-      // return props.tree.parent.canReplaceWith(index, index, item.tree.node.type)
-
-      return props.tree.parent.canReplace(
-        index,
-        index,
-        Fragment.from(item.tree.node)
-      )
-    },
-
-    hover(props, monitor, component) {
-      // if (!monitor.canDrop()) {
-      //   return null
-      // }
-
-      if (monitor.isOver({ shallow: true })) {
-        // Determine mouse position
-        const offset = monitor.getClientOffset()
-
-        if (offset) {
-          // get the dragged item
-          const item = monitor.getItem() as DragSourceProps
-
-          // get the target DOM node
-          // eslint-disable-next-line react/no-find-dom-node
-          const node = findDOMNode(component) as Element
-
-          // get the rectangle on screen
-          const { bottom, top } = node.getBoundingClientRect()
-
-          // get the vertical middle
-          const verticalMiddle = (bottom - top) / 2
-
-          // get pixels from the top
-          const verticalHover = offset.y - top
-
-          // store the position on the dragged item
-          item.position = verticalHover < verticalMiddle ? 'before' : 'after'
-
-          // from https://github.com/react-dnd/react-dnd/issues/179#issuecomment-236226301
-          component.setState({
-            dragPosition: item.position,
-          })
-        }
-      }
-    },
-
-    drop(props, monitor) {
-      if (monitor.didDrop()) {
-        return
-      } // already dropped on something else
-      if (!props.view) {
-        return
-      } // cant drop without a view to transact upon
-
-      const item = monitor.getItem() as DragSourceProps
-
-      const source = item.tree
-      const target = props.tree
-      const side = item.position
-
-      const insertPos =
-        side === 'before'
-          ? target.pos - 1
-          : target.pos + target.node.nodeSize - 1
-
-      let sourcePos = source.pos - 1
-
-      // @TODO fix duplicated ids by cloning a node with a cleared id attribute
-      // duplicated ids occurr when track changes are enabled and deletion is reverted and kept alongside with the newly inserted content
-
-      const newNode = source.node.type.schema.nodes[
-        source.node.type.name
-      ].create(
-        {
-          ...source.node.attrs,
-          id: '',
-        },
-        source.node?.content
-      )
-      const tr = props.view.state.tr.insert(insertPos, newNode)
-
-      sourcePos = tr.mapping.map(sourcePos)
-
-      tr.delete(sourcePos, sourcePos + source.node.nodeSize)
-
-      props.view.dispatch(tr)
-    },
-  },
-  (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    // isOver: monitor.isOver(),
-    isOverCurrent: monitor.isOver({ shallow: true }),
-    canDrop: monitor.canDrop(),
-    itemType: monitor.getItemType(),
-  })
-)
-
-const DraggableTree = dragSource(dropTarget(Tree))
-
-export default DraggableTree

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { DragLayer } from '@manuscripts/style-guide'
 import React from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -44,7 +43,6 @@ export const AuthorList: React.FC<AuthorListProps> = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <AuthorListContainer>
-        <DragLayer />
         {authors.map((a) => {
           return (
             <DraggableAuthor

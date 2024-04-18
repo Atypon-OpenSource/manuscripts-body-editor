@@ -43,10 +43,10 @@ export default () => {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
       const tableInlineFootnoteChange = transactions.find((tr) =>
-        tr.steps.find((s) => {
+        tr.steps.find((s, i) => {
           if (s instanceof ReplaceStep) {
             const step = s as ReplaceStep
-            const $pos = oldState.doc.resolve(step.from)
+            const $pos = tr.docs[i].resolve(step.from)
 
             return (
               $pos.node($pos.depth - 2)?.type === schema.nodes.table &&
