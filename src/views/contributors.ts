@@ -296,12 +296,7 @@ export class ContributorsView<
     if (!nodeAndPos) {
       this.insertAuthorNode(author)
     } else {
-      updateNodeAttrs(
-        this.view,
-        schema.nodes.contributor,
-        author,
-        nodeAndPos?.node.attrs
-      )
+      updateNodeAttrs(this.view, schema.nodes.contributor, author)
     }
   }
 

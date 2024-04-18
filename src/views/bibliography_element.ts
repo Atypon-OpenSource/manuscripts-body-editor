@@ -256,8 +256,7 @@ export class BibliographyElementBlockView<
 
   private handleSave = (item: BibliographyItem) => {
     const node = this.decoder.decode(item) as BibliographyItemNode
-    const nodeAndPos = findChildByID(this.view, item._id)
-    updateNodeAttrs(this.view, node.type, node.attrs, nodeAndPos?.node.attrs)
+    updateNodeAttrs(this.view, node.type, node.attrs)
   }
 
   private handleDelete = (item: BibliographyItem) => {

@@ -73,14 +73,13 @@ export const findChildrenAttrsByType = <T extends Attrs>(
 export const updateNodeAttrs = (
   view: ManuscriptEditorView,
   type: ManuscriptNodeType,
-  attrs: Attrs,
-  prevAttrs?: Attrs
+  attrs: Attrs
 ) => {
-  const copy = prevAttrs ? sanitizeAttrsChange(attrs, prevAttrs) : { ...attrs }
-  // @ts-ignore attrs readonly - deleting from a copy
-  delete copy.dataTracked
   const child = findChildByID(view, attrs.id)
   if (child) {
+    const copy = sanitizeAttrsChange(attrs, child.node.attrs)
+    // @ts-ignore attrs readonly - deleting from a copy
+    delete copy.dataTracked
     const pos = child.pos
     const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs)
     if (metaNodeTypes.includes(type)) {
