@@ -26,7 +26,7 @@ import { Decoration } from 'prosemirror-view'
 
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
+import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
