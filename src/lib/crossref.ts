@@ -27,6 +27,7 @@ import {
   BibliographyItemSource,
 } from '../components/references/BibliographyItemSource'
 import {BibliographyItemAttrs} from './references'
+import {fixCSLData} from "@manuscripts/library";
 
 type CrossrefResponse = {
   message: {
@@ -66,12 +67,12 @@ const searchAsync = async (
   const total = data.message['total-results']
 
   return {
-    items: items.map((i) => parseCSL(i)),
+    items: items.map((i) => parseCSLData(fixCSLData(i))),
     total,
   }
 }
 
-const parseCSL = (data: CSL.Data): BibliographyItemAttrs => ({
+const parseCSLData = (data: CSL.Data): BibliographyItemAttrs => ({
   id: generateID(ObjectTypes.BibliographyItem),
   type: data.type,
   author: data.author?.map(buildBibliographicName),
