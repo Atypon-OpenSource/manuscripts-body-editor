@@ -122,7 +122,6 @@ export const getInlineFootnotes = (
       }
     }
   })
-  console.log(inlineFootnotes)
   return inlineFootnotes
 }
 
