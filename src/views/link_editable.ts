@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LinkNode, schema } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import {
@@ -47,8 +47,11 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   public updateContents = () => {
     if (isRejectedInsert(this.node)) {
       this.dom.innerHTML = ''
+      this.contentDOM = undefined
       return
     }
+
+    this.contentDOM = this.dom
 
     const attrs = getActualAttrs(this.node)
     const href = attrs.href
@@ -57,13 +60,13 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
     const classes = ['link', ...getChangeClasses(this.node.attrs.dataTracked)]
     this.dom.className = classes.join(' ')
     this.dom.setAttribute('href', allowedHref(href) ? href : '')
+    this.dom.setAttribute('target', '_blank')
     this.dom.setAttribute('title', title || '')
   }
 
   protected createDOM = () => {
     this.dom = document.createElement('a')
     this.dom.addEventListener('click', this.handleClick)
-    this.contentDOM = this.dom
   }
 
   public selectNode = () => {
@@ -77,6 +80,12 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   }
 
   public deselectNode = () => {
+    if (!this.node.content.size) {
+      const tr = this.view.state.tr
+      const pos = this.getPos()
+      tr.delete(pos, pos + this.node.nodeSize)
+      this.view.dispatch(tr)
+    }
     this.closeForm()
   }
 
@@ -122,6 +131,9 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   private handleCancel = () => {
     const tr = this.view.state.tr
     const pos = this.getPos()
+    if (!this.node.content.size) {
+      tr.delete(pos, pos + this.node.nodeSize)
+    }
     tr.setSelection(TextSelection.create(tr.doc, pos))
     this.view.focus()
     this.view.dispatch(tr)
@@ -142,20 +154,21 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   private handleSave = (value: LinkValue) => {
     const tr = this.view.state.tr
 
-    const link = this.node as LinkNode
+    const attrs = getActualAttrs(this.node)
     const pos = this.getPos()
 
-    if (value.href !== link.attrs.href || value.title !== link.attrs.title) {
+    if (value.href !== attrs.href || value.title !== attrs.title) {
       tr.setNodeMarkup(pos, undefined, {
         ...this.node.attrs,
         href: value.href,
         title: value.title,
       })
     }
-    if (value.text !== link.textContent) {
+    if (value.text !== this.node.textContent) {
       tr.delete(pos + 1, pos + this.node.nodeSize - 1)
       tr.insert(pos + 1, schema.text(value.text))
     }
+
     tr.setSelection(TextSelection.create(tr.doc, pos))
     this.view.focus()
     this.view.dispatch(tr)
