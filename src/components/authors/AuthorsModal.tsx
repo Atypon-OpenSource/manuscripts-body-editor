@@ -263,7 +263,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
-            data-cy={'modal-close-button'}
+            data-cy="modal-close-button"
           />
         </ModalHeader>
         <ModalBody>
