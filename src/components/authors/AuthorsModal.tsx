@@ -267,7 +267,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
           />
         </ModalHeader>
         <ModalBody>
-          <ModalSidebar data-cy={'authors-sidebar'}>
+          <ModalSidebar data-cy="authors-sidebar">
             <ModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
             </ModalSidebarHeader>
