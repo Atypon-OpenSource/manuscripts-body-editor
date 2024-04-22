@@ -41,7 +41,10 @@ import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
-import { findTableInlineFootnoteIds } from './footnotes-utils'
+import {
+  findTableInlineFootnoteIds,
+  getInlineFootnotes,
+} from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -102,28 +105,6 @@ export const uncitedFootnoteWidget = () => () => {
   element.innerHTML = alertIcon
   return element
 }
-interface InlineFootnote {
-  node: InlineFootnoteNode
-  pos: number
-}
-
-export const getInlineFootnotes = (
-  view: EditorView,
-  id: string,
-  tableElement: NodeWithPos
-): InlineFootnote[] => {
-  const inlineFootnotes: InlineFootnote[] = []
-
-  tableElement.node.content.descendants((node, pos) => {
-    if (node.type === schema.nodes.inline_footnote) {
-      const footnote = node as InlineFootnoteNode
-      if (footnote.attrs.rids?.includes(id)) {
-        inlineFootnotes.push({ node: footnote, pos })
-      }
-    }
-  })
-  return inlineFootnotes
-}
 
 const deleteFootnoteWidget =
   (
@@ -146,7 +127,7 @@ const deleteFootnoteWidget =
 
         // delete table footnotes
         if (node.type === schema.nodes.footnote && pos) {
-          const inlineFootnotes = getInlineFootnotes(view, id, tableElement)
+          const inlineFootnotes = getInlineFootnotes(id, tableElement)
 
           const nodeWithPos = findParentNodeClosestToPos(
             tr.doc.resolve(pos),
@@ -162,13 +143,26 @@ const deleteFootnoteWidget =
             tr = view.state.tr
 
             inlineFootnotes.forEach((footnote) => {
-              tr.delete(
-                footnote.pos + tableElement.pos + 1,
-                footnote.pos + tableElement.pos + footnote.node.nodeSize + 1
-              )
+              const pos = footnote.pos + tableElement.pos
+
+              if (footnote.node.attrs.contents.includes(',')) {
+                const updatedRids = footnote.node.attrs.rids.filter(
+                  (rid) => rid !== id
+                )
+                tr.setNodeMarkup(tr.mapping.map(pos + 1), undefined, {
+                  ...node.attrs,
+                  rids: updatedRids,
+                })
+              } else {
+                tr.delete(
+                  tr.mapping.map(pos + 1),
+                  tr.mapping.map(pos + footnote.node.nodeSize + 1)
+                )
+              }
             })
-            view.dispatch(tr)
           }
+
+          view.dispatch(tr)
         }
       }
 
