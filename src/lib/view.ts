@@ -81,7 +81,7 @@ export const updateNodeAttrs = (
     // @ts-ignore attrs readonly - deleting from a copy
     delete copy.dataTracked
     const pos = child.pos
-    const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs)
+    const tr = view.state.tr.setNodeMarkup(pos, undefined, copy)
     if (metaNodeTypes.includes(type)) {
       tr.setMeta(updateMetaNode, true)
     }
