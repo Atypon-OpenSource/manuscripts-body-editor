@@ -296,8 +296,6 @@ export default (props: PluginProps) => {
           }
           if (can.editArticle) {
             if (isInTableElement) {
-              const isGeneralFootnote = node.type === schema.nodes.paragraph
-
               const footnote = (() => {
                 switch (node.type) {
                   case schema.nodes.footnote:
@@ -316,7 +314,7 @@ export default (props: PluginProps) => {
               })()
 
               if (
-                isGeneralFootnote &&
+                node.type === schema.nodes.paragraph &&
                 parent?.type === schema.nodes.table_element_footer
               ) {
                 decorations.push(
