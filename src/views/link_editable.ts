@@ -80,11 +80,9 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   }
 
   public deselectNode = () => {
-    if (!this.node.content.size) {
-      const tr = this.view.state.tr
-      const pos = this.getPos()
-      tr.delete(pos, pos + this.node.nodeSize)
-      this.view.dispatch(tr)
+    const attrs = getActualAttrs(this.node)
+    if (!this.node.content.size || !attrs.href) {
+      this.removeLink()
     }
     this.closeForm()
   }
@@ -129,25 +127,15 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
   }
 
   private handleCancel = () => {
-    const tr = this.view.state.tr
-    const pos = this.getPos()
-    if (!this.node.content.size) {
-      tr.delete(pos, pos + this.node.nodeSize)
+    const attrs = getActualAttrs(this.node)
+    if (!this.node.content.size || !attrs.href) {
+      this.removeLink()
     }
-    tr.setSelection(TextSelection.create(tr.doc, pos))
-    this.view.focus()
-    this.view.dispatch(tr)
     this.closeForm()
   }
 
   private handleRemove = () => {
-    const tr = this.view.state.tr
-    const pos = this.getPos()
-    tr.delete(pos, pos + this.node.nodeSize)
-    tr.insert(pos, schema.text(this.node.textContent))
-    tr.setSelection(TextSelection.create(tr.doc, pos))
-    this.view.focus()
-    this.view.dispatch(tr)
+    this.removeLink()
     this.closeForm()
   }
 
@@ -173,6 +161,18 @@ export class LinkEditableView extends LinkView<EditableBlockProps> {
     this.view.focus()
     this.view.dispatch(tr)
     this.closeForm()
+  }
+
+  private removeLink = () => {
+    const tr = this.view.state.tr
+    const pos = this.getPos()
+    tr.delete(pos, pos + this.node.nodeSize)
+    const text = this.node.textContent
+    if (text) {
+      tr.insert(pos, schema.text(text))
+    }
+    tr.setSelection(TextSelection.create(tr.doc, pos))
+    this.view.dispatch(tr)
   }
 
   private closeForm = () => {
