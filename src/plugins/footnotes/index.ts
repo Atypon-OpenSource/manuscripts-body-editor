@@ -144,8 +144,8 @@ const deleteFootnoteWidget =
 
             inlineFootnotes.forEach((footnote) => {
               const pos = footnote.pos + tableElement.pos
-
-              if (footnote.node.attrs.contents.includes(',')) {
+              
+              if (footnote.node.attrs.rids.length > 1) {
                 const updatedRids = footnote.node.attrs.rids.filter(
                   (rid) => rid !== id
                 )
