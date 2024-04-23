@@ -83,12 +83,14 @@ export class ContributorsView<
   }
 
   public updateContents = () => {
-    this.updateClasses()
-    this.updateAttributes()
-    this.container.innerHTML = ''
-    this.buildAuthors()
-    this.createEditButton()
-    this.createLegend()
+    setTimeout(() => {
+      this.updateClasses()
+      this.updateAttributes()
+      this.container.innerHTML = ''
+      this.buildAuthors()
+      this.createEditButton()
+      this.createLegend()
+    }, 0)
   }
 
   buildAuthors = () => {
@@ -284,7 +286,6 @@ export class ContributorsView<
         tr.setMeta(CLEAR_SUGGESTION_ID, true)
       }
     }
-    this.view.dispatch(tr)
     // Dont show context menu if author is deleted and it is not rejected
     if (
       !(
@@ -294,6 +295,7 @@ export class ContributorsView<
     ) {
       this.showContextMenu(elementId)
     }
+    this.view.dispatch(tr)
   }
 
   public showContextMenu = (elementId: string) => {
