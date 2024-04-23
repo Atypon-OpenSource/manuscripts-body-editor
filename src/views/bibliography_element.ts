@@ -137,17 +137,14 @@ export class BibliographyElementBlockView<
     tr.setSelection(NodeSelection.create(doc, this.getPos()))
     if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
       tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-      this.view.dispatch(tr)
     } else {
       if (isSelectedSuggestion) {
         tr.setMeta(CLEAR_SUGGESTION_ID, true)
-        this.view.dispatch(tr)
       } else {
-        this.view.dispatch(tr)
         this.showContextMenu(elementId)
-        return
       }
     }
+    this.view.dispatch(tr)
   }
 
   public updateContents = async () => {
