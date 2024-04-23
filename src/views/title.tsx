@@ -14,27 +14,33 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
-
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeProps } from './base_node_view'
+import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class TitleView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView
-{
+export class TitleView<
+  PropsType extends BaseNodeProps
+> extends BlockView<PropsType> {
   public contentDOM: HTMLElement
 
   public initialise = () => {
     this.createDOM()
+    this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
+    this.createElement()
+    this.createGutter(
+      'action-gutter',
+      this.actionGutterButtons().filter(Boolean)
+    )
   }
 
-  protected createDOM = () => {
+  public createDOM = () => {
     this.dom = document.createElement('div')
-    this.dom.classList.add('manuscript-title')
+    this.dom.classList.add('block-container', 'manuscript-title')
+  }
 
+  public createElement = () => {
     this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('article-titles')
+    this.contentDOM.classList.add('block', 'article-titles')
     this.dom.appendChild(this.contentDOM)
   }
 }
