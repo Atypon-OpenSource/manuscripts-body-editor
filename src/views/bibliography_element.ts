@@ -22,6 +22,7 @@ import {
   buildComment,
   Decoder,
 } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
 import { Decoration } from 'prosemirror-view'
 
 import { sanitize } from '../lib/dompurify'
@@ -132,23 +133,22 @@ export class BibliographyElementBlockView<
     const isSelectedSuggestion = !!selectedSuggestionKey
       .getState(this.view.state)
       ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-
+    const { tr, doc } = this.view.state
+    tr.setSelection(NodeSelection.create(doc, this.getPos()))
     if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
-      this.view.dispatch(
-        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-      )
+      tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
     } else {
       if (isSelectedSuggestion) {
-        this.view.dispatch(
-          this.view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true)
-        )
+        tr.setMeta(CLEAR_SUGGESTION_ID, true)
       } else {
         this.showContextMenu(elementId)
       }
     }
+    this.view.dispatch(tr)
   }
 
   public updateContents = async () => {
+    this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
     const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
