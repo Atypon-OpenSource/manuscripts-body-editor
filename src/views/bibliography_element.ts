@@ -22,7 +22,6 @@ import {
   buildComment,
   Decoder,
 } from '@manuscripts/transform'
-import { Decoration } from 'prosemirror-view'
 
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
@@ -34,6 +33,7 @@ import {
   selectedSuggestionKey,
   SET_SUGGESTION_ID,
 } from '../plugins/selected-suggestion-ui'
+import { WidgetDecoration } from '../types'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -44,9 +44,7 @@ import { ReferencesEditor, ReferencesEditorProps } from './ReferencesEditor'
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
 }
-type WidgetDecoration = Decoration & {
-  type: { toDOM: () => HTMLElement }
-}
+
 export class BibliographyElementBlockView<
   PropsType extends BibliographyElementViewProps & EditableBlockProps
 > extends BlockView<PropsType> {
