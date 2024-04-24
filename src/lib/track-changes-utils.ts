@@ -124,3 +124,17 @@ export const getAttrsTrackingButton = (changeID: string) => {
 export function isHidden(node: ProsemirrorNode) {
   return isDeleted(node) || isRejectedInsert(node)
 }
+
+export function sanitizeAttrsChange<T extends ProsemirrorNode>(
+  newAttr: T['attrs'],
+  currentAttrs: T['attrs']
+) {
+  return Object.keys(newAttr).reduce((acc, attr) => {
+    const key = attr as keyof T['attrs']
+    if (!currentAttrs[key] && currentAttrs[key] !== 0 && !newAttr[key]) {
+      return acc
+    }
+    acc[key] = newAttr[key]
+    return acc
+  }, {} as T['attrs'])
+}
