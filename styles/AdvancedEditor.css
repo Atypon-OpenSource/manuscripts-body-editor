@@ -782,12 +782,6 @@ Next levels are shifted 'up' by 1
   color: var(--deleted-color);
 }
 
-.contributor[data-track-op='delete']:not([data-track-status='rejected']),
-.contributor[data-track-op='delete']:not([data-track-status='rejected']) .name,
-.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
-  pointer-events: none;
-}
-
 .contributor[data-track-op='delete']:not([data-track-status='rejected']) {
   color: var(--deleted-color);
 }
@@ -805,29 +799,52 @@ Next levels are shifted 'up' by 1
 .contributors {
   white-space: initial;
   margin-top: 24px;
-  align-items: center;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 0 .5em;
 }
 .contributors-list {
+  display: flex;
+  max-width: 100%;
   flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 0 .25em;
 }
-
 .contributors .tools-panel {
   position: initial;
+  display: flex;
   flex: 1;
+  align-items: center;
 }
-
+.contributor-wrapper {
+  display: flex;
+}
+.contributor-wrapper:after {
+  content: ', ';
+  color: #353535;
+}
+.contributor-wrapper:last-child::after {
+  content: '';
+  margin-right: 0;
+}
+.contributor-wrapper .contributor-comment {
+  left: 0;
+  top: -8px;
+  width: auto;
+  height: auto; 
+}
 .contributor {
+  position: relative;
   display: inline-flex;
   background: transparent;
   border: 0;
-  font-family: 'PT Sans', sans-serif;
   font-size: 1rem;
   text-decoration: none;
   color: inherit;
   outline: none;
-  padding: 0;
+  padding: 4px;
+  /* margin: 0 6px; */
 }
 
 .contributor:not(:disabled):hover {
@@ -843,16 +860,6 @@ Next levels are shifted 'up' by 1
   cursor: pointer !important;
 }
 
-.contributor:after {
-  content: ', ';
-  color: #353535;
-  margin-right: 5px;
-}
-.contributor:last-child::after {
-  content: '';
-  margin-right: 0;
-}
-
 .contributors-legend {
   margin: 16px 0 0 0;
 }
@@ -864,11 +871,7 @@ Next levels are shifted 'up' by 1
   vertical-align: top;
 }
 
-.contributors .tools-panel {
-  align-items: center;
-  display: flex;
-  margin-left: 8px;
-}
+
 
 .contributor-note {
   display: inline-block;
