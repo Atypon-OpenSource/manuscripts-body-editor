@@ -188,6 +188,7 @@
   text-decoration: line-through;
 }
 
+.ProseMirror .bib-item.ProseMirror-selectednode,
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {
   background-color: #bce7f6;
@@ -941,14 +942,14 @@
   cursor: pointer;
   vertical-align: super;
   font-size: 75%;
+  color: #0d79d0;
 }
-
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
 }
 
-.ProseMirror .table-footnotes-element:not(:first-child)::before {
+.ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
   content: '';
   border-bottom: 1px dashed #C9C9C9;
   display: block;
@@ -957,6 +958,20 @@
 
 .ProseMirror .table-footnotes-element {
   counter-reset: table_footnote;
+}
+.table-footer .delete-icon {
+  display: none;
+  position: absolute;
+  right: -20px;
+  top: -13px;
+  cursor: pointer;
+  z-index: 1;
+}
+.table-footer .delete-icon:hover svg path {
+  fill: #353535;
+}
+.ProseMirror .table-footnotes-element > div {
+  position: relative;
 }
 
 .ProseMirror .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
@@ -979,9 +994,14 @@
   background-color: #f2fbfc;
   padding: 4px;
 }
+
+.ProseMirror .table-footer .footnote-selected .delete-icon ,.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
+  display: block;
+}
 .table-footer > div > p {
   padding-bottom: 10px;
 }
+
 .ProseMirror .table-footnotes-element .footnote-selected {
   border: 1px solid #bce7f6;
 }
@@ -989,8 +1009,16 @@
   border-left: 1px solid #bce7f6;
   border-right: 1px solid #bce7f6;
 }
+.table-footer > div:has(> p.footnote-selected)  > p:first-child .delete-icon {
+  z-index: 2;
+  display: block;
+} 
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
+  position: relative;
+}
+.table-footer > div:has(> p.footnote-selected) > p:last-of-type {
+  border-bottom: 1px solid #bce7f6;
 }
 .table-footer > div:has(> p.footnote-selected) > p:last-child {
   border-bottom: 1px solid #bce7f6;
