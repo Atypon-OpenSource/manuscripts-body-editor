@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { NodeSelection } from 'prosemirror-state'
+
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -55,6 +57,17 @@ export class KeywordGroupView extends BlockView<EditableBlockProps> {
     if (this.addingTools) {
       this.element.appendChild(this.addingTools)
     }
+  }
+
+  public updateContents = () => {
+    this.dom.addEventListener('click', (event) => this.onClickHandler(event))
+  }
+
+  private onClickHandler = (event: MouseEvent) => {
+    event?.stopPropagation()
+    const { tr, doc } = this.view.state
+    tr.setSelection(NodeSelection.create(doc, this.getPos()))
+    this.view.dispatch(tr)
   }
 }
 
