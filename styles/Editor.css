@@ -942,6 +942,7 @@
   cursor: pointer;
   vertical-align: super;
   font-size: 75%;
+  color: #0d79d0;
 }
 
 .ProseMirror .table-footer {
