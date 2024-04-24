@@ -337,10 +337,14 @@ export class ContextMenu {
                     schema.nodes.footnote
                   )
 
-                  const footnotes = footnotesWithPos.map((nodeWithPos) => ({
-                    node: nodeWithPos.node,
-                    index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
-                  })) as FootnoteWithIndex[]
+                  const footnotes = footnotesWithPos
+                    // .filter(
+                    //   ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
+                    // )
+                    .map(({ node }) => ({
+                      node: node,
+                      index: tablesFootnoteLabels.get(node.attrs.id),
+                    })) as FootnoteWithIndex[]
 
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from

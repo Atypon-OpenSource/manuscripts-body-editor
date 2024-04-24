@@ -108,12 +108,13 @@ export const useEditor = (externalProps: ExternalProps) => {
         (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
       ) {
         const sendable = sendableSteps(nextState)
+
         if (sendable) {
           collabProvider.sendSteps(
             sendable.version,
             sendable.steps,
             sendable.clientID,
-            !tr.isGeneric
+            false
           )
         }
       }
