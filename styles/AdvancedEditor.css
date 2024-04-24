@@ -730,6 +730,7 @@ Next levels are shifted 'up' by 1
   color: var(--deleted-color);
   text-decoration: line-through;
 }
+
 .ProseMirror .deleted.accepted::before,
 .ProseMirror .deleted.accepted {
   background: var(--accepted-bg-color);
