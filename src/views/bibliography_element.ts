@@ -26,7 +26,7 @@ import { Decoration } from 'prosemirror-view'
 
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, updateNode } from '../lib/view'
+import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
 import {
@@ -256,7 +256,7 @@ export class BibliographyElementBlockView<
 
   private handleSave = (item: BibliographyItem) => {
     const node = this.decoder.decode(item) as BibliographyItemNode
-    updateNode(this.view, node)
+    updateNodeAttrs(this.view, node.type, node.attrs)
   }
 
   private handleDelete = (item: BibliographyItem) => {
