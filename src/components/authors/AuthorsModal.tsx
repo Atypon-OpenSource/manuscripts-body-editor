@@ -142,6 +142,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (!values || !selection) {
       return
     }
+
     const author = {
       ...selection,
       ...values,
@@ -254,11 +255,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         <ModalHeader>
           <CloseButton
             onClick={() => setOpen(false)}
-            data-cy={'modal-close-button'}
+            data-cy="modal-close-button"
           />
         </ModalHeader>
         <ModalBody>
-          <ModalSidebar data-cy={'authors-sidebar'}>
+          <ModalSidebar data-cy="authors-sidebar">
             <ModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
             </ModalSidebarHeader>

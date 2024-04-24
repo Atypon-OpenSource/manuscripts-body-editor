@@ -1138,12 +1138,19 @@ export const updateCommentAnnotationState = (
   }
 }
 
+interface NodeWithPosition {
+  node: InlineFootnoteNode
+  pos: number
+}
+
 export const insertTableFootnote = (
   node: ManuscriptNode,
   position: number,
-  view: EditorView
+  view: EditorView,
+  inlineFootnote?: NodeWithPosition
 ) => {
   const { state, dispatch } = view
+  const tr = state.tr
 
   const footnote = state.schema.nodes.footnote.createAndFill({
     id: generateID(ObjectTypes.Footnote),
@@ -1152,18 +1159,30 @@ export const insertTableFootnote = (
 
   const insertedAt = state.selection.to
 
-  const inlineFootnotes = findChildrenByType(node, schema.nodes.inline_footnote)
-  const footnoteIndex =
-    inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length + 1
-  const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
-    rids: [footnote.attrs.id],
-    contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
-  }) as InlineFootnoteNode
+  let footnoteIndex
+  if (inlineFootnote) {
+    const contents = inlineFootnote.node.attrs.contents.split(',').map(Number)
+    footnoteIndex = Math.max(...contents) + 1
+    tr.setNodeMarkup(inlineFootnote.pos, undefined, {
+      rids: [...inlineFootnote.node.attrs.rids, footnote.attrs.id],
+      contents: inlineFootnote.node.attrs.contents + ',' + footnoteIndex,
+    })
+  } else {
+    const inlineFootnotes = findChildrenByType(
+      node,
+      schema.nodes.inline_footnote
+    )
+    footnoteIndex =
+      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
+      1
+    const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
+      rids: [footnote.attrs.id],
+      contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
+    }) as InlineFootnoteNode
 
-  const tr = state.tr
-
-  // insert the inline footnote
-  tr.insert(insertedAt, inlineFootnoteNode)
+    // insert the inline footnote
+    tr.insert(insertedAt, inlineFootnoteNode)
+  }
 
   let insertionPos = position
 
