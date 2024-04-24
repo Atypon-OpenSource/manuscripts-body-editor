@@ -151,6 +151,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (!values || !selection) {
       return
     }
+
     const author = {
       ...selection,
       ...values,
