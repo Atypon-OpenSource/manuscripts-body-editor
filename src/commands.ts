@@ -367,32 +367,32 @@ export const insertSectionLabel = (
   return true
 }
 
+const isLink = (text: string): boolean => /^\s*(https?:\S+)/.test(text)
+
 export const insertLink = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const text = selectedText()
-  const contents = text ? state.schema.text(text) : undefined
-  const matches = text.match(/^\s*(https?:\S+)/)
-  const attrs = {
-    href: matches ? matches[1] : '',
-  }
+  const tr = state.tr
+  const selection = state.selection
 
-  const range = new NodeRange(
-    state.selection.$from,
-    state.selection.$to,
-    state.selection.$from.depth
-  )
-  const { tr } = state
-  const wrapping = findWrapping(range, state.schema.nodes.link, attrs)
-
-  if (wrapping) {
-    tr.wrap(range, wrapping)
-  } else {
-    tr.insert(
-      state.selection.anchor,
-      state.schema.nodes.link.create(attrs, contents)
+  if (!selection.empty) {
+    const text = selectedText()
+    const attrs = {
+      href: isLink(text) ? text.trim() : '',
+    }
+    const range = new NodeRange(
+      selection.$from,
+      selection.$to,
+      selection.$from.depth
     )
+    const wrapping = findWrapping(range, schema.nodes.link, attrs)
+
+    if (wrapping) {
+      tr.wrap(range, wrapping)
+    }
+  } else {
+    tr.insert(state.selection.anchor, schema.nodes.link.create())
   }
 
   if (dispatch) {
