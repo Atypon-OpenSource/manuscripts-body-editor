@@ -24,106 +24,6 @@ import styled from 'styled-components'
 
 import { allowedHref } from '../../lib/url'
 
-export interface LinkValue {
-  text: string
-  href: string
-  title?: string
-}
-
-export const LinkForm: React.FC<{
-  handleCancel: () => void
-  handleRemove: () => void
-  handleSave: (value: LinkValue) => void
-  value: LinkValue
-}> = ({ handleCancel, handleRemove, handleSave, value }) => {
-  const [href, setHref] = useState(value.href)
-  const [text, setText] = useState(value.text)
-  const [title, setTitle] = useState(value.title || '')
-
-  const handleSubmit = useCallback(
-    (event) => {
-      event.preventDefault()
-      handleSave({ href, text, title })
-    },
-    [href, text, title, handleSave]
-  )
-
-  return (
-    <Form onSubmit={handleSubmit}>
-      <Field>
-        <FieldHeading>
-          <Label>URL</Label>
-
-          {href && allowedHref(href) && (
-            <Open href={href} target={'_blank'} rel={'noopener'} />
-          )}
-        </FieldHeading>
-
-        <TextField
-          type={'url'}
-          name={'href'}
-          value={href}
-          autoComplete={'off'}
-          autoFocus={true}
-          required={true}
-          onChange={(event) => {
-            setHref(event.target.value)
-          }}
-        />
-      </Field>
-
-      <Field>
-        <FieldHeading>
-          <Label>Text</Label>
-        </FieldHeading>
-
-        <TextField
-          type={'text'}
-          name={'text'}
-          value={text}
-          autoComplete={'off'}
-          required={true}
-          onChange={(event) => {
-            setText(event.target.value)
-          }}
-        />
-      </Field>
-
-      <Field>
-        <FieldHeading>
-          <Label>Title (optional)</Label>
-        </FieldHeading>
-
-        <TextField
-          type={'text'}
-          name={'title'}
-          value={title}
-          autoComplete={'off'}
-          required={false}
-          onChange={(event) => {
-            setTitle(event.target.value)
-          }}
-        />
-      </Field>
-
-      <Actions>
-        <ActionGroup>
-          <SecondaryButton type={'button'} mini={true} onClick={handleRemove}>
-            Remove Link
-          </SecondaryButton>
-        </ActionGroup>
-
-        <ActionGroup>
-          <SecondaryButton type={'button'} onClick={handleCancel}>
-            Cancel
-          </SecondaryButton>
-          <PrimaryButton type={'submit'}>Save</PrimaryButton>
-        </ActionGroup>
-      </Actions>
-    </Form>
-  )
-}
-
 const Form = styled.form`
   padding: 16px;
 `
@@ -175,3 +75,104 @@ const Open = styled.a`
     margin-left: 4px;
   }
 `
+
+export interface LinkValue {
+  text: string
+  href: string
+  title?: string
+}
+
+export interface LinkFormProps {
+  onCancel: () => void
+  onRemove: () => void
+  onSave: (value: LinkValue) => void
+  value: LinkValue
+}
+
+export const LinkForm: React.FC<LinkFormProps> = ({
+  onCancel,
+  onRemove,
+  onSave,
+  value,
+}) => {
+  const [href, setHref] = useState(value.href)
+  const [text, setText] = useState(value.text)
+  const [title, setTitle] = useState(value.title || '')
+
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      onSave({ href, text, title })
+    },
+    [href, text, title, onSave]
+  )
+
+  return (
+    <Form onSubmit={handleSubmit}>
+      <Field>
+        <FieldHeading>
+          <Label>URL</Label>
+
+          {href && allowedHref(href) && (
+            <Open href={href} target={'_blank'} rel={'noopener'} />
+          )}
+        </FieldHeading>
+
+        <TextField
+          type={'url'}
+          name={'href'}
+          value={href}
+          autoComplete={'off'}
+          autoFocus={true}
+          required={true}
+          onChange={(e) => setHref(e.target.value)}
+        />
+      </Field>
+
+      <Field>
+        <FieldHeading>
+          <Label>Text</Label>
+        </FieldHeading>
+
+        <TextField
+          type={'text'}
+          name={'text'}
+          value={text}
+          autoComplete={'off'}
+          required={true}
+          onChange={(e) => setText(e.target.value)}
+        />
+      </Field>
+
+      <Field>
+        <FieldHeading>
+          <Label>Title (optional)</Label>
+        </FieldHeading>
+
+        <TextField
+          type={'text'}
+          name={'title'}
+          value={title}
+          autoComplete={'off'}
+          required={false}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Field>
+
+      <Actions>
+        <ActionGroup>
+          <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
+            Remove Link
+          </SecondaryButton>
+        </ActionGroup>
+
+        <ActionGroup>
+          <SecondaryButton type={'button'} onClick={onCancel}>
+            Cancel
+          </SecondaryButton>
+          <PrimaryButton type={'submit'}>Save</PrimaryButton>
+        </ActionGroup>
+      </Actions>
+    </Form>
+  )
+}

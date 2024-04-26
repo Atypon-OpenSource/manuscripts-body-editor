@@ -38,7 +38,7 @@ import {
 } from '../../components/views/DeleteFootnoteDialog'
 import { PluginProps } from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { findParentNodeWithIdValue } from '../../lib/utils'
+import { findParentNodeWithIdValue, getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import {
@@ -125,6 +125,23 @@ const deleteFootnoteWidget =
         let tr = view.state.tr
         const pos = getPos()
 
+        // delete general footnotes
+        if (node.type === schema.nodes.table_element_footer) {
+          if (
+            !getChildOfType(node, schema.nodes.footnotes_element, true) &&
+            pos
+          ) {
+            // All child nodes are general footnotes
+            tr.delete(pos - 1, pos + node.nodeSize)
+          } else {
+            node.content.forEach((item) => {
+              if (item.type === schema.nodes.paragraph && pos) {
+                tr.delete(pos - 1, pos + item.nodeSize + 1)
+              }
+            })
+          }
+        }
+
         // delete table footnotes
         if (node.type === schema.nodes.footnote && pos) {
           const inlineFootnotes = getInlineFootnotes(id, tableElement)
@@ -144,7 +161,7 @@ const deleteFootnoteWidget =
 
             inlineFootnotes.forEach((footnote) => {
               const pos = footnote.pos + tableElement.pos
-              
+
               if (footnote.node.attrs.rids.length > 1) {
                 const updatedRids = footnote.node.attrs.rids.filter(
                   (rid) => rid !== id
@@ -161,9 +178,8 @@ const deleteFootnoteWidget =
               }
             })
           }
-
-          view.dispatch(tr)
         }
+        view.dispatch(tr)
       }
 
       const componentProps: DeleteFootnoteDialogProps = {
@@ -361,6 +377,27 @@ export default (props: PluginProps) => {
                     ),
                     {
                       key: node.attrs.id,
+                    }
+                  )
+                )
+              } else if (
+                node.type === schema.nodes.paragraph &&
+                parent?.type === schema.nodes.table_element_footer
+              ) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 1,
+
+                    deleteFootnoteWidget(
+                      parent,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      parent.attrs.id,
+                      tableElement
+                    ),
+                    {
+                      key: parent.attrs.id,
                     }
                   )
                 )
