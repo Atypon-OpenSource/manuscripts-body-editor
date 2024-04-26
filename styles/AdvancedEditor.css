@@ -723,7 +723,6 @@ Next levels are shifted 'up' by 1
   background: var(--accepted-bg-color);
   text-decoration: none;
 }
-
 .ProseMirror .deleted.pending::before,
 .ProseMirror .deleted.pending {
   background: var(--pending-bg-color);
