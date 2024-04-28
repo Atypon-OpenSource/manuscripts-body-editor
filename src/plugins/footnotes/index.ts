@@ -27,8 +27,14 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
 import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  TextSelection,
+} from 'prosemirror-state'
+import {
+  findParentNode,
   findParentNodeClosestToPos,
   findParentNodeOfType,
   hasParentNodeOfType,
@@ -48,6 +54,7 @@ import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import {
   findTableInlineFootnoteIds,
+  getAlphaOrderIndices,
   getInlineFootnotes,
 } from './footnotes-utils'
 
@@ -219,58 +226,19 @@ const deleteFootnoteWidget =
  *
  */
 
-function getAlphaOrderIndices(index: number) {
-  const unicodeInterval = [96, 122]
-  const places = unicodeInterval[1] - unicodeInterval[0]
-
-  function getClassCount(n: number, order: number) {
-    return n * Math.pow(places, order - 1)
-  }
-
-  let indices: number[] | null = null
-
-  while (index >= 0) {
-    let current = index
-    let position = 1
-    while (current >= places) {
-      current = current / places
-      position++
-    }
-    const newIndex = Math.floor(current)
-    indices = indices ? indices : new Array(position).fill(0)
-    indices.splice(indices.length - position, 1, newIndex)
-
-    index -= getClassCount(newIndex, position)
-
-    if (position === 1) {
-      break
-    }
-  }
-  return indices || []
-}
-
-function getAlphaOrder(index: number) {
-  return getAlphaOrderIndices(index)
-    .map((n) => String.fromCodePoint(n))
-    .join('')
-}
-
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   const inlineFootnotes: [InlineFootnoteNode, number][] = []
   const footnotes: Map<string, [FootnoteNode, number]> = new Map()
-
-  const labels = new Map<string, string>()
   let footnoteElement: [FootnotesElementNode, number] | undefined
 
   doc.descendants((node, pos, parentNode) => {
     if (isFootnoteNode(node)) {
       footnotes.set(node.attrs.id, [node, pos])
     }
+
     if (isFootnotesSectionNode(node)) {
-      console.log('footnotes section position: ' + pos)
       // this has to be done because footnote element is used in tables too
       node.descendants((node, childPos) => {
-        console.log('footnotes element position: ' + childPos)
         if (isFootnotesElementNode(node)) {
           footnoteElement = [node, pos + childPos]
         }
@@ -287,10 +255,12 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   })
 
   let index = 0
+  const labels = new Map<string, string>()
+
   inlineFootnotes.sort((a, b) => a[1] - b[1])
   inlineFootnotes.forEach(([node]) => {
     node.attrs.rids.forEach((rid) => {
-      labels.set(rid, getAlphaOrder(++index))
+      labels.set(rid, getAlphaOrderIndices(++index))
     })
   })
 
@@ -316,13 +286,15 @@ export default (props: PluginProps) => {
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { inlineFootnotes: oldInlineFootnoteNodes, footnoteElement } =
-        footnotesKey.getState(oldState) as PluginState
+      const { inlineFootnotes: oldInlineFootnoteNodes } = footnotesKey.getState(
+        oldState
+      ) as PluginState
 
       const {
         inlineFootnotes: inlineFootnoteNodes,
         footnotes,
         labels,
+        footnoteElement,
       } = footnotesKey.getState(newState) as PluginState
 
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
@@ -334,9 +306,6 @@ export default (props: PluginProps) => {
 
       const { tr } = newState
 
-      /*
-      @TODO - reorder items in backmatter - keep unused at the end 
-      */
       const footnotesReordered: FootnoteNode[] = []
       const footnotesRest = new Map(footnotes)
 
@@ -361,23 +330,23 @@ export default (props: PluginProps) => {
             contents,
           })
         }
-
-        // unused footnotes go to the bottom of the list
-        footnotesRest.forEach(([node]) => footnotesReordered.push(node))
-
-        // replaceFootnotes(tr, footnotesReordered, footnoteElement)
-        const newFElement = schema.nodes.footnotes_element.createAndFill(
-          footnoteElement[0].attrs,
-          footnotesReordered
-        )
-        if (newFElement) {
-          tr.replaceWith(
-            footnoteElement[1],
-            footnoteElement[1] + footnoteElement[0].nodeSize,
-            newFElement
-          )
-        }
       })
+
+      // unused footnotes go to the bottom of the list
+      footnotesRest.forEach(([node]) => footnotesReordered.push(node))
+
+      // replacing footnotes in footnote element
+      const newFElement = schema.nodes.footnotes_element.create(
+        footnoteElement[0].attrs,
+        footnotesReordered
+      )
+      if (newFElement) {
+        tr.replaceWith(
+          footnoteElement[1],
+          footnoteElement[1] + footnoteElement[0].nodeSize,
+          newFElement
+        )
+      }
 
       skipTracking(tr)
       return tr
@@ -528,3 +497,25 @@ export default (props: PluginProps) => {
     },
   })
 }
+
+// newState.doc.descendants((node, pos, parentNode) => {
+//   if (isFootnoteNode(node)) {
+//     footnotes.set(node.attrs.id, [node, pos])
+//   }
+//   if (isFootnotesElementNode(node)) {
+//     console.log(
+//       'APPLY: position of footnote element high level: ' + pos
+//     )
+//   }
+//   if (isFootnotesSectionNode(node)) {
+//     // this has to be done because footnote element is used in tables too
+//     node.descendants((node, childPos) => {
+//       if (isFootnotesElementNode(node)) {
+//         console.log(
+//           'APPLY: position of footnote element LOW level: ' +
+//             (pos + childPos)
+//         )
+//       }
+//     })
+//   }
+// })

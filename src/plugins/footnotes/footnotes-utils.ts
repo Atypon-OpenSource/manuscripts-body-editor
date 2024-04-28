@@ -181,3 +181,35 @@ export const getInlineFootnotes = (
 
   return inlineFootnotes
 }
+
+export function getAlphaOrderIndices(index: number) {
+  const unicodeInterval = [96, 122]
+  const places = unicodeInterval[1] - unicodeInterval[0]
+
+  function getClassCount(n: number, order: number) {
+    return n * Math.pow(places, order - 1)
+  }
+
+  let indices: number[] | null = null
+
+  while (index >= 0) {
+    let current = index
+    let position = 1
+    while (current >= places) {
+      current = current / places
+      position++
+    }
+    const newIndex = Math.floor(current)
+    indices = indices ? indices : new Array(position).fill(0)
+    indices.splice(indices.length - position, 1, newIndex)
+
+    index -= getClassCount(newIndex, position)
+
+    if (position === 1) {
+      break
+    }
+  }
+  return (indices || [])
+    .map((v) => String.fromCodePoint(v + unicodeInterval[0]))
+    .join('')
+}
