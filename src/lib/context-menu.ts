@@ -282,11 +282,20 @@ export class ContextMenu {
         this.node,
         schema.nodes.table_element_footer
       )
+      let isDeletedOrRejected = false
+
       const hasGeneralNote =
         tableElementFooter.length &&
         tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
 
-      if (!hasGeneralNote) {
+      if (hasGeneralNote) {
+        const generalFootnote = tableElementFooter[0]?.node.firstChild
+        if (generalFootnote) {
+          isDeletedOrRejected =
+            isDeleted(generalFootnote) || isRejectedInsert(generalFootnote)
+        }
+      }
+      if (!hasGeneralNote || isDeletedOrRejected) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
@@ -314,6 +323,7 @@ export class ContextMenu {
                 ).pop()
                 if (
                   !footnotesElementWithPos ||
+                  !footnotesElementWithPos?.node.content.childCount ||
                   isDeleted(footnotesElementWithPos.node) ||
                   isRejectedInsert(footnotesElementWithPos.node)
                 ) {
@@ -328,10 +338,14 @@ export class ContextMenu {
                     schema.nodes.footnote
                   )
 
-                  const footnotes = footnotesWithPos.map((nodeWithPos) => ({
-                    node: nodeWithPos.node,
-                    index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
-                  })) as FootnoteWithIndex[]
+                  const footnotes = footnotesWithPos
+                    // .filter(
+                    //   ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
+                    // )
+                    .map(({ node }) => ({
+                      node: node,
+                      index: tablesFootnoteLabels.get(node.attrs.id),
+                    })) as FootnoteWithIndex[]
 
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from

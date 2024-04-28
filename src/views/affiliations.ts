@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { NodeSelection } from 'prosemirror-state'
+
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -29,6 +31,17 @@ export class AffiliationsView<
     this.contentDOM.setAttribute('contenteditable', 'false')
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.contentDOM)
+  }
+
+  public updateContents = () => {
+    // to run deselectNode for other components
+    this.dom.addEventListener('click', () => this.onClickHandler())
+  }
+
+  private onClickHandler = () => {
+    const { tr, doc } = this.view.state
+    tr.setSelection(NodeSelection.create(doc, this.getPos()))
+    this.view.dispatch(tr)
   }
 }
 
