@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  FootnoteNode,
+  FootnotesElementNode,
   InlineFootnoteNode,
   isFootnoteNode,
+  isFootnotesElementNode,
+  isFootnotesSectionNode,
   isInlineFootnoteNode,
   ManuscriptNode,
   schema,
@@ -47,33 +52,13 @@ import {
 } from './footnotes-utils'
 
 interface PluginState {
-  nodes: [InlineFootnoteNode, number][]
+  inlineFootnotes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
+  footnotes: Map<string, [FootnoteNode, number]>
+  footnoteElement?: [FootnotesElementNode, number]
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
-
-export const buildPluginState = (doc: ManuscriptNode): PluginState => {
-  const nodes: [InlineFootnoteNode, number][] = []
-
-  let index = 0
-  const labels = new Map<string, string>()
-
-  doc.descendants((node, pos, parentNode) => {
-    if (
-      isInlineFootnoteNode(node) &&
-      parentNode &&
-      parentNode.type !== schema.nodes.table_cell
-    ) {
-      nodes.push([node, pos])
-      node.attrs.rids.forEach((rid) => {
-        labels.set(rid, String(++index))
-      })
-    }
-  })
-
-  return { nodes, labels }
-}
 
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
@@ -234,6 +219,84 @@ const deleteFootnoteWidget =
  *
  */
 
+function getAlphaOrderIndices(index: number) {
+  const unicodeInterval = [96, 122]
+  const places = unicodeInterval[1] - unicodeInterval[0]
+
+  function getClassCount(n: number, order: number) {
+    return n * Math.pow(places, order - 1)
+  }
+
+  let indices: number[] | null = null
+
+  while (index >= 0) {
+    let current = index
+    let position = 1
+    while (current >= places) {
+      current = current / places
+      position++
+    }
+    const newIndex = Math.floor(current)
+    indices = indices ? indices : new Array(position).fill(0)
+    indices.splice(indices.length - position, 1, newIndex)
+
+    index -= getClassCount(newIndex, position)
+
+    if (position === 1) {
+      break
+    }
+  }
+  return indices || []
+}
+
+function getAlphaOrder(index: number) {
+  return getAlphaOrderIndices(index)
+    .map((n) => String.fromCodePoint(n))
+    .join('')
+}
+
+export const buildPluginState = (doc: ManuscriptNode): PluginState => {
+  const inlineFootnotes: [InlineFootnoteNode, number][] = []
+  const footnotes: Map<string, [FootnoteNode, number]> = new Map()
+
+  const labels = new Map<string, string>()
+  let footnoteElement: [FootnotesElementNode, number] | undefined
+
+  doc.descendants((node, pos, parentNode) => {
+    if (isFootnoteNode(node)) {
+      footnotes.set(node.attrs.id, [node, pos])
+    }
+    if (isFootnotesSectionNode(node)) {
+      console.log('footnotes section position: ' + pos)
+      // this has to be done because footnote element is used in tables too
+      node.descendants((node, childPos) => {
+        console.log('footnotes element position: ' + childPos)
+        if (isFootnotesElementNode(node)) {
+          footnoteElement = [node, pos + childPos]
+        }
+      })
+    }
+
+    if (
+      isInlineFootnoteNode(node) &&
+      parentNode &&
+      parentNode.type !== schema.nodes.table_cell
+    ) {
+      inlineFootnotes.push([node, pos])
+    }
+  })
+
+  let index = 0
+  inlineFootnotes.sort((a, b) => a[1] - b[1])
+  inlineFootnotes.forEach(([node]) => {
+    node.attrs.rids.forEach((rid) => {
+      labels.set(rid, getAlphaOrder(++index))
+    })
+  })
+
+  return { inlineFootnotes, labels, footnotes, footnoteElement }
+}
+
 export default (props: PluginProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
@@ -244,31 +307,53 @@ export default (props: PluginProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
+        const prevState = footnotesKey.getState(oldState)
+        if (!tr.docChanged && prevState) {
+          return prevState
+        }
         return buildPluginState(newState.doc)
       },
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { nodes: oldInlineFootnoteNodes } = footnotesKey.getState(
-        oldState
-      ) as PluginState
+      const { inlineFootnotes: oldInlineFootnoteNodes, footnoteElement } =
+        footnotesKey.getState(oldState) as PluginState
 
-      const { nodes: inlineFootnoteNodes, labels } = footnotesKey.getState(
-        newState
-      ) as PluginState
+      const {
+        inlineFootnotes: inlineFootnoteNodes,
+        footnotes,
+        labels,
+      } = footnotesKey.getState(newState) as PluginState
 
-      if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
+      const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
+      const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
+
+      if (!footnoteElement || isEqual(prevIds, newIds)) {
         return null
       }
 
       const { tr } = newState
 
+      /*
+      @TODO - reorder items in backmatter - keep unused at the end 
+      */
+      const footnotesReordered: FootnoteNode[] = []
+      const footnotesRest = new Map(footnotes)
+
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
-          .map((rid) => labels.get(rid))
+          .map((rid) => {
+            const currentfNode = footnotesRest.get(rid)
+            if (currentfNode) {
+              footnotesReordered.push(currentfNode[0])
+              footnotesRest.delete(rid)
+            }
+            return labels.get(rid)
+          })
           .join('')
 
+        // displaying indices
         if (footnote.attrs.contents !== contents) {
           tr.setNodeMarkup(pos, undefined, {
             ...footnote.attrs,
@@ -276,8 +361,25 @@ export default (props: PluginProps) => {
             contents,
           })
         }
+
+        // unused footnotes go to the bottom of the list
+        footnotesRest.forEach(([node]) => footnotesReordered.push(node))
+
+        // replaceFootnotes(tr, footnotesReordered, footnoteElement)
+        const newFElement = schema.nodes.footnotes_element.createAndFill(
+          footnoteElement[0].attrs,
+          footnotesReordered
+        )
+        if (newFElement) {
+          tr.replaceWith(
+            footnoteElement[1],
+            footnoteElement[1] + footnoteElement[0].nodeSize,
+            newFElement
+          )
+        }
       })
 
+      skipTracking(tr)
       return tr
     },
 

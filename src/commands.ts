@@ -479,6 +479,8 @@ export const insertInlineFootnote =
       kind,
     }) as FootnoteNode
 
+    console.log('Inserting inline footnote')
+
     const insertedAt = state.selection.to
 
     const node = state.schema.nodes.inline_footnote.create({
