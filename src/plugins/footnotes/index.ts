@@ -260,7 +260,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   inlineFootnotes.sort((a, b) => a[1] - b[1])
   inlineFootnotes.forEach(([node]) => {
     node.attrs.rids.forEach((rid) => {
-      labels.set(rid, getAlphaOrderIndices(++index))
+      labels.set(rid, getAlphaOrderIndices(index++))
     })
   })
 
@@ -296,6 +296,8 @@ export default (props: PluginProps) => {
         labels,
         footnoteElement,
       } = footnotesKey.getState(newState) as PluginState
+
+      // @TODO: plugin doesnt run on first launch
 
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
@@ -340,6 +342,7 @@ export default (props: PluginProps) => {
         footnoteElement[0].attrs,
         footnotesReordered
       )
+
       if (newFElement) {
         tr.replaceWith(
           footnoteElement[1],
@@ -347,6 +350,30 @@ export default (props: PluginProps) => {
           newFElement
         )
       }
+
+      const prevSelection = newState.selection
+      const selectedFootnote = findParentNodeClosestToPos(
+        prevSelection.$anchor,
+        (node) => isFootnoteNode(node)
+      )
+      // relocating selection to the new position of the selected footnotes (selection set in commands normally)
+      if (selectedFootnote) {
+        let newFootnotePos = 0
+
+        for (let i = 0; i < footnotesReordered.length; i++) {
+          const node = footnotesReordered[i]
+          // has to run after persist plugin
+          if (node.attrs.id === selectedFootnote.node.attrs.id) {
+            break
+          }
+          newFootnotePos += node.nodeSize
+        }
+        tr.setSelection(
+          TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos + 3)
+        )
+      }
+
+      // selection will be lost otherwise as we replace the element completely
 
       skipTracking(tr)
       return tr

@@ -183,7 +183,7 @@ export const getInlineFootnotes = (
 }
 
 export function getAlphaOrderIndices(index: number) {
-  const unicodeInterval = [96, 122]
+  const unicodeInterval = [97, 123]
   const places = unicodeInterval[1] - unicodeInterval[0]
 
   function getClassCount(n: number, order: number) {
@@ -192,7 +192,7 @@ export function getAlphaOrderIndices(index: number) {
 
   let indices: number[] | null = null
 
-  while (index >= 0) {
+  for (;;) {
     let current = index
     let position = 1
     while (current >= places) {
@@ -210,6 +210,13 @@ export function getAlphaOrderIndices(index: number) {
     }
   }
   return (indices || [])
-    .map((v) => String.fromCodePoint(v + unicodeInterval[0]))
+    .map((v, i, array) => {
+      // offseting to start with zero for the second and later classes
+      // @TODO: find better solution
+      if (array.length > 1 && i !== array.length - 1) {
+        return String.fromCodePoint(v + unicodeInterval[0] - 1)
+      }
+      return String.fromCodePoint(v + unicodeInterval[0])
+    })
     .join('')
 }

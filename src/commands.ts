@@ -523,7 +523,7 @@ export const insertInlineFootnote =
         footnoteElement[0].node.nodeSize -
         1
       tr.insert(pos, footnote)
-      selectionPos = pos + 2
+      selectionPos = pos + 3
     }
 
     if (dispatch && selectionPos) {
