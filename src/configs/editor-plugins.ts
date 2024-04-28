@@ -95,7 +95,7 @@ export default (props: PluginProps) => {
     highlights(props),
     selected_suggestion_ui(props),
     footnotes(props),
-    // table_footnote(),
+    table_footnote(),
   ]
 
   if (props.collabProvider) {
