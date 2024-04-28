@@ -497,25 +497,3 @@ export default (props: PluginProps) => {
     },
   })
 }
-
-// newState.doc.descendants((node, pos, parentNode) => {
-//   if (isFootnoteNode(node)) {
-//     footnotes.set(node.attrs.id, [node, pos])
-//   }
-//   if (isFootnotesElementNode(node)) {
-//     console.log(
-//       'APPLY: position of footnote element high level: ' + pos
-//     )
-//   }
-//   if (isFootnotesSectionNode(node)) {
-//     // this has to be done because footnote element is used in tables too
-//     node.descendants((node, childPos) => {
-//       if (isFootnotesElementNode(node)) {
-//         console.log(
-//           'APPLY: position of footnote element LOW level: ' +
-//             (pos + childPos)
-//         )
-//       }
-//     })
-//   }
-// })
