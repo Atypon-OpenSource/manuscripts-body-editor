@@ -174,19 +174,17 @@ export class FigureElementView extends BlockView<
   }
 
   private deleteSupplementNode(file: FileAttachment) {
-    if (file.type.id === 'supplementary') {
-      const tr = this.view.state.tr
+    const tr = this.view.state.tr
 
-      this.view.state.doc.descendants((node, pos) => {
-        if (
-          node.type === schema.nodes.supplement &&
-          node.attrs.href === file.id
-        ) {
-          tr.delete(pos, pos + node.nodeSize)
-        }
-      })
-      this.view.dispatch(tr)
-    }
+    this.view.state.doc.descendants((node, pos) => {
+      if (
+        node.type === schema.nodes.supplement &&
+        node.attrs.href === file.id
+      ) {
+        tr.delete(pos, pos + node.nodeSize)
+      }
+    })
+    this.view.dispatch(tr)
   }
 }
 

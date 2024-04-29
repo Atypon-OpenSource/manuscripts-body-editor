@@ -101,6 +101,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public showContextMenu = () => {
+    this.props.popper.destroy()
     const componentProps: ContextMenuProps = {
       actions: [
         { label: 'Edit', action: this.handleEdit, icon: 'EditIcon' },
