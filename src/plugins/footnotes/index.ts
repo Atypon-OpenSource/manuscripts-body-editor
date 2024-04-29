@@ -34,7 +34,6 @@ import {
   TextSelection,
 } from 'prosemirror-state'
 import {
-  findParentNode,
   findParentNodeClosestToPos,
   findParentNodeOfType,
   hasParentNodeOfType,

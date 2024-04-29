@@ -25,8 +25,10 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isFootnoteNode,
   isInBibliographySection,
   isListNode,
+  isParagraphNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -65,9 +67,6 @@ import { commentAnnotation } from './plugins/comment_annotation'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
-import { isFootnoteNode } from '@manuscripts/transform'
-import { isFootnotesElementNode } from '@manuscripts/transform'
-import { isParagraphNode } from '@manuscripts/transform'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
