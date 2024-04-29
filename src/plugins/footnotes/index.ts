@@ -23,7 +23,12 @@ import {
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import {
+  findParentNodeClosestToPos,
+  findParentNodeOfType,
+  hasParentNodeOfType,
+  NodeWithPos,
+} from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
@@ -36,7 +41,10 @@ import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue, getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
-import { findTableInlineFootnoteIds } from './footnotes-utils'
+import {
+  findTableInlineFootnoteIds,
+  getInlineFootnotes,
+} from './footnotes-utils'
 
 interface PluginState {
   nodes: [InlineFootnoteNode, number][]
@@ -103,7 +111,9 @@ const deleteFootnoteWidget =
     node: ManuscriptNode,
     props: PluginProps,
     footnoteType: string,
-    footnoteMessage: string
+    footnoteMessage: string,
+    id: string,
+    tableElement: NodeWithPos
   ) =>
   (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
@@ -112,9 +122,10 @@ const deleteFootnoteWidget =
 
     deleteBtn.addEventListener('click', () => {
       const handleDelete = () => {
-        const tr = view.state.tr
+        let tr = view.state.tr
         const pos = getPos()
 
+        // delete general footnotes
         if (node.type === schema.nodes.table_element_footer) {
           if (
             !getChildOfType(node, schema.nodes.footnotes_element, true) &&
@@ -126,6 +137,44 @@ const deleteFootnoteWidget =
             node.content.forEach((item) => {
               if (item.type === schema.nodes.paragraph && pos) {
                 tr.delete(pos - 1, pos + item.nodeSize + 1)
+              }
+            })
+          }
+        }
+
+        // delete table footnotes
+        if (node.type === schema.nodes.footnote && pos) {
+          const inlineFootnotes = getInlineFootnotes(id, tableElement)
+
+          const nodeWithPos = findParentNodeClosestToPos(
+            tr.doc.resolve(pos),
+            (node) => node.type === schema.nodes.footnote
+          )
+          if (nodeWithPos) {
+            const { pos: fnPos, node: fnNode } = nodeWithPos
+            view.dispatch(tr.delete(fnPos, fnPos + fnNode.nodeSize))
+          }
+
+          // delete inline footnotes
+          if (inlineFootnotes) {
+            tr = view.state.tr
+
+            inlineFootnotes.forEach((footnote) => {
+              const pos = footnote.pos + tableElement.pos
+
+              if (footnote.node.attrs.rids.length > 1) {
+                const updatedRids = footnote.node.attrs.rids.filter(
+                  (rid) => rid !== id
+                )
+                tr.setNodeMarkup(tr.mapping.map(pos + 1), undefined, {
+                  ...node.attrs,
+                  rids: updatedRids,
+                })
+              } else {
+                tr.delete(
+                  tr.mapping.map(pos + 1),
+                  tr.mapping.map(pos + footnote.node.nodeSize + 1)
+                )
               }
             })
           }
@@ -240,9 +289,9 @@ export default (props: PluginProps) => {
           schema.nodes.table_element_footer
         )(state.selection)
 
-        const isInTableElement = hasParentNodeOfType(
-          schema.nodes.table_element
-        )(state.selection)
+        const tableElement = findParentNodeOfType(schema.nodes.table_element)(
+          state.selection
+        )
 
         if (isInTableElementFooter) {
           const parent = findParentNodeWithIdValue(state.selection)
@@ -295,7 +344,7 @@ export default (props: PluginProps) => {
             }
           }
           if (can.editArticle) {
-            if (isInTableElement) {
+            if (tableElement) {
               const footnote = (() => {
                 switch (node.type) {
                   case schema.nodes.footnote:
@@ -313,7 +362,25 @@ export default (props: PluginProps) => {
                 }
               })()
 
-              if (
+              if (node.type === schema.nodes.footnote) {
+                decorations.push(
+                  Decoration.widget(
+                    pos + 2,
+
+                    deleteFootnoteWidget(
+                      node,
+                      props,
+                      footnote.type,
+                      footnote.message,
+                      node.attrs.id,
+                      tableElement
+                    ),
+                    {
+                      key: node.attrs.id,
+                    }
+                  )
+                )
+              } else if (
                 node.type === schema.nodes.paragraph &&
                 parent?.type === schema.nodes.table_element_footer
               ) {
@@ -325,7 +392,9 @@ export default (props: PluginProps) => {
                       parent,
                       props,
                       footnote.type,
-                      footnote.message
+                      footnote.message,
+                      parent.attrs.id,
+                      tableElement
                     ),
                     {
                       key: parent.attrs.id,

@@ -723,7 +723,6 @@ Next levels are shifted 'up' by 1
   background: var(--accepted-bg-color);
   text-decoration: none;
 }
-
 .ProseMirror .deleted.pending::before,
 .ProseMirror .deleted.pending {
   background: var(--pending-bg-color);
@@ -840,12 +839,12 @@ Next levels are shifted 'up' by 1
   display: inline-flex;
   background: transparent;
   border: 0;
+  font-family: 'PT Sans', sans-serif;
   font-size: 1rem;
   text-decoration: none;
   color: inherit;
   outline: none;
-  padding: 4px;
-  /* margin: 0 6px; */
+  padding: 4px 0 4px 4px;
 }
 
 .contributor:not(:disabled):hover {
