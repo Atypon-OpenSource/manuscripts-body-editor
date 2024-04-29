@@ -65,6 +65,9 @@ import { commentAnnotation } from './plugins/comment_annotation'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
+import { isFootnoteNode } from '@manuscripts/transform'
+import { isFootnotesElementNode } from '@manuscripts/transform'
+import { isParagraphNode } from '@manuscripts/transform'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -505,30 +508,38 @@ export const insertInlineFootnote =
       ])
 
       const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
-
       tr.insert(backmatter.pos + 1, section)
 
-      // inside footnote inside element inside section
-      selectionPos = backmatter.pos + section.nodeSize - 3
+      let footnotePos = 0
+      tr.doc.descendants((n, pos) => {
+        if (isFootnoteNode(n)) {
+          footnotePos = pos
+          n.descendants((childNode, childPos) => {
+            if (isParagraphNode(childNode)) {
+              footnotePos += childPos
+            }
+          })
+        }
+      })
+      selectionPos = footnotePos + 2
     } else {
       // Look for footnote element inside the footnotes section to exclude tables footnote elements
       const footnoteElement = findChildrenByType(
         footnotesSection.node,
         schema.nodes.footnotes_element
       )
-      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
       const pos =
         footnotesSection.pos +
         footnoteElement[0].pos +
         footnoteElement[0].node.nodeSize -
         1
       tr.insert(pos, footnote)
-      selectionPos = pos + 3
+      selectionPos = pos + 2
     }
 
     if (dispatch && selectionPos) {
       // set selection inside new footnote
-      const selection = TextSelection.create(tr.doc, selectionPos)
+      const selection = TextSelection.near(tr.doc.resolve(selectionPos))
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 

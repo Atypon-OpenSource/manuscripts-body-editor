@@ -302,7 +302,7 @@ export default (props: PluginProps) => {
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
 
-      if (!footnoteElement || isEqual(prevIds, newIds)) {
+      if (!footnoteElement || isEqual(prevIds, newIds) || newIds.length < 2) {
         return null
       }
 
@@ -357,19 +357,19 @@ export default (props: PluginProps) => {
         (node) => isFootnoteNode(node)
       )
       // relocating selection to the new position of the selected footnotes (selection set in commands normally)
-      if (selectedFootnote) {
+      if (selectedFootnote && footnotes.size > 1) {
         let newFootnotePos = 0
 
         for (let i = 0; i < footnotesReordered.length; i++) {
           const node = footnotesReordered[i]
           // has to run after persist plugin
+          newFootnotePos += node.nodeSize
           if (node.attrs.id === selectedFootnote.node.attrs.id) {
             break
           }
-          newFootnotePos += node.nodeSize
         }
         tr.setSelection(
-          TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos + 3)
+          TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
         )
       }
 
