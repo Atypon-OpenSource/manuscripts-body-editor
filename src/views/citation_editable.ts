@@ -58,6 +58,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   private contextMenu: HTMLElement
 
   public selectNode = () => {
+    const can = this.props.getCapabilities()
     const dataTracked = this.node.attrs.dataTracked
     const isSelectedSuggestion = !!selectedSuggestionKey
       .getState(this.view.state)
@@ -68,14 +69,12 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.view.dispatch(
         this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked[0].id)
       )
-    } else {
-      if (!isDeleted(this.node)) {
-        const attrs = getActualAttrs(this.node) as CitationAttrs
-        if (!attrs.rids.length) {
-          this.showPopper()
-        } else {
-          this.showContextMenu()
-        }
+    } else if (can.seeReferencesButtons && !isDeleted(this.node)) {
+      const attrs = getActualAttrs(this.node) as CitationAttrs
+      if (!attrs.rids.length) {
+        this.showPopper()
+      } else {
+        this.showContextMenu()
       }
     }
   }
