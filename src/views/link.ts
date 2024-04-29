@@ -16,49 +16,11 @@
 
 import { ManuscriptNodeView } from '@manuscripts/transform'
 
-import { isRejectedInsert } from '../lib/track-changes-utils'
-import { allowedHref } from '../lib/url'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class LinkView<PropsType extends BaseNodeProps>
   extends BaseNodeView<PropsType>
-  implements ManuscriptNodeView
-{
-  public initialise = () => {
-    this.createDOM()
-    this.updateContents()
-  }
-
-  public updateContents = () => {
-    const linkText = this.node?.content?.firstChild?.text || ''
-
-    if (!isRejectedInsert(this.node)) {
-      const { href, title } = this.node.attrs
-
-      const linkElement = document.createElement('a')
-      linkElement.classList.add('link')
-      linkElement.style.position = 'relative'
-
-      if (href && allowedHref(href)) {
-        linkElement.setAttribute('href', href)
-      }
-      if (title) {
-        linkElement.setAttribute('title', title)
-      }
-      linkElement.innerHTML = linkText
-
-      this.dom.innerHTML = ''
-      this.dom.appendChild(linkElement)
-    } else {
-      this.dom.innerHTML = linkText
-    }
-  }
-
-  protected createDOM = () => {
-    this.dom = document.createElement('span')
-    this.contentDOM = this.dom
-  }
-}
+  implements ManuscriptNodeView {}
 
 export default createNodeView(LinkView)

@@ -136,10 +136,20 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
   }
 
+  const handleClose = () => {
+    const values = valuesRef.current
+    if (values && selection && !isEqual(values, normalize(selection))) {
+      setShowConfirmationDialog(true)
+    } else {
+      setOpen(false)
+    }
+  }
+
   const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
     if (!values || !selection) {
       return
     }
+
     const author = {
       ...selection,
       ...values,
@@ -245,13 +255,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   return (
     <StyledModal
       isOpen={isOpen}
-      onRequestClose={() => setOpen(false)}
+      onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
       <ModalContainer>
         <ModalHeader>
           <CloseButton
-            onClick={() => setOpen(false)}
+            onClick={() => handleClose()}
             data-cy="modal-close-button"
           />
         </ModalHeader>
