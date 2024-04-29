@@ -23,7 +23,6 @@ import {
   Decoder,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
-import { Decoration } from 'prosemirror-view'
 
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
