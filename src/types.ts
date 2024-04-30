@@ -55,3 +55,7 @@ export interface SyncError {
 export type TrackableAttributes<T extends ManuscriptNode> = T['attrs'] & {
   dataTracked?: TrackedAttrs[]
 }
+
+export type WidgetDecoration = Decoration & {
+  type: { toDOM: () => HTMLElement; spec: Decoration['spec'] }
+}
