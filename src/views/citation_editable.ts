@@ -57,6 +57,17 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   private editor: HTMLElement
   private contextMenu: HTMLElement
 
+  // we added this to stop select events in case the user clicks on the comment,
+  // so it won't interfere with the context menu
+  public stopEvent = (event: Event) => {
+    const element = event.target as Element
+    return !!(
+      element.classList.contains('point-comment') ||
+      element.classList.contains('comment-icon') ||
+      element.parentElement?.classList.contains('comment-icon')
+    )
+  }
+
   public selectNode = () => {
     const can = this.props.getCapabilities()
     const dataTracked = this.node.attrs.dataTracked

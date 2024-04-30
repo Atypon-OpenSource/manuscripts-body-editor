@@ -19,7 +19,6 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { buildComment, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
-import { Decoration } from 'prosemirror-view'
 
 import {
   ReferencesEditor,
@@ -36,6 +35,7 @@ import {
   selectedSuggestionKey,
   SET_SUGGESTION_ID,
 } from '../plugins/selected-suggestion-ui'
+import { WidgetDecoration } from '../types'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -45,9 +45,7 @@ import ReactSubView from './ReactSubView'
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
 }
-type WidgetDecoration = Decoration & {
-  type: { toDOM: () => HTMLElement }
-}
+
 export class BibliographyElementBlockView<
   PropsType extends BibliographyElementViewProps & EditableBlockProps
 > extends BlockView<PropsType> {
