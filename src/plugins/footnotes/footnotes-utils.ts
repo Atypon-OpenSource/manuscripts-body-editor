@@ -169,7 +169,7 @@ export const getInlineFootnotes = (
   targetNode: ManuscriptNode
 ): InlineFootnote[] => {
   const inlineFootnotes: InlineFootnote[] = []
-  
+
   targetNode.descendants((node, pos) => {
     if (node.type === schema.nodes.inline_footnote) {
       const footnote = node as InlineFootnoteNode
