@@ -166,11 +166,11 @@ interface InlineFootnote {
 
 export const getInlineFootnotes = (
   id: string,
-  tableElement: NodeWithPos
+  targetNode: ManuscriptNode
 ): InlineFootnote[] => {
   const inlineFootnotes: InlineFootnote[] = []
-
-  tableElement.node.content.descendants((node, pos) => {
+  
+  targetNode.descendants((node, pos) => {
     if (node.type === schema.nodes.inline_footnote) {
       const footnote = node as InlineFootnoteNode
       if (footnote.attrs.rids?.includes(id)) {
