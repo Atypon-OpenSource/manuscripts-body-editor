@@ -339,9 +339,9 @@ export class ContextMenu {
                   )
 
                   const footnotes = footnotesWithPos
-                    // .filter(
-                    //   ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
-                    // )
+                    .filter(
+                      ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
+                    )
                     .map(({ node }) => ({
                       node: node,
                       index: tablesFootnoteLabels.get(node.attrs.id),

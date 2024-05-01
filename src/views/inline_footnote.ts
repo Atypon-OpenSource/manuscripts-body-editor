@@ -34,6 +34,7 @@ import { insertTableFootnote } from '../commands'
 import {
   getChangeClasses,
   isDeleted,
+  isRejectedInsert,
   // isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
@@ -126,7 +127,7 @@ export class InlineFootnoteView<
     if (footnotesElement) {
       const tablesFootnoteLabels = buildTableFootnoteLabels(tableElement.node)
       footnotes = findChildrenByType(footnotesElement, schema.nodes.footnote)
-        // .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
+        .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
         .map(({ node }) => ({
           node: node,
           index: tablesFootnoteLabels.get(node.attrs.id),
