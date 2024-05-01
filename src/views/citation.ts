@@ -21,6 +21,7 @@ import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { getCitation } from '../plugins/bibliography/bibliography-utils'
+import { addCommentToLeafNode } from '../plugins/comment_annotation'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -63,6 +64,12 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
+    addCommentToLeafNode(
+      this.getPos(),
+      this.getPos() + this.node.nodeSize,
+      this.view.state,
+      this.dom
+    )
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
 
