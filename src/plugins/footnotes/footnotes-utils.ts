@@ -81,7 +81,7 @@ export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
   let index = 0
 
   findChildrenByType(node, schema.nodes.inline_footnote)
-    .filter(({ node }) => !isRejectedInsert(node))
+    .filter(({ node }) => !(isRejectedInsert(node) || isDeleted(node)))
     .map(({ node }) => node.attrs.rids)
     .flat()
     .map((rid: string) => {
