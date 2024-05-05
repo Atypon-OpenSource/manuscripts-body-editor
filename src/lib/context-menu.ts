@@ -323,6 +323,7 @@ export class ContextMenu {
                 ).pop()
                 if (
                   !footnotesElementWithPos ||
+                  !footnotesElementWithPos?.node.content.childCount ||
                   isDeleted(footnotesElementWithPos.node) ||
                   isRejectedInsert(footnotesElementWithPos.node)
                 ) {

@@ -159,3 +159,25 @@ export const updateTableInlineFootnoteLabels = (
 
   return tr
 }
+interface InlineFootnote {
+  node: InlineFootnoteNode
+  pos: number
+}
+
+export const getInlineFootnotes = (
+  id: string,
+  tableElement: NodeWithPos
+): InlineFootnote[] => {
+  const inlineFootnotes: InlineFootnote[] = []
+
+  tableElement.node.content.descendants((node, pos) => {
+    if (node.type === schema.nodes.inline_footnote) {
+      const footnote = node as InlineFootnoteNode
+      if (footnote.attrs.rids?.includes(id)) {
+        inlineFootnotes.push({ node: footnote, pos })
+      }
+    }
+  })
+
+  return inlineFootnotes
+}
