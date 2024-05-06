@@ -110,7 +110,12 @@ export const blockActive =
 
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
-    const { $from } = state.selection
+    const { $from, $to } = state.selection
+
+    // disable block comment insertion just for comment, LEAN-2746
+    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+      return false
+    }
 
     for (let d = $from.depth; d >= 0; d--) {
       const index = $from.index(d)
