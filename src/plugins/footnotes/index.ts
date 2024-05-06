@@ -296,8 +296,6 @@ export default (props: PluginProps) => {
         footnoteElement,
       } = footnotesKey.getState(newState) as PluginState
 
-      // @TODO: plugin doesnt run on first launch
-
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
 

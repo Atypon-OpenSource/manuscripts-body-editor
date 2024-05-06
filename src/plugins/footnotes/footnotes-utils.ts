@@ -212,7 +212,7 @@ export function getAlphaOrderIndices(index: number) {
   return (indices || [])
     .map((v, i, array) => {
       // offseting to start with zero for the second and later classes
-      // @TODO: find better solution
+      // @TODO: find better solution instead of this indexing offset
       if (array.length > 1 && i !== array.length - 1) {
         return String.fromCodePoint(v + unicodeInterval[0] - 1)
       }
