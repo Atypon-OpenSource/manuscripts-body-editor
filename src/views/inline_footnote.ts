@@ -35,7 +35,6 @@ import {
   getChangeClasses,
   isDeleted,
   isRejectedInsert,
-  // isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
