@@ -129,7 +129,7 @@ const deleteFootnoteWidget =
           : 'This action will entirely remove the table general note.',
     }
 
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('mousedown', () => {
       const handleDelete = () => {
         let tr = view.state.tr
         const pos = getPos()
