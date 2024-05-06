@@ -70,7 +70,11 @@ export default (props: BibliographyProps) => {
     props: {
       decorations(state) {
         const bib = getBibliographyPluginState(state)
-        return DecorationSet.create(state.doc, buildDecorations(bib, state.doc))
+
+        return DecorationSet.create(
+          state.doc,
+          bib ? buildDecorations(bib, state.doc) : []
+        )
       },
     },
   })
@@ -140,5 +144,5 @@ const buildBibliographyPluginState = (
 }
 
 export const getBibliographyPluginState = (state: EditorState) => {
-  return bibliographyKey.getState(state) as PluginState
+  return bibliographyKey.getState(state)
 }

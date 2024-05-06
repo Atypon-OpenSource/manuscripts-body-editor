@@ -45,6 +45,10 @@ export class CitationView<PropsType extends BaseNodeProps>
   public updateContents = () => {
     const bib = getBibliographyPluginState(this.view.state)
 
+    if (!bib) {
+      return
+    }
+
     const citation = this.getCitation()
     const classes = [
       'citation',

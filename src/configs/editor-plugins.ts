@@ -75,7 +75,7 @@ export default (props: PluginProps) => {
     history(),
     trackChangesPlugin({
       userID: props.userID,
-      debug: props.debug,
+      debug: false,
       initialStatus: props.getCapabilities().editWithoutTracking
         ? TrackChangesStatus.disabled
         : TrackChangesStatus.enabled,

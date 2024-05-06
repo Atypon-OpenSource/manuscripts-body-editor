@@ -937,13 +937,29 @@
 
 .ProseMirror .footnote::before {
   content: attr(contents);
-  display: inline-block;
   position: relative;
   cursor: pointer;
   vertical-align: super;
+  z-index: 1;
   font-size: 75%;
   color: #0d79d0;
 }
+
+.footnote {
+  position: relative;
+}
+.footnote.ProseMirror-selectednode:after {
+  content: ' ';
+  position: absolute;
+  height: 5em;
+  width: 5em;
+  border-radius: 2.5em;
+  background-color: rgba(195, 195, 195, 0.2);
+  z-index: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-50% + 0.75em));
+}
+
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
@@ -951,7 +967,7 @@
 
 .ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
   content: '';
-  border-bottom: 1px dashed #C9C9C9;
+  border-bottom: 1px dashed #c9c9c9;
   display: block;
   margin-bottom: 8px;
 }
@@ -974,7 +990,10 @@
   position: relative;
 }
 
-.ProseMirror .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
+.ProseMirror
+  .table-footnotes-element
+  > div:not(:has(.unctied-table-footnote))
+  p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -990,12 +1009,14 @@
   margin-top: 0px;
 }
 
-.ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
+.ProseMirror .table-footer .footnote-selected,
+.table-footer > div:has(> p.footnote-selected) > p {
   background-color: #f2fbfc;
   padding: 4px;
 }
 
-.ProseMirror .table-footer .footnote-selected .delete-icon ,.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
+.ProseMirror .table-footer .footnote-selected .delete-icon,
+.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
   display: block;
 }
 .table-footer > div > p {
@@ -1009,10 +1030,10 @@
   border-left: 1px solid #bce7f6;
   border-right: 1px solid #bce7f6;
 }
-.table-footer > div:has(> p.footnote-selected)  > p:first-child .delete-icon {
+.table-footer > div:has(> p.footnote-selected) > p:first-child .delete-icon {
   z-index: 2;
   display: block;
-} 
+}
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
   position: relative;

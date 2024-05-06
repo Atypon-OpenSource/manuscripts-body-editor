@@ -693,12 +693,12 @@ Next levels are shifted 'up' by 1
 }
 
 .selected-suggestion {
-  background: #BCE7F6 !important;
+  background: #bce7f6 !important;
 }
 
 .selected-suggestion {
   border-width: 2px 0 2px 0 !important;
-  border-color: #20AEDF !important;
+  border-color: #20aedf !important;
   border-radius: 3px !important;
   border-style: solid !important;
 }
@@ -802,14 +802,14 @@ Next levels are shifted 'up' by 1
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 0 .5em;
+  gap: 0 0.5em;
 }
 .contributors-list {
   display: flex;
   max-width: 100%;
   flex: 0 1 auto;
   flex-wrap: wrap;
-  gap: 0 .25em;
+  gap: 0 0.25em;
 }
 .contributors .tools-panel {
   position: initial;
@@ -832,7 +832,7 @@ Next levels are shifted 'up' by 1
   left: 0;
   top: -8px;
   width: auto;
-  height: auto; 
+  height: auto;
 }
 .contributor {
   position: relative;
@@ -870,8 +870,6 @@ Next levels are shifted 'up' by 1
   line-height: 1;
   vertical-align: top;
 }
-
-
 
 .contributor-note {
   display: inline-block;

@@ -126,6 +126,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     const citation = this.getCitation()
     const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
     const bib = getBibliographyPluginState(this.view.state)
+    if (!bib) {
+      return
+    }
     const items = Array.from(bib.bibliographyItems.values())
 
     if (can.editArticle) {
@@ -221,6 +224,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
 
   private handleCite = (items: BibliographyItem[]) => {
     const bib = getBibliographyPluginState(this.view.state)
+    if (!bib) {
+      return
+    }
 
     const citation = this.getCitation()
     const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)

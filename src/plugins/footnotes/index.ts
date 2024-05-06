@@ -69,7 +69,7 @@ export const footnotesKey = new PluginKey<PluginState>('footnotes')
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
     const footnote = node as InlineFootnoteNode
-    if (footnote.attrs.rids.includes(rid)) {
+    if (isInlineFootnoteNode(node) && footnote.attrs.rids.includes(rid)) {
       const selection = NodeSelection.create(view.state.doc, pos)
       view.dispatch(view.state.tr.setSelection(selection).scrollIntoView())
     }
@@ -83,7 +83,7 @@ const labelWidget =
     element.className = 'footnote-label'
     element.textContent = label
 
-    element.addEventListener('click', () => {
+    element.addEventListener('mousedown', () => {
       scrollToInlineFootnote(id, view)
     })
 
