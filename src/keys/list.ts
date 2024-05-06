@@ -16,6 +16,12 @@
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState, schema } from '@manuscripts/transform'
+import {
+  chainCommands,
+  deleteSelection,
+  joinBackward,
+} from 'prosemirror-commands'
+import { undoInputRule } from 'prosemirror-inputrules'
 import { NodeType } from 'prosemirror-model'
 import {
   liftListItem,
@@ -27,23 +33,22 @@ import { Command, EditorState, Transaction } from 'prosemirror-state'
 
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
-import { undoInputRule } from 'prosemirror-inputrules'
-import { chainCommands, deleteSelection, joinBackward } from 'prosemirror-commands'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
-export const skipCommandTracking = (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-  let handled = false;  // Variable to capture whether the command handled the action
+export const skipCommandTracking =
+  (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    let handled = false // Variable to capture whether the command handled the action
 
-  command(state, (tr) => {
-    handled = true;  // Set to true because the command handled the action and called dispatch
-    if (dispatch) {
-      skipTracking(tr);
-      dispatch(tr);
-    }
-  });
+    command(state, (tr) => {
+      handled = true // Set to true because the command handled the action and called dispatch
+      if (dispatch) {
+        skipTracking(tr)
+        dispatch(tr)
+      }
+    })
 
-  return handled;  // Return the captured value
-};
+    return handled // Return the captured value
+  }
 
 // Lift the list item if it's inside a parent list.
 const liftToOuterList = (itemType: NodeType): Command => {
@@ -77,7 +82,9 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-k': skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
   'Shift-Tab': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
   Tab: skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
-  Backspace: skipCommandTracking(chainCommands(undoInputRule, joinBackward, deleteSelection))
+  Backspace: skipCommandTracking(
+    chainCommands(undoInputRule, joinBackward, deleteSelection)
+  ),
 }
 
 export default listKeymap
