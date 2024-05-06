@@ -86,7 +86,6 @@ export class InlineFootnoteView<
       )
       this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
     } else {
-      console.timeEnd('whole-cycle')
       if (this.node.attrs.rids?.length) {
         let nodePos: number | undefined = undefined
         this.view.state.doc.descendants((node, pos) => {
