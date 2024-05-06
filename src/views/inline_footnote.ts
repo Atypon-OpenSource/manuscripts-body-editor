@@ -24,6 +24,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { History } from 'history'
+import { TextSelection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
   findChildrenByType,
@@ -41,7 +42,6 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { TextSelection } from 'prosemirror-state'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History

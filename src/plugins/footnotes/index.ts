@@ -231,15 +231,15 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   let footnoteElement: [FootnotesElementNode, number] | undefined
 
   doc.descendants((node, pos, parentNode) => {
-    if (isFootnoteNode(node)) {
-      footnotes.set(node.attrs.id, [node, pos])
-    }
-
     if (isFootnotesSectionNode(node)) {
       // this has to be done because footnote element is used in tables too
       node.descendants((node, childPos) => {
         if (isFootnotesElementNode(node)) {
           footnoteElement = [node, pos + childPos]
+        }
+
+        if (isFootnoteNode(node)) {
+          footnotes.set(node.attrs.id, [node, pos + childPos])
         }
       })
     }
