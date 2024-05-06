@@ -106,7 +106,9 @@ export class InlineFootnoteView<
   }
 
   public updateContents = () => {
-    this.setDomAttrs(this.node, this.dom)
+    const node = this.node as InlineFootnoteNode
+    this.dom.setAttribute('rids', node.attrs.rids.join(','))
+    this.dom.setAttribute('contents', node.attrs.contents)
     this.dom.className = [
       'footnote',
       ...getChangeClasses(this.node.attrs.dataTracked),
