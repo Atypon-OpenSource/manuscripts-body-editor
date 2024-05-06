@@ -92,7 +92,7 @@ export default (props: HighlightPluginProps) => {
         if (meta && SET_COMMENT in meta) {
           props.setComment(meta[SET_COMMENT])
         } else if (!tr.docChanged || tr.step.length === 0) {
-          return oldState
+          return value
         }
 
         return buildPluginState(tr.doc)
