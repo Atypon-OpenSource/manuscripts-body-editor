@@ -298,8 +298,12 @@ export default (props: PluginProps) => {
 
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
+      const initTransaction = transactions.find((t) => t.getMeta('INIT'))
 
-      if (!footnoteElement || isEqual(prevIds, newIds) || newIds.length < 2) {
+      if (
+        !footnoteElement ||
+        (!initTransaction && (isEqual(prevIds, newIds) || newIds.length < 2))
+      ) {
         return null
       }
 
