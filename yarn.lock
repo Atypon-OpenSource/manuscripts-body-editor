@@ -1530,14 +1530,14 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.11.3-LEAN-3526.0":
-  version "1.11.3-LEAN-3526.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.11.3-LEAN-3526.0.tgz#61664d979008c4e78708cffc0084f1e496b4dba4"
-  integrity sha512-rnHWNFjztBYZigpsJZ3/b5akt4vZcJ07SrssMnBnqrXa9r9zg7WfwXdLAKgCZsBP/ZIwHhR4cqekt4Gl3b4Lxg==
+"@manuscripts/style-guide@1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.12.0.tgz#e271d23a957f9aa17397c0c80d0b996b8ca2c20d"
+  integrity sha512-iwVvuRC+PupS+84XwgZwCDNHWnJ1Y6W8zf6muQP+gWLTs1GVubGEA3zqSu5mP6y9bTaN/Pk3rU1DdzHZP/wcmg==
   dependencies:
     "@manuscripts/assets" "^0.6.4"
     "@manuscripts/json-schema" "^2.2.7"
-    "@manuscripts/transform" "^2.2.1"
+    "@manuscripts/transform" "2.3.0"
     "@reach/tabs" "^0.18.0"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1572,10 +1572,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.2.1.tgz#fd9e5553c8130d41c068053de825da3b7255ca96"
-  integrity sha512-x/vcXSLsxBba3Fh/qoL+xLfj96S3/Ux1CkCuj2T4OV/8qx7ZmdwleIbHogvAit5hSjbAZDCxgTryBg0oRzeqFA==
+"@manuscripts/transform@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.0.tgz#c95d7571c3b6ebef455b5be8dfe943e636dda7c4"
+  integrity sha512-n7L3/dCUBP/o858k2wckdILqjNbrwrEcMV6AsTtsAcmrQjhxro9THRGn8RQTJqUkLY1q2V2rRtjbWWI8quzPmA==
   dependencies:
     "@manuscripts/json-schema" "^2.2.7"
     "@manuscripts/library" "^1.3.6"
