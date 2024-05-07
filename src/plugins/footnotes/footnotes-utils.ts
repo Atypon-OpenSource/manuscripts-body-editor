@@ -32,7 +32,7 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { isRejectedInsert } from '../../lib/track-changes-utils'
 
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
@@ -143,7 +143,7 @@ export const updateTableInlineFootnoteLabels = (
   const labels = buildTableFootnoteLabels(table.node)
 
   findChildrenByType(table.node, schema.nodes.inline_footnote)
-    .filter(({ node }) => !(isRejectedInsert(node) || isDeleted(node)))
+    .filter(({ node }) => !isRejectedInsert(node))
     .map(({ node, pos }) => {
       const contents = node.attrs.rids
         .map((rid: string) => labels.get(rid))

@@ -372,7 +372,7 @@ export class ContextMenu {
                             .content.descendants((node) => {
                               if (
                                 node.type === schema.nodes.inline_footnote &&
-                                !(isRejectedInsert(node) || isDeleted(node))
+                                !isRejectedInsert(node)
                               ) {
                                 inlineFootnoteIndex++
                                 return false

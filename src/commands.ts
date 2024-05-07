@@ -1174,9 +1174,7 @@ export const insertTableFootnote = (
     )
     footnoteIndex =
       inlineFootnotes.filter(
-        ({ pos }) =>
-          !(isRejectedInsert(node) || isDeleted(node)) &&
-          position + pos <= insertedAt
+        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
       ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
