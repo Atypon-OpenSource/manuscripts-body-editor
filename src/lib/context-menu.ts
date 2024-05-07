@@ -370,7 +370,10 @@ export class ContextMenu {
                           this.view.state.doc
                             .slice(this.getPos(), insertedAt)
                             .content.descendants((node) => {
-                              if (node.type === schema.nodes.inline_footnote) {
+                              if (
+                                node.type === schema.nodes.inline_footnote &&
+                                !(isRejectedInsert(node) || isDeleted(node))
+                              ) {
                                 inlineFootnoteIndex++
                                 return false
                               }
