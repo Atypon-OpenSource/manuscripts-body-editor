@@ -425,7 +425,7 @@ export default (props: PluginProps) => {
               decorations.push(
                 Decoration.widget(
                   pos + 2,
-                  placeholderWidget('Add new note here')
+                  placeholderWidget('Type new footnote here')
                 )
               )
             }

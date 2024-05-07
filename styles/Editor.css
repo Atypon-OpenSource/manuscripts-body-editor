@@ -945,21 +945,6 @@
   color: #0d79d0;
 }
 
-.footnote {
-  position: relative;
-}
-.footnote.ProseMirror-selectednode:after {
-  content: ' ';
-  position: absolute;
-  height: 5em;
-  width: 5em;
-  border-radius: 2.5em;
-  background-color: rgba(195, 195, 195, 0.2);
-  z-index: 0;
-  pointer-events: none;
-  transform: translate(-50%, calc(-50% + 0.75em));
-}
-
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
