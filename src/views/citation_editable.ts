@@ -79,7 +79,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     const isSelectedSuggestion = !!selectedSuggestionKey
       .getState(this.view.state)
       ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-
     this.dom.classList.add('ProseMirror-selectednode')
     if (dataTracked && !isSelectedSuggestion) {
       this.view.dispatch(
@@ -87,12 +86,8 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       )
     } else {
       if (!isDeleted(this.node)) {
-        const citation = this.getCitation()
-        const rids = citation.embeddedCitationItems.map(
-          (i) => i.bibliographyItem
-        )
-
-        if (!rids.length) {
+        const can = this.props.getCapabilities()
+        if (!can.editArticle) {
           this.showPopper()
         } else {
           this.showContextMenu()
@@ -138,7 +133,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     const rids = citation.embeddedCitationItems.map((i) => i.bibliographyItem)
     const bib = getBibliographyPluginState(this.view.state)
     const items = Array.from(bib.bibliographyItems.values())
-
     if (can.editArticle) {
       const query = this.node.attrs.selectedText
       const componentProps: CitationEditorProps = {
