@@ -1096,11 +1096,12 @@ const addBlockComment = (
 
   tr.setMeta('addToHistory', false)
 
-  if (dispatch && isAllowedType(type)) {
-    dispatch(tr)
+  if (isAllowedType(type)) {
+    dispatch && dispatch(tr)
+    return true
+  } else {
+    return false
   }
-
-  return true
 }
 
 const addHighlightComment = (
