@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-export * from './citation-sources'
 export * from './commands'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'

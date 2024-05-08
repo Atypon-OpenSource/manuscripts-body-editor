@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BibliographyItem } from '@manuscripts/json-schema'
-import { ReferencesModal, ReferencesModalProps } from '@manuscripts/style-guide'
 import React, { useReducer, useState } from 'react'
 
-import { arrayReducer } from '../lib/array-reducer'
-
-//The purpose of this component is to make items stateful, so that
-//the component refreshes on updates
+import { attrsReducer } from '../../lib/array-reducer'
+import { BibliographyItemAttrs } from '../../lib/references'
+import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
   'isOpen' | 'onCancel'
 >
 
-const itemsReducer = arrayReducer<BibliographyItem>((a, b) => a._id === b._id)
+const itemsReducer = attrsReducer<BibliographyItemAttrs>()
 
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [isOpen, setOpen] = useState(true)
   const [items, dispatch] = useReducer(itemsReducer, props.items)
 
-  const handleSave = (item: BibliographyItem) => {
+  const handleSave = (item: BibliographyItemAttrs) => {
     props.onSave(item)
     dispatch({
       type: 'update',
@@ -41,7 +38,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
     })
   }
 
-  const handleDelete = (item: BibliographyItem) => {
+  const handleDelete = (item: BibliographyItemAttrs) => {
     props.onDelete(item)
     dispatch({
       type: 'delete',
