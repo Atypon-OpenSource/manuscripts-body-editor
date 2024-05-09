@@ -485,7 +485,6 @@ export const insertInlineFootnote =
 
     const node = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
-      contents: 'test',
     }) as InlineFootnoteNode
 
     const tr = state.tr

@@ -378,9 +378,6 @@ export default (props: PluginProps) => {
     },
 
     props: {
-      handleClick(view: EditorView, pos: number) {
-        console.log('CURRENT POS: ' + pos)
-      },
       decorations: (state) => {
         const decorations: Decoration[] = []
 
