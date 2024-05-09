@@ -151,7 +151,7 @@ const deleteFootnoteWidget =
           }
         }
 
-        // delete table footnotes
+        // delete footnote
         if (node.type === schema.nodes.footnote && pos) {
           const targetNode = tableElement ? tableElement.node : view.state.doc
           const inlineFootnotes = getInlineFootnotes(id, targetNode)
@@ -325,7 +325,7 @@ export default (props: PluginProps) => {
             )
             decorations.push(
               Decoration.widget(
-                targetNode.pos + 2,
+                targetNode.pos + (footnote ? 1 : 2),
 
                 deleteFootnoteWidget(
                   targetNode.node,
