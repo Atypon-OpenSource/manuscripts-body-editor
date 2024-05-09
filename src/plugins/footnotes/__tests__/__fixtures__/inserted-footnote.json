@@ -80,7 +80,7 @@
                 "content": [
                   {
                     "type": "text",
-                    "text": "Notes"
+                    "text": "Footnotes"
                   }
                 ]
               },
@@ -132,7 +132,7 @@
   },
   "selection": {
     "type": "text",
-    "anchor": 35,
-    "head": 35
+    "anchor": 39,
+    "head": 39
   }
 }
