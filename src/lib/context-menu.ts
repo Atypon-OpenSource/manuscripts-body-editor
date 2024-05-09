@@ -29,6 +29,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
+import { NodeType, ResolvedPos } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -48,6 +49,10 @@ const popper = new PopperManager()
 const listTypes = [schema.nodes.ordered_list, schema.nodes.bullet_list]
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+
+const isGraphicalAbstractFigure = ($pos: ResolvedPos, type: NodeType) =>
+  type === schema.nodes.figure &&
+  $pos.parent.type === schema.nodes.graphical_abstract_section
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -419,7 +424,8 @@ export class ContextMenu {
 
     if (
       !readonlyTypes.includes(type) &&
-      !readonlyTypes.includes($pos.parent.type)
+      !readonlyTypes.includes($pos.parent.type) &&
+      !isGraphicalAbstractFigure($pos, type)
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
