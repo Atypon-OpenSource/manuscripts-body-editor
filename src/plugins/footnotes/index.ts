@@ -300,10 +300,7 @@ export default (props: PluginProps) => {
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const initTransaction = transactions.find((t) => t.getMeta('INIT'))
 
-      if (
-        !footnoteElement ||
-        (!initTransaction && (isEqual(prevIds, newIds) || newIds.length < 2))
-      ) {
+      if (!footnoteElement || (!initTransaction && isEqual(prevIds, newIds))) {
         return null
       }
 
@@ -358,7 +355,7 @@ export default (props: PluginProps) => {
         (node) => isFootnoteNode(node)
       )
       // relocating selection to the new position of the selected footnotes (selection set in commands normally)
-      if (selectedFootnote && footnotes.size > 1) {
+      if (selectedFootnote) {
         let newFootnotePos = 0
 
         for (let i = 0; i < footnotesReordered.length; i++) {
@@ -381,6 +378,9 @@ export default (props: PluginProps) => {
     },
 
     props: {
+      handleClick(view: EditorView, pos: number) {
+        console.log('CURRENT POS: ' + pos)
+      },
       decorations: (state) => {
         const decorations: Decoration[] = []
 

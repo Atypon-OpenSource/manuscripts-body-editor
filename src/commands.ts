@@ -485,6 +485,7 @@ export const insertInlineFootnote =
 
     const node = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
+      contents: 'test',
     }) as InlineFootnoteNode
 
     const tr = state.tr
@@ -502,15 +503,20 @@ export const insertInlineFootnote =
     if (!footnotesSection) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+        state.schema.nodes.section_title.create(
+          {},
+          state.schema.text('Footnotes')
+        ),
         state.schema.nodes.footnotes_element.create({}, footnote),
       ])
 
       const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
-      tr.insert(backmatter.pos + 1, section)
+      const sectionPos = backmatter.pos + 1
+
+      tr.insert(sectionPos, section)
 
       let footnotePos = 0
-      tr.doc.descendants((n, pos) => {
+      section.descendants((n, pos) => {
         if (isFootnoteNode(n)) {
           footnotePos = pos
           n.descendants((childNode, childPos) => {
@@ -520,7 +526,7 @@ export const insertInlineFootnote =
           })
         }
       })
-      selectionPos = footnotePos + 2
+      selectionPos = sectionPos + footnotePos
     } else {
       // Look for footnote element inside the footnotes section to exclude tables footnote elements
       const footnoteElement = findChildrenByType(
