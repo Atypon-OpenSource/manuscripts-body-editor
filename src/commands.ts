@@ -112,7 +112,7 @@ export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
     const { $from, $to } = state.selection
 
-    // disable block comment insertion just for comment, LEAN-2746
+    // disable block comment insertion just for title node, LEAN-2746
     if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
       return false
     }
