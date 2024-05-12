@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Attrs } from 'prosemirror-model'
+
 export type Update<T> = {
   type: 'update'
   items: T[]
@@ -61,3 +63,6 @@ export const arrayReducer = <T>(
     }
   }
 }
+
+export const attrsReducer = <T extends Attrs>() =>
+  arrayReducer<T>((a, b) => a.id === b.id)
