@@ -52,11 +52,8 @@ const listItemBackward = (
 ) => {
   const { selection } = state
   const isListItem = findParentNodeOfType(schema.nodes.list_item)(selection)
-  const isList =
-    findParentNodeOfType(schema.nodes.ordered_list)(selection) ||
-    findParentNodeOfType(schema.nodes.bullet_list)(selection)
 
-  if (isList || isListItem) {
+  if (isListItem) {
     return joinBackward(state, dispatch)
   }
 
