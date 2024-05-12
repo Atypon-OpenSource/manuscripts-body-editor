@@ -30,6 +30,7 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
+import { findParentNodeOfType } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
@@ -37,18 +38,30 @@ import { EditorAction } from '../types'
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
 export const skipCommandTracking =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    let handled = false // Variable to capture whether the command handled the action
-
-    command(state, (tr) => {
-      handled = true // Set to true because the command handled the action and called dispatch
+    return command(state, (tr) => {
       if (dispatch) {
         skipTracking(tr)
         dispatch(tr)
       }
     })
-
-    return handled // Return the captured value
   }
+
+const listItemBackward = (
+  state: EditorState,
+  dispatch?: (tr: Transaction) => void
+) => {
+  const { selection } = state
+  const isListItem = findParentNodeOfType(schema.nodes.list_item)(selection)
+  const isList =
+    findParentNodeOfType(schema.nodes.ordered_list)(selection) ||
+    findParentNodeOfType(schema.nodes.bullet_list)(selection)
+
+  if (isList || isListItem) {
+    return joinBackward(state, dispatch)
+  }
+
+  return false
+}
 
 // Lift the list item if it's inside a parent list.
 const liftToOuterList = (itemType: NodeType): Command => {
@@ -83,7 +96,7 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Shift-Tab': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
   Tab: skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
   Backspace: skipCommandTracking(
-    chainCommands(undoInputRule, joinBackward, deleteSelection)
+    chainCommands(undoInputRule, listItemBackward, deleteSelection)
   ),
 }
 
