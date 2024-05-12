@@ -1046,7 +1046,7 @@
   display: none;
 }
 
-.graphical-abstract-figure .block-gutter {
+.ProseMirror .graphical-abstract-figure.block-gutter {
   visibility: hidden;
 }
 
