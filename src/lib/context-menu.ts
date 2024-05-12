@@ -350,7 +350,12 @@ export class ContextMenu {
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from
                   )
-                  if (targetDom.node instanceof Element && this.props) {
+                  const targetNode =
+                    targetDom.node.nodeType === Node.TEXT_NODE
+                      ? targetDom.node.parentNode
+                      : targetDom.node
+
+                  if (targetNode instanceof Element && this.props) {
                     const popperContainer = ReactSubView(
                       { ...this.props, dispatch: this.view.dispatch },
                       TableFootnotesSelector,
@@ -404,7 +409,7 @@ export class ContextMenu {
                       'table-footnote-editor'
                     )
                     this.props?.popper.show(
-                      targetDom.node,
+                      targetNode,
                       popperContainer,
                       'bottom-end'
                     )
