@@ -1012,7 +1012,7 @@
 .table-footer > div:has(> p.footnote-selected)  > p:first-child .delete-icon {
   z-index: 2;
   display: block;
-} 
+}
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
   position: relative;
@@ -1044,6 +1044,10 @@
 
 .graphical-abstract .listing {
   display: none;
+}
+
+.ProseMirror .graphical-abstract-figure.block-gutter {
+  visibility: hidden;
 }
 
 .ProseMirror ul,
