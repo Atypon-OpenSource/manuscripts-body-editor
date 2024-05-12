@@ -765,6 +765,22 @@ export const ignoreAtomBlockNodeBackward = (
   return node.isBlock && node.isAtom
 }
 
+export const ignoreMetaNodeBackspaceCommand = (
+  state: ManuscriptEditorState
+) => {
+  const { selection } = state
+
+  if (!isNodeSelection(selection)) {
+    return false
+  }
+
+  return (
+    selection.node.type === schema.nodes.keyword_group ||
+    selection.node.type === schema.nodes.affiliations ||
+    selection.node.type === schema.nodes.contributors
+  )
+}
+
 // Copied from prosemirror-commands
 const findCutAfter = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
