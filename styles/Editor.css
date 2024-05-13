@@ -960,18 +960,19 @@
 .ProseMirror .table-footnotes-element {
   counter-reset: table_footnote;
 }
-.table-footer .delete-icon {
-  display: none;
+.delete-icon {
   position: absolute;
   right: -20px;
   top: -13px;
   cursor: pointer;
   z-index: 1;
 }
-.table-footer .delete-icon:hover svg path {
+.delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footnotes-element > div {
+.ProseMirror .table-footnotes-element > div,
+.ProseMirror .block-footnotes_element > .block > div
+ {
   position: relative;
 }
 
@@ -994,30 +995,23 @@
   margin-top: 0px;
 }
 
-.ProseMirror .table-footer .footnote-selected,
-.table-footer > div:has(> p.footnote-selected) > p {
+.ProseMirror .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
   padding: 4px;
 }
 
-.ProseMirror .table-footer .footnote-selected .delete-icon,
-.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
-  display: block;
-}
 .table-footer > div > p {
   padding-bottom: 10px;
 }
 
-.ProseMirror .table-footnotes-element .footnote-selected {
+.ProseMirror .table-footnotes-element .footnote-selected,
+.ProseMirror .block-footnotes_element .footnote-selected
+{
   border: 1px solid #bce7f6;
 }
 .table-footer > div:has(> p.footnote-selected) > p {
   border-left: 1px solid #bce7f6;
   border-right: 1px solid #bce7f6;
-}
-.table-footer > div:has(> p.footnote-selected) > p:first-child .delete-icon {
-  z-index: 2;
-  display: block;
 }
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
@@ -1050,6 +1044,10 @@
 
 .graphical-abstract .listing {
   display: none;
+}
+
+.ProseMirror .graphical-abstract-figure.block-gutter {
+  visibility: hidden;
 }
 
 .ProseMirror ul,

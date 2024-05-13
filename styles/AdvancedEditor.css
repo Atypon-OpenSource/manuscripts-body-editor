@@ -483,13 +483,6 @@ Next levels are shifted 'up' by 1
   top: 6px;
 }
 
-.block-comment-button.inline-citation {
-  z-index: 1;
-  left: -1%;
-  top: -8%;
-  display: inline-flex;
-}
-
 .block-comment-button.point-comment {
   z-index: 1;
   left: 0;

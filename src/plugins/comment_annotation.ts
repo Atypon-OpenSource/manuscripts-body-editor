@@ -16,9 +16,11 @@
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import { CommentNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { Node as ProsemirrorNode, NodeType } from 'prosemirror-model'
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
+import { ReplaceStep } from 'prosemirror-transform'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { WidgetDecoration } from '../types'
 import { SET_COMMENT } from './highlight'
 
 export const commentAnnotation = new PluginKey<DecorationSet>(
@@ -71,6 +73,7 @@ type Comment = {
   location: 'block' | 'point'
   count: number
   targetType: NodeType
+  isAtom: boolean
 }
 
 /**
@@ -87,16 +90,40 @@ export default (props: CommentAnnotationProps) => {
           return new DecorationSet()
         }
       },
-      apply: (tr) => {
+      apply: (tr, value, oldState, newState) => {
         const meta = tr.getMeta(commentAnnotation)
 
         if (meta) {
           if (SET_COMMENT in meta) {
             props.setComment(meta[SET_COMMENT])
+            return value
           }
         }
 
-        return commentsState(props.setSelectedComment, tr.doc)
+        // this will update decoration just in case we add/remove a comment node
+        const hasCommentChange = !!tr.steps.find((s) => {
+          if (s instanceof ReplaceStep) {
+            if (s.slice.size > 0) {
+              return (
+                newState.doc.nodeAt(s.from + 1)?.type ===
+                  schema.nodes.comment ||
+                newState.doc.nodeAt(s.from)?.type ===
+                  schema.nodes.highlight_marker
+              )
+            }
+            return (
+              oldState.doc.nodeAt(s.from)?.type === schema.nodes.comment ||
+              oldState.doc.nodeAt(s.from)?.type ===
+                schema.nodes.highlight_marker
+            )
+          }
+        })
+
+        if (hasCommentChange) {
+          return commentsState(props.setSelectedComment, tr.doc)
+        }
+
+        return value
       },
     },
     props: {
@@ -152,18 +179,38 @@ const commentsState = (
     const id = node.attrs['id'] || node.attrs['rid']
     const targetComment = commentsMap.get(id)
     if (targetComment) {
-      const position = getNodePosition(node, pos)
-
-      decorations.push(
-        Decoration.widget(
-          position,
-          getCommentIcon(
-            { ...targetComment, targetType: node.type } as Comment,
-            setSelectedComment
-          ),
-          { key: targetComment.id }
+      // for atom nodes will render commentIcon form node view as we can't do that from Decoration widget
+      if (node.isAtom && node.type !== schema.nodes.highlight_marker) {
+        decorations.push(
+          Decoration.inline(
+            pos,
+            pos + node.nodeSize,
+            {},
+            {
+              toDOM: getCommentIcon(
+                {
+                  ...targetComment,
+                  targetType: node.type,
+                  isAtom: node.isAtom,
+                } as Comment,
+                setSelectedComment
+              ),
+            }
+          )
         )
-      )
+      } else {
+        const position = getNodePosition(node, pos)
+        decorations.push(
+          Decoration.widget(
+            position,
+            getCommentIcon(
+              { ...targetComment, targetType: node.type } as Comment,
+              setSelectedComment
+            ),
+            { key: targetComment.id }
+          )
+        )
+      }
     }
   })
 
@@ -172,9 +219,9 @@ const commentsState = (
 
 const getCommentIcon =
   (comment: Comment, setSelectedComment: (id?: string) => void) => () => {
-    const { id, targetType, target, count, location } = comment
+    const { id, targetType, target, count, location, isAtom } = comment
     const commentId = location === 'block' ? target : id
-    const element = document.createElement('div')
+    const element = document.createElement(isAtom ? 'span' : 'div')
     element.id = commentId
 
     let elementClass
@@ -194,10 +241,8 @@ const getCommentIcon =
         elementClass = 'inline-comment'
     }
 
-    if (targetType === schema.nodes.citation || location === 'point') {
-      element.classList.add(
-        location === 'point' ? 'point-comment' : 'inline-citation'
-      )
+    if (isAtom || location === 'point') {
+      element.classList.add('point-comment')
     }
 
     element.classList.add('block-comment-button', elementClass)
@@ -227,3 +272,21 @@ const getCommentIcon =
   `
     return element
   }
+
+export const addCommentToLeafNode = (
+  from: number,
+  to: number,
+  state: EditorState,
+  dom: HTMLElement
+) => {
+  const commentsDecorationSet = commentAnnotation.getState(state)
+  if (commentsDecorationSet) {
+    const commentWidget = commentsDecorationSet.find(from, to)
+    if (commentWidget.length) {
+      const commentElement = (
+        commentWidget[0] as WidgetDecoration
+      ).type.spec.toDOM()
+      dom.appendChild(commentElement)
+    }
+  }
+}

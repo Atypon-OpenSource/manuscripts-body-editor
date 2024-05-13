@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-import { BibliographyItem } from '@manuscripts/json-schema'
+import { BibliographyItem, ObjectTypes } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
-import { isCitationNode, ManuscriptNode } from '@manuscripts/transform'
+import { isCitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import CiteProc from 'citeproc'
-import { isEqual } from 'lodash'
+import { isEqual, pickBy } from 'lodash'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
+import { findChildrenByType } from 'prosemirror-utils'
 import { DecorationSet } from 'prosemirror-view'
 
 import { CSLProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../../lib/popper'
-import { isRejectedInsert } from '../../lib/track-changes-utils'
+import { BibliographyItemAttrs } from '../../lib/references'
+import {
+  getActualAttrs,
+  isHidden,
+  isRejectedInsert,
+} from '../../lib/track-changes-utils'
 import {
   buildCitations,
   buildDecorations,
   CitationNodes,
-  getBibliographyItemModelMap,
 } from './bibliography-utils'
 
 export const bibliographyKey = new PluginKey<PluginState>('bibliography')
@@ -38,7 +43,7 @@ export interface PluginState {
   version: string
   citationNodes: CitationNodes
   citations: CiteProc.Citation[]
-  bibliographyItems: Map<string, BibliographyItem>
+  bibliographyItems: Map<string, BibliographyItemAttrs>
   renderedCitations: Map<string, string>
   citationCounts: Map<string, number>
   provider: CitationProvider
@@ -93,14 +98,14 @@ const buildBibliographyPluginState = (
     }
   })
 
-  const bibliographyItemMap = getBibliographyItemModelMap(doc)
+  const bibliographyItems = getBibliographyItemAttrs(doc)
 
   const citations = buildCitations(nodes)
 
   const $new: Partial<PluginState> = {
     citationNodes: nodes,
     citations,
-    bibliographyItems: bibliographyItemMap,
+    bibliographyItems,
   }
 
   //TODO remove. There should always be a csl style
@@ -111,7 +116,7 @@ const buildBibliographyPluginState = (
   if (
     $old &&
     isEqual(citations, $old.citations) &&
-    isEqual(bibliographyItemMap, $old.bibliographyItems)
+    isEqual(bibliographyItems, $old.bibliographyItems)
   ) {
     $new.version = $old.version
     $new.citationCounts = $old.citationCounts
@@ -126,7 +131,8 @@ const buildBibliographyPluginState = (
     })
 
     const provider = new CitationProvider({
-      getLibraryItem: (id: string) => bibliographyItemMap.get(id),
+      getLibraryItem: (id: string) =>
+        getBibliographyItem(bibliographyItems.get(id)),
       citationStyle: csl.style || '',
       locale: csl.locale,
     })
@@ -141,6 +147,32 @@ const buildBibliographyPluginState = (
   }
 
   return $new as PluginState
+}
+
+const getBibliographyItem = (
+  attrs: BibliographyItemAttrs | undefined
+): BibliographyItem | undefined => {
+  if (!attrs) {
+    return
+  }
+  const { id, containerTitle, doi, ...rest } = attrs
+  const item = {
+    _id: id,
+    objectType: ObjectTypes.BibliographyItem,
+    'container-title': containerTitle,
+    DOI: doi,
+    ...rest,
+  } as BibliographyItem
+  return pickBy(item, (v) => v !== undefined) as BibliographyItem
+}
+
+const getBibliographyItemAttrs = (doc: ManuscriptNode) => {
+  const attrs = new Map<string, BibliographyItemAttrs>()
+  findChildrenByType(doc, schema.nodes.bibliography_item)
+    .filter((n) => !isHidden(n.node))
+    .map((n) => getActualAttrs(n.node) as BibliographyItemAttrs)
+    .forEach((a) => attrs.set(a.id, a))
+  return attrs
 }
 
 export const getBibliographyPluginState = (state: EditorState) => {
