@@ -103,9 +103,19 @@ export default (props: CommentAnnotationProps) => {
         // this will update decoration just in case we add/remove a comment node
         const hasCommentChange = !!tr.steps.find((s) => {
           if (s instanceof ReplaceStep) {
-            return s.slice.size > 0
-              ? newState.doc.nodeAt(s.from + 1)?.type === schema.nodes.comment
-              : oldState.doc.nodeAt(s.from)?.type === schema.nodes.comment
+            if (s.slice.size > 0) {
+              return (
+                newState.doc.nodeAt(s.from + 1)?.type ===
+                  schema.nodes.comment ||
+                newState.doc.nodeAt(s.from)?.type ===
+                  schema.nodes.highlight_marker
+              )
+            }
+            return (
+              oldState.doc.nodeAt(s.from)?.type === schema.nodes.comment ||
+              oldState.doc.nodeAt(s.from)?.type ===
+                schema.nodes.highlight_marker
+            )
           }
         })
 

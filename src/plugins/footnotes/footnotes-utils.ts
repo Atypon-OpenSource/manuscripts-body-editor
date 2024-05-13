@@ -32,6 +32,8 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 
+import { isRejectedInsert } from '../../lib/track-changes-utils'
+
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
     $pos,
@@ -44,6 +46,7 @@ export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
           tableElement,
           (node) => node.type === schema.nodes.inline_footnote
         )
+          .filter(({ node }) => !isRejectedInsert(node))
           .map(({ node }) => (node as InlineFootnoteNode).attrs.rids)
           .flat()
       : []
@@ -78,6 +81,7 @@ export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
   let index = 0
 
   findChildrenByType(node, schema.nodes.inline_footnote)
+    .filter(({ node }) => !isRejectedInsert(node))
     .map(({ node }) => node.attrs.rids)
     .flat()
     .map((rid: string) => {
@@ -138,8 +142,9 @@ export const updateTableInlineFootnoteLabels = (
 ) => {
   const labels = buildTableFootnoteLabels(table.node)
 
-  findChildrenByType(table.node, schema.nodes.inline_footnote).map(
-    ({ node, pos }) => {
+  findChildrenByType(table.node, schema.nodes.inline_footnote)
+    .filter(({ node }) => !isRejectedInsert(node))
+    .map(({ node, pos }) => {
       const contents = node.attrs.rids
         .map((rid: string) => labels.get(rid))
         .join(',')
@@ -154,8 +159,7 @@ export const updateTableInlineFootnoteLabels = (
           contents,
         })
       }
-    }
-  )
+    })
 
   return tr
 }
