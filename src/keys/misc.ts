@@ -31,6 +31,7 @@ import { goToNextCell } from 'prosemirror-tables'
 import {
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
+  ignoreMetaNodeBackspaceCommand,
   insertBlock,
   insertBreak,
   insertCrossReference,
@@ -42,7 +43,11 @@ import {
 import { EditorAction } from '../types'
 
 const customKeymap: { [key: string]: EditorAction } = {
-  Backspace: chainCommands(undoInputRule, ignoreAtomBlockNodeBackward),
+  Backspace: chainCommands(
+    undoInputRule,
+    ignoreAtomBlockNodeBackward,
+    ignoreMetaNodeBackspaceCommand
+  ),
   Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
   'Mod-z': undo,
