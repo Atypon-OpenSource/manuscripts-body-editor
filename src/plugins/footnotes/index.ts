@@ -300,10 +300,7 @@ export default (props: PluginProps) => {
       const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const initTransaction = transactions.find((t) => t.getMeta('INIT'))
 
-      if (
-        !footnoteElement ||
-        (!initTransaction && (isEqual(prevIds, newIds) || newIds.length < 2))
-      ) {
+      if (!footnoteElement || (!initTransaction && isEqual(prevIds, newIds))) {
         return null
       }
 
