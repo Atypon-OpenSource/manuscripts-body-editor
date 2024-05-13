@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  ManuscriptNode,
+  ManuscriptNodeView,
+  schema,
+} from '@manuscripts/transform'
+import { ResolvedPos } from 'prosemirror-model'
 
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
+
+const isGraphicalAbstractFigure = ($pos: ResolvedPos, doc: ManuscriptNode) =>
+  $pos.parent.type === schema.nodes.graphical_abstract_section &&
+  doc.nodeAt($pos.pos)?.type === schema.nodes.figure_element
 
 export default class BlockView<T extends BaseNodeProps>
   extends BaseNodeView<T>
@@ -106,6 +115,14 @@ export default class BlockView<T extends BaseNodeProps>
     const gutter = document.createElement('div')
     gutter.setAttribute('contenteditable', 'false')
     gutter.classList.add(className)
+    if (
+      isGraphicalAbstractFigure(
+        this.view.state.doc.resolve(this.getPos()),
+        this.view.state.doc
+      )
+    ) {
+      gutter.classList.add('graphical-abstract-figure')
+    }
 
     for (const button of buttons) {
       gutter.appendChild(button)
