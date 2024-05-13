@@ -62,7 +62,8 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
     if (
       isInlineFootnoteNode(node) &&
       parentNode &&
-      parentNode.type !== schema.nodes.table_cell
+      parentNode.type !== schema.nodes.table_cell &&
+      parentNode.type !== schema.nodes.table_header
     ) {
       nodes.push([node, pos])
       node.attrs.rids.forEach((rid) => {
