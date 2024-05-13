@@ -6,6 +6,13 @@
     },
     "content": [
       {
+        "type": "abstracts",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
+      },
+      {
         "type": "body",
         "attrs": {
           "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71"
@@ -115,12 +122,19 @@
             ]
           }
         ]
+      },
+      {
+        "type": "comments",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
       }
     ]
   },
   "selection": {
     "type": "text",
-    "anchor": 8,
-    "head": 8
+    "anchor": 10,
+    "head": 10
   }
 }

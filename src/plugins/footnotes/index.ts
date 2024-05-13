@@ -353,7 +353,7 @@ export default (props: PluginProps) => {
         footnotesReordered
       )
 
-      if (newFElement) {
+      if (newFElement && footnotes.size > 0) {
         tr.replaceWith(
           footnoteElement[1],
           footnoteElement[1] + footnoteElement[0].nodeSize,

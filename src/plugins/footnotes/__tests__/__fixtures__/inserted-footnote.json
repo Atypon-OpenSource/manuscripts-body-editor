@@ -6,6 +6,13 @@
     },
     "content": [
       {
+        "type": "abstracts",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
+      },
+      {
         "type": "body",
         "attrs": {
           "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71"
@@ -45,7 +52,7 @@
                     "type": "inline_footnote",
                     "attrs": {
                       "rids": ["MOCKED_ID"],
-                      "contents": "",
+                      "contents": "a",
                       "dataTracked": null
                     }
                   },
@@ -127,12 +134,19 @@
             ]
           }
         ]
+      },
+      {
+        "type": "comments",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
       }
     ]
   },
   "selection": {
     "type": "text",
-    "anchor": 39,
-    "head": 39
+    "anchor": 41,
+    "head": 41
   }
 }
