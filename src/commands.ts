@@ -110,7 +110,12 @@ export const blockActive =
 
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
-    const { $from } = state.selection
+    const { $from, $to } = state.selection
+
+    // disable block comment insertion just for title node, LEAN-2746
+    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+      return false
+    }
 
     for (let d = $from.depth; d >= 0; d--) {
       const index = $from.index(d)
@@ -1107,11 +1112,12 @@ const addBlockComment = (
 
   tr.setMeta('addToHistory', false)
 
-  if (dispatch && isAllowedType(type)) {
-    dispatch(tr)
+  if (isAllowedType(type)) {
+    dispatch && dispatch(tr)
+    return true
+  } else {
+    return false
   }
-
-  return true
 }
 
 const addHighlightComment = (
