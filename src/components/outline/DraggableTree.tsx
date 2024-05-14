@@ -290,9 +290,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
       {items.length ? (
         <div className={`subtree ${isOpen ? '' : 'collapsed'}`}>
-          {items.map((subtree) => (
+          {items.map((subtree, index) => (
             <DraggableTree
-              key={subtree.node.attrs.id}
+              key={subtree.node.attrs.id || 'subtree-' + index}
               tree={subtree}
               view={view}
               depth={!tree.parent ? depth : depth + 1}
