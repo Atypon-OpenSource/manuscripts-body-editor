@@ -55,13 +55,9 @@ export class PopperManager {
         placement,
         removeOnDestroy: true,
         modifiers,
-        onCreate: (data) => {
-          this.fixPopperPosition(data, container)
+        onCreate: () => {
           this.addContainerClass(target)
           this.focusInput(container)
-        },
-        onUpdate: (data) => {
-          this.fixPopperPosition(data, container)
         },
       })
     })
@@ -94,30 +90,6 @@ export class PopperManager {
 
     if (container) {
       container.classList.add('popper-open')
-    }
-  }
-  // func to detreimne if the popper will overflow the body boundary
-  private fixPopperPosition(data: Popper.Data, popperElement: HTMLDivElement) {
-    const toolsPanel = popperElement.querySelector(
-      '.tools-panel'
-    ) as HTMLElement
-    const totalWidth = data.offsets.popper.left + toolsPanel.clientWidth
-    const arrow = popperElement.querySelector('.popper-arrow') as HTMLElement
-    // the following will always change the placement to bottom,
-    // for better positioning of the arrow and the popper
-    if (data.originalPlacement != 'bottom') {
-      data.instance.options.placement = 'bottom'
-      data.instance.update()
-    }
-    if (totalWidth > window.innerWidth) {
-      // the 40 is the size of the resizer button
-      popperElement.style.left =
-        (window.innerWidth - totalWidth - 40).toString() + 'px'
-      if (arrow) {
-        // the 30 is the size of the resizer button - the arrow margin value
-        arrow.style.left =
-          Math.abs(window.innerWidth - totalWidth - 30).toString() + 'px'
-      }
     }
   }
 
