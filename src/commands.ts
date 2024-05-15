@@ -110,7 +110,12 @@ export const blockActive =
 
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
-    const { $from } = state.selection
+    const { $from, $to } = state.selection
+
+    // disable block comment insertion just for title node, LEAN-2746
+    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+      return false
+    }
 
     for (let d = $from.depth; d >= 0; d--) {
       const index = $from.index(d)
@@ -765,6 +770,22 @@ export const ignoreAtomBlockNodeBackward = (
   return node.isBlock && node.isAtom
 }
 
+export const ignoreMetaNodeBackspaceCommand = (
+  state: ManuscriptEditorState
+) => {
+  const { selection } = state
+
+  if (!isNodeSelection(selection)) {
+    return false
+  }
+
+  return (
+    selection.node.type === schema.nodes.keyword_group ||
+    selection.node.type === schema.nodes.affiliations ||
+    selection.node.type === schema.nodes.contributors
+  )
+}
+
 // Copied from prosemirror-commands
 const findCutAfter = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
@@ -1091,11 +1112,12 @@ const addBlockComment = (
 
   tr.setMeta('addToHistory', false)
 
-  if (dispatch && isAllowedType(type)) {
-    dispatch(tr)
+  if (isAllowedType(type)) {
+    dispatch && dispatch(tr)
+    return true
+  } else {
+    return false
   }
-
-  return true
 }
 
 const addHighlightComment = (
@@ -1173,8 +1195,9 @@ export const insertTableFootnote = (
       schema.nodes.inline_footnote
     )
     footnoteIndex =
-      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
-      1
+      inlineFootnotes.filter(
+        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
+      ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
       contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
