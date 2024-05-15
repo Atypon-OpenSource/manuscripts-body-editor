@@ -995,6 +995,9 @@
   background-color: #f2fbfc;
   padding: 4px;
 }
+.table-footer > div {
+  position: relative;
+}
 
 .table-footer > div > p {
   padding-bottom: 10px;
