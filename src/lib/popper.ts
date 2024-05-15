@@ -47,6 +47,9 @@ export class PopperManager {
           enabled: false,
         }
       }
+      modifiers.preventOverflow = {
+        escapeWithReference: true,
+      }
 
       container.appendChild(contents)
       document.body.appendChild(container)
