@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  FootnoteNode,
+  FootnotesElementNode,
   InlineFootnoteNode,
   isFootnoteNode,
+  isFootnotesElementNode,
+  isFootnotesSectionNode,
   isInlineFootnoteNode,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { NodeSelection, Plugin, PluginKey } from 'prosemirror-state'
+import {
+  NodeSelection,
+  Plugin,
+  PluginKey,
+  TextSelection,
+} from 'prosemirror-state'
 import {
   findParentNodeClosestToPos,
   findParentNodeOfType,
@@ -42,43 +52,23 @@ import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import {
   findTableInlineFootnoteIds,
+  getAlphaOrderIndices,
   getInlineFootnotes,
 } from './footnotes-utils'
 
 interface PluginState {
-  nodes: [InlineFootnoteNode, number][]
+  inlineFootnotes: [InlineFootnoteNode, number][]
   labels: Map<string, string>
+  footnotes: Map<string, [FootnoteNode, number]>
+  footnoteElement?: [FootnotesElementNode, number]
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
 
-export const buildPluginState = (doc: ManuscriptNode): PluginState => {
-  const nodes: [InlineFootnoteNode, number][] = []
-
-  let index = 0
-  const labels = new Map<string, string>()
-
-  doc.descendants((node, pos, parentNode) => {
-    if (
-      isInlineFootnoteNode(node) &&
-      parentNode &&
-      parentNode.type !== schema.nodes.table_cell &&
-      parentNode.type !== schema.nodes.table_header
-    ) {
-      nodes.push([node, pos])
-      node.attrs.rids.forEach((rid) => {
-        labels.set(rid, String(++index))
-      })
-    }
-  })
-
-  return { nodes, labels }
-}
-
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
     const footnote = node as InlineFootnoteNode
-    if (footnote.attrs.rids.includes(rid)) {
+    if (isInlineFootnoteNode(node) && footnote.attrs.rids.includes(rid)) {
       const selection = NodeSelection.create(view.state.doc, pos)
       view.dispatch(view.state.tr.setSelection(selection).scrollIntoView())
     }
@@ -92,7 +82,7 @@ const labelWidget =
     element.className = 'footnote-label'
     element.textContent = label
 
-    element.addEventListener('click', () => {
+    element.addEventListener('mousedown', () => {
       scrollToInlineFootnote(id, view)
     })
 
@@ -246,6 +236,48 @@ const deleteFootnoteWidget =
  *
  */
 
+export const buildPluginState = (doc: ManuscriptNode): PluginState => {
+  const inlineFootnotes: [InlineFootnoteNode, number][] = []
+  const footnotes: Map<string, [FootnoteNode, number]> = new Map()
+  let footnoteElement: [FootnotesElementNode, number] | undefined
+
+  doc.descendants((node, pos, parentNode) => {
+    if (isFootnotesSectionNode(node)) {
+      // this has to be done because footnote element is used in tables too
+      node.descendants((node, childPos) => {
+        if (isFootnotesElementNode(node)) {
+          footnoteElement = [node, pos + childPos]
+        }
+
+        if (isFootnoteNode(node)) {
+          footnotes.set(node.attrs.id, [node, pos + childPos])
+        }
+      })
+    }
+
+    if (
+      isInlineFootnoteNode(node) &&
+      parentNode &&
+      parentNode.type !== schema.nodes.table_cell &&
+      parentNode.type !== schema.nodes.table_header
+    ) {
+      inlineFootnotes.push([node, pos])
+    }
+  })
+
+  let index = 0
+  const labels = new Map<string, string>()
+
+  inlineFootnotes.sort((a, b) => a[1] - b[1])
+  inlineFootnotes.forEach(([node]) => {
+    node.attrs.rids.forEach((rid) => {
+      labels.set(rid, getAlphaOrderIndices(index++))
+    })
+  })
+
+  return { inlineFootnotes, labels, footnotes, footnoteElement }
+}
+
 export default (props: PluginProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
@@ -256,31 +288,53 @@ export default (props: PluginProps) => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
+        const prevState = footnotesKey.getState(oldState)
+        if (!tr.docChanged && prevState) {
+          return prevState
+        }
         return buildPluginState(newState.doc)
       },
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { nodes: oldInlineFootnoteNodes } = footnotesKey.getState(
+      const { inlineFootnotes: oldInlineFootnoteNodes } = footnotesKey.getState(
         oldState
       ) as PluginState
 
-      const { nodes: inlineFootnoteNodes, labels } = footnotesKey.getState(
-        newState
-      ) as PluginState
+      const {
+        inlineFootnotes: inlineFootnoteNodes,
+        footnotes,
+        labels,
+        footnoteElement,
+      } = footnotesKey.getState(newState) as PluginState
 
-      if (isEqual(inlineFootnoteNodes, oldInlineFootnoteNodes)) {
+      const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
+      const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
+      const initTransaction = transactions.find((t) => t.getMeta('INIT'))
+
+      if (!footnoteElement || (!initTransaction && isEqual(prevIds, newIds))) {
         return null
       }
 
       const { tr } = newState
 
+      const footnotesReordered: FootnoteNode[] = []
+      const footnotesRest = new Map(footnotes)
+
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
-          .map((rid) => labels.get(rid))
+          .map((rid) => {
+            const currentfNode = footnotesRest.get(rid)
+            if (currentfNode) {
+              footnotesReordered.push(currentfNode[0])
+              footnotesRest.delete(rid)
+            }
+            return labels.get(rid)
+          })
           .join('')
 
+        // displaying indices
         if (footnote.attrs.contents !== contents) {
           tr.setNodeMarkup(pos, undefined, {
             ...footnote.attrs,
@@ -290,6 +344,48 @@ export default (props: PluginProps) => {
         }
       })
 
+      // unused footnotes go to the bottom of the list
+      footnotesRest.forEach(([node]) => footnotesReordered.push(node))
+
+      // replacing footnotes in footnote element
+      const newFElement = schema.nodes.footnotes_element.create(
+        footnoteElement[0].attrs,
+        footnotesReordered
+      )
+
+      if (newFElement && footnotes.size > 0) {
+        tr.replaceWith(
+          footnoteElement[1],
+          footnoteElement[1] + footnoteElement[0].nodeSize,
+          newFElement
+        )
+      }
+
+      const prevSelection = newState.selection
+      const selectedFootnote = findParentNodeClosestToPos(
+        prevSelection.$anchor,
+        (node) => isFootnoteNode(node)
+      )
+      // relocating selection to the new position of the selected footnotes (selection set in commands normally)
+      if (selectedFootnote && footnotes.size > 0) {
+        let newFootnotePos = 0
+
+        for (let i = 0; i < footnotesReordered.length; i++) {
+          const node = footnotesReordered[i]
+          // has to run after persist plugin
+          newFootnotePos += node.nodeSize
+          if (node.attrs.id === selectedFootnote.node.attrs.id) {
+            break
+          }
+        }
+        tr.setSelection(
+          TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
+        )
+      }
+
+      // selection will be lost otherwise as we replace the element completely
+
+      skipTracking(tr)
       return tr
     },
 
@@ -362,7 +458,7 @@ export default (props: PluginProps) => {
               decorations.push(
                 Decoration.widget(
                   pos + 2,
-                  placeholderWidget('Add new note here')
+                  placeholderWidget('Type new footnote here')
                 )
               )
             }

@@ -5,6 +5,13 @@
   },
   "content": [
     {
+      "type": "abstracts",
+      "attrs": {
+        "id": ""
+      },
+      "content": []
+    },
+    {
       "type": "body",
       "attrs": {
         "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71"
@@ -44,6 +51,13 @@
       "attrs": {
         "id": "MPSection:05EA736A-BBE3-4904-B2F5-59E861208BA9"
       }
+    },
+    {
+      "type": "comments",
+      "attrs": {
+        "id": ""
+      },
+      "content": []
     }
   ]
 }

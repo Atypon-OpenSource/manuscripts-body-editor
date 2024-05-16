@@ -70,7 +70,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
   public setDomAttrs(
     node: ManuscriptNode,
     element: HTMLElement,
-    omit: string[] = []
+    omit: string[] = ['contents']
   ) {
     Object.keys(node.attrs || {}).forEach((attr) => {
       if (!omit.includes(attr)) {
