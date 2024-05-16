@@ -16,6 +16,12 @@
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState, schema } from '@manuscripts/transform'
+import {
+  chainCommands,
+  deleteSelection,
+  joinBackward,
+} from 'prosemirror-commands'
+import { undoInputRule } from 'prosemirror-inputrules'
 import { NodeType } from 'prosemirror-model'
 import {
   liftListItem,
@@ -24,6 +30,7 @@ import {
   wrapInList,
 } from 'prosemirror-schema-list'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
+import { findParentNodeOfType } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
 import { EditorAction } from '../types'
@@ -31,14 +38,28 @@ import { EditorAction } from '../types'
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
 export const skipCommandTracking =
   (command: Command) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    command(state, (tr) => {
+    return command(state, (tr) => {
       if (dispatch) {
         skipTracking(tr)
         dispatch(tr)
       }
     })
-    return true
   }
+
+const listItemBackward = (
+  state: EditorState,
+  dispatch?: (tr: Transaction) => void
+) => {
+  const { selection } = state
+  const isListItem = findParentNodeOfType(schema.nodes.list_item)(selection)
+
+  if (isListItem) {
+    return joinBackward(state, dispatch)
+  }
+
+  return false
+}
+
 // Lift the list item if it's inside a parent list.
 const liftToOuterList = (itemType: NodeType): Command => {
   return function (state: EditorState, dispatch?: (tr: Transaction) => void) {
@@ -71,6 +92,9 @@ const listKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-k': skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
   'Shift-Tab': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
   Tab: skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
+  Backspace: skipCommandTracking(
+    chainCommands(undoInputRule, listItemBackward, deleteSelection)
+  ),
 }
 
 export default listKeymap

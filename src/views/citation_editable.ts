@@ -173,7 +173,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         'citation-editor'
       )
     }
-    this.props.popper.show(this.dom, this.editor, 'right')
+    this.props.popper.show(this.dom, this.editor, 'auto')
   }
 
   private handleEdit = () => {
