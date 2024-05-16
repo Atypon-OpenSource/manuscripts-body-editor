@@ -27,7 +27,7 @@ export class PlaceholderView<PropsType extends BaseNodeProps>
   public ignoreMutation = () => true
 
   public initialise = () => {
-    this.dom = createPlaceholderContent(this.node.attrs.label)
+    this.dom = createPlaceholderContent()
     this.dom.classList.add('placeholder-item')
   }
 }
