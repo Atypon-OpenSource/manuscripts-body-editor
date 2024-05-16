@@ -24,7 +24,7 @@ export function createPlaceholderContent(label = 'a component') {
     </div>
     <div class="placeholder-item-message">
       <div class="message-content">
-      A problem occured while loading ${label}</div>      
+      A problem occured while loading ${label}. If the problem persists please contact support.</div>      
       </div>
     </div>
   `
