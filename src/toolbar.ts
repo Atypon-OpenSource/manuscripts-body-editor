@@ -17,6 +17,7 @@
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { EditorState } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 import { ReactNode } from 'react'
 
 import {
@@ -35,10 +36,14 @@ export interface ToolbarButtonConfig {
   title: string
   content: ReactNode
   isActive?: (state: EditorState) => boolean
-  run: (state: EditorState, dispatch: Dispatch) => void
+  run: (state: EditorState, dispatch: Dispatch, view?: EditorView) => void
   isEnabled: (state: EditorState) => boolean
   options?: {
-    [key: string]: (state: EditorState, dispatch: Dispatch) => void
+    [key: string]: (
+      state: EditorState,
+      dispatch: Dispatch,
+      view?: EditorView
+    ) => void
   }
 }
 
