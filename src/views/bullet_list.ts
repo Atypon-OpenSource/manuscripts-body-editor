@@ -16,6 +16,7 @@
 
 import { ManuscriptNode } from '@manuscripts/transform'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -30,6 +31,11 @@ export class BulletListView<
     if (this.contentDOM) {
       const type = (this.node.attrs.listStyleType as JatsStyleType) || 'bullet'
       this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
+
+      if (this.node.attrs.dataTracked) {
+        const classes = [...getChangeClasses(this.node.attrs.dataTracked)]
+        this.contentDOM.className = classes.join(' ')
+      }
     }
   }
 }
