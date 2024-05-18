@@ -34,7 +34,6 @@ type Selection = {
   from: number
   to: number
 }
-
 export interface PluginState {
   decorations: DecorationSet
   suggestion?: TrackedAttrs

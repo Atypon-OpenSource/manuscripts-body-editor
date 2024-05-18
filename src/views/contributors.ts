@@ -117,7 +117,6 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     const state = this.view.state
     const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
     const suggestion = selectedSuggestionKey.getState(state)?.suggestion
-
     const container = document.createElement('span')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
@@ -266,6 +265,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
 
   public showContextMenu = (element: Element) => {
     this.props.popper.destroy() // destroy the old context menu
+
     const componentProps: ContextMenuProps = {
       actions: [
         {

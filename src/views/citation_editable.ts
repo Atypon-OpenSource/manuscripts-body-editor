@@ -65,8 +65,20 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public selectNode = () => {
+    console.log('selectNode...')
     this.dom.classList.add('ProseMirror-selectednode')
+    //this.onClickHandler()
+  }
+
+  public destroy = () => {
+    this.editor?.remove()
+    this.props.popper.destroy()
+  }
+
+  public onClickHandler = () => {
+    console.log('citation_editable click handler...')
     const can = this.props.getCapabilities()
+
     if (can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (!attrs.rids.length) {
@@ -75,16 +87,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         this.showContextMenu()
       }
     }
-  }
-
-  public deselectNode = () => {
-    this.dom.classList.remove('ProseMirror-selectednode')
-    this.props.popper.destroy()
-  }
-
-  public destroy = () => {
-    this.editor?.remove()
-    this.props.popper.destroy()
   }
 
   public showContextMenu = () => {
@@ -108,7 +110,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public showPopper = () => {
-    this.props.popper.destroy() // destroy the context menu
+    this.props.popper.destroy()
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
