@@ -15,29 +15,19 @@
  */
 
 import {
-  Capabilities,
   ContextMenu,
   ContextMenuProps,
   SecondaryButton,
 } from '@manuscripts/style-guide'
 import {
-  CHANGE_OPERATION,
-  CHANGE_STATUS,
-  TrackedAttrs,
-} from '@manuscripts/track-changes-plugin'
-import {
-  ContributorNode,
-  isContributorNode,
+  ContributorNode, isContributorNode,
   schema,
 } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
 
 import {
   AuthorsModal,
   AuthorsModalProps,
 } from '../components/authors/AuthorsModal'
-import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
-import { getActualAttrs } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -46,26 +36,15 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
-import {
-  CLEAR_SUGGESTION_ID,
-  selectedSuggestionKey,
-  SET_SUGGESTION_ID,
-} from '../plugins/selected-suggestion-ui'
-import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import {getActualAttrs} from "../lib/track-changes-utils";
+import {TrackableAttributes} from "../types";
+import {AffiliationAttrs, authorLabel, ContributorAttrs} from "../lib/authors";
+import {EditableBlockProps} from "./editable_block";
 
-export interface ContributorsProps extends EditableBlockProps {
-  getCapabilities: () => Capabilities
-  openAuthorEditing: () => void
-  selectAuthorForEditing: (authorId: string) => void
-}
-
-export class ContributorsView<
-  PropsType extends ContributorsProps
-> extends BlockView<PropsType> {
+export class ContributorsView extends BlockView<EditableBlockProps> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
@@ -94,8 +73,6 @@ export class ContributorsView<
   }
 
   buildAuthors = () => {
-    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
-    let selectedAuthor: string | undefined
     const authors: ContributorNode[] = []
     const authorsWrapper = document.createElement('div')
     authorsWrapper.classList.add('contributors-list')
@@ -103,15 +80,6 @@ export class ContributorsView<
     this.node.content?.forEach((node, offset) => {
       if (isContributorNode(node)) {
         authors.push(node)
-
-        if (
-          selectedSuggestion?.find(
-            this.getPos() + offset + 2,
-            this.getPos() + offset + node.nodeSize + 2
-          ).length
-        ) {
-          selectedAuthor = node.attrs.id
-        }
       }
     })
 
@@ -123,7 +91,7 @@ export class ContributorsView<
         }
         const jointAuthors = this.isJointFirstAuthor(authors, i)
         authorsWrapper.appendChild(
-          this.buildAuthor(author, jointAuthors, selectedAuthor)
+          this.buildAuthor(author, jointAuthors)
         )
       })
     this.container.appendChild(authorsWrapper)
@@ -132,7 +100,6 @@ export class ContributorsView<
   buildAuthor = (
     node: ContributorNode,
     isJointFirstAuthor: boolean,
-    selectedAuthor?: string
   ) => {
     const pluginState = affiliationsKey.getState(this.view.state)
     const attrs = node.attrs as TrackableAttributes<ContributorNode>
@@ -156,15 +123,10 @@ export class ContributorsView<
 
     const can = this.props.getCapabilities()
 
-    const disableEditButton = !can.editMetadata
+    const { isCorresponding, email } = displayAttr
 
-    const { isCorresponding, email, id } = displayAttr
-
-    if (!disableEditButton) {
-      container.addEventListener('click', () => {
-        const dataTracked = attrs.dataTracked as TrackedAttrs[]
-        this.onClickHandler(id, dataTracked ? dataTracked[0] : undefined)
-      })
+    if (can.editMetadata) {
+      container.addEventListener('click', this.handleClick)
     }
 
     const name = authorLabel(displayAttr)
@@ -195,11 +157,7 @@ export class ContributorsView<
       container.appendChild(this.createNote('*', 'Corresponding author'))
     }
 
-    if (selectedAuthor && selectedAuthor === attrs.id) {
-      container.classList.add('selected-suggestion')
-    }
     containerWrapper.appendChild(container)
-
     return containerWrapper
   }
 
@@ -270,32 +228,13 @@ export class ContributorsView<
     }
   }
 
-  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
+  private handleClick = (event: Event) => {
     this.props.popper.destroy()
-    const isSelectedSuggestion = !!selectedSuggestionKey
-      .getState(this.view.state)
-      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-
-    const { tr, doc } = this.view.state
-    tr.setSelection(NodeSelection.create(doc, this.getPos()))
-
-    if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
-      tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-    } else {
-      if (isSelectedSuggestion) {
-        tr.setMeta(CLEAR_SUGGESTION_ID, true)
-      }
+    const element = event.target as HTMLElement
+    const author = element.closest('.contributor')
+    if (author) {
+      this.showContextMenu(author.id)
     }
-    // Dont show context menu if author is deleted and it is not rejected
-    if (
-      !(
-        dataTracked?.operation === CHANGE_OPERATION.delete &&
-        dataTracked?.status !== CHANGE_STATUS.rejected
-      )
-    ) {
-      this.showContextMenu(elementId)
-    }
-    this.view.dispatch(tr)
   }
 
   public showContextMenu = (elementId: string) => {

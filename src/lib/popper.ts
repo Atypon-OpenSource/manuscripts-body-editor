@@ -17,7 +17,8 @@
 import Popper from 'popper.js'
 
 export class PopperManager {
-  protected activePopper?: Popper
+  private activePopper?: Popper
+  private handleDocumentClick?: (e: Event) => void
 
   public show(
     target: Element,
@@ -63,6 +64,12 @@ export class PopperManager {
           this.focusInput(container)
         },
       })
+      this.handleDocumentClick = (e) => {
+        if (!target.contains(e.target as Node)) {
+          this.destroy()
+        }
+      }
+      document.addEventListener('click', this.handleDocumentClick)
     })
   }
 
@@ -70,6 +77,9 @@ export class PopperManager {
     if (this.activePopper) {
       this.removeContainerClass(this.activePopper.reference as Element)
       this.activePopper.destroy()
+      if (this.handleDocumentClick) {
+        document.removeEventListener('click', this.handleDocumentClick)
+      }
       delete this.activePopper
     }
   }
