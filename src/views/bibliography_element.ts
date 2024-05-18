@@ -25,6 +25,7 @@ import {
 } from '../components/references/ReferencesEditor'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { deleteNode, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
@@ -34,7 +35,6 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import {getChangeClasses} from "../lib/track-changes-utils";
 
 interface BibliographyElementViewProps extends BaseNodeProps {
   setComment: (comment?: CommentAnnotation) => void
@@ -84,10 +84,6 @@ export class BibliographyElementBlockView<
     this.showPopper(citationId)
   }
 
-  public deselectNode = () => {
-    this.props.popper.destroy()
-  }
-
   private handleComment = (citationId: string) => {
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
@@ -131,7 +127,6 @@ export class BibliographyElementBlockView<
       this.showContextMenu(item as HTMLElement)
     }
   }
-
 
   public updateContents = async () => {
     this.props.popper.destroy() // destroy the old context menu
