@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import {
-  buildComment,
-  CitationNode,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { CitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
+import { addNodeComment } from '../commands'
 import {
   CitationEditor,
   CitationEditorProps,
@@ -257,8 +252,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   private handleComment = () => {
-    const comment = buildComment(this.node.attrs.id) as CommentAnnotation
-    this.props.setComment(comment)
+    addNodeComment(this.node, this.view.state, this.props.dispatch)
   }
 
   private insertBibliographyNode(attrs: BibliographyItemAttrs) {

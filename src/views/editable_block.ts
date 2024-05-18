@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNodeType, nodeNames, schema } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
@@ -37,8 +36,8 @@ const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
 
 export interface EditableBlockProps extends BaseNodeProps {
   getCapabilities: () => Capabilities
+  setSelectedComment: (id?: string, isNew?: boolean) => void
   retrySync: (componentIDs: string[]) => Promise<void>
-  setComment: (comment: CommentAnnotation) => void
   dispatch?: Dispatch
   theme: DefaultTheme
 }
@@ -159,14 +158,12 @@ export const EditableBlock = <
     }
 
     public createMenu = () => {
-      const { setComment } = this.props
-
       return new ContextMenu(
         this.node,
         this.view,
         this.getPos,
         {
-          setComment,
+          addComment: true,
         },
         this.props
       )

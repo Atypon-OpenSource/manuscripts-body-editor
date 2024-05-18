@@ -14,45 +14,31 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import { buildComment, schema } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
+import { BibliographyItemNode, schema } from '@manuscripts/transform'
 
+import { addNodeComment } from '../commands'
 import {
   ReferencesEditor,
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
+import { getCommentIconForNode, getCommentIDForNode } from '../lib/comments'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, updateNodeAttrs } from '../lib/view'
+import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { commentAnnotation } from '../plugins/comment_annotation'
-import {
-  CLEAR_SUGGESTION_ID,
-  selectedSuggestionKey,
-  SET_SUGGESTION_ID,
-} from '../plugins/selected-suggestion-ui'
-import { WidgetDecoration } from '../types'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-interface BibliographyElementViewProps extends BaseNodeProps {
-  setComment: (comment?: CommentAnnotation) => void
-}
-
 export class BibliographyElementBlockView<
-  PropsType extends BibliographyElementViewProps & EditableBlockProps
+  PropsType extends EditableBlockProps
 > extends BlockView<PropsType> {
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
-  private clickedElementId: string | null = null // for storing element.id which should have context menu displayed
 
   public showPopper = (id: string) => {
     this.props.popper.destroy() // destroy the old context menu
@@ -91,28 +77,29 @@ export class BibliographyElementBlockView<
     this.showPopper(citationId)
   }
 
-  private handleComment = (citationId: string) => {
-    this.props.setComment(buildComment(citationId) as CommentAnnotation)
+  private handleComment = (itemID: string) => {
+    const item = findChildByID(this.view, itemID)
+    if (item) {
+      addNodeComment(item.node, this.view.state, this.props.dispatch)
+    }
   }
 
-  public showContextMenu = (elementId: string) => {
+  public showContextMenu = (element: HTMLElement) => {
     this.props.popper.destroy() // destroy the old context menu
-    this.clickedElementId = null // reset clicked element id
     const can = this.props.getCapabilities()
-    const element = document.getElementById(elementId) as Element
     const componentProps: ContextMenuProps = {
       actions: [],
     }
     if (can.editCitationsAndRefs) {
       componentProps.actions.push({
         label: 'Edit',
-        action: () => this.handleEdit(elementId),
+        action: () => this.handleEdit(element.id),
         icon: 'EditIcon',
       })
     }
     componentProps.actions.push({
       label: 'Comment',
-      action: () => this.handleComment(elementId),
+      action: () => this.handleComment(element.id),
       icon: 'AddComment',
     })
 
@@ -128,111 +115,62 @@ export class BibliographyElementBlockView<
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
-    // store clicked element
-    this.clickedElementId = elementId
-    const isSelectedSuggestion = !!selectedSuggestionKey
-      .getState(this.view.state)
-      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-    const { tr, doc } = this.view.state
-    tr.setSelection(NodeSelection.create(doc, this.getPos()))
-    if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
-      tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-    } else {
-      if (isSelectedSuggestion) {
-        tr.setMeta(CLEAR_SUGGESTION_ID, true)
+  private handleClick = (event: Event) => {
+    const element = event.target as HTMLElement
+    const item = element.closest('.bib-item')
+    if (item) {
+      const marker = element.closest('.comment-icon')
+      if (marker) {
+        const commentID = getCommentIDForNode(item.id)
+        this.props.setSelectedComment(commentID)
       } else {
-        this.showContextMenu(elementId)
+        this.showContextMenu(item as HTMLElement)
       }
     }
-    this.view.dispatch(tr)
   }
 
   public updateContents = async () => {
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
-    const commentsDecorationSet = commentAnnotation.getState(this.view.state)
-    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
-    const commentElementMap: Map<string, HTMLElement> = new Map()
-    const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
-    let selectedBibItemSuggestion
+    if (!bib) {
+      return
+    }
 
-    this.node.descendants((node, pos) => {
-      const nodePosition = this.getPos() + pos + 2
-      if (commentsDecorationSet) {
-        const commentWidget = commentsDecorationSet.find(
-          nodePosition,
-          nodePosition
-        )
-        if (commentWidget.length) {
-          const commentElement = (
-            commentWidget[0] as WidgetDecoration
-          ).type.toDOM()
+    const nodes: Map<string, BibliographyItemNode> = new Map()
 
-          commentElementMap.set(commentElement.id, commentElement)
-        }
-      }
-
-      const dataTracked = node.attrs.dataTracked as TrackedAttrs[]
-
-      if (dataTracked?.length) {
-        const lastChange = dataTracked[dataTracked.length - 1]
-        dataTrackedMap.set(node.attrs.id, lastChange)
-      }
-
-      if (
-        dataTracked?.length &&
-        selectedSuggestion?.find(nodePosition, nodePosition + node.nodeSize)
-          .length
-      ) {
-        selectedBibItemSuggestion = node.attrs.id
-      }
+    this.node.descendants((node) => {
+      const id = node.attrs.id
+      nodes.set(id, node as BibliographyItemNode)
     })
 
     const can = this.props.getCapabilities()
 
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
-
-    if (!bib) {
-      return
+    if (can.seeReferencesButtons) {
+      wrapper.addEventListener('click', this.handleClick)
     }
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {
-      const id = meta.entry_ids[i]
+      const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
       ).firstElementChild as Element
 
-      const commentElement = commentElementMap.get(element.id)
-
-      if (commentElement) {
-        element.appendChild(commentElement)
+      const node = nodes.get(id) as BibliographyItemNode
+      const comment = getCommentIconForNode(this.view.state, node)
+      if (comment) {
+        element.appendChild(comment)
       }
 
-      const dataTracked = dataTrackedMap.get(element.id)
-      if (dataTracked) {
-        element.classList.add(
-          'attrs-track-mark',
-          ...getChangeClasses([dataTracked])
-        )
-      }
-
-      if (
-        selectedBibItemSuggestion &&
-        selectedBibItemSuggestion === element.id
-      ) {
-        element.classList.add('selected-suggestion')
-      }
-
-      if (can.seeReferencesButtons) {
-        element.addEventListener('click', () =>
-          this.onClickHandler(element.id, dataTracked)
-        )
-      }
+      const attrs = node.attrs as BibliographyItemAttrs
+      element.classList.add(
+        'attrs-track-mark',
+        ...getChangeClasses(attrs.dataTracked)
+      )
 
       wrapper.append(element)
     }
@@ -242,11 +180,6 @@ export class BibliographyElementBlockView<
       this.container.replaceChild(wrapper, oldContent)
     } else {
       this.container.appendChild(wrapper)
-    }
-
-    // if there is an element which was clicked, show ContextMenu
-    if (this.clickedElementId) {
-      this.showContextMenu(this.clickedElementId)
     }
   }
 

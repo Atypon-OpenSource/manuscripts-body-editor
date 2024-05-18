@@ -23,7 +23,7 @@ import {
 import { Plugin, Transaction } from 'prosemirror-state'
 import { ReplaceAroundStep, ReplaceStep } from 'prosemirror-transform'
 
-import { highlightKey, SET_COMMENT } from './highlight'
+import { commentsKey, SET_COMMENT } from './comments'
 
 /**
  * This plugin ensures that every section contains at least one child element, inserting a paragraph element after the title if needed.
@@ -49,7 +49,7 @@ const preventTitleEdit = (tr: Transaction) => {
   if (tr.getMeta('origin') === trackChangesPluginKey) {
     return dontPrevent
   }
-  const meta = tr.getMeta(highlightKey)
+  const meta = tr.getMeta(commentsKey)
   if (
     (meta && SET_COMMENT in meta) ||
     tr.getMeta('track-changes-skip-tracking')

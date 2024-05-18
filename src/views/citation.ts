@@ -20,7 +20,6 @@ import { DOMSerializer } from 'prosemirror-model'
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { addCommentToLeafNode } from '../plugins/comment_annotation'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -44,6 +43,7 @@ export class CitationView<PropsType extends BaseNodeProps>
 
   public updateContents = () => {
     const bib = getBibliographyPluginState(this.view.state)
+    const id = this.node.attrs.id
 
     if (!bib) {
       return
@@ -55,7 +55,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     ]
     const element = document.createElement('span')
     element.className = classes.join(' ')
-    const text = bib.renderedCitations.get(this.node.attrs.id)
+    const text = bib.renderedCitations.get(id)
     const fragment = sanitize(
       text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
       {
@@ -66,12 +66,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
-    addCommentToLeafNode(
-      this.getPos(),
-      this.getPos() + this.node.nodeSize,
-      this.view.state,
-      this.dom
-    )
+
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
 }

@@ -14,59 +14,38 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
-import { CommentAnnotation, Manuscript } from '@manuscripts/json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
 import {
   trackChangesPlugin,
   TrackChangesStatus,
 } from '@manuscripts/track-changes-plugin'
-import { ManuscriptSchema } from '@manuscripts/transform'
 import { collab } from 'prosemirror-collab'
 import { dropCursor } from 'prosemirror-dropcursor'
 import { history } from 'prosemirror-history'
-import { Plugin } from 'prosemirror-state'
 import { tableEditing } from 'prosemirror-tables'
 
-import { CollabProvider } from '../classes/collabProvider'
 import keys from '../keys'
-import { PopperManager } from '../lib/popper'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
-import comment_annotation from '../plugins/comment_annotation'
+import comment_annotation from '../plugins/comments'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
-import highlights from '../plugins/highlight'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
+import editorProps from '../plugins/editor-props'
 import sections from '../plugins/sections'
 import selected_suggestion_ui from '../plugins/selected-suggestion-ui'
 import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
-import { CSLProps } from './ManuscriptsEditor'
+import { EditorProps } from './ManuscriptsEditor'
 
-export interface PluginProps {
-  getManuscript: () => Manuscript
-  setComment: (comment?: CommentAnnotation) => void
-  setSelectedComment: (id?: string) => void
-  setEditorSelectedSuggestion: (id?: string) => void
-  getCapabilities: () => Capabilities
-  plugins?: Plugin<ManuscriptSchema>[]
-  cslProps: CSLProps
-  popper: PopperManager
-  collabProvider?: CollabProvider
-  userID: string
-  debug: boolean
-}
-
-export default (props: PluginProps) => {
+export default (props: EditorProps) => {
   const allPlugins = [
     rules,
     ...keys,
@@ -92,10 +71,10 @@ export default (props: PluginProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
-    highlights(props),
     selected_suggestion_ui(props),
     footnotes(props),
     table_footnote(),
+    editorProps(props),
   ]
 
   if (props.collabProvider) {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation } from '@manuscripts/json-schema'
 import {
   FootnoteWithIndex,
   TableFootnotesSelector,
@@ -32,7 +31,7 @@ import {
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
-  addComment,
+  addNodeComment,
   createBlock,
   insertGeneralFootnote,
   insertTableFootnote,
@@ -59,7 +58,7 @@ export const sectionLevel = (depth: number) => {
 }
 
 interface Actions {
-  setComment?: (comment: CommentAnnotation) => void
+  addComment?: boolean
 }
 
 type InsertableNodes = Nodes | 'subsection'
@@ -258,14 +257,14 @@ export class ContextMenu {
       )
     }
 
-    const { setComment } = this.actions
-    if (setComment) {
+    const { addComment } = this.actions
+    if (addComment) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
               const { state, dispatch } = this.view
-              addComment(state, dispatch, this.node, this.resolvePos())
+              addNodeComment(this.node, state, dispatch)
               popper.destroy()
             })
           )

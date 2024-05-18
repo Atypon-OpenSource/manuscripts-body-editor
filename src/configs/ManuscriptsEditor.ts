@@ -16,11 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import {
-  CommentAnnotation,
-  Manuscript,
-  UserProfile,
-} from '@manuscripts/json-schema'
+import { Manuscript, UserProfile } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
@@ -64,8 +60,7 @@ export interface EditorProps {
   debug: boolean
   cslProps: CSLProps
 
-  setComment: (comment?: CommentAnnotation) => void
-  setSelectedComment: (id?: string) => void
+  setSelectedComment: (id?: string, isNew?: boolean) => void
   setEditorSelectedSuggestion: (id?: string) => void
   retrySync: (componentIDs: string[]) => Promise<void>
   collabProvider?: CollabProvider
