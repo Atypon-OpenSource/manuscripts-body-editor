@@ -20,7 +20,8 @@ import {
   SecondaryButton,
 } from '@manuscripts/style-guide'
 import {
-  ContributorNode, isContributorNode,
+  ContributorNode,
+  isContributorNode,
   schema,
 } from '@manuscripts/transform'
 
@@ -28,6 +29,8 @@ import {
   AuthorsModal,
   AuthorsModalProps,
 } from '../components/authors/AuthorsModal'
+import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
+import { getActualAttrs } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -36,13 +39,11 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
+import { TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import {getActualAttrs} from "../lib/track-changes-utils";
-import {TrackableAttributes} from "../types";
-import {AffiliationAttrs, authorLabel, ContributorAttrs} from "../lib/authors";
-import {EditableBlockProps} from "./editable_block";
 
 export class ContributorsView extends BlockView<EditableBlockProps> {
   contextMenu: HTMLElement
@@ -77,7 +78,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     const authorsWrapper = document.createElement('div')
     authorsWrapper.classList.add('contributors-list')
 
-    this.node.content?.forEach((node, offset) => {
+    this.node.content?.forEach((node) => {
       if (isContributorNode(node)) {
         authors.push(node)
       }
@@ -90,17 +91,12 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
           return
         }
         const jointAuthors = this.isJointFirstAuthor(authors, i)
-        authorsWrapper.appendChild(
-          this.buildAuthor(author, jointAuthors)
-        )
+        authorsWrapper.appendChild(this.buildAuthor(author, jointAuthors))
       })
     this.container.appendChild(authorsWrapper)
   }
 
-  buildAuthor = (
-    node: ContributorNode,
-    isJointFirstAuthor: boolean,
-  ) => {
+  buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
     const pluginState = affiliationsKey.getState(this.view.state)
     const attrs = node.attrs as TrackableAttributes<ContributorNode>
     const displayAttr = getActualAttrs(node)

@@ -43,7 +43,7 @@ import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
-import {EditorProps} from "./ManuscriptsEditor";
+import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps) => {
   const allPlugins = [
