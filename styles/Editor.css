@@ -937,13 +937,14 @@
 
 .ProseMirror .footnote::before {
   content: attr(contents);
-  display: inline-block;
   position: relative;
   cursor: pointer;
   vertical-align: super;
+  z-index: 1;
   font-size: 75%;
   color: #0d79d0;
 }
+
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
@@ -951,7 +952,7 @@
 
 .ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
   content: '';
-  border-bottom: 1px dashed #C9C9C9;
+  border-bottom: 1px dashed #c9c9c9;
   display: block;
   margin-bottom: 8px;
 }
@@ -975,7 +976,10 @@
   position: relative;
 }
 
-.ProseMirror .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
+.ProseMirror
+  .table-footnotes-element
+  > div:not(:has(.unctied-table-footnote))
+  p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;

@@ -57,7 +57,6 @@ export const useEditor = (externalProps: ExternalProps) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
       if (state && view.current) {
-        // @TODO: make sure received steps are ignored by the quarterback plugin
         const localVersion = getVersion(view.current.state)
 
         // @TODO - save unconfirmed verison and compare it with newVersion to check if we can consume this update and don't have to call collabProvider.stepsSince

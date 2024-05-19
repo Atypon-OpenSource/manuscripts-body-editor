@@ -58,6 +58,10 @@ export class BibliographyElementBlockView<
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
 
+    if (!bib) {
+      return
+    }
+
     const componentProps: ReferencesEditorProps = {
       items: Array.from(bib.bibliographyItems.values()),
       citationCounts: bib.citationCounts,
@@ -189,6 +193,10 @@ export class BibliographyElementBlockView<
 
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
+
+    if (!bib) {
+      return
+    }
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
