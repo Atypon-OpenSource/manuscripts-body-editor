@@ -203,7 +203,9 @@
 .popper .table-footnote-editor {
   width: 600px;
 }
-
+.popper .cross-reference-editor {
+  position: relative;
+}
 .popper .cross-reference-editor,
 .popper .equation-editor,
 .popper .link-editor {
