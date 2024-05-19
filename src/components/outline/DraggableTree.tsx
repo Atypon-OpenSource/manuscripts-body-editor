@@ -282,7 +282,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
                 isDeletedItem && 'deleted'
               }`}
             >
-              {itemText(node)}
+              {node.type.name != "manuscript" && itemText(node)}
             </OutlineItemLinkText>
           </OutlineItemLink>
         </OutlineItem>
