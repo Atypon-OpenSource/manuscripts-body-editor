@@ -123,6 +123,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   public showPopper = () => {
     this.props.popper.destroy() // destroy the context menu
     const bib = getBibliographyPluginState(this.view.state)
+    if (!bib) {
+      return
+    }
     const can = this.props.getCapabilities()
 
     const attrs: CitationAttrs = getActualAttrs(this.node as CitationNode)
@@ -170,7 +173,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         'citation-editor'
       )
     }
-    this.props.popper.show(this.dom, this.editor, 'right')
+    this.props.popper.show(this.dom, this.editor, 'auto')
   }
 
   private handleEdit = () => {
@@ -217,6 +220,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
 
   private handleCite = (items: BibliographyItemAttrs[]) => {
     const bib = getBibliographyPluginState(this.view.state)
+    if (!bib) {
+      return
+    }
 
     const attrs = getActualAttrs(this.node as CitationNode)
     const rids = [...attrs.rids]
