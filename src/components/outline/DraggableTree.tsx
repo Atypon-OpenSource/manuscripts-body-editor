@@ -261,7 +261,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   return (
     <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
-      {!isTop && (
+      {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (
             <OutlineItemArrow onClick={toggleOpen}>
@@ -277,15 +277,13 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
           <OutlineItemLink to={`#${node.attrs.id}`}>
             <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
-            {node.type.name != 'manuscript' && (
-              <OutlineItemLinkText
-                className={`outline-text-${node.type.name} ${
-                  isDeletedItem && 'deleted'
-                }`}
-              >
-                {itemText(node)}
-              </OutlineItemLinkText>
-            )}
+            <OutlineItemLinkText
+              className={`outline-text-${node.type.name} ${
+                isDeletedItem && 'deleted'
+              }`}
+            >
+              {itemText(node)}
+            </OutlineItemLinkText>
           </OutlineItemLink>
         </OutlineItem>
       )}
