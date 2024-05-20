@@ -24,6 +24,7 @@ import CiteProc from 'citeproc'
 import { Attrs } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
+import { getActualAttrs } from '../../lib/track-changes-utils'
 import { PluginState } from './index'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
@@ -140,12 +141,14 @@ export const getEffectiveAttrs = (
 }
 
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>
-  citations.map((citation) => ({
-    citationID: citation[0].attrs.id,
-    citationItems: citation[0].attrs.rids.map((rid) => ({
-      id: rid,
-    })),
-    properties: {
-      noteIndex: 0,
-    },
-  }))
+  citations
+    .map((c) => getActualAttrs(c[0]))
+    .map((attrs) => ({
+      citationID: attrs.id,
+      citationItems: attrs.rids.map((rid) => ({
+        id: rid,
+      })),
+      properties: {
+        noteIndex: 0,
+      },
+    }))
