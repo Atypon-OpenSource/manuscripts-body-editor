@@ -347,7 +347,6 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   projectID: '',
   getCurrentUser: () => userProfile,
   history,
-  retrySync: async () => undefined,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
