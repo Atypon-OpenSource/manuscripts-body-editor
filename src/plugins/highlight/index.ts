@@ -86,13 +86,13 @@ export default (props: HighlightPluginProps) => {
     state: {
       init: (tr, state) => buildPluginState(state.doc),
       // TODO: map the decorations through content changes, and use setMeta to add/remove/update them
-      apply: (tr) => {
+      apply: (tr, value) => {
         const meta = tr.getMeta(highlightKey)
 
-        if (meta) {
-          if (SET_COMMENT in meta) {
-            props.setComment(meta[SET_COMMENT])
-          }
+        if (meta && SET_COMMENT in meta) {
+          props.setComment(meta[SET_COMMENT])
+        } else if (!tr.docChanged || tr.step.length === 0) {
+          return value
         }
 
         return buildPluginState(tr.doc)

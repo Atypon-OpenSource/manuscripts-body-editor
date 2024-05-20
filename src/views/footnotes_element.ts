@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
+import { EditableBlockProps } from './editable_block'
 import { setTCClasses } from './footnote'
 
 export class FootnotesElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+  Props extends EditableBlockProps
+> extends BlockView<Props> {
   public elementType = 'div'
 
   onUpdateContent() {
@@ -29,7 +29,10 @@ export class FootnotesElementView<
   }
 
   checkEditability = () => {
-    const editable = this.node.childCount ? 'true' : 'false'
+    const editable =
+      this.props.getCapabilities().editArticle && this.node.childCount
+        ? 'true'
+        : 'false'
     this.contentDOM?.setAttribute('contenteditable', editable)
     this.dom?.setAttribute('contenteditable', editable)
   }
