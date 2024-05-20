@@ -42,16 +42,18 @@ import {
   schema,
   SectionNode,
 } from '@manuscripts/transform'
+import { autoJoin } from 'prosemirror-commands'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   Command,
+  EditorState,
   NodeSelection,
   Selection,
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { findWrapping } from 'prosemirror-transform'
+import { findWrapping, liftTarget } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
@@ -650,6 +652,39 @@ const findListsAtSameLevel = (doc: ManuscriptNode, list: NodeWithPos) => {
   return lists
 }
 
+function splitListItem(
+  state: EditorState,
+  dispatch: (tr: ManuscriptTransaction) => void
+) {
+  const {
+    selection: { ranges },
+    tr,
+  } = state
+  ranges.forEach((range) => {
+    state.doc.nodesBetween(range.$from.pos, range.$to.pos, (node, pos) => {
+      if (node.type.isText) {
+        return
+      }
+
+      const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
+      const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize))
+      const nodeRange = $fromPos.blockRange($toPos)
+
+      if (!nodeRange) {
+        return
+      }
+
+      const targetLiftDepth = liftTarget(nodeRange)
+
+      if (targetLiftDepth || targetLiftDepth === 0) {
+        tr.lift(nodeRange, targetLiftDepth)
+      }
+    })
+  })
+
+  dispatch(tr)
+}
+
 export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
@@ -659,6 +694,16 @@ export const insertList =
       if (!dispatch) {
         return true
       }
+
+      if (
+        list.node.attrs.listStyleType === style ||
+        (style === 'order' && list.node.type === schema.nodes.ordered_list) ||
+        (style === 'bullet' && list.node.type === schema.nodes.bullet_list)
+      ) {
+        splitListItem(state, dispatch)
+        return true
+      }
+
       // list was found: update the type and style
       // of every list at the same level
       const nodes = findListsAtSameLevel(state.doc, list)
@@ -678,7 +723,9 @@ export const insertList =
       return true
     } else {
       // no list found, create new list
-      const command = wrapInList(type, { listStyleType: style })
+      const command = autoJoin(wrapInList(type, { listStyleType: style }), [
+        type.name,
+      ])
       return skipCommandTracking(command)(state, dispatch)
     }
   }
