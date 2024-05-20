@@ -277,13 +277,15 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
           <OutlineItemLink to={`#${node.attrs.id}`}>
             <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
-            <OutlineItemLinkText
-              className={`outline-text-${node.type.name} ${
-                isDeletedItem && 'deleted'
-              }`}
-            >
-              {node.type.name != 'manuscript' && itemText(node)}
-            </OutlineItemLinkText>
+            {node.type.name != 'manuscript' && (
+              <OutlineItemLinkText
+                className={`outline-text-${node.type.name} ${
+                  isDeletedItem && 'deleted'
+                }`}
+              >
+                {itemText(node)}
+              </OutlineItemLinkText>
+            )}
           </OutlineItemLink>
         </OutlineItem>
       )}
