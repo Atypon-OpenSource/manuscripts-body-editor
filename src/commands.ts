@@ -25,8 +25,10 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isFootnoteNode,
   isInBibliographySection,
   isListNode,
+  isParagraphNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -505,23 +507,36 @@ export const insertInlineFootnote =
     if (!footnotesSection) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+        state.schema.nodes.section_title.create(
+          {},
+          state.schema.text('Footnotes')
+        ),
         state.schema.nodes.footnotes_element.create({}, footnote),
       ])
 
       const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
+      const sectionPos = backmatter.pos + 1
 
-      tr.insert(backmatter.pos + 1, section)
+      tr.insert(sectionPos, section)
 
-      // inside footnote inside element inside section
-      selectionPos = backmatter.pos + section.nodeSize - 3
+      let footnotePos = 0
+      section.descendants((n, pos) => {
+        if (isFootnoteNode(n)) {
+          footnotePos = pos
+          n.descendants((childNode, childPos) => {
+            if (isParagraphNode(childNode)) {
+              footnotePos += childPos
+            }
+          })
+        }
+      })
+      selectionPos = sectionPos + footnotePos
     } else {
       // Look for footnote element inside the footnotes section to exclude tables footnote elements
       const footnoteElement = findChildrenByType(
         footnotesSection.node,
         schema.nodes.footnotes_element
       )
-      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
       const pos =
         footnotesSection.pos +
         footnoteElement[0].pos +
@@ -533,7 +548,7 @@ export const insertInlineFootnote =
 
     if (dispatch && selectionPos) {
       // set selection inside new footnote
-      const selection = TextSelection.create(tr.doc, selectionPos)
+      const selection = TextSelection.near(tr.doc.resolve(selectionPos))
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 

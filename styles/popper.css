@@ -188,6 +188,7 @@
 }
 
 .popper .link-editor {
+  position: relative;
   background: #fff;
   border-radius: 8px;
   border: 1px solid #e2e2e2;
@@ -195,7 +196,10 @@
   height: auto;
 }
 
-.popper .citation-editor,
+.popper .citation-editor {
+  position: relative;
+  width: 600px;
+}
 .popper .table-footnote-editor {
   width: 600px;
 }

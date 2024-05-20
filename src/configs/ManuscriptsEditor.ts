@@ -84,8 +84,8 @@ export const createEditorView = (
   root: HTMLElement,
   state: EditorState,
   dispatch: Dispatch
-) =>
-  new EditorView(root, {
+) => {
+  const view = new EditorView(root, {
     state,
     editable: () => props.getCapabilities().editArticle,
     scrollMargin: {
@@ -99,3 +99,10 @@ export const createEditorView = (
     attributes: props.attributes,
     transformPasted,
   })
+
+  // running an init transaction allowing plugins to caught up with the document for the first time
+  const tr = view.state.tr.setMeta('INIT', true)
+  const nextState = view.state.apply(tr)
+  view.updateState(nextState)
+  return view
+}
