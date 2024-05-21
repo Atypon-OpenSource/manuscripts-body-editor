@@ -42,7 +42,6 @@ import {
   schema,
   SectionNode,
 } from '@manuscripts/transform'
-import { autoJoin } from 'prosemirror-commands'
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -657,32 +656,35 @@ function splitListItem(
   dispatch: (tr: ManuscriptTransaction) => void
 ) {
   const {
-    selection: { ranges },
+    selection: { $from },
     tr,
   } = state
-  ranges.forEach((range) => {
-    state.doc.nodesBetween(range.$from.pos, range.$to.pos, (node, pos) => {
-      if (node.type.isText) {
-        return
+
+  const rootList = findRootList($from)
+
+  if (rootList) {
+    state.doc.nodesBetween(
+      rootList.pos,
+      rootList.pos + rootList.node.nodeSize,
+      (node, pos) => {
+        const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
+        const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
+        const nodeRange = $fromPos.blockRange($toPos)
+        if (!nodeRange) {
+          return
+        }
+
+        const targetLiftDepth = liftTarget(nodeRange)
+        if (targetLiftDepth || targetLiftDepth === 0) {
+          tr.lift(nodeRange, targetLiftDepth)
+        }
       }
-
-      const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
-      const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize))
-      const nodeRange = $fromPos.blockRange($toPos)
-
-      if (!nodeRange) {
-        return
-      }
-
-      const targetLiftDepth = liftTarget(nodeRange)
-
-      if (targetLiftDepth || targetLiftDepth === 0) {
-        tr.lift(nodeRange, targetLiftDepth)
-      }
-    })
-  })
-
-  dispatch(tr)
+    )
+    dispatch(skipTracking(tr))
+    return true
+  } else {
+    return false
+  }
 }
 
 export const insertList =
@@ -700,8 +702,7 @@ export const insertList =
         (style === 'order' && list.node.type === schema.nodes.ordered_list) ||
         (style === 'bullet' && list.node.type === schema.nodes.bullet_list)
       ) {
-        splitListItem(state, dispatch)
-        return true
+        return splitListItem(state, dispatch)
       }
 
       // list was found: update the type and style
@@ -723,9 +724,7 @@ export const insertList =
       return true
     } else {
       // no list found, create new list
-      const command = autoJoin(wrapInList(type, { listStyleType: style }), [
-        type.name,
-      ])
+      const command = wrapInList(type, { listStyleType: style })
       return skipCommandTracking(command)(state, dispatch)
     }
   }
