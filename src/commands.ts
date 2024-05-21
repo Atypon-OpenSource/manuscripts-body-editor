@@ -697,11 +697,7 @@ export const insertList =
         return true
       }
 
-      if (
-        list.node.attrs.listStyleType === style ||
-        (style === 'order' && list.node.type === schema.nodes.ordered_list) ||
-        (style === 'bullet' && list.node.type === schema.nodes.bullet_list)
-      ) {
+      if (list.node.attrs.listStyleType === style) {
         return splitListItem(state, dispatch)
       }
 
