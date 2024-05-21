@@ -110,6 +110,10 @@ export default () => {
         newState
       ) as PluginState
 
+      if (!transactions.find((tr) => tr.docChanged)) {
+        return
+      }
+
       const oldPluginState = affiliationsKey.getState(oldState) as PluginState
       const { tr } = newState
       const affiliations: Array<[AffiliationNode, number]> = []

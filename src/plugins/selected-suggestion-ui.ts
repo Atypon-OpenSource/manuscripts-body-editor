@@ -133,8 +133,6 @@ export default (props: SelectedSuggestionProps) =>
         }
 
         if (tr.getMeta(CLEAR_SUGGESTION_ID)) {
-          props.setEditorSelectedSuggestion(undefined)
-
           return DecorationSet.empty
         }
 
@@ -145,9 +143,14 @@ export default (props: SelectedSuggestionProps) =>
       handleClick(view: EditorView, pos: number) {
         const nodeClicked = view.state.doc.nodeAt(pos)
         const trackChangesData = nodeClicked && getTrackChangesData(nodeClicked)
+
         if (!trackChangesData) {
-          view.dispatch(view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true))
-          props.setEditorSelectedSuggestion(undefined)
+          // if running dispatch synchroniously it adds about 30ms in this case to the event capturing which results in corresponding delay for the event handler
+          setTimeout(() => {
+            const newTr = view.state.tr.setMeta(CLEAR_SUGGESTION_ID, true)
+            view.dispatch(newTr)
+            props.setEditorSelectedSuggestion(undefined)
+          })
         }
       },
       decorations: (state) => selectedSuggestionKey.getState(state),
@@ -172,7 +175,9 @@ const buildSelectedSuggestionDecoration = (
         class: 'selected-suggestion',
       })
     )
-    props.setEditorSelectedSuggestion(change.id)
+    setTimeout(() => {
+      props.setEditorSelectedSuggestion(change.id)
+    }, 0)
   }
 
   return DecorationSet.create(state.doc, decorations)
