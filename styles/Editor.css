@@ -970,12 +970,6 @@
 .delete-icon:hover svg path {
   fill: #353535;
 }
-.table-footer .delete-icon {
-  display: none;
-}
-.table-footer:has(p.footnote-selected, .table-footnotes-element > div.footnote-selected ) .delete-icon {
-  display: block;
-}
 .ProseMirror .table-footnotes-element > div,
 .ProseMirror .block-footnotes_element > .block > div
  {
