@@ -39,6 +39,7 @@ import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
+import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
@@ -74,6 +75,7 @@ export default (props: EditorProps) => {
     highlights(props),
     footnotes(props),
     table_footnote(),
+    selected_suggestion(props),
   ]
 
   if (props.collabProvider) {

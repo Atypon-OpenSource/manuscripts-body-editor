@@ -19,18 +19,21 @@ import {
   ContextMenuProps,
   SecondaryButton,
 } from '@manuscripts/style-guide'
-import {
-  ContributorNode,
-  isContributorNode,
-  schema,
-} from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
+import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   AuthorsModal,
   AuthorsModalProps,
 } from '../components/authors/AuthorsModal'
-import { AffiliationAttrs, authorLabel, ContributorAttrs } from '../lib/authors'
-import { getActualAttrs } from '../lib/track-changes-utils'
+import {
+  AffiliationAttrs,
+  authorComparator,
+  authorLabel,
+  ContributorAttrs,
+} from '../lib/authors'
+import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -39,7 +42,7 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey } from '../plugins/affiliations'
-import { TrackableAttributes } from '../types'
+import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -74,67 +77,62 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
   }
 
   buildAuthors = () => {
-    const authors: ContributorNode[] = []
-    const authorsWrapper = document.createElement('div')
-    authorsWrapper.classList.add('contributors-list')
+    const wrapper = document.createElement('div')
+    wrapper.classList.add('contributors-list')
 
-    this.node.content?.forEach((node) => {
-      if (isContributorNode(node)) {
-        authors.push(node)
+    const can = this.props.getCapabilities()
+    if (can.editMetadata) {
+      wrapper.addEventListener('click', this.handleClick)
+    }
+
+    const authors = findChildrenByType(this.node, schema.nodes.contributor).map(
+      (n) => (isDeleted(n.node) ? n.node.attrs : getActualAttrs(n.node))
+    ) as ContributorAttrs[]
+
+    authors.sort(authorComparator).forEach((author, i) => {
+      if (author.role !== 'author') {
+        return
       }
+      const jointAuthors = this.isJointFirstAuthor(authors, i)
+      wrapper.appendChild(this.buildAuthor(author, jointAuthors))
     })
 
-    authors
-      .sort((a, b) => Number(a.attrs.priority) - Number(b.attrs.priority))
-      .forEach((author, i) => {
-        if (getActualAttrs(author).role !== 'author') {
-          return
-        }
-        const jointAuthors = this.isJointFirstAuthor(authors, i)
-        authorsWrapper.appendChild(this.buildAuthor(author, jointAuthors))
-      })
-    this.container.appendChild(authorsWrapper)
+    this.container.appendChild(wrapper)
   }
 
-  buildAuthor = (node: ContributorNode, isJointFirstAuthor: boolean) => {
-    const pluginState = affiliationsKey.getState(this.view.state)
-    const attrs = node.attrs as TrackableAttributes<ContributorNode>
-    const displayAttr = getActualAttrs(node)
+  buildAuthor = (attrs: ContributorAttrs, isJointFirstAuthor: boolean) => {
+    const state = this.view.state
+    const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
+    const suggestion = selectedSuggestionKey.getState(state)?.suggestion
+
     const containerWrapper = document.createElement('div')
-    const container = document.createElement('button')
     containerWrapper.classList.add('contributor-wrapper')
+
+    const container = document.createElement('button')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
 
     if (attrs.dataTracked?.length) {
-      container.setAttribute('data-track-id', attrs.dataTracked[0].id)
-      container.setAttribute('data-track-status', attrs.dataTracked[0].status)
-      container.setAttribute('data-track-op', attrs.dataTracked[0].operation)
-    } else {
-      container.removeAttribute('data-track-id')
-      container.removeAttribute('data-track-status')
-      container.removeAttribute('data-track-type')
+      const change = attrs.dataTracked[0]
+      container.setAttribute('data-track-id', change.id)
+      container.setAttribute('data-track-status', change.status)
+      container.setAttribute('data-track-op', change.operation)
+      if (suggestion?.id === change.id) {
+        container.classList.add('selected-suggestion')
+      }
     }
 
-    const can = this.props.getCapabilities()
-
-    const { isCorresponding, email } = displayAttr
-
-    if (can.editMetadata) {
-      container.addEventListener('click', this.handleClick)
-    }
-
-    const name = authorLabel(displayAttr)
+    const name = authorLabel(attrs)
     container.innerHTML =
-      isCorresponding && email
-        ? `<span class="name">${name} (${email})</span>`
+      attrs.isCorresponding && attrs.email
+        ? `<span class="name">${name} (${attrs.email})</span>`
         : `<span class="name">${name}</span>`
 
     const noteText: string[] = []
-    if (pluginState?.indexedAffiliationIds) {
-      displayAttr.affiliations.map((af) => {
-        const index = pluginState?.indexedAffiliationIds.get(af)
+    if (affs) {
+      attrs.affiliations.map((a) => {
+        const index = affs.get(a)
         if (index) {
           noteText.push(index.toString())
         }
@@ -149,7 +147,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
       container.appendChild(this.createNote(noteText.join(',')))
     }
 
-    if (displayAttr.isCorresponding) {
+    if (attrs.isCorresponding) {
       container.appendChild(this.createNote('*', 'Corresponding author'))
     }
 
@@ -157,20 +155,19 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     return containerWrapper
   }
 
-  createNote(text = '', title = '') {
-    const el = document.createElement('span')
-    el.innerHTML = text
+  private createNote(text = '', title = '') {
+    const note = document.createElement('span')
+    note.innerHTML = text
     if (title) {
-      el.setAttribute('title', title)
+      note.setAttribute('title', title)
     }
-    el.classList.add('contributor-note')
-    return el
+    note.classList.add('contributor-note')
+    return note
   }
 
-  public isJointFirstAuthor = (authors: ContributorNode[], index: number) => {
+  private isJointFirstAuthor = (authors: ContributorAttrs[], index: number) => {
     const author = index === 0 ? authors[index] : authors[index - 1]
-
-    return Boolean(author.attrs.isJointContributor)
+    return Boolean(author.isJointContributor)
   }
 
   public createElement = () => {
@@ -228,19 +225,29 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     this.props.popper.destroy()
     const element = event.target as HTMLElement
     const author = element.closest('.contributor')
-    if (author) {
-      this.showContextMenu(author.id)
+    if (!author) {
+      return
     }
+    const { node, pos } = findChildByID(this.view, author.id) || {}
+    if (!node || !pos) {
+      return
+    }
+    if (!isDeleted(node)) {
+      this.showContextMenu(author)
+    }
+    const view = this.view
+    const tr = view.state.tr
+    tr.setSelection(NodeSelection.create(view.state.doc, pos))
+    view.dispatch(tr)
   }
 
-  public showContextMenu = (elementId: string) => {
+  public showContextMenu = (element: HTMLElement) => {
     this.props.popper.destroy() // destroy the old context menu
-    const element = document.getElementById(elementId) as Element
     const componentProps: ContextMenuProps = {
       actions: [
         {
           label: 'Edit',
-          action: () => this.handleEdit(elementId),
+          action: () => this.handleEdit(element.id),
           icon: 'EditIcon',
         },
       ],

@@ -92,6 +92,8 @@ const normalize = (author: ContributorAttrs) => ({
   ORCIDIdentifier: author.ORCIDIdentifier || '',
   priority: author.priority,
   isJointContributor: author.isJointContributor || false,
+  userID: '',
+  invitationID: '',
 })
 
 export interface AuthorsModalProps {
@@ -191,6 +193,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       ORCIDIdentifier: '',
       priority: authors.length,
       isJointContributor: false,
+      userID: '',
+      invitationID: '',
     }
     onSaveAuthor(author)
     setSelection(author)

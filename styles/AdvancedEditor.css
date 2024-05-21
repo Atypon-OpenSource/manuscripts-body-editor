@@ -685,6 +685,17 @@ Next levels are shifted 'up' by 1
   background: none;
 }
 
+.selected-suggestion {
+  background: #bce7f6 !important;
+}
+
+.selected-suggestion {
+  border-width: 2px 0 2px 0 !important;
+  border-color: #20aedf !important;
+  border-radius: 3px !important;
+  border-style: solid !important;
+}
+
 .ProseMirror .inserted.pending {
   background: var(--pending-bg-color);
   text-decoration: none;

@@ -18,6 +18,7 @@ import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { buildComment, schema } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
 
 import {
   ReferencesEditor,
@@ -26,9 +27,10 @@ import {
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, updateNodeAttrs } from '../lib/view'
+import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
+import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { WidgetDecoration } from '../types'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
@@ -46,6 +48,7 @@ export class BibliographyElementBlockView<
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
+  private version: string
 
   public showPopper = (id: string) => {
     this.props.popper.destroy() // destroy the old context menu
@@ -88,7 +91,7 @@ export class BibliographyElementBlockView<
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
 
-  public showContextMenu = (element: HTMLElement) => {
+  private showContextMenu = (element: HTMLElement) => {
     this.props.popper.destroy() // destroy the old context menu
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
@@ -125,6 +128,14 @@ export class BibliographyElementBlockView<
     const item = element.closest('.bib-item')
     if (item) {
       this.showContextMenu(item as HTMLElement)
+      const node = findChildByID(this.view, item.id)
+      if (!node) {
+        return
+      }
+      const view = this.view
+      const tr = view.state.tr
+      tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
+      view.dispatch(tr)
     }
   }
 
@@ -134,6 +145,12 @@ export class BibliographyElementBlockView<
     if (!bib) {
       return
     }
+
+    if (bib.version === this.version) {
+      this.updateSelection()
+      return
+    }
+    this.version = bib.version
 
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
@@ -200,6 +217,7 @@ export class BibliographyElementBlockView<
     } else {
       this.container.appendChild(wrapper)
     }
+    this.updateSelection()
   }
 
   public createElement = () => {
@@ -217,6 +235,21 @@ export class BibliographyElementBlockView<
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     deleteNode(this.view, item.id)
+  }
+
+  private updateSelection = () => {
+    const selection = selectedSuggestionKey.getState(
+      this.view.state
+    )?.suggestion
+    this.container
+      .querySelectorAll('.bib-item')
+      .forEach((e) => e.classList.remove('selected-suggestion'))
+    if (selection) {
+      const item = this.container.querySelector(
+        `[data-track-id="${selection.id}"]`
+      )
+      item?.classList.add('selected-suggestion')
+    }
   }
 }
 

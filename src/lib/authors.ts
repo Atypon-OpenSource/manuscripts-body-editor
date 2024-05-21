@@ -17,15 +17,14 @@
 import { BibliographicName } from '@manuscripts/json-schema'
 import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
 
+import { TrackableAttributes } from '../types'
+
 export type AffiliationAttrs = Omit<
   AffiliationNode['attrs'],
   'addressLine2' | 'addressLine3' | 'email'
 >
 
-export type ContributorAttrs = Omit<
-  ContributorNode['attrs'],
-  'userID' | 'invitationID'
->
+export type ContributorAttrs = TrackableAttributes<ContributorNode>
 
 export const affiliationLabel = (affiliation: AffiliationAttrs) => {
   const institution = affiliation.institution
