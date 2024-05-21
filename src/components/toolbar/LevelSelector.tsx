@@ -736,6 +736,7 @@ export const LevelSelector: React.FC<{
           overflowX: 'hidden',
           textOverflow: 'ellipsis',
           cursor: 'pointer',
+          height: 32,
         }),
         indicatorSeparator: (): CSSObjectWithLabel => ({
           display: 'none',
