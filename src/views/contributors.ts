@@ -241,7 +241,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     view.dispatch(tr)
   }
 
-  public showContextMenu = (element: HTMLElement) => {
+  public showContextMenu = (element: Element) => {
     this.props.popper.destroy() // destroy the old context menu
     const componentProps: ContextMenuProps = {
       actions: [

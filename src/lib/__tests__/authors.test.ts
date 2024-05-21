@@ -40,6 +40,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
       {
         id: 'MPContributor:y',
@@ -54,6 +56,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
       {
         id: 'MPContributor:z',
@@ -68,6 +72,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
     ]
     contribs.sort(authorComparator)
