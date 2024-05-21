@@ -75,7 +75,7 @@ export default (props: EditorProps) => {
     highlights(props),
     footnotes(props),
     table_footnote(),
-    selected_suggestion(props),
+    selected_suggestion(),
   ]
 
   if (props.collabProvider) {

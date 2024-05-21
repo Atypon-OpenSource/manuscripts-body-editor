@@ -29,20 +29,12 @@ export interface PluginState {
   suggestion?: TrackedAttrs
 }
 
-export interface SelectedSuggestionProps {
-  setSelectedSuggestionID: (id?: string) => void
-}
-
-export default (props: SelectedSuggestionProps) => {
+export default () => {
   return new Plugin<PluginState>({
     key: selectedSuggestionKey,
     state: {
       init: (_, state) => buildPluginState(state),
-      apply: (tr, value, oldState, newState) => {
-        const state = buildPluginState(newState)
-        props.setSelectedSuggestionID(state.suggestion?.id)
-        return state
-      },
+      apply: (tr, value, oldState, newState) => buildPluginState(newState),
     },
     props: {
       decorations: (state) => {

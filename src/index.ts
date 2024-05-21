@@ -23,6 +23,7 @@ export { ChangeReceiver } from './types'
 export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
 export * from './toolbar'
+export { selectedSuggestionKey } from './plugins/selected-suggestion'
 export * from './plugins/highlight'
 export {
   commentScroll,

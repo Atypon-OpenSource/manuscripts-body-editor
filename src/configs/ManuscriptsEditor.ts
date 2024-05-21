@@ -64,8 +64,6 @@ export interface EditorProps {
   debug: boolean
   cslProps: CSLProps
 
-  setSelectedSuggestionID: (id?: string) => void
-
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
   collabProvider?: CollabProvider
