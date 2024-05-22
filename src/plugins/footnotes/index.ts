@@ -153,7 +153,11 @@ const deleteFootnoteWidget =
           )
           if (nodeWithPos) {
             const { pos: fnPos, node: fnNode } = nodeWithPos
-            view.dispatch(tr.delete(fnPos, fnPos + fnNode.nodeSize))
+            view.dispatch(
+              tr
+                .setSelection(TextSelection.near(view.state.doc.resolve(0)))
+                .delete(fnPos, fnPos + fnNode.nodeSize)
+            )
           }
 
           // delete inline footnotes
