@@ -47,7 +47,7 @@ export class OrderedListView<
       this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
 
       if (this.node.attrs.dataTracked) {
-        const classes = [...getChangeClasses(this.node.attrs.dataTracked)]
+        const classes = getChangeClasses(this.node.attrs.dataTracked)
         this.contentDOM.className = classes.join(' ')
       }
     }
