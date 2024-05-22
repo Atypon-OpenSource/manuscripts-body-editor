@@ -286,7 +286,12 @@ export class ContextMenu {
       let isDeletedOrRejected = false
 
       const hasGeneralNote =
-        tableElementFooter.length &&  getChildOfType(tableElementFooter[0].node, schema.nodes.general_table_footnote, true)
+        tableElementFooter.length &&
+        getChildOfType(
+          tableElementFooter[0].node,
+          schema.nodes.general_table_footnote,
+          true
+        )
 
       if (hasGeneralNote) {
         const generalFootnote = tableElementFooter[0]?.node.firstChild
