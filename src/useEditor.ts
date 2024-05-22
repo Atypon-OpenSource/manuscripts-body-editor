@@ -123,7 +123,7 @@ export const useEditor = (externalProps: ExternalProps) => {
           setState(nextState)
         },
         200,
-        !tr.isGeneric
+        !tr.docChanged
       )
 
       return nextState

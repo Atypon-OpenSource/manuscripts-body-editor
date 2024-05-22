@@ -35,6 +35,10 @@ export class PopperManager {
       const container = document.createElement('div')
       container.className = 'popper'
 
+      container.addEventListener('click', (e) => {
+        e.stopPropagation()
+      })
+
       if (showArrow) {
         const arrow = document.createElement('div')
         arrow.className = 'popper-arrow'
@@ -65,7 +69,7 @@ export class PopperManager {
         },
       })
       this.handleDocumentClick = (e) => {
-        if (!target.contains(e.target as Node)) {
+        if (!container.contains(e.target as Node)) {
           this.destroy()
         }
       }
