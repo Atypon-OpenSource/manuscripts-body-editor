@@ -122,7 +122,7 @@ export const alertIcon = `
 export const deleteIcon = `
   <svg 
     width="13" 
-    height="15" 
+    height="17" 
     viewBox="0 0 13 15" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"

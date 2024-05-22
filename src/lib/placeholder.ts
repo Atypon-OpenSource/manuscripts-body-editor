@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function createPlaceholderContent(label = 'A component') {
+export function createPlaceholderContent(label = 'a component') {
   const el = document.createElement('div')
   el.innerHTML = `
     <div class="placeholder-item-icon">
@@ -23,14 +23,10 @@ export function createPlaceholderContent(label = 'A component') {
       </svg>
     </div>
     <div class="placeholder-item-message">
-      <div class="message-content"></div>
-      <div>Please contact <a href="mailto:support@manuscriptsapp.com" class="placeholder-item-link" target="_blank">support@manuscriptsapp.com</a> for further assistance.</div>
+      <div class="message-content">
+      A problem occured while loading ${label}. If the problem persists please contact support.</div>      
       </div>
     </div>
   `
-  const msg = el.querySelector('.message-content')
-  if (msg) {
-    msg.textContent = `${label} at this position is failing to sync to this device.`
-  }
   return el
 }
