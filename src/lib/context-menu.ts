@@ -339,9 +339,9 @@ export class ContextMenu {
                   )
 
                   const footnotes = footnotesWithPos
-                    // .filter(
-                    //   ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
-                    // )
+                    .filter(
+                      ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
+                    )
                     .map(({ node }) => ({
                       node: node,
                       index: tablesFootnoteLabels.get(node.attrs.id),
@@ -350,7 +350,12 @@ export class ContextMenu {
                   const targetDom = this.view.domAtPos(
                     this.view.state.selection.from
                   )
-                  if (targetDom.node instanceof Element && this.props) {
+                  const targetNode =
+                    targetDom.node.nodeType === Node.TEXT_NODE
+                      ? targetDom.node.parentNode
+                      : targetDom.node
+
+                  if (targetNode instanceof Element && this.props) {
                     const popperContainer = ReactSubView(
                       { ...this.props, dispatch: this.view.dispatch },
                       TableFootnotesSelector,
@@ -370,7 +375,10 @@ export class ContextMenu {
                           this.view.state.doc
                             .slice(this.getPos(), insertedAt)
                             .content.descendants((node) => {
-                              if (node.type === schema.nodes.inline_footnote) {
+                              if (
+                                node.type === schema.nodes.inline_footnote &&
+                                !isRejectedInsert(node)
+                              ) {
                                 inlineFootnoteIndex++
                                 return false
                               }
@@ -404,7 +412,7 @@ export class ContextMenu {
                       'table-footnote-editor'
                     )
                     this.props?.popper.show(
-                      targetDom.node,
+                      targetNode,
                       popperContainer,
                       'bottom-end'
                     )

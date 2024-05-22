@@ -15,26 +15,16 @@
  */
 
 import {
-  BibliographyItem,
-  Citation,
-  ObjectTypes,
-} from '@manuscripts/json-schema'
-import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
-import {
-  BibliographyItemNode,
-  CitationNode,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { CitationNode, ManuscriptNode } from '@manuscripts/transform'
 import CiteProc from 'citeproc'
-import { pickBy } from 'lodash'
 import { Attrs } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
+import { getActualAttrs } from '../../lib/track-changes-utils'
 import { PluginState } from './index'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
@@ -115,45 +105,10 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
   return decorations
 }
 
-export const getCitation = (node: CitationNode): Citation | undefined => {
-  const attrs = getEffectiveAttrs(node)
-  if (!attrs) {
-    return undefined
-  }
-  const rids: string[] = attrs.rids
-  const items = rids.map((i) => ({
-    _id: '_',
-    objectType: ObjectTypes.CitationItem,
-    bibliographyItem: i,
-  }))
-  return {
-    _id: attrs.id,
-    objectType: ObjectTypes.Citation,
-    embeddedCitationItems: items,
-  } as Citation
-}
-
-export const getBibliographyItem = (
-  node: BibliographyItemNode
-): BibliographyItem | undefined => {
-  const attrs = getEffectiveAttrs(node, true)
-  if (!attrs) {
-    return undefined
-  }
-  const { id, containerTitle, doi, ...rest } = attrs
-  const item = {
-    _id: id,
-    objectType: ObjectTypes.BibliographyItem,
-    'container-title': containerTitle,
-    DOI: doi,
-    ...rest,
-  }
-  return pickBy(item, (v) => v !== undefined) as BibliographyItem
-}
-
 export const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
   a.updatedAt > b.updatedAt ? a : b
 
+//TODO review this code and remove
 /**
  * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
  * as it's easier to deal with the manuscript Models for both references list & citation popup view
@@ -185,29 +140,15 @@ export const getEffectiveAttrs = (
   return isRejected ? nodeChange?.oldAttrs : attrs
 }
 
-/**
- * Return BibliographyItem model that are built primarily from PM document
- */
-export const getBibliographyItemModelMap = (doc: ManuscriptNode) => {
-  const bibliographyItemMap = new Map<string, BibliographyItem>()
-  doc.descendants((node) => {
-    if (node.type === schema.nodes.bibliography_item) {
-      const model = getBibliographyItem(node as BibliographyItemNode)
-      if (model) {
-        bibliographyItemMap.set(model._id, model)
-      }
-    }
-  })
-  return bibliographyItemMap
-}
-
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>
-  citations.map((citation) => ({
-    citationID: citation[0].attrs.id,
-    citationItems: citation[0].attrs.rids.map((rid) => ({
-      id: rid,
-    })),
-    properties: {
-      noteIndex: 0,
-    },
-  }))
+  citations
+    .map((c) => getActualAttrs(c[0]))
+    .map((attrs) => ({
+      citationID: attrs.id,
+      citationItems: attrs.rids.map((rid) => ({
+        id: rid,
+      })),
+      properties: {
+        noteIndex: 0,
+      },
+    }))

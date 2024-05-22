@@ -42,6 +42,10 @@ const isInlineFootnoteChange = (
 export default () => {
   return new Plugin({
     appendTransaction(transactions, oldState, newState) {
+      if (!transactions.find((tr) => tr.docChanged)) {
+        return null
+      }
+
       const tableInlineFootnoteChange = transactions.find((tr) =>
         tr.steps.find((s, i) => {
           if (s instanceof ReplaceStep) {

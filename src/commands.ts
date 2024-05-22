@@ -25,8 +25,10 @@ import {
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
+  isFootnoteNode,
   isInBibliographySection,
   isListNode,
+  isParagraphNode,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -110,7 +112,12 @@ export const blockActive =
 
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
-    const { $from } = state.selection
+    const { $from, $to } = state.selection
+
+    // disable block comment insertion just for title node, LEAN-2746
+    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+      return false
+    }
 
     for (let d = $from.depth; d >= 0; d--) {
       const index = $from.index(d)
@@ -500,23 +507,36 @@ export const insertInlineFootnote =
     if (!footnotesSection) {
       // create a new footnotes section if needed
       const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create({}, state.schema.text('Notes')),
+        state.schema.nodes.section_title.create(
+          {},
+          state.schema.text('Footnotes')
+        ),
         state.schema.nodes.footnotes_element.create({}, footnote),
       ])
 
       const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
+      const sectionPos = backmatter.pos + 1
 
-      tr.insert(backmatter.pos + 1, section)
+      tr.insert(sectionPos, section)
 
-      // inside footnote inside element inside section
-      selectionPos = backmatter.pos + section.nodeSize - 3
+      let footnotePos = 0
+      section.descendants((n, pos) => {
+        if (isFootnoteNode(n)) {
+          footnotePos = pos
+          n.descendants((childNode, childPos) => {
+            if (isParagraphNode(childNode)) {
+              footnotePos += childPos
+            }
+          })
+        }
+      })
+      selectionPos = sectionPos + footnotePos
     } else {
       // Look for footnote element inside the footnotes section to exclude tables footnote elements
       const footnoteElement = findChildrenByType(
         footnotesSection.node,
         schema.nodes.footnotes_element
       )
-      // TODO: Revisit this position calculation as it doesn't sound right to always push the note to the end.
       const pos =
         footnotesSection.pos +
         footnoteElement[0].pos +
@@ -528,7 +548,7 @@ export const insertInlineFootnote =
 
     if (dispatch && selectionPos) {
       // set selection inside new footnote
-      const selection = TextSelection.create(tr.doc, selectionPos)
+      const selection = TextSelection.near(tr.doc.resolve(selectionPos))
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -763,6 +783,22 @@ export const ignoreAtomBlockNodeBackward = (
   }
 
   return node.isBlock && node.isAtom
+}
+
+export const ignoreMetaNodeBackspaceCommand = (
+  state: ManuscriptEditorState
+) => {
+  const { selection } = state
+
+  if (!isNodeSelection(selection)) {
+    return false
+  }
+
+  return (
+    selection.node.type === schema.nodes.keyword_group ||
+    selection.node.type === schema.nodes.affiliations ||
+    selection.node.type === schema.nodes.contributors
+  )
 }
 
 // Copied from prosemirror-commands
@@ -1091,11 +1127,12 @@ const addBlockComment = (
 
   tr.setMeta('addToHistory', false)
 
-  if (dispatch && isAllowedType(type)) {
-    dispatch(tr)
+  if (isAllowedType(type)) {
+    dispatch && dispatch(tr)
+    return true
+  } else {
+    return false
   }
-
-  return true
 }
 
 const addHighlightComment = (
@@ -1173,8 +1210,9 @@ export const insertTableFootnote = (
       schema.nodes.inline_footnote
     )
     footnoteIndex =
-      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
-      1
+      inlineFootnotes.filter(
+        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
+      ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
       contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,

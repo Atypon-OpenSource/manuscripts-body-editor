@@ -24,6 +24,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { History } from 'history'
+import { TextSelection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
   findChildrenByType,
@@ -34,7 +35,7 @@ import { insertTableFootnote } from '../commands'
 import {
   getChangeClasses,
   isDeleted,
-  // isRejectedInsert,
+  isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -64,6 +65,7 @@ export class InlineFootnoteView<
     if (isDeleted(this.node)) {
       return
     }
+
     const tableElement = this.findParentTableElement()
     if (tableElement) {
       const componentProps = {
@@ -84,15 +86,29 @@ export class InlineFootnoteView<
       )
       this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
     } else {
-      this.props.history.push({
-        ...this.props.history.location,
-        hash: '#' + this.node.attrs.rid,
-      })
+      if (this.node.attrs.rids?.length) {
+        let nodePos: number | undefined = undefined
+        this.view.state.doc.descendants((node, pos) => {
+          if (node.attrs.id === this.node.attrs.rids[0]) {
+            nodePos = pos
+          }
+        })
+        if (nodePos && this.props.dispatch) {
+          const sel = TextSelection.near(
+            this.view.state.doc.resolve(nodePos + 1)
+          )
+          this.props.dispatch(
+            this.view.state.tr.setSelection(sel).scrollIntoView()
+          )
+        }
+      }
     }
   }
 
   public updateContents = () => {
-    this.setDomAttrs(this.node, this.dom)
+    const node = this.node as InlineFootnoteNode
+    this.dom.setAttribute('rids', node.attrs.rids.join(','))
+    this.dom.setAttribute('contents', node.attrs.contents)
     this.dom.className = [
       'footnote',
       ...getChangeClasses(this.node.attrs.dataTracked),
@@ -126,7 +142,7 @@ export class InlineFootnoteView<
     if (footnotesElement) {
       const tablesFootnoteLabels = buildTableFootnoteLabels(tableElement.node)
       footnotes = findChildrenByType(footnotesElement, schema.nodes.footnote)
-        // .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
+        .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
         .map(({ node }) => ({
           node: node,
           index: tablesFootnoteLabels.get(node.attrs.id),

@@ -32,6 +32,8 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 
+import { isRejectedInsert } from '../../lib/track-changes-utils'
+
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
     $pos,
@@ -44,6 +46,7 @@ export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
           tableElement,
           (node) => node.type === schema.nodes.inline_footnote
         )
+          .filter(({ node }) => !isRejectedInsert(node))
           .map(({ node }) => (node as InlineFootnoteNode).attrs.rids)
           .flat()
       : []
@@ -78,6 +81,7 @@ export const buildTableFootnoteLabels = (node: ManuscriptNode) => {
   let index = 0
 
   findChildrenByType(node, schema.nodes.inline_footnote)
+    .filter(({ node }) => !isRejectedInsert(node))
     .map(({ node }) => node.attrs.rids)
     .flat()
     .map((rid: string) => {
@@ -138,8 +142,9 @@ export const updateTableInlineFootnoteLabels = (
 ) => {
   const labels = buildTableFootnoteLabels(table.node)
 
-  findChildrenByType(table.node, schema.nodes.inline_footnote).map(
-    ({ node, pos }) => {
+  findChildrenByType(table.node, schema.nodes.inline_footnote)
+    .filter(({ node }) => !isRejectedInsert(node))
+    .map(({ node, pos }) => {
       const contents = node.attrs.rids
         .map((rid: string) => labels.get(rid))
         .join(',')
@@ -154,8 +159,7 @@ export const updateTableInlineFootnoteLabels = (
           contents,
         })
       }
-    }
-  )
+    })
 
   return tr
 }
@@ -166,11 +170,11 @@ interface InlineFootnote {
 
 export const getInlineFootnotes = (
   id: string,
-  tableElement: NodeWithPos
+  targetNode: ManuscriptNode
 ): InlineFootnote[] => {
   const inlineFootnotes: InlineFootnote[] = []
 
-  tableElement.node.content.descendants((node, pos) => {
+  targetNode.descendants((node, pos) => {
     if (node.type === schema.nodes.inline_footnote) {
       const footnote = node as InlineFootnoteNode
       if (footnote.attrs.rids?.includes(id)) {
@@ -180,4 +184,43 @@ export const getInlineFootnotes = (
   })
 
   return inlineFootnotes
+}
+
+export function getAlphaOrderIndices(index: number) {
+  const unicodeInterval = [97, 123]
+  const places = unicodeInterval[1] - unicodeInterval[0]
+
+  function getClassCount(n: number, order: number) {
+    return n * Math.pow(places, order - 1)
+  }
+
+  let indices: number[] | null = null
+
+  for (;;) {
+    let current = index
+    let position = 1
+    while (current >= places) {
+      current = current / places
+      position++
+    }
+    const newIndex = Math.floor(current)
+    indices = indices ? indices : new Array(position).fill(0)
+    indices.splice(indices.length - position, 1, newIndex)
+
+    index -= getClassCount(newIndex, position)
+
+    if (position === 1) {
+      break
+    }
+  }
+  return (indices || [])
+    .map((v, i, array) => {
+      // offseting to start with zero for the second and later classes
+      // @TODO: find better solution instead of this indexing offset
+      if (array.length > 1 && i !== array.length - 1) {
+        return String.fromCodePoint(v + unicodeInterval[0] - 1)
+      }
+      return String.fromCodePoint(v + unicodeInterval[0])
+    })
+    .join('')
 }

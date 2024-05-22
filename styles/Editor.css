@@ -937,13 +937,14 @@
 
 .ProseMirror .footnote::before {
   content: attr(contents);
-  display: inline-block;
   position: relative;
   cursor: pointer;
   vertical-align: super;
+  z-index: 1;
   font-size: 75%;
   color: #0d79d0;
 }
+
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
@@ -951,7 +952,7 @@
 
 .ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
   content: '';
-  border-bottom: 1px dashed #C9C9C9;
+  border-bottom: 1px dashed #c9c9c9;
   display: block;
   margin-bottom: 8px;
 }
@@ -959,22 +960,26 @@
 .ProseMirror .table-footnotes-element {
   counter-reset: table_footnote;
 }
-.table-footer .delete-icon {
-  display: none;
+.delete-icon {
   position: absolute;
   right: -20px;
   top: -13px;
   cursor: pointer;
   z-index: 1;
 }
-.table-footer .delete-icon:hover svg path {
+.delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footnotes-element > div {
+.ProseMirror .table-footnotes-element > div,
+.ProseMirror .block-footnotes_element > .block > div
+ {
   position: relative;
 }
 
-.ProseMirror .table-footnotes-element > div:not(:has(.unctied-table-footnote)) p::before  {
+.ProseMirror
+  .table-footnotes-element
+  > div:not(:has(.unctied-table-footnote))
+  p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
   display: inline-block;
@@ -990,29 +995,27 @@
   margin-top: 0px;
 }
 
-.ProseMirror .table-footer .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
+.ProseMirror .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
   background-color: #f2fbfc;
   padding: 4px;
 }
-
-.ProseMirror .table-footer .footnote-selected .delete-icon ,.ProseMirror .table-footer .footnote-selected .deleted.rejected .delete-icon {
-  display: block;
+.table-footer > div {
+  position: relative;
 }
+
 .table-footer > div > p {
   padding-bottom: 10px;
 }
 
-.ProseMirror .table-footnotes-element .footnote-selected {
+.ProseMirror .table-footnotes-element .footnote-selected,
+.ProseMirror .block-footnotes_element .footnote-selected
+{
   border: 1px solid #bce7f6;
 }
 .table-footer > div:has(> p.footnote-selected) > p {
   border-left: 1px solid #bce7f6;
   border-right: 1px solid #bce7f6;
 }
-.table-footer > div:has(> p.footnote-selected)  > p:first-child .delete-icon {
-  z-index: 2;
-  display: block;
-} 
 .table-footer > div:has(> p.footnote-selected) > p:first-child {
   border-top: 1px solid #bce7f6;
   position: relative;
@@ -1044,6 +1047,10 @@
 
 .graphical-abstract .listing {
   display: none;
+}
+
+.ProseMirror .graphical-abstract-figure.block-gutter {
+  visibility: hidden;
 }
 
 .ProseMirror ul,
