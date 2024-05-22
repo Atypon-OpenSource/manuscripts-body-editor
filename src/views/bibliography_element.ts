@@ -51,9 +51,7 @@ export class BibliographyElementBlockView<
   private version: string
 
   public showPopper = (id: string) => {
-    this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
-
     if (!bib) {
       return
     }
@@ -119,7 +117,12 @@ export class BibliographyElementBlockView<
       this.view,
       'context-menu'
     )
-    this.props.popper.show(element, this.contextMenu, 'right-start')
+    // TODO: this setTimeout is a hack to fix the issue with the context menu
+    // It is related to suggestion select
+    // Should be rechecked and removed after selected-suggestion-ui is refactored
+    setTimeout(() => {
+      this.props.popper.show(element, this.contextMenu, 'right-start')
+    }, 0)
   }
 
   private handleClick = (event: Event) => {

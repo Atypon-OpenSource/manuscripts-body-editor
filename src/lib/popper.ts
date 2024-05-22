@@ -27,9 +27,9 @@ export class PopperManager {
     showArrow = true,
     modifiers: Popper.Modifiers = {}
   ) {
-    if (this.activePopper) {
-      return this.destroy()
-    }
+    console.log(target)
+    // destroy any existing popper first
+    this.destroy()
 
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
@@ -75,6 +75,14 @@ export class PopperManager {
       }
       document.addEventListener('click', this.handleDocumentClick)
     })
+  }
+
+  public clickEventHandler(event: Event) {
+    const contextMenuElement = document.querySelector('.context-menu')
+    if (contextMenuElement?.contains(event.target as Node)) {
+      return
+    }
+    this.destroy()
   }
 
   public destroy() {

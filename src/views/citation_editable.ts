@@ -22,7 +22,7 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import {
@@ -67,6 +67,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     const can = this.props.getCapabilities()
+
     if (can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (!attrs.rids.length) {
@@ -75,11 +76,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         this.showContextMenu()
       }
     }
-  }
-
-  public deselectNode = () => {
-    this.dom.classList.remove('ProseMirror-selectednode')
-    this.props.popper.destroy()
   }
 
   public destroy = () => {
@@ -104,7 +100,12 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.view,
       'context-menu'
     )
-    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
+    // TODO: this setTimeout is a hack to fix the issue with the context menu
+    // It is related to suggestion select
+    // Should be rechecked and removed after selected-suggestion-ui is refactored
+    // setTimeout(() => {
+      this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
+    // }, 0)
   }
 
   public showPopper = () => {
