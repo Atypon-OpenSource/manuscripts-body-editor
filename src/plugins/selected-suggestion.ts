@@ -17,7 +17,7 @@ import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptEditorState,
   ManuscriptNode,
-  schema
+  schema,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { AllSelection, Plugin, PluginKey } from 'prosemirror-state'
