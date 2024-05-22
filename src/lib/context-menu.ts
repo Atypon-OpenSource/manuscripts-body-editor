@@ -42,6 +42,7 @@ import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
 import { isDeleted, isRejectedInsert } from './track-changes-utils'
+import { getChildOfType } from './utils'
 
 const popper = new PopperManager()
 
@@ -286,7 +287,11 @@ export class ContextMenu {
 
       const hasGeneralNote =
         tableElementFooter.length &&
-        tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
+        getChildOfType(
+          tableElementFooter[0].node,
+          schema.nodes.general_table_footnote,
+          true
+        )
 
       if (hasGeneralNote) {
         const generalFootnote = tableElementFooter[0]?.node.firstChild
