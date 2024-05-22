@@ -30,7 +30,7 @@ export class PlaceholderElementView<
     this.element.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.element)
 
-    const content = createPlaceholderContent('An element')
+    const content = createPlaceholderContent()
     content.className = 'placeholder-item'
     this.element.appendChild(content)
   }
