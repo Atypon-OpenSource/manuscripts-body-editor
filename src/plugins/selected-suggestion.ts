@@ -20,7 +20,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { AllSelection, Plugin, PluginKey } from 'prosemirror-state'
+import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isNodeSelection, isTextSelection } from '../commands'
@@ -51,37 +51,33 @@ export default () => {
 }
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
-  const selection = state.selection
-  if (selection instanceof AllSelection) {
-    return empty
-  }
-  if (isTextSelection(selection)) {
-    const $cursor = selection.$cursor
+  if (isTextSelection(state.selection)) {
+    const $cursor = state.selection.$cursor
     if (!$cursor) {
       return empty
     }
-    const sss = nodeAt(state.doc, $cursor)
-    if (!sss) {
+    const selection = getEffectiveSelection(state.doc, $cursor)
+    if (!selection) {
       return empty
     }
-    if (sss.node.isText) {
-      return buildTextDecoration(state.doc, sss)
+    if (selection.node.isText) {
+      return buildTextDecoration(state.doc, selection)
     } else {
-      return buildNodeDecoration(state.doc, sss)
+      return buildNodeDecoration(state.doc, selection)
     }
-  } else if (isNodeSelection(selection)) {
-    return buildNodeDecoration(state.doc, selection)
+  } else if (isNodeSelection(state.selection)) {
+    return buildNodeDecoration(state.doc, state.selection)
   }
   return empty
 }
 
-type SSS = {
+type Selection = {
   node: ManuscriptNode
   from: number
   to: number
 }
 
-const nodeAt = (doc: ManuscriptNode, $pos: ResolvedPos) => {
+const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
   const node = $pos.node()
   if (!node) {
     return
@@ -110,7 +106,7 @@ const nodeAt = (doc: ManuscriptNode, $pos: ResolvedPos) => {
   }
 }
 
-const buildNodeDecoration = (doc: ManuscriptNode, selection: SSS) => {
+const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
   if (suggestion?.status == CHANGE_STATUS.rejected) {
@@ -131,9 +127,9 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: SSS) => {
   }
 }
 
-const buildTextDecoration = (doc: ManuscriptNode, selection: SSS) => {
+const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
-  const suggestion = node.marks[0]?.attrs.dataTracked
+  const suggestion = getTrackedMark(node)?.attrs.dataTracked
   if (!suggestion) {
     return empty
   }
@@ -146,6 +142,18 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: SSS) => {
   return {
     suggestion,
     decorations: DecorationSet.create(doc, [decoration]),
+  }
+}
+
+const trackedMarkTypes = new Set([
+  schema.marks.tracked_insert,
+  schema.marks.tracked_delete,
+])
+const getTrackedMark = (node: ManuscriptNode) => {
+  for (const mark of node.marks) {
+    if (trackedMarkTypes.has(mark.type)) {
+      return mark
+    }
   }
 }
 
