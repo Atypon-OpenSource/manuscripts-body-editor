@@ -421,7 +421,7 @@ export default (props: EditorProps) => {
             )
             decorations.push(
               Decoration.widget(
-                targetNode.pos + (footnote ? 1 : 2),
+                targetNode.pos + 1,
 
                 deleteFootnoteWidget(
                   targetNode.node,
