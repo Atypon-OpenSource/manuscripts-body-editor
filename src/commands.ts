@@ -651,7 +651,7 @@ const findListsAtSameLevel = (doc: ManuscriptNode, list: NodeWithPos) => {
   return lists
 }
 
-function splitListItem(
+function toggleOffList(
   state: EditorState,
   dispatch: (tr: ManuscriptTransaction) => void
 ) {
@@ -698,7 +698,7 @@ export const insertList =
       }
 
       if (list.node.attrs.listStyleType === style) {
-        return splitListItem(state, dispatch)
+        return toggleOffList(state, dispatch)
       }
 
       // list was found: update the type and style
