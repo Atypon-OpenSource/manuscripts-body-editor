@@ -59,7 +59,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
       'cross-reference-editor'
     )
 
-    this.props.popper.show(this.dom, this.popperContainer, 'right')
+    this.props.popper.show(this.dom, this.popperContainer, 'auto')
   }
 
   public destroy = () => {
