@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import ArrowDownUp from '@manuscripts/assets/react/ArrowDownUp'
+import {
+  TriangleCollapsedIcon,
+  TriangleExpandedIcon
+} from '@manuscripts/style-guide'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -32,21 +35,16 @@ const SearchSourceLabel = styled.div`
   color: ${(props) => props.theme.colors.text.secondary};
   cursor: pointer;
 
+  display: flex;
+  align-items: center;
+
+  .icon {
+    margin-left: 8px;
+    margin-right: 13px;
+  }
+
   &:hover {
     color: ${(props) => props.theme.colors.text.muted};
-  }
-`
-
-export const Arrow = styled(ArrowDownUp)`
-  margin-right: 16px;
-  margin-left: 10px;
-
-  user-select: none;
-
-  transform: rotate(180deg);
-
-  &.open {
-    transform: rotate(0deg);
   }
 `
 
@@ -108,7 +106,7 @@ export const ReferenceSearchSection: React.FC<{
   return (
     <>
       <SearchSourceLabel onClick={toggleExpanded}>
-        <Arrow className={expanded ? 'open' : ''} />
+        {expanded ? <TriangleExpandedIcon className={'icon'}/> : <TriangleCollapsedIcon className={'icon'}/>}
         {source.label}
       </SearchSourceLabel>
 

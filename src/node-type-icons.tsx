@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import ListingIcon from '@manuscripts/assets/react/OutlineIconCodeSnippet'
-import EquationIcon from '@manuscripts/assets/react/OutlineIconEquation'
-import FigureIcon from '@manuscripts/assets/react/OutlineIconFigure'
-import ManuscriptIcon from '@manuscripts/assets/react/OutlineIconManuscript'
-import OrderedListIcon from '@manuscripts/assets/react/OutlineIconOrderedList'
-import ParagraphIcon from '@manuscripts/assets/react/OutlineIconParagraph'
-import SectionIcon from '@manuscripts/assets/react/OutlineIconSection'
-import TableIcon from '@manuscripts/assets/react/OutlineIconTable'
-import BulletListIcon from '@manuscripts/assets/react/OutlineIconUnorderedList'
-import { BlockQuoteIcon, PullQuoteIcon } from '@manuscripts/style-guide'
+import {
+  OutlineBlockQuoteIcon,
+  OutlineEquationIcon,
+  OutlineFigureIcon,
+  OutlineManuscriptIcon,
+  OutlineOrderedListIcon,
+  OutlineParagraphIcon,
+  OutlineSectionIcon,
+  OutlineTableIcon,
+  OutlineUnorderedListIcon,
+  OutlinePullQuoteIcon,
+} from '@manuscripts/style-guide'
 import { ManuscriptNodeType, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'
 import React from 'react'
@@ -34,22 +36,20 @@ const icons: Map<
   ManuscriptNodeType,
   React.FunctionComponent<React.SVGAttributes<SVGElement>>
 > = new Map([
-  [nodes.manuscript, ManuscriptIcon],
-  [nodes.bibliography_section, SectionIcon],
-  [nodes.blockquote_element, BlockQuoteIcon],
-  [nodes.bullet_list, BulletListIcon],
-  [nodes.equation_element, EquationIcon],
-  [nodes.figure_element, FigureIcon],
-  [nodes.multi_graphic_figure_element, FigureIcon],
-  [nodes.listing_element, ListingIcon],
-  [nodes.ordered_list, OrderedListIcon],
-  [nodes.paragraph, ParagraphIcon],
-  [nodes.pullquote_element, PullQuoteIcon],
-  [nodes.section, SectionIcon],
-  [nodes.table_element, TableIcon],
-  [nodes.toc_section, SectionIcon],
-  [nodes.graphical_abstract_section, SectionIcon],
-  [nodes.footnotes_section, SectionIcon],
+  [nodes.manuscript, OutlineManuscriptIcon],
+  [nodes.bibliography_section, OutlineSectionIcon],
+  [nodes.blockquote_element, OutlineBlockQuoteIcon],
+  [nodes.bullet_list, OutlineUnorderedListIcon],
+  [nodes.equation_element, OutlineEquationIcon],
+  [nodes.figure_element, OutlineFigureIcon],
+  [nodes.ordered_list, OutlineOrderedListIcon],
+  [nodes.paragraph, OutlineParagraphIcon],
+  [nodes.pullquote_element, OutlinePullQuoteIcon],
+  [nodes.section, OutlineSectionIcon],
+  [nodes.table_element, OutlineTableIcon],
+  [nodes.toc_section, OutlineSectionIcon],
+  [nodes.graphical_abstract_section, OutlineSectionIcon],
+  [nodes.footnotes_section, OutlineSectionIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType) => {
