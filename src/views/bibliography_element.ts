@@ -86,6 +86,7 @@ export class BibliographyElementBlockView<
   }
 
   private handleComment = (citationId: string) => {
+    this.props.popper.destroy()
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
 
@@ -120,9 +121,10 @@ export class BibliographyElementBlockView<
     // TODO: this setTimeout is a hack to fix the issue with the context menu
     // It is related to suggestion select
     // Should be rechecked and removed after selected-suggestion-ui is refactored
-    setTimeout(() => {
-      this.props.popper.show(element, this.contextMenu, 'right-start')
-    }, 0)
+    // setTimeout(() => {
+    console.log('bibliography_element: showing context menu')
+    this.props.popper.show(element, this.contextMenu, 'right-start')
+    // }, 0)
   }
 
   private handleClick = (event: Event) => {

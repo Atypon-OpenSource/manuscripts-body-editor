@@ -22,7 +22,7 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
-import { NodeSelection, TextSelection } from 'prosemirror-state'
+import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import {
@@ -65,7 +65,18 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public selectNode = () => {
+    console.log('selectNode...')
     this.dom.classList.add('ProseMirror-selectednode')
+    this.onClickHandler()
+  }
+
+  public destroy = () => {
+    this.editor?.remove()
+    this.props.popper.destroy()
+  }
+
+  public onClickHandler = () => {
+    console.log('citation click handler...')
     const can = this.props.getCapabilities()
 
     if (can.seeReferencesButtons && !isDeleted(this.node)) {
@@ -76,11 +87,6 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         this.showContextMenu()
       }
     }
-  }
-
-  public destroy = () => {
-    this.editor?.remove()
-    this.props.popper.destroy()
   }
 
   public showContextMenu = () => {
@@ -100,16 +106,11 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       this.view,
       'context-menu'
     )
-    // TODO: this setTimeout is a hack to fix the issue with the context menu
-    // It is related to suggestion select
-    // Should be rechecked and removed after selected-suggestion-ui is refactored
-    // setTimeout(() => {
-      this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
-    // }, 0)
+    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
   }
 
   public showPopper = () => {
-    this.props.popper.destroy() // destroy the context menu
+    // this.props.popper.destroy() // destroy the context menu
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
@@ -161,7 +162,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         'citation-editor'
       )
     }
+    // setTimeout(() => {
     this.props.popper.show(this.dom, this.editor, 'auto')
+    // })
   }
 
   private handleEdit = () => {

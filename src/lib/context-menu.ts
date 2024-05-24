@@ -571,6 +571,7 @@ export class ContextMenu {
   private addPopperEventListeners = () => {
     const mouseListener: EventListener = (event) => {
       const target = event.target as HTMLElement
+      // if target is one of btn-context-menu buttons, do not destroy popper
       if (target.classList.contains(contextMenuBtnClass)) {
         return
       }
