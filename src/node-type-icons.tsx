@@ -21,10 +21,10 @@ import {
   OutlineManuscriptIcon,
   OutlineOrderedListIcon,
   OutlineParagraphIcon,
+  OutlinePullQuoteIcon,
   OutlineSectionIcon,
   OutlineTableIcon,
   OutlineUnorderedListIcon,
-  OutlinePullQuoteIcon,
 } from '@manuscripts/style-guide'
 import { ManuscriptNodeType, schema } from '@manuscripts/transform'
 import { NodeType } from 'prosemirror-model'

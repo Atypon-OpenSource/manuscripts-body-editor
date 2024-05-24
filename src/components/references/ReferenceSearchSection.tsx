@@ -16,7 +16,7 @@
 
 import {
   TriangleCollapsedIcon,
-  TriangleExpandedIcon
+  TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -106,7 +106,11 @@ export const ReferenceSearchSection: React.FC<{
   return (
     <>
       <SearchSourceLabel onClick={toggleExpanded}>
-        {expanded ? <TriangleExpandedIcon className={'icon'}/> : <TriangleCollapsedIcon className={'icon'}/>}
+        {expanded ? (
+          <TriangleExpandedIcon className={'icon'} />
+        ) : (
+          <TriangleCollapsedIcon className={'icon'} />
+        )}
         {source.label}
       </SearchSourceLabel>
 

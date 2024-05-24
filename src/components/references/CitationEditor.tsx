@@ -113,10 +113,10 @@ const itemsReducer = attrsReducer<BibliographyItemAttrs>()
 const ridsReducer = arrayReducer<string>()
 
 export const CitationEditor: React.FC<CitationEditorProps> = ({
-                                                                query,
-                                                                rids: $rids,
-                                                                items: $items,
-                                                                citationCounts,
+  query,
+  rids: $rids,
+  items: $items,
+  citationCounts,
   sources,
   onSave,
   onDelete,

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import {
-  Category, CitationCountIcon,
+  Category,
+  CitationCountIcon,
   CloseButton,
   Dialog,
   ModalBody,
