@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import AddedIcon from '@manuscripts/assets/react/AddedIcon'
-import AddIcon from '@manuscripts/assets/react/AddIcon'
-import { SecondaryButton } from '@manuscripts/style-guide'
+import { AddedIcon, AddIcon, SecondaryButton } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
