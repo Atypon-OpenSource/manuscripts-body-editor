@@ -45,6 +45,15 @@ export class OrderedListView<
       const type = (this.node.attrs.listStyleType as JatsStyleType) || 'order'
       this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
     }
+    if (this.node.attrs.dataTracked?.length) {
+      const lastChange =
+        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+      this.dom.setAttribute('data-track-status', lastChange.status)
+      this.dom.setAttribute('data-track-op', lastChange.operation)
+    } else {
+      this.dom.removeAttribute('data-track-status')
+      this.dom.removeAttribute('data-track-type')
+    }
   }
 }
 

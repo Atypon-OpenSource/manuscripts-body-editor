@@ -16,7 +16,7 @@
 
 import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { TrackChangesAction } from '@manuscripts/track-changes-plugin'
 import {
   buildComment,
   FigureNode,
@@ -654,6 +654,7 @@ export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     const list = findSelectedList(state.selection)
+    const nodeType = list?.node.type as NodeType
 
     if (list) {
       if (!dispatch) {
@@ -664,7 +665,13 @@ export const insertList =
       const nodes = findListsAtSameLevel(state.doc, list)
       const tr = state.tr
       for (const { node, pos } of nodes) {
-        tr.setNodeMarkup(
+        // check if the selected node matching the new node type trigger only set attrs.
+        tr.setMeta(
+          type == nodeType
+            ? TrackChangesAction.updateMetaNode
+            : TrackChangesAction.updateNodeType,
+          true
+        ).setNodeMarkup(
           pos,
           type,
           {
@@ -674,7 +681,7 @@ export const insertList =
           node.marks
         )
       }
-      dispatch(skipTracking(tr))
+      dispatch(tr)
       return true
     } else {
       // no list found, create new list

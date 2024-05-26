@@ -19,6 +19,7 @@ import {
   FootnoteWithIndex,
   TableFootnotesSelector,
 } from '@manuscripts/style-guide'
+import { TrackChangesAction } from '@manuscripts/track-changes-plugin'
 import {
   InlineFootnoteNode,
   isInBibliographySection,
@@ -518,9 +519,11 @@ export class ContextMenu {
 
   private changeNodeType = (nodeType: ManuscriptNodeType) => {
     this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
-        id: this.node.attrs.id,
-      })
+      this.view.state.tr
+        .setMeta(TrackChangesAction.updateNodeType, true)
+        .setNodeMarkup(this.getPos(), nodeType, {
+          id: this.node.attrs.id,
+        })
     )
     popper.destroy()
   }
