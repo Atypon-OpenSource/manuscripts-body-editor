@@ -1530,12 +1530,11 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.12.6":
-  version "1.12.6"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.12.6.tgz#de0925cf9ddd5efaf44f6cf64866980e40c9b1dd"
-  integrity sha512-KA1hr6mdonpBA5rCkCdeH6x3HwwR210bBZSGJf61jVjoQMGCONbG8oo121CjxX8kQI08/K+6XQ5ALRYZke6GTw==
+"@manuscripts/style-guide@1.12.7-LEAN-2089.0":
+  version "1.12.7-LEAN-2089.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.12.7-LEAN-2089.0.tgz#946193ce72b132187a9e2094767f22209dbe7635"
+  integrity sha512-cx+0WErObuYXNTY2eShvkgDi3xxx8CxNen7fXNIhmcvDwanSSFUatkeAcSBM2pY+T0vez/X20rX5zt/3fB1NYQ==
   dependencies:
-    "@manuscripts/assets" "^0.6.4"
     "@manuscripts/json-schema" "^2.2.7"
     "@manuscripts/transform" "2.3.3"
     "@reach/tabs" "^0.18.0"
