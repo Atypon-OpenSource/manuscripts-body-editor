@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ArrowDownBlue from '@manuscripts/assets/react/ArrowDownBlue'
-import { DeleteIcon } from '@manuscripts/style-guide'
+import { ArrowDownCircleIcon, DeleteIcon } from '@manuscripts/style-guide'
 import { isEqual } from 'lodash'
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -45,7 +44,7 @@ const AffiliationLabel = styled.div`
   padding-right: 0.5rem;
 `
 
-const DropdownIndicator = styled(ArrowDownBlue)`
+const DropdownIndicator = styled(ArrowDownCircleIcon)`
   border: 0;
   border-radius: 50%;
   margin-right: 0.6em;

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import SearchIconNoBGc from '@manuscripts/assets/react/SearchIconNoBG'
-import { TextField } from '@manuscripts/style-guide'
+import { SearchIcon, TextField } from '@manuscripts/style-guide'
 import React, { InputHTMLAttributes, useState } from 'react'
 import styled from 'styled-components'
 
@@ -34,11 +33,11 @@ const SearchIconContainer = styled.span`
   z-index: 2;
 
   path {
-    fill: ${(props) => props.theme.colors.text.primary};
+    stroke: ${(props) => props.theme.colors.text.primary};
   }
 
   &.active path {
-    fill: ${(props) => props.theme.colors.brand.medium};
+    stroke: ${(props) => props.theme.colors.brand.medium};
   }
 `
 
@@ -85,7 +84,7 @@ export const SearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = (
       onBlur={onBlur}
     >
       <SearchIconContainer className={hover || focus ? 'active' : ''}>
-        <SearchIconNoBGc />
+        <SearchIcon />
       </SearchIconContainer>
 
       <SearchTextField
