@@ -41,6 +41,7 @@ import {
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { alertIcon, deleteIcon } from '../../assets'
+import { isTextSelection } from '../../commands'
 import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
@@ -413,7 +414,7 @@ export default (props: PluginProps) => {
         const can = props.getCapabilities()
         if (targetNode && can.editArticle) {
           const parent = findParentNodeWithIdValue(state.selection)
-          if (parent) {
+          if (parent && isTextSelection(state.selection)) {
             decorations.push(
               // Add a class for styling selected table element footnotes
               Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
@@ -422,7 +423,7 @@ export default (props: PluginProps) => {
             )
             decorations.push(
               Decoration.widget(
-                targetNode.pos + (footnote ? 1 : 2),
+                targetNode.pos + 1,
 
                 deleteFootnoteWidget(
                   targetNode.node,
