@@ -197,7 +197,7 @@ const AuthorDropDown: React.FC<{
         </ToggleButton>
         <RemoveButton
           type="button"
-          aria-label="Delete this affiliation"
+          aria-label="Delete this author"
           onClick={() => remove(index)}
         >
           <DeleteIcon />
@@ -669,13 +669,4 @@ const RemoveButton = styled.button`
   padding: 0;
 
   outline: none;
-
-  &:focus path {
-    fill: ${(props) => props.theme.colors.button.primary.color.hover};
-  }
-
-  svg {
-    width: 2rem;
-    height: 2rem;
-  }
 `
