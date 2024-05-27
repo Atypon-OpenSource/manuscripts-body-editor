@@ -18,7 +18,7 @@ import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
 import { findChildByID } from '../lib/view'
-import {affiliationsKey, PluginState} from '../plugins/affiliations'
+import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'

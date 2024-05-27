@@ -24,20 +24,20 @@ import {
   isContributorNode,
   ManuscriptNode,
 } from '@manuscripts/transform'
+import { isEqual } from 'lodash'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import {
+  AffiliationAttrs,
+  authorComparator,
+  ContributorAttrs,
+} from '../lib/authors'
 import {
   getActualAttrs,
   isDeleted,
   isPendingInsert,
 } from '../lib/track-changes-utils'
-import {
-  AffiliationAttrs,
-  authorComparator,
-  ContributorAttrs
-} from "../lib/authors";
-import {isEqual} from "lodash";
 
 export interface PluginState {
   version: string
@@ -50,7 +50,10 @@ export interface PluginState {
 export const affiliationsKey = new PluginKey<PluginState>('affiliations')
 
 let id = 1
-export const buildPluginState = (doc: ManuscriptNode, $old?: PluginState): PluginState => {
+export const buildPluginState = (
+  doc: ManuscriptNode,
+  $old?: PluginState
+): PluginState => {
   const nodes: [ManuscriptNode, number][] = []
   const contributors: ContributorAttrs[] = []
   const affiliations: AffiliationAttrs[] = []
@@ -67,19 +70,21 @@ export const buildPluginState = (doc: ManuscriptNode, $old?: PluginState): Plugi
     }
   })
 
-  if ($old && isEqual(contributors, $old.contributors) && isEqual(affiliations, $old.affiliations)) {
+  if (
+    $old &&
+    isEqual(contributors, $old.contributors) &&
+    isEqual(affiliations, $old.affiliations)
+  ) {
     return $old
   }
 
   const iAffiliations = new Set<string>()
 
-  contributors
-    .sort(authorComparator)
-    .forEach((attrs) => {
-      attrs.affiliations.forEach((aff) => {
-        iAffiliations.add(aff)
-      })
+  contributors.sort(authorComparator).forEach((attrs) => {
+    attrs.affiliations.forEach((aff) => {
+      iAffiliations.add(aff)
     })
+  })
 
   const indexedAffiliationIds = new Map<string, number>(
     [...iAffiliations].map((id, i) => [id, i + 1])
@@ -100,7 +105,7 @@ export const buildPluginState = (doc: ManuscriptNode, $old?: PluginState): Plugi
     indexedAffiliationIds,
     contributors,
     affiliations,
-    decorations: DecorationSet.create(doc, decorations)
+    decorations: DecorationSet.create(doc, decorations),
   }
 }
 
