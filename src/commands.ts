@@ -46,12 +46,13 @@ import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   Command,
+  EditorState,
   NodeSelection,
   Selection,
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { findWrapping, ReplaceAroundStep } from 'prosemirror-transform'
+import { findWrapping, liftTarget, ReplaceAroundStep } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
@@ -59,6 +60,7 @@ import {
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
+import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
@@ -649,6 +651,42 @@ const findListsAtSameLevel = (doc: ManuscriptNode, list: NodeWithPos) => {
   return lists
 }
 
+function toggleOffList(
+  state: EditorState,
+  dispatch: (tr: ManuscriptTransaction) => void
+) {
+  const {
+    selection: { $from },
+    tr,
+  } = state
+
+  const rootList = findRootList($from)
+
+  if (rootList) {
+    state.doc.nodesBetween(
+      rootList.pos,
+      rootList.pos + rootList.node.nodeSize,
+      (node, pos) => {
+        const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
+        const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
+        const nodeRange = $fromPos.blockRange($toPos)
+        if (!nodeRange) {
+          return
+        }
+
+        const targetLiftDepth = liftTarget(nodeRange)
+        if (targetLiftDepth || targetLiftDepth === 0) {
+          tr.lift(nodeRange, targetLiftDepth)
+        }
+      }
+    )
+    dispatch(skipTracking(tr))
+    return true
+  } else {
+    return false
+  }
+}
+
 export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
@@ -658,6 +696,11 @@ export const insertList =
       if (!dispatch) {
         return true
       }
+
+      if (list.node.attrs.listStyleType === style) {
+        return toggleOffList(state, dispatch)
+      }
+
       // list was found: update the type and style
       // of every list at the same level
       const nodes = findListsAtSameLevel(state.doc, list)

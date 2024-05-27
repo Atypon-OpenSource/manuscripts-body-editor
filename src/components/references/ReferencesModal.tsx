@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ReferenceLibraryIcon from '@manuscripts/assets/react/ReferenceLibraryIcon'
 import {
   Category,
+  CitationCountIcon,
   CloseButton,
   Dialog,
   ModalBody,
@@ -279,7 +279,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                     ref={isSelected(item) ? selectionRef : null}
                   >
                     <IconContainer>
-                      <ReferenceLibraryIcon />
+                      <CitationCountIcon />
                       {(citationCounts.get(item.id) || 0) > 0 ? (
                         <CitationCount data-tooltip-id="citation-count-tooltip">
                           {citationCounts.get(item.id)}
