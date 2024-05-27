@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import AddIconHighlight from '@manuscripts/assets/react/AddIconHighlight'
-import GutterIconNormal from '@manuscripts/assets/react/GutterIconNormal'
-import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
 import { Model } from '@manuscripts/json-schema'
 import {
+  AddIcon,
   AttachIcon,
   Capabilities,
+  DotsIcon,
   DropdownList,
   FileAttachment,
   getFileIcon,
@@ -27,6 +26,7 @@ import {
   IconTextButton,
   isImageFile,
   RoundIconButton,
+  TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
   useFiles,
@@ -109,7 +109,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             }
           />
           <UploadButton onClick={handleUpload} disabled={!can.uploadFile}>
-            <AddIconHighlight /> New file...
+            <AddIcon /> New file...
           </UploadButton>
         </DropdownList>
       )}
@@ -140,7 +140,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   return (
     <DropdownWrapper ref={wrapperRef}>
       <OptionsButton className={'options-button'} onClick={toggleOpen}>
-        <GutterIconNormal />
+        <DotsIcon />
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList
@@ -196,7 +196,7 @@ const NestedDropdown: React.FC<{
   return (
     <DropdownWrapper ref={wrapperRef}>
       <NestedListButton onClick={toggleOpen} disabled={disabled}>
-        {buttonText} <TriangleCollapsed />
+        {buttonText} <TriangleCollapsedIcon />
       </NestedListButton>
       {isOpen && (
         <NestedListDropdownList
