@@ -49,6 +49,18 @@ export class OrderedListView<
       if (this.node.attrs.dataTracked) {
         const classes = getChangeClasses(this.node.attrs.dataTracked)
         this.contentDOM.className = classes.join(' ')
+
+        this.dom.setAttribute(
+          'data-track-status',
+          this.node.attrs.dataTracked[0].status
+        )
+        this.dom.setAttribute(
+          'data-track-op',
+          this.node.attrs.dataTracked[0].operation
+        )
+      } else {
+        this.dom.removeAttribute('data-track-status')
+        this.dom.removeAttribute('data-track-op')
       }
     }
   }
