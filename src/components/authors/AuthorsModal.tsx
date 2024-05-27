@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import AddIcon from '@manuscripts/assets/react/AddIcon'
 import {
   buildBibliographicName,
   generateID,
   ObjectTypes,
 } from '@manuscripts/json-schema'
 import {
+  AddIcon,
   CloseButton,
   ModalBody,
   ModalContainer,

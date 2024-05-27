@@ -15,11 +15,11 @@
  */
 
 import {
+  AddNewIcon,
   ButtonGroup,
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
-  TemplateIcon,
 } from '@manuscripts/style-guide'
 import { debounce } from 'lodash'
 import React, { useState } from 'react'
@@ -132,7 +132,7 @@ export const ReferenceSearch: React.FC<{
       <Actions>
         <AddReferenceActions>
           <IconTextButton onClick={onAdd}>
-            <TemplateIcon />
+            <AddNewIcon />
             Add new
           </IconTextButton>
         </AddReferenceActions>
