@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import AddAuthor from '@manuscripts/assets/react/AddAuthor'
-import Trashcan from '@manuscripts/assets/react/AnnotationRemove'
-import ArrowDownBlue from '@manuscripts/assets/react/ArrowDownBlue'
 import {
   BibliographicName,
   buildBibliographicDate,
   buildBibliographicName,
 } from '@manuscripts/json-schema'
 import {
+  AddAuthorIcon,
+  ArrowDownIcon,
   ButtonGroup,
   Category,
   DeleteIcon,
@@ -193,17 +192,15 @@ const AuthorDropDown: React.FC<{
           onClick={() => setIsOpen(!isOpen)}
           isOpen={isOpen}
         >
-          <DropdownIndicator>
-            <ArrowDownBlue />
-          </DropdownIndicator>
+          <DropdownIndicator />
           {title}
         </ToggleButton>
         <RemoveButton
           type="button"
-          aria-label="Delete this affiliation"
+          aria-label="Delete this author"
           onClick={() => remove(index)}
         >
-          <Trashcan />
+          <DeleteIcon />
         </RemoveButton>
       </Title>
       {isOpen && (
@@ -454,7 +451,7 @@ export const ReferenceForm: React.FC<{
                           )
                         }
                       >
-                        <AddAuthor height={17} width={17} />
+                        <AddAuthorIcon height={17} width={17} />
                       </Button>
                     </LabelContainer>
 
@@ -634,7 +631,7 @@ const Title = styled.h4<{
     props.isInvalid ? props.theme.colors.text.warning : 'inherit'};
 `
 
-const DropdownIndicator = styled(ArrowDownBlue)`
+const DropdownIndicator = styled(ArrowDownIcon)`
   border: 0;
   border-radius: 50%;
   margin-right: 0.6em;
@@ -672,13 +669,4 @@ const RemoveButton = styled.button`
   padding: 0;
 
   outline: none;
-
-  &:focus path {
-    fill: ${(props) => props.theme.colors.button.primary.color.hover};
-  }
-
-  svg {
-    width: 2rem;
-    height: 2rem;
-  }
 `
