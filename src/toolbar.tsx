@@ -31,6 +31,7 @@ import {
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { EditorState } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 import React, { ReactNode } from 'react'
 
 import {
