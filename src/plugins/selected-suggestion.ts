@@ -29,11 +29,34 @@ export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
 )
 
+type Selection = {
+  node: ManuscriptNode
+  from: number
+  to: number
+}
+
 export interface PluginState {
   decorations: DecorationSet
   suggestion?: TrackedAttrs
 }
 
+const EMPTY: PluginState = {
+  decorations: DecorationSet.empty,
+}
+
+/**
+ * This plugin is responsible for designating a single suggestion as
+ * "selected" based on the current
+ * [editor selection]{@link ManuscriptEditorState#selection}.
+ *
+ * The selected suggestion is wrapped with a "selected-suggestion"
+ * decoration to apply different styling to it in the editor.
+ *
+ * For node views that render other nodes (e.g. the `bibliography_element`
+ * view is responsible for rendering `bibliography_item` nodes), the
+ * decoration has to be applied manually, for which the
+ * selected suggestion (if any) is [provided in the state]{@link PluginState#suggestion}.
+ */
 export default () => {
   return new Plugin<PluginState>({
     key: selectedSuggestionKey,
@@ -54,11 +77,11 @@ const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   if (isTextSelection(state.selection)) {
     const $cursor = state.selection.$cursor
     if (!$cursor) {
-      return empty
+      return EMPTY
     }
     const selection = getEffectiveSelection(state.doc, $cursor)
     if (!selection) {
-      return empty
+      return EMPTY
     }
     if (selection.node.isText) {
       return buildTextDecoration(state.doc, selection)
@@ -68,15 +91,17 @@ const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   } else if (isNodeSelection(state.selection)) {
     return buildNodeDecoration(state.doc, state.selection)
   }
-  return empty
+  return EMPTY
 }
 
-type Selection = {
-  node: ManuscriptNode
-  from: number
-  to: number
-}
-
+/**
+ * Find the node containing `$pos` with the _least depth_ (closest to the root)
+ * that changed. This is mainly for cases where inserting a node automatically
+ * inserts a bunch of children (e.g. inserting a `figure_element` automatically
+ * inserts a `figure`, `figure_caption`, etc.)
+ * @param doc
+ * @param $pos
+ */
 const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
   const pos = $pos.pos
   let current
@@ -111,7 +136,7 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
   if (!suggestion?.status || suggestion.status === CHANGE_STATUS.rejected) {
-    return empty
+    return EMPTY
   }
   const from = selection.from
   const to = selection.to
@@ -132,7 +157,7 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
   const suggestion = getTrackedMark(node)?.attrs.dataTracked
   if (!suggestion) {
-    return empty
+    return EMPTY
   }
   const from = selection.from
   const to = selection.to
@@ -156,8 +181,4 @@ const getTrackedMark = (node: ManuscriptNode) => {
       return mark
     }
   }
-}
-
-const empty = {
-  decorations: DecorationSet.empty,
 }
