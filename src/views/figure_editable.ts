@@ -17,8 +17,8 @@
 import {
   Capabilities,
   FileAttachment,
+  FileCorruptedIcon,
   FileManagement,
-  UnsupportedFormatFileIcon,
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { createElement } from 'react'
@@ -215,9 +215,10 @@ export class FigureEditableView extends FigureView<
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')
 
+    //todo remove reactdom
     const iconContainer = document.createElement('div')
     ReactDOM.render(
-      createElement(UnsupportedFormatFileIcon, { className: 'icon' }),
+      createElement(FileCorruptedIcon, { className: 'icon' }),
       iconContainer,
       () => {
         const target = instructions.querySelector('.unsupported-icon-wrapper')

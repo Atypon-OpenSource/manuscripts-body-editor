@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
+import {
+  AddCommentIcon,
+  ToolbarBoldIcon,
+  ToolbarCitationIcon,
+  ToolbarEquationIcon,
+  ToolbarFigureIcon,
+  ToolbarItalicIcon,
+  ToolbarOrderedListIcon,
+  ToolbarSubscriptIcon,
+  ToolbarSuperscriptIcon,
+  ToolbarTableIcon,
+  ToolbarUnderlineIcon,
+  ToolbarUnorderedListIcon,
+} from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { EditorState } from 'prosemirror-state'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
 import {
   addComment,
@@ -29,7 +43,6 @@ import {
   insertList,
   markActive,
 } from './commands'
-import icons from './icons'
 
 export interface ToolbarButtonConfig {
   title: string
@@ -52,21 +65,21 @@ export const toolbar: ToolbarConfig = {
   style: {
     bold: {
       title: 'Toggle bold',
-      content: icons.bold,
+      content: <ToolbarBoldIcon />,
       isActive: markActive(schema.marks.bold),
       isEnabled: toggleMark(schema.marks.bold),
       run: toggleMark(schema.marks.bold),
     },
     italic: {
       title: 'Toggle italic',
-      content: icons.italic,
+      content: <ToolbarItalicIcon />,
       isActive: markActive(schema.marks.italic),
       isEnabled: toggleMark(schema.marks.italic),
       run: toggleMark(schema.marks.italic),
     },
     underline: {
       title: 'Toggle underline',
-      content: icons.underline,
+      content: <ToolbarUnderlineIcon />,
       isActive: markActive(schema.marks.underline),
       isEnabled: toggleMark(schema.marks.underline),
       run: toggleMark(schema.marks.underline),
@@ -75,14 +88,14 @@ export const toolbar: ToolbarConfig = {
   vertical: {
     subscript: {
       title: 'Toggle subscript',
-      content: icons.subscript,
+      content: <ToolbarSubscriptIcon />,
       isActive: markActive(schema.marks.subscript),
       isEnabled: toggleMark(schema.marks.subscript),
       run: toggleMark(schema.marks.subscript),
     },
     superscript: {
       title: 'Toggle superscript',
-      content: icons.superscript,
+      content: <ToolbarSuperscriptIcon />,
       isActive: markActive(schema.marks.superscript),
       isEnabled: toggleMark(schema.marks.superscript),
       run: toggleMark(schema.marks.superscript),
@@ -91,7 +104,7 @@ export const toolbar: ToolbarConfig = {
   list: {
     bullet_list: {
       title: 'Wrap in bullet list',
-      content: icons.bullet_list,
+      content: <ToolbarUnorderedListIcon />,
       isActive: blockActive(schema.nodes.bullet_list),
       isEnabled: insertList(schema.nodes.bullet_list, 'bullet'),
       run: insertList(schema.nodes.bullet_list, 'bullet'),
@@ -102,7 +115,7 @@ export const toolbar: ToolbarConfig = {
     },
     ordered_list: {
       title: 'Wrap in ordered list',
-      content: icons.ordered_list,
+      content: <ToolbarOrderedListIcon />,
       isActive: blockActive(schema.nodes.ordered_list),
       isEnabled: insertList(schema.nodes.ordered_list, 'order'),
       run: insertList(schema.nodes.ordered_list, 'order'),
@@ -118,13 +131,13 @@ export const toolbar: ToolbarConfig = {
   inline: {
     citation: {
       title: 'Insert citation',
-      content: icons.citation,
+      content: <ToolbarCitationIcon />,
       isEnabled: canInsert(schema.nodes.citation),
       run: insertInlineCitation,
     },
     comment: {
       title: 'Insert comment',
-      content: icons.highlight,
+      content: <AddCommentIcon />,
       isEnabled: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
       run: addComment,
     },
@@ -132,19 +145,19 @@ export const toolbar: ToolbarConfig = {
   element: {
     figure_element: {
       title: 'Insert figure',
-      content: icons.figure_element,
+      content: <ToolbarFigureIcon />,
       isEnabled: canInsert(schema.nodes.figure_element),
       run: insertBlock(schema.nodes.figure_element),
     },
     table_element: {
       title: 'Insert table',
-      content: icons.table_element,
+      content: <ToolbarTableIcon />,
       isEnabled: canInsert(schema.nodes.table_element),
       run: insertBlock(schema.nodes.table_element),
     },
     equation_element: {
       title: 'Insert equation',
-      content: icons.equation_element,
+      content: <ToolbarEquationIcon />,
       isEnabled: canInsert(schema.nodes.equation_element),
       run: insertBlock(schema.nodes.equation_element),
     },
