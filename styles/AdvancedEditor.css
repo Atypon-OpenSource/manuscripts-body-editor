@@ -706,6 +706,14 @@ span.selected-suggestion, div.selected-suggestion .block, div.selected-suggestio
   border-style: solid !important;
 }
 
+.block-bullet_list .selected-suggestion p, .block-ordered_list .selected-suggestion p {
+  margin: 0;
+}
+
+.block-bullet_list .selected-suggestion, .block-ordered_list .selected-suggestion {
+  margin: 16px 0;
+}
+
 .ProseMirror .inserted.pending {
   background: var(--pending-bg-color);
   text-decoration: none;

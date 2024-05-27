@@ -103,7 +103,6 @@ const buildPluginState = (state: ManuscriptEditorState): PluginState => {
  * @param $pos
  */
 const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
-  const pos = $pos.pos
   let current
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
@@ -120,14 +119,18 @@ const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
   if (current) {
     return current
   }
-  const node = doc.nodeAt(pos)
-  if (node?.isText) {
-    const from = pos - $pos.textOffset
-    const to = from + node.nodeSize
-    return {
-      node,
-      from,
-      to,
+  const parent = $pos.parent
+  if (parent.inlineContent) {
+    const child = parent.childBefore($pos.parentOffset)
+    const node = child.node
+    if (node) {
+      const from = $pos.start() + child.offset
+      const to = from + node.nodeSize
+      return {
+        node,
+        from,
+        to,
+      }
     }
   }
 }
