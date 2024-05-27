@@ -52,7 +52,11 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { findWrapping, liftTarget, ReplaceAroundStep } from 'prosemirror-transform'
+import {
+  findWrapping,
+  liftTarget,
+  ReplaceAroundStep,
+} from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
@@ -60,7 +64,6 @@ import {
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
-import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
