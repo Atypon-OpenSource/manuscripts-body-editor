@@ -38,7 +38,6 @@ import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
 import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
-import list_item from '../views/list_item'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
 import orderedList from '../views/ordered_list_editable'
@@ -79,7 +78,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     link: link(props, dispatch),
     listing: listing(props),
     listing_element: listingElement(props),
-    list_item: list_item(props),
     ordered_list: orderedList(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),

@@ -764,6 +764,7 @@ Next levels are shifted 'up' by 1
 .ProseMirror .contributor[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
+.ProseMirror li[data-track-status='rejected'][data-track-op='insert'],
 .ProseMirror
   .block-container[data-track-status='rejected'][data-track-op='insert'] {
   display: none;
