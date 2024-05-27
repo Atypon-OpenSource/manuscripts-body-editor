@@ -78,24 +78,25 @@ type Selection = {
 }
 
 const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
-  const node = $pos.node()
-  if (!node) {
-    return
+  const pos = $pos.pos
+  let current
+  for (let depth = $pos.depth; depth > 0; depth--) {
+    const node = $pos.node(depth)
+    if (node.attrs.dataTracked) {
+      current = {
+        node,
+        from: $pos.before(depth),
+        to: $pos.after(depth),
+      }
+    } else {
+      break
+    }
   }
-  if (node.attrs.dataTracked) {
-    const from = $pos.before()
-    const to = $pos.after()
-    return {
-      node,
-      from,
-      to,
-    }
-  } else {
-    const pos = $pos.pos
-    const node = doc.nodeAt(pos)
-    if (!node) {
-      return
-    }
+  if (current) {
+    return current
+  }
+  const node = doc.nodeAt(pos)
+  if (node?.isText) {
     const from = pos - $pos.textOffset
     const to = from + node.nodeSize
     return {
@@ -109,7 +110,7 @@ const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
 const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
-  if (suggestion?.status == CHANGE_STATUS.rejected) {
+  if (!suggestion?.status || suggestion.status === CHANGE_STATUS.rejected) {
     return empty
   }
   const from = selection.from

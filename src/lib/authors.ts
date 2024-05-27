@@ -19,11 +19,7 @@ import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
 
 import { TrackableAttributes } from '../types'
 
-export type AffiliationAttrs = Omit<
-  AffiliationNode['attrs'],
-  'addressLine2' | 'addressLine3' | 'email'
->
-
+export type AffiliationAttrs = TrackableAttributes<AffiliationNode>
 export type ContributorAttrs = TrackableAttributes<ContributorNode>
 
 export const affiliationLabel = (affiliation: AffiliationAttrs) => {
@@ -33,6 +29,20 @@ export const affiliationLabel = (affiliation: AffiliationAttrs) => {
   }
   const department = affiliation.department
   return department ? `${institution} (${department})`.trim() : institution
+}
+
+export const affiliationName = (affiliation: AffiliationAttrs) => {
+  return [
+    affiliation.department,
+    affiliation.institution,
+    affiliation.addressLine1,
+    affiliation.city,
+    affiliation.county,
+    affiliation.country,
+    affiliation.postCode,
+  ]
+    .filter(Boolean)
+    .join(', ')
 }
 
 export const authorLabel = (author: ContributorAttrs) => {

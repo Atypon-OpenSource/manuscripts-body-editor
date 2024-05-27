@@ -139,7 +139,7 @@ export class BibliographyElementBlockView<
     }
   }
 
-  public updateContents = async () => {
+  public updateContents = () => {
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {

@@ -69,7 +69,8 @@ export class PopperManager {
         },
       })
       this.handleDocumentClick = (e) => {
-        if (!container.contains(e.target as Node)) {
+        const node = e.target as Node
+        if (!container.contains(node) && !target.contains(node)) {
           this.destroy()
         }
       }

@@ -21,7 +21,6 @@ import {
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
-import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   AuthorsModal,
@@ -33,7 +32,7 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
-import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -41,7 +40,7 @@ import {
   findChildrenAttrsByType,
   updateNodeAttrs,
 } from '../lib/view'
-import { affiliationsKey } from '../plugins/affiliations'
+import {affiliationsKey, PluginState} from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -53,6 +52,10 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
   container: HTMLElement
   inner: HTMLElement
   popper?: HTMLElement
+  version: string
+
+  public ignoreMutation = () => true
+  public stopEvent = () => true
 
   public initialise = () => {
     this.createDOM()
@@ -66,17 +69,23 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
   }
 
   public updateContents = () => {
-    setTimeout(() => {
-      this.updateClasses()
-      this.updateAttributes()
-      this.container.innerHTML = ''
-      this.buildAuthors()
-      this.createEditButton()
-      this.createLegend()
-    }, 0)
+    const affs = affiliationsKey.getState(this.view.state)
+    if (!affs) {
+      return
+    }
+    if (affs.version === this.version) {
+      this.updateSelection()
+      return
+    }
+    this.version = affs.version
+    this.container.innerHTML = ''
+    this.buildAuthors(affs)
+    this.createEditButton()
+    this.createLegend()
+    this.updateSelection()
   }
 
-  buildAuthors = () => {
+  buildAuthors = (affs: PluginState) => {
     const wrapper = document.createElement('div')
     wrapper.classList.add('contributors-list')
 
@@ -85,9 +94,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
       wrapper.addEventListener('click', this.handleClick)
     }
 
-    const authors = findChildrenByType(this.node, schema.nodes.contributor).map(
-      (n) => (isDeleted(n.node) ? n.node.attrs : getActualAttrs(n.node))
-    ) as ContributorAttrs[]
+    const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
       if (author.role !== 'author') {
@@ -95,6 +102,12 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
       }
       const jointAuthors = this.isJointFirstAuthor(authors, i)
       wrapper.appendChild(this.buildAuthor(author, jointAuthors))
+      if (i !== authors.length - 1) {
+        const separator = document.createElement('span')
+        separator.classList.add('separator')
+        separator.innerHTML = ','
+        wrapper.appendChild(separator)
+      }
     })
 
     this.container.appendChild(wrapper)
@@ -105,10 +118,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
     const suggestion = selectedSuggestionKey.getState(state)?.suggestion
 
-    const containerWrapper = document.createElement('div')
-    containerWrapper.classList.add('contributor-wrapper')
-
-    const container = document.createElement('button')
+    const container = document.createElement('span')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
@@ -151,8 +161,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
       container.appendChild(this.createNote('*', 'Corresponding author'))
     }
 
-    containerWrapper.appendChild(container)
-    return containerWrapper
+    return container
   }
 
   private createNote(text = '', title = '') {
@@ -209,7 +218,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     const state = affiliationsKey.getState(this.view.state)
     if (state?.contributors) {
       const isThereJointContributor = state.contributors.find(
-        ([contributor]) => contributor.attrs.isJointContributor
+        (attrs) => attrs.isJointContributor
       )
       if (isThereJointContributor) {
         const element = document.createElement('p')
@@ -239,6 +248,20 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     const tr = view.state.tr
     tr.setSelection(NodeSelection.create(view.state.doc, pos))
     view.dispatch(tr)
+  }
+
+  private updateSelection = () => {
+    const state = this.view.state
+    const selection = selectedSuggestionKey.getState(state)?.suggestion
+    this.container
+      .querySelectorAll('.selected-suggestion')
+      .forEach((e) => e.classList.remove('selected-suggestion'))
+    if (selection) {
+      const item = this.container.querySelector(
+        `[data-track-id="${selection.id}"]`
+      )
+      item?.classList.add('selected-suggestion')
+    }
   }
 
   public showContextMenu = (element: Element) => {
