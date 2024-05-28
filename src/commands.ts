@@ -714,7 +714,7 @@ export const insertList =
           node.marks
         )
       }
-      dispatch(skipTracking(tr))
+      dispatch(tr)
       return true
     } else {
       // no list found, create new list

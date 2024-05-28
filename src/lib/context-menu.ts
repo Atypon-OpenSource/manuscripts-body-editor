@@ -224,7 +224,6 @@ export class ContextMenu {
     const type = this.node.type
 
     if (type === schema.nodes.list) {
-      console.log('sadnasdjkasndjksandkjsdnjasjknnkdasjkasd')
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (this.node.attrs.type === 'bullet') {

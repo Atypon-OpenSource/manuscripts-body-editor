@@ -83,8 +83,8 @@ const listKeymap: { [key: string]: EditorAction } = {
   Enter: splitListItem(schema.nodes.list_item),
   'Mod-[': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent
   'Mod-]': skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent
-  'Mod-Alt-o': skipCommandTracking(wrapInList(schema.nodes.ordered_list)),
-  'Mod-Alt-k': skipCommandTracking(wrapInList(schema.nodes.bullet_list)),
+  'Mod-Alt-o': skipCommandTracking(wrapInList(schema.nodes.list)),
+  'Mod-Alt-k': skipCommandTracking(wrapInList(schema.nodes.list)),
   'Shift-Tab': skipCommandTracking(liftToOuterList(schema.nodes.list_item)), // outdent, same as Mod-[
   Tab: skipCommandTracking(sinkListItem(schema.nodes.list_item)), // indent, same as Mod-]
   Backspace: skipCommandTracking(listItemBackward),
