@@ -45,8 +45,6 @@ import { isDeleted, isRejectedInsert } from './track-changes-utils'
 
 const popper = new PopperManager()
 
-const listTypes = [schema.nodes.ordered_list, schema.nodes.bullet_list]
-
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
 
 export const sectionLevel = (depth: number) => {
@@ -146,7 +144,7 @@ export class ContextMenu {
       )
     }
 
-    if (hasAny(types, 'paragraph', 'ordered_list', 'bullet_list')) {
+    if (hasAny(types, 'paragraph', 'list')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (types.has('paragraph')) {
@@ -158,19 +156,10 @@ export class ContextMenu {
             )
           }
 
-          if (types.has('ordered_list')) {
+          if (types.has('list')) {
             section.appendChild(
-              this.createMenuItem('Numbered List', () => {
-                insertNode(schema.nodes.ordered_list)
-                popper.destroy()
-              })
-            )
-          }
-
-          if (types.has('bullet_list')) {
-            section.appendChild(
-              this.createMenuItem('Bullet List', () => {
-                insertNode(schema.nodes.bullet_list)
+              this.createMenuItem('List', () => {
+                insertNode(schema.nodes.list)
                 popper.destroy()
               })
             )
@@ -234,22 +223,23 @@ export class ContextMenu {
     const $pos = this.resolvePos()
     const type = this.node.type
 
-    if (listTypes.includes(type)) {
+    if (type === schema.nodes.list) {
+      console.log('sadnasdjkasndjksandkjsdnjasjknnkdasjkasd')
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (type === schema.nodes.bullet_list) {
+          if (this.node.attrs.type === 'bullet') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(schema.nodes.ordered_list)
+                this.changeNodeType(schema.nodes.list, 'order')
                 popper.destroy()
               })
             )
           }
 
-          if (type === schema.nodes.ordered_list) {
+          if (this.node.attrs.type === 'order') {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
-                this.changeNodeType(schema.nodes.bullet_list)
+                this.changeNodeType(schema.nodes.list, 'bullet')
                 popper.destroy()
               })
             )
@@ -505,8 +495,7 @@ export class ContextMenu {
     }
     checkNode('section', insertPos)
     checkNode('paragraph')
-    checkNode('ordered_list')
-    checkNode('bullet_list')
+    checkNode('list')
     checkNode('figure_element')
     checkNode('table_element')
     checkNode('equation_element')
@@ -516,10 +505,11 @@ export class ContextMenu {
     return insertable
   }
 
-  private changeNodeType = (nodeType: ManuscriptNodeType) => {
+  private changeNodeType = (nodeType: ManuscriptNodeType, listType: string) => {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
         id: this.node.attrs.id,
+        type: listType,
       })
     )
     popper.destroy()

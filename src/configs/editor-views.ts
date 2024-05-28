@@ -21,7 +21,6 @@ import affiliation from '../views/affiliation'
 import affiliationsSection from '../views/affiliations'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
-import bulletList from '../views/bullet_list_editable'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
@@ -38,9 +37,9 @@ import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
 import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
+import list from '../views/list_editable'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
-import orderedList from '../views/ordered_list_editable'
 import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
@@ -59,7 +58,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     title: title(props, dispatch),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
-    bullet_list: bulletList(props),
+    list: list(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
@@ -78,7 +77,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     link: link(props, dispatch),
     listing: listing(props),
     listing_element: listingElement(props),
-    ordered_list: orderedList(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),
     placeholder_element: placeholderElement(props),

@@ -410,13 +410,13 @@ const buildOptions = (
           isDisabled: sectionDepth <= 1 && sectionOffset <= 1,
         }),
         buildOption({
-          nodeType: nodes.ordered_list,
+          nodeType: nodes.list,
           value: -3,
           depth: 1,
           isDisabled: true,
         }),
         buildOption({
-          nodeType: nodes.bullet_list,
+          nodeType: nodes.list,
           value: -2,
           depth: 1,
           isDisabled: true,
@@ -496,16 +496,16 @@ const buildOptions = (
           isSelected: true,
         }),
         buildOption({
-          nodeType: nodes.ordered_list,
+          nodeType: nodes.list,
           value: -3,
           depth: 1,
-          action: convertParagraphToList(nodes.ordered_list),
+          action: convertParagraphToList(nodes.list),
         }),
         buildOption({
-          nodeType: nodes.bullet_list,
+          nodeType: nodes.list,
           value: -2,
           depth: 1,
-          action: convertParagraphToList(nodes.bullet_list),
+          action: convertParagraphToList(nodes.list),
         }),
       ]
 
@@ -542,7 +542,7 @@ const buildOptions = (
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
-    case schema.nodes.bullet_list: {
+    case schema.nodes.list: {
       return [
         {
           options: [
@@ -558,17 +558,17 @@ const buildOptions = (
         {
           options: [
             buildOption({
-              nodeType: nodes.ordered_list,
+              nodeType: nodes.list,
               value: -3,
               depth: 1,
-              action: convertListType(nodes.ordered_list, parentElement),
+              action: convertListType(nodes.list, parentElement),
             }),
           ],
         },
       ]
     }
 
-    case parentElementType.schema.nodes.ordered_list: {
+    case parentElementType.schema.nodes.list: {
       return [
         {
           options: [
@@ -584,10 +584,10 @@ const buildOptions = (
         {
           options: [
             buildOption({
-              nodeType: nodes.bullet_list,
+              nodeType: nodes.list,
               value: -3,
               depth: 1,
-              action: convertListType(nodes.bullet_list, parentElement),
+              action: convertListType(nodes.list, parentElement),
             }),
           ],
         },
