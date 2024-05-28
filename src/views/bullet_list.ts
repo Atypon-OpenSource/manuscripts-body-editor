@@ -32,13 +32,12 @@ export class BulletListView<
       const type = (this.node.attrs.listStyleType as JatsStyleType) || 'bullet'
       this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
 
-      if (this.node.attrs.dataTracked) {
-        const classes = [
-          'block',
-          ...getChangeClasses(this.node.attrs.dataTracked),
-        ]
-        this.contentDOM.className = classes.join(' ')
+      const classes = [
+        'block',
+        ...getChangeClasses(this.node.attrs.dataTracked),
+      ]
 
+      if (this.node.attrs.dataTracked) {
         this.dom.setAttribute(
           'data-track-status',
           this.node.attrs.dataTracked[0].status
@@ -51,6 +50,7 @@ export class BulletListView<
         this.dom.removeAttribute('data-track-status')
         this.dom.removeAttribute('data-track-op')
       }
+      this.contentDOM.className = classes.join(' ')
     }
   }
 }
