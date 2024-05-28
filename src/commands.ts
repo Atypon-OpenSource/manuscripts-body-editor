@@ -723,7 +723,6 @@ export const insertList =
       return true
     } else {
       // no list found, create new list
-
       const { selection } = state
       let tr = state.tr
 
