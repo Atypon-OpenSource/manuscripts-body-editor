@@ -33,6 +33,7 @@ import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
+import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
@@ -97,7 +98,11 @@ export const createEditorView = (
     dispatchTransaction: dispatch,
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
+    // TODO:: we get from google doc and ms word bloc,italic mark as span with style font-weight
+    // we can use transformPastedHTML to replace them with a strong,i tag so it can be parsed from DOMParser
+    // transformPastedHTML: ...
     transformPasted,
+    clipboardParser,
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time
