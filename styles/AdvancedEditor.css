@@ -698,7 +698,7 @@ Next levels are shifted 'up' by 1
   background: none;
 }
 
-span.selected-suggestion, div.selected-suggestion .block, div.selected-suggestion:not(:has(.block)) {
+span.selected-suggestion, div.selected-suggestion > .block-container .block, div.selected-suggestion:not(> .block-container) {
   background: #bce7f6 !important;
   border-width: 2px 0 2px 0 !important;
   border-color: #20aedf !important;
@@ -906,4 +906,8 @@ span.selected-suggestion, div.selected-suggestion .block, div.selected-suggestio
 
 * {
   scroll-behavior: smooth;
+}
+
+.ProseMirror li.ProseMirror-selectednode:after {
+  content: none;
 }

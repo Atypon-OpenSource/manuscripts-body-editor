@@ -23,7 +23,7 @@ import { ResolvedPos } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isNodeSelection, isTextSelection } from '../commands'
+import { isTextSelection } from '../commands'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -74,24 +74,20 @@ export default () => {
 }
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
-  if (isTextSelection(state.selection)) {
-    const $cursor = state.selection.$cursor
-    if (!$cursor) {
-      return EMPTY
-    }
-    const selection = getEffectiveSelection(state.doc, $cursor)
-    if (!selection) {
-      return EMPTY
-    }
-    if (selection.node.isText) {
-      return buildTextDecoration(state.doc, selection)
-    } else {
-      return buildNodeDecoration(state.doc, selection)
-    }
-  } else if (isNodeSelection(state.selection)) {
-    return buildNodeDecoration(state.doc, state.selection)
+  const selection = state.selection
+  const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
+  if (!$pos) {
+    return EMPTY
   }
-  return EMPTY
+  const effective = getEffectiveSelection($pos)
+  if (!effective) {
+    return EMPTY
+  }
+  if (effective.node.isText) {
+    return buildTextDecoration(state.doc, effective)
+  } else {
+    return buildNodeDecoration(state.doc, effective)
+  }
 }
 
 /**
@@ -99,10 +95,9 @@ const buildPluginState = (state: ManuscriptEditorState): PluginState => {
  * that changed. This is mainly for cases where inserting a node automatically
  * inserts a bunch of children (e.g. inserting a `figure_element` automatically
  * inserts a `figure`, `figure_caption`, etc.)
- * @param doc
  * @param $pos
  */
-const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
+const getEffectiveSelection = ($pos: ResolvedPos) => {
   let current
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
@@ -120,17 +115,15 @@ const getEffectiveSelection = (doc: ManuscriptNode, $pos: ResolvedPos) => {
     return current
   }
   const parent = $pos.parent
-  if (parent.inlineContent) {
-    const child = parent.childBefore($pos.parentOffset)
-    const node = child.node
-    if (node) {
-      const from = $pos.start() + child.offset
-      const to = from + node.nodeSize
-      return {
-        node,
-        from,
-        to,
-      }
+  const child = parent.childBefore($pos.parentOffset)
+  const node = child.node
+  if (node) {
+    const from = $pos.start() + child.offset
+    const to = from + node.nodeSize
+    return {
+      node,
+      from,
+      to,
     }
   }
 }
