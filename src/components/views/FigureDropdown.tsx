@@ -71,13 +71,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
         <AttachIcon />
       </FilesButton>
       {isOpen && (
-        <DropdownList
-          direction={'left'}
-          width={208}
-          height={187}
-          onClick={toggleOpen}
-          top={7}
-        >
+        <DropdownList direction={'left'} width={208} height={187} top={7}>
           <NestedDropdown
             disabled={!can.replaceFile || supplements.length < 1}
             parentToggleOpen={toggleOpen}
