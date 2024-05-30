@@ -332,21 +332,15 @@ export const getEditorMenus = (
       {
         id: 'insert-bullet-list',
         label: 'Bullet List',
-        isEnabled: isCommandValid(
-          insertList(schema.nodes.list, 'bullet', 'bullet')
-        ),
+        isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
           {
             id: 'bullet-list-context-menu',
             label: '',
             isEnabled: true,
             options: {
-              bullet: doCommand(
-                insertList(schema.nodes.list, 'bullet', 'bullet')
-              ),
-              simple: doCommand(
-                insertList(schema.nodes.list, 'bullet', 'simple')
-              ),
+              bullet: doCommand(insertList(schema.nodes.list, 'bullet')),
+              simple: doCommand(insertList(schema.nodes.list, 'simple')),
             },
           },
         ],
@@ -354,27 +348,25 @@ export const getEditorMenus = (
       {
         id: 'insert-ordered-list',
         label: 'Ordered List',
-        isEnabled: isCommandValid(
-          insertList(schema.nodes.list, 'order', 'order')
-        ),
+        isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [
           {
             id: 'ordered-list-context-menu',
             label: '',
             isEnabled: true,
             options: {
-              order: doCommand(insertList(schema.nodes.list, 'order', 'order')),
+              order: doCommand(insertList(schema.nodes.list, 'order')),
               'alpha-upper': doCommand(
-                insertList(schema.nodes.list, 'order', 'alpha-upper')
+                insertList(schema.nodes.list, 'alpha-upper')
               ),
               'alpha-lower': doCommand(
-                insertList(schema.nodes.list, 'order', 'alpha-lower')
+                insertList(schema.nodes.list, 'alpha-lower')
               ),
               'roman-upper': doCommand(
-                insertList(schema.nodes.list, 'order', 'roman-upper')
+                insertList(schema.nodes.list, 'roman-upper')
               ),
               'roman-lower': doCommand(
-                insertList(schema.nodes.list, 'order', 'roman-lower')
+                insertList(schema.nodes.list, 'roman-lower')
               ),
             },
           },

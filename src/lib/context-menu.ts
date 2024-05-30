@@ -508,7 +508,7 @@ export class ContextMenu {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
         id: this.node.attrs.id,
-        type: listType,
+        listStyleType: listType,
       })
     )
     popper.destroy()

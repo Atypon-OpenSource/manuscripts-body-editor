@@ -17,6 +17,7 @@
 import { ListElement } from '@manuscripts/json-schema'
 import { ManuscriptNode } from '@manuscripts/transform'
 
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -24,15 +25,15 @@ import { createNodeOrElementView } from './creators'
 export type JatsStyleType = NonNullable<ListElement['listStyleType']>
 
 export const JATS_HTML_LIST_STYLE_MAPPING: {
-  [key in JatsStyleType]: string
+  [key in JatsStyleType]: { style: string; type: string }
 } = {
-  simple: 'none',
-  bullet: 'disc',
-  order: 'decimal',
-  'alpha-lower': 'lower-alpha',
-  'alpha-upper': 'upper-alpha',
-  'roman-lower': 'lower-roman',
-  'roman-upper': 'upper-roman',
+  simple: { style: 'none', type: 'ul' },
+  bullet: { style: 'disc', type: 'ul' },
+  order: { style: 'decimal', type: 'ol' },
+  'alpha-lower': { style: 'lower-alpha', type: 'ol' },
+  'alpha-upper': { style: 'upper-alpha', type: 'ol' },
+  'roman-lower': { style: 'lower-roman', type: 'ol' },
+  'roman-upper': { style: 'upper-roman', type: 'ol' },
 }
 
 export class ListView<
@@ -42,23 +43,14 @@ export class ListView<
 
   static getElementType: () => string = () => this.prototype.elementType
 
-  public initialise = () => {
-    this.createDOM()
-    this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
-    this.createElement()
-    this.createGutter(
-      'action-gutter',
-      this.actionGutterButtons().filter(Boolean)
-    )
-    this.updateContents()
-  }
-
   public updateContents = () => {
+    const actualAttrs = getActualAttrs(this.node)
+
     if (this.contentDOM) {
-      this.elementType = this.node.attrs.type === 'bullet' ? 'ul' : 'ol'
-      const type =
-        (this.node.attrs.listStyleType as JatsStyleType) || this.node.attrs.type
-      this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
+      const type = actualAttrs.listStyleType as JatsStyleType
+      this.elementType = JATS_HTML_LIST_STYLE_MAPPING[type].type
+      this.contentDOM.style.listStyleType =
+        JATS_HTML_LIST_STYLE_MAPPING[type].style
 
       // Check and update the element type if necessary
       if (this.contentDOM.nodeName.toLowerCase() !== this.elementType) {
@@ -81,14 +73,6 @@ export class ListView<
     }
   }
 
-  public createElement = () => {
-    this.elementType = this.node.attrs.type === 'bullet' ? 'ul' : 'ol'
-    this.contentDOM = document.createElement(this.elementType)
-    this.contentDOM.className = 'block'
-
-    this.dom.appendChild(this.contentDOM)
-  }
-
   private updateElementType = () => {
     const newElement = document.createElement(this.elementType)
     newElement.className = 'block'
@@ -105,8 +89,8 @@ export class ListView<
 
 export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
-  const type = (node.attrs.listStyleType as JatsStyleType) || node.attrs.type
-  dom.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
+  const type = node.attrs.listStyleType as JatsStyleType
+  dom.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type].style
 }
 export default createNodeOrElementView(
   ListView,
