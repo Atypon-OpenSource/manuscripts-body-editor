@@ -61,8 +61,6 @@ export interface EditorProps {
   cslProps: CSLProps
 
   setSelectedComment: (id?: string, isNew?: boolean) => void
-  setEditorSelectedSuggestion: (id?: string) => void
-  retrySync: (componentIDs: string[]) => Promise<void>
   collabProvider?: CollabProvider
 }
 

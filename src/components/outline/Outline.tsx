@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import TriangleCollapsed from '@manuscripts/assets/react/TriangleCollapsed'
-import TriangleExpanded from '@manuscripts/assets/react/TriangleExpanded'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -54,9 +52,6 @@ export const OutlineItem = styled.div<{
   }
 `
 
-export const StyledTriangleCollapsed = styled(TriangleCollapsed)``
-export const StyledTriangleExpanded = styled(TriangleExpanded)``
-
 export const OutlineItemArrow = styled.button`
   display: inline-block;
   cursor: pointer;
@@ -66,8 +61,7 @@ export const OutlineItemArrow = styled.button`
   flex-shrink: 0;
   font-size: ${(props) => props.theme.font.size.normal};
 
-  &:hover ${StyledTriangleCollapsed} use[fill='#949494'],
-  &:hover ${StyledTriangleExpanded} use[fill='#949494'] {
+  &:hover use {
     fill: #ccc;
   }
 
@@ -78,7 +72,7 @@ export const OutlineItemArrow = styled.button`
 
 export const OutlineItemNoArrow = styled.span`
   display: inline-block;
-  width: ${(props) => props.theme.grid.unit * 5}px;
+  width: 25px;
   flex-shrink: 0;
 `
 

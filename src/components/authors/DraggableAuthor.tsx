@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import CorrespondingAuthorBadge from '@manuscripts/assets/react/CorrespondingAuthorBadge'
-import VerticalEllipsis from '@manuscripts/assets/react/VerticalEllipsis'
-import { Avatar } from '@manuscripts/style-guide'
+import {
+  Avatar,
+  CorrespondingAuthorIcon,
+  VerticalEllipsisIcon,
+} from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import styled from 'styled-components'
@@ -84,7 +86,7 @@ const AuthorName = styled.div`
   flex: 1;
 `
 
-const DragHandle = styled(VerticalEllipsis)`
+const DragHandle = styled(VerticalEllipsisIcon)`
   cursor: move;
 `
 
@@ -159,7 +161,7 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
         <AuthorNotes>
           {author.isCorresponding && (
             <AuthorBadge>
-              <CorrespondingAuthorBadge />
+              <CorrespondingAuthorIcon />
             </AuthorBadge>
           )}
         </AuthorNotes>

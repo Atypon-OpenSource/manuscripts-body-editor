@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Capabilities } from '@manuscripts/style-guide'
+import {
+  Capabilities,
+  TriangleCollapsedIcon,
+  TriangleExpandedIcon,
+} from '@manuscripts/style-guide'
 import {
   isElementNodeType,
   ManuscriptEditorView,
@@ -40,8 +44,6 @@ import {
   OutlineItemLinkText,
   OutlineItemNoArrow,
   OutlineItemPlaceholder,
-  StyledTriangleCollapsed,
-  StyledTriangleExpanded,
 } from './Outline'
 
 const excludedTypes = [
@@ -261,15 +263,11 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   return (
     <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
-      {!isTop && (
+      {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (
             <OutlineItemArrow onClick={toggleOpen}>
-              {isOpen ? (
-                <StyledTriangleExpanded />
-              ) : (
-                <StyledTriangleCollapsed />
-              )}
+              {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}
             </OutlineItemArrow>
           ) : (
             <OutlineItemNoArrow />

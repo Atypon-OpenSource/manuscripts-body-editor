@@ -15,7 +15,7 @@
  */
 
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNodeType, nodeNames, schema } from '@manuscripts/transform'
+import { ManuscriptNodeType, schema } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { DefaultTheme } from 'styled-components'
@@ -37,7 +37,6 @@ const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
 export interface EditableBlockProps extends BaseNodeProps {
   getCapabilities: () => Capabilities
   setSelectedComment: (id?: string, isNew?: boolean) => void
-  retrySync: (componentIDs: string[]) => Promise<void>
   dispatch?: Dispatch
   theme: DefaultTheme
 }
@@ -51,57 +50,7 @@ export const EditableBlock = <
     public gutterButtons = (): HTMLElement[] =>
       [this.createAddButton(), this.createEditButton()].filter(isNotNull)
 
-    public actionGutterButtons = (): HTMLElement[] =>
-      [this.createSyncWarningButton()].filter(isNotNull)
-
-    public createSyncWarningButton = (): HTMLElement | null => {
-      if (!this.props.getCapabilities()?.editArticle) {
-        return null
-      }
-
-      const { retrySync } = this.props
-
-      const warningButton = document.createElement('button')
-      warningButton.classList.add('action-button')
-      warningButton.classList.add('sync-warning-button')
-      // warningButton.innerHTML = this.icons.attention
-
-      warningButton.addEventListener('click', async () => {
-        const errors = this.syncErrors.map((error) => error._id)
-
-        await retrySync(errors)
-      })
-
-      warningButton.addEventListener('mouseenter', () => {
-        const warning = document.createElement('div')
-        warning.className = 'sync-warning'
-
-        warning.appendChild(
-          (() => {
-            const node = document.createElement('p')
-            const humanReadableType = nodeNames.get(this.node.type) || 'element'
-            node.textContent = `This ${humanReadableType.toLowerCase()} failed to be saved.`
-            return node
-          })()
-        )
-
-        warning.appendChild(
-          (() => {
-            const node = document.createElement('p')
-            node.textContent = `Please click to retry, and contact support@manuscriptsapp.com if the failure continues.`
-            return node
-          })()
-        )
-
-        this.props.popper.show(warningButton, warning, 'left')
-      })
-
-      warningButton.addEventListener('mouseleave', () => {
-        this.props.popper.destroy()
-      })
-
-      return warningButton
-    }
+    public actionGutterButtons = (): HTMLElement[] => []
 
     public createAddButton = (): HTMLElement | null => {
       const hasAccess = this.props.getCapabilities()?.editArticle

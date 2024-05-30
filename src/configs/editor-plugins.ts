@@ -29,7 +29,7 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
-import comment_annotation from '../plugins/comments'
+import comments from '../plugins/comments'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import objects from '../plugins/objects'
@@ -38,7 +38,7 @@ import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import editorProps from '../plugins/editor-props'
 import sections from '../plugins/sections'
-import selected_suggestion_ui from '../plugins/selected-suggestion-ui'
+import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
@@ -67,11 +67,11 @@ export default (props: EditorProps) => {
     bibliography(props),
     objects(props),
     affiliations(),
-    comment_annotation(props),
+    comments(props),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    selected_suggestion_ui(props),
+    selected_suggestion(props),
     footnotes(props),
     table_footnote(),
     editorProps(props),

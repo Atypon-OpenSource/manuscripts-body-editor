@@ -15,7 +15,9 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { BibliographyItemNode, schema } from '@manuscripts/transform'
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import { buildComment, schema } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
 
 import { addNodeComment } from '../commands'
 import {
@@ -28,6 +30,10 @@ import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
+import { commentAnnotation } from '../plugins/comment_annotation'
+import { selectedSuggestionKey } from '../plugins/selected-suggestion'
+import { WidgetDecoration } from '../types'
+import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -39,6 +45,7 @@ export class BibliographyElementBlockView<
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
+  private version: string
 
   public showPopper = (id: string) => {
     this.props.popper.destroy() // destroy the old context menu
@@ -84,7 +91,7 @@ export class BibliographyElementBlockView<
     }
   }
 
-  public showContextMenu = (element: HTMLElement) => {
+  private showContextMenu = (element: HTMLElement) => {
     this.props.popper.destroy() // destroy the old context menu
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
@@ -116,6 +123,7 @@ export class BibliographyElementBlockView<
   }
 
   private handleClick = (event: Event) => {
+    this.props.popper.destroy()
     const element = event.target as HTMLElement
     const item = element.closest('.bib-item')
     if (item) {
@@ -123,18 +131,32 @@ export class BibliographyElementBlockView<
       if (marker) {
         const commentID = getCommentIDForNode(item.id)
         this.props.setSelectedComment(commentID)
-      } else {
-        this.showContextMenu(item as HTMLElement)
+        return
       }
+      this.showContextMenu(item as HTMLElement)
+      const node = findChildByID(this.view, item.id)
+      if (!node) {
+        return
+      }
+      const view = this.view
+      const tr = view.state.tr
+      tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
+      view.dispatch(tr)
     }
   }
 
-  public updateContents = async () => {
+  public updateContents = () => {
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
     }
+
+    if (bib.version === this.version) {
+      this.updateSelection()
+      return
+    }
+    this.version = bib.version
 
     const nodes: Map<string, BibliographyItemNode> = new Map()
 
@@ -158,7 +180,7 @@ export class BibliographyElementBlockView<
       const fragment = bibliography[i]
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
-      ).firstElementChild as Element
+      ).firstElementChild as HTMLElement
 
       const node = nodes.get(id) as BibliographyItemNode
       const comment = getCommentIconForNode(this.view.state, node)
@@ -181,6 +203,7 @@ export class BibliographyElementBlockView<
     } else {
       this.container.appendChild(wrapper)
     }
+    this.updateSelection()
   }
 
   public createElement = () => {
@@ -198,6 +221,21 @@ export class BibliographyElementBlockView<
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     deleteNode(this.view, item.id)
+  }
+
+  private updateSelection = () => {
+    const selection = selectedSuggestionKey.getState(
+      this.view.state
+    )?.suggestion
+    this.container
+      .querySelectorAll('.bib-item')
+      .forEach((e) => e.classList.remove('selected-suggestion'))
+    if (selection) {
+      const item = this.container.querySelector(
+        `[data-track-id="${selection.id}"]`
+      )
+      item?.classList.add('selected-suggestion')
+    }
   }
 }
 

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import AddAuthor from '@manuscripts/assets/react/AddAuthor'
 import { generateID, ObjectTypes } from '@manuscripts/json-schema'
-import { Theme } from '@manuscripts/style-guide'
+import { AddAuthorIcon, Theme } from '@manuscripts/style-guide'
 import React, { useContext, useMemo, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import styled, { ThemeContext } from 'styled-components'
@@ -27,9 +26,7 @@ import {
 } from '../../lib/authors'
 import { AffiliationButton } from './AffiliationButton'
 
-const AddAffiliation = styled(AddAuthor)`
-  width: 24px;
-  height: 24px;
+const AddAffiliation = styled(AddAuthorIcon).attrs({ width: 24, height: 24 })`
   margin-right: 4px;
 
   circle,
@@ -113,10 +110,16 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
     const affiliation: AffiliationAttrs = {
       id: generateID(ObjectTypes.Affiliation),
       addressLine1: '',
+      addressLine2: '',
+      addressLine3: '',
       city: '',
       country: '',
       county: '',
       department: '',
+      email: {
+        href: '',
+        text: '',
+      },
       institution: institution,
       postCode: '',
       priority: 0,
