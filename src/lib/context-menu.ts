@@ -22,6 +22,8 @@ import {
 import {
   InlineFootnoteNode,
   isInBibliographySection,
+  JATS_HTML_LIST_STYLE_MAPPING,
+  JatsStyleType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -226,7 +228,11 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (this.node.attrs.type === 'bullet') {
+          const list_type =
+            JATS_HTML_LIST_STYLE_MAPPING[
+              this.node.attrs.listStyleType as JatsStyleType
+            ].type
+          if (list_type === 'ul') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
                 this.changeNodeType(schema.nodes.list, 'order')
@@ -235,7 +241,7 @@ export class ContextMenu {
             )
           }
 
-          if (this.node.attrs.type === 'order') {
+          if (list_type === 'ol') {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
                 this.changeNodeType(schema.nodes.list, 'bullet')

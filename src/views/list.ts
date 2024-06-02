@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-import { ListElement } from '@manuscripts/json-schema'
-import { ManuscriptNode } from '@manuscripts/transform'
+import {
+  JATS_HTML_LIST_STYLE_MAPPING,
+  JatsStyleType,
+  ManuscriptNode,
+} from '@manuscripts/transform'
 
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
-
-export type JatsStyleType = NonNullable<ListElement['listStyleType']>
-
-export const JATS_HTML_LIST_STYLE_MAPPING: {
-  [key in JatsStyleType]: { style: string; type: string }
-} = {
-  simple: { style: 'none', type: 'ul' },
-  bullet: { style: 'disc', type: 'ul' },
-  order: { style: 'decimal', type: 'ol' },
-  'alpha-lower': { style: 'lower-alpha', type: 'ol' },
-  'alpha-upper': { style: 'upper-alpha', type: 'ol' },
-  'roman-lower': { style: 'lower-roman', type: 'ol' },
-  'roman-upper': { style: 'upper-roman', type: 'ol' },
-}
-
 export class ListView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {

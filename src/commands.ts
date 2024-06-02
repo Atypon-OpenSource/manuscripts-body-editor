@@ -685,7 +685,7 @@ function toggleOffList(
 }
 
 export const insertList =
-  (type: ManuscriptNodeType, listType: string, style?: string) =>
+  (type: ManuscriptNodeType, style?: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     const list = findSelectedList(state.selection)
 
@@ -709,7 +709,6 @@ export const insertList =
           {
             ...node.attrs,
             listStyleType: style,
-            type: listType,
           },
           node.marks
         )
@@ -718,7 +717,7 @@ export const insertList =
       return true
     } else {
       // no list found, create new list
-      const command = wrapInList(type, { listStyleType: style, type: listType })
+      const command = wrapInList(type, { listStyleType: style })
       return skipCommandTracking(command)(state, dispatch)
     }
   }
