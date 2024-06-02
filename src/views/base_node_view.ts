@@ -24,7 +24,6 @@ import { SyncError } from '../types'
 export interface BaseNodeProps {
   popper: PopperManager
   cslProps: CSLProps
-  setEditorSelectedSuggestion: (id?: string) => void
 }
 
 export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {

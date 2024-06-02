@@ -20,69 +20,92 @@
  */
 import {
   AffiliationNode,
-  ContributorNode,
   isAffiliationNode,
   isContributorNode,
   ManuscriptNode,
 } from '@manuscripts/transform'
+import { isEqual } from 'lodash'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import {
+  AffiliationAttrs,
+  authorComparator,
+  ContributorAttrs,
+} from '../lib/authors'
 import {
   getActualAttrs,
   isDeleted,
   isPendingInsert,
 } from '../lib/track-changes-utils'
 
-interface PluginState {
+export interface PluginState {
   version: string
-  indexedAffiliationIds: Map<string, number> // key is authore id
-  contributors: Array<[ContributorNode, number]>
-  affiliations: Array<[AffiliationNode, number]>
+  indexedAffiliationIds: Map<string, number> // key is affiliation id
+  contributors: ContributorAttrs[]
+  affiliations: AffiliationAttrs[]
+  decorations: DecorationSet
 }
 
 export const affiliationsKey = new PluginKey<PluginState>('affiliations')
 
 let id = 1
-export const buildPluginState = (doc: ManuscriptNode): PluginState => {
-  const contributors: Array<[ContributorNode, number]> = []
-  const affiliations: Array<[AffiliationNode, number]> = []
+export const buildPluginState = (
+  doc: ManuscriptNode,
+  $old?: PluginState
+): PluginState => {
+  const nodes: [ManuscriptNode, number][] = []
+  const contributors: ContributorAttrs[] = []
+  const affiliations: AffiliationAttrs[] = []
 
   doc.descendants((node, pos) => {
-    if (isDeleted(node)) {
-      return
-    }
+    const attrs = isDeleted(node) ? node.attrs : getActualAttrs(node)
     if (isAffiliationNode(node)) {
-      affiliations.push([node, pos])
+      nodes.push([node, pos])
+      affiliations.push(attrs as AffiliationAttrs)
     }
     if (isContributorNode(node)) {
-      contributors.push([node, pos])
+      nodes.push([node, pos])
+      contributors.push(attrs as ContributorAttrs)
     }
   })
 
+  if (
+    $old &&
+    isEqual(contributors, $old.contributors) &&
+    isEqual(affiliations, $old.affiliations)
+  ) {
+    return $old
+  }
+
   const iAffiliations = new Set<string>()
 
-  contributors
-    .sort(([a], [b]) => {
-      return (
-        Number(getActualAttrs(a).priority) - Number(getActualAttrs(b).priority)
-      )
+  contributors.sort(authorComparator).forEach((attrs) => {
+    attrs.affiliations.forEach((aff) => {
+      iAffiliations.add(aff)
     })
-    .forEach(([author]) => {
-      getActualAttrs(author).affiliations.forEach((aff) => {
-        iAffiliations.add(aff)
-      })
-    })
+  })
 
   const indexedAffiliationIds = new Map<string, number>(
     [...iAffiliations].map((id, i) => [id, i + 1])
   )
 
+  const version = String(id++)
+  const decorations: Decoration[] = []
+  nodes.forEach(([node, pos]) => {
+    decorations.push(
+      Decoration.node(pos, pos + node.nodeSize, {
+        version,
+      })
+    )
+  })
+
   return {
-    version: String(id++),
+    version,
     indexedAffiliationIds,
     contributors,
     affiliations,
+    decorations: DecorationSet.create(doc, decorations),
   }
 }
 
@@ -96,68 +119,60 @@ export default () => {
       },
 
       apply(tr, value, oldState, newState): PluginState {
-        const prevPluginState = affiliationsKey.getState(oldState)
-        if (!tr.docChanged && prevPluginState) {
-          return prevPluginState
+        const $old = affiliationsKey.getState(oldState)
+        if (!tr.docChanged && $old) {
+          return $old
         } else {
-          return buildPluginState(newState.doc)
+          return buildPluginState(newState.doc, $old)
         }
       },
     },
 
     appendTransaction(transactions, oldState, newState) {
-      const { indexedAffiliationIds } = affiliationsKey.getState(
-        newState
-      ) as PluginState
-
-      if (!transactions.find((tr) => tr.docChanged)) {
+      const affs = affiliationsKey.getState(newState)
+      if (!affs || !transactions.find((tr) => tr.docChanged)) {
         return
       }
+      const $old = affiliationsKey.getState(oldState) as PluginState
 
-      const oldPluginState = affiliationsKey.getState(oldState) as PluginState
-      const { tr } = newState
-      const affiliations: Array<[AffiliationNode, number]> = []
-
+      const affiliations = new Map<string, [AffiliationNode, number]>()
       newState.doc.descendants((node, pos) => {
-        if (isDeleted(node)) {
-          return
-        }
         if (isAffiliationNode(node)) {
-          affiliations.push([node, pos])
+          affiliations.set(node.attrs.id, [node, pos])
         }
       })
 
-      for (const [id] of oldPluginState.indexedAffiliationIds.entries()) {
-        if (!indexedAffiliationIds.has(id)) {
-          const affiliation = affiliations.find(
-            ([node]) => node.attrs.id === id
-          )
-          if (affiliation && !isPendingInsert(affiliation[0])) {
-            tr.delete(affiliation[1], affiliation[1] + affiliation[0].nodeSize)
-          }
+      const deleteIDs = []
+
+      for (const [id] of $old.indexedAffiliationIds.entries()) {
+        if (!affs.indexedAffiliationIds.has(id)) {
+          deleteIDs.push(id)
         }
       }
 
+      if (!deleteIDs.length) {
+        return
+      }
+
+      const tr = newState.tr
       tr.setMeta('origin', 'affiliations')
+
+      for (const id of deleteIDs) {
+        const affiliation = affiliations.get(id)
+        if (!affiliation) {
+          continue
+        }
+        const [node, pos] = affiliation
+        if (node && !isPendingInsert(node)) {
+          tr.delete(pos, pos + node.nodeSize)
+        }
+      }
 
       return tr
     },
 
     props: {
-      decorations: (state) => {
-        const decorations: Decoration[] = []
-        const aff = affiliationsKey.getState(state) as PluginState
-        const nodes = [...aff.contributors, ...aff.affiliations]
-        nodes.forEach(([node, pos]) => {
-          decorations.push(
-            Decoration.node(pos, pos + node.nodeSize, {
-              version: aff.version,
-            })
-          )
-        })
-
-        return DecorationSet.create(state.doc, decorations)
-      },
+      decorations: (state) => affiliationsKey.getState(state)?.decorations,
     },
   })
 }
