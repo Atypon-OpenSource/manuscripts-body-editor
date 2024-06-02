@@ -110,10 +110,16 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
     const affiliation: AffiliationAttrs = {
       id: generateID(ObjectTypes.Affiliation),
       addressLine1: '',
+      addressLine2: '',
+      addressLine3: '',
       city: '',
       country: '',
       county: '',
       department: '',
+      email: {
+        href: '',
+        text: '',
+      },
       institution: institution,
       postCode: '',
       priority: 0,

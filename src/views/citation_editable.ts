@@ -38,10 +38,6 @@ import { BibliographyItemAttrs, CitationAttrs } from '../lib/references'
 import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import {
-  selectedSuggestionKey,
-  SET_SUGGESTION_ID,
-} from '../plugins/selected-suggestion-ui'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -69,18 +65,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public selectNode = () => {
-    const can = this.props.getCapabilities()
-    const dataTracked = this.node.attrs.dataTracked
-    const isSelectedSuggestion = !!selectedSuggestionKey
-      .getState(this.view.state)
-      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-
     this.dom.classList.add('ProseMirror-selectednode')
-    if (dataTracked && !isSelectedSuggestion) {
-      this.view.dispatch(
-        this.view.state.tr.setMeta(SET_SUGGESTION_ID, dataTracked[0].id)
-      )
-    } else if (can.seeReferencesButtons && !isDeleted(this.node)) {
+    const can = this.props.getCapabilities()
+    if (can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (!attrs.rids.length) {
         this.showPopper()
