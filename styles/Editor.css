@@ -1000,8 +1000,8 @@
   position: relative;
 }
 
-.general-table-footnote > p {
-  padding-bottom: 10px;
+.general-table-footnote > p:not(:last-child) {
+  padding-bottom: 8px;
 }
 
 .ProseMirror .table-footnotes-element .footnote-selected,
