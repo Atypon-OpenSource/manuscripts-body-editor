@@ -438,7 +438,7 @@ describe('editor view', () => {
 
     const orderedList = sectionWithList.content.child(1)
     expect(orderedList.type).toBe(
-      sectionWithList.type.schema.nodes.ordered_list
+      sectionWithList.type.schema.nodes.list
     )
     expect(orderedList.textContent).toBe('Test ')
 
