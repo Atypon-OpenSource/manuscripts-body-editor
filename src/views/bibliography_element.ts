@@ -16,7 +16,7 @@
 
 import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { buildComment, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -27,14 +27,10 @@ import {
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { deleteNode, updateNodeAttrs } from '../lib/view'
+import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentAnnotation } from '../plugins/comment_annotation'
-import {
-  CLEAR_SUGGESTION_ID,
-  selectedSuggestionKey,
-  SET_SUGGESTION_ID,
-} from '../plugins/selected-suggestion-ui'
+import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { WidgetDecoration } from '../types'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
@@ -52,7 +48,7 @@ export class BibliographyElementBlockView<
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
-  private clickedElementId: string | null = null // for storing element.id which should have context menu displayed
+  private version: string
 
   public showPopper = (id: string) => {
     this.props.popper.destroy() // destroy the old context menu
@@ -95,24 +91,22 @@ export class BibliographyElementBlockView<
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
 
-  public showContextMenu = (elementId: string) => {
+  private showContextMenu = (element: HTMLElement) => {
     this.props.popper.destroy() // destroy the old context menu
-    this.clickedElementId = null // reset clicked element id
     const can = this.props.getCapabilities()
-    const element = document.getElementById(elementId) as Element
     const componentProps: ContextMenuProps = {
       actions: [],
     }
     if (can.editCitationsAndRefs) {
       componentProps.actions.push({
         label: 'Edit',
-        action: () => this.handleEdit(elementId),
+        action: () => this.handleEdit(element.id),
         icon: 'EditIcon',
       })
     }
     componentProps.actions.push({
       label: 'Comment',
-      action: () => this.handleComment(elementId),
+      action: () => this.handleComment(element.id),
       icon: 'AddComment',
     })
 
@@ -128,34 +122,39 @@ export class BibliographyElementBlockView<
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  private onClickHandler = (elementId: string, dataTracked?: TrackedAttrs) => {
-    // store clicked element
-    this.clickedElementId = elementId
-    const isSelectedSuggestion = !!selectedSuggestionKey
-      .getState(this.view.state)
-      ?.find(this.getPos(), this.getPos() + this.node.nodeSize).length
-    const { tr, doc } = this.view.state
-    tr.setSelection(NodeSelection.create(doc, this.getPos()))
-    if (dataTracked && dataTracked.status !== CHANGE_STATUS.rejected) {
-      tr.setMeta(SET_SUGGESTION_ID, dataTracked.id)
-    } else {
-      if (isSelectedSuggestion) {
-        tr.setMeta(CLEAR_SUGGESTION_ID, true)
-      } else {
-        this.showContextMenu(elementId)
+  private handleClick = (event: Event) => {
+    this.props.popper.destroy()
+    const element = event.target as HTMLElement
+    const item = element.closest('.bib-item')
+    if (item) {
+      this.showContextMenu(item as HTMLElement)
+      const node = findChildByID(this.view, item.id)
+      if (!node) {
+        return
       }
+      const view = this.view
+      const tr = view.state.tr
+      tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
+      view.dispatch(tr)
     }
-    this.view.dispatch(tr)
   }
 
-  public updateContents = async () => {
+  public updateContents = () => {
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
+    if (!bib) {
+      return
+    }
+
+    if (bib.version === this.version) {
+      this.updateSelection()
+      return
+    }
+    this.version = bib.version
+
     const commentsDecorationSet = commentAnnotation.getState(this.view.state)
-    const selectedSuggestion = selectedSuggestionKey.getState(this.view.state)
     const commentElementMap: Map<string, HTMLElement> = new Map()
     const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
-    let selectedBibItemSuggestion
 
     this.node.descendants((node, pos) => {
       const nodePosition = this.getPos() + pos + 2
@@ -179,59 +178,34 @@ export class BibliographyElementBlockView<
         const lastChange = dataTracked[dataTracked.length - 1]
         dataTrackedMap.set(node.attrs.id, lastChange)
       }
-
-      if (
-        dataTracked?.length &&
-        selectedSuggestion?.find(nodePosition, nodePosition + node.nodeSize)
-          .length
-      ) {
-        selectedBibItemSuggestion = node.attrs.id
-      }
     })
 
     const can = this.props.getCapabilities()
 
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
-
-    if (!bib) {
-      return
+    if (can.seeReferencesButtons) {
+      wrapper.addEventListener('click', this.handleClick)
     }
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {
-      const id = meta.entry_ids[i]
+      const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
-      ).firstElementChild as Element
+      ).firstElementChild as HTMLElement
 
       const commentElement = commentElementMap.get(element.id)
 
       if (commentElement) {
         element.appendChild(commentElement)
       }
-
       const dataTracked = dataTrackedMap.get(element.id)
       if (dataTracked) {
-        element.classList.add(
-          'attrs-track-mark',
-          ...getChangeClasses([dataTracked])
-        )
-      }
-
-      if (
-        selectedBibItemSuggestion &&
-        selectedBibItemSuggestion === element.id
-      ) {
-        element.classList.add('selected-suggestion')
-      }
-
-      if (can.seeReferencesButtons) {
-        element.addEventListener('click', () =>
-          this.onClickHandler(element.id, dataTracked)
-        )
+        element.classList.add(...getChangeClasses([dataTracked]))
+        element.dataset.trackId = dataTracked.id
       }
 
       wrapper.append(element)
@@ -243,11 +217,7 @@ export class BibliographyElementBlockView<
     } else {
       this.container.appendChild(wrapper)
     }
-
-    // if there is an element which was clicked, show ContextMenu
-    if (this.clickedElementId) {
-      this.showContextMenu(this.clickedElementId)
-    }
+    this.updateSelection()
   }
 
   public createElement = () => {
@@ -265,6 +235,21 @@ export class BibliographyElementBlockView<
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     deleteNode(this.view, item.id)
+  }
+
+  private updateSelection = () => {
+    const selection = selectedSuggestionKey.getState(
+      this.view.state
+    )?.suggestion
+    this.container
+      .querySelectorAll('.bib-item')
+      .forEach((e) => e.classList.remove('selected-suggestion'))
+    if (selection) {
+      const item = this.container.querySelector(
+        `[data-track-id="${selection.id}"]`
+      )
+      item?.classList.add('selected-suggestion')
+    }
   }
 }
 

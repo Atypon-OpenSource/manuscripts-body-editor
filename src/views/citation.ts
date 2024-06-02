@@ -49,12 +49,13 @@ export class CitationView<PropsType extends BaseNodeProps>
       return
     }
 
-    const classes = [
-      'citation',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
     const element = document.createElement('span')
-    element.className = classes.join(' ')
+    element.classList.add('citation')
+    if (this.node.attrs.dataTracked?.length) {
+      element.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
+      element.dataset.trackId = this.node.attrs.dataTracked[0].id
+    }
+
     const text = bib.renderedCitations.get(this.node.attrs.id)
     const fragment = sanitize(
       text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
