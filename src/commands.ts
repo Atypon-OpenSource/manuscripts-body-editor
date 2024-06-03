@@ -52,7 +52,11 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { findWrapping, liftTarget } from 'prosemirror-transform'
+import {
+  findWrapping,
+  liftTarget,
+  ReplaceAroundStep,
+} from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
@@ -60,7 +64,6 @@ import {
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
-import { skipCommandTracking } from './keys/list'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
@@ -692,7 +695,7 @@ function toggleOffList(
 
 export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const list = findSelectedList(state.selection)
 
     if (list) {
@@ -723,8 +726,27 @@ export const insertList =
       return true
     } else {
       // no list found, create new list
-      const command = wrapInList(type, { listStyleType: style })
-      return skipCommandTracking(command)(state, dispatch)
+      const { selection } = state
+      let tr = state.tr
+
+      return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
+        // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
+        // as we have another ReplaceStep that will make transaction more complicated, so to make it easy to tracker we dispatch first ReplaceAroundStep
+        // then will dispatch reminder steps in one transaction
+        const range = selection.$from.blockRange(selection.$to)
+        if (range && dispatch) {
+          tempTr.steps.map((step) => {
+            if (step instanceof ReplaceAroundStep) {
+              dispatch(tr.step(step))
+              tr = view?.state.tr || tr
+            } else {
+              tr.step(step)
+            }
+          })
+
+          dispatch(tr)
+        }
+      })
     }
   }
 
