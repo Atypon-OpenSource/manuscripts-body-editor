@@ -13,39 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  ManuscriptNode,
+  ManuscriptTransaction,
+  schema,
+} from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
-import {Decoration, DecorationSet, EditorView} from 'prosemirror-view'
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import {
   Comment,
   CommentAttrs,
+  CommentKey,
   CommentRange,
-  getCommentID, getCommentIDForNode, getCommentMarkerID,
+  CommentSelection,
+  createCommentMarker,
+  getCommentKey,
   HighlightMarkerAttrs,
   InlineComment,
   NodeComment,
 } from '../lib/comments'
 
 export const commentsKey = new PluginKey<PluginState>('comments')
-export const SET_COMMENT = 'SET_COMMENT'
-
-interface CommentsPluginProps {
-  setSelectedComment: (id?: string) => void
-}
+const COMMENT_SELECTION = 'comment-selection'
+const EMPTY_SELECTION = {}
 
 export interface PluginState {
   decorations: DecorationSet
-  nodeDecorations: Map<string, Decoration>
   comments: Map<string, Comment>
-  commentIDs: Map<string, string>
+  commentsByKey: Map<CommentKey, Comment[]>
+  selection?: CommentSelection
 }
 
 /**
  * This plugin creates a icon decoration for both inline and block comment.
  */
-export default (props: CommentsPluginProps) => {
+export default () => {
   return new Plugin<PluginState>({
     key: commentsKey,
     state: {
@@ -53,31 +57,59 @@ export default (props: CommentsPluginProps) => {
         return buildPluginState(state.doc)
       },
       apply: (tr, value) => {
-        if (tr.docChanged) {
-          return buildPluginState(tr.doc)
+        if (tr.docChanged || tr.getMeta(COMMENT_SELECTION)) {
+          const selection = tr.getMeta(COMMENT_SELECTION) || value.selection
+          return buildPluginState(
+            tr.doc,
+            selection === EMPTY_SELECTION ? undefined : selection
+          )
         }
         return value
       },
     },
     props: {
       decorations: (state) => commentsKey.getState(state)?.decorations,
-      handleClick: (view: EditorView, pos: number) => {
-        const comments = commentsKey.getState(view.state)
-        if (!comments) {
+      handleClick: (view: EditorView, pos: number, e: MouseEvent) => {
+        const state = view.state
+        const com = commentsKey.getState(state)
+        const target = e.target as HTMLElement
+        const marker = target.closest('[data-key]') as HTMLElement
+        //don't dispatch a transaction if both empty
+        if (!marker && !com?.selection) {
           return
         }
-        const decorations = comments.decorations.find(pos, pos)
-        if (decorations.length) {
-          const decoration = decorations[0]
-          console.log(decoration)
-          const id = decoration.spec.id
-          props.setSelectedComment(id)
+        const tr = state.tr
+        if (marker) {
+          const key = marker.dataset.key as CommentKey
+          setCommentSelection(tr, key, undefined, false)
         } else {
-          props.setSelectedComment(undefined)
+          clearCommentSelection(tr)
         }
+        view.dispatch(tr)
       },
     },
   })
+}
+
+export const setCommentSelection = (
+  tr: ManuscriptTransaction,
+  key: CommentKey,
+  id: string | undefined,
+  isNew: boolean
+) => {
+  tr.setMeta(COMMENT_SELECTION, {
+    key,
+    id,
+    isNew,
+  })
+  tr.setMeta('origin', commentsKey)
+  return tr
+}
+
+export const clearCommentSelection = (tr: ManuscriptTransaction) => {
+  tr.setMeta(COMMENT_SELECTION, EMPTY_SELECTION)
+  tr.setMeta('origin', commentsKey)
+  return tr
 }
 
 const findCommentRanges = (doc: ManuscriptNode) => {
@@ -122,20 +154,26 @@ const findComments = (doc: ManuscriptNode) => {
   return commentsByTarget
 }
 
-const buildPluginState = (doc: ManuscriptNode) => {
+const buildPluginState = (
+  doc: ManuscriptNode,
+  selection?: CommentSelection
+) => {
   const commentsByTarget = findComments(doc)
   const ranges = findCommentRanges(doc)
 
   const decorations: Decoration[] = []
-  const nodeDecorations = new Map<string, Decoration>()
-  const commentByID = new Map<string, Comment>()
-  const commentIDs = new Map<string, string>()
+  const allComments: Comment[] = []
 
   doc.descendants((node, pos) => {
     const id = node.attrs.id
     const comments = commentsByTarget.get(id)
     if (!comments || !comments.length) {
       return
+    }
+
+    const target = {
+      node,
+      pos,
     }
 
     const nodeComments: NodeComment[] = []
@@ -145,11 +183,14 @@ const buildPluginState = (doc: ManuscriptNode) => {
     for (const attrs of comments) {
       const id = attrs.id
       const range = ranges.get(id)
+      const key = getCommentKey(attrs, range, node)
       const comment = {
+        key,
         attrs,
+        target,
         range,
       }
-      commentByID.set(id, comment)
+      allComments.push(comment)
       if (!comment.range) {
         nodeComments.push(comment)
       } else if (comment.range.size) {
@@ -159,36 +200,47 @@ const buildPluginState = (doc: ManuscriptNode) => {
       }
     }
     for (const comment of highlightComments) {
-      const id = getCommentID(comment)
-      commentIDs.set(comment.attrs.id, id)
-      decorations.push(highlight(id, comment.range))
+      const key = comment.key
+      const range = comment.range
+      decorations.push(createHighlightDecoration(key, range, selection))
     }
-    for (const comment of pointComments) {
-      const id = getCommentID(comment)
-      commentIDs.set(comment.attrs.id, id)
-      //todo handle multiple point comments at the same pos
-      const toDOM = () => getMarkerDOM(id, node, true)
-      decorations.push(commentIcon(id, comment.range.pos, toDOM, id))
+    if (pointComments.length) {
+      groupByKey(pointComments).forEach((comments, key) => {
+        const count = comments.length
+        const pos = comments[0].range.pos
+        decorations.push(
+          createMarkerDecoration(key, 'span', pos, count, selection)
+        )
+      })
     }
     //node comments
     if (nodeComments.length) {
-      const id = getCommentIDForNode(node.attrs.id)
       const count = nodeComments.length
-      const key = `${id}-${count}`
-      nodeComments.forEach((c) => commentIDs.set(c.attrs.id, id))
-      const toDOM = () => getMarkerDOM(id, node, node.isAtom, count)
-      const decoration = commentIcon(id, getDecorationPos(node, pos), toDOM, key)
-      decorations.push(decoration)
-      nodeDecorations.set(node.attrs.id, decoration)
+      const key = nodeComments[0].key
+      const tagName = node.isAtom ? 'span' : 'div'
+      const dpos = getDecorationPos(node, pos)
+      decorations.push(
+        createMarkerDecoration(key, tagName, dpos, count, selection)
+      )
     }
   })
 
   return {
     decorations: DecorationSet.create(doc, decorations),
-    nodeDecorations,
-    comments: commentByID,
-    commentIDs,
+    comments: new Map(allComments.map((c) => [c.attrs.id, c])),
+    commentsByKey: groupByKey(allComments),
+    selection,
   }
+}
+
+const groupByKey = <T extends Comment>(comments: T[]): Map<CommentKey, T[]> => {
+  const map = new Map()
+  for (const comment of comments) {
+    const key = comment.key
+    const value = map.get(key) || []
+    map.set(key, [...value, comment])
+  }
+  return map
 }
 
 const getDecorationPos = (node: ManuscriptNode, pos: number) => {
@@ -200,71 +252,38 @@ const getDecorationPos = (node: ManuscriptNode, pos: number) => {
   }
 }
 
-const highlight = (id: string, range: CommentRange) => {
+const createHighlightDecoration = (
+  key: CommentKey,
+  range: CommentRange,
+  selection: CommentSelection | undefined
+) => {
+  const classNames = ['highlight']
+  if (key === selection?.key) {
+    classNames.push('selected-comment')
+  }
   return Decoration.inline(range.pos, range.pos + range.size, {
     nodeName: 'span',
-    class: 'highlight',
-    id: getCommentMarkerID(id),
-  }, {
-    id,
+    class: classNames.join(' '),
+    'data-key': key,
   })
 }
 
-const commentIcon = (id: string, pos: number, toDOM: any, key: string) => {
-  return Decoration.widget(pos, toDOM, {
-    id,
-    key,
-    toDOM,
-  })
-}
-
-export const getMarkerDOM = (
-  id: string,
-  target: ManuscriptNode,
-  isInline: boolean,
-  count = 1
+const createMarkerDecoration = (
+  key: CommentKey,
+  tagName: string,
+  pos: number,
+  count: number,
+  selection: CommentSelection | undefined
 ) => {
-  const element = document.createElement(isInline ? 'span' : 'div')
-  element.id = getCommentMarkerID(id)
-
-  const classNames = ['block-comment-button']
-  switch (target.type) {
-    case schema.nodes.section:
-    case schema.nodes.footnotes_section:
-    case schema.nodes.bibliography_section:
-      classNames.push('block-comment')
-      break
-    case schema.nodes.figure_element:
-      classNames.push('figure-comment')
-      break
-    case schema.nodes.bibliography_item:
-      classNames.push('bibliography-comment')
-      break
-    default:
-      classNames.push('inline-comment')
+  const isSelected = selection?.key === key
+  const toDOM = () => {
+    const marker = createCommentMarker(tagName, key, count)
+    if (isSelected) {
+      marker.classList.add('selected-comment')
+    }
+    return marker
   }
-
-  if (isInline) {
-    classNames.push('point-comment')
-  }
-
-  element.classList.add(...classNames)
-
-  let html = `
-      <svg class="comment-icon" width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4.0625 2.9375V7.3125L1.4375 11.6875H12.8125C13.7794 11.6875 14.5625 10.9044 14.5625 9.9375V2.9375C14.5625 1.97062 13.7794 1.1875 12.8125 1.1875H5.8125C4.84562 1.1875 4.0625 1.97062 4.0625 2.9375Z"
-                fill="#FFFCDB" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M6.6875 4.6875H11.9375" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M6.6875 8.1875H9.3125" stroke="#FFBD26" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    `
-
-  if (count > 1) {
-    html += ` <svg class="group-comment-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="12" height="12" rx="6" fill="#F7B314"></rect>
-          <text x="6" y="8" fill="#FFF" font-size="9px" text-anchor="middle" font-weight="400">${count}</text>
-      </svg>`
-  }
-  element.innerHTML = html
-  return element
+  return Decoration.widget(pos, toDOM, {
+    key: `${key}-${count}-${isSelected}`,
+  })
 }

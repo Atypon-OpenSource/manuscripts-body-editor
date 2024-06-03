@@ -30,13 +30,13 @@ import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
+import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
-import editorProps from '../plugins/editor-props'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
@@ -50,7 +50,6 @@ export default (props: EditorProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     trackChangesPlugin({
       userID: props.userID,
@@ -67,11 +66,11 @@ export default (props: EditorProps) => {
     bibliography(props),
     objects(props),
     affiliations(),
-    comments(props),
+    comments(),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    selected_suggestion(props),
+    selected_suggestion(),
     footnotes(props),
     table_footnote(),
     editorProps(props),

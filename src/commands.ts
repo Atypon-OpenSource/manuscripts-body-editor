@@ -59,9 +59,11 @@ import {
 import { EditorView } from 'prosemirror-view'
 
 import { skipCommandTracking } from './keys/list'
+import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
@@ -1013,43 +1015,32 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.figure_element ||
   type === schema.nodes.table_element
 
-const getCommentTarget = (node: ManuscriptNode) => {
-  if (node.type === schema.nodes.keywords) {
-    const keywordGroups = findChildrenByType(
-      node,
-      schema.nodes.keyword_group,
-      true
-    )
-    return keywordGroups.length ? keywordGroups[0].node : node
-  }
-  return node
-}
-
 export const addNodeComment = (
   node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  node = getCommentTarget(node)
   if (!isCommentingAllowed(node.type)) {
     return false
   }
 
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
-  const comment = schema.nodes.comment.create({
+  const attrs = {
     id: generateID(ObjectTypes.CommentAnnotation),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
-  })
+  } as CommentAttrs
+  const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
   const pos = comments.pos + 1
 
   const tr = state.tr.insert(pos, comment)
+  const key = getCommentKey(attrs, undefined, node)
+  setCommentSelection(tr, key, attrs.id, true)
   if (dispatch) {
-    dispatch(skipTracking(tr))
-    props.setSelectedComment(comment.attrs.id, true)
+    dispatch(tr)
   }
   return true
 }
@@ -1068,7 +1059,7 @@ export const addInlineComment = (
 
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
-  const comment = schema.nodes.comment.create({
+  const attrs = {
     id: generateID(ObjectTypes.CommentAnnotation),
     contents: '',
     target: node.attrs.id,
@@ -1078,7 +1069,8 @@ export const addInlineComment = (
       from,
       to,
     },
-  })
+  } as CommentAttrs
+  const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
   const pos = comments.pos + 1
 
@@ -1097,7 +1089,6 @@ export const addInlineComment = (
       tid: node.attrs.id,
       position: 'start',
     })
-
     const end = schema.nodes.highlight_marker.create({
       id: comment.attrs.id,
       tid: node.attrs.id,
@@ -1105,9 +1096,11 @@ export const addInlineComment = (
     })
     tr.insert(from, start).insert(to + 1, end)
   }
+  const range = getCommentRange(attrs)
+  const key = getCommentKey(attrs, range, node)
+  setCommentSelection(tr, key, attrs.id, true)
   if (dispatch) {
-    dispatch(skipTracking(tr))
-    props.setSelectedComment(comment.attrs.id, true)
+    dispatch(tr)
   }
   return true
 }

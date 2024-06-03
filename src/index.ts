@@ -25,14 +25,7 @@ export { PopperManager } from './lib/popper'
 export * from './toolbar'
 export * from './lib/comments'
 export * from './plugins/comments'
-export { SET_SUGGESTION_ID } from './plugins/selected-suggestion-ui'
 export { selectedSuggestionKey } from './plugins/selected-suggestion'
-export * from './plugins/highlight'
-export {
-  commentScroll,
-  isThereSelector,
-  isHighlightComment,
-} from './plugins/comment_annotation'
 export * from './lib/utils'
 export * from './lib/track-changes-utils'
 export * from './useEditor'

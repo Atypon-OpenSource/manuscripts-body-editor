@@ -60,7 +60,6 @@ export interface EditorProps {
   debug: boolean
   cslProps: CSLProps
 
-  setSelectedComment: (id?: string, isNew?: boolean) => void
   collabProvider?: CollabProvider
 }
 

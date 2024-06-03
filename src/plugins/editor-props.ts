@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import {ManuscriptEditorState} from "@manuscripts/transform";
 
 export const editorPropsKey = new PluginKey<EditorProps>('editor-props')
 

@@ -406,88 +406,79 @@ Next levels are shifted 'up' by 1
   position: static;
 }
 
-.bibliography-comment > .group-comment-icon {
-  top: -5px;
-  left: 9px;
+
+.comment-marker.selected-comment > svg > path, .comment-marker:active > svg > path {
+  stroke: #f7b314;
+  fill: #ffe0b2;
 }
 
-.block-comment-button.bibliography-comment {
-  display: grid;
-  position: absolute;
-  top: -10%;
-  left: 1%;
-}
-
-.block-comment-button {
+.comment-marker {
+  display: inline-flex;
+  width: 0;
+  z-index: 100;
+  top: -20px;
+  left: 0;
   cursor: pointer;
   position: relative;
-  height: 0;
-  width: 0;
 }
 
-.block-comment-button:active > svg > path {
-  stroke: #f7b314;
-  fill: #ffe0b2;
-}
-
-.selected-comment > svg > path {
-  stroke: #f7b314;
-  fill: #ffe0b2;
-}
-
-.block-comment-button.block-comment {
-  z-index: 10;
-  left: 93%;
-}
-
-.block-comment > .comment-icon,
-.group-comment-icon {
-  position: absolute;
-  top: 16px;
-}
-
-.block-comment > .group-comment-icon {
-  left: 7px;
-  top: 10px;
-}
-
-.block-comment-button.figure-comment {
-  position: absolute;
-  right: 3%;
-  z-index: 10;
-}
-
-.figure-comment > .comment-icon {
-  position: absolute;
-  top: 4px;
-}
-
-.figure-comment > .group-comment-icon {
-  top: 0;
-  left: 10px;
-}
-
-.block-comment-button.inline-comment {
-  z-index: 10;
+.block > div.comment-marker, .figure-block > div.comment-marker {
+  top: -25px;
   left: 100%;
 }
 
-.inline-comment > .comment-icon,
-.group-comment-icon {
+.figure-block div.comment-marker {
+  grid-column: 3;
+}
+
+figure.block > .comment-marker {
+  float: right;
+  top: 0;
+  left: 0;
+}
+
+section > .comment-marker {
+  top: 12px;
+  float: right;
+  left: -64px;
+}
+
+span.comment-marker {
+  top: -38px;
+  left: -10px;
+}
+
+.citation-wrapper + .comment-marker {
+  left: -2px;
+}
+
+.keywords-group > .comment-marker {
+  float: right;
+}
+
+.comment-marker svg {
   position: absolute;
   top: 12px;
 }
 
-.inline-comment > .group-comment-icon {
-  left: 8px;
-  top: 6px;
+.comment-marker[data-count="0"] {
+  display: none;
 }
 
-.block-comment-button.point-comment {
-  z-index: 1;
-  left: 0;
-  bottom: 38px;
+.comment-marker[data-count]:after {
+  position: absolute;
   display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  content: attr(data-count);
+  top: 8px;
+  left: 8px;
+  background-color: #F7B314;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  font-size: 9px;
+  color: #ffffff;
 }
 
 .bib-item:hover > .bibliography-double-button {

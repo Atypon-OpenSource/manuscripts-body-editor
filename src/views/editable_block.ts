@@ -36,7 +36,6 @@ const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
 
 export interface EditableBlockProps extends BaseNodeProps {
   getCapabilities: () => Capabilities
-  setSelectedComment: (id?: string, isNew?: boolean) => void
   dispatch?: Dispatch
   theme: DefaultTheme
 }

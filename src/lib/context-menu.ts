@@ -263,8 +263,8 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
-              const { state, dispatch } = this.view
-              addNodeComment(this.node, state, dispatch)
+              const target = this.getCommentTarget()
+              addNodeComment(target, this.view.state, this.view.dispatch)
               popper.destroy()
             })
           )
@@ -586,5 +586,17 @@ export class ContextMenu {
 
   private trimTitle = (title: string, max: number) => {
     return title.length > max ? title.substring(0, max) + '…' : title
+  }
+
+  private getCommentTarget = () => {
+    if (this.node.type === schema.nodes.section_title) {
+      const $pos = this.resolvePos()
+      const parent = $pos.parent
+      if (parent.type === schema.nodes.keywords) {
+        const groups = findChildrenByType(parent, schema.nodes.keyword_group)
+        return groups.length ? groups[0].node : this.node
+      }
+    }
+    return this.node
   }
 }
