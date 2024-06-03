@@ -66,7 +66,6 @@ export interface EditorProps {
 
   setComment: (comment?: CommentAnnotation) => void
   setSelectedComment: (id?: string) => void
-  setEditorSelectedSuggestion: (id?: string) => void
   collabProvider?: CollabProvider
 }
 

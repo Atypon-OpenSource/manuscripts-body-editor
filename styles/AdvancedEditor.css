@@ -550,13 +550,26 @@ Next levels are shifted 'up' by 1
   font-family: Lato, sans-serif;
   font-size: 14px;
   line-height: 16px;
-  margin-right: 4px;
   margin-bottom: 4px;
   border: 1px solid transparent;
   border-radius: 6px;
   position: relative;
   cursor: default;
   padding: 4px 8px;
+}
+
+.keywords .selected-suggestion {
+  line-height: 1.6 !important;
+  display: inline-block;
+}
+
+.keywords .selected-suggestion .keyword {
+  background: none !important;
+  margin: 0;
+}
+
+.keyword-group > span {
+  margin-right: 4px;
 }
 
 .keywords .keyword ins,
@@ -685,15 +698,20 @@ Next levels are shifted 'up' by 1
   background: none;
 }
 
-.selected-suggestion {
+span.selected-suggestion, div.selected-suggestion > .block-container .block, div.selected-suggestion:not(:has(> .block-container)) {
   background: #bce7f6 !important;
-}
-
-.selected-suggestion {
   border-width: 2px 0 2px 0 !important;
   border-color: #20aedf !important;
   border-radius: 3px !important;
   border-style: solid !important;
+}
+
+.block-bullet_list .selected-suggestion p, .block-ordered_list .selected-suggestion p {
+  margin: 0;
+}
+
+.block-bullet_list .selected-suggestion, .block-ordered_list .selected-suggestion {
+  margin: 16px 0;
 }
 
 .ProseMirror .inserted.pending {
@@ -790,38 +808,28 @@ Next levels are shifted 'up' by 1
 }
 
 .contributors {
-  white-space: initial;
   margin-top: 24px;
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 0 0.5em;
 }
 .contributors-list {
   display: flex;
   max-width: 100%;
   flex: 0 1 auto;
   flex-wrap: wrap;
-  gap: 0 0.25em;
+  align-items: baseline;
+}
+.contributors-list .separator {
+  margin-right: 4px;
 }
 .contributors .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
   align-items: center;
+  margin-top: 4px;
 }
-.contributor-wrapper {
-  display: flex;
-}
-.contributor-wrapper:after {
-  content: ', ';
-  color: #353535;
-}
-.contributor-wrapper:last-child::after {
-  content: '';
-  margin-right: 0;
-}
-.contributor-wrapper .contributor-comment {
+.contributor .contributor-comment {
   left: 0;
   top: -8px;
   width: auto;
@@ -837,7 +845,7 @@ Next levels are shifted 'up' by 1
   text-decoration: none;
   color: inherit;
   outline: none;
-  padding: 4px 0 4px 4px;
+  padding: 4px 0;
 }
 
 .contributor:not(:disabled):hover {
@@ -880,6 +888,13 @@ Next levels are shifted 'up' by 1
 
 .affiliation {
   line-height: 1.2;
+  cursor: default;
+  user-select: none;
+}
+
+.affiliation .affiliation-label {
+  font-weight: bold;
+  margin-right: 4px;
 }
 
 .block-affiliations .block {
@@ -891,4 +906,8 @@ Next levels are shifted 'up' by 1
 
 * {
   scroll-behavior: smooth;
+}
+
+.ProseMirror li.ProseMirror-selectednode:after {
+  content: none;
 }
