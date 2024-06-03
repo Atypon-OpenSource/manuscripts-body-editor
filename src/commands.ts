@@ -838,8 +838,11 @@ export const ignoreMetaNodeBackspaceCommand = (
 
   return (
     selection.node.type === schema.nodes.keyword_group ||
+    selection.node.type === schema.nodes.keyword ||
     selection.node.type === schema.nodes.affiliations ||
-    selection.node.type === schema.nodes.contributors
+    selection.node.type === schema.nodes.affiliation ||
+    selection.node.type === schema.nodes.contributors ||
+    selection.node.type === schema.nodes.contributor
   )
 }
 
