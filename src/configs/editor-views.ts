@@ -17,8 +17,7 @@
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import affiliation from '../views/affiliation'
-import affiliationsSection from '../views/affiliations'
+import affiliations from '../views/affiliations'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import bulletList from '../views/bullet_list_editable'
@@ -38,6 +37,7 @@ import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
 import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
+import list_item from '../views/list_item'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
 import orderedList from '../views/ordered_list_editable'
@@ -63,8 +63,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
-    affiliations: affiliationsSection(props, dispatch),
-    affiliation: affiliation(props, dispatch),
+    affiliations: affiliations(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
@@ -78,6 +77,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     link: link(props, dispatch),
     listing: listing(props),
     listing_element: listingElement(props),
+    list_item: list_item(props),
     ordered_list: orderedList(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),

@@ -17,7 +17,8 @@
 import Popper from 'popper.js'
 
 export class PopperManager {
-  protected activePopper?: Popper
+  private activePopper?: Popper
+  private handleDocumentClick?: (e: Event) => void
 
   public show(
     target: Element,
@@ -33,6 +34,10 @@ export class PopperManager {
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
       container.className = 'popper'
+
+      container.addEventListener('click', (e) => {
+        e.stopPropagation()
+      })
 
       if (showArrow) {
         const arrow = document.createElement('div')
@@ -63,6 +68,13 @@ export class PopperManager {
           this.focusInput(container)
         },
       })
+      this.handleDocumentClick = (e) => {
+        const node = e.target as Node
+        if (!container.contains(node) && !target.contains(node)) {
+          this.destroy()
+        }
+      }
+      document.addEventListener('click', this.handleDocumentClick)
     })
   }
 
@@ -70,6 +82,9 @@ export class PopperManager {
     if (this.activePopper) {
       this.removeContainerClass(this.activePopper.reference as Element)
       this.activePopper.destroy()
+      if (this.handleDocumentClick) {
+        document.removeEventListener('click', this.handleDocumentClick)
+      }
       delete this.activePopper
     }
   }
