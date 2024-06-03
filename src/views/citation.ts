@@ -29,7 +29,6 @@ export class CitationView<PropsType extends BaseNodeProps>
   implements ManuscriptNodeView
 {
   public ignoreMutation = () => true
-  wasUpdated = false
 
   public initialise = () => {
     if (!this.node.type.spec.toDOM) {
@@ -44,7 +43,6 @@ export class CitationView<PropsType extends BaseNodeProps>
   }
 
   public updateContents = () => {
-    console.log('citation view updateContents')
     const bib = getBibliographyPluginState(this.view.state)
 
     if (!bib) {
@@ -75,18 +73,7 @@ export class CitationView<PropsType extends BaseNodeProps>
       this.view.state,
       this.dom
     )
-
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
-
-    if (!this.wasUpdated) {
-      // to have only one event listener
-      this.dom.addEventListener('click', () => this.onClickHandler())
-    }
-    this.wasUpdated = true
-  }
-
-  public onClickHandler = () => {
-    // extend this
   }
 }
 
