@@ -26,8 +26,6 @@ export class KeywordGroupView extends BlockView<EditableBlockProps> {
 
   public ignoreMutation = () => true
 
-  public stopEvent = () => true
-
   public createElement = () => {
     this.element = document.createElement('div')
     this.element.classList.add('block', 'keyword-group-container')

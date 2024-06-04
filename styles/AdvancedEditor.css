@@ -452,7 +452,7 @@ span.comment-marker {
   left: -2px;
 }
 
-.keywords-group > .comment-marker {
+.keyword-group > .comment-marker {
   float: right;
 }
 
