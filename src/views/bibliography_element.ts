@@ -46,7 +46,6 @@ export class BibliographyElementBlockView<
 
   public showPopper = (id: string) => {
     const bib = getBibliographyPluginState(this.view.state)
-
     if (!bib) {
       return
     }

@@ -21,7 +21,7 @@ import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { ContextMenu } from '../lib/context-menu'
+import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 
@@ -65,17 +65,15 @@ export const EditableBlock = <
       const after = !hasParent($pos, schema.nodes.bibliography_section)
 
       const button = document.createElement('a')
-      button.classList.add('add-block')
+      button.classList.add('add-block', contextMenuBtnClass)
       button.classList.add(after ? 'add-block-after' : 'add-block-before')
       button.setAttribute(
         'aria-label',
         `Add an element ${after ? 'below' : 'above'}`
       )
       button.setAttribute('data-balloon-pos', 'down-left')
-      // button.innerHTML = this.icons.plus
       button.addEventListener('mousedown', (event) => {
         event.preventDefault()
-        event.stopPropagation()
 
         const menu = this.createMenu()
         menu.showAddMenu(event.currentTarget as Element, after)
@@ -90,13 +88,11 @@ export const EditableBlock = <
       }
 
       const button = document.createElement('a')
-      button.classList.add('edit-block')
+      button.classList.add('edit-block', contextMenuBtnClass)
       button.setAttribute('aria-label', 'Open menu')
       button.setAttribute('data-balloon-pos', 'down-left')
-      // button.innerHTML = this.icons.circle
       button.addEventListener('mousedown', (event) => {
         event.preventDefault()
-        event.stopPropagation()
 
         const menu = this.createMenu()
         menu.showEditMenu(event.currentTarget as Element)

@@ -27,9 +27,9 @@ export class PopperManager {
     showArrow = true,
     modifiers: Popper.Modifiers = {}
   ) {
-    if (this.activePopper) {
-      return this.destroy()
-    }
+    // destroy any existing popper first
+    // checking activePopper is in destroy() method
+    this.destroy()
 
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
@@ -68,13 +68,18 @@ export class PopperManager {
           this.focusInput(container)
         },
       })
+
       this.handleDocumentClick = (e) => {
         const node = e.target as Node
         if (!container.contains(node) && !target.contains(node)) {
           this.destroy()
         }
       }
-      document.addEventListener('click', this.handleDocumentClick)
+      // add EventListener for checking if click was done outside of editor
+      // only if popper has class 'context-menu'
+      if (contents.classList.contains('context-menu')) {
+        window.addEventListener('click', this.handleDocumentClick)
+      }
     })
   }
 
@@ -83,7 +88,7 @@ export class PopperManager {
       this.removeContainerClass(this.activePopper.reference as Element)
       this.activePopper.destroy()
       if (this.handleDocumentClick) {
-        document.removeEventListener('click', this.handleDocumentClick)
+        window.removeEventListener('click', this.handleDocumentClick)
       }
       delete this.activePopper
     }
