@@ -42,7 +42,7 @@ import {
   schema,
   SectionNode,
 } from '@manuscripts/transform'
-import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
+import { Attrs, NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   Command,
@@ -172,7 +172,8 @@ export const createBlock = (
   nodeType: ManuscriptNodeType,
   position: number,
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  attrs?: Attrs
 ) => {
   let node
 
@@ -195,7 +196,7 @@ export const createBlock = (
       ])
       break
     default:
-      node = nodeType.createAndFill()
+      node = nodeType.createAndFill(attrs)
   }
 
   const tr = state.tr.insert(position, node as ManuscriptNode)

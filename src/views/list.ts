@@ -15,7 +15,7 @@
  */
 
 import {
-  JATS_HTML_LIST_STYLE_MAPPING,
+  getListType,
   JatsStyleType,
   ManuscriptNode,
 } from '@manuscripts/transform'
@@ -24,21 +24,17 @@ import { getActualAttrs } from '../lib/track-changes-utils'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
+import { EditableBlock } from './editable_block'
 export class ListView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
-  public elementType = 'ul'
-
-  static getElementType: () => string = () => this.prototype.elementType
-
   public updateContents = () => {
     const actualAttrs = getActualAttrs(this.node)
 
     if (this.contentDOM) {
       const type = actualAttrs.listStyleType as JatsStyleType
-      this.elementType = JATS_HTML_LIST_STYLE_MAPPING[type].type
-      this.contentDOM.style.listStyleType =
-        JATS_HTML_LIST_STYLE_MAPPING[type].style
+      this.elementType = getListType(type).type
+      this.contentDOM.style.listStyleType = getListType(type).style
 
       // Check and update the element type if necessary
       if (this.contentDOM.nodeName.toLowerCase() !== this.elementType) {
@@ -78,10 +74,10 @@ export class ListView<
 export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
   const type = node.attrs.listStyleType as JatsStyleType
-  dom.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type].style
+  dom.style.listStyleType = getListType(type).style
 }
 export default createNodeOrElementView(
-  ListView,
-  ListView.getElementType(),
+  EditableBlock(ListView),
+  'div',
   ListCallback
 )

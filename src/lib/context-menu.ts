@@ -20,10 +20,9 @@ import {
   TableFootnotesSelector,
 } from '@manuscripts/style-guide'
 import {
+  getListType,
   InlineFootnoteNode,
   isInBibliographySection,
-  JATS_HTML_LIST_STYLE_MAPPING,
-  JatsStyleType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -31,6 +30,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
+import { Attrs } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -100,14 +100,18 @@ export class ContextMenu {
     const endPos = $pos.end()
     const types = this.insertableTypes(after, insertPos, endPos)
 
-    const insertNode = (type: ManuscriptNodeType, pos?: number) => {
+    const insertNode = (
+      type: ManuscriptNodeType,
+      pos?: number,
+      attrs?: Attrs
+    ) => {
       const { state, dispatch } = this.view
 
       if (pos === undefined) {
         pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
       }
 
-      createBlock(type, pos, state, dispatch)
+      createBlock(type, pos, state, dispatch, attrs)
     }
 
     if (hasAny(types, 'section', 'subsection')) {
@@ -145,7 +149,6 @@ export class ContextMenu {
         })
       )
     }
-
     if (hasAny(types, 'paragraph', 'list')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -160,8 +163,18 @@ export class ContextMenu {
 
           if (types.has('list')) {
             section.appendChild(
-              this.createMenuItem('List', () => {
-                insertNode(schema.nodes.list)
+              this.createMenuItem('Bullet List', () => {
+                insertNode(schema.nodes.list, undefined, {
+                  listStyleType: 'bullet',
+                })
+                popper.destroy()
+              })
+            )
+            section.appendChild(
+              this.createMenuItem('Ordered List', () => {
+                insertNode(schema.nodes.list, undefined, {
+                  listStyleType: 'order',
+                })
                 popper.destroy()
               })
             )
@@ -228,10 +241,7 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const list_type =
-            JATS_HTML_LIST_STYLE_MAPPING[
-              this.node.attrs.listStyleType as JatsStyleType
-            ].type
+          const list_type = getListType(this.node.attrs.listStyleType).type
           if (list_type === 'ul') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
