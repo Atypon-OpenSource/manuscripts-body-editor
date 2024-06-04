@@ -16,7 +16,7 @@
 import { schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
 // we can override other node rules for clipboard here
-// so we don't have a conflict with manuscripts-transform
+// to avoid having a conflict with manuscripts-transform
 const nodes = [
   {
     tag: 'p',
