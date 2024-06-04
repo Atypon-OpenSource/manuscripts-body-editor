@@ -68,12 +68,14 @@ const hasAny = <T>(set: Set<T>, ...items: T[]) => {
   return items.some((i) => set.has(i))
 }
 
+export const contextMenuBtnClass = 'btn-context-menu'
 export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
   private readonly props?: EditableBlockProps
+
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
@@ -567,7 +569,12 @@ export class ContextMenu {
   private resolvePos = () => this.view.state.doc.resolve(this.getPos())
 
   private addPopperEventListeners = () => {
-    const mouseListener: EventListener = () => {
+    const mouseListener: EventListener = (event) => {
+      const target = event.target as HTMLElement
+      // if target is one of btn-context-menu buttons, do not destroy popper
+      if (target.classList.contains(contextMenuBtnClass)) {
+        return
+      }
       window.requestAnimationFrame(() => {
         window.removeEventListener('mousedown', mouseListener)
         popper.destroy()

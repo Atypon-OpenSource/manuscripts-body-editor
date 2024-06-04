@@ -51,9 +51,7 @@ export class BibliographyElementBlockView<
   private version: string
 
   public showPopper = (id: string) => {
-    this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
-
     if (!bib) {
       return
     }
@@ -88,6 +86,7 @@ export class BibliographyElementBlockView<
   }
 
   private handleComment = (citationId: string) => {
+    this.props.popper.destroy()
     this.props.setComment(buildComment(citationId) as CommentAnnotation)
   }
 
