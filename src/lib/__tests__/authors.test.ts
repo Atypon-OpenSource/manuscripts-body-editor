@@ -40,6 +40,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
       {
         id: 'MPContributor:y',
@@ -54,6 +56,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
       {
         id: 'MPContributor:z',
@@ -68,6 +72,8 @@ describe('authorComparator', () => {
         isJointContributor: false,
         ORCIDIdentifier: '',
         email: '',
+        userID: '',
+        invitationID: '',
       },
     ]
     contribs.sort(authorComparator)
@@ -124,10 +130,16 @@ describe('affiliationLabel', () => {
   const affiliation: AffiliationAttrs = {
     id: 'MPAffiliation:aff-1',
     addressLine1: '',
+    addressLine2: '',
+    addressLine3: '',
     city: '',
     country: 'United Kingdom',
     county: '',
     department: 'Dept of Examples',
+    email: {
+      href: '',
+      text: '',
+    },
     institution: 'University of Examples',
     postCode: '',
     priority: 0,
@@ -142,10 +154,16 @@ describe('affiliationLabel', () => {
     const affiliation: AffiliationAttrs = {
       id: 'MPAffiliation:aff-1',
       addressLine1: '',
+      addressLine2: '',
+      addressLine3: '',
       city: '',
       country: 'United Kingdom',
       county: '',
       department: '',
+      email: {
+        href: '',
+        text: '',
+      },
       institution: 'University of Examples',
       postCode: '',
       priority: 0,
@@ -158,10 +176,16 @@ describe('affiliationLabel', () => {
     const affiliation: AffiliationAttrs = {
       id: 'MPAffiliation:aff-1',
       addressLine1: '',
+      addressLine2: '',
+      addressLine3: '',
       city: '',
       country: 'United Kingdom',
       county: '',
       department: 'Dept of Examples',
+      email: {
+        href: '',
+        text: '',
+      },
       institution: '',
       postCode: '',
       priority: 0,
@@ -174,10 +198,16 @@ describe('affiliationLabel', () => {
     const affiliation: AffiliationAttrs = {
       id: 'MPAffiliation:aff-1',
       addressLine1: '',
+      addressLine2: '',
+      addressLine3: '',
       city: '',
       country: 'United Kingdom',
       county: '',
       department: '',
+      email: {
+        href: '',
+        text: '',
+      },
       institution: '',
       postCode: '',
       priority: 0,

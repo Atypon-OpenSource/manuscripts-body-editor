@@ -46,7 +46,6 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../../components/views/DeleteFootnoteDialog'
-import { PluginProps } from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { findParentNodeWithIdValue, getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
@@ -100,7 +99,7 @@ export const uncitedFootnoteWidget = () => () => {
 const deleteFootnoteWidget =
   (
     node: ManuscriptNode,
-    props: PluginProps,
+    props: EditorProps,
     id: string,
     tableElement: NodeWithPos | undefined
   ) =>
@@ -279,7 +278,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
   return { inlineFootnotes, labels, footnotes, footnoteElement }
 }
 
-export default (props: PluginProps) => {
+export default (props: EditorProps) => {
   return new Plugin<PluginState>({
     key: footnotesKey,
 
