@@ -15,18 +15,8 @@
  */
 import { schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
-
-const marks = [
-  {
-    tag: 'strong',
-    mark: 'bold',
-  },
-  {
-    tag: 'i',
-    mark: 'italic',
-  },
-]
-
+// we can override other node rules for clipboard here
+// so we don't have a conflict with manuscripts-transform
 const nodes = [
   {
     tag: 'p',
@@ -34,4 +24,7 @@ const nodes = [
   },
 ]
 
-export const clipboardParser = new DOMParser(schema, [...marks, ...nodes])
+export const clipboardParser = new DOMParser(schema, [
+  ...nodes,
+  ...DOMParser.fromSchema(schema).rules,
+])

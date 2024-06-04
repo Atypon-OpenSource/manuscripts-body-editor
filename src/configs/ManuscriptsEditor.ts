@@ -98,9 +98,6 @@ export const createEditorView = (
     dispatchTransaction: dispatch,
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
-    // TODO:: we get from google doc and ms word bloc,italic mark as span with style font-weight
-    // we can use transformPastedHTML to replace them with a strong,i tag so it can be parsed from DOMParser
-    // transformPastedHTML: ...
     transformPasted,
     clipboardParser,
   })
