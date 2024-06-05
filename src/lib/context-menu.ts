@@ -603,6 +603,7 @@ export class ContextMenu {
         const groups = findChildrenByType(parent, schema.nodes.keyword_group)
         return groups.length ? groups[0].node : this.node
       }
+      return parent
     }
     return this.node
   }

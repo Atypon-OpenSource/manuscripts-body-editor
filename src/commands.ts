@@ -1073,7 +1073,7 @@ export const addInlineComment = (
 ): boolean => {
   const selection = state.selection
   const node = getParentNode(selection)
-  if (!node) {
+  if (!node || !isCommentingAllowed(node.type)) {
     return false
   }
   const from = selection.from
