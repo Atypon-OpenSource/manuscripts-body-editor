@@ -37,6 +37,7 @@ import keyword from '../views/keyword'
 import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
 import list from '../views/list'
+import list_item from '../views/list_item'
 import listing from '../views/listing_editable'
 import listingElement from '../views/listing_element_editable'
 import paragraph from '../views/paragraph_editable'
@@ -75,6 +76,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     link: link(props, dispatch),
     listing: listing(props),
     listing_element: listingElement(props),
+    list_item: list_item(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),
     placeholder_element: placeholderElement(props),

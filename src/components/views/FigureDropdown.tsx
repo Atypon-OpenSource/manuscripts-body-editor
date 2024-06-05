@@ -143,12 +143,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
         <DotsIcon />
       </OptionsButton>
       {isOpen && (
-        <OptionsDropdownList
-          direction={'right'}
-          width={128}
-          onClick={toggleOpen}
-          top={5}
-        >
+        <OptionsDropdownList direction={'right'} width={128} top={5}>
           <ListItemButton onClick={handleDownload} disabled={!showDownload}>
             Download
           </ListItemButton>
