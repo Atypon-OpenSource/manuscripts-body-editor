@@ -248,9 +248,21 @@ const getCommentIcon =
     element.classList.add('block-comment-button', elementClass)
 
     element.onclick = (e: Event) => {
-      e.stopPropagation()
+      createSelection(e.target as Element)
       setSelectedComment(commentId)
       commentScroll(commentId, 'inspector')
+    }
+
+    const createSelection = (target: Element) => {
+      const commentButton = target.closest(
+        '.block-comment-button'
+      ) as HTMLElement
+      const range = document.createRange()
+      range.setStart(commentButton, 0)
+      range.setEnd(commentButton, 0)
+      const selection = window.getSelection()
+      selection?.removeAllRanges()
+      selection?.addRange(range)
     }
 
     const groupCommentIcon =

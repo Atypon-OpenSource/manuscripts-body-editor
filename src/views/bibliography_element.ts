@@ -125,7 +125,8 @@ export class BibliographyElementBlockView<
     this.props.popper.destroy()
     const element = event.target as HTMLElement
     const item = element.closest('.bib-item')
-    if (item) {
+    const commentBtn = element.closest('.block-comment-button')
+    if (item && !commentBtn) {
       this.showContextMenu(item as HTMLElement)
       const node = findChildByID(this.view, item.id)
       if (!node) {
