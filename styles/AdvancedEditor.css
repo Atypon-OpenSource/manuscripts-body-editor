@@ -415,7 +415,7 @@ Next levels are shifted 'up' by 1
 .comment-marker {
   display: inline-flex;
   width: 0;
-  z-index: 100;
+  z-index: 5;
   top: -20px;
   left: 0;
   cursor: pointer;
