@@ -29,7 +29,7 @@ export class ListView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public elementType = 'ul'
-  
+
   public updateContents = () => {
     const actualAttrs = getActualAttrs(this.node)
     if (this.contentDOM) {
