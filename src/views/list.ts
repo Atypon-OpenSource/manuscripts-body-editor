@@ -28,18 +28,13 @@ import { EditableBlock } from './editable_block'
 export class ListView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
+  public elementType = 'ul'
+  
   public updateContents = () => {
     const actualAttrs = getActualAttrs(this.node)
-
     if (this.contentDOM) {
       const type = actualAttrs.listStyleType as JatsStyleType
-      this.elementType = getListType(type).type
       this.contentDOM.style.listStyleType = getListType(type).style
-
-      // Check and update the element type if necessary
-      if (this.contentDOM.nodeName.toLowerCase() !== this.elementType) {
-        this.updateElementType()
-      }
     }
 
     if (this.node.attrs.dataTracked?.length) {
@@ -56,19 +51,6 @@ export class ListView<
       this.dom.removeAttribute('data-track-type')
     }
   }
-
-  private updateElementType = () => {
-    const newElement = document.createElement(this.elementType)
-    newElement.className = 'block'
-    if (this.contentDOM) {
-      while (this.contentDOM.firstChild) {
-        newElement.appendChild(this.contentDOM.firstChild)
-      }
-
-      this.dom.replaceChild(newElement, this.contentDOM)
-      this.contentDOM = newElement
-    }
-  }
 }
 
 export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
@@ -78,6 +60,6 @@ export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
 }
 export default createNodeOrElementView(
   EditableBlock(ListView),
-  'div',
+  'ul',
   ListCallback
 )
