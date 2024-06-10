@@ -1518,10 +1518,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.12.11":
-  version "1.12.11"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.12.11.tgz#432f08a0456046a11974a54a5e47d47bca164c66"
-  integrity sha512-9RoILjJ57b7bCkXk8h/5Vul9q0fDtZzcT22dm+IAG14w9frYvvd/FGSzNAhYgodMHz3bc5rX2Qdq+nMYLNb57Q==
+"@manuscripts/style-guide@1.12.12":
+  version "1.12.12"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.12.12.tgz#5ce586472992a28a148d671dc8a111144bb8238f"
+  integrity sha512-5qxof7p+/74fus8r8cpMbGrhqCJ/285k69BuZps2SIsMT1ildB8TKjhjUyLomlpcVHdSv8GW9ec617hPfCWDFA==
   dependencies:
     "@manuscripts/json-schema" "2.2.8"
     "@manuscripts/transform" "2.3.6"
