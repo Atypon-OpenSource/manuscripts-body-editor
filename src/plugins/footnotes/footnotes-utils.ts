@@ -125,15 +125,23 @@ export const orderTableFootnotes = (
     .map(({ node }) => node)
 
   const { node: footnotesElement, pos } = footnotesElementWithPos
-  const footnoteElementPos = position + pos
+  const footnoteElementPos = position + pos + 1
 
-  return skipTracking(
+  const oldDataTracked = footnotesElement.attrs.dataTracked
+
+  skipTracking(
     tr.replaceWith(
       tr.mapping.map(footnoteElementPos),
       tr.mapping.map(footnoteElementPos + footnotesElement.nodeSize),
       Fragment.fromArray(orderedFootnotes)
     )
   )
+  if (oldDataTracked) {
+    tr.setNodeMarkup(footnoteElementPos, schema.nodes.footnotes_element, {
+      ...footnotesElement.attrs,
+      dataTracked: oldDataTracked,
+    })
+  }
 }
 
 export const updateTableInlineFootnoteLabels = (
