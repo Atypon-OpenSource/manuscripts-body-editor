@@ -98,6 +98,10 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    transformPastedHTML: (html) => {
+      console.log(html, '\n \n ^^ please copy the above HTML')
+      return html
+    },
     clipboardParser,
   })
 
