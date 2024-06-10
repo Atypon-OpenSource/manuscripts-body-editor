@@ -116,7 +116,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
   buildAuthor = (attrs: ContributorAttrs, isJointFirstAuthor: boolean) => {
     const state = this.view.state
     const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
-    const suggestion = selectedSuggestionKey.getState(state)?.suggestion
+
     const container = document.createElement('span')
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
@@ -127,9 +127,6 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
       container.setAttribute('data-track-id', change.id)
       container.setAttribute('data-track-status', change.status)
       container.setAttribute('data-track-op', change.operation)
-      if (suggestion?.id === change.id) {
-        container.classList.add('selected-suggestion')
-      }
     }
 
     const name = authorLabel(attrs)

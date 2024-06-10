@@ -35,7 +35,7 @@ import { EditorView } from 'prosemirror-view'
 import React, { ReactNode } from 'react'
 
 import {
-  addComment,
+  addInlineComment,
   blockActive,
   canInsert,
   Dispatch,
@@ -144,7 +144,7 @@ export const toolbar: ToolbarConfig = {
       title: 'Insert comment',
       content: <AddCommentIcon />,
       isEnabled: canInsert(schema.nodes.highlight_marker), // TODO: check both ends of selection
-      run: addComment,
+      run: addInlineComment,
     },
   },
   element: {

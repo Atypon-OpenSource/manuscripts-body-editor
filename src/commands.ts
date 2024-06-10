@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation, ObjectTypes } from '@manuscripts/json-schema'
+import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
 import { FileAttachment } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
-  buildComment,
   FigureNode,
   FootnoteNode,
   generateID,
@@ -45,7 +44,6 @@ import {
 import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
-  Command,
   EditorState,
   NodeSelection,
   Selection,
@@ -64,12 +62,13 @@ import {
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
+import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
-import { commentAnnotation } from './plugins/comment_annotation'
+import { setCommentSelection } from './plugins/comments'
+import { getEditorProps } from './plugins/editor-props'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
-import { highlightKey, SET_COMMENT } from './plugins/highlight'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
@@ -1018,133 +1017,6 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
-export const insertHighlight = (
-  state: ManuscriptEditorState,
-  comment: CommentAnnotation,
-  dispatch?: Dispatch
-): boolean => {
-  const { from, to } = state.selection
-
-  const fromNode = state.schema.nodes.highlight_marker.create({
-    id: comment._id,
-    tid: comment.target,
-    position: 'start',
-  })
-
-  const toNode = state.schema.nodes.highlight_marker.create({
-    id: comment._id,
-    tid: comment.target,
-    position: 'end',
-  })
-
-  const tr = state.tr
-    .insert(from, fromNode)
-    .insert(to + 1, toNode)
-    .setMeta(highlightKey, {
-      [SET_COMMENT]: {
-        ...comment,
-        selector: { from, to },
-        originalText: state.tr.doc.textBetween(from, to, '\n'),
-      },
-    })
-
-  tr.setMeta('addToHistory', false)
-
-  if (dispatch) {
-    dispatch(tr)
-  }
-
-  return true
-}
-
-export const deleteHighlightMarkers =
-  (rid: string): Command =>
-  (state, dispatch) => {
-    const markersToDelete: number[] = []
-    highlightKey.getState(state)?.highlights.forEach((highlight) => {
-      if (highlight.id === rid) {
-        markersToDelete.push(highlight.start - 1)
-        markersToDelete.push(highlight.end)
-      }
-    })
-    if (markersToDelete.length === 0) {
-      return false
-    }
-    const { tr } = state
-    markersToDelete
-      .sort((a, b) => b - a)
-      .forEach((pos) => {
-        tr.delete(pos, pos + 1)
-      })
-    tr.setMeta('track-changes-skip-tracking', true)
-    dispatch && dispatch(tr)
-    return true
-  }
-
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-): boolean
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  viewNode?: ManuscriptNode,
-  resolvePos?: ResolvedPos
-): boolean
-
-/**
- * when the value of viewNode is undefined, function call came from __toolbar__ or __menus__ otherwise
- * function call will be for __context-menu__.
- *
- * Will add block or highlight comment based on this cases:
- *  > For context-menu call:
- *    * if the selected text parent is the `viewNode` add highlight comment, ***for paragraph
- *      if we selected all of the text will add block comment***
- *    * otherwise add block comment for `viewNode`
- *
- *  > For toolbar or menus call:
- *    * if we select text will add highlight comment for it, and the same exception
- *    will be for paragraph, as mentioned above
- *    * otherwise add block comment for the parent node of selection
- * @param viewNode: node beside the __context-menu(3DotMenu)__
- * @param state
- * @param dispatch
- * @param resolvePos
- */
-export function addComment(
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  viewNode?: ManuscriptNode,
-  resolvePos?: ResolvedPos
-) {
-  const { selection } = state
-  const hasText = selection.content().size > 0
-  const parent = getParentNode(selection)
-  if (!parent) {
-    return false
-  }
-
-  if (viewNode && resolvePos) {
-    const viewNode = getParentNode(TextSelection.near(resolvePos))
-    if (!viewNode) {
-      return false
-    }
-
-    if (hasText && parent.attrs.id === viewNode.attrs.id) {
-      return addHighlightComment(viewNode, state, dispatch)
-    } else {
-      return addBlockComment(viewNode, state, dispatch)
-    }
-  } else {
-    if (hasText) {
-      return addHighlightComment(parent, state, dispatch)
-    } else {
-      // TODO:: add block comment for the selection parent node or what!!!
-      return addBlockComment(parent, state, dispatch)
-    }
-  }
-}
-
 /**
  * This to make sure we get block node
  */
@@ -1160,8 +1032,10 @@ const getParentNode = (selection: Selection) => {
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
-const isAllowedType = (type: NodeType) =>
+const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.section ||
+  type === schema.nodes.citation ||
+  type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
   type === schema.nodes.keyword_group ||
@@ -1169,80 +1043,94 @@ const isAllowedType = (type: NodeType) =>
   type === schema.nodes.figure_element ||
   type === schema.nodes.table_element
 
-const getNode = (node: ManuscriptNode) => {
-  if (node.type === schema.nodes.keywords) {
-    const keywordGroups = findChildrenByType(
-      node,
-      schema.nodes.keyword_group,
-      true
-    )
-    return keywordGroups.length ? keywordGroups[0].node : node
-  }
-  return node
-}
-
-const addBlockComment = (
+export const addNodeComment = (
   node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const {
-    attrs: { id },
-    type,
-  } = getNode(node)
-  const comment = buildComment(id)
-  const tr = state.tr.setMeta(commentAnnotation, {
-    [SET_COMMENT]: comment,
-  })
-
-  tr.setMeta('addToHistory', false)
-
-  if (isAllowedType(type)) {
-    dispatch && dispatch(tr)
-    return true
-  } else {
+  if (!isCommentingAllowed(node.type)) {
     return false
   }
-}
 
-const addHighlightComment = (
-  node: ManuscriptNode,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const {
-    attrs: { id },
-    type,
-  } = node
-  const comment = buildComment(id) as CommentAnnotation
+  const props = getEditorProps(state)
+  const contribution = buildContribution(props.userID)
+  const attrs = {
+    id: generateID(ObjectTypes.CommentAnnotation),
+    contents: '',
+    target: node.attrs.id,
+    contributions: [contribution],
+  } as CommentAttrs
+  const comment = schema.nodes.comment.create(attrs)
+  const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+  const pos = comments.pos + 1
 
-  if (type === schema.nodes.paragraph) {
-    const { $anchor, $head } = state.selection
-    const isAllTextSelected =
-      ($anchor.textOffset === 0 && $head.textOffset === 0) ||
-      $anchor.textOffset === $head.textOffset
-
-    if (isAllTextSelected) {
-      return addBlockComment(node, state, dispatch)
-    } else {
-      return insertHighlight(state, comment, dispatch)
-    }
-  } else {
-    return insertHighlight(state, comment, dispatch)
-  }
-}
-
-export const updateCommentAnnotationState = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const tr = state.tr.setMeta(commentAnnotation, {})
-
-  tr.setMeta('addToHistory', false)
-
+  const tr = state.tr.insert(pos, comment)
+  const key = getCommentKey(attrs, undefined, node)
+  setCommentSelection(tr, key, attrs.id, true)
   if (dispatch) {
     dispatch(tr)
   }
+  return true
+}
+
+export const addInlineComment = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+): boolean => {
+  const selection = state.selection
+  const node = getParentNode(selection)
+  if (!node || !isCommentingAllowed(node.type)) {
+    return false
+  }
+  const from = selection.from
+  const to = selection.to
+
+  const props = getEditorProps(state)
+  const contribution = buildContribution(props.userID)
+  const attrs = {
+    id: generateID(ObjectTypes.CommentAnnotation),
+    contents: '',
+    target: node.attrs.id,
+    contributions: [contribution],
+    originalText: selectedText(),
+    selector: {
+      from,
+      to,
+    },
+  } as CommentAttrs
+  const comment = schema.nodes.comment.create(attrs)
+  const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+  const pos = comments.pos + 1
+
+  const tr = state.tr.insert(pos, comment)
+
+  if (from === to) {
+    const point = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'point',
+    })
+    tr.insert(from, point)
+  } else {
+    const start = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'start',
+    })
+    const end = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'end',
+    })
+    tr.insert(from, start).insert(to + 1, end)
+  }
+  const range = getCommentRange(attrs)
+  const key = getCommentKey(attrs, range, node)
+  setCommentSelection(tr, key, attrs.id, true)
+  if (dispatch) {
+    dispatch(tr)
+  }
+  return true
 }
 
 interface NodeWithPosition {
