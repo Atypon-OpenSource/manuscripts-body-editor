@@ -27,13 +27,15 @@ export type Comment = NodeComment | InlineComment
 
 export type NodeComment = {
   key: CommentKey
-  attrs: CommentAttrs
+  node: CommentNode
+  pos: number
   target: NodeWithPos
 }
 
 export type InlineComment = {
   key: CommentKey
-  attrs: CommentAttrs
+  node: CommentNode
+  pos: number
   target: NodeWithPos
   range: CommentRange
 }
@@ -52,8 +54,7 @@ export type CommentSelection = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isNodeComment = (comment: any): comment is NodeComment =>
-  !comment.range
+export const isNodeComment = (c: any): c is NodeComment => !c.range
 
 export const getCommentKey = (
   comment: CommentAttrs,
