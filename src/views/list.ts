@@ -53,7 +53,7 @@ export class ListView<
   }
 }
 
-export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
+export const listCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
   const type = node.attrs.listStyleType as JatsStyleType
   dom.style.listStyleType = getListType(type).style
@@ -61,5 +61,5 @@ export const ListCallback = (node: ManuscriptNode, dom: HTMLElement) => {
 export default createNodeOrElementView(
   EditableBlock(ListView),
   'ul',
-  ListCallback
+  listCallback
 )

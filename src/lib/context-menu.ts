@@ -243,8 +243,8 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const list_type = getListType(this.node.attrs.listStyleType).type
-          if (list_type === 'ul') {
+          const listType = getListType(this.node.attrs.listStyleType).type
+          if (listType === 'ul') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
                 this.changeNodeType(schema.nodes.list, 'order')
@@ -253,7 +253,7 @@ export class ContextMenu {
             )
           }
 
-          if (list_type === 'ol') {
+          if (listType === 'ol') {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
                 this.changeNodeType(schema.nodes.list, 'bullet')
