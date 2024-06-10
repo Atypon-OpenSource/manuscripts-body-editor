@@ -23,13 +23,9 @@ export { ChangeReceiver } from './types'
 export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
 export * from './toolbar'
+export * from './lib/comments'
+export * from './plugins/comments'
 export { selectedSuggestionKey } from './plugins/selected-suggestion'
-export * from './plugins/highlight'
-export {
-  commentScroll,
-  isThereSelector,
-  isHighlightComment,
-} from './plugins/comment_annotation'
 export * from './lib/utils'
 export * from './lib/track-changes-utils'
 export * from './useEditor'

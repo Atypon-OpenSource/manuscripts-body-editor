@@ -29,7 +29,7 @@ import {
 } from 'prosemirror-tables'
 
 import {
-  addComment,
+  addInlineComment,
   blockActive,
   canInsert,
   ifInTableBody,
@@ -247,8 +247,8 @@ export const getEditorMenus = (
       {
         id: 'insert-comment',
         label: 'Comment',
-        isEnabled: isCommandValid(addComment),
-        run: doCommand(addComment),
+        isEnabled: isCommandValid(addInlineComment),
+        run: doCommand(addInlineComment),
       },
     ],
   }
