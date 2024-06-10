@@ -22,6 +22,11 @@ const nodes = [
     tag: 'p',
     node: 'paragraph',
   },
+  // this is to avoid adding a new line, as it won't appear in google doc
+  {
+    tag: 'br.Apple-interchange-newline',
+    ignore: true,
+  },
 ]
 
 export const clipboardParser = new DOMParser(schema, [
