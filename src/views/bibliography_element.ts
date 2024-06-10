@@ -14,36 +14,30 @@
  * limitations under the License.
  */
 
-import { CommentAnnotation } from '@manuscripts/json-schema'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import { buildComment, schema } from '@manuscripts/transform'
+import { BibliographyItemNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
+import { addNodeComment } from '../commands'
 import {
   ReferencesEditor,
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
+import { CommentKey, createCommentMarker } from '../lib/comments'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { commentAnnotation } from '../plugins/comment_annotation'
+import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
-import { WidgetDecoration } from '../types'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-interface BibliographyElementViewProps extends BaseNodeProps {
-  setComment: (comment?: CommentAnnotation) => void
-}
-
 export class BibliographyElementBlockView<
-  PropsType extends BibliographyElementViewProps & EditableBlockProps
+  PropsType extends EditableBlockProps
 > extends BlockView<PropsType> {
   private container: HTMLElement
   private editor: HTMLDivElement
@@ -85,13 +79,15 @@ export class BibliographyElementBlockView<
     this.showPopper(citationId)
   }
 
-  private handleComment = (citationId: string) => {
-    this.props.popper.destroy()
-    this.props.setComment(buildComment(citationId) as CommentAnnotation)
+  private handleComment = (itemID: string) => {
+    const item = findChildByID(this.view, itemID)
+    if (item) {
+      addNodeComment(item.node, this.view.state, this.props.dispatch)
+    }
   }
 
   private showContextMenu = (element: HTMLElement) => {
-    this.props.popper.destroy() // destroy the old context menu
+    this.props.popper.destroy()
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
@@ -122,10 +118,17 @@ export class BibliographyElementBlockView<
   }
 
   private handleClick = (event: Event) => {
-    this.props.popper.destroy()
     const element = event.target as HTMLElement
     const item = element.closest('.bib-item')
     if (item) {
+      const marker = element.closest('.comment-marker') as HTMLElement
+      if (marker) {
+        const key = marker.dataset.key as CommentKey
+        const tr = this.view.state.tr
+        setCommentSelection(tr, key, undefined, false)
+        this.view.dispatch(tr)
+        return
+      }
       this.showContextMenu(item as HTMLElement)
       const node = findChildByID(this.view, item.id)
       if (!node) {
@@ -146,37 +149,16 @@ export class BibliographyElementBlockView<
     }
 
     if (bib.version === this.version) {
-      this.updateSelection()
+      this.updateSelections()
       return
     }
     this.version = bib.version
 
-    const commentsDecorationSet = commentAnnotation.getState(this.view.state)
-    const commentElementMap: Map<string, HTMLElement> = new Map()
-    const dataTrackedMap: Map<string, TrackedAttrs> = new Map()
+    const nodes: Map<string, BibliographyItemNode> = new Map()
 
-    this.node.descendants((node, pos) => {
-      const nodePosition = this.getPos() + pos + 2
-      if (commentsDecorationSet) {
-        const commentWidget = commentsDecorationSet.find(
-          nodePosition,
-          nodePosition
-        )
-        if (commentWidget.length) {
-          const commentElement = (
-            commentWidget[0] as WidgetDecoration
-          ).type.toDOM()
-
-          commentElementMap.set(commentElement.id, commentElement)
-        }
-      }
-
-      const dataTracked = node.attrs.dataTracked as TrackedAttrs[]
-
-      if (dataTracked?.length) {
-        const lastChange = dataTracked[dataTracked.length - 1]
-        dataTrackedMap.set(node.attrs.id, lastChange)
-      }
+    this.node.descendants((node) => {
+      const id = node.attrs.id
+      nodes.set(id, node as BibliographyItemNode)
     })
 
     const can = this.props.getCapabilities()
@@ -196,15 +178,15 @@ export class BibliographyElementBlockView<
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
       ).firstElementChild as HTMLElement
 
-      const commentElement = commentElementMap.get(element.id)
+      const node = nodes.get(id) as BibliographyItemNode
+      const comment = createCommentMarker('div', id)
+      element.prepend(comment)
 
-      if (commentElement) {
-        element.appendChild(commentElement)
-      }
-      const dataTracked = dataTrackedMap.get(element.id)
-      if (dataTracked) {
-        element.classList.add(...getChangeClasses([dataTracked]))
-        element.dataset.trackId = dataTracked.id
+      const attrs = node.attrs as BibliographyItemAttrs
+      const change = attrs.dataTracked?.[0]
+      if (change) {
+        element.classList.add(...getChangeClasses([change]))
+        element.dataset.trackId = change.id
       }
 
       wrapper.append(element)
@@ -216,7 +198,7 @@ export class BibliographyElementBlockView<
     } else {
       this.container.appendChild(wrapper)
     }
-    this.updateSelection()
+    this.updateSelections()
   }
 
   public createElement = () => {
@@ -236,19 +218,36 @@ export class BibliographyElementBlockView<
     deleteNode(this.view, item.id)
   }
 
-  private updateSelection = () => {
-    const selection = selectedSuggestionKey.getState(
-      this.view.state
-    )?.suggestion
-    this.container
-      .querySelectorAll('.bib-item')
-      .forEach((e) => e.classList.remove('selected-suggestion'))
-    if (selection) {
-      const item = this.container.querySelector(
-        `[data-track-id="${selection.id}"]`
-      )
-      item?.classList.add('selected-suggestion')
-    }
+  private updateSelections = () => {
+    const state = this.view.state
+    const com = commentsKey.getState(state)
+    const suggestion = selectedSuggestionKey.getState(state)?.suggestion
+
+    const items = this.container.querySelectorAll('.bib-item')
+    items.forEach((e) => {
+      const item = e as HTMLElement
+      if (suggestion?.id && item.dataset.trackId === suggestion?.id) {
+        item.classList.add('selected-suggestion')
+      } else {
+        item.classList.remove('selected-suggestion')
+      }
+
+      const marker = item.querySelector('.comment-marker') as HTMLElement
+      const key = marker.dataset.key as CommentKey
+      const comments = com?.commentsByKey.get(key)
+      if (!comments) {
+        marker.setAttribute('data-count', '0')
+      } else if (comments.length !== 1) {
+        marker.setAttribute('data-count', String(comments.length))
+      } else {
+        marker.removeAttribute('data-count')
+      }
+      if (key === com?.selection?.key) {
+        marker.classList.add('selected-comment')
+      } else {
+        marker.classList.remove('selected-comment')
+      }
+    })
   }
 }
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// import { gapCursor } from 'prosemirror-gapcursor'
 import 'prosemirror-gapcursor/style/gapcursor.css'
 import 'prosemirror-tables/style/tables.css'
 
@@ -30,10 +29,10 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
-import comment_annotation from '../plugins/comment_annotation'
+import comments from '../plugins/comments'
+import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
-import highlights from '../plugins/highlight'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -51,7 +50,6 @@ export default (props: EditorProps) => {
     rules,
     ...keys,
     dropCursor(),
-    // gapCursor(),
     history(),
     trackChangesPlugin({
       userID: props.userID,
@@ -68,14 +66,14 @@ export default (props: EditorProps) => {
     bibliography(props),
     objects(props),
     affiliations(),
-    comment_annotation(props),
+    comments(),
     paragraphs(),
     placeholder(),
     tableEditing(),
-    highlights(props),
+    selected_suggestion(),
     footnotes(props),
     table_footnote(),
-    selected_suggestion(),
+    editorProps(props),
   ]
 
   if (props.collabProvider) {
