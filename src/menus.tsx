@@ -110,7 +110,7 @@ export const getEditorMenus = (
     submenu: [
       {
         id: 'front-matter',
-        label: 'Front Matter',
+        label: 'Article Metadata',
         isEnabled: true,
         submenu: [
           {
@@ -141,7 +141,7 @@ export const getEditorMenus = (
       },
       {
         id: 'back-matter',
-        label: 'Back Matter',
+        label: 'Author Notes',
         isEnabled: true,
         submenu: [
           {
