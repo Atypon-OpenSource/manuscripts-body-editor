@@ -83,6 +83,12 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     this.createEditButton()
     this.createLegend()
     this.updateSelection()
+
+    // trigger the popUp on the first insertion of the contrbutors node
+    if (this.container?.dataset.firstInitials == 'true') {
+      this.handleEdit('')
+      this.container.dataset.firstInitials = ''
+    }
   }
 
   buildAuthors = (affs: PluginState) => {
@@ -182,6 +188,10 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
 
     this.container = document.createElement('div')
     this.container.classList.add('contributors')
+    this.container.setAttribute(
+      'data-first-initials',
+      this.node.attrs.firstInitials
+    )
     this.inner.appendChild(this.container)
   }
 

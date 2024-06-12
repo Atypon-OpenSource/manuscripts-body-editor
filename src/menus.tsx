@@ -33,12 +33,16 @@ import {
   blockActive,
   canInsert,
   ifInTableBody,
+  insertAbstract,
+  insertBackMatterSection,
   insertBlock,
+  insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
+  insertKeywords,
   insertLink,
   insertList,
   insertSection,
@@ -105,6 +109,102 @@ export const getEditorMenus = (
     isEnabled: true,
     submenu: [
       {
+        id: 'front-matter',
+        label: 'Front Matter',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-abstract',
+            label: 'Abstract',
+            isEnabled: isCommandValid(insertAbstract),
+            run: doCommand(insertAbstract),
+          },
+          {
+            id: 'insert-graphical-abstract',
+            label: 'Graphical Abstract',
+            isEnabled: isCommandValid(insertGraphicalAbstract),
+            run: doCommand(insertGraphicalAbstract),
+          },
+          {
+            id: 'insert-contributors',
+            label: 'Authors & Affiliations',
+            isEnabled: isCommandValid(insertContributors),
+            run: doCommand(insertContributors),
+          },
+          {
+            id: 'insert-keywords',
+            label: 'Keywords',
+            isEnabled: isCommandValid(insertKeywords),
+            run: doCommand(insertKeywords),
+          },
+        ],
+      },
+      {
+        id: 'back-matter',
+        label: 'Back Matter',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-acknowledgements',
+            label: 'Acknowledgements',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('acknowledgement')
+            ),
+            run: doCommand(insertBackMatterSection('acknowledgement')),
+          },
+          {
+            id: 'insert-availability',
+            label: 'Availability',
+            isEnabled: isCommandValid(insertBackMatterSection('availability')),
+            run: doCommand(insertBackMatterSection('availability')),
+          },
+          {
+            id: 'insert-coi-statement',
+            label: 'COI Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('competing-interests')
+            ),
+            run: doCommand(insertBackMatterSection('competing-interests')),
+          },
+          {
+            id: 'insert-con',
+            label: 'Contributed-by Information',
+            isEnabled: isCommandValid(insertBackMatterSection('con')),
+            run: doCommand(insertBackMatterSection('con')),
+          },
+          {
+            id: 'insert-ethics-statement',
+            label: 'Ethics Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('ethics-statement')
+            ),
+            run: doCommand(insertBackMatterSection('ethics-statement')),
+          },
+          {
+            id: 'insert-financial-disclosure',
+            label: 'Financial Disclosure',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('financial-disclosure')
+            ),
+            run: doCommand(insertBackMatterSection('financial-disclosure')),
+          },
+          {
+            id: 'insert-supplementary-material',
+            label: 'Supplementary Material',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('supplementary-material')
+            ),
+            run: doCommand(insertBackMatterSection('supplementary-material')),
+          },
+          {
+            id: 'insert-supported-by',
+            label: 'Supported By',
+            isEnabled: isCommandValid(insertBackMatterSection('supported-by')),
+            run: doCommand(insertBackMatterSection('supported-by')),
+          },
+        ],
+      },
+      {
         id: 'insert-section',
         label: 'Section',
         shortcut: {
@@ -113,12 +213,6 @@ export const getEditorMenus = (
         },
         isEnabled: isCommandValid(insertSection()),
         run: doCommand(insertSection()),
-      },
-      {
-        id: 'insert-graphical-abstract',
-        label: 'Graphical Abstract',
-        isEnabled: isCommandValid(insertGraphicalAbstract),
-        run: doCommand(insertGraphicalAbstract),
       },
       {
         id: 'insert-subsection',
