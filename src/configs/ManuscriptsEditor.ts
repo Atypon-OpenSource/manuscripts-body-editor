@@ -29,6 +29,7 @@ import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
+import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
@@ -91,6 +92,7 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    clipboardParser,
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time
