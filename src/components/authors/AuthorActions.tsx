@@ -58,7 +58,7 @@ export const AuthorActions: React.FC<AuthorActionsProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   return (
-    <AuthorActionsContainer>
+    <AuthorActionsContainer data-cy="author-action">
       <DeleteAuthorConfirmationDialog
         author={author}
         isOpen={showDeleteDialog}

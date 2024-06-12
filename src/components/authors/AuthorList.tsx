@@ -42,7 +42,7 @@ export const AuthorList: React.FC<AuthorListProps> = ({
 }) => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <AuthorListContainer>
+      <AuthorListContainer data-cy="authors-list">
         {authors.map((a) => {
           return (
             <DraggableAuthor

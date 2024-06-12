@@ -146,19 +146,30 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
 
   dragRef(dropRef(ref))
 
-  const dragClass = isDragging ? 'dragging' : ''
-  const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
-  const activeClass = isSelected ? 'active' : ''
+  const classes: string[] = []
+
+  if (isDragging) {
+    classes.push('dragging')
+  }
+
+  if (isOver && dropSide) {
+    classes.push(`drop-${dropSide}`)
+  }
+
+  if (isSelected) {
+    classes.push('active')
+  }
 
   return (
     <AuthorContainer
       ref={ref}
-      className={`${dragClass} ${dropClass} ${activeClass}`}
+      className={classes.join(' ')}
       onClick={onClick}
+      data-cy="author-item"
     >
-      <AvatarContainer>
+      <AvatarContainer data-cy="author-avatar">
         <Avatar size={36} color={'#6e6e6e'} />
-        <AuthorNotes>
+        <AuthorNotes data-cy="author-notes">
           {author.isCorresponding && (
             <AuthorBadge>
               <CorrespondingAuthorIcon />
@@ -166,7 +177,7 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
           )}
         </AuthorNotes>
       </AvatarContainer>
-      <AuthorName>{authorLabel(author)}</AuthorName>
+      <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
       {isSelected && <DragHandle />}
     </AuthorContainer>
   )
