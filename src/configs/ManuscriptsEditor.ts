@@ -16,11 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import {
-  CommentAnnotation,
-  Manuscript,
-  UserProfile,
-} from '@manuscripts/json-schema'
+import { Manuscript, UserProfile } from '@manuscripts/json-schema'
 import {
   Capabilities,
   FileAttachment,
@@ -33,6 +29,7 @@ import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
+import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
@@ -64,8 +61,6 @@ export interface EditorProps {
   debug: boolean
   cslProps: CSLProps
 
-  setComment: (comment?: CommentAnnotation) => void
-  setSelectedComment: (id?: string) => void
   collabProvider?: CollabProvider
 }
 
@@ -97,6 +92,7 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    clipboardParser,
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time

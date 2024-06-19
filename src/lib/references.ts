@@ -15,8 +15,10 @@
  */
 import { BibliographyItemNode, CitationNode } from '@manuscripts/transform'
 
-export type BibliographyItemAttrs = BibliographyItemNode['attrs']
-export type CitationAttrs = CitationNode['attrs']
+import { TrackableAttributes } from '../types'
+
+export type BibliographyItemAttrs = TrackableAttributes<BibliographyItemNode>
+export type CitationAttrs = TrackableAttributes<CitationNode>
 
 export const metadata = (item: BibliographyItemAttrs): string => {
   return [authors(item), item.containerTitle, issuedYear(item)]

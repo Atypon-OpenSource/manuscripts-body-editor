@@ -20,7 +20,6 @@ import { DOMSerializer } from 'prosemirror-model'
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { addCommentToLeafNode } from '../plugins/comment_annotation'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -37,6 +36,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     const outputSpec = this.node.type.spec.toDOM(this.node)
     const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
     this.dom = dom as HTMLElement
+    this.dom.className = 'citation-wrapper'
     this.contentDOM = (contentDOM as HTMLElement) || undefined
     this.updateContents()
     return this
@@ -49,14 +49,19 @@ export class CitationView<PropsType extends BaseNodeProps>
       return
     }
 
+    const id = this.node.attrs.id
     const element = document.createElement('span')
+    element.id = id
     element.classList.add('citation')
     if (this.node.attrs.dataTracked?.length) {
-      element.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
-      element.dataset.trackId = this.node.attrs.dataTracked[0].id
+      const change = this.node.attrs.dataTracked[0]
+      element.setAttribute('data-track-id', change.id)
+      element.setAttribute('data-track-status', change.status)
+      element.setAttribute('data-track-op', change.operation)
+      element.classList.add(...getChangeClasses([change]))
     }
 
-    const text = bib.renderedCitations.get(this.node.attrs.id)
+    const text = bib.renderedCitations.get(id)
     const fragment = sanitize(
       text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
       {
@@ -64,15 +69,9 @@ export class CitationView<PropsType extends BaseNodeProps>
       }
     )
     element.appendChild(fragment)
-    this.dom.className = 'citation-wrapper'
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
-    addCommentToLeafNode(
-      this.getPos(),
-      this.getPos() + this.node.nodeSize,
-      this.view.state,
-      this.dom
-    )
+
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
 }

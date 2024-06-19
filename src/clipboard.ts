@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CommentAnnotation } from '@manuscripts/json-schema'
-import { DecorationSet } from 'prosemirror-view'
+import { schema } from '@manuscripts/transform'
+import { DOMParser } from 'prosemirror-model'
+// we can override other node rules for clipboard here
+// to avoid having a conflict with manuscripts-transform
+const nodes = [
+  {
+    tag: 'p',
+    node: 'paragraph',
+  },
+  // this is to avoid adding a new line, as it won't appear in google doc
+  {
+    tag: 'br.Apple-interchange-newline',
+    ignore: true,
+  },
+]
 
-export interface HighlightPluginProps {
-  setComment: (comment?: CommentAnnotation) => void
-}
-
-export interface HighlightStartMarker {
-  id: string
-  tid: string
-  start: number
-}
-export interface HighlightMarker extends HighlightStartMarker {
-  end: number
-  text: string
-}
-
-export interface HighlightPluginState {
-  highlights: HighlightMarker[]
-  decorations: DecorationSet
-}
+export const clipboardParser = new DOMParser(schema, [
+  ...nodes,
+  ...DOMParser.fromSchema(schema).rules,
+])

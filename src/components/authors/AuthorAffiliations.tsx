@@ -129,7 +129,7 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
   }
 
   return (
-    <>
+    <div data-cy="affiliations-editor">
       {authorAffiliations.map((a) => (
         <AffiliationButton
           key={`${author.id}-${a.id}`}
@@ -160,6 +160,6 @@ export const AuthorAffiliations: React.FC<AuthorAffiliationsProps> = ({
           }),
         }}
       />
-    </>
+    </div>
   )
 }

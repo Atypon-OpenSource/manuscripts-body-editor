@@ -275,7 +275,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
             </ModalSidebarHeader>
             <SidebarContent>
-              <AddAuthorButton onClick={handleAddAuthor}>
+              <AddAuthorButton
+                data-cy="add-author-button"
+                onClick={handleAddAuthor}
+              >
                 <AddIcon width={40} height={40} />
                 <ActionTitle>Add Author</ActionTitle>
               </AddAuthorButton>
@@ -287,7 +290,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               />
             </SidebarContent>
           </ModalSidebar>
-          <ScrollableModalContent>
+          <ScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <AuthorForms>
                 <SaveAuthorConfirmationDialog
