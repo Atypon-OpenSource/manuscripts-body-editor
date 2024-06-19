@@ -17,6 +17,7 @@
 import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
+import { DOIView } from '../lib/doi-view'
 import { findChildByID } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
@@ -68,6 +69,12 @@ export class AffiliationsView extends BlockView<EditableBlockProps> {
     elements
       .sort(this.sortAffiliations)
       .forEach((e) => this.container.appendChild(e.element))
+
+    const { doi } = this.view.state.doc.attrs
+    if (doi) {
+      const doi_view = DOIView(doi)
+      this.container.appendChild(doi_view)
+    }
   }
 
   private buildAffiliation = (attrs: AffiliationAttrs, index?: number) => {
