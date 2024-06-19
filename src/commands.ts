@@ -562,7 +562,8 @@ export const insertInlineFootnote =
 
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: EditorView
 ) => {
   // check if another graphical abstract already exists
   // parameter 'deep' must equal true to search the whole document
@@ -587,6 +588,9 @@ export const insertGraphicalAbstract = (
   if (dispatch) {
     // place cursor inside section title
     const selection = TextSelection.create(tr.doc, pos + 1)
+    if (view) {
+      view.focus()
+    }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
@@ -594,16 +598,14 @@ export const insertGraphicalAbstract = (
 
 export const insertSection =
   (subsection = false) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     let pos = findPosAfterParentSection(state.selection.$from)
     const body = findChildrenByType(state.doc, schema.nodes.body)[0]
     if (isInBibliographySection(state.selection.$from)) {
       return false
     }
     if (pos === null) {
-      if (body) {
-        pos = body.pos + body.node.content.size + 1
-      }
+      pos = body.pos + body.node.content.size + 1
     }
 
     const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
@@ -615,6 +617,9 @@ export const insertSection =
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
+      if (view) {
+        view.focus()
+      }
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -622,7 +627,8 @@ export const insertSection =
   }
 
 export const insertBackMatterSection =
-  (category: string) => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  (category: string) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const bibliographySection = findChildrenByType(
       state.doc,
       schema.nodes.bibliography_section
@@ -638,13 +644,16 @@ export const insertBackMatterSection =
     const tr = state.tr.insert(
       pos,
       state.schema.nodes.section.createAndFill({
-        category: `MPSectionCategory:${category}`,
+        category: category,
       }) as SectionNode
     )
 
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos)
+      if (view) {
+        view.focus()
+      }
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -658,7 +667,8 @@ const findSelectedList = findParentNodeOfType([
 
 export const insertAbstract = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: EditorView
 ) => {
   if (
     getMatchingChild(
@@ -683,15 +693,33 @@ export const insertAbstract = (
   const tr = state.tr.insert(pos, section)
 
   if (dispatch) {
-    // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + 1)
-    dispatch(tr.setSelection(selection).scrollIntoView())
+    // Find the start position of the newly inserted section
+    const sectionStart = tr.doc.resolve(pos)
+
+    const sectionNode = sectionStart.nodeAfter
+
+    if (sectionNode && sectionNode.firstChild) {
+      // Calculate the position for the cursor within the paragraph node
+      const paragraphPos = pos + sectionNode.firstChild.nodeSize + 2 // Adjusted calculation
+
+      // Place cursor inside the paragraph element
+      const selection = TextSelection.create(tr.doc, paragraphPos)
+
+      if (view) {
+        // Focus the editor view before setting the selection
+        view.focus()
+      }
+
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
   }
   return true
 }
+
 export const insertContributors = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: EditorView
 ) => {
   // Check if another contributors node already exists
   if (getChildOfType(state.doc, schema.nodes.contributors, true)) {
@@ -714,7 +742,10 @@ export const insertContributors = (
   const tr = state.tr.insert(pos, fragment)
 
   if (dispatch) {
-    const selection = TextSelection.create(tr.doc, pos + 1)
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
@@ -723,7 +754,8 @@ export const insertContributors = (
 
 export const insertKeywords = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: EditorView
 ) => {
   // Check if another keywords node already exists
   if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
@@ -755,7 +787,10 @@ export const insertKeywords = (
   const tr = state.tr.insert(pos, keywords)
 
   if (dispatch) {
-    const selection = TextSelection.create(tr.doc, pos + 1)
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 
@@ -1390,19 +1425,4 @@ export const insertTableFootnote = (
   )
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
-}
-
-export function findNodeByType(
-  doc: ManuscriptNode,
-  nodeType: NodeType
-): NodeWithPosition[] {
-  const foundNodes: NodeWithPosition[] = []
-
-  doc.descendants((node: ManuscriptNode, pos: number) => {
-    if (node.type === nodeType) {
-      foundNodes.push({ node, pos })
-    }
-  })
-
-  return foundNodes
 }

@@ -148,59 +148,83 @@ export const getEditorMenus = (
             id: 'insert-acknowledgements',
             label: 'Acknowledgements',
             isEnabled: isCommandValid(
-              insertBackMatterSection('acknowledgement')
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
             ),
-            run: doCommand(insertBackMatterSection('acknowledgement')),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
+            ),
           },
           {
             id: 'insert-availability',
             label: 'Availability',
-            isEnabled: isCommandValid(insertBackMatterSection('availability')),
-            run: doCommand(insertBackMatterSection('availability')),
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
           },
           {
             id: 'insert-coi-statement',
             label: 'COI Statement',
             isEnabled: isCommandValid(
-              insertBackMatterSection('competing-interests')
+              insertBackMatterSection('MPSectionCategory:competing-interests')
             ),
-            run: doCommand(insertBackMatterSection('competing-interests')),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:competing-interests')
+            ),
           },
           {
             id: 'insert-con',
             label: 'Contributed-by Information',
-            isEnabled: isCommandValid(insertBackMatterSection('con')),
-            run: doCommand(insertBackMatterSection('con')),
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:con')
+            ),
+            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
           },
           {
             id: 'insert-ethics-statement',
             label: 'Ethics Statement',
             isEnabled: isCommandValid(
-              insertBackMatterSection('ethics-statement')
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
             ),
-            run: doCommand(insertBackMatterSection('ethics-statement')),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
+            ),
           },
           {
             id: 'insert-financial-disclosure',
             label: 'Financial Disclosure',
             isEnabled: isCommandValid(
-              insertBackMatterSection('financial-disclosure')
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
             ),
-            run: doCommand(insertBackMatterSection('financial-disclosure')),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+            ),
           },
           {
             id: 'insert-supplementary-material',
             label: 'Supplementary Material',
             isEnabled: isCommandValid(
-              insertBackMatterSection('supplementary-material')
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
             ),
-            run: doCommand(insertBackMatterSection('supplementary-material')),
+            run: doCommand(
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
+            ),
           },
           {
             id: 'insert-supported-by',
             label: 'Supported By',
-            isEnabled: isCommandValid(insertBackMatterSection('supported-by')),
-            run: doCommand(insertBackMatterSection('supported-by')),
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
           },
         ],
       },
