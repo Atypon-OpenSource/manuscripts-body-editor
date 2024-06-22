@@ -42,7 +42,11 @@ import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
-import { isDeleted, isRejectedInsert } from './track-changes-utils'
+import {
+  getActualAttrs,
+  isDeleted,
+  isRejectedInsert,
+} from './track-changes-utils'
 
 const popper = new PopperManager()
 
@@ -242,20 +246,20 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const listType = getListType(this.node.attrs.listStyleType).type
-          if (listType === 'ul') {
+          const actualAttrs = getActualAttrs(this.node)
+          const listType = getListType(actualAttrs.listStyleType).style
+          console.log(listType, this.node.attrs)
+          if (listType === 'none' || listType === 'disc') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(schema.nodes.list, 'order')
+                this.changeNodeType(null, 'order')
                 popper.destroy()
               })
             )
-          }
-
-          if (listType === 'ol') {
+          } else {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
-                this.changeNodeType(schema.nodes.list, 'bullet')
+                this.changeNodeType(null, 'bullet')
                 popper.destroy()
               })
             )
@@ -521,7 +525,10 @@ export class ContextMenu {
     return insertable
   }
 
-  private changeNodeType = (nodeType: ManuscriptNodeType, listType: string) => {
+  private changeNodeType = (
+    nodeType: ManuscriptNodeType | null,
+    listType: string
+  ) => {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
         id: this.node.attrs.id,

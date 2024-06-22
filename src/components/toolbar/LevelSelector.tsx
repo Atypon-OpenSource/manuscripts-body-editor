@@ -551,9 +551,7 @@ const buildOptions = (
     }
 
     case schema.nodes.list: {
-      const { style, type } = getListType(
-        parentElement.node.attrs.listStyleType
-      )
+      const { style } = getListType(parentElement.node.attrs.listStyleType)
       return [
         {
           options: [
@@ -573,7 +571,8 @@ const buildOptions = (
               value: -3,
               depth: 1,
               action: convertListType(nodes.list, parentElement, style),
-              listType: type === 'ol' ? 'order' : 'bullet',
+              listType:
+                style === 'none' || style === 'disc' ? 'bullet' : 'order',
             }),
           ],
         },

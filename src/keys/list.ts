@@ -17,17 +17,18 @@
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState, schema } from '@manuscripts/transform'
 import { joinBackward } from 'prosemirror-commands'
-import { NodeType } from 'prosemirror-model'
+import { Fragment, NodeType, Slice } from 'prosemirror-model'
 import {
   liftListItem,
-  sinkListItem,
   splitListItem,
   wrapInList,
 } from 'prosemirror-schema-list'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
+import { ReplaceAroundStep } from 'prosemirror-transform'
 import { findParentNodeOfType } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
@@ -76,6 +77,66 @@ const liftToOuterList = (itemType: NodeType): Command => {
     else {
       return false
     }
+  }
+}
+
+// This fucntion is forked from the prosemirror-schema-list package, since the original function does not support cloning attributes from the parent list
+export function sinkListItem(itemType: NodeType): Command {
+  return function (state, dispatch) {
+    const { $from, $to } = state.selection
+    const range = $from.blockRange(
+      $to,
+      (node) => node.childCount > 0 && node.firstChild?.type == itemType
+    )
+    if (!range) {
+      return false
+    }
+    const startIndex = range.startIndex
+    if (startIndex == 0) {
+      return false
+    }
+    const parent = range.parent,
+      nodeBefore = parent.child(startIndex - 1)
+    if (nodeBefore.type != itemType) {
+      return false
+    }
+    if (dispatch) {
+      const nestedBefore =
+        nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
+      const actualAttrs = getActualAttrs(parent)
+      const listType = actualAttrs.listStyleType
+      const inner = Fragment.from(nestedBefore ? itemType.create() : null)
+      const slice = new Slice(
+        Fragment.from(
+          itemType.create(
+            null,
+            Fragment.from(
+              parent.type.create({ listStyleType: listType }, inner)
+            )
+          )
+        ),
+        nestedBefore ? 3 : 1,
+        0
+      )
+      const before = range.start,
+        after = range.end
+      dispatch(
+        state.tr
+          .step(
+            new ReplaceAroundStep(
+              before - (nestedBefore ? 3 : 1),
+              after,
+              before,
+              after,
+              slice,
+              1,
+              true
+            )
+          )
+          .scrollIntoView()
+      )
+    }
+    return true
   }
 }
 
