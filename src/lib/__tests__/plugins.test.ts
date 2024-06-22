@@ -389,8 +389,7 @@ describe('editor view', () => {
     expect(tableOfContentsSection.content.child(1).attrs.contents).toBe(
       '<div>Table of Contents</div>'
     )
-    let section = view.state.doc.child(2);
-    console.log(section.content.child(0).type)
+
     const emptySection = view.state.doc.child(2).child(1)
     expect(emptySection.childCount).toBe(1)
 
