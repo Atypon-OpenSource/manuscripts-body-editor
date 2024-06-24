@@ -215,9 +215,12 @@ export const insertGeneralFootnote = (
   tableElementFooter?: NodeWithPos[]
 ) => {
   const { state, dispatch } = view
-  const generalNote = state.schema.nodes.paragraph.create({
+  const paragraph = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
+  const generalNote = state.schema.nodes.general_table_footnote.create({}, [
+    paragraph,
+  ])
   const tableColGroup = findChildrenByType(
     tableNode,
     schema.nodes.table_colgroup

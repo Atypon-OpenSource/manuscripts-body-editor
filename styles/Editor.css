@@ -971,7 +971,8 @@
   fill: #353535;
 }
 .ProseMirror .table-footnotes-element > div,
-.ProseMirror .block-footnotes_element > .block > div
+.ProseMirror .block-footnotes_element > .block > div,
+.ProseMirror .general-table-footnote
  {
   position: relative;
 }
@@ -995,37 +996,27 @@
   margin-top: 0px;
 }
 
-.ProseMirror .footnote-selected, .table-footer > div:has(> p.footnote-selected) > p  {
-  background-color: #f2fbfc;
-  padding: 4px;
-}
 .table-footer > div {
   position: relative;
 }
 
-.table-footer > div > p {
-  padding-bottom: 10px;
+.general-table-footnote > p {
+  padding-bottom: 8px;
+}
+
+.general-table-footnote:has(> p.footnote-selected) > p:last-child {
+  padding-bottom: 0;
 }
 
 .ProseMirror .table-footnotes-element .footnote-selected,
-.ProseMirror .block-footnotes_element .footnote-selected
+.ProseMirror .block-footnotes_element .footnote-selected,
+.ProseMirror .general-table-footnote:has(> p.footnote-selected)
 {
+  background-color: #f2fbfc;
+  padding: 4px;
   border: 1px solid #bce7f6;
 }
-.table-footer > div:has(> p.footnote-selected) > p {
-  border-left: 1px solid #bce7f6;
-  border-right: 1px solid #bce7f6;
-}
-.table-footer > div:has(> p.footnote-selected) > p:first-child {
-  border-top: 1px solid #bce7f6;
-  position: relative;
-}
-.table-footer > div:has(> p.footnote-selected) > p:last-of-type {
-  border-bottom: 1px solid #bce7f6;
-}
-.table-footer > div:has(> p.footnote-selected) > p:last-child {
-  border-bottom: 1px solid #bce7f6;
-}
+
 .ProseMirror .footnote-label {
   vertical-align: super;
   font-size: 75%;
