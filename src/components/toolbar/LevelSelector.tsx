@@ -38,7 +38,11 @@ import styled from 'styled-components'
 import { findClosestParentElement } from '../../lib/hierarchy'
 import { nodeTypeIcon } from '../../node-type-icons'
 
-const optionName = (nodeType: ManuscriptNodeType, depth: number, listType?: string) => {
+const optionName = (
+  nodeType: ManuscriptNodeType,
+  depth: number,
+  listType?: string
+) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
       return (depth > 0 ? 'sub'.repeat(depth - 1) : '') + 'section heading'
