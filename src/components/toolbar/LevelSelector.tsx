@@ -38,11 +38,12 @@ import styled from 'styled-components'
 import { findClosestParentElement } from '../../lib/hierarchy'
 import { nodeTypeIcon } from '../../node-type-icons'
 
-const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
+const optionName = (nodeType: ManuscriptNodeType, depth: number, listType?: string) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
       return (depth > 0 ? 'sub'.repeat(depth - 1) : '') + 'section heading'
-
+    case nodeType.schema.nodes.list:
+      return listType === 'order' ? 'Ordered List' : 'Bullet List'
     default:
       return nodeNames.get(nodeType) || nodeType.name
   }
@@ -84,7 +85,7 @@ interface NodeWithPosition {
 const buildOption = (props: SelectorOptionProps): Option => ({
   ...props,
   icon: nodeTypeIcon(props.nodeType, props.listType),
-  label: titleCase(optionName(props.nodeType, props.depth)),
+  label: titleCase(optionName(props.nodeType, props.depth, props.listType)),
   isDisabled: Boolean(props.isDisabled),
   isSelected: Boolean(props.isSelected),
   isFocused: Boolean(props.isFocused),
