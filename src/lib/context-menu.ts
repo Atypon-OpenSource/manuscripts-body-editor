@@ -47,7 +47,6 @@ import {
   isDeleted,
   isRejectedInsert,
 } from './track-changes-utils'
-import { isDeleted, isRejectedInsert } from './track-changes-utils'
 import { getChildOfType } from './utils'
 
 const popper = new PopperManager()
