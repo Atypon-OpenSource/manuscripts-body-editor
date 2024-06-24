@@ -80,7 +80,7 @@ const liftToOuterList = (itemType: NodeType): Command => {
   }
 }
 
-// This fucntion is forked from the prosemirror-schema-list package, since the original function does not support cloning attributes from the parent list
+// This fucntion is forked from the prosemirror-schema-list package, since the original function does not support cloning attributes from the parent list.
 export function sinkListItem(itemType: NodeType): Command {
   return function (state, dispatch) {
     const { $from, $to } = state.selection
