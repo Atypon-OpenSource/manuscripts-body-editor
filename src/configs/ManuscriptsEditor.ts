@@ -31,11 +31,11 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { handleScrollToBibliographyItem } from '../lib/helpers'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
-import { handleScrollToBibliographyItem } from '../lib/helpers'
 
 export type CSLProps = {
   style?: string

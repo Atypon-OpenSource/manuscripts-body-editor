@@ -91,8 +91,10 @@ export const handleScrollToBibliographyItem = (view: EditorView) => {
     return false
   }
   const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
-  const editorBodyElement = document.querySelector('.editor-body')
-  const parentRect = editorBodyElement!.getBoundingClientRect()
+  const editorBodyElement = document.querySelector(
+    '.editor-body'
+  ) as HTMLElement
+  const parentRect = editorBodyElement.getBoundingClientRect()
 
   if (
     bibliographyItemRect.bottom > window.innerHeight ||
@@ -103,8 +105,8 @@ export const handleScrollToBibliographyItem = (view: EditorView) => {
     childTopOffset =
       childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
 
-    const scrollToTop = editorBodyElement!.scrollTop + childTopOffset
-    editorBodyElement!.scrollTo({ top: scrollToTop, behavior: 'smooth' })
+    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
+    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
   }
 
   return true
