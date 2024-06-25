@@ -733,7 +733,6 @@ export const insertContributors = (
 
   const contributors = state.schema.nodes.contributors.create({
     id: '',
-    firstInitials: true,
   })
   const affiliations = state.schema.nodes.affiliations.create({ id: '' })
 
