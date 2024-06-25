@@ -450,15 +450,15 @@ export const getEditorMenus = (
       {
         id: 'insert-bullet-list',
         label: 'Bullet List',
-        isEnabled: isCommandValid(insertList(schema.nodes.bullet_list)),
+        isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
           {
             id: 'bullet-list-context-menu',
             label: '',
             isEnabled: true,
             options: {
-              bullet: doCommand(insertList(schema.nodes.bullet_list, 'bullet')),
-              simple: doCommand(insertList(schema.nodes.bullet_list, 'simple')),
+              bullet: doCommand(insertList(schema.nodes.list, 'bullet')),
+              simple: doCommand(insertList(schema.nodes.list, 'simple')),
             },
           },
         ],
@@ -466,25 +466,25 @@ export const getEditorMenus = (
       {
         id: 'insert-ordered-list',
         label: 'Ordered List',
-        isEnabled: isCommandValid(insertList(schema.nodes.ordered_list)),
+        isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [
           {
             id: 'ordered-list-context-menu',
             label: '',
             isEnabled: true,
             options: {
-              order: doCommand(insertList(schema.nodes.ordered_list, 'order')),
+              order: doCommand(insertList(schema.nodes.list, 'order')),
               'alpha-upper': doCommand(
-                insertList(schema.nodes.ordered_list, 'alpha-upper')
+                insertList(schema.nodes.list, 'alpha-upper')
               ),
               'alpha-lower': doCommand(
-                insertList(schema.nodes.ordered_list, 'alpha-lower')
+                insertList(schema.nodes.list, 'alpha-lower')
               ),
               'roman-upper': doCommand(
-                insertList(schema.nodes.ordered_list, 'roman-upper')
+                insertList(schema.nodes.list, 'roman-upper')
               ),
               'roman-lower': doCommand(
-                insertList(schema.nodes.ordered_list, 'roman-lower')
+                insertList(schema.nodes.list, 'roman-lower')
               ),
             },
           },

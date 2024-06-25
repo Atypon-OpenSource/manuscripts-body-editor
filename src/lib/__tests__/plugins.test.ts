@@ -145,7 +145,8 @@ const addSectionWithEquationInList = () => {
     manuscriptID: manuscript._id,
     containerID: manuscript.containerID,
     elementType: 'ol',
-    contents: `<ul xmlns="http://www.w3.org/1999/xhtml" id="${orderedListID}" class="MPElement" data-object-type="MPListElement"><li data-placeholder-text="List item">Test <span class="MPInlineMathFragment" data-tex-representation="2+3=5"></span></li></ul>`,
+    listStyleType: 'order',
+    contents: `<ol xmlns="http://www.w3.org/1999/xhtml" id="${orderedListID}" class="MPElement" data-object-type="MPListElement"><li data-placeholder-text="List item">Test <span class="MPInlineMathFragment" data-tex-representation="2+3=5"></span></li></ol>`,
   }
 
   models.push(orderedList)
@@ -436,9 +437,7 @@ describe('editor view', () => {
     )
 
     const orderedList = sectionWithList.content.child(1)
-    expect(orderedList.type).toBe(
-      sectionWithList.type.schema.nodes.ordered_list
-    )
+    expect(orderedList.type).toBe(sectionWithList.type.schema.nodes.list)
     expect(orderedList.textContent).toBe('Test ')
 
     const inlineEquation = getMatchingDescendant(

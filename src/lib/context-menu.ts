@@ -19,6 +19,7 @@ import {
   TableFootnotesSelector,
 } from '@manuscripts/style-guide'
 import {
+  getListType,
   InlineFootnoteNode,
   isInBibliographySection,
   ManuscriptEditorView,
@@ -28,6 +29,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
+import { Attrs } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -40,11 +42,14 @@ import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { PopperManager } from './popper'
-import { isDeleted, isRejectedInsert } from './track-changes-utils'
+import {
+  getActualAttrs,
+  isDeleted,
+  isRejectedInsert,
+} from './track-changes-utils'
+import { getChildOfType } from './utils'
 
 const popper = new PopperManager()
-
-const listTypes = [schema.nodes.ordered_list, schema.nodes.bullet_list]
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
 
@@ -101,14 +106,18 @@ export class ContextMenu {
     const endPos = $pos.end()
     const types = this.insertableTypes(after, insertPos, endPos)
 
-    const insertNode = (type: ManuscriptNodeType, pos?: number) => {
+    const insertNode = (
+      type: ManuscriptNodeType,
+      pos?: number,
+      attrs?: Attrs
+    ) => {
       const { state, dispatch } = this.view
 
       if (pos === undefined) {
         pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
       }
 
-      createBlock(type, pos, state, dispatch)
+      createBlock(type, pos, state, dispatch, attrs)
     }
 
     if (hasAny(types, 'section', 'subsection')) {
@@ -146,8 +155,7 @@ export class ContextMenu {
         })
       )
     }
-
-    if (hasAny(types, 'paragraph', 'ordered_list', 'bullet_list')) {
+    if (hasAny(types, 'paragraph', 'list')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (types.has('paragraph')) {
@@ -159,19 +167,20 @@ export class ContextMenu {
             )
           }
 
-          if (types.has('ordered_list')) {
+          if (types.has('list')) {
             section.appendChild(
-              this.createMenuItem('Numbered List', () => {
-                insertNode(schema.nodes.ordered_list)
+              this.createMenuItem('Bullet List', () => {
+                insertNode(schema.nodes.list, undefined, {
+                  listStyleType: 'bullet',
+                })
                 popper.destroy()
               })
             )
-          }
-
-          if (types.has('bullet_list')) {
             section.appendChild(
-              this.createMenuItem('Bullet List', () => {
-                insertNode(schema.nodes.bullet_list)
+              this.createMenuItem('Ordered List', () => {
+                insertNode(schema.nodes.list, undefined, {
+                  listStyleType: 'order',
+                })
                 popper.destroy()
               })
             )
@@ -235,22 +244,23 @@ export class ContextMenu {
     const $pos = this.resolvePos()
     const type = this.node.type
 
-    if (listTypes.includes(type)) {
+    if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          if (type === schema.nodes.bullet_list) {
+          const actualAttrs = getActualAttrs(this.node)
+          const listType = getListType(actualAttrs.listStyleType).style
+          console.log(listType, this.node.attrs)
+          if (listType === 'none' || listType === 'disc') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(schema.nodes.ordered_list)
+                this.changeNodeType(null, 'order')
                 popper.destroy()
               })
             )
-          }
-
-          if (type === schema.nodes.ordered_list) {
+          } else {
             section.appendChild(
               this.createMenuItem('Change to Bullet List', () => {
-                this.changeNodeType(schema.nodes.bullet_list)
+                this.changeNodeType(null, 'bullet')
                 popper.destroy()
               })
             )
@@ -287,7 +297,11 @@ export class ContextMenu {
 
       const hasGeneralNote =
         tableElementFooter.length &&
-        tableElementFooter[0].node.firstChild?.type === schema.nodes.paragraph
+        getChildOfType(
+          tableElementFooter[0].node,
+          schema.nodes.general_table_footnote,
+          true
+        )
 
       if (hasGeneralNote) {
         const generalFootnote = tableElementFooter[0]?.node.firstChild
@@ -506,8 +520,7 @@ export class ContextMenu {
     }
     checkNode('section', insertPos)
     checkNode('paragraph')
-    checkNode('ordered_list')
-    checkNode('bullet_list')
+    checkNode('list')
     checkNode('figure_element')
     checkNode('table_element')
     checkNode('equation_element')
@@ -517,10 +530,14 @@ export class ContextMenu {
     return insertable
   }
 
-  private changeNodeType = (nodeType: ManuscriptNodeType) => {
+  private changeNodeType = (
+    nodeType: ManuscriptNodeType | null,
+    listType: string
+  ) => {
     this.view.dispatch(
       this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
         id: this.node.attrs.id,
+        listStyleType: listType,
       })
     )
     popper.destroy()
