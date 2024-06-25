@@ -28,7 +28,12 @@ import {
   findParentNodeClosestToPos,
 } from 'prosemirror-utils'
 
-import { insertTableFootnote } from '../commands'
+import {
+  createFootnote,
+  insertFootnote,
+  insertInlineFootnote,
+  insertTableFootnote,
+} from '../commands'
 import {
   getChangeClasses,
   isDeleted,
@@ -39,7 +44,7 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { footnotesKey, PluginState } from '../plugins/footnotes'
+import { footnotesKey } from '../plugins/footnotes'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
@@ -57,10 +62,10 @@ export class InlineFootnoteView<
 
   public isSelected() {
     const sel = this.view.state.selection
-    console.log(sel)
-    console.log(this.getPos())
-    console.log(this.node)
-    if (sel instanceof NodeSelection && sel.node == this.node) {
+    const juxtaposed =
+      sel.$head.pos === sel.$anchor.pos &&
+      sel.$head.pos === this.getPos() + this.node.nodeSize
+    if ((sel instanceof NodeSelection && sel.node == this.node) || juxtaposed) {
       return true
     }
     return false
@@ -83,44 +88,27 @@ export class InlineFootnoteView<
         notes: this.getNotes(tableElement),
         onAdd: this.onAdd,
       })
-    } else {
-      const fnState = footnotesKey.getState(this.view.state)
-      if (fnState && fnState.unusedFootnotes.size > 0) {
-        this.activateModal({
-          notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
-            node: n[0],
-          })),
-        })
-      } else {
-        if (this.node.attrs.rids?.length) {
-          let nodePos: number | undefined = undefined
-          this.view.state.doc.descendants((node, pos) => {
-            if (node.attrs.id === this.node.attrs.rids[0]) {
-              nodePos = pos
-            }
-          })
-          if (nodePos && this.props.dispatch) {
-            const sel = TextSelection.near(
-              this.view.state.doc.resolve(nodePos + 1)
-            )
-            this.props.dispatch(
-              this.view.state.tr.setSelection(sel).scrollIntoView()
-            )
+    } else if (!this.activateGenericFnModal()) {
+      if (this.node.attrs.rids?.length) {
+        let nodePos: number | undefined = undefined
+        this.view.state.doc.descendants((node, pos) => {
+          if (node.attrs.id === this.node.attrs.rids[0]) {
+            nodePos = pos
           }
+        })
+        if (nodePos && this.props.dispatch) {
+          const sel = TextSelection.near(
+            this.view.state.doc.resolve(nodePos + 1)
+          )
+          this.props.dispatch(
+            this.view.state.tr.setSelection(sel).scrollIntoView()
+          )
         }
       }
     }
   }
 
   activateModal(modalProps: Partial<ModalProps>) {
-    // const componentProps: ModalProps = {
-    //     notes: this.getNotes(tableElement),
-    //     onAdd: this.onAdd,
-    //     onInsert: this.onInsert,
-    //     onCancel: this.destroy,
-    //     inlineFootnote: this.node as InlineFootnoteNode,
-    //   }
-
     const defaultModal: ModalProps = {
       notes: [],
       onInsert: this.onInsert,
@@ -139,18 +127,50 @@ export class InlineFootnoteView<
       this.view,
       'footnote-editor'
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
+    this.props.popper.show(this.dom, this.popperContainer, 'auto', false, {
+      preventOverflow: {
+        boundariesElement: 'viewport', // You can also use 'window'
+      },
+      flip: {
+        behavior: 'clockwise', // Options: 'flip', 'clockwise', 'counterclockwise'
+      },
+    })
   }
 
-  maybeActivateModal() {
+  activateGenericFnModal() {
     const fnState = footnotesKey.getState(this.view.state)
-    console.log(this.isSelected())
-    if (this.isSelected() && fnState && fnState.unusedFootnotes.size > 0) {
+    if (
+      (!this.node.attrs.rids || !this.node.attrs.rids.length) &&
+      fnState &&
+      fnState.unusedFootnotes.size > 0
+    ) {
       this.activateModal({
         notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
           node: n[0],
         })),
+        onAdd: () => {
+          const footnote = createFootnote(this.view.state, 'footnote')
+          const tr = insertFootnote(
+            this.view.state,
+            this.view.state.tr,
+            footnote
+          )
+          tr.setNodeAttribute(tr.mapping.map(this.getPos()), 'rids', [
+            footnote.attrs.id,
+          ])
+          this.view.dispatch(tr)
+          this.destroy()
+        },
+        addNewLabel: 'Replace with new footnote',
       })
+      return true
+    }
+    return false
+  }
+
+  maybeActivateModal() {
+    if (this.isSelected()) {
+      this.activateGenericFnModal()
     }
   }
 

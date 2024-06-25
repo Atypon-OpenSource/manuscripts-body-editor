@@ -4,7 +4,7 @@
   /* min-width: 100px; */
   position: absolute;
   width: auto;
-  z-index: 5;
+  z-index: 10;
 }
 
 .popper-arrow {
@@ -234,11 +234,6 @@
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   height: auto;
   width: 600px;
-}
-
-.popper .footnote-editor {
-  left: 50%;
-  transform: translate(-50%, -100%);
 }
 
 .popper .track-attrs-popper {
