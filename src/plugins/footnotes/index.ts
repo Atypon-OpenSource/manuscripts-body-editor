@@ -136,7 +136,7 @@ const deleteFootnoteWidget =
             tr.delete(pos - 1, pos + node.nodeSize)
           } else {
             node.content.forEach((item) => {
-              if (item.type === schema.nodes.paragraph && pos) {
+              if (item.type === schema.nodes.general_table_footnote && pos) {
                 tr.delete(pos - 1, pos + item.nodeSize + 1)
               }
             })

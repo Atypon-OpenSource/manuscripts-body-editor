@@ -41,7 +41,7 @@ import {
   schema,
   SectionNode,
 } from '@manuscripts/transform'
-import { NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
+import { Attrs, NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   EditorState,
@@ -175,7 +175,8 @@ export const createBlock = (
   nodeType: ManuscriptNodeType,
   position: number,
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  attrs?: Attrs
 ) => {
   let node
 
@@ -198,7 +199,7 @@ export const createBlock = (
       ])
       break
     default:
-      node = nodeType.createAndFill()
+      node = nodeType.createAndFill(attrs)
   }
 
   const tr = state.tr.insert(position, node as ManuscriptNode)
@@ -216,9 +217,12 @@ export const insertGeneralFootnote = (
   tableElementFooter?: NodeWithPos[]
 ) => {
   const { state, dispatch } = view
-  const generalNote = state.schema.nodes.paragraph.create({
+  const paragraph = state.schema.nodes.paragraph.create({
     placeholder: 'Add general note here',
   })
+  const generalNote = state.schema.nodes.general_table_footnote.create({}, [
+    paragraph,
+  ])
   const tableColGroup = findChildrenByType(
     tableNode,
     schema.nodes.table_colgroup
@@ -622,10 +626,7 @@ export const insertSection =
     return true
   }
 
-const findSelectedList = findParentNodeOfType([
-  schema.nodes.ordered_list,
-  schema.nodes.bullet_list,
-])
+const findSelectedList = findParentNodeOfType([schema.nodes.list])
 
 const findRootList = ($pos: ResolvedPos) => {
   for (let i = 0; i < $pos.depth; i++) {
@@ -726,7 +727,7 @@ export const insertList =
           node.marks
         )
       }
-      dispatch(skipTracking(tr))
+      dispatch(tr)
       return true
     } else {
       // no list found, create new list
