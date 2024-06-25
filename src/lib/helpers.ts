@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
+import { EditorView } from 'prosemirror-view'
 
 export const isNodeOfType =
   (...type: string[]) =>
@@ -71,4 +72,40 @@ export const renderMath = async (math: string, format: string) => {
     const { convertMathMLToSVG } = await import('../lib/mathml-to-svg')
     return convertMathMLToSVG(math)
   }
+}
+
+export const handleScrollToBibliographyItem = (view: EditorView) => {
+  const tr = view.state.tr
+
+  const node = tr.doc.nodeAt(tr.selection.$from.pos)
+
+  if (!node || node.type !== schema.nodes.bibliography_item) {
+    return false
+  }
+
+  const bibliographyItemElement = document.querySelector(
+    `[id="${node.attrs.id}"]`
+  ) as HTMLElement
+
+  if (!bibliographyItemElement) {
+    return false
+  }
+  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
+  const editorBodyElement = document.querySelector('.editor-body')
+  const parentRect = editorBodyElement!.getBoundingClientRect()
+
+  if (
+    bibliographyItemRect.bottom > window.innerHeight ||
+    bibliographyItemRect.top < 150
+  ) {
+    let childTopOffset = bibliographyItemRect.top - parentRect.top
+    // to center the element vertically within the viewport.
+    childTopOffset =
+      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
+
+    const scrollToTop = editorBodyElement!.scrollTop + childTopOffset
+    editorBodyElement!.scrollTo({ top: scrollToTop, behavior: 'smooth' })
+  }
+
+  return true
 }

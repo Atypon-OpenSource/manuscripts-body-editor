@@ -35,6 +35,7 @@ import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
+import { handleScrollToBibliographyItem } from '../lib/helpers'
 
 export type CSLProps = {
   style?: string
@@ -93,6 +94,7 @@ export const createEditorView = (
     attributes: props.attributes,
     transformPasted,
     clipboardParser,
+    handleScrollToSelection: handleScrollToBibliographyItem,
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time
