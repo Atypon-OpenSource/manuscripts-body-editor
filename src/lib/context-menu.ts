@@ -249,7 +249,6 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           const actualAttrs = getActualAttrs(this.node)
           const listType = getListType(actualAttrs.listStyleType).style
-          console.log(listType, this.node.attrs)
           if (listType === 'none' || listType === 'disc') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
