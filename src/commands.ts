@@ -68,9 +68,9 @@ import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
+import { footnotesKey } from './plugins/footnotes'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
-import { footnotesKey } from './plugins/footnotes'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 

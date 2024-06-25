@@ -38,12 +38,12 @@ import {
   isDeleted,
   isRejectedInsert,
 } from '../lib/track-changes-utils'
+import { footnotesKey } from '../plugins/footnotes'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { footnotesKey } from '../plugins/footnotes'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
