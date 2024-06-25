@@ -39,10 +39,8 @@ const icons: Map<
   [nodes.manuscript, OutlineManuscriptIcon],
   [nodes.bibliography_section, OutlineSectionIcon],
   [nodes.blockquote_element, OutlineBlockQuoteIcon],
-  [nodes.bullet_list, OutlineUnorderedListIcon],
   [nodes.equation_element, OutlineEquationIcon],
   [nodes.figure_element, OutlineFigureIcon],
-  [nodes.ordered_list, OutlineOrderedListIcon],
   [nodes.paragraph, OutlineParagraphIcon],
   [nodes.pullquote_element, OutlinePullQuoteIcon],
   [nodes.section, OutlineSectionIcon],
@@ -52,7 +50,14 @@ const icons: Map<
   [nodes.footnotes_section, OutlineSectionIcon],
 ])
 
-export const nodeTypeIcon = (nodeType: NodeType) => {
+export const nodeTypeIcon = (nodeType: NodeType, listType?: string) => {
+  if (nodeType === schema.nodes.list) {
+    if (listType === 'bullet') {
+      return <OutlineUnorderedListIcon />
+    } else {
+      return <OutlineOrderedListIcon />
+    }
+  }
   const Icon = icons.get(nodeType as ManuscriptNodeType)
 
   return Icon ? <Icon /> : null

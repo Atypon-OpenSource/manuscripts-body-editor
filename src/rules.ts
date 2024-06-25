@@ -45,11 +45,8 @@ export default inputRules({
     ellipsis,
     emDash,
 
-    // 1. or 1) ordered list
-    creatingInputRule(/^\d+[.)]\s$/, schema.nodes.ordered_list),
-
-    // * bullet list
-    creatingInputRule(/^\s*\*\s$/, schema.nodes.bullet_list),
+    // * bullet | ordered list
+    creatingInputRule(/^(\d+[.)]\s|\s*\*\s)$/, schema.nodes.list),
 
     // > blockquote
     creatingInputRule(/^\s*>\s$/, schema.nodes.blockquote_element),
