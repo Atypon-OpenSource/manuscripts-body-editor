@@ -43,7 +43,7 @@ import {
   SectionNode,
 } from '@manuscripts/transform'
 
-import { Fragment, NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
+import { Attrs, Fragment, NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   EditorState,
