@@ -147,6 +147,14 @@ export class InlineFootnoteView<
         notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
           node: n[0],
         })),
+        onCancel: () => {
+          const { tr } = this.view.state
+          if (!this.node.attrs.rids.length) {
+            this.view.dispatch(
+              tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+            )
+          }
+        },
         onAdd: () => {
           const footnote = createFootnote(this.view.state, 'footnote')
           const tr = insertFootnote(
@@ -168,12 +176,6 @@ export class InlineFootnoteView<
     return false
   }
 
-  maybeActivateModal() {
-    if (this.isSelected()) {
-      this.activateGenericFnModal()
-    }
-  }
-
   public updateContents = () => {
     const node = this.node as InlineFootnoteNode
     this.dom.setAttribute('rids', node.attrs.rids.join(','))
@@ -183,7 +185,9 @@ export class InlineFootnoteView<
       ...getChangeClasses(this.node.attrs.dataTracked),
     ].join(' ')
 
-    this.maybeActivateModal()
+    if (this.isSelected()) {
+      this.activateGenericFnModal()
+    }
   }
 
   public initialise = () => {
