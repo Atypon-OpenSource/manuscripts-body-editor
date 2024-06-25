@@ -70,6 +70,7 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
+import { footnotesKey } from './plugins/footnotes'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -536,23 +537,30 @@ export const insertInlineFootnote =
       selectionPos = sectionPos + footnotePos
     } else {
       // Look for footnote element inside the footnotes section to exclude tables footnote elements
-      const footnoteElement = findChildrenByType(
-        footnotesSection.node,
-        schema.nodes.footnotes_element
-      )
-      const pos =
-        footnotesSection.pos +
-        footnoteElement[0].pos +
-        footnoteElement[0].node.nodeSize -
-        1
-      tr.insert(pos, footnote)
-      selectionPos = pos + 2
+
+      const fnState = footnotesKey.getState(state)
+      if (fnState && fnState.unusedFootnotes.size === 0) {
+        const footnoteElement = findChildrenByType(
+          footnotesSection.node,
+          schema.nodes.footnotes_element
+        )
+        const pos =
+          footnotesSection.pos +
+          footnoteElement[0].pos +
+          footnoteElement[0].node.nodeSize -
+          1
+        tr.insert(pos, footnote)
+        selectionPos = pos + 2
+      }
     }
 
-    if (dispatch && selectionPos) {
+    if (dispatch) {
       // set selection inside new footnote
-      const selection = TextSelection.near(tr.doc.resolve(selectionPos))
-      dispatch(tr.setSelection(selection).scrollIntoView())
+      if (selectionPos) {
+        const selection = TextSelection.near(tr.doc.resolve(selectionPos))
+        tr.setSelection(selection).scrollIntoView()
+      }
+      dispatch(tr)
     }
 
     return true

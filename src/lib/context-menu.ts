@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  FootnoteWithIndex,
-  TableFootnotesSelector,
-} from '@manuscripts/style-guide'
+import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   isInBibliographySection,
@@ -359,7 +356,7 @@ export class ContextMenu {
                   if (targetNode instanceof Element && this.props) {
                     const popperContainer = ReactSubView(
                       { ...this.props, dispatch: this.view.dispatch },
-                      TableFootnotesSelector,
+                      FootnotesSelector,
                       {
                         notes: footnotes,
                         onAdd: () => {
@@ -410,7 +407,7 @@ export class ContextMenu {
                       this.node,
                       this.getPos,
                       this.view,
-                      'table-footnote-editor'
+                      'footnote-editor'
                     )
                     this.props?.popper.show(
                       targetNode,

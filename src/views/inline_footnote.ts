@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  FootnoteWithIndex,
-  TableFootnotesSelector,
-} from '@manuscripts/style-guide'
+import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   ManuscriptNodeView,
   schema,
 } from '@manuscripts/transform'
 import { History } from 'history'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
   findChildrenByType,
@@ -42,10 +39,13 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { footnotesKey, PluginState } from '../plugins/footnotes'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
 }
+
+type ModalProps = Exclude<(typeof FootnotesSelector)['defaultProps'], undefined>
 
 export class InlineFootnoteView<
     PropsType extends InlineFootnoteProps & EditableBlockProps
@@ -54,6 +54,17 @@ export class InlineFootnoteView<
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
+
+  public isSelected() {
+    const sel = this.view.state.selection
+    console.log(sel)
+    console.log(this.getPos())
+    console.log(this.node)
+    if (sel instanceof NodeSelection && sel.node == this.node) {
+      return true
+    }
+    return false
+  }
 
   public findParentTableElement = () =>
     findParentNodeClosestToPos(
@@ -68,40 +79,78 @@ export class InlineFootnoteView<
 
     const tableElement = this.findParentTableElement()
     if (tableElement) {
-      const componentProps = {
+      this.activateModal({
         notes: this.getNotes(tableElement),
         onAdd: this.onAdd,
-        onInsert: this.onUpdate,
-        onCancel: this.destroy,
-        inlineFootnote: this.node,
-      }
-      this.popperContainer = ReactSubView(
-        { ...this.props, dispatch: this.view.dispatch },
-        TableFootnotesSelector,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        'table-footnote-editor'
-      )
-      this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
+      })
     } else {
-      if (this.node.attrs.rids?.length) {
-        let nodePos: number | undefined = undefined
-        this.view.state.doc.descendants((node, pos) => {
-          if (node.attrs.id === this.node.attrs.rids[0]) {
-            nodePos = pos
-          }
+      const fnState = footnotesKey.getState(this.view.state)
+      if (fnState && fnState.unusedFootnotes.size > 0) {
+        this.activateModal({
+          notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
+            node: n[0],
+          })),
         })
-        if (nodePos && this.props.dispatch) {
-          const sel = TextSelection.near(
-            this.view.state.doc.resolve(nodePos + 1)
-          )
-          this.props.dispatch(
-            this.view.state.tr.setSelection(sel).scrollIntoView()
-          )
+      } else {
+        if (this.node.attrs.rids?.length) {
+          let nodePos: number | undefined = undefined
+          this.view.state.doc.descendants((node, pos) => {
+            if (node.attrs.id === this.node.attrs.rids[0]) {
+              nodePos = pos
+            }
+          })
+          if (nodePos && this.props.dispatch) {
+            const sel = TextSelection.near(
+              this.view.state.doc.resolve(nodePos + 1)
+            )
+            this.props.dispatch(
+              this.view.state.tr.setSelection(sel).scrollIntoView()
+            )
+          }
         }
       }
+    }
+  }
+
+  activateModal(modalProps: Partial<ModalProps>) {
+    // const componentProps: ModalProps = {
+    //     notes: this.getNotes(tableElement),
+    //     onAdd: this.onAdd,
+    //     onInsert: this.onInsert,
+    //     onCancel: this.destroy,
+    //     inlineFootnote: this.node as InlineFootnoteNode,
+    //   }
+
+    const defaultModal: ModalProps = {
+      notes: [],
+      onInsert: this.onInsert,
+      onCancel: this.destroy,
+      inlineFootnote: this.node as InlineFootnoteNode,
+    }
+    this.popperContainer = ReactSubView(
+      { ...this.props, dispatch: this.view.dispatch },
+      FootnotesSelector,
+      {
+        ...defaultModal,
+        ...modalProps,
+      },
+      this.node,
+      this.getPos,
+      this.view,
+      'footnote-editor'
+    )
+    this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
+  }
+
+  maybeActivateModal() {
+    const fnState = footnotesKey.getState(this.view.state)
+    console.log(this.isSelected())
+    if (this.isSelected() && fnState && fnState.unusedFootnotes.size > 0) {
+      this.activateModal({
+        notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
+          node: n[0],
+        })),
+      })
     }
   }
 
@@ -113,6 +162,8 @@ export class InlineFootnoteView<
       'footnote',
       ...getChangeClasses(this.node.attrs.dataTracked),
     ].join(' ')
+
+    this.maybeActivateModal()
   }
 
   public initialise = () => {
@@ -162,7 +213,7 @@ export class InlineFootnoteView<
     }
   }
 
-  public onUpdate = (notes: FootnoteWithIndex[]) => {
+  public onInsert = (notes: FootnoteWithIndex[]) => {
     const contents = this.node.attrs.contents.split(',')
     const rids = notes.map((note) => note.node.attrs.id)
     const { tr } = this.view.state

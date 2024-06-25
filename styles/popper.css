@@ -135,7 +135,7 @@
 .popper .cross-reference-editor,
 .popper .citation-references,
 .popper .track-changes-review-panel,
-.popper .table-footnote-editor,
+.popper .footnote-editor,
 .popper .context-menu {
   background: #fff;
   border: 1px solid #e2e2e2;
@@ -201,7 +201,7 @@
   width: 600px;
 }
 
-.popper .table-footnote-editor {
+.popper .footnote-editor {
   width: 600px;
 }
 
@@ -221,7 +221,7 @@
   .popper .cross-reference-editor,
   .popper .equation-editor,
   .popper .link-editor,
-  .popper .table-footnote-editor {
+  .popper .footnote-editor {
     min-width: 90%;
     max-width: 90%;
   }
@@ -236,15 +236,15 @@
   width: 600px;
 }
 
-.popper .table-footnote-editor {
+.popper .footnote-editor {
   left: 50%;
   transform: translate(-50%, -100%);
 }
 
 .popper .track-attrs-popper {
-  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  background: #FFF;
+  background: #fff;
   width: 368px;
   z-index: 10;
 }
