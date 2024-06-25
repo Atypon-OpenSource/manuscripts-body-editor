@@ -31,7 +31,6 @@ import {
 import {
   createFootnote,
   insertFootnote,
-  insertInlineFootnote,
   insertTableFootnote,
 } from '../commands'
 import {
@@ -159,6 +158,7 @@ export class InlineFootnoteView<
             footnote.attrs.id,
           ])
           this.view.dispatch(tr)
+          this.view.focus()
           this.destroy()
         },
         addNewLabel: 'Replace with new footnote',

@@ -372,6 +372,8 @@ export default (props: EditorProps) => {
             break
           }
         }
+
+        tr.setMeta('ensureFocus', true)
         tr.setSelection(
           TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
         )
