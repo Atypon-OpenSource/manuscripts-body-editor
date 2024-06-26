@@ -16,6 +16,7 @@
 
 import {
   generateNodeID,
+  getListType,
   isSectionNodeType,
   ManuscriptEditorState,
   ManuscriptEditorView,
@@ -37,11 +38,16 @@ import styled from 'styled-components'
 import { findClosestParentElement } from '../../lib/hierarchy'
 import { nodeTypeIcon } from '../../node-type-icons'
 
-const optionName = (nodeType: ManuscriptNodeType, depth: number) => {
+const optionName = (
+  nodeType: ManuscriptNodeType,
+  depth: number,
+  listType?: string
+) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
       return (depth > 0 ? 'sub'.repeat(depth - 1) : '') + 'section heading'
-
+    case nodeType.schema.nodes.list:
+      return listType === 'order' ? 'Ordered List' : 'Bullet List'
     default:
       return nodeNames.get(nodeType) || nodeType.name
   }
@@ -60,6 +66,7 @@ interface Option {
   label: string
   nodeType: ManuscriptNodeType
   value: number
+  listType?: string
 }
 
 interface SelectorOptionProps {
@@ -70,6 +77,7 @@ interface SelectorOptionProps {
   isFocused?: boolean
   nodeType: ManuscriptNodeType
   value: number
+  listType?: string
 }
 
 interface NodeWithPosition {
@@ -80,8 +88,8 @@ interface NodeWithPosition {
 
 const buildOption = (props: SelectorOptionProps): Option => ({
   ...props,
-  icon: nodeTypeIcon(props.nodeType),
-  label: titleCase(optionName(props.nodeType, props.depth)),
+  icon: nodeTypeIcon(props.nodeType, props.listType),
+  label: titleCase(optionName(props.nodeType, props.depth, props.listType)),
   isDisabled: Boolean(props.isDisabled),
   isSelected: Boolean(props.isSelected),
   isFocused: Boolean(props.isFocused),
@@ -356,43 +364,46 @@ const buildOptions = (
     view && view.focus()
   }
 
-  const convertParagraphToList = (nodeType: ManuscriptNodeType) => () => {
-    const paragraph = $from.node($from.depth)
-    const beforeParagraph = $from.before($from.depth)
-    const afterParagraph = $from.after($from.depth)
-
-    const list = nodeType.create(
-      {
-        id: generateNodeID(nodeType),
-      },
-      nodes.list_item.create(
-        {},
-        schema.nodes.paragraph.create({}, paragraph.content)
+  const convertParagraphToList =
+    (nodeType: ManuscriptNodeType, listType: string) => () => {
+      const paragraph = $from.node($from.depth)
+      const beforeParagraph = $from.before($from.depth)
+      const afterParagraph = $from.after($from.depth)
+      const list = nodeType.create(
+        {
+          id: generateNodeID(nodeType),
+          listStyleType: listType,
+        },
+        nodes.list_item.create(
+          {},
+          schema.nodes.paragraph.create({}, paragraph.content)
+        )
       )
-    )
+      tr.replaceWith(beforeParagraph, afterParagraph, list)
 
-    tr.replaceWith(beforeParagraph, afterParagraph, list)
+      const anchor = beforeParagraph + 3
 
-    const anchor = beforeParagraph + 3
+      tr.setSelection(
+        TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
+      )
 
-    tr.setSelection(
-      TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
-    )
-
-    dispatch(tr.scrollIntoView())
-    view && view.focus()
-  }
+      dispatch(tr.scrollIntoView())
+      view && view.focus()
+    }
 
   const convertListType =
-    (nodeType: ManuscriptNodeType, list: NodeWithPosition) => () => {
-      tr.setNodeMarkup(list.before, nodeType, list.node.attrs)
+    (nodeType: ManuscriptNodeType, list: NodeWithPosition, listType: string) =>
+    () => {
+      tr.setNodeMarkup(list.before, nodeType, {
+        ...list.node.attrs,
+        listStyleType: listType,
+      })
 
       dispatch(tr.scrollIntoView())
       view && view.focus()
     }
 
   const parentElementType = parentElement.node.type
-
   switch (parentElementType) {
     case parentElementType.schema.nodes.section: {
       const sectionDepth = Math.max(1, $from.depth - 1)
@@ -410,19 +421,20 @@ const buildOptions = (
           isDisabled: sectionDepth <= 1 && sectionOffset <= 1,
         }),
         buildOption({
-          nodeType: nodes.ordered_list,
+          nodeType: nodes.list,
           value: -3,
           depth: 1,
           isDisabled: true,
+          listType: 'order',
         }),
         buildOption({
-          nodeType: nodes.bullet_list,
+          nodeType: nodes.list,
           value: -2,
           depth: 1,
           isDisabled: true,
+          listType: 'bullet',
         }),
       ]
-
       const sectionOptions: Option[] = []
 
       // Section lvl 1 is hidden, we will start from level 2
@@ -477,7 +489,6 @@ const buildOptions = (
           })
         )
       }
-
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
@@ -496,16 +507,18 @@ const buildOptions = (
           isSelected: true,
         }),
         buildOption({
-          nodeType: nodes.ordered_list,
+          nodeType: nodes.list,
           value: -3,
           depth: 1,
-          action: convertParagraphToList(nodes.ordered_list),
+          action: convertParagraphToList(nodes.list, 'order'),
+          listType: 'order',
         }),
         buildOption({
-          nodeType: nodes.bullet_list,
+          nodeType: nodes.list,
           value: -2,
           depth: 1,
-          action: convertParagraphToList(nodes.bullet_list),
+          action: convertParagraphToList(nodes.list, 'bullet'),
+          listType: 'bullet',
         }),
       ]
 
@@ -542,7 +555,8 @@ const buildOptions = (
       return [{ options: typeOptions }, { options: sectionOptions }]
     }
 
-    case schema.nodes.bullet_list: {
+    case schema.nodes.list: {
+      const { style } = getListType(parentElement.node.attrs.listStyleType)
       return [
         {
           options: [
@@ -558,36 +572,12 @@ const buildOptions = (
         {
           options: [
             buildOption({
-              nodeType: nodes.ordered_list,
+              nodeType: nodes.list,
               value: -3,
               depth: 1,
-              action: convertListType(nodes.ordered_list, parentElement),
-            }),
-          ],
-        },
-      ]
-    }
-
-    case parentElementType.schema.nodes.ordered_list: {
-      return [
-        {
-          options: [
-            buildOption({
-              nodeType: parentElementType,
-              value: -4,
-              depth: 1,
-              isDisabled: true,
-              isSelected: true,
-            }),
-          ],
-        },
-        {
-          options: [
-            buildOption({
-              nodeType: nodes.bullet_list,
-              value: -3,
-              depth: 1,
-              action: convertListType(nodes.bullet_list, parentElement),
+              action: convertListType(nodes.list, parentElement, style),
+              listType:
+                style === 'none' || style === 'disc' ? 'bullet' : 'order',
             }),
           ],
         },
@@ -660,7 +650,6 @@ export const LevelSelector: React.FC<{
   } = state
 
   const options = buildOptions(state, dispatch, view)
-
   return (
     <StyledSelect
       isDisabled={options.length <= 1}
@@ -710,7 +699,9 @@ export const LevelSelector: React.FC<{
 
           return (
             <OptionContainer {...props.innerProps} ref={null} style={style}>
-              <OptionIcon>{nodeTypeIcon(data.nodeType)}</OptionIcon>
+              <OptionIcon>
+                {nodeTypeIcon(data.nodeType, data.listType)}
+              </OptionIcon>
               <OptionLabel>{data.label}</OptionLabel>
             </OptionContainer>
           )
