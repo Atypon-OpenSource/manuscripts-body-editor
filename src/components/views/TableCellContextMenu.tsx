@@ -26,24 +26,10 @@ export const ContextMenuButton: React.FC<{ toggleOpen: () => void }> = ({
   </MenuButton>
 )
 
-export const ContextMenu: React.FC<{ view: EditorView }> = ({ view }) => {
+export const ContextMenu: React.FC<{ view: EditorView }> = () => {
   return (
     <MenuDropdownList>
       {/*   TODO:: table operations button */}
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
-      <span>*****</span>
     </MenuDropdownList>
   )
 }
