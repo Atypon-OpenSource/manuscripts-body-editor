@@ -372,14 +372,11 @@ export default (props: EditorProps) => {
             break
           }
         }
-
-        tr.setMeta('ensureFocus', true)
+        // selection will be lost otherwise as we replace the element completely
         tr.setSelection(
           TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
         )
       }
-
-      // selection will be lost otherwise as we replace the element completely
 
       skipTracking(tr)
       return tr
