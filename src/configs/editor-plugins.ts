@@ -41,6 +41,7 @@ import placeholder from '../plugins/placeholder'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
+import tableCellContextMenu from '../plugins/tableCellContextMenu'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
@@ -71,6 +72,7 @@ export default (props: EditorProps) => {
     paragraphs(),
     placeholder(),
     tableEditing(),
+    tableCellContextMenu(),
     selected_suggestion(),
     footnotes(props),
     table_footnote(),
