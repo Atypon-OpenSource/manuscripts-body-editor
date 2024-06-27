@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 import {
+  CommentNode,
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
 } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
-import { findChildrenByType } from 'prosemirror-utils'
+import { findChildrenByType, NodeWithPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import {
@@ -141,14 +142,13 @@ const findCommentRanges = (doc: ManuscriptNode) => {
 }
 
 const findComments = (doc: ManuscriptNode) => {
-  const nodes = findChildrenByType(doc, schema.nodes.comment)
+  const comments = findChildrenByType(doc, schema.nodes.comment)
 
-  const commentsByTarget = new Map<string, CommentAttrs[]>()
-  for (const { node } of nodes) {
-    const attrs = node.attrs as CommentAttrs
-    const targetID = attrs.target
-    const comments = commentsByTarget.get(targetID) || []
-    commentsByTarget.set(targetID, [...comments, attrs])
+  const commentsByTarget = new Map<string, NodeWithPos[]>()
+  for (const comment of comments) {
+    const targetID = comment.node.attrs.target
+    const list = commentsByTarget.get(targetID) || []
+    commentsByTarget.set(targetID, [...list, comment])
   }
 
   return commentsByTarget
@@ -180,25 +180,31 @@ const buildPluginState = (
     const highlightComments: InlineComment[] = []
     const pointComments: InlineComment[] = []
 
-    for (const attrs of comments) {
-      const id = attrs.id
-      const range = ranges.get(id)
-      const key = getCommentKey(attrs, range, node)
-      const comment = {
-        key,
-        attrs,
-        target,
-        range,
-      }
-      allComments.push(comment)
-      if (!comment.range) {
-        nodeComments.push(comment)
-      } else if (comment.range.size) {
-        highlightComments.push(comment as InlineComment)
-      } else {
-        pointComments.push(comment as InlineComment)
-      }
-    }
+    comments
+      .map((c) => {
+        const attrs = c.node.attrs as CommentAttrs
+        const id = attrs.id
+        const range = ranges.get(id)
+        const key = getCommentKey(attrs, range, node)
+        return {
+          key,
+          node: c.node as CommentNode,
+          pos: c.pos,
+          target,
+          range,
+        }
+      })
+      .forEach((c) => {
+        allComments.push(c)
+        if (!c.range) {
+          nodeComments.push(c)
+        } else if (c.range.size) {
+          highlightComments.push(c as InlineComment)
+        } else {
+          pointComments.push(c as InlineComment)
+        }
+      })
+
     for (const comment of highlightComments) {
       const key = comment.key
       const range = comment.range
@@ -213,7 +219,6 @@ const buildPluginState = (
         )
       })
     }
-    //node comments
     if (nodeComments.length) {
       const count = nodeComments.length
       const key = nodeComments[0].key
@@ -227,7 +232,7 @@ const buildPluginState = (
 
   return {
     decorations: DecorationSet.create(doc, decorations),
-    comments: new Map(allComments.map((c) => [c.attrs.id, c])),
+    comments: new Map(allComments.map((c) => [c.node.attrs.id, c])),
     commentsByKey: groupByKey(allComments),
     selection,
   }
