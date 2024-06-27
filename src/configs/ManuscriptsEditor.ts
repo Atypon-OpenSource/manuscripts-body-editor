@@ -31,6 +31,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { initMathJax } from '../lib/math'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
@@ -94,6 +95,8 @@ export const createEditorView = (
     transformPasted,
     clipboardParser,
   })
+
+  initMathJax()
 
   // running an init transaction allowing plugins to caught up with the document for the first time
   const tr = view.state.tr.setMeta('INIT', true)
