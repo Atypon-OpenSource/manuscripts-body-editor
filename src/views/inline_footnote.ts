@@ -185,7 +185,7 @@ export class InlineFootnoteView<
       ...getChangeClasses(this.node.attrs.dataTracked),
     ].join(' ')
 
-    if (this.isSelected()) {
+    if (this.isSelected() && !this.findParentTableElement()) {
       this.activateGenericFnModal()
     }
   }
