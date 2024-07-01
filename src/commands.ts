@@ -65,6 +65,7 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
+  findParentNodeOfTypeClosestToPos,
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
@@ -611,13 +612,24 @@ export const insertSection =
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     let pos = findPosAfterParentSection(state.selection.$from)
     const body = findChildrenByType(state.doc, schema.nodes.body)[0]
+
     if (isInBibliographySection(state.selection.$from)) {
       return false
     } else if (pos === null && subsection) {
       return false
     }
+
     if (pos === null) {
       pos = body.pos + body.node.content.size + 1
+    }
+    // checking wether the selection inside the abstracts node or not
+    const resolvePos = state.doc.resolve(pos)
+    const isAbstract = findParentNodeOfTypeClosestToPos(
+      resolvePos,
+      schema.nodes.abstracts
+    )
+    if (isAbstract && !subsection) {
+      return false
     }
 
     const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
