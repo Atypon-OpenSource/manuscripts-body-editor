@@ -941,3 +941,7 @@ span.accepted .selected-suggestion,
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
 }
+
+.ProseMirror .manuscript-title.empty-node .article-titles::before {
+  content: attr(data-placeholder);
+}

@@ -85,6 +85,13 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
     this.updateSelection()
   }
 
+  public selectNode = () => {
+    this.dom.classList.add('ProseMirror-selectednode')
+    if (!isDeleted(this.node)) {
+      this.handleEdit('')
+    }
+  }
+
   buildAuthors = (affs: PluginState) => {
     const wrapper = document.createElement('div')
     wrapper.classList.add('contributors-list')

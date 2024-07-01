@@ -30,11 +30,14 @@ export class TitleView<PropsType extends BaseNodeProps>
   }
 
   protected createDOM = () => {
+    const attrs = this.node.attrs
     this.dom = document.createElement('div')
     this.dom.classList.add('manuscript-title')
-
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('article-titles')
+    if (!this.node.childCount && attrs.placeholder) {
+      this.contentDOM.setAttribute('data-placeholder', attrs.placeholder)
+    }
     this.dom.appendChild(this.contentDOM)
   }
 }
