@@ -30,6 +30,7 @@ import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
+import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
@@ -74,6 +75,7 @@ export default (props: EditorProps) => {
     footnotes(props),
     table_footnote(),
     editorProps(props),
+    doi(),
   ]
 
   if (props.collabProvider) {
