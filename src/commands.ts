@@ -613,6 +613,8 @@ export const insertSection =
     const body = findChildrenByType(state.doc, schema.nodes.body)[0]
     if (isInBibliographySection(state.selection.$from)) {
       return false
+    } else if (pos === null && subsection) {
+      return false
     }
     if (pos === null) {
       pos = body.pos + body.node.content.size + 1
