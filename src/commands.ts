@@ -855,7 +855,7 @@ export const ignoreMetaNodeBackspaceCommand = (
   const { selection } = state
 
   if (!isNodeSelection(selection)) {
-    return false
+    return selection.$from.node().type === schema.nodes.keyword
   }
 
   return (
@@ -904,6 +904,10 @@ export const ignoreAtomBlockNodeForward = (
 
   if (!isTextSelection(selection)) {
     return false
+  }
+
+  if (selection.$from.node().type === schema.nodes.keyword) {
+    return true
   }
 
   const { $cursor } = selection
