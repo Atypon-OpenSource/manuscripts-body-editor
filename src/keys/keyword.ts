@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-import { baseKeymap } from 'prosemirror-commands'
-import { keymap } from 'prosemirror-keymap'
+import { isTextSelection } from '../commands'
+import { EditorAction } from '../types'
 
-import highlightKeymap from './highlight'
-import keywordKeymap from './keyword'
-import listKeymap from './list'
-import miscKeymap from './misc'
-import titleKeymap from './title'
+const ignoreEnter: EditorAction = (state) => {
+  const { selection } = state
 
-export default [
-  keymap(keywordKeymap),
-  keymap(listKeymap),
-  keymap(miscKeymap),
-  keymap(titleKeymap),
-  keymap(baseKeymap),
-  keymap(highlightKeymap),
-]
+  if (!isTextSelection(selection)) {
+    return false
+  }
+  const { $cursor } = selection
+
+  if (!$cursor) {
+    return false
+  }
+
+  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.keyword) {
+    return false
+  }
+  return true
+}
+
+const keywordKeymap: { [key: string]: EditorAction } = {
+  Enter: ignoreEnter,
+}
+
+export default keywordKeymap
