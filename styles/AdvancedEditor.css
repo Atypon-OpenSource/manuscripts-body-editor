@@ -697,7 +697,7 @@ span.comment-marker {
   background: none;
 }
 
-span.selected-suggestion, 
+span.selected-suggestion,
 .selected-suggestion > .block-container .block:not(.accepted),
 .selected-suggestion:not(:has(> .block-container)) {
   background-color: var(--selected-pending-background-color) !important;
@@ -708,8 +708,8 @@ span.selected-suggestion,
   border-style: solid !important;
 }
 
-span.accepted .selected-suggestion, 
-.accepted .selected-suggestion > .block-container .block, 
+span.accepted .selected-suggestion,
+.accepted .selected-suggestion > .block-container .block,
 .accepted .selected-suggestion:not(:has(> .block-container)),
 .selected-suggestion[data-track-status="accepted"],
 .selected-suggestion  > .block-container .block.accepted,
@@ -940,4 +940,12 @@ span.accepted .selected-suggestion,
 
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
+}
+
+.ProseMirror .table-cell-context-menu-button {
+  visibility: hidden;
+}
+
+.ProseMirror td:hover > .table-cell-context-menu-button, th:hover > .table-cell-context-menu-button {
+  visibility: visible;
 }
