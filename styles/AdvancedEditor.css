@@ -927,6 +927,13 @@ span.accepted .selected-suggestion,
   align-items: flex-start;
 }
 
+.ProseMirror .doi-container {
+  margin: 1rem 64px 0;
+  font-size: 12px;
+  color: #6e6e6e;
+
+}
+
 * {
   scroll-behavior: smooth;
 }
