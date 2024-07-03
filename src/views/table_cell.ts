@@ -30,6 +30,10 @@ import ReactSubView from './ReactSubView'
 export class TableCellView extends BlockView<EditableBlockProps> {
   public contentDOM: HTMLElement
 
+  public ignoreMutation(mutation: MutationRecord) {
+    return mutation.type === 'attributes' && mutation.attributeName === 'class'
+  }
+
   public initialise = () => {
     if (!this.node.type.spec.toDOM) {
       return
@@ -51,6 +55,10 @@ export class TableCellView extends BlockView<EditableBlockProps> {
       ContextMenuButton,
       {
         toggleOpen: () => {
+          this.dom.parentNode?.parentNode
+            ?.querySelector('.open-context-menu')
+            ?.classList.remove('open-context-menu')
+
           if (this.props.popper.isActive()) {
             this.props.popper.destroy()
           } else {
@@ -63,12 +71,19 @@ export class TableCellView extends BlockView<EditableBlockProps> {
             const contextMenu = ReactSubView(
               { ...this.props, dispatch: this.view.dispatch },
               ContextMenu,
-              { view: this.view },
+              {
+                view: this.view,
+                close: () => {
+                  this.props.popper.destroy()
+                  contextMenuButton.classList.toggle('open-context-menu')
+                },
+              },
               this.view.state.selection.$from.node(),
               this.getPos,
               this.view,
               'table-cell-context-menu'
             )
+            contextMenuButton.classList.toggle('open-context-menu')
 
             this.props.popper.show(
               contextMenuButton,

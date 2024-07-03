@@ -946,6 +946,6 @@ span.accepted .selected-suggestion,
   visibility: hidden;
 }
 
-.ProseMirror td:hover > div > .table-context-menu-button, th:hover > div > .table-context-menu-button {
+.ProseMirror td:hover > div > .table-context-menu-button, th:hover > div > .table-context-menu-button, .open-context-menu > .table-context-menu-button {
   visibility: visible;
 }

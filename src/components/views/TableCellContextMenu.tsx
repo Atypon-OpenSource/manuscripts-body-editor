@@ -41,8 +41,14 @@ export const ContextMenuButton: React.FC<{ toggleOpen: () => void }> = ({
   </MenuButton>
 )
 
-export const ContextMenu: React.FC<{ view: EditorView }> = ({ view }) => {
-  const runCommand = (command: Command) => command(view.state, view.dispatch)
+export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
+  view,
+  close,
+}) => {
+  const runCommand = (command: Command) => {
+    command(view.state, view.dispatch)
+    close()
+  }
 
   return (
     <MenuDropdownList>
@@ -60,10 +66,10 @@ export const ContextMenu: React.FC<{ view: EditorView }> = ({ view }) => {
       </ActionButton>
       <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <DeleteIcon /> Delete row
+        <GrayDeleteIcon /> Delete row
       </ActionButton>
       <ActionButton onClick={() => runCommand(deleteColumn)}>
-        <DeleteIcon /> Delete column
+        <GrayDeleteIcon /> Delete column
       </ActionButton>
     </MenuDropdownList>
   )
@@ -104,4 +110,11 @@ const Separator = styled.div`
   height: 0;
   border-bottom: 1px solid #e2e2e2;
   margin: 4px 0;
+`
+
+const GrayDeleteIcon = styled(DeleteIcon)`
+  path,
+  rect {
+    fill: #333333;
+  }
 `
