@@ -81,8 +81,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
       },
       this.view.state.selection.$from.node(),
       this.getPos,
-      this.view,
-      'table-cell-context-menu-button'
+      this.view
     )
     this.dom.appendChild(contextMenuButton)
   }

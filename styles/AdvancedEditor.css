@@ -942,10 +942,10 @@ span.accepted .selected-suggestion,
   content: none;
 }
 
-.ProseMirror .table-cell-context-menu-button {
+.ProseMirror .table-context-menu-button {
   visibility: hidden;
 }
 
-.ProseMirror td:hover > .table-cell-context-menu-button, th:hover > .table-cell-context-menu-button {
+.ProseMirror td:hover > div > .table-context-menu-button, th:hover > div > .table-context-menu-button {
   visibility: visible;
 }
