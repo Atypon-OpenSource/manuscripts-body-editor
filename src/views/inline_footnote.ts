@@ -138,11 +138,7 @@ export class InlineFootnoteView<
 
   activateGenericFnModal() {
     const fnState = footnotesKey.getState(this.view.state)
-    if (
-      (!this.node.attrs.rids || !this.node.attrs.rids.length) &&
-      fnState &&
-      fnState.unusedFootnotes.size > 0
-    ) {
+    if (fnState && fnState.unusedFootnotes.size > 0) {
       this.activateModal({
         notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
           node: n[0],
