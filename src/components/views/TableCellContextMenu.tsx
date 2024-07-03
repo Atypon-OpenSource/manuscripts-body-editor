@@ -13,7 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DotsIcon, IconButton } from '@manuscripts/style-guide'
+import {
+  DeleteIcon,
+  DotsIcon,
+  IconButton,
+  IconTextButton,
+  PlusIcon,
+} from '@manuscripts/style-guide'
+import { Command } from 'prosemirror-state'
+import {
+  addColumnAfter,
+  addColumnBefore,
+  addRowAfter,
+  addRowBefore,
+  deleteColumn,
+  deleteRow,
+} from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import styled from 'styled-components'
@@ -26,10 +41,30 @@ export const ContextMenuButton: React.FC<{ toggleOpen: () => void }> = ({
   </MenuButton>
 )
 
-export const ContextMenu: React.FC<{ view: EditorView }> = () => {
+export const ContextMenu: React.FC<{ view: EditorView }> = ({ view }) => {
+  const runCommand = (command: Command) => command(view.state, view.dispatch)
+
   return (
     <MenuDropdownList>
-      {/*   TODO:: table operations button */}
+      <ActionButton onClick={() => runCommand(addRowBefore)}>
+        <PlusIcon /> Insert row above
+      </ActionButton>
+      <ActionButton onClick={() => runCommand(addRowAfter)}>
+        <PlusIcon /> Insert row below
+      </ActionButton>
+      <ActionButton onClick={() => runCommand(addColumnBefore)}>
+        <PlusIcon /> Insert column to the left
+      </ActionButton>
+      <ActionButton onClick={() => runCommand(addColumnAfter)}>
+        <PlusIcon /> Insert column to the right
+      </ActionButton>
+      <Separator />
+      <ActionButton onClick={() => runCommand(deleteRow)}>
+        <DeleteIcon /> Delete row
+      </ActionButton>
+      <ActionButton onClick={() => runCommand(deleteColumn)}>
+        <DeleteIcon /> Delete column
+      </ActionButton>
     </MenuDropdownList>
   )
 }
@@ -54,4 +89,19 @@ const MenuButton = styled(IconButton)`
 const MenuDropdownList = styled.div`
   display: flex;
   flex-direction: column;
+`
+
+const ActionButton = styled(IconTextButton)`
+  padding: 8px 16px;
+  justify-content: flex-start;
+
+  :hover {
+    background: #f2fbfc;
+  }
+`
+
+const Separator = styled.div`
+  height: 0;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 4px 0;
 `

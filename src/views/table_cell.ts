@@ -16,6 +16,7 @@
 
 import { schema } from '@manuscripts/transform'
 import { DOMSerializer, ResolvedPos } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
 
 import {
   ContextMenu,
@@ -45,15 +46,6 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   }
 
   private createContextMenu() {
-    const contextMenu = ReactSubView(
-      { ...this.props, dispatch: this.view.dispatch },
-      ContextMenu,
-      { view: this.view },
-      this.view.state.selection.$from.node(),
-      this.getPos,
-      this.view
-    )
-
     const contextMenuButton = ReactSubView(
       { ...this.props, dispatch: this.view.dispatch },
       ContextMenuButton,
@@ -62,6 +54,22 @@ export class TableCellView extends BlockView<EditableBlockProps> {
           if (this.props.popper.isActive()) {
             this.props.popper.destroy()
           } else {
+            this.view.dispatch(
+              this.view.state.tr.setSelection(
+                TextSelection.create(this.view.state.doc, this.getPos())
+              )
+            )
+            this.view.focus()
+            const contextMenu = ReactSubView(
+              { ...this.props, dispatch: this.view.dispatch },
+              ContextMenu,
+              { view: this.view },
+              this.view.state.selection.$from.node(),
+              this.getPos,
+              this.view,
+              'table-cell-context-menu'
+            )
+
             this.props.popper.show(
               contextMenuButton,
               contextMenu,
