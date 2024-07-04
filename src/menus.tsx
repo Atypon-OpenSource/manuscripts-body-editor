@@ -32,7 +32,6 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
-  ifInTableBody,
   insertBlock,
   insertCrossReference,
   insertGraphicalAbstract,
@@ -383,19 +382,19 @@ export const getEditorMenus = (
           {
             id: 'format-table-add-row-before',
             label: 'Add Row Above',
-            isEnabled: isCommandValid(ifInTableBody(addRowBefore)),
+            isEnabled: isCommandValid(addRowBefore),
             run: doCommand(addRowBefore),
           },
           {
             id: 'format-table-add-row-after',
             label: 'Add Row Below',
-            isEnabled: isCommandValid(ifInTableBody(addRowAfter)),
+            isEnabled: isCommandValid(addRowAfter),
             run: doCommand(addRowAfter),
           },
           {
             id: 'format-table-delete-row',
             label: 'Delete Row',
-            isEnabled: isCommandValid(ifInTableBody(deleteRow)),
+            isEnabled: isCommandValid(deleteRow),
             run: doCommand(deleteRow),
           },
           {
@@ -404,19 +403,19 @@ export const getEditorMenus = (
           {
             id: 'format-table-add-column-before',
             label: 'Add Column Before',
-            isEnabled: isCommandValid(ifInTableBody(addColumnBefore)),
+            isEnabled: isCommandValid(addColumnBefore),
             run: doCommand(addColumnBefore),
           },
           {
             id: 'format-table-add-column-after',
             label: 'Add Column After',
-            isEnabled: isCommandValid(ifInTableBody(addColumnAfter)),
+            isEnabled: isCommandValid(addColumnAfter),
             run: doCommand(addColumnAfter),
           },
           {
             id: 'format-table-delete-column',
             label: 'Delete Column',
-            isEnabled: isCommandValid(ifInTableBody(deleteColumn)),
+            isEnabled: isCommandValid(deleteColumn),
             run: doCommand(deleteColumn),
           },
         ],

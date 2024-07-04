@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
-import { DOMSerializer, ResolvedPos } from 'prosemirror-model'
+import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
 import {
@@ -44,9 +43,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
     this.contentDOM = document.createElement('span')
     this.dom.appendChild(this.contentDOM)
 
-    if (isInTable(this.view.state.doc.resolve(this.getPos()))) {
-      this.createContextMenu()
-    }
+    this.createContextMenu()
   }
 
   private createContextMenu() {
@@ -99,15 +96,6 @@ export class TableCellView extends BlockView<EditableBlockProps> {
       this.view
     )
     this.dom.appendChild(contextMenuButton)
-  }
-}
-
-const isInTable = ($pos: ResolvedPos) => {
-  const depth = $pos.depth
-  const node = $pos.node(depth)
-  if (node.type === schema.nodes.table_row) {
-    const table = $pos.node(depth - 1)
-    return !(table.firstChild === node || table.lastChild === node)
   }
 }
 
