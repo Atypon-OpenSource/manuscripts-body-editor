@@ -23,16 +23,20 @@ const ignoreEnter: EditorAction = (state) => {
   if (!isTextSelection(selection)) {
     return false
   }
-  const { $cursor } = selection
 
-  if (!$cursor) {
-    return false
+  const { $from, $to } = selection
+  // Check if the selection starts and ends in a keyword node
+  const startNode = $from.node($from.depth)
+  const endNode = $to.node($to.depth)
+
+  if (
+    startNode.type === state.schema.nodes.keyword ||
+    endNode.type === state.schema.nodes.keyword
+  ) {
+    return true // Ignore Enter key press if selection is within a keyword node
   }
 
-  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.keyword) {
-    return false
-  }
-  return true
+  return false
 }
 
 const keywordKeymap: { [key: string]: EditorAction } = {
