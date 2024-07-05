@@ -944,8 +944,21 @@ span.accepted .selected-suggestion,
 
 .ProseMirror .table-context-menu-button {
   visibility: hidden;
+  display: inline-grid;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  border: 1px solid #c9c9c9 !important;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
 }
 
-.ProseMirror td:hover > div > .table-context-menu-button, th:hover > div > .table-context-menu-button, .open-context-menu > .table-context-menu-button {
+.ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, .open-context-menu {
   visibility: visible;
 }

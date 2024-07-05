@@ -13,13 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  DeleteIcon,
-  DotsIcon,
-  IconButton,
-  IconTextButton,
-  PlusIcon,
-} from '@manuscripts/style-guide'
+import { DeleteIcon, IconTextButton, PlusIcon } from '@manuscripts/style-guide'
 import { Command } from 'prosemirror-state'
 import {
   addColumnAfter,
@@ -32,14 +26,6 @@ import {
 import { EditorView } from 'prosemirror-view'
 import React from 'react'
 import styled from 'styled-components'
-
-export const ContextMenuButton: React.FC<{ toggleOpen: () => void }> = ({
-  toggleOpen,
-}) => (
-  <MenuButton className={'table-context-menu-button'} onClick={toggleOpen}>
-    <DotsIcon />
-  </MenuButton>
-)
 
 export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   view,
@@ -74,23 +60,6 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     </MenuDropdownList>
   )
 }
-
-const MenuButton = styled(IconButton)`
-  border: 1px solid #c9c9c9 !important;
-  border-radius: 4px;
-  width: ${(props) => props.theme.grid.unit * 6}px;
-  height: ${(props) => props.theme.grid.unit * 6}px;
-  background: white;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  :hover,
-  :active,
-  :focus {
-    background: white !important;
-  }
-`
 
 const MenuDropdownList = styled.div`
   display: flex;

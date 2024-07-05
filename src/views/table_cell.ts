@@ -17,10 +17,8 @@
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
-import {
-  ContextMenu,
-  ContextMenuButton,
-} from '../components/views/TableCellContextMenu'
+import { threeDotIcon } from '../assets'
+import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -47,54 +45,45 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   }
 
   private createContextMenu() {
-    const contextMenuButton = ReactSubView(
-      { ...this.props, dispatch: this.view.dispatch },
-      ContextMenuButton,
-      {
-        toggleOpen: () => {
-          this.dom.parentNode?.parentNode
-            ?.querySelector('.open-context-menu')
-            ?.classList.remove('open-context-menu')
+    const contextMenuButton = document.createElement('button')
+    contextMenuButton.className = 'table-context-menu-button'
+    contextMenuButton.innerHTML = threeDotIcon
 
-          if (this.props.popper.isActive()) {
-            this.props.popper.destroy()
-          } else {
-            this.view.dispatch(
-              this.view.state.tr.setSelection(
-                TextSelection.create(this.view.state.doc, this.getPos())
-              )
-            )
-            this.view.focus()
-            const contextMenu = ReactSubView(
-              { ...this.props, dispatch: this.view.dispatch },
-              ContextMenu,
-              {
-                view: this.view,
-                close: () => {
-                  this.props.popper.destroy()
-                  contextMenuButton.classList.toggle('open-context-menu')
-                },
-              },
-              this.view.state.selection.$from.node(),
-              this.getPos,
-              this.view,
-              'table-cell-context-menu'
-            )
-            contextMenuButton.classList.toggle('open-context-menu')
+    contextMenuButton.addEventListener('click', () => {
+      this.dom.parentNode?.parentNode
+        ?.querySelector('.open-context-menu')
+        ?.classList.remove('open-context-menu')
 
-            this.props.popper.show(
-              contextMenuButton,
-              contextMenu,
-              'right',
-              false
-            )
-          }
-        },
-      },
-      this.view.state.selection.$from.node(),
-      this.getPos,
-      this.view
-    )
+      if (this.props.popper.isActive()) {
+        this.props.popper.destroy()
+      } else {
+        this.view.dispatch(
+          this.view.state.tr.setSelection(
+            TextSelection.create(this.view.state.doc, this.getPos())
+          )
+        )
+        this.view.focus()
+        const contextMenu = ReactSubView(
+          { ...this.props, dispatch: this.view.dispatch },
+          ContextMenu,
+          {
+            view: this.view,
+            close: () => {
+              this.props.popper.destroy()
+              contextMenuButton.classList.toggle('open-context-menu')
+            },
+          },
+          this.view.state.selection.$from.node(),
+          this.getPos,
+          this.view,
+          'table-cell-context-menu'
+        )
+        contextMenuButton.classList.toggle('open-context-menu')
+
+        this.props.popper.show(contextMenuButton, contextMenu, 'right', false)
+      }
+    })
+
     this.dom.appendChild(contextMenuButton)
   }
 }
