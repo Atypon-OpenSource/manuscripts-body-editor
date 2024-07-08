@@ -819,7 +819,8 @@ span.accepted .selected-suggestion,
   background-color: var(--deleted-pending-bg-color)
 }
 
-.contributor[data-track-op='delete']:not([data-track-status='rejected']) {
+.contributor[data-track-op='delete']:not([data-track-status='rejected']),
+.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
   text-decoration: line-through;
 }
 
@@ -940,6 +941,10 @@ span.accepted .selected-suggestion,
 
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
+}
+
+.ProseMirror .manuscript-title.empty-node .article-titles::before {
+  content: attr(data-placeholder);
 }
 
 .ProseMirror .table-context-menu-button {

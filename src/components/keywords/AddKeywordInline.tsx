@@ -104,7 +104,6 @@ export const AddKeywordInline: React.FC<{
   const [isExistingKeywordError, setIsExistingKeywordError] =
     useState<boolean>(false)
   const { getPos, view } = viewProps
-
   const getKeywords = (node: ManuscriptNode) => {
     const keywords: KeywordEntry[] = []
     node.content.descendants((descNode) => {
@@ -164,8 +163,7 @@ export const AddKeywordInline: React.FC<{
 
   const handleAddKeyword = () => {
     const keyword: Build<Keyword> = buildKeyword(newKeyword)
-
-    if (!isExistingKeyword()) {
+    if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
       const keywordNode = node.type.schema.nodes.keyword.create(
         {
@@ -196,12 +194,19 @@ export const AddKeywordInline: React.FC<{
       <KeywordField
         value={newKeyword}
         onChange={handleInputChange}
-        onKeyUp={(e) => {
+        onKeyDown={(e) => {
+          e.stopPropagation()
           if (e.key == 'Enter') {
             handleAddKeyword()
           } else if (e.key == 'Escape') {
             handleCancel()
           }
+        }}
+        onKeyUp={(e) => {
+          e.stopPropagation()
+        }}
+        onKeyPress={(e) => {
+          e.stopPropagation()
         }}
         autoFocus
       />
@@ -249,7 +254,6 @@ export const AddKeywordInline: React.FC<{
       {isAddingNewKeyword && isValidNewKeyword() && (
         <CreateKeywordButtonElement />
       )}
-
       <Dialog
         isOpen={isExistingKeywordError}
         actions={actions}

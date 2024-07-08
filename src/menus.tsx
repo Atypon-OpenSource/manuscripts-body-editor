@@ -32,12 +32,16 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
+  insertAbstract,
+  insertBackMatterSection,
   insertBlock,
+  insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
+  insertKeywords,
   insertLink,
   insertList,
   insertSection,
@@ -104,6 +108,126 @@ export const getEditorMenus = (
     isEnabled: true,
     submenu: [
       {
+        id: 'front-matter',
+        label: 'Article Metadata',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-abstract',
+            label: 'Abstract',
+            isEnabled: isCommandValid(insertAbstract),
+            run: doCommand(insertAbstract),
+          },
+          {
+            id: 'insert-graphical-abstract',
+            label: 'Graphical Abstract',
+            isEnabled: isCommandValid(insertGraphicalAbstract),
+            run: doCommand(insertGraphicalAbstract),
+          },
+          {
+            id: 'insert-contributors',
+            label: 'Authors & Affiliations',
+            isEnabled: isCommandValid(insertContributors),
+            run: doCommand(insertContributors),
+          },
+          {
+            id: 'insert-keywords',
+            label: 'Keywords',
+            isEnabled: isCommandValid(insertKeywords),
+            run: doCommand(insertKeywords),
+          },
+        ],
+      },
+      {
+        id: 'back-matter',
+        label: 'Author Notes',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-acknowledgements',
+            label: 'Acknowledgements',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
+            ),
+          },
+          {
+            id: 'insert-availability',
+            label: 'Availability',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
+          },
+          {
+            id: 'insert-coi-statement',
+            label: 'COI Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:competing-interests')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:competing-interests')
+            ),
+          },
+          {
+            id: 'insert-con',
+            label: 'Contributed-by Information',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:con')
+            ),
+            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
+          },
+          {
+            id: 'insert-ethics-statement',
+            label: 'Ethics Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
+            ),
+          },
+          {
+            id: 'insert-financial-disclosure',
+            label: 'Financial Disclosure',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+            ),
+          },
+          {
+            id: 'insert-supplementary-material',
+            label: 'Supplementary Material',
+            isEnabled: isCommandValid(
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
+            ),
+            run: doCommand(
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
+            ),
+          },
+          {
+            id: 'insert-supported-by',
+            label: 'Supported By',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
+          },
+        ],
+      },
+      {
         id: 'insert-section',
         label: 'Section',
         shortcut: {
@@ -112,12 +236,6 @@ export const getEditorMenus = (
         },
         isEnabled: isCommandValid(insertSection()),
         run: doCommand(insertSection()),
-      },
-      {
-        id: 'insert-graphical-abstract',
-        label: 'Graphical Abstract',
-        isEnabled: isCommandValid(insertGraphicalAbstract),
-        run: doCommand(insertGraphicalAbstract),
       },
       {
         id: 'insert-subsection',

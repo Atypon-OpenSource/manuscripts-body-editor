@@ -18,11 +18,13 @@ import { baseKeymap } from 'prosemirror-commands'
 import { keymap } from 'prosemirror-keymap'
 
 import highlightKeymap from './highlight'
+import keywordKeymap from './keyword'
 import listKeymap from './list'
 import miscKeymap from './misc'
 import titleKeymap from './title'
 
 export default [
+  keymap(keywordKeymap),
   keymap(listKeymap),
   keymap(miscKeymap),
   keymap(titleKeymap),
