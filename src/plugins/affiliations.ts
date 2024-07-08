@@ -57,6 +57,7 @@ export const buildPluginState = (
   const nodes: [ManuscriptNode, number][] = []
   const contributors: ContributorAttrs[] = []
   const affiliations: AffiliationAttrs[] = []
+  const deletedContribId = new Set<string>()
 
   doc.descendants((node, pos) => {
     const attrs = isDeleted(node) ? node.attrs : getActualAttrs(node)
@@ -65,6 +66,7 @@ export const buildPluginState = (
       affiliations.push(attrs as AffiliationAttrs)
     }
     if (isContributorNode(node)) {
+      isDeleted(node) && deletedContribId.add(attrs.id)
       nodes.push([node, pos])
       contributors.push(attrs as ContributorAttrs)
     }
@@ -77,19 +79,16 @@ export const buildPluginState = (
   ) {
     return $old
   }
-
   const iAffiliations = new Set<string>()
 
   contributors.sort(authorComparator).forEach((attrs) => {
     attrs.affiliations.forEach((aff) => {
-      iAffiliations.add(aff)
+      !deletedContribId.has(attrs.id) && iAffiliations.add(aff)
     })
   })
-
   const indexedAffiliationIds = new Map<string, number>(
     [...iAffiliations].map((id, i) => [id, i + 1])
   )
-
   const version = String(id++)
   const decorations: Decoration[] = []
   nodes.forEach(([node, pos]) => {
