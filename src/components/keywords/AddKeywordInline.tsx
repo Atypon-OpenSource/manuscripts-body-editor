@@ -163,7 +163,7 @@ export const AddKeywordInline: React.FC<{
 
   const handleAddKeyword = () => {
     const keyword: Build<Keyword> = buildKeyword(newKeyword)
-    if (!isExistingKeyword()) {
+    if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
       const keywordNode = node.type.schema.nodes.keyword.create(
         {
