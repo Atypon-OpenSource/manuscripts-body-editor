@@ -1529,10 +1529,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@1.13.7":
-  version "1.13.7"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.13.7.tgz#cb50138762b941992beb674f6a9e1c17e4b90497"
-  integrity sha512-VrSFSAvb7st8VeNJdimyzJ1JUCpYORfKHA1FkkRY3Ozl7J8zy8CB1du0gm6xBo5kylB8/z9zOBBPjp2KuDbzbg==
+"@manuscripts/style-guide@1.13.8-LEAN-3450.0":
+  version "1.13.8-LEAN-3450.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-1.13.8-LEAN-3450.0.tgz#98d4ed384bf23359405d61579445343189841aa5"
+  integrity sha512-9bp99Jf2DiLzpz6ZPKU59tSASSDMzfwylAT7hmcYSp6GOhTHlh7IXJaujHB5MXJB/I8Drq01J9kG5cUysximIg==
   dependencies:
     "@manuscripts/json-schema" "2.2.10"
     "@manuscripts/transform" "2.3.15"
