@@ -228,11 +228,7 @@ export class ContextMenu {
       )
     }
 
-    popper.show(target, menu, 'right', true, {
-      modifiers: {
-        offset: { offset: '0, 50%p' },
-      },
-    })
+    popper.show(target, menu, 'right', true)
 
     this.addPopperEventListeners()
   }
@@ -457,11 +453,7 @@ export class ContextMenu {
       )
     }
 
-    popper.show(target, menu, 'right', true, {
-      modifiers: {
-        offset: { offset: '0, 50%p' },
-      },
-    })
+    popper.show(target, menu, 'right', true)
 
     this.addPopperEventListeners()
   }
