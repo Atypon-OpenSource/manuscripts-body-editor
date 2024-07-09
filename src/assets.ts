@@ -166,10 +166,9 @@ export const deleteIcon = `
   />
 </svg>`
 
-export const threeDotIcon = `
-<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="7" cy="1.75" r="1.75" fill="#6E6E6E"/>
-<circle cx="7" cy="7" r="1.75" fill="#6E6E6E"/>
-<circle cx="7" cy="12.25" r="1.75" fill="#6E6E6E"/>
+export const threeDotIcon = ` <svg width="4" height="16" viewBox="0 0 4 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="2" cy="2" r="2" fill="#6E6E6E"></circle>
+<circle cx="2" cy="8" r="2" fill="#6E6E6E"></circle>
+<circle cx="2" cy="14" r="2" fill="#6E6E6E"></circle>
 </svg>
 `

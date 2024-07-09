@@ -16,6 +16,7 @@
 
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
+import { CellSelection } from 'prosemirror-tables'
 
 import { threeDotIcon } from '../assets'
 import { ContextMenu } from '../components/views/TableCellContextMenu'
@@ -56,12 +57,22 @@ export class TableCellView extends BlockView<EditableBlockProps> {
           .querySelector('.open-context-menu')
           ?.classList.remove('open-context-menu')
       } else {
-        this.view.dispatch(
-          this.view.state.tr.setSelection(
-            TextSelection.create(this.view.state.doc, this.getPos())
+        // if the clicked button are not selected will move selection to that node view
+        if (
+          !(
+            this.view.state.selection instanceof CellSelection &&
+            (this.getPos() === this.view.state.selection.$anchorCell.pos ||
+              this.getPos() === this.view.state.selection.$headCell.pos)
           )
-        )
-        this.view.focus()
+        ) {
+          this.view.dispatch(
+            this.view.state.tr.setSelection(
+              TextSelection.create(this.view.state.doc, this.getPos())
+            )
+          )
+          this.view.focus()
+        }
+
         const contextMenu = ReactSubView(
           { ...this.props, dispatch: this.view.dispatch },
           ContextMenu,
