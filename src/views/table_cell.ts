@@ -50,12 +50,11 @@ export class TableCellView extends BlockView<EditableBlockProps> {
     contextMenuButton.innerHTML = threeDotIcon
 
     contextMenuButton.addEventListener('click', () => {
-      this.dom.parentNode?.parentNode
-        ?.querySelector('.open-context-menu')
-        ?.classList.remove('open-context-menu')
-
       if (this.props.popper.isActive()) {
         this.props.popper.destroy()
+        this.view.dom
+          .querySelector('.open-context-menu')
+          ?.classList.remove('open-context-menu')
       } else {
         this.view.dispatch(
           this.view.state.tr.setSelection(

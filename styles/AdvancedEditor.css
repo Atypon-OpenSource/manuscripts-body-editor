@@ -964,6 +964,6 @@ span.accepted .selected-suggestion,
   cursor: pointer;
 }
 
-.ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, th > .open-context-menu {
+.ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, .open-context-menu {
   visibility: visible !important;
 }
