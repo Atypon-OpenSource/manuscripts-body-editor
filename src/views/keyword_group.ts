@@ -37,7 +37,6 @@ export class KeywordGroupView extends BlockView<EditableBlockProps> {
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
-
     if (this.props.getCapabilities().editArticle) {
       this.addingTools = ReactSubView(
         this.props,
