@@ -15,6 +15,7 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
@@ -58,6 +59,11 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+  const doCommandWithoutTracking = (command: Command) => () => {
+    editor.doCommand((state, dispatch) =>
+      command(state, (tr) => dispatch && dispatch(skipTracking(tr)))
+    )
+  }
 
   const edit: MenuSpec = {
     id: 'edit',
@@ -522,19 +528,19 @@ export const getEditorMenus = (
             id: 'format-table-add-column-before',
             label: 'Add Column Before',
             isEnabled: isCommandValid(addColumnBefore),
-            run: doCommand(addColumnBefore),
+            run: doCommandWithoutTracking(addColumnBefore),
           },
           {
             id: 'format-table-add-column-after',
             label: 'Add Column After',
             isEnabled: isCommandValid(addColumnAfter),
-            run: doCommand(addColumnAfter),
+            run: doCommandWithoutTracking(addColumnAfter),
           },
           {
             id: 'format-table-delete-column',
             label: 'Delete Column',
             isEnabled: isCommandValid(deleteColumn),
-            run: doCommand(deleteColumn),
+            run: doCommandWithoutTracking(deleteColumn),
           },
         ],
       },
