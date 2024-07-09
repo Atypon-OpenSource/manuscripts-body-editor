@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { isTextSelection } from '../commands'
+import { ManuscriptEditorState, schema } from '@manuscripts/transform'
+
+import { isNodeSelection, isTextSelection } from '../commands'
 import { EditorAction } from '../types'
 
 const ignoreEnter: EditorAction = (state) => {
@@ -39,8 +41,30 @@ const ignoreEnter: EditorAction = (state) => {
   return false
 }
 
+export const ignoreBackSpace = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isNodeSelection(selection)) {
+    return selection.$from.node().type === schema.nodes.keyword
+  }
+
+  return false
+}
+
+export const ignoreDelete = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isTextSelection(selection)) {
+    return false
+  }
+
+  return selection.$from.node().type === schema.nodes.keyword
+}
+
 const keywordKeymap: { [key: string]: EditorAction } = {
   Enter: ignoreEnter,
+  Delete: ignoreDelete,
+  Backspace: ignoreBackSpace,
 }
 
 export default keywordKeymap
