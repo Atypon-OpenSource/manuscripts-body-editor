@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DeleteIcon, IconTextButton, PlusIcon } from '@manuscripts/style-guide'
+import {
+  ColumnChangeWarningDialog,
+  DeleteIcon,
+  IconTextButton,
+  PlusIcon,
+} from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { Command } from 'prosemirror-state'
 import {
   addColumnAfter,
@@ -24,17 +30,23 @@ import {
   deleteRow,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   view,
   close,
 }) => {
-  const runCommand = (command: Command) => {
-    command(view.state, view.dispatch)
+  const runCommand = (command: Command, noTracking?: boolean) => {
+    command(view.state, (tr) =>
+      view.dispatch((noTracking && skipTracking(tr)) || tr)
+    )
     close()
   }
+
+  const [columnAction, setColumnAction] = useState<Command | undefined>(
+    undefined
+  )
 
   return (
     <MenuDropdownList>
@@ -44,19 +56,30 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
       <ActionButton onClick={() => runCommand(addRowAfter)}>
         <PlusIcon /> Insert row below
       </ActionButton>
-      <ActionButton onClick={() => runCommand(addColumnBefore)}>
+      <ActionButton onClick={() => setColumnAction(() => addColumnBefore)}>
         <PlusIcon /> Insert column to the left
       </ActionButton>
-      <ActionButton onClick={() => runCommand(addColumnAfter)}>
+      <ActionButton onClick={() => setColumnAction(() => addColumnAfter)}>
         <PlusIcon /> Insert column to the right
       </ActionButton>
       <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
         <GrayDeleteIcon /> Delete row
       </ActionButton>
-      <ActionButton onClick={() => runCommand(deleteColumn)}>
+      <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete column
       </ActionButton>
+
+      <ColumnChangeWarningDialog
+        isOpen={!!columnAction}
+        primaryAction={() => {
+          if (columnAction) {
+            runCommand(columnAction, true)
+            setColumnAction(undefined)
+          }
+        }}
+        secondaryAction={() => setColumnAction(undefined)}
+      />
     </MenuDropdownList>
   )
 }
