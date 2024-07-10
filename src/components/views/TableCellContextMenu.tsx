@@ -20,18 +20,38 @@ import {
   PlusIcon,
 } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { Command } from 'prosemirror-state'
+import { Command, EditorState, Transaction } from 'prosemirror-state'
 import {
   addColumnAfter,
   addColumnBefore,
-  addRowAfter,
-  addRowBefore,
+  addRow,
+  CellSelection,
   deleteColumn,
   deleteRow,
+  isInTable,
+  selectedRect,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
+
+const addRows =
+  (direction: 'top' | 'bottom') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (!isInTable(state)) {
+      return false
+    }
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const selectedRows = rect.bottom - rect.top
+      for (let i = 0; i < selectedRows; i++) {
+        addRow(tr, rect, rect[direction])
+      }
+      dispatch(tr)
+    }
+    return true
+  }
 
 export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   view,
@@ -48,13 +68,23 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     undefined
   )
 
+  const { rows } = useMemo(() => {
+    const { selection } = view.state
+    const selectedCells = { rows: 1 }
+    if (selection instanceof CellSelection) {
+      const rect = selectedRect(view.state)
+      selectedCells.rows = rect.bottom - rect.top
+    }
+    return selectedCells
+  }, [view.state])
+
   return (
     <MenuDropdownList>
-      <ActionButton onClick={() => runCommand(addRowBefore)}>
-        <PlusIcon /> Insert row above
+      <ActionButton onClick={() => runCommand(addRows('top'))}>
+        <PlusIcon /> Insert row above {rows > 1 && rows}
       </ActionButton>
-      <ActionButton onClick={() => runCommand(addRowAfter)}>
-        <PlusIcon /> Insert row below
+      <ActionButton onClick={() => runCommand(addRows('bottom'))}>
+        <PlusIcon /> Insert row below {rows > 1 && rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => addColumnBefore)}>
         <PlusIcon /> Insert column to the left
@@ -64,7 +94,7 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
       </ActionButton>
       <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete row
+        <GrayDeleteIcon /> Delete row {rows > 1 && rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete column
