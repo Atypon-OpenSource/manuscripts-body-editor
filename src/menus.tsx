@@ -15,6 +15,7 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
@@ -33,12 +34,16 @@ import {
   blockActive,
   canInsert,
   ifInTableBody,
+  insertAbstract,
+  insertBackMatterSection,
   insertBlock,
+  insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
+  insertKeywords,
   insertLink,
   insertList,
   insertSection,
@@ -55,6 +60,11 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+  const doCommandWithoutTracking = (command: Command) => () => {
+    editor.doCommand((state, dispatch) =>
+      command(state, (tr) => dispatch && dispatch(skipTracking(tr)))
+    )
+  }
 
   const edit: MenuSpec = {
     id: 'edit',
@@ -105,6 +115,126 @@ export const getEditorMenus = (
     isEnabled: true,
     submenu: [
       {
+        id: 'front-matter',
+        label: 'Article Metadata',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-abstract',
+            label: 'Abstract',
+            isEnabled: isCommandValid(insertAbstract),
+            run: doCommand(insertAbstract),
+          },
+          {
+            id: 'insert-graphical-abstract',
+            label: 'Graphical Abstract',
+            isEnabled: isCommandValid(insertGraphicalAbstract),
+            run: doCommand(insertGraphicalAbstract),
+          },
+          {
+            id: 'insert-contributors',
+            label: 'Authors & Affiliations',
+            isEnabled: isCommandValid(insertContributors),
+            run: doCommand(insertContributors),
+          },
+          {
+            id: 'insert-keywords',
+            label: 'Keywords',
+            isEnabled: isCommandValid(insertKeywords),
+            run: doCommand(insertKeywords),
+          },
+        ],
+      },
+      {
+        id: 'back-matter',
+        label: 'Author Notes',
+        isEnabled: true,
+        submenu: [
+          {
+            id: 'insert-acknowledgements',
+            label: 'Acknowledgements',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:acknowledgement')
+            ),
+          },
+          {
+            id: 'insert-availability',
+            label: 'Availability',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:availability')
+            ),
+          },
+          {
+            id: 'insert-coi-statement',
+            label: 'COI Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:competing-interests')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:competing-interests')
+            ),
+          },
+          {
+            id: 'insert-con',
+            label: 'Contributed-by Information',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:con')
+            ),
+            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
+          },
+          {
+            id: 'insert-ethics-statement',
+            label: 'Ethics Statement',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:ethics-statement')
+            ),
+          },
+          {
+            id: 'insert-financial-disclosure',
+            label: 'Financial Disclosure',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+            ),
+          },
+          {
+            id: 'insert-supplementary-material',
+            label: 'Supplementary Material',
+            isEnabled: isCommandValid(
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
+            ),
+            run: doCommand(
+              insertBackMatterSection(
+                'MPSectionCategory:supplementary-material'
+              )
+            ),
+          },
+          {
+            id: 'insert-supported-by',
+            label: 'Supported By',
+            isEnabled: isCommandValid(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
+            run: doCommand(
+              insertBackMatterSection('MPSectionCategory:supported-by')
+            ),
+          },
+        ],
+      },
+      {
         id: 'insert-section',
         label: 'Section',
         shortcut: {
@@ -113,12 +243,6 @@ export const getEditorMenus = (
         },
         isEnabled: isCommandValid(insertSection()),
         run: doCommand(insertSection()),
-      },
-      {
-        id: 'insert-graphical-abstract',
-        label: 'Graphical Abstract',
-        isEnabled: isCommandValid(insertGraphicalAbstract),
-        run: doCommand(insertGraphicalAbstract),
       },
       {
         id: 'insert-subsection',
@@ -405,19 +529,19 @@ export const getEditorMenus = (
             id: 'format-table-add-column-before',
             label: 'Add Column Before',
             isEnabled: isCommandValid(ifInTableBody(addColumnBefore)),
-            run: doCommand(addColumnBefore),
+            run: doCommandWithoutTracking(addColumnBefore),
           },
           {
             id: 'format-table-add-column-after',
             label: 'Add Column After',
             isEnabled: isCommandValid(ifInTableBody(addColumnAfter)),
-            run: doCommand(addColumnAfter),
+            run: doCommandWithoutTracking(addColumnAfter),
           },
           {
             id: 'format-table-delete-column',
             label: 'Delete Column',
             isEnabled: isCommandValid(ifInTableBody(deleteColumn)),
-            run: doCommand(deleteColumn),
+            run: doCommandWithoutTracking(deleteColumn),
           },
         ],
       },
