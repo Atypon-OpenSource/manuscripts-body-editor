@@ -36,6 +36,7 @@ import {
 import {
   getChangeClasses,
   isDeleted,
+  isPendingInsert,
   isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
@@ -150,8 +151,10 @@ export class InlineFootnoteView<
               tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
             )
           }
+          this.destroy()
         },
         onAdd: () => {
+          console.log('on add called')
           const footnote = createFootnote(this.view.state, 'footnote')
           const tr = insertFootnote(
             this.view.state,
@@ -234,19 +237,26 @@ export class InlineFootnoteView<
   }
 
   public onInsert = (notes: FootnoteWithIndex[]) => {
-    const contents = this.node.attrs.contents.split(',')
-    const rids = notes.map((note) => note.node.attrs.id)
-    const { tr } = this.view.state
-    this.view.dispatch(
-      rids.length
-        ? tr.setNodeMarkup(this.getPos(), undefined, {
+    if (notes.length) {
+      const contents = this.node.attrs.contents.split(',')
+      const rids = notes.map((note) => note.node.attrs.id)
+      const { tr } = this.view.state
+
+      if (rids.length) {
+        this.view.dispatch(
+          tr.setNodeMarkup(this.getPos(), undefined, {
             rids,
             contents: notes
               .map(({ index }) => (index ? index : Math.max(...contents) + 1))
               .join(),
           })
-        : tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
-    )
+        )
+      } else if (isPendingInsert(this.node)) {
+        this.view.dispatch(
+          tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+        )
+      }
+    }
     this.destroy()
   }
 }
