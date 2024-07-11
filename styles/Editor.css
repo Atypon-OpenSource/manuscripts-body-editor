@@ -628,8 +628,13 @@
   display: grid;
   grid-template-columns: 52px auto 52px;
 }
+.ProseMirror .block-container.block-section {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto;
+}
 
-.ProseMirror .block-container:hover {
+.ProseMirror .block-container:not(.block-section):hover {
   z-index: 2;
 }
 
@@ -684,7 +689,7 @@
   margin-top: 16px;
 }
 
-.ProseMirror .block-container:hover .block-gutter {
+.ProseMirror .block-container:not(.block-section):hover .block-gutter {
   opacity: 1;
   z-index: 2;
 }

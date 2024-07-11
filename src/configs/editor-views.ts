@@ -50,6 +50,7 @@ import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
+import section from '../views/section'
 
 type EditorProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
 
@@ -80,6 +81,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     paragraph: paragraph(props),
     placeholder: placeholder(props),
     placeholder_element: placeholderElement(props),
+    section: section(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
