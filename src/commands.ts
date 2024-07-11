@@ -922,12 +922,13 @@ export const insertList =
       // no list found, create new list
       const { selection } = state
       let tr = state.tr
+      const startPosition = selection.$from.pos +1
 
       return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
         // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
         // as we have another ReplaceStep that will make transaction more complicated, so to make it easy to tracker we dispatch first ReplaceAroundStep
         // then will dispatch reminder steps in one transaction
-        const range = selection.$from.blockRange(selection.$to)
+        const range = selection.$from.blockRange(selection.$to) 
         if (range && dispatch) {
           tempTr.steps.map((step) => {
             if (step instanceof ReplaceAroundStep) {
@@ -937,6 +938,15 @@ export const insertList =
               tr.step(step)
             }
           })
+          if (startPosition) {
+            const selection = createSelection(
+              state.schema.nodes.paragraph,
+              startPosition,
+              tr.doc
+            )
+            view?.focus()
+            tr.setSelection(selection)
+          }
 
           dispatch(tr)
         }
