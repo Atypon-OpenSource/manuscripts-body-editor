@@ -17,11 +17,7 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import { Manuscript, UserProfile } from '@manuscripts/json-schema'
-import {
-  Capabilities,
-  FileAttachment,
-  FileManagement,
-} from '@manuscripts/style-guide'
+import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
@@ -31,6 +27,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
