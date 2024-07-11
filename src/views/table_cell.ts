@@ -42,7 +42,11 @@ export class TableCellView extends BlockView<EditableBlockProps> {
     this.contentDOM = document.createElement('span')
     this.dom.appendChild(this.contentDOM)
 
-    this.createContextMenu()
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
+      this.createContextMenu()
+    }
   }
 
   private createContextMenu() {
