@@ -28,6 +28,7 @@ import {
   deleteColumn,
   deleteRow,
 } from 'prosemirror-tables'
+import { EditorView } from 'prosemirror-view'
 
 import {
   addInlineComment,
@@ -54,7 +55,6 @@ import {
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
 import { useEditor } from './useEditor'
-import { EditorView } from 'prosemirror-view'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
