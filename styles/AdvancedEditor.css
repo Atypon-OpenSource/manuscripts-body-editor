@@ -751,10 +751,12 @@ span.accepted .selected-suggestion,
 }
 
 .ProseMirror .selected-suggestion .inserted.pending,
-.ProseMirror .selected-suggestion [data-track-op='insert'][data-track-status='pending'] .block {
+.ProseMirror .selected-suggestion [data-track-op='insert'][data-track-status='pending'] .block,
+.ProseMirror .selected-suggestion .deleted.pending {
   background-color: var(--selected-pending-background-color) !important;
   color: var(--common-color) !important;
 }
+
 .ProseMirror .inserted.accepted {
   text-decoration: none;
 }
@@ -762,16 +764,18 @@ span.accepted .selected-suggestion,
   display: none;
 }
 
-/* Is this needed? */
-.ProseMirror .set_attrs.pending {
+.ProseMirror .selected-suggestion .deleted.accepted,
+.ProseMirror .selected-suggestion .inserted.accepted {
+  background-color: var(--selected-accepted-background-color) !important;
+}
+
+.ProseMirror .set_attrs.pending,
+.ProseMirror [data-track-op='set_attrs'].pending,
+.ProseMirror [data-track-op='set_attrs'][data-track-status='pending'] {
   background: var(--inserted-pending-bg-color);
   text-decoration: none;
 }
-/* Is this needed? */
-.ProseMirror .set_attrs.accepted {
-  background: var(--accepted-bg-color);
-  text-decoration: none;
-}
+
 .ProseMirror .deleted.pending::before,
 .ProseMirror .deleted.pending {
   background: var(--deleted-pending-bg-color);
