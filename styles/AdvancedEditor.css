@@ -710,7 +710,7 @@ span.comment-marker {
   background: none;
 }
 
-span.selected-suggestion, 
+span.selected-suggestion,
 .selected-suggestion > .block-container .block:not(.accepted),
 .selected-suggestion:not(:has(> .block-container)) {
   background-color: var(--selected-pending-background-color) !important;
@@ -721,8 +721,8 @@ span.selected-suggestion,
   border-style: solid !important;
 }
 
-span.accepted .selected-suggestion, 
-.accepted .selected-suggestion > .block-container .block, 
+span.accepted .selected-suggestion,
+.accepted .selected-suggestion > .block-container .block,
 .accepted .selected-suggestion:not(:has(> .block-container)),
 .selected-suggestion[data-track-status="accepted"],
 .selected-suggestion  > .block-container .block.accepted,
@@ -836,7 +836,7 @@ span.accepted .selected-suggestion,
   background-color: var(--deleted-pending-bg-color)
 }
 
-.contributor[data-track-op='delete']:not([data-track-status='rejected']), 
+.contributor[data-track-op='delete']:not([data-track-status='rejected']),
 .affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
   text-decoration: line-through;
 }
@@ -962,4 +962,29 @@ span.accepted .selected-suggestion,
 
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
+}
+
+.ProseMirror .table-context-menu-button svg {
+  margin: 4px;
+  pointer-events: none;
+}
+
+.ProseMirror .table-context-menu-button {
+  visibility: hidden;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  width: 22px;
+  padding: 0;
+  background: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, .open-context-menu {
+  visibility: visible !important;
 }
