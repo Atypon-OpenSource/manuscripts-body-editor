@@ -59,8 +59,10 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     )
   }
 
-  public selectNode = () => {
-    this.dom.classList.add('ProseMirror-selectednode')
+  public eventHandlers = () => {
+    this.dom.addEventListener('click', this.handlcick)
+  }
+  public handlcick = () => {
     const can = this.props.getCapabilities()
     if (can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
@@ -70,6 +72,11 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
         this.showContextMenu()
       }
     }
+  }
+  public selectNode = () => {
+    this.dom.classList.add('ProseMirror-selectednode')
+    const trackModalActive = document.body.dataset.trackModal
+    !trackModalActive ? this.handlcick() : this.eventHandlers()
   }
 
   public destroy = () => {
