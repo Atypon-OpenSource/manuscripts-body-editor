@@ -923,6 +923,7 @@ export const insertList =
       // no list found, create new list
       const { selection } = state
       let tr = state.tr
+      const startPosition = selection.$from.pos + 1
 
       return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
         // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
@@ -938,6 +939,15 @@ export const insertList =
               tr.step(step)
             }
           })
+          if (startPosition) {
+            const selection = createSelection(
+              state.schema.nodes.paragraph,
+              startPosition,
+              tr.doc
+            )
+            view?.focus()
+            tr.setSelection(selection)
+          }
 
           dispatch(tr)
         }
