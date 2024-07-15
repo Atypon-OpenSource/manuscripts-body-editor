@@ -628,6 +628,7 @@ span.comment-marker {
 }
 .keyword-group .keyword {
   border: 1px solid #C9C9C9;
+  margin-top: 10px;
 }
 .keywords .keywords-editor {
   position: static;
@@ -644,10 +645,6 @@ span.comment-marker {
 .author-notes > .block-section_title > .block, .keywords > .block-section_title > .block {
   align-items: center;
 }
-.ProseMirror > .keywords > .block-section_title > h1, .ProseMirror > .selected-suggestion > .keywords > .block-section_title > h1{
-  padding:  12px 10px 12px;
-}
-
 .author-notes .block-comment-button,
 .keywords .block-comment-button {
   position: absolute;
