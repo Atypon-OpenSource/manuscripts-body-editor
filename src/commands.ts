@@ -304,8 +304,9 @@ export const insertSupplement = (
   })
 
   const tr = state.tr
-  const pos = insertSupplementsNode(tr)
-  tr.insert(pos + 1, supplement)
+  const supplements = insertSupplementsNode(tr)
+  const pos = supplements.pos + supplements.node.nodeSize - 1
+  tr.insert(pos, supplement)
   if (dispatch) {
     dispatch(tr)
   }

@@ -24,12 +24,15 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   const doc = tr.doc
   const supplements = findChildrenByType(doc, schema.nodes.supplements)[0]
   if (supplements) {
-    return supplements.pos
+    return supplements
   }
   const abstracts = findAbstractsNode(doc)
   const pos = abstracts.pos - 1
   tr.insert(pos, schema.nodes.supplements.create())
-  return pos
+  return {
+    node: supplements,
+    pos,
+  }
 }
 
 export const findAbstractsNode = (doc: ManuscriptNode) => {
