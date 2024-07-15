@@ -308,7 +308,7 @@ export const insertSupplement = (
   const pos = supplements.pos + supplements.node.nodeSize - 1
   tr.insert(pos, supplement)
   if (dispatch) {
-    dispatch(tr)
+    dispatch(skipTracking(tr))
   }
   return true
 }
