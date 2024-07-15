@@ -20,38 +20,33 @@ import {
   PlusIcon,
 } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { Command, EditorState, Transaction } from 'prosemirror-state'
+import { Command, EditorState } from 'prosemirror-state'
 import {
   addColumnAfter,
   addColumnBefore,
-  addRow,
   CellSelection,
   deleteColumn,
   deleteRow,
-  isInTable,
   selectedRect,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
-const addRows =
-  (direction: 'top' | 'bottom') =>
-  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
-    if (!isInTable(state)) {
-      return false
-    }
-    if (dispatch) {
-      const { tr } = state
-      const rect = selectedRect(state)
-      const selectedRows = rect.bottom - rect.top
-      for (let i = 0; i < selectedRows; i++) {
-        addRow(tr, rect, rect[direction])
-      }
-      dispatch(tr)
-    }
-    return true
+import { addRows } from '../../commands'
+
+/**
+ * Return the number of selected rows/columns
+ */
+const getSelectedCells = (state: EditorState) => {
+  const { selection } = state
+  const selectedCells = { rows: 1 }
+  if (selection instanceof CellSelection) {
+    const rect = selectedRect(state)
+    selectedCells.rows = rect.bottom - rect.top
   }
+  return selectedCells
+}
 
 export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   view,
@@ -68,15 +63,7 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     undefined
   )
 
-  const { rows } = useMemo(() => {
-    const { selection } = view.state
-    const selectedCells = { rows: 1 }
-    if (selection instanceof CellSelection) {
-      const rect = selectedRect(view.state)
-      selectedCells.rows = rect.bottom - rect.top
-    }
-    return selectedCells
-  }, [view.state])
+  const { rows } = getSelectedCells(view.state)
 
   return (
     <MenuDropdownList>

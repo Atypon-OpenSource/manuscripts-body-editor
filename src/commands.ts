@@ -57,6 +57,7 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
+import { addRow, isInTable, selectedRect } from 'prosemirror-tables'
 import {
   findWrapping,
   liftTarget,
@@ -1421,3 +1422,21 @@ export const insertTableFootnote = (
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
+
+export const addRows =
+  (direction: 'top' | 'bottom') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (!isInTable(state)) {
+      return false
+    }
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const selectedRows = rect.bottom - rect.top
+      for (let i = 0; i < selectedRows; i++) {
+        addRow(tr, rect, rect[direction])
+      }
+      dispatch(tr)
+    }
+    return true
+  }
