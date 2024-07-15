@@ -138,6 +138,9 @@ export class InlineFootnoteView<
   }
 
   activateGenericFnModal() {
+    if (!this.props.getCapabilities().editArticle) {
+      return
+    }
     const fnState = footnotesKey.getState(this.view.state)
     if (fnState && fnState.unusedFootnotes.size > 0) {
       this.activateModal({
