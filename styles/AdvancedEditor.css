@@ -618,6 +618,7 @@ span.comment-marker {
 }
 .keyword-group .keyword {
   border: 1px solid #C9C9C9;
+  margin-top: 10px;
 }
 .keywords .keywords-editor {
   position: static;
@@ -633,7 +634,6 @@ span.comment-marker {
 
 .keywords > .block-section_title > .block {
   align-items: center;
-  padding:  12px 10px 12px
 }
 
 .keywords .block-comment-button {
