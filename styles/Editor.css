@@ -173,11 +173,6 @@
   cursor: pointer;
 }
 
-.ProseMirror .citation.deleted.pending,
-.ProseMirror .citation.deleted.accepted {
-  text-decoration: line-through;
-}
-
 .ProseMirror .cross-reference {
   text-decoration: none;
   color: inherit;
