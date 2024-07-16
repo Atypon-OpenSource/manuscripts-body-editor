@@ -53,6 +53,5 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
       setValues(undefined)
     }
   }, [debouncedProps, props.can])
-
   return values ? <DraggableTree {...values} depth={0} /> : null
 }
