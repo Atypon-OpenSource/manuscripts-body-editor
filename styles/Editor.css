@@ -992,28 +992,20 @@
 }
 
 .ProseMirror .table-footer p {
-  margin-bottom: 0px;
-  margin-top: 0px;
+  margin: 0;
 }
 
 .table-footer > div {
   position: relative;
 }
-
-.general-table-footnote > p {
+.general-table-footnote > p:not(:last-of-type) {
   padding-bottom: 8px;
 }
-
-.general-table-footnote:has(> p.footnote-selected) > p:last-child {
-  padding-bottom: 0;
-}
-
 .ProseMirror .table-footnotes-element .footnote-selected,
 .ProseMirror .block-footnotes_element .footnote-selected,
-.ProseMirror .general-table-footnote:has(> p.footnote-selected)
+.ProseMirror .general-table-footnote.footnote-selected
 {
   background-color: #f2fbfc;
-  padding: 4px;
   border: 1px solid #bce7f6;
 }
 
@@ -1024,8 +1016,9 @@
   cursor: pointer;
 }
 
-.ProseMirror .table-footnotes-element > div:has(.unctied-table-footnote) {
+.ProseMirror .table-footnotes-element > div:has(.unctied-table-footnote), .general-table-footnote  {
   position: relative;
+  padding: 5px 5px 10px 5px
 }
 
 .ProseMirror .unctied-table-footnote {
