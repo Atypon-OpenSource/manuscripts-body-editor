@@ -557,6 +557,8 @@ span.comment-marker {
   position: relative;
   cursor: default;
   padding: 4px 8px;
+  border: 1px solid #C9C9C9;
+  margin-top: 10px;
 }
 
 .keywords .selected-suggestion {
