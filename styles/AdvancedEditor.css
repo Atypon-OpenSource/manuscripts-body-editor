@@ -626,10 +626,7 @@ span.comment-marker {
 .keywords .keyword-group {
   display: inline;
 }
-.keyword-group .keyword {
-  border: 1px solid #C9C9C9;
-  margin-top: 10px;
-}
+
 .keywords .keywords-editor {
   position: static;
   display: inline-block;
@@ -642,9 +639,11 @@ span.comment-marker {
   margin-top: 0;
 }
 
-.author-notes > .block-section_title > .block, .keywords > .block-section_title > .block {
+.author-notes > .block-section_title > .block,
+.keywords > .block-section_title > .block {
   align-items: center;
 }
+
 .author-notes .block-comment-button,
 .keywords .block-comment-button {
   position: absolute;
@@ -848,9 +847,10 @@ span.accepted .selected-suggestion,
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
-
+.block-contributors, .block-affiliations, .keywords {
+  margin: 15px 0px;
+}
 .contributors {
-  margin-top: 24px;
   display: flex;
   align-items: flex-start;
 }
@@ -923,9 +923,7 @@ span.accepted .selected-suggestion,
 }
 
 .block-affiliations {
-  margin-top: 16px;
   color: #6e6e6e;
-  margin-bottom: 24px;
 }
 
 .affiliation {
@@ -960,7 +958,9 @@ span.accepted .selected-suggestion,
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
 }
-
+.manuscript-title {
+  margin-bottom: 20px;
+}
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
