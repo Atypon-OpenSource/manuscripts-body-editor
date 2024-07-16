@@ -16,7 +16,7 @@
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -50,18 +50,18 @@ export default (
 
   // parentContentDOM: HTMLElement
 ): HTMLDivElement => {
-  const root = document.createElement('div')
-  root.classList.add('tools-panel')
+  const container = document.createElement('div')
+  container.classList.add('tools-panel')
   if (classNames) {
-    root.classList.add(classNames)
+    container.classList.add(classNames)
   }
-  root.setAttribute('contenteditable', 'false')
+  container.setAttribute('contenteditable', 'false')
 
-  // const reactChild = root.appendChild(document.createElement('div'))
+  // const reactChild = container.appendChild(document.createElement('div'))
   // let contentDOM: HTMLElement | null
   // if (contentDOMElementType) {
   //   contentDOM = document.createElement(contentDOMElementType)
-  //   root.appendChild(contentDOM)
+  //   container.appendChild(contentDOM)
   // } else {
   //   contentDOM = null
   // }
@@ -117,8 +117,9 @@ export default (
       </ThemeProvider>
     )
   }
+  const root = createRoot(container)
 
-  ReactDOM.render(<Wrapped />, root)
+  root.render(<Wrapped />)
 
-  return root
+  return container
 }
