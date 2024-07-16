@@ -38,6 +38,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom = dom as HTMLElement
     this.dom.className = 'citation-wrapper'
     this.contentDOM = (contentDOM as HTMLElement) || undefined
+    this.eventHandlers()
     this.updateContents()
     return this
   }
@@ -71,9 +72,9 @@ export class CitationView<PropsType extends BaseNodeProps>
     element.appendChild(fragment)
     this.dom.innerHTML = ''
     this.dom.appendChild(element)
-
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
+  public eventHandlers = () => {}
 }
 
 export default createNodeView(CitationView)

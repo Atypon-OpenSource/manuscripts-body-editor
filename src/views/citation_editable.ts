@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { Capabilities, ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { CitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
@@ -47,7 +47,7 @@ const createBibliographySection = (node: ManuscriptNode) =>
 export class CitationEditableView extends CitationView<EditableBlockProps> {
   private editor: HTMLElement
   private contextMenu: HTMLElement
-
+  private can: Capabilities = this.props.getCapabilities()
   // we added this to stop select events in case the user clicks on the comment,
   // so it won't interfere with the context menu
   public stopEvent = (event: Event) => {
@@ -60,23 +60,25 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public eventHandlers = () => {
-    this.dom.addEventListener('click', this.handlcick)
+    this.dom.addEventListener('click', this.handlcick, { capture: true })
+    this.dom.addEventListener('mouseup', this.handlcick, { capture: true })
   }
   public handlcick = () => {
-    const can = this.props.getCapabilities()
-    if (can.seeReferencesButtons && !isDeleted(this.node)) {
+    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
-      if (!attrs.rids.length) {
-        this.showPopper()
-      } else {
+      if (attrs.rids.length) {
         this.showContextMenu()
-      }
+      } 
     }
   }
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
-    const trackModalActive = document.body.dataset.trackModal
-    !trackModalActive ? this.handlcick() : this.eventHandlers()
+    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
+      const attrs = getActualAttrs(this.node) as CitationAttrs
+      if (!attrs.rids.length) {
+        this.showPopper()
+      } 
+    }
   }
 
   public destroy = () => {
