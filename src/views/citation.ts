@@ -74,7 +74,7 @@ export class CitationView<PropsType extends BaseNodeProps>
     this.dom.appendChild(element)
     this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
   }
-  public eventHandlers = () => {}
+  public eventHandlers: () => void
 }
 
 export default createNodeView(CitationView)

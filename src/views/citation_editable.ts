@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { Capabilities, ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  Capabilities,
+  ContextMenu,
+  ContextMenuProps,
+} from '@manuscripts/style-guide'
 import { CitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
@@ -60,15 +64,18 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public eventHandlers = () => {
-    this.dom.addEventListener('click', this.handlcick, { capture: true })
     this.dom.addEventListener('mouseup', this.handlcick, { capture: true })
   }
-  public handlcick = () => {
-    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
+  public handlcick = (event: MouseEvent) => {
+    if (
+      this.can.seeReferencesButtons &&
+      !isDeleted(this.node) &&
+      event.button === 0
+    ) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (attrs.rids.length) {
         this.showContextMenu()
-      } 
+      }
     }
   }
   public selectNode = () => {
@@ -77,7 +84,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (!attrs.rids.length) {
         this.showPopper()
-      } 
+      }
     }
   }
 
