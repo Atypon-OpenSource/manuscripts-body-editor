@@ -139,9 +139,9 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   //marked as such in the schema
   const inline = node.type === schema.nodes.keyword || node.isInline
   const decorationType = inline ? Decoration.inline : Decoration.node
-  const decoration =  decorationType(from, to, {
-      class: 'selected-suggestion',
-    })
+  const decoration = decorationType(from, to, {
+    class: 'selected-suggestion',
+  })
   return {
     suggestion,
     decorations: DecorationSet.create(doc, [decoration]),
