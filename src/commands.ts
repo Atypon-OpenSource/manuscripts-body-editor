@@ -984,31 +984,6 @@ export const insertTOCSection = () => {
   return false
 }
 
-/**
- * Call the callback (a prosemirror-tables command) if the current selection is in the table body
- */
-export const ifInTableBody =
-  (command: (state: ManuscriptEditorState) => boolean) =>
-  (state: ManuscriptEditorState): boolean => {
-    const $head = state.selection.$head
-
-    for (let d = $head.depth; d > 0; d--) {
-      const node = $head.node(d)
-
-      if (node.type === state.schema.nodes.table_row) {
-        const table = $head.node(d - 1)
-
-        if (table.firstChild === node || table.lastChild === node) {
-          return false
-        }
-
-        return command(state)
-      }
-    }
-
-    return false
-  }
-
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
