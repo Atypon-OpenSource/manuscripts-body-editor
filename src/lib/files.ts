@@ -90,7 +90,7 @@ export const groupFiles = (
         }
         figureFiles.push({
           node: figure.node,
-          pos: figure.pos,
+          pos: pos + figure.pos + 1,
           file,
         })
       }
