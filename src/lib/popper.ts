@@ -91,11 +91,6 @@ export class PopperManager {
 
   public destroy() {
     if (this.activePopper) {
-      console.log(
-        'destroying popper',
-        this.activePopper,
-        this.activePopper.state.elements.reference
-      )
       this.removeContainerClass(
         this.activePopper.state.elements.reference as Element
       )
