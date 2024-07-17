@@ -115,6 +115,8 @@ export class PopperManager {
     }
   }
 
+  public isActive = () => !!this.activePopper
+
   private focusInput(container: HTMLDivElement) {
     const element = container.querySelector('input') as HTMLDivElement | null
 

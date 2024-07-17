@@ -57,7 +57,7 @@
   margin: 5px 0;
 }*/
 
-.popper .equation-editor {
+.popper .equation-editor, .table-cell-context-menu {
   position: relative;
 }
 
@@ -131,6 +131,7 @@
 .popper .citation-references,
 .popper .track-changes-review-panel,
 .popper .table-footnote-editor,
+.popper .table-cell-context-menu,
 .popper .context-menu {
   background: #fff;
   border: 1px solid #e2e2e2;
