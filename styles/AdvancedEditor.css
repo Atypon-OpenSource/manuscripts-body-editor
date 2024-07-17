@@ -551,12 +551,14 @@ span.comment-marker {
   font-family: Lato, sans-serif;
   font-size: 14px;
   line-height: 16px;
-  margin-bottom: 4px;
   border: 1px solid transparent;
   border-radius: 6px;
   position: relative;
   cursor: default;
   padding: 4px 8px;
+  border: 1px solid #C9C9C9;
+  margin-top: 10px;
+  margin-bottom: 4px;
 }
 
 .keywords .selected-suggestion {
@@ -620,7 +622,7 @@ span.comment-marker {
 
 .keywords .keyword-group-container {
   position: relative;
-  margin: 0 0 36px !important;
+   margin: 0 0 36px !important;
 }
 
 .keywords .keyword-group {
@@ -847,9 +849,10 @@ span.accepted .selected-suggestion,
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
-
+.block-contributors, .block-affiliations, .keywords {
+  margin: 15px 0px;
+}
 .contributors {
-  margin-top: 24px;
   display: flex;
   align-items: flex-start;
 }
@@ -922,9 +925,7 @@ span.accepted .selected-suggestion,
 }
 
 .block-affiliations {
-  margin-top: 16px;
   color: #6e6e6e;
-  margin-bottom: 24px;
 }
 
 .affiliation {
@@ -959,7 +960,9 @@ span.accepted .selected-suggestion,
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
 }
-
+.manuscript-title {
+  margin-bottom: 20px;
+}
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
