@@ -97,13 +97,11 @@ export const groupFiles = (
           file,
         })
       }
-      if (figureFiles.length) {
-        figures.push({
-          node,
-          pos,
-          files: figureFiles,
-        })
-      }
+      figures.push({
+        node,
+        pos,
+        files: figureFiles,
+      })
     }
 
     if (node.type === schema.nodes.supplement) {
