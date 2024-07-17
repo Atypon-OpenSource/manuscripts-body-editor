@@ -82,6 +82,9 @@ export const groupFiles = (
           continue
         }
         const src = getActualAttrs(figure.node).src
+        if (!src) {
+          continue
+        }
         let file = fileMap.get(src)
         if (file) {
           fileMap.delete(src)
