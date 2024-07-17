@@ -551,12 +551,14 @@ span.comment-marker {
   font-family: Lato, sans-serif;
   font-size: 14px;
   line-height: 16px;
-  margin-bottom: 4px;
   border: 1px solid transparent;
   border-radius: 6px;
   position: relative;
   cursor: default;
   padding: 4px 8px;
+  border: 1px solid #C9C9C9;
+  margin-top: 10px;
+  margin-bottom: 4px;
 }
 
 .keywords .selected-suggestion {
