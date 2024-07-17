@@ -622,7 +622,7 @@ span.comment-marker {
 
 .keywords .keyword-group-container {
   position: relative;
-  margin: 0 0 36px !important;
+   margin: 0 0 36px !important;
 }
 
 .keywords .keyword-group {
@@ -849,9 +849,10 @@ span.accepted .selected-suggestion,
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
-
+.block-contributors, .block-affiliations, .keywords {
+  margin: 15px 0px;
+}
 .contributors {
-  margin-top: 24px;
   display: flex;
   align-items: flex-start;
 }
@@ -924,9 +925,7 @@ span.accepted .selected-suggestion,
 }
 
 .block-affiliations {
-  margin-top: 16px;
   color: #6e6e6e;
-  margin-bottom: 24px;
 }
 
 .affiliation {
@@ -961,7 +960,9 @@ span.accepted .selected-suggestion,
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
 }
-
+.manuscript-title {
+  margin-bottom: 20px;
+}
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
