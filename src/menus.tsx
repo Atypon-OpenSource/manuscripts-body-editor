@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { MenuSpec } from '@manuscripts/style-guide'
+import { MenuSpec, TableConfig } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
-import { Command } from 'prosemirror-state'
+import { Command, EditorState, Transaction } from 'prosemirror-state'
 import {
   addColumnAfter,
   addColumnBefore,
@@ -28,6 +28,7 @@ import {
   deleteColumn,
   deleteRow,
 } from 'prosemirror-tables'
+import { EditorView } from 'prosemirror-view'
 
 import {
   addInlineComment,
@@ -59,6 +60,24 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+
+  type CommandWithConfig = (
+    state: EditorState,
+    dispatch?: (tr: Transaction) => void,
+    view?: EditorView,
+    tableConfig?: TableConfig
+  ) => boolean
+
+  const wrappedDoCommand = (
+    command: CommandWithConfig,
+    tableConfig?: TableConfig
+  ) => {
+    return () => {
+      doCommand((state, dispatch, view) => {
+        return command(state, dispatch, view, tableConfig)
+      })()
+    }
+  }
   const doCommandWithoutTracking = (command: Command) => () => {
     editor.doCommand((state, dispatch) =>
       command(state, (tr) => dispatch && dispatch(skipTracking(tr)))
@@ -295,7 +314,12 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+T',
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.table_element)),
-        run: doCommand(insertBlock(schema.nodes.table_element)),
+        run: (tableConfig) => {
+          wrappedDoCommand(
+            insertBlock(schema.nodes.table_element),
+            tableConfig
+          )()
+        },
       },
       {
         role: 'separator',
