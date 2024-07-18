@@ -128,14 +128,7 @@ export class InlineFootnoteView<
       this.view,
       'footnote-editor'
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'auto', false, {
-      preventOverflow: {
-        boundariesElement: 'viewport', // You can also use 'window'
-      },
-      flip: {
-        behavior: 'clockwise', // Options: 'flip', 'clockwise', 'counterclockwise'
-      },
-    })
+    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
   activateGenericFnModal() {
