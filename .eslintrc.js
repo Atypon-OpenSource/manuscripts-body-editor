@@ -21,7 +21,7 @@ module.exports = {
     'jsx-a11y/no-autofocus': 'off',
     'jsx-a11y/no-onchange': 'off',
   },
-  ignorePatterns: ['/src/version.ts'],
+  ignorePatterns: ['/src/versions.ts'],
   overrides: [
     {
       files: '**/*.test.ts',
