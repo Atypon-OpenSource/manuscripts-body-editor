@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-const src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js'
+import { MATHJAX_VERSION } from '../versions'
+
+const src = `https://cdn.jsdelivr.net/npm/mathjax@${MATHJAX_VERSION}/es5/tex-svg.js`
 
 /**
  * MathJax uses delimiters to find math in the doc by default, which is
@@ -53,10 +55,6 @@ const config = {
 
 export const initMathJax = () => {
   // @ts-ignore
-  if (window.MathJax) {
-    return
-  }
-  // @ts-ignore
   window.MathJax = config
   const script = document.createElement('script')
   script.src = src
@@ -66,7 +64,11 @@ export const initMathJax = () => {
 
 export const renderMath = (node: HTMLElement) => {
   //@ts-ignore
-  if (window.MathJax && node.parentNode) {
+  if (!window.MathJax) {
+    initMathJax()
+  }
+  //@ts-ignore
+  if (window.MathJax.typeset && node.parentNode) {
     //@ts-ignore
     window.MathJax.typeset([node])
   }
