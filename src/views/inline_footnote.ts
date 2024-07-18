@@ -41,11 +41,11 @@ import {
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
+import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
-import { TrackableAttributes } from '../types'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
