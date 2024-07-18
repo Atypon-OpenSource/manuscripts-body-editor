@@ -16,6 +16,7 @@
 
 import {
   AddCommentIcon,
+  TableConfig,
   ToolbarBoldIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,
@@ -49,7 +50,12 @@ export interface ToolbarButtonConfig {
   title: string
   content: ReactNode
   isActive?: (state: EditorState) => boolean
-  run: (state: EditorState, dispatch: Dispatch, view?: EditorView) => void
+  run: (
+    state: EditorState,
+    dispatch: Dispatch,
+    view?: EditorView,
+    tableConfig?: TableConfig
+  ) => void
   isEnabled: (state: EditorState) => boolean
   options?: {
     [key: string]: (

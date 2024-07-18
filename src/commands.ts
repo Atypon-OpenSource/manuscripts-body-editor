@@ -15,7 +15,7 @@
  */
 
 import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
-import { FileAttachment } from '@manuscripts/style-guide'
+import { FileAttachment, TableConfig } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FigureNode,
@@ -29,6 +29,7 @@ import {
   isListNode,
   isParagraphNode,
   isSectionNodeType,
+  KeywordsNode,
   ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptMarkType,
@@ -41,7 +42,13 @@ import {
   schema,
   SectionNode,
 } from '@manuscripts/transform'
-import { Attrs, NodeRange, NodeType, ResolvedPos } from 'prosemirror-model'
+import {
+  Attrs,
+  Fragment,
+  NodeRange,
+  NodeType,
+  ResolvedPos,
+} from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
   EditorState,
@@ -50,6 +57,7 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
+import { addRow, isInTable, selectedRect } from 'prosemirror-tables'
 import {
   findWrapping,
   liftTarget,
@@ -58,6 +66,7 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
+  findParentNodeOfTypeClosestToPos,
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
@@ -65,7 +74,11 @@ import { EditorView } from 'prosemirror-view'
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  getMatchingChild,
+} from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
@@ -175,13 +188,18 @@ export const createBlock = (
   position: number,
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  attrs?: Attrs
+  attrs?: Attrs,
+  tableConfig?: TableConfig
 ) => {
   let node
-
   switch (nodeType) {
     case state.schema.nodes.table_element:
-      node = createAndFillTableElement(state)
+      if (!tableConfig) {
+        throw new Error(
+          'Table configuration is required for creating a table element'
+        )
+      }
+      node = createAndFillTableElement(state, tableConfig)
       break
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
@@ -202,7 +220,6 @@ export const createBlock = (
   }
 
   const tr = state.tr.insert(position, node as ManuscriptNode)
-
   if (dispatch) {
     const selection = createSelection(nodeType, position, tr.doc)
     dispatch(tr.setSelection(selection).scrollIntoView())
@@ -283,14 +300,18 @@ export const insertFileAsFigure = (
 }
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  (
+    state: ManuscriptEditorState,
+    dispatch?: Dispatch,
+    view?: EditorView,
+    tableConfig?: TableConfig
+  ) => {
     const position = findBlockInsertPosition(state)
-
     if (position === null) {
       return false
     }
 
-    createBlock(nodeType, position, state, dispatch)
+    createBlock(nodeType, position, state, dispatch, undefined, tableConfig)
 
     return true
   }
@@ -564,7 +585,8 @@ export const insertInlineFootnote =
 
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  dispatch?: Dispatch,
+  view?: EditorView
 ) => {
   // check if another graphical abstract already exists
   // parameter 'deep' must equal true to search the whole document
@@ -589,6 +611,9 @@ export const insertGraphicalAbstract = (
   if (dispatch) {
     // place cursor inside section title
     const selection = TextSelection.create(tr.doc, pos + 1)
+    if (view) {
+      view.focus()
+    }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
@@ -596,10 +621,26 @@ export const insertGraphicalAbstract = (
 
 export const insertSection =
   (subsection = false) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    const pos = findPosAfterParentSection(state.selection.$from)
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    let pos = findPosAfterParentSection(state.selection.$from)
+    const body = findChildrenByType(state.doc, schema.nodes.body)[0]
 
-    if (pos === null || isInBibliographySection(state.selection.$from)) {
+    if (isInBibliographySection(state.selection.$from)) {
+      return false
+    } else if (pos === null && subsection) {
+      return false
+    }
+
+    if (pos === null) {
+      pos = body.pos + body.node.content.size + 1
+    }
+    // checking wether the selection inside the abstracts node or not
+    const resolvePos = state.doc.resolve(pos)
+    const isAbstract = findParentNodeOfTypeClosestToPos(
+      resolvePos,
+      schema.nodes.abstracts
+    )
+    if (isAbstract && !subsection) {
       return false
     }
 
@@ -612,6 +653,43 @@ export const insertSection =
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
+      if (view) {
+        view.focus()
+      }
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
+  }
+
+export const insertBackMatterSection =
+  (category: string) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const bibliographySection = findChildrenByType(
+      state.doc,
+      schema.nodes.bibliography_section
+    )[0]
+    const backmatter = findChildrenByType(state.doc, schema.nodes.backmatter)[0]
+    let pos
+    // check if reference node exist to insert before it.
+    if (bibliographySection) {
+      pos = bibliographySection.pos
+    } else {
+      pos = backmatter.pos + backmatter.node.content.size + 1
+    }
+    const tr = state.tr.insert(
+      pos,
+      state.schema.nodes.section.createAndFill({
+        category: category,
+      }) as SectionNode
+    )
+
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos)
+      if (view) {
+        view.focus()
+      }
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -619,6 +697,137 @@ export const insertSection =
   }
 
 const findSelectedList = findParentNodeOfType([schema.nodes.list])
+
+export const insertAbstract = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  if (
+    getMatchingChild(
+      state.doc,
+      (node) => node.attrs.category === 'MPSectionCategory:abstract',
+      true
+    )
+  ) {
+    return false
+  }
+  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+  // Insert abstract at the top of abstracts section
+  const pos = abstracts.pos + 1
+  const section = schema.nodes.section.createAndFill(
+    { category: 'MPSectionCategory:abstract' },
+    [
+      schema.nodes.section_title.create({}, schema.text('Abstract')),
+      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+    ]
+  ) as ManuscriptNode
+
+  const tr = state.tr.insert(pos, section)
+
+  if (dispatch) {
+    // Find the start position of the newly inserted section
+    const sectionStart = tr.doc.resolve(pos)
+
+    const sectionNode = sectionStart.nodeAfter
+
+    if (sectionNode && sectionNode.firstChild) {
+      // Calculate the position for the cursor within the paragraph node
+      const paragraphPos = pos + sectionNode.firstChild.nodeSize + 2 // Adjusted calculation
+
+      // Place cursor inside the paragraph element
+      const selection = TextSelection.create(tr.doc, paragraphPos)
+
+      if (view) {
+        // Focus the editor view before setting the selection
+        view.focus()
+      }
+
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+  }
+  return true
+}
+
+export const insertContributors = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  // Check if another contributors node already exists
+  if (getChildOfType(state.doc, schema.nodes.contributors, true)) {
+    return false
+  }
+
+  // Find the title node
+  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+
+  const pos = title.pos + title.node.nodeSize
+
+  const contributors = state.schema.nodes.contributors.create({
+    id: '',
+  })
+  const affiliations = state.schema.nodes.affiliations.create({ id: '' })
+
+  const fragment = Fragment.fromArray([contributors, affiliations])
+
+  const tr = state.tr.insert(pos, fragment)
+
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
+
+export const insertKeywords = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  // Check if another keywords node already exists
+  if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
+    return false
+  }
+
+  // determine the position to insert the keywords node
+  const supplements = findChildrenByType(
+    state.doc,
+    state.schema.nodes.supplements
+  )[0]
+  const abstracts = findChildrenByType(
+    state.doc,
+    state.schema.nodes.abstracts
+  )[0]
+  let pos
+  if (supplements) {
+    pos = supplements.pos + supplements.node.nodeSize
+  } else {
+    pos = abstracts.pos
+  }
+  const keywords = schema.nodes.keywords.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('Keywords')),
+    schema.nodes.keywords_element.create({}, [
+      schema.nodes.keyword_group.create({}, []),
+    ]),
+  ]) as KeywordsNode
+
+  const tr = state.tr.insert(pos, keywords)
+
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+
+  return true
+}
 
 const findRootList = ($pos: ResolvedPos) => {
   for (let i = 0; i < $pos.depth; i++) {
@@ -725,6 +934,7 @@ export const insertList =
       // no list found, create new list
       const { selection } = state
       let tr = state.tr
+      const startPosition = selection.$from.pos + 1
 
       return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
         // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
@@ -740,6 +950,15 @@ export const insertList =
               tr.step(step)
             }
           })
+          if (startPosition) {
+            const selection = createSelection(
+              state.schema.nodes.paragraph,
+              startPosition,
+              tr.doc
+            )
+            view?.focus()
+            tr.setSelection(selection)
+          }
 
           dispatch(tr)
         }
@@ -754,31 +973,6 @@ export const insertBibliographySection = () => {
 export const insertTOCSection = () => {
   return false
 }
-
-/**
- * Call the callback (a prosemirror-tables command) if the current selection is in the table body
- */
-export const ifInTableBody =
-  (command: (state: ManuscriptEditorState) => boolean) =>
-  (state: ManuscriptEditorState): boolean => {
-    const $head = state.selection.$head
-
-    for (let d = $head.depth; d > 0; d--) {
-      const node = $head.node(d)
-
-      if (node.type === state.schema.nodes.table_row) {
-        const table = $head.node(d - 1)
-
-        if (table.firstChild === node || table.lastChild === node) {
-          return false
-        }
-
-        return command(state)
-      }
-    }
-
-    return false
-  }
 
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
@@ -978,25 +1172,32 @@ export const selectAllIsolating = (
 }
 
 /**
- * Create a figure containing a 2x2 table with header and footer and a figcaption
+ * Create a table containing a configurable number of rows and columns.
+ * The table can optionally include a header row.
  */
-export const createAndFillTableElement = (state: ManuscriptEditorState) => {
-  const emptyTableHeader = state.schema.nodes.table_row.create({}, [
-    state.schema.nodes.table_header.create(),
-    state.schema.nodes.table_header.create(),
-  ])
+export const createAndFillTableElement = (
+  state: ManuscriptEditorState,
+  tableConfig: TableConfig
+) => {
+  const { nodes } = state.schema
+  const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
+  const createRow = (cellType: string) => {
+    const cells = Array.from({ length: numberOfColumns }, () =>
+      nodes[cellType].create()
+    )
+    return nodes.table_row.create({}, cells)
+  }
 
-  const emptyTableRow = state.schema.nodes.table_row.create({}, [
-    state.schema.nodes.table_cell.create(),
-    state.schema.nodes.table_cell.create(),
-  ])
+  const tableRows = includeHeader ? [createRow('table_header')] : []
 
-  const tableRows = [emptyTableHeader, ...Array(3).fill(emptyTableRow)]
+  for (let i = 0; i < numberOfRows; i++) {
+    tableRows.push(createRow('table_cell'))
+  }
 
-  return state.schema.nodes.table_element.createChecked({}, [
-    state.schema.nodes.table.create({}, tableRows),
+  return nodes.table_element.createChecked({}, [
+    nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
-    state.schema.nodes.listing.create(),
+    nodes.listing.create(),
   ])
 }
 
@@ -1060,15 +1261,18 @@ export const addNodeComment = (
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
-  const pos = comments.pos + 1
+  if (comments) {
+    const pos = comments.pos + 1
 
-  const tr = state.tr.insert(pos, comment)
-  const key = getCommentKey(attrs, undefined, node)
-  setCommentSelection(tr, key, attrs.id, true)
-  if (dispatch) {
-    dispatch(tr)
+    const tr = state.tr.insert(pos, comment)
+    const key = getCommentKey(attrs, undefined, node)
+    setCommentSelection(tr, key, attrs.id, true)
+    if (dispatch) {
+      dispatch(tr)
+    }
+    return true
   }
-  return true
+  return false
 }
 
 export const addInlineComment = (
@@ -1098,37 +1302,40 @@ export const addInlineComment = (
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
-  const pos = comments.pos + 1
+  if (comments) {
+    const pos = comments.pos + 1
 
-  const tr = state.tr.insert(pos, comment)
+    const tr = state.tr.insert(pos, comment)
 
-  if (from === to) {
-    const point = schema.nodes.highlight_marker.create({
-      id: comment.attrs.id,
-      tid: node.attrs.id,
-      position: 'point',
-    })
-    tr.insert(from, point)
-  } else {
-    const start = schema.nodes.highlight_marker.create({
-      id: comment.attrs.id,
-      tid: node.attrs.id,
-      position: 'start',
-    })
-    const end = schema.nodes.highlight_marker.create({
-      id: comment.attrs.id,
-      tid: node.attrs.id,
-      position: 'end',
-    })
-    tr.insert(from, start).insert(to + 1, end)
+    if (from === to) {
+      const point = schema.nodes.highlight_marker.create({
+        id: comment.attrs.id,
+        tid: node.attrs.id,
+        position: 'point',
+      })
+      tr.insert(from, point)
+    } else {
+      const start = schema.nodes.highlight_marker.create({
+        id: comment.attrs.id,
+        tid: node.attrs.id,
+        position: 'start',
+      })
+      const end = schema.nodes.highlight_marker.create({
+        id: comment.attrs.id,
+        tid: node.attrs.id,
+        position: 'end',
+      })
+      tr.insert(from, start).insert(to + 1, end)
+    }
+    const range = getCommentRange(attrs)
+    const key = getCommentKey(attrs, range, node)
+    setCommentSelection(tr, key, attrs.id, true)
+    if (dispatch) {
+      dispatch(tr)
+    }
+    return true
   }
-  const range = getCommentRange(attrs)
-  const key = getCommentKey(attrs, range, node)
-  setCommentSelection(tr, key, attrs.id, true)
-  if (dispatch) {
-    dispatch(tr)
-  }
-  return true
+  return false
 }
 
 interface NodeWithPosition {
@@ -1243,3 +1450,21 @@ export const insertTableFootnote = (
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
+
+export const addRows =
+  (direction: 'top' | 'bottom') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (!isInTable(state)) {
+      return false
+    }
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const selectedRows = rect.bottom - rect.top
+      for (let i = 0; i < selectedRows; i++) {
+        addRow(tr, rect, rect[direction])
+      }
+      dispatch(tr)
+    }
+    return true
+  }

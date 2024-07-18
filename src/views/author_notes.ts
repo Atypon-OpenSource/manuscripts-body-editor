@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2023 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-import { baseKeymap } from 'prosemirror-commands'
-import { keymap } from 'prosemirror-keymap'
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
 
-import highlightKeymap from './highlight'
-import keywordKeymap from './keyword'
-import listKeymap from './list'
-import miscKeymap from './misc'
-import titleKeymap from './title'
+export class AuthorNotesView extends BaseNodeView<BaseNodeProps> {
+  container: HTMLElement
 
-export default [
-  keymap(keywordKeymap),
-  keymap(listKeymap),
-  keymap(miscKeymap),
-  keymap(titleKeymap),
-  keymap(baseKeymap),
-  keymap(highlightKeymap),
-]
+  public ignoreMutation = () => true
+  public stopEvent = () => true
+}
+
+export default createNodeView(AuthorNotesView)

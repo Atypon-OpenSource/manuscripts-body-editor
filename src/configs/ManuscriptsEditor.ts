@@ -31,6 +31,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { handleScrollToBibliographyItem } from '../lib/helpers'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
@@ -93,6 +94,18 @@ export const createEditorView = (
     attributes: props.attributes,
     transformPasted,
     clipboardParser,
+    handleScrollToSelection: handleScrollToBibliographyItem,
+    handleClickOn: (view, pos, node, nodePos, event) => {
+      // This to prevent changing editor selection when clicking on table cell context menu button
+      if (
+        event?.target &&
+        (event.target as HTMLElement).classList.contains(
+          'table-context-menu-button'
+        )
+      ) {
+        return true
+      }
+    },
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time

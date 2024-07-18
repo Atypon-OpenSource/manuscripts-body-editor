@@ -5,7 +5,6 @@ Object {
   "content": Array [
     Object {
       "attrs": Object {
-        "comments": null,
         "dataTracked": null,
         "id": null,
         "paragraphStyle": "",
