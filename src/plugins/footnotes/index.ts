@@ -151,12 +151,27 @@ const deleteFootnoteWidget =
         if (node.type === schema.nodes.footnote && pos) {
           const targetNode = tableElement ? tableElement.node : view.state.doc
           const inlineFootnotes = getInlineFootnotes(id, targetNode)
-          const nodeWithPos = findParentNodeClosestToPos(
+          const footnotesElement = findParentNodeClosestToPos(
             tr.doc.resolve(pos),
-            (node) => node.type === schema.nodes.footnote
+            (node) => node.type === schema.nodes.footnotes_element
           )
-          if (nodeWithPos) {
-            const { pos: fnPos, node: fnNode } = nodeWithPos
+          const tableElementFooter = findParentNodeClosestToPos(
+            tr.doc.resolve(pos),
+            (node) => node.type === schema.nodes.table_element_footer
+          )
+          // remove table-element-footer if it has only one footnote
+          if (
+            footnotesElement?.node.childCount === 1 &&
+            tableElementFooter?.node.childCount === 1
+          ) {
+            const { pos: fnPos, node: fnNode } = tableElementFooter
+            tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
+          } else {
+            const footnoteElement = findParentNodeClosestToPos(
+              tr.doc.resolve(pos),
+              (node) => node.type === schema.nodes.footnote
+            )
+            const { pos: fnPos, node: fnNode } = footnoteElement
             tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
           }
 
