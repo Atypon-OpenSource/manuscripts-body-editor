@@ -78,11 +78,7 @@ export default () => {
         table &&
         findChildrenByType(table.node, schema.nodes.footnotes_element).pop()
 
-      if (
-        !table ||
-        !footnotesElementWithPos ||
-        footnotesElementWithPos.node.childCount < 2
-      ) {
+      if (!table || !footnotesElementWithPos) {
         return null
       }
       updateTableInlineFootnoteLabels(tr, table)
