@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
@@ -33,12 +34,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   }
 
   public initialise = () => {
-    if (!this.node.type.spec.toDOM) {
-      return
-    }
-    const outputSpec = this.node.type.spec.toDOM(this.node)
-    const { dom } = DOMSerializer.renderSpec(document, outputSpec)
-    this.dom = dom as HTMLElement
+    this.dom = this.toDom()
     this.contentDOM = document.createElement('span')
     this.dom.appendChild(this.contentDOM)
 
@@ -47,6 +43,14 @@ export class TableCellView extends BlockView<EditableBlockProps> {
     if (can.editArticle) {
       this.createContextMenu()
     }
+  }
+
+  public updateContents = () => {
+    this.dom.getAttributeNames().map((attr) => this.dom.removeAttribute(attr))
+    Array.from(this.toDom().attributes).map(
+      (attr) =>
+        attr.nodeValue && this.dom.setAttribute(attr.nodeName, attr.nodeValue)
+    )
   }
 
   private createContextMenu() {
@@ -100,6 +104,17 @@ export class TableCellView extends BlockView<EditableBlockProps> {
     })
 
     this.dom.appendChild(contextMenuButton)
+  }
+
+  private toDom(): HTMLElement {
+    if (!this.node.type.spec.toDOM) {
+      return this.node.type === schema.nodes.table_cell
+        ? document.createElement('td')
+        : document.createElement('th')
+    }
+
+    const outputSpec = this.node.type.spec.toDOM(this.node)
+    return DOMSerializer.renderSpec(document, outputSpec).dom as HTMLElement
   }
 }
 

@@ -27,7 +27,9 @@ import {
   CellSelection,
   deleteColumn,
   deleteRow,
+  mergeCells,
   selectedRect,
+  splitCell,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
@@ -63,6 +65,9 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     undefined
   )
 
+  const isCellSelectionMerged = mergeCells(view.state)
+  const isCellSelectionSplittable = splitCell(view.state)
+
   const { rows } = getSelectedCells(view.state)
 
   return (
@@ -86,6 +91,18 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete column
       </ActionButton>
+
+      {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
+      {isCellSelectionMerged && (
+        <ActionButton onClick={() => runCommand(mergeCells)}>
+          Merge cells
+        </ActionButton>
+      )}
+      {isCellSelectionSplittable && (
+        <ActionButton onClick={() => runCommand(splitCell)}>
+          Split cells
+        </ActionButton>
+      )}
 
       <ColumnChangeWarningDialog
         isOpen={!!columnAction}
