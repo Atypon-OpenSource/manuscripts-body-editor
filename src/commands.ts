@@ -576,6 +576,7 @@ export const insertInlineFootnote =
 
     const insertedAt = state.selection.to
     let tr = state.tr
+
     const node = state.schema.nodes.inline_footnote.create({
       rids: footnote ? [footnote.attrs.id] : [],
     }) as InlineFootnoteNode

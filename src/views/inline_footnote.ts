@@ -45,6 +45,7 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { TrackableAttributes } from '../types'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
@@ -157,7 +158,6 @@ export class InlineFootnoteView<
           this.destroy()
         },
         onAdd: () => {
-          console.log('on add called')
           const footnote = createFootnote(this.view.state, 'footnote')
           const tr = insertFootnote(
             this.view.state,
@@ -179,15 +179,19 @@ export class InlineFootnoteView<
   }
 
   public updateContents = () => {
-    const node = this.node as InlineFootnoteNode
-    this.dom.setAttribute('rids', node.attrs.rids.join(','))
-    this.dom.setAttribute('contents', node.attrs.contents)
+    const attrs = this.node.attrs as TrackableAttributes<InlineFootnoteNode>
+    this.dom.setAttribute('rids', attrs.rids.join(','))
+    this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
-      ...getChangeClasses(this.node.attrs.dataTracked),
+      ...getChangeClasses(attrs.dataTracked),
     ].join(' ')
 
-    if (this.isSelected() && !this.findParentTableElement()) {
+    if (
+      this.isSelected() &&
+      (!attrs.rids || !attrs.rids.length) &&
+      !this.findParentTableElement()
+    ) {
       this.activateGenericFnModal()
     }
   }
