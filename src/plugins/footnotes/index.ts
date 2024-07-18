@@ -124,9 +124,8 @@ const deleteFootnoteWidget =
 
     deleteBtn.addEventListener('mousedown', () => {
       const handleDelete = () => {
-        let tr = view.state.tr
+        const tr = view.state.tr
         const pos = getPos()
-
         // delete general footnotes
         if (node.type === schema.nodes.general_table_footnote && pos) {
           if (
@@ -152,24 +151,20 @@ const deleteFootnoteWidget =
         if (node.type === schema.nodes.footnote && pos) {
           const targetNode = tableElement ? tableElement.node : view.state.doc
           const inlineFootnotes = getInlineFootnotes(id, targetNode)
-
           const nodeWithPos = findParentNodeClosestToPos(
             tr.doc.resolve(pos),
             (node) => node.type === schema.nodes.footnote
           )
           if (nodeWithPos) {
             const { pos: fnPos, node: fnNode } = nodeWithPos
-            view.dispatch(tr.delete(fnPos, fnPos + fnNode.nodeSize))
+            tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
           }
 
           // delete inline footnotes
           if (inlineFootnotes) {
-            tr = view.state.tr
-
             inlineFootnotes.forEach((footnote) => {
               const pos =
                 footnote.pos + (tableElement ? tableElement.pos + 1 : 0)
-
               if (footnote.node.attrs.rids.length > 1) {
                 const updatedRids = footnote.node.attrs.rids.filter(
                   (rid) => rid !== id
@@ -187,6 +182,7 @@ const deleteFootnoteWidget =
             })
           }
         }
+
         view.dispatch(tr)
       }
 
