@@ -39,3 +39,18 @@ export const findAbstractsNode = (doc: ManuscriptNode) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return findChildrenByType(doc, schema.nodes.abstracts)[0]!
 }
+
+export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {
+  const ga = findChildrenByType(doc, schema.nodes.graphical_abstract_section)[0]
+  if (!ga) {
+    return
+  }
+  const element = findChildrenByType(ga.node, schema.nodes.figure_element)[0]
+  if (!element) {
+    return
+  }
+  return {
+    node: element.node,
+    pos: ga.pos + element.pos + 1,
+  }
+}

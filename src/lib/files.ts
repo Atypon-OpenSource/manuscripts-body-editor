@@ -16,6 +16,7 @@
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
+import { findGraphicalAbstractFigureElement } from './doc'
 import { getActualAttrs, isHidden } from './track-changes-utils'
 
 export type FileDesignation = {
@@ -74,34 +75,46 @@ export const groupFiles = (
   const fileMap = new Map(files.map((f) => [f.id, f]))
   const figures: ElementFiles[] = []
   const supplements: NodeFile[] = []
-  doc.descendants((node, pos) => {
-    if (node.type === schema.nodes.figure_element) {
-      const figureFiles = []
-      for (const figure of findChildrenByType(node, schema.nodes.figure)) {
-        if (isHidden(figure.node)) {
-          continue
-        }
-        const src = getActualAttrs(figure.node).src
-        if (!src) {
-          continue
-        }
-        let file = fileMap.get(src)
-        if (file) {
-          fileMap.delete(src)
-        } else {
-          file = MISSING_FILE
-        }
-        figureFiles.push({
-          node: figure.node,
-          pos: pos + figure.pos + 1,
-          file,
-        })
+
+  const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
+    const figureFiles = []
+    for (const figure of findChildrenByType(node, schema.nodes.figure)) {
+      if (isHidden(figure.node)) {
+        continue
       }
-      figures.push({
-        node,
-        pos,
-        files: figureFiles,
+      const src = getActualAttrs(figure.node).src
+      if (!src) {
+        continue
+      }
+      let file = fileMap.get(src)
+      if (file) {
+        fileMap.delete(src)
+      } else {
+        file = MISSING_FILE
+      }
+      figureFiles.push({
+        node: figure.node,
+        pos: pos + figure.pos + 1,
+        file,
       })
+    }
+    return {
+      node,
+      pos,
+      files: figureFiles,
+    }
+  }
+
+  let gaID: string
+  const element = findGraphicalAbstractFigureElement(doc)
+  if (element) {
+    gaID = element.node.attrs.id
+    figures.push(getFigureElementFiles(element.node, element.pos))
+  }
+
+  doc.descendants((node, pos) => {
+    if (node.type === schema.nodes.figure_element && node.attrs.id !== gaID) {
+      figures.push(getFigureElementFiles(node, pos))
     }
 
     if (node.type === schema.nodes.supplement) {
