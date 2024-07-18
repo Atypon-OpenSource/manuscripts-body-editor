@@ -81,7 +81,7 @@ export default () => {
       if (!table || !footnotesElementWithPos) {
         return null
       }
-      if (footnotesElementWithPos.node.childCount < 2) {
+      if (footnotesElementWithPos.node.childCount > 1) {
         updateTableInlineFootnoteLabels(tr, table)
         orderTableFootnotes(
           tr,
