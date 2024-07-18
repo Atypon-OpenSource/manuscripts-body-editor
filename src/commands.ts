@@ -15,7 +15,7 @@
  */
 
 import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
-import { FileAttachment } from '@manuscripts/style-guide'
+import { FileAttachment, TableConfig } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FigureNode,
@@ -57,6 +57,7 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
+import { addRow, isInTable, selectedRect } from 'prosemirror-tables'
 import {
   findWrapping,
   liftTarget,
@@ -188,12 +189,18 @@ export const createBlock = (
   position: number,
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  attrs?: Attrs
+  attrs?: Attrs,
+  tableConfig?: TableConfig
 ) => {
   let node
   switch (nodeType) {
     case state.schema.nodes.table_element:
-      node = createAndFillTableElement(state)
+      if (!tableConfig) {
+        throw new Error(
+          'Table configuration is required for creating a table element'
+        )
+      }
+      node = createAndFillTableElement(state, tableConfig)
       break
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
@@ -294,13 +301,18 @@ export const insertFileAsFigure = (
 }
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  (
+    state: ManuscriptEditorState,
+    dispatch?: Dispatch,
+    view?: EditorView,
+    tableConfig?: TableConfig
+  ) => {
     const position = findBlockInsertPosition(state)
     if (position === null) {
       return false
     }
 
-    createBlock(nodeType, position, state, dispatch)
+    createBlock(nodeType, position, state, dispatch, undefined, tableConfig)
 
     return true
   }
@@ -983,31 +995,6 @@ export const insertTOCSection = () => {
   return false
 }
 
-/**
- * Call the callback (a prosemirror-tables command) if the current selection is in the table body
- */
-export const ifInTableBody =
-  (command: (state: ManuscriptEditorState) => boolean) =>
-  (state: ManuscriptEditorState): boolean => {
-    const $head = state.selection.$head
-
-    for (let d = $head.depth; d > 0; d--) {
-      const node = $head.node(d)
-
-      if (node.type === state.schema.nodes.table_row) {
-        const table = $head.node(d - 1)
-
-        if (table.firstChild === node || table.lastChild === node) {
-          return false
-        }
-
-        return command(state)
-      }
-    }
-
-    return false
-  }
-
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
@@ -1206,25 +1193,32 @@ export const selectAllIsolating = (
 }
 
 /**
- * Create a figure containing a 2x2 table with header and footer and a figcaption
+ * Create a table containing a configurable number of rows and columns.
+ * The table can optionally include a header row.
  */
-export const createAndFillTableElement = (state: ManuscriptEditorState) => {
-  const emptyTableHeader = state.schema.nodes.table_row.create({}, [
-    state.schema.nodes.table_header.create(),
-    state.schema.nodes.table_header.create(),
-  ])
+export const createAndFillTableElement = (
+  state: ManuscriptEditorState,
+  tableConfig: TableConfig
+) => {
+  const { nodes } = state.schema
+  const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
+  const createRow = (cellType: string) => {
+    const cells = Array.from({ length: numberOfColumns }, () =>
+      nodes[cellType].create()
+    )
+    return nodes.table_row.create({}, cells)
+  }
 
-  const emptyTableRow = state.schema.nodes.table_row.create({}, [
-    state.schema.nodes.table_cell.create(),
-    state.schema.nodes.table_cell.create(),
-  ])
+  const tableRows = includeHeader ? [createRow('table_header')] : []
 
-  const tableRows = [emptyTableHeader, ...Array(3).fill(emptyTableRow)]
+  for (let i = 0; i < numberOfRows; i++) {
+    tableRows.push(createRow('table_cell'))
+  }
 
-  return state.schema.nodes.table_element.createChecked({}, [
-    state.schema.nodes.table.create({}, tableRows),
+  return nodes.table_element.createChecked({}, [
+    nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
-    state.schema.nodes.listing.create(),
+    nodes.listing.create(),
   ])
 }
 
@@ -1477,3 +1471,21 @@ export const insertTableFootnote = (
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
+
+export const addRows =
+  (direction: 'top' | 'bottom') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (!isInTable(state)) {
+      return false
+    }
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const selectedRows = rect.bottom - rect.top
+      for (let i = 0; i < selectedRows; i++) {
+        addRow(tr, rect, rect[direction])
+      }
+      dispatch(tr)
+    }
+    return true
+  }

@@ -95,6 +95,17 @@ export const createEditorView = (
     transformPasted,
     clipboardParser,
     handleScrollToSelection: handleScrollToBibliographyItem,
+    handleClickOn: (view, pos, node, nodePos, event) => {
+      // This to prevent changing editor selection when clicking on table cell context menu button
+      if (
+        event?.target &&
+        (event.target as HTMLElement).classList.contains(
+          'table-context-menu-button'
+        )
+      ) {
+        return true
+      }
+    },
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time

@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-import Popper from 'popper.js'
+import {
+  createPopper,
+  Instance,
+  Placement,
+  StrictModifiers,
+} from '@popperjs/core'
 
 export class PopperManager {
-  private activePopper?: Popper
+  private activePopper?: Instance
   private handleDocumentClick?: (e: Event) => void
 
   public show(
     target: Element,
     contents: HTMLElement,
-    placement: Popper.Placement = 'bottom',
+    placement: Placement = 'bottom',
     showArrow = true,
-    modifiers: Popper.Modifiers = {}
+    modifiers: Array<Partial<StrictModifiers>> = []
   ) {
     // destroy any existing popper first
     // checking activePopper is in destroy() method
@@ -43,27 +48,28 @@ export class PopperManager {
         const arrow = document.createElement('div')
         arrow.className = 'popper-arrow'
         container.appendChild(arrow)
-
-        modifiers.arrow = {
-          element: arrow,
-        }
+        modifiers.push({
+          name: 'arrow',
+          options: {
+            element: arrow,
+          },
+        })
       } else {
-        modifiers.arrow = {
-          enabled: false,
-        }
-      }
-      modifiers.preventOverflow = {
-        escapeWithReference: true,
+        modifiers.push({
+          name: 'arrow',
+          options: {
+            element: null,
+          },
+        })
       }
 
       container.appendChild(contents)
       document.body.appendChild(container)
 
-      this.activePopper = new Popper(target, container, {
+      this.activePopper = createPopper(target, container, {
         placement,
-        removeOnDestroy: true,
         modifiers,
-        onCreate: () => {
+        onFirstUpdate: () => {
           this.addContainerClass(target)
           this.focusInput(container)
         },
@@ -85,11 +91,20 @@ export class PopperManager {
 
   public destroy() {
     if (this.activePopper) {
-      this.removeContainerClass(this.activePopper.reference as Element)
+      console.log(
+        'destroying popper',
+        this.activePopper,
+        this.activePopper.state.elements.reference
+      )
+      this.removeContainerClass(
+        this.activePopper.state.elements.reference as Element
+      )
       this.activePopper.destroy()
+      this.activePopper.state.elements.popper.remove()
       if (this.handleDocumentClick) {
         window.removeEventListener('click', this.handleDocumentClick)
       }
+
       delete this.activePopper
     }
   }
@@ -99,6 +114,8 @@ export class PopperManager {
       this.activePopper.update()
     }
   }
+
+  public isActive = () => !!this.activePopper
 
   private focusInput(container: HTMLDivElement) {
     const element = container.querySelector('input') as HTMLDivElement | null
