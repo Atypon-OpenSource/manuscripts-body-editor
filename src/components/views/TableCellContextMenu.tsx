@@ -22,8 +22,6 @@ import {
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { Command, EditorState } from 'prosemirror-state'
 import {
-  addColumnAfter,
-  addColumnBefore,
   CellSelection,
   deleteColumn,
   deleteRow,
@@ -33,19 +31,24 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addRows } from '../../commands'
+import { addColumns, addRows } from '../../commands'
 
 /**
  * Return the number of selected rows/columns
  */
-const getSelectedCells = (state: EditorState) => {
+const getSelectedCellsCount = (state: EditorState) => {
   const { selection } = state
-  const selectedCells = { rows: 1 }
+  const selectedCells = { rows: 1, columns: 1 }
   if (selection instanceof CellSelection) {
     const rect = selectedRect(state)
     selectedCells.rows = rect.bottom - rect.top
+    selectedCells.columns = rect.right - rect.left
   }
-  return selectedCells
+  const { rows, columns } = selectedCells
+  return {
+    rows: rows > 1 ? `${rows} rows` : `row`,
+    columns: columns > 1 ? `${columns} columns` : `column`,
+  }
 }
 
 export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
@@ -63,28 +66,28 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     undefined
   )
 
-  const { rows } = getSelectedCells(view.state)
+  const { rows, columns } = getSelectedCellsCount(view.state)
 
   return (
     <MenuDropdownList>
       <ActionButton onClick={() => runCommand(addRows('top'))}>
-        <PlusIcon /> Insert row above {rows > 1 && rows}
+        <PlusIcon /> Insert row above {rows}
       </ActionButton>
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
-        <PlusIcon /> Insert row below {rows > 1 && rows}
+        <PlusIcon /> Insert row below {rows}
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumnBefore)}>
-        <PlusIcon /> Insert column to the left
+      <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
+        <PlusIcon /> Insert {columns} to the left
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumnAfter)}>
-        <PlusIcon /> Insert column to the right
+      <ActionButton onClick={() => setColumnAction(() => addColumns('right'))}>
+        <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete row {rows > 1 && rows}
+        <GrayDeleteIcon /> Delete {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
-        <GrayDeleteIcon /> Delete column
+        <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
 
       <ColumnChangeWarningDialog
