@@ -94,12 +94,12 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
 
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
-        <ActionButton onClick={() => runCommand(mergeCells)}>
+        <ActionButton onClick={() => runCommand(mergeCells, true)}>
           Merge cells
         </ActionButton>
       )}
       {isCellSelectionSplittable && (
-        <ActionButton onClick={() => runCommand(splitCell)}>
+        <ActionButton onClick={() => runCommand(splitCell, true)}>
           Split cells
         </ActionButton>
       )}
