@@ -65,8 +65,9 @@ export class TableCellView extends BlockView<EditableBlockProps> {
         if (
           !(
             this.view.state.selection instanceof CellSelection &&
-            (this.getPos() === this.view.state.selection.$anchorCell.pos ||
-              this.getPos() === this.view.state.selection.$headCell.pos)
+            !!this.view.state.selection.ranges.find(
+              (range) => range.$from.pos === this.getPos() + 1
+            )
           )
         ) {
           this.view.dispatch(
