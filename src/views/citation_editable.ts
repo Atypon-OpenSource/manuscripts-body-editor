@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Capabilities,
-  ContextMenu,
-  ContextMenuProps,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { CitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
@@ -51,8 +47,8 @@ const createBibliographySection = (node: ManuscriptNode) =>
 export class CitationEditableView extends CitationView<EditableBlockProps> {
   private editor: HTMLElement
   private contextMenu: HTMLElement
-  private can: Capabilities = this.props.getCapabilities()
-  // we added this to stop select events in case the user clicks on the comment,
+  private can = this.props.getCapabilities()
+  // we added this to stop select events in case th e user clicks on the comment,
   // so it won't interfere with the context menu
   public stopEvent = (event: Event) => {
     const element = event.target as Element
@@ -64,9 +60,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   public eventHandlers = () => {
-    this.dom.addEventListener('mouseup', this.handlcick, { capture: true })
+    this.dom.addEventListener('mouseup', this.handleClick)
   }
-  public handlcick = (event: MouseEvent) => {
+  public handleClick = (event: MouseEvent) => {
     if (
       this.can.seeReferencesButtons &&
       !isDeleted(this.node) &&
