@@ -969,7 +969,7 @@
 .table-footer > div {
   position: relative;
 }
-.general-table-footnote, .table-footnotes-element div{
+.general-table-footnote, .table-footnotes-element div {
   padding: 4px;
 }
 .general-table-footnote > p {
@@ -983,7 +983,9 @@
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
 }
-
+.ProseMirror .table-footer .inserted.pending {
+  margin-bottom: 5px;
+}
 .ProseMirror .footnote-label {
   vertical-align: super;
   font-size: 75%;
