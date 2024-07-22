@@ -56,11 +56,12 @@ import {
   getInlineFootnotes,
 } from './footnotes-utils'
 
-interface PluginState {
+export interface PluginState {
   inlineFootnotes: [InlineFootnoteNode, number][]
-  labels: Map<string, string>
+  unusedFootnotes: Map<string, [FootnoteNode, number]>
   footnotes: Map<string, [FootnoteNode, number]>
   footnoteElement?: [FootnotesElementNode, number]
+  labels: Map<string, string>
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
@@ -213,32 +214,6 @@ const deleteFootnoteWidget =
  *  - It adds and updates superscripted numbering of the footnotes on editor state changes
  *  - deletes inline footnotes when a footnotes is deleted
  *  - provides an ability to scroll to a footnote upon clicking on the respective inline footnotes
- * TODO:
- *   1. use setMeta to notify of updates when the doc hasn't changed in appendTransaction
- *     if (!transactions.some(transaction => transaction.docChanged)) {
- *       return null
- *     }
- *   2. re-order footnotes as inline_footnotes are re-ordered? - may cause syncing issues
- *
- * NOTE:
- *   1. The footnotes deletions isn't prevented on purpose as it may cause a syncing issues.
- *      This, however, maybe required in the future. It maybe done with something like that:
- *       filterTransaction(transaction, state) {
- *         const pluginState = footnotesKey.getState(state)
- *         if (pluginState) {
- *           const presentFootnotesIds = []
- *           transaction.doc.descendants((node, pos) => {
- *             if (isFootnoteNode(node)) {
- *               presentFootnotesIds.push(node.attrs.id)
- *             }
- *           })
- *           if (presentFootnotesIds.length < pluginState.nodes.length) {
- *             return false
- *           }
- *         }
- *         return true
- *       },
- *
  */
 
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
@@ -280,7 +255,27 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
     })
   })
 
-  return { inlineFootnotes, labels, footnotes, footnoteElement }
+  const footnotesReordered: FootnoteNode[] = []
+  const footnotesRest = new Map(footnotes)
+
+  inlineFootnotes.forEach(([node]) => {
+    const footnote = node as InlineFootnoteNode
+    footnote.attrs.rids.forEach((rid) => {
+      const currentfNode = footnotesRest.get(rid)
+      if (currentfNode) {
+        footnotesReordered.push(currentfNode[0])
+        footnotesRest.delete(rid)
+      }
+    })
+  })
+
+  return {
+    inlineFootnotes,
+    unusedFootnotes: footnotesRest,
+    footnotes,
+    footnoteElement,
+    labels,
+  }
 }
 
 export default (props: EditorProps) => {
@@ -311,6 +306,7 @@ export default (props: EditorProps) => {
         footnotes,
         labels,
         footnoteElement,
+        unusedFootnotes,
       } = footnotesKey.getState(newState) as PluginState
 
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
@@ -324,16 +320,14 @@ export default (props: EditorProps) => {
       const { tr } = newState
 
       const footnotesReordered: FootnoteNode[] = []
-      const footnotesRest = new Map(footnotes)
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
           .map((rid) => {
-            const currentfNode = footnotesRest.get(rid)
+            const currentfNode = footnotes.get(rid)
             if (currentfNode) {
               footnotesReordered.push(currentfNode[0])
-              footnotesRest.delete(rid)
             }
             return labels.get(rid)
           })
@@ -350,7 +344,7 @@ export default (props: EditorProps) => {
       })
 
       // unused footnotes go to the bottom of the list
-      footnotesRest.forEach(([node]) => footnotesReordered.push(node))
+      unusedFootnotes.forEach(([node]) => footnotesReordered.push(node))
 
       // replacing footnotes in footnote element
       const newFElement = schema.nodes.footnotes_element.create(
@@ -383,12 +377,11 @@ export default (props: EditorProps) => {
             break
           }
         }
+        // selection will be lost otherwise as we replace the element completely
         tr.setSelection(
           TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
         )
       }
-
-      // selection will be lost otherwise as we replace the element completely
 
       skipTracking(tr)
       return tr
