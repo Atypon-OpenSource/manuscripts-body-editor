@@ -81,6 +81,7 @@ import {
 } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
+import { footnotesKey } from './plugins/footnotes'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
 
@@ -506,80 +507,100 @@ export const insertInlineEquation = (
   return true
 }
 
+export const createFootnote = (
+  state: ManuscriptEditorState,
+  kind: 'footnote' | 'endnote'
+) => {
+  return state.schema.nodes.footnote.createAndFill({
+    id: generateID(ObjectTypes.Footnote),
+    kind,
+  }) as FootnoteNode
+}
+
+export const insertFootnote = (
+  state: ManuscriptEditorState,
+  tr: Transaction,
+  footnote: FootnoteNode
+) => {
+  const footnotesSection = findChildrenByType(
+    tr.doc,
+    schema.nodes.footnotes_section
+  )[0]
+
+  let selectionPos = 0
+
+  if (!footnotesSection) {
+    // create a new footnotes section if needed
+    const section = state.schema.nodes.footnotes_section.create({}, [
+      state.schema.nodes.section_title.create(
+        {},
+        state.schema.text('Footnotes')
+      ),
+      state.schema.nodes.footnotes_element.create({}, footnote),
+    ])
+
+    const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
+    const sectionPos = backmatter.pos + 1
+
+    tr.insert(sectionPos, section)
+
+    let footnotePos = 0
+    section.descendants((n, pos) => {
+      if (isFootnoteNode(n)) {
+        footnotePos = pos
+        n.descendants((childNode, childPos) => {
+          if (isParagraphNode(childNode)) {
+            footnotePos += childPos
+          }
+        })
+      }
+    })
+    selectionPos = sectionPos + footnotePos
+  } else {
+    // Look for footnote element inside the footnotes section to exclude tables footnote elements
+    const footnoteElement = findChildrenByType(
+      footnotesSection.node,
+      schema.nodes.footnotes_element
+    )
+    const pos =
+      footnotesSection.pos +
+      footnoteElement[0].pos +
+      footnoteElement[0].node.nodeSize -
+      1
+    tr.insert(pos, footnote)
+    selectionPos = pos + 2
+  }
+  if (selectionPos) {
+    const selection = TextSelection.near(tr.doc.resolve(selectionPos))
+    tr.setSelection(selection).scrollIntoView()
+  }
+  return tr
+}
+
 export const insertInlineFootnote =
   (kind: 'footnote' | 'endnote') =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    const footnote = state.schema.nodes.footnote.createAndFill({
-      id: generateID(ObjectTypes.Footnote),
-      kind,
-    }) as FootnoteNode
+    const fnState = footnotesKey.getState(state)
+    const hasUnusedNodes = fnState && fnState.unusedFootnotes.size > 0
+    const footnote: FootnoteNode | null = !hasUnusedNodes
+      ? createFootnote(state, kind)
+      : null
 
     const insertedAt = state.selection.to
+    let tr = state.tr
 
     const node = state.schema.nodes.inline_footnote.create({
-      rids: [footnote.attrs.id],
+      rids: footnote ? [footnote.attrs.id] : [],
     }) as InlineFootnoteNode
 
-    const tr = state.tr
-
-    // insert the inline footnote, referencing the footnote in the footnotes element in the footnotes section
     tr.insert(insertedAt, node)
 
-    const footnotesSection = findChildrenByType(
-      tr.doc,
-      schema.nodes.footnotes_section
-    )[0]
-
-    let selectionPos
-
-    if (!footnotesSection) {
-      // create a new footnotes section if needed
-      const section = state.schema.nodes.footnotes_section.create({}, [
-        state.schema.nodes.section_title.create(
-          {},
-          state.schema.text('Footnotes')
-        ),
-        state.schema.nodes.footnotes_element.create({}, footnote),
-      ])
-
-      const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
-      const sectionPos = backmatter.pos + 1
-
-      tr.insert(sectionPos, section)
-
-      let footnotePos = 0
-      section.descendants((n, pos) => {
-        if (isFootnoteNode(n)) {
-          footnotePos = pos
-          n.descendants((childNode, childPos) => {
-            if (isParagraphNode(childNode)) {
-              footnotePos += childPos
-            }
-          })
-        }
-      })
-      selectionPos = sectionPos + footnotePos
-    } else {
-      // Look for footnote element inside the footnotes section to exclude tables footnote elements
-      const footnoteElement = findChildrenByType(
-        footnotesSection.node,
-        schema.nodes.footnotes_element
-      )
-      const pos =
-        footnotesSection.pos +
-        footnoteElement[0].pos +
-        footnoteElement[0].node.nodeSize -
-        1
-      tr.insert(pos, footnote)
-      selectionPos = pos + 2
+    if (footnote) {
+      tr = insertFootnote(state, tr, footnote)
     }
-
-    if (dispatch && selectionPos) {
-      // set selection inside new footnote
-      const selection = TextSelection.near(tr.doc.resolve(selectionPos))
-      dispatch(tr.setSelection(selection).scrollIntoView())
+    if (dispatch) {
+      dispatch(tr)
     }
-
     return true
   }
 
