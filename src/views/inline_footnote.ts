@@ -14,30 +14,34 @@
  * limitations under the License.
  */
 
-import {
-  FootnoteWithIndex,
-  TableFootnotesSelector,
-} from '@manuscripts/style-guide'
+import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   ManuscriptNodeView,
   schema,
 } from '@manuscripts/transform'
 import { History } from 'history'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
   findChildrenByType,
   findParentNodeClosestToPos,
 } from 'prosemirror-utils'
 
-import { insertTableFootnote } from '../commands'
+import {
+  createFootnote,
+  insertFootnote,
+  insertTableFootnote,
+} from '../commands'
 import {
   getChangeClasses,
   isDeleted,
+  isPendingInsert,
   isRejectedInsert,
 } from '../lib/track-changes-utils'
+import { footnotesKey } from '../plugins/footnotes'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
+import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -47,6 +51,8 @@ export interface InlineFootnoteProps extends BaseNodeProps {
   history: History
 }
 
+type ModalProps = Exclude<(typeof FootnotesSelector)['defaultProps'], undefined>
+
 export class InlineFootnoteView<
     PropsType extends InlineFootnoteProps & EditableBlockProps
   >
@@ -54,6 +60,17 @@ export class InlineFootnoteView<
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
+
+  public isSelected() {
+    const sel = this.view.state.selection
+    const juxtaposed =
+      sel.$head.pos === sel.$anchor.pos &&
+      sel.$head.pos === this.getPos() + this.node.nodeSize
+    if ((sel instanceof NodeSelection && sel.node == this.node) || juxtaposed) {
+      return true
+    }
+    return false
+  }
 
   public findParentTableElement = () =>
     findParentNodeClosestToPos(
@@ -68,24 +85,11 @@ export class InlineFootnoteView<
 
     const tableElement = this.findParentTableElement()
     if (tableElement) {
-      const componentProps = {
+      this.activateModal({
         notes: this.getNotes(tableElement),
         onAdd: this.onAdd,
-        onInsert: this.onUpdate,
-        onCancel: this.destroy,
-        inlineFootnote: this.node,
-      }
-      this.popperContainer = ReactSubView(
-        { ...this.props, dispatch: this.view.dispatch },
-        TableFootnotesSelector,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        'table-footnote-editor'
-      )
-      this.props.popper.show(this.dom, this.popperContainer, 'bottom-end')
-    } else {
+      })
+    } else if (!this.activateGenericFnModal()) {
       if (this.node.attrs.rids?.length) {
         let nodePos: number | undefined = undefined
         this.view.state.doc.descendants((node, pos) => {
@@ -105,14 +109,84 @@ export class InlineFootnoteView<
     }
   }
 
+  activateModal(modalProps: Partial<ModalProps>) {
+    const defaultModal: ModalProps = {
+      notes: [],
+      onInsert: this.onInsert,
+      onCancel: this.destroy,
+      inlineFootnote: this.node as InlineFootnoteNode,
+    }
+    this.popperContainer = ReactSubView(
+      { ...this.props, dispatch: this.view.dispatch },
+      FootnotesSelector,
+      {
+        ...defaultModal,
+        ...modalProps,
+      },
+      this.node,
+      this.getPos,
+      this.view,
+      'footnote-editor'
+    )
+    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
+  }
+
+  activateGenericFnModal() {
+    if (!this.props.getCapabilities().editArticle) {
+      return
+    }
+    const fnState = footnotesKey.getState(this.view.state)
+    if (fnState && fnState.unusedFootnotes.size > 0) {
+      this.activateModal({
+        notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
+          node: n[0],
+        })),
+        onCancel: () => {
+          const { tr } = this.view.state
+          if (!this.node.attrs.rids.length) {
+            this.view.dispatch(
+              tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+            )
+          }
+          this.destroy()
+        },
+        onAdd: () => {
+          const footnote = createFootnote(this.view.state, 'footnote')
+          const tr = insertFootnote(
+            this.view.state,
+            this.view.state.tr,
+            footnote
+          )
+          tr.setNodeAttribute(tr.mapping.map(this.getPos()), 'rids', [
+            footnote.attrs.id,
+          ])
+          this.view.dispatch(tr)
+          this.view.focus()
+          this.destroy()
+        },
+        addNewLabel: 'Replace with new footnote',
+      })
+      return true
+    }
+    return false
+  }
+
   public updateContents = () => {
-    const node = this.node as InlineFootnoteNode
-    this.dom.setAttribute('rids', node.attrs.rids.join(','))
-    this.dom.setAttribute('contents', node.attrs.contents)
+    const attrs = this.node.attrs as TrackableAttributes<InlineFootnoteNode>
+    this.dom.setAttribute('rids', attrs.rids.join(','))
+    this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
-      ...getChangeClasses(this.node.attrs.dataTracked),
+      ...getChangeClasses(attrs.dataTracked),
     ].join(' ')
+
+    if (
+      this.isSelected() &&
+      (!attrs.rids || !attrs.rids.length) &&
+      !this.findParentTableElement()
+    ) {
+      this.activateGenericFnModal()
+    }
   }
 
   public initialise = () => {
@@ -162,20 +236,27 @@ export class InlineFootnoteView<
     }
   }
 
-  public onUpdate = (notes: FootnoteWithIndex[]) => {
-    const contents = this.node.attrs.contents.split(',')
-    const rids = notes.map((note) => note.node.attrs.id)
-    const { tr } = this.view.state
-    this.view.dispatch(
-      rids.length
-        ? tr.setNodeMarkup(this.getPos(), undefined, {
+  public onInsert = (notes: FootnoteWithIndex[]) => {
+    if (notes.length) {
+      const contents = this.node.attrs.contents.split(',')
+      const rids = notes.map((note) => note.node.attrs.id)
+      const { tr } = this.view.state
+
+      if (rids.length) {
+        this.view.dispatch(
+          tr.setNodeMarkup(this.getPos(), undefined, {
             rids,
             contents: notes
               .map(({ index }) => (index ? index : Math.max(...contents) + 1))
               .join(),
           })
-        : tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
-    )
+        )
+      } else if (isPendingInsert(this.node)) {
+        this.view.dispatch(
+          tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+        )
+      }
+    }
     this.destroy()
   }
 }
