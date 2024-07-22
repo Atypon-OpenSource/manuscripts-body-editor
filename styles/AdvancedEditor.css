@@ -335,9 +335,9 @@ Next levels are shifted 'up' by 1
 }
 
 .ProseMirror .figure-block > figure {
-  border-color: #000 !important;
-  border-style: none !important;
-  border-width: 0pt !important;
+  border-color: #000;
+  border-style: none;
+  border-width: 0pt;
   position: relative;
   grid-column: 1/-1;
 }
