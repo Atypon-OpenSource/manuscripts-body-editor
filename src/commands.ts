@@ -15,12 +15,14 @@
  */
 
 import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
-import { FileAttachment, TableConfig } from '@manuscripts/style-guide'
+import { TableConfig } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  FigureElementNode,
   FigureNode,
   FootnoteNode,
   generateID,
+  generateNodeID,
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
@@ -72,6 +74,8 @@ import {
 import { EditorView } from 'prosemirror-view'
 
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
+import { insertSupplementsNode } from './lib/doc'
+import { FileAttachment } from './lib/files'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
@@ -271,7 +275,7 @@ export const insertGeneralFootnote = (
   }
 }
 
-export const insertFileAsFigure = (
+export const insertFigure = (
   file: FileAttachment,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -284,21 +288,40 @@ export const insertFileAsFigure = (
   const figure = state.schema.nodes.figure.createAndFill({
     label: file.name,
     src: file.id,
-    embedURL: { default: undefined },
-    originalURL: { default: undefined },
   }) as FigureNode
 
-  const figureElement = state.schema.nodes.figure_element.createAndFill({}, [
+  const element = state.schema.nodes.figure_element.createAndFill({}, [
     figure,
     state.schema.nodes.figcaption.create({}, [
       state.schema.nodes.caption_title.create(),
       state.schema.nodes.caption.create(),
     ]),
-  ])
-  const tr = state.tr.insert(position, figureElement as ManuscriptNode)
+  ]) as FigureElementNode
+  const tr = state.tr.insert(position, element)
   dispatch(tr)
   return true
 }
+
+export const insertSupplement = (
+  file: FileAttachment,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const supplement = schema.nodes.supplement.create({
+    id: generateNodeID(schema.nodes.supplement),
+    href: file.id,
+  })
+
+  const tr = state.tr
+  const supplements = insertSupplementsNode(tr)
+  const pos = supplements.pos + supplements.node.nodeSize - 1
+  tr.insert(pos, supplement)
+  if (dispatch) {
+    dispatch(skipTracking(tr))
+  }
+  return true
+}
+
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
   (
