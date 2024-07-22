@@ -969,24 +969,23 @@
 .table-footer > div {
   position: relative;
 }
-
+.general-table-footnote, .table-footnotes-element div {
+  padding: 4px;
+}
 .general-table-footnote > p {
   padding-bottom: 8px;
 }
 
-.general-table-footnote:has(> p.footnote-selected) > p:last-child {
-  padding-bottom: 0;
-}
-
 .ProseMirror .table-footnotes-element .footnote-selected,
 .ProseMirror .block-footnotes_element .footnote-selected,
-.ProseMirror .general-table-footnote:has(> p.footnote-selected)
+.ProseMirror .general-table-footnote.footnote-selected
 {
   background-color: #f2fbfc;
-  padding: 4px;
   border: 1px solid #bce7f6;
 }
-
+.ProseMirror .table-footer .inserted.pending {
+  margin-bottom: 5px;
+}
 .ProseMirror .footnote-label {
   vertical-align: super;
   font-size: 75%;
@@ -1002,7 +1001,7 @@
   display: flex;
   position: absolute;
   margin-right: 4px;
-  top: 10%;
+  top: 15%;
   right: 100%;
 }
 
