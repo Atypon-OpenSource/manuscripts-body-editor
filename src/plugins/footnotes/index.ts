@@ -167,11 +167,11 @@ const deleteFootnoteWidget =
             const { pos: fnPos, node: fnNode } = tableElementFooter
             tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
           } else {
-            const footnoteElement = findParentNodeClosestToPos(
+            const footnote = findParentNodeClosestToPos(
               tr.doc.resolve(pos),
               (node) => node.type === schema.nodes.footnote
             )
-            const { pos: fnPos, node: fnNode } = footnoteElement
+            const { pos: fnPos, node: fnNode } = footnote
             tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
           }
 
@@ -184,7 +184,7 @@ const deleteFootnoteWidget =
                 const updatedRids = footnote.node.attrs.rids.filter(
                   (rid) => rid !== id
                 )
-                tr.setNodeMarkup(tr.mapping.map(pos + 1), undefined, {
+                tr.setNodeMarkup(tr.mapping.map(pos), undefined, {
                   ...node.attrs,
                   rids: updatedRids,
                 })

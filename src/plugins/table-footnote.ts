@@ -81,14 +81,12 @@ export default () => {
       if (!table || !footnotesElementWithPos) {
         return null
       }
-      if (footnotesElementWithPos.node.childCount > 1) {
-        updateTableInlineFootnoteLabels(tr, table)
-        orderTableFootnotes(
-          tr,
-          footnotesElementWithPos,
-          tr.mapping.map(table.pos)
-        )
-      }
+      updateTableInlineFootnoteLabels(tr, table)
+      orderTableFootnotes(
+        tr,
+        footnotesElementWithPos,
+        tr.mapping.map(table.pos)
+      )
 
       return tr
     },
