@@ -278,7 +278,7 @@ export class ContextMenu {
 
     if (type === schema.nodes.table_element) {
       // Check if the selection is inside the table.
-      const isInTable = hasParentNodeOfType(schema.nodes.table)(
+      const isInTableCell = hasParentNodeOfType(schema.nodes.table_cell)(
         this.view.state.selection
       )
       const tableElementFooter = findChildrenByType(
@@ -319,7 +319,7 @@ export class ContextMenu {
         )
       }
 
-      if (isInTable) {
+      if (isInTableCell) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
