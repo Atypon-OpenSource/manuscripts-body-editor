@@ -168,8 +168,10 @@ const deleteFootnoteWidget =
               tr.doc.resolve(pos),
               (node) => node.type === schema.nodes.footnote
             )
-            const { pos: fnPos, node: fnNode } = footnote
-            tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
+            if (footnote) {
+              const { pos: fnPos, node: fnNode } = footnote
+              tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
+            }
           }
 
           // delete inline footnotes
