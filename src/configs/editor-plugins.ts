@@ -59,7 +59,7 @@ export default (props: EditorProps) => {
         ? TrackChangesStatus.disabled
         : TrackChangesStatus.enabled,
     }),
-    sectionNumberingPlugin(props),
+    sectionNumberingPlugin(),
     table_editing_fix(),
     elements(),
     persist(),
