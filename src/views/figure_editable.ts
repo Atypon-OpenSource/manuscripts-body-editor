@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  Capabilities,
-  FileAttachment,
-  FileCorruptedIcon,
-  FileManagement,
-} from '@manuscripts/style-guide'
+import { Capabilities, FileCorruptedIcon } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { createElement } from 'react'
 import ReactDOM from 'react-dom'
@@ -28,7 +23,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { buildFileMap } from '../lib/build-file-models'
+import { FileAttachment, FileManagement, groupFiles } from '../lib/files'
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -69,31 +64,19 @@ export class FigureEditableView extends FigureView<
     const attrs = getActualAttrs(this.node)
 
     if (this.node.attrs.dataTracked?.length) {
-      /*
-        if track-status is 'rejected' and operation is 'set_attrs' then find old attribute in
-        the this.node.attrs.dataTracked[x].oldAttrs and use them in the display
-      */
-
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
+      const change = this.node.attrs.dataTracked[0]
+      this.dom.setAttribute('data-track-status', change.status)
+      this.dom.setAttribute('data-track-op', change.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
+      this.dom.removeAttribute('data-track-op')
     }
 
     const src = attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
 
-    while (this.container.hasChildNodes()) {
-      this.container.removeChild(this.container.firstChild as Node)
-    }
+    this.container.innerHTML = ''
 
     const can = this.props.getCapabilities()
 
@@ -176,14 +159,15 @@ export class FigureEditableView extends FigureView<
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
+      const files = this.props.getFiles()
+      const doc = this.view.state.doc
       const componentProps: FigureOptionsProps = {
         can,
-        files,
-        getFilesMap: () => buildFileMap(this.view.state.doc),
-        handleDownload,
-        handleUpload,
-        handleDetach,
-        handleReplace,
+        files: groupFiles(doc, files),
+        onDownload: handleDownload,
+        onUpload: handleUpload,
+        onDetach: handleDetach,
+        onReplace: handleReplace,
       }
       this.reactTools = ReactSubView(
         this.props,
