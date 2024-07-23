@@ -44,13 +44,13 @@ import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
 import pullquoteElement from '../views/pullquote_element_editable'
+import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
-import section from '../views/section'
 
 type EditorProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
 

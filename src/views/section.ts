@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import { PAGE_BREAK_AFTER, PAGE_BREAK_BEFORE, PAGE_BREAK_BEFORE_AND_AFTER } from '@manuscripts/transform'
+import {
+  PAGE_BREAK_AFTER,
+  PAGE_BREAK_BEFORE,
+  PAGE_BREAK_BEFORE_AND_AFTER,
+} from '@manuscripts/transform'
+
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
-import { createEditableNodeView, createNodeView } from './creators'
+import { createNodeView } from './creators'
 
 export class SectionView<
   PropsType extends BaseNodeProps
@@ -28,14 +33,14 @@ export class SectionView<
     this.createDOM()
     this.createElement()
     this.updateContents()
-  
   }
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
     this.dom.appendChild(this.contentDOM)
   }
   public onUpdateContent = () => {
-    const {titleSuppressed, generatedLabel, pageBreakStyle, id, category} = this.node.attrs
+    const { titleSuppressed, generatedLabel, pageBreakStyle, id, category } =
+      this.node.attrs
     const classnames: string[] = []
 
     if (titleSuppressed) {
@@ -59,11 +64,10 @@ export class SectionView<
     ) {
       classnames.push('page-break-after')
     }
-    if(this.contentDOM) {
+    if (this.contentDOM) {
       this.contentDOM.id = id
       this.contentDOM.classList.add(...classnames)
       category && this.contentDOM.setAttribute('data-category', category)
-      
     }
   }
 }

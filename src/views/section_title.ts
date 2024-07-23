@@ -15,6 +15,7 @@
  */
 
 import { sectionLevel } from '../lib/context-menu'
+import { sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -25,20 +26,25 @@ export class SectionTitleView<
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
-  public updateContents = () => {
+  public onUpdateContent = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
-
+    const sectionTitleState = sectionTitleKey.getState(this.view.state)
+    const sectionNumber = sectionTitleState?.get($pos.pos.toString())
+    const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
       // the first level is hidden
       // other levels are shifted by 1
-      const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
       this.contentDOM.setAttribute(
         'data-placeholder',
         `${sectionLevel(level)} heading`
       )
+    }
+    if (sectionNumber) {
+      this.contentDOM.dataset.sectionNumber = sectionNumber
+      this.contentDOM.dataset.titleLevel = level.toString()
     }
   }
 }
