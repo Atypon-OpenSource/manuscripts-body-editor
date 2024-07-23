@@ -59,7 +59,12 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state'
-import { addRow, isInTable, selectedRect } from 'prosemirror-tables'
+import {
+  addColumnAfter,
+  addColumnBefore,
+  addRow,
+  selectedRect,
+} from 'prosemirror-tables'
 import {
   findWrapping,
   liftTarget,
@@ -1498,15 +1503,28 @@ export const insertTableFootnote = (
 export const addRows =
   (direction: 'top' | 'bottom') =>
   (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
-    if (!isInTable(state)) {
-      return false
-    }
     if (dispatch) {
       const { tr } = state
       const rect = selectedRect(state)
       const selectedRows = rect.bottom - rect.top
       for (let i = 0; i < selectedRows; i++) {
         addRow(tr, rect, rect[direction])
+      }
+      dispatch(tr)
+    }
+    return true
+  }
+
+export const addColumns =
+  (direction: 'right' | 'left') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state.apply(tr))
+      const selectedRows = rect.right - rect.left
+      for (let i = 0; i < selectedRows; i++) {
+        const command = direction === 'right' ? addColumnAfter : addColumnBefore
+        command(state.apply(tr), (t) => t.steps.map((s) => tr.step(s)))
       }
       dispatch(tr)
     }
