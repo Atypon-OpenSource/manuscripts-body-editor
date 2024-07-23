@@ -155,10 +155,7 @@ const deleteFootnoteWidget =
             tr.doc.resolve(pos),
             (node) => node.type === schema.nodes.footnotes_element
           )
-          const tableElementFooter = findParentNodeClosestToPos(
-            tr.doc.resolve(pos),
-            (node) => node.type === schema.nodes.table_element_footer
-          )
+
           // remove table-element-footer if it has only one footnote
           if (
             footnotesElement?.node.childCount === 1 &&
