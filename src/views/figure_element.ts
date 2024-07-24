@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import {
-  Capabilities,
-  FileAttachment,
-  FileManagement,
-} from '@manuscripts/style-guide'
 import { FigureNode, schema } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
   FigureElementOptionsProps,
 } from '../components/views/FigureDropdown'
-import { buildFileMap } from '../lib/build-file-models'
+import { FileAttachment, FileManagement, groupFiles } from '../lib/files'
 import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -36,7 +31,6 @@ import ReactSubView from './ReactSubView'
 interface FigureElementProps {
   fileManagement: FileManagement
   getFiles: () => FileAttachment[]
-  getCapabilities: () => Capabilities
 }
 
 export class FigureElementView extends BlockView<
@@ -68,17 +62,12 @@ export class FigureElementView extends BlockView<
     }
 
     if (this.node.attrs.dataTracked?.length) {
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
+      const change = this.node.attrs.dataTracked[0]
+      this.dom.setAttribute('data-track-status', change.status)
+      this.dom.setAttribute('data-track-op', change.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
+      this.dom.removeAttribute('data-track-op')
     }
 
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
@@ -153,12 +142,13 @@ export class FigureElementView extends BlockView<
     }
 
     if (this.props.dispatch && this.props.theme) {
+      const files = this.props.getFiles()
+      const doc = this.view.state.doc
       const componentProps: FigureElementOptionsProps = {
         can: can,
-        files: this.props.getFiles(),
-        getFilesMap: () => buildFileMap(this.view.state.doc),
-        handleUpload,
-        handleAdd,
+        files: groupFiles(doc, files),
+        onUpload: handleUpload,
+        onAdd: handleAdd,
       }
       this.reactTools = ReactSubView(
         this.props,

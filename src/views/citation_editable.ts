@@ -47,8 +47,8 @@ const createBibliographySection = (node: ManuscriptNode) =>
 export class CitationEditableView extends CitationView<EditableBlockProps> {
   private editor: HTMLElement
   private contextMenu: HTMLElement
-
-  // we added this to stop select events in case the user clicks on the comment,
+  private can = this.props.getCapabilities()
+  // we added this to stop select events in case th e user clicks on the comment,
   // so it won't interfere with the context menu
   public stopEvent = (event: Event) => {
     const element = event.target as Element
@@ -59,15 +59,27 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     )
   }
 
+  public eventHandlers = () => {
+    this.dom.addEventListener('mouseup', this.handleClick)
+  }
+  public handleClick = (event: MouseEvent) => {
+    if (
+      this.can.seeReferencesButtons &&
+      !isDeleted(this.node) &&
+      event.button === 0
+    ) {
+      const attrs = getActualAttrs(this.node) as CitationAttrs
+      if (attrs.rids.length) {
+        this.showContextMenu()
+      }
+    }
+  }
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
-    const can = this.props.getCapabilities()
-    if (can.seeReferencesButtons && !isDeleted(this.node)) {
+    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (!attrs.rids.length) {
         this.showPopper()
-      } else {
-        this.showContextMenu()
       }
     }
   }

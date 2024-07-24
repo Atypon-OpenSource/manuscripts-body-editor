@@ -47,7 +47,7 @@ import {
   DeleteFootnoteDialogProps,
 } from '../../components/views/DeleteFootnoteDialog'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { findParentNodeWithIdValue, getChildOfType } from '../../lib/utils'
+import { getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 import { placeholderWidget } from '../placeholder'
 import {
@@ -56,11 +56,12 @@ import {
   getInlineFootnotes,
 } from './footnotes-utils'
 
-interface PluginState {
+export interface PluginState {
   inlineFootnotes: [InlineFootnoteNode, number][]
-  labels: Map<string, string>
+  unusedFootnotes: Map<string, [FootnoteNode, number]>
   footnotes: Map<string, [FootnoteNode, number]>
   footnoteElement?: [FootnotesElementNode, number]
+  labels: Map<string, string>
 }
 
 export const footnotesKey = new PluginKey<PluginState>('footnotes')
@@ -101,7 +102,8 @@ const deleteFootnoteWidget =
     node: ManuscriptNode,
     props: EditorProps,
     id: string,
-    tableElement: NodeWithPos | undefined
+    tableElement: NodeWithPos | undefined,
+    tableElementFooter: NodeWithPos | undefined
   ) =>
   (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
@@ -126,19 +128,23 @@ const deleteFootnoteWidget =
         const pos = getPos()
 
         // delete general footnotes
-        if (node.type === schema.nodes.table_element_footer) {
+        if (node.type === schema.nodes.general_table_footnote && pos) {
           if (
-            !getChildOfType(node, schema.nodes.footnotes_element, true) &&
-            pos
+            tableElementFooter &&
+            !getChildOfType(
+              tableElementFooter.node,
+              schema.nodes.footnotes_element,
+              true
+            ) &&
+            tableElementFooter.pos
           ) {
             // All child nodes are general footnotes
-            tr.delete(pos - 1, pos + node.nodeSize)
+            tr.delete(
+              tableElementFooter.pos - 1,
+              tableElementFooter.pos + tableElementFooter.node.nodeSize
+            )
           } else {
-            node.content.forEach((item) => {
-              if (item.type === schema.nodes.general_table_footnote && pos) {
-                tr.delete(pos - 1, pos + item.nodeSize + 1)
-              }
-            })
+            tr.delete(pos - 1, pos + node.nodeSize + 1)
           }
         }
 
@@ -208,32 +214,6 @@ const deleteFootnoteWidget =
  *  - It adds and updates superscripted numbering of the footnotes on editor state changes
  *  - deletes inline footnotes when a footnotes is deleted
  *  - provides an ability to scroll to a footnote upon clicking on the respective inline footnotes
- * TODO:
- *   1. use setMeta to notify of updates when the doc hasn't changed in appendTransaction
- *     if (!transactions.some(transaction => transaction.docChanged)) {
- *       return null
- *     }
- *   2. re-order footnotes as inline_footnotes are re-ordered? - may cause syncing issues
- *
- * NOTE:
- *   1. The footnotes deletions isn't prevented on purpose as it may cause a syncing issues.
- *      This, however, maybe required in the future. It maybe done with something like that:
- *       filterTransaction(transaction, state) {
- *         const pluginState = footnotesKey.getState(state)
- *         if (pluginState) {
- *           const presentFootnotesIds = []
- *           transaction.doc.descendants((node, pos) => {
- *             if (isFootnoteNode(node)) {
- *               presentFootnotesIds.push(node.attrs.id)
- *             }
- *           })
- *           if (presentFootnotesIds.length < pluginState.nodes.length) {
- *             return false
- *           }
- *         }
- *         return true
- *       },
- *
  */
 
 export const buildPluginState = (doc: ManuscriptNode): PluginState => {
@@ -275,7 +255,27 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
     })
   })
 
-  return { inlineFootnotes, labels, footnotes, footnoteElement }
+  const footnotesReordered: FootnoteNode[] = []
+  const footnotesRest = new Map(footnotes)
+
+  inlineFootnotes.forEach(([node]) => {
+    const footnote = node as InlineFootnoteNode
+    footnote.attrs.rids.forEach((rid) => {
+      const currentfNode = footnotesRest.get(rid)
+      if (currentfNode) {
+        footnotesReordered.push(currentfNode[0])
+        footnotesRest.delete(rid)
+      }
+    })
+  })
+
+  return {
+    inlineFootnotes,
+    unusedFootnotes: footnotesRest,
+    footnotes,
+    footnoteElement,
+    labels,
+  }
 }
 
 export default (props: EditorProps) => {
@@ -306,6 +306,7 @@ export default (props: EditorProps) => {
         footnotes,
         labels,
         footnoteElement,
+        unusedFootnotes,
       } = footnotesKey.getState(newState) as PluginState
 
       const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
@@ -319,16 +320,14 @@ export default (props: EditorProps) => {
       const { tr } = newState
 
       const footnotesReordered: FootnoteNode[] = []
-      const footnotesRest = new Map(footnotes)
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
         const contents = footnote.attrs.rids
           .map((rid) => {
-            const currentfNode = footnotesRest.get(rid)
+            const currentfNode = footnotes.get(rid)
             if (currentfNode) {
               footnotesReordered.push(currentfNode[0])
-              footnotesRest.delete(rid)
             }
             return labels.get(rid)
           })
@@ -345,7 +344,7 @@ export default (props: EditorProps) => {
       })
 
       // unused footnotes go to the bottom of the list
-      footnotesRest.forEach(([node]) => footnotesReordered.push(node))
+      unusedFootnotes.forEach(([node]) => footnotesReordered.push(node))
 
       // replacing footnotes in footnote element
       const newFElement = schema.nodes.footnotes_element.create(
@@ -378,12 +377,11 @@ export default (props: EditorProps) => {
             break
           }
         }
+        // selection will be lost otherwise as we replace the element completely
         tr.setSelection(
           TextSelection.create(tr.doc, footnoteElement[1] + newFootnotePos)
         )
       }
-
-      // selection will be lost otherwise as we replace the element completely
 
       skipTracking(tr)
       return tr
@@ -393,13 +391,17 @@ export default (props: EditorProps) => {
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const tableElementFooter = findParentNodeOfType(
-          schema.nodes.table_element_footer
+        const generalFootnote = findParentNodeOfType(
+          schema.nodes.general_table_footnote
         )(state.selection)
 
         const tableElement = findParentNodeOfType(schema.nodes.table_element)(
           state.selection
         )
+
+        const tableElementFooter = findParentNodeOfType(
+          schema.nodes.table_element_footer
+        )(state.selection)
 
         const footnote = findParentNodeOfType(schema.nodes.footnote)(
           state.selection
@@ -407,35 +409,37 @@ export default (props: EditorProps) => {
         let targetNode
         if (footnote) {
           targetNode = footnote
-        } else if (tableElementFooter) {
-          targetNode = tableElementFooter
+        } else if (generalFootnote) {
+          targetNode = generalFootnote
         }
         const can = props.getCapabilities()
-        if (targetNode && can.editArticle) {
-          const parent = findParentNodeWithIdValue(state.selection)
-          if (parent && isTextSelection(state.selection)) {
-            decorations.push(
-              // Add a class for styling selected table element footnotes
-              Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+        if (targetNode && can.editArticle && isTextSelection(state.selection)) {
+          decorations.push(
+            // Add a class for styling selected table element footnotes
+            Decoration.node(
+              targetNode.pos,
+              targetNode.pos + targetNode.node.nodeSize,
+              {
                 class: 'footnote-selected',
-              })
+              }
             )
-            decorations.push(
-              Decoration.widget(
-                targetNode.pos + 1,
+          )
+          decorations.push(
+            Decoration.widget(
+              targetNode.pos + 1,
 
-                deleteFootnoteWidget(
-                  targetNode.node,
-                  props,
-                  targetNode.node.attrs.id,
-                  tableElement
-                ),
-                {
-                  key: targetNode.node.attrs.id,
-                }
-              )
+              deleteFootnoteWidget(
+                targetNode.node,
+                props,
+                targetNode.node.attrs.id,
+                tableElement,
+                tableElementFooter
+              ),
+              {
+                key: targetNode.node.attrs.id,
+              }
             )
-          }
+          )
         }
 
         const { labels } = footnotesKey.getState(state) as PluginState
