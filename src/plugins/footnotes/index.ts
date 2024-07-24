@@ -163,6 +163,9 @@ const deleteFootnoteWidget =
           ) {
             const { pos: fnPos, node: fnNode } = tableElementFooter
             tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
+          } else if (footnotesElement?.node.childCount === 1) {
+            const { pos: fnPos, node: fnNode } = footnotesElement
+            tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
           } else {
             const footnote = findParentNodeClosestToPos(
               tr.doc.resolve(pos),
