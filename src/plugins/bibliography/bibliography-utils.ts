@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  CHANGE_OPERATION,
-  CHANGE_STATUS,
-  TrackedAttrs,
-} from '@manuscripts/track-changes-plugin'
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { CitationNode, ManuscriptNode } from '@manuscripts/transform'
 import CiteProc from 'citeproc'
-import { Attrs } from 'prosemirror-model'
 import { Decoration } from 'prosemirror-view'
 
 import { getActualAttrs } from '../../lib/track-changes-utils'
@@ -107,38 +102,6 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
 
 export const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
   a.updatedAt > b.updatedAt ? a : b
-
-//TODO review this code and remove
-/**
- * Map PM node(bibliography, citation) to Model and it could be map by dataTracked if it's exist
- * as it's easier to deal with the manuscript Models for both references list & citation popup view
- */
-export const getEffectiveAttrs = (
-  node: ManuscriptNode,
-  excludeDeletedNode?: boolean
-): Attrs | undefined => {
-  const { dataTracked, ...attrs } = node.attrs
-  const nodeChange = (dataTracked as TrackedAttrs[] | undefined)?.reduce(
-    getLatest
-  )
-
-  const isDeleted =
-    nodeChange &&
-    nodeChange.operation === CHANGE_OPERATION.delete &&
-    nodeChange.status !== CHANGE_STATUS.rejected
-
-  // Exclude deleted nodes
-  if (isDeleted && excludeDeletedNode) {
-    return undefined
-  }
-
-  const isRejected =
-    nodeChange &&
-    nodeChange.operation === CHANGE_OPERATION.set_node_attributes &&
-    nodeChange.status === CHANGE_STATUS.rejected
-
-  return isRejected ? nodeChange?.oldAttrs : attrs
-}
 
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>
   citations
