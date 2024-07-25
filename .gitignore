@@ -6,3 +6,4 @@
 .cache
 /.vscode/
 /.idea/
+/src/versions.ts
