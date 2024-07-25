@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * The versions file is generated at build time using
+ * the `versions.mjs` script.
+ */
+//@ts-ignore
+//eslint-disable-next-line import/no-unresolved
 import { MATHJAX_VERSION } from '../versions'
 
 const src = `https://cdn.jsdelivr.net/npm/mathjax@${MATHJAX_VERSION}/es5/tex-svg.js`
