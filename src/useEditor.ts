@@ -200,9 +200,7 @@ export const useEditor = (externalProps: ExternalProps) => {
     if (nodeId) {
       focusNodeWithId(nodeId)
     }
-    // This function will be invoked on component unmount and will clean up
-    // the event listener.
-  }, [location, focusNodeWithId])
+  }, [location])
 
   return {
     state,
