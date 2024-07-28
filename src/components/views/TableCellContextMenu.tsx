@@ -75,10 +75,10 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   return (
     <MenuDropdownList>
       <ActionButton onClick={() => runCommand(addRows('top'))}>
-        <PlusIcon /> Insert row above {rows}
+        <PlusIcon /> Insert {rows} above
       </ActionButton>
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
-        <PlusIcon /> Insert row below {rows}
+        <PlusIcon /> Insert {rows} below
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
         <PlusIcon /> Insert {columns} to the left
