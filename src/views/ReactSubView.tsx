@@ -57,27 +57,6 @@ export default (
   }
   container.setAttribute('contenteditable', 'false')
 
-  // const reactChild = container.appendChild(document.createElement('div'))
-  // let contentDOM: HTMLElement | null
-  // if (contentDOMElementType) {
-  //   contentDOM = document.createElement(contentDOMElementType)
-  //   container.appendChild(contentDOM)
-  // } else {
-  //   contentDOM = null
-  // }
-  // a very simple event emitter that tracks the current value of ManuscriptNode
-  // and injects it into Component
-  // let subscriber: ((node: ManuscriptNode) => void) | null
-  // // const setNode = (next: ManuscriptNode) => {
-  // //   subscriber && subscriber(next)
-  // // }
-  // const subscribe = (func: (node: ManuscriptNode) => void) => {
-  //   subscriber = func
-  // }
-  // const unsubscribe = () => {
-  //   subscriber = null
-  // }
-
   const Wrapped: React.FC = () => {
     // @TODO consider implementing subscription to avoid many rerenders - this is why those comments are kept
     // const [node, setNode] = useState<ManuscriptNode>(initialNode)
