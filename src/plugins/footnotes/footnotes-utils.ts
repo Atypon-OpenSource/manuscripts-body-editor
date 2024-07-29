@@ -113,7 +113,6 @@ export const orderTableFootnotes = (
     node: nodeWithPos.node,
     index: tablesFootnoteLabels.get(nodeWithPos.node.attrs.id),
   })) as FootnoteWithIndex[]
-
   const orderedFootnotes = [...footnotes]
     .sort((a, b) => {
       if (a.index !== undefined && b.index !== undefined) {
@@ -126,9 +125,10 @@ export const orderTableFootnotes = (
 
   const { node: footnotesElement, pos } = footnotesElementWithPos
   const footnoteElementPos = position + pos + 1
-
+  if (orderedFootnotes.length === 0) {
+    return
+  }
   const oldDataTracked = footnotesElement.attrs.dataTracked
-
   skipTracking(
     tr.replaceWith(
       tr.mapping.map(footnoteElementPos),
@@ -149,7 +149,6 @@ export const updateTableInlineFootnoteLabels = (
   table: ContentNodeWithPos
 ) => {
   const labels = buildTableFootnoteLabels(table.node)
-
   findChildrenByType(table.node, schema.nodes.inline_footnote)
     .filter(({ node }) => !isRejectedInsert(node))
     .map(({ node, pos }) => {

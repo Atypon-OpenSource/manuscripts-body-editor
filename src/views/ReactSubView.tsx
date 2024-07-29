@@ -16,7 +16,7 @@
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
@@ -50,33 +50,12 @@ export default (
 
   // parentContentDOM: HTMLElement
 ): HTMLDivElement => {
-  const root = document.createElement('div')
-  root.classList.add('tools-panel')
+  const container = document.createElement('div')
+  container.classList.add('tools-panel')
   if (classNames) {
-    root.classList.add(classNames)
+    container.classList.add(classNames)
   }
-  root.setAttribute('contenteditable', 'false')
-
-  // const reactChild = root.appendChild(document.createElement('div'))
-  // let contentDOM: HTMLElement | null
-  // if (contentDOMElementType) {
-  //   contentDOM = document.createElement(contentDOMElementType)
-  //   root.appendChild(contentDOM)
-  // } else {
-  //   contentDOM = null
-  // }
-  // a very simple event emitter that tracks the current value of ManuscriptNode
-  // and injects it into Component
-  // let subscriber: ((node: ManuscriptNode) => void) | null
-  // // const setNode = (next: ManuscriptNode) => {
-  // //   subscriber && subscriber(next)
-  // // }
-  // const subscribe = (func: (node: ManuscriptNode) => void) => {
-  //   subscriber = func
-  // }
-  // const unsubscribe = () => {
-  //   subscriber = null
-  // }
+  container.setAttribute('contenteditable', 'false')
 
   const Wrapped: React.FC = () => {
     // @TODO consider implementing subscription to avoid many rerenders - this is why those comments are kept
@@ -117,8 +96,9 @@ export default (
       </ThemeProvider>
     )
   }
+  const root = createRoot(container)
 
-  ReactDOM.render(<Wrapped />, root)
+  root.render(<Wrapped />)
 
-  return root
+  return container
 }

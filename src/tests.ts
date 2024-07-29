@@ -16,6 +16,7 @@
 
 import 'regenerator-runtime/runtime'
 
+import { TextDecoder, TextEncoder } from 'util'
 import { v4 as uuid } from 'uuid'
 
 process.env.API_BASE_URL = 'https://127.0.0.1/'
@@ -35,3 +36,5 @@ if (!window.URL.createObjectURL) {
     value: jest.fn(() => 'blob:https://localhost/' + uuid()),
   })
 }
+
+Object.assign(global, { TextDecoder, TextEncoder })
