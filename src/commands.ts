@@ -714,16 +714,23 @@ export const insertSection =
 export const insertBackMatterSection =
   (category: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    
     const bibliographySection = findChildrenByType(
       state.doc,
       schema.nodes.bibliography_section
     )[0]
     const backmatter = findChildrenByType(state.doc, schema.nodes.backmatter)[0]
-    
-    const backmatterSections = findChildrenByType(backmatter.node, schema.nodes.section, true)
+
+    const backmatterSections = findChildrenByType(
+      backmatter.node,
+      schema.nodes.section,
+      true
+    )
     // Check if the section already exists
-    if (backmatterSections.some((section) => section.node.attrs.category === category)) {
+    if (
+      backmatterSections.some(
+        (section) => section.node.attrs.category === category
+      )
+    ) {
       return false
     }
     let pos
