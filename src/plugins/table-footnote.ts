@@ -81,7 +81,6 @@ export default () => {
       if (!table || !footnotesElementWithPos) {
         return null
       }
-
       updateTableInlineFootnoteLabels(tr, table)
       orderTableFootnotes(
         tr,
