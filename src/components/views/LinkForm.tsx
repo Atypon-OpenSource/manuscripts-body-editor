@@ -100,7 +100,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   const [title, setTitle] = useState(value.title || '')
 
   const handleSubmit = useCallback(
-    (event) => {
+    (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
       onSave({ href, text, title })
     },
