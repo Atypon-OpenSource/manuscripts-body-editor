@@ -746,7 +746,13 @@ export const insertBackMatterSection =
     return true
   }
 
-const findSelectedList = findParentNodeOfType([schema.nodes.list])
+const findSelectedList = (selection: Selection) =>
+  (selection instanceof NodeSelection &&
+    selection.node.type === schema.nodes.list && {
+      pos: selection.from,
+      node: selection.node,
+    }) ||
+  findParentNodeOfType([schema.nodes.list])(selection)
 
 export const insertAbstract = (
   state: ManuscriptEditorState,
