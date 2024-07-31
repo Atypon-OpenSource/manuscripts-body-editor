@@ -342,7 +342,6 @@ const history = createMemoryHistory()
 
 const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   doc,
-  getManuscript: () => manuscript,
   locale: 'en-US',
   popper: new PopperManager(),
   projectID: '',

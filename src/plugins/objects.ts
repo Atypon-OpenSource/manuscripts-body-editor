@@ -26,33 +26,23 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
-interface Props {
-  getManuscript: () => Manuscript
-}
-
 /**
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
-export default (props: Props) => {
+export default () => {
   return new Plugin<Map<string, Target>>({
     key: objectsKey,
 
     state: {
       init: (config, state) => {
-        return buildTargets(
-          Fragment.from(state.doc.content),
-          props.getManuscript()
-        )
+        return buildTargets(Fragment.from(state.doc.content))
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(
-          Fragment.from(tr.doc.content),
-          props.getManuscript()
-        )
+        return buildTargets(Fragment.from(tr.doc.content))
       },
     },
     props: {
