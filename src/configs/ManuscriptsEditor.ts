@@ -46,7 +46,6 @@ export interface EditorProps {
 
   projectID: string
   doc: ManuscriptNode
-  getManuscript: () => Manuscript
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
 
