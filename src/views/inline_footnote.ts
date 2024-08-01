@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+  FootnotesSelector,
+  FootnoteWithIndex,
+} from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   ManuscriptNodeView,
@@ -78,6 +83,44 @@ export class InlineFootnoteView<
       (node) => node.type === schema.nodes.table_element
     )
 
+  public showContextMenu = () => {
+    this.props.popper.destroy()
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Edit',
+          action: () => {
+            this.props.popper.destroy()
+            this.activateGenericFnModal()
+          },
+          icon: 'Edit',
+        },
+        // {
+        //   label: 'Scroll to the footnote',
+        //   action: () => {
+        //     this.props.popper.destroy()
+        //     this.scrollToReferenced()
+        //   },
+        //   icon: 'Icon TBD',
+        // }
+      ],
+    }
+    this.props.popper.show(
+      this.dom,
+      ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'context-menu'
+      ),
+      'right-start',
+      false
+    )
+  }
+
   public handleClick = () => {
     if (isDeleted(this.node)) {
       return
@@ -89,22 +132,24 @@ export class InlineFootnoteView<
         notes: this.getNotes(tableElement),
         onAdd: this.onAdd,
       })
-    } else if (!this.activateGenericFnModal()) {
-      if (this.node.attrs.rids?.length) {
-        let nodePos: number | undefined = undefined
-        this.view.state.doc.descendants((node, pos) => {
-          if (node.attrs.id === this.node.attrs.rids[0]) {
-            nodePos = pos
-          }
-        })
-        if (nodePos && this.props.dispatch) {
-          const sel = TextSelection.near(
-            this.view.state.doc.resolve(nodePos + 1)
-          )
-          this.props.dispatch(
-            this.view.state.tr.setSelection(sel).scrollIntoView()
-          )
+    } else {
+      this.showContextMenu()
+    }
+  }
+
+  scrollToReferenced = () => {
+    if (this.node.attrs.rids?.length) {
+      let nodePos: number | undefined = undefined
+      this.view.state.doc.descendants((node, pos) => {
+        if (node.attrs.id === this.node.attrs.rids[0]) {
+          nodePos = pos
         }
+      })
+      if (nodePos && this.props.dispatch) {
+        const sel = TextSelection.near(this.view.state.doc.resolve(nodePos + 1))
+        this.props.dispatch(
+          this.view.state.tr.setSelection(sel).scrollIntoView()
+        )
       }
     }
   }
@@ -131,7 +176,7 @@ export class InlineFootnoteView<
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
-  activateGenericFnModal() {
+  activateGenericFnModal = () => {
     if (!this.props.getCapabilities().editArticle) {
       return
     }

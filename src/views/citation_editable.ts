@@ -91,11 +91,15 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
 
   public showContextMenu = () => {
     this.props.popper.destroy()
+    const can = this.props.getCapabilities()
+    const actions = [
+      { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
+    ]
+    if (can.editArticle) {
+      actions.unshift({ label: 'Edit', action: this.handleEdit, icon: 'Edit' })
+    }
     const componentProps: ContextMenuProps = {
-      actions: [
-        { label: 'Edit', action: this.handleEdit, icon: 'EditIcon' },
-        { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
-      ],
+      actions,
     }
     this.contextMenu = ReactSubView(
       this.props,
