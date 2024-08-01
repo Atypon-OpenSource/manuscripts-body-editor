@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Manuscript } from '@manuscripts/json-schema'
 import {
   buildTargets,
   isInGraphicalAbstractSection,

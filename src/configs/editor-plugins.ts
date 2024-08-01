@@ -65,7 +65,7 @@ export default (props: EditorProps) => {
     sections(),
     toc(),
     bibliography(props),
-    objects(props),
+    objects(),
     affiliations(),
     comments(),
     paragraphs(),

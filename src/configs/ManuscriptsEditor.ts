@@ -16,7 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { Manuscript, UserProfile } from '@manuscripts/json-schema'
+import { UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
