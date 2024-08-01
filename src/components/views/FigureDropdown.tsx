@@ -112,7 +112,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
           />
           <UploadButton
             onClick={onUpload}
-            disabled={showAddFile && !can.uploadFile}
+            disabled={showAddFile || !can.uploadFile}
           >
             <AddIcon /> New file...
           </UploadButton>
