@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Manuscript } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
@@ -23,7 +22,6 @@ import { useDebounce } from '../hooks/use-debounce'
 import { buildTree, DraggableTree, TreeItem } from './DraggableTree'
 
 export interface ManuscriptOutlineProps {
-  manuscript: Manuscript
   doc: ManuscriptNode | null
   can?: Capabilities
   view?: ManuscriptEditorView
