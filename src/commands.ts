@@ -32,6 +32,7 @@ import {
   isParagraphNode,
   isSectionNodeType,
   KeywordsNode,
+  ListNode,
   ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptMarkType,
@@ -928,7 +929,17 @@ function toggleOffList(
     tr,
   } = state
 
-  const rootList = findRootList($from)
+  let rootList = findRootList($from)
+
+  if (
+    state.selection instanceof NodeSelection &&
+    state.selection.node.type === schema.nodes.list
+  ) {
+    rootList = {
+      pos: state.selection.from,
+      node: state.selection.node as ListNode,
+    }
+  }
 
   if (rootList) {
     state.doc.nodesBetween(
