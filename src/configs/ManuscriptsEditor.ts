@@ -17,13 +17,8 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import { Manuscript, UserProfile } from '@manuscripts/json-schema'
-import {
-  Capabilities,
-  FileAttachment,
-  FileManagement,
-} from '@manuscripts/style-guide'
+import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
@@ -31,6 +26,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
 import { transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
@@ -55,7 +51,6 @@ export interface EditorProps {
   fileManagement: FileManagement
 
   popper: PopperManager
-  history: History
 
   getCapabilities: () => Capabilities
   userID: string
@@ -95,6 +90,17 @@ export const createEditorView = (
     transformPasted,
     clipboardParser,
     handleScrollToSelection: handleScrollToBibliographyItem,
+    handleClickOn: (view, pos, node, nodePos, event) => {
+      // This to prevent changing editor selection when clicking on table cell context menu button
+      if (
+        event?.target &&
+        (event.target as HTMLElement).classList.contains(
+          'table-context-menu-button'
+        )
+      ) {
+        return true
+      }
+    },
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time

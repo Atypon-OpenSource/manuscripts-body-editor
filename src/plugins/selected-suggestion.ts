@@ -138,8 +138,8 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   //hack for keywords since they're really inline nodes but not
   //marked as such in the schema
   const inline = node.type === schema.nodes.keyword || node.isInline
-  const decoration = Decoration.node(from, to, {
-    nodeName: inline ? 'span' : 'div',
+  const decorationType = inline ? Decoration.inline : Decoration.node
+  const decoration = decorationType(from, to, {
     class: 'selected-suggestion',
   })
   return {

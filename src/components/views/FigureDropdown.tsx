@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Model } from '@manuscripts/json-schema'
 import {
   AddIcon,
   AttachIcon,
   Capabilities,
   DotsIcon,
   DropdownList,
-  FileAttachment,
   getFileIcon,
   IconButton,
   IconTextButton,
@@ -29,41 +27,42 @@ import {
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
-  useFiles,
 } from '@manuscripts/style-guide'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
+import { FileAttachment, ManuscriptFiles } from '../../lib/files'
+
 export interface FigureDropdownProps {
   can: Capabilities
-  files: FileAttachment[]
-  getFilesMap: () => Map<string, Model>
+  files: ManuscriptFiles
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
-  handleDownload?: () => void
-  handleUpload?: () => void
-  handleDetach?: () => void
-  handleReplace?: (file: FileAttachment) => void
+  onDownload?: () => void
+  onUpload?: () => void
+  onDetach?: () => void
+  onReplace?: (file: FileAttachment) => void
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
-  handleAdd: (file: FileAttachment) => Promise<void>
-  handleUpload: () => void
+  onAdd: (file: FileAttachment) => Promise<void>
+  onUpload: () => void
 }
 
 export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
   can,
   files,
-  getFilesMap,
-  handleAdd,
-  handleUpload,
+  onAdd,
+  onUpload,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  let { supplements, otherFiles } = useFiles(getFilesMap(), files)
-  supplements = supplements.filter(isImageFile)
-  otherFiles = otherFiles.filter(isImageFile)
+  const supplements = files.supplements
+    .map((s) => s.file)
+    .filter((f) => isImageFile(f.name))
+
+  const others = files.others.filter((f) => isImageFile(f.name))
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
@@ -85,8 +84,8 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             list={
               <>
                 {supplements.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
-                    {getFileIcon(file)}
+                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
+                    {getFileIcon(file.name)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
@@ -94,21 +93,21 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             }
           />
           <NestedDropdown
-            disabled={!can.replaceFile || otherFiles.length < 1}
+            disabled={!can.replaceFile || others.length < 1}
             parentToggleOpen={toggleOpen}
             buttonText={'Other files'}
             list={
               <>
-                {otherFiles.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => handleAdd(file)}>
-                    {getFileIcon(file)}
+                {others.map((file) => (
+                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
+                    {getFileIcon(file.name)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
               </>
             }
           />
-          <UploadButton onClick={handleUpload} disabled={!can.uploadFile}>
+          <UploadButton onClick={onUpload} disabled={!can.uploadFile}>
             <AddIcon /> New file...
           </UploadButton>
         </DropdownList>
@@ -120,22 +119,19 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
   can,
   files,
-  getFilesMap,
-  handleDownload,
-  handleUpload,
-  handleDetach,
-  handleReplace,
+  onDownload,
+  onUpload,
+  onDetach,
+  onReplace,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
-  const otherFiles = useFiles(getFilesMap(), files).otherFiles.filter(
-    isImageFile
-  )
+  const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
-  const showDownload = handleDownload && can.downloadFiles
-  const showUpload = handleUpload && can.uploadFile
-  const showDetach = handleDetach && can.editArticle
-  const showReplace = handleReplace && can.replaceFile
+  const showDownload = onDownload && can.downloadFiles
+  const showUpload = onUpload && can.uploadFile
+  const showDetach = onDetach && can.detachFile
+  const showReplace = onReplace && can.replaceFile
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -144,7 +140,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <ListItemButton onClick={handleDownload} disabled={!showDownload}>
+          <ListItemButton onClick={onDownload} disabled={!showDownload}>
             Download
           </ListItemButton>
           <NestedDropdown
@@ -158,19 +154,19 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                   <ListItemButton
                     key={file.id}
                     id={index.toString()}
-                    onClick={() => handleReplace && handleReplace(file)}
+                    onClick={() => onReplace && onReplace(file)}
                   >
-                    {getFileIcon(file)}
+                    {getFileIcon(file.name)}
                     <ListItemText>{file.name}</ListItemText>
                   </ListItemButton>
                 ))}
-                <UploadButton onClick={handleUpload} disabled={!showUpload}>
+                <UploadButton onClick={onUpload} disabled={!showUpload}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
               </>
             }
           />
-          <ListItemButton onClick={handleDetach} disabled={!showDetach}>
+          <ListItemButton onClick={onDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
         </OptionsDropdownList>

@@ -18,10 +18,12 @@ import { DefaultTheme } from 'styled-components'
 
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
+import authorNotes from '../views/author_notes'
 import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
+import corresp from '../views/corresp'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
 import empty from '../views/empty'
@@ -38,8 +40,6 @@ import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
 import list from '../views/list'
 import list_item from '../views/list_item'
-import listing from '../views/listing_editable'
-import listingElement from '../views/listing_element_editable'
 import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
@@ -47,6 +47,7 @@ import pullquoteElement from '../views/pullquote_element_editable'
 import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
+import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
@@ -75,8 +76,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     keyword: keyword(props, dispatch),
     keyword_group: keywordGroup(props, dispatch),
     link: link(props, dispatch),
-    listing: listing(props),
-    listing_element: listingElement(props),
     list_item: list_item(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),
@@ -86,9 +85,13 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
     table_element: tableElement(props),
+    table_cell: tableCell(props),
+    table_header: tableCell(props),
     table_element_footer: tableElementFooter(props),
     toc_element: tocElement(props),
     comments: empty('comments'),
     supplements: empty('supplements'),
+    author_notes: authorNotes(props, dispatch),
+    corresp: corresp(props),
   }
 }

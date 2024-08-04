@@ -4,7 +4,7 @@
   /* min-width: 100px; */
   position: absolute;
   width: auto;
-  z-index: 5;
+  z-index: 10;
 }
 
 .popper-arrow {
@@ -14,47 +14,42 @@
   border: 5px solid transparent;
 }
 
-.popper[x-placement='bottom'] .popper-arrow {
+.popper[data-popper-placement='bottom'] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
   border-bottom-color: #e2e2e2;
   border-top-width: 0;
-  margin: 0 5px;
 }
 
-.popper[x-placement='top'] .popper-arrow {
+.popper[data-popper-placement='top'] .popper-arrow {
   bottom: -5px;
   left: calc(50% - 5px);
   border-top-color: #e2e2e2;
   border-bottom-width: 0;
-  margin: 0 5px;
 }
 
-.popper[x-placement='left'] .popper-arrow {
+.popper[data-popper-placement='left'] .popper-arrow {
   right: -5px;
   top: calc(50% - 5px);
   border-left-color: #e2e2e2;
   border-right-width: 0;
-  margin: 5px 0;
 }
 
-.popper[x-placement='right'] .popper-arrow {
+.popper[data-popper-placement='right'] .popper-arrow {
   left: -5px;
   top: calc(50% - 5px);
   border-right-color: #e2e2e2;
   border-left-width: 0;
-  margin: 5px 0;
 }
 
-.popper[x-placement='bottom-start'] .popper-arrow {
+.popper[data-popper-placement='bottom-start'] .popper-arrow {
   top: -5px;
   left: calc(50% - 5px);
   border-bottom-color: #e2e2e2;
   border-top-width: 0;
-  margin: 0 5px;
 }
 
-/*.popper[x-placement="right-end"] .popper-arrow {
+/*.popper[data-popper-placement="right-end"] .popper-arrow {
   left: -5px;
   top: 5px;
   border-right-color: #eee;
@@ -62,7 +57,8 @@
   margin: 5px 0;
 }*/
 
-.popper .equation-editor {
+.popper .equation-editor,
+.table-cell-context-menu {
   position: relative;
 }
 
@@ -135,7 +131,9 @@
 .popper .cross-reference-editor,
 .popper .citation-references,
 .popper .track-changes-review-panel,
+.popper .footnote-editor,
 .popper .table-footnote-editor,
+.popper .table-cell-context-menu,
 .popper .context-menu {
   background: #fff;
   border: 1px solid #e2e2e2;
@@ -201,7 +199,7 @@
   width: 600px;
 }
 
-.popper .table-footnote-editor {
+.popper .footnote-editor {
   width: 600px;
 }
 
@@ -221,7 +219,7 @@
   .popper .cross-reference-editor,
   .popper .equation-editor,
   .popper .link-editor,
-  .popper .table-footnote-editor {
+  .popper .footnote-editor {
     min-width: 90%;
     max-width: 90%;
   }
@@ -236,15 +234,10 @@
   width: 600px;
 }
 
-.popper .table-footnote-editor {
-  left: 50%;
-  transform: translate(-50%, -100%);
-}
-
 .popper .track-attrs-popper {
-  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  background: #FFF;
+  background: #fff;
   width: 368px;
   z-index: 10;
 }

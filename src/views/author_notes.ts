@@ -1,5 +1,5 @@
 /*!
- * © 2020 Atypon Systems LLC
+ * © 2023 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-module.exports = {
-  extends: '@manuscripts/eslint-config',
-  rules: {
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'jsx-a11y/no-autofocus': 'off',
-    'jsx-a11y/no-onchange': 'off',
-  },
-  ignorePatterns: ['/src/versions.ts'],
-  overrides: [
-    {
-      files: '**/*.test.ts',
-      rules: {
-        '@typescript-eslint/no-non-null-assertion': 'off',
-      },
-    },
-  ],
+import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
+
+export class AuthorNotesView extends BaseNodeView<BaseNodeProps> {
+  container: HTMLElement
+
+  public ignoreMutation = () => true
+  public stopEvent = () => true
 }
+
+export default createNodeView(AuthorNotesView)

@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2023 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { createEditableNodeView } from './creators'
-import { EditableBlock } from './editable_block'
-import { ListingElementView } from './listing_element'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
+import { EditableBlockProps } from './editable_block'
 
-export default createEditableNodeView(EditableBlock(ListingElementView))
+export class CorrespView extends BlockView<EditableBlockProps> {
+  version: string
+  container: HTMLElement
+
+  public ignoreMutation = () => true
+  public stopEvent = () => true
+}
+
+export default createNodeView(CorrespView)

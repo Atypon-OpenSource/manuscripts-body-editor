@@ -141,7 +141,7 @@
   font-weight: bold;
 }
 
-.ProseMirror tr:last-of-type td {
+.ProseMirror tr td {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
 }
@@ -154,7 +154,7 @@
   border-bottom: 1px solid #000;
 }
 
-.ProseMirror tr:not(:first-of-type):not(:last-of-type) td:not(:last-child) {
+.ProseMirror tr td:not(:last-child) {
   border-right: 1px solid #000;
 }
 
@@ -171,11 +171,6 @@
   color: #353535;
   padding: 0 2px;
   cursor: pointer;
-}
-
-.ProseMirror .citation.deleted.pending,
-.ProseMirror .citation.deleted.accepted {
-  text-decoration: line-through;
 }
 
 .ProseMirror .cross-reference {
@@ -581,36 +576,6 @@
   margin: 16px 0 0;
 }
 
-.ProseMirror tr:first-of-type {
-  counter-reset: header_counter;
-}
-
-.ProseMirror tr:first-of-type th {
-  counter-increment: header_counter;
-}
-
-.ProseMirror tr:last-of-type {
-  counter-reset: footer_counter;
-}
-
-.ProseMirror tr:last-of-type td {
-  counter-increment: footer_counter;
-}
-
-.ProseMirror
-  .block-table_element:not(.suppress-header)
-  tr:first-of-type
-  th.empty-node::before {
-  content: 'Header ' counter(header_counter);
-}
-
-.ProseMirror
-  .block-table_element:not(.suppress-footer)
-  tr:last-of-type
-  td.empty-node::before {
-  content: 'Footer ' counter(footer_counter);
-}
-
 /* TODO: UI for code -> table */
 .ProseMirror .block-table_element .listing {
   display: none;
@@ -714,7 +679,6 @@
   display: flex;
   min-height: 34px;
   padding: 0;
-  margin: 16px auto 0;
   max-width: 100%;
   overflow-x: auto;
   justify-content: center;
@@ -1009,24 +973,23 @@
 .table-footer > div {
   position: relative;
 }
-
+.general-table-footnote, .table-footnotes-element div {
+  padding: 4px;
+}
 .general-table-footnote > p {
   padding-bottom: 8px;
 }
 
-.general-table-footnote:has(> p.footnote-selected) > p:last-child {
-  padding-bottom: 0;
-}
-
 .ProseMirror .table-footnotes-element .footnote-selected,
 .ProseMirror .block-footnotes_element .footnote-selected,
-.ProseMirror .general-table-footnote:has(> p.footnote-selected)
+.ProseMirror .general-table-footnote.footnote-selected
 {
   background-color: #f2fbfc;
-  padding: 4px;
   border: 1px solid #bce7f6;
 }
-
+.ProseMirror .table-footer .inserted.pending {
+  margin-bottom: 5px;
+}
 .ProseMirror .footnote-label {
   vertical-align: super;
   font-size: 75%;
@@ -1042,7 +1005,7 @@
   display: flex;
   position: absolute;
   margin-right: 4px;
-  top: 10%;
+  top: 15%;
   right: 100%;
 }
 
