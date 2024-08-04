@@ -136,7 +136,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
-  const showDetach = onDetach && can.editArticle
+  const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
 
   return (
