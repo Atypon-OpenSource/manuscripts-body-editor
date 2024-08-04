@@ -50,6 +50,7 @@ import {
   NodeRange,
   NodeType,
   ResolvedPos,
+  Slice,
 } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -63,12 +64,14 @@ import {
   addColumnAfter,
   addColumnBefore,
   addRow,
+  mergeCells,
   selectedRect,
 } from 'prosemirror-tables'
 import {
   findWrapping,
   liftTarget,
   ReplaceAroundStep,
+  ReplaceStep,
 } from 'prosemirror-transform'
 import {
   findChildrenByType,
@@ -1232,7 +1235,7 @@ export const createAndFillTableElement = (
   const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
   const createRow = (cellType: string) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      nodes[cellType].create()
+      nodes[cellType].create({}, state.schema.nodes.paragraph.create())
     )
     return nodes.table_row.create({}, cells)
   }
@@ -1530,3 +1533,33 @@ export const addColumns =
     }
     return true
   }
+
+export const mergeCellsWithSpace = (
+  state: EditorState,
+  dispatch?: (tr: Transaction) => void
+): boolean => {
+  if (dispatch) {
+    return mergeCells(state, (tempTr) => {
+      const tr = state.tr
+      tempTr.steps.map((s) => {
+        if (s instanceof ReplaceStep && s.slice.size > 0) {
+          tr.step(
+            new ReplaceStep(
+              s.from,
+              s.to,
+              new Slice(
+                s.slice.content.addToStart(schema.text(' ')),
+                s.slice.openStart,
+                s.slice.openEnd
+              )
+            )
+          )
+        } else {
+          tr.step(s)
+        }
+      })
+      dispatch(tr)
+    })
+  }
+  return false
+}
