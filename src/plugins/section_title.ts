@@ -18,6 +18,8 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
+import { isDeleted, isRejectedInsert } from '../lib/track-changes-utils'
+
 type NumberingArray = number[]
 export type PluginState = Map<string, string>
 
@@ -30,15 +32,18 @@ const calculateSectionLevels = (
 ) => {
   const sectionNumberMap = new Map<string, string>()
   node.forEach((childNode, offset) => {
-    if (childNode.type === schema.nodes.section) {
+    if (
+      childNode.type === schema.nodes.section &&
+      !isDeleted(childNode) &&
+      !isRejectedInsert(childNode)
+    ) {
       numbering[numbering.length - 1] += 1
       const sectionNumber = numbering.join('.')
       const sectionStartPos = startPos + offset + 1
 
-      childNode.forEach((innerChildNode, innerOffset) => {
+      childNode.forEach((innerChildNode) => {
         if (innerChildNode.type === schema.nodes.section_title) {
-          const titleStartPos = sectionStartPos + innerOffset + 1
-          sectionNumberMap.set(titleStartPos.toString(), sectionNumber)
+          sectionNumberMap.set(childNode.attrs.id.toString(), sectionNumber)
         }
       })
 
@@ -68,8 +73,7 @@ export default () => {
     key: sectionTitleKey,
     state: {
       init: (_, state: EditorState) => {
-        const map = getPluginState(state.doc)
-        return map
+        return getPluginState(state.doc)
       },
       apply: (
         tr: Transaction,
@@ -78,8 +82,7 @@ export default () => {
         newState: EditorState
       ) => {
         if (tr.docChanged) {
-          const map = getPluginState(newState.doc)
-          return map
+          return getPluginState(newState.doc)
         }
         return oldSectionNumberMap
       },

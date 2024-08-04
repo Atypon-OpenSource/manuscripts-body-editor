@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
+import { schema } from '@manuscripts/transform'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+
 import { sectionLevel } from '../lib/context-menu'
-import { sectionTitleKey } from '../plugins/section_title'
+import { PluginState, sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+
+// handle sections numbering after track-changes process
+export const handleSectionNumbering = (sections: PluginState) => {
+  sections.forEach((sectionNumber, sectionId) => {
+    const section = document.getElementById(sectionId)
+    const sectionTitle = section?.querySelector('h1')
+    if (sectionTitle) {
+      sectionTitle.dataset.sectionNumber = sectionNumber
+    }
+  })
+}
 
 export class SectionTitleView<
   PropsType extends BaseNodeProps
@@ -29,7 +43,15 @@ export class SectionTitleView<
   public onUpdateContent = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
-    const sectionNumber = sectionTitleState?.get($pos.pos.toString())
+    const parentSection = findParentNodeOfTypeClosestToPos(
+      $pos,
+      schema.nodes.section
+    )
+    console.log('parentSection', parentSection)
+    const sectionNumber = sectionTitleState?.get(
+      parentSection?.node.attrs.id.toString()
+    )
+    console.log('sectionNumber', sectionTitleState)
     const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
@@ -42,9 +64,10 @@ export class SectionTitleView<
         `${sectionLevel(level)} heading`
       )
     }
-    if (sectionNumber) {
+    if (sectionTitleState) {
       this.contentDOM.dataset.sectionNumber = sectionNumber
       this.contentDOM.dataset.titleLevel = level.toString()
+      handleSectionNumbering(sectionTitleState)
     }
   }
 }

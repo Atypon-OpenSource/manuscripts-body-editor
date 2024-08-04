@@ -20,9 +20,11 @@ import {
   PAGE_BREAK_BEFORE_AND_AFTER,
 } from '@manuscripts/transform'
 
+import { sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { handleSectionNumbering } from './section_title'
 
 export class SectionView<
   PropsType extends BaseNodeProps
@@ -39,35 +41,41 @@ export class SectionView<
     this.dom.appendChild(this.contentDOM)
   }
   public onUpdateContent = () => {
+    const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const { titleSuppressed, generatedLabel, pageBreakStyle, id, category } =
       this.node.attrs
-    const classnames: string[] = []
+    const classNames: string[] = []
 
     if (titleSuppressed) {
-      classnames.push('title-suppressed')
+      classNames.push('title-suppressed')
     }
 
     if (typeof generatedLabel === 'undefined' || generatedLabel) {
-      classnames.push('generated-label')
+      classNames.push('generated-label')
     }
 
     if (
       pageBreakStyle === PAGE_BREAK_BEFORE ||
       pageBreakStyle === PAGE_BREAK_BEFORE_AND_AFTER
     ) {
-      classnames.push('page-break-before')
+      classNames.push('page-break-before')
     }
 
     if (
       pageBreakStyle === PAGE_BREAK_AFTER ||
       pageBreakStyle === PAGE_BREAK_BEFORE_AND_AFTER
     ) {
-      classnames.push('page-break-after')
+      classNames.push('page-break-after')
     }
     if (this.contentDOM) {
       this.contentDOM.id = id
-      this.contentDOM.classList.add(...classnames)
+      this.contentDOM.classList.add(...classNames)
       category && this.contentDOM.setAttribute('data-category', category)
+    }
+
+    // update sections numbering, when newly inserted section got deleted
+    if (sectionTitleState) {
+      handleSectionNumbering(sectionTitleState)
     }
   }
 }

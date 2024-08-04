@@ -38,7 +38,7 @@ import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
-import sectionNumberingPlugin from '../plugins/section_title'
+import section_title from '../plugins/section_title'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
@@ -59,7 +59,7 @@ export default (props: EditorProps) => {
         ? TrackChangesStatus.disabled
         : TrackChangesStatus.enabled,
     }),
-    sectionNumberingPlugin(),
+    section_title(),
     table_editing_fix(),
     elements(),
     persist(),
