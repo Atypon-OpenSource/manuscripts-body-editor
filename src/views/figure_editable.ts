@@ -17,7 +17,7 @@
 import { Capabilities, FileCorruptedIcon } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { createElement } from 'react'
-import ReactDOM from 'react-dom'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   FigureOptions,
@@ -199,36 +199,29 @@ export class FigureEditableView extends FigureView<
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')
 
-    //todo remove reactdom
-    const iconContainer = document.createElement('div')
-    ReactDOM.render(
-      createElement(FileCorruptedIcon, { className: 'icon' }),
-      iconContainer,
-      () => {
-        const target = instructions.querySelector('.unsupported-icon-wrapper')
-        if (target) {
-          target.innerHTML = iconContainer.innerHTML
-        }
-      }
+    // Convert the React component to a static HTML string
+    const iconHtml = renderToStaticMarkup(
+      createElement(FileCorruptedIcon, { className: 'icon' })
     )
 
     instructions.innerHTML = `
-        <div>
-          <div class="unsupported-icon-wrapper"></div>
-          <div>${name}</div>
-          <div class="unsupported-format-label">
-            Unsupported file format
-          </div>
-          <div>
-            ${
-              this.props.getCapabilities()?.editArticle
-                ? 'Click to add image'
-                : 'No image here yet…'
-            }
-          </div>
-        </div>
-      `
+    <div>
+      <div class="unsupported-icon-wrapper">${iconHtml}</div>
+      <div>${name}</div>
+      <div class="unsupported-format-label">
+        Unsupported file format
+      </div>
+      <div>
+        ${
+          this.props.getCapabilities()?.editArticle
+            ? 'Click to add image'
+            : 'No image here yet…'
+        }
+      </div>
+    </div>
+  `
 
+    element.appendChild(instructions)
     return element
   }
 
