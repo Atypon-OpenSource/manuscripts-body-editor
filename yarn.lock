@@ -1529,10 +1529,10 @@
     citeproc "^2.4.62"
     fontoxpath "^3.28.2"
 
-"@manuscripts/style-guide@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.0.tgz#ee6341116747684b248f9b7b9340a22eda556b76"
-  integrity sha512-a5Qbzlv/rGXib1gNC1FN/RzbFF/swrUezs7WaBeNMXg6MYKLx7myLIQNGN3v+GXqUggjmQi8+Z38C+eZ34C78Q==
+"@manuscripts/style-guide@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.1.tgz#164d2c85733aa76c92b7bfe53a7fa000ab30aadc"
+  integrity sha512-HO1KNMvxEsACEbAT3/hoUNaVEIswWMQcKNfzKXH8ZOmaeZDJJl0GVKb1Mc4Wj8ZjpNlVNqEsnY1ECt9pwTTRCw==
   dependencies:
     "@manuscripts/json-schema" "2.2.10"
     "@manuscripts/transform" "2.3.21"
@@ -1560,10 +1560,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.16-LEAN-3731.0":
-  version "1.7.16-LEAN-3731.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.16-LEAN-3731.0.tgz#f85eb1564e468929e17165f0528a203956532129"
-  integrity sha512-9OdjvG6zDlg0aGgdsWrpZv1PDGwwks23U4yAIYRGwqd6J0AvimtJau71zgDAhS2XbERZuyCSHybXUVcdWQQfOg==
+"@manuscripts/track-changes-plugin@1.7.16":
+  version "1.7.16"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.16.tgz#605063135f4866f5f67c9d7b23e6a48c22beaf7e"
+  integrity sha512-fwi4F3vwoLyw9R583qnCWOmPQEQvYxFr+M2MbLXJ0WWbHu9TZviTa0LQTMp0JzmLzrX4AKNgEfA0shuu4GhaQw==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
