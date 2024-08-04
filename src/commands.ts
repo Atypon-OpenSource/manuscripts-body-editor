@@ -1624,7 +1624,7 @@ export function mergeCellsWithSpace(
 
     tr.setNodeMarkup(mergedPos + rect.tableStart, null, {
       ...addColSpan(
-        mergedCell.attrs as any,
+        mergedCell.attrs as never,
         mergedCell.attrs.colspan,
         rect.right - rect.left - mergedCell.attrs.colspan
       ),
