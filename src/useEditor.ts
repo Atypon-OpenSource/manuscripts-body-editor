@@ -200,6 +200,7 @@ export const useEditor = (externalProps: ExternalProps) => {
     if (nodeId) {
       focusNodeWithId(nodeId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   return {
