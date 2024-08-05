@@ -296,6 +296,10 @@
   word-wrap: break-word;
 }
 
+.ProseMirror .block-table_element figcaption {
+  text-align: left;
+}
+
 .ProseMirror .caption-title:not(.empty-node) {
   font-weight: bold;
 }
@@ -314,6 +318,14 @@
 
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
+}
+
+.ProseMirror .block-table_element .caption-description.empty-node::before {
+  content: 'Table caption';
+}
+
+.ProseMirror .block-table_element .caption-title.empty-node::before {
+  content: 'Table title';
 }
 
 .ProseMirror .suppress-caption .caption-description {
