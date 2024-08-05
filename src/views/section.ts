@@ -20,12 +20,21 @@ import {
   PAGE_BREAK_BEFORE_AND_AFTER,
 } from '@manuscripts/transform'
 
-import { sectionTitleKey } from '../plugins/section_title'
+import { PluginState, sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { handleSectionNumbering } from './section_title'
 
+// handle sections numbering after track-changes process
+export const handleSectionNumbering = (sections: PluginState) => {
+  sections.forEach((sectionNumber, sectionId) => {
+    const section = document.getElementById(sectionId)
+    const sectionTitle = section?.querySelector('h1')
+    if (sectionTitle) {
+      sectionTitle.dataset.sectionNumber = sectionNumber
+    }
+  })
+}
 export class SectionView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {

@@ -18,7 +18,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
-import { isDeleted, isRejectedInsert } from '../lib/track-changes-utils'
+import { isRejectedInsert } from '../lib/track-changes-utils'
 
 type NumberingArray = number[]
 export type PluginState = Map<string, string>
@@ -34,7 +34,6 @@ const calculateSectionLevels = (
   node.forEach((childNode, offset) => {
     if (
       childNode.type === schema.nodes.section &&
-      !isDeleted(childNode) &&
       !isRejectedInsert(childNode)
     ) {
       numbering[numbering.length - 1] += 1
