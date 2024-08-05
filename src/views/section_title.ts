@@ -35,9 +35,7 @@ export class SectionTitleView<
       $pos,
       schema.nodes.section
     )
-    const sectionNumber = sectionTitleState?.get(
-      parentSection?.node.attrs.id.toString()
-    )
+    const sectionNumber = sectionTitleState?.get(parentSection?.node.attrs.id)
     const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')

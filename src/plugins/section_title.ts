@@ -28,9 +28,9 @@ export const sectionTitleKey = new PluginKey<PluginState>('sectionNumbering')
 const calculateSectionLevels = (
   node: ProseMirrorNode,
   startPos: number,
+  sectionNumberMap: Map<string, string>,
   numbering: NumberingArray = [0]
 ) => {
-  const sectionNumberMap = new Map<string, string>()
   node.forEach((childNode, offset) => {
     if (
       childNode.type === schema.nodes.section &&
@@ -42,27 +42,24 @@ const calculateSectionLevels = (
 
       childNode.forEach((innerChildNode) => {
         if (innerChildNode.type === schema.nodes.section_title) {
-          sectionNumberMap.set(childNode.attrs.id.toString(), sectionNumber)
+          sectionNumberMap.set(childNode.attrs.id, sectionNumber)
         }
       })
 
       // Process child nodes to handle subsections
-      const childSectionMap = calculateSectionLevels(
-        childNode,
-        sectionStartPos,
-        [...numbering, 0]
-      )
-      childSectionMap.forEach((value, key) => sectionNumberMap.set(key, value))
+      calculateSectionLevels(childNode, sectionStartPos, sectionNumberMap, [
+        ...numbering,
+        0,
+      ])
     }
   })
-
-  return sectionNumberMap
 }
 
 const getPluginState = (doc: ProseMirrorNode): PluginState => {
   const bodyNodes = findChildrenByType(doc, schema.nodes.body)
   const bodyNode = bodyNodes[0]
-  const sectionNumberMap = calculateSectionLevels(bodyNode.node, bodyNode.pos)
+  const sectionNumberMap = new Map<string, string>()
+  calculateSectionLevels(bodyNode.node, bodyNode.pos, sectionNumberMap)
 
   return sectionNumberMap
 }
