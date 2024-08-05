@@ -1,13 +1,21 @@
-/* LVL 1 */
-/*
-This level is actually hidden in the editor
-Next levels are shifted 'up' by 1
-*/
-.ProseMirror > div.body > section:not(.toc) {
-  counter-increment: level_1 0;
+.ProseMirror
+  > div.body
+  section:not(.toc) 
+ .block-section_title
+  h1.empty-node[data-placeholder]::before {
+  content: attr(data-section-number) '. ' attr(data-placeholder);
 }
 
-.ProseMirror > div > .block-section_title > h1 {
+.ProseMirror
+  > div.body
+  section:not(.toc) 
+ .block-section_title
+  h1::before {
+  content: attr(data-section-number) '. ';
+}
+
+
+.ProseMirror > div .block-section_title > h1 {
   font-size: 16pt !important;
   font-style: normal !important;
   font-weight: bold !important;
@@ -19,280 +27,20 @@ Next levels are shifted 'up' by 1
   text-indent: 0pt;
   display: inline;
 }
-
-/* LVL 2 */
-.ProseMirror > div.body > section:not(.toc) {
-  counter-increment: level_1;
-  counter-reset: level_2;
-}
-.ProseMirror > div > section > .block-section_title > h1 {
-  font-size: 15.75pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #353535 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 24pt;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror > div.body {
-  counter-reset: level_1;
-}
-.ProseMirror
-  > div.body
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '. ';
+.ProseMirror .block-section_title h1[data-title-level] {
+  font-size: 12pt !important;
 }
 
-.ProseMirror
-  > div.body
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '. ' attr(data-placeholder);
+.ProseMirror .block-section_title h1[data-title-level='1'] {
+  font-size: 16pt !important;
 }
-/* LVL 3 */
-.ProseMirror > div.body > section > section:not(.toc) {
-  counter-increment: level_2;
-  counter-reset: level_3;
-}
-.ProseMirror > div > section > section > .block-section_title > h1 {
+
+.ProseMirror .block-section_title h1[data-title-level='2'] {
   font-size: 13.5pt !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  color: #353535 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 24pt;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror
-  > div.body
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '. ';
-}
-.ProseMirror
-  > div.body
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '. '
-    attr(data-placeholder);
-}
-/* LVL 4 */
-.ProseMirror > div.body > section > section > section:not(.toc) {
-  counter-increment: level_3;
-  counter-reset: level_4;
-}
-.ProseMirror > div > section > section > section > .block-section_title > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '. ';
 }
 
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '. ' attr(data-placeholder);
-}
-/* LVL 5 */
-.ProseMirror > div.body > section > section > section > section:not(.toc) {
-  counter-increment: level_4;
-  counter-reset: level_5;
-}
 
-.ProseMirror
-  > div
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '. ';
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '. '
-    attr(data-placeholder);
-}
-/* LVL 6 */
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc) {
-  counter-increment: level_5;
-  counter-reset: level_6;
-}
-.ProseMirror
-  > div
-  > section
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
-    counter(level_5, decimal) '. ';
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
-    counter(level_5, decimal) '. ' attr(data-placeholder);
-}
-/* LVL 7 */
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc) {
-  counter-increment: level_6;
-  counter-reset: level_7;
-}
-.ProseMirror
-  > div
-  > section
-  > section
-  > section
-  > section
-  > section
-  > .block-section_title
-  > h1 {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
-  text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
-  line-height: 1.5;
-  text-indent: 0pt;
-  display: inline;
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
-    counter(level_5, decimal) '.' counter(level_6, decimal) '. ';
-}
-.ProseMirror
-  > div.body
-  > section
-  > section
-  > section
-  > section
-  > section
-  > section:not(.toc)
-  > .block-section_title
-  > h1.empty-node[data-placeholder]::before {
-  content: counter(level_1, decimal) '.' counter(level_2, decimal) '.'
-    counter(level_3, decimal) '.' counter(level_4, decimal) '.'
-    counter(level_5, decimal) '.' counter(level_6, decimal) '. '
-    attr(data-placeholder);
-}
+
 .ProseMirror div.backmatter::before {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
