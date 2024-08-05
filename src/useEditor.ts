@@ -31,7 +31,7 @@ import {
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import {
   createEditorState,
@@ -49,7 +49,7 @@ export const useEditor = (externalProps: ExternalProps) => {
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
-  const history = useHistory()
+  const location = useLocation()
   const { collabProvider } = props
 
   // Receiving steps from backend
@@ -193,21 +193,15 @@ export const useEditor = (externalProps: ExternalProps) => {
   )
 
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      // This will be evaluated on every route change. So, if
-      // the route has changed and the node id is defined, we want to
-      // focus that node.
-      const nodeId = history.location.hash.substring(1)
-      if (nodeId) {
-        focusNodeWithId(nodeId)
-      }
-    })
-    // This function will be invoked on component unmount and will clean up
-    // the event listener.
-    return () => {
-      unlisten()
+    // This will be evaluated on every route change. So, if
+    // the route has changed and the node id is defined, we want to
+    // focus that node.
+    const nodeId = location.hash.substring(1)
+    if (nodeId) {
+      focusNodeWithId(nodeId)
     }
-  }, [history, focusNodeWithId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
 
   return {
     state,

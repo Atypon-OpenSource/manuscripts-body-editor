@@ -19,7 +19,6 @@ import 'prosemirror-view/style/prosemirror.css'
 import { Manuscript, UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { History } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { DefaultTheme } from 'styled-components'
@@ -52,7 +51,6 @@ export interface EditorProps {
   fileManagement: FileManagement
 
   popper: PopperManager
-  history: History
 
   getCapabilities: () => Capabilities
   userID: string

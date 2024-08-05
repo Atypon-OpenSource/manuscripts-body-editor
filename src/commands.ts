@@ -649,6 +649,7 @@ export const insertGraphicalAbstract = (
     return false
   }
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
   const section = schema.nodes.graphical_abstract_section.createAndFill(
@@ -723,6 +724,20 @@ export const insertBackMatterSection =
       schema.nodes.bibliography_section
     )[0]
     const backmatter = findChildrenByType(state.doc, schema.nodes.backmatter)[0]
+
+    const backmatterSections = findChildrenByType(
+      backmatter.node,
+      schema.nodes.section,
+      true
+    )
+    // Check if the section already exists
+    if (
+      backmatterSections.some(
+        (section) => section.node.attrs.category === category
+      )
+    ) {
+      return false
+    }
     let pos
     // check if reference node exist to insert before it.
     if (bibliographySection) {
