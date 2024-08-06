@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { MenuSpec, TableConfig } from '@manuscripts/style-guide'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { MenuSpec } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
-import { Command, EditorState, Transaction } from 'prosemirror-state'
+import { Command } from 'prosemirror-state'
 import {
   addColumnAfter,
   addColumnBefore,
@@ -28,7 +27,6 @@ import {
   deleteColumn,
   deleteRow,
 } from 'prosemirror-tables'
-import { EditorView } from 'prosemirror-view'
 
 import {
   addInlineComment,
@@ -49,6 +47,9 @@ import {
   insertSection,
   markActive,
 } from './commands'
+import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
+import { ListMenuItem } from './components/toolbar/ListMenuItem'
+import { skipCommandTracking } from './keys/list'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -60,29 +61,6 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
-
-  type CommandWithConfig = (
-    state: EditorState,
-    dispatch?: (tr: Transaction) => void,
-    view?: EditorView,
-    tableConfig?: TableConfig
-  ) => boolean
-
-  const wrappedDoCommand = (
-    command: CommandWithConfig,
-    tableConfig?: TableConfig
-  ) => {
-    return () => {
-      doCommand((state, dispatch, view) => {
-        return command(state, dispatch, view, tableConfig)
-      })()
-    }
-  }
-  const doCommandWithoutTracking = (command: Command) => () => {
-    editor.doCommand((state, dispatch) =>
-      command(state, (tr) => dispatch && dispatch(skipTracking(tr)))
-    )
-  }
 
   const edit: MenuSpec = {
     id: 'edit',
@@ -314,12 +292,7 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+T',
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.table_element)),
-        run: (tableConfig) => {
-          wrappedDoCommand(
-            insertBlock(schema.nodes.table_element),
-            tableConfig
-          )()
-        },
+        run: () => openInsertTableDialog(editor.state, editor.dispatch),
       },
       {
         role: 'separator',
@@ -479,43 +452,58 @@ export const getEditorMenus = (
       {
         id: 'insert-bullet-list',
         label: 'Bullet List',
+        component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
           {
-            id: 'bullet-list-context-menu',
-            label: '',
+            id: 'bullet',
+            label: 'Bullet',
             isEnabled: true,
-            options: {
-              bullet: doCommand(insertList(schema.nodes.list, 'bullet')),
-              simple: doCommand(insertList(schema.nodes.list, 'simple')),
-            },
+            run: doCommand(insertList(schema.nodes.list, 'bullet')),
+          },
+          {
+            id: 'simple',
+            label: 'Simple',
+            isEnabled: true,
+            run: doCommand(insertList(schema.nodes.list, 'simple')),
           },
         ],
       },
       {
         id: 'insert-ordered-list',
         label: 'Ordered List',
+        component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [
           {
-            id: 'ordered-list-context-menu',
-            label: '',
+            id: 'order',
+            label: 'Order',
             isEnabled: true,
-            options: {
-              order: doCommand(insertList(schema.nodes.list, 'order')),
-              'alpha-upper': doCommand(
-                insertList(schema.nodes.list, 'alpha-upper')
-              ),
-              'alpha-lower': doCommand(
-                insertList(schema.nodes.list, 'alpha-lower')
-              ),
-              'roman-upper': doCommand(
-                insertList(schema.nodes.list, 'roman-upper')
-              ),
-              'roman-lower': doCommand(
-                insertList(schema.nodes.list, 'roman-lower')
-              ),
-            },
+            run: doCommand(insertList(schema.nodes.list, 'order')),
+          },
+          {
+            id: 'alpha-upper',
+            label: 'Alpha upper',
+            isEnabled: true,
+            run: doCommand(insertList(schema.nodes.list, 'alpha-upper')),
+          },
+          {
+            id: 'alpha-lower',
+            label: 'Alpha lower',
+            isEnabled: true,
+            run: doCommand(insertList(schema.nodes.list, 'alpha-lower')),
+          },
+          {
+            id: 'roman-upper',
+            label: 'Roman upper',
+            isEnabled: true,
+            run: doCommand(insertList(schema.nodes.list, 'roman-upper')),
+          },
+          {
+            id: 'roman-lower',
+            label: 'Roman lower',
+            isEnabled: true,
+            run: doCommand(insertList(schema.nodes.list, 'roman-lower')),
           },
         ],
       },
@@ -552,19 +540,19 @@ export const getEditorMenus = (
             id: 'format-table-add-column-before',
             label: 'Add Column Before',
             isEnabled: isCommandValid(addColumnBefore),
-            run: doCommandWithoutTracking(addColumnBefore),
+            run: doCommand(skipCommandTracking(addColumnBefore)),
           },
           {
             id: 'format-table-add-column-after',
             label: 'Add Column After',
             isEnabled: isCommandValid(addColumnAfter),
-            run: doCommandWithoutTracking(addColumnAfter),
+            run: doCommand(skipCommandTracking(addColumnAfter)),
           },
           {
             id: 'format-table-delete-column',
             label: 'Delete Column',
             isEnabled: isCommandValid(deleteColumn),
-            run: doCommandWithoutTracking(deleteColumn),
+            run: doCommand(skipCommandTracking(deleteColumn)),
           },
         ],
       },

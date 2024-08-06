@@ -15,7 +15,6 @@
  */
 
 import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
-import { TableConfig } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FigureElementNode,
@@ -203,18 +202,12 @@ export const createBlock = (
   position: number,
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  attrs?: Attrs,
-  tableConfig?: TableConfig
+  attrs?: Attrs
 ) => {
   let node
   switch (nodeType) {
     case state.schema.nodes.table_element:
-      if (!tableConfig) {
-        throw new Error(
-          'Table configuration is required for creating a table element'
-        )
-      }
-      node = createAndFillTableElement(state, tableConfig)
+      node = createAndFillTableElement(state)
       break
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
@@ -312,6 +305,21 @@ export const insertFigure = (
   return true
 }
 
+export const insertTable = (
+  config: TableConfig,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = findBlockInsertPosition(state)
+  if (!pos) {
+    return false
+  }
+  const node = createAndFillTableElement(state, config)
+  const tr = state.tr.insert(pos, node)
+  dispatch && dispatch(tr)
+  return true
+}
+
 export const insertSupplement = (
   file: FileAttachment,
   state: ManuscriptEditorState,
@@ -334,18 +342,13 @@ export const insertSupplement = (
 
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
-  (
-    state: ManuscriptEditorState,
-    dispatch?: Dispatch,
-    view?: EditorView,
-    tableConfig?: TableConfig
-  ) => {
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     const position = findBlockInsertPosition(state)
     if (position === null) {
       return false
     }
 
-    createBlock(nodeType, position, state, dispatch, undefined, tableConfig)
+    createBlock(nodeType, position, state, dispatch, undefined)
 
     return true
   }
@@ -1256,33 +1259,44 @@ export const selectAllIsolating = (
   return true
 }
 
+export type TableConfig = {
+  numberOfColumns: number
+  numberOfRows: number
+  includeHeader: boolean
+}
+
+const DEFAULT_TABLE_CONFIG: TableConfig = {
+  numberOfColumns: 2,
+  numberOfRows: 2,
+  includeHeader: true,
+}
+
 /**
  * Create a table containing a configurable number of rows and columns.
  * The table can optionally include a header row.
  */
 export const createAndFillTableElement = (
   state: ManuscriptEditorState,
-  tableConfig: TableConfig
+  config = DEFAULT_TABLE_CONFIG
 ) => {
-  const { nodes } = state.schema
-  const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
-  const createRow = (cellType: string) => {
+  const { numberOfColumns, numberOfRows, includeHeader } = config
+  const createRow = (cellType: ManuscriptNodeType) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      nodes[cellType].create({}, state.schema.nodes.paragraph.create())
+      cellType.create({})
     )
-    return nodes.table_row.create({}, cells)
+    return schema.nodes.table_row.create({}, cells)
   }
 
-  const tableRows = includeHeader ? [createRow('table_header')] : []
+  const tableRows = includeHeader ? [createRow(schema.nodes.table_header)] : []
 
   for (let i = 0; i < numberOfRows; i++) {
-    tableRows.push(createRow('table_cell'))
+    tableRows.push(createRow(schema.nodes.table_cell))
   }
 
-  return nodes.table_element.createChecked({}, [
-    nodes.table.create({}, tableRows),
+  return schema.nodes.table_element.createChecked({}, [
+    schema.nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
-    nodes.listing.create(),
+    schema.nodes.listing.create(),
   ])
 }
 
