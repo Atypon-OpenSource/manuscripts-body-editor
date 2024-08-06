@@ -25,13 +25,15 @@ import {
   CellSelection,
   deleteColumn,
   deleteRow,
+  mergeCells,
   selectedRect,
+  splitCell,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addColumns, addRows } from '../../commands'
+import { addColumns, addRows, mergeCellsWithSpace } from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -66,15 +68,17 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     undefined
   )
 
+  const isCellSelectionMerged = mergeCells(view.state)
+  const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
 
   return (
     <MenuDropdownList>
       <ActionButton onClick={() => runCommand(addRows('top'))}>
-        <PlusIcon /> Insert row above {rows}
+        <PlusIcon /> Insert {rows} above
       </ActionButton>
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
-        <PlusIcon /> Insert row below {rows}
+        <PlusIcon /> Insert {rows} below
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
         <PlusIcon /> Insert {columns} to the left
@@ -89,6 +93,18 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
+
+      {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
+      {isCellSelectionMerged && (
+        <ActionButton onClick={() => runCommand(mergeCellsWithSpace, true)}>
+          Merge cells
+        </ActionButton>
+      )}
+      {isCellSelectionSplittable && (
+        <ActionButton onClick={() => runCommand(splitCell, true)}>
+          Split cells
+        </ActionButton>
+      )}
 
       <ColumnChangeWarningDialog
         isOpen={!!columnAction}
