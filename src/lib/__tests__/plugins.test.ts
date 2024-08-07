@@ -475,10 +475,10 @@ describe('editor view', () => {
     expect(tableElement.childCount).toBe(3)
     expect(tableElement.type).toBe(tableElement.type.schema.nodes.table_element)
     expect(tableElement.content.child(0).type).toBe(
-      tableElement.type.schema.nodes.table
+      tableElement.type.schema.nodes.figcaption
     )
     expect(tableElement.content.child(1).type).toBe(
-      tableElement.type.schema.nodes.figcaption
+      tableElement.type.schema.nodes.table
     )
   })
 })
