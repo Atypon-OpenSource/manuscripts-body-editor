@@ -1268,7 +1268,7 @@ export const createAndFillTableElement = (
   const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
   const createRow = (cellType: string) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      nodes[cellType].create({}, state.schema.nodes.paragraph.create())
+      nodes[cellType].create()
     )
     return nodes.table_row.create({}, cells)
   }
