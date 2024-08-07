@@ -46,7 +46,12 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   }
 
   public updateContents = () => {
-    this.dom.getAttributeNames().map((attr) => this.dom.removeAttribute(attr))
+    // will remove old attribute of node view as it could change rowspan,colspan from update to table
+    this.dom.getAttributeNames().map((attr) => {
+      if (attr !== 'class') {
+        this.dom.removeAttribute(attr)
+      }
+    })
     Array.from(this.toDom().attributes).map(
       (attr) =>
         attr.nodeValue && this.dom.setAttribute(attr.nodeName, attr.nodeValue)
