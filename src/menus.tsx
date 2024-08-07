@@ -15,19 +15,10 @@
  */
 
 import { MenuSpec, TableConfig } from '@manuscripts/style-guide'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command, EditorState, Transaction } from 'prosemirror-state'
-import {
-  addColumnAfter,
-  addColumnBefore,
-  addRowAfter,
-  addRowBefore,
-  deleteColumn,
-  deleteRow,
-} from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
 
 import {
@@ -77,11 +68,6 @@ export const getEditorMenus = (
         return command(state, dispatch, view, tableConfig)
       })()
     }
-  }
-  const doCommandWithoutTracking = (command: Command) => () => {
-    editor.doCommand((state, dispatch) =>
-      command(state, (tr) => dispatch && dispatch(skipTracking(tr)))
-    )
   }
 
   const edit: MenuSpec = {
@@ -516,55 +502,6 @@ export const getEditorMenus = (
                 insertList(schema.nodes.list, 'roman-lower')
               ),
             },
-          },
-        ],
-      },
-      {
-        role: 'separator',
-      },
-      {
-        id: 'format-table',
-        label: 'Table',
-        isEnabled: isCommandValid(blockActive(schema.nodes.table)),
-        submenu: [
-          {
-            id: 'format-table-add-row-before',
-            label: 'Add Row Above',
-            isEnabled: isCommandValid(addRowBefore),
-            run: doCommand(addRowBefore),
-          },
-          {
-            id: 'format-table-add-row-after',
-            label: 'Add Row Below',
-            isEnabled: isCommandValid(addRowAfter),
-            run: doCommand(addRowAfter),
-          },
-          {
-            id: 'format-table-delete-row',
-            label: 'Delete Row',
-            isEnabled: isCommandValid(deleteRow),
-            run: doCommand(deleteRow),
-          },
-          {
-            role: 'separator',
-          },
-          {
-            id: 'format-table-add-column-before',
-            label: 'Add Column Before',
-            isEnabled: isCommandValid(addColumnBefore),
-            run: doCommandWithoutTracking(addColumnBefore),
-          },
-          {
-            id: 'format-table-add-column-after',
-            label: 'Add Column After',
-            isEnabled: isCommandValid(addColumnAfter),
-            run: doCommandWithoutTracking(addColumnAfter),
-          },
-          {
-            id: 'format-table-delete-column',
-            label: 'Delete Column',
-            isEnabled: isCommandValid(deleteColumn),
-            run: doCommandWithoutTracking(deleteColumn),
           },
         ],
       },
