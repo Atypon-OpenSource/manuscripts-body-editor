@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FootnotesSelector,
-  FootnoteWithIndex,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   ManuscriptNodeView,
@@ -38,6 +33,10 @@ import {
   insertFootnote,
   insertTableFootnote,
 } from '../commands'
+import {
+  FootnotesSelector,
+  FootnoteWithIndex,
+} from '../components/views/FootnotesSelector'
 import {
   getChangeClasses,
   isDeleted,
