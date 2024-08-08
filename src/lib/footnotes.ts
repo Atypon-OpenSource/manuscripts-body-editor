@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { FootnoteWithIndex } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  FootnoteNode,
   InlineFootnoteNode,
   isFootnoteNode,
   ManuscriptNode,
@@ -32,7 +32,9 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 
-import { isRejectedInsert } from '../../lib/track-changes-utils'
+import { isRejectedInsert } from './track-changes-utils'
+
+export type FootnoteWithIndex = { node: FootnoteNode; index?: string }
 
 export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(

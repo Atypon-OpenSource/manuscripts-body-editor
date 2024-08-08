@@ -86,6 +86,7 @@ import { EditorView } from 'prosemirror-view'
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { insertSupplementsNode } from './lib/doc'
 import { FileAttachment } from './lib/files'
+import { getNewFootnotePos } from './lib/footnotes'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
@@ -96,7 +97,6 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void

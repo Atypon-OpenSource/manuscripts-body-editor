@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FootnotesSelector,
-  FootnoteWithIndex,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   InlineFootnoteNode,
   ManuscriptNodeView,
@@ -38,6 +33,8 @@ import {
   insertFootnote,
   insertTableFootnote,
 } from '../commands'
+import { FootnotesSelector } from '../components/views/FootnotesSelector'
+import { buildTableFootnoteLabels, FootnoteWithIndex } from '../lib/footnotes'
 import {
   getChangeClasses,
   isDeleted,
@@ -45,7 +42,6 @@ import {
   isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
-import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
 import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

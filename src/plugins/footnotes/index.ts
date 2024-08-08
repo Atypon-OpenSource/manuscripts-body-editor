@@ -47,14 +47,14 @@ import {
   DeleteFootnoteDialogProps,
 } from '../../components/views/DeleteFootnoteDialog'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { getChildOfType } from '../../lib/utils'
-import ReactSubView from '../../views/ReactSubView'
-import { placeholderWidget } from '../placeholder'
 import {
   findTableInlineFootnoteIds,
   getAlphaOrderIndices,
   getInlineFootnotes,
-} from './footnotes-utils'
+} from '../../lib/footnotes'
+import { getChildOfType } from '../../lib/utils'
+import ReactSubView from '../../views/ReactSubView'
+import { placeholderWidget } from '../placeholder'
 
 export interface PluginState {
   inlineFootnotes: [InlineFootnoteNode, number][]
