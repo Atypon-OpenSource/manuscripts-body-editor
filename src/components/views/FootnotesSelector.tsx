@@ -27,6 +27,8 @@ import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { FootnoteWithIndex } from '../../lib/footnotes'
+
 const NotesContainer = styled.div`
   height: 90vh;
   max-height: 400px;
@@ -61,8 +63,6 @@ const AddNewFootnote = styled(ButtonGroup)`
     }
   }
 `
-
-export type FootnoteWithIndex = { node: FootnoteNode; index?: string }
 
 export const FootnotesSelector: React.FC<{
   notes: FootnoteWithIndex[]
