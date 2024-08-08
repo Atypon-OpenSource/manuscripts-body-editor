@@ -46,9 +46,6 @@ export default (
   getPos: () => number,
   view: ManuscriptEditorView,
   classNames = ''
-  // contentDOMElementType?: keyof HTMLElementTagNameMap | null
-
-  // parentContentDOM: HTMLElement
 ): HTMLDivElement => {
   const container = document.createElement('div')
   container.classList.add('tools-panel')
@@ -58,17 +55,6 @@ export default (
   container.setAttribute('contenteditable', 'false')
 
   const Wrapped: React.FC = () => {
-    // @TODO consider implementing subscription to avoid many rerenders - this is why those comments are kept
-    // const [node, setNode] = useState<ManuscriptNode>(initialNode)
-    // useEffect(() => {
-    //   subscribe((node) => {
-    //     setNode(node)
-    //   })
-    //   return () => {
-    //     unsubscribe()
-    //   }
-    // }, [])
-
     const setNodeAttrs = (nextAttrs: Partial<ManuscriptNode['attrs']>) => {
       const { selection, tr } = view.state
 

@@ -1282,7 +1282,7 @@ export const createAndFillTableElement = (
   const { numberOfColumns, numberOfRows, includeHeader } = config
   const createRow = (cellType: ManuscriptNodeType) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      cellType.create({})
+      cellType.create()
     )
     return schema.nodes.table_row.create({}, cells)
   }

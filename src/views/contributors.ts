@@ -275,7 +275,7 @@ export class ContributorsView extends BlockView<EditableBlockProps> {
         {
           label: 'Edit',
           action: () => this.handleEdit(element.id),
-          icon: 'EditIcon',
+          icon: 'Edit',
         },
       ],
     }
