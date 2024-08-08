@@ -316,7 +316,7 @@ export const insertTable = (
   }
   const node = createAndFillTableElement(state, config)
   const tr = state.tr.insert(pos, node)
-  tr.setSelection(NodeSelection.create(state.doc, pos)).scrollIntoView()
+  tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
   dispatch && dispatch(tr)
   return true
 }
