@@ -55,25 +55,22 @@ export const useEditor = (externalProps: ExternalProps) => {
   // Receiving steps from backend
   if (collabProvider) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    collabProvider.onNewSteps(async (newVersion, steps, clientIDs) => {
+    collabProvider.onNewSteps(async () => {
       if (state && view.current) {
         const localVersion = getVersion(view.current.state)
 
-        // @TODO - save unconfirmed verison and compare it with newVersion to check if we can consume this update and don't have to call collabProvider.stepsSince
-        // if (newVersion == lastLocalUnconfirmed) {
-        //   view.current.dispatch(
-        //     receiveTransaction(
-        //       // has to be called for the collab to increment version and drop buffered steps
-        //       view.current.state,
-        //       steps,
-        //       clientIDs
-        //     )
-        //   )
-        // }
-
         const since = await collabProvider.stepsSince(localVersion)
 
-        if (since?.steps && since.clientIDs) {
+        // if (since?.version < localVersion) {
+        //   debugger
+        // }
+
+        if (since && since.version <= localVersion) {
+          console.log('detected run away update of document')
+          return
+        }
+
+        if (since?.steps.length && since.clientIDs.length) {
           view.current.dispatch(
             receiveTransaction(
               // has to be called for the collab to increment version and drop buffered steps
@@ -122,7 +119,7 @@ export const useEditor = (externalProps: ExternalProps) => {
         () => {
           setState(nextState)
         },
-        200,
+        250,
         !tr.isGeneric || !tr.docChanged
       )
 
