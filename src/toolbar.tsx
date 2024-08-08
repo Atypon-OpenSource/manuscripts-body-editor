@@ -16,7 +16,6 @@
 
 import {
   AddCommentIcon,
-  TableConfig,
   ToolbarBoldIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,
@@ -45,17 +44,13 @@ import {
   insertList,
   markActive,
 } from './commands'
+import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
   title: string
   content: ReactNode
   isActive?: (state: EditorState) => boolean
-  run: (
-    state: EditorState,
-    dispatch: Dispatch,
-    view?: EditorView,
-    tableConfig?: TableConfig
-  ) => void
+  run: (state: EditorState, dispatch: Dispatch, view?: EditorView) => void
   isEnabled: (state: EditorState) => boolean
   options?: {
     [key: string]: (
@@ -164,7 +159,7 @@ export const toolbar: ToolbarConfig = {
       title: 'Insert table',
       content: <ToolbarTableIcon />,
       isEnabled: canInsert(schema.nodes.table_element),
-      run: insertBlock(schema.nodes.table_element),
+      run: openInsertTableDialog,
     },
     equation_element: {
       title: 'Insert equation',

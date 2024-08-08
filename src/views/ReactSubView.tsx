@@ -66,10 +66,6 @@ export default (
       view.dispatch(tr)
     }
 
-    if (!node.attrs || !props.dispatch) {
-      return null
-    }
-
     return (
       <ThemeProvider theme={props.theme}>
         <Component
