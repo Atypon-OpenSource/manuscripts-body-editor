@@ -1369,8 +1369,8 @@ export const addInlineComment = (
   if (!node || !isCommentingAllowed(node.type)) {
     return false
   }
-  const from = selection.from
-  const to = selection.to
+  let from = selection.from
+  let to = selection.to
 
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
@@ -1393,25 +1393,65 @@ export const addInlineComment = (
     const tr = state.tr.insert(pos, comment)
 
     if (from === to) {
-      const point = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'point',
-      })
-      tr.insert(from, point)
-    } else {
-      const start = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'start',
-      })
-      const end = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'end',
-      })
-      tr.insert(from, start).insert(to + 1, end)
+      let start = from
+      let end = to
+      const resolvedPos = state.doc.resolve(from)
+      const blockStart = resolvedPos.start()
+      const blockEnd = resolvedPos.end()
+
+      // Move backward to find the start of the word
+      while (
+        start > blockStart &&
+        !/\s/.test(state.doc.textBetween(start - 1, start))
+      ) {
+        start--
+      }
+      // Move forward to find the end of the word
+      while (
+        end < blockEnd &&
+        !/\s/.test(state.doc.textBetween(end, end + 1))
+      ) {
+        end++
+      }
+
+      from = start
+      to = end
+
+      // If no word is found (cursor between spaces), search for the previous word
+      if (from === to) {
+        // Move backward through spaces
+        while (
+          start > blockStart &&
+          /\s/.test(state.doc.textBetween(start - 1, start))
+        ) {
+          start--
+        }
+        to = start
+
+        // Move backward to find the start of the previous word
+        while (
+          start > blockStart &&
+          !/\s/.test(state.doc.textBetween(start - 1, start))
+        ) {
+          start--
+        }
+
+        from = start
+      }
     }
+
+    const start = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'start',
+    })
+    const end = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'end',
+    })
+    tr.insert(from, start).insert(to + 1, end)
+
     const range = getCommentRange(attrs)
     const key = getCommentKey(attrs, range, node)
     setCommentSelection(tr, key, attrs.id, true)
