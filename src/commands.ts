@@ -86,7 +86,11 @@ import { EditorView } from 'prosemirror-view'
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { insertSupplementsNode } from './lib/doc'
 import { FileAttachment } from './lib/files'
-import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import {
+  findWordBoundaries,
+  isNodeOfType,
+  nearestAncestor,
+} from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -1393,51 +1397,10 @@ export const addInlineComment = (
     const tr = state.tr.insert(pos, comment)
 
     if (from === to) {
-      let start = from
-      let end = to
-      const resolvedPos = state.doc.resolve(from)
-      const blockStart = resolvedPos.start()
-      const blockEnd = resolvedPos.end()
-
-      // Move backward to find the start of the word
-      while (
-        start > blockStart &&
-        !/\s/.test(state.doc.textBetween(start - 1, start))
-      ) {
-        start--
-      }
-      // Move forward to find the end of the word
-      while (
-        end < blockEnd &&
-        !/\s/.test(state.doc.textBetween(end, end + 1))
-      ) {
-        end++
-      }
-
-      from = start
-      to = end
-
-      // If no word is found (cursor between spaces), search for the previous word
-      if (from === to) {
-        // Move backward through spaces
-        while (
-          start > blockStart &&
-          /\s/.test(state.doc.textBetween(start - 1, start))
-        ) {
-          start--
-        }
-        to = start
-
-        // Move backward to find the start of the previous word
-        while (
-          start > blockStart &&
-          !/\s/.test(state.doc.textBetween(start - 1, start))
-        ) {
-          start--
-        }
-
-        from = start
-      }
+      // Use the current cursor position to determine the boundaries of the intended word
+      const result = findWordBoundaries(state, from)
+      from = result.from
+      to = result.to
     }
 
     const start = schema.nodes.highlight_marker.create({
