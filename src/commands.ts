@@ -27,7 +27,6 @@ import {
   InlineFootnoteNode,
   isElementNodeType,
   isFootnoteNode,
-  isInBibliographySection,
   isListNode,
   isParagraphNode,
   isSectionNodeType,
@@ -78,13 +77,18 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
-  findParentNodeOfTypeClosestToPos,
+  hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
-import { insertSupplementsNode } from './lib/doc'
+import {
+  findBackmatter,
+  findBibliographySection,
+  findBody,
+  insertSupplementsNode,
+} from './lib/doc'
 import { FileAttachment } from './lib/files'
 import { isNodeOfType, nearestAncestor } from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
@@ -677,40 +681,26 @@ export const insertGraphicalAbstract = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    let pos = findPosAfterParentSection(state.selection.$from)
-    const body = findChildrenByType(state.doc, schema.nodes.body)[0]
-
-    if (isInBibliographySection(state.selection.$from)) {
-      return false
-    } else if (pos === null && subsection) {
-      return false
-    }
-
-    if (pos === null) {
+    let pos
+    if (hasParentNodeOfType(schema.nodes.body)(state.selection)) {
+      pos = findPosAfterParentSection(state.selection.$from)
+    } else if (!subsection) {
+      const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
     }
-    // checking wether the selection inside the abstracts node or not
-    const resolvePos = state.doc.resolve(pos)
-    const isAbstract = findParentNodeOfTypeClosestToPos(
-      resolvePos,
-      schema.nodes.abstracts
-    )
-    if (isAbstract && !subsection) {
+
+    if (!pos) {
       return false
     }
 
-    const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
-    const tr = state.tr.insert(
-      pos + adjustment,
-      state.schema.nodes.section.createAndFill() as SectionNode
-    )
+    const section = schema.nodes.section.createAndFill() as SectionNode
+    const diff = subsection ? -1 : 0 // move pos inside section for a subsection
+    const tr = state.tr.insert(pos + diff, section)
 
     if (dispatch) {
       // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
-      if (view) {
-        view.focus()
-      }
+      const selection = TextSelection.create(tr.doc, pos + diff + 2)
+      view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -720,45 +710,33 @@ export const insertSection =
 export const insertBackMatterSection =
   (category: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const bibliographySection = findChildrenByType(
-      state.doc,
-      schema.nodes.bibliography_section
-    )[0]
-    const backmatter = findChildrenByType(state.doc, schema.nodes.backmatter)[0]
+    const backmatter = findBackmatter(state.doc)
 
-    const backmatterSections = findChildrenByType(
-      backmatter.node,
-      schema.nodes.section,
-      true
-    )
+    const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
-    if (
-      backmatterSections.some(
-        (section) => section.node.attrs.category === category
-      )
-    ) {
+    if (sections.some((s) => s.node.attrs.category === category)) {
       return false
     }
-    let pos
+
     // check if reference node exist to insert before it.
-    if (bibliographySection) {
-      pos = bibliographySection.pos
+    const bibliography = findBibliographySection(state.doc)
+
+    let pos
+    if (bibliography) {
+      pos = bibliography.pos
     } else {
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
-    const tr = state.tr.insert(
-      pos,
-      state.schema.nodes.section.createAndFill({
-        category: category,
-      }) as SectionNode
-    )
 
+    const node = schema.nodes.section.createAndFill({
+      category,
+    }) as SectionNode
+
+    const tr = state.tr.insert(pos, node)
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos)
-      if (view) {
-        view.focus()
-      }
+      view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
