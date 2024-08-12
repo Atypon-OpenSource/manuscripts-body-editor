@@ -155,6 +155,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     return item.id === selection?.id
   }
   const selectionIndex = items.findIndex(isSelected)
+  if (selection) {
+    console.log(
+      '  console.log(citationCounts.get(selection.id)',
+      citationCounts.get(selection.id)
+    )
+  }
 
   useEffect(() => {
     setSelection(item)
@@ -217,6 +223,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   }
 
   const handleDelete = () => {
+    console.log('selection', selection)
     if (!selection) {
       return
     }
