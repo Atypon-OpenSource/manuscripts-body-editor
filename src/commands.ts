@@ -681,10 +681,15 @@ export const insertGraphicalAbstract = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const selection = state.selection
+    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
+      return false
+    }
+
     let pos
-    if (hasParentNodeOfType(schema.nodes.body)(state.selection)) {
+    if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
       pos = findPosAfterParentSection(state.selection.$from)
-    } else if (!subsection) {
+    } else {
       const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
     }
