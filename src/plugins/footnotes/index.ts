@@ -86,13 +86,12 @@ const labelWidget =
     element.addEventListener('mousedown', () => {
       scrollToInlineFootnote(id, view)
     })
-
     return element
   }
 
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
-  element.className = 'unctied-table-footnote'
+  element.className = 'uncited-footnote'
   element.innerHTML = alertIcon
   return element
 }
@@ -454,23 +453,51 @@ export default (props: EditorProps) => {
             )
           )
         }
-
         const { labels } = footnotesKey.getState(state) as PluginState
         let tableInlineFootnoteIds: Set<string> | undefined = undefined
 
         state.doc.descendants((node, pos, parent) => {
+          if (node.type === schema.nodes.footnotes_element) {
+            tableInlineFootnoteIds = undefined
+            if (parent?.type === schema.nodes.table_element_footer) {
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  class: 'table-footnotes-element',
+                })
+              )
+              tableInlineFootnoteIds = findTableInlineFootnoteIds(
+                state.doc.resolve(pos)
+              )
+            }
+          }
+
           if (isFootnoteNode(node)) {
-            const id = node.attrs.id
-            if (labels) {
-              const label = labels.get(id)
-              if (label) {
+            if (!tableInlineFootnoteIds) {
+              const id = node.attrs.id
+              if (!labels || !labels.has(id)) {
                 decorations.push(
-                  Decoration.widget(pos + 2, labelWidget(label, id), {
+                  Decoration.widget(pos + 2, uncitedFootnoteWidget(), {
                     side: -1,
                   })
                 )
+              } else {
+                const label = labels.get(id)
+                if (label) {
+                  decorations.push(
+                    Decoration.widget(pos + 2, labelWidget(label, id), {
+                      side: -1,
+                    })
+                  )
+                } else {
+                  decorations.push(
+                    Decoration.widget(pos + 2, uncitedFootnoteWidget(), {
+                      side: -1,
+                    })
+                  )
+                }
               }
             }
+
             if (!node.firstChild?.textContent) {
               decorations.push(
                 Decoration.widget(
@@ -490,21 +517,6 @@ export default (props: EditorProps) => {
                   uncitedFootnoteWidget()
                 )
               )
-            }
-          }
-
-          if (node.type === schema.nodes.footnotes_element) {
-            if (parent?.type === schema.nodes.table_element_footer) {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'table-footnotes-element',
-                })
-              )
-              tableInlineFootnoteIds = findTableInlineFootnoteIds(
-                state.doc.resolve(pos)
-              )
-            } else {
-              tableInlineFootnoteIds = undefined
             }
           }
         })
