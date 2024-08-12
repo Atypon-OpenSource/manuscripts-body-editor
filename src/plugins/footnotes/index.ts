@@ -86,13 +86,12 @@ const labelWidget =
     element.addEventListener('mousedown', () => {
       scrollToInlineFootnote(id, view)
     })
-
     return element
   }
 
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
-  element.className = 'unctied-table-footnote'
+  element.className = 'uncited-footnote'
   element.innerHTML = alertIcon
   return element
 }
@@ -454,14 +453,19 @@ export default (props: EditorProps) => {
             )
           )
         }
-
         const { labels } = footnotesKey.getState(state) as PluginState
         let tableInlineFootnoteIds: Set<string> | undefined = undefined
-
         state.doc.descendants((node, pos, parent) => {
           if (isFootnoteNode(node)) {
             const id = node.attrs.id
-            if (labels) {
+            if (!labels || !labels.has(id)) {
+              decorations.push(
+                Decoration.widget(pos + 2, uncitedFootnoteWidget(), {
+                  side: -1,
+                })
+              )
+            }
+            else {
               const label = labels.get(id)
               if (label) {
                 decorations.push(
