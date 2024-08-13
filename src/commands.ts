@@ -86,7 +86,11 @@ import { EditorView } from 'prosemirror-view'
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import { insertSupplementsNode } from './lib/doc'
 import { FileAttachment } from './lib/files'
-import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import {
+  findWordBoundaries,
+  isNodeOfType,
+  nearestAncestor,
+} from './lib/helpers'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -1280,8 +1284,8 @@ export const createAndFillTableElement = (
   }
 
   return nodes.table_element.createChecked({}, [
-    nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
+    nodes.table.create({}, tableRows),
     nodes.listing.create(),
   ])
 }
@@ -1369,8 +1373,8 @@ export const addInlineComment = (
   if (!node || !isCommentingAllowed(node.type)) {
     return false
   }
-  const from = selection.from
-  const to = selection.to
+  let from = selection.from
+  let to = selection.to
 
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
@@ -1393,25 +1397,24 @@ export const addInlineComment = (
     const tr = state.tr.insert(pos, comment)
 
     if (from === to) {
-      const point = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'point',
-      })
-      tr.insert(from, point)
-    } else {
-      const start = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'start',
-      })
-      const end = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'end',
-      })
-      tr.insert(from, start).insert(to + 1, end)
+      // Use the current cursor position to determine the boundaries of the intended word
+      const result = findWordBoundaries(state, from)
+      from = result.from
+      to = result.to
     }
+
+    const start = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'start',
+    })
+    const end = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'end',
+    })
+    tr.insert(from, start).insert(to + 1, end)
+
     const range = getCommentRange(attrs)
     const key = getCommentKey(attrs, range, node)
     setCommentSelection(tr, key, attrs.id, true)
