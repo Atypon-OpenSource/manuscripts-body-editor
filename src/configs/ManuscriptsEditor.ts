@@ -16,7 +16,12 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { Manuscript, UserProfile } from '@manuscripts/json-schema'
+import {
+  Manuscript,
+  Model,
+  SectionCategory,
+  UserProfile,
+} from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
@@ -56,7 +61,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-
+  sectionCategories: SectionCategory[]
   collabProvider?: CollabProvider
 }
 
