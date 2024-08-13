@@ -33,6 +33,7 @@ export const setTCClasses = (node: ManuscriptNode, dom: HTMLElement) => {
     const lastChange = dataTracked[dataTracked.length - 1]
     const changeClasses = getChangeClasses([lastChange])
     dom.classList.add(...changeClasses)
+    dom.setAttribute('id', node.attrs.id)
   }
 }
 

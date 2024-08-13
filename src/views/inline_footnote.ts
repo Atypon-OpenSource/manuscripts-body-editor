@@ -21,6 +21,7 @@ import {
   FootnoteWithIndex,
 } from '@manuscripts/style-guide'
 import {
+  FootnoteNode,
   InlineFootnoteNode,
   ManuscriptNodeView,
   schema,
@@ -39,6 +40,7 @@ import {
   insertTableFootnote,
 } from '../commands'
 import {
+  getActualAttrs,
   getChangeClasses,
   isDeleted,
   isPendingInsert,
@@ -46,7 +48,6 @@ import {
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
 import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
-import { TrackableAttributes } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -181,12 +182,18 @@ export class InlineFootnoteView<
       return
     }
     const fnState = footnotesKey.getState(this.view.state)
-    console.log(fnState)
     if (fnState) {
       this.activateModal({
-        notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
-          node: n[0],
-        })),
+        notes: Array.from(fnState.unusedFootnotes.values()).reduce((acc, n) => {
+          const node = n[0]
+          if (!isDeleted(node) && !isRejectedInsert(node)) {
+            acc.push({
+              node,
+            })
+          }
+
+          return acc
+        }, [] as Array<FootnoteWithIndex>),
         onCancel: () => {
           const { tr } = this.view.state
           if (!this.node.attrs.rids.length) {
@@ -218,7 +225,7 @@ export class InlineFootnoteView<
   }
 
   public updateContents = () => {
-    const attrs = this.node.attrs as TrackableAttributes<InlineFootnoteNode>
+    const attrs = getActualAttrs<InlineFootnoteNode>(this.node)
     this.dom.setAttribute('rids', attrs.rids.join(','))
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
