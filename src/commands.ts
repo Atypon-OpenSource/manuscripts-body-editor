@@ -1284,8 +1284,8 @@ export const createAndFillTableElement = (
   }
 
   return nodes.table_element.createChecked({}, [
-    nodes.table.create({}, tableRows),
     createAndFillFigcaptionElement(state),
+    nodes.table.create({}, tableRows),
     nodes.listing.create(),
   ])
 }
