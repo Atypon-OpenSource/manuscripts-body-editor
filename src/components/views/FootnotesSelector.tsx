@@ -159,21 +159,35 @@ const FootnotesList: React.FC<{
 
   return (
     <NotesListContainer>
-      {selectedNotes.map((note) => footnoteItem(note, isSelected, onSelect))}
+      {selectedNotes.map((note) => (
+        <FootnoteItem
+          key={note.node.attrs.id}
+          note={note}
+          isSelected={isSelected}
+          onSelect={onSelect}
+        />
+      ))}
       {selectedNotes.length > 0 && remainingNotes.length > 0 && <Separator />}
-      {remainingNotes.map((note) => footnoteItem(note, isSelected, onSelect))}
+      {remainingNotes.map((note) => (
+        <FootnoteItem
+          key={note.node.attrs.id}
+          note={note}
+          isSelected={isSelected}
+          onSelect={onSelect}
+        />
+      ))}
     </NotesListContainer>
   )
 }
 
-const footnoteItem = (
-  note: FootnoteWithIndex,
-  isSelected: (item: FootnoteNode) => boolean,
+const FootnoteItem: React.FC<{
+  note: FootnoteWithIndex
+  isSelected: (item: FootnoteNode) => boolean
   onSelect: (item: FootnoteNode) => void
-) => {
+}> = ({ note, isSelected, onSelect }) => {
   const { node, index } = note
   return (
-    <FootnoteItem onClick={() => onSelect(node)} key={node.attrs.id}>
+    <FootnoteItemContainer onClick={() => onSelect(node)}>
       <StatusIcon>
         {isSelected(node) ? (
           <AddedIcon data-cy={'plus-icon-ok'} />
@@ -184,7 +198,7 @@ const footnoteItem = (
       <NoteText>
         {(index ? index + '. ' : '') + node.firstChild?.textContent}
       </NoteText>
-    </FootnoteItem>
+    </FootnoteItemContainer>
   )
 }
 
@@ -200,7 +214,7 @@ const NotesListContainer = styled.div`
   overflow-y: auto;
 `
 
-const FootnoteItem = styled.div`
+const FootnoteItemContainer = styled.div`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 2}px 0;
   display: flex;
