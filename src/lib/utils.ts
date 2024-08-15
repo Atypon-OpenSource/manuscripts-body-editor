@@ -85,3 +85,20 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     }
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
+
+export const isChildOfNodeType = (
+  doc: ManuscriptNode,
+  pos: number,
+  parentNodeType: string
+) => {
+  const resolvedPos = doc.resolve(pos)
+
+  // Iterate through the parent nodes
+  for (let depth = resolvedPos.depth - 1; depth >= 0; depth--) {
+    if (resolvedPos.node(depth).type.name === parentNodeType) {
+      return true
+    }
+  }
+
+  return false
+}

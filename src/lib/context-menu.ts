@@ -44,7 +44,7 @@ import {
   isDeleted,
   isRejectedInsert,
 } from './track-changes-utils'
-import { getChildOfType } from './utils'
+import { getChildOfType, isChildOfNodeType } from './utils'
 
 const popper = new PopperManager()
 
@@ -124,8 +124,19 @@ export class ContextMenu {
           const itemTitle = sectionTitle
             ? `“${this.trimTitle(sectionTitle, 30)}”`
             : 'This Section'
-
-          if (types.has('section')) {
+          if (
+            types.has('section') &&
+            !isChildOfNodeType(
+              this.view.state.doc,
+              $pos.pos,
+              schema.nodes.abstracts.name
+            ) &&
+            !isChildOfNodeType(
+              this.view.state.doc,
+              $pos.pos,
+              schema.nodes.backmatter.name
+            )
+          ) {
             const labelPosition = after ? 'After' : 'Before'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
