@@ -1526,13 +1526,13 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.1-LEAN-3828.0":
-  version "2.0.1-LEAN-3828.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.1-LEAN-3828.0.tgz#b6d635a3baf5282966833c2706960fde33478f9f"
-  integrity sha512-5PZgu5S+nUi98lTBr6tb9wJQGUYwPsTwqZ0fGRf9f2WkLh9Vf5ddJlTYofmfOcoCzcHKKlGbTPTcX9CouFN3sA==
+"@manuscripts/style-guide@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.4.tgz#0551cd1d3a964f7d32fcab7ad68c96b7af8ccabe"
+  integrity sha512-0Vd07StJiCZNN7M7hzHsnKuoydud4YXI2a4j7J+Eg//l2yAOo4NFSuK+LdMBqfr9bmFGvpSFa0fr6zcLckjm5g==
   dependencies:
     "@manuscripts/json-schema" "2.2.10"
-    "@manuscripts/transform" "2.3.22-LEAN-3828.0"
+    "@manuscripts/transform" "2.3.23"
     "@reach/tabs" "^0.18.0"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1557,10 +1557,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.15":
-  version "1.7.15"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.15.tgz#6165e4cb8dca5a1c20ce3bc9428126326f0efe02"
-  integrity sha512-fTx8bvL2hcMSOEwdtxNqy8k9hAZGYKOtPTDPV6q7mo0SXn389QA1pZbEWVzrKYyVxBPQJ3Me1Am90WEt72v3ww==
+"@manuscripts/track-changes-plugin@1.7.17":
+  version "1.7.17"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.17.tgz#f75fe992709511f85f9b50a7c85d07d3ea5465ee"
+  integrity sha512-L898CzhMfiqK4JGk/y6ky4WH4K/DQ2nlg2c5MyoTDcEGuddwZIMyc1yD0PscetEKKocOqWJRNQfWuzOjspYMTg==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1573,10 +1573,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.3.22-LEAN-3828.0":
-  version "2.3.22-LEAN-3828.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.22-LEAN-3828.0.tgz#825387c78197872723d3cf5deff7cfe856fba41f"
-  integrity sha512-5GeJKX9KeYQzNTMJUFvoHGrsDtYBUotAY/r1EUPLKp03H1P+FK2BtB3r1I5bt7zuCyRB26oNUR5vux3CG0A6qA==
+"@manuscripts/transform@2.3.23":
+  version "2.3.23"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.23.tgz#5ebfb1cf07f449b11b4dde98f9e940551c38b6ef"
+  integrity sha512-E98s99sY/YWbMp8h298slARty9oFkGiOYCtakknDlcJOEXDk8PCgVmusSi29gju6CdLw1xmS1BEE2cao587ZrQ==
   dependencies:
     "@manuscripts/json-schema" "2.2.10"
     "@manuscripts/library" "1.3.11-LEAN-3828.1"

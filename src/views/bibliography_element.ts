@@ -96,7 +96,7 @@ export class BibliographyElementBlockView<
       componentProps.actions.push({
         label: 'Edit',
         action: () => this.handleEdit(element.id),
-        icon: 'EditIcon',
+        icon: 'Edit',
       })
     }
     componentProps.actions.push({

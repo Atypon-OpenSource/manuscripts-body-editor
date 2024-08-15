@@ -44,6 +44,7 @@ import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
 import pullquoteElement from '../views/pullquote_element_editable'
+import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableCell from '../views/table_cell'
@@ -79,6 +80,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     paragraph: paragraph(props),
     placeholder: placeholder(props),
     placeholder_element: placeholderElement(props),
+    section: section(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),
