@@ -17,8 +17,6 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import {
-  Manuscript,
-  Model,
   SectionCategory,
   UserProfile,
 } from '@manuscripts/json-schema'
@@ -51,7 +49,6 @@ export interface EditorProps {
 
   projectID: string
   doc: ManuscriptNode
-  getManuscript: () => Manuscript
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
 
