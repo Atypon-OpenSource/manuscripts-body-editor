@@ -965,7 +965,7 @@
 
 .ProseMirror
   .table-footnotes-element
-  > div:not(:has(.unctied-table-footnote))
+  > div:not(:has(.uncited-footnote))
   p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
@@ -1009,15 +1009,15 @@
   cursor: pointer;
 }
 
-.ProseMirror .table-footnotes-element > div:has(.unctied-table-footnote) {
+.ProseMirror .table-footnotes-element > div:has(.uncited-footnote) {
   position: relative;
 }
 
-.ProseMirror .unctied-table-footnote {
+.ProseMirror .uncited-footnote {
   display: flex;
   position: absolute;
   margin-right: 4px;
-  top: 15%;
+  top: 6px;
   right: 100%;
 }
 
