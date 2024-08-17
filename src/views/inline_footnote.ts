@@ -21,7 +21,6 @@ import {
   FootnoteWithIndex,
 } from '@manuscripts/style-guide'
 import {
-  FootnoteNode,
   InlineFootnoteNode,
   ManuscriptNodeView,
   schema,
@@ -225,12 +224,12 @@ export class InlineFootnoteView<
   }
 
   public updateContents = () => {
-    const attrs = getActualAttrs<InlineFootnoteNode>(this.node)
+    const attrs = getActualAttrs(this.node as InlineFootnoteNode)
     this.dom.setAttribute('rids', attrs.rids.join(','))
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
-      ...getChangeClasses(attrs.dataTracked),
+      ...getChangeClasses(this.node.attrs.dataTracked),
     ].join(' ')
 
     if (
