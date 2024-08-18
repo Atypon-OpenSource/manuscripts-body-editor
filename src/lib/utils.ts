@@ -20,6 +20,7 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
+import { NodeType } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
@@ -86,16 +87,16 @@ export const findParentElement = (selection: Selection, validIds?: string[]) =>
     return isElementNodeType(node.type) && node.attrs.id
   })(selection)
 
-export const isChildOfNodeType = (
+export const isChildOfNodeTypes = (
   doc: ManuscriptNode,
   pos: number,
-  parentNodeType: string
+  parentNodeTypes: NodeType[]
 ) => {
   const resolvedPos = doc.resolve(pos)
 
   // Iterate through the parent nodes
   for (let depth = resolvedPos.depth - 1; depth >= 0; depth--) {
-    if (resolvedPos.node(depth).type.name === parentNodeType) {
+    if (parentNodeTypes.includes(resolvedPos.node(depth).type)) {
       return true
     }
   }
