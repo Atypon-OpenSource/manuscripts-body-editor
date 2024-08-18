@@ -16,10 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import {
-  SectionCategory,
-  UserProfile,
-} from '@manuscripts/json-schema'
+import { SectionCategory, UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'

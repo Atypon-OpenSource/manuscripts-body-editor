@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Model, SectionCategory } from '@manuscripts/json-schema'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
+import { SectionCategory } from '@manuscripts/json-schema'
+import { isSectionNode, schema, SectionNode } from '@manuscripts/transform'
+import { EditorState, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { sectionCategoryIcon } from '../assets'
-import { EditorProps } from '../configs/ManuscriptsEditor'
-import { PopperManager } from '../lib/popper'
+import { sectionCategoryIcon } from '../../assets'
+import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { PopperManager } from '../../lib/popper'
 import {
   getCategoryName,
   isBackMatterSection,
-  isEditableSectionCategory,
+  isEditableSectionCategoryID,
   isUnique,
-} from '../lib/section-categories'
-import { isChildOfNodeType } from '../lib/utils'
+} from '../../lib/section-categories'
+import { isChildOfNodeType } from '../../lib/utils'
 
 export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 const popper = new PopperManager()
@@ -40,9 +40,9 @@ export interface SectionCategoryProps extends EditorProps {
   sectionCategories: SectionCategory[]
 }
 
-function changeNodeType(
+function changeNodeAttrs(
   view: EditorView,
-  node: ManuscriptNode,
+  node: SectionNode,
   type: string,
   pos: number
 ) {
@@ -60,14 +60,14 @@ function createMenuItem(
   isDisabled = false,
   isSelected = false
 ) {
-  const item = document.createElement('div')
+  const item = document.createElement('button')
   item.className = `menu-item ${isDisabled ? 'disabled' : ''} ${
     isSelected ? 'selected' : ''
   }`
   item.textContent = contents
   item.addEventListener('mousedown', (event) => {
-    event.preventDefault()
     handler(event)
+    popper.destroy()
   })
   return item
 }
@@ -75,7 +75,7 @@ function createMenuItem(
 function createMenu(
   view: EditorView,
   props: SectionCategoryProps,
-  node: ManuscriptNode,
+  node: SectionNode,
   pos: number,
   currCategory: string
 ) {
@@ -92,7 +92,7 @@ function createMenu(
   categories.forEach((category) => {
     const item = createMenuItem(
       category.name,
-      () => changeNodeType(view, node, category._id, pos),
+      () => changeNodeAttrs(view, node, category._id, pos),
       category.isDisabled,
       currCategory === category._id
     )
@@ -111,7 +111,7 @@ function createMenu(
 function createButton(
   view: EditorView,
   props: SectionCategoryProps,
-  node: ManuscriptNode,
+  node: SectionNode,
   pos: number,
   category: string,
   canEdit = true
@@ -122,8 +122,7 @@ function createButton(
   button.innerHTML = sectionCategoryIcon
   button.className = `section-category-button ${category && 'assigned'}`
   if (canEdit) {
-    button.addEventListener('mousedown', (e) => {
-      e.stopPropagation()
+    button.addEventListener('mousedown', () => {
       popper.destroy()
       const menu = createMenu(view, props, node, pos, category)
       popper.show(button, menu, 'bottom-end', false, [
@@ -152,7 +151,7 @@ function createButton(
   return button
 }
 
-function buildPluginState(
+export function buildPluginState(
   state: EditorState,
   props: SectionCategoryProps
 ): PluginState {
@@ -160,23 +159,25 @@ function buildPluginState(
   const can = props.getCapabilities()
 
   state.doc.descendants((node, pos) => {
-    if (
-      node.type.name === 'section' &&
-      isEditableSectionCategory(node.attrs.category) &&
-      !isUnique(node.attrs.category)
-    ) {
-      decorations.push(
-        Decoration.widget(pos + 1, (view) =>
-          createButton(
-            view,
-            props,
-            node,
-            pos,
-            node.attrs.category,
-            can?.editArticle
+    if (isSectionNode(node)) {
+      const attrs = node.attrs as SectionNode['attrs']
+      if (
+        isEditableSectionCategoryID(attrs.category as string) &&
+        !isUnique(attrs.category as string)
+      ) {
+        decorations.push(
+          Decoration.widget(pos + 1, (view) =>
+            createButton(
+              view,
+              props,
+              node,
+              pos,
+              attrs.category as string,
+              can?.editArticle
+            )
           )
         )
-      )
+      }
     }
   })
 
@@ -199,7 +200,7 @@ function getExistingCatsCounted(state: EditorState): Record<string, number> {
 
 function getSortedSectionCategories(
   state: EditorState,
-  container: ManuscriptNode,
+  container: SectionNode,
   sectionCategories: SectionCategory[],
   pos: number,
   existingCatsCounted: Record<string, number>
@@ -241,17 +242,3 @@ function getSortedSectionCategories(
       ),
     }))
 }
-
-export default (props: SectionCategoryProps) =>
-  new Plugin<PluginState>({
-    key: sectionCategoryKey,
-    state: {
-      init: (_, state) => buildPluginState(state, props),
-      apply: (tr, value, oldState, newState) =>
-        buildPluginState(newState, props),
-    },
-    props: {
-      decorations: (state) =>
-        sectionCategoryKey.getState(state)?.decorations || DecorationSet.empty,
-    },
-  })

@@ -32,9 +32,6 @@ export const uniqueSectionCategories: string[] = [
 export const isEditableSectionCategoryID = (id: string) =>
   !uneditableSectionCategories.includes(id)
 
-export const isEditableSectionCategory = (sectionCategory: SectionCategory) =>
-  isEditableSectionCategoryID(sectionCategory._id)
-
 export const isUnique = (categoryId: string) => {
   return uniqueSectionCategories.includes(categoryId)
 }

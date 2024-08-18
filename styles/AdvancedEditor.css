@@ -797,6 +797,9 @@ span.accepted .selected-suggestion,
   font-weight: 400;
   line-height: 24px;
   position: relative;
+  background: none;
+  border: unset;
+  display: flex;
 }
 
 .section-category.menu .menu-item.selected:after {
