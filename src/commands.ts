@@ -250,7 +250,7 @@ export const createBlock = (
 }
 
 export const insertGeneralFootnote = (
-  tableNode: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: ManuscriptEditorView,
   tableElementFooter?: NodeWithPos[]
@@ -263,15 +263,16 @@ export const insertGeneralFootnote = (
     paragraph,
   ])
   const tableColGroup = findChildrenByType(
-    tableNode,
+    tableElementNode,
     schema.nodes.table_colgroup
   )[0]
+  const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
     : position +
       (!tableColGroup
-        ? tableNode.content.firstChild?.nodeSize || 0
+        ? table.pos + table.node.nodeSize
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
@@ -1415,7 +1416,7 @@ interface NodeWithPosition {
 }
 
 export const insertTableFootnote = (
-  node: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: EditorView,
   inlineFootnote?: NodeWithPosition
@@ -1440,12 +1441,13 @@ export const insertTableFootnote = (
     })
   } else {
     const inlineFootnotes = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.inline_footnote
     )
     footnoteIndex =
       inlineFootnotes.filter(
-        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
+        ({ pos }) =>
+          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
       ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
@@ -1459,7 +1461,7 @@ export const insertTableFootnote = (
   let insertionPos = position
 
   const footnotesElement = findChildrenByType(
-    node,
+    tableElementNode,
     schema.nodes.footnotes_element
   ).pop()
 
@@ -1479,7 +1481,7 @@ export const insertTableFootnote = (
     )
 
     const tableElementFooter = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.table_element_footer
     )[0]
 
@@ -1496,19 +1498,17 @@ export const insertTableFootnote = (
       )
 
       const tableColGroup = findChildrenByType(
-        node,
+        tableElementNode,
         schema.nodes.table_colgroup
       )[0]
+      const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
       if (tableColGroup) {
         insertionPos =
           position + tableColGroup.pos + tableColGroup.node.nodeSize
         tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
-        const tableSize = node.content.firstChild?.nodeSize
-        if (tableSize) {
-          insertionPos = position + tableSize
-          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
-        }
+        insertionPos = position + table.pos + table.node.nodeSize
+        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       }
     }
   }
