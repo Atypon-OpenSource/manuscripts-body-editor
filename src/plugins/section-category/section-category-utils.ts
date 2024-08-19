@@ -27,7 +27,7 @@ import {
   isEditableSectionCategoryID,
   isUnique,
 } from '../../lib/section-categories'
-import { isChildOfNodeType } from '../../lib/utils'
+import { isChildOfNodeTypes } from '../../lib/utils'
 
 export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 const popper = new PopperManager()
@@ -217,10 +217,10 @@ function getSortedSectionCategories(
   } else {
     // for newly created sections, that doesn't have category type
     // Check if the node is inside body or backmatter and set the groupID accordingly
-    const isChildOfBody = isChildOfNodeType(
+    const isChildOfBody = isChildOfNodeTypes(
       state.doc,
       pos,
-      schema.nodes.body.name
+      [schema.nodes.body]
     )
     if (isChildOfBody) {
       groupIDToUse = 'MPSectionCategory:body'
