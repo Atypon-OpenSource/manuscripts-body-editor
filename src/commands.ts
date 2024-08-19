@@ -749,8 +749,6 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    console.log('fake change to test zax')
-
     const node = schema.nodes.section.createAndFill(
       {
         category,
