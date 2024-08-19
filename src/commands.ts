@@ -1324,11 +1324,13 @@ const getParentNode = (selection: Selection) => {
 
 // TODO:: remove this check when we allow all type of block node to have comment
 const isCommentingAllowed = (type: NodeType) =>
+  type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
