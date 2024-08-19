@@ -40,6 +40,20 @@ export const findAbstractsNode = (doc: ManuscriptNode) => {
   return findChildrenByType(doc, schema.nodes.abstracts)[0]!
 }
 
+export const findBody = (doc: ManuscriptNode) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return findChildrenByType(doc, schema.nodes.body)[0]!
+}
+
+export const findBackmatter = (doc: ManuscriptNode) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return findChildrenByType(doc, schema.nodes.backmatter)[0]!
+}
+
+export const findBibliographySection = (doc: ManuscriptNode) => {
+  return findChildrenByType(doc, schema.nodes.bibliography_section)[0]
+}
+
 export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {
   const ga = findChildrenByType(doc, schema.nodes.graphical_abstract_section)[0]
   if (!ga) {
