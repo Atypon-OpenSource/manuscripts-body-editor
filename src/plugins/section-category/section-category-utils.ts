@@ -205,14 +205,14 @@ function getSortedSectionCategories(
   pos: number,
   existingCatsCounted: Record<string, number>
 ): SectionCategory[] {
-  let groupIDToUse: string | undefined
+  let groupIDToUse: string = ''
 
   if (container.attrs.category) {
     const sectionCategory = sectionCategories.find(
       ({ _id }) => _id === container.attrs.category
     )
     if (sectionCategory) {
-      groupIDToUse = sectionCategory.groupIDs?.[0]
+      groupIDToUse = sectionCategory.groupIDs?.[0] as string
     }
   } else {
     // for newly created sections, that doesn't have category type
