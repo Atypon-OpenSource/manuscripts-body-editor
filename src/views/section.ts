@@ -24,7 +24,6 @@ import { PluginState, sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { getActualAttrs } from '../lib/track-changes-utils'
 
 // handle sections numbering after track-changes process
 export const handleSectionNumbering = (sections: PluginState) => {
@@ -53,7 +52,7 @@ export class SectionView<
   public onUpdateContent = () => {
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const { titleSuppressed, generatedLabel, pageBreakStyle, id, category } =
-      getActualAttrs(this.node)
+      this.node.attrs
     const classNames: string[] = []
 
     if (titleSuppressed) {
