@@ -721,7 +721,7 @@ const sectionTitles = new Map<SectionCategory, string>([
   ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
   ['MPSectionCategory:availability', 'Availability'],
   ['MPSectionCategory:competing-interests', 'COI Statement'],
-  ['MPSectionCategory:con', 'Contributed by information'],
+  ['MPSectionCategory:con', 'Contributed-by information'],
   ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
   ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
   ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
