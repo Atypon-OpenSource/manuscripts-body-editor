@@ -251,7 +251,7 @@ export const createBlock = (
 }
 
 export const insertGeneralFootnote = (
-  tableElementNode: ManuscriptNode,
+  tableNode: ManuscriptNode,
   position: number,
   view: ManuscriptEditorView,
   tableElementFooter?: NodeWithPos[]
@@ -264,16 +264,15 @@ export const insertGeneralFootnote = (
     paragraph,
   ])
   const tableColGroup = findChildrenByType(
-    tableElementNode,
+    tableNode,
     schema.nodes.table_colgroup
   )[0]
-  const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
     : position +
       (!tableColGroup
-        ? table.pos + table.node.nodeSize
+        ? tableNode.content.firstChild?.nodeSize || 0
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
@@ -395,12 +394,39 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
+const findPosBeforeFirstSubsection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  let posBeforeFirstSubsection: number | null = null
+
+  for (let d = $pos.depth; d >= 0; d--) {
+    const parentNode = $pos.node(d)
+    if (isSectionNodeType(parentNode.type)) {
+      const parentStartPos = $pos.start(d) // Get the start position of the parent section
+      parentNode.descendants((node, pos) => {
+        if (
+          node.type === schema.nodes.section &&
+          posBeforeFirstSubsection === null
+        ) {
+          // Found the first subsection, set the position before it
+          posBeforeFirstSubsection = parentStartPos + pos
+          return false // Stop iterating after finding the first subsection
+        }
+        return true // Continue iterating
+      })
+
+      break // Stop iterating after finding the parent section
+    }
+  }
+
+  return posBeforeFirstSubsection
+}
+
 const findPosAfterParentSection = (
   $pos: ManuscriptResolvedPos
 ): number | null => {
   for (let d = $pos.depth; d >= 0; d--) {
     const node = $pos.node(d)
-
     if (isSectionNodeType(node.type)) {
       return $pos.after(d)
     }
@@ -694,7 +720,18 @@ export const insertSection =
 
     let pos
     if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
-      pos = findPosAfterParentSection(state.selection.$from)
+      /*
+      Determine the position where the new section or subsection will be inserted.
+      If we are inserting a subsection (`subsection` is true):
+        - First, try to find the position before the first existing subsection in the current section using `findPosBeforeFirstSubsection`.
+        - If there are no existing subsections (or the function returns null), fallback to finding the position immediately after the parent section using `findPosAfterParentSection`.
+      If we are inserting a regular section (`subsection` is false):
+        - Simply find the position after the parent section using `findPosAfterParentSection`.
+      */
+      pos = subsection
+        ? findPosBeforeFirstSubsection(state.selection.$from) ||
+          findPosAfterParentSection(state.selection.$from)
+        : findPosAfterParentSection(state.selection.$from)
     } else {
       const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
@@ -1438,7 +1475,7 @@ interface NodeWithPosition {
 }
 
 export const insertTableFootnote = (
-  tableElementNode: ManuscriptNode,
+  node: ManuscriptNode,
   position: number,
   view: EditorView,
   inlineFootnote?: NodeWithPosition
@@ -1463,13 +1500,12 @@ export const insertTableFootnote = (
     })
   } else {
     const inlineFootnotes = findChildrenByType(
-      tableElementNode,
+      node,
       schema.nodes.inline_footnote
     )
     footnoteIndex =
       inlineFootnotes.filter(
-        ({ pos }) =>
-          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
+        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
       ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
@@ -1483,7 +1519,7 @@ export const insertTableFootnote = (
   let insertionPos = position
 
   const footnotesElement = findChildrenByType(
-    tableElementNode,
+    node,
     schema.nodes.footnotes_element
   ).pop()
 
@@ -1503,7 +1539,7 @@ export const insertTableFootnote = (
     )
 
     const tableElementFooter = findChildrenByType(
-      tableElementNode,
+      node,
       schema.nodes.table_element_footer
     )[0]
 
@@ -1520,17 +1556,19 @@ export const insertTableFootnote = (
       )
 
       const tableColGroup = findChildrenByType(
-        tableElementNode,
+        node,
         schema.nodes.table_colgroup
       )[0]
-      const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
       if (tableColGroup) {
         insertionPos =
           position + tableColGroup.pos + tableColGroup.node.nodeSize
         tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
-        insertionPos = position + table.pos + table.node.nodeSize
-        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
+        const tableSize = node.content.firstChild?.nodeSize
+        if (tableSize) {
+          insertionPos = position + tableSize
+          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
+        }
       }
     }
   }
