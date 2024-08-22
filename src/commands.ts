@@ -42,6 +42,7 @@ import {
   ManuscriptTextSelection,
   ManuscriptTransaction,
   schema,
+  SectionCategory,
   SectionNode,
 } from '@manuscripts/transform'
 import {
@@ -717,8 +718,19 @@ export const insertSection =
     return true
   }
 
+const sectionTitles = new Map<SectionCategory, string>([
+  ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
+  ['MPSectionCategory:availability', 'Availability'],
+  ['MPSectionCategory:competing-interests', 'COI Statement'],
+  ['MPSectionCategory:con', 'Contributed-by information'],
+  ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
+  ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
+  ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
+  ['MPSectionCategory:supported-by', 'Supported By'],
+])
+
 export const insertBackMatterSection =
-  (category: string) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
@@ -738,9 +750,17 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill({
-      category,
-    }) as SectionNode
+    const node = schema.nodes.section.createAndFill(
+      {
+        category,
+      },
+      [
+        schema.nodes.section_title.create(
+          {},
+          schema.text(sectionTitles.get(category) || '')
+        ),
+      ]
+    ) as SectionNode
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
