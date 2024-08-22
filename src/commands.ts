@@ -681,9 +681,8 @@ export const insertGraphicalAbstract = (
   }
   return true
 }
-
 export const insertSection =
-  (subsection = false) =>
+  (subsection = false, pastedSectionContents?: ManuscriptNode[]) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
     if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
@@ -702,7 +701,13 @@ export const insertSection =
       return false
     }
 
-    const section = schema.nodes.section.createAndFill() as SectionNode
+    const section = pastedSectionContents?.length
+      ? (state.schema.nodes.section.create(
+          {},
+          pastedSectionContents
+        ) as SectionNode)
+      : (schema.nodes.section.createAndFill() as SectionNode)
+
     const diff = subsection ? -1 : 0 // move pos inside section for a subsection
     const tr = state.tr.insert(pos + diff, section)
 
