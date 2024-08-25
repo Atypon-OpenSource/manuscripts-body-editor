@@ -42,6 +42,7 @@ import {
   ManuscriptTextSelection,
   ManuscriptTransaction,
   schema,
+  SectionCategory,
   SectionNode,
 } from '@manuscripts/transform'
 import {
@@ -250,7 +251,7 @@ export const createBlock = (
 }
 
 export const insertGeneralFootnote = (
-  tableNode: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: ManuscriptEditorView,
   tableElementFooter?: NodeWithPos[]
@@ -263,15 +264,16 @@ export const insertGeneralFootnote = (
     paragraph,
   ])
   const tableColGroup = findChildrenByType(
-    tableNode,
+    tableElementNode,
     schema.nodes.table_colgroup
   )[0]
+  const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
     : position +
       (!tableColGroup
-        ? tableNode.content.firstChild?.nodeSize || 0
+        ? table.pos + table.node.nodeSize
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
@@ -716,8 +718,19 @@ export const insertSection =
     return true
   }
 
+const sectionTitles = new Map<SectionCategory, string>([
+  ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
+  ['MPSectionCategory:availability', 'Availability'],
+  ['MPSectionCategory:competing-interests', 'COI Statement'],
+  ['MPSectionCategory:con', 'Contributed-by information'],
+  ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
+  ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
+  ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
+  ['MPSectionCategory:supported-by', 'Supported By'],
+])
+
 export const insertBackMatterSection =
-  (category: string) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
@@ -737,9 +750,17 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill({
-      category,
-    }) as SectionNode
+    const node = schema.nodes.section.createAndFill(
+      {
+        category,
+      },
+      [
+        schema.nodes.section_title.create(
+          {},
+          schema.text(sectionTitles.get(category) || '')
+        ),
+      ]
+    ) as SectionNode
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -1304,11 +1325,13 @@ const getParentNode = (selection: Selection) => {
 
 // TODO:: remove this check when we allow all type of block node to have comment
 const isCommentingAllowed = (type: NodeType) =>
+  type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
@@ -1415,7 +1438,7 @@ interface NodeWithPosition {
 }
 
 export const insertTableFootnote = (
-  node: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: EditorView,
   inlineFootnote?: NodeWithPosition
@@ -1440,12 +1463,13 @@ export const insertTableFootnote = (
     })
   } else {
     const inlineFootnotes = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.inline_footnote
     )
     footnoteIndex =
       inlineFootnotes.filter(
-        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
+        ({ pos }) =>
+          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
       ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
@@ -1459,7 +1483,7 @@ export const insertTableFootnote = (
   let insertionPos = position
 
   const footnotesElement = findChildrenByType(
-    node,
+    tableElementNode,
     schema.nodes.footnotes_element
   ).pop()
 
@@ -1479,7 +1503,7 @@ export const insertTableFootnote = (
     )
 
     const tableElementFooter = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.table_element_footer
     )[0]
 
@@ -1496,19 +1520,17 @@ export const insertTableFootnote = (
       )
 
       const tableColGroup = findChildrenByType(
-        node,
+        tableElementNode,
         schema.nodes.table_colgroup
       )[0]
+      const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
       if (tableColGroup) {
         insertionPos =
           position + tableColGroup.pos + tableColGroup.node.nodeSize
         tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
-        const tableSize = node.content.firstChild?.nodeSize
-        if (tableSize) {
-          insertionPos = position + tableSize
-          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
-        }
+        insertionPos = position + table.pos + table.node.nodeSize
+        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       }
     }
   }
