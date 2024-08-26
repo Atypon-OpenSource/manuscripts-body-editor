@@ -411,11 +411,9 @@ const findPosBeforeFirstSubsection = (
         ) {
           // Found the first subsection, set the position before it
           posBeforeFirstSubsection = parentStartPos + pos
-          return false // Stop iterating after finding the first subsection
         }
-        return true // Continue iterating
+        return posBeforeFirstSubsection === null
       })
-
       break // Stop iterating after finding the parent section
     }
   }
@@ -428,7 +426,7 @@ const findPosAfterParentSection = (
 ): number | null => {
   for (let d = $pos.depth; d >= 0; d--) {
     const node = $pos.node(d)
-    
+
     if (isSectionNodeType(node.type)) {
       return $pos.after(d)
     }
@@ -722,14 +720,7 @@ export const insertSection =
 
     let pos
     if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
-      /*
-      Determine the position where the new section or subsection will be inserted.
-      If we are inserting a subsection (`subsection` is true):
-        - First, try to find the position before the first existing subsection in the current section using `findPosBeforeFirstSubsection`.
-        - If there are no existing subsections (or the function returns null), fallback to finding the position immediately after the parent section using `findPosAfterParentSection`.
-      If we are inserting a regular section (`subsection` is false):
-        - Simply find the position after the parent section using `findPosAfterParentSection`.
-      */
+      // Looking for the position to insert the section
       pos = subsection
         ? findPosBeforeFirstSubsection(state.selection.$from) ||
           findPosAfterParentSection(state.selection.$from)
