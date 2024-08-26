@@ -19,6 +19,7 @@ import {
   Category,
   DeleteSolidIcon,
   Dialog,
+  EditIcon,
   IconButton,
   IconTextButton,
   PrimaryButton,
@@ -76,25 +77,6 @@ const Actions = styled.div`
   justify-content: space-between;
   align-items: center;
 `
-
-const EditIcon: React.FC = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 14 14"
-    fill="none"
-    color="#6E6E6E"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M13.7145 1.64621L12.4444 0.369929C11.9536 -0.12331 11.1566 -0.12331 10.6641 0.369929L9.44748 1.59248L12.2954 4.45434L13.7145 3.02831C14.0952 2.64572 14.0952 2.02877 13.7145 1.64621ZM8.70555 2.33642L11.5535 5.19826L4.3446 12.4424L1.4983 9.58059L8.70555 2.33642ZM0.399974 13.9906C0.166693 14.0476 -0.0439034 13.8375 0.00792508 13.6031L0.727197 10.3555L3.5735 13.2173L0.399974 13.9906Z"
-      fill="#6E6E6E"
-    />
-  </svg>
-)
-
 export interface CitationEditorProps {
   query?: string
   rids: string[]
