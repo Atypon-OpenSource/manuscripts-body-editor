@@ -702,7 +702,10 @@ export const insertSection =
     if (!pos) {
       return false
     }
+    const diff = subsection ? -1 : 0
+    const insertionPos = pos + diff
 
+    // Determine the section to insert and its selection position
     const section = pastedSectionContents?.length
       ? (state.schema.nodes.section.create(
           {},
@@ -710,16 +713,18 @@ export const insertSection =
         ) as SectionNode)
       : (schema.nodes.section.createAndFill() as SectionNode)
 
-    const diff = subsection ? -1 : 0 // move pos inside section for a subsection
-    const tr = state.tr.insert(pos + diff, section)
+    const selectionPos = pastedSectionContents?.length
+      ? insertionPos + section.content.size
+      : insertionPos + 2
+
+    // Create a transaction, insert the section, and set the selection
+    const tr = state.tr.insert(insertionPos, section)
 
     if (dispatch) {
-      // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + diff + 2)
+      const selection = TextSelection.create(tr.doc, selectionPos)
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
-
     return true
   }
 
