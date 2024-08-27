@@ -205,7 +205,7 @@ function getSortedSectionCategories(
   pos: number,
   existingCatsCounted: Record<string, number>
 ): SectionCategory[] {
-  let groupIDToUse: string = ''
+  let groupIDToUse = ''
 
   if (container.attrs.category) {
     const sectionCategory = sectionCategories.find(
@@ -217,11 +217,9 @@ function getSortedSectionCategories(
   } else {
     // for newly created sections, that doesn't have category type
     // Check if the node is inside body or backmatter and set the groupID accordingly
-    const isChildOfBody = isChildOfNodeTypes(
-      state.doc,
-      pos,
-      [schema.nodes.body]
-    )
+    const isChildOfBody = isChildOfNodeTypes(state.doc, pos, [
+      schema.nodes.body,
+    ])
     if (isChildOfBody) {
       groupIDToUse = 'MPSectionCategory:body'
     } else {
