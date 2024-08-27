@@ -72,13 +72,21 @@ const pasteSection = (slice: ManuscriptSlice, view: ManuscriptEditorView) => {
         {},
         node.content
       ) as SectionTitleNode
+    } else if (node.type === node.type.schema.nodes.paragraph) {
+      sectionTitleNode = null
     }
   })
+
   if (sectionTitleNode) {
     const pastedSectionContents = [sectionTitleNode, ...sectionBodyNodes]
+
     insertSection(false, pastedSectionContents)(state, dispatch, view)
     event?.preventDefault() // stop other pasting handlers
     event?.stopPropagation()
+  } 
+  // If the pasted section contains multiple paragraphs, create the section without passing any content
+  else {
+    insertSection(false)(state, dispatch, view)
   }
 }
 
