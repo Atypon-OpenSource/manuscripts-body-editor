@@ -395,7 +395,7 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
-const findPosBeforeFirstSubsection = (
+export const findPosBeforeFirstSubsection = (
   $pos: ManuscriptResolvedPos
 ): number | null => {
   let posBeforeFirstSubsection: number | null = null
