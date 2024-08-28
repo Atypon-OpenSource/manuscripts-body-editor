@@ -19,14 +19,6 @@ import { schema } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
-import {
-  addColumnAfter,
-  addColumnBefore,
-  addRowAfter,
-  addRowBefore,
-  deleteColumn,
-  deleteRow,
-} from 'prosemirror-tables'
 
 import {
   addInlineComment,
@@ -49,7 +41,6 @@ import {
 } from './commands'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
-import { skipCommandTracking } from './keys/list'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -504,55 +495,6 @@ export const getEditorMenus = (
             label: 'Roman lower',
             isEnabled: true,
             run: doCommand(insertList(schema.nodes.list, 'roman-lower')),
-          },
-        ],
-      },
-      {
-        role: 'separator',
-      },
-      {
-        id: 'format-table',
-        label: 'Table',
-        isEnabled: isCommandValid(blockActive(schema.nodes.table)),
-        submenu: [
-          {
-            id: 'format-table-add-row-before',
-            label: 'Add Row Above',
-            isEnabled: isCommandValid(addRowBefore),
-            run: doCommand(addRowBefore),
-          },
-          {
-            id: 'format-table-add-row-after',
-            label: 'Add Row Below',
-            isEnabled: isCommandValid(addRowAfter),
-            run: doCommand(addRowAfter),
-          },
-          {
-            id: 'format-table-delete-row',
-            label: 'Delete Row',
-            isEnabled: isCommandValid(deleteRow),
-            run: doCommand(deleteRow),
-          },
-          {
-            role: 'separator',
-          },
-          {
-            id: 'format-table-add-column-before',
-            label: 'Add Column Before',
-            isEnabled: isCommandValid(addColumnBefore),
-            run: doCommand(skipCommandTracking(addColumnBefore)),
-          },
-          {
-            id: 'format-table-add-column-after',
-            label: 'Add Column After',
-            isEnabled: isCommandValid(addColumnAfter),
-            run: doCommand(skipCommandTracking(addColumnAfter)),
-          },
-          {
-            id: 'format-table-delete-column',
-            label: 'Delete Column',
-            isEnabled: isCommandValid(deleteColumn),
-            run: doCommand(skipCommandTracking(deleteColumn)),
           },
         ],
       },
