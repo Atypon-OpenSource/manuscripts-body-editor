@@ -709,8 +709,9 @@ export const insertGraphicalAbstract = (
   }
   return true
 }
+
 export const insertSection =
-  (subsection = false, pastedSectionContents?: ManuscriptNode[]) =>
+  (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
     if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
@@ -732,29 +733,18 @@ export const insertSection =
     if (!pos) {
       return false
     }
-    const diff = subsection ? -1 : 0
-    const insertionPos = pos + diff
 
-    // Determine the section to insert and its selection position
-    const section = pastedSectionContents?.length
-      ? (state.schema.nodes.section.create(
-          {},
-          pastedSectionContents
-        ) as SectionNode)
-      : (schema.nodes.section.createAndFill() as SectionNode)
-
-    const selectionPos = pastedSectionContents?.length
-      ? insertionPos + section.content.size
-      : insertionPos + 2
-
-    // Create a transaction, insert the section, and set the selection
-    const tr = state.tr.insert(insertionPos, section)
+    const section = schema.nodes.section.createAndFill() as SectionNode
+    const diff = subsection ? -1 : 0 // move pos inside section for a subsection
+    const tr = state.tr.insert(pos + diff, section)
 
     if (dispatch) {
-      const selection = TextSelection.create(tr.doc, selectionPos)
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos + diff + 2)
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
+
     return true
   }
 
