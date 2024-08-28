@@ -32,6 +32,7 @@ import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import {
   addNodeComment,
   createBlock,
+  findPosBeforeFirstSubsection,
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
@@ -144,12 +145,13 @@ export class ContextMenu {
           }
 
           if (types.has('subsection')) {
+            const insPos = findPosBeforeFirstSubsection($pos) || endPos
             const level = sectionLevel($pos.depth)
             const label = `New ${level} to ${itemTitle}`
 
             section.appendChild(
               this.createMenuItem(label, () => {
-                insertNode(schema.nodes.section, endPos)
+                insertNode(schema.nodes.section, insPos)
                 popper.destroy()
               })
             )
