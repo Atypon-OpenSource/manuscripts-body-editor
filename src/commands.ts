@@ -395,6 +395,32 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
+export const findPosBeforeFirstSubsection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  let posBeforeFirstSubsection: number | null = null
+
+  for (let d = $pos.depth; d >= 0; d--) {
+    const parentNode = $pos.node(d)
+    if (isSectionNodeType(parentNode.type)) {
+      const parentStartPos = $pos.start(d) // Get the start position of the parent section
+      parentNode.descendants((node, pos) => {
+        if (
+          node.type === schema.nodes.section &&
+          posBeforeFirstSubsection === null
+        ) {
+          // Found the first subsection, set the position before it
+          posBeforeFirstSubsection = parentStartPos + pos
+        }
+        return posBeforeFirstSubsection === null
+      })
+      break // Stop iterating after finding the parent section
+    }
+  }
+
+  return posBeforeFirstSubsection
+}
+
 const findPosAfterParentSection = (
   $pos: ManuscriptResolvedPos
 ): number | null => {
@@ -693,7 +719,11 @@ export const insertSection =
 
     let pos
     if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
-      pos = findPosAfterParentSection(state.selection.$from)
+      // Looking for the position to insert the section
+      pos = subsection
+        ? findPosBeforeFirstSubsection(state.selection.$from) ||
+          findPosAfterParentSection(state.selection.$from)
+        : findPosAfterParentSection(state.selection.$from)
     } else {
       const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
