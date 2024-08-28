@@ -16,14 +16,12 @@
 
 import {
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptSlice,
-  ParagraphNode,
-  SectionTitleNode,
+  schema,
 } from '@manuscripts/transform'
-import { EditorView } from 'prosemirror-view'
-
-import { insertSection } from '../commands'
+import { Fragment, Slice } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
+import { findParentNode } from 'prosemirror-utils'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -38,6 +36,15 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
+const wrapInSection = (slice: ManuscriptSlice) => {
+  if (slice.content.firstChild?.type === schema.nodes.section_title) {
+    // @ts-ignore
+    slice.content = Fragment.from(
+      schema.nodes.section.create({}, slice.content)
+    )
+  }
+}
+
 // remove `id` from pasted content
 const removeIDs = (slice: ManuscriptSlice) => {
   slice.content.descendants((node) => {
@@ -48,57 +55,41 @@ const removeIDs = (slice: ManuscriptSlice) => {
   })
 }
 
-const pasteSection = (slice: ManuscriptSlice, view: ManuscriptEditorView) => {
-  const { state, dispatch } = view
-  let sectionTitleNode: ManuscriptNode | null = null
-  const sectionBodyNodes: ManuscriptNode[] = []
-  ClipboardEvent
-
-  slice.content.descendants((node) => {
-    if (node.type === node.type.schema.nodes.section) {
-      node.content.forEach((item) => {
-        const sectionBodyNode = state.schema.nodes.paragraph.create(
-          {},
-          item.content
-        ) as ParagraphNode
-
-        sectionBodyNodes.push(sectionBodyNode)
-      })
-    } else if (
-      node.type === node.type.schema.nodes.section_title &&
-      node.content.childCount === 1
-    ) {
-      sectionTitleNode = state.schema.nodes.section_title.create(
-        {},
-        node.content
-      ) as SectionTitleNode
-    } else if (node.type === node.type.schema.nodes.paragraph) {
-      sectionTitleNode = null
-    }
-  })
-
-  if (sectionTitleNode) {
-    const pastedSectionContents = [sectionTitleNode, ...sectionBodyNodes]
-
-    insertSection(false, pastedSectionContents)(state, dispatch, view)
-    event?.preventDefault() // stop other pasting handlers
-    event?.stopPropagation()
-  } 
-  // If the pasted section contains multiple paragraphs, create the section without passing any content
-  else {
-    insertSection(false)(state, dispatch, view)
-  }
-}
-
-export const transformPasted = (
-  slice: ManuscriptSlice,
-  view: EditorView
-): ManuscriptSlice => {
-  pasteSection(slice, view)
+export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
+  wrapInSection(slice)
 
   removeFirstParagraphIfEmpty(slice)
 
   removeIDs(slice)
 
   return slice
+}
+export const handlePaste = (
+  view: ManuscriptEditorView,
+  event: ClipboardEvent,
+  slice: Slice
+) => {
+  if (event.type !== 'paste') {
+    return false
+  }
+
+  const {
+    state: { tr },
+    dispatch,
+  } = view
+
+  const parent = findParentNode((node) => node.type === schema.nodes.section)(
+    tr.selection
+  )
+  if (slice.content.firstChild?.type === schema.nodes.section && parent) {
+    const $pos = tr.doc.resolve(parent.start)
+    const insertPos = $pos.after($pos.depth)
+    tr.insert(insertPos, slice.content)
+    dispatch(
+      tr.setSelection(TextSelection.create(tr.doc, insertPos)).scrollIntoView()
+    )
+    return true
+  }
+
+  return false
 }
