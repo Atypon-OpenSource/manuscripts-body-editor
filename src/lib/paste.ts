@@ -36,15 +36,6 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
-const wrapInSection = (slice: ManuscriptSlice) => {
-  if (slice.content.firstChild?.type === schema.nodes.section_title) {
-    // @ts-ignore
-    slice.content = Fragment.from(
-      schema.nodes.section.create({}, slice.content)
-    )
-  }
-}
-
 // remove `id` from pasted content
 const removeIDs = (slice: ManuscriptSlice) => {
   slice.content.descendants((node) => {
@@ -53,6 +44,15 @@ const removeIDs = (slice: ManuscriptSlice) => {
       node.attrs.id = null
     }
   })
+}
+
+const wrapInSection = (slice: ManuscriptSlice) => {
+  if (slice.content.firstChild?.type === schema.nodes.section_title) {
+    // @ts-ignore
+    slice.content = Fragment.from(
+      schema.nodes.section.create({}, slice.content)
+    )
+  }
 }
 
 export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
@@ -64,6 +64,7 @@ export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
 
   return slice
 }
+
 export const handlePaste = (
   view: ManuscriptEditorView,
   event: ClipboardEvent,
