@@ -42,6 +42,7 @@ import {
   ManuscriptTextSelection,
   ManuscriptTransaction,
   schema,
+  SectionCategory,
   SectionNode,
 } from '@manuscripts/transform'
 import {
@@ -394,6 +395,32 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 
 const selectedText = (): string => (window.getSelection() || '').toString()
 
+export const findPosBeforeFirstSubsection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  let posBeforeFirstSubsection: number | null = null
+
+  for (let d = $pos.depth; d >= 0; d--) {
+    const parentNode = $pos.node(d)
+    if (isSectionNodeType(parentNode.type)) {
+      const parentStartPos = $pos.start(d) // Get the start position of the parent section
+      parentNode.descendants((node, pos) => {
+        if (
+          node.type === schema.nodes.section &&
+          posBeforeFirstSubsection === null
+        ) {
+          // Found the first subsection, set the position before it
+          posBeforeFirstSubsection = parentStartPos + pos
+        }
+        return posBeforeFirstSubsection === null
+      })
+      break // Stop iterating after finding the parent section
+    }
+  }
+
+  return posBeforeFirstSubsection
+}
+
 const findPosAfterParentSection = (
   $pos: ManuscriptResolvedPos
 ): number | null => {
@@ -693,7 +720,11 @@ export const insertSection =
 
     let pos
     if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
-      pos = findPosAfterParentSection(state.selection.$from)
+      // Looking for the position to insert the section
+      pos = subsection
+        ? findPosBeforeFirstSubsection(state.selection.$from) ||
+          findPosAfterParentSection(state.selection.$from)
+        : findPosAfterParentSection(state.selection.$from)
     } else {
       const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
@@ -717,8 +748,19 @@ export const insertSection =
     return true
   }
 
+const sectionTitles = new Map<SectionCategory, string>([
+  ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
+  ['MPSectionCategory:availability', 'Availability'],
+  ['MPSectionCategory:competing-interests', 'COI Statement'],
+  ['MPSectionCategory:con', 'Contributed-by information'],
+  ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
+  ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
+  ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
+  ['MPSectionCategory:supported-by', 'Supported By'],
+])
+
 export const insertBackMatterSection =
-  (category: string) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
@@ -738,9 +780,17 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill({
-      category,
-    }) as SectionNode
+    const node = schema.nodes.section.createAndFill(
+      {
+        category,
+      },
+      [
+        schema.nodes.section_title.create(
+          {},
+          schema.text(sectionTitles.get(category) || '')
+        ),
+      ]
+    ) as SectionNode
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
