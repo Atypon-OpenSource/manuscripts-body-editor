@@ -2446,10 +2446,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.8-LEAN-3902.0":
-  version "2.0.8-LEAN-3902.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.8-LEAN-3902.0.tgz#4c37ea36de5ddefe90c9ab1906844bb891f7715d"
-  integrity sha512-9G0KjcV3QUN8R9S7VxxcuEPPYRh7FGbYiPWxPXld/OGcP0Y0M+LaqBMlJE3O3bCMSNyue1drUdxTLoZ9c4rxYw==
+"@manuscripts/style-guide@2.0.8-LEAN-3902.1":
+  version "2.0.8-LEAN-3902.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.8-LEAN-3902.1.tgz#f479e86600d3e8bc6804a90c066e1a9114a05e1f"
+  integrity sha512-VH5AgS6/KfA8MXZpMgk2A6YR725LPMnX5nsj82CjXMK9geQNM78iMFk/u/S63w1+JyLK1iWCgHzTUSi2o8hrEA==
   dependencies:
     "@chakra-ui/react" "^2.8.2"
     "@emotion/react" "^11.13.3"
