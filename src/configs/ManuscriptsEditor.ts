@@ -21,6 +21,7 @@ import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
+import { Location, NavigateFunction } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
@@ -57,6 +58,8 @@ export interface EditorProps {
   cslProps: CSLProps
 
   collabProvider?: CollabProvider
+  navigate: NavigateFunction
+  location: Location
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper'>
