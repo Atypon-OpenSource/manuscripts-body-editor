@@ -29,7 +29,7 @@ import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
-import { transformPasted } from '../lib/paste'
+import { handlePaste, transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
@@ -90,6 +90,7 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    handlePaste,
     clipboardParser,
     handleScrollToSelection: handleScrollToBibliographyItem,
     handleClickOn: (view, pos, node, nodePos, event) => {
