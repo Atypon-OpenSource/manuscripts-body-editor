@@ -16,7 +16,7 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { UserProfile } from '@manuscripts/json-schema'
+import { SectionCategory, UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
@@ -29,7 +29,7 @@ import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
-import { transformPasted } from '../lib/paste'
+import { handlePaste, transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
@@ -56,7 +56,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-
+  sectionCategories: SectionCategory[]
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
@@ -90,6 +90,7 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    handlePaste,
     clipboardParser,
     handleScrollToSelection: handleScrollToBibliographyItem,
     handleClickOn: (view, pos, node, nodePos, event) => {
