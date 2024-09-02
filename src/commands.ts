@@ -44,7 +44,6 @@ import {
   schema,
   SectionCategory,
   SectionNode,
-  SectionTitleNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -79,7 +78,6 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
-  findParentNodeOfTypeClosestToPos,
   hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
