@@ -53,7 +53,9 @@ export const CitationViewer: React.FC<CitationViewerProps> = ({
   return (
     <CitedItems>
       {cited.map((item) => (
-        <ReferenceLine key={item.id} item={item} />
+        <CitedItem key={item.id}>
+          <ReferenceLine item={item} />
+        </CitedItem>
       ))}
     </CitedItems>
   )
