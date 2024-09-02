@@ -22,17 +22,11 @@ import { sectionTitleKey } from '../plugins/section_title'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditorState } from 'prosemirror-state'
 export class SectionTitleView<
   PropsType extends BaseNodeProps
 > extends BlockView<PropsType> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
-
-  cursorAtTheEndOfText(state: EditorState, nodeSize: number) {
-    const { from, to } = state.selection
-    return from === to && to === this.getPos() + nodeSize - 1
-  }
 
   public onUpdateContent = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
