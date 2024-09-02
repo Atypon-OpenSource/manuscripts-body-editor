@@ -1518,6 +1518,15 @@
     deepmerge "^4.3.1"
     uuid "^9.0.0"
 
+"@manuscripts/json-schema@2.2.11":
+  version "2.2.11"
+  resolved "https://registry.yarnpkg.com/@manuscripts/json-schema/-/json-schema-2.2.11.tgz#3dfddf02cd3d986823b1723c1db89fe3906b1f9f"
+  integrity sha512-/L8N6YmyLp3VmpqPx/XgRWdbovoonqYJt5t5g5bS0+Mk/BYnj6ifNnCtQOvjS1u3Lv/v7C0kUmu5h2M/Kzhmmg==
+  dependencies:
+    ajv "^8.12.0"
+    deepmerge "^4.3.1"
+    uuid "^9.0.0"
+
 "@manuscripts/library@1.3.11":
   version "1.3.11"
   resolved "https://registry.yarnpkg.com/@manuscripts/library/-/library-1.3.11.tgz#76d6c8170c849aa6a010fcd504e79e494dd49ea4"
@@ -1526,13 +1535,13 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.8-LEAN-3923.0":
-  version "2.0.8-LEAN-3923.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.8-LEAN-3923.0.tgz#906829d41ac0fb8028230c662f48989e019a43a2"
-  integrity sha512-yW0VcHIqLsfG/uoL8RA3Q+yYeZsuzq9vjCHLiLoxWkBOaANoP7HuHA0YgScIWsxaTl9nwbtqS2saUFB0rPSx4A==
+"@manuscripts/style-guide@2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.9.tgz#032633aea3bf1588d9d53b4d9a6cf66dc99c86dc"
+  integrity sha512-yCdt4KVEmDjYnMrppybuEBK3OiC0UvXcN5gLFKsEd/eKCvndkrE6/hP/DWe7K+UIforuZZAYcHSVYcjg/cldvw==
   dependencies:
-    "@manuscripts/json-schema" "2.2.10"
-    "@manuscripts/transform" "2.3.26-LEAN-3923.0"
+    "@manuscripts/json-schema" "2.2.11"
+    "@manuscripts/transform" "2.3.27"
     "@reach/tabs" "^0.18.0"
     date-fns "^2.29.3"
     formik "^2.2.9"
@@ -1573,12 +1582,12 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.3.26-LEAN-3923.0":
-  version "2.3.26-LEAN-3923.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.26-LEAN-3923.0.tgz#5d74f8e33316ebf5339f843e373df255030b8311"
-  integrity sha512-MsUCh6J16jUDwavCR2fnT/qGz+YmcJWeW4d510xLnFj6MgbIoayfe/Lve7sDYB7Hl4tnTm38yX/4zPFKYeEPCA==
+"@manuscripts/transform@2.3.27":
+  version "2.3.27"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.27.tgz#3e5c684fda0991935ce880cc163d120e8533f530"
+  integrity sha512-xgZl+Z93ukcc0iHfnH7HkC+Bm8uQonCzxjiKb55vKcR1rNmS9aJfMTbS5ZxNT8EunX25/DLWbzyOglrody2Krg==
   dependencies:
-    "@manuscripts/json-schema" "2.2.10"
+    "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/library" "1.3.11"
     debug "^4.3.4"
     jszip "^3.10.1"

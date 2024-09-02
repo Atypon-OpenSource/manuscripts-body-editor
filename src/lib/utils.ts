@@ -93,9 +93,8 @@ export const isChildOfNodeTypes = (
   parentNodeTypes: NodeType[]
 ) => {
   const resolvedPos = doc.resolve(pos)
-
   // Iterate through the parent nodes
-  for (let depth = resolvedPos.depth - 1; depth >= 0; depth--) {
+  for (let depth = resolvedPos.depth; depth >= 0; depth--) {
     if (parentNodeTypes.includes(resolvedPos.node(depth).type)) {
       return true
     }
