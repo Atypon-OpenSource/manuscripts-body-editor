@@ -1535,10 +1535,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.11":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.11.tgz#62ae2820379fedd649268cdcebd3816e001cdb57"
-  integrity sha512-oqS97nML5UIenDbyaAyWZND5ieM0akYmku9UoKt4vwVZrybRv1h0sUHVkfUHYCMuoUrJ1ZGsajt9gUpBiUg/wA==
+"@manuscripts/style-guide@2.0.12-LEAN-3840.0":
+  version "2.0.12-LEAN-3840.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.12-LEAN-3840.0.tgz#64f6fede0072baef6180729a3e92a2feceed6b1e"
+  integrity sha512-YdSWpaBYtJr8y43b4fHXxfG77SGkwNfVagBtmKqB0BPUNZ4HdAa8RsiBGF6izqA579rXA3GHrVQmXBcu390Z6g==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/transform" "2.3.29"
@@ -1566,10 +1566,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.18-LEAN-3840.0":
-  version "1.7.18-LEAN-3840.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18-LEAN-3840.0.tgz#60221fd7a0747a96e07fdbd07bd7a1c3f5282644"
-  integrity sha512-/eEHwM+tCAsKRvNBh3+NVLe2kU8lbwR4seCjgy4MU9iPR8ernYfL8vEj2V4bm4cf0n4yDGGBYVvSc5NOVsUPgw==
+"@manuscripts/track-changes-plugin@1.7.18-LEAN-3840.1":
+  version "1.7.18-LEAN-3840.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18-LEAN-3840.1.tgz#2ba6bc998da66fbfc69a866e989cb73ec559b510"
+  integrity sha512-eMatVDeiirQuHfkLx4sbYrIdI0hoir0+dVR1Xl8e1K5mNTW40t2sVZ3R0ohIL6CeQjtIaTHE6P87Y3a3fD0gOQ==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
