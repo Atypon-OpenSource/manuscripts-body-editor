@@ -17,9 +17,9 @@ import { schema } from '@manuscripts/transform'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isRejectedInsert } from '../../lib/track-changes-utils'
-import { Decoration, DecorationSet } from 'prosemirror-view'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
