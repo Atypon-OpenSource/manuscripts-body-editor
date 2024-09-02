@@ -15,14 +15,15 @@
  */
 
 import { CrossReferenceNode, ManuscriptNodeView } from '@manuscripts/transform'
-import { History } from 'history'
+import { Location, NavigateFunction } from 'react-router-dom'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
-  history: History
+  navigate: NavigateFunction
+  location: Location
 }
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
@@ -40,8 +41,8 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
     if (!rids.length) {
       return
     }
-    this.props.history.push({
-      pathname: this.props.history.location.pathname,
+    this.props.navigate({
+      pathname: this.props.location.pathname,
       hash: '#' + rids[0],
     })
   }

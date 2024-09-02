@@ -32,6 +32,7 @@ import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import {
   addNodeComment,
   createBlock,
+  findPosBeforeFirstSubsection,
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
@@ -44,7 +45,7 @@ import {
   isDeleted,
   isRejectedInsert,
 } from './track-changes-utils'
-import { getChildOfType } from './utils'
+import { getChildOfType, isChildOfNodeTypes } from './utils'
 
 const popper = new PopperManager()
 
@@ -124,8 +125,13 @@ export class ContextMenu {
           const itemTitle = sectionTitle
             ? `“${this.trimTitle(sectionTitle, 30)}”`
             : 'This Section'
-
-          if (types.has('section')) {
+          if (
+            types.has('section') &&
+            !isChildOfNodeTypes(this.view.state.doc, $pos.pos, [
+              schema.nodes.abstracts,
+              schema.nodes.backmatter,
+            ])
+          ) {
             const labelPosition = after ? 'After' : 'Before'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
@@ -139,12 +145,13 @@ export class ContextMenu {
           }
 
           if (types.has('subsection')) {
+            const insPos = findPosBeforeFirstSubsection($pos) || endPos
             const level = sectionLevel($pos.depth)
             const label = `New ${level} to ${itemTitle}`
 
             section.appendChild(
               this.createMenuItem(label, () => {
-                insertNode(schema.nodes.section, endPos)
+                insertNode(schema.nodes.section, insPos)
                 popper.destroy()
               })
             )

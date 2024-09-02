@@ -63,11 +63,9 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     this.dom.addEventListener('mouseup', this.handleClick)
   }
   public handleClick = (event: MouseEvent) => {
-    if (
-      this.can.seeReferencesButtons &&
-      !isDeleted(this.node) &&
-      event.button === 0
-    ) {
+    if (!this.can.seeReferencesButtons) {
+      this.showPopper()
+    } else if (!isDeleted(this.node) && event.button === 0) {
       const attrs = getActualAttrs(this.node) as CitationAttrs
       if (attrs.rids.length) {
         this.showContextMenu()
