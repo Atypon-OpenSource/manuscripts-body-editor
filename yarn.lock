@@ -1535,10 +1535,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.11":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.11.tgz#62ae2820379fedd649268cdcebd3816e001cdb57"
-  integrity sha512-oqS97nML5UIenDbyaAyWZND5ieM0akYmku9UoKt4vwVZrybRv1h0sUHVkfUHYCMuoUrJ1ZGsajt9gUpBiUg/wA==
+"@manuscripts/style-guide@2.0.12-LEAN-3883.1":
+  version "2.0.12-LEAN-3883.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.12-LEAN-3883.1.tgz#340fd7643d386cba96a62e9dc902ad1c65d96ed3"
+  integrity sha512-Mo8jemut1dBWETeXPCjIHit6r8eOWcSlZQ2kG+C62HZGN0Z2r8htemR1WObsQWuBR7/tmLUQ60zCz4L260UHAQ==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/transform" "2.3.29"
