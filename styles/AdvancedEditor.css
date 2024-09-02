@@ -51,6 +51,7 @@
   content: attr(data-suggest);
   opacity: 0.5;
   pointer-events: none;
+  font-style: italic;
 }
 
 .ProseMirror p.block {
