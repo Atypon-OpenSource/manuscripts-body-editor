@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 import { SectionCategory } from '@manuscripts/json-schema'
+import { SectionCategoryIcon } from '@manuscripts/style-guide'
 import { isSectionNode, schema, SectionNode } from '@manuscripts/transform'
 import { EditorState, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { sectionCategoryIcon } from '../../assets'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../../lib/popper'
 import {
@@ -119,7 +121,7 @@ function createButton(
   const arrow = document.createElement('div')
   arrow.className = 'section-category popper-arrow'
   const button = document.createElement('button')
-  button.innerHTML = sectionCategoryIcon
+  button.innerHTML = renderToStaticMarkup(createElement(SectionCategoryIcon))
   button.className = `section-category-button ${category && 'assigned'}`
   if (canEdit) {
     button.addEventListener('mousedown', () => {
