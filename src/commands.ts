@@ -44,6 +44,7 @@ import {
   schema,
   SectionCategory,
   SectionNode,
+  SectionTitleNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -78,6 +79,7 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
+  findParentNodeOfTypeClosestToPos,
   hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
@@ -107,6 +109,8 @@ import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
 import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
+import { sectionTitles } from './lib/section-titles'
+import { checkForCompletion } from './plugins/section_title/autocompletion'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -747,17 +751,6 @@ export const insertSection =
 
     return true
   }
-
-const sectionTitles = new Map<SectionCategory, string>([
-  ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
-  ['MPSectionCategory:availability', 'Availability'],
-  ['MPSectionCategory:competing-interests', 'COI Statement'],
-  ['MPSectionCategory:con', 'Contributed-by information'],
-  ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
-  ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
-  ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
-  ['MPSectionCategory:supported-by', 'Supported By'],
-])
 
 export const insertBackMatterSection =
   (category: SectionCategory) =>
@@ -1711,4 +1704,17 @@ export function mergeCellsWithSpace(
     dispatch(tr)
   }
   return true
+}
+
+export const autoComplete = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const autocompleteText = checkForCompletion(state)
+  if (autocompleteText) {
+    const tr = state.tr.insertText(autocompleteText, state.selection.from)
+    dispatch && dispatch(tr)
+    return true
+  }
+  return false
 }
