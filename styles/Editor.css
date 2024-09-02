@@ -949,10 +949,22 @@
 .delete-icon {
   position: absolute;
   right: -20px;
-  top: -13px;
+  top: 13px;
   cursor: pointer;
   z-index: 1;
 }
+.delete-icon svg path {
+  fill: #c9c9c9;
+}
+
+.delete-icon svg rect {
+  fill: #c9c9c9;
+}
+
+.delete-icon svg path:last-child {
+  fill: #fff;
+}
+
 .delete-icon:hover svg path {
   fill: #353535;
 }
