@@ -281,15 +281,20 @@ span.comment-marker {
   line-height: 16px !important;
   margin-top: 4px !important;
 }
-.ProseMirror > .author-notes {
-  margin: 1rem 0;
-}
-.ProseMirror > .author-notes > .block-section_title > h1 {
+
+.ProseMirror .author-notes-container h1 {
   color: #353535 !important;
   font-size: 16px !important;
   font-weight: 700 !important;
   line-height: 24px !important;
   margin: 0 !important
+}
+
+.ProseMirror .author-notes-container > div {
+  margin-bottom: 16px;
+}
+.ProseMirror .author-notes-container > div:last-child {
+  margin-bottom: 0;
 }
 
 .keywords .keyword {
@@ -738,4 +743,114 @@ span.accepted .selected-suggestion,
 
 .ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, .open-context-menu {
   visibility: visible !important;
+}
+
+.section-category-button {
+  position: absolute;
+  right: 0;
+  top: 14px;
+  line-height: 1.6;
+  background: unset;
+  border: none;
+  opacity: 0;
+  padding: 0;
+  margin: 0 6px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.section-category-button svg {
+  width: 16px;
+  height: 20px;
+  position: relative;
+}
+
+.section-category-button:not(.assigned) path {
+  fill: #FFE0B2;
+}
+
+.section-category-button.assigned:after {
+  top: 2px;
+  right: 5px;
+  position: absolute;
+  content: '';
+  height: 8px;
+  width: 4px;
+  border-bottom: 2px solid #36B260;
+  border-right: 2px solid #36B260;
+  transform: rotate(45deg);
+}
+
+.ProseMirror .block-container:hover .section-category-button {
+  opacity: 1;
+}
+.section-category.menu {
+  border-radius: 8px;
+  border: 1px solid #E2E2E2;
+  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.30);
+}
+
+.section-category.menu .menu-item {
+  padding: 7px 8px 8px 16px;
+  box-sizing: border-box;
+  min-width: 176px;
+  height: 37px;
+  padding-right: 40px;
+  font-family: Lato;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  position: relative;
+  background: none;
+  border: unset;
+  display: flex;
+}
+
+.section-category.menu .menu-item.selected:after {
+  top: 10.5px;
+  right: 19px;
+  position: absolute;
+  content: '';
+  height: 10px;
+  width: 5px;
+  border-bottom: 2px solid #36B260;
+  border-right: 2px solid #36B260;
+  transform: rotate(45deg);
+}
+
+.section-category.menu .menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.section-category.tooltip {
+  font-family: 'Lato, sans-serif';
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  background: #E2E2E2;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  color:  #353535;
+  line-height: 16px;
+}
+
+.section-category.tooltip span {
+  color:  #353535;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 16px;
+  margin-left: 3.2px;
+}
+
+.popper[data-popper-placement] .section-category.popper-arrow {
+  border-width: 10px;
+  right: -20px;
+  top: 6px;
+  pointer-events: none;
 }

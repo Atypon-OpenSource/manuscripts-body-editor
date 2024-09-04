@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { AlertIcon, DeleteIcon } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FootnoteNode,
@@ -39,8 +40,9 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { alertIcon, deleteIcon } from '../../assets'
 import { isTextSelection } from '../../commands'
 import {
   DeleteFootnoteDialog,
@@ -92,7 +94,7 @@ const labelWidget =
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
   element.className = 'uncited-footnote'
-  element.innerHTML = alertIcon
+  element.innerHTML = renderToStaticMarkup(createElement(AlertIcon))
   return element
 }
 
@@ -107,7 +109,7 @@ const deleteFootnoteWidget =
   (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-icon'
-    deleteBtn.innerHTML = deleteIcon
+    deleteBtn.innerHTML = renderToStaticMarkup(createElement(DeleteIcon))
 
     const parentType = tableElement ? 'table ' : ''
     const footnote = {
