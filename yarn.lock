@@ -1535,10 +1535,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.17-LEAN-3573-menus.0":
-  version "2.0.17-LEAN-3573-menus.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.17-LEAN-3573-menus.0.tgz#e9341afdd01c21ffb9a567f81f64b2531bb8cef1"
-  integrity sha512-2omZ0Y6Bsf6AVXr61f9eEv1Y9kF7tUC7095ak9VxnCBbGC0EuMb9DtX3ccT98r/BXUf+y79YBgKfkomzQ4LD+Q==
+"@manuscripts/style-guide@2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.17.tgz#42e7fd02550a5c72bdeefd409c743cb5d842ccb6"
+  integrity sha512-hwYv+qxr6iyA03KE+0n7iwQZZZcaVukWW0YRenMGSmE0oSc5sW56NfScxaUuYhDIe7q8AlK570kXUvTN69sKVg==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/transform" "2.3.31"
