@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
 import {
   getListType,
   InlineFootnoteNode,
@@ -36,9 +35,10 @@ import {
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
-import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
+import { FootnotesSelector } from '../components/views/FootnotesSelector'
 import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
+import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
 import {
   getActualAttrs,
