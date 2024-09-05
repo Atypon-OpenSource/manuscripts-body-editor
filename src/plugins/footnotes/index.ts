@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { AlertIcon, DeleteIcon } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FootnoteNode,
@@ -39,8 +40,9 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { alertIcon, deleteIcon } from '../../assets'
 import { isTextSelection } from '../../commands'
 import {
   DeleteFootnoteDialog,
@@ -86,14 +88,13 @@ const labelWidget =
     element.addEventListener('mousedown', () => {
       scrollToInlineFootnote(id, view)
     })
-
     return element
   }
 
 export const uncitedFootnoteWidget = () => () => {
   const element = document.createElement('span')
-  element.className = 'unctied-table-footnote'
-  element.innerHTML = alertIcon
+  element.className = 'uncited-footnote'
+  element.innerHTML = renderToStaticMarkup(createElement(AlertIcon))
   return element
 }
 
@@ -108,7 +109,7 @@ const deleteFootnoteWidget =
   (view: EditorView, getPos: () => number | undefined) => {
     const deleteBtn = document.createElement('span')
     deleteBtn.className = 'delete-icon'
-    deleteBtn.innerHTML = deleteIcon
+    deleteBtn.innerHTML = renderToStaticMarkup(createElement(DeleteIcon))
 
     const parentType = tableElement ? 'table ' : ''
     const footnote = {
@@ -454,23 +455,51 @@ export default (props: EditorProps) => {
             )
           )
         }
-
         const { labels } = footnotesKey.getState(state) as PluginState
         let tableInlineFootnoteIds: Set<string> | undefined = undefined
 
         state.doc.descendants((node, pos, parent) => {
+          if (node.type === schema.nodes.footnotes_element) {
+            tableInlineFootnoteIds = undefined
+            if (parent?.type === schema.nodes.table_element_footer) {
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  class: 'table-footnotes-element',
+                })
+              )
+              tableInlineFootnoteIds = findTableInlineFootnoteIds(
+                state.doc.resolve(pos)
+              )
+            }
+          }
+
           if (isFootnoteNode(node)) {
-            const id = node.attrs.id
-            if (labels) {
-              const label = labels.get(id)
-              if (label) {
+            if (!tableInlineFootnoteIds) {
+              const id = node.attrs.id
+              if (!labels || !labels.has(id)) {
                 decorations.push(
-                  Decoration.widget(pos + 2, labelWidget(label, id), {
+                  Decoration.widget(pos + 2, uncitedFootnoteWidget(), {
                     side: -1,
                   })
                 )
+              } else {
+                const label = labels.get(id)
+                if (label) {
+                  decorations.push(
+                    Decoration.widget(pos + 2, labelWidget(label, id), {
+                      side: -1,
+                    })
+                  )
+                } else {
+                  decorations.push(
+                    Decoration.widget(pos + 2, uncitedFootnoteWidget(), {
+                      side: -1,
+                    })
+                  )
+                }
               }
             }
+
             if (!node.firstChild?.textContent) {
               decorations.push(
                 Decoration.widget(
@@ -490,21 +519,6 @@ export default (props: EditorProps) => {
                   uncitedFootnoteWidget()
                 )
               )
-            }
-          }
-
-          if (node.type === schema.nodes.footnotes_element) {
-            if (parent?.type === schema.nodes.table_element_footer) {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'table-footnotes-element',
-                })
-              )
-              tableInlineFootnoteIds = findTableInlineFootnoteIds(
-                state.doc.resolve(pos)
-              )
-            } else {
-              tableInlineFootnoteIds = undefined
             }
           }
         })

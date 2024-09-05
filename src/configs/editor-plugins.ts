@@ -39,6 +39,7 @@ import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
 import section_title from '../plugins/section_title'
+import section_category from '../plugins/section-category'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_footnote from '../plugins/table-footnote'
@@ -66,7 +67,7 @@ export default (props: EditorProps) => {
     sections(),
     toc(),
     bibliography(props),
-    objects(props),
+    objects(),
     affiliations(),
     comments(),
     paragraphs(),
@@ -77,6 +78,7 @@ export default (props: EditorProps) => {
     table_footnote(),
     editorProps(props),
     doi(),
+    section_category(props),
   ]
 
   if (props.collabProvider) {

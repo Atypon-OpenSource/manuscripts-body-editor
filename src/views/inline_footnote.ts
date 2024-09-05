@@ -177,7 +177,6 @@ export class InlineFootnoteView<
       return
     }
     const fnState = footnotesKey.getState(this.view.state)
-    console.log(fnState)
     if (fnState) {
       this.activateModal({
         notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({

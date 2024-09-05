@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  ManuscriptEditorState,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { EditorView } from 'prosemirror-view'
 
@@ -100,4 +104,55 @@ export const handleScrollToBibliographyItem = (view: EditorView) => {
   }
 
   return true
+}
+
+// Find the boundaries of the intended word based on the current cursor position
+export const findWordBoundaries = (
+  state: ManuscriptEditorState,
+  position: number
+) => {
+  let start = position
+  let end = position
+  const resolvedPos = state.doc.resolve(position)
+  const blockStart = resolvedPos.start()
+  const blockEnd = resolvedPos.end()
+
+  // Move backward to find the start of the word
+  while (
+    start > blockStart &&
+    !/\s/.test(state.doc.textBetween(start - 1, start))
+  ) {
+    start--
+  }
+  // Move forward to find the end of the word
+  while (end < blockEnd && !/\s/.test(state.doc.textBetween(end, end + 1))) {
+    end++
+  }
+
+  let from = start
+  let to = end
+
+  // If no word is found (cursor between spaces), search for the previous word
+  if (from === to) {
+    // Move backward through spaces
+    while (
+      start > blockStart &&
+      /\s/.test(state.doc.textBetween(start - 1, start))
+    ) {
+      start--
+    }
+    to = start
+
+    // Move backward to find the start of the previous word
+    while (
+      start > blockStart &&
+      !/\s/.test(state.doc.textBetween(start - 1, start))
+    ) {
+      start--
+    }
+
+    from = start
+  }
+
+  return { from, to }
 }

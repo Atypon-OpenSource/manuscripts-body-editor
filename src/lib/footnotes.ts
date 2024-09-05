@@ -40,7 +40,7 @@ export const findTableInlineFootnoteIds = ($pos: ResolvedPos) => {
   const tableElement = findParentNodeClosestToPos(
     $pos,
     (node) => node.type === schema.nodes.table_element
-  )?.node.firstChild
+  )?.node
 
   return new Set(
     tableElement
