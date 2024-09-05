@@ -90,6 +90,7 @@ import {
   insertSupplementsNode,
 } from './lib/doc'
 import { FileAttachment } from './lib/files'
+import { getNewFootnotePos } from './lib/footnotes'
 import {
   findWordBoundaries,
   isNodeOfType,
@@ -104,7 +105,6 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
