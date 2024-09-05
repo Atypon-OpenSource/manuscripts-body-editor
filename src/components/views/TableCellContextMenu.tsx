@@ -77,10 +77,11 @@ const ColumnChangeWarningDialog: React.FC<{
   />
 )
 
-export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
-  view,
-  close,
-}) => {
+export const ContextMenu: React.FC<{
+  view: EditorView
+  close: () => void
+  onCancelColumnDialog: () => void
+}> = ({ view, close, onCancelColumnDialog }) => {
   const runCommand = (command: Command, noTracking?: boolean) => {
     command(view.state, (tr) =>
       view.dispatch((noTracking && skipTracking(tr)) || tr)
@@ -95,7 +96,7 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
   const { rows, columns } = getSelectedCellsCount(view.state)
 
   return (
-    <MenuDropdownList>
+    <MenuDropdownList className={'table-ctx'}>
       <ActionButton onClick={() => runCommand(addRows('top'))}>
         <PlusIcon /> Insert {rows} above
       </ActionButton>
@@ -136,7 +137,10 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
             setColumnAction(undefined)
           }
         }}
-        secondaryAction={() => setColumnAction(undefined)}
+        secondaryAction={() => {
+          setColumnAction(undefined)
+          onCancelColumnDialog()
+        }}
       />
     </MenuDropdownList>
   )

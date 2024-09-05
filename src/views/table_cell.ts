@@ -98,6 +98,8 @@ export class TableCellView extends BlockView<EditableBlockProps> {
               this.props.popper.destroy()
               contextMenuButton.classList.toggle('open-context-menu')
             },
+            onCancelColumnDialog: () =>
+              this.addOutClickListener(contextMenuButton),
           },
           this.view.state.selection.$from.node(),
           this.getPos,
@@ -107,6 +109,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
         contextMenuButton.classList.toggle('open-context-menu')
 
         this.props.popper.show(contextMenuButton, contextMenu, 'right', false)
+        this.addOutClickListener(contextMenuButton)
       }
     })
 
@@ -122,6 +125,24 @@ export class TableCellView extends BlockView<EditableBlockProps> {
 
     const outputSpec = this.node.type.spec.toDOM(this.node)
     return DOMSerializer.renderSpec(document, outputSpec).dom as HTMLElement
+  }
+
+  private addOutClickListener(contextMenuButton: HTMLButtonElement) {
+    const listener: EventListener = (event) => {
+      const target = event.target as HTMLElement
+      if (
+        !target.classList.contains('open-context-menu') &&
+        !(target.parentNode as HTMLElement)?.classList.contains('table-ctx')
+      ) {
+        this.props.popper.destroy()
+        contextMenuButton.classList.toggle('open-context-menu')
+      }
+      window.removeEventListener('mousedown', listener)
+      window.removeEventListener('keydown', listener)
+    }
+
+    window.addEventListener('mousedown', listener)
+    window.addEventListener('keydown', listener)
   }
 }
 
