@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
 import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { editAttrsTrackingIcon } from '../assets'
 import { TrackableAttributes } from '../types'
 
 export function isRejectedInsert(node: ProsemirrorNode) {
@@ -116,7 +118,7 @@ export const getAttrsTrackingButton = (changeID: string) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'
   el.value = changeID
-  el.innerHTML = editAttrsTrackingIcon
+  el.innerHTML = renderToStaticMarkup(createElement(EditAttrsTrackingIcon))
 
   return el
 }

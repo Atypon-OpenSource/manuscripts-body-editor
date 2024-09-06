@@ -24,7 +24,7 @@ import {
 import {
   orderTableFootnotes,
   updateTableInlineFootnoteLabels,
-} from './footnotes/footnotes-utils'
+} from '../lib/footnotes'
 
 const isInlineFootnoteChange = (
   step: ReplaceStep,
