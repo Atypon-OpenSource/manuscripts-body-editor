@@ -17,6 +17,14 @@
 import { SectionCategory } from '@manuscripts/transform'
 
 export const sectionTitles = new Map<SectionCategory, string>([
+  ['MPSectionCategory:abstract', 'Abstract'],
+  ['MPSectionCategory:abstract-graphical', 'Graphical  Abstract'],
+  ['MPSectionCategory:introduction', 'Introduction'],
+  ['MPSectionCategory:review', 'Review'],
+  ['MPSectionCategory:materials-method', 'Materials & Methods'],
+  ['MPSectionCategory:results', 'Results'],
+  ['MPSectionCategory:discussion', 'Discussion'],
+  ['MPSectionCategory:conclusions', 'Conclusions'],
   ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
   ['MPSectionCategory:availability', 'Availability'],
   ['MPSectionCategory:competing-interests', 'COI Statement'],
