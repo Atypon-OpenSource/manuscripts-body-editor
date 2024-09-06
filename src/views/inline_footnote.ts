@@ -43,11 +43,6 @@ import {
   isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
-<<<<<<< HEAD
-import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
-=======
-import { TrackableAttributes } from '../types'
->>>>>>> a103e849e5481510da4019e4d2e8374fc30cea67
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
