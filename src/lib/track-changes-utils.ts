@@ -15,7 +15,7 @@
  */
 
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import { TrackedAttrs, UpdateAttrs } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode } from '@manuscripts/transform'
 import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
@@ -104,12 +104,22 @@ export function isTracked(node: ProsemirrorNode) {
 
 export function getActualAttrs<T extends ManuscriptNode>(node: T) {
   const attrs = node.attrs as TrackableAttributes<T>
-  if (
-    attrs.dataTracked &&
-    attrs.dataTracked[0].status === 'rejected' &&
-    attrs.dataTracked[0].operation === 'set_attrs'
-  ) {
-    return attrs.dataTracked[0].oldAttrs as T['attrs']
+  if (attrs.dataTracked?.length) {
+    console.log(attrs.dataTracked)
+    const changes = (attrs.dataTracked as TrackedAttrs[]).filter(
+      (c) => c.operation === 'set_attrs'
+    ) as UpdateAttrs[]
+    const hasPendingAttrs = changes.some((c) => c.status === 'pending')
+    if (hasPendingAttrs) {
+      // assuming we can't have pending attributes superceded by rejected attributes changes
+      return attrs
+    }
+    const rejected = changes
+      .filter((c) => c.status === 'rejected')
+      .sort((a, b) => b.statusUpdateAt - a.statusUpdateAt)[0]
+    if (rejected && rejected.status === 'rejected') {
+      return rejected.oldAttrs as T['attrs']
+    }
   }
   return attrs
 }

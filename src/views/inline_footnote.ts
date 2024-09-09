@@ -191,7 +191,7 @@ export class InlineFootnoteView<
         }, [] as Array<FootnoteWithIndex>),
         onCancel: () => {
           const { tr } = this.view.state
-          if (!this.node.attrs.rids.length) {
+          if (!getActualAttrs(this.node).rids.length) {
             this.view.dispatch(
               tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
             )
@@ -222,6 +222,7 @@ export class InlineFootnoteView<
   public updateContents = () => {
     const attrs = getActualAttrs(this.node as InlineFootnoteNode)
     this.dom.setAttribute('rids', attrs.rids.join(','))
+    console.log(this.node)
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
@@ -286,7 +287,7 @@ export class InlineFootnoteView<
 
   public onInsert = (notes: FootnoteWithIndex[]) => {
     if (notes.length) {
-      const contents = this.node.attrs.contents.split(',')
+      const contents = getActualAttrs(this.node).contents.split(',')
       const rids = notes.map((note) => note.node.attrs.id)
       const { tr } = this.view.state
 

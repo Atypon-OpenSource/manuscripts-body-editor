@@ -33,8 +33,8 @@ export const setTCClasses = (node: ManuscriptNode, dom: HTMLElement) => {
     const lastChange = dataTracked[dataTracked.length - 1]
     const changeClasses = getChangeClasses([lastChange])
     dom.classList.add(...changeClasses)
-    dom.setAttribute('id', node.attrs.id)
   }
+  dom.setAttribute('id', node.attrs.id)
 }
 
 export default createNodeOrElementView(FootnoteView, 'div', setTCClasses)
