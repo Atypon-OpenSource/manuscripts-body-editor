@@ -284,15 +284,20 @@ span.comment-marker {
   line-height: 16px !important;
   margin-top: 4px !important;
 }
-.ProseMirror > .author-notes {
-  margin: 1rem 0;
-}
-.ProseMirror > .author-notes > .block-section_title > h1 {
+
+.ProseMirror .author-notes-container h1 {
   color: #353535 !important;
   font-size: 16px !important;
   font-weight: 700 !important;
   line-height: 24px !important;
   margin: 0 !important;
+}
+
+.ProseMirror .author-notes-container > div {
+  margin-bottom: 16px;
+}
+.ProseMirror .author-notes-container > div:last-child {
+  margin-bottom: 0;
 }
 
 .keywords .keyword {

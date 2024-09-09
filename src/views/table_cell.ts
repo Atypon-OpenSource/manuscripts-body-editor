@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import { DotsIcon } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { threeDotIcon } from '../assets'
 import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -61,7 +63,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   private createContextMenu() {
     const contextMenuButton = document.createElement('button')
     contextMenuButton.className = 'table-context-menu-button'
-    contextMenuButton.innerHTML = threeDotIcon
+    contextMenuButton.innerHTML = renderToStaticMarkup(createElement(DotsIcon))
 
     contextMenuButton.addEventListener('click', () => {
       if (this.props.popper.isActive()) {

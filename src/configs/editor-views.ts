@@ -23,7 +23,6 @@ import bibliographyElement from '../views/bibliography_element_editable'
 import blockquoteElement from '../views/blockquote_element_editable'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
-import corresp from '../views/corresp'
 import crossReference from '../views/cross_reference_editable'
 import { EditableBlockProps } from '../views/editable_block'
 import empty from '../views/empty'
@@ -92,6 +91,5 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     comments: empty('comments'),
     supplements: empty('supplements'),
     author_notes: authorNotes(props, dispatch),
-    corresp: corresp(props),
   }
 }

@@ -17,6 +17,7 @@ import {
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
+  SupplementsNode,
 } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
@@ -28,9 +29,11 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   }
   const abstracts = findAbstractsNode(doc)
   const pos = abstracts.pos - 1
-  tr.insert(pos, schema.nodes.supplements.create())
+  const supplementsNode =
+    schema.nodes.supplements.createAndFill() as SupplementsNode
+  tr.insert(pos, supplementsNode)
   return {
-    node: supplements,
+    node: supplementsNode,
     pos,
   }
 }
