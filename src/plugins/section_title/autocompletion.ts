@@ -46,15 +46,8 @@ export function hasAutoCompletionSlack(
 ) {
   const category = getActualAttrs(parentSection).category as SectionCategory
   const title = sectionTitles.get(category)
-  if (
-    category &&
-    title &&
-    titleSection.textContent
-    // title.startsWith(titleSection.textContent)
-  ) {
+  if (category && title && titleSection.textContent) {
     const actualTextContent = getActualTextContent(titleSection.content)
-    console.log('actualTextContent')
-    console.log(actualTextContent)
     if (title.toLowerCase().startsWith(actualTextContent.toLowerCase())) {
       const suggestionText = title.slice(actualTextContent.length)
       return isUpperCase(actualTextContent)
@@ -83,8 +76,6 @@ export function checkForCompletion(state: EditorState) {
       section.node as SectionNode,
       title.node as SectionTitleNode
     )
-    console.log('returnable text')
-    console.log(text)
     return text
   }
   return ''
