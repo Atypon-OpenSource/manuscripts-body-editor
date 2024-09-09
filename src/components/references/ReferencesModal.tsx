@@ -211,6 +211,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
       ...selection,
       ...values,
     }
+    // Check if citation count for the new item is undefined, and set it to 1
+    const currentCitationCount = citationCounts.get(item.id)
+
+    if (currentCitationCount === undefined) {
+      citationCounts.set(item.id, 1) // update the citation count in the Map
+    }
     onSave(item)
     setSelection(item)
     setConfirm(false)
@@ -301,7 +307,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             {selection && (
               <ReferenceForm
                 values={normalize(selection)}
-                showDelete={!citationCounts.get(selection.id)}
+                showDelete={
+                  !citationCounts.get(selection.id) &&
+                  citationCounts.get(selection.id)! > 0
+                }
                 onChange={handleChange}
                 onCancel={onCancel}
                 onDelete={handleDelete}
