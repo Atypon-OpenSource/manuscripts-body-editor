@@ -108,6 +108,7 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
 import { EditorAction } from './types'
+import { checkForCompletion } from './plugins/section_title/autocompletion'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
