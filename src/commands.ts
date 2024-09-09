@@ -43,6 +43,7 @@ import {
   schema,
   SectionCategory,
   SectionNode,
+  SupplementNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -336,10 +337,10 @@ export const insertSupplement = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const supplement = schema.nodes.supplement.create({
+  const supplement = schema.nodes.supplement.createAndFill({
     id: generateNodeID(schema.nodes.supplement),
     href: file.id,
-  })
+  }) as SupplementNode
 
   const tr = state.tr
   const supplements = insertSupplementsNode(tr)
