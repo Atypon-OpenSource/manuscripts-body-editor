@@ -105,7 +105,6 @@ export function isTracked(node: ProsemirrorNode) {
 export function getActualAttrs<T extends ManuscriptNode>(node: T) {
   const attrs = node.attrs as TrackableAttributes<T>
   if (attrs.dataTracked?.length) {
-    console.log(attrs.dataTracked)
     const changes = (attrs.dataTracked as TrackedAttrs[]).filter(
       (c) => c.operation === 'set_attrs'
     ) as UpdateAttrs[]

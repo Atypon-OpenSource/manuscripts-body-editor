@@ -222,7 +222,6 @@ export class InlineFootnoteView<
   public updateContents = () => {
     const attrs = getActualAttrs(this.node as InlineFootnoteNode)
     this.dom.setAttribute('rids', attrs.rids.join(','))
-    console.log(this.node)
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
