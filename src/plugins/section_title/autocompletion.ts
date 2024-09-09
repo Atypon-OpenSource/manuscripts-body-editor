@@ -23,6 +23,10 @@ import { EditorState } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { sectionTitles } from '../../lib/section-titles'
+import {
+  getActualAttrs,
+  getActualTextContent,
+} from '../../lib/track-changes-utils'
 
 function cursorAtTheEndOfText(
   state: EditorState,
@@ -33,23 +37,32 @@ function cursorAtTheEndOfText(
   return from === to && to === nodePos + nodeSize - 1
 }
 
+const isUpperCase = (test: string) =>
+  test === test.toUpperCase() && test.length > 1
+
 export function hasAutoCompletionSlack(
   parentSection: SectionNode,
   titleSection: SectionTitleNode
 ) {
-  const category = parentSection.attrs.category as SectionCategory
+  const category = getActualAttrs(parentSection).category as SectionCategory
   const title = sectionTitles.get(category)
   if (
     category &&
     title &&
-    titleSection.textContent &&
-    title.startsWith(titleSection.textContent)
+    titleSection.textContent
+    // title.startsWith(titleSection.textContent)
   ) {
-    const suggestionText = title.slice(titleSection.textContent.length)
-    return suggestionText
-  } else {
-    return ''
+    const actualTextContent = getActualTextContent(titleSection.content)
+    console.log('actualTextContent')
+    console.log(actualTextContent)
+    if (title.toLowerCase().startsWith(actualTextContent.toLowerCase())) {
+      const suggestionText = title.slice(actualTextContent.length)
+      return isUpperCase(actualTextContent)
+        ? suggestionText.toUpperCase()
+        : suggestionText
+    }
   }
+  return ''
 }
 
 export function checkForCompletion(state: EditorState) {
@@ -70,6 +83,8 @@ export function checkForCompletion(state: EditorState) {
       section.node as SectionNode,
       title.node as SectionTitleNode
     )
+    console.log('returnable text')
+    console.log(text)
     return text
   }
   return ''

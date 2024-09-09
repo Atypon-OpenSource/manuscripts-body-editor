@@ -29,6 +29,7 @@ export class SectionTitleView<
   public elementType = 'h1'
 
   public onUpdateContent = () => {
+    console.log(this.node)
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const parentSection = findParentNodeOfTypeClosestToPos(
