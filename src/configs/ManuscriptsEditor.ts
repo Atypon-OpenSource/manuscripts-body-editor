@@ -108,6 +108,7 @@ export const createEditorView = (
 
   // running an init transaction allowing plugins to caught up with the document for the first time
   const tr = view.state.tr.setMeta('INIT', true)
+
   const nextState = view.state.apply(tr)
   view.updateState(nextState)
   return view
