@@ -18,13 +18,9 @@ import { AuthorNotesNode, ManuscriptNode } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { Trackable } from '../types'
 
-export class AuthorNotesView extends BlockView<
-  EditableBlockProps,
-  Trackable<AuthorNotesNode>
-> {
+export class AuthorNotesView extends BlockView<Trackable<AuthorNotesNode>> {
   container: HTMLElement
   allowedTypes = ['corresp', 'footnote', 'paragraph']
   correspondenceHeader = 'Correspondence'

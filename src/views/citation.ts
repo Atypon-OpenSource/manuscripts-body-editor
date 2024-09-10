@@ -20,12 +20,12 @@ import { DOMSerializer } from 'prosemirror-model'
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { Trackable } from '../types'
 
-export class CitationView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType, Trackable<CitationNode>>
+export class CitationView
+  extends BaseNodeView<Trackable<CitationNode>>
   implements ManuscriptNodeView
 {
   public ignoreMutation = () => true

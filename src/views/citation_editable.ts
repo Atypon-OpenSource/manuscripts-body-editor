@@ -35,7 +35,6 @@ import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
 const createBibliographySection = (node: ManuscriptNode) =>
@@ -44,7 +43,7 @@ const createBibliographySection = (node: ManuscriptNode) =>
     schema.nodes.bibliography_element.create({}, node ? [node] : []),
   ]) as ManuscriptNode
 
-export class CitationEditableView extends CitationView<EditableBlockProps> {
+export class CitationEditableView extends CitationView {
   private editor: HTMLElement
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()

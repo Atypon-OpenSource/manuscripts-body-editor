@@ -36,7 +36,6 @@ import {
   insertTableFootnote,
 } from '../commands'
 import { FootnotesSelector } from '../components/views/FootnotesSelector'
-import { EditableBlockProps } from '../views/editable_block'
 import ReactSubView from '../views/ReactSubView'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
@@ -46,6 +45,7 @@ import {
   isRejectedInsert,
 } from './track-changes-utils'
 import { getChildOfType, isChildOfNodeTypes } from './utils'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 
 const popper = new PopperManager()
 
@@ -76,14 +76,14 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
-  private readonly props?: EditableBlockProps
+  private readonly props?: EditorProps
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
     getPos: () => number,
     actions: Actions = {},
-    props?: EditableBlockProps
+    props?: EditorProps
   ) {
     this.node = node
     this.view = view

@@ -17,16 +17,12 @@
 import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { JATS_HTML_LIST_STYLE_MAPPING, JatsStyleType } from './ordered_list'
 import { Trackable } from '../types'
 
-export class BulletListView<PropsType extends BaseNodeProps> extends BlockView<
-  PropsType,
-  Trackable<ListNode>
-> {
+export class BulletListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 
   public updateContents = () => {

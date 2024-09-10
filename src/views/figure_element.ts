@@ -20,24 +20,15 @@ import {
   FigureElementOptions,
   FigureElementOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, FileManagement, groupFiles } from '../lib/files'
+import { FileAttachment, groupFiles } from '../lib/files'
 import { getMatchingChild } from '../lib/utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 import { Trackable } from '../types'
 
-interface FigureElementProps {
-  fileManagement: FileManagement
-  getFiles: () => FileAttachment[]
-}
-
-export class FigureElementView extends BlockView<
-  EditableBlockProps & FigureElementProps,
-  Trackable<FigureElementNode>
-> {
+export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
   private container: HTMLElement
   private reactTools: HTMLElement
 

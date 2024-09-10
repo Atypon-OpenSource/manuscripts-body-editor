@@ -20,8 +20,8 @@ import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { EditableBlockProps } from './editable_block'
 import { Trackable } from '../types'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
@@ -40,7 +40,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
 */
 
 function createSubView<T extends Trackable<ManuscriptNode>>(
-  props: EditableBlockProps,
+  props: EditorProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   componentProps: object,
   node: T,

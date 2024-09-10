@@ -27,8 +27,8 @@ export interface CrossReferenceViewProps extends BaseNodeProps {
   location: Location
 }
 
-export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
-  extends BaseNodeView<PropsType, Trackable<CrossReferenceNode>>
+export class CrossReferenceView
+  extends BaseNodeView<Trackable<CrossReferenceNode>>
   implements ManuscriptNodeView
 {
   public selectNode = () => {

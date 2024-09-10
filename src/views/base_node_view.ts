@@ -17,7 +17,7 @@
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { Decoration, NodeView } from 'prosemirror-view'
 
-import { CSLProps } from '../configs/ManuscriptsEditor'
+import { CSLProps, EditorProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import { SyncError } from '../types'
 
@@ -26,18 +26,14 @@ export interface BaseNodeProps {
   cslProps: CSLProps
 }
 
-export class BaseNodeView<
-  PropsType extends BaseNodeProps,
-  Node extends ManuscriptNode
-> implements NodeView
-{
+export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]
   public elementType = 'div'
 
   public constructor(
-    public readonly props: PropsType,
+    public readonly props: EditorProps,
     public node: Node,
     public readonly view: ManuscriptEditorView,
     public readonly getPos: () => number,

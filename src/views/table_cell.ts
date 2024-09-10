@@ -25,13 +25,9 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class TableCellView extends BlockView<
-  EditableBlockProps,
-  ManuscriptNode
-> {
+export class TableCellView extends BlockView<ManuscriptNode> {
   public contentDOM: HTMLElement
 
   public ignoreMutation(mutation: MutationRecord) {

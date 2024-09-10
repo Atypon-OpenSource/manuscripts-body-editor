@@ -19,11 +19,11 @@ import {
   TableElementFooterNode,
 } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TableElementFooterView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType, TableElementFooterNode>
+export class TableElementFooterView
+  extends BaseNodeView<TableElementFooterNode>
   implements ManuscriptNodeView
 {
   public initialise = () => {

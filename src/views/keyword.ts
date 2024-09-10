@@ -24,7 +24,6 @@ import {
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 import { Trackable } from '../types'
 
@@ -39,7 +38,7 @@ const deleteIcon =
   '</svg>'
 
 export class KeywordView
-  extends BaseNodeView<EditableBlockProps, Trackable<KeywordNode>>
+  extends BaseNodeView<Trackable<KeywordNode>>
   implements ManuscriptNodeView
 {
   private dialog: HTMLElement

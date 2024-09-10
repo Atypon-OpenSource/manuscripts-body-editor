@@ -17,14 +17,10 @@
 import { FootnoteNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class FootnoteView<PropsType extends BaseNodeProps> extends BlockView<
-  PropsType,
-  FootnoteNode
-> {
+export class FootnoteView extends BlockView<FootnoteNode> {
   public elementType = 'div'
 }
 

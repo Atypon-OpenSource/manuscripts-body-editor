@@ -45,7 +45,6 @@ import { footnotesKey } from '../plugins/footnotes'
 import { Trackable } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
 export interface InlineFootnoteProps extends BaseNodeProps {
@@ -54,10 +53,8 @@ export interface InlineFootnoteProps extends BaseNodeProps {
 
 type ModalProps = Exclude<(typeof FootnotesSelector)['defaultProps'], undefined>
 
-export class InlineFootnoteView<
-    PropsType extends InlineFootnoteProps & EditableBlockProps
-  >
-  extends BaseNodeView<PropsType, Trackable<InlineFootnoteNode>>
+export class InlineFootnoteView
+  extends BaseNodeView<Trackable<InlineFootnoteNode>>
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement

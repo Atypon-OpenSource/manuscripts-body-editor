@@ -21,13 +21,10 @@ import { TextSelection } from 'prosemirror-state'
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
-import { CrossReferenceView, CrossReferenceViewProps } from './cross_reference'
-import { EditableBlockProps } from './editable_block'
+import { CrossReferenceView } from './cross_reference'
 import ReactSubView from './ReactSubView'
 
-export class CrossReferenceEditableView extends CrossReferenceView<
-  CrossReferenceViewProps & EditableBlockProps
-> {
+export class CrossReferenceEditableView extends CrossReferenceView {
   protected popperContainer: HTMLDivElement
 
   public selectNode = () => {

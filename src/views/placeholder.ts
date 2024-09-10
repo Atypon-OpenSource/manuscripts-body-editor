@@ -17,11 +17,11 @@
 import { ManuscriptNodeView, PlaceholderNode } from '@manuscripts/transform'
 
 import { createPlaceholderContent } from '../lib/placeholder'
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class PlaceholderView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType, PlaceholderNode>
+export class PlaceholderView
+  extends BaseNodeView<PlaceholderNode>
   implements ManuscriptNodeView
 {
   public ignoreMutation = () => true

@@ -15,13 +15,10 @@
  */
 
 import { BlockquoteElementNode } from '@manuscripts/transform'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class BlockquoteElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType, BlockquoteElementNode> {
+export class BlockquoteElementView extends BlockView<BlockquoteElementNode> {
   public elementType = 'blockquote'
 }
 

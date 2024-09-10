@@ -37,13 +37,12 @@ import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 import { Trackable } from '../types'
 
-export class BibliographyElementBlockView<
-  PropsType extends EditableBlockProps
-> extends BlockView<PropsType, Trackable<BibliographyElementNode>> {
+export class BibliographyElementBlockView extends BlockView<
+  Trackable<BibliographyElementNode>
+> {
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement

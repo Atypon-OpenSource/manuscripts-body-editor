@@ -22,14 +22,10 @@ import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { AffiliationNode } from '@manuscripts/transform'
 import { Trackable } from '../types'
 
-export class AffiliationsView extends BlockView<
-  EditableBlockProps,
-  Trackable<AffiliationNode>
-> {
+export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
 

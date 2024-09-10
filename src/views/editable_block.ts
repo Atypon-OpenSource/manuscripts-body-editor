@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Capabilities } from '@manuscripts/style-guide'
 import {
   ManuscriptNode,
   ManuscriptNodeType,
@@ -22,11 +21,8 @@ import {
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
-import { DefaultTheme } from 'styled-components'
 
-import { Dispatch } from '../commands'
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,15 +34,7 @@ const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
   return !!findParentNodeOfTypeClosestToPos($pos, type)
 }
 
-export interface EditableBlockProps extends BaseNodeProps {
-  getCapabilities: () => Capabilities
-  dispatch?: Dispatch
-  theme: DefaultTheme
-}
-
-export const EditableBlock = <
-  T extends Constructor<BlockView<EditableBlockProps, ManuscriptNode>>
->(
+export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
   Base: T
 ) => {
   return class extends Base {

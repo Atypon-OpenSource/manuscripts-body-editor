@@ -16,12 +16,12 @@
 
 import { FigureNode, ManuscriptNodeView } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { Trackable } from '../types'
 
-export class FigureView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType, Trackable<FigureNode>>
+export class FigureView
+  extends BaseNodeView<Trackable<FigureNode>>
   implements ManuscriptNodeView
 {
   protected container: HTMLElement

@@ -16,11 +16,11 @@
 
 import { ManuscriptNodeView, TitleNode } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TitleView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType, TitleNode>
+export class TitleView
+  extends BaseNodeView<TitleNode>
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement

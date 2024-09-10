@@ -19,12 +19,9 @@ import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { sectionLevel } from '../lib/context-menu'
 import { sectionTitleKey } from '../plugins/section_title'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-export class SectionTitleView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType, SectionTitleNode> {
+export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
