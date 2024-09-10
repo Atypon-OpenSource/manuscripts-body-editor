@@ -15,7 +15,7 @@
  */
 
 import { DotsIcon } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
@@ -28,7 +28,10 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class TableCellView extends BlockView<EditableBlockProps> {
+export class TableCellView extends BlockView<
+  EditableBlockProps,
+  ManuscriptNode
+> {
   public contentDOM: HTMLElement
 
   public ignoreMutation(mutation: MutationRecord) {

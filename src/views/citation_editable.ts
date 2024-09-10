@@ -15,7 +15,7 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { CitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
@@ -29,7 +29,7 @@ import {
   CitationViewerProps,
 } from '../components/references/CitationViewer'
 import { Crossref } from '../lib/crossref'
-import { BibliographyItemAttrs, CitationAttrs } from '../lib/references'
+import { BibliographyItemAttrs } from '../lib/references'
 import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
@@ -66,7 +66,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     if (!this.can.seeReferencesButtons) {
       this.showPopper()
     } else if (!isDeleted(this.node) && event.button === 0) {
-      const attrs = getActualAttrs(this.node) as CitationAttrs
+      const attrs = getActualAttrs(this.node)
       if (attrs.rids.length) {
         this.showContextMenu()
       }
@@ -75,7 +75,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
-      const attrs = getActualAttrs(this.node) as CitationAttrs
+      const attrs = getActualAttrs(this.node)
       if (!attrs.rids.length) {
         this.showPopper()
       }
@@ -119,7 +119,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
     }
     const can = this.props.getCapabilities()
 
-    const attrs: CitationAttrs = getActualAttrs(this.node as CitationNode)
+    const attrs = getActualAttrs(this.node)
     const rids = attrs.rids
 
     const items = Array.from(bib.bibliographyItems.values())
@@ -191,7 +191,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
   }
 
   private handleUncite = (id: string) => {
-    const attrs = getActualAttrs(this.node as CitationNode)
+    const attrs = getActualAttrs(this.node)
     const rids = attrs.rids.filter((i) => i !== id)
     const pos = this.getPos()
     const tr = this.view.state.tr
@@ -215,7 +215,7 @@ export class CitationEditableView extends CitationView<EditableBlockProps> {
       return
     }
 
-    const attrs = getActualAttrs(this.node as CitationNode)
+    const attrs = getActualAttrs(this.node)
     const rids = [...attrs.rids]
 
     items = items.filter((i) => !rids.includes(i.id))

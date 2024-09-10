@@ -22,7 +22,10 @@ import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { EditableBlockProps } from './editable_block'
 
 export const createNodeView =
-  <T extends BaseNodeView<BaseNodeProps>, PropsT extends BaseNodeProps>(
+  <
+    T extends BaseNodeView<BaseNodeProps, ManuscriptNode>,
+    PropsT extends BaseNodeProps
+  >(
     type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
   ) =>
   (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> =>
@@ -42,7 +45,7 @@ export const createNodeView =
 
 export const createEditableNodeView =
   <
-    T extends BaseNodeView<EditableBlockProps>,
+    T extends BaseNodeView<EditableBlockProps, ManuscriptNode>,
     PropsT extends EditableBlockProps
   >(
     type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -63,7 +66,10 @@ export const createEditableNodeView =
   }
 
 export const createNodeOrElementView =
-  <T extends BaseNodeView<BaseNodeProps>, PropsT extends BaseNodeProps>(
+  <
+    T extends BaseNodeView<BaseNodeProps, ManuscriptNode>,
+    PropsT extends BaseNodeProps
+  >(
     type: new (...args: any[]) => T, // eslint-disable-line @typescript-eslint/no-explicit-any
     tagName: string,
     callback?: (node: ManuscriptNode, dom: HTMLElement) => void

@@ -15,7 +15,7 @@
  */
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { CrossReferenceNode, Target } from '@manuscripts/transform'
+import { Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
@@ -33,8 +33,7 @@ export class CrossReferenceEditableView extends CrossReferenceView<
   public selectNode = () => {
     const { getCapabilities } = this.props
 
-    const xref = this.node as CrossReferenceNode
-    const rids = xref.attrs.rids
+    const rids = this.node.attrs.rids
     const can = getCapabilities()
 
     if (!can?.editArticle || rids.length) {

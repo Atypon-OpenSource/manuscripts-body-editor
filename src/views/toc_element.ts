@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+import { TOCElementNode } from '@manuscripts/transform'
 import { sanitize } from '../lib/dompurify'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class TOCElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class TOCElementView<PropsType extends BaseNodeProps> extends BlockView<
+  PropsType,
+  TOCElementNode
+> {
   private element: HTMLElement
 
   public ignoreMutation = () => true

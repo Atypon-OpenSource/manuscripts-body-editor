@@ -26,7 +26,11 @@ export interface BaseNodeProps {
   cslProps: CSLProps
 }
 
-export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
+export class BaseNodeView<
+  PropsType extends BaseNodeProps,
+  Node extends ManuscriptNode
+> implements NodeView
+{
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public syncErrors: SyncError[]
@@ -34,7 +38,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
 
   public constructor(
     public readonly props: PropsType,
-    public node: ManuscriptNode,
+    public node: Node,
     public readonly view: ManuscriptEditorView,
     public readonly getPos: () => number,
     public decorations: readonly Decoration[]
@@ -52,7 +56,7 @@ export class BaseNodeView<PropsType extends BaseNodeProps> implements NodeView {
       return false
     }
     this.handleDecorations(decorations)
-    this.node = newNode
+    this.node = newNode as Node
     this.updateContents()
     this.props.popper.update()
     return true

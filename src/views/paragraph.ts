@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+import { ParagraphNode } from '@manuscripts/transform'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class ParagraphView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class ParagraphView<PropsType extends BaseNodeProps> extends BlockView<
+  PropsType,
+  ParagraphNode
+> {
   public elementType = 'p'
 }
 

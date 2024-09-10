@@ -15,7 +15,11 @@
  */
 
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNodeType, schema } from '@manuscripts/transform'
+import {
+  ManuscriptNode,
+  ManuscriptNodeType,
+  schema,
+} from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { DefaultTheme } from 'styled-components'
@@ -41,7 +45,7 @@ export interface EditableBlockProps extends BaseNodeProps {
 }
 
 export const EditableBlock = <
-  T extends Constructor<BlockView<EditableBlockProps>>
+  T extends Constructor<BlockView<EditableBlockProps, ManuscriptNode>>
 >(
   Base: T
 ) => {

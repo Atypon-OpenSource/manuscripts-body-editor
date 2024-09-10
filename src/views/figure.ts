@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { FigureNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export class FigureView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
+  extends BaseNodeView<PropsType, Trackable<FigureNode>>
   implements ManuscriptNodeView
 {
   protected container: HTMLElement

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+import { BlockquoteElementNode } from '@manuscripts/transform'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
 export class BlockquoteElementView<
   PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+> extends BlockView<PropsType, BlockquoteElementNode> {
   public elementType = 'blockquote'
 }
 

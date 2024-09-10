@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FigureNode, schema } from '@manuscripts/transform'
+import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
@@ -27,6 +27,7 @@ import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+import { Trackable } from '../types'
 
 interface FigureElementProps {
   fileManagement: FileManagement
@@ -34,7 +35,8 @@ interface FigureElementProps {
 }
 
 export class FigureElementView extends BlockView<
-  EditableBlockProps & FigureElementProps
+  EditableBlockProps & FigureElementProps,
+  Trackable<FigureElementNode>
 > {
   private container: HTMLElement
   private reactTools: HTMLElement
@@ -72,7 +74,7 @@ export class FigureElementView extends BlockView<
 
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
-    this.contentDOM.setAttribute('data-alignment', alignment)
+    this.contentDOM.setAttribute('data-alignment', alignment || '')
 
     if (sizeFraction > 1) {
       // fit to page width

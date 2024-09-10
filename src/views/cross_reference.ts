@@ -20,6 +20,7 @@ import { Location, NavigateFunction } from 'react-router-dom'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
   navigate: NavigateFunction
@@ -27,7 +28,7 @@ export interface CrossReferenceViewProps extends BaseNodeProps {
 }
 
 export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
-  extends BaseNodeView<PropsType>
+  extends BaseNodeView<PropsType, Trackable<CrossReferenceNode>>
   implements ManuscriptNodeView
 {
   public selectNode = () => {
@@ -36,8 +37,7 @@ export class CrossReferenceView<PropsType extends CrossReferenceViewProps>
   }
 
   public handleClick = () => {
-    const xref = this.node as CrossReferenceNode
-    const rids = xref.attrs.rids
+    const rids = this.node.attrs.rids
     if (!rids.length) {
       return
     }

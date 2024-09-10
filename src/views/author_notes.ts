@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
+import { AuthorNotesNode, ManuscriptNode } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
+import { Trackable } from '../types'
 
-export class AuthorNotesView extends BlockView<EditableBlockProps> {
+export class AuthorNotesView extends BlockView<
+  EditableBlockProps,
+  Trackable<AuthorNotesNode>
+> {
   container: HTMLElement
   allowedTypes = ['corresp', 'footnote', 'paragraph']
   correspondenceHeader = 'Correspondence'

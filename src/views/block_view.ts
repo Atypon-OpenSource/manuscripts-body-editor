@@ -27,8 +27,11 @@ const isGraphicalAbstractFigure = ($pos: ResolvedPos, doc: ManuscriptNode) =>
   $pos.parent.type === schema.nodes.graphical_abstract_section &&
   doc.nodeAt($pos.pos)?.type === schema.nodes.figure_element
 
-export default class BlockView<T extends BaseNodeProps>
-  extends BaseNodeView<T>
+export default class BlockView<
+    T extends BaseNodeProps,
+    BlockNode extends ManuscriptNode
+  >
+  extends BaseNodeView<T, BlockNode>
   implements ManuscriptNodeView
 {
   public viewAttributes = {

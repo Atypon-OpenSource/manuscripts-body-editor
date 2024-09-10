@@ -18,6 +18,7 @@ import {
   PAGE_BREAK_AFTER,
   PAGE_BREAK_BEFORE,
   PAGE_BREAK_BEFORE_AND_AFTER,
+  SectionNode,
 } from '@manuscripts/transform'
 
 import { PluginState, sectionTitleKey } from '../plugins/section_title'
@@ -35,9 +36,10 @@ export const handleSectionNumbering = (sections: PluginState) => {
     }
   })
 }
-export class SectionView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class SectionView<PropsType extends BaseNodeProps> extends BlockView<
+  PropsType,
+  SectionNode
+> {
   public elementType = 'section'
   public element: HTMLElement
   public initialise = () => {

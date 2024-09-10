@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { PlaceholderNode } from '@manuscripts/transform'
 import { createPlaceholderContent } from '../lib/placeholder'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
@@ -21,7 +22,7 @@ import { createNodeView } from './creators'
 
 export class PlaceholderElementView<
   PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+> extends BlockView<PropsType, PlaceholderNode> {
   private element: HTMLElement
 
   public createElement = () => {

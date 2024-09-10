@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import { schema, SectionTitleNode } from '@manuscripts/transform'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { sectionLevel } from '../lib/context-menu'
@@ -24,7 +24,7 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class SectionTitleView<
   PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+> extends BlockView<PropsType, SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 

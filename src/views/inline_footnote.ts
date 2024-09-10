@@ -42,7 +42,7 @@ import {
   isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
-import { TrackableAttributes } from '../types'
+import { Trackable } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import { EditableBlockProps } from './editable_block'
@@ -57,7 +57,7 @@ type ModalProps = Exclude<(typeof FootnotesSelector)['defaultProps'], undefined>
 export class InlineFootnoteView<
     PropsType extends InlineFootnoteProps & EditableBlockProps
   >
-  extends BaseNodeView<PropsType>
+  extends BaseNodeView<PropsType, Trackable<InlineFootnoteNode>>
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
@@ -155,7 +155,7 @@ export class InlineFootnoteView<
       notes: [],
       onInsert: this.onInsert,
       onCancel: this.destroy,
-      inlineFootnote: this.node as InlineFootnoteNode,
+      inlineFootnote: this.node,
     }
     this.popperContainer = ReactSubView(
       { ...this.props, dispatch: this.view.dispatch },
@@ -213,7 +213,7 @@ export class InlineFootnoteView<
   }
 
   public updateContents = () => {
-    const attrs = this.node.attrs as TrackableAttributes<InlineFootnoteNode>
+    const attrs = this.node.attrs
     this.dom.setAttribute('rids', attrs.rids.join(','))
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
@@ -270,7 +270,7 @@ export class InlineFootnoteView<
     const tableElement = this.findParentTableElement()
     if (tableElement) {
       insertTableFootnote(tableElement.node, tableElement.pos, this.view, {
-        node: this.node as InlineFootnoteNode,
+        node: this.node,
         pos: this.getPos(),
       })
       this.destroy()
@@ -279,7 +279,9 @@ export class InlineFootnoteView<
 
   public onInsert = (notes: FootnoteWithIndex[]) => {
     if (notes.length) {
-      const contents = this.node.attrs.contents.split(',')
+      const contents = this.node.attrs.contents
+        .split(',')
+        .map((n) => parseInt(n))
       const rids = notes.map((note) => note.node.attrs.id)
       const { tr } = this.view.state
 

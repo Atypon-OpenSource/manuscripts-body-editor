@@ -21,6 +21,7 @@ import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
 import { EditableBlockProps } from './editable_block'
+import { Trackable } from '../types'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
@@ -29,7 +30,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   viewProps: {
     view: ManuscriptEditorView
     getPos: () => number
-    node: ManuscriptNode
+    node: ManuscriptNode | Trackable<ManuscriptNode>
   }
   dispatch: Dispatch
 }
@@ -38,15 +39,15 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   MAKE SURE dispatch IS PASSED TO YOUR VIEW
 */
 
-export default (
+function createSubView<T extends Trackable<ManuscriptNode>>(
   props: EditableBlockProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   componentProps: object,
-  node: ManuscriptNode,
+  node: T,
   getPos: () => number,
   view: ManuscriptEditorView,
   classNames = ''
-): HTMLDivElement => {
+): HTMLDivElement {
   const container = document.createElement('div')
   container.classList.add('tools-panel')
   if (classNames) {
@@ -84,3 +85,5 @@ export default (
 
   return container
 }
+
+export default createSubView

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+import { EquationElementNode } from '@manuscripts/transform'
 import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export class EquationElementView<
   PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+> extends BlockView<PropsType, Trackable<EquationElementNode>> {
   public elementType = 'figure'
 
   public updateContents = () => {
