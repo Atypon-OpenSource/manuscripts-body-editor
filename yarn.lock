@@ -1565,10 +1565,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.17":
-  version "1.7.17"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.17.tgz#f75fe992709511f85f9b50a7c85d07d3ea5465ee"
-  integrity sha512-L898CzhMfiqK4JGk/y6ky4WH4K/DQ2nlg2c5MyoTDcEGuddwZIMyc1yD0PscetEKKocOqWJRNQfWuzOjspYMTg==
+"@manuscripts/track-changes-plugin@1.7.18-LEAN-3898.0":
+  version "1.7.18-LEAN-3898.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18-LEAN-3898.0.tgz#fee44538d21e7c51bcdc5483f150bca44ee6455b"
+  integrity sha512-y87TbojLDmKJp7A15XtzRs201ZY52Mt8TUHqWsJx+9Y5DpsD4VLwCJGM2HWRL39TYuaej7tTKniFdqxheixiTw==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1581,10 +1581,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.3.31":
-  version "2.3.31"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.31.tgz#e7ce02d926d19f8b474f52bc48e7b9d01ad1c6a4"
-  integrity sha512-agXrGgUTrZdCM3mNAGft+8pjYWZJPaHp3LZb2kHjJipOGUd/NU7wAqlNu7CUVcK+d7/XMHBjcmkq3wDgMb7HKQ==
+"@manuscripts/transform@2.3.32-LEAN-3898.0":
+  version "2.3.32-LEAN-3898.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.32-LEAN-3898.0.tgz#7ac9a1bd2d40c81671c02af4e79cdd8b399f646a"
+  integrity sha512-5zmKJNW6rGZZKzzAWsUM75UnfcRTQBDr3o1Knm4sf6ptcbiOZUE0cDrb4Rdi0XvvcjdBcv+x+QiXge7m7qVYuw==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/library" "1.3.11"
