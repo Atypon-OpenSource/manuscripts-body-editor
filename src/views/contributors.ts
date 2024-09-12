@@ -19,7 +19,7 @@ import {
   ContextMenuProps,
   SecondaryButton,
 } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import {
@@ -44,10 +44,10 @@ import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { Trackable } from '../types'
 
-export class ContributorsView extends BlockView<EditableBlockProps> {
+export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement

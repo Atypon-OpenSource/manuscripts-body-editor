@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { LinkNode, ManuscriptNodeView } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
-export class LinkView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
+export class LinkView
+  extends BaseNodeView<Trackable<LinkNode>>
   implements ManuscriptNodeView {}
 
 export default createNodeView(LinkView)

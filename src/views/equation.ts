@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
 import { getActualAttrs } from '../lib/track-changes-utils'
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class EquationView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
+export class EquationView
+  extends BaseNodeView<EquationNode>
   implements ManuscriptNodeView
 {
   public initialise = () => {
