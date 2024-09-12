@@ -1581,10 +1581,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.3.31-LEAN-3960.0":
-  version "2.3.31-LEAN-3960.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.31-LEAN-3960.0.tgz#6d6b987d98691504e46faed1ca436af159c437d3"
-  integrity sha512-2wJ1K7AyoJMUh9Zn+drokYKbUi4MiVohqldUT2c20zPkyFVNSYAjKTth0fn2lWHy2mKd0jbJAh15Dsv3nQJA3Q==
+"@manuscripts/transform@2.3.32":
+  version "2.3.32"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.32.tgz#e3c930b9f51f2b2b9b92e9fc378423149a44d1b3"
+  integrity sha512-8QumcfAz6xXfoWTGbKhWb0fzalN3AR9p5ZftCAeWj5gCyhLm4kGSbWl/JjPEgLUzShwzO30YmL8k6qSp02TzQg==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/library" "1.3.11"
