@@ -49,13 +49,15 @@ export function hasAutoCompletionSlack(
   if (category && title && titleSection.textContent) {
     const actualTextContent = getActualTextContent(titleSection.content)
     if (title.toLowerCase().startsWith(actualTextContent.toLowerCase())) {
-      const suggestionText = title.slice(actualTextContent.length)
-      return isUpperCase(actualTextContent)
-        ? suggestionText.toUpperCase()
-        : suggestionText
+      const suggestionPart = title.slice(actualTextContent.length)
+      const suggestion = isUpperCase(actualTextContent)
+        ? suggestionPart.toUpperCase()
+        : suggestionPart
+
+      return { suggestion, title }
     }
   }
-  return ''
+  return null
 }
 
 export function checkForCompletion(state: EditorState) {
@@ -76,7 +78,9 @@ export function checkForCompletion(state: EditorState) {
       section.node as SectionNode,
       title.node as SectionTitleNode
     )
-    return text
+    if (text) {
+      return text
+    }
   }
-  return ''
+  return null
 }

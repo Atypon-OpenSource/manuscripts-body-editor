@@ -77,7 +77,7 @@ export default () => {
           const decoration = Decoration.widget(state.selection.from, () => {
             const node = document.createElement('span')
             node.classList.add('completion-bearer')
-            node.dataset.suggest = text
+            node.dataset.suggest = text.suggestion
             return node
           })
           return DecorationSet.create(state.doc, [decoration])

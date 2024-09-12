@@ -1724,9 +1724,16 @@ export const autoComplete = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const autocompleteText = checkForCompletion(state)
-  if (autocompleteText) {
-    const tr = state.tr.insertText(autocompleteText, state.selection.from)
+  const complete = checkForCompletion(state)
+  if (complete) {
+    const firstLetterOnly =
+      complete.title.length - complete.suggestion.length === 1
+    const pos = firstLetterOnly
+      ? state.selection.from - 1
+      : state.selection.from
+    const text = firstLetterOnly ? complete.title : complete.suggestion
+
+    const tr = state.tr.insertText(text, pos)
     dispatch && dispatch(tr)
     return true
   }
