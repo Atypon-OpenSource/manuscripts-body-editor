@@ -20,7 +20,6 @@ import {
   ManuscriptNodeView,
   schema,
 } from '@manuscripts/transform'
-import { History } from 'history'
 import { NodeSelection, TextSelection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
@@ -36,6 +35,7 @@ import {
 import { FootnotesSelector } from '../components/views/FootnotesSelector'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from '../lib/footnotes'
 import {
+  getActualAttrs,
   getChangeClasses,
   isDeleted,
   isPendingInsert,
@@ -43,13 +43,9 @@ import {
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
 import { Trackable } from '../types'
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
-export interface InlineFootnoteProps extends BaseNodeProps {
-  history: History
-}
 
 type ModalProps = Exclude<(typeof FootnotesSelector)['defaultProps'], undefined>
 
@@ -176,12 +172,19 @@ export class InlineFootnoteView
     const fnState = footnotesKey.getState(this.view.state)
     if (fnState) {
       this.activateModal({
-        notes: Array.from(fnState.unusedFootnotes.values()).map((n) => ({
-          node: n[0],
-        })),
+        notes: Array.from(fnState.unusedFootnotes.values()).reduce((acc, n) => {
+          const node = n[0]
+          if (!isDeleted(node) && !isRejectedInsert(node)) {
+            acc.push({
+              node,
+            })
+          }
+
+          return acc
+        }, [] as Array<FootnoteWithIndex>),
         onCancel: () => {
           const { tr } = this.view.state
-          if (!this.node.attrs.rids.length) {
+          if (!getActualAttrs(this.node).rids.length) {
             this.view.dispatch(
               tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
             )
@@ -215,7 +218,7 @@ export class InlineFootnoteView
     this.dom.setAttribute('contents', attrs.contents)
     this.dom.className = [
       'footnote',
-      ...getChangeClasses(attrs.dataTracked),
+      ...getChangeClasses(this.node.attrs.dataTracked),
     ].join(' ')
 
     if (
@@ -276,8 +279,8 @@ export class InlineFootnoteView
 
   public onInsert = (notes: FootnoteWithIndex[]) => {
     if (notes.length) {
-      const contents = this.node.attrs.contents
-        .split(',')
+      const contents = getActualAttrs(this.node)
+        .contents.split(',')
         .map((n) => parseInt(n))
       const rids = notes.map((note) => note.node.attrs.id)
       const { tr } = this.view.state
