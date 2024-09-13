@@ -1535,10 +1535,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.20-LEAN-3840.0":
-  version "2.0.20-LEAN-3840.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.20-LEAN-3840.0.tgz#c7cb9b4969e4631ec22460cd34c2c128de99e2e2"
-  integrity sha512-LTMyxoXjG2bqhcdEBLRQGwgQFN7P6unRPb1xB+FftXysOOEwfbDUnm9rSLWrx43IakDGmvxgRCbYFit4YZv8HQ==
+"@manuscripts/style-guide@2.0.19":
+  version "2.0.19"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.19.tgz#565f99732b0ff9fd9e155e3814c592efb7a49b7d"
+  integrity sha512-k/cqGlNbyYFkI6X50vYvQ4rJ9wbW1DS1CExgoaWTuZ8P++3cAWwV9H+RHVY60jfhavNTqwPLJI5ZNnfEU9SAdA==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@reach/tabs" "^0.18.0"
@@ -1565,10 +1565,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.18-LEAN-3840.1":
-  version "1.7.18-LEAN-3840.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18-LEAN-3840.1.tgz#2ba6bc998da66fbfc69a866e989cb73ec559b510"
-  integrity sha512-eMatVDeiirQuHfkLx4sbYrIdI0hoir0+dVR1Xl8e1K5mNTW40t2sVZ3R0ohIL6CeQjtIaTHE6P87Y3a3fD0gOQ==
+"@manuscripts/track-changes-plugin@1.7.18":
+  version "1.7.18"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18.tgz#03072e6573fe9a993d248afba6a435e287966d03"
+  integrity sha512-9k6ehtS17Q0OU4i0ZDVZbPYwtLKYkn1lTDb1FyvFTpMZAUslqewhD1l605VrMZjsz/UO2SbJF9sccvunoevZtQ==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
