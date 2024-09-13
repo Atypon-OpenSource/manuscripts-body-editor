@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
+import { FootnotesElementNode } from '@manuscripts/transform'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { setTCClasses } from './footnote'
 
-export class FootnotesElementView<
-  Props extends EditableBlockProps
-> extends BlockView<Props> {
+export class FootnotesElementView extends BlockView<FootnotesElementNode> {
   public elementType = 'div'
 
   onUpdateContent() {
