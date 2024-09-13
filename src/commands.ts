@@ -1726,14 +1726,14 @@ export const autoComplete = (
 ) => {
   const complete = checkForCompletion(state)
   if (complete) {
-    const firstLetterOnly =
-      complete.title.length - complete.suggestion.length === 1
-    const pos = firstLetterOnly
-      ? state.selection.from - 1
-      : state.selection.from
-    const text = firstLetterOnly ? complete.title : complete.suggestion
-
-    const tr = state.tr.insertText(text, pos)
+    const tr = state.tr.insertText(complete.suggestion, state.selection.from)
+    if (complete.title.length - complete.suggestion.length === 1) {
+      tr.replaceWith(
+        state.selection.from - 1,
+        state.selection.from,
+        schema.text(complete.title[0])
+      )
+    }
     dispatch && dispatch(tr)
     return true
   }
