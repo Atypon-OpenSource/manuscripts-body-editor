@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  ManuscriptNodeView,
+  TableElementFooterNode,
+} from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TableElementFooterView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
+export class TableElementFooterView
+  extends BaseNodeView<TableElementFooterNode>
   implements ManuscriptNodeView
 {
   public initialise = () => {

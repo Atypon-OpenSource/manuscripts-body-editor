@@ -15,12 +15,12 @@
  */
 
 import { ListElement } from '@manuscripts/json-schema'
-import { ManuscriptNode } from '@manuscripts/transform'
+import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
+import { Trackable } from '../types'
 
 export type JatsStyleType = NonNullable<ListElement['listStyleType']>
 
@@ -36,9 +36,7 @@ export const JATS_HTML_LIST_STYLE_MAPPING: {
   'roman-upper': 'upper-roman',
 }
 
-export class OrderedListView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class OrderedListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ol'
 
   public updateContents = () => {

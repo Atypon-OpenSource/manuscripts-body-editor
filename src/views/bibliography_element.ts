@@ -15,7 +15,11 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { BibliographyItemNode, schema } from '@manuscripts/transform'
+import {
+  BibliographyElementNode,
+  BibliographyItemNode,
+  schema,
+} from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { addNodeComment } from '../commands'
@@ -33,12 +37,12 @@ import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { Trackable } from '../types'
 
-export class BibliographyElementBlockView<
-  PropsType extends EditableBlockProps
-> extends BlockView<PropsType> {
+export class BibliographyElementBlockView extends BlockView<
+  Trackable<BibliographyElementNode>
+> {
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
@@ -181,6 +185,8 @@ export class BibliographyElementBlockView<
       const node = nodes.get(id) as BibliographyItemNode
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
+
+      node.attrs as BibliographyItemAttrs
 
       const attrs = node.attrs as BibliographyItemAttrs
       const change = attrs.dataTracked?.[0]

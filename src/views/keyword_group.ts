@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { KeywordGroupNode } from '@manuscripts/transform'
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class KeywordGroupView extends BlockView<EditableBlockProps> {
+export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   private element: HTMLElement
   private addingTools: HTMLDivElement
 

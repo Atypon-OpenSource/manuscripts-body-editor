@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Capabilities, FileCorruptedIcon } from '@manuscripts/style-guide'
+import { FileCorruptedIcon } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -23,24 +23,14 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, FileManagement, groupFiles } from '../lib/files'
+import { FileAttachment, groupFiles } from '../lib/files'
 import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-export interface FigureProps {
-  fileManagement: FileManagement
-  getFiles: () => FileAttachment[]
-  getCapabilities: () => Capabilities
-  isInGraphicalAbstract?: boolean
-}
-
-export class FigureEditableView extends FigureView<
-  EditableBlockProps & FigureProps
-> {
+export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
 
   public viewProps: {
