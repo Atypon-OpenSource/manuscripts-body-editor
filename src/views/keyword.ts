@@ -24,8 +24,8 @@ import {
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
+import { Trackable } from '../types'
 
 const deleteIcon =
   '<svg width="8px" height="8px" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\n' +
@@ -38,7 +38,7 @@ const deleteIcon =
   '</svg>'
 
 export class KeywordView
-  extends BaseNodeView<EditableBlockProps>
+  extends BaseNodeView<Trackable<KeywordNode>>
   implements ManuscriptNodeView
 {
   private dialog: HTMLElement
@@ -88,7 +88,7 @@ export class KeywordView
   private showConfirmationDialog = () => {
     this.dialog?.remove()
 
-    const keyword = this.node as KeywordNode
+    const keyword = this.node
     const pos = this.getPos()
 
     const handleDelete = () => {

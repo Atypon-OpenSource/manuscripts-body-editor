@@ -22,9 +22,10 @@ import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
+import { AffiliationNode } from '@manuscripts/transform'
+import { Trackable } from '../types'
 
-export class AffiliationsView extends BlockView<EditableBlockProps> {
+export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
 
@@ -104,6 +105,7 @@ export class AffiliationsView extends BlockView<EditableBlockProps> {
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     const item = element.closest('.affiliation')
+
     if (item) {
       const node = findChildByID(this.view, item.id)
       if (!node) {
