@@ -308,7 +308,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
               <ReferenceForm
                 values={normalize(selection)}
                 showDelete={
-                  !citationCounts.get(selection.id) &&
+                  !!citationCounts.get(selection.id) &&
                   citationCounts.get(selection.id)! > 0
                 }
                 onChange={handleChange}
