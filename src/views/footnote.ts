@@ -31,6 +31,7 @@ export const setTCClasses = (node: ManuscriptNode, dom: HTMLElement) => {
     const changeClasses = getChangeClasses([lastChange])
     dom.classList.add(...changeClasses)
   }
+  dom.setAttribute('id', node.attrs.id)
 }
 
 export default createNodeOrElementView(FootnoteView, 'div', setTCClasses)
