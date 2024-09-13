@@ -54,7 +54,10 @@ export function hasAutoCompletionSlack(
         ? suggestionPart.toUpperCase()
         : suggestionPart
 
-      return { suggestion, title }
+      return {
+        suggestion,
+        title: isUpperCase(actualTextContent) ? title.toUpperCase() : title,
+      }
     }
   }
   return null
@@ -69,6 +72,7 @@ export function checkForCompletion(state: EditorState) {
     state.selection.$from,
     schema.nodes.section_title
   )
+
   if (
     section &&
     title &&

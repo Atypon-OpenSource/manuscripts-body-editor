@@ -1727,13 +1727,21 @@ export const autoComplete = (
   const complete = checkForCompletion(state)
   if (complete) {
     const tr = state.tr.insertText(complete.suggestion, state.selection.from)
-    if (complete.title.length - complete.suggestion.length === 1) {
+    const inserted = complete.title.substring(
+      0,
+      complete.title.length - complete.suggestion.length
+    )
+    console.log(inserted)
+    console.log(complete)
+    if (inserted) {
+      // replacing to provide text case as required
       tr.replaceWith(
-        state.selection.from - 1,
+        state.selection.from - inserted.length,
         state.selection.from,
-        schema.text(complete.title[0])
+        schema.text(inserted)
       )
     }
+
     dispatch && dispatch(tr)
     return true
   }

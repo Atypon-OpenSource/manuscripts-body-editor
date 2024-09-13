@@ -72,7 +72,6 @@ export default () => {
     props: {
       decorations(state) {
         const text = checkForCompletion(state)
-
         if (text) {
           const decoration = Decoration.widget(state.selection.from, () => {
             const node = document.createElement('span')
