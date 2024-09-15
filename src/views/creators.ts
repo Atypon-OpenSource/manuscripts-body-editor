@@ -19,10 +19,10 @@ import { ManuscriptNode } from '@manuscripts/transform'
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
-import { EditableBlockProps } from './editable_block'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 
 export const createNodeView =
-  <T extends BaseNodeView<BaseNodeProps>, PropsT extends BaseNodeProps>(
+  <T extends BaseNodeView<ManuscriptNode>, PropsT extends BaseNodeProps>(
     type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
   ) =>
   (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> =>
@@ -41,13 +41,10 @@ export const createNodeView =
   }
 
 export const createEditableNodeView =
-  <
-    T extends BaseNodeView<EditableBlockProps>,
-    PropsT extends EditableBlockProps
-  >(
+  <T extends BaseNodeView<ManuscriptNode>>(
     type: new (...args: any[]) => T // eslint-disable-line @typescript-eslint/no-explicit-any
   ) =>
-  (props: PropsT, dispatch?: Dispatch): NodeViewCreator<T> =>
+  (props: EditorProps, dispatch?: Dispatch): NodeViewCreator<T> =>
   (node, view, getPos, decorations) => {
     const nodeView = new type(
       { ...props, dispatch },
@@ -63,12 +60,12 @@ export const createEditableNodeView =
   }
 
 export const createNodeOrElementView =
-  <T extends BaseNodeView<BaseNodeProps>, PropsT extends BaseNodeProps>(
+  <T extends BaseNodeView<ManuscriptNode>>(
     type: new (...args: any[]) => T, // eslint-disable-line @typescript-eslint/no-explicit-any
     tagName: string,
     callback?: (node: ManuscriptNode, dom: HTMLElement) => void
   ) =>
-  (props: PropsT): NodeViewCreator<T> =>
+  (props: EditorProps): NodeViewCreator<T> =>
   (node, view, getPos, decorations) => {
     // TODO: look for parent Section instead?
 
