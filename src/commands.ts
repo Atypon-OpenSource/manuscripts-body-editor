@@ -110,7 +110,7 @@ import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
-// enter on at the start of paragraph will add node above
+// enter at the start of paragraph will add node above
 export const addToStart = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
