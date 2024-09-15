@@ -635,14 +635,25 @@ export const insertFootnote = (
     const footnoteElement = findChildrenByType(
       footnotesSection.node,
       schema.nodes.footnotes_element
-    )
-    const pos =
-      footnotesSection.pos +
-      footnoteElement[0].pos +
-      footnoteElement[0].node.nodeSize -
-      1
-    tr.insert(pos, footnote)
-    selectionPos = pos + 2
+    ).pop()
+
+    if (footnoteElement) {
+      const pos =
+        footnotesSection.pos +
+        footnoteElement.pos +
+        footnoteElement.node.nodeSize -
+        1
+      tr.insert(pos, footnote)
+      selectionPos = pos + 2
+    } else {
+      const footnoteElement = schema.nodes.footnotes_element.create(
+        {},
+        footnote
+      )
+      const pos = footnotesSection.pos + footnotesSection.node.nodeSize - 1
+      tr.insert(pos, footnoteElement)
+      selectionPos = pos + 2
+    }
   }
   if (selectionPos) {
     const selection = TextSelection.near(tr.doc.resolve(selectionPos))
