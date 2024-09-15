@@ -318,7 +318,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                 values={normalize(selection)}
                 showDelete={
                   !citationCounts.get(selection.id) &&
-                  isNewItem(selection, ['id', 'type'])
+                  isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
                 }
                 onChange={handleChange}
                 onCancel={onCancel}
