@@ -29,6 +29,7 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
+  addToStart,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
   ignoreMetaNodeBackspaceCommand,
@@ -43,6 +44,7 @@ import {
 import { EditorAction } from '../types'
 
 const customKeymap: { [key: string]: EditorAction } = {
+  Enter: addToStart,
   Backspace: chainCommands(
     undoInputRule,
     ignoreAtomBlockNodeBackward,

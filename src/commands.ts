@@ -110,6 +110,45 @@ import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
+// enter on at the start of paragraph will add node above
+export const addToStart = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+): boolean => {
+  const { selection } = state
+
+  if (
+    !dispatch ||
+    !(selection instanceof TextSelection) ||
+    selection.$from.node().type !== schema.nodes.paragraph
+  ) {
+    return false
+  }
+
+  const {
+    $anchor: { parentOffset: startOffset },
+    $head: { parentOffset: endOffset },
+    $from,
+    $to,
+  } = selection
+  const parentSize = $from.node().content.size
+
+  if (
+    (startOffset === 0 && endOffset === 0) ||
+    startOffset === parentSize ||
+    endOffset === parentSize
+  ) {
+    const side =
+      (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
+        .pos - (startOffset === 0 ? 1 : 0)
+    const tr = state.tr.insert(side, $from.node().type.createAndFill()!)
+    tr.setSelection(TextSelection.create(tr.doc, side + 1))
+    dispatch(tr.scrollIntoView())
+    return true
+  }
+  return false
+}
+
 export const markActive =
   (type: ManuscriptMarkType) =>
   (state: ManuscriptEditorState): boolean => {
