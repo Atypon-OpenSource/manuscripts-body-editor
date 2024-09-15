@@ -202,6 +202,15 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     actionsRef.current?.reset()
     setConfirm(false)
   }
+  // Determine if the newly added citation is a new item by checking if it has properties beyond just 'id' and 'type'
+  const isNewItem = (
+    obj: BibliographyItemAttrs,
+    basicProps: string | string[]
+  ) => {
+    const allKeys = Object.keys(obj)
+    const extraKeys = allKeys.filter((key) => !basicProps.includes(key))
+    return extraKeys.length > 0
+  }
 
   const handleSave = (values: BibliographyItemAttrs | undefined) => {
     if (!values || !selection) {
@@ -308,8 +317,8 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
               <ReferenceForm
                 values={normalize(selection)}
                 showDelete={
-                  !!citationCounts.get(selection.id) &&
-                  citationCounts.get(selection.id)! > 0
+                  !citationCounts.get(selection.id) &&
+                  isNewItem(selection, ['id', 'type'])
                 }
                 onChange={handleChange}
                 onCancel={onCancel}
