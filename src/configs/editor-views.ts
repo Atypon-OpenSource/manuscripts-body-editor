@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { DefaultTheme } from 'styled-components'
-
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
@@ -24,11 +22,10 @@ import blockquoteElement from '../views/blockquote_element_editable'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
-import { EditableBlockProps } from '../views/editable_block'
 import empty from '../views/empty'
 import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
-import figure, { FigureProps } from '../views/figure_editable'
+import figure from '../views/figure_editable'
 import figureElement from '../views/figure_element_editable'
 import footnote from '../views/footnote_editable'
 import footnotesElement from '../views/footnotes_element'
@@ -51,15 +48,13 @@ import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer_editable'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
-
-type EditorProps = EditableBlockProps & FigureProps & { theme: DefaultTheme }
+import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
-    list: list(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
@@ -75,6 +70,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     keyword: keyword(props, dispatch),
     keyword_group: keywordGroup(props, dispatch),
     link: link(props, dispatch),
+    list: list(props),
     list_item: list_item(props),
     paragraph: paragraph(props),
     placeholder: placeholder(props),
