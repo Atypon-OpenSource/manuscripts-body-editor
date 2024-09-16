@@ -15,26 +15,22 @@
  */
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { CrossReferenceNode, Target } from '@manuscripts/transform'
+import { Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
-import { CrossReferenceView, CrossReferenceViewProps } from './cross_reference'
-import { EditableBlockProps } from './editable_block'
+import { CrossReferenceView } from './cross_reference'
 import ReactSubView from './ReactSubView'
 
-export class CrossReferenceEditableView extends CrossReferenceView<
-  CrossReferenceViewProps & EditableBlockProps
-> {
+export class CrossReferenceEditableView extends CrossReferenceView {
   protected popperContainer: HTMLDivElement
 
   public selectNode = () => {
     const { getCapabilities } = this.props
 
-    const xref = this.node as CrossReferenceNode
-    const rids = xref.attrs.rids
+    const rids = this.node.attrs.rids
     const can = getCapabilities()
 
     if (!can?.editArticle || rids.length) {

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 import {
-  ColumnChangeWarningDialog,
+  Category,
   DeleteIcon,
+  Dialog,
   IconTextButton,
   PlusIcon,
 } from '@manuscripts/style-guide'
@@ -53,10 +54,34 @@ const getSelectedCellsCount = (state: EditorState) => {
   }
 }
 
-export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
-  view,
-  close,
-}) => {
+const ColumnChangeWarningDialog: React.FC<{
+  isOpen: boolean
+  primaryAction: () => void
+  secondaryAction: () => void
+}> = ({ isOpen, primaryAction, secondaryAction }) => (
+  <Dialog
+    isOpen={isOpen}
+    category={Category.confirmation}
+    header={"This change can't be tracked"}
+    message="This column action won't be marked as chnage. Do you want to continue?"
+    actions={{
+      primary: {
+        action: primaryAction,
+        title: 'Ok',
+      },
+      secondary: {
+        action: secondaryAction,
+        title: 'Cancel',
+      },
+    }}
+  />
+)
+
+export const ContextMenu: React.FC<{
+  view: EditorView
+  close: () => void
+  onCancelColumnDialog: () => void
+}> = ({ view, close, onCancelColumnDialog }) => {
   const runCommand = (command: Command, noTracking?: boolean) => {
     command(view.state, (tr) =>
       view.dispatch((noTracking && skipTracking(tr)) || tr)
@@ -64,16 +89,14 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
     close()
   }
 
-  const [columnAction, setColumnAction] = useState<Command | undefined>(
-    undefined
-  )
+  const [columnAction, setColumnAction] = useState<Command>()
 
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
 
   return (
-    <MenuDropdownList>
+    <MenuDropdownList className={'table-ctx'}>
       <ActionButton onClick={() => runCommand(addRows('top'))}>
         <PlusIcon /> Insert {rows} above
       </ActionButton>
@@ -114,7 +137,10 @@ export const ContextMenu: React.FC<{ view: EditorView; close: () => void }> = ({
             setColumnAction(undefined)
           }
         }}
-        secondaryAction={() => setColumnAction(undefined)}
+        secondaryAction={() => {
+          setColumnAction(undefined)
+          onCancelColumnDialog()
+        }}
       />
     </MenuDropdownList>
   )
