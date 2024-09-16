@@ -17,10 +17,14 @@
 import { schema } from '@manuscripts/transform'
 import {
   chainCommands,
+  createParagraphNear,
   exitCode,
   joinDown,
   joinUp,
   lift,
+  liftEmptyBlock,
+  newlineInCode,
+  splitBlock,
   toggleMark,
   wrapIn,
 } from 'prosemirror-commands'
@@ -29,6 +33,7 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
+  autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
   ignoreMetaNodeBackspaceCommand,
@@ -65,6 +70,13 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-=': toggleMark(schema.marks.superscript),
   'Mod-Alt--': toggleMark(schema.marks.subscript),
   'Ctrl->': wrapIn(schema.nodes.blockquote),
+  Enter: chainCommands(
+    autoComplete,
+    newlineInCode,
+    createParagraphNear,
+    liftEmptyBlock,
+    splitBlock
+  ),
   'Shift-Mod-Enter': insertSection(true),
   'Mod-Enter': chainCommands(exitCode, insertSection()),
   'Shift-Enter': chainCommands(exitCode, insertBreak),
