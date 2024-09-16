@@ -17,10 +17,9 @@
 import { NodeSelection } from 'prosemirror-state'
 
 import { createEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { InlineEquationView } from './inline_equation'
 
-export class InlineEquationEditableView extends InlineEquationView<EditableBlockProps> {
+export class InlineEquationEditableView extends InlineEquationView {
   public selectNode = async () => {
     if (!this.props.getCapabilities().editArticle) {
       return

@@ -56,6 +56,10 @@ export type TrackableAttributes<T extends ManuscriptNode> = T['attrs'] & {
   dataTracked?: TrackedAttrs[]
 }
 
+export type Trackable<T extends ManuscriptNode> = Omit<T, 'attrs'> & {
+  attrs: TrackableAttributes<T>
+}
+
 export type WidgetDecoration = Decoration & {
   type: { toDOM: () => HTMLElement; spec: Decoration['spec'] }
 }
