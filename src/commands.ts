@@ -1742,8 +1742,6 @@ export const autoComplete = (
       0,
       complete.title.length - complete.suggestion.length
     )
-    console.log(inserted)
-    console.log(complete)
     if (inserted) {
       // replacing to provide text case as required
       tr.replaceWith(
