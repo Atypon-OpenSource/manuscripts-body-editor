@@ -177,6 +177,12 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
+      if (
+        tree.node.type === schema.nodes.bibliography_section ||
+        item.node.type === schema.nodes.bibliography_section
+      ) {
+        return false
+      }
       if (!ref.current) {
         return false
       }

@@ -60,9 +60,10 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
+  dispatch?: Dispatch
 }
 
-export type ExternalProps = Omit<EditorProps, 'popper'>
+export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
 
 export const createEditorState = (props: EditorProps) =>
   EditorState.create({
