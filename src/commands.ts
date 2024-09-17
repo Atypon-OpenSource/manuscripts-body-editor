@@ -97,6 +97,7 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
+import { sectionTitles } from './lib/section-titles'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -107,6 +108,7 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
 import { EditorAction } from './types'
+import { checkForCompletion } from './plugins/section_title/autocompletion'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -763,17 +765,6 @@ export const insertSection =
 
     return true
   }
-
-const sectionTitles = new Map<SectionCategory, string>([
-  ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
-  ['MPSectionCategory:availability', 'Availability'],
-  ['MPSectionCategory:competing-interests', 'COI Statement'],
-  ['MPSectionCategory:con', 'Contributed-by information'],
-  ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
-  ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
-  ['MPSectionCategory:supplementary-material', 'Supplementary Material'],
-  ['MPSectionCategory:supported-by', 'Supported By'],
-])
 
 export const insertBackMatterSection =
   (category: SectionCategory) =>
@@ -1738,4 +1729,30 @@ export function mergeCellsWithSpace(
     dispatch(tr)
   }
   return true
+}
+
+export const autoComplete = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const complete = checkForCompletion(state)
+  if (complete) {
+    const tr = state.tr.insertText(complete.suggestion, state.selection.from)
+    const inserted = complete.title.substring(
+      0,
+      complete.title.length - complete.suggestion.length
+    )
+    if (inserted) {
+      // replacing to provide text case as required
+      tr.replaceWith(
+        state.selection.from - inserted.length,
+        state.selection.from,
+        schema.text(inserted)
+      )
+    }
+
+    dispatch && dispatch(tr)
+    return true
+  }
+  return false
 }

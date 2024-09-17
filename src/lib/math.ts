@@ -74,8 +74,36 @@ export const renderMath = (node: HTMLElement) => {
     initMathJax()
   }
   //@ts-ignore
-  if (window.MathJax.typeset && node.parentNode) {
+  if (window.MathJax.typeset) {
     //@ts-ignore
-    window.MathJax.typeset([node])
+    if (!node.parentNode) {
+      awaitMounting(node).then(() => {
+        //@ts-ignore
+        window.MathJax.typeset([node])
+      })
+    } else {
+      //@ts-ignore
+      window.MathJax.typeset([node])
+    }
   }
+}
+
+function awaitMounting(node: HTMLElement) {
+  return new Promise<void>(function (resolve, reject) {
+    let max = 10
+    function wait() {
+      max--
+      if (!node.parentNode) {
+        setTimeout(() => {
+          wait()
+        }, 0)
+      } else {
+        resolve()
+      }
+      if (max <= 0) {
+        reject()
+      }
+    }
+    wait()
+  })
 }
