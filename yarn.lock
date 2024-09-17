@@ -1565,10 +1565,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.7.18-LEAN-3892.0":
-  version "1.7.18-LEAN-3892.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.18-LEAN-3892.0.tgz#30c339021ca7daa9c0a530dabab7120e55162397"
-  integrity sha512-rUY41VMhDTyMUIPnLO1rKn1YfvFpiuQ/40zgySLl2MQMi1XKBEZF+cmcuVgyrJXn9wZ9MHrRKswxfvTp/OWBHQ==
+"@manuscripts/track-changes-plugin@1.7.21":
+  version "1.7.21"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.7.21.tgz#a449d89afa8b59ccb08ee5e52a44e3d05401b9e1"
+  integrity sha512-NikH89ewiOVqEabY5Acc8Gyl3yLaW+LzdGHuo61iP4tIYW2nMiKSudFFT5yt15nuC2U2UPmASNs3gY/YWK9WvA==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -1581,10 +1581,10 @@
     prosemirror-transform "^1.7.0"
     prosemirror-view "^1.29.1"
 
-"@manuscripts/transform@2.3.32-LEAN-3892.0":
-  version "2.3.32-LEAN-3892.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.32-LEAN-3892.0.tgz#323c454c271d1f6b905d22e79c497afefbc34623"
-  integrity sha512-Z6y5YhjlfDJoaVVHfNEI97c7rSEcGNoVAOWgTHb5HKB8tXKsJoiyhfaqOsXY3CQND/V4LroYqyPK7rxTdIWUNQ==
+"@manuscripts/transform@2.3.33":
+  version "2.3.33"
+  resolved "https://registry.yarnpkg.com/@manuscripts/transform/-/transform-2.3.33.tgz#c41377d7df8d785b40ec89f7179237f921d15a71"
+  integrity sha512-j5NyjagjVL2qyHIlNUQa+Bv2zXrkeN+SjwNTyQW2NKCzhRZKo5zt5VcIySZm2A47fMXbZu5C926uu2OXeSYeew==
   dependencies:
     "@manuscripts/json-schema" "2.2.11"
     "@manuscripts/library" "1.3.11"
@@ -6499,10 +6499,10 @@ prosemirror-suggest@^2.0.6:
     "@remirror/types" "^1.0.1"
     escape-string-regexp "^4.0.0"
 
-prosemirror-tables@^1.3.4, prosemirror-tables@^1.3.5:
-  version "1.3.7"
-  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.3.7.tgz#9d296bd432d2bc7dca90f14e5c3b5c5f61277f7a"
-  integrity sha512-oEwX1wrziuxMtwFvdDWSFHVUWrFJWt929kVVfHvtTi8yvw+5ppxjXZkMG/fuTdFo+3DXyIPSKfid+Be1npKXDA==
+prosemirror-tables@^1.3.4, prosemirror-tables@^1.3.5, prosemirror-tables@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.5.0.tgz#3ba1ea3d53852505cc0d2037ce386973bb639a7d"
+  integrity sha512-VMx4zlYWm7aBlZ5xtfJHpqa3Xgu3b7srV54fXYnXgsAcIGRqKSrhiK3f89omzzgaAgAtDOV4ImXnLKhVfheVNQ==
   dependencies:
     prosemirror-keymap "^1.1.2"
     prosemirror-model "^1.8.1"

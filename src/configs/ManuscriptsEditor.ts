@@ -60,9 +60,10 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
+  dispatch?: Dispatch
 }
 
-export type ExternalProps = Omit<EditorProps, 'popper'>
+export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
 
 export const createEditorState = (props: EditorProps) =>
   EditorState.create({
@@ -108,6 +109,7 @@ export const createEditorView = (
 
   // running an init transaction allowing plugins to caught up with the document for the first time
   const tr = view.state.tr.setMeta('INIT', true)
+
   const nextState = view.state.apply(tr)
   view.updateState(nextState)
   return view

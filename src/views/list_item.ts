@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
+import { ListItemNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class ListItemView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class ListItemView extends BlockView<ListItemNode> {
   public elementType = 'li'
 }
 

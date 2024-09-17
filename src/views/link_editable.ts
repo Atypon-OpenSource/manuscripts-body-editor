@@ -30,11 +30,10 @@ import {
 } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { LinkView } from './link'
 import ReactSubView from './ReactSubView'
 
-export class LinkEditableView extends LinkView<EditableBlockProps> {
+export class LinkEditableView extends LinkView {
   protected popperContainer: HTMLDivElement
 
   public ignoreMutation = () => true

@@ -1,19 +1,14 @@
 .ProseMirror
   > div.body
-  section:not(.toc) 
- .block-section_title
+  section:not(.toc)
+  .block-section_title
   h1.empty-node[data-placeholder]::before {
   content: attr(data-section-number) '. ' attr(data-placeholder);
 }
 
-.ProseMirror
-  > div.body
-  section:not(.toc) 
- .block-section_title
-  h1::before {
+.ProseMirror > div.body section:not(.toc) .block-section_title h1::before {
   content: attr(data-section-number) '. ';
 }
-
 
 .ProseMirror > div .block-section_title > h1 {
   font-size: 16pt !important;
@@ -39,8 +34,6 @@
   font-size: 13.5pt !important;
 }
 
-
-
 .ProseMirror div.backmatter::before {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
@@ -50,6 +43,15 @@
 .ProseMirror div.backmatter .block-section_title > h1 {
   font-size: 13.5pt !important;
   color: #6e6e6e !important;
+}
+.completion-bearer {
+  pointer-events: none;
+}
+.block-section_title .completion-bearer:after {
+  content: attr(data-suggest);
+  opacity: 0.5;
+  pointer-events: none;
+  font-style: italic;
 }
 
 .ProseMirror p.block {
@@ -154,8 +156,8 @@
   position: static;
 }
 
-
-.comment-marker.selected-comment > svg > path, .comment-marker:active > svg > path {
+.comment-marker.selected-comment > svg > path,
+.comment-marker:active > svg > path {
   stroke: #f7b314;
   fill: #ffe0b2;
 }
@@ -170,7 +172,8 @@
   position: relative;
 }
 
-.block > div.comment-marker, .figure-block > div.comment-marker {
+.block > div.comment-marker,
+.figure-block > div.comment-marker {
   top: -25px;
   left: 100%;
 }
@@ -209,7 +212,7 @@ span.comment-marker {
   top: 12px;
 }
 
-.comment-marker[data-count="0"] {
+.comment-marker[data-count='0'] {
   display: none;
 }
 
@@ -221,7 +224,7 @@ span.comment-marker {
   content: attr(data-count);
   top: 8px;
   left: 8px;
-  background-color: #F7B314;
+  background-color: #f7b314;
   border-radius: 50%;
   width: 12px;
   height: 12px;
@@ -287,7 +290,7 @@ span.comment-marker {
   font-size: 16px !important;
   font-weight: 700 !important;
   line-height: 24px !important;
-  margin: 0 !important
+  margin: 0 !important;
 }
 
 .ProseMirror .author-notes-container > div {
@@ -309,7 +312,7 @@ span.comment-marker {
   position: relative;
   cursor: default;
   padding: 4px 8px;
-  border: 1px solid #C9C9C9;
+  border: 1px solid #c9c9c9;
   margin-top: 10px;
   margin-bottom: 4px;
 }
@@ -375,7 +378,7 @@ span.comment-marker {
 
 .keywords .keyword-group-container {
   position: relative;
-   margin: 0 0 36px !important;
+  margin: 0 0 36px !important;
 }
 
 .keywords .keyword-group {
@@ -449,8 +452,8 @@ span.comment-marker {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
   --accepted-bg-color: #e2e2e2;
-  --deleted-color: #F35143;
-  --deleted-pending-bg-color: #FFF1F0;
+  --deleted-color: #f35143;
+  --deleted-pending-bg-color: #fff1f0;
   --highlight-bg-color: #ffeebf;
   --common-color: #353535;
   --selected-pending-background-color: #ddf3fa;
@@ -479,22 +482,28 @@ span.selected-suggestion,
 span.accepted .selected-suggestion,
 .accepted .selected-suggestion > .block-container .block,
 .accepted .selected-suggestion:not(:has(> .block-container)),
-.selected-suggestion[data-track-status="accepted"],
-.selected-suggestion  > .block-container .block.accepted,
-.selected-suggestion  > .block-container .block:has([data-track-status='accepted']),
-.selected-suggestion:not(:has(> .block-container)):has([data-track-status='accepted']) {
+.selected-suggestion[data-track-status='accepted'],
+.selected-suggestion > .block-container .block.accepted,
+.selected-suggestion
+  > .block-container
+  .block:has([data-track-status='accepted']),
+.selected-suggestion:not(:has(> .block-container)):has(
+    [data-track-status='accepted']
+  ) {
   background-color: var(--selected-accepted-background-color) !important;
   border-width: 2px 0 2px 0 !important;
-  border-color: #C9C9C9 !important;
+  border-color: #c9c9c9 !important;
   border-radius: 3px !important;
   border-style: solid !important;
 }
 
-.block-bullet_list .selected-suggestion p, .block-ordered_list .selected-suggestion p {
+.block-bullet_list .selected-suggestion p,
+.block-ordered_list .selected-suggestion p {
   margin: 0;
 }
 
-.block-bullet_list .selected-suggestion, .block-ordered_list .selected-suggestion {
+.block-bullet_list .selected-suggestion,
+.block-ordered_list .selected-suggestion {
   margin: 16px 0;
 }
 
@@ -506,7 +515,10 @@ span.accepted .selected-suggestion,
 }
 
 .ProseMirror .selected-suggestion .inserted.pending,
-.ProseMirror .selected-suggestion [data-track-op='insert'][data-track-status='pending'] .block,
+.ProseMirror
+  .selected-suggestion
+  [data-track-op='insert'][data-track-status='pending']
+  .block,
 .ProseMirror .selected-suggestion .deleted.pending {
   background-color: var(--selected-pending-background-color) !important;
   color: var(--common-color) !important;
@@ -549,7 +561,11 @@ span.accepted .selected-suggestion,
 .ProseMirror .inserted.pending:has(.selected-suggestion),
 .ProseMirror .deleted.pending:has(.selected-suggestion),
 .ProseMirror .selected-suggestion .highlight,
-.ProseMirror .selected-suggestion .graphical-abstract:has([data-track-status='pending'][data-track-op='insert']) {
+.ProseMirror
+  .selected-suggestion
+  .graphical-abstract:has(
+    [data-track-status='pending'][data-track-op='insert']
+  ) {
   background: transparent !important;
   color: var(--common-color);
   text-decoration: none;
@@ -588,7 +604,7 @@ span.accepted .selected-suggestion,
 .affiliation[data-track-status='pending'][data-track-op='delete'] {
   text-decoration: line-through;
   color: var(--deleted-color);
-  background-color: var(--deleted-pending-bg-color)
+  background-color: var(--deleted-pending-bg-color);
 }
 
 .contributor[data-track-op='delete']:not([data-track-status='rejected']),
@@ -602,7 +618,9 @@ span.accepted .selected-suggestion,
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
-.block-contributors, .block-affiliations, .keywords {
+.block-contributors,
+.block-affiliations,
+.keywords {
   margin: 15px 0px;
 }
 .contributors {
@@ -703,7 +721,6 @@ span.accepted .selected-suggestion,
   margin: 1rem 64px 0;
   font-size: 12px;
   color: #6e6e6e;
-
 }
 
 * {
@@ -741,7 +758,9 @@ span.accepted .selected-suggestion,
   z-index: 10;
 }
 
-.ProseMirror td:hover > .table-context-menu-button, th:hover > .table-context-menu-button, .open-context-menu {
+.ProseMirror td:hover > .table-context-menu-button,
+th:hover > .table-context-menu-button,
+.open-context-menu {
   visibility: visible !important;
 }
 
@@ -766,7 +785,7 @@ span.accepted .selected-suggestion,
 }
 
 .section-category-button:not(.assigned) path {
-  fill: #FFE0B2;
+  fill: #ffe0b2;
 }
 
 .section-category-button.assigned:after {
@@ -776,8 +795,8 @@ span.accepted .selected-suggestion,
   content: '';
   height: 8px;
   width: 4px;
-  border-bottom: 2px solid #36B260;
-  border-right: 2px solid #36B260;
+  border-bottom: 2px solid #36b260;
+  border-right: 2px solid #36b260;
   transform: rotate(45deg);
 }
 
@@ -786,8 +805,8 @@ span.accepted .selected-suggestion,
 }
 .section-category.menu {
   border-radius: 8px;
-  border: 1px solid #E2E2E2;
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.30);
+  border: 1px solid #e2e2e2;
+  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
 }
 
 .section-category.menu .menu-item {
@@ -814,8 +833,8 @@ span.accepted .selected-suggestion,
   content: '';
   height: 10px;
   width: 5px;
-  border-bottom: 2px solid #36B260;
-  border-right: 2px solid #36B260;
+  border-bottom: 2px solid #36b260;
+  border-right: 2px solid #36b260;
   transform: rotate(45deg);
 }
 
@@ -831,16 +850,16 @@ span.accepted .selected-suggestion,
   display: flex;
   align-items: center;
   border-radius: 6px;
-  background: #E2E2E2;
+  background: #e2e2e2;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  color:  #353535;
+  color: #353535;
   line-height: 16px;
 }
 
 .section-category.tooltip span {
-  color:  #353535;
+  color: #353535;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
