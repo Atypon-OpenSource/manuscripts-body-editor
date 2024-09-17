@@ -16,8 +16,8 @@
 
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
 import { TrackedAttrs, UpdateAttrs } from '@manuscripts/track-changes-plugin'
-import { ManuscriptNode } from '@manuscripts/transform'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -134,6 +134,52 @@ export const getAttrsTrackingButton = (changeID: string) => {
 
 export function isHidden(node: ProsemirrorNode) {
   return isDeleted(node) || isRejectedInsert(node)
+}
+
+export function isDeletedText(node: ProsemirrorNode) {
+  if (node.type === schema.nodes.text && node.marks.length) {
+    const deleteMark = node.marks.find(
+      (mark) => mark.type === schema.marks.tracked_delete
+    )
+    if (
+      deleteMark &&
+      deleteMark.attrs?.dataTracked?.status &&
+      ['pending', 'approved'].includes(deleteMark.attrs?.dataTracked?.status)
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
+export function isRejectedText(node: ProsemirrorNode) {
+  if (node.type === schema.nodes.text) {
+    const insertMark = node.marks.find(
+      (mark) => mark.type === schema.marks.tracked_insert
+    )
+    if (insertMark && insertMark.attrs?.dataTracked?.status === 'rejected') {
+      return true
+    }
+  }
+  return false
+}
+
+export function getActualTextContent(fragment: Fragment) {
+  let finalContent = ''
+
+  function getContent(fragment: Fragment) {
+    fragment.forEach((node) => {
+      if (node.type !== schema.nodes.text) {
+        finalContent += getContent(node.content)
+      }
+      if (!isDeletedText(node) && !isRejectedText(node)) {
+        finalContent += node.textContent
+      }
+    })
+  }
+
+  getContent(fragment)
+  return finalContent
 }
 
 export function sanitizeAttrsChange<T extends ProsemirrorNode>(
