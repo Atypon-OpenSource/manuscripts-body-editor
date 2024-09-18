@@ -45,7 +45,9 @@ export const authors = (item: BibliographyItemAttrs): string => {
   if (!item.author) {
     return ''
   }
-  const authors = item.author.map((a) => a.family || a.given).filter(Boolean)
+  const authors = item.author
+    .map((a) => a.family || a.literal || a.given)
+    .filter(Boolean)
 
   if (authors.length > 1) {
     const last = authors.splice(-2)
