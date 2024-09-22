@@ -56,7 +56,7 @@ export default class BlockView<BlockNode extends ManuscriptNode>
   }
 
   // unfortunately we can't call updateContents in successors because they are not methods but props
-  // which means they're inited in the contructor and are not accessible via super.
+  // which means they're inited in the constructor and are not accessible via super.
   // onUpdateContent is provided here to allow to execute additional actions on content update without a need to copy all the code
   // @TODO - rewrite arrow props to methods
   onUpdateContent() {
