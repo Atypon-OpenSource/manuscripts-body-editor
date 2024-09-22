@@ -77,7 +77,7 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     }
 
     const dataTracked = (this.node.attrs.dataTracked || []).filter(
-      (attr: TrackedAttrs) => attr.operation !== 'split_source'
+      (attr: TrackedAttrs) => attr.operation !== 'reference'
     )
 
     if (dataTracked?.length) {

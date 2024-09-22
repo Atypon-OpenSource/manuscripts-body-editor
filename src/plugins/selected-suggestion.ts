@@ -104,7 +104,7 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
     if (
       node.attrs.dataTracked &&
       !node.attrs.dataTracked?.find(
-        (c: DataTrackedAttrs) => c.operation === 'split_source'
+        (c: DataTrackedAttrs) => c.operation === 'reference'
       )
     ) {
       current = {
