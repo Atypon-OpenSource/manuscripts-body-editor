@@ -107,8 +107,8 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { EditorAction } from './types'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
+import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -605,6 +605,21 @@ export const insertFootnote = (
 
   let selectionPos = 0
 
+  const findFootnotePos = (node: ManuscriptNode) => {
+    let footnotePos = 0
+    node.descendants((n, pos) => {
+      if (isFootnoteNode(n)) {
+        footnotePos = pos
+        n.descendants((childNode, childPos) => {
+          if (isParagraphNode(childNode)) {
+            footnotePos += childPos
+          }
+        })
+      }
+    })
+    return footnotePos
+  }
+
   if (!footnotesSection) {
     // create a new footnotes section if needed
     const section = state.schema.nodes.footnotes_section.create({}, [
@@ -620,18 +635,7 @@ export const insertFootnote = (
 
     tr.insert(sectionPos, section)
 
-    let footnotePos = 0
-    section.descendants((n, pos) => {
-      if (isFootnoteNode(n)) {
-        footnotePos = pos
-        n.descendants((childNode, childPos) => {
-          if (isParagraphNode(childNode)) {
-            footnotePos += childPos
-          }
-        })
-      }
-    })
-    selectionPos = sectionPos + footnotePos
+    selectionPos = sectionPos + findFootnotePos(section)
   } else {
     // Look for footnote element inside the footnotes section to exclude tables footnote elements
     const footnoteElement = findChildrenByType(
@@ -640,6 +644,22 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
+      if (isDeleted(footnoteElement.node)) {
+        const footnoteElementPos =
+          footnotesSection.pos + findFootnotePos(footnotesSection.node)
+
+        //Restore the deleted footnote element by clearing the 'dataTracked' attribute (setting it to null)
+        const updatedAttrs = {
+          ...footnoteElement.node.attrs,
+          dataTracked: null,
+        }
+        tr.setNodeMarkup(
+          footnoteElementPos,
+          undefined,
+          updatedAttrs,
+          footnoteElement.node.marks
+        )
+      }
       const pos =
         footnotesSection.pos +
         footnoteElement.pos +
