@@ -15,6 +15,8 @@
  */
 
 import {
+  BibliographicDate,
+  buildBibliographicDate,
   buildBibliographicName,
   generateID,
   ObjectTypes,
@@ -74,11 +76,7 @@ const parseCSLData = (data: CSL.Data): BibliographyItemAttrs => ({
   id: generateID(ObjectTypes.BibliographyItem),
   type: data.type,
   author: data.author?.map(buildBibliographicName),
-  issued: {
-    _id: generateID(ObjectTypes.BibliographicDate),
-    objectType: ObjectTypes.BibliographicDate,
-    'date-parts': data.issued?.['date-parts'],
-  },
+  issued: buildBibliographicDate(data.issued as BibliographicDate),
   containerTitle: data['container-title'],
   doi: data.DOI,
   volume: data.volume ? String(data.volume) : undefined,
