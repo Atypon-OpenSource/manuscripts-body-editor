@@ -107,8 +107,8 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { EditorAction } from './types'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
+import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -640,6 +640,22 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
+      if (isDeleted(footnoteElement.node)) {
+        const footnoteElementPos =
+          footnotesSection.pos + footnoteElement.pos + 1
+
+        //Restore the deleted footnote element by clearing the 'dataTracked' attribute (setting it to null)
+        const updatedAttrs = {
+          ...footnoteElement.node.attrs,
+          dataTracked: null,
+        }
+        tr.setNodeMarkup(
+          footnoteElementPos,
+          undefined,
+          updatedAttrs,
+          footnoteElement.node.marks
+        )
+      }
       const pos =
         footnotesSection.pos +
         footnoteElement.pos +
