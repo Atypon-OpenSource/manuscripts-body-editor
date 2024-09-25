@@ -605,21 +605,6 @@ export const insertFootnote = (
 
   let selectionPos = 0
 
-  const findFootnotePos = (node: ManuscriptNode) => {
-    let footnotePos = 0
-    node.descendants((n, pos) => {
-      if (isFootnoteNode(n)) {
-        footnotePos = pos
-        n.descendants((childNode, childPos) => {
-          if (isParagraphNode(childNode)) {
-            footnotePos += childPos
-          }
-        })
-      }
-    })
-    return footnotePos
-  }
-
   if (!footnotesSection) {
     // create a new footnotes section if needed
     const section = state.schema.nodes.footnotes_section.create({}, [
@@ -635,7 +620,18 @@ export const insertFootnote = (
 
     tr.insert(sectionPos, section)
 
-    selectionPos = sectionPos + findFootnotePos(section)
+    let footnotePos = 0
+    section.descendants((n, pos) => {
+      if (isFootnoteNode(n)) {
+        footnotePos = pos
+        n.descendants((childNode, childPos) => {
+          if (isParagraphNode(childNode)) {
+            footnotePos += childPos
+          }
+        })
+      }
+    })
+    selectionPos = sectionPos + footnotePos
   } else {
     // Look for footnote element inside the footnotes section to exclude tables footnote elements
     const footnoteElement = findChildrenByType(
@@ -646,7 +642,7 @@ export const insertFootnote = (
     if (footnoteElement) {
       if (isDeleted(footnoteElement.node)) {
         const footnoteElementPos =
-          footnotesSection.pos + findFootnotePos(footnotesSection.node)
+          footnotesSection.pos + footnoteElement.pos + 1
 
         //Restore the deleted footnote element by clearing the 'dataTracked' attribute (setting it to null)
         const updatedAttrs = {
@@ -1403,6 +1399,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
+  type === schema.nodes.list ||
   type === schema.nodes.table_element
 
 export const addNodeComment = (
