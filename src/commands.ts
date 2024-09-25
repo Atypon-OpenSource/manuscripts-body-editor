@@ -640,11 +640,14 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
-      if (isDeleted(footnoteElement.node)) {
+      if (
+        isDeleted(footnoteElement.node) ||
+        isRejectedInsert(footnoteElement.node)
+      ) {
         const footnoteElementPos =
           footnotesSection.pos + footnoteElement.pos + 1
 
-        //Restore the deleted footnote element by clearing the 'dataTracked' attribute (setting it to null)
+        //Restore the deleted/rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
         const updatedAttrs = {
           ...footnoteElement.node.attrs,
           dataTracked: null,
@@ -1552,11 +1555,27 @@ export const insertTableFootnote = (
     schema.nodes.footnotes_element
   ).pop()
 
-  if (
-    footnotesElement &&
-    !isDeleted(footnotesElement.node) &&
-    !isRejectedInsert(footnotesElement.node)
-  ) {
+  if (footnotesElement) {
+    if (
+      isDeleted(footnotesElement.node) ||
+      isRejectedInsert(footnotesElement.node)
+    ) {
+      const footnotesElementPos = tr.mapping.map(
+        position + footnotesElement.pos + 1
+      )
+
+      //Restore the deleted/ rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
+      const updatedAttrs = {
+        ...footnotesElement.node.attrs,
+        dataTracked: null,
+      }
+      tr.setNodeMarkup(
+        footnotesElementPos,
+        undefined,
+        updatedAttrs,
+        footnotesElement.node.marks
+      )
+    }
     const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
     insertionPos = tr.mapping.map(position + footnotePos)
 
