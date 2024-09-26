@@ -178,6 +178,10 @@
   left: 100%;
 }
 
+ul > .comment-marker, ol > .comment-marker {
+  float: left;
+}
+
 .figure-block div.comment-marker {
   grid-column: 3;
 }
