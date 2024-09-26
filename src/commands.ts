@@ -639,6 +639,22 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
+      if (isDeleted(footnoteElement.node)) {
+        const footnoteElementPos =
+          footnotesSection.pos + footnoteElement.pos + 1
+
+        //Restore the deleted footnote element by clearing the 'dataTracked' attribute (setting it to null)
+        const updatedAttrs = {
+          ...footnoteElement.node.attrs,
+          dataTracked: null,
+        }
+        tr.setNodeMarkup(
+          footnoteElementPos,
+          undefined,
+          updatedAttrs,
+          footnoteElement.node.marks
+        )
+      }
       const pos =
         footnotesSection.pos +
         footnoteElement.pos +
@@ -1382,6 +1398,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
+  type === schema.nodes.list ||
   type === schema.nodes.table_element
 
 export const addNodeComment = (
