@@ -51,7 +51,7 @@
                   {
                     "type": "inline_footnote",
                     "attrs": {
-                      "rids": ["MOCKED_ID"],
+                      "rids": ["MOCKED_NODE_ID"],
                       "contents": "a",
                       "dataTracked": null
                     }
@@ -103,7 +103,7 @@
                   {
                     "type": "footnote",
                     "attrs": {
-                      "id": "MOCKED_ID",
+                      "id": "MOCKED_NODE_ID",
                       "kind": "footnote",
                       "paragraphStyle": "",
                       "placeholder": "",
