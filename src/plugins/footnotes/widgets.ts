@@ -92,27 +92,15 @@ export const deleteFootnoteWidget =
         if (node.type === schema.nodes.footnote && pos) {
           const targetNode = tableElement ? tableElement.node : view.state.doc
           const inlineFootnotes = getInlineFootnotes(id, targetNode)
-          const footnotesElement = findParentNodeClosestToPos(
-            tr.doc.resolve(pos),
-            (node) => node.type === schema.nodes.footnotes_element
-          )
 
           // remove table-element-footer if it has only one footnote
-          if (
-            footnotesElement?.node.childCount === 1 &&
-            tableElementFooter?.node.childCount === 1
-          ) {
-            const { pos: fnPos, node: fnNode } = tableElementFooter
+          const footnote = findParentNodeClosestToPos(
+            tr.doc.resolve(pos),
+            (node) => node.type === schema.nodes.footnote
+          )
+          if (footnote) {
+            const { pos: fnPos, node: fnNode } = footnote
             tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
-          } else {
-            const footnote = findParentNodeClosestToPos(
-              tr.doc.resolve(pos),
-              (node) => node.type === schema.nodes.footnote
-            )
-            if (footnote) {
-              const { pos: fnPos, node: fnNode } = footnote
-              tr.delete(fnPos, fnPos + fnNode.nodeSize + 1)
-            }
           }
 
           // delete inline footnotes
@@ -137,7 +125,6 @@ export const deleteFootnoteWidget =
             })
           }
         }
-        // Apply the transaction to delete the footnote
 
         view.dispatch(tr)
 
@@ -153,17 +140,17 @@ export const deleteFootnoteWidget =
             let allFootnotesDeleted = true
 
             // Check if all footnote in footnotesElement are deleted
-            footnotesElement.node.forEach((child) => {
+            footnotesElement.node.descendants((child) => {
               if (child.type === schema.nodes.footnote && !isDeleted(child)) {
                 allFootnotesDeleted = false
+                return false
               }
             })
-            // If all footnotes are deleted, remove the entire footnotes element
             if (allFootnotesDeleted) {
               const { pos: fnPos, node: fnNode } = footnotesElement
-              const tr2 = view.state.tr // Create a new transaction to delete the footnotesElement
+              const tr2 = view.state.tr
               tr2.delete(fnPos, fnPos + fnNode.nodeSize + 1)
-              view.dispatch(tr2) // Dispatch the transaction to delete footnotesElement
+              view.dispatch(tr2)
             }
           }
         }
