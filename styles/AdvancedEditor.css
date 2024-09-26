@@ -54,6 +54,12 @@
   font-style: italic;
 }
 
+.ProseMirror .box-element > .block-section {
+  border: 2px solid #E2E2E2;
+  background: #FAFAFA;
+  margin-top: 8px;
+}
+
 .ProseMirror p.block {
   font-size: 12pt !important;
   font-style: normal !important;
@@ -170,6 +176,12 @@
   left: 0;
   cursor: pointer;
   position: relative;
+}
+
+.box-element > .comment-marker {
+  float: right !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 
 .block > div.comment-marker,
@@ -391,10 +403,15 @@ span.comment-marker {
   width: auto;
 }
 .author-notes > .block-section_title > .block-gutter,
-.keywords > .block-section_title > .block-gutter {
+.keywords > .block-section_title > .block-gutter,
+.block-box_element > .block-gutter {
   display: flex;
   justify-content: flex-end;
   margin-top: 0;
+}
+
+.block-box_element > .block-gutter {
+  margin-top: 14px;
 }
 
 .author-notes > .block-section_title > .block,

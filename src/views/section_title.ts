@@ -33,11 +33,14 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
       schema.nodes.section
     )
     const sectionNumber = sectionTitleState?.get(parentSection?.node.attrs.id)
-    const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
+    let level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
+      if (!!findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)) {
+        level = level - 2;
+      }
       // the first level is hidden
       // other levels are shifted by 1
       this.contentDOM.setAttribute(
@@ -45,7 +48,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
         `${sectionLevel(level)} heading`
       )
     }
-    if (sectionTitleState) {
+    if (sectionTitleState && sectionNumber) {
       this.contentDOM.dataset.sectionNumber = sectionNumber
       this.contentDOM.dataset.titleLevel = level.toString()
     }

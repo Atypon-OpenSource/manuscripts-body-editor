@@ -50,7 +50,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       }
 
       const $pos = this.view.state.doc.resolve(this.getPos())
-      if (hasParent($pos, schema.nodes.keywords)) {
+      if (hasParent($pos, schema.nodes.keywords) || this.node.type === schema.nodes.box_element) {
         return null
       }
 

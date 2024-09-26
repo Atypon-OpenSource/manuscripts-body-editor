@@ -25,7 +25,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
-import { Attrs } from 'prosemirror-model'
+import {Attrs, ResolvedPos} from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -50,6 +50,8 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 const popper = new PopperManager()
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+
+const isBoxElementSection = ($pos: ResolvedPos) => $pos.node($pos.depth - 1).type === schema.nodes.box_element
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -441,7 +443,8 @@ export class ContextMenu {
 
     if (
       !readonlyTypes.includes(type) &&
-      !readonlyTypes.includes($pos.parent.type)
+      !readonlyTypes.includes($pos.parent.type) &&
+      !isBoxElementSection($pos)
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {

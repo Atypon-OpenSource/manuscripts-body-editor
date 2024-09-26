@@ -732,7 +732,8 @@ export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
-    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
+    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
+      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))) {
       return false
     }
 
@@ -1379,6 +1380,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.box_element ||
   type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
