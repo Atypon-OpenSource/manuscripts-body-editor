@@ -718,7 +718,7 @@ export const insertGraphicalAbstract = (
   )[0]
 
   if (
-    GraphicalAbstractSectionNode &&
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true) &&
     !isRejectedInsert(GraphicalAbstractSectionNode.node)
   ) {
     return false
