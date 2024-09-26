@@ -712,10 +712,14 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // check if another graphical abstract already exists
-  // parameter 'deep' must equal true to search the whole document
+  const GraphicalAbstractSectionNode = findChildrenByType(
+    state.doc,
+    schema.nodes.graphical_abstract_section
+  )[0]
+
   if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+    GraphicalAbstractSectionNode &&
+    !isRejectedInsert(GraphicalAbstractSectionNode.node)
   ) {
     return false
   }
