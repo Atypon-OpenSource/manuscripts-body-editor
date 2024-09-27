@@ -22,12 +22,7 @@ import {
   LinkFormProps,
   LinkValue,
 } from '../components/views/LinkForm'
-import {
-  getActualAttrs,
-  getChangeClasses,
-  isDeleted,
-  isRejectedInsert,
-} from '../lib/track-changes-utils'
+import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
@@ -44,15 +39,9 @@ export class LinkEditableView extends LinkView {
   }
 
   public updateContents = () => {
-    if (isRejectedInsert(this.node)) {
-      this.dom.innerHTML = ''
-      this.contentDOM = undefined
-      return
-    }
-
     this.contentDOM = this.dom
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const href = attrs.href
     const title = attrs.title
 
@@ -79,7 +68,7 @@ export class LinkEditableView extends LinkView {
   }
 
   public deselectNode = () => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     if (!this.node.content.size || !attrs.href) {
       this.removeLink()
     }
@@ -91,7 +80,7 @@ export class LinkEditableView extends LinkView {
       return
     }
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
 
     const value: LinkValue = {
       href: attrs.href,
@@ -126,7 +115,7 @@ export class LinkEditableView extends LinkView {
   }
 
   private handleCancel = () => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     if (!this.node.content.size || !attrs.href) {
       this.removeLink()
     }
@@ -141,7 +130,7 @@ export class LinkEditableView extends LinkView {
   private handleSave = (value: LinkValue) => {
     const tr = this.view.state.tr
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const pos = this.getPos()
 
     if (value.href !== attrs.href || value.title !== attrs.title) {

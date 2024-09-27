@@ -98,7 +98,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { sectionTitles } from './lib/section-titles'
-import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
+import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
   getChildOfType,
@@ -1515,10 +1515,8 @@ export const insertTableFootnote = (
       schema.nodes.inline_footnote
     )
     footnoteIndex =
-      inlineFootnotes.filter(
-        ({ pos }) =>
-          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
-      ).length + 1
+      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
+      1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
       contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
@@ -1535,11 +1533,7 @@ export const insertTableFootnote = (
     schema.nodes.footnotes_element
   ).pop()
 
-  if (
-    footnotesElement &&
-    !isDeleted(footnotesElement.node) &&
-    !isRejectedInsert(footnotesElement.node)
-  ) {
+  if (footnotesElement && !isDeleted(footnotesElement.node)) {
     const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
     insertionPos = tr.mapping.map(position + footnotePos)
 

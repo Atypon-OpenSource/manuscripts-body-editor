@@ -35,7 +35,6 @@ import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { getInlineFootnotes } from '../../lib/footnotes'
 import { getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
-import { getActualAttrs } from '../../lib/track-changes-utils'
 
 export const deleteFootnoteWidget =
   (
@@ -165,10 +164,7 @@ export const deleteFootnoteWidget =
 const scrollToInlineFootnote = (rid: string, view: EditorView) => {
   view.state.doc.descendants((node, pos) => {
     const footnote = node as InlineFootnoteNode
-    if (
-      isInlineFootnoteNode(node) &&
-      getActualAttrs(footnote).rids.includes(rid)
-    ) {
+    if (isInlineFootnoteNode(node) && footnote.attrs.rids.includes(rid)) {
       const selection = NodeSelection.create(view.state.doc, pos)
       view.dispatch(view.state.tr.setSelection(selection).scrollIntoView())
     }

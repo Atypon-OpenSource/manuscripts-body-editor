@@ -26,11 +26,7 @@ import { DecorationSet } from 'prosemirror-view'
 import { CSLProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../../lib/popper'
 import { BibliographyItemAttrs } from '../../lib/references'
-import {
-  getActualAttrs,
-  isHidden,
-  isRejectedInsert,
-} from '../../lib/track-changes-utils'
+import { isHidden } from '../../lib/track-changes-utils'
 import {
   buildCitations,
   buildDecorations,
@@ -93,7 +89,7 @@ const buildBibliographyPluginState = (
 ): PluginState => {
   const nodes: CitationNodes = []
   doc.descendants((node, pos) => {
-    if (isCitationNode(node) && !isRejectedInsert(node)) {
+    if (isCitationNode(node)) {
       nodes.push([node, pos])
     }
   })
@@ -170,7 +166,7 @@ const getBibliographyItemAttrs = (doc: ManuscriptNode) => {
   const attrs = new Map<string, BibliographyItemAttrs>()
   findChildrenByType(doc, schema.nodes.bibliography_item)
     .filter((n) => !isHidden(n.node))
-    .map((n) => getActualAttrs(n.node) as BibliographyItemAttrs)
+    .map((n) => n.node.attrs as BibliographyItemAttrs)
     .forEach((a) => attrs.set(a.id, a))
   return attrs
 }

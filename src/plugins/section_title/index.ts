@@ -19,7 +19,6 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isRejectedInsert } from '../../lib/track-changes-utils'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -34,10 +33,7 @@ const calculateSectionLevels = (
   numbering: NumberingArray = [0]
 ) => {
   node.forEach((childNode, offset) => {
-    if (
-      childNode.type === schema.nodes.section &&
-      !isRejectedInsert(childNode)
-    ) {
+    if (childNode.type === schema.nodes.section) {
       numbering[numbering.length - 1] += 1
       const sectionNumber = numbering.join('.')
       const sectionStartPos = startPos + offset + 1
