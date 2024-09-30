@@ -15,9 +15,10 @@
  */
 
 import { EquationElementNode } from '@manuscripts/transform'
+
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { Trackable } from '../types'
 
 export class EquationElementView extends BlockView<
   Trackable<EquationElementNode>
