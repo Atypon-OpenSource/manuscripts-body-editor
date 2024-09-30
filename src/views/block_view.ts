@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptNode,
   ManuscriptNodeView,
@@ -75,9 +76,12 @@ export default class BlockView<BlockNode extends ManuscriptNode>
       return
     }
 
-    if (this.node.attrs.dataTracked?.length) {
-      const lastChange =
-        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+    const dataTracked = (this.node.attrs.dataTracked || []).filter(
+      (attr: TrackedAttrs) => attr.operation !== 'reference'
+    )
+
+    if (dataTracked?.length) {
+      const lastChange = dataTracked[dataTracked.length - 1]
       this.dom.setAttribute('data-track-status', lastChange.status)
       this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {
