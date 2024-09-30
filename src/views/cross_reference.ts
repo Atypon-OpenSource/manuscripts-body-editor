@@ -18,9 +18,9 @@ import { CrossReferenceNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { Location, NavigateFunction } from 'react-router-dom'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { Trackable } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export interface CrossReferenceViewProps extends BaseNodeProps {
   navigate: NavigateFunction

@@ -17,10 +17,10 @@
 import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
-import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { JATS_HTML_LIST_STYLE_MAPPING, JatsStyleType } from './ordered_list'
+import { Trackable } from '../types'
 
 export class BulletListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'

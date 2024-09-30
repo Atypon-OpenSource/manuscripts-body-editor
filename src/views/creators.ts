@@ -17,9 +17,9 @@
 import { ManuscriptNode } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
-import { EditorProps } from '../configs/ManuscriptsEditor'
 import { NodeViewCreator } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 
 export const createNodeView =
   <T extends BaseNodeView<ManuscriptNode>, PropsT extends BaseNodeProps>(

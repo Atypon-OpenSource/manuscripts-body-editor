@@ -20,9 +20,9 @@ import { DOMSerializer } from 'prosemirror-model'
 import { sanitize } from '../lib/dompurify'
 import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export class CitationView
   extends BaseNodeView<Trackable<CitationNode>>

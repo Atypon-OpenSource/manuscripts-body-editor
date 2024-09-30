@@ -20,8 +20,8 @@ import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']

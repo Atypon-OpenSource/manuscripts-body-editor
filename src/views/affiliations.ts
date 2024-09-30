@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { AffiliationNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
 import { findChildByID } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
-import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { AffiliationNode } from '@manuscripts/transform'
+import { Trackable } from '../types'
 
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string

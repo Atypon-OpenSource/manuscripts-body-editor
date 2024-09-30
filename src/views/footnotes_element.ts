@@ -15,7 +15,6 @@
  */
 
 import { FootnotesElementNode } from '@manuscripts/transform'
-
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { setTCClasses } from './footnote'

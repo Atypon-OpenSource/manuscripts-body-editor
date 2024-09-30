@@ -40,8 +40,8 @@ import {
   findTableInlineFootnoteIds,
   getAlphaOrderIndices,
 } from '../../lib/footnotes'
-import { getActualAttrs } from '../../lib/track-changes-utils'
 import { placeholderWidget } from '../placeholder'
+import { getActualAttrs } from '../../lib/track-changes-utils'
 import {
   deleteFootnoteWidget,
   labelWidget,

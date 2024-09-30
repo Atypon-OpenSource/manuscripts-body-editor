@@ -15,7 +15,6 @@
  */
 
 import { ParagraphNode } from '@manuscripts/transform'
-
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 

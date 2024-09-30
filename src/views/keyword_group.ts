@@ -15,7 +15,6 @@
  */
 
 import { KeywordGroupNode } from '@manuscripts/transform'
-
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
