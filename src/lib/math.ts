@@ -77,8 +77,12 @@ export const renderMath = (node: HTMLElement) => {
   if (window.MathJax.typeset) {
     //@ts-ignore
     if (!node.parentNode) {
+      // iwant to disable eslint for the next block
+      // because it's a promise and it's not returning anything
+      // and I don't want to return a promise
       awaitMounting(node).then(() => {
         //@ts-ignore
+
         window.MathJax.typeset([node])
       })
     } else {
