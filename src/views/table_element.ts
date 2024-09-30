@@ -15,6 +15,7 @@
  */
 
 import { TableElementNode } from '@manuscripts/transform'
+
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 

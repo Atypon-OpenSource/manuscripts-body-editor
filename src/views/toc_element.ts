@@ -15,6 +15,7 @@
  */
 
 import { TOCElementNode } from '@manuscripts/transform'
+
 import { sanitize } from '../lib/dompurify'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
