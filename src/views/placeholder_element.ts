@@ -15,6 +15,7 @@
  */
 
 import { PlaceholderNode } from '@manuscripts/transform'
+
 import { createPlaceholderContent } from '../lib/placeholder'
 import BlockView from './block_view'
 import { createNodeView } from './creators'

@@ -36,6 +36,7 @@ import {
   insertTableFootnote,
 } from '../commands'
 import { FootnotesSelector } from '../components/views/FootnotesSelector'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 import ReactSubView from '../views/ReactSubView'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
@@ -45,7 +46,6 @@ import {
   isRejectedInsert,
 } from './track-changes-utils'
 import { getChildOfType, isChildOfNodeTypes } from './utils'
-import { EditorProps } from '../configs/ManuscriptsEditor'
 
 const popper = new PopperManager()
 
