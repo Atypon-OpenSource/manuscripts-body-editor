@@ -16,9 +16,9 @@
 
 import { LinkNode, ManuscriptNodeView } from '@manuscripts/transform'
 
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { Trackable } from '../types'
 
 export class LinkView
   extends BaseNodeView<Trackable<LinkNode>>
