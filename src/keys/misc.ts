@@ -34,6 +34,7 @@ import { goToNextCell } from 'prosemirror-tables'
 
 import {
   autoComplete,
+  addToStart,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
   ignoreMetaNodeBackspaceCommand,
@@ -72,6 +73,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Ctrl->': wrapIn(schema.nodes.blockquote),
   Enter: chainCommands(
     autoComplete,
+    addToStart,
     newlineInCode,
     createParagraphNear,
     liftEmptyBlock,
