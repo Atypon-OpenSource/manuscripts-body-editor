@@ -22,11 +22,11 @@ import {
 } from '../components/views/FigureDropdown'
 import { FileAttachment, groupFiles } from '../lib/files'
 import { getMatchingChild } from '../lib/utils'
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-import { Trackable } from '../types'
 
 export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
   private container: HTMLElement
