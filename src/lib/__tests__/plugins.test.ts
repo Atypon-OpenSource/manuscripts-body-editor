@@ -24,8 +24,7 @@ import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
-import { readAndParseJSONFixture } from './files'
-
+import jsonDoc from './__fixtures__/doc.json'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
   objectType: ObjectTypes.UserProfile,
@@ -65,7 +64,6 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
 })
 
 describe('editor view', () => {
-  const jsonDoc = readAndParseJSONFixture('doc.json')
   const doc = schema.nodeFromJSON(jsonDoc) as ActualManuscriptNode
   beforeAll(() => {
     const root = document.createElement('div')
