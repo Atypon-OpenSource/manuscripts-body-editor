@@ -107,8 +107,8 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { EditorAction } from './types'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
+import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -179,7 +179,7 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
     const node = $from.node(d)
 
     if (isElementNodeType(node.type)) {
-      return $from.after(d)
+      return node.type === schema.nodes.box_element ? $from.pos : $from.after(d)
     }
   }
 
@@ -732,8 +732,10 @@ export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
-    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
-      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))) {
+    if (
+      hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
+      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))
+    ) {
       return false
     }
 

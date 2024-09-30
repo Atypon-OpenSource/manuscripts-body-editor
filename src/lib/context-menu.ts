@@ -25,7 +25,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
-import {Attrs, ResolvedPos} from 'prosemirror-model'
+import { Attrs, NodeType, ResolvedPos } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -36,6 +36,7 @@ import {
   insertTableFootnote,
 } from '../commands'
 import { FootnotesSelector } from '../components/views/FootnotesSelector'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 import ReactSubView from '../views/ReactSubView'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
@@ -45,13 +46,14 @@ import {
   isRejectedInsert,
 } from './track-changes-utils'
 import { getChildOfType, isChildOfNodeTypes } from './utils'
-import { EditorProps } from '../configs/ManuscriptsEditor'
 
 const popper = new PopperManager()
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
 
-const isBoxElementSection = ($pos: ResolvedPos) => $pos.node($pos.depth - 1).type === schema.nodes.box_element
+const isBoxElementSection = ($pos: ResolvedPos, type: NodeType) =>
+  type === schema.nodes.section_title &&
+  $pos.node($pos.depth - 1).type === schema.nodes.box_element
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -444,7 +446,7 @@ export class ContextMenu {
     if (
       !readonlyTypes.includes(type) &&
       !readonlyTypes.includes($pos.parent.type) &&
-      !isBoxElementSection($pos)
+      !isBoxElementSection($pos, type)
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
