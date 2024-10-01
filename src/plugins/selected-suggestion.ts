@@ -15,6 +15,7 @@
  */
 import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
+  DataTrackedAttrs,
   ManuscriptEditorState,
   ManuscriptNode,
   schema,
@@ -100,7 +101,12 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
   let current
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
-    if (node.attrs.dataTracked) {
+    if (
+      node.attrs.dataTracked &&
+      !node.attrs.dataTracked?.find(
+        (c: DataTrackedAttrs) => c.operation === 'reference'
+      )
+    ) {
       current = {
         node,
         from: $pos.before(depth),
