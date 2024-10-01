@@ -112,6 +112,45 @@ import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
+// enter at the start of paragraph will add node above
+export const addToStart = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+): boolean => {
+  const { selection } = state
+
+  if (
+    !dispatch ||
+    !(selection instanceof TextSelection) ||
+    selection.$from.node().type !== schema.nodes.paragraph
+  ) {
+    return false
+  }
+
+  const {
+    $anchor: { parentOffset: startOffset },
+    $head: { parentOffset: endOffset },
+    $from,
+    $to,
+  } = selection
+  const parentSize = $from.node().content.size
+
+  if (
+    (startOffset === 0 && endOffset === 0) ||
+    startOffset === parentSize ||
+    endOffset === parentSize
+  ) {
+    const side =
+      (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
+        .pos - (startOffset === 0 ? 1 : 0)
+    const tr = state.tr.insert(side, $from.node().type.createAndFill()!)
+    tr.setSelection(TextSelection.create(tr.doc, side + 1))
+    dispatch(tr.scrollIntoView())
+    return true
+  }
+  return false
+}
+
 export const markActive =
   (type: ManuscriptMarkType) =>
   (state: ManuscriptEditorState): boolean => {
@@ -246,6 +285,18 @@ export const createBlock = (
   }
 }
 
+export const undoFootnoteDelete = (
+  tr: Transaction,
+  footnote: NodeWithPos,
+  position: number
+) => {
+  const updatedAttrs = {
+    ...footnote.node.attrs,
+    dataTracked: null,
+  }
+  tr.setNodeMarkup(position, undefined, updatedAttrs, footnote.node.marks)
+}
+
 export const insertGeneralFootnote = (
   tableElementNode: ManuscriptNode,
   position: number,
@@ -273,6 +324,18 @@ export const insertGeneralFootnote = (
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
+    if (
+      isDeleted(tableElementFooter[0].node) ||
+      isRejectedInsert(tableElementFooter[0].node)
+    ) {
+      const tableElementFooterPos = tr.mapping.map(
+        position + tableElementFooter[0].pos + 1
+      )
+
+      //Restore the deleted/ rejected tablefooter by clearing the 'dataTracked' attribute (setting it to null)
+      undoFootnoteDelete(tr, tableElementFooter[0], tableElementFooterPos)
+    }
+
     tr.insert(pos, generalNote as ManuscriptNode)
   } else {
     const tableElementFooter = schema.nodes.table_element_footer.create(
@@ -640,6 +703,28 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
+      if (
+        isDeleted(footnoteElement.node) ||
+        isRejectedInsert(footnoteElement.node)
+      ) {
+        const footnoteElementPos =
+          footnotesSection.pos + footnoteElement.pos + 1
+
+        //Restore the deleted/rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
+
+        undoFootnoteDelete(tr, footnoteElement, footnoteElementPos)
+
+        const updatedAttrs = {
+          ...footnoteElement.node.attrs,
+          dataTracked: null,
+        }
+        tr.setNodeMarkup(
+          footnoteElementPos,
+          undefined,
+          updatedAttrs,
+          footnoteElement.node.marks
+        )
+      }
       const pos =
         footnotesSection.pos +
         footnoteElement.pos +
@@ -696,10 +781,14 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // check if another graphical abstract already exists
-  // parameter 'deep' must equal true to search the whole document
+  const GraphicalAbstractSectionNode = findChildrenByType(
+    state.doc,
+    schema.nodes.graphical_abstract_section
+  )[0]
+
   if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true) &&
+    !isRejectedInsert(GraphicalAbstractSectionNode.node)
   ) {
     return false
   }
@@ -1385,6 +1474,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
+  type === schema.nodes.list ||
   type === schema.nodes.table_element
 
 export const addNodeComment = (
@@ -1537,11 +1627,18 @@ export const insertTableFootnote = (
     schema.nodes.footnotes_element
   ).pop()
 
-  if (
-    footnotesElement &&
-    !isDeleted(footnotesElement.node) &&
-    !isRejectedInsert(footnotesElement.node)
-  ) {
+  if (footnotesElement) {
+    if (
+      isDeleted(footnotesElement.node) ||
+      isRejectedInsert(footnotesElement.node)
+    ) {
+      const footnotesElementPos = tr.mapping.map(
+        position + footnotesElement.pos + 1
+      )
+
+      //Restore the deleted/ rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
+      undoFootnoteDelete(tr, footnotesElement, footnotesElementPos)
+    }
     const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
     insertionPos = tr.mapping.map(position + footnotePos)
 
@@ -1558,6 +1655,17 @@ export const insertTableFootnote = (
     )[0]
 
     if (tableElementFooter) {
+      if (
+        isDeleted(tableElementFooter.node) ||
+        isRejectedInsert(tableElementFooter.node)
+      ) {
+        const tableElementFooterPos = tr.mapping.map(
+          position + tableElementFooter.pos + 1
+        )
+
+        //Restore the deleted/ rejected table footer by clearing the 'dataTracked' attribute (setting it to null)
+        undoFootnoteDelete(tr, tableElementFooter, tableElementFooterPos)
+      }
       const pos = tableElementFooter.pos
       insertionPos = position + pos + tableElementFooter.node.nodeSize
       tr.insert(tr.mapping.map(insertionPos), footnoteElement)
