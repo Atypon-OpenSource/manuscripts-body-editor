@@ -18,9 +18,9 @@ import { ListElement } from '@manuscripts/json-schema'
 import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
-import { Trackable } from '../types'
 
 export type JatsStyleType = NonNullable<ListElement['listStyleType']>
 
