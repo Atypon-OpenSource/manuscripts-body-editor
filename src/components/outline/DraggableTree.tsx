@@ -185,14 +185,13 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
-      if (
-        !tree.parent ||
-        isAbstractOrBackmatter(item) ||
-        isAbstractOrBackmatter(tree)
-      ) {
+      if (isAbstractOrBackmatter(item) || isAbstractOrBackmatter(tree)) {
         return false
       }
       if (!ref.current) {
+        return false
+      }
+      if (!tree.parent) {
         return false
       }
       // can't drop on itself
