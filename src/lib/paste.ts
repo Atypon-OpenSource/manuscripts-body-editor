@@ -75,9 +75,12 @@ export const handlePaste = (
   }
 
   const {
-    state: { tr },
+    state: { tr, selection },
     dispatch,
   } = view
+
+  tr.setMeta('uiEvent', 'paste')
+  tr.setMeta('paste', true)
 
   const parent = findParentNode((node) => node.type === schema.nodes.section)(
     tr.selection
@@ -88,6 +91,23 @@ export const handlePaste = (
     tr.insert(insertPos, slice.content)
     dispatch(
       tr.setSelection(TextSelection.create(tr.doc, insertPos)).scrollIntoView()
+    )
+    return true
+  }
+
+  if (
+    selection instanceof TextSelection &&
+    selection.$anchor.parentOffset === 0 &&
+    selection.$head.parentOffset === 0 &&
+    selection.$from.node().type === schema.nodes.paragraph
+  ) {
+    const { $from, $to } = selection
+    const side =
+      (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
+        .pos - 1
+    tr.insert(side, slice.content)
+    dispatch(
+      tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
     )
     return true
   }
