@@ -178,8 +178,12 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
       if (
-        tree.node.type === schema.nodes.bibliography_section ||
-        item.node.type === schema.nodes.bibliography_section
+        item.parent &&
+        tree.parent &&
+        (item.parent.type === schema.nodes.abstracts ||
+          item.parent.type === schema.nodes.backmatter ||
+          tree.parent.type === schema.nodes.abstracts ||
+          tree.parent.type === schema.nodes.backmatter)
       ) {
         return false
       }
