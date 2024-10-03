@@ -666,7 +666,12 @@
   margin-top: 16px;
 }
 
-.ProseMirror .block-container:not(.block-section):hover .block-gutter {
+.ProseMirror .block-container:not(.block-section, .block-box_element):hover .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
 }
