@@ -17,6 +17,7 @@ import { SectionCategory } from '@manuscripts/json-schema'
 import { SectionCategoryIcon } from '@manuscripts/style-guide'
 import { isSectionNode, schema, SectionNode } from '@manuscripts/transform'
 import { EditorState, PluginKey } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -163,9 +164,14 @@ export function buildPluginState(
   state.doc.descendants((node, pos) => {
     if (isSectionNode(node)) {
       const attrs = node.attrs as SectionNode['attrs']
+      const parent = findParentNodeOfTypeClosestToPos(
+        state.doc.resolve(pos),
+        schema.nodes.section
+      )
       if (
         isEditableSectionCategoryID(attrs.category as string) &&
-        !isUnique(attrs.category as string)
+        !isUnique(attrs.category as string) &&
+        parent?.node.type !== schema.nodes.section
       ) {
         decorations.push(
           Decoration.widget(pos + 1, (view) =>

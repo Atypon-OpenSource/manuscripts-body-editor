@@ -151,7 +151,9 @@ export class ContextMenu {
 
             section.appendChild(
               this.createMenuItem(label, () => {
-                insertNode(schema.nodes.section, insPos)
+                insertNode(schema.nodes.section, insPos, {
+                  category: 'MPSectionCategory:subsection',
+                })
                 popper.destroy()
               })
             )
