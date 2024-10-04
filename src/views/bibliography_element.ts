@@ -211,7 +211,6 @@ export class BibliographyElementBlockView extends BlockView<
     this.container = document.createElement('div')
     this.container.classList.add('block')
     this.container.contentEditable = 'false'
-
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
   }
