@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {ManuscriptNode} from '@manuscripts/transform'
-import {createEditableNodeView} from './creators'
-import BlockView from "./block_view";
-import {EditableBlock} from "./editable_block";
+import { ManuscriptNode } from '@manuscripts/transform'
+
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
 export class BoxElementView extends BlockView<ManuscriptNode> {
   public elementType = 'div'
@@ -28,8 +28,6 @@ export class BoxElementView extends BlockView<ManuscriptNode> {
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.contentDOM)
   }
-
 }
 
-
-export default createEditableNodeView(EditableBlock(BoxElementView))
+export default createNodeView(BoxElementView)
