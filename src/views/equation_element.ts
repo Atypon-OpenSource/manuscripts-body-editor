@@ -26,13 +26,6 @@ export class EquationElementView extends BlockView<
   public elementType = 'figure'
 
   public updateContents = () => {
-    const { label } = this.node.attrs
-    if (label) {
-      const labelEl = document.createElement('label')
-      labelEl.textContent = label
-      this.dom.appendChild(labelEl)
-    }
-
     if (this.node.attrs.dataTracked?.length) {
       const lastChange =
         this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]

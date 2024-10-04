@@ -47,9 +47,6 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
   }
 
   public updateContents = () => {
-    const { figureStyle, figureLayout, alignment, sizeFraction } =
-      this.node.attrs
-
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
     }
@@ -62,21 +59,6 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-op')
     }
-
-    this.contentDOM.setAttribute('data-figure-style', figureStyle)
-    this.contentDOM.setAttribute('data-figure-layout', figureLayout)
-    this.contentDOM.setAttribute('data-alignment', alignment || '')
-
-    if (sizeFraction > 1) {
-      // fit to page width
-      this.contentDOM.style.width = '100%'
-      this.contentDOM.style.padding = '0 !important'
-    } else {
-      // fit to margin
-      this.contentDOM.style.width = `${(sizeFraction || 1) * 100}%`
-    }
-
-    this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
     const can = this.props.getCapabilities()
 

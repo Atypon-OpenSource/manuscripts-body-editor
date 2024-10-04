@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import {
-  PAGE_BREAK_AFTER,
-  PAGE_BREAK_BEFORE,
-  PAGE_BREAK_BEFORE_AND_AFTER,
-  SectionNode,
-} from '@manuscripts/transform'
+import { SectionNode } from '@manuscripts/transform'
 
+import { getActualAttrs } from '../lib/track-changes-utils'
 import { PluginState, sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -48,41 +44,19 @@ export class SectionView extends BlockView<SectionNode> {
     this.dom.appendChild(this.contentDOM)
   }
   public onUpdateContent = () => {
-    const sectionTitleState = sectionTitleKey.getState(this.view.state)
-    const { titleSuppressed, generatedLabel, pageBreakStyle, id, category } =
-      this.node.attrs
-    const classNames: string[] = []
+    const sectionTitles = sectionTitleKey.getState(this.view.state)
 
-    if (titleSuppressed) {
-      classNames.push('title-suppressed')
-    }
-
-    if (typeof generatedLabel === 'undefined' || generatedLabel) {
-      classNames.push('generated-label')
-    }
-
-    if (
-      pageBreakStyle === PAGE_BREAK_BEFORE ||
-      pageBreakStyle === PAGE_BREAK_BEFORE_AND_AFTER
-    ) {
-      classNames.push('page-break-before')
-    }
-
-    if (
-      pageBreakStyle === PAGE_BREAK_AFTER ||
-      pageBreakStyle === PAGE_BREAK_BEFORE_AND_AFTER
-    ) {
-      classNames.push('page-break-after')
-    }
+    const attrs = getActualAttrs(this.node)
     if (this.contentDOM) {
-      this.contentDOM.id = id
-      this.contentDOM.classList.add(...classNames)
-      category && this.contentDOM.setAttribute('data-category', category)
+      this.contentDOM.id = attrs.id
+      if (attrs.category) {
+        this.contentDOM.setAttribute('data-category', attrs.category)
+      }
     }
 
     // update sections numbering, when newly inserted section got deleted
-    if (sectionTitleState) {
-      handleSectionNumbering(sectionTitleState)
+    if (sectionTitles) {
+      handleSectionNumbering(sectionTitles)
     }
   }
 }
