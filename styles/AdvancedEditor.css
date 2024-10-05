@@ -166,8 +166,9 @@
 }
 
 .box-element figcaption {
-  margin-left: 52px;
-  margin-right: 52px;
+  margin-left: 54px;
+  margin-right: 54px;
+  padding-bottom: 6px;
   border-bottom: 2px solid #E2E2E2;
 }
 

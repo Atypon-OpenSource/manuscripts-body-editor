@@ -183,7 +183,7 @@ export function buildPluginState(
     }
 
     if (node.type === schema.nodes.box_element) {
-      return false;
+      return false
     }
   })
 

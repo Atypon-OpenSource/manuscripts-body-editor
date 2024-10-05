@@ -19,7 +19,7 @@ import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
 import bibliographyElement from '../views/bibliography_element'
 import blockquoteElement from '../views/blockquote_element_editable'
-import boxElement from "../views/box_element";
+import boxElement from '../views/box_element'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'

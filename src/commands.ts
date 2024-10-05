@@ -198,8 +198,11 @@ export const canInsert =
     if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
       return false
     }
+    const initDepth =
+      findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
+      0
 
-    for (let d = $from.depth; d >= 0; d--) {
+    for (let d = $from.depth; d >= initDepth; d--) {
       const index = $from.index(d)
 
       if ($from.node(d).canReplaceWith(index, index, type)) {
@@ -217,7 +220,7 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
     const node = $from.node(d)
 
     if (isElementNodeType(node.type)) {
-      return node.type === schema.nodes.box_element ? $from.pos : $from.after(d)
+      return $from.after(d)
     }
   }
 
