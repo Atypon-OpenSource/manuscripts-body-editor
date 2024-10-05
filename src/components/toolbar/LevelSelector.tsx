@@ -110,7 +110,6 @@ const buildOptions = (
     schema,
     tr,
   } = state
-  doc.resolve($from.index($from.depth - 1))
   const { nodes } = schema
 
   if (!$from.sameParent($to)) {

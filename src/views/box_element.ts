@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
+import { BoxElementNode } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class BoxElementView extends BlockView<ManuscriptNode> {
+export class BoxElementView extends BlockView<BoxElementNode> {
   public elementType = 'div'
 
   public createElement = () => {
