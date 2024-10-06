@@ -300,6 +300,10 @@
   text-align: left;
 }
 
+.ProseMirror .block-table_element .block-gutter {
+  padding-top: 1em;
+}
+
 .ProseMirror .caption-title:not(.empty-node) {
   font-weight: bold;
 }

@@ -152,7 +152,7 @@
 }
 
 .ProseMirror .box-element .block-container .block {
-  background: #FAFAFA;
+  background: var(--box-element-bg-color);
   padding-left: 12px;
   border-left: 2px solid #E2E2E2;
   border-right: 2px solid #E2E2E2;
@@ -172,6 +172,11 @@
   padding-bottom: 6px;
   text-align: left;
 }
+
+.box-element section figcaption {
+  background: var(--box-element-bg-color);
+}
+
 
 .unsupported-format-label {
   font-size: 140%;
@@ -328,7 +333,6 @@ span.comment-marker {
   font-style: italic !important;
   font-weight: 400 !important;
   line-height: 16px !important;
-  margin-top: 4px !important;
 }
 
 .ProseMirror .author-notes-container h1 {
@@ -437,10 +441,10 @@ span.comment-marker {
   width: auto;
 }
 .author-notes > .block-section_title > .block-gutter,
-.keywords > .block-section_title > .block-gutter,
-.block-box_element > .block-gutter {
+.keywords > .block-section_title > .block-gutter {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-top: 0;
 }
 
@@ -509,6 +513,7 @@ span.comment-marker {
   --common-color: #353535;
   --selected-pending-background-color: #ddf3fa;
   --selected-accepted-background-color: #f2f2f2;
+  --box-element-bg-color: #fafafa;
 }
 .ProseMirror ins,
 .ProseMirror del {
