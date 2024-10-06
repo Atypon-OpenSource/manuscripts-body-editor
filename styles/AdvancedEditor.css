@@ -158,18 +158,18 @@
   border-right: 2px solid #E2E2E2;
 }
 
-.ProseMirror .box-element::after {
+.ProseMirror .box-element::after, .box-element > .block-section::before {
   content: ' ';
   margin-left: 52px;
   margin-right: 52px;
   border-top: 2px solid #E2E2E2;
+  height: 0;
 }
 
 .box-element figcaption {
   margin-left: 54px;
   margin-right: 54px;
   padding-bottom: 6px;
-  border-bottom: 2px solid #E2E2E2;
 }
 
 .unsupported-format-label {
