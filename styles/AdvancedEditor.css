@@ -166,10 +166,11 @@
   height: 0;
 }
 
-.box-element figcaption {
+.box-element > figcaption {
   margin-left: 54px;
   margin-right: 54px;
   padding-bottom: 6px;
+  text-align: left;
 }
 
 .unsupported-format-label {

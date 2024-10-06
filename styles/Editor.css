@@ -296,7 +296,7 @@
   word-wrap: break-word;
 }
 
-.ProseMirror .block-table_element figcaption, .block-box_element figcaption {
+.ProseMirror .block-table_element figcaption {
   text-align: left;
 }
 
