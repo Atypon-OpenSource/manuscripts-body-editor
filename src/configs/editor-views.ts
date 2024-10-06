@@ -17,7 +17,7 @@
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
-import bibliographyElement from '../views/bibliography_element_editable'
+import bibliographyElement from '../views/bibliography_element'
 import blockquoteElement from '../views/blockquote_element_editable'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
