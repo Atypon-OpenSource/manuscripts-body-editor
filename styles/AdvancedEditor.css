@@ -10,14 +10,24 @@
   content: attr(data-section-number) '. ';
 }
 
+.ProseMirror > div.body .block-box_element .box-element section:not(.toc)
+.block-section_title h1.empty-node[data-placeholder]::before {
+  content: attr(data-placeholder);
+}
+
+.ProseMirror > div.body .block-box_element .box-element section:not(.toc)
+.block-section_title h1::before {
+  content: none;
+}
+
 .ProseMirror > div .block-section_title > h1 {
   font-size: 16pt !important;
   font-style: normal !important;
   font-weight: bold !important;
   color: #000 !important;
   text-align: left;
-  margin-top: 8pt !important;
-  margin-bottom: 5pt !important;
+  padding-top: 8pt !important;
+  padding-bottom: 5pt !important;
   line-height: 1.5;
   text-indent: 0pt;
   display: inline;
@@ -60,8 +70,8 @@
   font-weight: normal !important;
   color: #353535 !important;
   text-align: left !important;
-  margin-top: 10pt !important;
-  margin-bottom: 10pt !important;
+  padding-top: 10pt !important;
+  padding-bottom: 10pt !important;
   line-height: 2 !important;
   text-indent: 0pt !important;
 }
@@ -130,6 +140,43 @@
   grid-row: 2 !important;
   text-align: center !important;
 }
+
+.ProseMirror .block-container.block-box_element {
+  grid-template-columns: auto;
+}
+
+.ProseMirror .block-container.block-box_element > .block.box-element {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto;
+}
+
+.ProseMirror .box-element .block-container .block {
+  background: var(--box-element-bg-color);
+  padding-left: 12px;
+  border-left: 2px solid #E2E2E2;
+  border-right: 2px solid #E2E2E2;
+}
+
+.ProseMirror .box-element::after, .box-element > .block-section::before {
+  content: ' ';
+  margin-left: 52px;
+  margin-right: 52px;
+  border-top: 2px solid #E2E2E2;
+  height: 0;
+}
+
+.box-element > figcaption {
+  margin-left: 54px;
+  margin-right: 54px;
+  padding-bottom: 6px;
+  text-align: left;
+}
+
+.box-element section figcaption {
+  background: var(--box-element-bg-color);
+}
+
 
 .unsupported-format-label {
   font-size: 140%;
@@ -286,7 +333,6 @@ span.comment-marker {
   font-style: italic !important;
   font-weight: 400 !important;
   line-height: 16px !important;
-  margin-top: 4px !important;
 }
 
 .ProseMirror .author-notes-container h1 {
@@ -398,7 +444,12 @@ span.comment-marker {
 .keywords > .block-section_title > .block-gutter {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-top: 0;
+}
+
+.block-box_element > .block-gutter {
+  margin-top: 14px;
 }
 
 .author-notes > .block-section_title > .block,
@@ -462,6 +513,7 @@ span.comment-marker {
   --common-color: #353535;
   --selected-pending-background-color: #ddf3fa;
   --selected-accepted-background-color: #f2f2f2;
+  --box-element-bg-color: #fafafa;
 }
 .ProseMirror ins,
 .ProseMirror del {
