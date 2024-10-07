@@ -48,6 +48,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
 export interface FigureElementOptionsProps extends FigureDropdownProps {
   onAdd: (file: FileAttachment) => Promise<void>
   onUpload: () => void
+  onAddNewFile?: () => boolean
 }
 
 export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
@@ -55,6 +56,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
   files,
   onAdd,
   onUpload,
+  onAddNewFile,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -63,6 +65,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
     .filter((f) => isImageFile(f.name))
 
   const others = files.others.filter((f) => isImageFile(f.name))
+  const showAddFile = onAddNewFile ? onAddNewFile() : true
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
@@ -78,7 +81,9 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
           top={7}
         >
           <NestedDropdown
-            disabled={!can.replaceFile || supplements.length < 1}
+            disabled={
+              !can.replaceFile || supplements.length < 1 || !showAddFile
+            }
             parentToggleOpen={toggleOpen}
             buttonText={'Supplements'}
             list={
@@ -93,7 +98,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
             }
           />
           <NestedDropdown
-            disabled={!can.replaceFile || others.length < 1}
+            disabled={!can.replaceFile || others.length < 1 || !showAddFile}
             parentToggleOpen={toggleOpen}
             buttonText={'Other files'}
             list={
@@ -107,7 +112,10 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
               </>
             }
           />
-          <UploadButton onClick={onUpload} disabled={!can.uploadFile}>
+          <UploadButton
+            onClick={onUpload}
+            disabled={!can.uploadFile || !showAddFile}
+          >
             <AddIcon /> New file...
           </UploadButton>
         </DropdownList>
