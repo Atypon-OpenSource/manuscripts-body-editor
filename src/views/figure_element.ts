@@ -62,15 +62,7 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
       this.dom.removeAttribute('data-track-status')
       this.dom.removeAttribute('data-track-op')
     }
-    const handleNewFile = (): boolean => {
-      let figureUploaded = false
-      this.node.content.forEach((file) => {
-        if (file.attrs.src) {
-          figureUploaded = true
-        }
-      })
-      return figureUploaded
-    }
+
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
     this.contentDOM.setAttribute('data-alignment', alignment || '')
@@ -87,9 +79,20 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
     this.container.classList.toggle('fit-to-page', sizeFraction === 2)
 
     const can = this.props.getCapabilities()
+
     let handleUpload = () => {
       //noop
     }
+    const handleNewFile = (): boolean => {
+      let figureUploaded = true
+      this.node.content.forEach((file) => {
+        if (file.attrs.src) {
+          figureUploaded = false
+        }
+      })
+      return figureUploaded
+    }
+
     const handleAdd = async (file: FileAttachment) => {
       const {
         state: { tr, schema, selection },
@@ -139,6 +142,7 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
 
       handleUpload = figureUploader(upload)
     }
+
     if (this.props.dispatch && this.props.theme) {
       const files = this.props.getFiles()
       const doc = this.view.state.doc
