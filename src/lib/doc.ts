@@ -17,6 +17,7 @@ import {
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
+  SupplementsNode,
 } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
@@ -28,9 +29,11 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   }
   const abstracts = findAbstractsNode(doc)
   const pos = abstracts.pos - 1
-  tr.insert(pos, schema.nodes.supplements.create())
+  const supplementsNode =
+    schema.nodes.supplements.createAndFill() as SupplementsNode
+  tr.insert(pos, supplementsNode)
   return {
-    node: supplements,
+    node: supplementsNode,
     pos,
   }
 }
@@ -38,6 +41,20 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
 export const findAbstractsNode = (doc: ManuscriptNode) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return findChildrenByType(doc, schema.nodes.abstracts)[0]!
+}
+
+export const findBody = (doc: ManuscriptNode) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return findChildrenByType(doc, schema.nodes.body)[0]!
+}
+
+export const findBackmatter = (doc: ManuscriptNode) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return findChildrenByType(doc, schema.nodes.backmatter)[0]!
+}
+
+export const findBibliographySection = (doc: ManuscriptNode) => {
+  return findChildrenByType(doc, schema.nodes.bibliography_section)[0]
 }
 
 export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import { BaseNodeProps } from './base_node_view'
+import { PullquoteElementNode } from '@manuscripts/transform'
+
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
-export class PullquoteElementView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class PullquoteElementView extends BlockView<PullquoteElementNode> {
   public elementType = 'aside'
   // public footerElement: HTMLElement
 

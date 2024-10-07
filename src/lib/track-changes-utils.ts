@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
-import { ManuscriptNode } from '@manuscripts/transform'
-import { Node as ProsemirrorNode } from 'prosemirror-model'
+import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
+import { TrackedAttrs, UpdateAttrs } from '@manuscripts/track-changes-plugin'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { editAttrsTrackingIcon } from '../assets'
 import { TrackableAttributes } from '../types'
 
 export function isRejectedInsert(node: ProsemirrorNode) {
@@ -102,12 +104,21 @@ export function isTracked(node: ProsemirrorNode) {
 
 export function getActualAttrs<T extends ManuscriptNode>(node: T) {
   const attrs = node.attrs as TrackableAttributes<T>
-  if (
-    attrs.dataTracked &&
-    attrs.dataTracked[0].status === 'rejected' &&
-    attrs.dataTracked[0].operation === 'set_attrs'
-  ) {
-    return attrs.dataTracked[0].oldAttrs as T['attrs']
+  if (attrs.dataTracked?.length) {
+    const changes = (attrs.dataTracked as TrackedAttrs[]).filter(
+      (c) => c.operation === 'set_attrs'
+    ) as UpdateAttrs[]
+    const hasPendingAttrs = changes.some((c) => c.status === 'pending')
+    if (hasPendingAttrs) {
+      // assuming we can't have pending attributes superceded by rejected attributes changes
+      return attrs
+    }
+    const rejected = changes
+      .filter((c) => c.status === 'rejected')
+      .sort((a, b) => b.statusUpdateAt - a.statusUpdateAt)[0]
+    if (rejected && rejected.status === 'rejected') {
+      return rejected.oldAttrs as T['attrs']
+    }
   }
   return attrs
 }
@@ -116,13 +127,59 @@ export const getAttrsTrackingButton = (changeID: string) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'
   el.value = changeID
-  el.innerHTML = editAttrsTrackingIcon
+  el.innerHTML = renderToStaticMarkup(createElement(EditAttrsTrackingIcon))
 
   return el
 }
 
 export function isHidden(node: ProsemirrorNode) {
   return isDeleted(node) || isRejectedInsert(node)
+}
+
+export function isDeletedText(node: ProsemirrorNode) {
+  if (node.type === schema.nodes.text && node.marks.length) {
+    const deleteMark = node.marks.find(
+      (mark) => mark.type === schema.marks.tracked_delete
+    )
+    if (
+      deleteMark &&
+      deleteMark.attrs?.dataTracked?.status &&
+      ['pending', 'approved'].includes(deleteMark.attrs?.dataTracked?.status)
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
+export function isRejectedText(node: ProsemirrorNode) {
+  if (node.type === schema.nodes.text) {
+    const insertMark = node.marks.find(
+      (mark) => mark.type === schema.marks.tracked_insert
+    )
+    if (insertMark && insertMark.attrs?.dataTracked?.status === 'rejected') {
+      return true
+    }
+  }
+  return false
+}
+
+export function getActualTextContent(fragment: Fragment) {
+  let finalContent = ''
+
+  function getContent(fragment: Fragment) {
+    fragment.forEach((node) => {
+      if (node.type !== schema.nodes.text) {
+        finalContent += getContent(node.content)
+      }
+      if (!isDeletedText(node) && !isRejectedText(node)) {
+        finalContent += node.textContent
+      }
+    })
+  }
+
+  getContent(fragment)
+  return finalContent
 }
 
 export function sanitizeAttrsChange<T extends ProsemirrorNode>(

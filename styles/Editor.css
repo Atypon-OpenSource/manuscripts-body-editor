@@ -296,6 +296,14 @@
   word-wrap: break-word;
 }
 
+.ProseMirror .block-table_element figcaption {
+  text-align: left;
+}
+
+.ProseMirror .block-table_element .block-gutter {
+  padding-top: 1em;
+}
+
 .ProseMirror .caption-title:not(.empty-node) {
   font-weight: bold;
 }
@@ -314,6 +322,14 @@
 
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
+}
+
+.ProseMirror .block-table_element .caption-description.empty-node::before {
+  content: 'Table caption';
+}
+
+.ProseMirror .block-table_element .caption-title.empty-node::before {
+  content: 'Table title';
 }
 
 .ProseMirror .suppress-caption .caption-description {
@@ -654,7 +670,12 @@
   margin-top: 16px;
 }
 
-.ProseMirror .block-container:not(.block-section):hover .block-gutter {
+.ProseMirror .block-container:not(.block-section, .block-box_element):hover .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
 }
@@ -937,10 +958,22 @@
 .delete-icon {
   position: absolute;
   right: -20px;
-  top: -13px;
+  top: 13px;
   cursor: pointer;
   z-index: 1;
 }
+.delete-icon svg path {
+  fill: #c9c9c9;
+}
+
+.delete-icon svg rect {
+  fill: #c9c9c9;
+}
+
+.delete-icon svg path:last-child {
+  fill: #fff;
+}
+
 .delete-icon:hover svg path {
   fill: #353535;
 }
@@ -953,7 +986,7 @@
 
 .ProseMirror
   .table-footnotes-element
-  > div:not(:has(.unctied-table-footnote))
+  > div:not(:has(.uncited-footnote))
   p::before {
   counter-increment: table_footnote;
   content: counter(table_footnote);
@@ -997,15 +1030,15 @@
   cursor: pointer;
 }
 
-.ProseMirror .table-footnotes-element > div:has(.unctied-table-footnote) {
+.ProseMirror .table-footnotes-element > div:has(.uncited-footnote) {
   position: relative;
 }
 
-.ProseMirror .unctied-table-footnote {
+.ProseMirror .uncited-footnote {
   display: flex;
   position: absolute;
   margin-right: 4px;
-  top: 15%;
+  top: 6px;
   right: 100%;
 }
 

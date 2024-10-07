@@ -17,17 +17,16 @@
 import {
   getListType,
   JatsStyleType,
+  ListNode,
   ManuscriptNode,
 } from '@manuscripts/transform'
 
 import { getActualAttrs } from '../lib/track-changes-utils'
-import { BaseNodeProps } from './base_node_view'
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
-export class ListView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class ListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 
   public updateContents = () => {

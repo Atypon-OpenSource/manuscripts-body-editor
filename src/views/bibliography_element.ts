@@ -15,7 +15,11 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { BibliographyItemNode, schema } from '@manuscripts/transform'
+import {
+  BibliographyElementNode,
+  BibliographyItemNode,
+  schema,
+} from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { addNodeComment } from '../commands'
@@ -31,14 +35,14 @@ import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class BibliographyElementBlockView<
-  PropsType extends EditableBlockProps
-> extends BlockView<PropsType> {
+export class BibliographyElementBlockView extends BlockView<
+  Trackable<BibliographyElementNode>
+> {
   private container: HTMLElement
   private editor: HTMLDivElement
   private contextMenu: HTMLDivElement
@@ -96,7 +100,7 @@ export class BibliographyElementBlockView<
       componentProps.actions.push({
         label: 'Edit',
         action: () => this.handleEdit(element.id),
-        icon: 'EditIcon',
+        icon: 'Edit',
       })
     }
     componentProps.actions.push({
@@ -182,6 +186,8 @@ export class BibliographyElementBlockView<
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
+      node.attrs as BibliographyItemAttrs
+
       const attrs = node.attrs as BibliographyItemAttrs
       const change = attrs.dataTracked?.[0]
       if (change) {
@@ -205,7 +211,6 @@ export class BibliographyElementBlockView<
     this.container = document.createElement('div')
     this.container.classList.add('block')
     this.container.contentEditable = 'false'
-
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
   }

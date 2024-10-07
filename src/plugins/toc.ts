@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { ObjectTypes } from '@manuscripts/json-schema'
 import {
-  generateID,
+  generateNodeID,
   isSectionNodeType,
   isTOCSectionNode,
   ManuscriptNode,
@@ -115,7 +114,7 @@ export default () => {
             nodesToUpdate.push({
               node,
               pos,
-              id: node.attrs.id || generateID(ObjectTypes.TOCElement),
+              id: node.attrs.id || generateNodeID(schema.nodes.toc_element),
               contents,
             })
           }

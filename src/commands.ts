@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
-import { TableConfig } from '@manuscripts/style-guide'
+import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FigureElementNode,
   FigureNode,
   FootnoteNode,
-  generateID,
   generateNodeID,
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
   isElementNodeType,
   isFootnoteNode,
-  isInBibliographySection,
   isListNode,
   isParagraphNode,
   isSectionNodeType,
@@ -43,7 +40,9 @@ import {
   ManuscriptTextSelection,
   ManuscriptTransaction,
   schema,
+  SectionCategory,
   SectionNode,
+  SupplementNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -78,15 +77,26 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
-  findParentNodeOfTypeClosestToPos,
+  hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
-import { insertSupplementsNode } from './lib/doc'
+import {
+  findBackmatter,
+  findBibliographySection,
+  findBody,
+  insertSupplementsNode,
+} from './lib/doc'
 import { FileAttachment } from './lib/files'
-import { isNodeOfType, nearestAncestor } from './lib/helpers'
+import { getNewFootnotePos } from './lib/footnotes'
+import {
+  findWordBoundaries,
+  isNodeOfType,
+  nearestAncestor,
+} from './lib/helpers'
+import { sectionTitles } from './lib/section-titles'
 import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -96,10 +106,49 @@ import {
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { footnotesKey } from './plugins/footnotes'
-import { getNewFootnotePos } from './plugins/footnotes/footnotes-utils'
+import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
+
+// enter at the start of paragraph will add node above
+export const addToStart = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+): boolean => {
+  const { selection } = state
+
+  if (
+    !dispatch ||
+    !(selection instanceof TextSelection) ||
+    selection.$from.node().type !== schema.nodes.paragraph
+  ) {
+    return false
+  }
+
+  const {
+    $anchor: { parentOffset: startOffset },
+    $head: { parentOffset: endOffset },
+    $from,
+    $to,
+  } = selection
+  const parentSize = $from.node().content.size
+
+  if (
+    (startOffset === 0 && endOffset === 0) ||
+    startOffset === parentSize ||
+    endOffset === parentSize
+  ) {
+    const side =
+      (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
+        .pos - (startOffset === 0 ? 1 : 0)
+    const tr = state.tr.insert(side, $from.node().type.createAndFill()!)
+    tr.setSelection(TextSelection.create(tr.doc, side + 1))
+    dispatch(tr.scrollIntoView())
+    return true
+  }
+  return false
+}
 
 export const markActive =
   (type: ManuscriptMarkType) =>
@@ -149,8 +198,11 @@ export const canInsert =
     if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
       return false
     }
+    const initDepth =
+      findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
+      0
 
-    for (let d = $from.depth; d >= 0; d--) {
+    for (let d = $from.depth; d >= initDepth; d--) {
       const index = $from.index(d)
 
       if ($from.node(d).canReplaceWith(index, index, type)) {
@@ -203,18 +255,12 @@ export const createBlock = (
   position: number,
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  attrs?: Attrs,
-  tableConfig?: TableConfig
+  attrs?: Attrs
 ) => {
   let node
   switch (nodeType) {
     case state.schema.nodes.table_element:
-      if (!tableConfig) {
-        throw new Error(
-          'Table configuration is required for creating a table element'
-        )
-      }
-      node = createAndFillTableElement(state, tableConfig)
+      node = createAndFillTableElement(state)
       break
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
@@ -241,8 +287,20 @@ export const createBlock = (
   }
 }
 
+export const undoFootnoteDelete = (
+  tr: Transaction,
+  footnote: NodeWithPos,
+  position: number
+) => {
+  const updatedAttrs = {
+    ...footnote.node.attrs,
+    dataTracked: null,
+  }
+  tr.setNodeMarkup(position, undefined, updatedAttrs, footnote.node.marks)
+}
+
 export const insertGeneralFootnote = (
-  tableNode: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: ManuscriptEditorView,
   tableElementFooter?: NodeWithPos[]
@@ -255,23 +313,36 @@ export const insertGeneralFootnote = (
     paragraph,
   ])
   const tableColGroup = findChildrenByType(
-    tableNode,
+    tableElementNode,
     schema.nodes.table_colgroup
   )[0]
+  const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
   const tr = state.tr
   const pos = tableElementFooter?.length
     ? position + tableElementFooter[0].pos + 2
     : position +
       (!tableColGroup
-        ? tableNode.content.firstChild?.nodeSize || 0
+        ? table.pos + table.node.nodeSize
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
+    if (
+      isDeleted(tableElementFooter[0].node) ||
+      isRejectedInsert(tableElementFooter[0].node)
+    ) {
+      const tableElementFooterPos = tr.mapping.map(
+        position + tableElementFooter[0].pos + 1
+      )
+
+      //Restore the deleted/ rejected tablefooter by clearing the 'dataTracked' attribute (setting it to null)
+      undoFootnoteDelete(tr, tableElementFooter[0], tableElementFooterPos)
+    }
+
     tr.insert(pos, generalNote as ManuscriptNode)
   } else {
     const tableElementFooter = schema.nodes.table_element_footer.create(
       {
-        id: generateID(ObjectTypes.TableElementFooter),
+        id: generateNodeID(schema.nodes.table_element_footer),
       },
       [generalNote]
     )
@@ -312,15 +383,31 @@ export const insertFigure = (
   return true
 }
 
+export const insertTable = (
+  config: TableConfig,
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = findBlockInsertPosition(state)
+  if (!pos) {
+    return false
+  }
+  const node = createAndFillTableElement(state, config)
+  const tr = state.tr.insert(pos, node)
+  tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
+  dispatch && dispatch(tr)
+  return true
+}
+
 export const insertSupplement = (
   file: FileAttachment,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const supplement = schema.nodes.supplement.create({
+  const supplement = schema.nodes.supplement.createAndFill({
     id: generateNodeID(schema.nodes.supplement),
     href: file.id,
-  })
+  }) as SupplementNode
 
   const tr = state.tr
   const supplements = insertSupplementsNode(tr)
@@ -334,18 +421,13 @@ export const insertSupplement = (
 
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
-  (
-    state: ManuscriptEditorState,
-    dispatch?: Dispatch,
-    view?: EditorView,
-    tableConfig?: TableConfig
-  ) => {
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
     const position = findBlockInsertPosition(state)
     if (position === null) {
       return false
     }
 
-    createBlock(nodeType, position, state, dispatch, undefined, tableConfig)
+    createBlock(nodeType, position, state, dispatch, undefined)
 
     return true
   }
@@ -384,6 +466,32 @@ export const insertBreak: EditorAction = (state, dispatch) => {
 }
 
 const selectedText = (): string => (window.getSelection() || '').toString()
+
+export const findPosBeforeFirstSubsection = (
+  $pos: ManuscriptResolvedPos
+): number | null => {
+  let posBeforeFirstSubsection: number | null = null
+
+  for (let d = $pos.depth; d >= 0; d--) {
+    const parentNode = $pos.node(d)
+    if (isSectionNodeType(parentNode.type)) {
+      const parentStartPos = $pos.start(d) // Get the start position of the parent section
+      parentNode.descendants((node, pos) => {
+        if (
+          node.type === schema.nodes.section &&
+          posBeforeFirstSubsection === null
+        ) {
+          // Found the first subsection, set the position before it
+          posBeforeFirstSubsection = parentStartPos + pos
+        }
+        return posBeforeFirstSubsection === null
+      })
+      break // Stop iterating after finding the parent section
+    }
+  }
+
+  return posBeforeFirstSubsection
+}
 
 const findPosAfterParentSection = (
   $pos: ManuscriptResolvedPos
@@ -476,8 +584,8 @@ export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const node = state.schema.nodes.citation.create({
-    id: generateID(ObjectTypes.Citation),
+  const node = schema.nodes.citation.create({
+    id: generateNodeID(schema.nodes.citation),
     rids: [],
     selectedText: selectedText(),
   })
@@ -544,8 +652,8 @@ export const createFootnote = (
   state: ManuscriptEditorState,
   kind: 'footnote' | 'endnote'
 ) => {
-  return state.schema.nodes.footnote.createAndFill({
-    id: generateID(ObjectTypes.Footnote),
+  return schema.nodes.footnote.createAndFill({
+    id: generateNodeID(schema.nodes.footnote),
     kind,
   }) as FootnoteNode
 }
@@ -594,14 +702,47 @@ export const insertFootnote = (
     const footnoteElement = findChildrenByType(
       footnotesSection.node,
       schema.nodes.footnotes_element
-    )
-    const pos =
-      footnotesSection.pos +
-      footnoteElement[0].pos +
-      footnoteElement[0].node.nodeSize -
-      1
-    tr.insert(pos, footnote)
-    selectionPos = pos + 2
+    ).pop()
+
+    if (footnoteElement) {
+      if (
+        isDeleted(footnoteElement.node) ||
+        isRejectedInsert(footnoteElement.node)
+      ) {
+        const footnoteElementPos =
+          footnotesSection.pos + footnoteElement.pos + 1
+
+        //Restore the deleted/rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
+
+        undoFootnoteDelete(tr, footnoteElement, footnoteElementPos)
+
+        const updatedAttrs = {
+          ...footnoteElement.node.attrs,
+          dataTracked: null,
+        }
+        tr.setNodeMarkup(
+          footnoteElementPos,
+          undefined,
+          updatedAttrs,
+          footnoteElement.node.marks
+        )
+      }
+      const pos =
+        footnotesSection.pos +
+        footnoteElement.pos +
+        footnoteElement.node.nodeSize -
+        1
+      tr.insert(pos, footnote)
+      selectionPos = pos + 2
+    } else {
+      const footnoteElement = schema.nodes.footnotes_element.create(
+        {},
+        footnote
+      )
+      const pos = footnotesSection.pos + footnotesSection.node.nodeSize - 1
+      tr.insert(pos, footnoteElement)
+      selectionPos = pos + 2
+    }
   }
   if (selectionPos) {
     const selection = TextSelection.near(tr.doc.resolve(selectionPos))
@@ -642,10 +783,14 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // check if another graphical abstract already exists
-  // parameter 'deep' must equal true to search the whole document
+  const GraphicalAbstractSectionNode = findChildrenByType(
+    state.doc,
+    schema.nodes.graphical_abstract_section
+  )[0]
+
   if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true) &&
+    !isRejectedInsert(GraphicalAbstractSectionNode.node)
   ) {
     return false
   }
@@ -677,40 +822,38 @@ export const insertGraphicalAbstract = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    let pos = findPosAfterParentSection(state.selection.$from)
-    const body = findChildrenByType(state.doc, schema.nodes.body)[0]
-
-    if (isInBibliographySection(state.selection.$from)) {
-      return false
-    } else if (pos === null && subsection) {
+    const selection = state.selection
+    if (
+      hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
+      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))
+    ) {
       return false
     }
 
-    if (pos === null) {
+    let pos
+    if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
+      // Looking for the position to insert the section
+      pos = subsection
+        ? findPosBeforeFirstSubsection(state.selection.$from) ||
+          findPosAfterParentSection(state.selection.$from)
+        : findPosAfterParentSection(state.selection.$from)
+    } else {
+      const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
     }
-    // checking wether the selection inside the abstracts node or not
-    const resolvePos = state.doc.resolve(pos)
-    const isAbstract = findParentNodeOfTypeClosestToPos(
-      resolvePos,
-      schema.nodes.abstracts
-    )
-    if (isAbstract && !subsection) {
+
+    if (!pos) {
       return false
     }
 
-    const adjustment = subsection ? -1 : 0 // move pos inside section for a subsection
-    const tr = state.tr.insert(
-      pos + adjustment,
-      state.schema.nodes.section.createAndFill() as SectionNode
-    )
+    const section = schema.nodes.section.createAndFill() as SectionNode
+    const diff = subsection ? -1 : 0 // move pos inside section for a subsection
+    const tr = state.tr.insert(pos + diff, section)
 
     if (dispatch) {
       // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + adjustment + 2)
-      if (view) {
-        view.focus()
-      }
+      const selection = TextSelection.create(tr.doc, pos + diff + 2)
+      view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -718,47 +861,43 @@ export const insertSection =
   }
 
 export const insertBackMatterSection =
-  (category: string) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const bibliographySection = findChildrenByType(
-      state.doc,
-      schema.nodes.bibliography_section
-    )[0]
-    const backmatter = findChildrenByType(state.doc, schema.nodes.backmatter)[0]
+    const backmatter = findBackmatter(state.doc)
 
-    const backmatterSections = findChildrenByType(
-      backmatter.node,
-      schema.nodes.section,
-      true
-    )
+    const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
-    if (
-      backmatterSections.some(
-        (section) => section.node.attrs.category === category
-      )
-    ) {
+    if (sections.some((s) => s.node.attrs.category === category)) {
       return false
     }
-    let pos
+
     // check if reference node exist to insert before it.
-    if (bibliographySection) {
-      pos = bibliographySection.pos
+    const bibliography = findBibliographySection(state.doc)
+
+    let pos
+    if (bibliography) {
+      pos = bibliography.pos
     } else {
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
-    const tr = state.tr.insert(
-      pos,
-      state.schema.nodes.section.createAndFill({
-        category: category,
-      }) as SectionNode
-    )
 
+    const node = schema.nodes.section.createAndFill(
+      {
+        category,
+      },
+      [
+        schema.nodes.section_title.create(
+          {},
+          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
+        ),
+      ]
+    ) as SectionNode
+
+    const tr = state.tr.insert(pos, node)
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos)
-      if (view) {
-        view.focus()
-      }
+      view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
 
@@ -1256,33 +1395,44 @@ export const selectAllIsolating = (
   return true
 }
 
+export type TableConfig = {
+  numberOfColumns: number
+  numberOfRows: number
+  includeHeader: boolean
+}
+
+const DEFAULT_TABLE_CONFIG: TableConfig = {
+  numberOfColumns: 2,
+  numberOfRows: 2,
+  includeHeader: true,
+}
+
 /**
  * Create a table containing a configurable number of rows and columns.
  * The table can optionally include a header row.
  */
 export const createAndFillTableElement = (
   state: ManuscriptEditorState,
-  tableConfig: TableConfig
+  config = DEFAULT_TABLE_CONFIG
 ) => {
-  const { nodes } = state.schema
-  const { numberOfColumns, numberOfRows, includeHeader } = tableConfig
-  const createRow = (cellType: string) => {
+  const { numberOfColumns, numberOfRows, includeHeader } = config
+  const createRow = (cellType: ManuscriptNodeType) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      nodes[cellType].create({}, state.schema.nodes.paragraph.create())
+      cellType.create()
     )
-    return nodes.table_row.create({}, cells)
+    return schema.nodes.table_row.create({}, cells)
   }
 
-  const tableRows = includeHeader ? [createRow('table_header')] : []
+  const tableRows = includeHeader ? [createRow(schema.nodes.table_header)] : []
 
   for (let i = 0; i < numberOfRows; i++) {
-    tableRows.push(createRow('table_cell'))
+    tableRows.push(createRow(schema.nodes.table_cell))
   }
 
-  return nodes.table_element.createChecked({}, [
-    nodes.table.create({}, tableRows),
+  return schema.nodes.table_element.createChecked({}, [
     createAndFillFigcaptionElement(state),
-    nodes.listing.create(),
+    schema.nodes.table.create({}, tableRows),
+    schema.nodes.listing.create(),
   ])
 }
 
@@ -1317,14 +1467,18 @@ const getParentNode = (selection: Selection) => {
 
 // TODO:: remove this check when we allow all type of block node to have comment
 const isCommentingAllowed = (type: NodeType) =>
+  type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.box_element ||
+  type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
+  type === schema.nodes.list ||
   type === schema.nodes.table_element
 
 export const addNodeComment = (
@@ -1339,7 +1493,7 @@ export const addNodeComment = (
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
-    id: generateID(ObjectTypes.CommentAnnotation),
+    id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
@@ -1369,13 +1523,13 @@ export const addInlineComment = (
   if (!node || !isCommentingAllowed(node.type)) {
     return false
   }
-  const from = selection.from
-  const to = selection.to
+  let from = selection.from
+  let to = selection.to
 
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
-    id: generateID(ObjectTypes.CommentAnnotation),
+    id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
@@ -1393,25 +1547,24 @@ export const addInlineComment = (
     const tr = state.tr.insert(pos, comment)
 
     if (from === to) {
-      const point = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'point',
-      })
-      tr.insert(from, point)
-    } else {
-      const start = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'start',
-      })
-      const end = schema.nodes.highlight_marker.create({
-        id: comment.attrs.id,
-        tid: node.attrs.id,
-        position: 'end',
-      })
-      tr.insert(from, start).insert(to + 1, end)
+      // Use the current cursor position to determine the boundaries of the intended word
+      const result = findWordBoundaries(state, from)
+      from = result.from
+      to = result.to
     }
+
+    const start = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'start',
+    })
+    const end = schema.nodes.highlight_marker.create({
+      id: comment.attrs.id,
+      tid: node.attrs.id,
+      position: 'end',
+    })
+    tr.insert(from, start).insert(to + 1, end)
+
     const range = getCommentRange(attrs)
     const key = getCommentKey(attrs, range, node)
     setCommentSelection(tr, key, attrs.id, true)
@@ -1429,7 +1582,7 @@ interface NodeWithPosition {
 }
 
 export const insertTableFootnote = (
-  node: ManuscriptNode,
+  tableElementNode: ManuscriptNode,
   position: number,
   view: EditorView,
   inlineFootnote?: NodeWithPosition
@@ -1437,8 +1590,8 @@ export const insertTableFootnote = (
   const { state, dispatch } = view
   const tr = state.tr
 
-  const footnote = state.schema.nodes.footnote.createAndFill({
-    id: generateID(ObjectTypes.Footnote),
+  const footnote = schema.nodes.footnote.createAndFill({
+    id: generateNodeID(schema.nodes.footnote),
     kind: 'footnote',
   }) as FootnoteNode
 
@@ -1454,12 +1607,13 @@ export const insertTableFootnote = (
     })
   } else {
     const inlineFootnotes = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.inline_footnote
     )
     footnoteIndex =
       inlineFootnotes.filter(
-        ({ pos }) => !isRejectedInsert(node) && position + pos <= insertedAt
+        ({ pos }) =>
+          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
       ).length + 1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
@@ -1473,15 +1627,22 @@ export const insertTableFootnote = (
   let insertionPos = position
 
   const footnotesElement = findChildrenByType(
-    node,
+    tableElementNode,
     schema.nodes.footnotes_element
   ).pop()
 
-  if (
-    footnotesElement &&
-    !isDeleted(footnotesElement.node) &&
-    !isRejectedInsert(footnotesElement.node)
-  ) {
+  if (footnotesElement) {
+    if (
+      isDeleted(footnotesElement.node) ||
+      isRejectedInsert(footnotesElement.node)
+    ) {
+      const footnotesElementPos = tr.mapping.map(
+        position + footnotesElement.pos + 1
+      )
+
+      //Restore the deleted/ rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
+      undoFootnoteDelete(tr, footnotesElement, footnotesElementPos)
+    }
     const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
     insertionPos = tr.mapping.map(position + footnotePos)
 
@@ -1493,36 +1654,45 @@ export const insertTableFootnote = (
     )
 
     const tableElementFooter = findChildrenByType(
-      node,
+      tableElementNode,
       schema.nodes.table_element_footer
     )[0]
 
     if (tableElementFooter) {
+      if (
+        isDeleted(tableElementFooter.node) ||
+        isRejectedInsert(tableElementFooter.node)
+      ) {
+        const tableElementFooterPos = tr.mapping.map(
+          position + tableElementFooter.pos + 1
+        )
+
+        //Restore the deleted/ rejected table footer by clearing the 'dataTracked' attribute (setting it to null)
+        undoFootnoteDelete(tr, tableElementFooter, tableElementFooterPos)
+      }
       const pos = tableElementFooter.pos
       insertionPos = position + pos + tableElementFooter.node.nodeSize
       tr.insert(tr.mapping.map(insertionPos), footnoteElement)
     } else {
       const tableElementFooter = schema.nodes.table_element_footer.create(
         {
-          id: generateID(ObjectTypes.TableElementFooter),
+          id: generateNodeID(schema.nodes.table_element_footer),
         },
         [footnoteElement]
       )
 
       const tableColGroup = findChildrenByType(
-        node,
+        tableElementNode,
         schema.nodes.table_colgroup
       )[0]
+      const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
       if (tableColGroup) {
         insertionPos =
           position + tableColGroup.pos + tableColGroup.node.nodeSize
         tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       } else {
-        const tableSize = node.content.firstChild?.nodeSize
-        if (tableSize) {
-          insertionPos = position + tableSize
-          tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
-        }
+        insertionPos = position + table.pos + table.node.nodeSize
+        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
       }
     }
   }
@@ -1673,4 +1843,30 @@ export function mergeCellsWithSpace(
     dispatch(tr)
   }
   return true
+}
+
+export const autoComplete = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const complete = checkForCompletion(state)
+  if (complete) {
+    const tr = state.tr.insertText(complete.suggestion, state.selection.from)
+    const inserted = complete.title.substring(
+      0,
+      complete.title.length - complete.suggestion.length
+    )
+    if (inserted) {
+      // replacing to provide text case as required
+      tr.replaceWith(
+        state.selection.from - inserted.length,
+        state.selection.from,
+        schema.text(inserted)
+      )
+    }
+
+    dispatch && dispatch(tr)
+    return true
+  }
+  return false
 }

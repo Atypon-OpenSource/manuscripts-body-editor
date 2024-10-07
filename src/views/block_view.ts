@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
 import {
   ManuscriptNode,
   ManuscriptNodeView,
@@ -21,14 +22,14 @@ import {
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 
 const isGraphicalAbstractFigure = ($pos: ResolvedPos, doc: ManuscriptNode) =>
   $pos.parent.type === schema.nodes.graphical_abstract_section &&
   doc.nodeAt($pos.pos)?.type === schema.nodes.figure_element
 
-export default class BlockView<T extends BaseNodeProps>
-  extends BaseNodeView<T>
+export default class BlockView<BlockNode extends ManuscriptNode>
+  extends BaseNodeView<BlockNode>
   implements ManuscriptNodeView
 {
   public viewAttributes = {
@@ -55,7 +56,7 @@ export default class BlockView<T extends BaseNodeProps>
   }
 
   // unfortunately we can't call updateContents in successors because they are not methods but props
-  // which means they're inited in the contructor and are not accessible via super.
+  // which means they're inited in the constructor and are not accessible via super.
   // onUpdateContent is provided here to allow to execute additional actions on content update without a need to copy all the code
   // @TODO - rewrite arrow props to methods
   onUpdateContent() {
@@ -75,9 +76,12 @@ export default class BlockView<T extends BaseNodeProps>
       return
     }
 
-    if (this.node.attrs.dataTracked?.length) {
-      const lastChange =
-        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
+    const dataTracked = (this.node.attrs.dataTracked || []).filter(
+      (attr: TrackedAttrs) => attr.operation !== 'reference'
+    )
+
+    if (dataTracked?.length) {
+      const lastChange = dataTracked[dataTracked.length - 1]
       this.dom.setAttribute('data-track-status', lastChange.status)
       this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {

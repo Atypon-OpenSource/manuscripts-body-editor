@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import { DotsIcon } from '@manuscripts/style-guide'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { threeDotIcon } from '../assets'
 import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class TableCellView extends BlockView<EditableBlockProps> {
+export class TableCellView extends BlockView<ManuscriptNode> {
   public contentDOM: HTMLElement
 
   public ignoreMutation(mutation: MutationRecord) {
@@ -61,7 +62,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
   private createContextMenu() {
     const contextMenuButton = document.createElement('button')
     contextMenuButton.className = 'table-context-menu-button'
-    contextMenuButton.innerHTML = threeDotIcon
+    contextMenuButton.innerHTML = renderToStaticMarkup(createElement(DotsIcon))
 
     contextMenuButton.addEventListener('click', () => {
       if (this.props.popper.isActive()) {
@@ -96,6 +97,8 @@ export class TableCellView extends BlockView<EditableBlockProps> {
               this.props.popper.destroy()
               contextMenuButton.classList.toggle('open-context-menu')
             },
+            onCancelColumnDialog: () =>
+              this.addOutClickListener(contextMenuButton),
           },
           this.view.state.selection.$from.node(),
           this.getPos,
@@ -105,6 +108,7 @@ export class TableCellView extends BlockView<EditableBlockProps> {
         contextMenuButton.classList.toggle('open-context-menu')
 
         this.props.popper.show(contextMenuButton, contextMenu, 'right', false)
+        this.addOutClickListener(contextMenuButton)
       }
     })
 
@@ -120,6 +124,24 @@ export class TableCellView extends BlockView<EditableBlockProps> {
 
     const outputSpec = this.node.type.spec.toDOM(this.node)
     return DOMSerializer.renderSpec(document, outputSpec).dom as HTMLElement
+  }
+
+  private addOutClickListener(contextMenuButton: HTMLButtonElement) {
+    const listener: EventListener = (event) => {
+      const target = event.target as HTMLElement
+      if (
+        !target.classList.contains('open-context-menu') &&
+        !(target.parentNode as HTMLElement)?.classList.contains('table-ctx')
+      ) {
+        this.props.popper.destroy()
+        contextMenuButton.classList.toggle('open-context-menu')
+      }
+      window.removeEventListener('mousedown', listener)
+      window.removeEventListener('keydown', listener)
+    }
+
+    window.addEventListener('mousedown', listener)
+    window.addEventListener('keydown', listener)
   }
 }
 

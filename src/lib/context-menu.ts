@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { FootnotesSelector, FootnoteWithIndex } from '@manuscripts/style-guide'
 import {
   getListType,
   InlineFootnoteNode,
   isInBibliographySection,
+  isSectionTitleNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -26,29 +26,35 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
-import { Attrs } from 'prosemirror-model'
+import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
   addNodeComment,
   createBlock,
+  findPosBeforeFirstSubsection,
   insertGeneralFootnote,
   insertTableFootnote,
 } from '../commands'
-import { buildTableFootnoteLabels } from '../plugins/footnotes/footnotes-utils'
-import { EditableBlockProps } from '../views/editable_block'
+import { FootnotesSelector } from '../components/views/FootnotesSelector'
+import { EditorProps } from '../configs/ManuscriptsEditor'
 import ReactSubView from '../views/ReactSubView'
+import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
 import {
   getActualAttrs,
   isDeleted,
   isRejectedInsert,
 } from './track-changes-utils'
-import { getChildOfType } from './utils'
+import { getChildOfType, isChildOfNodeTypes } from './utils'
 
 const popper = new PopperManager()
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+
+const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
+  isSectionTitleNode(node) &&
+  $pos.node($pos.depth - 1).type === schema.nodes.box_element
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -75,14 +81,14 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
-  private readonly props?: EditableBlockProps
+  private readonly props?: EditorProps
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
     getPos: () => number,
     actions: Actions = {},
-    props?: EditableBlockProps
+    props?: EditorProps
   ) {
     this.node = node
     this.view = view
@@ -124,8 +130,13 @@ export class ContextMenu {
           const itemTitle = sectionTitle
             ? `“${this.trimTitle(sectionTitle, 30)}”`
             : 'This Section'
-
-          if (types.has('section')) {
+          if (
+            types.has('section') &&
+            !isChildOfNodeTypes(this.view.state.doc, $pos.pos, [
+              schema.nodes.abstracts,
+              schema.nodes.backmatter,
+            ])
+          ) {
             const labelPosition = after ? 'After' : 'Before'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
@@ -139,12 +150,13 @@ export class ContextMenu {
           }
 
           if (types.has('subsection')) {
+            const insPos = findPosBeforeFirstSubsection($pos) || endPos
             const level = sectionLevel($pos.depth)
             const label = `New ${level} to ${itemTitle}`
 
             section.appendChild(
               this.createMenuItem(label, () => {
-                insertNode(schema.nodes.section, endPos)
+                insertNode(schema.nodes.section, insPos)
                 popper.destroy()
               })
             )
@@ -235,7 +247,8 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const type = this.node.type
+    const isBox = isBoxElementSectionTitle($pos, this.node)
+    const type = isBox ? schema.nodes.box_element : this.node.type
 
     if (type === schema.nodes.list) {
       menu.appendChild(
@@ -537,21 +550,19 @@ export class ContextMenu {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
-          this.view.state.tr
-            .setMeta('fromContextMenu', true)
-            .delete($pos.before(), $pos.after())
+          this.view.state.tr.delete($pos.before(), $pos.after())
         )
 
         break
       }
 
-      case 'bibliography_element': {
+      case 'box_element': {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
           this.view.state.tr.delete(
-            $pos.before($pos.depth),
-            $pos.after($pos.depth)
+            $pos.before($pos.depth - 1),
+            $pos.after($pos.depth - 1)
           )
         )
 

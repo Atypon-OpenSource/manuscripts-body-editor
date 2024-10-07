@@ -17,8 +17,10 @@ import { schema } from '@manuscripts/transform'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isRejectedInsert } from '../lib/track-changes-utils'
+import { isRejectedInsert } from '../../lib/track-changes-utils'
+import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
 export type PluginState = Map<string, string>
@@ -33,7 +35,8 @@ const calculateSectionLevels = (
 ) => {
   node.forEach((childNode, offset) => {
     if (
-      childNode.type === schema.nodes.section &&
+      (childNode.type === schema.nodes.section ||
+        childNode.type === schema.nodes.box_element) &&
       !isRejectedInsert(childNode)
     ) {
       numbering[numbering.length - 1] += 1
@@ -67,6 +70,22 @@ const getPluginState = (doc: ProseMirrorNode): PluginState => {
 export default () => {
   return new Plugin<PluginState>({
     key: sectionTitleKey,
+    props: {
+      decorations(state) {
+        const text = checkForCompletion(state)
+        if (text) {
+          const decoration = Decoration.widget(state.selection.from, () => {
+            const node = document.createElement('span')
+            node.classList.add('completion-bearer')
+            node.dataset.suggest = text.suggestion
+            return node
+          })
+          return DecorationSet.create(state.doc, [decoration])
+        }
+
+        return DecorationSet.empty
+      },
+    },
     state: {
       init: (_, state: EditorState) => {
         return getPluginState(state.doc)

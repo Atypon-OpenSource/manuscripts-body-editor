@@ -202,6 +202,15 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     actionsRef.current?.reset()
     setConfirm(false)
   }
+  // Determine if the newly added citation is a new item by checking if it has properties beyond just 'id' and 'type'
+  const isNewItem = (
+    obj: BibliographyItemAttrs,
+    basicProps: string | string[]
+  ) => {
+    const allKeys = Object.keys(obj)
+    const extraKeys = allKeys.filter((key) => !basicProps.includes(key))
+    return extraKeys.length > 0
+  }
 
   const handleSave = (values: BibliographyItemAttrs | undefined) => {
     if (!values || !selection) {
@@ -210,6 +219,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     const item = {
       ...selection,
       ...values,
+    }
+    // Check if citation count for the new item is undefined, and set it to 1
+    const currentCitationCount = citationCounts.get(item.id)
+
+    if (currentCitationCount === undefined) {
+      citationCounts.set(item.id, 1) // update the citation count in the Map
     }
     onSave(item)
     setSelection(item)
@@ -301,7 +316,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             {selection && (
               <ReferenceForm
                 values={normalize(selection)}
-                showDelete={!citationCounts.get(selection.id)}
+                showDelete={
+                  !citationCounts.get(selection.id) &&
+                  isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
+                }
                 onChange={handleChange}
                 onCancel={onCancel}
                 onDelete={handleDelete}

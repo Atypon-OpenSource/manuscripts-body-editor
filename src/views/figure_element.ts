@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-import { FigureNode, schema } from '@manuscripts/transform'
+import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
 
 import {
   FigureElementOptions,
   FigureElementOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, FileManagement, groupFiles } from '../lib/files'
+import { FileAttachment, groupFiles } from '../lib/files'
 import { getMatchingChild } from '../lib/utils'
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-interface FigureElementProps {
-  fileManagement: FileManagement
-  getFiles: () => FileAttachment[]
-}
-
-export class FigureElementView extends BlockView<
-  EditableBlockProps & FigureElementProps
-> {
+export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
   private container: HTMLElement
   private reactTools: HTMLElement
 
@@ -80,7 +73,7 @@ export class FigureElementView extends BlockView<
     }
     this.contentDOM.setAttribute('data-figure-style', figureStyle)
     this.contentDOM.setAttribute('data-figure-layout', figureLayout)
-    this.contentDOM.setAttribute('data-alignment', alignment)
+    this.contentDOM.setAttribute('data-alignment', alignment || '')
 
     if (sizeFraction > 1) {
       // fit to page width

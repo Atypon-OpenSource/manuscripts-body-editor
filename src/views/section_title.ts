@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import { schema, SectionTitleNode } from '@manuscripts/transform'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { sectionLevel } from '../lib/context-menu'
 import { sectionTitleKey } from '../plugins/section_title'
-import { BaseNodeProps } from './base_node_view'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-export class SectionTitleView<
-  PropsType extends BaseNodeProps
-> extends BlockView<PropsType> {
+export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
@@ -36,7 +33,12 @@ export class SectionTitleView<
       schema.nodes.section
     )
     const sectionNumber = sectionTitleState?.get(parentSection?.node.attrs.id)
-    const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
+    let level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
+
+    if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)) {
+      level = level - 2
+    }
+
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
@@ -48,7 +50,7 @@ export class SectionTitleView<
         `${sectionLevel(level)} heading`
       )
     }
-    if (sectionTitleState) {
+    if (sectionTitleState && sectionNumber) {
       this.contentDOM.dataset.sectionNumber = sectionNumber
       this.contentDOM.dataset.titleLevel = level.toString()
     }

@@ -16,11 +16,12 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { Manuscript, UserProfile } from '@manuscripts/json-schema'
+import { SectionCategory, UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
+import { Location, NavigateFunction } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
@@ -28,7 +29,7 @@ import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
-import { transformPasted } from '../lib/paste'
+import { handlePaste, transformPasted } from '../lib/paste'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
@@ -46,7 +47,6 @@ export interface EditorProps {
 
   projectID: string
   doc: ManuscriptNode
-  getManuscript: () => Manuscript
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
 
@@ -56,11 +56,14 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-
+  sectionCategories: SectionCategory[]
   collabProvider?: CollabProvider
+  navigate: NavigateFunction
+  location: Location
+  dispatch?: Dispatch
 }
 
-export type ExternalProps = Omit<EditorProps, 'popper'>
+export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
 
 export const createEditorState = (props: EditorProps) =>
   EditorState.create({
@@ -88,6 +91,7 @@ export const createEditorView = (
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
     transformPasted,
+    handlePaste,
     clipboardParser,
     handleScrollToSelection: handleScrollToBibliographyItem,
     handleClickOn: (view, pos, node, nodePos, event) => {
@@ -105,6 +109,7 @@ export const createEditorView = (
 
   // running an init transaction allowing plugins to caught up with the document for the first time
   const tr = view.state.tr.setMeta('INIT', true)
+
   const nextState = view.state.apply(tr)
   view.updateState(nextState)
   return view

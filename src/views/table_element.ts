@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
+import { TableElementNode } from '@manuscripts/transform'
+
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { EditableBlockProps } from './editable_block'
-import { FigureProps } from './figure_editable'
 
-export class TableElementView extends BlockView<
-  EditableBlockProps & FigureProps
-> {
+export class TableElementView extends BlockView<TableElementNode> {
   public elementType = 'figure'
 
   public createElement = () => {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView } from '@manuscripts/transform'
+import { ManuscriptNodeView, TitleNode } from '@manuscripts/transform'
 
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TitleView<PropsType extends BaseNodeProps>
-  extends BaseNodeView<PropsType>
+export class TitleView
+  extends BaseNodeView<TitleNode>
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement

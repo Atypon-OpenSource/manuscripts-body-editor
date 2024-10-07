@@ -20,7 +20,8 @@ import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { EditableBlockProps } from './editable_block'
+import { EditorProps } from '../configs/ManuscriptsEditor'
+import { Trackable } from '../types'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
@@ -29,7 +30,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   viewProps: {
     view: ManuscriptEditorView
     getPos: () => number
-    node: ManuscriptNode
+    node: ManuscriptNode | Trackable<ManuscriptNode>
   }
   dispatch: Dispatch
 }
@@ -38,18 +39,15 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   MAKE SURE dispatch IS PASSED TO YOUR VIEW
 */
 
-export default (
-  props: EditableBlockProps,
+function createSubView<T extends Trackable<ManuscriptNode>>(
+  props: EditorProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   componentProps: object,
-  node: ManuscriptNode,
+  node: T,
   getPos: () => number,
   view: ManuscriptEditorView,
   classNames = ''
-  // contentDOMElementType?: keyof HTMLElementTagNameMap | null
-
-  // parentContentDOM: HTMLElement
-): HTMLDivElement => {
+): HTMLDivElement {
   const container = document.createElement('div')
   container.classList.add('tools-panel')
   if (classNames) {
@@ -58,17 +56,6 @@ export default (
   container.setAttribute('contenteditable', 'false')
 
   const Wrapped: React.FC = () => {
-    // @TODO consider implementing subscription to avoid many rerenders - this is why those comments are kept
-    // const [node, setNode] = useState<ManuscriptNode>(initialNode)
-    // useEffect(() => {
-    //   subscribe((node) => {
-    //     setNode(node)
-    //   })
-    //   return () => {
-    //     unsubscribe()
-    //   }
-    // }, [])
-
     const setNodeAttrs = (nextAttrs: Partial<ManuscriptNode['attrs']>) => {
       const { selection, tr } = view.state
 
@@ -78,10 +65,6 @@ export default (
       }).setSelection(selection.map(tr.doc, tr.mapping))
 
       view.dispatch(tr)
-    }
-
-    if (!node.attrs || !props.dispatch) {
-      return null
     }
 
     return (
@@ -102,3 +85,5 @@ export default (
 
   return container
 }
+
+export default createSubView
