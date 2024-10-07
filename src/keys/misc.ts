@@ -33,8 +33,8 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
-  autoComplete,
   addToStart,
+  autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
   ignoreMetaNodeBackspaceCommand,
