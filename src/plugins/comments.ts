@@ -196,12 +196,15 @@ const buildPluginState = (
       })
       .forEach((c) => {
         allComments.push(c)
-        if (!c.range) {
-          nodeComments.push(c)
-        } else if (c.range.size) {
-          highlightComments.push(c as InlineComment)
-        } else {
-          pointComments.push(c as InlineComment)
+        // Check if the comment is not a reply
+        if (!c.node.attrs.target.includes('MPCommentAnnotation')) {
+          if (!c.range) {
+            nodeComments.push(c)
+          } else if (c.range.size) {
+            highlightComments.push(c as InlineComment)
+          } else {
+            pointComments.push(c as InlineComment)
+          }
         }
       })
 
