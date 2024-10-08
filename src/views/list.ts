@@ -21,10 +21,10 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
-import { Trackable } from '../types'
 export class ListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 

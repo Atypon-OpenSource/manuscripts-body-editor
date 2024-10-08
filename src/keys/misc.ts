@@ -33,6 +33,7 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
+  addToStart,
   autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
@@ -72,6 +73,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Ctrl->': wrapIn(schema.nodes.blockquote),
   Enter: chainCommands(
     autoComplete,
+    addToStart,
     newlineInCode,
     createParagraphNear,
     liftEmptyBlock,

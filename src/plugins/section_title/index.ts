@@ -33,7 +33,10 @@ const calculateSectionLevels = (
   numbering: NumberingArray = [0]
 ) => {
   node.forEach((childNode, offset) => {
-    if (childNode.type === schema.nodes.section) {
+    if (
+      childNode.type === schema.nodes.section ||
+      childNode.type === schema.nodes.box_element
+    ) {
       numbering[numbering.length - 1] += 1
       const sectionNumber = numbering.join('.')
       const sectionStartPos = startPos + offset + 1

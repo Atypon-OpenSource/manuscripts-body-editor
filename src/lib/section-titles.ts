@@ -26,7 +26,10 @@ export const sectionTitles = new Map<SectionCategory, string>([
   ['MPSectionCategory:conclusions', 'Conclusions'],
   ['MPSectionCategory:acknowledgement', 'Acknowledgments'],
   ['MPSectionCategory:availability', 'Availability'],
-  ['MPSectionCategory:competing-interests', 'COI Statement'],
+  [
+    'MPSectionCategory:competing-interests',
+    'COI Statement|Competing Interests',
+  ],
   ['MPSectionCategory:con', 'Contributed-by information'],
   ['MPSectionCategory:ethics-statement', 'Ethics Statement'],
   ['MPSectionCategory:financial-disclosure', 'Financial Disclosure'],
