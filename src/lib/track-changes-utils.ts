@@ -117,18 +117,6 @@ export function isDeletedText(node: ProsemirrorNode) {
   return false
 }
 
-export function isRejectedText(node: ProsemirrorNode) {
-  if (node.type === schema.nodes.text) {
-    const insertMark = node.marks.find(
-      (mark) => mark.type === schema.marks.tracked_insert
-    )
-    if (insertMark && insertMark.attrs?.dataTracked?.status === 'rejected') {
-      return true
-    }
-  }
-  return false
-}
-
 export function getActualTextContent(fragment: Fragment) {
   let finalContent = ''
 
@@ -137,7 +125,7 @@ export function getActualTextContent(fragment: Fragment) {
       if (node.type !== schema.nodes.text) {
         finalContent += getContent(node.content)
       }
-      if (!isDeletedText(node) && !isRejectedText(node)) {
+      if (!isDeletedText(node)) {
         finalContent += node.textContent
       }
     })
