@@ -146,7 +146,7 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
         files: groupFiles(doc, files),
         onUpload: handleUpload,
         onAdd: handleAdd,
-        UploadedImage: hasUploadedImage,
+        hasUploadedImage: hasUploadedImage,
       }
       this.reactTools?.remove()
       this.reactTools = ReactSubView(
