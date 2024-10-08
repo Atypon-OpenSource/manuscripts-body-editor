@@ -21,6 +21,7 @@ import {
   PlusIcon,
 } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { schema } from '@manuscripts/transform'
 import { Command, EditorState } from 'prosemirror-state'
 import {
   CellSelection,
@@ -91,13 +92,20 @@ export const ContextMenu: React.FC<{
 
   const [columnAction, setColumnAction] = useState<Command>()
 
+  const isHeaderCellSelected =
+    view.state.doc.nodeAt(view.state.selection.from)?.type ===
+    schema.nodes.table_header
+
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
 
   return (
     <MenuDropdownList className={'table-ctx'}>
-      <ActionButton onClick={() => runCommand(addRows('top'))}>
+      <ActionButton
+        disabled={isHeaderCellSelected}
+        onClick={() => runCommand(addRows('top'))}
+      >
         <PlusIcon /> Insert {rows} above
       </ActionButton>
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
