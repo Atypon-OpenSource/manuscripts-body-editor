@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  BoxElementNode,
   FigureElementNode,
   FigureNode,
   FootnoteNode,
@@ -1704,6 +1705,32 @@ export const insertTableFootnote = (
   )
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
+}
+
+export const insertBoxedText = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null || !dispatch) {
+    return false
+  }
+
+  const section = schema.nodes.section.createAndFill([
+    schema.nodes.section_title.create(),
+  ]) as ManuscriptNode
+
+  const BoxedTextElement = state.schema.nodes.box_element.createAndFill({}, [
+    state.schema.nodes.figcaption.create({}, [
+      state.schema.nodes.caption_title.create(),
+    ]),
+    section,
+  ]) as BoxElementNode
+
+  const tr = state.tr.insert(position, BoxedTextElement)
+  dispatch(tr)
+
+  return true
 }
 
 export const addRows =
