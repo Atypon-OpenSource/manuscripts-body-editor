@@ -198,8 +198,11 @@ export const canInsert =
     if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
       return false
     }
+    const initDepth =
+      findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
+      0
 
-    for (let d = $from.depth; d >= 0; d--) {
+    for (let d = $from.depth; d >= initDepth; d--) {
       const index = $from.index(d)
 
       if ($from.node(d).canReplaceWith(index, index, type)) {
@@ -820,7 +823,10 @@ export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
-    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
+    if (
+      hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
+      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))
+    ) {
       return false
     }
 
@@ -882,7 +888,7 @@ export const insertBackMatterSection =
       [
         schema.nodes.section_title.create(
           {},
-          schema.text(sectionTitles.get(category) || '')
+          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
         ),
       ]
     ) as SectionNode
@@ -1467,6 +1473,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.box_element ||
   type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
