@@ -846,7 +846,9 @@ export const insertSection =
       return false
     }
 
-    const section = schema.nodes.section.createAndFill() as SectionNode
+    const section = schema.nodes.section.createAndFill({
+      category: subsection ? 'MPSectionCategory:subsection' : '',
+    }) as SectionNode
     const diff = subsection ? -1 : 0 // move pos inside section for a subsection
     const tr = state.tr.insert(pos + diff, section)
 

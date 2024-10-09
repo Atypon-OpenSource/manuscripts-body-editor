@@ -27,6 +27,7 @@ import {
   getCategoryName,
   isBackMatterSection,
   isEditableSectionCategoryID,
+  isSubSection,
   isUnique,
 } from '../../lib/section-categories'
 import { isChildOfNodeTypes } from '../../lib/utils'
@@ -165,7 +166,8 @@ export function buildPluginState(
       const attrs = node.attrs as SectionNode['attrs']
       if (
         isEditableSectionCategoryID(attrs.category as string) &&
-        !isUnique(attrs.category as string)
+        !isUnique(attrs.category as string) &&
+        !isSubSection(attrs.category as string)
       ) {
         decorations.push(
           Decoration.widget(pos + 1, (view) =>
