@@ -1715,9 +1715,13 @@ export const insertBoxedText = (
   if (position === null || !dispatch) {
     return false
   }
+  const paragraph = state.schema.nodes.paragraph.create({
+    placeholder: 'Insert box content...',
+  })
 
-  const section = schema.nodes.section.createAndFill([
+  const section = schema.nodes.section.createAndFill({}, [
     schema.nodes.section_title.create(),
+    paragraph,
   ]) as ManuscriptNode
 
   const BoxedTextElement = state.schema.nodes.box_element.createAndFill({}, [

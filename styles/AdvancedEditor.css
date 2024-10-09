@@ -177,14 +177,11 @@
   font-weight: 400 !important;
   line-height: 24px; /* 114.286% */
   letter-spacing: -0.369px;
-  font-size: 21px !important;
 }
 
 .box-element section figcaption {
   background: var(--box-element-bg-color);
 }
-
-
 .unsupported-format-label {
   font-size: 140%;
   line-height: 1.3;
