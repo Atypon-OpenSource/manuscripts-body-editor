@@ -888,7 +888,7 @@ export const insertBackMatterSection =
       [
         schema.nodes.section_title.create(
           {},
-          schema.text(sectionTitles.get(category) || '')
+          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
         ),
       ]
     ) as SectionNode
