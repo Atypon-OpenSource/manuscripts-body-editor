@@ -40,6 +40,10 @@ export const isBackMatterSection = (groupId: string) => {
   return groupId === 'MPSectionCategory:backmatter'
 }
 
+export const isSubSection = (categoryId: string) => {
+  return categoryId === 'MPSectionCategory:subsection'
+}
+
 export const getCategoryName = (categories: SectionCategory[], id: string) => {
   const category = categories.find((item) => item._id === id)
   return category ? category.name : ''
