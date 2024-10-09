@@ -33,7 +33,7 @@ import { useDrag, useDrop } from 'react-dnd'
 
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,
@@ -245,13 +245,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   })
 
   const isDeletedItem = isDeleted(node)
-  const isRejectedItem = isRejectedInsert(node)
 
   const isTop = isManuscriptNode(parent)
-
-  if (isRejectedItem) {
-    return null
-  }
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()

@@ -23,10 +23,7 @@ import { EditorState } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { sectionTitles } from '../../lib/section-titles'
-import {
-  getActualAttrs,
-  getActualTextContent,
-} from '../../lib/track-changes-utils'
+import { getActualTextContent } from '../../lib/track-changes-utils'
 
 function cursorAtTheEndOfText(
   state: EditorState,
@@ -44,7 +41,7 @@ export function hasAutoCompletionSlack(
   parentSection: SectionNode,
   titleSection: SectionTitleNode
 ) {
-  const category = getActualAttrs(parentSection).category as SectionCategory
+  const category = parentSection.attrs.category as SectionCategory
   const titles = sectionTitles.get(category)?.split('|')
 
   if (category && titles?.length && titleSection.textContent) {

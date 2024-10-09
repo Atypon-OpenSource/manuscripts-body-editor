@@ -97,7 +97,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { sectionTitles } from './lib/section-titles'
-import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
+import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
   getChildOfType,
@@ -326,10 +326,7 @@ export const insertGeneralFootnote = (
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
-    if (
-      isDeleted(tableElementFooter[0].node) ||
-      isRejectedInsert(tableElementFooter[0].node)
-    ) {
+    if (isDeleted(tableElementFooter[0].node)) {
       const tableElementFooterPos = tr.mapping.map(
         position + tableElementFooter[0].pos + 1
       )
@@ -705,10 +702,7 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
-      if (
-        isDeleted(footnoteElement.node) ||
-        isRejectedInsert(footnoteElement.node)
-      ) {
+      if (isDeleted(footnoteElement.node)) {
         const footnoteElementPos =
           footnotesSection.pos + footnoteElement.pos + 1
 
@@ -783,14 +777,8 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  const GraphicalAbstractSectionNode = findChildrenByType(
-    state.doc,
-    schema.nodes.graphical_abstract_section
-  )[0]
-
   if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true) &&
-    !isRejectedInsert(GraphicalAbstractSectionNode.node)
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
   ) {
     return false
   }
@@ -1611,10 +1599,8 @@ export const insertTableFootnote = (
       schema.nodes.inline_footnote
     )
     footnoteIndex =
-      inlineFootnotes.filter(
-        ({ pos }) =>
-          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
-      ).length + 1
+      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
+      1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
       contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
@@ -1632,10 +1618,7 @@ export const insertTableFootnote = (
   ).pop()
 
   if (footnotesElement) {
-    if (
-      isDeleted(footnotesElement.node) ||
-      isRejectedInsert(footnotesElement.node)
-    ) {
+    if (isDeleted(footnotesElement.node)) {
       const footnotesElementPos = tr.mapping.map(
         position + footnotesElement.pos + 1
       )
@@ -1659,10 +1642,7 @@ export const insertTableFootnote = (
     )[0]
 
     if (tableElementFooter) {
-      if (
-        isDeleted(tableElementFooter.node) ||
-        isRejectedInsert(tableElementFooter.node)
-      ) {
+      if (isDeleted(tableElementFooter.node)) {
         const tableElementFooterPos = tr.mapping.map(
           position + tableElementFooter.pos + 1
         )

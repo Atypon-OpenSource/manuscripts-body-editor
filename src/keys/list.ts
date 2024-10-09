@@ -28,7 +28,6 @@ import { ReplaceAroundStep } from 'prosemirror-transform'
 import { findParentNodeOfType } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
-import { getActualAttrs } from '../lib/track-changes-utils'
 import { EditorAction } from '../types'
 
 // TODO:: remove this command when quarterback start supporting list_item and the operation on the list
@@ -103,8 +102,7 @@ export function sinkListItem(itemType: NodeType): Command {
     if (dispatch) {
       const nestedBefore =
         nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type
-      const actualAttrs = getActualAttrs(parent)
-      const listType = actualAttrs.listStyleType
+      const listType = parent.attrs.listStyleType
       const inner = Fragment.from(nestedBefore ? itemType.create() : null)
       const slice = new Slice(
         Fragment.from(

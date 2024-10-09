@@ -21,7 +21,6 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 
-import { getActualAttrs } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -30,7 +29,7 @@ export class ListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 
   public updateContents = () => {
-    const actualAttrs = getActualAttrs(this.node)
+    const actualAttrs = this.node.attrs
     if (this.contentDOM) {
       const type = actualAttrs.listStyleType as JatsStyleType
       this.contentDOM.style.listStyleType = getListType(type).style

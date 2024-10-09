@@ -17,7 +17,6 @@
 import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getActualAttrs } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -37,7 +36,7 @@ export class EquationView
   }
 
   public updateContents = () => {
-    this.dom.innerHTML = getActualAttrs(this.node).contents
+    this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }
 

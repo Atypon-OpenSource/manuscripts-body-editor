@@ -35,11 +35,9 @@ import {
 import { FootnotesSelector } from '../components/views/FootnotesSelector'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from '../lib/footnotes'
 import {
-  getActualAttrs,
   getChangeClasses,
   isDeleted,
   isPendingInsert,
-  isRejectedInsert,
 } from '../lib/track-changes-utils'
 import { footnotesKey } from '../plugins/footnotes'
 import { Trackable } from '../types'
@@ -174,7 +172,7 @@ export class InlineFootnoteView
       this.activateModal({
         notes: Array.from(fnState.unusedFootnotes.values()).reduce((acc, n) => {
           const node = n[0]
-          if (!isDeleted(node) && !isRejectedInsert(node)) {
+          if (!isDeleted(node)) {
             acc.push({
               node,
             })
@@ -184,7 +182,7 @@ export class InlineFootnoteView
         }, [] as Array<FootnoteWithIndex>),
         onCancel: () => {
           const { tr } = this.view.state
-          if (!getActualAttrs(this.node).rids.length) {
+          if (this.node.attrs.rids.length) {
             this.view.dispatch(
               tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
             )
@@ -257,7 +255,7 @@ export class InlineFootnoteView
     if (footnotesElement) {
       const tablesFootnoteLabels = buildTableFootnoteLabels(tableElement.node)
       footnotes = findChildrenByType(footnotesElement, schema.nodes.footnote)
-        .filter(({ node }) => !isDeleted(node) && !isRejectedInsert(node))
+        .filter(({ node }) => !isDeleted(node))
         .map(({ node }) => ({
           node: node,
           index: tablesFootnoteLabels.get(node.attrs.id),
@@ -279,8 +277,8 @@ export class InlineFootnoteView
 
   public onInsert = (notes: FootnoteWithIndex[]) => {
     if (notes.length) {
-      const contents = getActualAttrs(this.node)
-        .contents.split(',')
+      const contents = this.node.attrs.contents
+        .split(',')
         .map((n) => parseInt(n))
       const rids = notes.map((note) => note.node.attrs.id)
       const { tr } = this.view.state

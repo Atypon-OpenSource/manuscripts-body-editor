@@ -33,11 +33,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../lib/authors'
-import {
-  getActualAttrs,
-  isDeleted,
-  isPendingInsert,
-} from '../lib/track-changes-utils'
+import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 
 export interface PluginState {
   version: string
@@ -60,7 +56,7 @@ export const buildPluginState = (
   const deletedContribId = new Set<string>()
 
   doc.descendants((node, pos) => {
-    const attrs = isDeleted(node) ? node.attrs : getActualAttrs(node)
+    const attrs = node.attrs
     if (isAffiliationNode(node)) {
       nodes.push([node, pos])
       affiliations.push(attrs as AffiliationAttrs)

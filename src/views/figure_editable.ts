@@ -24,7 +24,6 @@ import {
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
 import { FileAttachment, groupFiles } from '../lib/files'
-import { getActualAttrs } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
@@ -51,7 +50,7 @@ export class FigureEditableView extends FigureView {
   }
 
   public updateContents = () => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
 
     if (this.node.attrs.dataTracked?.length) {
       const change = this.node.attrs.dataTracked[0]
