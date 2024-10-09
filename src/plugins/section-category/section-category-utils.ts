@@ -187,6 +187,10 @@ export function buildPluginState(
         )
       }
     }
+
+    if (node.type === schema.nodes.box_element) {
+      return false
+    }
   })
 
   return { decorations: DecorationSet.create(state.doc, decorations) }

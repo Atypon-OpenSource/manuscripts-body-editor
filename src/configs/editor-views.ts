@@ -17,8 +17,9 @@
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
-import bibliographyElement from '../views/bibliography_element_editable'
+import bibliographyElement from '../views/bibliography_element'
 import blockquoteElement from '../views/blockquote_element_editable'
+import boxElement from '../views/box_element'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
@@ -55,6 +56,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     title: title(props, dispatch),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
+    box_element: boxElement(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),

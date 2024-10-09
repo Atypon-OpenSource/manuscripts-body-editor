@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import { buildContribution, ObjectTypes } from '@manuscripts/json-schema'
+import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FigureElementNode,
   FigureNode,
   FootnoteNode,
-  generateID,
   generateNodeID,
   GraphicalAbstractSectionNode,
   InlineFootnoteNode,
@@ -199,8 +198,11 @@ export const canInsert =
     if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
       return false
     }
+    const initDepth =
+      findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
+      0
 
-    for (let d = $from.depth; d >= 0; d--) {
+    for (let d = $from.depth; d >= initDepth; d--) {
       const index = $from.index(d)
 
       if ($from.node(d).canReplaceWith(index, index, type)) {
@@ -340,7 +342,7 @@ export const insertGeneralFootnote = (
   } else {
     const tableElementFooter = schema.nodes.table_element_footer.create(
       {
-        id: generateID(ObjectTypes.TableElementFooter),
+        id: generateNodeID(schema.nodes.table_element_footer),
       },
       [generalNote]
     )
@@ -582,8 +584,8 @@ export const insertInlineCitation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const node = state.schema.nodes.citation.create({
-    id: generateID(ObjectTypes.Citation),
+  const node = schema.nodes.citation.create({
+    id: generateNodeID(schema.nodes.citation),
     rids: [],
     selectedText: selectedText(),
   })
@@ -650,8 +652,8 @@ export const createFootnote = (
   state: ManuscriptEditorState,
   kind: 'footnote' | 'endnote'
 ) => {
-  return state.schema.nodes.footnote.createAndFill({
-    id: generateID(ObjectTypes.Footnote),
+  return schema.nodes.footnote.createAndFill({
+    id: generateNodeID(schema.nodes.footnote),
     kind,
   }) as FootnoteNode
 }
@@ -821,7 +823,10 @@ export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const selection = state.selection
-    if (hasParentNodeOfType(schema.nodes.bibliography_section)(selection)) {
+    if (
+      hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
+      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))
+    ) {
       return false
     }
 
@@ -885,7 +890,7 @@ export const insertBackMatterSection =
       [
         schema.nodes.section_title.create(
           {},
-          schema.text(sectionTitles.get(category) || '')
+          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
         ),
       ]
     ) as SectionNode
@@ -1470,6 +1475,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.bibliography_item ||
   type === schema.nodes.footnotes_section ||
   type === schema.nodes.bibliography_section ||
+  type === schema.nodes.box_element ||
   type === schema.nodes.graphical_abstract_section ||
   type === schema.nodes.keyword_group ||
   type === schema.nodes.paragraph ||
@@ -1489,7 +1495,7 @@ export const addNodeComment = (
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
-    id: generateID(ObjectTypes.CommentAnnotation),
+    id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
@@ -1525,7 +1531,7 @@ export const addInlineComment = (
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
-    id: generateID(ObjectTypes.CommentAnnotation),
+    id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
@@ -1586,8 +1592,8 @@ export const insertTableFootnote = (
   const { state, dispatch } = view
   const tr = state.tr
 
-  const footnote = state.schema.nodes.footnote.createAndFill({
-    id: generateID(ObjectTypes.Footnote),
+  const footnote = schema.nodes.footnote.createAndFill({
+    id: generateNodeID(schema.nodes.footnote),
     kind: 'footnote',
   }) as FootnoteNode
 
@@ -1672,7 +1678,7 @@ export const insertTableFootnote = (
     } else {
       const tableElementFooter = schema.nodes.table_element_footer.create(
         {
-          id: generateID(ObjectTypes.TableElementFooter),
+          id: generateNodeID(schema.nodes.table_element_footer),
         },
         [footnoteElement]
       )
