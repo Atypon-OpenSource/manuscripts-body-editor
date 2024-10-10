@@ -104,8 +104,6 @@ export default () => {
         if (node.type === node.type.schema.nodes.toc_element) {
           const list = document.createElement('ul')
 
-          list.setAttribute('data-paragraph-style', node.attrs.paragraphStyle)
-
           buildTOCList(list, newState.doc)
 
           const contents = list.outerHTML
