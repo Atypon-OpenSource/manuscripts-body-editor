@@ -65,6 +65,10 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
     let handleUpload = () => {
       //noop
     }
+    const hasUploadedImage = !!getMatchingChild(
+      this.node,
+      (node) => node.type === schema.nodes.figure && node.attrs.src
+    )
 
     const handleAdd = async (file: FileAttachment) => {
       const {
@@ -124,7 +128,9 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
         files: groupFiles(doc, files),
         onUpload: handleUpload,
         onAdd: handleAdd,
+        hasUploadedImage: hasUploadedImage,
       }
+      this.reactTools?.remove()
       this.reactTools = ReactSubView(
         this.props,
         FigureElementOptions,
@@ -133,7 +139,6 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
         this.getPos,
         this.view
       )
-      this.reactTools?.remove()
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
   }
