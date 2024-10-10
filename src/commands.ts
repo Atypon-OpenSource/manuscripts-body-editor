@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  BoxElementNode,
   FigureElementNode,
   FigureNode,
   FootnoteNode,
@@ -1704,6 +1705,44 @@ export const insertTableFootnote = (
   )
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
+}
+
+export const insertBoxedText = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const { selection, schema } = state
+
+  // Check if the selection is inside the body
+  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+
+  // If selection is not in the body, disable the option
+  if (!isBody) {
+    return false
+  }
+
+  const position = findBlockInsertPosition(state)
+
+  const paragraph = schema.nodes.paragraph.create({})
+
+  // Create a section node with a section title and a paragraph
+  const section = schema.nodes.section.createAndFill({}, [
+    schema.nodes.section_title.create(),
+    paragraph,
+  ]) as ManuscriptNode
+
+  // Create the BoxedTextElement with a figcaption and the section
+  const BoxedTextElement = schema.nodes.box_element.createAndFill({}, [
+    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+    section,
+  ]) as BoxElementNode
+
+  if (position && dispatch) {
+    const tr = state.tr.insert(position, BoxedTextElement)
+    dispatch(tr)
+  }
+
+  return true
 }
 
 export const addRows =
