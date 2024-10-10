@@ -47,8 +47,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-      // the first level is hidden
-      // other levels are shifted by 1
+
       if (
         ParentNode?.node.type === schema.nodes.box_element &&
         $pos.node($pos.depth - 1).type === schema.nodes.box_element
@@ -57,6 +56,8 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
           'data-placeholder',
           `Optional box title...`
         )
+        // the first level is hidden
+        // other levels are shifted by 1
       } else {
         this.contentDOM.setAttribute(
           'data-placeholder',
