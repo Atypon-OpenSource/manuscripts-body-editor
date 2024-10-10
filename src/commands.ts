@@ -142,7 +142,11 @@ export const addToStart = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - (startOffset === 0 ? 1 : 0)
-    const tr = state.tr.insert(side, $from.node().type.createAndFill()!)
+    const nodeType = $from.node().type.createAndFill()
+    if (!nodeType) {
+      return false
+    }
+    const tr = state.tr.insert(side, nodeType)
     tr.setSelection(TextSelection.create(tr.doc, side + 1))
     dispatch(tr.scrollIntoView())
     return true
