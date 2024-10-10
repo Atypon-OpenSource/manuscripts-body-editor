@@ -33,6 +33,7 @@ import {
   getCommentKey,
   HighlightMarkerAttrs,
   InlineComment,
+  isReply,
   NodeComment,
 } from '../lib/comments'
 
@@ -196,8 +197,7 @@ const buildPluginState = (
       })
       .forEach((c) => {
         allComments.push(c)
-        // Check if the comment is not a reply
-        if (!c.node.attrs.target.includes('MPCommentAnnotation')) {
+        if (!isReply(c)) {
           if (!c.range) {
             nodeComments.push(c)
           } else if (c.range.size) {
