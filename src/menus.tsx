@@ -273,7 +273,7 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+B',
           pc: 'CommandOrControl+Option+B',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.box_element)),
+        isEnabled: isCommandValid(insertBoxedText),
         run: doCommand(insertBoxedText),
       },
       {

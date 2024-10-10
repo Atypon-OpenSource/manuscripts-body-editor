@@ -1711,28 +1711,36 @@ export const insertBoxedText = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const position = findBlockInsertPosition(state)
-  if (position === null || !dispatch) {
+  const { selection, schema } = state
+
+  // Check if the selection is inside the body
+  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+
+  // If selection is not in the body, disable the option
+  if (!isBody) {
     return false
   }
-  const paragraph = state.schema.nodes.paragraph.create({
-    placeholder: 'Insert box content...',
-  })
 
+  const position = findBlockInsertPosition(state)
+
+  const paragraph = schema.nodes.paragraph.create({})
+
+  // Create a section node with a section title and a paragraph
   const section = schema.nodes.section.createAndFill({}, [
     schema.nodes.section_title.create(),
     paragraph,
   ]) as ManuscriptNode
 
-  const BoxedTextElement = state.schema.nodes.box_element.createAndFill({}, [
-    state.schema.nodes.figcaption.create({}, [
-      state.schema.nodes.caption_title.create(),
-    ]),
+  // Create the BoxedTextElement with a figcaption and the section
+  const BoxedTextElement = schema.nodes.box_element.createAndFill({}, [
+    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
     section,
   ]) as BoxElementNode
 
-  const tr = state.tr.insert(position, BoxedTextElement)
-  dispatch(tr)
+  if (position && dispatch) {
+    const tr = state.tr.insert(position, BoxedTextElement)
+    dispatch(tr)
+  }
 
   return true
 }

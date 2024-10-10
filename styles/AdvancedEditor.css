@@ -172,12 +172,18 @@
   padding-bottom: 6px;
   text-align: left;
 }
-.ProseMirror .box-element .block-section_title h1 {
+
+.ProseMirror .box-element .block-section_title h1.empty-node {
   font-style: italic !important;
   font-weight: 400 !important;
   line-height: 24px; /* 114.286% */
   letter-spacing: -0.369px;
+  font-size: 18px !important;
 }
+.ProseMirror .box-element .block-section > section > .block-section_title > h1.empty-node {
+  font-size: 21px !important;
+}
+
 
 .box-element section figcaption {
   background: var(--box-element-bg-color);
@@ -455,7 +461,6 @@ span.comment-marker {
 .block-box_element > .block-gutter {
   margin-top: 14px;
 }
-
 .author-notes > .block-section_title > .block,
 .keywords > .block-section_title > .block {
   align-items: center;
