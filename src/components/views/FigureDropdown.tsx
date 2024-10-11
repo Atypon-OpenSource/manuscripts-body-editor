@@ -48,6 +48,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
 export interface FigureElementOptionsProps extends FigureDropdownProps {
   onAdd: (file: FileAttachment) => Promise<void>
   onUpload: () => void
+  hasUploadedImage: boolean
 }
 
 export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
@@ -55,6 +56,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
   files,
   onAdd,
   onUpload,
+  hasUploadedImage,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -66,7 +68,7 @@ export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
 
   return (
     <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
-      <FilesButton>
+      <FilesButton disabled={hasUploadedImage}>
         <AttachIcon />
       </FilesButton>
       {isOpen && (
