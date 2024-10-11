@@ -33,7 +33,7 @@ import {
 } from '../../components/views/DeleteFootnoteDialog'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { getInlineFootnotes } from '../../lib/footnotes'
-import { getActualAttrs, isDeleted } from '../../lib/track-changes-utils'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { getChildOfType } from '../../lib/utils'
 import ReactSubView from '../../views/ReactSubView'
 
