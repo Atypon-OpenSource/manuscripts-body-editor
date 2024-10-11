@@ -1731,7 +1731,7 @@ export const insertBoxElement = (
     paragraph,
   ]) as ManuscriptNode
 
-  // Create the BoxedTextElement with a figcaption and the section
+  // Create the BoxedTextElement node with a figcaption and the section
   const BoxTextNode = schema.nodes.box_element.createAndFill({}, [
     schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
     section,
