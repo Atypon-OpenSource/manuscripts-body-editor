@@ -24,7 +24,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 export function isDeleted(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
-    return changes.some(({ operation, status }) => operation === 'delete')
+    return changes.some(({ operation }) => operation === 'delete')
   }
   return false
 }
