@@ -1707,11 +1707,11 @@ export const insertTableFootnote = (
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
 }
 
-export const insertBoxedText = (
+export const insertBoxElement = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const { selection, schema } = state
+  const selection = state.selection
 
   // Check if the selection is inside the body
   const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
@@ -1732,13 +1732,13 @@ export const insertBoxedText = (
   ]) as ManuscriptNode
 
   // Create the BoxedTextElement with a figcaption and the section
-  const BoxedTextElement = schema.nodes.box_element.createAndFill({}, [
+  const BoxTextNode = schema.nodes.box_element.createAndFill({}, [
     schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
     section,
   ]) as BoxElementNode
 
   if (position && dispatch) {
-    const tr = state.tr.insert(position, BoxedTextElement)
+    const tr = state.tr.insert(position, BoxTextNode)
     dispatch(tr)
   }
 
