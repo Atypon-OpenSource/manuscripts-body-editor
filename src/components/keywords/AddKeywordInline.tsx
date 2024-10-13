@@ -13,14 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Keyword } from '@manuscripts/json-schema'
+import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
-import {
-  Build,
-  buildKeyword,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, {
   ChangeEvent,
   useCallback,

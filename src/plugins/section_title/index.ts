@@ -35,7 +35,8 @@ const calculateSectionLevels = (
 ) => {
   node.forEach((childNode, offset) => {
     if (
-      childNode.type === schema.nodes.section &&
+      (childNode.type === schema.nodes.section ||
+        childNode.type === schema.nodes.box_element) &&
       !isRejectedInsert(childNode)
     ) {
       numbering[numbering.length - 1] += 1

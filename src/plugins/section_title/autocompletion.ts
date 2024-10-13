@@ -45,15 +45,19 @@ export function hasAutoCompletionSlack(
   titleSection: SectionTitleNode
 ) {
   const category = getActualAttrs(parentSection).category as SectionCategory
-  const title = sectionTitles.get(category)
-  if (category && title && titleSection.textContent) {
+  const titles = sectionTitles.get(category)?.split('|')
+
+  if (category && titles?.length && titleSection.textContent) {
     const actualTextContent = getActualTextContent(titleSection.content)
-    if (title.toLowerCase().startsWith(actualTextContent.toLowerCase())) {
+    const title = titles.find((t) =>
+      t.toLowerCase().startsWith(actualTextContent.toLowerCase())
+    )
+
+    if (title) {
       const suggestionPart = title.slice(actualTextContent.length)
       const suggestion = isUpperCase(actualTextContent)
         ? suggestionPart.toUpperCase()
         : suggestionPart
-
       return {
         suggestion,
         title: isUpperCase(actualTextContent) ? title.toUpperCase() : title,

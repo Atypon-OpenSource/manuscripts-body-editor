@@ -94,6 +94,8 @@ const normalize = (author: ContributorAttrs) => ({
   isJointContributor: author.isJointContributor || false,
   userID: '',
   invitationID: '',
+  footnote: author.footnote || [],
+  corresp: author.corresp || [],
 })
 
 export interface AuthorsModalProps {
@@ -195,6 +197,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       isJointContributor: false,
       userID: '',
       invitationID: '',
+      corresp: [],
+      footnote: [],
     }
     onSaveAuthor(author)
     setSelection(author)

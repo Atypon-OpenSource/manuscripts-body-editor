@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-import { BibliographyElementBlockView } from './bibliography_element'
-import { createEditableNodeView } from './creators'
-import { EditableBlock } from './editable_block'
+import { BoxElementNode } from '@manuscripts/transform'
 
-export default createEditableNodeView(
-  EditableBlock(BibliographyElementBlockView)
-)
+import BlockView from './block_view'
+import { createNodeView } from './creators'
+
+export class BoxElementView extends BlockView<BoxElementNode> {
+  public elementType = 'div'
+
+  public createElement = () => {
+    this.contentDOM = document.createElement(this.elementType)
+    this.contentDOM.className = 'block box-element'
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.dom.appendChild(this.contentDOM)
+  }
+}
+
+export default createNodeView(BoxElementView)

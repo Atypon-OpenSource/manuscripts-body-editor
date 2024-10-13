@@ -35,7 +35,6 @@ export default class BlockView<BlockNode extends ManuscriptNode>
   public viewAttributes = {
     id: 'id',
     placeholder: 'placeholder',
-    paragraphStyle: 'data-paragraph-style',
   }
 
   public initialise = () => {

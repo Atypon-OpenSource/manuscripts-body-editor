@@ -91,7 +91,7 @@
                   {
                     "type": "footnote",
                     "attrs": {
-                      "id": "MOCKED_ID",
+                      "id": "MOCKED_NODE_ID",
                       "kind": "footnote",
                       "paragraphStyle": "",
                       "placeholder": "",

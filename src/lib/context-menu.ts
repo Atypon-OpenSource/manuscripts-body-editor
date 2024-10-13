@@ -18,6 +18,7 @@ import {
   getListType,
   InlineFootnoteNode,
   isInBibliographySection,
+  isSectionTitleNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -25,7 +26,7 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
-import { Attrs } from 'prosemirror-model'
+import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 
 import {
@@ -50,6 +51,10 @@ import { getChildOfType, isChildOfNodeTypes } from './utils'
 const popper = new PopperManager()
 
 const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+
+const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
+  isSectionTitleNode(node) &&
+  $pos.node($pos.depth - 1).type === schema.nodes.box_element
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -242,7 +247,8 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const type = this.node.type
+    const isBox = isBoxElementSectionTitle($pos, this.node)
+    const type = isBox ? schema.nodes.box_element : this.node.type
 
     if (type === schema.nodes.list) {
       menu.appendChild(
@@ -546,21 +552,19 @@ export class ContextMenu {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
-          this.view.state.tr
-            .setMeta('fromContextMenu', true)
-            .delete($pos.before(), $pos.after())
+          this.view.state.tr.delete($pos.before(), $pos.after())
         )
 
         break
       }
 
-      case 'bibliography_element': {
+      case 'box_element': {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
           this.view.state.tr.delete(
-            $pos.before($pos.depth),
-            $pos.after($pos.depth)
+            $pos.before($pos.depth - 1),
+            $pos.after($pos.depth - 1)
           )
         )
 

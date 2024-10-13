@@ -1,0 +1,418 @@
+{
+  "type": "manuscript",
+  "attrs": {
+    "id": "MPManuscript:test-manuscript",
+    "doi": "",
+    "prototype": "",
+    "primaryLanguageCode": "",
+    "articleType": ""
+  },
+  "content": [
+    {
+      "type": "title",
+      "attrs": {
+        "id": "MPTitles:9213E784-4F57-4BE8-B6DF-945AC1A05CE2",
+        "placeholder": "Insert title here...",
+        "dataTracked": null
+      }
+    },
+    { "type": "abstracts", "attrs": { "id": "" } },
+    {
+      "type": "body",
+      "attrs": { "id": "" },
+      "content": [
+        {
+          "type": "toc_section",
+          "attrs": { "id": "MPSection:model-2", "dataTracked": null },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "Table of Contents" }]
+            },
+            {
+              "type": "toc_element",
+              "attrs": {
+                "id": "MPTOCElement:model-1",
+                "contents": "<div>Table of Contents</div>",
+                "paragraphStyle": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-3",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-4",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-5",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-8",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-6",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-7",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-11",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-9",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-10",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-14",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-12",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "MPParagraphElement:model-13",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-16",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a list" }
+              ]
+            },
+            {
+              "type": "list",
+              "attrs": {
+                "id": "MPListElement:model-15",
+                "paragraphStyle": "",
+                "dataTracked": null,
+                "listStyleType": "order"
+              },
+              "content": [
+                {
+                  "type": "list_item",
+                  "attrs": { "placeholder": "List item", "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "id": "",
+                        "paragraphStyle": "",
+                        "placeholder": "",
+                        "dataTracked": null
+                      },
+                      "content": [
+                        { "type": "text", "text": "Test " },
+                        {
+                          "type": "inline_equation",
+                          "attrs": {
+                            "dataTracked": null,
+                            "id": null,
+                            "contents": "",
+                            "format": null
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-19",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a figure" }
+              ]
+            },
+            {
+              "type": "figure_element",
+              "attrs": {
+                "figureLayout": "",
+                "figureStyle": "",
+                "id": "MPFigureElement:model-18",
+                "label": "",
+                "sizeFraction": 0,
+                "suppressCaption": false,
+                "suppressTitle": true,
+                "dataTracked": null
+              },
+              "content": [
+                {
+                  "type": "figure",
+                  "attrs": {
+                    "id": "MPFigure:model-17",
+                    "src": "",
+                    "contentType": "",
+                    "dataTracked": null
+                  }
+                },
+                {
+                  "type": "figcaption",
+                  "attrs": { "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "caption_title",
+                      "attrs": {
+                        "placeholder": "Title...",
+                        "dataTracked": null
+                      }
+                    },
+                    {
+                      "type": "caption",
+                      "attrs": {
+                        "placeholder": "Caption...",
+                        "dataTracked": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "listing",
+                  "attrs": {
+                    "id": "",
+                    "contents": "",
+                    "language": "",
+                    "languageKey": "null",
+                    "isExpanded": false,
+                    "isExecuting": false,
+                    "dataTracked": null
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "MPSection:model-22",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a table" }
+              ]
+            },
+            {
+              "type": "table_element",
+              "attrs": {
+                "id": "MPTableElement:model-21",
+                "paragraphStyle": "",
+                "tableStyle": "",
+                "label": "",
+                "suppressCaption": false,
+                "suppressTitle": true,
+                "suppressFooter": false,
+                "suppressHeader": false,
+                "expandListing": false,
+                "dataTracked": null
+              },
+              "content": [
+                {
+                  "type": "figcaption",
+                  "attrs": { "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "caption_title",
+                      "attrs": {
+                        "placeholder": "Title...",
+                        "dataTracked": null
+                      }
+                    },
+                    {
+                      "type": "caption",
+                      "attrs": {
+                        "placeholder": "Caption...",
+                        "dataTracked": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "table",
+                  "attrs": { "id": "MPTable:model-20", "dataTracked": null },
+                  "content": [
+                    { "type": "table_row", "attrs": { "dataTracked": null } }
+                  ]
+                },
+                {
+                  "type": "listing",
+                  "attrs": {
+                    "id": "",
+                    "contents": "",
+                    "language": "",
+                    "languageKey": "null",
+                    "isExpanded": false,
+                    "isExecuting": false,
+                    "dataTracked": null
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "type": "backmatter", "attrs": { "id": "", "placeholder": " " } },
+    { "type": "comments", "attrs": { "id": "" } }
+  ]
+}

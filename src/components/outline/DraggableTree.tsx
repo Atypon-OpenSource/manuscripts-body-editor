@@ -89,6 +89,14 @@ interface TreeBuilderOptions {
 
 type TreeBuilder = (options: TreeBuilderOptions) => TreeItem
 
+const isAbstractOrBackmatter = (item: TreeItem) => {
+  return (
+    item.parent &&
+    (item.parent.type === schema.nodes.abstracts ||
+      item.parent.type === schema.nodes.backmatter)
+  )
+}
+
 const isManuscriptNode = (node: ManuscriptNode | undefined) => {
   return node?.type === schema.nodes.manuscript
 }
@@ -177,10 +185,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
-      if (
-        tree.node.type === schema.nodes.bibliography_section ||
-        item.node.type === schema.nodes.bibliography_section
-      ) {
+      if (isAbstractOrBackmatter(item) || isAbstractOrBackmatter(tree)) {
         return false
       }
       if (!ref.current) {

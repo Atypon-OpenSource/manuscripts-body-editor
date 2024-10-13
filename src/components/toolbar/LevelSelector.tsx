@@ -27,6 +27,7 @@ import {
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
+import { findParentNodeOfType } from 'prosemirror-utils'
 import React, { CSSProperties } from 'react'
 import Select, {
   CSSObjectWithLabel,
@@ -109,7 +110,6 @@ const buildOptions = (
     schema,
     tr,
   } = state
-
   const { nodes } = schema
 
   if (!$from.sameParent($to)) {
@@ -121,6 +121,9 @@ const buildOptions = (
   if (!parentElement) {
     return []
   }
+
+  const depth =
+    findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth || 1
 
   // move paragraph to title of new subsection, along with subsequent content
   const moveParagraphToNewSubsection = () => {
@@ -263,7 +266,7 @@ const buildOptions = (
     const beforeParagraphOffset = $beforeParagraph.parentOffset
     const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize
 
-    const sectionDepth = $from.depth - 1
+    const sectionDepth = $from.depth - depth
     const parentSection = $from.node(sectionDepth)
     const startIndex = $from.index(sectionDepth)
     const endIndex = $from.indexAfter(sectionDepth)
@@ -316,7 +319,7 @@ const buildOptions = (
     const $afterSectionTitle = doc.resolve(afterSectionTitle)
     const afterSectionTitleOffset = $afterSectionTitle.parentOffset
 
-    const sectionDepth = $from.depth - 1
+    const sectionDepth = $from.depth - depth
     const section = $from.node(sectionDepth)
     const beforeSection = $from.before(sectionDepth)
     const afterSection = $from.after(sectionDepth)
@@ -406,7 +409,7 @@ const buildOptions = (
   const parentElementType = parentElement.node.type
   switch (parentElementType) {
     case parentElementType.schema.nodes.section: {
-      const sectionDepth = Math.max(1, $from.depth - 1)
+      const sectionDepth = Math.max(1, $from.depth - depth)
       const parentSectionDepth = sectionDepth - 1
       const minimumDepth = Math.max(1, parentSectionDepth)
       const beforeSection = $from.before(sectionDepth)
@@ -493,7 +496,7 @@ const buildOptions = (
     }
 
     case parentElementType.schema.nodes.paragraph: {
-      const sectionDepth = $from.depth - 1
+      const sectionDepth = $from.depth - depth
       const minimumDepth = Math.max(1, sectionDepth)
 
       let parentSectionDepth = 0
