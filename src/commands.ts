@@ -101,6 +101,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { sectionTitles } from './lib/section-titles'
+import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
   getChildOfType,
@@ -294,18 +295,6 @@ export const createBlock = (
   }
 }
 
-export const undoFootnoteDelete = (
-  tr: Transaction,
-  footnote: NodeWithPos,
-  position: number
-) => {
-  const updatedAttrs = {
-    ...footnote.node.attrs,
-    dataTracked: null,
-  }
-  tr.setNodeMarkup(position, undefined, updatedAttrs, footnote.node.marks)
-}
-
 export const insertInlineTableFootnote = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -334,6 +323,7 @@ export const insertGeneralTableFootnote = (
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const container = findParentNodeOfTypeClosestToPos(
     $pos,
     schema.nodes.table_element
@@ -652,9 +642,13 @@ export const insertTableElementFooter = (
     schema.nodes.table_element_footer
   )[0]
   if (footer) {
+    const pos = table[1] + footer.pos + 1
+    if (isDeleted(footer.node)) {
+      tr.setNodeAttribute(pos, 'dataTracked', null)
+    }
     return {
       node: footer.node,
-      pos: table[1] + footer.pos + 1,
+      pos,
     }
   }
   const pos = table[1] + table[0].nodeSize - 2
@@ -714,19 +708,27 @@ export const insertInlineFootnote = (
 
   const element =
     fn?.element || insertFootnotesElement(tr, [container.node, container.pos])
+
+  if (isDeleted(element[0])) {
+    tr.setNodeAttribute(element[1], 'dataTracked', null)
+  }
   const footnote = !hasUnusedFootnotes && insertFootnote(tr, element)
 
   const node = schema.nodes.inline_footnote.create({
     rids: footnote ? [footnote.node.attrs.id] : [],
   })
 
-  tr.insert(tr.mapping.map(pos), node)
+  const newPos = tr.mapping.map(pos)
+  tr.insert(newPos, node)
 
   if (dispatch) {
+    let selection
     if (footnote) {
-      const selection = TextSelection.create(tr.doc, footnote.pos + 1)
-      tr.setSelection(selection).scrollIntoView()
+      selection = TextSelection.create(tr.doc, footnote.pos + 3)
+    } else {
+      selection = NodeSelection.create(tr.doc, newPos)
     }
+    tr.setSelection(selection).scrollIntoView()
     dispatch(tr)
   }
   return true

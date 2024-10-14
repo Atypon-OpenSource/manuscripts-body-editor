@@ -278,7 +278,11 @@ export class ContextMenu {
       )
     }
 
-    if (type === schema.nodes.table_element) {
+    if (
+      type === schema.nodes.table_element &&
+      (insertInlineTableFootnote(this.view.state) ||
+        insertGeneralTableFootnote(this.view.state))
+    ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (insertInlineTableFootnote(this.view.state)) {

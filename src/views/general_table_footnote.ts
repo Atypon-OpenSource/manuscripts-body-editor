@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GeneralTableFootnote, schema } from '@manuscripts/transform'
+import { GeneralTableFootnoteNode, schema } from '@manuscripts/transform'
 import {
   findChildrenByType,
   findParentNodeOfTypeClosestToPos,
@@ -29,7 +29,7 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
-export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnote> {
+export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnoteNode> {
   dialog: HTMLElement
 
   public initialise = () => {
@@ -75,6 +75,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnote>
 
     const pos = this.getPos()
     const $pos = this.view.state.doc.resolve(pos)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const footer = findParentNodeOfTypeClosestToPos(
       $pos,
       schema.nodes.table_element_footer

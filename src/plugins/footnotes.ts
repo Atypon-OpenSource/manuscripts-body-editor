@@ -27,6 +27,7 @@ import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { EditorProps } from '../configs/ManuscriptsEditor'
 import { findNodeByID } from '../lib/doc'
 import {
   findFootnotesContainerNode,
@@ -99,9 +100,11 @@ const buildFootnotesElementState = (
   }
 
   const footnotes = findChildrenByType(element[0], schema.nodes.footnote)
+  const footnoteIDs = new Set()
   footnotes.forEach(({ node, pos }) => {
     fn.footnotes.push([node as FootnoteNode, element[1] + pos + 1])
     fn.unusedFootnoteIDs.add(node.attrs.id)
+    footnoteIDs.add(node.attrs.id)
   })
 
   let index = 0
@@ -114,15 +117,22 @@ const buildFootnotesElementState = (
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
     const rids = inlineFootnote.attrs.rids
-    if (rids.some((rid) => !fn.unusedFootnoteIDs.has(rid))) {
+    if (rids.some((rid) => !footnoteIDs.has(rid))) {
       return
     }
-    fn.inlineFootnotes.push([node as InlineFootnoteNode, container[1] + pos])
+    if (container[1]) {
+      pos += container[1] + 1
+    }
+    fn.inlineFootnotes.push([node as InlineFootnoteNode, pos])
     rids.forEach((rid) => {
-      const label = container[1] ? String(++index) : generateAlphaLabel(index++)
-      fn.labels.set(rid, label)
-      fn.unusedFootnoteIDs.delete(rid)
-      orderedFootnoteIDs.push(rid)
+      if (orderedFootnoteIDs.indexOf(rid) < 0) {
+        const label = container[1]
+          ? String(++index)
+          : generateAlphaLabel(index++)
+        fn.labels.set(rid, label)
+        fn.unusedFootnoteIDs.delete(rid)
+        orderedFootnoteIDs.push(rid)
+      }
     })
   })
   fn.unusedFootnoteIDs.forEach((id) => orderedFootnoteIDs.push(id))
@@ -150,7 +160,7 @@ const getVersion = (
   return String(version++)
 }
 
-export default () => {
+export default (props: EditorProps) => {
   return new Plugin<FootnotesPluginState>({
     key: footnotesKey,
     state: {
@@ -195,7 +205,7 @@ export default () => {
       if (selectedFootnote) {
         const pos = findNodeByID(tr.doc, selectedFootnote.node.attrs.id)?.pos
         if (pos) {
-          tr.setSelection(TextSelection.create(tr.doc, pos + 1))
+          tr.setSelection(TextSelection.create(tr.doc, pos + 2))
         }
       }
 
@@ -220,15 +230,17 @@ export default () => {
             decorations.push(Decoration.node(pos, to, {}, { version }))
           })
         })
-        const footnote = findParentFootnote(state.selection)
-        if (footnote) {
-          const pos = footnote.pos
-          const to = pos + footnote.node.nodeSize
-          decorations.push(
-            Decoration.node(pos, to, {
-              class: 'footnote-selected',
-            })
-          )
+        if (props.getCapabilities().editArticle) {
+          const footnote = findParentFootnote(state.selection)
+          if (footnote) {
+            const pos = footnote.pos
+            const to = pos + footnote.node.nodeSize
+            decorations.push(
+              Decoration.node(pos, to, {
+                class: 'footnote-selected',
+              })
+            )
+          }
         }
         return DecorationSet.create(state.doc, decorations)
       },

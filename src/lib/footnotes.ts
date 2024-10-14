@@ -17,14 +17,15 @@
 import {
   FootnoteNode,
   ManuscriptEditorState,
-  ManuscriptNode, schema
+  ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
-
-import { footnotesKey } from '../plugins/footnotes'
 import {
   findParentNodeOfType,
-  findParentNodeOfTypeClosestToPos
-} from "prosemirror-utils";
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
+
+import { footnotesKey } from '../plugins/footnotes'
 
 export const generateAlphaLabel = (index: number) => {
   const unicodeInterval = [97, 123]

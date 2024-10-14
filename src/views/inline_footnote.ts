@@ -48,7 +48,7 @@ export class InlineFootnoteView
   protected popperContainer: HTMLDivElement
   isTableFootnote: boolean
 
-  public showContextMenu = () => {
+  showContextMenu = () => {
     this.props.popper.destroy()
     const componentProps: ContextMenuProps = {
       actions: [
@@ -86,8 +86,8 @@ export class InlineFootnoteView
     )
   }
 
-  public handleClick = () => {
-    if (isDeleted(this.node)) {
+  handleClick = () => {
+    if (isDeleted(this.node) || !this.props.getCapabilities().editArticle) {
       return
     }
     if (this.isTableFootnote) {
@@ -166,6 +166,12 @@ export class InlineFootnoteView
       this.getPos()
     )
     this.isTableFootnote = isTableElementNode(container.node)
+  }
+
+  selectNode = () => {
+    if (!this.node.attrs.rids.length) {
+      this.showFootnotesSelector()
+    }
   }
 
   public ignoreMutation = () => true

@@ -73,7 +73,7 @@ export default (props: EditorProps) => {
     placeholder(),
     tableEditing(),
     selected_suggestion(),
-    footnotes(),
+    footnotes(props),
     editorProps(props),
     doi(),
     section_category(props),
