@@ -7,7 +7,6 @@ Object {
       "attrs": Object {
         "dataTracked": null,
         "id": null,
-        "paragraphStyle": "",
         "placeholder": "",
       },
       "content": Array [
