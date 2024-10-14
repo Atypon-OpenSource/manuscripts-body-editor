@@ -16,7 +16,6 @@
 
 import { SectionNode } from '@manuscripts/transform'
 
-import { getActualAttrs } from '../lib/track-changes-utils'
 import { PluginState, sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -46,7 +45,7 @@ export class SectionView extends BlockView<SectionNode> {
   public onUpdateContent = () => {
     const sectionTitles = sectionTitleKey.getState(this.view.state)
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     if (this.contentDOM) {
       this.contentDOM.id = attrs.id
       if (attrs.category) {

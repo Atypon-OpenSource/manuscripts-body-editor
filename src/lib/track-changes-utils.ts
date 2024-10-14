@@ -15,30 +15,16 @@
  */
 
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
-import { TrackedAttrs, UpdateAttrs } from '@manuscripts/track-changes-plugin'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import { schema } from '@manuscripts/transform'
 import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { TrackableAttributes } from '../types'
-
-export function isRejectedInsert(node: ProsemirrorNode) {
-  if (node.attrs.dataTracked) {
-    const changes = node.attrs.dataTracked as TrackedAttrs[]
-    return changes.some(
-      ({ operation, status }) => operation === 'insert' && status == 'rejected'
-    )
-  }
-  return false
-}
-
 export function isDeleted(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
-    return changes.some(
-      ({ operation, status }) => operation === 'delete' && status !== 'rejected'
-    )
+    return changes.some(({ operation }) => operation === 'delete')
   }
   return false
 }
@@ -102,27 +88,6 @@ export function isTracked(node: ProsemirrorNode) {
   return false
 }
 
-export function getActualAttrs<T extends ManuscriptNode>(node: T) {
-  const attrs = node.attrs as TrackableAttributes<T>
-  if (attrs.dataTracked?.length) {
-    const changes = (attrs.dataTracked as TrackedAttrs[]).filter(
-      (c) => c.operation === 'set_attrs'
-    ) as UpdateAttrs[]
-    const hasPendingAttrs = changes.some((c) => c.status === 'pending')
-    if (hasPendingAttrs) {
-      // assuming we can't have pending attributes superceded by rejected attributes changes
-      return attrs
-    }
-    const rejected = changes
-      .filter((c) => c.status === 'rejected')
-      .sort((a, b) => b.statusUpdateAt - a.statusUpdateAt)[0]
-    if (rejected && rejected.status === 'rejected') {
-      return rejected.oldAttrs as T['attrs']
-    }
-  }
-  return attrs
-}
-
 export const getAttrsTrackingButton = (changeID: string) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'
@@ -133,7 +98,7 @@ export const getAttrsTrackingButton = (changeID: string) => {
 }
 
 export function isHidden(node: ProsemirrorNode) {
-  return isDeleted(node) || isRejectedInsert(node)
+  return isDeleted(node)
 }
 
 export function isDeletedText(node: ProsemirrorNode) {
@@ -144,20 +109,8 @@ export function isDeletedText(node: ProsemirrorNode) {
     if (
       deleteMark &&
       deleteMark.attrs?.dataTracked?.status &&
-      ['pending', 'approved'].includes(deleteMark.attrs?.dataTracked?.status)
+      'pending' === deleteMark.attrs?.dataTracked?.status
     ) {
-      return true
-    }
-  }
-  return false
-}
-
-export function isRejectedText(node: ProsemirrorNode) {
-  if (node.type === schema.nodes.text) {
-    const insertMark = node.marks.find(
-      (mark) => mark.type === schema.marks.tracked_insert
-    )
-    if (insertMark && insertMark.attrs?.dataTracked?.status === 'rejected') {
       return true
     }
   }
@@ -172,7 +125,7 @@ export function getActualTextContent(fragment: Fragment) {
       if (node.type !== schema.nodes.text) {
         finalContent += getContent(node.content)
       }
-      if (!isDeletedText(node) && !isRejectedText(node)) {
+      if (!isDeletedText(node)) {
         finalContent += node.textContent
       }
     })
