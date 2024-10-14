@@ -196,7 +196,11 @@ export const canInsert =
     const { $from, $to } = state.selection
 
     // disable block comment insertion just for title node, LEAN-2746
-    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+    if (
+      ($from.node().type === schema.nodes.title ||
+        schema.nodes.section_title) &&
+      $from.pos === $to.pos
+    ) {
       return false
     }
     const initDepth =
@@ -363,7 +367,6 @@ export const insertFigure = (
   dispatch?: Dispatch
 ) => {
   const position = findBlockInsertPosition(state)
-
   if (position === null || !dispatch) {
     return false
   }
@@ -389,6 +392,12 @@ export const insertTable = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  const selection = state.selection
+
+  const isBoxText = hasParentNodeOfType(schema.nodes.section_title)(selection)
+  if (isBoxText) {
+    return false
+  }
   const pos = findBlockInsertPosition(state)
   if (!pos) {
     return false
@@ -1715,9 +1724,10 @@ export const insertBoxElement = (
 
   // Check if the selection is inside the body
   const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
 
   // If selection is not in the body, disable the option
-  if (!isBody) {
+  if (!isBody || isBoxText) {
     return false
   }
 
