@@ -392,12 +392,6 @@ export const insertTable = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const selection = state.selection
-
-  const isBoxText = hasParentNodeOfType(schema.nodes.section_title)(selection)
-  if (isBoxText) {
-    return false
-  }
   const pos = findBlockInsertPosition(state)
   if (!pos) {
     return false
