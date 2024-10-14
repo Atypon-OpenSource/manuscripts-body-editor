@@ -94,15 +94,9 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
     }
 
     public createMenu = () => {
-      return new ContextMenu(
-        this.node,
-        this.view,
-        this.getPos,
-        {
-          addComment: true,
-        },
-        this.props
-      )
+      return new ContextMenu(this.node, this.view, this.getPos, {
+        addComment: true,
+      })
     }
   }
 }

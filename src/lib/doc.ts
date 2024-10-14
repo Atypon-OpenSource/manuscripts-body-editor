@@ -19,7 +19,7 @@ import {
   schema,
   SupplementsNode,
 } from '@manuscripts/transform'
-import { findChildrenByType } from 'prosemirror-utils'
+import { findChildren, findChildrenByType } from 'prosemirror-utils'
 
 export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   const doc = tr.doc
@@ -29,11 +29,28 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   }
   const abstracts = findAbstractsNode(doc)
   const pos = abstracts.pos - 1
-  const supplementsNode =
-    schema.nodes.supplements.createAndFill() as SupplementsNode
-  tr.insert(pos, supplementsNode)
+  const node = schema.nodes.supplements.createAndFill() as SupplementsNode
+  tr.insert(pos, node)
   return {
-    node: supplementsNode,
+    node,
+    pos,
+  }
+}
+
+export const insertFootnotesSection = (tr: ManuscriptTransaction) => {
+  const doc = tr.doc
+  const section = findChildrenByType(doc, schema.nodes.footnotes_section)[0]
+  if (section) {
+    return section
+  }
+  const backmatter = findBackmatter(doc)
+  const pos = backmatter.pos + 1
+  const node = schema.nodes.footnotes_section.create({}, [
+    schema.nodes.section_title.create({}, schema.text('Footnotes')),
+  ])
+  tr.insert(pos, node)
+  return {
+    node,
     pos,
   }
 }
@@ -70,4 +87,9 @@ export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {
     node: element.node,
     pos: ga.pos + element.pos + 1,
   }
+}
+
+export const findNodeByID = (doc: ManuscriptNode, id: string) => {
+  const children = findChildren(doc, (n) => n.attrs.id === id)
+  return children[0]
 }

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { FootnotesElementNode } from '@manuscripts/transform'
+import { FootnotesElementNode, ManuscriptNode } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
-import { setTCClasses } from './footnote'
 
 export class FootnotesElementView extends BlockView<FootnotesElementNode> {
   public elementType = 'div'
+
+  updateClasses = () => {
+    updateClasses(this.node, this.dom)
+  }
 
   onUpdateContent() {
     this.checkEditability()
@@ -37,8 +40,13 @@ export class FootnotesElementView extends BlockView<FootnotesElementNode> {
   }
 }
 
+const updateClasses = (node: ManuscriptNode, dom: HTMLElement) => {
+  dom.classList.toggle('empty-node', !node.childCount)
+  dom.classList.add('footnotes-element')
+}
+
 export default createNodeOrElementView(
   FootnotesElementView,
   'div',
-  setTCClasses
+  updateClasses
 )
