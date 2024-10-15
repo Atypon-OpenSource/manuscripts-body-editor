@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import { CrossReferenceNode, ManuscriptNodeView } from '@manuscripts/transform'
+import {
+  CrossReferenceNode,
+  ManuscriptNodeView,
+  Target,
+} from '@manuscripts/transform'
 import { Location, NavigateFunction } from 'react-router-dom'
 
 import { getChangeClasses } from '../lib/track-changes-utils'
+import { objectsKey } from '../plugins/objects'
 import { Trackable } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -48,12 +53,16 @@ export class CrossReferenceView
   }
 
   public updateContents = () => {
-    const nodeClasses = [
-      'cross-reference',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
-    this.dom.className = nodeClasses.join(' ')
-    this.dom.textContent = this.node.attrs.customLabel || this.node.attrs.label
+    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+
+    const attrs = this.node.attrs
+
+    const classes = ['cross-reference', ...getChangeClasses(attrs.dataTracked)]
+
+    this.dom.className = classes.join(' ')
+    const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
+
+    this.dom.textContent = attrs.label || label || ''
     this.dom.addEventListener('click', this.handleClick)
   }
 
