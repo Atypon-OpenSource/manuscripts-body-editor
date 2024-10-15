@@ -22,8 +22,8 @@ import {
 import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
-import { createTableFromSlice } from './table'
 
+import { createTableFromSlice } from './table'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -88,12 +88,19 @@ export const handlePaste = (
     tr.selection
   )
 
-  if (slice.content.firstChild && (slice.content.firstChild.type == schema.nodes.table_row || slice.content.firstChild.type == schema.nodes.table_cell)) {
-    const newTable = createTableFromSlice(slice, view.state.schema);
+  if (
+    slice.content.firstChild &&
+    (slice.content.firstChild.type == schema.nodes.table_row ||
+      slice.content.firstChild.type == schema.nodes.table_cell)
+  ) {
+    const newTable = createTableFromSlice(slice, view.state.schema)
     if (newTable) {
-      const tr = view.state.tr.insert(view.state.selection.$anchor.pos, newTable);
-      view.dispatch(tr);
-      return true;
+      const tr = view.state.tr.insert(
+        view.state.selection.$anchor.pos,
+        newTable
+      )
+      view.dispatch(tr)
+      return true
     }
   }
 

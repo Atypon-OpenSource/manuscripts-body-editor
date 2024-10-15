@@ -1,49 +1,54 @@
-import { Fragment, Schema, Slice, Node } from 'prosemirror-model'
-import { EditorState} from 'prosemirror-state'
-import {
-    schema,
-  } from '@manuscripts/transform'
+/*!
+ * © 2024 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { schema } from '@manuscripts/transform'
+import { Fragment, Node, Schema, Slice } from 'prosemirror-model'
+import { EditorState } from 'prosemirror-state'
 
-export const updateSliceWithFullTableContent = (state: EditorState, slice: Fragment): Node[] =>{
-    let newSliceContent: Node[] = [];
-    slice.forEach((node) => {
-      if (node.type === schema.nodes.table_element) {
-        const {tableNode} = getTableElementNode(state);
-        tableNode && newSliceContent.push(tableNode);
-      } else {
-        newSliceContent.push(node);
-      }
-    });
-    return newSliceContent;
-  }
-  
-export const getTableElementNode = (state: EditorState): {tableNode: Node | null, tableStart: number | null} => {
-    const { from, to } = state.selection;
-    let tableStart: number | null = null;
-    let tableNode: Node | null = null
-    state.doc.nodesBetween(from, to, (node, pos) => {
-      if (node.type === schema.nodes.table_element) {
-        tableStart = pos;
-        tableNode = node;
-        return false;
-      }
-      return true;
-    });
-    return {tableNode, tableStart};
-  }
-export const createTableFromSlice = (slice: Slice, schema: Schema): Node | null => {
-    const rows: Node[] = [];
-    slice.content.forEach((node: Node) => {
-      if (node.type === schema.nodes.table_row) {
-        rows.push(node);
-      } else if (node.type === schema.nodes.table_cell) {
-        rows.push(schema.nodes.table_row.create(null, Fragment.from(node)));
-      }
-    });
-  
-    if (rows.length > 0) {
-      return schema.nodes.table.create(null, rows);
+export const updateSliceWithFullTableContent = (
+  state: EditorState,
+  slice: Fragment
+): Node[] => {
+  const newSliceContent: Node[] = []
+  slice.forEach((node) => {
+    if (node.type === schema.nodes.table_element) {
+      const { tableNode } = getTableElementNode(state)
+      tableNode && newSliceContent.push(tableNode)
+    } else {
+      newSliceContent.push(node)
     }
-  
-    return null;
+  })
+  return newSliceContent
+}
+
+export const createTableFromSlice = (
+  slice: Slice,
+  schema: Schema
+): Node | null => {
+  const rows: Node[] = []
+  slice.content.forEach((node: Node) => {
+    if (node.type === schema.nodes.table_row) {
+      rows.push(node)
+    } else if (node.type === schema.nodes.table_cell) {
+      rows.push(schema.nodes.table_row.create(null, Fragment.from(node)))
+    }
+  })
+
+  if (rows.length > 0) {
+    return schema.nodes.table.create(null, rows)
   }
+
+  return null
+}
