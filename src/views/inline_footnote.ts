@@ -21,13 +21,14 @@ import {
   isTableElementNode,
   ManuscriptNodeView,
 } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 
-import { insertFootnote } from '../commands'
 import {
   FootnotesSelector,
   FootnotesSelectorProps,
 } from '../components/views/FootnotesSelector'
 import {
+  createFootnote,
   findFootnotesContainerNode,
   getFootnotesElementState,
 } from '../lib/footnotes'
@@ -205,8 +206,12 @@ export class InlineFootnoteView
       return
     }
     const tr = this.view.state.tr
-    const footnote = insertFootnote(tr, fn.element)
-    tr.setNodeAttribute(tr.mapping.map(pos), 'rids', [footnote.node.attrs.id])
+    const footnote = createFootnote()
+    tr.setNodeAttribute(pos, 'rids', [footnote.attrs.id])
+    const fnPos = fn.element[1] + fn.element[0].nodeSize - 1
+    tr.insert(fnPos, footnote)
+    const selection = TextSelection.create(tr.doc, fnPos + 2)
+    tr.setSelection(selection).scrollIntoView()
     this.view.dispatch(tr)
     this.view.focus()
     this.destroy()

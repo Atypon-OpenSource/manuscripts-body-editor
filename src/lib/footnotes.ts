@@ -16,6 +16,7 @@
 
 import {
   FootnoteNode,
+  generateNodeID,
   ManuscriptEditorState,
   ManuscriptNode,
   schema,
@@ -106,4 +107,14 @@ export const getFootnoteLabel = (
   const id = footnote.attrs.id
   const fns = getFootnotesElementState(state, id)
   return fns?.labels.get(id) || ''
+}
+
+export const createFootnote = () => {
+  return schema.nodes.footnote.createAndFill(
+    {
+      id: generateNodeID(schema.nodes.footnote),
+      kind: 'footnote',
+    },
+    [schema.nodes.paragraph.create({})]
+  ) as FootnoteNode
 }
