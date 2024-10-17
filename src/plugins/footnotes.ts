@@ -18,6 +18,7 @@ import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   FootnoteNode,
   FootnotesElementNode,
+  generateAlphaFootnoteLabel,
   InlineFootnoteNode,
   ManuscriptNode,
   schema,
@@ -32,7 +33,6 @@ import { findNodeByID } from '../lib/doc'
 import {
   findFootnotesContainerNode,
   findParentFootnote,
-  generateAlphaLabel,
 } from '../lib/footnotes'
 
 export type FootnotesElementState = {
@@ -128,7 +128,7 @@ const buildFootnotesElementState = (
       if (orderedFootnoteIDs.indexOf(rid) < 0) {
         const label = container[1]
           ? String(++index)
-          : generateAlphaLabel(index++)
+          : generateAlphaFootnoteLabel(index++)
         fn.labels.set(rid, label)
         fn.unusedFootnoteIDs.delete(rid)
         orderedFootnoteIDs.push(rid)

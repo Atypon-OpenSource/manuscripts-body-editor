@@ -28,45 +28,6 @@ import {
 
 import { footnotesKey } from '../plugins/footnotes'
 
-export const generateAlphaLabel = (index: number) => {
-  const unicodeInterval = [97, 123]
-  const places = unicodeInterval[1] - unicodeInterval[0]
-
-  function getClassCount(n: number, order: number) {
-    return n * Math.pow(places, order - 1)
-  }
-
-  let indices: number[] | null = null
-
-  for (;;) {
-    let current = index
-    let position = 1
-    while (current >= places) {
-      current = current / places
-      position++
-    }
-    const newIndex = Math.floor(current)
-    indices = indices ? indices : new Array(position).fill(0)
-    indices.splice(indices.length - position, 1, newIndex)
-
-    index -= getClassCount(newIndex, position)
-
-    if (position === 1) {
-      break
-    }
-  }
-  return (indices || [])
-    .map((v, i, array) => {
-      // offseting to start with zero for the second and later classes
-      // @TODO: find better solution instead of this indexing offset
-      if (array.length > 1 && i !== array.length - 1) {
-        return String.fromCodePoint(v + unicodeInterval[0] - 1)
-      }
-      return String.fromCodePoint(v + unicodeInterval[0])
-    })
-    .join('')
-}
-
 export const findFootnotesContainerNode = (
   doc: ManuscriptNode,
   pos: number
