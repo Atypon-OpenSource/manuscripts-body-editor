@@ -19,7 +19,7 @@ import {
   FootnoteNode,
   FootnotesElementNode,
   generateAlphaFootnoteLabel,
-  InlineFootnoteNode,
+  InlineFootnoteNode, isTableElementNode,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
@@ -35,11 +35,29 @@ import {
   findParentFootnote,
 } from '../lib/footnotes'
 
+/**
+ * The state for a single footnotes_element.
+ */
 export type FootnotesElementState = {
+  /**
+   * A list of inline_footnote nodes that reference footnote nodes in
+   * this element.
+   */
   inlineFootnotes: [InlineFootnoteNode, number][]
+  /**
+   * A set of footnote node IDs that are not referenced from any
+   * inline_footnote node.
+   */
   unusedFootnoteIDs: Set<string>
+  /**
+   * A list of footnote nodes, in reference order. i.e. footnote nodes
+   * that are referenced earlier appear earlier in the list.
+   */
   footnotes: [FootnoteNode, number][]
   element: [FootnotesElementNode, number]
+  /**
+   * footnote node ID => label
+   */
   labels: Map<string, string>
 }
 
@@ -48,7 +66,16 @@ export type VersionedFootnotesElementState = FootnotesElementState & {
 }
 
 export type FootnotesPluginState = {
+  /**
+   * footnote_element ID => state
+   */
   footnotesElements: Map<string, VersionedFootnotesElementState>
+  /**
+   * Tracks the footnote_element node ID corresponding to a few important
+   * node IDs. The node IDs tracked are:
+   * - footnote node IDs
+   * - table_element node IDs
+   */
   footnotesElementIDs: Map<string, string>
 }
 
@@ -87,6 +114,9 @@ const buildPluginState = (doc: ManuscriptNode, $old?: FootnotesPluginState) => {
   }
 }
 
+/**
+ * Build the state for a single footnotes_element node.
+ */
 const buildFootnotesElementState = (
   container: [ManuscriptNode, number],
   element: [FootnotesElementNode, number]
@@ -99,20 +129,28 @@ const buildFootnotesElementState = (
     labels: new Map(),
   }
 
+  // process footnote nodes
   const footnotes = findChildrenByType(element[0], schema.nodes.footnote)
   const footnoteIDs = new Set()
   footnotes.forEach(({ node, pos }) => {
     fn.footnotes.push([node as FootnoteNode, element[1] + pos + 1])
+    // this set will start with every footnote node ID. Used IDs
+    // will be removed from it while processing inline_footnote nodes.
     fn.unusedFootnoteIDs.add(node.attrs.id)
     footnoteIDs.add(node.attrs.id)
   })
 
+  // process inline_footnote nodes
   let index = 0
   const inlineFootnotes = findChildrenByType(
     container[0],
     schema.nodes.inline_footnote
   )
   inlineFootnotes.sort((a, b) => a.pos - b.pos)
+  // this is used to track footnote node IDs based on the order of
+  // the corresponding inline_footnote nodes. It will be used later to
+  // properly generate labels for footnotes, and to order the footnotes
+  // in the state object.
   const orderedFootnoteIDs: string[] = []
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
@@ -125,8 +163,9 @@ const buildFootnotesElementState = (
     }
     fn.inlineFootnotes.push([node as InlineFootnoteNode, pos])
     rids.forEach((rid) => {
+      //this is to ensure footnotes are processed only once
       if (orderedFootnoteIDs.indexOf(rid) < 0) {
-        const label = container[1]
+        const label = isTableElementNode(container[0])
           ? String(++index)
           : generateAlphaFootnoteLabel(index++)
         fn.labels.set(rid, label)
@@ -135,7 +174,12 @@ const buildFootnotesElementState = (
       }
     })
   })
+  // At this point, the set includes only footnote node IDs that have no
+  // corresponding inline_footnote. These should be added to the end
+  // of the footnote node list.
   fn.unusedFootnoteIDs.forEach((id) => orderedFootnoteIDs.push(id))
+  // Now the footnote list is sorted based on the appearance of the
+  // corresponding inline_footnote nodes.
   fn.footnotes.sort(
     ([a], [b]) =>
       orderedFootnoteIDs.indexOf(a.attrs.id) -
@@ -145,6 +189,11 @@ const buildFootnotesElementState = (
   return fn
 }
 
+/**
+ * Select a version for the new state. The version only changes when the
+ * order of the FootnoteNodes change. If the order did not change, the
+ * old version is used.
+ */
 const getVersion = (
   $new: FootnotesElementState,
   $old?: VersionedFootnotesElementState
@@ -187,9 +236,12 @@ export default (props: EditorProps) => {
         const oldState = $old?.footnotesElements.get(key)
         const footnotes = newState.footnotes.map(([node]) => node)
 
+        // A version mismatch indicates that the order of the footnote nodes
+        // has changed, so we need to reflect that on the doc.
         if (newState.version !== oldState?.version) {
           const newElement = schema.nodes.footnotes_element.create(
             element.attrs,
+            // footnotes here is already in the correct order.
             footnotes
           )
           tr.replaceWith(pos, pos + element.nodeSize, newElement)
@@ -200,6 +252,8 @@ export default (props: EditorProps) => {
         return
       }
 
+      // this is to ensure that the selection remains valid if it
+      // was within a footnotes_element node that was replaced.
       const selection = newState.selection
       const selectedFootnote = findParentFootnote(selection)
       if (selectedFootnote) {
