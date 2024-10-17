@@ -28,8 +28,9 @@ import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
 import figure from '../views/figure_editable'
 import figureElement from '../views/figure_element_editable'
-import footnote from '../views/footnote_editable'
+import footnote from '../views/footnote'
 import footnotesElement from '../views/footnotes_element'
+import generalTableFootnote from '../views/general_table_footnote'
 import inlineEquation from '../views/inline_equation_editable'
 import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
@@ -46,7 +47,7 @@ import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
-import tableElementFooter from '../views/table_element_footer_editable'
+import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
 import tocElement from '../views/toc_element_editable'
 import { EditorProps } from './ManuscriptsEditor'
@@ -67,6 +68,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     figure_element: figureElement(props, dispatch),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),
+    general_table_footnote: generalTableFootnote(props, dispatch),
     inline_equation: inlineEquation(props),
     inline_footnote: inlineFootnote(props, dispatch),
     keyword: keyword(props, dispatch),

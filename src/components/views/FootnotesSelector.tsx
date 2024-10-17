@@ -27,8 +27,6 @@ import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { FootnoteWithIndex } from '../../lib/footnotes'
-
 const NotesContainer = styled.div`
   height: 90vh;
   max-height: 400px;
@@ -64,23 +62,34 @@ const AddNewFootnote = styled(ButtonGroup)`
   }
 `
 
-export const FootnotesSelector: React.FC<{
-  notes: FootnoteWithIndex[]
+export interface FootnotesSelectorProps {
+  footnotes: FootnoteNode[]
   inlineFootnote?: InlineFootnoteNode
+  labels: Map<string, string>
   onAdd: () => void
-  onInsert: (notes: FootnoteWithIndex[]) => void
+  onInsert: (notes: FootnoteNode[]) => void
   onCancel: () => void
   addNewLabel?: string
-}> = ({ notes, inlineFootnote, onAdd, onInsert, onCancel, addNewLabel }) => {
+}
+
+export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
+  footnotes,
+  inlineFootnote,
+  labels,
+  onAdd,
+  onInsert,
+  onCancel,
+  addNewLabel,
+}) => {
   let selectedNotesMap
 
   if (inlineFootnote) {
     const rids = inlineFootnote.attrs.rids
-    const selectedNotes = notes.filter(({ node }) =>
+    const selectedNotes = footnotes.filter((node) =>
       rids.includes(node.attrs.id)
     )
     selectedNotesMap = new Map(
-      selectedNotes.map(({ node }) => [node.attrs.id, node])
+      selectedNotes.map((node) => [node.attrs.id, node])
     )
   }
 
@@ -104,15 +113,16 @@ export const FootnotesSelector: React.FC<{
   }
 
   const handleClick = () => {
-    return onInsert(notes.filter(({ node }) => selections.has(node.attrs.id)))
+    return onInsert(footnotes.filter((node) => selections.has(node.attrs.id)))
   }
 
   return (
     <Container>
       <NotesContainer>
         <FootnotesList
-          notes={notes}
+          footnotes={footnotes}
           inlineFootnote={inlineFootnote}
+          labels={labels}
           isSelected={isSelected}
           onSelect={toggleSelection}
         />
@@ -139,39 +149,42 @@ export const FootnotesSelector: React.FC<{
 }
 
 const FootnotesList: React.FC<{
-  notes: FootnoteWithIndex[]
+  footnotes: FootnoteNode[]
   inlineFootnote?: InlineFootnoteNode
+  labels: Map<string, string>
   isSelected: (item: FootnoteNode) => boolean
   onSelect: (item: FootnoteNode) => void
-}> = ({ notes, isSelected, onSelect, inlineFootnote }) => {
-  const selectedNotes: FootnoteWithIndex[] = []
-  const remainingNotes: FootnoteWithIndex[] = []
+}> = ({ footnotes, inlineFootnote, labels, isSelected, onSelect }) => {
+  const rids = inlineFootnote?.attrs.rids
+  const selectedNotes: FootnoteNode[] = []
+  const remainingNotes: FootnoteNode[] = []
 
-  notes.forEach((note) => {
-    const isNoteSelected =
-      inlineFootnote && inlineFootnote.attrs.rids.includes(note.node.attrs.id)
+  footnotes.forEach((footnote) => {
+    const isNoteSelected = rids?.includes(footnote.attrs.id)
     if (isNoteSelected) {
-      selectedNotes.push(note)
+      selectedNotes.push(footnote)
     } else {
-      remainingNotes.push(note)
+      remainingNotes.push(footnote)
     }
   })
 
   return (
     <NotesListContainer>
-      {selectedNotes.map((note) => (
+      {selectedNotes.map((footnote) => (
         <FootnoteItem
-          key={note.node.attrs.id}
-          note={note}
+          key={footnote.attrs.id}
+          footnote={footnote}
+          label={labels.get(footnote.attrs.id)}
           isSelected={isSelected}
           onSelect={onSelect}
         />
       ))}
       {selectedNotes.length > 0 && remainingNotes.length > 0 && <Separator />}
-      {remainingNotes.map((note) => (
+      {remainingNotes.map((footnote) => (
         <FootnoteItem
-          key={note.node.attrs.id}
-          note={note}
+          key={footnote.attrs.id}
+          footnote={footnote}
+          label={labels.get(footnote.attrs.id)}
           isSelected={isSelected}
           onSelect={onSelect}
         />
@@ -181,23 +194,21 @@ const FootnotesList: React.FC<{
 }
 
 const FootnoteItem: React.FC<{
-  note: FootnoteWithIndex
+  footnote: FootnoteNode
+  label?: string
   isSelected: (item: FootnoteNode) => boolean
   onSelect: (item: FootnoteNode) => void
-}> = ({ note, isSelected, onSelect }) => {
-  const { node, index } = note
+}> = ({ footnote, label, isSelected, onSelect }) => {
   return (
-    <FootnoteItemContainer onClick={() => onSelect(node)}>
+    <FootnoteItemContainer onClick={() => onSelect(footnote)}>
       <StatusIcon>
-        {isSelected(node) ? (
+        {isSelected(footnote) ? (
           <AddedIcon data-cy={'plus-icon-ok'} />
         ) : (
           <AddIcon data-cy={'plus-icon'} />
         )}
       </StatusIcon>
-      <NoteText>
-        {(index ? index + '. ' : '') + node.firstChild?.textContent}
-      </NoteText>
+      <NoteText>{(label ? label + '. ' : '') + footnote.textContent}</NoteText>
     </FootnoteItemContainer>
   )
 }
