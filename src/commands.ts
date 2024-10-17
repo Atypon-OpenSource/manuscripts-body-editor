@@ -648,7 +648,7 @@ export const insertTableElementFooter = (
   if (footer) {
     const pos = tr.mapping.map(table[1] + footer.pos + 1)
     if (isDeleted(footer.node)) {
-      tr.setNodeAttribute(pos, 'dataTracked', null)
+      reinstateNode(tr, footer.node, pos)
     }
     return {
       node: footer.node,
@@ -709,7 +709,7 @@ export const insertInlineFootnote = (
     }
 
     if (isDeleted(element[0])) {
-      tr.setNodeAttribute(element[1], 'dataTracked', null)
+      reinstateNode(tr, element[0], element[1])
     }
 
     const fnPos = element[1] + element[0].nodeSize - 1
@@ -725,6 +725,14 @@ export const insertInlineFootnote = (
     dispatch(tr)
   }
   return true
+}
+
+const reinstateNode = (tr: Transaction, node: ManuscriptNode, pos: number) => {
+  const attrs = {
+    ...node.attrs,
+    dataTracked: null,
+  }
+  tr.setNodeMarkup(pos, null, attrs)
 }
 
 export const insertGraphicalAbstract = (
