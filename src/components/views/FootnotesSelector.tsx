@@ -28,7 +28,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { FootnoteWithIndex } from '../../lib/footnotes'
-import { getActualAttrs } from '../../lib/track-changes-utils'
 
 const NotesContainer = styled.div`
   height: 90vh;
@@ -76,7 +75,7 @@ export const FootnotesSelector: React.FC<{
   let selectedNotesMap
 
   if (inlineFootnote) {
-    const rids = getActualAttrs(inlineFootnote).rids
+    const rids = inlineFootnote.attrs.rids
     const selectedNotes = notes.filter(({ node }) =>
       rids.includes(node.attrs.id)
     )
@@ -150,8 +149,7 @@ const FootnotesList: React.FC<{
 
   notes.forEach((note) => {
     const isNoteSelected =
-      inlineFootnote &&
-      getActualAttrs(inlineFootnote).rids.includes(note.node.attrs.id)
+      inlineFootnote && inlineFootnote.attrs.rids.includes(note.node.attrs.id)
     if (isNoteSelected) {
       selectedNotes.push(note)
     } else {

@@ -21,7 +21,7 @@ import {
 } from '@manuscripts/transform'
 import { Location, NavigateFunction } from 'react-router-dom'
 
-import { getActualAttrs, getChangeClasses } from '../lib/track-changes-utils'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { objectsKey } from '../plugins/objects'
 import { Trackable } from '../types'
 import { BaseNodeProps, BaseNodeView } from './base_node_view'
@@ -55,12 +55,9 @@ export class CrossReferenceView
   public updateContents = () => {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
 
-    const classes = [
-      'cross-reference',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
+    const classes = ['cross-reference', ...getChangeClasses(attrs.dataTracked)]
 
     this.dom.className = classes.join(' ')
     const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
