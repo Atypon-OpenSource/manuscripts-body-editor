@@ -36,7 +36,7 @@ describe('footnotes plugin', () => {
   test("should create an inline node and footnotes section if it doesn't exist", () => {
     const expectedDoc = parseDoc(insertedFootnoteJson.doc)
 
-    setupEditor()
+    const { view } = setupEditor()
       .selectText(10)
       .command(insertInlineFootnote)
       .insertText('a footnote')
@@ -46,10 +46,11 @@ describe('footnotes plugin', () => {
           insertedFootnoteJson.selection
         )
       })
+    view.destroy()
   })
   test('should remove the inline node as well as the footnote on deletion', () => {
     const expectedDoc = parseDoc(deletedFootnoteJson.doc)
-    setupEditor()
+    const { view } = setupEditor()
       .selectText(10)
       .command(insertInlineFootnote)
       .insertText('a footnote')
@@ -61,5 +62,6 @@ describe('footnotes plugin', () => {
           deletedFootnoteJson.selection
         )
       })
+    view.destroy()
   })
 })
