@@ -19,7 +19,8 @@ import {
   FootnoteNode,
   FootnotesElementNode,
   generateAlphaFootnoteLabel,
-  InlineFootnoteNode, isTableElementNode,
+  InlineFootnoteNode,
+  isTableElementNode,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
@@ -226,7 +227,10 @@ export default (props: EditorProps) => {
     },
     appendTransaction(transactions, oldState, newState) {
       const $old = footnotesKey.getState(oldState)
-      const $new = footnotesKey.getState(newState) as FootnotesPluginState
+      const $new = footnotesKey.getState(newState)
+      if (!$new) {
+        return
+      }
 
       const tr = newState.tr
 
