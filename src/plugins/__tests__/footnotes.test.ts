@@ -16,8 +16,8 @@
 
 import { ManuscriptNodeType } from '@manuscripts/transform'
 
-import { insertInlineFootnote } from '../../../commands'
-import { parseDoc, setupEditor } from '../../../testing/setup-editor'
+import { insertInlineFootnote } from '../../commands'
+import { parseDoc, setupEditor } from '../../testing/setup-editor'
 import deletedFootnoteJson from './__fixtures__/deleted-footnote.json'
 import insertedFootnoteJson from './__fixtures__/inserted-footnote.json'
 
