@@ -43,18 +43,18 @@ export class FootnoteView extends BaseNodeView<FootnoteNode> {
 
   public updateContents = () => {
     const id = this.node.attrs.id
-    const fns = getFootnotesElementState(this.view.state, id)
-    if (!fns) {
+    const fn = getFootnotesElementState(this.view.state, id)
+    if (!fn) {
       return
     }
 
     const marker = document.createElement('span')
-    if (!isDeleted(this.node) && fns.unusedFootnoteIDs.has(id)) {
+    if (!isDeleted(this.node) && fn.unusedFootnoteIDs.has(id)) {
       marker.classList.add('uncited-footnote')
       marker.innerHTML = alertIcon
     } else {
       marker.classList.add('footnote-marker')
-      marker.innerText = fns.labels.get(id) || ''
+      marker.innerText = fn.labels.get(id) || ''
     }
     const deleteBtn = document.createElement('span')
     deleteBtn.classList.add('delete-icon')

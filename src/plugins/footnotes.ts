@@ -35,6 +35,7 @@ import {
   findFootnotesContainerNode,
   findParentFootnote,
 } from '../lib/footnotes'
+import { isInit } from '../lib/plugins'
 
 /**
  * The state for a single footnotes_element.
@@ -62,18 +63,15 @@ export type FootnotesElementState = {
   labels: Map<string, string>
 }
 
-export type VersionedFootnotesElementState = FootnotesElementState & {
-  version: string
-}
-
 export type FootnotesPluginState = {
   /**
    * footnote_element ID => state
    */
-  footnotesElements: Map<string, VersionedFootnotesElementState>
+  footnotesElements: Map<string, FootnotesElementState>
   /**
    * Tracks the footnote_element node ID corresponding to a few important
    * node IDs. The node IDs tracked are:
+   * - inline_footnote node IDs
    * - footnote node IDs
    * - table_element node IDs
    */
@@ -82,31 +80,26 @@ export type FootnotesPluginState = {
 
 export const footnotesKey = new PluginKey<FootnotesPluginState>('footnotes')
 
-let version = 1
-
 /**
  * This plugin provides support of footnotes related behaviours:
  *  - It adds and updates superscripted numbering of the footnotes on editor state changes
  *  - deletes inline footnotes when a footnotes is deleted
  *  - provides an ability to scroll to a footnote upon clicking on the respective inline footnotes
  */
-const buildPluginState = (doc: ManuscriptNode, $old?: FootnotesPluginState) => {
+const buildPluginState = (doc: ManuscriptNode) => {
   const states = new Map()
   const ids = new Map()
   const elements = findChildrenByType(doc, schema.nodes.footnotes_element)
   elements.map(({ node, pos }) => {
     const container = findFootnotesContainerNode(doc, pos)
-    const oldState = $old?.footnotesElements.get(node.attrs.id)
     const newState = buildFootnotesElementState(
       [container.node, container.pos],
       [node as FootnotesElementNode, pos]
     )
     const elementID = node.attrs.id
-    states.set(elementID, {
-      ...newState,
-      version: getVersion(newState, oldState),
-    })
+    states.set(elementID, newState)
     newState.footnotes.forEach(([n]) => ids.set(n.attrs.id, elementID))
+    newState.inlineFootnotes.forEach(([n]) => ids.set(n.attrs.id, elementID))
     ids.set(container.node.attrs.id, elementID)
   })
   return {
@@ -163,17 +156,23 @@ const buildFootnotesElementState = (
       pos += container[1] + 1
     }
     fn.inlineFootnotes.push([node as InlineFootnoteNode, pos])
-    rids.forEach((rid) => {
-      //this is to ensure footnotes are processed only once
-      if (orderedFootnoteIDs.indexOf(rid) < 0) {
-        const label = isTableElementNode(container[0])
-          ? String(++index)
-          : generateAlphaFootnoteLabel(index++)
-        fn.labels.set(rid, label)
-        fn.unusedFootnoteIDs.delete(rid)
-        orderedFootnoteIDs.push(rid)
-      }
-    })
+    const label = rids
+      .map((rid) => {
+        //this is to ensure footnotes are processed only once
+        if (fn.labels.has(rid)) {
+          return fn.labels.get(rid)
+        } else {
+          const label = isTableElementNode(container[0])
+            ? String(++index)
+            : generateAlphaFootnoteLabel(index++)
+          fn.labels.set(rid, label)
+          fn.unusedFootnoteIDs.delete(rid)
+          orderedFootnoteIDs.push(rid)
+          return label
+        }
+      })
+      .join(', ')
+    fn.labels.set(node.attrs.id, label)
   })
   // At this point, the set includes only footnote node IDs that have no
   // corresponding inline_footnote. These should be added to the end
@@ -195,19 +194,16 @@ const buildFootnotesElementState = (
  * order of the FootnoteNodes change. If the order did not change, the
  * old version is used.
  */
-const getVersion = (
+const hasChanged = (
   $new: FootnotesElementState,
-  $old?: VersionedFootnotesElementState
+  $old?: FootnotesElementState
 ) => {
   const nids = $new.footnotes.map(([node]) => node.attrs.id)
   const oids = $old?.footnotes.map(([node]) => node.attrs.id)
-  if (
+  return !(
     isEqual(nids, oids) &&
     isEqual($new.unusedFootnoteIDs, $old?.unusedFootnoteIDs)
-  ) {
-    return $old?.version
-  }
-  return String(version++)
+  )
 }
 
 export default (props: EditorProps) => {
@@ -222,10 +218,13 @@ export default (props: EditorProps) => {
         if (!tr.docChanged && $old) {
           return $old
         }
-        return buildPluginState(newState.doc, $old)
+        return buildPluginState(newState.doc)
       },
     },
     appendTransaction(transactions, oldState, newState) {
+      if (!transactions.find((tr) => tr.docChanged || isInit(tr))) {
+        return
+      }
       const $old = footnotesKey.getState(oldState)
       const $new = footnotesKey.getState(newState)
       if (!$new) {
@@ -240,9 +239,7 @@ export default (props: EditorProps) => {
         const oldState = $old?.footnotesElements.get(key)
         const footnotes = newState.footnotes.map(([node]) => node)
 
-        // A version mismatch indicates that the order of the footnote nodes
-        // has changed, so we need to reflect that on the doc.
-        if (newState.version !== oldState?.version) {
+        if (hasChanged(newState, oldState)) {
           const newElement = schema.nodes.footnotes_element.create(
             element.attrs,
             // footnotes here is already in the correct order.
@@ -278,14 +275,15 @@ export default (props: EditorProps) => {
         }
         const decorations: Decoration[] = []
         fns.footnotesElements.forEach((fn) => {
-          const version = fn.version
           fn.footnotes.forEach(([node, pos]) => {
             const to = pos + node.nodeSize
-            decorations.push(Decoration.node(pos, to, {}, { version }))
+            const label = fn.labels.get(node.attrs.id)
+            decorations.push(Decoration.node(pos, to, {}, { label }))
           })
           fn.inlineFootnotes.forEach(([node, pos]) => {
             const to = pos + node.nodeSize
-            decorations.push(Decoration.node(pos, to, {}, { version }))
+            const label = fn.labels.get(node.attrs.id)
+            decorations.push(Decoration.node(pos, to, {}, { label }))
           })
         })
         if (props.getCapabilities().editArticle) {

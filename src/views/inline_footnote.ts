@@ -145,16 +145,12 @@ export class InlineFootnoteView
     ].join(' ')
 
     const state = this.view.state
-    const pos = this.getPos()
-    const container = findFootnotesContainerNode(state.doc, pos)
-    const fn = getFootnotesElementState(state, container.node.attrs.id)
+    const fn = getFootnotesElementState(state, this.node.attrs.id)
     if (!fn) {
       return
     }
 
-    this.dom.innerText = this.node.attrs.rids
-      .map((rid) => fn.labels.get(rid))
-      .join(', ')
+    this.dom.innerText = fn.labels.get(this.node.attrs.id) || ''
   }
 
   public initialise = () => {

@@ -17,6 +17,8 @@ import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { generateNodeID, ManuscriptNode, schema } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
+import { isInit } from '../lib/plugins'
+
 /**
  * This plugin ensures that all nodes which need ids (i.e. `id` is defined in the node spec's attributes) are given an id, and that there aren't any duplicate ids in the document.
  */
@@ -29,14 +31,13 @@ export default () => {
   return new Plugin<null>({
     appendTransaction(transactions, oldState, newState) {
       // only scan if nodes have changed
-      if (!transactions.some((tr) => tr.docChanged)) {
+      if (!transactions.some((tr) => tr.docChanged || isInit(tr))) {
         return null
       }
       const ids = new Set<string>()
       const tr = newState.tr
       newState.doc.descendants((node, pos, parent) => {
         if (
-          node.isInline ||
           isManuscriptNode(node) ||
           isManuscriptNode(parent) ||
           !node.type.spec.attrs ||
