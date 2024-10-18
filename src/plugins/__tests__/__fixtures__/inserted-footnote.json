@@ -51,6 +51,7 @@
                   {
                     "type": "inline_footnote",
                     "attrs": {
+                      "id": "inline_footnote_id",
                       "rids": ["footnote_id"],
                       "contents": "a",
                       "dataTracked": null
