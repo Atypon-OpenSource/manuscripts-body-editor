@@ -41,11 +41,7 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import ReactSubView from '../views/ReactSubView'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
-import {
-  getActualAttrs,
-  isDeleted,
-  isRejectedInsert,
-} from './track-changes-utils'
+import { isDeleted } from './track-changes-utils'
 import { getChildOfType, isChildOfNodeTypes } from './utils'
 
 const popper = new PopperManager()
@@ -156,7 +152,9 @@ export class ContextMenu {
 
             section.appendChild(
               this.createMenuItem(label, () => {
-                insertNode(schema.nodes.section, insPos)
+                insertNode(schema.nodes.section, insPos, {
+                  category: 'MPSectionCategory:subsection',
+                })
                 popper.destroy()
               })
             )
@@ -253,8 +251,8 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const actualAttrs = getActualAttrs(this.node)
-          const listType = getListType(actualAttrs.listStyleType).style
+          const attrs = this.node.attrs
+          const listType = getListType(attrs.listStyleType).style
           if (listType === 'none' || listType === 'disc') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
@@ -298,7 +296,7 @@ export class ContextMenu {
         this.node,
         schema.nodes.table_element_footer
       )
-      let isDeletedOrRejected = false
+      let isDeletedInsert = false
 
       const hasGeneralNote =
         tableElementFooter.length &&
@@ -311,11 +309,10 @@ export class ContextMenu {
       if (hasGeneralNote) {
         const generalFootnote = tableElementFooter[0]?.node.firstChild
         if (generalFootnote) {
-          isDeletedOrRejected =
-            isDeleted(generalFootnote) || isRejectedInsert(generalFootnote)
+          isDeletedInsert = isDeleted(generalFootnote)
         }
       }
-      if (!hasGeneralNote || isDeletedOrRejected) {
+      if (!hasGeneralNote || isDeletedInsert) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
@@ -344,8 +341,7 @@ export class ContextMenu {
                 if (
                   !footnotesElementWithPos ||
                   !footnotesElementWithPos?.node.content.childCount ||
-                  isDeleted(footnotesElementWithPos.node) ||
-                  isRejectedInsert(footnotesElementWithPos.node)
+                  isDeleted(footnotesElementWithPos.node)
                 ) {
                   insertTableFootnote(this.node, this.getPos(), this.view)
                 } else {
@@ -359,9 +355,7 @@ export class ContextMenu {
                   )
 
                   const footnotes = footnotesWithPos
-                    .filter(
-                      ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
-                    )
+                    .filter(({ node }) => !isDeleted(node))
                     .map(({ node }) => ({
                       node: node,
                       index: tablesFootnoteLabels.get(node.attrs.id),
@@ -395,10 +389,7 @@ export class ContextMenu {
                           this.view.state.doc
                             .slice(this.getPos(), insertedAt)
                             .content.descendants((node) => {
-                              if (
-                                node.type === schema.nodes.inline_footnote &&
-                                !isRejectedInsert(node)
-                              ) {
+                              if (node.type === schema.nodes.inline_footnote) {
                                 inlineFootnoteIndex++
                                 return false
                               }
@@ -451,8 +442,10 @@ export class ContextMenu {
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const nodeName = nodeNames.get(type) || ''
-
+          let nodeName = nodeNames.get(type) || ''
+          if (type === schema.nodes.section_title) {
+            nodeName = nodeNames.get(schema.nodes.section) as string
+          }
           section.appendChild(
             this.createMenuItem(`Delete ${nodeName}`, () => {
               this.deleteNode(type)

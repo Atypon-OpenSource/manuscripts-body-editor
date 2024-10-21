@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  BoxElementNode,
   FigureElementNode,
   FigureNode,
   FootnoteNode,
@@ -97,7 +98,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { sectionTitles } from './lib/section-titles'
-import { isDeleted, isRejectedInsert } from './lib/track-changes-utils'
+import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
   getChildOfType,
@@ -142,7 +143,12 @@ export const addToStart = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - (startOffset === 0 ? 1 : 0)
-    const tr = state.tr.insert(side, $from.node().type.createAndFill()!)
+
+    const tr = state.tr
+    const from = $from.node().type.createAndFill()
+    if (from) {
+      tr.insert(side, from)
+    }
     tr.setSelection(TextSelection.create(tr.doc, side + 1))
     dispatch(tr.scrollIntoView())
     return true
@@ -195,9 +201,13 @@ export const canInsert =
     const { $from, $to } = state.selection
 
     // disable block comment insertion just for title node, LEAN-2746
-    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+    if (
+      ($from.node().type === schema.nodes.title || $from.node().type === schema.nodes.section_title) &&
+      $from.pos === $to.pos
+    ) {
       return false
     }
+    
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -326,10 +336,7 @@ export const insertGeneralFootnote = (
         : tableColGroup.pos + tableColGroup.node.nodeSize)
 
   if (tableElementFooter?.length) {
-    if (
-      isDeleted(tableElementFooter[0].node) ||
-      isRejectedInsert(tableElementFooter[0].node)
-    ) {
+    if (isDeleted(tableElementFooter[0].node)) {
       const tableElementFooterPos = tr.mapping.map(
         position + tableElementFooter[0].pos + 1
       )
@@ -362,7 +369,6 @@ export const insertFigure = (
   dispatch?: Dispatch
 ) => {
   const position = findBlockInsertPosition(state)
-
   if (position === null || !dispatch) {
     return false
   }
@@ -705,10 +711,7 @@ export const insertFootnote = (
     ).pop()
 
     if (footnoteElement) {
-      if (
-        isDeleted(footnoteElement.node) ||
-        isRejectedInsert(footnoteElement.node)
-      ) {
+      if (isDeleted(footnoteElement.node)) {
         const footnoteElementPos =
           footnotesSection.pos + footnoteElement.pos + 1
 
@@ -783,14 +786,8 @@ export const insertGraphicalAbstract = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  const GraphicalAbstractSectionNode = findChildrenByType(
-    state.doc,
-    schema.nodes.graphical_abstract_section
-  )[0]
-
   if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true) &&
-    !isRejectedInsert(GraphicalAbstractSectionNode.node)
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
   ) {
     return false
   }
@@ -846,7 +843,9 @@ export const insertSection =
       return false
     }
 
-    const section = schema.nodes.section.createAndFill() as SectionNode
+    const section = schema.nodes.section.createAndFill({
+      category: subsection ? 'MPSectionCategory:subsection' : '',
+    }) as SectionNode
     const diff = subsection ? -1 : 0 // move pos inside section for a subsection
     const tr = state.tr.insert(pos + diff, section)
 
@@ -1611,10 +1610,8 @@ export const insertTableFootnote = (
       schema.nodes.inline_footnote
     )
     footnoteIndex =
-      inlineFootnotes.filter(
-        ({ pos }) =>
-          !isRejectedInsert(tableElementNode) && position + pos <= insertedAt
-      ).length + 1
+      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
+      1
     const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
       rids: [footnote.attrs.id],
       contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
@@ -1632,10 +1629,7 @@ export const insertTableFootnote = (
   ).pop()
 
   if (footnotesElement) {
-    if (
-      isDeleted(footnotesElement.node) ||
-      isRejectedInsert(footnotesElement.node)
-    ) {
+    if (isDeleted(footnotesElement.node)) {
       const footnotesElementPos = tr.mapping.map(
         position + footnotesElement.pos + 1
       )
@@ -1659,10 +1653,7 @@ export const insertTableFootnote = (
     )[0]
 
     if (tableElementFooter) {
-      if (
-        isDeleted(tableElementFooter.node) ||
-        isRejectedInsert(tableElementFooter.node)
-      ) {
+      if (isDeleted(tableElementFooter.node)) {
         const tableElementFooterPos = tr.mapping.map(
           position + tableElementFooter.pos + 1
         )
@@ -1704,6 +1695,45 @@ export const insertTableFootnote = (
   )
   view.focus()
   dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
+}
+
+export const insertBoxElement = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const selection = state.selection
+
+  // Check if the selection is inside the body
+  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
+
+  // If selection is not in the body, disable the option
+  if (!isBody || isBoxText) {
+    return false
+  }
+
+  const position = findBlockInsertPosition(state)
+
+  const paragraph = schema.nodes.paragraph.create({})
+
+  // Create a section node with a section title and a paragraph
+  const section = schema.nodes.section.createAndFill({}, [
+    schema.nodes.section_title.create(),
+    paragraph,
+  ]) as ManuscriptNode
+
+  // Create the BoxElement node with a figcaption and the section
+  const BoxElementNode = schema.nodes.box_element.createAndFill({}, [
+    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+    section,
+  ]) as BoxElementNode
+
+  if (position && dispatch) {
+    const tr = state.tr.insert(position, BoxElementNode)
+    dispatch(tr)
+  }
+
+  return true
 }
 
 export const addRows =

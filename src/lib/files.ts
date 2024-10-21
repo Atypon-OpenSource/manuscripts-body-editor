@@ -17,7 +17,7 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import { findGraphicalAbstractFigureElement } from './doc'
-import { getActualAttrs, isHidden } from './track-changes-utils'
+import { isHidden } from './track-changes-utils'
 
 export type FileDesignation = {
   id: string
@@ -82,7 +82,7 @@ export const groupFiles = (
       if (isHidden(figure.node)) {
         continue
       }
-      const src = getActualAttrs(figure.node).src
+      const src = figure.node.attrs.src
       if (!src) {
         continue
       }
@@ -121,7 +121,7 @@ export const groupFiles = (
       if (isHidden(node)) {
         return
       }
-      const href = getActualAttrs(node).href
+      const href = node.attrs.href
       let file = fileMap.get(href)
       if (file) {
         fileMap.delete(href)

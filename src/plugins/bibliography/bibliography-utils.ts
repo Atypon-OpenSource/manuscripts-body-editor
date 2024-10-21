@@ -19,7 +19,6 @@ import { CitationNode, ManuscriptNode } from '@manuscripts/transform'
 import CiteProc from 'citeproc'
 import { Decoration } from 'prosemirror-view'
 
-import { getActualAttrs } from '../../lib/track-changes-utils'
 import { PluginState } from './index'
 
 export const isBibliographyElement = (node: ManuscriptNode) =>
@@ -105,7 +104,7 @@ export const getLatest = (a: TrackedAttrs, b: TrackedAttrs) =>
 
 export const buildCitations = (citations: CitationNodes): CiteProc.Citation[] =>
   citations
-    .map((c) => getActualAttrs(c[0]))
+    .map((c) => c[0].attrs)
     .map((attrs) => ({
       citationID: attrs.id,
       citationItems: attrs.rids.map((rid) => ({

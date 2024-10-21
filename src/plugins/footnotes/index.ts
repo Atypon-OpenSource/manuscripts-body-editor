@@ -40,7 +40,6 @@ import {
   findTableInlineFootnoteIds,
   getAlphaOrderIndices,
 } from '../../lib/footnotes'
-import { getActualAttrs } from '../../lib/track-changes-utils'
 import { placeholderWidget } from '../placeholder'
 import {
   deleteFootnoteWidget,
@@ -99,8 +98,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   inlineFootnotes.sort((a, b) => a[1] - b[1])
   inlineFootnotes.forEach(([node]) => {
-    // console.dir(getActualAttrs(node).rids)
-    getActualAttrs(node).rids.forEach((rid) => {
+    node.attrs.rids.forEach((rid) => {
       labels.set(rid, getAlphaOrderIndices(index++))
     })
   })
@@ -110,7 +108,7 @@ export const buildPluginState = (doc: ManuscriptNode): PluginState => {
 
   inlineFootnotes.forEach(([node]) => {
     const footnote = node as InlineFootnoteNode
-    getActualAttrs(footnote).rids.forEach((rid) => {
+    footnote.attrs.rids.forEach((rid) => {
       const currentFnNode = unusedFootnotes.get(rid)
       if (currentFnNode) {
         // separating used and orphan footnotes
@@ -160,12 +158,8 @@ export default (props: EditorProps) => {
         unusedFootnotes,
       } = footnotesKey.getState(newState) as PluginState
 
-      const prevIds = oldInlineFootnoteNodes.map(
-        ([node]) => getActualAttrs(node).rids
-      )
-      const newIds = inlineFootnoteNodes.map(
-        ([node]) => getActualAttrs(node).rids
-      )
+      const prevIds = oldInlineFootnoteNodes.map(([node]) => node.attrs.rids)
+      const newIds = inlineFootnoteNodes.map(([node]) => node.attrs.rids)
       const initTransaction = transactions.find((t) => t.getMeta('INIT'))
 
       if (!footnoteElement || (!initTransaction && isEqual(prevIds, newIds))) {
@@ -178,7 +172,7 @@ export default (props: EditorProps) => {
 
       inlineFootnoteNodes.forEach(([node, pos]) => {
         const footnote = node as InlineFootnoteNode
-        const attrs = getActualAttrs(footnote)
+        const attrs = footnote.attrs
         const contents = attrs.rids
           .map((rid) => {
             const currentFnNode = footnotes.get(rid)

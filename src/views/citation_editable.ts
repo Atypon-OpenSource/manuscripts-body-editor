@@ -30,7 +30,7 @@ import {
 } from '../components/references/CitationViewer'
 import { Crossref } from '../lib/crossref'
 import { BibliographyItemAttrs } from '../lib/references'
-import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
@@ -65,7 +65,7 @@ export class CitationEditableView extends CitationView {
     if (!this.can.seeReferencesButtons) {
       this.showPopper()
     } else if (!isDeleted(this.node) && event.button === 0) {
-      const attrs = getActualAttrs(this.node)
+      const attrs = this.node.attrs
       if (attrs.rids.length) {
         this.showContextMenu()
       }
@@ -74,7 +74,7 @@ export class CitationEditableView extends CitationView {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
-      const attrs = getActualAttrs(this.node)
+      const attrs = this.node.attrs
       if (!attrs.rids.length) {
         this.showPopper()
       }
@@ -118,7 +118,7 @@ export class CitationEditableView extends CitationView {
     }
     const can = this.props.getCapabilities()
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = attrs.rids
 
     const items = Array.from(bib.bibliographyItems.values())
@@ -190,7 +190,7 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleUncite = (id: string) => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = attrs.rids.filter((i) => i !== id)
     const pos = this.getPos()
     const tr = this.view.state.tr
@@ -214,7 +214,7 @@ export class CitationEditableView extends CitationView {
       return
     }
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = [...attrs.rids]
 
     items = items.filter((i) => !rids.includes(i.id))
