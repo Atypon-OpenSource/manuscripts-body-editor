@@ -19,10 +19,9 @@ import { TextSelection } from 'prosemirror-state'
 import { findParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
-import { updateSliceWithFullTableContent } from './table'
-
 export const transformCopied = (slice: Slice, view: EditorView): Slice => {
   const { state } = view
+
   if (
     (!view.props.handleKeyDown || !state.selection.empty) &&
     slice.content.firstChild?.type === schema.nodes.table
@@ -52,24 +51,6 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
     }
     if (tableNode) {
       return new Slice(Fragment.from(tableNode), 0, 0)
-    }
-  }
-
-  // handle case when part of the copied content is a table
-  if (slice.content.firstChild?.type === schema.nodes.body) {
-    let newSliceContent: Node[] = []
-    slice.content.firstChild.descendants((node) => {
-      if (node.childCount > 1) {
-        newSliceContent = updateSliceWithFullTableContent(state, node.content)
-        return false
-      }
-      if (newSliceContent.length > 0) {
-        return false
-      }
-      return true
-    })
-    if (newSliceContent.length > 0) {
-      return new Slice(Fragment.from(newSliceContent), 0, 0)
     }
   }
 

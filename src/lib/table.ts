@@ -13,25 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { schema } from '@manuscripts/transform'
 import { Fragment, Node, Schema, Slice } from 'prosemirror-model'
-import { EditorState } from 'prosemirror-state'
-
-export const updateSliceWithFullTableContent = (
-  state: EditorState,
-  slice: Fragment
-): Node[] => {
-  const newSliceContent: Node[] = []
-  slice.forEach((node) => {
-    if (node.type === schema.nodes.table_element) {
-      const { tableNode } = getTableElementNode(state)
-      tableNode && newSliceContent.push(tableNode)
-    } else {
-      newSliceContent.push(node)
-    }
-  })
-  return newSliceContent
-}
 
 export const createTableFromSlice = (
   slice: Slice,
