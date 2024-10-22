@@ -109,7 +109,7 @@ export const toolbar: ToolbarConfig = {
   },
   list: {
     bullet_list: {
-      title: 'Wrap in bullet list',
+      title: 'Bullet list',
       content: <ToolbarUnorderedListIcon />,
       isActive: blockActive(schema.nodes.list),
       isEnabled: insertList(schema.nodes.list, 'bullet'),
@@ -120,7 +120,7 @@ export const toolbar: ToolbarConfig = {
       },
     },
     ordered_list: {
-      title: 'Wrap in ordered list',
+      title: 'Ordered list',
       content: <ToolbarOrderedListIcon />,
       isActive: blockActive(schema.nodes.list),
       isEnabled: insertList(schema.nodes.list, 'order'),
