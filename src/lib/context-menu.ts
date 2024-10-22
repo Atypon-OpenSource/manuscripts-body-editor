@@ -42,7 +42,7 @@ import ReactSubView from '../views/ReactSubView'
 import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
 import { isDeleted } from './track-changes-utils'
-import { getChildOfType, isChildOfNodeTypes } from './utils'
+import { getChildOfType, isChildOfNodeTypes, isSelectionInNode } from './utils'
 
 const popper = new PopperManager()
 
@@ -328,8 +328,8 @@ export class ContextMenu {
           })
         )
       }
-
-      if (isInTable) {
+      const isInsideNode = isSelectionInNode(this.view.state, this.node)
+      if (isInTable && isInsideNode) {
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(

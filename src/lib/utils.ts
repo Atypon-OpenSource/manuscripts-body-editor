@@ -20,8 +20,8 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
-import { NodeType } from 'prosemirror-model'
-import { Selection } from 'prosemirror-state'
+import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import { EditorState, Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
 export function* iterateChildren(
@@ -100,5 +100,20 @@ export const isChildOfNodeTypes = (
     }
   }
 
+  return false
+}
+
+export const isSelectionInNode = (
+  state: EditorState,
+  targetNode: ProseMirrorNode
+) => {
+  const resolvedFrom = state.doc.resolve(state.selection.from)
+
+  for (let depth = resolvedFrom.depth; depth >= 0; depth--) {
+    const node = resolvedFrom.node(depth)
+    if (node === targetNode) {
+      return true
+    }
+  }
   return false
 }
