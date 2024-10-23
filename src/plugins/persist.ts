@@ -36,11 +36,10 @@ export default () => {
       const tr = newState.tr
       newState.doc.descendants((node, pos, parent) => {
         if (
-          node.isInline ||
+          (!(node.type.spec.attrs && 'id' in node.type.spec.attrs) &&
+            node.isInline) ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent) ||
-          !node.type.spec.attrs ||
-          !('id' in node.type.spec.attrs)
+          isManuscriptNode(parent)
         ) {
           return
         }
