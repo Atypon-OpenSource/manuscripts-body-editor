@@ -109,7 +109,7 @@ export const toolbar: ToolbarConfig = {
   },
   list: {
     bullet_list: {
-      title: 'Bullet list',
+      title: 'Bulleted list',
       content: <ToolbarUnorderedListIcon />,
       isActive: blockActive(schema.nodes.list),
       isEnabled: insertList(schema.nodes.list, 'bullet'),
