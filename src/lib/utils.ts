@@ -103,6 +103,12 @@ export const isChildOfNodeTypes = (
   return false
 }
 
+/**
+ * Check if selection is inside the given node
+ * @param state - the editor state
+ * @param targetNode - the node to check if the selection is inside
+ * @return boolean
+ */
 export const isSelectionInNode = (
   state: EditorState,
   targetNode: ProseMirrorNode

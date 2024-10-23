@@ -328,108 +328,114 @@ export class ContextMenu {
           })
         )
       }
-      const isInsideNode = isSelectionInNode(this.view.state, this.node)
-      if (isInTable && isInsideNode) {
+      if (isInTable) {
+        const isInsideNode = isSelectionInNode(this.view.state, this.node)
         menu.appendChild(
           this.createMenuSection((section: HTMLElement) => {
             section.appendChild(
-              this.createMenuItem('Add Reference Note', () => {
-                const footnotesElementWithPos = findChildrenByType(
-                  this.node,
-                  schema.nodes.footnotes_element
-                ).pop()
-                if (
-                  !footnotesElementWithPos ||
-                  !footnotesElementWithPos?.node.content.childCount ||
-                  isDeleted(footnotesElementWithPos.node)
-                ) {
-                  insertTableFootnote(this.node, this.getPos(), this.view)
-                } else {
-                  const tablesFootnoteLabels = buildTableFootnoteLabels(
-                    this.node
-                  )
-
-                  const footnotesWithPos = findChildrenByType(
-                    footnotesElementWithPos.node,
-                    schema.nodes.footnote
-                  )
-
-                  const footnotes = footnotesWithPos
-                    .filter(({ node }) => !isDeleted(node))
-                    .map(({ node }) => ({
-                      node: node,
-                      index: tablesFootnoteLabels.get(node.attrs.id),
-                    })) as FootnoteWithIndex[]
-
-                  const targetDom = this.view.domAtPos(
-                    this.view.state.selection.from
-                  )
-                  const targetNode =
-                    targetDom.node.nodeType === Node.TEXT_NODE
-                      ? targetDom.node.parentNode
-                      : targetDom.node
-
-                  if (targetNode instanceof Element && this.props) {
-                    const popperContainer = ReactSubView(
-                      { ...this.props, dispatch: this.view.dispatch },
-                      FootnotesSelector,
-                      {
-                        notes: footnotes,
-                        onAdd: () => {
-                          insertTableFootnote(
-                            this.node,
-                            this.getPos(),
-                            this.view
-                          )
-                          this.props?.popper.destroy()
-                        },
-                        onInsert: (notes: FootnoteWithIndex[]) => {
-                          const insertedAt = this.view.state.selection.to
-                          let inlineFootnoteIndex = 1
-                          this.view.state.doc
-                            .slice(this.getPos(), insertedAt)
-                            .content.descendants((node) => {
-                              if (node.type === schema.nodes.inline_footnote) {
-                                inlineFootnoteIndex++
-                                return false
-                              }
-                            })
-
-                          const node =
-                            this.view.state.schema.nodes.inline_footnote.create(
-                              {
-                                rids: notes.map(({ node }) => node.attrs.id),
-                                contents: notes
-                                  .map(({ index }) =>
-                                    index ? index : inlineFootnoteIndex
-                                  )
-                                  .join(),
-                              }
-                            ) as InlineFootnoteNode
-
-                          const tr = this.view.state.tr
-
-                          tr.insert(insertedAt, node)
-                          this.view.dispatch(tr)
-                          this.props?.popper.destroy()
-                        },
-                        onCancel: () => {
-                          this.props?.popper.destroy()
-                        },
-                      },
-                      this.node,
-                      this.getPos,
-                      this.view,
-                      'footnote-editor'
+              this.createMenuItem(
+                'Add Reference Note',
+                () => {
+                  const footnotesElementWithPos = findChildrenByType(
+                    this.node,
+                    schema.nodes.footnotes_element
+                  ).pop()
+                  if (
+                    !footnotesElementWithPos ||
+                    !footnotesElementWithPos?.node.content.childCount ||
+                    isDeleted(footnotesElementWithPos.node)
+                  ) {
+                    insertTableFootnote(this.node, this.getPos(), this.view)
+                  } else {
+                    const tablesFootnoteLabels = buildTableFootnoteLabels(
+                      this.node
                     )
-                    this.props?.popper.show(
-                      targetNode,
-                      popperContainer,
-                      'bottom-end'
+
+                    const footnotesWithPos = findChildrenByType(
+                      footnotesElementWithPos.node,
+                      schema.nodes.footnote
                     )
+
+                    const footnotes = footnotesWithPos
+                      .filter(({ node }) => !isDeleted(node))
+                      .map(({ node }) => ({
+                        node: node,
+                        index: tablesFootnoteLabels.get(node.attrs.id),
+                      })) as FootnoteWithIndex[]
+
+                    const targetDom = this.view.domAtPos(
+                      this.view.state.selection.from
+                    )
+                    const targetNode =
+                      targetDom.node.nodeType === Node.TEXT_NODE
+                        ? targetDom.node.parentNode
+                        : targetDom.node
+
+                    if (targetNode instanceof Element && this.props) {
+                      const popperContainer = ReactSubView(
+                        { ...this.props, dispatch: this.view.dispatch },
+                        FootnotesSelector,
+                        {
+                          notes: footnotes,
+                          onAdd: () => {
+                            insertTableFootnote(
+                              this.node,
+                              this.getPos(),
+                              this.view
+                            )
+                            this.props?.popper.destroy()
+                          },
+                          onInsert: (notes: FootnoteWithIndex[]) => {
+                            const insertedAt = this.view.state.selection.to
+                            let inlineFootnoteIndex = 1
+                            this.view.state.doc
+                              .slice(this.getPos(), insertedAt)
+                              .content.descendants((node) => {
+                                if (
+                                  node.type === schema.nodes.inline_footnote
+                                ) {
+                                  inlineFootnoteIndex++
+                                  return false
+                                }
+                              })
+
+                            const node =
+                              this.view.state.schema.nodes.inline_footnote.create(
+                                {
+                                  rids: notes.map(({ node }) => node.attrs.id),
+                                  contents: notes
+                                    .map(({ index }) =>
+                                      index ? index : inlineFootnoteIndex
+                                    )
+                                    .join(),
+                                }
+                              ) as InlineFootnoteNode
+
+                            const tr = this.view.state.tr
+
+                            tr.insert(insertedAt, node)
+                            this.view.dispatch(tr)
+                            this.props?.popper.destroy()
+                          },
+                          onCancel: () => {
+                            this.props?.popper.destroy()
+                          },
+                        },
+                        this.node,
+                        this.getPos,
+                        this.view,
+                        'footnote-editor'
+                      )
+                      this.props?.popper.show(
+                        targetNode,
+                        popperContainer,
+                        'bottom-end'
+                      )
+                    }
                   }
-                }
-              })
+                },
+                !isInsideNode
+              )
             )
           })
         )
@@ -461,14 +467,23 @@ export class ContextMenu {
     this.addPopperEventListeners()
   }
 
-  private createMenuItem = (contents: string, handler: EventListener) => {
+  private createMenuItem = (
+    contents: string,
+    handler: EventListener,
+    isDisabled = false
+  ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
     item.textContent = contents
-    item.addEventListener('mousedown', (event) => {
-      event.preventDefault()
-      handler(event)
-    })
+    if (isDisabled) {
+      item.setAttribute('disabled', 'true')
+    } else {
+      item.addEventListener('mousedown', (event) => {
+        event.preventDefault()
+        handler(event)
+      })
+    }
+
     return item
   }
 
