@@ -202,12 +202,13 @@ export const canInsert =
 
     // disable block comment insertion just for title node, LEAN-2746
     if (
-      ($from.node().type === schema.nodes.title || $from.node().type === schema.nodes.section_title) &&
+      ($from.node().type === schema.nodes.title ||
+        $from.node().type === schema.nodes.section_title) &&
       $from.pos === $to.pos
     ) {
       return false
     }
-    
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
