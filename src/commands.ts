@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  BoxElementNode,
   FigureElementNode,
   FigureNode,
   FootnotesElementNode,
@@ -203,9 +204,13 @@ export const canInsert =
     const { $from, $to } = state.selection
 
     // disable block comment insertion just for title node, LEAN-2746
-    if ($from.node().type === schema.nodes.title && $from.pos === $to.pos) {
+    if (
+      ($from.node().type === schema.nodes.title || $from.node().type === schema.nodes.section_title) &&
+      $from.pos === $to.pos
+    ) {
       return false
     }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -345,7 +350,6 @@ export const insertFigure = (
   dispatch?: Dispatch
 ) => {
   const position = findBlockInsertPosition(state)
-
   if (position === null || !dispatch) {
     return false
   }
@@ -729,6 +733,44 @@ const reinstateNode = (tr: Transaction, node: ManuscriptNode, pos: number) => {
   tr.setNodeMarkup(pos, null, attrs)
 }
 
+export const insertBoxElement = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const selection = state.selection
+
+  // Check if the selection is inside the body
+  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
+
+  // If selection is not in the body, disable the option
+  if (!isBody || isBoxText) {
+    return false
+  }
+
+  const position = findBlockInsertPosition(state)
+
+  const paragraph = schema.nodes.paragraph.create({})
+
+  // Create a section node with a section title and a paragraph
+  const section = schema.nodes.section.createAndFill({}, [
+    schema.nodes.section_title.create(),
+    paragraph,
+  ]) as ManuscriptNode
+
+  // Create the BoxElement node with a figcaption and the section
+  const node = schema.nodes.box_element.createAndFill({}, [
+    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+    section,
+  ]) as BoxElementNode
+
+  if (position && dispatch) {
+    const tr = state.tr.insert(position, node)
+    dispatch(tr)
+  }
+
+  return true
+}
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,

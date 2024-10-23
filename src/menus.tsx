@@ -27,6 +27,7 @@ import {
   insertAbstract,
   insertBackMatterSection,
   insertBlock,
+  insertBoxElement,
   insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
@@ -264,6 +265,16 @@ export const getEditorMenus = (
       },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-boxed-text',
+        label: 'Boxed Text',
+        shortcut: {
+          mac: 'Option+CommandOrControl+B',
+          pc: 'CommandOrControl+Option+B',
+        },
+        isEnabled: isCommandValid(insertBoxElement),
+        run: doCommand(insertBoxElement),
       },
       {
         id: 'insert-figure-element',
