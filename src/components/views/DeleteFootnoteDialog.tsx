@@ -17,10 +17,14 @@ import { Category, Dialog } from '@manuscripts/style-guide'
 import React, { useState } from 'react'
 
 export interface DeleteFootnoteDialogProps {
+  header: string
+  message: string
   handleDelete: () => void
 }
 
 export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
+  header,
+  message,
   handleDelete,
 }) => {
   const [isOpen, setOpen] = useState(true)
@@ -43,8 +47,8 @@ export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
         },
       }}
       category={Category.confirmation}
-      header={`Delete footnote`}
-      message={`This action will entirely remove the footnote from the list because it will no longer be used.`}
+      header={header}
+      message={message}
     />
   )
 }

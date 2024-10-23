@@ -311,18 +311,12 @@ export const insertInlineTableFootnote = (
 }
 
 export const insertGeneralTableFootnote = (
+  element: [ManuscriptNode, number],
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const $pos = state.selection.$to
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const container = findParentNodeOfTypeClosestToPos(
-    $pos,
-    schema.nodes.table_element
-  )!
-
   const existing = findChildrenByType(
-    container.node,
+    element[0],
     schema.nodes.general_table_footnote
   )
   if (existing) {
@@ -333,7 +327,7 @@ export const insertGeneralTableFootnote = (
   }
 
   const tr = state.tr
-  const footer = insertTableElementFooter(tr, [container.node, container.pos])
+  const footer = insertTableElementFooter(tr, element)
 
   const pos = footer.pos + 1
   const node = schema.nodes.general_table_footnote.create({}, [

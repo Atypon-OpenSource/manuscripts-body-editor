@@ -16,6 +16,7 @@
 
 import { FootnotesElementNode, ManuscriptNode } from '@manuscripts/transform'
 
+import { getChangeClasses } from '../lib/track-changes-utils'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
@@ -41,8 +42,10 @@ export class FootnotesElementView extends BlockView<FootnotesElementNode> {
 }
 
 const updateClasses = (node: ManuscriptNode, dom: HTMLElement) => {
-  dom.classList.toggle('empty-node', !node.childCount)
+  dom.classList.value = ''
+  !node.childCount && dom.classList.add('empty-node')
   dom.classList.add('footnotes-element')
+  dom.classList.add(...getChangeClasses(node.attrs.dataTracked))
 }
 
 export default createNodeOrElementView(

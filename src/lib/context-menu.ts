@@ -278,29 +278,28 @@ export class ContextMenu {
       )
     }
 
-    if (
-      type === schema.nodes.table_element &&
-      (insertInlineTableFootnote(this.view.state) ||
-        insertGeneralTableFootnote(this.view.state))
-    ) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          if (insertInlineTableFootnote(this.view.state)) {
-            section.appendChild(
-              this.createMenuItem('Add Reference Note', () => {
-                insertInlineTableFootnote(this.view.state, this.view.dispatch)
-              })
-            )
-          }
-          if (insertGeneralTableFootnote(this.view.state)) {
-            section.appendChild(
-              this.createMenuItem('Add General Note', () => {
-                insertGeneralTableFootnote(this.view.state, this.view.dispatch)
-              })
-            )
-          }
+    if (type === schema.nodes.table_element) {
+      const items = []
+      if (insertInlineTableFootnote(this.view.state)) {
+        const item = this.createMenuItem('Add Reference Note', () => {
+          insertInlineTableFootnote(this.view.state, this.view.dispatch)
         })
-      )
+        items.push(item)
+      }
+      const pos = this.getPos()
+      if (insertGeneralTableFootnote([this.node, pos], this.view.state)) {
+        const item = this.createMenuItem('Add General Note', () => {
+          insertGeneralTableFootnote(
+            [this.node, pos],
+            this.view.state,
+            this.view.dispatch
+          )
+        })
+        items.push(item)
+      }
+      if (items.length) {
+        menu.append(...items)
+      }
     }
 
     if (

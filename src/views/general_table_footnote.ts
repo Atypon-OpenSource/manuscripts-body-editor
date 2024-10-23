@@ -25,16 +25,19 @@ import {
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
 import { deleteIcon } from '../icons'
+import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
-export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnoteNode> {
+export class GeneralTableFootnoteView extends BaseNodeView<
+  Trackable<GeneralTableFootnoteNode>
+> {
   dialog: HTMLElement
 
   public initialise = () => {
     this.dom = document.createElement('div')
-    this.dom.classList.add('footnote', 'general-table-footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
@@ -47,6 +50,9 @@ export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnoteN
     deleteBtn.addEventListener('mousedown', (e) => this.handleClick(e))
 
     this.dom.innerHTML = ''
+    this.dom.classList.value = ''
+    this.dom.classList.add('footnote', 'general-table-footnote')
+    this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
     this.contentDOM && this.dom.appendChild(this.contentDOM)
     this.dom.appendChild(deleteBtn)
   }
@@ -55,6 +61,8 @@ export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnoteN
     e.preventDefault()
     e.stopPropagation()
     const componentProps: DeleteFootnoteDialogProps = {
+      header: 'Delete table general note',
+      message: 'This action will entirely remove the table general note.',
       handleDelete: this.handleDelete,
     }
 
@@ -80,8 +88,11 @@ export class GeneralTableFootnoteView extends BaseNodeView<GeneralTableFootnoteN
       $pos,
       schema.nodes.table_element_footer
     )!
-    const footnotes = findChildrenByType(footer.node, schema.nodes.footnote)
-    if (footnotes.length) {
+    const element = findChildrenByType(
+      footer.node,
+      schema.nodes.footnotes_element
+    )[0]
+    if (!element || isDeleted(element.node)) {
       const from = pos
       const to = from + this.node.nodeSize
       tr.delete(from, to)

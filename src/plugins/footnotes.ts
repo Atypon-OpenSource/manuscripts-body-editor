@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,10 +81,7 @@ export type FootnotesPluginState = {
 export const footnotesKey = new PluginKey<FootnotesPluginState>('footnotes')
 
 /**
- * This plugin provides support of footnotes related behaviours:
- *  - It adds and updates superscripted numbering of the footnotes on editor state changes
- *  - deletes inline footnotes when a footnotes is deleted
- *  - provides an ability to scroll to a footnote upon clicking on the respective inline footnotes
+ * This plugin provides support of footnotes related behaviours
  */
 const buildPluginState = (doc: ManuscriptNode) => {
   const states = new Map()
@@ -189,11 +186,6 @@ const buildFootnotesElementState = (
   return fn
 }
 
-/**
- * Select a version for the new state. The version only changes when the
- * order of the FootnoteNodes change. If the order did not change, the
- * old version is used.
- */
 const hasChanged = (
   $new: FootnotesElementState,
   $old?: FootnotesElementState

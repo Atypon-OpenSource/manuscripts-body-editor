@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FootnoteNode, schema } from '@manuscripts/transform'
+import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
@@ -25,17 +25,17 @@ import {
 } from '../components/views/DeleteFootnoteDialog'
 import { alertIcon, deleteIcon } from '../icons'
 import { getFootnotesElementState } from '../lib/footnotes'
-import { isDeleted } from '../lib/track-changes-utils'
+import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
-export class FootnoteView extends BaseNodeView<FootnoteNode> {
+export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
 
   public initialise = () => {
     this.dom = document.createElement('div')
-    this.dom.classList.add('footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
@@ -62,6 +62,9 @@ export class FootnoteView extends BaseNodeView<FootnoteNode> {
     deleteBtn.addEventListener('mousedown', (e) => this.handleClick(e))
 
     this.dom.innerHTML = ''
+    this.dom.classList.value = ''
+    this.dom.classList.add('footnote')
+    this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
     this.dom.appendChild(marker)
     this.contentDOM && this.dom.appendChild(this.contentDOM)
     this.dom.appendChild(deleteBtn)
@@ -71,6 +74,9 @@ export class FootnoteView extends BaseNodeView<FootnoteNode> {
     e.preventDefault()
     e.stopPropagation()
     const componentProps: DeleteFootnoteDialogProps = {
+      header: 'Delete footnote',
+      message:
+        'This action will entirely remove the footnote from the list because it will no longer be used.',
       handleDelete: this.handleDelete,
     }
 
@@ -117,12 +123,23 @@ export class FootnoteView extends BaseNodeView<FootnoteNode> {
       $pos,
       schema.nodes.footnotes_element
     )
-    if (element && element.node.childCount === 1) {
+    if (element && getEffectiveChildCount(element.node) <= 1) {
       tr.delete(element.pos, element.pos + element.node.nodeSize)
     } else {
       tr.delete(pos, pos + this.node.nodeSize)
     }
   }
+}
+
+const getEffectiveChildCount = (node: ManuscriptNode) => {
+  let count = 0
+  for (let i = 0; i < node.childCount; i++) {
+    const child = node.child(i)
+    if (!isDeleted(child)) {
+      count++
+    }
+  }
+  return count
 }
 
 export default createNodeView(FootnoteView)
