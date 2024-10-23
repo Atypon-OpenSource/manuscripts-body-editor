@@ -205,7 +205,8 @@ export const canInsert =
 
     // disable block comment insertion just for title node, LEAN-2746
     if (
-      ($from.node().type === schema.nodes.title || $from.node().type === schema.nodes.section_title) &&
+      ($from.node().type === schema.nodes.title ||
+        $from.node().type === schema.nodes.section_title) &&
       $from.pos === $to.pos
     ) {
       return false
@@ -324,7 +325,7 @@ export const insertGeneralTableFootnote = (
     element[0],
     schema.nodes.general_table_footnote
   )
-  if (existing) {
+  if (existing.length) {
     return false
   }
   if (!dispatch) {

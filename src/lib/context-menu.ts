@@ -279,7 +279,7 @@ export class ContextMenu {
     }
 
     if (type === schema.nodes.table_element) {
-      const items = []
+      const items: Node[] = []
       if (insertInlineTableFootnote(this.view.state)) {
         const item = this.createMenuItem('Add Reference Note', () => {
           insertInlineTableFootnote(this.view.state, this.view.dispatch)
@@ -298,7 +298,7 @@ export class ContextMenu {
         items.push(item)
       }
       if (items.length) {
-        menu.append(...items)
+        menu.append(this.createMenuSection((e) => e.append(...items)))
       }
     }
 
