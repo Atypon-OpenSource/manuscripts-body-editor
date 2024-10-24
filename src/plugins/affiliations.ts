@@ -33,6 +33,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../lib/authors'
+import { isInit } from '../lib/plugins'
 import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 
 export interface PluginState {
@@ -125,7 +126,7 @@ export default () => {
 
     appendTransaction(transactions, oldState, newState) {
       const affs = affiliationsKey.getState(newState)
-      if (!affs || !transactions.find((tr) => tr.docChanged)) {
+      if (!affs || !transactions.find((tr) => tr.docChanged || isInit(tr))) {
         return
       }
       const $old = affiliationsKey.getState(oldState) as PluginState

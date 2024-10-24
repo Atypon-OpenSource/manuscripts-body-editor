@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Transaction } from 'prosemirror-state'
 
-import { createEditableNodeView } from './creators'
-import { TableElementFooterView } from './table_element_footer'
+export const INIT_META = 'INIT'
 
-export default createEditableNodeView(TableElementFooterView)
+export const isInit = (tr: Transaction) => {
+  return tr.getMeta(INIT_META)
+}

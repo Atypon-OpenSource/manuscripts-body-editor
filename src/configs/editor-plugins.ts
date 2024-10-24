@@ -42,7 +42,6 @@ import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
-import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
@@ -75,7 +74,6 @@ export default (props: EditorProps) => {
     tableEditing(),
     selected_suggestion(),
     footnotes(props),
-    table_footnote(),
     editorProps(props),
     doi(),
     section_category(props),

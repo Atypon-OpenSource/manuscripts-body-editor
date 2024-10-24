@@ -86,7 +86,10 @@ export const defaultEditorProps: EditorProps = {
     upload: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
-  getCapabilities: () => getAllPermitted(),
+  getCapabilities: () => ({
+    ...getAllPermitted(),
+    editWithoutTracking: true,
+  }),
   cslProps: {
     style: '',
     locale: '',

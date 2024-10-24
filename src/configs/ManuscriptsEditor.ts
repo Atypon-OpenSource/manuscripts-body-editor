@@ -30,6 +30,7 @@ import { Dispatch } from '../commands'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToBibliographyItem } from '../lib/helpers'
 import { handlePaste, transformPasted } from '../lib/paste'
+import { INIT_META } from '../lib/plugins'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
@@ -108,7 +109,7 @@ export const createEditorView = (
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time
-  const tr = view.state.tr.setMeta('INIT', true)
+  const tr = view.state.tr.setMeta(INIT_META, true)
 
   const nextState = view.state.apply(tr)
   view.updateState(nextState)
