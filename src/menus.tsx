@@ -453,7 +453,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-bullet-list',
-        label: 'Bullet List',
+        label: 'Bulleted list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
@@ -473,7 +473,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-ordered-list',
-        label: 'Ordered List',
+        label: 'Ordered list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [
