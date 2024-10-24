@@ -167,7 +167,7 @@ export class ContextMenu {
 
           if (types.has('list')) {
             section.appendChild(
-              this.createMenuItem('Bullet List', () => {
+              this.createMenuItem('Bulleted List', () => {
                 insertNode(schema.nodes.list, undefined, {
                   listStyleType: 'bullet',
                 })
@@ -253,7 +253,7 @@ export class ContextMenu {
             )
           } else {
             section.appendChild(
-              this.createMenuItem('Change to Bullet List', () => {
+              this.createMenuItem('Change to Bulleted list', () => {
                 this.changeNodeType(null, 'bullet')
                 popper.destroy()
               })
