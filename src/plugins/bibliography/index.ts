@@ -16,7 +16,12 @@
 
 import { BibliographyItem, ObjectTypes } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
-import { isCitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  CitationNode,
+  isCitationNode,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import CiteProc from 'citeproc'
 import { isEqual, pickBy } from 'lodash'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
@@ -87,15 +92,15 @@ const buildBibliographyPluginState = (
   csl: CSLProps,
   $old?: PluginState
 ): PluginState => {
-  const nodes: CitationNodes = []
+  const nodesMap = new Map<string, [CitationNode, number]>()
   doc.descendants((node, pos) => {
     if (isCitationNode(node)) {
-      nodes.push([node, pos])
+      nodesMap.set(node.attrs.id, [node, pos])
     }
   })
 
+  const nodes = Array.from(nodesMap.values())
   const bibliographyItems = getBibliographyItemAttrs(doc)
-
   const citations = buildCitations(nodes)
 
   const $new: Partial<PluginState> = {
