@@ -16,7 +16,7 @@
 
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import { Transaction } from 'prosemirror-state'
+import { NodeSelection, Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import {
@@ -55,11 +55,12 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     } else {
       marker.classList.add('footnote-marker')
       marker.innerText = fn.labels.get(id) || ''
+      marker.addEventListener('mousedown', (e) => this.handleMarkerClick(e))
     }
     const deleteBtn = document.createElement('span')
     deleteBtn.classList.add('delete-icon')
     deleteBtn.innerHTML = deleteIcon
-    deleteBtn.addEventListener('mousedown', (e) => this.handleClick(e))
+    deleteBtn.addEventListener('mousedown', (e) => this.handleDeleteClick(e))
 
     this.dom.innerHTML = ''
     this.dom.classList.value = ''
@@ -70,7 +71,26 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.appendChild(deleteBtn)
   }
 
-  handleClick = (e: Event) => {
+  handleMarkerClick = (e: Event) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const id = this.node.attrs.id
+    const fn = getFootnotesElementState(this.view.state, id)
+    if (!fn) {
+      return
+    }
+    for (const [node, pos] of fn.inlineFootnotes) {
+      if (node.attrs.rids.includes(id)) {
+        const tr = this.view.state.tr
+        const selection = NodeSelection.create(this.view.state.doc, pos)
+        tr.setSelection(selection)
+        tr.scrollIntoView()
+        this.view.dispatch(tr)
+      }
+    }
+  }
+
+  handleDeleteClick = (e: Event) => {
     e.preventDefault()
     e.stopPropagation()
     const componentProps: DeleteFootnoteDialogProps = {

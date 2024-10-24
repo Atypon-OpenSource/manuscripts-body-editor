@@ -48,15 +48,7 @@ export default () => {
         let id = node.attrs.id
         if (!id || ids.has(id)) {
           id = generateNodeID(node.type)
-          tr.setNodeMarkup(
-            pos,
-            undefined,
-            {
-              ...node.attrs,
-              id,
-            },
-            node.marks
-          )
+          tr.setNodeAttribute(pos, 'id', id)
         }
         ids.add(id)
       })

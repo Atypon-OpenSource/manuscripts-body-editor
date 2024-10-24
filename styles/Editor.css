@@ -966,6 +966,7 @@
   font-size: 75%;
   margin-bottom: 10px;
   cursor: pointer;
+  color: #0d79d0;
 }
 
 .ProseMirror .footnote {
@@ -977,6 +978,7 @@
 
 .ProseMirror .footnote .footnote-marker {
   margin-right: 8px;
+  color: inherit;
 }
 
 .ProseMirror .footnote .delete-icon {

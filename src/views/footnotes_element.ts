@@ -42,7 +42,6 @@ export class FootnotesElementView extends BlockView<FootnotesElementNode> {
 }
 
 const updateClasses = (node: ManuscriptNode, dom: HTMLElement) => {
-  dom.classList.value = ''
   !node.childCount && dom.classList.add('empty-node')
   dom.classList.add('footnotes-element')
   dom.classList.add(...getChangeClasses(node.attrs.dataTracked))
