@@ -22,26 +22,6 @@
       "attrs": { "id": "" },
       "content": [
         {
-          "type": "toc_section",
-          "attrs": { "id": "MPSection:model-2", "dataTracked": null },
-          "content": [
-            {
-              "type": "section_title",
-              "attrs": { "dataTracked": null },
-              "content": [{ "type": "text", "text": "Table of Contents" }]
-            },
-            {
-              "type": "toc_element",
-              "attrs": {
-                "id": "MPTOCElement:model-1",
-                "contents": "<div>Table of Contents</div>",
-                "paragraphStyle": "",
-                "dataTracked": null
-              }
-            }
-          ]
-        },
-        {
           "type": "section",
           "attrs": {
             "id": "MPSection:model-3",
@@ -92,7 +72,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-8",
+            "id": "MPSection:empty-para",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
