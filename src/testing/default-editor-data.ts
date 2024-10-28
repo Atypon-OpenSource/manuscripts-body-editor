@@ -23,7 +23,7 @@ import { DefaultTheme } from 'styled-components'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
-
+import sectionCategories from './section-categories.json'
 type TestData = {
   MANUSCRIPT: Manuscript
   MODEL: Model
@@ -94,4 +94,5 @@ export const defaultEditorProps: EditorProps = {
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
+  sectionCategories: new Map(sectionCategories)
 }
