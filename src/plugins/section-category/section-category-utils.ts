@@ -99,9 +99,9 @@ function createMenu(
   categories.forEach((category) => {
     const item = createMenuItem(
       category.name,
-      () => changeNodeAttrs(view, node, category.id, pos),
+      () => changeNodeAttrs(view, node, category._id, pos),
       category.isDisabled,
-      currCategory === category.id
+      currCategory === category._id
     )
     menu.appendChild(item)
   })
@@ -245,7 +245,7 @@ function getSortedSectionCategories(
     .map((category) => ({
       ...category,
       isDisabled: Boolean(
-        existingCatsCounted[category.id] &&
+        existingCatsCounted[category._id] &&
           isBackMatterSection(category.groupIDs?.[0] ?? '')
       ),
     }))

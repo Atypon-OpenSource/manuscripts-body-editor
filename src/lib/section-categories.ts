@@ -32,8 +32,8 @@ export const isAbstractSection = (
 ) => {
   const category = sectionCategories.get(id)
   return (
-    category?.id === 'MPSectionCategory:abstract' ||
-    category?.id === 'MPSectionCategory:abstract-graphical'
+    category?._id === 'MPSectionCategory:abstract' ||
+    category?._id === 'MPSectionCategory:abstract-graphical'
   )
 }
 
