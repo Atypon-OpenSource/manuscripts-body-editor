@@ -22,6 +22,7 @@ import { EditorView } from 'prosemirror-view'
 
 import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import sectionCategories from '../../testing/section-categories.json'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
@@ -61,6 +62,7 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
     style: '',
     locale: '',
   },
+  sectionCategories: new Map(sectionCategories),
 })
 
 describe('editor view', () => {

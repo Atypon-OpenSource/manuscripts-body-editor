@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-import { SectionCategory } from '@manuscripts/json-schema'
+import { SectionCategory } from '@manuscripts/transform'
 
-export const uneditableSectionCategories: string[] = [
-  'MPSectionCategory:bibliography',
-  'MPSectionCategory:keywords',
-  'MPSectionCategory:list-of-figures',
-  'MPSectionCategory:list-of-tables',
-  'MPSectionCategory:toc',
-]
-
-export const uniqueSectionCategories: string[] = [
-  'MPSectionCategory:abstract-graphical',
-  'MPSectionCategory:abstract',
-]
-
-export const isEditableSectionCategoryID = (id: string) =>
-  !uneditableSectionCategories.includes(id)
-
-export const isUnique = (categoryId: string) => {
-  return uniqueSectionCategories.includes(categoryId)
+export const isEditableSection = (
+  id: string,
+  sectionCategories: Map<string, SectionCategory>
+) => {
+  const category = sectionCategories.get(id)
+  if (!category) {
+    return false
+  }
+  return category.isEditable
+}
+export const isAbstractSection = (
+  id: string,
+  sectionCategories: Map<string, SectionCategory>
+) => {
+  const category = sectionCategories.get(id)
+  return (
+    category?.id === 'MPSectionCategory:abstract' ||
+    category?.id === 'MPSectionCategory:abstract-graphical'
+  )
 }
 
 export const isBackMatterSection = (groupId: string) => {
@@ -44,7 +45,10 @@ export const isSubSection = (categoryId: string) => {
   return categoryId === 'MPSectionCategory:subsection'
 }
 
-export const getCategoryName = (categories: SectionCategory[], id: string) => {
-  const category = categories.find((item) => item._id === id)
+export const getCategoryName = (
+  categories: Map<string, SectionCategory>,
+  id: string
+) => {
+  const category = categories.get(id)
   return category ? category.name : ''
 }

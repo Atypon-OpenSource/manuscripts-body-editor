@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SectionCategory } from '@manuscripts/json-schema'
+import { SectionCategory } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
@@ -27,7 +27,7 @@ export interface PluginState {
 }
 
 export interface SectionCategoryProps extends EditorProps {
-  sectionCategories: SectionCategory[]
+  sectionCategories: Map<string, SectionCategory>
 }
 
 export default (props: SectionCategoryProps) =>

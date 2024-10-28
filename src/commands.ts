@@ -97,7 +97,6 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
-import { sectionTitles } from './lib/section-titles'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -861,7 +860,7 @@ export const insertSection =
   }
 
 export const insertBackMatterSection =
-  (category: SectionCategory) =>
+  (category: string, sectionCategories: Map<string, SectionCategory>) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
@@ -888,7 +887,7 @@ export const insertBackMatterSection =
       [
         schema.nodes.section_title.create(
           {},
-          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
+          schema.text(sectionCategories.get(category)?.titles?.[0] || '')
         ),
       ]
     ) as SectionNode
@@ -1876,28 +1875,27 @@ export function mergeCellsWithSpace(
   return true
 }
 
-export const autoComplete = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const complete = checkForCompletion(state)
-  if (complete) {
-    const tr = state.tr.insertText(complete.suggestion, state.selection.from)
-    const inserted = complete.title.substring(
-      0,
-      complete.title.length - complete.suggestion.length
-    )
-    if (inserted) {
-      // replacing to provide text case as required
-      tr.replaceWith(
-        state.selection.from - inserted.length,
-        state.selection.from,
-        schema.text(inserted)
+export const autoComplete =
+  (sectionCategories: Map<string, SectionCategory>) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const complete = checkForCompletion(state, sectionCategories)
+    if (complete) {
+      const tr = state.tr.insertText(complete.suggestion, state.selection.from)
+      const inserted = complete.title.substring(
+        0,
+        complete.title.length - complete.suggestion.length
       )
-    }
+      if (inserted) {
+        // replacing to provide text case as required
+        tr.replaceWith(
+          state.selection.from - inserted.length,
+          state.selection.from,
+          schema.text(inserted)
+        )
+      }
 
-    dispatch && dispatch(tr)
-    return true
+      dispatch && dispatch(tr)
+      return true
+    }
+    return false
   }
-  return false
-}

@@ -22,7 +22,6 @@ import {
 import { EditorState } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionTitles } from '../../lib/section-titles'
 import { getActualTextContent } from '../../lib/track-changes-utils'
 
 function cursorAtTheEndOfText(
@@ -39,10 +38,12 @@ const isUpperCase = (test: string) =>
 
 export function hasAutoCompletionSlack(
   parentSection: SectionNode,
-  titleSection: SectionTitleNode
+  titleSection: SectionTitleNode,
+  sectionCategories: Map<string, SectionCategory>
 ) {
-  const category = parentSection.attrs.category as SectionCategory
-  const titles = sectionTitles.get(category)?.split('|')
+  const category = sectionCategories.get(parentSection.attrs.category)
+
+  const titles = category?.titles
 
   if (category && titles?.length && titleSection.textContent) {
     const actualTextContent = getActualTextContent(titleSection.content)
@@ -64,7 +65,10 @@ export function hasAutoCompletionSlack(
   return null
 }
 
-export function checkForCompletion(state: EditorState) {
+export function checkForCompletion(
+  state: EditorState,
+  sectionCategories: Map<string, SectionCategory>
+) {
   const section = findParentNodeOfTypeClosestToPos(
     state.selection.$from,
     schema.nodes.section
@@ -81,7 +85,8 @@ export function checkForCompletion(state: EditorState) {
   ) {
     const text = hasAutoCompletionSlack(
       section.node as SectionNode,
-      title.node as SectionTitleNode
+      title.node as SectionTitleNode,
+      sectionCategories
     )
     if (text) {
       return text

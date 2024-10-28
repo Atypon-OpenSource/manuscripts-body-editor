@@ -15,7 +15,7 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { schema, SectionCategory } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
@@ -49,7 +49,8 @@ import {
 import { useEditor } from './useEditor'
 
 export const getEditorMenus = (
-  editor: ReturnType<typeof useEditor>
+  editor: ReturnType<typeof useEditor>,
+  sectionCategories: Map<string, SectionCategory>
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
@@ -142,58 +143,96 @@ export const getEditorMenus = (
             id: 'insert-acknowledgements',
             label: 'Acknowledgements',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
+              insertBackMatterSection(
+                'MPSectionCategory:acknowledgement',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
+              insertBackMatterSection(
+                'MPSectionCategory:acknowledgement',
+                sectionCategories
+              )
             ),
           },
           {
             id: 'insert-availability',
             label: 'Availability',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:availability')
+              insertBackMatterSection(
+                'MPSectionCategory:availability',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:availability')
+              insertBackMatterSection(
+                'MPSectionCategory:availability',
+                sectionCategories
+              )
             ),
           },
           {
             id: 'insert-coi-statement',
             label: 'COI Statement',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
+              insertBackMatterSection(
+                'MPSectionCategory:competing-interests',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
+              insertBackMatterSection(
+                'MPSectionCategory:competing-interests',
+                sectionCategories
+              )
             ),
           },
           {
             id: 'insert-con',
             label: 'Contributed-by Information',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:con')
+              insertBackMatterSection(
+                'MPSectionCategory:con',
+                sectionCategories
+              )
             ),
-            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
+            run: doCommand(
+              insertBackMatterSection(
+                'MPSectionCategory:con',
+                sectionCategories
+              )
+            ),
           },
           {
             id: 'insert-ethics-statement',
             label: 'Ethics Statement',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
+              insertBackMatterSection(
+                'MPSectionCategory:ethics-statement',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
+              insertBackMatterSection(
+                'MPSectionCategory:ethics-statement',
+                sectionCategories
+              )
             ),
           },
           {
             id: 'insert-financial-disclosure',
             label: 'Financial Disclosure',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+              insertBackMatterSection(
+                'MPSectionCategory:financial-disclosure',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
+              insertBackMatterSection(
+                'MPSectionCategory:financial-disclosure',
+                sectionCategories
+              )
             ),
           },
           {
@@ -201,12 +240,14 @@ export const getEditorMenus = (
             label: 'Supplementary Material',
             isEnabled: isCommandValid(
               insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
+                'MPSectionCategory:supplementary-material',
+                sectionCategories
               )
             ),
             run: doCommand(
               insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
+                'MPSectionCategory:supplementary-material',
+                sectionCategories
               )
             ),
           },
@@ -214,10 +255,16 @@ export const getEditorMenus = (
             id: 'insert-supported-by',
             label: 'Supported By',
             isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:supported-by')
+              insertBackMatterSection(
+                'MPSectionCategory:supported-by',
+                sectionCategories
+              )
             ),
             run: doCommand(
-              insertBackMatterSection('MPSectionCategory:supported-by')
+              insertBackMatterSection(
+                'MPSectionCategory:supported-by',
+                sectionCategories
+              )
             ),
           },
         ],

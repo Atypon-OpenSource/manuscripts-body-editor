@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SectionCategory } from '@manuscripts/json-schema'
 import { SectionCategoryIcon } from '@manuscripts/style-guide'
-import { isSectionNode, schema, SectionNode } from '@manuscripts/transform'
+import {
+  isSectionNode,
+  schema,
+  SectionCategory,
+  SectionNode,
+} from '@manuscripts/transform'
 import { EditorState, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 import { createElement } from 'react'
@@ -25,10 +29,10 @@ import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../../lib/popper'
 import {
   getCategoryName,
+  isAbstractSection,
   isBackMatterSection,
-  isEditableSectionCategoryID,
+  isEditableSection,
   isSubSection,
-  isUnique,
 } from '../../lib/section-categories'
 import { isChildOfNodeTypes } from '../../lib/utils'
 
@@ -40,7 +44,7 @@ export interface PluginState {
 }
 
 export interface SectionCategoryProps extends EditorProps {
-  sectionCategories: SectionCategory[]
+  sectionCategories: Map<string, SectionCategory>
 }
 
 function changeNodeAttrs(
@@ -95,9 +99,9 @@ function createMenu(
   categories.forEach((category) => {
     const item = createMenuItem(
       category.name,
-      () => changeNodeAttrs(view, node, category._id, pos),
+      () => changeNodeAttrs(view, node, category.id, pos),
       category.isDisabled,
-      currCategory === category._id
+      currCategory === category.id
     )
     menu.appendChild(item)
   })
@@ -165,8 +169,8 @@ export function buildPluginState(
     if (isSectionNode(node)) {
       const attrs = node.attrs as SectionNode['attrs']
       if (
-        isEditableSectionCategoryID(attrs.category as string) &&
-        !isUnique(attrs.category as string) &&
+        isEditableSection(attrs.category as string, props.sectionCategories) &&
+        !isAbstractSection(attrs.category as string, props.sectionCategories) &&
         !isSubSection(attrs.category as string)
       ) {
         decorations.push(
@@ -209,16 +213,14 @@ function getExistingCatsCounted(state: EditorState): Record<string, number> {
 function getSortedSectionCategories(
   state: EditorState,
   container: SectionNode,
-  sectionCategories: SectionCategory[],
+  sectionCategories: Map<string, SectionCategory>,
   pos: number,
   existingCatsCounted: Record<string, number>
 ): SectionCategory[] {
   let groupIDToUse = ''
 
   if (container.attrs.category) {
-    const sectionCategory = sectionCategories.find(
-      ({ _id }) => _id === container.attrs.category
-    )
+    const sectionCategory = sectionCategories.get(container.attrs.category)
     if (sectionCategory) {
       groupIDToUse = sectionCategory.groupIDs?.[0] as string
     }
@@ -238,12 +240,12 @@ function getSortedSectionCategories(
     return []
   }
 
-  return sectionCategories
+  return Array.from(sectionCategories.values())
     .filter((category) => category.groupIDs?.includes(groupIDToUse))
     .map((category) => ({
       ...category,
       isDisabled: Boolean(
-        existingCatsCounted[category._id] &&
+        existingCatsCounted[category.id] &&
           isBackMatterSection(category.groupIDs?.[0] ?? '')
       ),
     }))

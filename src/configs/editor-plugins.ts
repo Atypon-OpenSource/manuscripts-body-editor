@@ -50,7 +50,7 @@ import { EditorProps } from './ManuscriptsEditor'
 export default (props: EditorProps) => {
   const allPlugins = [
     rules,
-    ...keys,
+    ...keys(props.sectionCategories),
     dropCursor(),
     history(),
     trackChangesPlugin({
@@ -60,7 +60,7 @@ export default (props: EditorProps) => {
         ? TrackChangesStatus.disabled
         : TrackChangesStatus.enabled,
     }),
-    section_title(),
+    section_title(props),
     table_editing_fix(),
     elements(),
     persist(),
