@@ -36,7 +36,7 @@ import {
   insertInlineTableFootnote,
 } from '../commands'
 import { PopperManager } from './popper'
-import { isChildOfNodeTypes } from './utils'
+import { isChildOfNodeTypes, isSelectionInNode } from './utils'
 
 const popper = new PopperManager()
 
@@ -280,7 +280,8 @@ export class ContextMenu {
 
     if (type === schema.nodes.table_element) {
       const items: Node[] = []
-      if (insertInlineTableFootnote(this.view.state)) {
+      const isInsideNode = isSelectionInNode(this.view.state, this.node)
+      if (isInsideNode && insertInlineTableFootnote(this.view.state)) {
         const item = this.createMenuItem('Add Reference Note', () => {
           insertInlineTableFootnote(this.view.state, this.view.dispatch)
         })
