@@ -17,9 +17,9 @@
 import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
+import { isDeleted } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { isDeleted } from '../lib/track-changes-utils'
 
 export class EquationView
   extends BaseNodeView<EquationNode>
