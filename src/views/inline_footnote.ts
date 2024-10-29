@@ -111,10 +111,13 @@ export class InlineFootnoteView
       return []
     }
 
-    let footnotes = fn.footnotes.map((n) => n[0])
-    if (!this.isTableFootnote) {
-      footnotes = footnotes.filter((n) => fn.unusedFootnoteIDs.has(n.attrs.id))
-    }
+    const rids = this.node.attrs.rids
+
+    const footnotes = fn.footnotes
+      .map((n) => n[0])
+      .filter(
+        (n) => fn.unusedFootnoteIDs.has(n.attrs.id) || rids.includes(n.attrs.id)
+      )
 
     const props: FootnotesSelectorProps = {
       footnotes,
@@ -123,7 +126,6 @@ export class InlineFootnoteView
       onCancel: this.handleCancel,
       onAdd: this.handleAdd,
       onInsert: this.handleInsert,
-      addNewLabel: 'Replace with new footnote',
     }
 
     this.popperContainer = ReactSubView(
@@ -203,7 +205,8 @@ export class InlineFootnoteView
     }
     const tr = this.view.state.tr
     const footnote = createFootnote()
-    tr.setNodeAttribute(pos, 'rids', [footnote.attrs.id])
+    const rids = this.node.attrs.rids
+    tr.setNodeAttribute(pos, 'rids', [...rids, footnote.attrs.id])
     const fnPos = fn.element[1] + fn.element[0].nodeSize - 1
     tr.insert(fnPos, footnote)
     const selection = TextSelection.create(tr.doc, fnPos + 2)

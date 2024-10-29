@@ -69,7 +69,6 @@ export interface FootnotesSelectorProps {
   onAdd: () => void
   onInsert: (notes: FootnoteNode[]) => void
   onCancel: () => void
-  addNewLabel?: string
 }
 
 export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
@@ -79,7 +78,6 @@ export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
   onAdd,
   onInsert,
   onCancel,
-  addNewLabel,
 }) => {
   let selectedNotesMap
 
@@ -131,7 +129,7 @@ export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
         <AddNewFootnote>
           <IconTextButton onClick={onAdd}>
             <AddNewIcon />
-            {addNewLabel || 'Add new'}
+            Add new
           </IconTextButton>
         </AddNewFootnote>
         <ButtonGroup>
