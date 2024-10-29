@@ -19,6 +19,7 @@ import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { renderMath } from '../lib/math'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { isDeleted } from '../lib/track-changes-utils'
 
 export class EquationView
   extends BaseNodeView<EquationNode>
@@ -37,6 +38,11 @@ export class EquationView
 
   public updateContents = () => {
     this.dom.innerHTML = this.node.attrs.contents
+    if (isDeleted(this.node)) {
+      this.dom.classList.add('deleted')
+    } else {
+      this.dom.classList.remove('deleted')
+    }
     renderMath(this.dom)
   }
 
