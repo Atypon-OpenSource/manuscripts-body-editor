@@ -48,7 +48,7 @@ const optionName = (
     case nodeType.schema.nodes.section:
       return (depth > 0 ? 'sub'.repeat(depth - 1) : '') + 'section heading'
     case nodeType.schema.nodes.list:
-      return listType === 'order' ? 'Ordered List' : 'Bullet List'
+      return listType === 'order' ? 'Ordered list' : 'Bulleted list'
     default:
       return nodeNames.get(nodeType) || nodeType.name
   }
