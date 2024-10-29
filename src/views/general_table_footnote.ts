@@ -92,7 +92,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       footer.node,
       schema.nodes.footnotes_element
     )[0]
-    if (!element || isDeleted(element.node)) {
+    if (element && !isDeleted(element.node)) {
       const from = pos
       const to = from + this.node.nodeSize
       tr.delete(from, to)
