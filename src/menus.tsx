@@ -411,7 +411,7 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+F',
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.inline_footnote)),
-        run: doCommand(insertInlineFootnote('footnote')),
+        run: doCommand(insertInlineFootnote),
       },
       {
         id: 'insert-comment',

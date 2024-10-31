@@ -930,35 +930,14 @@
   margin: 16px 64px;
 }
 
-.ProseMirror .footnote::before {
-  content: attr(contents);
-  position: relative;
-  cursor: pointer;
-  vertical-align: super;
-  z-index: 1;
-  font-size: 75%;
-  color: #0d79d0;
-}
-
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
 }
 
-.ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
-  content: '';
-  border-bottom: 1px dashed #c9c9c9;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.ProseMirror .table-footnotes-element {
-  counter-reset: table_footnote;
-}
 .delete-icon {
   position: absolute;
   right: -20px;
-  top: 13px;
   cursor: pointer;
   z-index: 1;
 }
@@ -977,69 +956,61 @@
 .delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footnotes-element > div,
-.ProseMirror .block-footnotes_element > .block > div,
-.ProseMirror .general-table-footnote
- {
-  position: relative;
-}
 
-.ProseMirror
-  .table-footnotes-element
-  > div:not(:has(.uncited-footnote))
-  p::before {
-  counter-increment: table_footnote;
-  content: counter(table_footnote);
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  vertical-align: super;
-  font-size: 75%;
-  margin-right: 4px;
-}
-
-.ProseMirror .table-footer p {
-  margin-bottom: 0px;
-  margin-top: 0px;
-}
-
-.table-footer > div {
-  position: relative;
-}
-.general-table-footnote, .table-footnotes-element div {
-  padding: 4px;
-}
-.general-table-footnote > p {
-  padding-bottom: 8px;
-}
-
-.ProseMirror .table-footnotes-element .footnote-selected,
-.ProseMirror .block-footnotes_element .footnote-selected,
-.ProseMirror .general-table-footnote.footnote-selected
-{
-  background-color: #f2fbfc;
-  border: 1px solid #bce7f6;
-}
 .ProseMirror .table-footer .inserted.pending {
   margin-bottom: 5px;
 }
-.ProseMirror .footnote-label {
+
+.ProseMirror .footnote-marker {
   vertical-align: super;
   font-size: 75%;
-  margin-right: 8px;
+  margin-bottom: 10px;
   cursor: pointer;
+  color: #0d79d0;
 }
 
-.ProseMirror .table-footnotes-element > div:has(.uncited-footnote) {
-  position: relative;
-}
-
-.ProseMirror .uncited-footnote {
+.ProseMirror .footnote {
   display: flex;
-  position: absolute;
+  align-items: center;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.ProseMirror .footnote .footnote-marker {
+  margin-right: 8px;
+  color: inherit;
+}
+
+.ProseMirror .footnote .delete-icon {
+  visibility: hidden;
+}
+
+.ProseMirror .footnote .uncited-footnote {
   margin-right: 4px;
-  top: 6px;
-  right: 100%;
+}
+
+.ProseMirror .footnote.footnote-selected {
+  background-color: #f2fbfc;
+  border: 1px solid #bce7f6;
+}
+
+.ProseMirror .footnote.footnote-selected .delete-icon {
+  visibility: visible;
+}
+
+.ProseMirror .table-footer p {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.ProseMirror .footnote.general-table-footnote {
+  padding: 4px;
+  margin-bottom: 8px;
+}
+
+.ProseMirror .table-footer .footnotes-element:has(> div):not(:first-child) {
+  border-top: 1px dashed #c9c9c9;
+  padding-top: 8px;
 }
 
 .graphical-abstract .listing {

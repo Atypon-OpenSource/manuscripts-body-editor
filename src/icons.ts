@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { AlertIcon, DeleteIcon } from '@manuscripts/style-guide'
+import { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
-import { createNodeOrElementView } from './creators'
-import { EditableBlock } from './editable_block'
-import { FootnoteView, setTCClasses } from './footnote'
-
-export default createNodeOrElementView(
-  EditableBlock(FootnoteView),
-  'div',
-  setTCClasses
-)
+export const alertIcon = renderToStaticMarkup(createElement(AlertIcon))
+export const deleteIcon = renderToStaticMarkup(createElement(DeleteIcon))
