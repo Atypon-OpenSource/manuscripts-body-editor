@@ -1516,6 +1516,13 @@ export const addInlineComment = (
   let from = selection.from
   let to = selection.to
 
+  if (from === to) {
+    // Use the current cursor position to determine the boundaries of the intended word
+    const result = findWordBoundaries(state, from)
+    from = result.from
+    to = result.to
+  }
+
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
@@ -1523,7 +1530,7 @@ export const addInlineComment = (
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
-    originalText: selectedText(),
+    originalText: selectedText() || state.doc.textBetween(from, to),
     selector: {
       from,
       to,
@@ -1535,13 +1542,6 @@ export const addInlineComment = (
     const pos = comments.pos + 1
 
     const tr = state.tr.insert(pos, comment)
-
-    if (from === to) {
-      // Use the current cursor position to determine the boundaries of the intended word
-      const result = findWordBoundaries(state, from)
-      from = result.from
-      to = result.to
-    }
 
     const start = schema.nodes.highlight_marker.create({
       id: comment.attrs.id,
