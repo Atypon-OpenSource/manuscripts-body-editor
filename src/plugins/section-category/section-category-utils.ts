@@ -166,10 +166,10 @@ export function buildPluginState(
         : SectionGroup.Body
       const groupCategories = getGroupCateogries(categories, group)
       decorations.push(
-        Decoration.widget(pos + 1, (view, getPos) =>
+        Decoration.widget(pos + 1, (view) =>
           createButton(
             view,
-            getPos() as number,
+            pos,
             category,
             groupCategories,
             usedCategoryIDs,
