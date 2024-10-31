@@ -46,10 +46,11 @@ import table_editing_fix from '../plugins/tables-cursor-fix'
 import toc from '../plugins/toc'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
+
 export default (props: EditorProps) => {
   const allPlugins = [
     rules,
-    ...keys(props.sectionCategories),
+    ...keys,
     dropCursor(),
     history(),
     trackChangesPlugin({
@@ -59,7 +60,7 @@ export default (props: EditorProps) => {
         ? TrackChangesStatus.disabled
         : TrackChangesStatus.enabled,
     }),
-    section_title(props),
+    section_title(),
     table_editing_fix(),
     elements(),
     persist(),

@@ -15,7 +15,12 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
-import { schema, SectionCategory } from '@manuscripts/transform'
+import {
+  getGroupCateogries,
+  schema,
+  SectionCategory,
+  SectionGroup,
+} from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
@@ -25,7 +30,7 @@ import {
   blockActive,
   canInsert,
   insertAbstract,
-  insertBackMatterSection,
+  insertBackmatterSection,
   insertBlock,
   insertBoxElement,
   insertContributors,
@@ -46,15 +51,30 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 
 export const getEditorMenus = (
-  editor: ReturnType<typeof useEditor>,
-  sectionCategories: Map<string, SectionCategory>
+  editor: ReturnType<typeof useEditor>
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+  const props = getEditorProps(state)
 
+  const insertBackmatterSectionMenu = (category: SectionCategory) => {
+    const command = insertBackmatterSection(category)
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
+  const categories = getGroupCateogries(
+    props.sectionCategories,
+    SectionGroup.Backmatter
+  )
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -138,136 +158,7 @@ export const getEditorMenus = (
         id: 'back-matter',
         label: 'Author Notes',
         isEnabled: true,
-        submenu: [
-          {
-            id: 'insert-acknowledgements',
-            label: 'Acknowledgements',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:acknowledgement',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:acknowledgement',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-availability',
-            label: 'Availability',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:availability',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:availability',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-coi-statement',
-            label: 'COI Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:competing-interests',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:competing-interests',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-con',
-            label: 'Contributed-by Information',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:con',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:con',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-ethics-statement',
-            label: 'Ethics Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:ethics-statement',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:ethics-statement',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-financial-disclosure',
-            label: 'Financial Disclosure',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:financial-disclosure',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:financial-disclosure',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-supplementary-material',
-            label: 'Supplementary Material',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material',
-                sectionCategories
-              )
-            ),
-          },
-          {
-            id: 'insert-supported-by',
-            label: 'Supported By',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:supported-by',
-                sectionCategories
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:supported-by',
-                sectionCategories
-              )
-            ),
-          },
-        ],
+        submenu: categories.map(insertBackmatterSectionMenu),
       },
       {
         id: 'insert-section',

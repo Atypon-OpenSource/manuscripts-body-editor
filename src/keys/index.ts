@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { SectionCategory } from '@manuscripts/transform'
 import { baseKeymap } from 'prosemirror-commands'
 import { keymap } from 'prosemirror-keymap'
 
@@ -24,10 +23,10 @@ import listKeymap from './list'
 import miscKeymap from './misc'
 import titleKeymap from './title'
 
-export default (sectionCategories: Map<string, SectionCategory>) => [
+export default [
   keymap(keywordKeymap),
   keymap(listKeymap),
-  keymap(miscKeymap(sectionCategories)),
+  keymap(miscKeymap),
   keymap(titleKeymap),
   keymap(baseKeymap),
   keymap(highlightKeymap),

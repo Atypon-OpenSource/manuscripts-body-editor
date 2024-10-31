@@ -19,7 +19,6 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { SectionCategoryProps } from '../section-category'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -66,12 +65,12 @@ const getPluginState = (doc: ProseMirrorNode): PluginState => {
   return sectionNumberMap
 }
 
-export default (props: SectionCategoryProps) => {
+export default () => {
   return new Plugin<PluginState>({
     key: sectionTitleKey,
     props: {
       decorations(state) {
-        const text = checkForCompletion(state, props.sectionCategories)
+        const text = checkForCompletion(state)
         if (text) {
           const decoration = Decoration.widget(state.selection.from, () => {
             const node = document.createElement('span')

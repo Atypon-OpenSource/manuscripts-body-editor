@@ -849,14 +849,14 @@ export const insertSection =
     return true
   }
 
-export const insertBackMatterSection =
-  (category: string, sectionCategories: Map<string, SectionCategory>) =>
+export const insertBackmatterSection =
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
     const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
-    if (sections.some((s) => s.node.attrs.category === category)) {
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
 
@@ -870,17 +870,12 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill(
-      {
-        category,
-      },
-      [
-        schema.nodes.section_title.create(
-          {},
-          schema.text(sectionCategories.get(category)?.titles?.[0] || '')
-        ),
-      ]
-    ) as SectionNode
+    const attrs = {
+      category: category.id,
+    }
+    const node = schema.nodes.section.create(attrs, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+    ])
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -1704,27 +1699,28 @@ export function mergeCellsWithSpace(
   return true
 }
 
-export const autoComplete =
-  (sectionCategories: Map<string, SectionCategory>) =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    const complete = checkForCompletion(state, sectionCategories)
-    if (complete) {
-      const tr = state.tr.insertText(complete.suggestion, state.selection.from)
-      const inserted = complete.title.substring(
-        0,
-        complete.title.length - complete.suggestion.length
+export const autoComplete = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const complete = checkForCompletion(state)
+  if (complete) {
+    const tr = state.tr.insertText(complete.suggestion, state.selection.from)
+    const inserted = complete.title.substring(
+      0,
+      complete.title.length - complete.suggestion.length
+    )
+    if (inserted) {
+      // replacing to provide text case as required
+      tr.replaceWith(
+        state.selection.from - inserted.length,
+        state.selection.from,
+        schema.text(inserted)
       )
-      if (inserted) {
-        // replacing to provide text case as required
-        tr.replaceWith(
-          state.selection.from - inserted.length,
-          state.selection.from,
-          schema.text(inserted)
-        )
-      }
-
-      dispatch && dispatch(tr)
-      return true
     }
-    return false
+
+    dispatch && dispatch(tr)
+    return true
   }
+  return false
+}
