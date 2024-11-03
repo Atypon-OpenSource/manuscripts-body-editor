@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 import { schema } from '@manuscripts/transform'
-import { Fragment, Node, Slice } from 'prosemirror-model'
-import { TextSelection } from 'prosemirror-state'
+import { Slice } from 'prosemirror-model'
 import { findParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
+import { handleTableSlice } from './table'
 
 export const transformCopied = (slice: Slice, view: EditorView): Slice => {
   const { state } = view
@@ -27,31 +27,13 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
     (!view.props.handleKeyDown || !state.selection.empty) &&
     slice.content.firstChild?.type === schema.nodes.table
   ) {
-    let tableStart: number | null = null
-    let tableNode: Node | null = null
-
+    console.log('table jkjkjkkjjkjk')
     // Find the table_element node that contains the copied content
     const tableElement = findParentNodeOfType(schema.nodes.table_element)(
       state.selection
     )
     if (tableElement) {
-      tableStart = tableElement.pos
-      tableNode = tableElement.node
-      // Dispatch a transaction to update the selection to include the whole table_element
-      if (tableNode && tableStart) {
-        view.dispatch(
-          state.tr.setSelection(
-            TextSelection.create(
-              state.doc,
-              tableStart,
-              tableStart + tableNode.nodeSize
-            )
-          )
-        )
-      }
-    }
-    if (tableNode) {
-      return new Slice(Fragment.from(tableNode), cutDepth, cutDepth)
+      return handleTableSlice(view, cutDepth, tableElement)
     }
   }
   if (

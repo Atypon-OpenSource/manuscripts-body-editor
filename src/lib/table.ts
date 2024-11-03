@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ManuscriptEditorView } from '@manuscripts/transform'
 import { Fragment, Node, Schema, Slice } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
+import { ContentNodeWithPos } from 'prosemirror-utils'
 
 export const createTableFromSlice = (
   slice: Slice,
@@ -33,4 +36,19 @@ export const createTableFromSlice = (
   }
 
   return null
+}
+
+export const handleTableSlice = (view: ManuscriptEditorView, cutDepth: number, tableElement: ContentNodeWithPos) => {
+      const { node, pos } = tableElement
+      // Dispatch a transaction to update the selection to include the whole table_element
+      view.dispatch(
+        view.state.tr.setSelection(
+          TextSelection.create(
+            view.state.doc,
+            pos,
+            pos + node.nodeSize
+          )
+        )
+      )
+      return new Slice(Fragment.from(node), cutDepth, cutDepth)
 }
