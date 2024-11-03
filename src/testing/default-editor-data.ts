@@ -16,7 +16,11 @@
 
 import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
-import { ActualManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  ActualManuscriptNode,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { DefaultTheme } from 'styled-components'
 
@@ -97,5 +101,10 @@ export const defaultEditorProps: EditorProps = {
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
-  sectionCategories: new Map(sectionCategories)
+  sectionCategories: new Map(
+    sectionCategories.map((category: SectionCategory) => [
+      category.id,
+      category,
+    ])
+  ),
 }

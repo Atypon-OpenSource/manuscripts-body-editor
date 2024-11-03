@@ -19,7 +19,6 @@ import {
   isSubsection,
   schema,
   SectionCategory,
-  SectionGroup,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { EditorState } from 'prosemirror-state'
@@ -161,9 +160,7 @@ export function buildPluginState(
 
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
-      const group = isInBackmatter($pos)
-        ? SectionGroup.Backmatter
-        : SectionGroup.Body
+      const group = isInBackmatter($pos) ? 'backmatter' : 'body'
       const groupCategories = getGroupCateogries(categories, group)
       decorations.push(
         Decoration.widget(pos + 1, (view) =>

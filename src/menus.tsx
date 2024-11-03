@@ -19,7 +19,6 @@ import {
   getGroupCateogries,
   schema,
   SectionCategory,
-  SectionGroup,
 } from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
@@ -71,10 +70,7 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCateogries(
-    props.sectionCategories,
-    SectionGroup.Backmatter
-  )
+  const categories = getGroupCateogries(props.sectionCategories, 'backmatter')
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
