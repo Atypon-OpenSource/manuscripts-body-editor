@@ -785,13 +785,10 @@ export const insertGraphicalAbstract = (
 
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill(
-    { category: 'abstract-graphical' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-      createAndFillFigureElement(state),
-    ]
-  ) as GraphicalAbstractSectionNode
+  const section = schema.nodes.graphical_abstract_section.createAndFill([
+    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
+    createAndFillFigureElement(state),
+  ]) as GraphicalAbstractSectionNode
 
   const tr = state.tr.insert(pos, section)
 
