@@ -786,7 +786,7 @@ export const insertGraphicalAbstract = (
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
   const section = schema.nodes.graphical_abstract_section.createAndFill(
-    { category: 'MPSectionCategory:abstract-graphical' },
+    { category: 'abstract-graphical' },
     [
       schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
       createAndFillFigureElement(state),
@@ -834,7 +834,7 @@ export const insertSection =
     }
 
     const section = schema.nodes.section.createAndFill({
-      category: subsection ? 'MPSectionCategory:subsection' : '',
+      category: subsection ? 'subsection' : '',
     }) as SectionNode
     const diff = subsection ? -1 : 0 // move pos inside section for a subsection
     const tr = state.tr.insert(pos + diff, section)
@@ -904,7 +904,7 @@ export const insertAbstract = (
   if (
     getMatchingChild(
       state.doc,
-      (node) => node.attrs.category === 'MPSectionCategory:abstract',
+      (node) => node.attrs.category === 'abstract',
       true
     )
   ) {
@@ -913,13 +913,10 @@ export const insertAbstract = (
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
   // Insert abstract at the top of abstracts section
   const pos = abstracts.pos + 1
-  const section = schema.nodes.section.createAndFill(
-    { category: 'MPSectionCategory:abstract' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Abstract')),
-      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
-    ]
-  ) as ManuscriptNode
+  const section = schema.nodes.section.createAndFill({ category: 'abstract' }, [
+    schema.nodes.section_title.create({}, schema.text('Abstract')),
+    schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+  ]) as ManuscriptNode
 
   const tr = state.tr.insert(pos, section)
 
