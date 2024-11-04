@@ -1,24 +1,10 @@
-.ProseMirror .inserted.accepted,
-.ProseMirror .set_attrs.accepted {
-  background: #bffca7;
+.ProseMirror .inserted,
+.ProseMirror .set_attrs {
   text-decoration: none;
 }
-.ProseMirror .inserted.pending,
-.ProseMirror .set_attrs.pending {
-  text-decoration: none;
-}
-.ProseMirror .inserted.rejected {
-  display: none;
-}
-.ProseMirror .deleted.accepted {
-  background: #bffca7;
-}
-.ProseMirror .deleted.rejected {
-  text-decoration: none;
-}
-.ProseMirror .inserted.pending,
-.ProseMirror .set_attrs.pending,
-.ProseMirror .deleted.pending {
+.ProseMirror .inserted,
+.ProseMirror .set_attrs,
+.ProseMirror .deleted {
   background: #ddf3fa;
 }
 .ProseMirror
