@@ -24,9 +24,9 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
   const { state } = view
   const cutDepth = Math.min(slice.openStart, slice.openEnd)
   if (
-      (!view.props.handleKeyDown || !state.selection.empty) &&
-      slice.content.firstChild?.type === schema.nodes.table
-    ) {
+    (!view.props.handleKeyDown || !state.selection.empty) &&
+    slice.content.firstChild?.type === schema.nodes.table
+  ) {
     // Find the table_element node that contains the copied content
     const tableElement = findParentNodeOfType(schema.nodes.table_element)(
       state.selection
@@ -52,7 +52,7 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
       return true
     })
 
-    return new Slice(Fragment.from(newSliceContent), cutDepth, cutDepth)
+    return new Slice(Fragment.from(newSliceContent), 0, 0)
   }
   return slice
 }
