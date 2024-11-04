@@ -46,13 +46,11 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
         newSliceContent = updateSliceWithFullTableContent(state, node.content)
         return false
       }
-      if (newSliceContent.length > 0) {
-        return false
-      }
       return true
     })
-
-    return new Slice(Fragment.from(newSliceContent), 0, 0)
+    if (newSliceContent.length > 0) {
+      return new Slice(Fragment.from(newSliceContent), 0, 0)
+    }
   }
   return slice
 }
