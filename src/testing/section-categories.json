@@ -10,14 +10,14 @@
     "id": "abstract",
     "titles": ["Abstract"],
     "synonyms": ["abstract"],
-    "group": "frontmatter",
+    "group": "abstracts",
     "isUnique": false
   },
   {
     "id": "abstract-graphical",
     "titles": ["Graphical Abstract"],
     "synonyms": ["abstract-graphical"],
-    "group": "frontmatter",
+    "group": "abstracts",
     "isUnique": false
   },
   {
