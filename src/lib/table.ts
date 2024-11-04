@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptEditorView } from '@manuscripts/transform'
+import {
+  ManuscriptEditorState,
+  ManuscriptEditorView,
+  schema,
+} from '@manuscripts/transform'
 import { Fragment, Node, Schema, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { ContentNodeWithPos } from 'prosemirror-utils'
@@ -38,17 +42,45 @@ export const createTableFromSlice = (
   return null
 }
 
-export const handleTableSlice = (view: ManuscriptEditorView, cutDepth: number, tableElement: ContentNodeWithPos) => {
-      const { node, pos } = tableElement
-      // Dispatch a transaction to update the selection to include the whole table_element
-      view.dispatch(
-        view.state.tr.setSelection(
-          TextSelection.create(
-            view.state.doc,
-            pos,
-            pos + node.nodeSize
-          )
-        )
-      )
-      return new Slice(Fragment.from(node), cutDepth, cutDepth)
+export const handleTableSlice = (
+  view: ManuscriptEditorView,
+  cutDepth: number,
+  tableElement: ContentNodeWithPos
+) => {
+  const { node, pos } = tableElement
+  // Dispatch a transaction to update the selection to include the whole table_element
+  view.dispatch(
+    view.state.tr.setSelection(
+      TextSelection.create(view.state.doc, pos, pos + node.nodeSize)
+    )
+  )
+  return new Slice(Fragment.from(node), cutDepth, cutDepth)
+}
+export const findTableElement = (state: ManuscriptEditorState) => {
+  const { from, to } = state.selection
+  let tableNode: Node | null = null
+  state.doc.nodesBetween(from, to, (node) => {
+    if (node.type === schema.nodes.table_element) {
+      tableNode = node
+      return false
+    }
+    return true
+  })
+  return { tableNode }
+}
+
+export const updateSliceWithFullTableContent = (
+  state: ManuscriptEditorState,
+  slice: Fragment
+): Node[] => {
+  const newSliceContent: Node[] = []
+  slice.forEach((node) => {
+    if (node.type === schema.nodes.table_element) {
+      const { tableNode } = findTableElement(state)
+      tableNode && newSliceContent.push(tableNode)
+    } else {
+      newSliceContent.push(node)
+    }
+  })
+  return newSliceContent
 }

@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { schema } from '@manuscripts/transform'
-import { Slice } from 'prosemirror-model'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { Fragment, Slice } from 'prosemirror-model'
 import { findParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
-import { handleTableSlice } from './table'
+
+import { handleTableSlice, updateSliceWithFullTableContent } from './table'
 
 export const transformCopied = (slice: Slice, view: EditorView): Slice => {
   const { state } = view
   const cutDepth = Math.min(slice.openStart, slice.openEnd)
-
   if (
-    (!view.props.handleKeyDown || !state.selection.empty) &&
-    slice.content.firstChild?.type === schema.nodes.table
-  ) {
-    console.log('table jkjkjkkjjkjk')
+      (!view.props.handleKeyDown || !state.selection.empty) &&
+      slice.content.firstChild?.type === schema.nodes.table
+    ) {
     // Find the table_element node that contains the copied content
     const tableElement = findParentNodeOfType(schema.nodes.table_element)(
       state.selection
@@ -41,7 +40,19 @@ export const transformCopied = (slice: Slice, view: EditorView): Slice => {
     (slice.content.firstChild?.type.isBlock ||
       slice.content.lastChild?.type.isBlock)
   ) {
-    return new Slice(slice.content, cutDepth, cutDepth)
+    let newSliceContent: ManuscriptNode[] = []
+    slice.content.firstChild?.descendants((node) => {
+      if (node.childCount > 1) {
+        newSliceContent = updateSliceWithFullTableContent(state, node.content)
+        return false
+      }
+      if (newSliceContent.length > 0) {
+        return false
+      }
+      return true
+    })
+
+    return new Slice(Fragment.from(newSliceContent), cutDepth, cutDepth)
   }
   return slice
 }
