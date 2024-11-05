@@ -17,6 +17,7 @@
 import { InlineEquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
+import { isDeleted } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -30,6 +31,11 @@ export class InlineEquationView
   }
 
   public updateContents = () => {
+    if (isDeleted(this.node)) {
+      this.dom.classList.add('deleted')
+    } else {
+      this.dom.classList.remove('deleted')
+    }
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }

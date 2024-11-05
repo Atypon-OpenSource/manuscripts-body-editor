@@ -20,9 +20,9 @@ import {
 } from '@manuscripts/transform'
 
 import { BaseNodeView } from './base_node_view'
-import { createNodeView } from './creators'
+import { createEditableNodeView } from './creators'
 
-export class TableElementFooterView
+class TableElementFooterView
   extends BaseNodeView<TableElementFooterNode>
   implements ManuscriptNodeView
 {
@@ -34,9 +34,8 @@ export class TableElementFooterView
     this.dom = document.createElement('div')
     this.dom.classList.add('table-footer')
     this.dom.setAttribute('id', this.node.attrs.id)
-    this.contentDOM = document.createElement('div')
-    this.dom.appendChild(this.contentDOM)
+    this.contentDOM = this.dom
   }
 }
 
-export default createNodeView(TableElementFooterView)
+export default createEditableNodeView(TableElementFooterView)
