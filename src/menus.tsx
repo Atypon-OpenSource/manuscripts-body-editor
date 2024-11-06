@@ -364,7 +364,7 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+F',
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.inline_footnote)),
-        run: doCommand(insertInlineFootnote('footnote')),
+        run: doCommand(insertInlineFootnote),
       },
       {
         id: 'insert-comment',
@@ -453,7 +453,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-bullet-list',
-        label: 'Bullet List',
+        label: 'Bulleted list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
@@ -473,7 +473,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-ordered-list',
-        label: 'Ordered List',
+        label: 'Ordered list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [

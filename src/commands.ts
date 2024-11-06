@@ -20,15 +20,13 @@ import {
   BoxElementNode,
   FigureElementNode,
   FigureNode,
-  FootnoteNode,
+  FootnotesElementNode,
   generateNodeID,
   GraphicalAbstractSectionNode,
-  InlineFootnoteNode,
   isElementNodeType,
-  isFootnoteNode,
   isListNode,
-  isParagraphNode,
   isSectionNodeType,
+  isTableElementNode,
   KeywordsNode,
   ListNode,
   ManuscriptEditorState,
@@ -78,6 +76,7 @@ import {
 import {
   findChildrenByType,
   findParentNodeOfType,
+  findParentNodeOfTypeClosestToPos,
   hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
@@ -88,10 +87,15 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertFootnotesSection,
   insertSupplementsNode,
 } from './lib/doc'
 import { FileAttachment } from './lib/files'
-import { getNewFootnotePos } from './lib/footnotes'
+import {
+  createFootnote,
+  findFootnotesContainerNode,
+  getFootnotesElementState,
+} from './lib/footnotes'
 import {
   findWordBoundaries,
   isNodeOfType,
@@ -106,7 +110,6 @@ import {
 } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
-import { footnotesKey } from './plugins/footnotes'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 
@@ -298,70 +301,48 @@ export const createBlock = (
   }
 }
 
-export const undoFootnoteDelete = (
-  tr: Transaction,
-  footnote: NodeWithPos,
-  position: number
+export const insertInlineTableFootnote = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
 ) => {
-  const updatedAttrs = {
-    ...footnote.node.attrs,
-    dataTracked: null,
+  const $pos = state.selection.$to
+  const table = findParentNodeOfTypeClosestToPos($pos, schema.nodes.table)
+  if (!table) {
+    return false
   }
-  tr.setNodeMarkup(position, undefined, updatedAttrs, footnote.node.marks)
+  if (!dispatch) {
+    return true
+  }
+  return insertInlineFootnote(state, dispatch)
 }
 
-export const insertGeneralFootnote = (
-  tableElementNode: ManuscriptNode,
-  position: number,
-  view: ManuscriptEditorView,
-  tableElementFooter?: NodeWithPos[]
+export const insertGeneralTableFootnote = (
+  element: [ManuscriptNode, number],
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
 ) => {
-  const { state, dispatch } = view
-  const paragraph = state.schema.nodes.paragraph.create({
-    placeholder: 'Add general note here',
-  })
-  const generalNote = state.schema.nodes.general_table_footnote.create({}, [
-    paragraph,
-  ])
-  const tableColGroup = findChildrenByType(
-    tableElementNode,
-    schema.nodes.table_colgroup
-  )[0]
-  const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
+  const existing = findChildrenByType(
+    element[0],
+    schema.nodes.general_table_footnote
+  )
+  if (existing.length) {
+    return false
+  }
+  if (!dispatch) {
+    return true
+  }
+
   const tr = state.tr
-  const pos = tableElementFooter?.length
-    ? position + tableElementFooter[0].pos + 2
-    : position +
-      (!tableColGroup
-        ? table.pos + table.node.nodeSize
-        : tableColGroup.pos + tableColGroup.node.nodeSize)
+  const footer = insertTableElementFooter(tr, element)
 
-  if (tableElementFooter?.length) {
-    if (isDeleted(tableElementFooter[0].node)) {
-      const tableElementFooterPos = tr.mapping.map(
-        position + tableElementFooter[0].pos + 1
-      )
-
-      //Restore the deleted/ rejected tablefooter by clearing the 'dataTracked' attribute (setting it to null)
-      undoFootnoteDelete(tr, tableElementFooter[0], tableElementFooterPos)
-    }
-
-    tr.insert(pos, generalNote as ManuscriptNode)
-  } else {
-    const tableElementFooter = schema.nodes.table_element_footer.create(
-      {
-        id: generateNodeID(schema.nodes.table_element_footer),
-      },
-      [generalNote]
-    )
-    tr.insert(pos, tableElementFooter)
-  }
-
-  if (dispatch && pos) {
-    const selection = createSelection(state.schema.nodes.paragraph, pos, tr.doc)
-    view?.focus()
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
+  const pos = footer.pos + 1
+  const node = schema.nodes.general_table_footnote.create({}, [
+    schema.nodes.paragraph.create(),
+  ])
+  tr.insert(pos, node)
+  const selection = TextSelection.create(tr.doc, pos + 1)
+  tr.setSelection(selection).scrollIntoView()
+  dispatch(tr)
 }
 
 export const insertFigure = (
@@ -655,133 +636,142 @@ export const insertInlineEquation = (
   return true
 }
 
-export const createFootnote = (
-  state: ManuscriptEditorState,
-  kind: 'footnote' | 'endnote'
-) => {
-  return schema.nodes.footnote.createAndFill({
-    id: generateNodeID(schema.nodes.footnote),
-    kind,
-  }) as FootnoteNode
-}
-
-export const insertFootnote = (
-  state: ManuscriptEditorState,
+export const insertTableElementFooter = (
   tr: Transaction,
-  footnote: FootnoteNode
+  table: [ManuscriptNode, number]
 ) => {
-  const footnotesSection = findChildrenByType(
-    tr.doc,
-    schema.nodes.footnotes_section
+  const footer = findChildrenByType(
+    table[0],
+    schema.nodes.table_element_footer
   )[0]
-
-  let selectionPos = 0
-
-  if (!footnotesSection) {
-    // create a new footnotes section if needed
-    const section = state.schema.nodes.footnotes_section.create({}, [
-      state.schema.nodes.section_title.create(
-        {},
-        state.schema.text('Footnotes')
-      ),
-      state.schema.nodes.footnotes_element.create({}, footnote),
-    ])
-
-    const backmatter = findChildrenByType(tr.doc, schema.nodes.backmatter)[0]
-    const sectionPos = backmatter.pos + 1
-
-    tr.insert(sectionPos, section)
-
-    let footnotePos = 0
-    section.descendants((n, pos) => {
-      if (isFootnoteNode(n)) {
-        footnotePos = pos
-        n.descendants((childNode, childPos) => {
-          if (isParagraphNode(childNode)) {
-            footnotePos += childPos
-          }
-        })
-      }
-    })
-    selectionPos = sectionPos + footnotePos
-  } else {
-    // Look for footnote element inside the footnotes section to exclude tables footnote elements
-    const footnoteElement = findChildrenByType(
-      footnotesSection.node,
-      schema.nodes.footnotes_element
-    ).pop()
-
-    if (footnoteElement) {
-      if (isDeleted(footnoteElement.node)) {
-        const footnoteElementPos =
-          footnotesSection.pos + footnoteElement.pos + 1
-
-        //Restore the deleted/rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
-
-        undoFootnoteDelete(tr, footnoteElement, footnoteElementPos)
-
-        const updatedAttrs = {
-          ...footnoteElement.node.attrs,
-          dataTracked: null,
-        }
-        tr.setNodeMarkup(
-          footnoteElementPos,
-          undefined,
-          updatedAttrs,
-          footnoteElement.node.marks
-        )
-      }
-      const pos =
-        footnotesSection.pos +
-        footnoteElement.pos +
-        footnoteElement.node.nodeSize -
-        1
-      tr.insert(pos, footnote)
-      selectionPos = pos + 2
-    } else {
-      const footnoteElement = schema.nodes.footnotes_element.create(
-        {},
-        footnote
-      )
-      const pos = footnotesSection.pos + footnotesSection.node.nodeSize - 1
-      tr.insert(pos, footnoteElement)
-      selectionPos = pos + 2
+  if (footer) {
+    const pos = tr.mapping.map(table[1] + footer.pos + 1)
+    if (isDeleted(footer.node)) {
+      reinstateNode(tr, footer.node, pos)
+    }
+    return {
+      node: footer.node,
+      pos,
     }
   }
-  if (selectionPos) {
-    const selection = TextSelection.near(tr.doc.resolve(selectionPos))
+  const pos = tr.mapping.map(table[1] + table[0].nodeSize - 2)
+  const node = schema.nodes.table_element_footer.create()
+  tr.insert(pos, node)
+  return {
+    node,
+    pos,
+  }
+}
+
+export const insertFootnotesElement = (
+  tr: Transaction,
+  container: [ManuscriptNode, number]
+) => {
+  let pos
+  if (isTableElementNode(container[0])) {
+    //table footnote
+    const footer = insertTableElementFooter(tr, container)
+    pos = footer.pos + footer.node.nodeSize - 1
+  } else {
+    //regular footnote
+    const section = insertFootnotesSection(tr)
+    pos = section.pos + section.node.nodeSize - 1
+  }
+  const node = schema.nodes.footnotes_element.create()
+  tr.insert(pos, node)
+  return [node, pos] as [FootnotesElementNode, number]
+}
+
+export const insertInlineFootnote = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pos = state.selection.to
+  const tr = state.tr
+  const container = findFootnotesContainerNode(state.doc, pos)
+  const fn = getFootnotesElementState(state, container.node.attrs.id)
+  const hasUnusedFootnotes = fn && fn.unusedFootnoteIDs.size > 0
+
+  const footnote = !hasUnusedFootnotes && createFootnote()
+  const node = schema.nodes.inline_footnote.create({
+    rids: footnote ? [footnote.attrs.id] : [],
+  })
+
+  tr.insert(pos, node)
+
+  if (footnote) {
+    let element: [FootnotesElementNode, number]
+    if (fn) {
+      element = [fn.element[0], tr.mapping.map(fn.element[1])]
+    } else {
+      element = insertFootnotesElement(tr, [container.node, container.pos])
+    }
+
+    if (isDeleted(element[0])) {
+      reinstateNode(tr, element[0], element[1])
+    }
+
+    const fnPos = element[1] + element[0].nodeSize - 1
+    tr.insert(fnPos, footnote)
+    const selection = TextSelection.create(tr.doc, fnPos + 2)
+    tr.setSelection(selection).scrollIntoView()
+  } else {
+    const selection = NodeSelection.create(tr.doc, pos)
     tr.setSelection(selection).scrollIntoView()
   }
-  return tr
+
+  if (dispatch) {
+    dispatch(tr)
+  }
+  return true
 }
 
-export const insertInlineFootnote =
-  (kind: 'footnote' | 'endnote') =>
-  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-    const fnState = footnotesKey.getState(state)
-    const hasUnusedNodes = fnState && fnState.unusedFootnotes.size > 0
-    const footnote: FootnoteNode | null = !hasUnusedNodes
-      ? createFootnote(state, kind)
-      : null
+const reinstateNode = (tr: Transaction, node: ManuscriptNode, pos: number) => {
+  const attrs = {
+    ...node.attrs,
+    dataTracked: null,
+  }
+  tr.setNodeMarkup(pos, null, attrs)
+}
 
-    const insertedAt = state.selection.to
-    let tr = state.tr
+export const insertBoxElement = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const selection = state.selection
 
-    const node = state.schema.nodes.inline_footnote.create({
-      rids: footnote ? [footnote.attrs.id] : [],
-    }) as InlineFootnoteNode
+  // Check if the selection is inside the body
+  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
 
-    tr.insert(insertedAt, node)
-
-    if (footnote) {
-      tr = insertFootnote(state, tr, footnote)
-    }
-    if (dispatch) {
-      dispatch(tr)
-    }
-    return true
+  // If selection is not in the body, disable the option
+  if (!isBody || isBoxText) {
+    return false
   }
 
+  const position = findBlockInsertPosition(state)
+
+  const paragraph = schema.nodes.paragraph.create({})
+
+  // Create a section node with a section title and a paragraph
+  const section = schema.nodes.section.createAndFill({}, [
+    schema.nodes.section_title.create(),
+    paragraph,
+  ]) as ManuscriptNode
+
+  // Create the BoxElement node with a figcaption and the section
+  const node = schema.nodes.box_element.createAndFill({}, [
+    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+    section,
+  ]) as BoxElementNode
+
+  if (position && dispatch) {
+    const tr = state.tr.insert(position, node)
+    dispatch(tr)
+  }
+
+  return true
+}
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
@@ -1526,6 +1516,13 @@ export const addInlineComment = (
   let from = selection.from
   let to = selection.to
 
+  if (from === to) {
+    // Use the current cursor position to determine the boundaries of the intended word
+    const result = findWordBoundaries(state, from)
+    from = result.from
+    to = result.to
+  }
+
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
@@ -1533,7 +1530,7 @@ export const addInlineComment = (
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
-    originalText: selectedText(),
+    originalText: selectedText() || state.doc.textBetween(from, to),
     selector: {
       from,
       to,
@@ -1545,13 +1542,6 @@ export const addInlineComment = (
     const pos = comments.pos + 1
 
     const tr = state.tr.insert(pos, comment)
-
-    if (from === to) {
-      // Use the current cursor position to determine the boundaries of the intended word
-      const result = findWordBoundaries(state, from)
-      from = result.from
-      to = result.to
-    }
 
     const start = schema.nodes.highlight_marker.create({
       id: comment.attrs.id,
@@ -1574,167 +1564,6 @@ export const addInlineComment = (
     return true
   }
   return false
-}
-
-interface NodeWithPosition {
-  node: InlineFootnoteNode
-  pos: number
-}
-
-export const insertTableFootnote = (
-  tableElementNode: ManuscriptNode,
-  position: number,
-  view: EditorView,
-  inlineFootnote?: NodeWithPosition
-) => {
-  const { state, dispatch } = view
-  const tr = state.tr
-
-  const footnote = schema.nodes.footnote.createAndFill({
-    id: generateNodeID(schema.nodes.footnote),
-    kind: 'footnote',
-  }) as FootnoteNode
-
-  const insertedAt = state.selection.to
-
-  let footnoteIndex
-  if (inlineFootnote) {
-    const contents = inlineFootnote.node.attrs.contents.split(',').map(Number)
-    footnoteIndex = Math.max(...contents) + 1
-    tr.setNodeMarkup(inlineFootnote.pos, undefined, {
-      rids: [...inlineFootnote.node.attrs.rids, footnote.attrs.id],
-      contents: inlineFootnote.node.attrs.contents + ',' + footnoteIndex,
-    })
-  } else {
-    const inlineFootnotes = findChildrenByType(
-      tableElementNode,
-      schema.nodes.inline_footnote
-    )
-    footnoteIndex =
-      inlineFootnotes.filter(({ pos }) => position + pos <= insertedAt).length +
-      1
-    const inlineFootnoteNode = state.schema.nodes.inline_footnote.create({
-      rids: [footnote.attrs.id],
-      contents: footnoteIndex === -1 ? inlineFootnotes.length : footnoteIndex,
-    }) as InlineFootnoteNode
-
-    // insert the inline footnote
-    tr.insert(insertedAt, inlineFootnoteNode)
-  }
-
-  let insertionPos = position
-
-  const footnotesElement = findChildrenByType(
-    tableElementNode,
-    schema.nodes.footnotes_element
-  ).pop()
-
-  if (footnotesElement) {
-    if (isDeleted(footnotesElement.node)) {
-      const footnotesElementPos = tr.mapping.map(
-        position + footnotesElement.pos + 1
-      )
-
-      //Restore the deleted/ rejected footnote element by clearing the 'dataTracked' attribute (setting it to null)
-      undoFootnoteDelete(tr, footnotesElement, footnotesElementPos)
-    }
-    const footnotePos = getNewFootnotePos(footnotesElement, footnoteIndex)
-    insertionPos = tr.mapping.map(position + footnotePos)
-
-    tr.insert(insertionPos, footnote)
-  } else {
-    const footnoteElement = state.schema.nodes.footnotes_element.create(
-      {},
-      footnote
-    )
-
-    const tableElementFooter = findChildrenByType(
-      tableElementNode,
-      schema.nodes.table_element_footer
-    )[0]
-
-    if (tableElementFooter) {
-      if (isDeleted(tableElementFooter.node)) {
-        const tableElementFooterPos = tr.mapping.map(
-          position + tableElementFooter.pos + 1
-        )
-
-        //Restore the deleted/ rejected table footer by clearing the 'dataTracked' attribute (setting it to null)
-        undoFootnoteDelete(tr, tableElementFooter, tableElementFooterPos)
-      }
-      const pos = tableElementFooter.pos
-      insertionPos = position + pos + tableElementFooter.node.nodeSize
-      tr.insert(tr.mapping.map(insertionPos), footnoteElement)
-    } else {
-      const tableElementFooter = schema.nodes.table_element_footer.create(
-        {
-          id: generateNodeID(schema.nodes.table_element_footer),
-        },
-        [footnoteElement]
-      )
-
-      const tableColGroup = findChildrenByType(
-        tableElementNode,
-        schema.nodes.table_colgroup
-      )[0]
-      const table = findChildrenByType(tableElementNode, schema.nodes.table)[0]
-      if (tableColGroup) {
-        insertionPos =
-          position + tableColGroup.pos + tableColGroup.node.nodeSize
-        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
-      } else {
-        insertionPos = position + table.pos + table.node.nodeSize
-        tr.insert(tr.mapping.map(insertionPos), tableElementFooter)
-      }
-    }
-  }
-
-  dispatch(tr)
-
-  const textSelection = TextSelection.near(
-    view.state.tr.doc.resolve(insertionPos + 1)
-  )
-  view.focus()
-  dispatch(view.state.tr.setSelection(textSelection).scrollIntoView())
-}
-
-export const insertBoxElement = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const selection = state.selection
-
-  // Check if the selection is inside the body
-  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
-  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
-
-  // If selection is not in the body, disable the option
-  if (!isBody || isBoxText) {
-    return false
-  }
-
-  const position = findBlockInsertPosition(state)
-
-  const paragraph = schema.nodes.paragraph.create({})
-
-  // Create a section node with a section title and a paragraph
-  const section = schema.nodes.section.createAndFill({}, [
-    schema.nodes.section_title.create(),
-    paragraph,
-  ]) as ManuscriptNode
-
-  // Create the BoxElement node with a figcaption and the section
-  const BoxElementNode = schema.nodes.box_element.createAndFill({}, [
-    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
-    section,
-  ]) as BoxElementNode
-
-  if (position && dispatch) {
-    const tr = state.tr.insert(position, BoxElementNode)
-    dispatch(tr)
-  }
-
-  return true
 }
 
 export const addRows =

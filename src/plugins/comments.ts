@@ -33,6 +33,7 @@ import {
   getCommentKey,
   HighlightMarkerAttrs,
   InlineComment,
+  isReply,
   NodeComment,
 } from '../lib/comments'
 
@@ -196,12 +197,14 @@ const buildPluginState = (
       })
       .forEach((c) => {
         allComments.push(c)
-        if (!c.range) {
-          nodeComments.push(c)
-        } else if (c.range.size) {
-          highlightComments.push(c as InlineComment)
-        } else {
-          pointComments.push(c as InlineComment)
+        if (!isReply(c)) {
+          if (!c.range) {
+            nodeComments.push(c)
+          } else if (c.range.size) {
+            highlightComments.push(c as InlineComment)
+          } else {
+            pointComments.push(c as InlineComment)
+          }
         }
       })
 
