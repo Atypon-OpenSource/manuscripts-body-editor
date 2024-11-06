@@ -55,6 +55,12 @@ const getSelectedCellsCount = (state: EditorState) => {
   }
 }
 
+
+const isHeaderCellSelected = (state: EditorState) => {
+  return state.doc.nodeAt( state.selection.from)?.type ===
+    schema.nodes.table_header || ( state.selection instanceof CellSelection && ( state.selection.$anchorCell.node( state.selection.$anchorCell.depth).firstChild?.type === schema.nodes.table_header ||  state.selection.$headCell.node( state.selection.$headCell.depth).firstChild?.type === schema.nodes.table_header))
+}
+
 const ColumnChangeWarningDialog: React.FC<{
   isOpen: boolean
   primaryAction: () => void
@@ -92,10 +98,6 @@ export const ContextMenu: React.FC<{
 
   const [columnAction, setColumnAction] = useState<Command>()
 
-  const isHeaderCellSelected =
-    view.state.doc.nodeAt(view.state.selection.from)?.type ===
-    schema.nodes.table_header
-
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
@@ -103,7 +105,7 @@ export const ContextMenu: React.FC<{
   return (
     <MenuDropdownList className={'table-ctx'}>
       <ActionButton
-        disabled={isHeaderCellSelected}
+        disabled={isHeaderCellSelected(view.state)}
         onClick={() => runCommand(addRows('top'))}
       >
         <PlusIcon /> Insert {rows} above
