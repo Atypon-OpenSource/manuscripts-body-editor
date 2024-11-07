@@ -16,7 +16,6 @@
 
 import {
   getListType,
-  InlineFootnoteNode,
   isInBibliographySection,
   isSectionTitleNode,
   ManuscriptEditorView,
@@ -27,22 +26,17 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
-import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
+import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   addNodeComment,
   createBlock,
   findPosBeforeFirstSubsection,
-  insertGeneralFootnote,
-  insertTableFootnote,
+  insertGeneralTableFootnote,
+  insertInlineTableFootnote,
 } from '../commands'
-import { FootnotesSelector } from '../components/views/FootnotesSelector'
-import { EditorProps } from '../configs/ManuscriptsEditor'
-import ReactSubView from '../views/ReactSubView'
-import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
 import { PopperManager } from './popper'
-import { isDeleted } from './track-changes-utils'
-import { getChildOfType, isChildOfNodeTypes } from './utils'
+import { isChildOfNodeTypes, isSelectionInNode } from './utils'
 
 const popper = new PopperManager()
 
@@ -77,20 +71,17 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private readonly actions: Actions
-  private readonly props?: EditorProps
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
     getPos: () => number,
-    actions: Actions = {},
-    props?: EditorProps
+    actions: Actions = {}
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
     this.actions = actions
-    this.props = props
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
@@ -288,151 +279,27 @@ export class ContextMenu {
     }
 
     if (type === schema.nodes.table_element) {
-      // Check if the selection is inside the table.
-      const isInTable = hasParentNodeOfType(schema.nodes.table)(
-        this.view.state.selection
-      )
-      const tableElementFooter = findChildrenByType(
-        this.node,
-        schema.nodes.table_element_footer
-      )
-      let isDeletedInsert = false
-
-      const hasGeneralNote =
-        tableElementFooter.length &&
-        getChildOfType(
-          tableElementFooter[0].node,
-          schema.nodes.general_table_footnote,
-          true
-        )
-
-      if (hasGeneralNote) {
-        const generalFootnote = tableElementFooter[0]?.node.firstChild
-        if (generalFootnote) {
-          isDeletedInsert = isDeleted(generalFootnote)
-        }
+      const items: Node[] = []
+      const isInsideNode = isSelectionInNode(this.view.state, this.node)
+      if (isInsideNode && insertInlineTableFootnote(this.view.state)) {
+        const item = this.createMenuItem('Add Reference Note', () => {
+          insertInlineTableFootnote(this.view.state, this.view.dispatch)
+        })
+        items.push(item)
       }
-      if (!hasGeneralNote || isDeletedInsert) {
-        menu.appendChild(
-          this.createMenuSection((section: HTMLElement) => {
-            section.appendChild(
-              this.createMenuItem('Add General Note', () => {
-                insertGeneralFootnote(
-                  this.node,
-                  this.getPos(),
-                  this.view,
-                  tableElementFooter
-                )
-              })
-            )
-          })
-        )
+      const pos = this.getPos()
+      if (insertGeneralTableFootnote([this.node, pos], this.view.state)) {
+        const item = this.createMenuItem('Add General Note', () => {
+          insertGeneralTableFootnote(
+            [this.node, pos],
+            this.view.state,
+            this.view.dispatch
+          )
+        })
+        items.push(item)
       }
-
-      if (isInTable) {
-        menu.appendChild(
-          this.createMenuSection((section: HTMLElement) => {
-            section.appendChild(
-              this.createMenuItem('Add Reference Note', () => {
-                const footnotesElementWithPos = findChildrenByType(
-                  this.node,
-                  schema.nodes.footnotes_element
-                ).pop()
-                if (
-                  !footnotesElementWithPos ||
-                  !footnotesElementWithPos?.node.content.childCount ||
-                  isDeleted(footnotesElementWithPos.node)
-                ) {
-                  insertTableFootnote(this.node, this.getPos(), this.view)
-                } else {
-                  const tablesFootnoteLabels = buildTableFootnoteLabels(
-                    this.node
-                  )
-
-                  const footnotesWithPos = findChildrenByType(
-                    footnotesElementWithPos.node,
-                    schema.nodes.footnote
-                  )
-
-                  const footnotes = footnotesWithPos
-                    .filter(({ node }) => !isDeleted(node))
-                    .map(({ node }) => ({
-                      node: node,
-                      index: tablesFootnoteLabels.get(node.attrs.id),
-                    })) as FootnoteWithIndex[]
-
-                  const targetDom = this.view.domAtPos(
-                    this.view.state.selection.from
-                  )
-                  const targetNode =
-                    targetDom.node.nodeType === Node.TEXT_NODE
-                      ? targetDom.node.parentNode
-                      : targetDom.node
-
-                  if (targetNode instanceof Element && this.props) {
-                    const popperContainer = ReactSubView(
-                      { ...this.props, dispatch: this.view.dispatch },
-                      FootnotesSelector,
-                      {
-                        notes: footnotes,
-                        onAdd: () => {
-                          insertTableFootnote(
-                            this.node,
-                            this.getPos(),
-                            this.view
-                          )
-                          this.props?.popper.destroy()
-                        },
-                        onInsert: (notes: FootnoteWithIndex[]) => {
-                          const insertedAt = this.view.state.selection.to
-                          let inlineFootnoteIndex = 1
-                          this.view.state.doc
-                            .slice(this.getPos(), insertedAt)
-                            .content.descendants((node) => {
-                              if (node.type === schema.nodes.inline_footnote) {
-                                inlineFootnoteIndex++
-                                return false
-                              }
-                            })
-
-                          const node =
-                            this.view.state.schema.nodes.inline_footnote.create(
-                              {
-                                rids: notes.map(({ node }) => node.attrs.id),
-                                contents: notes
-                                  .map(({ index }) =>
-                                    index ? index : inlineFootnoteIndex
-                                  )
-                                  .join(),
-                              }
-                            ) as InlineFootnoteNode
-
-                          const tr = this.view.state.tr
-
-                          tr.insert(insertedAt, node)
-                          this.view.dispatch(tr)
-                          this.props?.popper.destroy()
-                        },
-                        onCancel: () => {
-                          this.props?.popper.destroy()
-                        },
-                      },
-                      this.node,
-                      this.getPos,
-                      this.view,
-                      'footnote-editor'
-                    )
-                    this.props?.popper.show(
-                      targetNode,
-                      popperContainer,
-                      'bottom-end'
-                    )
-                  }
-                }
-              })
-            )
-          })
-        )
+      if (items.length) {
+        menu.append(this.createMenuSection((e) => e.append(...items)))
       }
     }
 
