@@ -217,18 +217,22 @@ export class InlineFootnoteView
   }
 
   handleInsert = (footnotes: FootnoteNode[]) => {
+    const pos = this.getPos()
+    const tr = this.view.state.tr
+
     if (footnotes.length) {
-      const pos = this.getPos()
       const rids = footnotes.map((note) => note.attrs.id)
-      const tr = this.view.state.tr
       if (rids.length) {
         tr.setNodeAttribute(pos, 'rids', rids)
-        this.view.dispatch(tr)
       } else if (isPendingInsert(this.node)) {
         tr.delete(pos, pos + this.node.nodeSize)
-        this.view.dispatch(tr)
       }
+    } else {
+      // When no footnotes, set rids to an empty array
+      tr.setNodeAttribute(pos, 'rids', [])
     }
+    this.view.dispatch(tr)
+
     this.destroy()
   }
 }
