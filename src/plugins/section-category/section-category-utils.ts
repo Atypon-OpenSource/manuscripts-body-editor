@@ -239,7 +239,10 @@ function getSortedSectionCategories(
   }
 
   return sectionCategories
-    .filter((category) => category.groupIDs?.includes(groupIDToUse) && category.name !== 'Subsection')
+    .filter(
+      (category) =>
+        category.groupIDs?.includes(groupIDToUse) && !isSubSection(category._id)
+    )
     .map((category) => ({
       ...category,
       isDisabled: Boolean(
