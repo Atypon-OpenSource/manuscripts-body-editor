@@ -111,10 +111,7 @@ export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
   }
 
   const handleClick = () => {
-    const selectedFootnotes = footnotes.filter((node) =>
-      selections.has(node.attrs.id)
-    )
-    onInsert(selectedFootnotes)
+    return onInsert(footnotes.filter((node) => selections.has(node.attrs.id)))
   }
 
   return (
