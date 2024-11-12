@@ -228,8 +228,7 @@ export class InlineFootnoteView
         tr.delete(pos, pos + this.node.nodeSize)
       }
     } else {
-      // When no footnotes, set rids to an empty array
-      tr.setNodeAttribute(pos, 'rids', [])
+      tr.delete(pos, pos + this.node.nodeSize)
     }
     this.view.dispatch(tr)
 
