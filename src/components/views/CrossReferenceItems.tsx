@@ -189,8 +189,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
               selectedItem &&
               handleSelect(
                 selectedItem,
-                customTextRef.current?.value ||
-                  targets.find(({ id }) => id === selectedItem)?.label
+                customTextRef.current?.value || ''
               )
             }
             disabled={!selectedItem}
