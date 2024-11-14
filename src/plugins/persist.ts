@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { generateNodeID, ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  generateNodeID,
+  isHighlightMarkerNode,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
 import { isInit } from '../lib/plugins'
@@ -38,6 +43,7 @@ export default () => {
       const tr = newState.tr
       newState.doc.descendants((node, pos, parent) => {
         if (
+          isHighlightMarkerNode(node) ||
           isManuscriptNode(node) ||
           isManuscriptNode(parent) ||
           !node.type.spec.attrs ||
