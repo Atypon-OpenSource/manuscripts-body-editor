@@ -16,7 +16,7 @@
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
-import { Selection, SelectionRange, TextSelection } from 'prosemirror-state'
+import { Selection, TextSelection } from 'prosemirror-state'
 import { Mappable } from 'prosemirror-transform'
 
 /**
@@ -28,18 +28,7 @@ export class InlineNodesSelection extends Selection {
   public $endNode: ResolvedPos
 
   constructor($from: ResolvedPos, $to: ResolvedPos) {
-    const ranges: SelectionRange[] = []
-    const doc = $from.doc
-    doc.slice($from.pos, $to.pos).content.forEach((node, offset) => {
-      ranges.push(
-        new SelectionRange(
-          doc.resolve($from.pos + offset),
-          doc.resolve($from.pos + offset + node.nodeSize)
-        )
-      )
-    })
-    super($to, $to, ranges)
-
+    super($to, $to)
     this.$startNode = $from
     this.$endNode = $to
   }
