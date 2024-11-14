@@ -154,10 +154,6 @@ export function buildPluginState(
     }
     if (isSectionNode(node)) {
       const categoryID = node.attrs.category
-      if (isSubsection(categoryID)) {
-        return false
-      }
-
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
       const group = isInBackmatter($pos) ? 'backmatter' : 'body'
@@ -174,6 +170,7 @@ export function buildPluginState(
           )
         )
       )
+      return false
     }
   })
 
