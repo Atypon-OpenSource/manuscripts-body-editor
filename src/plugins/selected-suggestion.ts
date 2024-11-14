@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import {
+  CHANGE_STATUS,
+  TrackedAttrs,
+  TrackedChange,
+} from '@manuscripts/track-changes-plugin'
 import {
   DataTrackedAttrs,
   ManuscriptEditorState,
@@ -25,6 +29,11 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
+import {
+  InlineNodesSelection,
+  isInlineNodesSelection,
+  pointToInlineChanges,
+} from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -75,6 +84,16 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
+  if (isInlineNodesSelection(selection)) {
+    return buildInlineNodesDecoration(
+      state.doc,
+      selection as InlineNodesSelection
+    )
+  }
+  const inlineChange = pointToInlineChanges(state)
+  if (inlineChange) {
+    return buildInlineChangeDecoration(state.doc, inlineChange)
+  }
   const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
   if (!$pos) {
     return EMPTY
@@ -170,6 +189,28 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
     suggestion,
     decorations: DecorationSet.create(doc, [decoration]),
   }
+}
+
+const buildInlineNodesDecoration = (
+  doc: ManuscriptNode,
+  selection: InlineNodesSelection
+) => {
+  const from = selection.$startNode.pos
+  const to = selection.$endNode.pos
+  const decoration = Decoration.inline(from, to, {
+    class: 'selected-suggestion',
+  })
+  return { decorations: DecorationSet.create(doc, [decoration]) }
+}
+
+const buildInlineChangeDecoration = (
+  doc: ManuscriptNode,
+  inlineChange: TrackedChange
+) => {
+  const decoration = Decoration.inline(inlineChange.from, inlineChange.to, {
+    class: 'selected-suggestion',
+  })
+  return { decorations: DecorationSet.create(doc, [decoration]) }
 }
 
 const trackedMarkTypes = new Set([
