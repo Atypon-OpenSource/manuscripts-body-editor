@@ -20,7 +20,6 @@ import { EditorView } from 'prosemirror-view'
 
 import { handleTableSlice, updateSliceWithFullTableContent } from './table'
 
-
 // TODO: checking the ability to remove the following logic, after the following ticket LEAN-4118 is resolved
 export const transformCopied = (slice: Slice, view: EditorView): Slice => {
   const { state } = view
