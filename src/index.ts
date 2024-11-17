@@ -39,3 +39,9 @@ export { objectsKey as objectsPluginKey } from './plugins/objects'
 export { footnotesKey as footnotesPluginKey } from './plugins/footnotes'
 export { bibliographyKey as bibliographyPluginKey } from './plugins/bibliography'
 export { metadata, BibliographyItemAttrs } from './lib/references'
+export {
+  authorLabel,
+  affiliationLabel,
+  AffiliationAttrs,
+  ContributorAttrs,
+} from './lib/authors'
