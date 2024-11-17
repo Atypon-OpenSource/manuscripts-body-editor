@@ -43,11 +43,10 @@ export default () => {
       const tr = newState.tr
       newState.doc.descendants((node, pos, parent) => {
         if (
+          !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent) ||
-          !node.type.spec.attrs ||
-          !('id' in node.type.spec.attrs)
+          isManuscriptNode(parent)
         ) {
           return
         }
