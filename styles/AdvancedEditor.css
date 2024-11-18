@@ -605,6 +605,9 @@ span.selected-suggestion,
   text-decoration: line-through;
 }
 
+.tracking-enabled .ProseMirror .equation.deleted {
+  display: flex;
+}
 
 .tracking-enabled .equation.deleted:after {
   content: '';
@@ -614,7 +617,6 @@ span.selected-suggestion,
   border-top: 1px solid red;
   top: calc(50% + 1px);
 }
-
 
 .tracking-enabled .ProseMirror .footnote.deleted::before,
 .tracking-enabled .ProseMirror .footnote.deleted {
