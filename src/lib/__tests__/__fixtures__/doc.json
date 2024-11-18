@@ -1,7 +1,7 @@
 {
   "type": "manuscript",
   "attrs": {
-    "id": "MPManuscript:test-manuscript",
+    "id": "manuscript",
     "doi": "",
     "prototype": "",
     "primaryLanguageCode": "",
@@ -11,7 +11,7 @@
     {
       "type": "title",
       "attrs": {
-        "id": "MPTitles:9213E784-4F57-4BE8-B6DF-945AC1A05CE2",
+        "id": "titles",
         "placeholder": "Insert title here...",
         "dataTracked": null
       }
@@ -22,29 +22,9 @@
       "attrs": { "id": "" },
       "content": [
         {
-          "type": "toc_section",
-          "attrs": { "id": "MPSection:model-2", "dataTracked": null },
-          "content": [
-            {
-              "type": "section_title",
-              "attrs": { "dataTracked": null },
-              "content": [{ "type": "text", "text": "Table of Contents" }]
-            },
-            {
-              "type": "toc_element",
-              "attrs": {
-                "id": "MPTOCElement:model-1",
-                "contents": "<div>Table of Contents</div>",
-                "paragraphStyle": "",
-                "dataTracked": null
-              }
-            }
-          ]
-        },
-        {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-3",
+            "id": "empty-section-1",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -60,7 +40,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-4",
+            "id": "empty-section-2",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -76,7 +56,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-5",
+            "id": "empty-section-3",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -92,7 +72,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-8",
+            "id": "section-with-empty-paragraphs-1",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -111,8 +91,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-6",
-                "paragraphStyle": "",
+                "id": "empty-paragraph-1",
                 "placeholder": "",
                 "dataTracked": null
               }
@@ -120,8 +99,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-7",
-                "paragraphStyle": "",
+                "id": "empty-paragraph-2",
                 "placeholder": "",
                 "dataTracked": null
               }
@@ -131,7 +109,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-11",
+            "id": "section-with-empty-paragraphs-2",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -150,8 +128,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-9",
-                "paragraphStyle": "",
+                "id": "empty-paragraph-3",
                 "placeholder": "",
                 "dataTracked": null
               }
@@ -159,8 +136,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-10",
-                "paragraphStyle": "",
+                "id": "empty-paragraph-4",
                 "placeholder": "",
                 "dataTracked": null
               }
@@ -170,7 +146,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-14",
+            "id": "section-with-empty-paragraphs-3",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -189,8 +165,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-12",
-                "paragraphStyle": "",
+                "id": "empty-paragraph-5",
                 "placeholder": "",
                 "dataTracked": null
               }
@@ -198,7 +173,7 @@
             {
               "type": "paragraph",
               "attrs": {
-                "id": "MPParagraphElement:model-13",
+                "id": "empty-paragraph-6",
                 "paragraphStyle": "",
                 "placeholder": "",
                 "dataTracked": null
@@ -209,7 +184,7 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-16",
+            "id": "section-with-list",
             "category": "",
             "titleSuppressed": false,
             "dataTracked": null
@@ -225,8 +200,7 @@
             {
               "type": "list",
               "attrs": {
-                "id": "MPListElement:model-15",
-                "paragraphStyle": "",
+                "id": "list",
                 "dataTracked": null,
                 "listStyleType": "order"
               },
@@ -239,7 +213,6 @@
                       "type": "paragraph",
                       "attrs": {
                         "id": "",
-                        "paragraphStyle": "",
                         "placeholder": "",
                         "dataTracked": null
                       },
@@ -265,9 +238,8 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-19",
+            "id": "section-with-figure",
             "category": "",
-            "titleSuppressed": false,
             "dataTracked": null
           },
           "content": [
@@ -281,20 +253,15 @@
             {
               "type": "figure_element",
               "attrs": {
-                "figureLayout": "",
-                "figureStyle": "",
-                "id": "MPFigureElement:model-18",
+                "id": "figure-element",
                 "label": "",
-                "sizeFraction": 0,
-                "suppressCaption": false,
-                "suppressTitle": true,
                 "dataTracked": null
               },
               "content": [
                 {
                   "type": "figure",
                   "attrs": {
-                    "id": "MPFigure:model-17",
+                    "id": "figure",
                     "src": "",
                     "contentType": "",
                     "dataTracked": null
@@ -339,9 +306,8 @@
         {
           "type": "section",
           "attrs": {
-            "id": "MPSection:model-22",
+            "id": "section-with-table",
             "category": "",
-            "titleSuppressed": false,
             "dataTracked": null
           },
           "content": [
@@ -355,15 +321,8 @@
             {
               "type": "table_element",
               "attrs": {
-                "id": "MPTableElement:model-21",
-                "paragraphStyle": "",
-                "tableStyle": "",
+                "id": "table-element",
                 "label": "",
-                "suppressCaption": false,
-                "suppressTitle": true,
-                "suppressFooter": false,
-                "suppressHeader": false,
-                "expandListing": false,
                 "dataTracked": null
               },
               "content": [
@@ -389,7 +348,7 @@
                 },
                 {
                   "type": "table",
-                  "attrs": { "id": "MPTable:model-20", "dataTracked": null },
+                  "attrs": { "id": "table", "dataTracked": null },
                   "content": [
                     { "type": "table_row", "attrs": { "dataTracked": null } }
                   ]
