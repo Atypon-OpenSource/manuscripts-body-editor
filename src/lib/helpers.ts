@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorState,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { EditorView } from 'prosemirror-view'
 
@@ -68,55 +64,42 @@ export const mergeSimilarItems =
     }, [])
   }
 
-const scrollToElement = (element: HTMLElement) => {
-  const elementRect = element.getBoundingClientRect()
-  const editorBodyElement = document.querySelector(
-    '.editor-body'
-  ) as HTMLElement
-  const parentRect = editorBodyElement.getBoundingClientRect()
-
-  if (elementRect.bottom > window.innerHeight || elementRect.top < 150) {
-    let childTopOffset = elementRect.top - parentRect.top
-    // to center the element vertically within the viewport.
-    childTopOffset =
-      childTopOffset - (window.innerHeight - elementRect.height) / 2
-
-    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
-    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
-  }
-}
-
-export const handleScrollToSelectedElement = (
-  view: EditorView,
-  targetHtmlElement?: HTMLElement
-) => {
+export const handleScrollToBibliographyItem = (view: EditorView) => {
   const tr = view.state.tr
+
   const node = tr.doc.nodeAt(tr.selection.$from.pos)
 
   if (!node) {
     return false
   }
 
-  // Check if the selection is a bibliography item
-  if (node.type === schema.nodes.bibliography_item) {
-    const bibliographyItemElement = document.querySelector(
-      `[id="${node.attrs.id}"]`
-    ) as HTMLElement
+  const bibliographyItemElement = document.querySelector(
+    `[id="${node.attrs.id}"]`
+  ) as HTMLElement
 
-    if (bibliographyItemElement) {
-      scrollToElement(bibliographyItemElement)
-      return true
-    }
+  if (!bibliographyItemElement) {
+    return false
+  }
+  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
+  const editorBodyElement = document.querySelector(
+    '.editor-body'
+  ) as HTMLElement
+  const parentRect = editorBodyElement.getBoundingClientRect()
+
+  if (
+    bibliographyItemRect.bottom > window.innerHeight ||
+    bibliographyItemRect.top < 150
+  ) {
+    let childTopOffset = bibliographyItemRect.top - parentRect.top
+    // to center the element vertically within the viewport.
+    childTopOffset =
+      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
+
+    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
+    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
   }
 
-  // If targetHtmlElement is passed, handle scrolling to that element (e.g., comment)
-  if (targetHtmlElement) {
-    scrollToElement(targetHtmlElement)
-    return true
-  }
-
-  // Return false if neither a bibliography item nor targetHtmlElement is found
-  return false
+  return true
 }
 
 // Find the boundaries of the intended word based on the current cursor position
