@@ -178,10 +178,6 @@
   color: inherit;
 }
 
-.ProseMirror .cross-reference.deleted {
-  text-decoration: line-through;
-}
-
 .ProseMirror .bib-item.ProseMirror-selectednode,
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {

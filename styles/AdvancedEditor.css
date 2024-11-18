@@ -419,11 +419,6 @@ span.comment-marker {
   border-color: #bce7f6;
 }
 
-.keywords .keyword.deleted,
-.keywords .keyword.deleted {
-  text-decoration: line-through;
-}
-
 .keywords .keyword .track-changes--control {
   top: 0;
 }
@@ -564,10 +559,17 @@ span.selected-suggestion,
   margin: 16px 0;
 }
 
-.ProseMirror .inserted,
-.ProseMirror [data-track-op='insert'][data-track-status='pending'] .block,
-.ProseMirror [data-track-op='node_split'][data-track-status='pending'] .block,
-.ProseMirror
+.tracking-enabled .ProseMirror .inserted,
+.tracking-enabled
+  .ProseMirror
+  [data-track-op='insert'][data-track-status='pending']
+  .block,
+.tracking-enabled
+  .ProseMirror
+  [data-track-op='node_split'][data-track-status='pending']
+  .block,
+.tracking-enabled
+  .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
   .block {
   background: var(--inserted-pending-bg-color);
@@ -582,29 +584,50 @@ span.selected-suggestion,
   color: var(--common-color) !important;
 }
 
-.ProseMirror .set_attrs,
-.ProseMirror [data-track-op='set_attrs'] {
+.tracking-enabled .ProseMirror .set_attrs,
+.tracking-enabled .ProseMirror [data-track-op='set_attrs'] {
   background: var(--inserted-pending-bg-color);
   text-decoration: none;
 }
 
 .ProseMirror .deleted::before,
-.ProseMirror .deleted {
+.ProseMirror .deleted,
+.ProseMirror p .equation.deleted {
+  display: none;
+}
+
+.tracking-enabled .ProseMirror .deleted::before,
+.tracking-enabled .ProseMirror .deleted,
+.tracking-enabled .ProseMirror p .equation.deleted {
+  display: inline;
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
 }
-.equation.deleted {
-  position: relative;
-}
 
-.equation.deleted:after {
+
+.tracking-enabled .equation.deleted:after {
   content: '';
   width: 100%;
   left: 0;
   position: absolute;
   border-top: 1px solid red;
   top: calc(50% + 1px);
+}
+
+
+.tracking-enabled .ProseMirror .footnote.deleted::before,
+.tracking-enabled .ProseMirror .footnote.deleted {
+  display: flex;
+}
+
+.tracking-enabled .subtree .deleted {
+  display: inline;
+  text-decoration: line-through;
+}
+
+.subtree .deleted {
+  display: none;
 }
 
 .ProseMirror .inserted:has(.selected-suggestion),
@@ -649,20 +672,35 @@ span.selected-suggestion,
   display: none;
 }
 
+.ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: none;
+}
+.tracking-enabled
+  .ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: grid;
+}
+
 .contributor[data-track-status='pending'][data-track-op='delete'],
 .affiliation[data-track-status='pending'][data-track-op='delete'] {
+  display: none;
+}
+
+.tracking-enabled
+  .contributor[data-track-status='pending'][data-track-op='delete'],
+.tracking-enabled
+  .affiliation[data-track-status='pending'][data-track-op='delete'] {
+  display: inline-flex;
   text-decoration: line-through;
   color: var(--deleted-color);
   background-color: var(--deleted-pending-bg-color);
 }
 
-.contributor[data-track-op='delete']:not([data-track-status='rejected']),
-.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
-  text-decoration: line-through;
-}
-
-.contributor[data-track-status='pending'][data-track-op='insert'],
-.affiliation[data-track-status='pending'][data-track-op='insert'] {
+.tracking-enabled
+  .contributor[data-track-status='pending'][data-track-op='insert'],
+.tracking-enabled
+  .affiliation[data-track-status='pending'][data-track-op='insert'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
