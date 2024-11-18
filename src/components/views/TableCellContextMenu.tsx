@@ -56,14 +56,21 @@ const getSelectedCellsCount = (state: EditorState) => {
 }
 
 const isHeaderCellSelected = (state: EditorState) => {
+  if (state.selection instanceof CellSelection) {
+    const anchorNode = state.selection.$anchorCell.node(
+      state.selection.$anchorCell.depth
+    ).firstChild
+    const headNode = state.selection.$headCell.node(
+      state.selection.$headCell.depth
+    ).firstChild
+    return (
+      anchorNode?.type === schema.nodes.table_header ||
+      headNode?.type === schema.nodes.table_header
+    )
+  }
+
   return (
-    state.doc.nodeAt(state.selection.from)?.type ===
-      schema.nodes.table_header ||
-    (state.selection instanceof CellSelection &&
-      (state.selection.$anchorCell.node(state.selection.$anchorCell.depth)
-        .firstChild?.type === schema.nodes.table_header ||
-        state.selection.$headCell.node(state.selection.$headCell.depth)
-          .firstChild?.type === schema.nodes.table_header))
+    state.doc.nodeAt(state.selection.from)?.type === schema.nodes.table_header
   )
 }
 
