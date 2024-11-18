@@ -17,7 +17,7 @@
 import { InlineEquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -37,11 +37,6 @@ export class InlineEquationView
       ...getChangeClasses(this.node.attrs.dataTracked),
     ]
     this.dom.className = classes.join(' ')
-    if (isDeleted(this.node)) {
-      this.dom.classList.add('deleted')
-    } else {
-      this.dom.classList.remove('deleted')
-    }
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }
