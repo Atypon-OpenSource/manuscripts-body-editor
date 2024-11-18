@@ -43,7 +43,6 @@ import section_category from '../plugins/section-category'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
-import toc from '../plugins/toc'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -65,7 +64,6 @@ export default (props: EditorProps) => {
     elements(),
     persist(),
     sections(),
-    toc(),
     bibliography(props),
     objects(),
     affiliations(),

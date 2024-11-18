@@ -49,7 +49,6 @@ import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
-import tocElement from '../views/toc_element_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps, dispatch: Dispatch) => {
@@ -87,7 +86,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     table_cell: tableCell(props),
     table_header: tableCell(props),
     table_element_footer: tableElementFooter(props),
-    toc_element: tocElement(props),
     comments: empty('comments'),
     supplements: empty('supplements'),
     author_notes: authorNotes(props, dispatch),
