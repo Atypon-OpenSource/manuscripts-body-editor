@@ -64,39 +64,42 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToBibliographyItem = (view: EditorView) => {
+export const handleScrollToSelectedComment = (view: EditorView) => {
   const tr = view.state.tr
-
   const node = tr.doc.nodeAt(tr.selection.$from.pos)
 
   if (!node) {
     return false
   }
 
-  const bibliographyItemElement = document.querySelector(
+  const targetComment = document.querySelector(
     `[id^="${node.attrs.id}-comment-marker"]`
   ) as HTMLElement
 
-  if (!bibliographyItemElement) {
+  if (!targetComment) {
     return false
   }
-  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
+
   const editorBodyElement = document.querySelector(
     '.editor-body'
   ) as HTMLElement
-  const parentRect = editorBodyElement.getBoundingClientRect()
 
-  if (
-    bibliographyItemRect.bottom > window.innerHeight ||
-    bibliographyItemRect.top < 150
-  ) {
-    let childTopOffset = bibliographyItemRect.top - parentRect.top
-    // to center the element vertically within the viewport.
-    childTopOffset =
-      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
+  if (!editorBodyElement) {
+    return false
+  }
 
-    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
-    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
+  const { top: targetTop, height: targetHeight } =
+    targetComment.getBoundingClientRect()
+  const { top: parentTop } = editorBodyElement.getBoundingClientRect()
+
+  // Check if the target is outside the viewport
+  if (targetTop < 150 || targetTop + targetHeight > window.innerHeight) {
+    const offset =
+      targetTop - parentTop - (window.innerHeight - targetHeight) / 2
+    editorBodyElement.scrollTo({
+      top: editorBodyElement.scrollTop + offset,
+      behavior: 'smooth',
+    })
   }
 
   return true

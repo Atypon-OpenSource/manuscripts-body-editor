@@ -29,7 +29,7 @@ import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
-import { handleScrollToBibliographyItem } from '../lib/helpers'
+import { handleScrollToSelectedComment } from '../lib/helpers'
 import { handlePaste, transformPasted } from '../lib/paste'
 import { INIT_META } from '../lib/plugins'
 import { PopperManager } from '../lib/popper'
@@ -95,7 +95,7 @@ export const createEditorView = (
     transformPasted,
     handlePaste,
     clipboardParser,
-    handleScrollToSelection: handleScrollToBibliographyItem,
+    handleScrollToSelection: handleScrollToSelectedComment,
     transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {
       // This to prevent changing editor selection when clicking on table cell context menu button
