@@ -74,7 +74,7 @@ export const handleScrollToBibliographyItem = (view: EditorView) => {
   }
 
   const bibliographyItemElement = document.querySelector(
-    `[id="${node.attrs.id}"]`
+    `[id^="${node.attrs.id}-comment-marker"]`
   ) as HTMLElement
 
   if (!bibliographyItemElement) {
