@@ -22,7 +22,7 @@ import {
 } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
-import { Command, EditorState } from 'prosemirror-state'
+import { Command, EditorState, TextSelection } from 'prosemirror-state'
 import {
   CellSelection,
   deleteColumn,
@@ -35,7 +35,12 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addColumns, addRows, mergeCellsWithSpace } from '../../commands'
+import {
+  addColumns,
+  addHeaderRow,
+  addRows,
+  mergeCellsWithSpace,
+} from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -53,6 +58,30 @@ const getSelectedCellsCount = (state: EditorState) => {
     rows: rows > 1 ? `${rows} rows` : `row`,
     columns: columns > 1 ? `${columns} columns` : `column`,
   }
+}
+
+const getAddHeaderDirection = (state: EditorState) => {
+  const { selection } = state
+  if (selection instanceof CellSelection) {
+    const rect = selectedRect(state)
+    const rows = rect.bottom - rect.top
+    if (rows > 1) {
+      return undefined
+    }
+    return (
+      (state.doc.nodeAt(selection.$anchor.pos)?.type ===
+        schema.nodes.table_header &&
+        'below') ||
+      'above'
+    )
+  } else if (
+    selection instanceof TextSelection &&
+    state.doc.nodeAt(state.selection.from)?.type === schema.nodes.table_header
+  ) {
+    return 'below'
+  }
+
+  return 'above'
 }
 
 const ColumnChangeWarningDialog: React.FC<{
@@ -99,6 +128,7 @@ export const ContextMenu: React.FC<{
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
+  const headerDir = getAddHeaderDirection(view.state)
 
   return (
     <MenuDropdownList className={'table-ctx'}>
@@ -118,8 +148,16 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
+      <ActionButton
+        disabled={!headerDir}
+        onClick={() => headerDir && runCommand(addHeaderRow(headerDir))}
+      >
+        <PlusIcon /> Insert header row {headerDir || 'above'}
+      </ActionButton>
+      <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete {rows}
+        <GrayDeleteIcon /> Delete {headerDir === 'below' ? 'header ' : ''}
+        {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
