@@ -34,7 +34,7 @@ export default () => {
         // Check if document or targets have changed
         const oldTargets = objectsKey.getState(oldState)
         const newTargets = objectsKey.getState(newState)
-        if (tr.docChanged || !isEqual(oldTargets, newTargets)) {
+        if (tr.docChanged && !isEqual(oldTargets, newTargets)) {
           const decorations = createDecorations(tr.doc)
           decoSet = DecorationSet.create(tr.doc, decorations)
         }

@@ -53,23 +53,21 @@ export class CrossReferenceView
   }
 
   public updateContents = () => {
-    window.setTimeout(() => {
-      const targets = objectsKey.getState(this.view.state) as Map<
-        string,
-        Target
-      >
-      const attrs = this.node.attrs
-      const classes = [
-        'cross-reference',
-        ...getChangeClasses(attrs.dataTracked),
-      ]
-      this.dom.className = classes.join(' ')
+    const targets = objectsKey.getState(this.view.state) as Map<
+      string,
+      Target
+    >
+    const attrs = this.node.attrs
+    const classes = [
+      'cross-reference',
+      ...getChangeClasses(attrs.dataTracked),
+    ]
+    this.dom.className = classes.join(' ')
 
-      const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
-      // attrs.label contains custom text inserted at cross-reference creation time
-      this.dom.textContent = attrs.label || label || ''
-      this.dom.addEventListener('click', this.handleClick)
-    }, 0)
+    const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
+    // attrs.label contains custom text inserted at cross-reference creation time
+    this.dom.textContent = attrs.label || label || ''
+    this.dom.addEventListener('click', this.handleClick)
   }
 
   public initialise = () => {
