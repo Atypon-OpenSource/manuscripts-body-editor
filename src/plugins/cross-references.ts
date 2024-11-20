@@ -14,44 +14,57 @@
  * limitations under the License.
  */
 
-import { Plugin } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
-import { schema } from '@manuscripts/transform';
+import { schema } from '@manuscripts/transform'
+import { isEqual } from 'lodash'
+import { Plugin } from 'prosemirror-state'
+import { Decoration, DecorationSet } from 'prosemirror-view'
+
+import { objectsKey } from './objects'
+import { Node } from 'prosemirror-model'
 
 export default () => {
   return new Plugin({
     state: {
       init(_, state) {
         // Initialize decorations with an empty set
-        return DecorationSet.empty;
+        return DecorationSet.empty
       },
-      apply(tr, oldState) {
-        let decoSet = oldState;
-
-        if (tr.docChanged) {
-          const decorations: Decoration[] = [];
-          tr.doc.descendants((node, pos) => {
-            if (node.type === schema.nodes.cross_reference) {
-              // Create a decoration that adds a class to the node
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'updated-' + Date.now(), // Add a unique class to the decoration
-                })
-              );
-            }
-          });
-
-          // Create a new decoration set with the collected decorations
-          decoSet = DecorationSet.create(tr.doc, decorations);
+      apply(tr, oldDecorationSet, oldState, newState) {
+        let decoSet = oldDecorationSet
+        // Check if document or targets have changed
+        const oldTargets = objectsKey.getState(oldState)
+        const newTargets = objectsKey.getState(newState)
+        if (tr.docChanged || !isEqual(oldTargets, newTargets)) {
+          const decorations = createDecorations(tr.doc)
+          decoSet = DecorationSet.create(tr.doc, decorations)
         }
 
-        return decoSet;
+        return decoSet
       },
     },
     props: {
       decorations(state) {
-        return this.getState(state);
+        return this.getState(state)
       },
     },
-  });
+  })
+}
+
+/**
+ * Helper function to create decorations for specific node types.
+ * @param {Node} doc - The document to scan.
+ * @returns {Decoration[]} - An array of decorations.
+ */
+function createDecorations(doc: Node): Decoration[] {
+  const decorations: Decoration[] = []
+  doc.descendants((node, pos) => {
+    if (node.type === schema.nodes.cross_reference) {
+      decorations.push(
+        Decoration.node(pos, pos + node.nodeSize, {
+          class: `decorated-${Date.now()}`,
+        })
+      )
+    }
+  })
+  return decorations
 }
