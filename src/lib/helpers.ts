@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
+import {
+  ManuscriptEditorState,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { EditorView } from 'prosemirror-view'
 
@@ -64,35 +68,57 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToSelectedComment = (view: EditorView) => {
+export const handleScrollToSelectedTarget = (view: EditorView) => {
   const tr = view.state.tr
-  const node = tr.doc.nodeAt(tr.selection.$from.pos)
+  let node = null
+
+  node = tr.doc.nodeAt(tr.selection.$from.pos)
 
   if (!node) {
     return false
   }
 
-  const targetComment = document.querySelector(
-    `[id^="${node.attrs.id}-comment-marker"]`
-  ) as HTMLElement
+  let targetElement: HTMLElement | null = null
 
-  if (!targetComment) {
+  // Handle bibliography_item node type
+  if (node.type === schema.nodes.bibliography_item) {
+    targetElement = document.querySelector(
+      `[id="${node.attrs.id}"]`
+    ) as HTMLElement
+  } else {
+    // find idSelector, either from node or comment/highlight marker
+    let idSelector = node.attrs.id
+
+    // If idSelector is not found,  find the marker ID ( for ex: system comments)
+    if (!idSelector) {
+      idSelector = findCommentOrHighlightMarkerId(view)
+    }
+
+    if (!idSelector) {
+      return false
+    }
+
+    targetElement = document.querySelector(
+      `[id="${idSelector}"]`
+    ) as HTMLElement
+  }
+
+  if (!targetElement) {
     return false
   }
 
   const editorBodyElement = document.querySelector(
     '.editor-body'
   ) as HTMLElement
-
   if (!editorBodyElement) {
     return false
   }
 
   const { top: targetTop, height: targetHeight } =
-    targetComment.getBoundingClientRect()
+    targetElement.getBoundingClientRect()
   const { top: parentTop } = editorBodyElement.getBoundingClientRect()
 
-  // Check if the target is outside the viewport
+  // Check if the target element is outside the viewport and scroll if necessary
   if (targetTop < 150 || targetTop + targetHeight > window.innerHeight) {
     const offset =
       targetTop - parentTop - (window.innerHeight - targetHeight) / 2
@@ -103,6 +129,20 @@ export const handleScrollToSelectedComment = (view: EditorView) => {
   }
 
   return true
+}
+
+// Helper function to find the comment or highlight marker ID if available
+const findCommentOrHighlightMarkerId = (view: EditorView): string | null => {
+  const tr = view.state.tr
+  const parentNode = view.domAtPos(tr.selection.$to.pos).node
+  const parentElement = parentNode as HTMLElement
+
+  // Look for either a comment marker or a highlight marker
+  const marker = parentElement.querySelector(
+    'span.comment-marker, span.highlight-marker'
+  )
+
+  return marker ? marker.id : null
 }
 
 // Find the boundaries of the intended word based on the current cursor position
