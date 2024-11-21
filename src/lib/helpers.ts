@@ -70,9 +70,8 @@ export const mergeSimilarItems =
 
 export const handleScrollToSelectedTarget = (view: EditorView) => {
   const tr = view.state.tr
-  let node = null
 
-  node = tr.doc.nodeAt(tr.selection.$from.pos)
+  const node = tr.doc.nodeAt(tr.selection.$from.pos)
 
   if (!node) {
     return false
