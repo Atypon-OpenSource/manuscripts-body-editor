@@ -605,6 +605,9 @@
   display: grid;
   grid-template-columns: auto;
 }
+.ProseMirror .block-container.block-section section {
+  position: relative;
+}
 
 .ProseMirror .block-container:not(.block-section):hover {
   z-index: 2;
