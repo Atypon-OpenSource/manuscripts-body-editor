@@ -17,12 +17,13 @@
 import { InlineEquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { isDeleted } from '../lib/track-changes-utils'
+import { getChangeClasses } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class InlineEquationView
-  extends BaseNodeView<InlineEquationNode>
+  extends BaseNodeView<Trackable<InlineEquationNode>>
   implements ManuscriptNodeView
 {
   public initialise = () => {
@@ -31,11 +32,11 @@ export class InlineEquationView
   }
 
   public updateContents = () => {
-    if (isDeleted(this.node)) {
-      this.dom.classList.add('deleted')
-    } else {
-      this.dom.classList.remove('deleted')
-    }
+    const classes = [
+      'equation',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
+    this.dom.className = classes.join(' ')
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }
@@ -44,7 +45,6 @@ export class InlineEquationView
 
   protected createDOM = () => {
     this.dom = document.createElement('span')
-    this.dom.classList.add('equation')
     this.dom.setAttribute('id', this.node.attrs.id)
   }
 }
