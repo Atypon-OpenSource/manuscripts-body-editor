@@ -35,7 +35,12 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addColumns, addRows, mergeCellsWithSpace } from '../../commands'
+import {
+  addColumns,
+  addHeaderRow,
+  addRows,
+  mergeCellsWithSpace,
+} from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -72,6 +77,16 @@ const isHeaderCellSelected = (state: EditorState) => {
   return (
     state.doc.nodeAt(state.selection.from)?.type === schema.nodes.table_header
   )
+}
+
+const canAddTableHeader = (state: EditorState) => {
+  const { selection } = state
+  if (selection instanceof CellSelection) {
+    const rect = selectedRect(state)
+    const rows = rect.bottom - rect.top
+    return rows === 1
+  }
+  return true
 }
 
 const ColumnChangeWarningDialog: React.FC<{
@@ -114,6 +129,7 @@ export const ContextMenu: React.FC<{
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
   const { rows, columns } = getSelectedCellsCount(view.state)
+  const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
   return (
     <MenuDropdownList className={'table-ctx'}>
@@ -133,8 +149,16 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
+      <ActionButton
+        disabled={!canAddTableHeader(view.state)}
+        onClick={() => runCommand(addHeaderRow(headerPosition))}
+      >
+        <PlusIcon /> Insert header row {headerPosition}
+      </ActionButton>
+      <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete {rows}
+        <GrayDeleteIcon /> Delete
+        {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
