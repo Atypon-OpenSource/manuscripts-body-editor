@@ -266,14 +266,14 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer>
-        <ModalHeader>
+      <ModalContainer className="modal-container">
+        <ModalHeader className="modal-header">
           <CloseButton
             onClick={() => handleClose()}
             data-cy="modal-close-button"
           />
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className="modal-body">
           <ModalSidebar data-cy="authors-sidebar">
             <ModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>

@@ -15,6 +15,7 @@
  */
 import { Form, useFormikContext } from 'formik'
 import React, { PropsWithChildren, useEffect } from 'react'
+import styled from 'styled-components'
 
 export interface ChangeHandlingFormProps<Values> {
   onChange: (values: Values) => void
@@ -33,5 +34,12 @@ export const ChangeHandlingForm = <Values,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onChange, values])
 
-  return <Form>{props.children}</Form>
+  return <FlexForm>{props.children}</FlexForm>
 }
+
+export const FlexForm = styled(Form)`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`
