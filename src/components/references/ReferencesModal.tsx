@@ -274,7 +274,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           },
         }}
       />
-      <ReferencesModalContainer>
+      <ReferencesModalContainer className={'references-editor'}>
         <ModalHeader>
           <CloseButton onClick={onCancel} />
         </ModalHeader>
