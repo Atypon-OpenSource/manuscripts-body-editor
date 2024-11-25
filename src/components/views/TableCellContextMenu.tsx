@@ -53,11 +53,7 @@ const getSelectedCellsCount = (state: EditorState) => {
     selectedCells.rows = rect.bottom - rect.top
     selectedCells.columns = rect.right - rect.left
   }
-  const { rows, columns } = selectedCells
-  return {
-    rows: rows > 1 ? `${rows} rows` : `row`,
-    columns: columns > 1 ? `${columns} columns` : `column`,
-  }
+  return selectedCells
 }
 
 const isHeaderCellSelected = (state: EditorState) => {
@@ -77,16 +73,6 @@ const isHeaderCellSelected = (state: EditorState) => {
   return (
     state.doc.nodeAt(state.selection.from)?.type === schema.nodes.table_header
   )
-}
-
-const canAddTableHeader = (state: EditorState) => {
-  const { selection } = state
-  if (selection instanceof CellSelection) {
-    const rect = selectedRect(state)
-    const rows = rect.bottom - rect.top
-    return rows === 1
-  }
-  return true
 }
 
 const ColumnChangeWarningDialog: React.FC<{
@@ -128,7 +114,9 @@ export const ContextMenu: React.FC<{
 
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
-  const { rows, columns } = getSelectedCellsCount(view.state)
+  const count = getSelectedCellsCount(view.state)
+  const rows = count.rows > 1 ? `${count.rows} rows` : `row`
+  const columns = count.columns > 1 ? `${count.columns} columns` : `column`
   const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
   return (
@@ -150,7 +138,7 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       <Separator />
       <ActionButton
-        disabled={!canAddTableHeader(view.state)}
+        disabled={count.rows !== 1}
         onClick={() => runCommand(addHeaderRow(headerPosition))}
       >
         <PlusIcon /> Insert header row {headerPosition}
