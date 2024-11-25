@@ -15,8 +15,8 @@
  */
 import {
   CHANGE_STATUS,
+  InlineAdjacentChanges,
   TrackedAttrs,
-  TrackedChange,
 } from '@manuscripts/track-changes-plugin'
 import {
   DataTrackedAttrs,
@@ -29,11 +29,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
-import {
-  InlineNodesSelection,
-  isInlineNodesSelection,
-  pointToInlineChanges,
-} from '../selection'
+import { pointToInlineChanges } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -84,12 +80,6 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
-  if (isInlineNodesSelection(selection)) {
-    return buildInlineNodesDecoration(
-      state.doc,
-      selection as InlineNodesSelection
-    )
-  }
   const inlineChange = pointToInlineChanges(state)
   if (inlineChange) {
     return buildInlineChangeDecoration(state.doc, inlineChange)
@@ -191,26 +181,17 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   }
 }
 
-const buildInlineNodesDecoration = (
-  doc: ManuscriptNode,
-  selection: InlineNodesSelection
-) => {
-  const from = selection.$startNode.pos
-  const to = selection.$endNode.pos
-  const decoration = Decoration.inline(from, to, {
-    class: 'selected-suggestion',
-  })
-  return { decorations: DecorationSet.create(doc, [decoration]) }
-}
-
 const buildInlineChangeDecoration = (
   doc: ManuscriptNode,
-  inlineChange: TrackedChange
+  inlineChange: InlineAdjacentChanges
 ) => {
   const decoration = Decoration.inline(inlineChange.from, inlineChange.to, {
     class: 'selected-suggestion',
   })
-  return { decorations: DecorationSet.create(doc, [decoration]) }
+  return {
+    decorations: DecorationSet.create(doc, [decoration]),
+    suggestion: inlineChange.nodes.at(0)?.dataTracked,
+  }
 }
 
 const trackedMarkTypes = new Set([

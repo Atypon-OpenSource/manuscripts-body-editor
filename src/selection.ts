@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+import {
+  InlineAdjacentChanges,
+  trackChangesPluginKey,
+} from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
-import { Selection, TextSelection } from 'prosemirror-state'
+import { Selection } from 'prosemirror-state'
 import { Mappable } from 'prosemirror-transform'
 
+import { isTextSelection } from './commands'
+
 /**
- * This selection will preserve location of first and last inline node,
- * to help us for grouping them in selected-suggestion plugin without moving selection cursor
+ * Selecting multiple nodes without moving selection cursor
  */
-export class InlineNodesSelection extends Selection {
+export class NodesSelection extends Selection {
   public $startNode: ResolvedPos
   public $endNode: ResolvedPos
 
@@ -35,7 +39,7 @@ export class InlineNodesSelection extends Selection {
 
   eq(selection: Selection): boolean {
     return (
-      selection instanceof InlineNodesSelection &&
+      selection instanceof NodesSelection &&
       selection.$startNode.pos == this.$startNode.pos &&
       selection.$endNode.pos == this.$endNode.pos
     )
@@ -44,7 +48,7 @@ export class InlineNodesSelection extends Selection {
   map(doc: Node, mapping: Mappable): Selection {
     const $from = doc.resolve(mapping.map(this.$startNode.pos))
     const $to = doc.resolve(mapping.map(this.$endNode.pos))
-    return new InlineNodesSelection($from, $to)
+    return new NodesSelection($from, $to)
   }
 
   toJSON(): any {
@@ -56,20 +60,19 @@ export class InlineNodesSelection extends Selection {
   }
 }
 
-export const isInlineNodesSelection = (selection: Selection) =>
-  selection instanceof InlineNodesSelection
-
 export const pointToInlineChanges = (state: ManuscriptEditorState) => {
   const selection = state.selection
-  if (selection instanceof TextSelection && selection.$cursor) {
-    const $cursor = selection.$cursor
+  const $pos = isTextSelection(selection)
+    ? selection.$cursor
+    : selection instanceof NodesSelection && selection.$from
+  if ($pos) {
     return trackChangesPluginKey
       .getState(state)
-      ?.changeSet.changeTree.find(
+      ?.changeSet.groupChanges.find(
         (change) =>
           change.type === 'inline-changes' &&
-          $cursor.pos >= change.from &&
-          $cursor.pos <= change.to
-      )
+          $pos.pos >= change.from &&
+          $pos.pos <= change.to
+      ) as InlineAdjacentChanges
   }
 }
