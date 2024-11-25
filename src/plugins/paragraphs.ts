@@ -27,7 +27,7 @@ export default () => {
 
       const tr = newState.tr
 
-      if (!transactions.some((transaction) => transaction.docChanged)) {
+      if (!transactions.some((tr) => tr.docChanged || tr.getMeta('INIT'))) {
         return null
       }
 

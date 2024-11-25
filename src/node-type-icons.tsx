@@ -45,7 +45,6 @@ const icons: Map<
   [nodes.pullquote_element, OutlinePullQuoteIcon],
   [nodes.section, OutlineSectionIcon],
   [nodes.table_element, OutlineTableIcon],
-  [nodes.toc_section, OutlineSectionIcon],
   [nodes.graphical_abstract_section, OutlineSectionIcon],
   [nodes.footnotes_section, OutlineSectionIcon],
 ])
