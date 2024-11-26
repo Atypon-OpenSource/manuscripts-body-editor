@@ -81,9 +81,7 @@ export const handleScrollToSelectedTarget = (view: EditorView) => {
 
   // Handle bibliography_item node type
   if (node.type === schema.nodes.bibliography_item) {
-    targetElement = document.querySelector(
-      `[id="${node.attrs.id}"]`
-    ) as HTMLElement
+    targetElement = document.getElementById(node.attrs.id) as HTMLElement
   } else {
     // find idSelector, either from node or comment/highlight marker
     let idSelector = node.attrs.id
@@ -97,9 +95,7 @@ export const handleScrollToSelectedTarget = (view: EditorView) => {
       return false
     }
 
-    targetElement = document.querySelector(
-      `[id="${idSelector}"]`
-    ) as HTMLElement
+    targetElement = document.getElementById(idSelector) as HTMLElement
   }
 
   if (!targetElement) {
