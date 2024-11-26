@@ -61,14 +61,14 @@ export class InlineFootnoteView
           },
           icon: 'Edit',
         },
-        // {
-        //   label: 'Scroll to the footnote',
-        //   action: () => {
-        //     this.props.popper.destroy()
-        //     this.scrollToReferenced()
-        //   },
-        //   icon: 'Icon TBD',
-        // }
+        {
+          label: 'Go to footnote',
+          action: () => {
+            this.props.popper.destroy()
+            this.scrollToReferencedFootnote()
+          },
+          icon: 'Scroll',
+        },
       ],
     }
     this.props.popper.show(
@@ -95,6 +95,29 @@ export class InlineFootnoteView
       this.showFootnotesSelector()
     } else {
       this.showContextMenu()
+    }
+  }
+
+  scrollToReferencedFootnote = () => {
+    const state = this.view.state
+    const fn = getFootnotesElementState(state, this.node.attrs.id)
+
+    if (!fn) {
+      return
+    }
+
+    let nodePos: number | undefined = undefined
+
+    for (const [node, pos] of fn.footnotes) {
+      if (node.attrs.id === this.node.attrs.rids[0]) {
+        nodePos = pos
+      }
+    }
+
+    if (nodePos && this.props.dispatch) {
+      const sel = TextSelection.near(this.view.state.doc.resolve(nodePos + 1))
+
+      this.props.dispatch(this.view.state.tr.setSelection(sel).scrollIntoView())
     }
   }
 

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AlertIcon, DeleteIcon } from '@manuscripts/style-guide'
+import { AlertIcon, DeleteIcon, ScrollIcon } from '@manuscripts/style-guide'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 export const alertIcon = renderToStaticMarkup(createElement(AlertIcon))
 export const deleteIcon = renderToStaticMarkup(createElement(DeleteIcon))
+export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
