@@ -29,7 +29,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
-import { pointToInlineChanges } from '../selection'
+import { getSelectionChangeGroup } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -80,7 +80,7 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
-  const inlineChange = pointToInlineChanges(state)
+  const inlineChange = getSelectionChangeGroup(state)
   if (inlineChange) {
     return buildInlineChangeDecoration(state.doc, inlineChange)
   }

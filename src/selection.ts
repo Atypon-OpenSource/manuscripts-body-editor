@@ -60,7 +60,7 @@ export class NodesSelection extends Selection {
   }
 }
 
-export const pointToInlineChanges = (state: ManuscriptEditorState) => {
+export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
   const selection = state.selection
   const $pos = isTextSelection(selection)
     ? selection.$cursor
