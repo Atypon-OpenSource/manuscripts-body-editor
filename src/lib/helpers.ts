@@ -69,45 +69,30 @@ export const mergeSimilarItems =
   }
 
 export const handleScrollToSelectedTarget = (view: EditorView) => {
-  const tr = view.state.tr
+  const { tr, selection } = view.state
 
-  const node = tr.doc.nodeAt(tr.selection.$from.pos)
-
+  const node = tr.doc.nodeAt(selection.$from.pos)
   if (!node) {
     return false
   }
-
   let targetElement: HTMLElement | null = null
 
   // Handle bibliography_item node type
   if (node.type === schema.nodes.bibliography_item) {
     targetElement = document.getElementById(node.attrs.id) as HTMLElement
-  } else {
-    // find idSelector, either from node or comment/highlight marker
-    let idSelector = node.attrs.id
+  }
 
-    // If idSelector is not found,  find the marker ID ( for ex: system comments)
-    if (!idSelector) {
-      idSelector = findCommentOrHighlightMarkerId(view)
-    }
-
-    if (!idSelector) {
-      return false
-    }
-
-    targetElement = document.getElementById(idSelector) as HTMLElement
+  // If no specific target element for bibliography_item, fallback to the DOM at selection position
+  if (!targetElement) {
+    targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
   }
 
   if (!targetElement) {
     return false
   }
-
   const editorBodyElement = document.querySelector(
     '.editor-body'
   ) as HTMLElement
-  if (!editorBodyElement) {
-    return false
-  }
 
   const { top: targetTop, height: targetHeight } =
     targetElement.getBoundingClientRect()
@@ -124,20 +109,6 @@ export const handleScrollToSelectedTarget = (view: EditorView) => {
   }
 
   return true
-}
-
-// Helper function to find the comment or highlight marker ID if available
-const findCommentOrHighlightMarkerId = (view: EditorView): string | null => {
-  const tr = view.state.tr
-  const parentNode = view.domAtPos(tr.selection.$to.pos).node
-  const parentElement = parentNode as HTMLElement
-
-  // Look for either a comment marker or a highlight marker
-  const marker = parentElement.querySelector(
-    'span.comment-marker, span.highlight-marker'
-  )
-
-  return marker ? marker.id : null
 }
 
 // Find the boundaries of the intended word based on the current cursor position
