@@ -202,6 +202,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       if (item.pos <= tree.pos && item.endPos >= tree.endPos) {
         return false
       }
+      // can't drop immediately before/after itself
+      if (tree.pos === item.endPos || item.pos === tree.endPos) {
+        return false
+      }
 
       const side = getDropSide(ref.current, monitor)
       const index = side === 'before' ? tree.index : tree.index + 1
@@ -219,11 +223,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       if (!ref.current || !view) {
         return
       }
-
       const side = getDropSide(ref.current, monitor)
-
       const pos = side === 'before' ? tree.pos - 1 : tree.endPos - 1
-
       let sourcePos = item.pos - 1
 
       const node = item.node.type.schema.nodes[item.node.type.name].create(
