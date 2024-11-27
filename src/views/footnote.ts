@@ -118,21 +118,6 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       if (node.attrs.rids.includes(id)) {
         const tr = this.view.state.tr
         const selection = NodeSelection.create(this.view.state.doc, pos)
-        const targetElement = this.view.domAtPos(pos).node as HTMLElement
-        const markerElement = targetElement.querySelector(
-          '.footnote-marker'
-        ) as HTMLElement
-        // Ensure the marker exists and add highlight class for 3 seconds
-        // A grey bar fades in and out on the line where the marker is present to help user find marker
-        if (markerElement) {
-          markerElement.classList.add('highlight-footnote-marker')
-
-          setTimeout(
-            () => markerElement.classList.remove('highlight-footnote-marker'),
-            3000
-          )
-        }
-
         tr.setSelection(selection)
         tr.scrollIntoView()
         this.view.dispatch(tr)

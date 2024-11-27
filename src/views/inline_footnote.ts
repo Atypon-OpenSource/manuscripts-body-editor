@@ -21,7 +21,7 @@ import {
   isTableElementNode,
   ManuscriptNodeView,
 } from '@manuscripts/transform'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 
 import {
   FootnotesSelector,
@@ -115,9 +115,11 @@ export class InlineFootnoteView
     }
 
     if (nodePos && this.props.dispatch) {
-      const sel = TextSelection.near(this.view.state.doc.resolve(nodePos + 1))
+      const selection = NodeSelection.create(this.view.state.doc, nodePos + 1)
 
-      this.props.dispatch(this.view.state.tr.setSelection(sel).scrollIntoView())
+      this.props.dispatch(
+        this.view.state.tr.setSelection(selection).scrollIntoView()
+      )
     }
   }
 

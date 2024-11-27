@@ -68,39 +68,58 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToBibliographyItem = (view: EditorView) => {
-  const tr = view.state.tr
+export const handleScrollToSelectedTarget = (view: EditorView) => {
+  const { tr, selection } = view.state
 
-  const node = tr.doc.nodeAt(tr.selection.$from.pos)
-
-  if (!node || node.type !== schema.nodes.bibliography_item) {
+  const node = tr.doc.nodeAt(selection.$from.pos)
+  if (!node) {
     return false
   }
+  let targetElement: HTMLElement | null = null
 
-  const bibliographyItemElement = document.querySelector(
-    `[id="${node.attrs.id}"]`
-  ) as HTMLElement
+  // Handle bibliography_item node type
+  if (node.type === schema.nodes.bibliography_item) {
+    targetElement = document.getElementById(node.attrs.id) as HTMLElement
+  }
 
-  if (!bibliographyItemElement) {
+  // If no specific target element for bibliography_item, fallback to the DOM at selection position
+  if (!targetElement) {
+    targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
+
+    const markerElement = targetElement.querySelector(
+      '.footnote-marker'
+    ) as HTMLElement
+
+    // Ensure the marker exists and add highlight class for inline footnote marker for 3 seconds
+    if (markerElement && node.type === schema.nodes.inline_footnote) {
+      markerElement.classList.add('highlight-footnote-marker')
+
+      setTimeout(
+        () => markerElement.classList.remove('highlight-footnote-marker'),
+        3000
+      )
+    }
+  }
+
+  if (!targetElement) {
     return false
   }
-  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
   const editorBodyElement = document.querySelector(
     '.editor-body'
   ) as HTMLElement
-  const parentRect = editorBodyElement.getBoundingClientRect()
 
-  if (
-    bibliographyItemRect.bottom > window.innerHeight ||
-    bibliographyItemRect.top < 150
-  ) {
-    let childTopOffset = bibliographyItemRect.top - parentRect.top
-    // to center the element vertically within the viewport.
-    childTopOffset =
-      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
+  const { top: targetTop, height: targetHeight } =
+    targetElement.getBoundingClientRect()
+  const { top: parentTop } = editorBodyElement.getBoundingClientRect()
 
-    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
-    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
+  // Check if the target element is outside the viewport and scroll if necessary
+  if (targetTop < 150 || targetTop + targetHeight > window.innerHeight) {
+    const offset =
+      targetTop - parentTop - (window.innerHeight - targetHeight) / 2
+    editorBodyElement.scrollTo({
+      top: editorBodyElement.scrollTop + offset,
+      behavior: 'smooth',
+    })
   }
 
   return true
