@@ -47,13 +47,11 @@ export default () => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
-
         const targets = objectsKey.getState(state)
 
         if (targets) {
           state.doc.descendants((node, pos) => {
             const { id } = node.attrs
-
             if (id) {
               const target = targets.get(id)
               const resolvedPos = state.doc.resolve(pos)
@@ -79,7 +77,6 @@ export default () => {
             }
           })
         }
-
         return DecorationSet.create(state.doc, decorations)
       },
     },

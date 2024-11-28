@@ -30,6 +30,7 @@ import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
+import cross_references from '../plugins/cross-references'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
@@ -76,6 +77,7 @@ export default (props: EditorProps) => {
     editorProps(props),
     doi(),
     section_category(props),
+    cross_references(),
   ]
 
   if (props.collabProvider) {
