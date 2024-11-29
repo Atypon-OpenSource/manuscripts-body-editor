@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CHANGE_STATUS, TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import {
+  CHANGE_STATUS,
+  InlineAdjacentChanges,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
 import {
   DataTrackedAttrs,
   ManuscriptEditorState,
@@ -25,6 +29,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
+import { getSelectionChangeGroup } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -75,6 +80,10 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
+  const inlineChange = getSelectionChangeGroup(state)
+  if (inlineChange) {
+    return buildInlineChangeDecoration(state.doc, inlineChange)
+  }
   const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
   if (!$pos) {
     return EMPTY
@@ -169,6 +178,19 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   return {
     suggestion,
     decorations: DecorationSet.create(doc, [decoration]),
+  }
+}
+
+const buildInlineChangeDecoration = (
+  doc: ManuscriptNode,
+  inlineChange: InlineAdjacentChanges
+) => {
+  const decoration = Decoration.inline(inlineChange.from, inlineChange.to, {
+    class: 'selected-suggestion',
+  })
+  return {
+    decorations: DecorationSet.create(doc, [decoration]),
+    suggestion: inlineChange.nodes.at(0)?.dataTracked,
   }
 }
 
