@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isSectionNodeType } from '@manuscripts/transform'
+import { isSectionNodeType, schema } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -36,7 +36,7 @@ export default () => {
         state.doc.descendants((node, pos, parent) => {
           if (
             parent &&
-            isSectionNodeType(parent.type) &&
+            (isSectionNodeType(parent.type) || parent.type === schema.nodes.body) &&
             node.type !== section
           ) {
             decorations.push(

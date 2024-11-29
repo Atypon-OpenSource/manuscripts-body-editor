@@ -85,7 +85,7 @@ export default class BlockView<BlockNode extends ManuscriptNode>
       this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
+      this.dom.removeAttribute('data-track-op')
     }
 
     for (const [key, target] of Object.entries(this.viewAttributes)) {
