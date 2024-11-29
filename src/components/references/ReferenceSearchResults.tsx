@@ -70,7 +70,7 @@ export const ReferenceSearchResults: React.FC<{
       <ReferenceSearchResult
         onClick={() => onSelect(item)}
         key={item.id}
-        className={`reference ${isSelected(item) ? 'selected' : ''}`}
+        data-cy={`${isSelected(item) ? 'selected-reference' : 'reference'}`}
       >
         <StatusIcon>
           {isSelected(item) ? (
