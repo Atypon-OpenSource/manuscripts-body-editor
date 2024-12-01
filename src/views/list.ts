@@ -46,7 +46,7 @@ export class ListView extends BlockView<Trackable<ListNode>> {
       )
     } else {
       this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
+      this.dom.removeAttribute('data-track-op')
     }
   }
 }
