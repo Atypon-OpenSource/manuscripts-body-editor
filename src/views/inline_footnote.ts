@@ -51,16 +51,23 @@ export class InlineFootnoteView
 
   showContextMenu = () => {
     this.props.popper.destroy()
+    const can = this.props.getCapabilities()
+    const showEditIcon = can?.editArticle
+
     const componentProps: ContextMenuProps = {
       actions: [
-        {
-          label: 'Edit',
-          action: () => {
-            this.props.popper.destroy()
-            this.showFootnotesSelector()
-          },
-          icon: 'Edit',
-        },
+        ...(showEditIcon
+          ? [
+              {
+                label: 'Edit',
+                action: () => {
+                  this.props.popper.destroy()
+                  this.showFootnotesSelector()
+                },
+                icon: 'Edit',
+              },
+            ]
+          : []),
         {
           label: 'Go to footnote',
           action: () => {
@@ -88,7 +95,7 @@ export class InlineFootnoteView
   }
 
   handleClick = () => {
-    if (isDeleted(this.node) || !this.props.getCapabilities().editArticle) {
+    if (isDeleted(this.node)) {
       return
     }
     if (this.isTableFootnote) {
