@@ -17,12 +17,13 @@
 import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { isDeleted } from '../lib/track-changes-utils'
+import { getChangeClasses } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { Trackable } from '../types'
 
 export class EquationView
-  extends BaseNodeView<EquationNode>
+  extends BaseNodeView<Trackable<EquationNode>>
   implements ManuscriptNodeView
 {
   public initialise = () => {
@@ -32,17 +33,17 @@ export class EquationView
 
   public createDOM = () => {
     this.dom = document.createElement('div')
-    this.dom.classList.add('equation')
     this.dom.setAttribute('id', this.node.attrs.id)
   }
 
   public updateContents = () => {
+    const classes = [
+      'equation',
+      ...getChangeClasses(this.node.attrs.dataTracked),
+    ]
+    this.dom.className = classes.join(' ')
+
     this.dom.innerHTML = this.node.attrs.contents
-    if (isDeleted(this.node)) {
-      this.dom.classList.add('deleted')
-    } else {
-      this.dom.classList.remove('deleted')
-    }
     renderMath(this.dom)
   }
 
