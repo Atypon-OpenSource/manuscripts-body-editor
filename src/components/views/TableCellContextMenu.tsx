@@ -35,7 +35,12 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addColumns, addRows, mergeCellsWithSpace } from '../../commands'
+import {
+  addColumns,
+  addHeaderRow,
+  addRows,
+  mergeCellsWithSpace,
+} from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -48,11 +53,7 @@ const getSelectedCellsCount = (state: EditorState) => {
     selectedCells.rows = rect.bottom - rect.top
     selectedCells.columns = rect.right - rect.left
   }
-  const { rows, columns } = selectedCells
-  return {
-    rows: rows > 1 ? `${rows} rows` : `row`,
-    columns: columns > 1 ? `${columns} columns` : `column`,
-  }
+  return selectedCells
 }
 
 const isHeaderCellSelected = (state: EditorState) => {
@@ -113,7 +114,10 @@ export const ContextMenu: React.FC<{
 
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
-  const { rows, columns } = getSelectedCellsCount(view.state)
+  const count = getSelectedCellsCount(view.state)
+  const rows = count.rows > 1 ? `${count.rows} rows` : `row`
+  const columns = count.columns > 1 ? `${count.columns} columns` : `column`
+  const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
   return (
     <MenuDropdownList className={'table-ctx'}>
@@ -133,8 +137,16 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
+      <ActionButton
+        disabled={count.rows !== 1}
+        onClick={() => runCommand(addHeaderRow(headerPosition))}
+      >
+        <PlusIcon /> Insert header row {headerPosition}
+      </ActionButton>
+      <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete {rows}
+        <GrayDeleteIcon /> Delete
+        {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
