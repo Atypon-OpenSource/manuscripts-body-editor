@@ -18,9 +18,9 @@ import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
 import { getChangeClasses } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { Trackable } from '../types'
 
 export class EquationView
   extends BaseNodeView<Trackable<EquationNode>>
