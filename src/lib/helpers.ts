@@ -68,48 +68,57 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToSelectedTarget = (view: EditorView) => {
-  const { tr, selection } = view.state
-
-  const node = tr.doc.nodeAt(selection.$from.pos)
-  if (!node) {
-    return false
+  export const handleScrollToSelectedTarget = (view: EditorView) => {
+    const { tr, selection } = view.state
+  
+    const node = tr.doc.nodeAt(selection.$from.pos)
+    if (!node) {
+      return false
+    }
+  
+    let targetElement: HTMLElement | null = null
+  
+    // Handle bibliography_item node type
+    if (node.type === schema.nodes.bibliography_item) {
+      targetElement = document.getElementById(node.attrs.id) as HTMLElement
+    }
+  
+    // If no specific target element for bibliography_item, fallback to the DOM at selection position
+    if (!targetElement) {
+      targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
+    }
+  
+    if (!targetElement) {
+      return false
+    }
+  
+    // Search within targetElement for elements with the desired classes
+    const scrollTarget = targetElement.querySelector(
+      '.comment-marker, .selected-comment, .highlight-marker'
+    ) as HTMLElement
+  
+    const elementToScroll = scrollTarget || targetElement
+  
+    const editorBodyElement = document.querySelector(
+      '.editor-body'
+    ) as HTMLElement
+  
+    const { top: elementTop, height: elementHeight } =
+      elementToScroll.getBoundingClientRect()
+    const { top: parentTop } = editorBodyElement.getBoundingClientRect()
+  
+    // Check if the element to scroll is outside the viewport and scroll if necessary
+    if (elementTop < 150 || elementTop + elementHeight > window.innerHeight) {
+      const offset =
+        elementTop - parentTop - (window.innerHeight - elementHeight) / 2
+      editorBodyElement.scrollTo({
+        top: editorBodyElement.scrollTop + offset,
+        behavior: 'smooth',
+      })
+    }
+  
+    return true
   }
-  let targetElement: HTMLElement | null = null
-
-  // Handle bibliography_item node type
-  if (node.type === schema.nodes.bibliography_item) {
-    targetElement = document.getElementById(node.attrs.id) as HTMLElement
-  }
-
-  // If no specific target element for bibliography_item, fallback to the DOM at selection position
-  if (!targetElement) {
-    targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
-  }
-
-  if (!targetElement) {
-    return false
-  }
-  const editorBodyElement = document.querySelector(
-    '.editor-body'
-  ) as HTMLElement
-
-  const { top: targetTop, height: targetHeight } =
-    targetElement.getBoundingClientRect()
-  const { top: parentTop } = editorBodyElement.getBoundingClientRect()
-
-  // Check if the target element is outside the viewport and scroll if necessary
-  if (targetTop < 150 || targetTop + targetHeight > window.innerHeight) {
-    const offset =
-      targetTop - parentTop - (window.innerHeight - targetHeight) / 2
-    editorBodyElement.scrollTo({
-      top: editorBodyElement.scrollTop + offset,
-      behavior: 'smooth',
-    })
-  }
-
-  return true
-}
 
 // Find the boundaries of the intended word based on the current cursor position
 export const findWordBoundaries = (
