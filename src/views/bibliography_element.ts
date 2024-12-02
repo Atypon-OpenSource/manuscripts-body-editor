@@ -165,11 +165,13 @@ export class BibliographyElementBlockView extends BlockView<
       nodes.set(id, node as BibliographyItemNode)
     })
 
+    const can = this.props.getCapabilities()
 
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
-    wrapper.addEventListener('click', this.handleClick)
-
+    if (can.seeReferencesButtons) {
+      wrapper.addEventListener('click', this.handleClick)
+    }
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
@@ -253,4 +255,5 @@ export class BibliographyElementBlockView extends BlockView<
     })
   }
 }
+
 export default createNodeView(BibliographyElementBlockView)

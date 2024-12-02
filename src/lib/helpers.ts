@@ -94,7 +94,7 @@ export const mergeSimilarItems =
   
     // Search within targetElement for elements with the desired classes
     const scrollTarget = targetElement.querySelector(
-      '.comment-marker, .selected-comment, .highlight-marker'
+      '.comment-marker'
     ) as HTMLElement
   
     const elementToScroll = scrollTarget || targetElement
