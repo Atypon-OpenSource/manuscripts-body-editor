@@ -49,6 +49,7 @@ import {
   NodeRange,
   NodeType,
   ResolvedPos,
+  Slice,
 } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -72,11 +73,13 @@ import {
   findWrapping,
   liftTarget,
   ReplaceAroundStep,
+  ReplaceStep,
 } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
   findParentNodeOfTypeClosestToPos,
+  flatten,
   hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
@@ -1568,6 +1571,39 @@ export const addRows =
         addRow(tr, rect, rect[direction])
       }
       dispatch(tr)
+    }
+    return true
+  }
+
+export const addHeaderRow =
+  (direction: 'above' | 'below') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const addRowStep = addRow(
+        state.tr,
+        rect,
+        rect[direction === 'below' ? 'bottom' : 'top']
+      ).steps.pop()
+      if (addRowStep && addRowStep instanceof ReplaceStep) {
+        const { from, to, slice } = addRowStep
+        const cells = flatten(slice.content.firstChild as ManuscriptNode)
+        const row = schema.nodes.table_row.create(
+          undefined,
+          cells.map((cell) =>
+            schema.nodes.table_header.create(cell.node.attrs, cell.node.content)
+          )
+        )
+        tr.step(
+          new ReplaceStep(
+            from,
+            to,
+            new Slice(Fragment.from(row), slice.openStart, slice.openEnd)
+          )
+        )
+        dispatch(tr)
+      }
     }
     return true
   }
