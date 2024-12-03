@@ -123,7 +123,7 @@ export class BibliographyElementBlockView extends BlockView<
 
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
-    // Handle click on comment marker 
+    // Handle click on comment marker
     const marker = element.closest('.comment-marker') as HTMLElement
     if (marker) {
       const key = marker.dataset.key as CommentKey
@@ -132,7 +132,7 @@ export class BibliographyElementBlockView extends BlockView<
       this.view.dispatch(tr)
       return
     }
-  
+
     if (this.props.getCapabilities().seeReferencesButtons) {
       const item = element.closest('.bib-item')
       if (item) {
@@ -150,54 +150,54 @@ export class BibliographyElementBlockView extends BlockView<
   }
 
   public updateContents = () => {
-    this.props.popper.destroy()// Destroy the old context menu
+    this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
     }
-  
+
     if (bib.version === this.version) {
       this.updateSelections()
       return
     }
     this.version = bib.version
-  
+
     const nodes: Map<string, BibliographyItemNode> = new Map()
-  
+
     this.node.descendants((node) => {
       const id = node.attrs.id
       nodes.set(id, node as BibliographyItemNode)
     })
-  
+
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
-  
+
     const [meta, bibliography] = bib.provider.makeBibliography()
-  
+
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
       ).firstElementChild as HTMLElement
-  
+
       const node = nodes.get(id) as BibliographyItemNode
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
-  
+
       node.attrs as BibliographyItemAttrs
-  
+
       const attrs = node.attrs as BibliographyItemAttrs
       const change = attrs.dataTracked?.[0]
       if (change) {
         element.classList.add(...getChangeClasses([change]))
         element.dataset.trackId = change.id
       }
-  
+
       wrapper.append(element)
     }
-  
+
     const oldContent = this.container.querySelector('.contents')
     if (oldContent) {
       this.container.replaceChild(wrapper, oldContent)
@@ -206,7 +206,6 @@ export class BibliographyElementBlockView extends BlockView<
     }
     this.updateSelections()
   }
-  
 
   public createElement = () => {
     this.container = document.createElement('div')

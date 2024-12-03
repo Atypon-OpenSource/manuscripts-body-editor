@@ -68,57 +68,60 @@ export const mergeSimilarItems =
     }, [])
   }
 
-  export const handleScrollToSelectedTarget = (view: EditorView) => {
-    const { tr, selection } = view.state
-  
-    const node = tr.doc.nodeAt(selection.$from.pos)
-    if (!node) {
-      return false
-    }
-  
-    let targetElement: HTMLElement | null = null
-  
-    // Handle bibliography_item node type
-    if (node.type === schema.nodes.bibliography_item) {
-      targetElement = document.getElementById(node.attrs.id) as HTMLElement
-    }
-  
-    // If no specific target element for bibliography_item, fallback to the DOM at selection position
-    if (!targetElement) {
-      targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
-    }
-  
-    if (!targetElement) {
-      return false
-    }
-  
-    // Search within targetElement for elements with the desired classes
-    const scrollTarget = targetElement.querySelector(
-      '.comment-marker'
-    ) as HTMLElement
-  
-    const elementToScroll = scrollTarget || targetElement
-  
-    const editorBodyElement = document.querySelector(
-      '.editor-body'
-    ) as HTMLElement
-  
-    const { top: elementTop, height: elementHeight } =
-      elementToScroll.getBoundingClientRect()
-    const { top: parentTop } = editorBodyElement.getBoundingClientRect()
-  
-    // Check if the element to scroll is outside the viewport and scroll if necessary
-    if (elementTop < 150 || elementTop + elementHeight > window.innerHeight) {
-      const offset =
-        elementTop - parentTop - (window.innerHeight - elementHeight) / 2
-      editorBodyElement.scrollTo({
-        top: editorBodyElement.scrollTop + offset,
-        behavior: 'smooth',
-      })
-    }
-  
-    return true
+export const handleScrollToSelectedTarget = (view: EditorView) => {
+  const { tr, selection } = view.state
+
+  const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
+  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
+
+  if (!nodeAtFrom) {
+    return false
   }
+
+  // Determine the target element based on node types
+  let targetElement: HTMLElement | null = null
+
+  if (nodeAtFrom.type === schema.nodes.bibliography_item) {
+    targetElement = document.getElementById(nodeAtFrom.attrs.id) as HTMLElement
+  } else if (nodeAtTo?.type === schema.nodes.highlight_marker) {
+    targetElement = document.getElementById(nodeAtTo?.attrs.id) as HTMLElement
+  }
+
+  // Fallback to the DOM element at the selection position
+  if (!targetElement) {
+    targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
+  }
+
+  if (!targetElement) {
+    return false
+  }
+
+  // Locate the specific element to scroll to ( for comment block)
+  const scrollTarget =
+    targetElement.querySelector('.comment-marker') ||
+    (targetElement as HTMLElement)
+
+  // Perform the scrolling
+  const editorBodyElement = document.querySelector(
+    '.editor-body'
+  ) as HTMLElement
+
+  const { top: elementTop, height: elementHeight } =
+    scrollTarget.getBoundingClientRect()
+  const { top: parentTop } = editorBodyElement.getBoundingClientRect()
+
+  // Check if the element to scroll is outside the viewport and scroll if necessary
+  if (elementTop < 150 || elementTop + elementHeight > window.innerHeight) {
+    const offset =
+      elementTop - parentTop - (window.innerHeight - elementHeight) / 2
+    editorBodyElement.scrollTo({
+      top: editorBodyElement.scrollTop + offset,
+      behavior: 'smooth',
+    })
+  }
+
+  return true
+}
 
 // Find the boundaries of the intended word based on the current cursor position
 export const findWordBoundaries = (
