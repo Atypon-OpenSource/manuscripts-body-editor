@@ -64,7 +64,7 @@ export const findChildrenAttrsByType = <T extends Attrs>(
   return findChildrenByType(view, type).map((n) => n.node.attrs) as T[]
 }
 
-export const updateNodeAttrs = ( //
+export const updateNodeAttrs = (
   view: ManuscriptEditorView,
   type: ManuscriptNodeType,
   attrs: Attrs
