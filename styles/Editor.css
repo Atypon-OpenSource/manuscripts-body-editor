@@ -989,7 +989,7 @@
   margin-right: 4px;
 }
 
-.ProseMirror .footnote.footnote-selected {
+.ProseMirror .footnote.footnote-selected:not(.selected-suggestion) {
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
 }

@@ -565,11 +565,10 @@ span.comment-marker {
   text-decoration: underline;
 }
 
-.inserted .selected-suggestion,
+.inserted:has(.selected-suggestion),
 .inserted.selected-suggestion {
-  background-color: var(--inserted-pending-bg-color) !important;
-  color: var(--inserted-pending-color) !important;
   border-color: var(--inserted-pending-color) !important;
+  text-decoration: none !important;
 }
 
 /* Delete */
@@ -580,18 +579,15 @@ span.comment-marker {
   text-decoration: line-through;
 }
 
-
-.deleted .selected-suggestion,
+.deleted:has(.selected-suggestion),
 .deleted.selected-suggestion {
-  background-color: var(--deleted-pending-bg-color) !important;
-  color: var(--deleted-color) !important;
   border-color: var(--deleted-color) !important;
-  text-decoration: line-through;
+  text-decoration: none !important;
 }
 
 /* Update */
 .ProseMirror .set_attrs {
-  background:  var(--updated-bg-color);
+  background: var(--updated-bg-color);
   text-decoration: none;
 }
 
@@ -603,6 +599,11 @@ span.comment-marker {
   border-color: var(--updated-border-color) !important;
   border-radius: 3px !important;
   border-style: solid !important;
+}
+
+.selected-suggestion .inserted,
+.selected-suggestion .deleted {
+  text-decoration: none !important;
 }
 
 .block-bullet_list .selected-suggestion p,
@@ -672,6 +673,10 @@ span.comment-marker {
   position: absolute;
   border-top: 1px solid red;
   top: calc(50% + 1px);
+}
+
+.selected-suggestion .equation.deleted:after {
+  content: none;
 }
 
 .citation-wrapper {
