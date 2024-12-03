@@ -1286,6 +1286,16 @@ export const ignoreMetaNodeBackspaceCommand = (
   )
 }
 
+export const ignoreNodeCommands = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isTextSelection(selection)) {
+    return false
+  }
+
+  return selection.$from.parent.type === schema.nodes.section_title
+}
+
 // Copied from prosemirror-commands
 const findCutAfter = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
