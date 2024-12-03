@@ -257,6 +257,10 @@ ol > .comment-marker {
   float: left;
 }
 
+li > .comment-marker {
+  float: right;
+}
+
 .figure-block div.comment-marker {
   grid-column: 3;
 }
