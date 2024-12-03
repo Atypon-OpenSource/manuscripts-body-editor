@@ -675,7 +675,8 @@ span.comment-marker {
   top: calc(50% + 1px);
 }
 
-.selected-suggestion .equation.deleted:after {
+.selected-suggestion .equation.deleted:after,
+.selected-suggestion.equation.deleted:after {
   content: none;
 }
 
