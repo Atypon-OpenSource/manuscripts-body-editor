@@ -68,38 +68,41 @@ export const mergeSimilarItems =
     }, [])
   }
 
-  export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
-    const { tr, selection } = view.state
-  
-    // Get the nodes at the selection's start and end positions
-    const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
-    const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
-  
-    if (!nodeAtFrom) return false
-  
-    // Determine the target element to scroll to
-    const targetElement = 
-      nodeAtFrom.type === schema.nodes.bibliography_item
-        ? document.getElementById(nodeAtFrom.attrs.id) as HTMLElement
-        : nodeAtTo?.type === schema.nodes.highlight_marker
-        ? document.getElementById(nodeAtTo.attrs.id) as HTMLElement
-        : document.getElementById(nodeAtFrom.attrs.id) as HTMLElement
-  
-    // Use the DOM element at the selection position as a fallback
-    const scrollTarget = targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
-  
-    if (!scrollTarget) return false
-  
-   // Scroll the target element into view
-    scrollTarget.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start', // Align the target element to the start of the viewport
-    })
+export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
+  const { tr, selection } = view.state
 
-  
-    return true
-  };
-  
+  // Get the nodes at the selection's start and end positions
+  const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
+  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
+
+  if (!nodeAtFrom) {
+    return false
+  }
+
+  // Determine the target element to scroll to
+  const targetElement =
+    nodeAtFrom.type === schema.nodes.bibliography_item
+      ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+      : nodeAtTo?.type === schema.nodes.highlight_marker
+      ? (document.getElementById(nodeAtTo.attrs.id) as HTMLElement)
+      : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+
+  // Use the DOM element at the selection position as a fallback
+  const scrollTarget =
+    targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
+
+  if (!scrollTarget) {
+    return false
+  }
+
+  // Scroll the target element into view
+  scrollTarget.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start', // Align the target element to the start of the viewport
+  })
+
+  return true
+}
 
 // Find the boundaries of the intended word based on the current cursor position
 export const findWordBoundaries = (
