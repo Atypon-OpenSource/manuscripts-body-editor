@@ -95,10 +95,13 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
     return false
   }
 
+  // Decide the block alignment based on the element type
+  const blockAlignment =
+    nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
   // Scroll the target element into view
   scrollTarget.scrollIntoView({
     behavior: 'smooth',
-    block: 'start', // Align the target element to the start of the viewport
+    block: blockAlignment, // Align the target element to the start of the viewport
   })
 
   return true
