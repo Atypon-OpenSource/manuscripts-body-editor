@@ -700,25 +700,11 @@ span.comment-marker {
   display: inline-block;
 }
 
-.ProseMirror .affiliation[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror .contributor[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror
-  .block-container[data-track-status='rejected'][data-track-op='insert'] {
-  display: none;
-}
-
 .contributor[data-track-status='pending'][data-track-op='delete'],
 .affiliation[data-track-status='pending'][data-track-op='delete'] {
   text-decoration: line-through;
   color: var(--deleted-color);
   background-color: var(--deleted-pending-bg-color);
-}
-
-.contributor[data-track-op='delete']:not([data-track-status='rejected']),
-.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
-  text-decoration: line-through;
 }
 
 .contributor[data-track-status='pending'][data-track-op='insert'],
@@ -727,6 +713,19 @@ span.comment-marker {
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
+
+.contributor[data-track-status='pending'][data-track-op='set_attrs'],
+.affiliation[data-track-status='pending'][data-track-op='set_attrs'] {
+  background: var(--updated-bg-color);
+  color: var(--common-color);
+  border-color: var(--updated-border-color);
+}
+
+.selected-suggestion.contributor,
+.selected-suggestion.affiliation {
+  text-decoration: none !important;
+}
+
 .block-contributors,
 .block-affiliations,
 .keywords {
