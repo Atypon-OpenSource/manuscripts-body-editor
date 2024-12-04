@@ -52,6 +52,7 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   container.classList.add('tools-panel')
   if (classNames) {
     container.classList.add(classNames)
+    container.setAttribute('data-cy', classNames)
   }
   container.setAttribute('contenteditable', 'false')
 
