@@ -250,13 +250,9 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(
-    leaveSectionTitle,
-    protectReferencesTitle,
-    leaveFigcaption
-  ),
+  Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
   Tab: exitBlock(1),
-  Delete: keepCaption,
+  Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),
 }
 
