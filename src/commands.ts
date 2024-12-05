@@ -1293,7 +1293,10 @@ export const ignoreNodeCommands = (state: ManuscriptEditorState) => {
     return false
   }
 
-  return selection.$from.parent.type === schema.nodes.section_title
+  return (
+    selection.$from.node(selection.$from.depth - 1).type ===
+    schema.nodes.bibliography_section
+  )
 }
 
 // Copied from prosemirror-commands
