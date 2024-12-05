@@ -68,40 +68,41 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToBibliographyItem = (view: EditorView) => {
-  const tr = view.state.tr
+export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
+  const { tr, selection } = view.state
 
-  const node = tr.doc.nodeAt(tr.selection.$from.pos)
+  // Get the nodes at the selection's start and end positions
+  const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
+  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
 
-  if (!node || node.type !== schema.nodes.bibliography_item) {
+  if (!nodeAtFrom) {
     return false
   }
 
-  const bibliographyItemElement = document.querySelector(
-    `[id="${node.attrs.id}"]`
-  ) as HTMLElement
+  // Determine the target element to scroll to
+  const targetElement =
+    nodeAtFrom.type === schema.nodes.bibliography_item
+      ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+      : nodeAtTo?.type === schema.nodes.highlight_marker
+      ? (document.getElementById(nodeAtTo.attrs.id) as HTMLElement)
+      : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
 
-  if (!bibliographyItemElement) {
+  // Use the DOM element at the selection position as a fallback
+  const scrollTarget =
+    targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
+
+  if (!scrollTarget) {
     return false
   }
-  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
-  const editorBodyElement = document.querySelector(
-    '.editor-body'
-  ) as HTMLElement
-  const parentRect = editorBodyElement.getBoundingClientRect()
 
-  if (
-    bibliographyItemRect.bottom > window.innerHeight ||
-    bibliographyItemRect.top < 150
-  ) {
-    let childTopOffset = bibliographyItemRect.top - parentRect.top
-    // to center the element vertically within the viewport.
-    childTopOffset =
-      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
-
-    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
-    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
-  }
+  // Decide the block alignment based on the element type
+  const blockAlignment =
+    nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
+  // Scroll the target element into view
+  scrollTarget.scrollIntoView({
+    behavior: 'smooth',
+    block: blockAlignment, // Align the target element to the start of the viewport
+  })
 
   return true
 }
