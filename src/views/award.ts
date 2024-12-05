@@ -34,32 +34,24 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
     this.contentDOM.innerHTML = ''
     this.contentDOM.classList.remove('block-container')
-
+    const notAvailable = 'N/A'
     const { recipient, code, source } = this.node.attrs
-    if (!recipient && !code && !source) {
-      return
-    }
+    if (!source) return
 
     const fragment = document.createDocumentFragment()
 
-    if (source) {
-      fragment.appendChild(this.createAwardElement('award-source', source))
-    }
+    fragment.appendChild(this.createAwardElement('award-source', source))
 
-    if (code) {
-      fragment.appendChild(
-        this.createAwardElement(
-          'award-code',
-          `Grant Number(s): ${code.split(';').join(', ')}`
-        )
+    fragment.appendChild(
+      this.createAwardElement(
+        'award-code',
+        `Grant Number(s): ${code ? code.split(';').join(', ') : notAvailable}`
       )
-    }
+    )
 
-    if (recipient) {
-      fragment.appendChild(
-        this.createAwardElement('award-recipient', `Recipient: ${recipient}`)
-      )
-    }
+    fragment.appendChild(
+      this.createAwardElement('award-recipient', `Recipient: ${recipient ? recipient : notAvailable}`)
+    )
 
     this.contentDOM.appendChild(fragment)
   }
