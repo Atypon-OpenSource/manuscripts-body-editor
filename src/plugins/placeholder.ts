@@ -18,7 +18,8 @@ import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
   ManuscriptEditorView,
-  ManuscriptNode, schema,
+  ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -69,6 +70,17 @@ export default () =>
                 )
               }
             } else {
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  class: 'empty-node',
+                })
+              )
+            }
+          }
+
+          if (node.type === node.type.schema.nodes.body) {
+            if (node.childCount === 0) {
+              // If the body is empty, add the empty-node class
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
                   class: 'empty-node',
