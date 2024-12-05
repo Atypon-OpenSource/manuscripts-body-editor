@@ -61,25 +61,24 @@ export default () =>
         const decorations: Decoration[] = []
 
         state.doc.descendants((node, pos, parent) => {
-          if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
-            if (node.type === node.type.schema.nodes.paragraph) {
-              const text = getParagraphPlaceholderText(parent)
-              if (text) {
+          if (node.childCount === 0) {
+            if (!node.isAtom && node.type.isBlock) {
+              if (node.type === node.type.schema.nodes.paragraph) {
+                const text = getParagraphPlaceholderText(parent)
+                if (text) {
+                  decorations.push(
+                    Decoration.widget(pos + 1, placeholderWidget(text))
+                  )
+                }
+              } else {
                 decorations.push(
-                  Decoration.widget(pos + 1, placeholderWidget(text))
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: 'empty-node',
+                  })
                 )
               }
-            } else {
-              decorations.push(
-                Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'empty-node',
-                })
-              )
             }
-          }
-
-          if (node.type === node.type.schema.nodes.body) {
-            if (node.childCount === 0) {
+            if (node.type === node.type.schema.nodes.body) {
               // If the body is empty, add the empty-node class
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
