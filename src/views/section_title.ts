@@ -25,6 +25,17 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
+  public createElement = () => {
+    this.contentDOM = document.createElement(this.elementType)
+    this.contentDOM.className = 'block'
+    this.dom.appendChild(this.contentDOM)
+
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    if ($pos.parent.type === schema.nodes.bibliography_section) {
+      this.contentDOM.setAttribute('contenteditable', 'false')
+    }
+  }
+
   public onUpdateContent = () => {
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)

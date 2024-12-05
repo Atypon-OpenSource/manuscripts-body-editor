@@ -18,6 +18,7 @@ import {
   isInGraphicalAbstractSection,
   ManuscriptEditorState,
   ManuscriptEditorView,
+  schema,
 } from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
@@ -191,6 +192,20 @@ const protectSectionTitle: EditorAction = (
   )
 }
 
+export const protectReferencesTitle = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isTextSelection(selection)) {
+    return false
+  }
+  const { $from } = selection
+  const parentNode = $from.node($from.depth - 1)
+  return (
+    $from.parent.type === schema.nodes.section_title &&
+    parentNode.type === schema.nodes.bibliography_section
+  )
+}
+
 const protectCaption: EditorAction = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -230,10 +245,14 @@ const keepCaption = (state: ManuscriptEditorState) => {
 }
 
 const titleKeymap: { [key: string]: EditorAction } = {
-  Backspace: chainCommands(protectSectionTitle, protectCaption),
+  Backspace: chainCommands(
+    protectSectionTitle,
+    protectReferencesTitle,
+    protectCaption
+  ),
   Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
   Tab: exitBlock(1),
-  Delete: keepCaption,
+  Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),
 }
 

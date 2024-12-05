@@ -534,6 +534,10 @@
   overflow-wrap: normal;
 }
 
+.ProseMirror.manuscript-editor section.bibliography .block-section_title h1 {
+  user-select: none;
+}
+
 .ProseMirror section.title-suppressed > .block-section_title {
   display: none;
 }
