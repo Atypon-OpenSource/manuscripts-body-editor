@@ -1285,23 +1285,6 @@ export const ignoreMetaNodeBackspaceCommand = (
     selection.node.type === schema.nodes.contributor
   )
 }
-
-export const ignoreBibliographyTitleCommands = (
-  state: ManuscriptEditorState
-) => {
-  const { selection } = state
-
-  if (!isTextSelection(selection)) {
-    return false
-  }
-  const { $from } = selection
-  const parentNode = $from.node($from.depth - 1)
-  return (
-    $from.parent.type === schema.nodes.section_title &&
-    parentNode.type === schema.nodes.bibliography_section
-  )
-}
-
 // Copied from prosemirror-commands
 const findCutAfter = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {

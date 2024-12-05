@@ -37,7 +37,6 @@ import {
   autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
-  ignoreBibliographyTitleCommands,
   ignoreMetaNodeBackspaceCommand,
   insertBlock,
   insertBreak,
@@ -53,13 +52,9 @@ const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
     undoInputRule,
     ignoreAtomBlockNodeBackward,
-    ignoreMetaNodeBackspaceCommand,
-    ignoreBibliographyTitleCommands
+    ignoreMetaNodeBackspaceCommand
   ),
-  Delete: chainCommands(
-    ignoreAtomBlockNodeForward,
-    ignoreBibliographyTitleCommands
-  ),
+  Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
   'Mod-z': undo,
   'Mod-y': redo, // Mac
