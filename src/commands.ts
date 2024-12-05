@@ -1294,9 +1294,10 @@ export const ignoreBibliographyTitleCommands = (
   if (!isTextSelection(selection)) {
     return false
   }
-  const parentNode = selection.$from.node(selection.$from.depth - 1)
+  const { $from } = selection
+  const parentNode = $from.node($from.depth - 1)
   return (
-    selection.$from.parent.type === schema.nodes.section_title &&
+    $from.parent.type === schema.nodes.section_title &&
     parentNode.type === schema.nodes.bibliography_section
   )
 }
