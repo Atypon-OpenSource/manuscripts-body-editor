@@ -675,6 +675,9 @@ span.selected-suggestion,
 .keywords {
   margin: 15px 0px;
 }
+.block-awards.empty-node {
+  display: none;
+}
 .contributors {
   display: flex;
   align-items: flex-start;

@@ -38,9 +38,16 @@ export class AwardsView extends BlockView<AwardsNode> {
     if (!this.contentDOM) {
       return
     }
-    this.wrapper.innerHTML = ''
-    const header = createHeader(this.node.type.name, 'Funder Information')
-    this.wrapper.append(header, this.contentDOM)
+    this.dom.setAttribute('contenteditable', 'false')
+    this.contentDOM.setAttribute('contenteditable', 'false')
+
+    if (this.node.content.size !== 0) {
+      this.wrapper.innerHTML = ''
+      this.wrapper.setAttribute('contenteditable', 'false')
+
+      const header = createHeader(this.node.type.name, 'Funder Information')
+      this.wrapper.append(header, this.contentDOM)
+    }
   }
 }
 
