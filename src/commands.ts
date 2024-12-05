@@ -1286,16 +1286,18 @@ export const ignoreMetaNodeBackspaceCommand = (
   )
 }
 
-export const ignoreNodeCommands = (state: ManuscriptEditorState) => {
+export const ignoreBibliographyTitleCommands = (
+  state: ManuscriptEditorState
+) => {
   const { selection } = state
 
   if (!isTextSelection(selection)) {
     return false
   }
-
+  const parentNode = selection.$from.node(selection.$from.depth - 1)
   return (
-    selection.$from.node(selection.$from.depth - 1).type ===
-    schema.nodes.bibliography_section
+    selection.$from.parent.type === schema.nodes.section_title &&
+    parentNode.type === schema.nodes.bibliography_section
   )
 }
 
