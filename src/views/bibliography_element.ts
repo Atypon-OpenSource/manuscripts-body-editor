@@ -69,7 +69,7 @@ export class BibliographyElementBlockView extends BlockView<
       this.node,
       this.getPos,
       this.view,
-      'references-modal'
+      'references-editor'
     )
 
     this.props.popper.show(this.dom, this.editor, 'right')

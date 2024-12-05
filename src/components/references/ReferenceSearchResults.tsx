@@ -64,26 +64,28 @@ export const ReferenceSearchResults: React.FC<{
   isSelected: (item: BibliographyItemAttrs) => boolean
   onSelect: (item: BibliographyItemAttrs) => void
   onShowMore: () => void
-}> = ({ items, total, isSelected, onSelect, onShowMore }) => {
-  return (
-    <ReferenceSearchResultsContainer>
-      {items.map((item) => (
-        <ReferenceSearchResult onClick={() => onSelect(item)} key={item.id}>
-          <StatusIcon>
-            {isSelected(item) ? (
-              <AddedIcon data-cy={'plus-icon-ok'} width={24} height={24} />
-            ) : (
-              <AddIcon data-cy={'plus-icon'} width={24} height={24} />
-            )}
-          </StatusIcon>
-          <ReferenceLine item={item} />
-        </ReferenceSearchResult>
-      ))}
-      {items.length < 25 && total > items.length ? (
-        <MoreButton onClick={onShowMore} data-cy={'more-button'}>
-          Show more
-        </MoreButton>
-      ) : undefined}
-    </ReferenceSearchResultsContainer>
-  )
-}
+}> = ({ items, total, isSelected, onSelect, onShowMore }) => (
+  <ReferenceSearchResultsContainer>
+    {items.map((item) => (
+      <ReferenceSearchResult
+        onClick={() => onSelect(item)}
+        key={item.id}
+        data-cy={`${isSelected(item) ? 'selected-reference' : 'reference'}`}
+      >
+        <StatusIcon>
+          {isSelected(item) ? (
+            <AddedIcon width={24} height={24} />
+          ) : (
+            <AddIcon width={24} height={24} />
+          )}
+        </StatusIcon>
+        <ReferenceLine item={item} />
+      </ReferenceSearchResult>
+    ))}
+    {items.length < 25 && total > items.length ? (
+      <MoreButton onClick={onShowMore} data-cy={'more-button'}>
+        Show more
+      </MoreButton>
+    ) : undefined}
+  </ReferenceSearchResultsContainer>
+)
