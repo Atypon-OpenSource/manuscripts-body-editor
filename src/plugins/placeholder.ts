@@ -18,8 +18,7 @@ import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
   ManuscriptEditorView,
-  ManuscriptNode,
-  schema,
+  ManuscriptNode, schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -61,25 +60,15 @@ export default () =>
         const decorations: Decoration[] = []
 
         state.doc.descendants((node, pos, parent) => {
-          if (node.childCount === 0) {
-            if (!node.isAtom && node.type.isBlock) {
-              if (node.type === node.type.schema.nodes.paragraph) {
-                const text = getParagraphPlaceholderText(parent)
-                if (text) {
-                  decorations.push(
-                    Decoration.widget(pos + 1, placeholderWidget(text))
-                  )
-                }
-              } else {
+          if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
+            if (node.type === node.type.schema.nodes.paragraph) {
+              const text = getParagraphPlaceholderText(parent)
+              if (text) {
                 decorations.push(
-                  Decoration.node(pos, pos + node.nodeSize, {
-                    class: 'empty-node',
-                  })
+                  Decoration.widget(pos + 1, placeholderWidget(text))
                 )
               }
-            }
-            if (node.type === node.type.schema.nodes.body) {
-              // If the body is empty, add the empty-node class
+            } else {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
                   class: 'empty-node',
