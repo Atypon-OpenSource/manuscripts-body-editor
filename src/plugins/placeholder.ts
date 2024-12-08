@@ -18,7 +18,8 @@ import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
   ManuscriptEditorView,
-  ManuscriptNode, schema,
+  ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
