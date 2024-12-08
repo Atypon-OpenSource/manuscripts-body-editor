@@ -123,3 +123,10 @@ export const isSelectionInNode = (
   }
   return false
 }
+
+export const createHeader = (typeName: string, text: string) => {
+  const header = document.createElement('h1')
+  header.classList.add(`title-${typeName}`, 'authors-info-header')
+  header.textContent = text
+  return header
+}

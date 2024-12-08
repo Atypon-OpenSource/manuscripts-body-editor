@@ -36,7 +36,8 @@ export default () => {
         state.doc.descendants((node, pos, parent) => {
           if (
             parent &&
-            (isSectionNodeType(parent.type) || parent.type === schema.nodes.body) &&
+            (isSectionNodeType(parent.type) ||
+              parent.type === schema.nodes.body) &&
             node.type !== section
           ) {
             decorations.push(
