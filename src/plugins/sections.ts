@@ -72,7 +72,6 @@ const preventTitleEdit = (tr: Transaction) => {
           if (isGraphicalAbstractSectionNode(node) || isKeywordsNode(node)) {
             const nodeRangeStart = nodePos
             const nodeRangeEnd = nodePos + node.nodeSize
-
             // Detect if the change is a deletion (complete removal of the node)
             const isDeletion = fromA <= nodeRangeStart && toA >= nodeRangeEnd
 
