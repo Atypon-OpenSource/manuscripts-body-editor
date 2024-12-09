@@ -27,6 +27,8 @@ import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { isDeleted } from '../../lib/track-changes-utils'
+
 const NotesContainer = styled.div`
   height: 90vh;
   max-height: 400px;
@@ -159,11 +161,10 @@ const FootnotesList: React.FC<{
 
   footnotes.forEach((footnote) => {
     const isNoteSelected = rids?.includes(footnote.attrs.id)
-    if (isNoteSelected) {
-      selectedNotes.push(footnote)
-    } else {
-      remainingNotes.push(footnote)
-    }
+    if (isDeleted(footnote)) return
+    isNoteSelected
+      ? selectedNotes.push(footnote)
+      : remainingNotes.push(footnote)
   })
 
   return (
