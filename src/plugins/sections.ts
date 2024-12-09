@@ -94,6 +94,7 @@ const preventTitleEdit = (tr: Transaction) => {
               }
             })
           }
+          // check if one is graphical abstract and another one is a title
         })
       })
     })
