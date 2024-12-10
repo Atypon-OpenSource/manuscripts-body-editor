@@ -56,6 +56,7 @@ const excludedTypes = [
   schema.nodes.contributors,
   schema.nodes.author_notes,
   schema.nodes.title,
+  schema.nodes.embed,
 ]
 
 const childrenExcludedTypes = [
