@@ -104,7 +104,6 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
-import { sectionTitles } from './lib/section-titles'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -789,13 +788,10 @@ export const insertGraphicalAbstract = (
 
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill(
-    { category: 'MPSectionCategory:abstract-graphical' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-      createAndFillFigureElement(state),
-    ]
-  ) as GraphicalAbstractSectionNode
+  const section = schema.nodes.graphical_abstract_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
+    createAndFillFigureElement(state),
+  ]) as GraphicalAbstractSectionNode
 
   const tr = state.tr.insert(pos, section)
 
@@ -845,9 +841,7 @@ export const insertSection =
       pos = body.pos + body.node.content.size + 1
     }
 
-    const section = nodes.section.createAndFill({
-      category: subsection ? 'MPSectionCategory:subsection' : '',
-    }) as SectionNode
+    const section = nodes.section.createAndFill() as SectionNode
     const tr = state.tr.insert(pos, section)
 
     if (dispatch) {
@@ -856,18 +850,16 @@ export const insertSection =
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
-
     return true
   }
-
-export const insertBackMatterSection =
+export const insertBackmatterSection =
   (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
     const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
-    if (sections.some((s) => s.node.attrs.category === category)) {
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
 
@@ -881,17 +873,12 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill(
-      {
-        category,
-      },
-      [
-        schema.nodes.section_title.create(
-          {},
-          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
-        ),
-      ]
-    ) as SectionNode
+    const attrs = {
+      category: category.id,
+    }
+    const node = schema.nodes.section.create(attrs, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+    ])
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -920,7 +907,7 @@ export const insertAbstract = (
   if (
     getMatchingChild(
       state.doc,
-      (node) => node.attrs.category === 'MPSectionCategory:abstract',
+      (node) => node.attrs.category === 'abstract',
       true
     )
   ) {
@@ -929,13 +916,10 @@ export const insertAbstract = (
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
   // Insert abstract at the top of abstracts section
   const pos = abstracts.pos + 1
-  const section = schema.nodes.section.createAndFill(
-    { category: 'MPSectionCategory:abstract' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Abstract')),
-      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
-    ]
-  ) as ManuscriptNode
+  const section = schema.nodes.section.createAndFill({ category: 'abstract' }, [
+    schema.nodes.section_title.create({}, schema.text('Abstract')),
+    schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+  ]) as ManuscriptNode
 
   const tr = state.tr.insert(pos, section)
 
