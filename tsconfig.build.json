@@ -3,6 +3,7 @@
   "exclude": [
     "**/__fixtures__",
     "**/__mocks__",
-    "**/__tests__"
+    "**/__tests__",
+    "src/testing/**",
   ]
 }
