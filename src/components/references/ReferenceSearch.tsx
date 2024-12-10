@@ -107,7 +107,7 @@ export const ReferenceSearch: React.FC<{
   }, 800)
 
   return (
-    <Container>
+    <Container data-cy={'reference-finder'}>
       <SearchInput onChange={debouncedSetQuery} defaultValue={initialQuery} />
       <ReferenceSearchSectionContainer>
         <ReferenceSearchSection

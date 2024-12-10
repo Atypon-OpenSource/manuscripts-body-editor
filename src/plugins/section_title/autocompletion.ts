@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  schema,
-  SectionCategory,
-  SectionNode,
-  SectionTitleNode,
-} from '@manuscripts/transform'
+import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionTitles } from '../../lib/section-titles'
 import { getActualTextContent } from '../../lib/track-changes-utils'
+import { getEditorProps } from '../editor-props'
 
 function cursorAtTheEndOfText(
   state: EditorState,
@@ -38,14 +33,13 @@ const isUpperCase = (test: string) =>
   test === test.toUpperCase() && test.length > 1
 
 export function hasAutoCompletionSlack(
-  parentSection: SectionNode,
-  titleSection: SectionTitleNode
+  node: ManuscriptNode,
+  category: SectionCategory
 ) {
-  const category = parentSection.attrs.category as SectionCategory
-  const titles = sectionTitles.get(category)?.split('|')
+  const titles = category.titles
 
-  if (category && titles?.length && titleSection.textContent) {
-    const actualTextContent = getActualTextContent(titleSection.content)
+  if (titles.length && node.textContent) {
+    const actualTextContent = getActualTextContent(node.content)
     const title = titles.find((t) =>
       t.toLowerCase().startsWith(actualTextContent.toLowerCase())
     )
@@ -69,23 +63,25 @@ export function checkForCompletion(state: EditorState) {
     state.selection.$from,
     schema.nodes.section
   )
+  if (!section) {
+    return
+  }
+
   const title = findParentNodeOfTypeClosestToPos(
     state.selection.$from,
     schema.nodes.section_title
   )
+  if (!title || !cursorAtTheEndOfText(state, title.node.nodeSize, title.pos)) {
+    return
+  }
 
-  if (
-    section &&
-    title &&
-    cursorAtTheEndOfText(state, title.node.nodeSize, title.pos)
-  ) {
-    const text = hasAutoCompletionSlack(
-      section.node as SectionNode,
-      title.node as SectionTitleNode
-    )
+  const props = getEditorProps(state)
+  const category = props.sectionCategories.get(section.node.attrs.category)
+
+  if (category) {
+    const text = hasAutoCompletionSlack(title.node, category)
     if (text) {
       return text
     }
   }
-  return null
 }

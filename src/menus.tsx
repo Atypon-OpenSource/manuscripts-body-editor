@@ -15,7 +15,11 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import {
+  getGroupCateogries,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
@@ -25,7 +29,7 @@ import {
   blockActive,
   canInsert,
   insertAbstract,
-  insertBackMatterSection,
+  insertBackmatterSection,
   insertBlock,
   insertBoxElement,
   insertContributors,
@@ -46,6 +50,7 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 
 export const getEditorMenus = (
@@ -53,7 +58,19 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+  const props = getEditorProps(state)
 
+  const insertBackmatterSectionMenu = (category: SectionCategory) => {
+    const command = insertBackmatterSection(category)
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
+  const categories = getGroupCateogries(props.sectionCategories, 'backmatter')
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -137,90 +154,7 @@ export const getEditorMenus = (
         id: 'back-matter',
         label: 'Author Notes',
         isEnabled: true,
-        submenu: [
-          {
-            id: 'insert-acknowledgements',
-            label: 'Acknowledgements',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
-            ),
-          },
-          {
-            id: 'insert-availability',
-            label: 'Availability',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:availability')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:availability')
-            ),
-          },
-          {
-            id: 'insert-coi-statement',
-            label: 'COI Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
-            ),
-          },
-          {
-            id: 'insert-con',
-            label: 'Contributed-by Information',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:con')
-            ),
-            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
-          },
-          {
-            id: 'insert-ethics-statement',
-            label: 'Ethics Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
-            ),
-          },
-          {
-            id: 'insert-financial-disclosure',
-            label: 'Financial Disclosure',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
-            ),
-          },
-          {
-            id: 'insert-supplementary-material',
-            label: 'Supplementary Material',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
-              )
-            ),
-          },
-          {
-            id: 'insert-supported-by',
-            label: 'Supported By',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:supported-by')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:supported-by')
-            ),
-          },
-        ],
+        submenu: categories.map(insertBackmatterSectionMenu),
       },
       {
         id: 'insert-section',
