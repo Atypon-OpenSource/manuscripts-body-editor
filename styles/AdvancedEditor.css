@@ -271,7 +271,7 @@ figure.block > .comment-marker {
   left: 0;
 }
 
-section > .comment-marker {
+section > .comment-marker, .body > .comment-marker {
   top: 12px;
   float: right;
   left: -64px;
