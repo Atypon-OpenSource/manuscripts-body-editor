@@ -362,8 +362,7 @@ span.comment-marker {
   font-weight: 400 !important;
   line-height: 16px !important;
 }
-
-.ProseMirror .author-notes-container h1 {
+.ProseMirror h1.authors-info-header {
   color: #353535 !important;
   font-size: 16px !important;
   font-weight: 700 !important;
@@ -371,9 +370,11 @@ span.comment-marker {
   margin: 0 !important;
 }
 
+.ProseMirror .block-award,
 .ProseMirror .author-notes-container > div {
   margin-bottom: 16px;
 }
+.ProseMirror .block-award:last-child,
 .ProseMirror .author-notes-container > div:last-child {
   margin-bottom: 0;
 }
@@ -708,9 +709,14 @@ span.selected-suggestion,
   text-decoration: underline;
 }
 .block-contributors,
+.block-author_notes,
+.block-awards,
 .block-affiliations,
 .keywords {
   margin: 15px 0px;
+}
+.block-awards.empty-node {
+  display: none;
 }
 .contributors {
   display: flex;

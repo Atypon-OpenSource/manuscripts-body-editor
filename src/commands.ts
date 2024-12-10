@@ -1266,7 +1266,9 @@ export const ignoreMetaNodeBackspaceCommand = (
     selection.node.type === schema.nodes.affiliations ||
     selection.node.type === schema.nodes.affiliation ||
     selection.node.type === schema.nodes.contributors ||
-    selection.node.type === schema.nodes.contributor
+    selection.node.type === schema.nodes.contributor ||
+    selection.node.type === schema.nodes.awards ||
+    selection.node.type === schema.nodes.award
   )
 }
 
