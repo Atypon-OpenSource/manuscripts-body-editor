@@ -53,15 +53,9 @@ export class CrossReferenceView
   }
 
   public updateContents = () => {
-    const targets = objectsKey.getState(this.view.state) as Map<
-      string,
-      Target
-    >
+    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const attrs = this.node.attrs
-    const classes = [
-      'cross-reference',
-      ...getChangeClasses(attrs.dataTracked),
-    ]
+    const classes = ['cross-reference', ...getChangeClasses(attrs.dataTracked)]
     this.dom.className = classes.join(' ')
 
     const label = attrs.rids.length && targets.get(attrs.rids[0])?.label

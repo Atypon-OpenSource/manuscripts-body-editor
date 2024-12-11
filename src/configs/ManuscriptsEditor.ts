@@ -16,9 +16,9 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { SectionCategory, UserProfile } from '@manuscripts/json-schema'
+import { UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { Location, NavigateFunction } from 'react-router-dom'
@@ -58,7 +58,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-  sectionCategories: SectionCategory[]
+  sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location

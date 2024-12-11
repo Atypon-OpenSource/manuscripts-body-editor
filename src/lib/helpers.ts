@@ -68,59 +68,55 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToSelectedTarget = (view: EditorView) => {
+export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
   const { tr, selection } = view.state
 
-  const node = tr.doc.nodeAt(selection.$from.pos)
-  if (!node) {
+  // Get the nodes at the selection's start and end positions
+  const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
+  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
+
+  if (!nodeAtFrom) {
     return false
   }
-  let targetElement: HTMLElement | null = null
 
-  // Handle bibliography_item node type
-  if (node.type === schema.nodes.bibliography_item) {
-    targetElement = document.getElementById(node.attrs.id) as HTMLElement
-  }
+  // Determine the target element to scroll to
+  const targetElement =
+    nodeAtFrom.type === schema.nodes.bibliography_item
+      ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+      : nodeAtTo?.type === schema.nodes.highlight_marker
+      ? (document.getElementById(nodeAtTo.attrs.id) as HTMLElement)
+      : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
 
-  // If no specific target element for bibliography_item, fallback to the DOM at selection position
-  if (!targetElement) {
-    targetElement = view.domAtPos(selection.$from.pos).node as HTMLElement
-
-    const markerElement = targetElement.querySelector(
-      '.footnote-marker'
-    ) as HTMLElement
-
-    // Ensure the marker exists and add highlight class for inline footnote marker for 3 seconds
-    if (markerElement && node.type === schema.nodes.inline_footnote) {
-      markerElement.classList.add('highlight-footnote-marker')
-
-      setTimeout(
-        () => markerElement.classList.remove('highlight-footnote-marker'),
-        3000
-      )
-    }
-  }
-
-  if (!targetElement) {
-    return false
-  }
-  const editorBodyElement = document.querySelector(
-    '.editor-body'
+  const markerElement = targetElement.querySelector(
+    '.footnote-marker'
   ) as HTMLElement
 
-  const { top: targetTop, height: targetHeight } =
-    targetElement.getBoundingClientRect()
-  const { top: parentTop } = editorBodyElement.getBoundingClientRect()
+   // Ensure the marker exists and add highlight class for inline footnote marker for 3 seconds
+   if (markerElement && nodeAtFrom.type === schema.nodes.inline_footnote) {
+    markerElement.classList.add('highlight-footnote-marker')
 
-  // Check if the target element is outside the viewport and scroll if necessary
-  if (targetTop < 150 || targetTop + targetHeight > window.innerHeight) {
-    const offset =
-      targetTop - parentTop - (window.innerHeight - targetHeight) / 2
-    editorBodyElement.scrollTo({
-      top: editorBodyElement.scrollTop + offset,
-      behavior: 'smooth',
-    })
+    setTimeout(
+      () => markerElement.classList.remove('highlight-footnote-marker'),
+      3000
+    )
   }
+
+  // Use the DOM element at the selection position as a fallback
+  const scrollTarget =
+    targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
+
+  if (!scrollTarget) {
+    return false
+  }
+
+  // Decide the block alignment based on the element type
+  const blockAlignment =
+    nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
+  // Scroll the target element into view
+  scrollTarget.scrollIntoView({
+    behavior: 'smooth',
+    block: blockAlignment, // Align the target element to the start of the viewport
+  })
 
   return true
 }

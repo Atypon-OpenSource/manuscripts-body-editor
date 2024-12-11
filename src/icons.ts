@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AlertIcon, DeleteIcon, ScrollIcon } from '@manuscripts/style-guide'
-import { createElement } from 'react'
+import {
+  AlertIcon,
+  DeleteIcon,
+  SectionCategoryIcon,
+  ScrollIcon
+} from '@manuscripts/style-guide'
+import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-export const alertIcon = renderToStaticMarkup(createElement(AlertIcon))
-export const deleteIcon = renderToStaticMarkup(createElement(DeleteIcon))
+const renderIcon = (c: React.FC) => renderToStaticMarkup(createElement(c))
+
+export const alertIcon = renderIcon(AlertIcon)
+export const deleteIcon = renderIcon(DeleteIcon)
+export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))

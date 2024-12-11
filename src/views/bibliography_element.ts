@@ -69,7 +69,7 @@ export class BibliographyElementBlockView extends BlockView<
       this.node,
       this.getPos,
       this.view,
-      'references-modal'
+      'references-editor'
     )
 
     this.props.popper.show(this.dom, this.editor, 'right')
@@ -123,25 +123,29 @@ export class BibliographyElementBlockView extends BlockView<
 
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
-    const item = element.closest('.bib-item')
-    if (item) {
-      const marker = element.closest('.comment-marker') as HTMLElement
-      if (marker) {
-        const key = marker.dataset.key as CommentKey
-        const tr = this.view.state.tr
-        setCommentSelection(tr, key, undefined, false)
-        this.view.dispatch(tr)
-        return
+    // Handle click on comment marker
+    const marker = element.closest('.comment-marker') as HTMLElement
+    if (marker) {
+      const key = marker.dataset.key as CommentKey
+      const tr = this.view.state.tr
+      setCommentSelection(tr, key, undefined, false)
+      this.view.dispatch(tr)
+      return
+    }
+
+    if (this.props.getCapabilities().seeReferencesButtons) {
+      const item = element.closest('.bib-item')
+      if (item) {
+        this.showContextMenu(item as HTMLElement)
+        const node = findChildByID(this.view, item.id)
+        if (!node) {
+          return
+        }
+        const view = this.view
+        const tr = view.state.tr
+        tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
+        view.dispatch(tr)
       }
-      this.showContextMenu(item as HTMLElement)
-      const node = findChildByID(this.view, item.id)
-      if (!node) {
-        return
-      }
-      const view = this.view
-      const tr = view.state.tr
-      tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
-      view.dispatch(tr)
     }
   }
 
@@ -165,13 +169,9 @@ export class BibliographyElementBlockView extends BlockView<
       nodes.set(id, node as BibliographyItemNode)
     })
 
-    const can = this.props.getCapabilities()
-
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
-    if (can.seeReferencesButtons) {
-      wrapper.addEventListener('click', this.handleClick)
-    }
+    wrapper.addEventListener('click', this.handleClick)
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
