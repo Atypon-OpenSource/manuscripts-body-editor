@@ -17,6 +17,8 @@
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
+import award from '../views/award'
+import awards from '../views/awards'
 import bibliographyElement from '../views/bibliography_element'
 import blockquoteElement from '../views/blockquote_element_editable'
 import boxElement from '../views/box_element'
@@ -89,5 +91,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     comments: empty('comments'),
     supplements: empty('supplements'),
     author_notes: authorNotes(props, dispatch),
+    awards: awards(props, dispatch),
+    award: award(props, dispatch),
   }
 }

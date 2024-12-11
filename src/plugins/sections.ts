@@ -70,6 +70,18 @@ const preventTitleEdit = (tr: Transaction) => {
            and preventing that change
            */
           if (isGraphicalAbstractSectionNode(node) || isKeywordsNode(node)) {
+            const nodeRangeStart = nodePos
+            const nodeRangeEnd = nodePos + node.nodeSize
+
+            // Detect if the change is a deletion (complete removal of the node)
+            const isDeletion = fromA <= nodeRangeStart && toA >= nodeRangeEnd
+
+            if (isDeletion) {
+              // Allow deletion of the node
+              return true
+            }
+
+            // Prevent updates to the section title in graphical abstract or keywords
             node.descendants((childNode, childPos) => {
               const inDocPos = nodePos + childPos
 
@@ -83,7 +95,6 @@ const preventTitleEdit = (tr: Transaction) => {
               }
             })
           }
-          // check if one is graphical abstract and another one is a title
         })
       })
     })
