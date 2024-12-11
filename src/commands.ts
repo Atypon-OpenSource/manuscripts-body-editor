@@ -1271,7 +1271,6 @@ export const ignoreMetaNodeBackspaceCommand = (
     selection.node.type === schema.nodes.award
   )
 }
-
 // Copied from prosemirror-commands
 const findCutAfter = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {

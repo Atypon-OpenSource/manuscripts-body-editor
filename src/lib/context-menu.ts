@@ -40,7 +40,11 @@ import { isChildOfNodeTypes, isSelectionInNode } from './utils'
 
 const popper = new PopperManager()
 
-const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+const readonlyTypes = [
+  schema.nodes.keywords,
+  schema.nodes.bibliography_element,
+  schema.nodes.bibliography_section,
+]
 
 const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
   isSectionTitleNode(node) &&
