@@ -614,8 +614,10 @@
 }
 
 .ProseMirror .block-container > .block {
-  padding: 0 12px;
   margin: 0;
+  z-index: 1;
+  padding: 0 12px;
+  overflow-x: hidden;
 }
 
 .ProseMirror .block-container.block-figure_element > .block {
@@ -963,6 +965,31 @@
   margin-bottom: 10px;
   cursor: pointer;
   color: #0d79d0;
+  margin: 0 5px;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+}
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before, .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
+  content: '';
+  width: 45vw;
+  opacity: 0;
+  z-index: -1;
+  height: 30px;
+  margin: 0 12px;
+  position: absolute;
+  background: #E2E2E2;
+  transition: opacity 2s ease-in-out;
+ 
+} 
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
+  left: 0;
+}
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
+  right:-100px;
+}
+.ProseMirror .footnote-marker.highlight-footnote-marker::before, .ProseMirror .footnote-marker.highlight-footnote-marker::after {
+  opacity: 1 !important;
 }
 
 .ProseMirror .footnote {
@@ -980,7 +1007,13 @@
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
-
+.ProseMirror .footnote .scroll-icon {
+  cursor: pointer;
+  visibility: hidden;
+  margin-left: 15px;
+  transition: 0.2s all;
+  transform: rotate(180deg);
+}
 .ProseMirror .footnote .uncited-footnote {
   margin-right: 4px;
 }
@@ -991,6 +1024,10 @@
 }
 
 .ProseMirror .footnote.footnote-selected .delete-icon {
+  visibility: visible;
+}
+
+.ProseMirror .footnote:hover .scroll-icon {
   visibility: visible;
 }
 

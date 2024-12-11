@@ -87,6 +87,20 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
       ? (document.getElementById(nodeAtTo.attrs.id) as HTMLElement)
       : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
 
+  const markerElement = targetElement.querySelector(
+    '.footnote-marker'
+  ) as HTMLElement
+
+   // Ensure the marker exists and add highlight class for inline footnote marker for 3 seconds
+   if (markerElement && nodeAtFrom.type === schema.nodes.inline_footnote) {
+    markerElement.classList.add('highlight-footnote-marker')
+
+    setTimeout(
+      () => markerElement.classList.remove('highlight-footnote-marker'),
+      3000
+    )
+  }
+
   // Use the DOM element at the selection position as a fallback
   const scrollTarget =
     targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
