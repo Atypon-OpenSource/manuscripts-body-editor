@@ -16,11 +16,11 @@
 
 import { schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
+import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { objectsKey } from './objects'
-import { Node } from 'prosemirror-model'
 
 export default () => {
   return new Plugin({
