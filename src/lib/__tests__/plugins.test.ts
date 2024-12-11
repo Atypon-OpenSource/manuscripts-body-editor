@@ -15,13 +15,18 @@
  */
 import { ObjectTypes, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
-import { ActualManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  ActualManuscriptNode,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
 import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import sectionCategories from '../../testing/section-categories.json'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
@@ -61,6 +66,12 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
     style: '',
     locale: '',
   },
+  sectionCategories: new Map(
+    sectionCategories.map((category: SectionCategory) => [
+      category.id,
+      category,
+    ])
+  ),
 })
 
 describe('editor view', () => {

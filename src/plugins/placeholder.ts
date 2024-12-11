@@ -18,7 +18,8 @@ import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
   ManuscriptEditorView,
-  ManuscriptNode, schema,
+  ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -43,7 +44,7 @@ const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
     return
   }
   if (parent.type === schema.nodes.body) {
-    return 'Paragraph'
+    return 'Start typing here...'
   }
   if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
     return 'Type new footnote here'
