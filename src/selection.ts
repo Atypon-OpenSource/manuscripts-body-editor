@@ -57,7 +57,7 @@ export class NodesSelection extends Selection {
   }
 }
 
-export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
+export const getGroupOfChanges = (state: ManuscriptEditorState) => {
   const selection = state.selection
   const $pos = isTextSelection(selection)
     ? selection.$cursor

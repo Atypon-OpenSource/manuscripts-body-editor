@@ -29,7 +29,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
-import { getSelectionChangeGroup } from '../selection'
+import { getGroupOfChanges } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -80,9 +80,9 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
-  const inlineChanges = getSelectionChangeGroup(state)
-  if (inlineChanges) {
-    return buildInlineChangesDecoration(state.doc, inlineChanges)
+  const changes = getGroupOfChanges(state)
+  if (changes) {
+    return buildGroupOfChangesDecoration(state.doc, changes)
   }
   const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
   if (!$pos) {
@@ -181,7 +181,7 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   }
 }
 
-const buildInlineChangesDecoration = (
+const buildGroupOfChangesDecoration = (
   doc: ManuscriptNode,
   changes: TrackedChange[]
 ) => {
