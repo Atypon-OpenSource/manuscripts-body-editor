@@ -16,8 +16,8 @@
 import {
   AlertIcon,
   DeleteIcon,
+  ScrollIcon,
   SectionCategoryIcon,
-  ScrollIcon
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'

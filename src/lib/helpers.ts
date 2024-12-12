@@ -68,56 +68,63 @@ export const mergeSimilarItems =
     }, [])
   }
 
-  export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
-    const { tr, selection } = view.state
-  
+export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
+  const { tr, selection } = view.state
+
   // Get the nodes at the selection's start and end positions
   const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
-    const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
-    // Get the DOM element at the selection's position
-    const domAtSelectionFrom = view.domAtPos(selection.$from.pos).node as HTMLElement
-  
-    if (!nodeAtFrom) return false
-  
-  // Determine the target element to scroll to
-    const targetElement =
-      nodeAtFrom.type === schema.nodes.bibliography_item
-        ? document.getElementById(nodeAtFrom.attrs.id) as HTMLElement
-        : nodeAtTo?.type === schema.nodes.highlight_marker
-        ? document.getElementById(nodeAtTo?.attrs.id) as HTMLElement
-        : document.getElementById(nodeAtFrom.attrs.id) as HTMLElement
-  
-    // Fallback to the DOM element at the selection's position
-    const scrollTarget = targetElement || domAtSelectionFrom
-  
-    if (!scrollTarget) return false;
-  
-    // Highlight the footnote marker if applicable
-    if (nodeAtFrom.type === schema.nodes.inline_footnote) {
+  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
+  // Get the DOM element at the selection's position
+  const domAtSelectionFrom = view.domAtPos(selection.$from.pos)
+    .node as HTMLElement
 
-      const markerElement = domAtSelectionFrom.querySelector(
-        '.footnote-marker'
-      ) as HTMLElement;
-  
-      if (markerElement) {
-        markerElement.classList.add('highlight-footnote-marker');
-        setTimeout(() => markerElement.classList.remove('highlight-footnote-marker'), 3000)
-      }
-    }
-  
-    // Set block alignment based on the node type
-    const blockAlignment =
-      nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
-  
-    // Scroll the target element into view
-    scrollTarget.scrollIntoView({
-      behavior: 'smooth',
-      block: blockAlignment,
-    })
-  
-    return true
+  if (!nodeAtFrom) {
+    return false
   }
-  
+
+  // Determine the target element to scroll to
+  const targetElement =
+    nodeAtFrom.type === schema.nodes.bibliography_item
+      ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+      : nodeAtTo?.type === schema.nodes.highlight_marker
+      ? (document.getElementById(nodeAtTo?.attrs.id) as HTMLElement)
+      : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
+
+  // Fallback to the DOM element at the selection's position
+  const scrollTarget = targetElement || domAtSelectionFrom
+
+  if (!scrollTarget) {
+    return false
+  }
+
+  // Highlight the footnote marker if applicable
+  if (nodeAtFrom.type === schema.nodes.inline_footnote) {
+    const markerElement = domAtSelectionFrom.querySelector(
+      '.footnote-marker'
+    ) as HTMLElement
+
+    if (markerElement) {
+      markerElement.classList.add('highlight-footnote-marker')
+      setTimeout(
+        () => markerElement.classList.remove('highlight-footnote-marker'),
+        3000
+      )
+    }
+  }
+
+  // Set block alignment based on the node type
+  const blockAlignment =
+    nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
+
+  // Scroll the target element into view
+  scrollTarget.scrollIntoView({
+    behavior: 'smooth',
+    block: blockAlignment,
+  })
+
+  return true
+}
+
 // Find the boundaries of the intended word based on the current cursor position
 export const findWordBoundaries = (
   state: ManuscriptEditorState,
