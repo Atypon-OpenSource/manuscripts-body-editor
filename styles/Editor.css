@@ -704,6 +704,7 @@
   overflow-x: auto;
   justify-content: center;
   vertical-align: middle;
+  align-items: center;
 }
 
 .ProseMirror .equation svg {
