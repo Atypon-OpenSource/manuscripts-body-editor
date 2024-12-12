@@ -60,7 +60,6 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     } else {
       marker.classList.add('footnote-marker')
       marker.innerText = fn.labels.get(id) || ''
-      marker.addEventListener('mousedown', (e) => this.handleMarkerClick(e))
     }
     const container = findFootnotesContainerNode(this.view.state.doc, pos)
 
@@ -85,8 +84,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
     this.dom.append(
       marker,
+      // Only append scrollBtn if it's created
+      ...(scrollBtn ? [scrollBtn] : []),
       ...(this.contentDOM ? [this.contentDOM] : []),
-      ...(scrollBtn ? [scrollBtn] : []), // Only append scrollBtn if it's created
       deleteBtn
     )
   }

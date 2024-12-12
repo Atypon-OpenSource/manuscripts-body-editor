@@ -617,9 +617,7 @@
   margin: 0;
   z-index: 1;
   padding: 0 12px;
-  overflow-x: hidden;
 }
-
 .ProseMirror .block-container.block-figure_element > .block {
   display: grid;
 }
@@ -972,15 +970,13 @@
 }
 .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before, .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
   content: '';
-  width: 45vw;
   opacity: 0;
   z-index: -1;
   height: 30px;
   margin: 0 12px;
   position: absolute;
   background: #E2E2E2;
-  transition: opacity 2s ease-in-out;
- 
+  pointer-events: none;
 } 
 .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
   left: 0;
@@ -990,6 +986,11 @@
 }
 .ProseMirror .footnote-marker.highlight-footnote-marker::before, .ProseMirror .footnote-marker.highlight-footnote-marker::after {
   opacity: 1 !important;
+  width: 45vw;
+  transition: opacity 0.3s ease-in-out;
+}
+.ProseMirror .block-container > .block:has(.highlight-footnote-marker.footnote-marker) {
+  overflow-x: hidden;
 }
 
 .ProseMirror .footnote {
@@ -1008,6 +1009,7 @@
   visibility: hidden;
 }
 .ProseMirror .footnote .scroll-icon {
+  order: 1;
   cursor: pointer;
   visibility: hidden;
   margin-left: 15px;
