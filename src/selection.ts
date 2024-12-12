@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  InlineAdjacentChanges,
-  trackChangesPluginKey,
-} from '@manuscripts/track-changes-plugin'
+import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { Selection } from 'prosemirror-state'
@@ -68,11 +65,11 @@ export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
   if ($pos) {
     return trackChangesPluginKey
       .getState(state)
-      ?.changeSet.groupChanges.find(
-        (change) =>
-          change.type === 'inline-changes' &&
-          $pos.pos >= change.from &&
-          $pos.pos <= change.to
-      ) as InlineAdjacentChanges
+      ?.changeSet.changeTree.find(
+        (changes) =>
+          changes.length > 1 &&
+          $pos.pos >= changes[0].from &&
+          $pos.pos <= changes[changes.length - 1].to
+      )
   }
 }

@@ -15,8 +15,8 @@
  */
 import {
   CHANGE_STATUS,
-  InlineAdjacentChanges,
   TrackedAttrs,
+  TrackedChange,
 } from '@manuscripts/track-changes-plugin'
 import {
   DataTrackedAttrs,
@@ -80,9 +80,9 @@ export default () => {
 
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
-  const inlineChange = getSelectionChangeGroup(state)
-  if (inlineChange) {
-    return buildInlineChangeDecoration(state.doc, inlineChange)
+  const inlineChanges = getSelectionChangeGroup(state)
+  if (inlineChanges) {
+    return buildInlineChangesDecoration(state.doc, inlineChanges)
   }
   const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
   if (!$pos) {
@@ -181,16 +181,18 @@ const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   }
 }
 
-const buildInlineChangeDecoration = (
+const buildInlineChangesDecoration = (
   doc: ManuscriptNode,
-  inlineChange: InlineAdjacentChanges
+  changes: TrackedChange[]
 ) => {
-  const decoration = Decoration.inline(inlineChange.from, inlineChange.to, {
+  const from = changes[0].from,
+    to = changes[changes.length - 1].to
+  const decoration = Decoration.inline(from, to, {
     class: 'selected-suggestion',
   })
   return {
     decorations: DecorationSet.create(doc, [decoration]),
-    suggestion: inlineChange.nodes.at(0)?.dataTracked,
+    suggestion: changes[0].dataTracked,
   }
 }
 
