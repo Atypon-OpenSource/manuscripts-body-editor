@@ -133,12 +133,16 @@
   padding: 10px;
 }
 
-.ProseMirror tr:first-of-type th {
+.ProseMirror tr th {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  background: #f2f2f2;
+  background: #E2E2E2;
   text-align: left;
   font-weight: bold;
+}
+
+.ProseMirror tr th:not(:last-child) {
+  border-right: 1px solid #C9C9C9;
 }
 
 .ProseMirror tr td {
@@ -176,10 +180,6 @@
 .ProseMirror .cross-reference {
   text-decoration: none;
   color: inherit;
-}
-
-.ProseMirror .cross-reference.deleted {
-  text-decoration: line-through;
 }
 
 .ProseMirror .bib-item.ProseMirror-selectednode,
@@ -561,14 +561,6 @@
   color: #c9c9c9;
   margin: 0;
 }
-
-.ProseMirror .empty-node::before {
-  position: absolute;
-  color: #c9c9c9;
-  cursor: text;
-  pointer-events: none;
-}
-
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
@@ -612,6 +604,9 @@
   position: relative;
   display: grid;
   grid-template-columns: auto;
+}
+.ProseMirror .block-container.block-section section {
+  position: relative;
 }
 
 .ProseMirror .block-container:not(.block-section):hover {

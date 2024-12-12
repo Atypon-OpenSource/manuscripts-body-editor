@@ -99,10 +99,6 @@ export const OutlineItemLinkText = styled.span`
   overflow-x: hidden;
   text-overflow: ellipsis;
   margin-left: ${(props) => props.theme.grid.unit * 2}px;
-
-  &.deleted {
-    text-decoration: line-through;
-  }
 `
 
 export const Outline = styled.div`

@@ -187,11 +187,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
           <PrimaryButton
             onClick={() =>
               selectedItem &&
-              handleSelect(
-                selectedItem,
-                customTextRef.current?.value ||
-                  targets.find(({ id }) => id === selectedItem)?.label
-              )
+              handleSelect(selectedItem, customTextRef.current?.value || '')
             }
             disabled={!selectedItem}
           >
