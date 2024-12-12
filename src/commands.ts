@@ -49,6 +49,7 @@ import {
   NodeRange,
   NodeType,
   ResolvedPos,
+  Slice,
 } from 'prosemirror-model'
 import { wrapInList } from 'prosemirror-schema-list'
 import {
@@ -72,11 +73,13 @@ import {
   findWrapping,
   liftTarget,
   ReplaceAroundStep,
+  ReplaceStep,
 } from 'prosemirror-transform'
 import {
   findChildrenByType,
   findParentNodeOfType,
   findParentNodeOfTypeClosestToPos,
+  flatten,
   hasParentNodeOfType,
   NodeWithPos,
 } from 'prosemirror-utils'
@@ -101,7 +104,6 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
-import { sectionTitles } from './lib/section-titles'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -786,13 +788,10 @@ export const insertGraphicalAbstract = (
 
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill(
-    { category: 'MPSectionCategory:abstract-graphical' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-      createAndFillFigureElement(state),
-    ]
-  ) as GraphicalAbstractSectionNode
+  const section = schema.nodes.graphical_abstract_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
+    createAndFillFigureElement(state),
+  ]) as GraphicalAbstractSectionNode
 
   const tr = state.tr.insert(pos, section)
 
@@ -810,54 +809,57 @@ export const insertGraphicalAbstract = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const selection = state.selection
-    if (
-      hasParentNodeOfType(schema.nodes.bibliography_section)(selection) ||
-      (!subsection && hasParentNodeOfType(schema.nodes.box_element)(selection))
-    ) {
-      return false
-    }
+    const nodes = schema.nodes
+    const $pos = state.selection.$from
 
     let pos
-    if (hasParentNodeOfType(schema.nodes.body)(selection) || subsection) {
-      // Looking for the position to insert the section
-      pos = subsection
-        ? findPosBeforeFirstSubsection(state.selection.$from) ||
-          findPosAfterParentSection(state.selection.$from)
-        : findPosAfterParentSection(state.selection.$from)
-    } else {
+    if (findParentNodeOfTypeClosestToPos($pos, nodes.bibliography_section)) {
+      //disallow insert (sub)section in bibliography_section
+      return false
+    } else if (subsection) {
+      pos =
+        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
+      if (!pos) {
+        return false
+      }
+      //move pos inside the section for a subsection
+      pos -= 1
+    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.box_element)) {
+      //only subsections are allowed for box_element, which should be
+      //handled before
+      return false
+    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.body)) {
+      pos = findPosAfterParentSection($pos)
+    }
+
+    if (!pos) {
+      //this means one of 2 things:
+      //- the selection points outside the body
+      //- the selection points inside the body, but to an element without a parent section
+      //for both cases, insert the section at the end of the body
       const body = findBody(state.doc)
       pos = body.pos + body.node.content.size + 1
     }
 
-    if (!pos) {
-      return false
-    }
-
-    const section = schema.nodes.section.createAndFill({
-      category: subsection ? 'MPSectionCategory:subsection' : '',
-    }) as SectionNode
-    const diff = subsection ? -1 : 0 // move pos inside section for a subsection
-    const tr = state.tr.insert(pos + diff, section)
+    const section = nodes.section.createAndFill() as SectionNode
+    const tr = state.tr.insert(pos, section)
 
     if (dispatch) {
       // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + diff + 2)
+      const selection = TextSelection.create(tr.doc, pos + 2)
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
-
     return true
   }
-
-export const insertBackMatterSection =
+export const insertBackmatterSection =
   (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
 
     const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
-    if (sections.some((s) => s.node.attrs.category === category)) {
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
 
@@ -871,17 +873,12 @@ export const insertBackMatterSection =
       pos = backmatter.pos + backmatter.node.content.size + 1
     }
 
-    const node = schema.nodes.section.createAndFill(
-      {
-        category,
-      },
-      [
-        schema.nodes.section_title.create(
-          {},
-          schema.text(sectionTitles.get(category)?.split('|')[0] || '')
-        ),
-      ]
-    ) as SectionNode
+    const attrs = {
+      category: category.id,
+    }
+    const node = schema.nodes.section.create(attrs, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+    ])
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -910,7 +907,7 @@ export const insertAbstract = (
   if (
     getMatchingChild(
       state.doc,
-      (node) => node.attrs.category === 'MPSectionCategory:abstract',
+      (node) => node.attrs.category === 'abstract',
       true
     )
   ) {
@@ -919,13 +916,10 @@ export const insertAbstract = (
   const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
   // Insert abstract at the top of abstracts section
   const pos = abstracts.pos + 1
-  const section = schema.nodes.section.createAndFill(
-    { category: 'MPSectionCategory:abstract' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Abstract')),
-      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
-    ]
-  ) as ManuscriptNode
+  const section = schema.nodes.section.createAndFill({ category: 'abstract' }, [
+    schema.nodes.section_title.create({}, schema.text('Abstract')),
+    schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+  ]) as ManuscriptNode
 
   const tr = state.tr.insert(pos, section)
 
@@ -1272,7 +1266,9 @@ export const ignoreMetaNodeBackspaceCommand = (
     selection.node.type === schema.nodes.affiliations ||
     selection.node.type === schema.nodes.affiliation ||
     selection.node.type === schema.nodes.contributors ||
-    selection.node.type === schema.nodes.contributor
+    selection.node.type === schema.nodes.contributor ||
+    selection.node.type === schema.nodes.awards ||
+    selection.node.type === schema.nodes.award
   )
 }
 
@@ -1577,6 +1573,39 @@ export const addRows =
         addRow(tr, rect, rect[direction])
       }
       dispatch(tr)
+    }
+    return true
+  }
+
+export const addHeaderRow =
+  (direction: 'above' | 'below') =>
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const addRowStep = addRow(
+        state.tr,
+        rect,
+        rect[direction === 'below' ? 'bottom' : 'top']
+      ).steps.pop()
+      if (addRowStep && addRowStep instanceof ReplaceStep) {
+        const { from, to, slice } = addRowStep
+        const cells = flatten(slice.content.firstChild as ManuscriptNode)
+        const row = schema.nodes.table_row.create(
+          undefined,
+          cells.map((cell) =>
+            schema.nodes.table_header.create(cell.node.attrs, cell.node.content)
+          )
+        )
+        tr.step(
+          new ReplaceStep(
+            from,
+            to,
+            new Slice(Fragment.from(row), slice.openStart, slice.openEnd)
+          )
+        )
+        dispatch(tr)
+      }
     }
     return true
   }

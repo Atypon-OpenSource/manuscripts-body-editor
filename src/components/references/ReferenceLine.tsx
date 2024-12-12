@@ -34,7 +34,7 @@ export const ReferenceLine: React.FC<{
   item: BibliographyItemAttrs
 }> = ({ item }) => (
   <MetadataContainer>
-    <div>{item.title || 'Untitled'}</div>
+    <div data-cy={'reference-title'}>{item.title || 'Untitled'}</div>
     <Metadata>{metadata(item)}</Metadata>
   </MetadataContainer>
 )

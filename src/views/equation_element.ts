@@ -33,7 +33,7 @@ export class EquationElementView extends BlockView<
       this.dom.setAttribute('data-track-op', lastChange.operation)
     } else {
       this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
+      this.dom.removeAttribute('data-track-op')
     }
   }
 }

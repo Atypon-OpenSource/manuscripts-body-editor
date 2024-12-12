@@ -56,6 +56,7 @@ const excludedTypes = [
   schema.nodes.contributors,
   schema.nodes.author_notes,
   schema.nodes.title,
+  schema.nodes.embed,
 ]
 
 const childrenExcludedTypes = [
@@ -202,6 +203,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       if (item.pos <= tree.pos && item.endPos >= tree.endPos) {
         return false
       }
+      // can't drop immediately before/after itself
+      if (tree.pos === item.endPos || item.pos === tree.endPos) {
+        return false
+      }
 
       const side = getDropSide(ref.current, monitor)
       const index = side === 'before' ? tree.index : tree.index + 1
@@ -219,11 +224,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       if (!ref.current || !view) {
         return
       }
-
       const side = getDropSide(ref.current, monitor)
-
       const pos = side === 'before' ? tree.pos - 1 : tree.endPos - 1
-
       let sourcePos = item.pos - 1
 
       const node = item.node.type.schema.nodes[item.node.type.name].create(
@@ -269,7 +271,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
 
   return (
-    <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
+    <Outline
+      ref={ref}
+      className={`${dragClass} ${dropClass} ${isDeletedItem && 'deleted'}`}
+    >
       {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (
@@ -282,11 +287,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
           <OutlineItemLink to={`#${node.attrs.id}`}>
             <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
-            <OutlineItemLinkText
-              className={`outline-text-${node.type.name} ${
-                isDeletedItem && 'deleted'
-              }`}
-            >
+            <OutlineItemLinkText className={`outline-text-${node.type.name}`}>
               {itemText(node)}
             </OutlineItemLinkText>
           </OutlineItemLink>

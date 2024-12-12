@@ -16,6 +16,7 @@
 
 import { AuthorNotesNode, ManuscriptNode } from '@manuscripts/transform'
 
+import { createHeader } from '../lib/utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -62,13 +63,6 @@ export class AuthorNotesView extends BlockView<Trackable<AuthorNotesNode>> {
     })
   }
 
-  public createHeader = (typeName: string, text: string) => {
-    const header = document.createElement('h1')
-    header.classList.add(`${typeName}-title`, 'block')
-    header.textContent = text
-    return header
-  }
-
   public createContent = (typeName: string, nodes: ManuscriptNode[]) => {
     let isNotEmpty = false
     if (nodes.length) {
@@ -77,10 +71,10 @@ export class AuthorNotesView extends BlockView<Trackable<AuthorNotesNode>> {
       // Show title 'Correspondence' for corresp items
       // or 'Author notes' for other items, but only once
       if (typeName === this.allowedTypes[0]) {
-        container.append(this.createHeader(typeName, this.correspondenceHeader))
+        container.append(createHeader(typeName, this.correspondenceHeader))
       } else if (!this.genericHeaderIsDisplayed) {
         this.genericHeaderIsDisplayed = true
-        container.append(this.createHeader(typeName, this.genericHeader))
+        container.append(createHeader(typeName, this.genericHeader))
       }
 
       nodes.forEach((node) => {
