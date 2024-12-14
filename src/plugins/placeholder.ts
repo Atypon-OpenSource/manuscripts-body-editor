@@ -44,7 +44,7 @@ const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
     return
   }
   if (parent.type === schema.nodes.body) {
-    return 'Paragraph'
+    return 'Start typing here...'
   }
   if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
     return 'Type new footnote here'
