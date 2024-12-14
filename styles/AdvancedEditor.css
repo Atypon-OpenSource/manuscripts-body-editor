@@ -560,6 +560,16 @@ span.comment-marker {
   border-style: solid !important;
 }
 
+.block-bullet_list .selected-suggestion p,
+.block-ordered_list .selected-suggestion p {
+  margin: 0;
+}
+
+.block-bullet_list .selected-suggestion,
+.block-ordered_list .selected-suggestion {
+  margin: 16px 0;
+}
+
 /* Insert */
 .tracking-visible .ProseMirror .inserted {
   background: var(--inserted-pending-bg-color);
@@ -632,6 +642,7 @@ span.comment-marker {
   border-color: var(--updated-border-color) !important;
 }
 
+/* */
 .selected-suggestion .inserted,
 .selected-suggestion .deleted {
   text-decoration: none !important;
@@ -641,16 +652,6 @@ span.comment-marker {
 .selected-suggestion .deleted:not(.citation.deleted),
 figure.block .equation.set_attrs.selected-suggestion {
   background-color: transparent !important;
-}
-
-.block-bullet_list .selected-suggestion p,
-.block-ordered_list .selected-suggestion p {
-  margin: 0;
-}
-
-.block-bullet_list .selected-suggestion,
-.block-ordered_list .selected-suggestion {
-  margin: 16px 0;
 }
 
 /* Inserted Block */
