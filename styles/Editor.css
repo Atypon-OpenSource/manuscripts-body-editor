@@ -182,10 +182,6 @@
   color: inherit;
 }
 
-.ProseMirror .cross-reference.deleted {
-  text-decoration: line-through;
-}
-
 .ProseMirror .bib-item.ProseMirror-selectednode,
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {
@@ -532,6 +528,10 @@
 
 .ProseMirror.manuscript-editor section.bibliography {
   overflow-wrap: normal;
+}
+
+.ProseMirror.manuscript-editor section.bibliography .block-section_title h1 {
+  user-select: none;
 }
 
 .ProseMirror section.title-suppressed > .block-section_title {

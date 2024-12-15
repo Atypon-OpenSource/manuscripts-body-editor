@@ -257,6 +257,10 @@ ol > .comment-marker {
   float: left;
 }
 
+li > .comment-marker {
+  float: right;
+}
+
 .figure-block div.comment-marker {
   grid-column: 3;
 }
@@ -267,7 +271,7 @@ figure.block > .comment-marker {
   left: 0;
 }
 
-section > .comment-marker {
+section > .comment-marker, .body > .comment-marker {
   top: 12px;
   float: right;
   left: -64px;
@@ -362,8 +366,7 @@ span.comment-marker {
   font-weight: 400 !important;
   line-height: 16px !important;
 }
-
-.ProseMirror .author-notes-container h1 {
+.ProseMirror h1.authors-info-header {
   color: #353535 !important;
   font-size: 16px !important;
   font-weight: 700 !important;
@@ -371,9 +374,11 @@ span.comment-marker {
   margin: 0 !important;
 }
 
+.ProseMirror .block-award,
 .ProseMirror .author-notes-container > div {
   margin-bottom: 16px;
 }
+.ProseMirror .block-award:last-child,
 .ProseMirror .author-notes-container > div:last-child {
   margin-bottom: 0;
 }
@@ -417,11 +422,6 @@ span.comment-marker {
 .keywords .keyword.selected {
   background-color: #f2fbfc;
   border-color: #bce7f6;
-}
-
-.keywords .keyword.deleted,
-.keywords .keyword.deleted {
-  text-decoration: line-through;
 }
 
 .keywords .keyword .track-changes--control {
@@ -564,10 +564,17 @@ span.selected-suggestion,
   margin: 16px 0;
 }
 
-.ProseMirror .inserted,
-.ProseMirror [data-track-op='insert'][data-track-status='pending'] .block,
-.ProseMirror [data-track-op='node_split'][data-track-status='pending'] .block,
-.ProseMirror
+.tracking-visible .ProseMirror .inserted,
+.tracking-visible
+  .ProseMirror
+  [data-track-op='insert'][data-track-status='pending']
+  .block,
+.tracking-visible
+  .ProseMirror
+  [data-track-op='node_split'][data-track-status='pending']
+  .block,
+.tracking-visible
+  .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
   .block {
   background: var(--inserted-pending-bg-color);
@@ -582,29 +589,52 @@ span.selected-suggestion,
   color: var(--common-color) !important;
 }
 
-.ProseMirror .set_attrs,
-.ProseMirror [data-track-op='set_attrs'] {
+.tracking-visible .ProseMirror .set_attrs,
+.tracking-visible .ProseMirror [data-track-op='set_attrs'] {
   background: var(--inserted-pending-bg-color);
   text-decoration: none;
 }
 
 .ProseMirror .deleted::before,
-.ProseMirror .deleted {
+.ProseMirror .deleted,
+.ProseMirror p .equation.deleted {
+  display: none;
+}
+
+.tracking-visible .ProseMirror .deleted::before,
+.tracking-visible .ProseMirror .deleted,
+.tracking-visible .ProseMirror p .equation.deleted {
+  display: inline;
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
 }
-.equation.deleted {
-  position: relative;
+
+.tracking-visible .ProseMirror .equation.deleted {
+  display: flex;
 }
 
-.equation.deleted:after {
+.tracking-visible .equation.deleted:after {
   content: '';
   width: 100%;
   left: 0;
   position: absolute;
   border-top: 1px solid red;
   top: calc(50% + 1px);
+}
+
+.tracking-visible .ProseMirror .footnote.deleted::before,
+.tracking-visible .ProseMirror .footnote.deleted {
+  display: flex;
+}
+
+.tracking-visible .subtree .deleted {
+  display: inline;
+  text-decoration: line-through;
+}
+
+.subtree .deleted {
+  display: none;
 }
 
 .ProseMirror .inserted:has(.selected-suggestion),
@@ -649,28 +679,48 @@ span.selected-suggestion,
   display: none;
 }
 
+.ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: none;
+}
+.tracking-visible
+  .ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: grid;
+}
+
 .contributor[data-track-status='pending'][data-track-op='delete'],
 .affiliation[data-track-status='pending'][data-track-op='delete'] {
+  display: none;
+}
+
+.tracking-visible
+  .contributor[data-track-status='pending'][data-track-op='delete'],
+.tracking-visible
+  .affiliation[data-track-status='pending'][data-track-op='delete'] {
+  display: inline-flex;
   text-decoration: line-through;
   color: var(--deleted-color);
   background-color: var(--deleted-pending-bg-color);
 }
 
-.contributor[data-track-op='delete']:not([data-track-status='rejected']),
-.affiliation[data-track-op='delete']:not([data-track-status='rejected']) {
-  text-decoration: line-through;
-}
-
-.contributor[data-track-status='pending'][data-track-op='insert'],
-.affiliation[data-track-status='pending'][data-track-op='insert'] {
+.tracking-visible
+  .contributor[data-track-status='pending'][data-track-op='insert'],
+.tracking-visible
+  .affiliation[data-track-status='pending'][data-track-op='insert'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
 .block-contributors,
+.block-author_notes,
+.block-awards,
 .block-affiliations,
 .keywords {
   margin: 15px 0px;
+}
+.block-awards.empty-node {
+  display: none;
 }
 .contributors {
   display: flex;
