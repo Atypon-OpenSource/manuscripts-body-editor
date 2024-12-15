@@ -54,7 +54,7 @@
   font-size: 13.5pt !important;
 }
 
-.ProseMirror div.backmatter:not(.empty-node)::before,  .ProseMirror div.body:not(.empty-node)::before {
+.ProseMirror div.backmatter:not(.empty-node)::before,  .ProseMirror div.abstracts:not(.empty-node)::after {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
   display: block;
