@@ -92,6 +92,7 @@ export const createEditorView = (
     dispatchTransaction: dispatch,
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
+    transformPastedHTML,
     transformPasted,
     handlePaste,
     clipboardParser,
