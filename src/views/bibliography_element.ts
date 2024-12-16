@@ -30,6 +30,7 @@ import {
 import { CommentKey, createCommentMarker } from '../lib/comments'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
+import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
@@ -38,7 +39,6 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import {addTrackChangesAttributes} from "../lib/track-changes-utils";
 
 export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
@@ -90,7 +90,7 @@ export class BibliographyElementBlockView extends BlockView<
     }
   }
 
-  private showContextMenu(element: HTMLElement){
+  private showContextMenu(element: HTMLElement) {
     this.props.popper.destroy()
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
@@ -121,7 +121,7 @@ export class BibliographyElementBlockView extends BlockView<
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  private handleClick(event: Event) {
+  private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     // Handle click on comment marker
     const marker = element.closest('.comment-marker') as HTMLElement
