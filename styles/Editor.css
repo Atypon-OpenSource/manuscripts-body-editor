@@ -965,12 +965,17 @@
   vertical-align: super;
   font-size: 75%;
   margin-bottom: 10px;
-  cursor: pointer;
   color: #0d79d0;
   margin: 0 5px;
-  cursor: pointer;
   position: relative;
   display: inline-block;
+  cursor: pointer;
+}
+
+.ProseMirror .footnote .footnote-marker {
+  color: inherit;
+  cursor: default;
+  margin-right: 2px;
 }
 .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before, .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
   content: '';
@@ -996,29 +1001,27 @@
 .ProseMirror .block-container > .block:has(.highlight-footnote-marker.footnote-marker) {
   overflow-x: hidden;
 }
-
 .ProseMirror .footnote {
   display: flex;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
 }
-
-.ProseMirror .footnote .footnote-marker {
-  margin-right: 8px;
-  color: inherit;
-}
-
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
+.ProseMirror .footnote.footnote-selected .delete-icon {
+  visibility: visible;
+}
 .ProseMirror .footnote .scroll-icon {
-  order: 1;
   cursor: pointer;
   visibility: hidden;
-  margin-left: 15px;
+  margin-left: -20px;
   transition: 0.2s all;
   transform: rotate(180deg);
+}
+.ProseMirror .footnote:hover .scroll-icon {
+  visibility: visible;
 }
 .ProseMirror .footnote .uncited-footnote {
   margin-right: 4px;
@@ -1028,15 +1031,6 @@
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
 }
-
-.ProseMirror .footnote.footnote-selected .delete-icon {
-  visibility: visible;
-}
-
-.ProseMirror .footnote:hover .scroll-icon {
-  visibility: visible;
-}
-
 .ProseMirror .table-footer p {
   margin-bottom: 0;
   margin-top: 0;

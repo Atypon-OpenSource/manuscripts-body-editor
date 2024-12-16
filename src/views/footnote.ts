@@ -83,9 +83,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.classList.add('footnote')
     this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
     this.dom.append(
-      marker,
       // Only append scrollBtn if it's created
       ...(scrollBtn ? [scrollBtn] : []),
+      marker,
       ...(this.contentDOM ? [this.contentDOM] : []),
       deleteBtn
     )
