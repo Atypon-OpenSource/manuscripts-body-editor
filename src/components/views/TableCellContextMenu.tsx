@@ -35,11 +35,7 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  addColumns,
-  addHeaderRow,
-  addRows,
-} from '../../commands'
+import { addColumns, addHeaderRow, addRows } from '../../commands'
 
 /**
  * Return the number of selected rows/columns

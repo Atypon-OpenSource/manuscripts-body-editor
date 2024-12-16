@@ -17,10 +17,14 @@ import { Slice } from 'prosemirror-model'
 
 // TODO: checking the ability to remove the following logic, after the following ticket LEAN-4118 is resolved
 export const transformCopied = (slice: Slice) => {
-  if (slice.openStart !== slice.openEnd && (slice.content.firstChild?.type.isBlock || slice.content.lastChild?.type.isBlock)) {
+  if (
+    slice.openStart !== slice.openEnd &&
+    (slice.content.firstChild?.type.isBlock ||
+      slice.content.lastChild?.type.isBlock)
+  ) {
     const cutDepth = Math.min(slice.openStart, slice.openEnd)
     // rebalance slice sides to be digestible for track changes plugin
     return new Slice(slice.content, cutDepth, cutDepth)
   }
-  return slice;
+  return slice
 }

@@ -68,11 +68,12 @@ export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
 export const transformPastedHTML = (html: string) => {
   // add figure which is table_element node in DOM
   if (html.includes('table')) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, 'text/html')
     doc.querySelectorAll('table').forEach((table) => {
       if (table.parentElement?.tagName !== 'figure') {
         const tableElement = document.createElement('figure')
         tableElement.className = 'table'
+        table.removeAttribute('data-pm-slice')
         table.parentElement?.insertBefore(tableElement, table)
         tableElement.append(table)
       }
