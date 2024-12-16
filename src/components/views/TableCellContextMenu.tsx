@@ -39,7 +39,6 @@ import {
   addColumns,
   addHeaderRow,
   addRows,
-  mergeCellsWithSpace,
 } from '../../commands'
 
 /**
@@ -154,7 +153,7 @@ export const ContextMenu: React.FC<{
 
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
-        <ActionButton onClick={() => runCommand(mergeCellsWithSpace, true)}>
+        <ActionButton onClick={() => runCommand(mergeCells, true)}>
           Merge cells
         </ActionButton>
       )}
