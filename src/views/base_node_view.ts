@@ -58,6 +58,9 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
     if (this.node.attrs.id) {
       this.dom.id = this.node.attrs.id
     }
+    if (this.contentDOM) {
+      this.contentDOM.removeAttribute('id')
+    }
     this.handleTrackChanges()
     // extend this
   }
