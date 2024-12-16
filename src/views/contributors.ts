@@ -17,7 +17,7 @@
 import {
   ContextMenu,
   ContextMenuProps,
-  SecondaryButton,
+  EditIcon,
 } from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
@@ -46,7 +46,6 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
@@ -80,7 +79,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
     this.buildAuthors(affs)
-    this.createEditButton()
+    // this.createEditButton()
     this.createLegend()
     this.updateSelection()
   }
@@ -197,12 +196,41 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.dom.classList.add('block-container', `block-${this.node.type.name}`)
   }
 
-  createEditButton = () => {
+  public authorContextMenu = () => {
+    const can = this.props.getCapabilities()
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'New Author',
+        action: () => this.handleEdit('', true),
+        icon: 'AddOutline',
+      })
+      componentProps.actions.push({
+        label: 'Edit',
+        action: () => this.handleEdit(''),
+        icon: 'Edit',
+      })
+    }
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    return this.contextMenu
+  }
+  createEditButton = (): HTMLElement => {
     const can = this.props.getCapabilities()
 
     const button = ReactSubView(
       this.props,
-      SecondaryButton,
+      EditIcon,
       {
         mini: true,
         onClick: () => this.handleEdit(''),
@@ -214,7 +242,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.getPos,
       this.view
     )
-    this.container.appendChild(button)
+    return button
   }
 
   createLegend = () => {
@@ -291,7 +319,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  handleEdit = (id: string) => {
+  handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
 
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
@@ -305,7 +333,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     )
 
     const author = id ? contributors.filter((a) => a.id === id)[0] : undefined
-
     const componentProps: AuthorsModalProps = {
       author,
       authors: contributors,
@@ -313,6 +340,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       onSaveAuthor: this.handleSaveAuthor,
       onDeleteAuthor: this.handleDeleteAuthor,
       onSaveAffiliation: this.handleSaveAffiliation,
+      addNewAuthor: addNew,
     }
 
     this.popper?.remove()
@@ -363,6 +391,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const node = schema.nodes.affiliation.create(attrs)
     this.view.dispatch(tr.insert(parent.pos + 1, node))
   }
+  public actionGutterButtons = (): HTMLElement[] => [this.authorContextMenu()]
 }
 
 export default createNodeView(ContributorsView)

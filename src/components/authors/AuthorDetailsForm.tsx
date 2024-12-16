@@ -46,6 +46,12 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
+const TextFieldWithError = styled(TextField)`
+  &:required::placeholder {
+    color: ${(props) => props.theme.colors.text.error};
+  }
+`
+
 export interface FormActions {
   reset: () => void
 }
@@ -55,6 +61,7 @@ interface AuthorDetailsFormProps {
   onChange: (values: ContributorAttrs) => void
   onSave: (values: ContributorAttrs) => void
   actionsRef?: MutableRefObject<FormActions | undefined>
+  isEmailRequired?: boolean
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -62,6 +69,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   onChange,
   onSave,
   actionsRef,
+  isEmailRequired,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
 
@@ -78,7 +86,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       initialValues={values}
       onSubmit={onSave}
       enableReinitialize={true}
-      validateOnChange={false}
+      validateOnChange={true}
       innerRef={formRef}
     >
       {(formik) => {
@@ -110,13 +118,19 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </TextFieldGroupContainer>
 
               <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => (
-                  <TextField
-                    id={'email'}
-                    placeholder={'Email address'}
-                    {...props.field}
-                  />
-                )}
+                {(props: FieldProps) => {
+                  const placeholder = isEmailRequired
+                    ? '*Email address (required)'
+                    : 'Email address'
+                  return (
+                    <TextFieldWithError
+                      required={isEmailRequired}
+                      id={'email'}
+                      placeholder={placeholder}
+                      {...props.field}
+                    />
+                  )
+                }}
               </Field>
 
               <CheckboxLabel disabled={!isAuthor}>

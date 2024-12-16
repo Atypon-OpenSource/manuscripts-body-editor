@@ -13,13 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Category, Dialog } from '@manuscripts/style-guide'
+import { AttentionOrangeIcon, Category, Dialog } from '@manuscripts/style-guide'
 import React from 'react'
+import styled from 'styled-components'
 
-import { authorLabel, ContributorAttrs } from '../../lib/authors'
+const StyledIcon = styled(AttentionOrangeIcon)`
+  margin-right: 8px;
+`
 
+const P = styled.p`
+  margin-bottom: 4px;
+`
+
+const Header = () => (
+  <>
+    <StyledIcon /> Delete author
+  </>
+)
+
+const Message = () => {
+  return (
+    <>
+      <p>Are you sure you want to remove this author from the authors list?</p>
+      <P>Do you want to continue?</P>
+    </>
+  )
+}
 export interface DeleteAuthorConfirmationDialogProps {
-  author: ContributorAttrs
   isOpen: boolean
   onDelete: () => void
   onCancel: () => void
@@ -27,14 +47,13 @@ export interface DeleteAuthorConfirmationDialogProps {
 
 export const DeleteAuthorConfirmationDialog: React.FC<
   DeleteAuthorConfirmationDialogProps
-> = ({ isOpen, author, onDelete, onCancel }) => {
-  const label = authorLabel(author)
+> = ({ isOpen, onDelete, onCancel }) => {
   return (
     <Dialog
       isOpen={isOpen}
       category={Category.confirmation}
-      header={'Remove author'}
-      message={`Are you sure you want to remove ${label} from the authors list?`}
+      header={<Header />}
+      message={<Message />}
       actions={{
         secondary: {
           action: onDelete,

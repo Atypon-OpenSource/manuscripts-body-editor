@@ -663,6 +663,13 @@
   transition: 0.2s all;
 }
 
+.ProseMirror .action-gutter {
+  position: relative;
+  cursor: ns-resize;
+  opacity: 0;
+  transition: 0.2s all;
+}
+
 .ProseMirror .block-section_title .block-gutter,
 .ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
@@ -671,6 +678,13 @@
 .ProseMirror
   .block-container:not(.block-section, .block-box_element):hover
   .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror
+  .block-container:not(.block-section, .block-box_element):hover
+  .action-gutter {
   opacity: 1;
   z-index: 2;
 }

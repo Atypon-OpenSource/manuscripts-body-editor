@@ -31,14 +31,18 @@ interface AuthorListProps {
   author?: ContributorAttrs
   authors: ContributorAttrs[]
   onSelect: (item: ContributorAttrs) => void
+  onDelete: () => void
   moveAuthor: (index: number, target: number) => void
+  showSuccessIcon: boolean
 }
 
 export const AuthorList: React.FC<AuthorListProps> = ({
   author,
   authors,
   onSelect,
+  onDelete,
   moveAuthor,
+  showSuccessIcon,
 }) => {
   return (
     <DndProvider backend={HTML5Backend}>
@@ -50,7 +54,9 @@ export const AuthorList: React.FC<AuthorListProps> = ({
               author={a}
               isSelected={a.id === author?.id}
               onClick={() => onSelect(a)}
+              onDelete={() => onDelete()}
               moveAuthor={moveAuthor}
+              showSuccessIcon={showSuccessIcon}
             />
           )
         })}

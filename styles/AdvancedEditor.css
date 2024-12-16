@@ -217,7 +217,8 @@
   width: 100%;
   position: absolute;
   top: 0;
-  left: 0;
+  left: -10px;
+  display: flex;
   z-index: 3;
 }
 
@@ -525,6 +526,8 @@ span.comment-marker {
 .ProseMirror {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
+  --updated-pending-bg-color: #E6F7FC;
+  --updated-pending-color: #0284B0;
   --accepted-bg-color: #e2e2e2;
   --deleted-color: #f35143;
   --deleted-pending-bg-color: #fff1f0;
@@ -591,7 +594,8 @@ span.selected-suggestion,
 
 .tracking-visible .ProseMirror .set_attrs,
 .tracking-visible .ProseMirror [data-track-op='set_attrs'] {
-  background: var(--inserted-pending-bg-color);
+  background: var(--updated-pending-bg-color);
+  color: var(--updated-pending-color);
   text-decoration: none;
 }
 

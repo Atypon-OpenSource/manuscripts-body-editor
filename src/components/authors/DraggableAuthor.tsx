@@ -17,7 +17,9 @@
 import {
   Avatar,
   CorrespondingAuthorIcon,
-  VerticalEllipsisIcon,
+  CrclTickAnimation,
+  DeleteIcon,
+  DraggableIcon,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -27,7 +29,8 @@ import { authorLabel, ContributorAttrs } from '../../lib/authors'
 import { DropSide, getDropSide } from '../../lib/dnd'
 
 const AuthorContainer = styled.div`
-  padding: ${(props) => props.theme.grid.unit * 2}px;
+  padding: ${(props) => props.theme.grid.unit * 2}px 0
+    ${(props) => props.theme.grid.unit * 2}px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -62,6 +65,11 @@ const AuthorContainer = styled.div`
 const AvatarContainer = styled.div`
   display: inline-flex;
   position: relative;
+  align-items: center;
+`
+
+const Box = styled.div`
+  margin-left: 14px;
 `
 
 const AuthorBadge = styled.div`
@@ -86,10 +94,25 @@ const AuthorName = styled.div`
   flex: 1;
 `
 
-const DragHandle = styled(VerticalEllipsisIcon)`
+const DragHandle = styled(DraggableIcon)`
   cursor: move;
+  margin-left: -4px;
+  margin-right: -12px;
 `
-
+const RemoveButton = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  svg {
+    cursor: pointer;
+  }
+  .icon_element {
+    fill: #6e6e6e;
+  }
+`
+const StyledCrclTickAnimation = styled(CrclTickAnimation)`
+  margin-left: 12px;
+`
 interface DragItem {
   author: ContributorAttrs
 }
@@ -98,14 +121,18 @@ interface DraggableAuthorProps {
   author: ContributorAttrs
   isSelected: boolean
   onClick: () => void
+  onDelete: () => void
   moveAuthor: (from: number, to: number) => void
+  showSuccessIcon?: boolean
 }
 
 export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
   author,
   isSelected,
   onClick,
+  onDelete,
   moveAuthor,
+  showSuccessIcon,
 }) => {
   const [dropSide, setDropSide] = useState<DropSide>()
   const ref = useRef<HTMLDivElement>(null)
@@ -158,6 +185,12 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
 
   if (isSelected) {
     classes.push('active')
+    if (ref.current) {
+      ref.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
+    }
   }
 
   return (
@@ -168,7 +201,17 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
       data-cy="author-item"
     >
       <AvatarContainer data-cy="author-avatar">
-        <Avatar size={36} color={'#6e6e6e'} />
+        {isSelected && <DragHandle />}
+        <Box>
+          {showSuccessIcon && isSelected && (
+            <StyledCrclTickAnimation size={36} />
+          )}
+          <Avatar
+            size={36}
+            color={'#6e6e6e'}
+            opacity={showSuccessIcon && isSelected ? 0.05 : 1}
+          />
+        </Box>
         <AuthorNotes data-cy="author-notes">
           {author.isCorresponding && (
             <AuthorBadge>
@@ -178,7 +221,11 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
         </AuthorNotes>
       </AvatarContainer>
       <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
-      {isSelected && <DragHandle />}
+      {isSelected && (
+        <RemoveButton onClick={() => onDelete()}>
+          <DeleteIcon fill={'#6E6E6E'} />
+        </RemoveButton>
+      )}
     </AuthorContainer>
   )
 }
