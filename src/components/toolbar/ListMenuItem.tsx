@@ -55,7 +55,11 @@ export const ListStyles: React.FC<ListSubmenuItemsProps> = ({
   return (
     <ListContainer>
       {styles.map((style, index) => (
-        <StyleBlock key={index} onClick={() => onClick(style, index)}>
+        <StyleBlock
+          data-cy="submenu"
+          key={index}
+          onClick={() => onClick(style, index)}
+        >
           {styleItems[style].map((item, index) => (
             <BlockItem key={index}>
               <Label hide={item === '-'}>{item}</Label>

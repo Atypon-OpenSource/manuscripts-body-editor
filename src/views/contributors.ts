@@ -32,7 +32,10 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
-import { isDeleted } from '../lib/track-changes-utils'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -57,18 +60,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public ignoreMutation = () => true
   public stopEvent = () => true
 
-  public initialise = () => {
-    this.createDOM()
-    this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
-    this.createElement()
-    this.createGutter(
-      'action-gutter',
-      this.actionGutterButtons().filter(Boolean)
-    )
-    this.updateContents()
-  }
-
-  public updateContents = () => {
+  public updateContents() {
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return
@@ -129,12 +121,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
 
-    if (attrs.dataTracked?.length) {
-      const change = attrs.dataTracked[0]
-      container.setAttribute('data-track-id', change.id)
-      container.setAttribute('data-track-status', change.status)
-      container.setAttribute('data-track-op', change.operation)
-    }
+    addTrackChangesAttributes(attrs, container)
 
     const name = authorLabel(attrs)
     container.innerHTML =

@@ -32,11 +32,7 @@ import {
   findFootnotesContainerNode,
   getFootnotesElementState,
 } from '../lib/footnotes'
-import {
-  getChangeClasses,
-  isDeleted,
-  isPendingInsert,
-} from '../lib/track-changes-utils'
+import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -140,12 +136,8 @@ export class InlineFootnoteView
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
-  public updateContents = () => {
-    this.dom.className = [
-      'footnote-marker',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ].join(' ')
-
+  public updateContents() {
+    super.updateContents()
     const state = this.view.state
     const fn = getFootnotesElementState(state, this.node.attrs.id)
     if (!fn) {

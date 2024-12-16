@@ -24,18 +24,6 @@ export class EquationElementView extends BlockView<
   Trackable<EquationElementNode>
 > {
   public elementType = 'figure'
-
-  public updateContents = () => {
-    if (this.node.attrs.dataTracked?.length) {
-      const lastChange =
-        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
-      this.dom.setAttribute('data-track-status', lastChange.status)
-      this.dom.setAttribute('data-track-op', lastChange.operation)
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-op')
-    }
-  }
 }
 
 export default createNodeView(EquationElementView)

@@ -46,18 +46,10 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
     this.container.appendChild(this.contentDOM)
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     if (!this.contentDOM) {
       throw new Error('No contentDOM')
-    }
-
-    if (this.node.attrs.dataTracked?.length) {
-      const change = this.node.attrs.dataTracked[0]
-      this.dom.setAttribute('data-track-status', change.status)
-      this.dom.setAttribute('data-track-op', change.operation)
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-op')
     }
 
     const can = this.props.getCapabilities()

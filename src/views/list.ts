@@ -28,25 +28,12 @@ import { EditableBlock } from './editable_block'
 export class ListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     const actualAttrs = this.node.attrs
     if (this.contentDOM) {
       const type = actualAttrs.listStyleType as JatsStyleType
       this.contentDOM.style.listStyleType = getListType(type).style
-    }
-
-    if (this.node.attrs.dataTracked?.length) {
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-      this.dom.setAttribute(
-        'data-track-op',
-        this.node.attrs.dataTracked[0].operation
-      )
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-op')
     }
   }
 }

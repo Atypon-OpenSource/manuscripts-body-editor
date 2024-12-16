@@ -15,35 +15,27 @@
  */
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
-import { Decoration, NodeView } from 'prosemirror-view'
+import { NodeView } from 'prosemirror-view'
 
-import { CSLProps, EditorProps } from '../configs/ManuscriptsEditor'
-import { PopperManager } from '../lib/popper'
-import { SyncError } from '../types'
-
-export interface BaseNodeProps {
-  popper: PopperManager
-  cslProps: CSLProps
-}
+import { EditorProps } from '../configs/ManuscriptsEditor'
+import {
+  addTrackChangesAttributes,
+  addTrackChangesClassNames,
+} from '../lib/track-changes-utils'
 
 export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
-  public syncErrors: SyncError[]
   public elementType = 'div'
 
   public constructor(
     public readonly props: EditorProps,
     public node: Node,
     public readonly view: ManuscriptEditorView,
-    public readonly getPos: () => number,
-    public decorations: readonly Decoration[]
+    public readonly getPos: () => number
   ) {}
 
-  public update = (
-    newNode: ManuscriptNode,
-    decorations: readonly Decoration[]
-  ): boolean => {
+  public update(newNode: ManuscriptNode) {
     // if (!newNode.sameMarkup(this.node)) return false
     if (newNode.attrs.id !== this.node.attrs.id) {
       return false
@@ -51,59 +43,40 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
     if (newNode.type.name !== this.node.type.name) {
       return false
     }
-    this.handleDecorations(decorations)
     this.node = newNode as Node
     this.updateContents()
     this.props.popper.update()
     return true
   }
 
-  public initialise = () => {
+  public initialise() {
     // extend this
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    //this should be in initialize
+    if (this.node.attrs.id) {
+      this.dom.id = this.node.attrs.id
+    }
+    this.handleTrackChanges()
     // extend this
   }
 
-  public setDomAttrs(
-    node: ManuscriptNode,
-    element: HTMLElement,
-    omit: string[] = ['contents']
-  ) {
-    Object.keys(node.attrs || {}).forEach((attr) => {
-      if (!omit.includes(attr)) {
-        element.setAttribute(attr, node.attrs[attr])
-      }
-    })
+  public handleTrackChanges() {
+    addTrackChangesAttributes(this.node.attrs, this.dom)
+    addTrackChangesClassNames(this.node.attrs, this.dom)
   }
 
-  public selectNode = () => {
+  public selectNode() {
     this.dom.classList.add('ProseMirror-selectednode')
   }
 
-  public deselectNode = () => {
+  public deselectNode() {
     this.dom.classList.remove('ProseMirror-selectednode')
     this.props.popper.destroy()
   }
 
-  public destroy = () => {
+  public destroy() {
     this.props.popper.destroy()
-  }
-
-  public handleDecorations = (decorations: readonly Decoration[]) => {
-    this.decorations = decorations
-
-    if (decorations && this.dom) {
-      const syncErrorDecoration = decorations.find(
-        (decoration) => decoration.spec.syncErrors
-      )
-
-      this.syncErrors = syncErrorDecoration
-        ? (syncErrorDecoration.spec.syncErrors as SyncError[])
-        : []
-
-      this.dom.classList.toggle('has-sync-error', this.syncErrors.length > 0)
-    }
   }
 }

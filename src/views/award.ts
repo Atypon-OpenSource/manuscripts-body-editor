@@ -21,13 +21,13 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.contentDOM = this.dom
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
     if (!this.contentDOM) {
       return
     }
