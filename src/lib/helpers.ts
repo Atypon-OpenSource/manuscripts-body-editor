@@ -99,14 +99,14 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
 
   // Highlight the footnote marker if applicable
   if (nodeAtFrom.type === schema.nodes.inline_footnote) {
-    const markerElement = domAtSelectionFrom.querySelector(
-      '.footnote-marker'
-    ) as HTMLElement
+    const resolvedPos = view.state.doc.resolve(selection.$from.pos)
+    const targetNode = view.nodeDOM(resolvedPos.pos) as HTMLElement
 
-    if (markerElement) {
-      markerElement.classList.add('highlight-footnote-marker')
+    if (targetNode) {
+      // Add the highlight class to the exact DOM node
+      targetNode.classList.add('highlight-footnote-marker')
       setTimeout(
-        () => markerElement.classList.remove('highlight-footnote-marker'),
+        () => targetNode.classList.remove('highlight-footnote-marker'),
         3000
       )
     }
