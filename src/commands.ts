@@ -60,14 +60,10 @@ import {
   Transaction,
 } from 'prosemirror-state'
 import {
-  addColSpan,
   addColumnAfter,
   addColumnBefore,
   addRow,
-  CellSelection,
-  Rect,
   selectedRect,
-  TableMap,
 } from 'prosemirror-tables'
 import {
   findWrapping,
@@ -1403,7 +1399,7 @@ export const createAndFillTableElement = (
   const { numberOfColumns, numberOfRows, includeHeader } = config
   const createRow = (cellType: ManuscriptNodeType) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      cellType.create()
+      cellType.create({}, schema.nodes.paragraph.create())
     )
     return schema.nodes.table_row.create({}, cells)
   }
@@ -1624,114 +1620,6 @@ export const addColumns =
     }
     return true
   }
-
-function isEmpty(cell: ManuscriptNode): boolean {
-  const c = cell.content
-
-  return (
-    c.childCount == 1 && c.child(0).isTextblock && c.child(0).childCount == 0
-  )
-}
-
-function cellsOverlapRectangle({ width, height, map }: TableMap, rect: Rect) {
-  let indexTop = rect.top * width + rect.left,
-    indexLeft = indexTop
-  let indexBottom = (rect.bottom - 1) * width + rect.left,
-    indexRight = indexTop + (rect.right - rect.left - 1)
-  for (let i = rect.top; i < rect.bottom; i++) {
-    if (
-      (rect.left > 0 && map[indexLeft] == map[indexLeft - 1]) ||
-      (rect.right < width && map[indexRight] == map[indexRight + 1])
-    ) {
-      return true
-    }
-    indexLeft += width
-    indexRight += width
-  }
-  for (let i = rect.left; i < rect.right; i++) {
-    if (
-      (rect.top > 0 && map[indexTop] == map[indexTop - width]) ||
-      (rect.bottom < height && map[indexBottom] == map[indexBottom + width])
-    ) {
-      return true
-    }
-    indexTop++
-    indexBottom++
-  }
-  return false
-}
-
-// This command was brought from: https://github.com/ProseMirror/prosemirror-tables
-// and tweaked to add space between cells when they get merged
-// we can use the original command when table cell content is block not inline, as with that content for each cell will be in a paragraph
-export function mergeCellsWithSpace(
-  state: EditorState,
-  dispatch?: (tr: Transaction) => void
-): boolean {
-  const sel = state.selection
-  if (
-    !(sel instanceof CellSelection) ||
-    sel.$anchorCell.pos == sel.$headCell.pos
-  ) {
-    return false
-  }
-  const rect = selectedRect(state),
-    { map } = rect
-  if (cellsOverlapRectangle(map, rect)) {
-    return false
-  }
-  if (dispatch) {
-    const tr = state.tr
-    const seen: Record<number, boolean> = {}
-    let content = Fragment.empty
-    let mergedPos: number | undefined
-    let mergedCell: ManuscriptNode | undefined
-    for (let row = rect.top; row < rect.bottom; row++) {
-      for (let col = rect.left; col < rect.right; col++) {
-        const cellPos = map.map[row * map.width + col]
-        const cell = rect.table.nodeAt(cellPos)
-        if (seen[cellPos] || !cell) {
-          continue
-        }
-        seen[cellPos] = true
-        if (mergedPos == null) {
-          mergedPos = cellPos
-          mergedCell = cell
-        } else {
-          if (!isEmpty(cell)) {
-            content = content.append(
-              cell.content.addToStart(cell.type.schema.text(' '))
-            )
-          }
-          const mapped = tr.mapping.map(cellPos + rect.tableStart)
-          tr.delete(mapped, mapped + cell.nodeSize)
-        }
-      }
-    }
-    if (mergedPos == null || mergedCell == null) {
-      return true
-    }
-
-    tr.setNodeMarkup(mergedPos + rect.tableStart, null, {
-      ...addColSpan(
-        mergedCell.attrs as never,
-        mergedCell.attrs.colspan,
-        rect.right - rect.left - mergedCell.attrs.colspan
-      ),
-      rowspan: rect.bottom - rect.top,
-    })
-    if (content.size) {
-      const end = mergedPos + 1 + mergedCell.content.size
-      const start = isEmpty(mergedCell) ? mergedPos + 1 : end
-      tr.replaceWith(start + rect.tableStart, end + rect.tableStart, content)
-    }
-    tr.setSelection(
-      new CellSelection(tr.doc.resolve(mergedPos + rect.tableStart))
-    )
-    dispatch(tr)
-  }
-  return true
-}
 
 export const autoComplete = (
   state: ManuscriptEditorState,
