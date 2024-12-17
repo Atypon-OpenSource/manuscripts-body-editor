@@ -965,7 +965,6 @@ export const insertContributors = (
   const contributors = state.schema.nodes.contributors.create({
     id: '',
   })
-  // const affiliations = state.schema.nodes.affiliations.create({ id: '' })
 
   const fragment = Fragment.from(contributors)
 

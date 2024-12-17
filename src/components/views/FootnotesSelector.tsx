@@ -161,7 +161,9 @@ const FootnotesList: React.FC<{
 
   footnotes.forEach((footnote) => {
     const isNoteSelected = rids?.includes(footnote.attrs.id)
-    if (isDeleted(footnote)) return
+    if (isDeleted(footnote)) {
+      return
+    }
     isNoteSelected
       ? selectedNotes.push(footnote)
       : remainingNotes.push(footnote)

@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  EditIcon,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -79,7 +75,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
     this.buildAuthors(affs)
-    // this.createEditButton()
     this.createLegend()
     this.updateSelection()
   }
@@ -224,25 +219,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       'context-menu'
     )
     return this.contextMenu
-  }
-  createEditButton = (): HTMLElement => {
-    const can = this.props.getCapabilities()
-
-    const button = ReactSubView(
-      this.props,
-      EditIcon,
-      {
-        mini: true,
-        onClick: () => this.handleEdit(''),
-        className: 'edit-authors-button',
-        disabled: !can.editMetadata,
-        children: 'Edit Authors',
-      },
-      this.node,
-      this.getPos,
-      this.view
-    )
-    return button
   }
 
   createLegend = () => {
