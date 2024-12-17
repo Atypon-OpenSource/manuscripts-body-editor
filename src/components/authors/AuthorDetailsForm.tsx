@@ -34,6 +34,9 @@ export const LabelText = styled.div`
     ${(props) => props.theme.font.family.sans};
   letter-spacing: -0.2px;
   color: ${(props) => props.theme.colors.text.primary};
+  &::before {
+    margin-right: 8px !important;
+  }
 `
 
 export const Fieldset = styled.fieldset`
@@ -50,6 +53,12 @@ const TextFieldWithError = styled(TextField)`
   &:required::placeholder {
     color: ${(props) => props.theme.colors.text.error};
   }
+`
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
 `
 
 export interface FormActions {
@@ -132,39 +141,40 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   )
                 }}
               </Field>
+              <CheckboxContainer>
+                <CheckboxLabel disabled={!isAuthor}>
+                  <Field name={'isCorresponding'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        disabled={!isAuthor}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Corresponding Author</LabelText>
+                </CheckboxLabel>
 
-              <CheckboxLabel disabled={!isAuthor}>
-                <Field name={'isCorresponding'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      id={'isCorresponding'}
-                      checked={props.field.value}
-                      disabled={!isAuthor}
-                      {...props.field}
-                    />
-                  )}
-                </Field>
-                <LabelText>Corresponding Author</LabelText>
-              </CheckboxLabel>
-
-              <CheckboxLabel>
-                <Field name={'role'} type={'checkbox'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      name={'role'}
-                      checked={isAuthor}
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          props.field.name,
-                          e.target.checked ? 'author' : 'other',
-                          false
-                        )
-                      }}
-                    />
-                  )}
-                </Field>
-                <LabelText>Include in Authors List</LabelText>
-              </CheckboxLabel>
+                <CheckboxLabel>
+                  <Field name={'role'} type={'checkbox'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        name={'role'}
+                        checked={isAuthor}
+                        onChange={(e) => {
+                          formik.setFieldValue(
+                            props.field.name,
+                            e.target.checked ? 'author' : 'other',
+                            false
+                          )
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Include in Authors List</LabelText>
+                </CheckboxLabel>
+              </CheckboxContainer>
 
               <OrcidContainer>
                 <TextFieldLabel>
