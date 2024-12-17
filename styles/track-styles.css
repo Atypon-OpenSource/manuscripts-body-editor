@@ -7,7 +7,3 @@
 .ProseMirror .deleted {
   background: #ddf3fa;
 }
-.ProseMirror
-  .block-container[data-track-status='rejected'][data-track-op='insert'] {
-  display: none;
-}
