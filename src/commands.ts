@@ -966,9 +966,7 @@ export const insertContributors = (
     id: '',
   })
 
-  const fragment = Fragment.from(contributors)
-
-  const tr = state.tr.insert(pos, fragment)
+  const tr = state.tr.insert(pos, contributors)
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
@@ -1009,9 +1007,7 @@ export const insertAffiliation = (
     id: '',
   })
 
-  const fragment = Fragment.from(affiliations)
-
-  const tr = state.tr.insert(pos, fragment)
+  const tr = state.tr.insert(pos, affiliations)
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
