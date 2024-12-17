@@ -29,6 +29,7 @@ import {
   blockActive,
   canInsert,
   insertAbstract,
+  insertAffiliation,
   insertBackmatterSection,
   insertBlock,
   insertBoxElement,
@@ -138,9 +139,15 @@ export const getEditorMenus = (
           },
           {
             id: 'insert-contributors',
-            label: 'Authors & Affiliations',
+            label: 'Authors',
             isEnabled: isCommandValid(insertContributors),
             run: doCommand(insertContributors),
+          },
+          {
+            id: 'insert-contributors',
+            label: 'Affiliations',
+            isEnabled: isCommandValid(insertAffiliation),
+            run: doCommand(insertAffiliation),
           },
           {
             id: 'insert-keywords',

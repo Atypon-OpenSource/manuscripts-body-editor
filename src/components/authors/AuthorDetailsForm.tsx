@@ -34,6 +34,9 @@ export const LabelText = styled.div`
     ${(props) => props.theme.font.family.sans};
   letter-spacing: -0.2px;
   color: ${(props) => props.theme.colors.text.primary};
+  &::before {
+    margin-right: 8px !important;
+  }
 `
 
 export const Fieldset = styled.fieldset`
@@ -46,6 +49,18 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
+const TextFieldWithError = styled(TextField)`
+  &:required::placeholder {
+    color: ${(props) => props.theme.colors.text.error};
+  }
+`
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+`
+
 export interface FormActions {
   reset: () => void
 }
@@ -55,6 +70,7 @@ interface AuthorDetailsFormProps {
   onChange: (values: ContributorAttrs) => void
   onSave: (values: ContributorAttrs) => void
   actionsRef?: MutableRefObject<FormActions | undefined>
+  isEmailRequired?: boolean
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -62,6 +78,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   onChange,
   onSave,
   actionsRef,
+  isEmailRequired,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
 
@@ -78,7 +95,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       initialValues={values}
       onSubmit={onSave}
       enableReinitialize={true}
-      validateOnChange={false}
+      validateOnChange={true}
       innerRef={formRef}
     >
       {(formik) => {
@@ -110,47 +127,54 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </TextFieldGroupContainer>
 
               <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => (
-                  <TextField
-                    id={'email'}
-                    placeholder={'Email address'}
-                    {...props.field}
-                  />
-                )}
-              </Field>
-
-              <CheckboxLabel disabled={!isAuthor}>
-                <Field name={'isCorresponding'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      id={'isCorresponding'}
-                      checked={props.field.value}
-                      disabled={!isAuthor}
+                {(props: FieldProps) => {
+                  const placeholder = isEmailRequired
+                    ? '*Email address (required)'
+                    : 'Email address'
+                  return (
+                    <TextFieldWithError
+                      required={isEmailRequired}
+                      id={'email'}
+                      placeholder={placeholder}
                       {...props.field}
                     />
-                  )}
-                </Field>
-                <LabelText>Corresponding Author</LabelText>
-              </CheckboxLabel>
+                  )
+                }}
+              </Field>
+              <CheckboxContainer>
+                <CheckboxLabel disabled={!isAuthor}>
+                  <Field name={'isCorresponding'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        disabled={!isAuthor}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Corresponding Author</LabelText>
+                </CheckboxLabel>
 
-              <CheckboxLabel>
-                <Field name={'role'} type={'checkbox'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      name={'role'}
-                      checked={isAuthor}
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          props.field.name,
-                          e.target.checked ? 'author' : 'other',
-                          false
-                        )
-                      }}
-                    />
-                  )}
-                </Field>
-                <LabelText>Include in Authors List</LabelText>
-              </CheckboxLabel>
+                <CheckboxLabel>
+                  <Field name={'role'} type={'checkbox'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        name={'role'}
+                        checked={isAuthor}
+                        onChange={(e) => {
+                          formik.setFieldValue(
+                            props.field.name,
+                            e.target.checked ? 'author' : 'other',
+                            false
+                          )
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Include in Authors List</LabelText>
+                </CheckboxLabel>
+              </CheckboxContainer>
 
               <OrcidContainer>
                 <TextFieldLabel>

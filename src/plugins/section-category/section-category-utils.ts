@@ -17,7 +17,7 @@ import {
   getGroupCateogries,
   isSectionNode,
   schema,
-  SectionCategory
+  SectionCategory,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 import { EditorState } from 'prosemirror-state'
