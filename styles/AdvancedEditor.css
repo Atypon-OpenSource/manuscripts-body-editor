@@ -54,7 +54,7 @@
   font-size: 13.5pt !important;
 }
 
-.ProseMirror div.backmatter:not(.empty-node)::before,  .ProseMirror div.body .block-section:first-of-type::before {
+.ProseMirror div.backmatter:not(.empty-node)::before,  .ProseMirror div.abstracts:not(.empty-node)::after {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
   display: block;
@@ -257,6 +257,10 @@ ol > .comment-marker {
   float: left;
 }
 
+li > .comment-marker {
+  float: right;
+}
+
 .figure-block div.comment-marker {
   grid-column: 3;
 }
@@ -267,7 +271,7 @@ figure.block > .comment-marker {
   left: 0;
 }
 
-section > .comment-marker {
+section > .comment-marker, .body > .comment-marker {
   top: 12px;
   float: right;
   left: -64px;
@@ -521,13 +525,12 @@ span.comment-marker {
 .ProseMirror {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
-  --accepted-bg-color: #e2e2e2;
   --deleted-color: #f35143;
   --deleted-pending-bg-color: #fff1f0;
+  --updated-bg-color: #d9f6ff;
+  --updated-border-color: #1a9bc7;
   --highlight-bg-color: #ffeebf;
   --common-color: #353535;
-  --selected-pending-background-color: #ddf3fa;
-  --selected-accepted-background-color: #f2f2f2;
   --box-element-bg-color: #fafafa;
 }
 .ProseMirror ins,
@@ -539,13 +542,20 @@ span.comment-marker {
   background: none;
 }
 
-span.selected-suggestion,
-.selected-suggestion > .block-container .block,
-.selected-suggestion:not(:has(> .block-container)) {
-  background-color: var(--selected-pending-background-color) !important;
-  color: var(--common-color) !important;
+@keyframes fadeOutBackground {
+  0% {
+    background: var(--fade-color);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.selected-suggestion:not(.block-container):not(.graphical-abstract):not(
+    .keywords
+  ):not(figure):not(figure .equation) {
   border-width: 2px 0 2px 0 !important;
-  border-color: #20aedf !important;
+  border-radius: 3px !important;
   border-style: solid !important;
 }
 
@@ -559,37 +569,21 @@ span.selected-suggestion,
   margin: 16px 0;
 }
 
-.tracking-visible .ProseMirror .inserted,
-.tracking-visible
-  .ProseMirror
-  [data-track-op='insert'][data-track-status='pending']
-  .block,
-.tracking-visible
-  .ProseMirror
-  [data-track-op='node_split'][data-track-status='pending']
-  .block,
-.tracking-visible
-  .ProseMirror
-  [data-track-op='wrap_with_node'][data-track-status='pending']
-  .block {
+/* Insert */
+.tracking-visible .ProseMirror .inserted {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
 
-.ProseMirror .selected-suggestion .inserted,
-.ProseMirror .selected-suggestion [data-track-op='insert'] .block,
-.ProseMirror .selected-suggestion .deleted {
-  background-color: var(--selected-pending-background-color) !important;
-  color: var(--common-color) !important;
+.inserted:has(.selected-suggestion),
+.inserted.selected-suggestion,
+.selected-suggestion:has(.inserted) {
+  border-color: var(--inserted-pending-color) !important;
+  text-decoration: none !important;
 }
 
-.tracking-visible .ProseMirror .set_attrs,
-.tracking-visible .ProseMirror [data-track-op='set_attrs'] {
-  background: var(--inserted-pending-bg-color);
-  text-decoration: none;
-}
-
+/* Delete */
 .ProseMirror .deleted::before,
 .ProseMirror .deleted,
 .ProseMirror p .equation.deleted {
@@ -609,6 +603,11 @@ span.selected-suggestion,
   display: flex;
 }
 
+.tracking-visible .ProseMirror .footnote.deleted::before,
+.tracking-visible .ProseMirror .footnote.deleted {
+  display: flex;
+}
+
 .tracking-visible .equation.deleted:after {
   content: '';
   width: 100%;
@@ -618,9 +617,105 @@ span.selected-suggestion,
   top: calc(50% + 1px);
 }
 
-.tracking-visible .ProseMirror .footnote.deleted::before,
-.tracking-visible .ProseMirror .footnote.deleted {
-  display: flex;
+
+.selected-suggestion .equation.deleted:after,
+.selected-suggestion.equation.deleted:after {
+  content: none;
+}
+
+.deleted:has(.selected-suggestion),
+.deleted.selected-suggestion,
+.selected-suggestion:has(.deleted) {
+  border-color: var(--deleted-color) !important;
+  text-decoration: none !important;
+}
+
+/* Update */
+.tracking-visible .ProseMirror .set_attrs {
+  background: var(--updated-bg-color);
+  text-decoration: none;
+}
+
+.selected-suggestion:has(.set_attrs),
+.selected-suggestion.set_attrs {
+  border-color: var(--updated-border-color) !important;
+}
+
+/* */
+.selected-suggestion .inserted,
+.selected-suggestion .deleted {
+  text-decoration: none !important;
+}
+
+.selected-suggestion .inserted:not(.citation.inserted),
+.selected-suggestion .deleted:not(.citation.deleted),
+figure.block .equation.set_attrs.selected-suggestion {
+  background-color: transparent !important;
+}
+
+/* Inserted Block */
+.tracking-visible .ProseMirror [data-track-op='insert'][data-track-status='pending'] .block,
+.tracking-visible .ProseMirror [data-track-op='node_split'][data-track-status='pending'] .block,
+.tracking-visible .ProseMirror
+  [data-track-op='wrap_with_node'][data-track-status='pending']
+  .block {
+  border-left: 3px solid var(--inserted-pending-color);
+}
+
+.selected-suggestion[data-track-status='pending'][data-track-op='insert']
+  .block,
+.selected-suggestion
+  [data-track-status='pending'][data-track-op='insert']
+  .block,
+.selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending']
+  .block {
+  border-left: 6px solid var(--inserted-pending-color) !important;
+  box-shadow: inset 6px 0 0 var(--inserted-pending-bg-color);
+  animation: fadeOutBackground 3s forwards;
+  --fade-color: var(--inserted-pending-bg-color);
+}
+
+/* Deleted Block */
+.ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: none;
+}
+.tracking-visible
+  .ProseMirror
+  .block-container[data-track-status='pending'][data-track-op='delete'] {
+  display: grid;
+}
+
+.tracking-visible .ProseMirror [data-track-status='pending'][data-track-op='delete'] .block {
+  border-left: 3px solid var(--deleted-color);
+}
+
+.selected-suggestion[data-track-status='pending'][data-track-op='delete']
+  .block,
+.selected-suggestion
+  [data-track-status='pending'][data-track-op='delete']
+  .block {
+  border-left: 6px solid var(--deleted-color) !important;
+  box-shadow: inset 6px 0 0 var(--deleted-pending-bg-color);
+  animation: fadeOutBackground 3s forwards;
+  --fade-color: var(--deleted-pending-bg-color);
+}
+
+/* Updated Block */
+.tracking-visible .ProseMirror [data-track-op='set_attrs'] .block,
+.tracking-visible .block:has(figure[data-track-op='set_attrs']),
+.tracking-visible figure.block:has(.equation.set_attrs) {
+  border-left: 3px solid var(--updated-border-color);
+}
+
+.selected-suggestion[data-track-op='set_attrs'] .block,
+.selected-suggestion [data-track-op='set_attrs'] .block,
+.block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+figure.block:has(.equation.set_attrs.selected-suggestion) {
+  border-left: 6px solid var(--updated-border-color);
+  box-shadow: inset 6px 0 0 var(--updated-bg-color);
+  animation: fadeOutBackground 3s forwards;
+  --fade-color: var(--updated-bg-color);
 }
 
 .tracking-visible .subtree .deleted {
@@ -630,19 +725,6 @@ span.selected-suggestion,
 
 .subtree .deleted {
   display: none;
-}
-
-.ProseMirror .inserted:has(.selected-suggestion),
-.ProseMirror .deleted:has(.selected-suggestion),
-.ProseMirror .selected-suggestion .highlight,
-.ProseMirror
-  .selected-suggestion
-  .graphical-abstract:has(
-    [data-track-status='pending'][data-track-op='insert']
-  ) {
-  background: transparent !important;
-  color: var(--common-color);
-  text-decoration: none;
 }
 
 .citation-wrapper {
@@ -663,25 +745,6 @@ span.selected-suggestion,
 }
 .citation-wrapper:hover .track-changes-review {
   display: inline-block;
-}
-
-.ProseMirror .affiliation[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror .contributor[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror figure[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror table[data-track-status='rejected'][data-track-op='insert'],
-.ProseMirror
-  .block-container[data-track-status='rejected'][data-track-op='insert'] {
-  display: none;
-}
-
-.ProseMirror
-  .block-container[data-track-status='pending'][data-track-op='delete'] {
-  display: none;
-}
-.tracking-visible
-  .ProseMirror
-  .block-container[data-track-status='pending'][data-track-op='delete'] {
-  display: grid;
 }
 
 .contributor[data-track-status='pending'][data-track-op='delete'],
@@ -707,6 +770,19 @@ span.selected-suggestion,
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
+
+.tracking-visible .contributor[data-track-status='pending'][data-track-op='set_attrs'],
+.tracking-visible .affiliation[data-track-status='pending'][data-track-op='set_attrs'] {
+  background: var(--updated-bg-color);
+  color: var(--common-color);
+  border-color: var(--updated-border-color);
+}
+
+.selected-suggestion.contributor,
+.selected-suggestion.affiliation {
+  text-decoration: none !important;
+}
+
 .block-contributors,
 .block-author_notes,
 .block-awards,
