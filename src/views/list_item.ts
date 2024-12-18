@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { ListItemNode, ManuscriptNode } from '@manuscripts/transform'
+import { ListItemNode } from '@manuscripts/transform'
 
-import { getChangeClasses } from '../lib/track-changes-utils'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 
@@ -24,11 +23,4 @@ export class ListItemView extends BlockView<ListItemNode> {
   public elementType = 'li'
 }
 
-export const listItemCallback = (node: ManuscriptNode, dom: HTMLElement) => {
-  if (node.attrs.dataTracked) {
-    const classes = getChangeClasses(node.attrs.dataTracked)
-    dom.className = classes.join(' ')
-  }
-}
-
-export default createNodeOrElementView(ListItemView, 'li', listItemCallback)
+export default createNodeOrElementView(ListItemView, 'li')
