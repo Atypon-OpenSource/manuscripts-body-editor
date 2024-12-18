@@ -74,6 +74,9 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
   // Get the nodes at the selection's start and end positions
   const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
   const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
+  // Get the DOM element at the selection's position
+  const domAtSelectionFrom = view.domAtPos(selection.$from.pos)
+    .node as HTMLElement
 
   if (!nodeAtFrom) {
     return false
@@ -84,24 +87,39 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
     nodeAtFrom.type === schema.nodes.bibliography_item
       ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
       : nodeAtTo?.type === schema.nodes.highlight_marker
-      ? (document.getElementById(nodeAtTo.attrs.id) as HTMLElement)
+      ? (document.getElementById(nodeAtTo?.attrs.id) as HTMLElement)
       : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
 
-  // Use the DOM element at the selection position as a fallback
-  const scrollTarget =
-    targetElement || (view.domAtPos(selection.$from.pos).node as HTMLElement)
+  // Fallback to the DOM element at the selection's position
+  const scrollTarget = targetElement || domAtSelectionFrom
 
   if (!scrollTarget) {
     return false
   }
 
-  // Decide the block alignment based on the element type
+  // Highlight the footnote marker if applicable
+  if (nodeAtFrom.type === schema.nodes.inline_footnote) {
+    const resolvedPos = view.state.doc.resolve(selection.$from.pos)
+    const targetNode = view.nodeDOM(resolvedPos.pos) as HTMLElement
+
+    if (targetNode) {
+      // Add the highlight class to the exact DOM node
+      targetNode.classList.add('highlight-footnote-marker')
+      setTimeout(
+        () => targetNode.classList.remove('highlight-footnote-marker'),
+        3000
+      )
+    }
+  }
+
+  // Set block alignment based on the node type
   const blockAlignment =
     nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
+
   // Scroll the target element into view
   scrollTarget.scrollIntoView({
     behavior: 'smooth',
-    block: blockAlignment, // Align the target element to the start of the viewport
+    block: blockAlignment,
   })
 
   return true

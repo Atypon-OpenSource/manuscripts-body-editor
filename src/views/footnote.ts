@@ -23,8 +23,11 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
-import { alertIcon, deleteIcon } from '../icons'
-import { getFootnotesElementState } from '../lib/footnotes'
+import { alertIcon, deleteIcon, scrollIcon } from '../icons'
+import {
+  findFootnotesContainerNode,
+  getFootnotesElementState,
+} from '../lib/footnotes'
 import { isDeleted } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -46,6 +49,8 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     super.updateContents()
     const id = this.node.attrs.id
     const fn = getFootnotesElementState(this.view.state, id)
+    const pos = this.getPos()
+
     if (!fn) {
       return
     }
@@ -57,27 +62,55 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     } else {
       marker.classList.add('footnote-marker')
       marker.innerText = fn.labels.get(id) || ''
-      marker.addEventListener('mousedown', (e) => this.handleMarkerClick(e))
     }
-    const deleteBtn = document.createElement('span')
-    deleteBtn.classList.add('delete-icon')
-    deleteBtn.innerHTML = deleteIcon
-    deleteBtn.addEventListener('mousedown', (e) => this.handleDeleteClick(e))
+    const container = findFootnotesContainerNode(this.view.state.doc, pos)
+
+    let scrollBtn: HTMLElement | null = null
+    if (container.node.type !== schema.nodes.table_element) {
+      // Only create the scroll button if the parent is not a table
+      scrollBtn = this.createButton(
+        'scroll-icon',
+        scrollIcon,
+        this.handleMarkerClick
+      )
+    }
+    const deleteBtn = this.createButton(
+      'delete-icon',
+      deleteIcon,
+      this.handleDeleteClick
+    )
 
     this.dom.innerHTML = ''
+    scrollBtn && this.dom.appendChild(scrollBtn)
     this.dom.appendChild(marker)
     this.contentDOM && this.dom.appendChild(this.contentDOM)
     this.dom.appendChild(deleteBtn)
   }
 
+  // Helper function to create buttons
+  private createButton = (
+    className: string,
+    icon: string,
+    eventHandler: (e: Event) => void
+  ): HTMLElement => {
+    const btn = document.createElement('span')
+    btn.classList.add(className)
+    btn.innerHTML = icon
+    btn.addEventListener('mousedown', eventHandler)
+    return btn
+  }
+
   handleMarkerClick = (e: Event) => {
     e.preventDefault()
     e.stopPropagation()
+
     const id = this.node.attrs.id
     const fn = getFootnotesElementState(this.view.state, id)
+
     if (!fn) {
       return
     }
+
     for (const [node, pos] of fn.inlineFootnotes) {
       if (node.attrs.rids.includes(id)) {
         const tr = this.view.state.tr

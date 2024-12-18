@@ -618,10 +618,10 @@
 }
 
 .ProseMirror .block-container > .block {
-  padding: 0 12px;
   margin: 0;
+  z-index: 1;
+  padding: 0 12px;
 }
-
 .ProseMirror .block-container.block-figure_element > .block {
   display: grid;
 }
@@ -966,26 +966,64 @@
   vertical-align: super;
   font-size: 75%;
   margin-bottom: 10px;
-  cursor: pointer;
   color: #0d79d0;
+  margin: 0 5px;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
 }
 
+.ProseMirror .footnote .footnote-marker {
+  color: inherit;
+  cursor: default;
+  margin-right: 2px;
+}
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before, .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
+  content: '';
+  opacity: 0;
+  z-index: -1;
+  height: 30px;
+  margin: 0 12px;
+  position: absolute;
+  background: #E2E2E2;
+  pointer-events: none;
+} 
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
+  left: 0;
+}
+.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
+  right:-100px;
+}
+.ProseMirror .footnote-marker.highlight-footnote-marker::before, .ProseMirror .footnote-marker.highlight-footnote-marker::after {
+  opacity: 1 !important;
+  width: 45vw;
+  transition: opacity 0.3s ease-in-out;
+}
+.ProseMirror .block-container > .block:has(.highlight-footnote-marker.footnote-marker) {
+  overflow-x: hidden;
+}
 .ProseMirror .footnote {
   display: flex;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
 }
-
-.ProseMirror .footnote .footnote-marker {
-  margin-right: 8px;
-  color: inherit;
-}
-
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
-
+.ProseMirror .footnote.footnote-selected .delete-icon {
+  visibility: visible;
+}
+.ProseMirror .footnote .scroll-icon {
+  cursor: pointer;
+  visibility: hidden;
+  margin-left: -20px;
+  transition: 0.2s all;
+  transform: rotate(180deg);
+}
+.ProseMirror .footnote:hover .scroll-icon {
+  visibility: visible;
+}
 .ProseMirror .footnote .uncited-footnote {
   margin-right: 4px;
 }
@@ -994,11 +1032,6 @@
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
 }
-
-.ProseMirror .footnote.footnote-selected .delete-icon {
-  visibility: visible;
-}
-
 .ProseMirror .table-footer p {
   margin-bottom: 0;
   margin-top: 0;

@@ -21,7 +21,7 @@ import {
   isTableElementNode,
   ManuscriptNodeView,
 } from '@manuscripts/transform'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 
 import {
   FootnotesSelector,
@@ -47,24 +47,31 @@ export class InlineFootnoteView
 
   showContextMenu = () => {
     this.props.popper.destroy()
+    const can = this.props.getCapabilities()
+    const showEditIcon = can?.editArticle
+
     const componentProps: ContextMenuProps = {
       actions: [
+        ...(showEditIcon
+          ? [
+              {
+                label: 'Edit',
+                action: () => {
+                  this.props.popper.destroy()
+                  this.showFootnotesSelector()
+                },
+                icon: 'Edit',
+              },
+            ]
+          : []),
         {
-          label: 'Edit',
+          label: 'Go to footnote',
           action: () => {
             this.props.popper.destroy()
-            this.showFootnotesSelector()
+            this.scrollToReferencedFootnote()
           },
-          icon: 'Edit',
+          icon: 'Scroll',
         },
-        // {
-        //   label: 'Scroll to the footnote',
-        //   action: () => {
-        //     this.props.popper.destroy()
-        //     this.scrollToReferenced()
-        //   },
-        //   icon: 'Icon TBD',
-        // }
       ],
     }
     this.props.popper.show(
@@ -84,13 +91,38 @@ export class InlineFootnoteView
   }
 
   handleClick = () => {
-    if (isDeleted(this.node) || !this.props.getCapabilities().editArticle) {
+    if (isDeleted(this.node)) {
       return
     }
     if (this.isTableFootnote) {
       this.showFootnotesSelector()
     } else {
       this.showContextMenu()
+    }
+  }
+
+  scrollToReferencedFootnote = () => {
+    const state = this.view.state
+    const fn = getFootnotesElementState(state, this.node.attrs.id)
+
+    if (!fn) {
+      return
+    }
+
+    let nodePos: number | undefined = undefined
+
+    for (const [node, pos] of fn.footnotes) {
+      if (node.attrs.id === this.node.attrs.rids[0]) {
+        nodePos = pos
+      }
+    }
+
+    if (nodePos && this.props.dispatch) {
+      const selection = NodeSelection.create(this.view.state.doc, nodePos + 1)
+
+      this.props.dispatch(
+        this.view.state.tr.setSelection(selection).scrollIntoView()
+      )
     }
   }
 
