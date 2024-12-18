@@ -16,6 +16,7 @@
 import {
   AlertIcon,
   DeleteIcon,
+  ScrollIcon,
   SectionCategoryIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
@@ -26,3 +27,4 @@ const renderIcon = (c: React.FC) => renderToStaticMarkup(createElement(c))
 export const alertIcon = renderIcon(AlertIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
+export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
