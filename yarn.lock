@@ -1604,10 +1604,10 @@
     react-tooltip "^5.26.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.8.6-LEAN-4102.0":
-  version "1.8.6-LEAN-4102.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.8.6-LEAN-4102.0.tgz#fc6873b7fb7088a566b66d0863915db4fa520b18"
-  integrity sha512-Tuao6j+z6RxwByH3MOBgOw0xQGh5xFZFyxM7a+Kawwwx4yLNbvhNzgeIZFst0CfjtUVdgWDfBuNIk2pytluXVQ==
+"@manuscripts/track-changes-plugin@1.8.6-LEAN-4102.1":
+  version "1.8.6-LEAN-4102.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.8.6-LEAN-4102.1.tgz#a1cd3ad1d1fa2f3e8b993642d8c1b059bb42cf44"
+  integrity sha512-zkoZ6o2aYliXRD/MHI1mhsubya+vhClN/ceEzH6lftbd8zD/LhRFVgsyIEay8/G355XdPGbCrH/mTuu55L+G8w==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
