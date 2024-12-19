@@ -149,13 +149,6 @@ export const ReferenceTextArea = styled(TextArea)`
   resize: none;
 `
 
-// export const FlexForm = styled(Form)`
-//   height: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   overflow: hidden;
-// `
-
 export const FormFields = styled.div`
   flex: 1;
   overflow-y: auto;

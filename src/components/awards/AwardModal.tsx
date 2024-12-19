@@ -94,14 +94,14 @@ export const AwardModal: React.FC<AwardModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer className="modal-container">
-        <ModalHeader className="modal-header">
+      <ModalContainer>
+        <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
             data-cy="modal-close-button"
           />
         </ModalHeader>
-        <ModalBody className="modal-body">
+        <ModalBody>
           <ModalTitle>Add Funder information</ModalTitle>
           <AwardForm
             values={normalizedValues}

@@ -990,7 +990,6 @@ export const insertAward = (
     insertAwards(state, dispatch)
     if (getChildOfType(state.doc, schema.nodes.awards, true)) {
       const attrs = {
-        // id: generateNodeID(schema.nodes.award)
         id: '',
         source: '',
         recipient: '',
