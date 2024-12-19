@@ -25,7 +25,7 @@ import { objectsKey } from './objects'
 export default () => {
   return new Plugin({
     state: {
-      init(_, state) {
+      init() {
         // Initialize decorations with an empty set
         return DecorationSet.empty
       },

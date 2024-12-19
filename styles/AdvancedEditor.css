@@ -599,6 +599,10 @@ span.comment-marker {
   text-decoration: line-through;
 }
 
+.tracking-visible .ProseMirror .block.deleted {
+  display: block;
+}
+
 .tracking-visible .ProseMirror .equation.deleted {
   display: flex;
 }
@@ -790,9 +794,13 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .keywords {
   margin: 15px 0px;
 }
+.block-award {
+  position: relative
+}
+/* DONT COMMIT THIS COMMENTED CODE 
 .block-awards.empty-node {
   display: none;
-}
+} */
 .contributors {
   display: flex;
   align-items: flex-start;

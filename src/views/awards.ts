@@ -22,16 +22,16 @@ import { createNodeView } from './creators'
 
 export class AwardsView extends BlockView<AwardsNode> {
   public elementType = 'div'
-  public wrapper: HTMLElement
+  container: HTMLElement
 
   public createElement = () => {
-    this.wrapper = document.createElement(this.elementType)
-    this.wrapper.classList.add('block')
+    this.container = document.createElement(this.elementType)
+    this.container.classList.add('block')
 
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
-    this.wrapper.appendChild(this.contentDOM)
-    this.dom.appendChild(this.wrapper)
+    this.container.appendChild(this.contentDOM)
+    this.dom.appendChild(this.container)
   }
 
   public updateContents() {
@@ -43,11 +43,11 @@ export class AwardsView extends BlockView<AwardsNode> {
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     if (this.node.content.size !== 0) {
-      this.wrapper.innerHTML = ''
-      this.wrapper.setAttribute('contenteditable', 'false')
+      this.container.innerHTML = ''
+      this.container.setAttribute('contenteditable', 'false')
 
       const header = createHeader(this.node.type.name, 'Funder Information')
-      this.wrapper.append(header, this.contentDOM)
+      this.container.append(header, this.contentDOM)
     }
   }
 }
