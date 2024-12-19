@@ -87,7 +87,6 @@ import {
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
-import { AwardAttrs } from './components/awards/AwardModal'
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import {
   findBackmatter,
@@ -117,6 +116,7 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
+import { AwardAttrs } from './views/award'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 

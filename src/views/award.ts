@@ -31,7 +31,6 @@ import ReactSubView from './ReactSubView'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
 
@@ -72,7 +71,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
     fragment.appendChild(
       this.createAwardFragment(
-
         'award-recipient',
         `Recipient: ${recipient ? recipient : notAvailable}`
       )

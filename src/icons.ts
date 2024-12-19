@@ -16,8 +16,8 @@
 import {
   AlertIcon,
   DeleteIcon,
-  ScrollIcon,
   EditIcon,
+  ScrollIcon,
   SectionCategoryIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
