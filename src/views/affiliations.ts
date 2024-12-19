@@ -18,6 +18,7 @@ import { AffiliationNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
+import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { findChildByID } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
@@ -25,6 +26,7 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
+//todo update AffiliationNode to AffiliationsNode
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
@@ -32,7 +34,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   public ignoreMutation = () => true
   public stopEvent = () => true
 
-  public createElement = () => {
+  public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('affiliations', 'block')
     this.container.contentEditable = 'false'
@@ -41,7 +43,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.dom.appendChild(this.container)
   }
 
-  public updateContents = () => {
+  public updateContents() {
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return
@@ -56,7 +58,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.updateSelection()
   }
 
-  private buildAffiliations = (affs: PluginState) => {
+  private buildAffiliations(affs: PluginState) {
     const elements = []
     for (const affiliation of affs.affiliations) {
       const index = affs.indexedAffiliationIds.get(affiliation.id)
@@ -71,16 +73,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       .forEach((e) => this.container.appendChild(e.element))
   }
 
-  private buildAffiliation = (attrs: AffiliationAttrs, index?: number) => {
+  private buildAffiliation(attrs: AffiliationAttrs, index?: number) {
     const element = document.createElement('div')
     element.classList.add('affiliation')
     element.id = attrs.id
-    if (attrs.dataTracked?.length) {
-      const change = attrs.dataTracked[0]
-      element.setAttribute('data-track-id', change.id)
-      element.setAttribute('data-track-status', change.status)
-      element.setAttribute('data-track-op', change.operation)
-    }
+    addTrackChangesAttributes(attrs, element)
 
     if (index) {
       const label = document.createElement('span')
@@ -96,13 +93,13 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     return element
   }
 
-  sortAffiliations = (aff1: { index?: number }, aff2: { index?: number }) => {
+  private sortAffiliations(aff1: { index?: number }, aff2: { index?: number }) {
     const index1 = aff1.index || 10000
     const index2 = aff2.index || 10000
     return index1 - index2
   }
 
-  private handleClick = (event: Event) => {
+  private handleClick(event: Event) {
     const element = event.target as HTMLElement
     const item = element.closest('.affiliation')
 
@@ -118,7 +115,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
   }
 
-  private updateSelection = () => {
+  private updateSelection() {
     const state = this.view.state
     const selection = selectedSuggestionKey.getState(state)?.suggestion
     this.container

@@ -25,7 +25,7 @@ import {
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
 import { deleteIcon } from '../icons'
-import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -38,21 +38,20 @@ export class GeneralTableFootnoteView extends BaseNodeView<
 
   public initialise = () => {
     this.dom = document.createElement('div')
+    this.dom.classList.add('footnote', 'general-table-footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     const deleteBtn = document.createElement('span')
     deleteBtn.classList.add('delete-icon')
     deleteBtn.innerHTML = deleteIcon
     deleteBtn.addEventListener('mousedown', (e) => this.handleClick(e))
 
     this.dom.innerHTML = ''
-    this.dom.classList.value = ''
-    this.dom.classList.add('footnote', 'general-table-footnote')
-    this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
     this.contentDOM && this.dom.appendChild(this.contentDOM)
     this.dom.appendChild(deleteBtn)
   }

@@ -30,7 +30,7 @@ import {
 import { CommentKey, createCommentMarker } from '../lib/comments'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
-import { getChangeClasses } from '../lib/track-changes-utils'
+import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
@@ -48,7 +48,7 @@ export class BibliographyElementBlockView extends BlockView<
   private contextMenu: HTMLDivElement
   private version: string
 
-  public showPopper = (id: string) => {
+  public showPopper(id: string) {
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
@@ -79,18 +79,18 @@ export class BibliographyElementBlockView extends BlockView<
 
   public ignoreMutation = () => true
 
-  private handleEdit = (citationId: string) => {
-    this.showPopper(citationId)
+  private handleEdit(citationID: string) {
+    this.showPopper(citationID)
   }
 
-  private handleComment = (itemID: string) => {
+  private handleComment(itemID: string) {
     const item = findChildByID(this.view, itemID)
     if (item) {
       addNodeComment(item.node, this.view.state, this.props.dispatch)
     }
   }
 
-  private showContextMenu = (element: HTMLElement) => {
+  private showContextMenu(element: HTMLElement) {
     this.props.popper.destroy()
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
@@ -149,7 +149,7 @@ export class BibliographyElementBlockView extends BlockView<
     }
   }
 
-  public updateContents = () => {
+  public updateContents() {
     this.props.popper.destroy() // destroy the old context menu
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
@@ -186,14 +186,7 @@ export class BibliographyElementBlockView extends BlockView<
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
-      node.attrs as BibliographyItemAttrs
-
-      const attrs = node.attrs as BibliographyItemAttrs
-      const change = attrs.dataTracked?.[0]
-      if (change) {
-        element.classList.add(...getChangeClasses([change]))
-        element.dataset.trackId = change.id
-      }
+      addTrackChangesAttributes(node.attrs, element)
 
       wrapper.append(element)
     }

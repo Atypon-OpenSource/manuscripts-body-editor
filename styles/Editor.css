@@ -1050,7 +1050,7 @@
   display: none;
 }
 
-.ProseMirror .graphical-abstract-figure.block-gutter {
+.ProseMirror .graphical-abstract .block-figure_element .block-gutter {
   visibility: hidden;
 }
 

@@ -36,7 +36,8 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
     }
   }
 
-  public onUpdateContent = () => {
+  public updateContents() {
+    super.updateContents()
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const parentSection = findParentNodeOfTypeClosestToPos(

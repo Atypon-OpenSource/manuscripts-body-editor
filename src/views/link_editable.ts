@@ -22,7 +22,7 @@ import {
   LinkFormProps,
   LinkValue,
 } from '../components/views/LinkForm'
-import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
@@ -38,15 +38,14 @@ export class LinkEditableView extends LinkView {
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     this.contentDOM = this.dom
 
     const attrs = this.node.attrs
     const href = attrs.href
     const title = attrs.title
 
-    const classes = ['link', ...getChangeClasses(this.node.attrs.dataTracked)]
-    this.dom.className = classes.join(' ')
     this.dom.setAttribute('href', allowedHref(href) ? href : '')
     this.dom.setAttribute('target', '_blank')
     this.dom.setAttribute('title', title || '')
@@ -54,6 +53,7 @@ export class LinkEditableView extends LinkView {
 
   protected createDOM = () => {
     this.dom = document.createElement('a')
+    this.dom.classList.add('link')
     this.dom.addEventListener('click', this.handleClick)
   }
 
