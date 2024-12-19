@@ -34,7 +34,8 @@ export class AwardsView extends BlockView<AwardsNode> {
     this.dom.appendChild(this.wrapper)
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     if (!this.contentDOM) {
       return
     }

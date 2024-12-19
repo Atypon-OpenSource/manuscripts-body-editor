@@ -16,47 +16,45 @@
 
 import { SectionNode } from '@manuscripts/transform'
 
-import { PluginState, sectionTitleKey } from '../plugins/section_title'
+import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-// handle sections numbering after track-changes process
-export const handleSectionNumbering = (sections: PluginState) => {
-  sections.forEach((sectionNumber, sectionId) => {
-    const section = document.getElementById(sectionId)
-    const sectionTitle = section?.querySelector('h1')
-    if (sectionTitle) {
-      sectionTitle.dataset.sectionNumber = sectionNumber
-    }
-  })
-}
 export class SectionView extends BlockView<SectionNode> {
   public elementType = 'section'
   public element: HTMLElement
-  public initialise = () => {
+
+  public initialise() {
     this.createDOM()
     this.createElement()
     this.updateContents()
   }
-  public createElement = () => {
+
+  public createElement() {
     this.contentDOM = document.createElement(this.elementType)
     this.dom.appendChild(this.contentDOM)
   }
-  public onUpdateContent = () => {
-    const sectionTitles = sectionTitleKey.getState(this.view.state)
 
-    const attrs = this.node.attrs
-    if (this.contentDOM) {
-      this.contentDOM.id = attrs.id
-      if (attrs.category) {
-        this.contentDOM.setAttribute('data-category', attrs.category)
+  public updateContents() {
+    super.updateContents()
+    this.dom.setAttribute('data-category', this.node.attrs.category)
+    this.handleSectionNumbering()
+  }
+
+  // handle sections numbering after track-changes process
+  //todo move to plugin
+  handleSectionNumbering() {
+    const sections = sectionTitleKey.getState(this.view.state)
+    if (!sections) {
+      return
+    }
+    sections.forEach((sectionNumber, id) => {
+      const section = document.getElementById(id)
+      const sectionTitle = section?.querySelector('h1')
+      if (sectionTitle) {
+        sectionTitle.dataset.sectionNumber = sectionNumber
       }
-    }
-
-    // update sections numbering, when newly inserted section got deleted
-    if (sectionTitles) {
-      handleSectionNumbering(sectionTitles)
-    }
+    })
   }
 }
 
