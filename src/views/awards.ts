@@ -17,16 +17,27 @@
 import { AwardsNode } from '@manuscripts/transform'
 
 import { createHeader } from '../lib/utils'
-import BlockView from './block_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class AwardsView extends BlockView<AwardsNode> {
+export class AwardsView extends BaseNodeView<AwardsNode> {
   public elementType = 'div'
   container: HTMLElement
 
+  public initialise() {
+    this.createDOM()
+    this.createElement()
+    this.updateContents()
+  }
+
+  public createDOM() {
+    this.dom = document.createElement('div')
+    this.dom.classList.add(`block-${this.node.type.name}`)
+  }
+
   public createElement = () => {
     this.container = document.createElement(this.elementType)
-    this.container.classList.add('block')
+    this.container.classList.add('block', 'container-awards')
 
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
@@ -48,6 +59,7 @@ export class AwardsView extends BlockView<AwardsNode> {
 
       const header = createHeader(this.node.type.name, 'Funder Information')
       this.container.append(header, this.contentDOM)
+      this.dom.append(this.container)
     }
   }
 }

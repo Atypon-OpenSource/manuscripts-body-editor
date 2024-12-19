@@ -22,7 +22,7 @@ import {
   DeleteAwardDialog,
   DeleteAwardDialogProps,
 } from '../components/awards/DeleteAwardDiaolog'
-import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { Trackable, TrackableAttributes } from '../types'
 import BlockView from './block_view'
@@ -34,12 +34,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
 
-  public initialise() {
-    this.createDOM()
-    this.contentDOM = this.dom
-    this.updateContents()
-  }
-
   public updateContents() {
     if (!this.contentDOM) {
       return
@@ -48,11 +42,8 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     if (!source) {
       return
     }
-    const classes = [
-      'block block-award',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
-    this.contentDOM.className = classes.join(' ')
+
+    this.contentDOM.className = 'block block-award'
     this.contentDOM.setAttribute('id', id)
     this.contentDOM.innerHTML = ''
     const notAvailable = 'N/A'
@@ -80,6 +71,8 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     }
 
     this.contentDOM.appendChild(fragment)
+
+    this.handleTrackChanges()
   }
 
   private createAwardFragment = (

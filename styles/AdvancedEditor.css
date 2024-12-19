@@ -374,6 +374,10 @@ span.comment-marker {
   margin: 0 !important;
 }
 
+.ProseMirror h1.authors-info-header {
+  margin: 0 67px !important;
+}
+
 .ProseMirror .block-award,
 .ProseMirror .author-notes-container > div {
   margin-bottom: 16px;
