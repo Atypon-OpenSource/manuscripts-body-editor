@@ -18,7 +18,6 @@ import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AwardNode,
-  AwardsNode,
   BoxElementNode,
   FigureElementNode,
   FigureNode,
@@ -92,6 +91,7 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
 } from './lib/doc'
@@ -116,7 +116,6 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
-import { AwardAttrs } from './views/award'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -986,61 +985,15 @@ export const insertAward = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
+  const award = schema.nodes.award.create() as AwardNode
+  const tr = state.tr
+  const awards = insertAwardsNode(tr)
+  const pos = awards.pos + awards.node.nodeSize - 1
+  tr.insert(pos, award)
+  const selection = NodeSelection.create(tr.doc, pos)
+  view && view.focus()
   if (dispatch) {
-    insertAwards(state, dispatch)
-    if (getChildOfType(state.doc, schema.nodes.awards, true)) {
-      const attrs = {
-        id: '',
-        source: '',
-        recipient: '',
-        code: '',
-      } as AwardAttrs
-      const awards = findChildrenByType(state.doc, schema.nodes.awards)[0]
-      const award = schema.nodes.award.create(attrs) as AwardNode
-      const pos = awards.pos + awards.node.nodeSize - 1
-      const tr = state.tr.insert(pos, award)
-      const selection = NodeSelection.create(tr.doc, pos)
-      if (view) {
-        view.focus()
-      }
-      dispatch(tr.setSelection(selection).scrollIntoView())
-    }
-  }
-
-  return true
-}
-
-export const insertAwards = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
-) => {
-  const { doc } = state
-  // Check if awards node already exists
-  if (!getChildOfType(state.doc, schema.nodes.awards, true)) {
-    // Find position to insert the awards node
-    const positions: number[] = []
-    const possibleNodesTypes = [
-      'doi',
-      'keywords',
-      'supplements',
-      'abstracts',
-      'body',
-    ]
-    doc.descendants((node, pos) => {
-      if (possibleNodesTypes.includes(node.type.name)) {
-        positions.push(pos)
-      }
-    })
-    const pos = positions.length === 0 ? 0 : Math.min(...positions)
-    if (!pos) {
-      return false
-    }
-
-    const awards = schema.nodes.awards.create() as AwardsNode
-    const tr = state.tr.insert(pos, awards)
-    if (dispatch) {
-      dispatch(tr)
-    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
 }

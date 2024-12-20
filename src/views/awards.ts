@@ -31,18 +31,13 @@ export class AwardsView extends BaseNodeView<AwardsNode> {
   }
 
   public createDOM() {
-    this.dom = document.createElement('div')
+    this.dom = document.createElement(this.elementType)
     this.dom.classList.add(`block-${this.node.type.name}`)
   }
 
   public createElement = () => {
-    this.container = document.createElement(this.elementType)
-    this.container.classList.add('block', 'container-awards')
-
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
-    this.container.appendChild(this.contentDOM)
-    this.dom.appendChild(this.container)
   }
 
   public updateContents() {
@@ -50,16 +45,13 @@ export class AwardsView extends BaseNodeView<AwardsNode> {
     if (!this.contentDOM) {
       return
     }
+    this.dom.innerHTML = ''
     this.dom.setAttribute('contenteditable', 'false')
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     if (this.node.content.size !== 0) {
-      this.container.innerHTML = ''
-      this.container.setAttribute('contenteditable', 'false')
-
       const header = createHeader(this.node.type.name, 'Funder Information')
-      this.container.append(header, this.contentDOM)
-      this.dom.append(this.container)
+      this.dom.append(header, this.contentDOM)
     }
   }
 }

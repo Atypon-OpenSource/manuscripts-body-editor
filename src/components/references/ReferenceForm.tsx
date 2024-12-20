@@ -41,7 +41,7 @@ import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { BibliographyItemAttrs } from '../../lib/references'
-import { ChangeHandlingForm } from '../shared/ChangeHandlingForm'
+import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelContainer = styled.div`
   display: flex;

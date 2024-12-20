@@ -35,35 +35,34 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   private dialog: HTMLElement
 
   public updateContents() {
+    super.updateContents()
     if (!this.contentDOM) {
       return
     }
-    const { id, recipient, code, source } = this.node.attrs
+    const { recipient, code, source } = this.node.attrs
     if (!source) {
       return
     }
 
-    this.contentDOM.className = 'block block-award'
-    this.contentDOM.setAttribute('id', id)
     this.contentDOM.innerHTML = ''
     const notAvailable = 'N/A'
     const fragment = document.createDocumentFragment()
 
-    fragment.appendChild(
-      this.createAwardFragment('award-source', `${source ? source : ''}`)
-    )
+    fragment.appendChild(this.createAwardFragment('award-source', '', source))
 
     fragment.appendChild(
       this.createAwardFragment(
         'award-code',
-        `Grant Number(s): ${code ? code.split(';').join(', ') : notAvailable}`
+        'Grant Number(s): ',
+        code ? code.split(';').join(', ') : notAvailable
       )
     )
 
     fragment.appendChild(
       this.createAwardFragment(
         'award-recipient',
-        `Recipient: ${recipient ? recipient : notAvailable}`
+        'Recipient: ',
+        recipient ? recipient : notAvailable
       )
     )
     if (this.props.getCapabilities().editArticle) {
@@ -71,18 +70,29 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     }
 
     this.contentDOM.appendChild(fragment)
-
-    this.handleTrackChanges()
+    this.updateClasses()
   }
 
   private createAwardFragment = (
     className: string,
-    textContent: string
+    title: string,
+    content: string
   ): HTMLDivElement => {
-    const element = document.createElement('div')
-    element.classList.add(className)
-    element.textContent = textContent
-    return element
+    const awardFragment = document.createElement('div')
+    awardFragment.classList.add(className)
+    if (title) {
+      const titleElement = document.createElement('span')
+      titleElement.classList.add('title')
+      titleElement.textContent = title
+      awardFragment.appendChild(titleElement)
+    }
+    if (content) {
+      const contentElement = document.createElement('span')
+      contentElement.classList.add('content')
+      contentElement.textContent = content
+      awardFragment.appendChild(contentElement)
+    }
+    return awardFragment
   }
 
   handleClick = () => {
@@ -94,6 +104,9 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
   showContextMenu = () => {
     this.props.popper.destroy()
+    if (!this.contentDOM) {
+      return
+    }
     const componentProps: ContextMenuProps = {
       actions: [
         {
@@ -115,7 +128,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       ],
     }
     this.props.popper.show(
-      this.dom,
+      this.contentDOM,
       ReactSubView(
         this.props,
         ContextMenu,
@@ -190,10 +203,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
-  public selectNode = () => {
+  public selectNode() {
+    super.selectNode()
     // check if award is empty and open the modal for it...
-    this.dom.classList.add('ProseMirror-selectednode')
-    if (this.node.attrs.source === '') {
+    if (!this.node.attrs.source) {
       this.showAwardModal(this.node)
     }
   }

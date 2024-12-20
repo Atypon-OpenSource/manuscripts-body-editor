@@ -26,7 +26,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { AwardAttrs } from '../../views/award'
-import { ChangeHandlingForm } from '../shared/ChangeHandlingForm'
+import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export interface AwardFormProps {
   values: AwardAttrs
