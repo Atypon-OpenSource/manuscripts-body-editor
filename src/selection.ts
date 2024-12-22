@@ -65,7 +65,7 @@ export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
   if ($pos) {
     return trackChangesPluginKey
       .getState(state)
-      ?.changeSet.changeTree.find(
+      ?.changeSet.groupChanges.find(
         (changes) =>
           changes.length > 1 &&
           $pos.pos >= changes[0].from &&
