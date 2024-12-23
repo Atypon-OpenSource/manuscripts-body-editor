@@ -47,6 +47,7 @@ import { AuthorAffiliations } from './AuthorAffiliations'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
+import { RequiredFieldConfirmationDialog } from './RequiredFieldConfirmationDialog'
 import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
 
 const AddAuthorButton = styled.div`
@@ -126,6 +127,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isEmailRequired, setEmailRequired] = useState(false)
   const [showSuccessIcon, setShowSuccessIcon] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
+  const [
+    showRequiredFieldConfirmationDialog,
+    setShowRequiredFieldConfirmationDialog,
+  ] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
   const [unSavedChanges, setUnSavedChanges] = useState(false)
@@ -170,7 +175,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [selection])
 
   const handleClose = () => {
-    if (unSavedChanges) {
+    if (isDisableSave) {
+      setShowRequiredFieldConfirmationDialog(true)
+    } else if (unSavedChanges) {
       setShowConfirmationDialog(true)
     } else {
       setOpen(false)
@@ -400,6 +407,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
           <ScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <AuthorForms>
+                <RequiredFieldConfirmationDialog
+                  isOpen={showRequiredFieldConfirmationDialog}
+                  onSave={() => setShowRequiredFieldConfirmationDialog(false)}
+                  onCancel={handleCancel}
+                />
                 <SaveAuthorConfirmationDialog
                   isOpen={showConfirmationDialog}
                   onSave={handleSave}
