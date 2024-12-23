@@ -17,7 +17,6 @@
 import { ListElement } from '@manuscripts/json-schema'
 import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -39,30 +38,11 @@ export const JATS_HTML_LIST_STYLE_MAPPING: {
 export class OrderedListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ol'
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     if (this.contentDOM) {
       const type = (this.node.attrs.listStyleType as JatsStyleType) || 'order'
       this.contentDOM.style.listStyleType = JATS_HTML_LIST_STYLE_MAPPING[type]
-
-      const classes = [
-        'block',
-        ...getChangeClasses(this.node.attrs.dataTracked),
-      ]
-
-      if (this.node.attrs.dataTracked) {
-        this.dom.setAttribute(
-          'data-track-status',
-          this.node.attrs.dataTracked[0].status
-        )
-        this.dom.setAttribute(
-          'data-track-op',
-          this.node.attrs.dataTracked[0].operation
-        )
-      } else {
-        this.dom.removeAttribute('data-track-status')
-        this.dom.removeAttribute('data-track-op')
-      }
-      this.contentDOM.className = classes.join(' ')
     }
   }
 }

@@ -37,7 +37,8 @@ export class AuthorNotesView extends BlockView<Trackable<AuthorNotesNode>> {
     this.dom.appendChild(this.container)
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     this.genericHeaderIsDisplayed = false
     this.dom.setAttribute('contenteditable', 'false')
     this.container.innerHTML = ''

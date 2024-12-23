@@ -17,7 +17,6 @@
 import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -33,16 +32,10 @@ export class EquationView
 
   public createDOM = () => {
     this.dom = document.createElement('div')
-    this.dom.setAttribute('id', this.node.attrs.id)
   }
 
-  public updateContents = () => {
-    const classes = [
-      'equation',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
-    this.dom.className = classes.join(' ')
-
+  public updateContents() {
+    super.updateContents()
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }

@@ -47,6 +47,12 @@ export class CitationEditableView extends CitationView {
   private editor: HTMLElement
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
+
+  createDOM() {
+    super.createDOM()
+    this.dom.addEventListener('mouseup', this.handleClick)
+  }
+
   // we added this to stop select events in case th e user clicks on the comment,
   // so it won't interfere with the context menu
   public stopEvent = (event: Event) => {
@@ -58,9 +64,6 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public eventHandlers = () => {
-    this.dom.addEventListener('mouseup', this.handleClick)
-  }
   public handleClick = (event: MouseEvent) => {
     if (!this.can.seeReferencesButtons) {
       this.showPopper()

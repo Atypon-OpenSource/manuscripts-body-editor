@@ -17,7 +17,6 @@
 import { InlineEquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -26,26 +25,21 @@ export class InlineEquationView
   extends BaseNodeView<Trackable<InlineEquationNode>>
   implements ManuscriptNodeView
 {
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.updateContents()
   }
 
-  public updateContents = () => {
-    const classes = [
-      'equation',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
-    this.dom.className = classes.join(' ')
+  public updateContents() {
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }
 
   public ignoreMutation = () => true
 
-  protected createDOM = () => {
+  protected createDOM() {
     this.dom = document.createElement('span')
-    this.dom.setAttribute('id', this.node.attrs.id)
+    this.dom.classList.add('equation')
   }
 }
 
