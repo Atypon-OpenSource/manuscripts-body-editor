@@ -53,7 +53,7 @@ const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-  margin-left: ${(props) => props.theme.grid.unit * 2}px;
+  margin-left: ${(props) => props.theme.grid.unit * 4}px;
   cursor: pointer;
 `
 
@@ -128,6 +128,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
+  const [unSavedChanges, setUnSavedChanges] = useState(false)
+  const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
@@ -150,22 +152,59 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
-    setShowSuccessIcon(false)
-    setNewAuthor(false)
+
     if (values && selection && !isEqual(values, normalize(selection))) {
       setShowConfirmationDialog(true)
+      setNextAuthor(author)
     } else {
+      setShowSuccessIcon(false)
       setSelection(author)
     }
   }
 
-  const handleClose = () => {
+  useEffect(() => {
     const values = valuesRef.current
     if (values && selection && !isEqual(values, normalize(selection))) {
+      setUnSavedChanges(true)
+    }
+  }, [selection])
+
+  const handleClose = () => {
+    if (unSavedChanges) {
       setShowConfirmationDialog(true)
     } else {
       setOpen(false)
     }
+  }
+
+  const handleSave = () => {
+    if (valuesRef.current && selection) {
+      handleSaveAuthor(valuesRef.current)
+    }
+
+    if (nextAuthor) {
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+    } else if (newAuthor) {
+      createNewAuthor()
+      setNewAuthor(false)
+    }
+
+    setShowConfirmationDialog(false)
+  }
+
+  const handleCancel = () => {
+    handleResetAuthor()
+
+    if (nextAuthor) {
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+    } else if (newAuthor) {
+      createNewAuthor()
+      setNewAuthor(false)
+    }
+
+    setShowConfirmationDialog(false)
   }
 
   const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
@@ -202,8 +241,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       state: copy,
     })
   }
-
-  const handleAddAuthor = () => {
+  const createNewAuthor = () => {
     const name = buildBibliographicName({ given: '', family: '' })
     const author: ContributorAttrs = {
       id: generateID(ObjectTypes.Contributor),
@@ -221,13 +259,19 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       footnote: [],
     }
     setShowSuccessIcon(false)
-    setNewAuthor(true)
-    onSaveAuthor(author)
     setSelection(author)
-    dispatchAuthors({
-      type: 'update',
-      items: [author],
-    })
+  }
+
+  const handleAddAuthor = () => {
+    const values = valuesRef.current
+
+    if (values && selection && !isEqual(values, normalize(selection))) {
+      setShowConfirmationDialog(true)
+      setNextAuthor(null)
+      setNewAuthor(true)
+    } else {
+      createNewAuthor()
+    }
   }
 
   const handleDeleteAuthor = () => {
@@ -276,7 +320,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleResetAuthor = () => {
     actionsRef.current?.reset()
     setShowConfirmationDialog(false)
-    setOpen(false)
+    setUnSavedChanges(false)
+    if (!newAuthor && !nextAuthor) {
+      setOpen(false)
+    } else {
+      setNewAuthor(false)
+      createNewAuthor()
+    }
   }
 
   const handleChangeAuthor = (values: ContributorAttrs) => {
@@ -334,8 +384,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 data-cy="add-author-button"
                 onClick={handleAddAuthor}
               >
-                <AddIcon width={40} height={40} />
-                <ActionTitle>Add Author</ActionTitle>
+                <AddIcon width={18} height={18} />
+                <ActionTitle>New Author</ActionTitle>
               </AddAuthorButton>
               <AuthorList
                 author={selection}
@@ -352,8 +402,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               <AuthorForms>
                 <SaveAuthorConfirmationDialog
                   isOpen={showConfirmationDialog}
-                  onSave={() => handleSaveAuthor(valuesRef.current)}
-                  onCancel={handleResetAuthor}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
                 />
                 <AuthorActions
                   onSave={() => handleSaveAuthor(valuesRef.current)}

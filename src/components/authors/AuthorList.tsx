@@ -26,6 +26,14 @@ const AuthorListContainer = styled.div`
   flex: 1;
   overflow-y: visible;
 `
+const AuthorListTitle = styled.h2`
+  color: #6e6e6e;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-left: 14px;
+  margin-top: 28px;
+`
 
 interface AuthorListProps {
   author?: ContributorAttrs
@@ -46,6 +54,7 @@ export const AuthorList: React.FC<AuthorListProps> = ({
 }) => {
   return (
     <DndProvider backend={HTML5Backend}>
+      <AuthorListTitle>Existing Authors</AuthorListTitle>
       <AuthorListContainer data-cy="authors-list">
         {authors.map((a) => {
           return (

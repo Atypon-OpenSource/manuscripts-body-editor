@@ -361,11 +361,31 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   insertAffiliationNode = (attrs: AffiliationAttrs) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parent = findChildByType(this.view, schema.nodes.affiliations)!
-    const tr = this.view.state.tr
-    const node = schema.nodes.affiliation.create(attrs)
-    this.view.dispatch(tr.insert(parent.pos + 1, node))
+    const { view } = this
+    const { dispatch } = view
+    const affiliationsNodeType = schema.nodes.affiliations
+    const contributorsNodeType = schema.nodes.contributors
+    const affiliationNodeType = schema.nodes.affiliation
+
+    let affiliations = findChildByType(view, affiliationsNodeType)
+
+    if (!affiliations) {
+      const contributors = findChildByType(view, contributorsNodeType)
+
+      if (contributors) {
+        const { tr } = this.view.state
+        const affiliationsNode = affiliationsNodeType.create()
+        const insertPos = contributors.pos + contributors.node.nodeSize
+        dispatch(tr.insert(insertPos, affiliationsNode))
+        affiliations = findChildByType(view, affiliationsNodeType)
+      }
+    }
+
+    if (affiliations) {
+      const { tr } = this.view.state
+      const affiliationNode = affiliationNodeType.create(attrs)
+      dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
+    }
   }
   public actionGutterButtons = (): HTMLElement[] => [this.authorContextMenu()]
 }

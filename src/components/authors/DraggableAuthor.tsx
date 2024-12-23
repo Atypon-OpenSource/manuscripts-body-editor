@@ -20,8 +20,9 @@ import {
   CrclTickAnimation,
   DeleteIcon,
   DraggableIcon,
+  Tooltip,
 } from '@manuscripts/style-guide'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import styled from 'styled-components'
 
@@ -34,12 +35,10 @@ const AuthorContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
   transition: background-color 0.25s;
   border: 1px solid transparent;
   border-left: 0;
   border-right: 0;
-
   &:hover,
   &.active {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -50,14 +49,21 @@ const AuthorContainer = styled.div`
   }
 
   &.dragging {
-    visibility: hidden;
+    opacity: 1;
+    cursor: grabbing;
+  }
+
+  &.dragging * {
+    opacity: 0;
   }
 
   &.drop-before {
+    cursor: grabbing;
     border-top-color: ${(props) => props.theme.colors.brand.dark};
   }
 
   &.drop-after {
+    cursor: grabbing;
     border-bottom-color: ${(props) => props.theme.colors.brand.dark};
   }
 `
@@ -126,106 +132,117 @@ interface DraggableAuthorProps {
   showSuccessIcon?: boolean
 }
 
-export const DraggableAuthor: React.FC<DraggableAuthorProps> = ({
-  author,
-  isSelected,
-  onClick,
-  onDelete,
-  moveAuthor,
-  showSuccessIcon,
-}) => {
-  const [dropSide, setDropSide] = useState<DropSide>()
-  const ref = useRef<HTMLDivElement>(null)
+export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
+  ({ author, isSelected, onClick, onDelete, moveAuthor, showSuccessIcon }) => {
+    const [dropSide, setDropSide] = useState<DropSide>()
+    const ref = useRef<HTMLDivElement>(null)
+    const [{ isDragging }, dragRef, preview] = useDrag({
+      type: 'author',
+      item: {
+        author,
+      },
+      collect: (monitor) => {
+        return {
+          isDragging: monitor.isDragging(),
+        }
+      },
+    })
+    preview(ref)
+    const [{ isOver }, dropRef] = useDrop({
+      accept: 'author',
+      hover: (item: DragItem, monitor) => {
+        if (!ref.current) {
+          return
+        }
+        const side = getDropSide(ref.current, monitor)
+        setDropSide(side)
+      },
+      drop: (item: DragItem, monitor) => {
+        if (!ref.current) {
+          return
+        }
+        const side = getDropSide(ref.current, monitor)
+        const from = item.author.priority as number
+        const to = author.priority as number
+        const diff = side === 'before' ? -0.5 : 0.5
+        moveAuthor(from, to + diff)
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    })
 
-  const [{ isDragging }, dragRef] = useDrag({
-    type: 'author',
-    item: {
-      author,
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  })
+    dragRef(dropRef(ref))
 
-  const [{ isOver }, dropRef] = useDrop({
-    accept: 'author',
-    hover: (item: DragItem, monitor) => {
-      if (!ref.current) {
-        return
-      }
-      const side = getDropSide(ref.current, monitor)
-      setDropSide(side)
-    },
-    drop: (item: DragItem, monitor) => {
-      if (!ref.current) {
-        return
-      }
-      const side = getDropSide(ref.current, monitor)
-      const from = item.author.priority as number
-      const to = author.priority as number
-      const diff = side === 'before' ? -0.5 : 0.5
-      moveAuthor(from, to + diff)
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  })
-
-  dragRef(dropRef(ref))
-
-  const classes: string[] = []
-
-  if (isDragging) {
-    classes.push('dragging')
-  }
-
-  if (isOver && dropSide) {
-    classes.push(`drop-${dropSide}`)
-  }
-
-  if (isSelected) {
-    classes.push('active')
-    if (ref.current) {
-      ref.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
+    const classes: string[] = []
+    if (isDragging) {
+      classes.push('dragging')
     }
-  }
 
-  return (
-    <AuthorContainer
-      ref={ref}
-      className={classes.join(' ')}
-      onClick={onClick}
-      data-cy="author-item"
-    >
-      <AvatarContainer data-cy="author-avatar">
-        {isSelected && <DragHandle />}
-        <Box>
-          {showSuccessIcon && isSelected && (
-            <StyledCrclTickAnimation size={36} />
-          )}
-          <Avatar
-            size={36}
-            color={'#6e6e6e'}
-            opacity={showSuccessIcon && isSelected ? 0.05 : 1}
-          />
-        </Box>
-        <AuthorNotes data-cy="author-notes">
-          {author.isCorresponding && (
-            <AuthorBadge>
-              <CorrespondingAuthorIcon />
-            </AuthorBadge>
-          )}
-        </AuthorNotes>
-      </AvatarContainer>
-      <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
-      {isSelected && (
-        <RemoveButton onClick={() => onDelete()}>
-          <DeleteIcon fill={'#6E6E6E'} />
-        </RemoveButton>
-      )}
-    </AuthorContainer>
-  )
-}
+    if (isOver && dropSide) {
+      classes.push(`drop-${dropSide}`)
+    }
+
+    if (isSelected) {
+      classes.push('active')
+      if (ref.current) {
+        ref.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
+    }
+
+    useEffect(() => {
+      if (isDragging || isOver) {
+        document.body.style.cursor = 'grabbing'
+      }
+      return () => {
+        document.body.style.cursor = 'default'
+      }
+    }, [isDragging, isOver])
+
+    return (
+      <AuthorContainer
+        ref={ref}
+        className={classes.join(' ')}
+        onClick={onClick}
+        data-cy="author-item"
+        style={{ cursor: isDragging ? 'grabbing' : 'default' }}
+      >
+        <AvatarContainer data-cy="author-avatar">
+          {isSelected && <DragHandle />}
+          <Box>
+            {showSuccessIcon && isSelected && (
+              <StyledCrclTickAnimation size={36} />
+            )}
+            <Avatar
+              size={36}
+              color={'#6e6e6e'}
+              opacity={showSuccessIcon && isSelected ? 0.05 : 1}
+            />
+          </Box>
+          <AuthorNotes data-cy="author-notes">
+            {author.isCorresponding && (
+              <AuthorBadge>
+                <CorrespondingAuthorIcon />
+              </AuthorBadge>
+            )}
+          </AuthorNotes>
+        </AvatarContainer>
+        <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
+        {isSelected && (
+          <RemoveButton
+            onClick={() => onDelete()}
+            data-tooltip-id={'delete-button-tooltip'}
+          >
+            <DeleteIcon fill={'#6E6E6E'} />
+            <Tooltip id={'delete-button-tooltip'} place="bottom">
+              {'Delete'}
+            </Tooltip>
+          </RemoveButton>
+        )}
+      </AuthorContainer>
+    )
+  }
+)

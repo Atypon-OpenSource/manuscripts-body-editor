@@ -1008,7 +1008,6 @@ export const insertAffiliation = (
   })
 
   const tr = state.tr.insert(pos, affiliations)
-
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
     if (view) {

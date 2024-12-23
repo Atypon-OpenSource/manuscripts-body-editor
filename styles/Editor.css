@@ -682,8 +682,9 @@
   z-index: 2;
 }
 
-.ProseMirror
+.ProseMirror:not(.ProseMirror-focused.popper-open)
   .block-container:not(.block-section, .block-box_element):hover
+  .authors-container +
   .action-gutter {
   opacity: 1;
   z-index: 2;
