@@ -172,7 +172,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (values && selection && !isEqual(values, normalize(selection))) {
       setUnSavedChanges(true)
     }
-  }, [selection])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valuesRef.current, selection])
 
   const handleClose = () => {
     if (isDisableSave) {

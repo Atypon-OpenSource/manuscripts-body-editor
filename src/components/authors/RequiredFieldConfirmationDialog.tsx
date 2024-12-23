@@ -25,7 +25,7 @@ const MessageBox = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 72px;
+  min-height: 90px;
 `
 
 const Header = () => (
