@@ -176,7 +176,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [valuesRef.current, selection])
 
   const handleClose = () => {
-    if (isDisableSave) {
+    if (isDisableSave && unSavedChanges) {
       setShowRequiredFieldConfirmationDialog(true)
     } else if (unSavedChanges) {
       setShowConfirmationDialog(true)
