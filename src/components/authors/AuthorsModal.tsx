@@ -125,12 +125,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isOpen, setOpen] = useState(true)
   const [isDisableSave, setDisableSave] = useState(false)
   const [isEmailRequired, setEmailRequired] = useState(false)
-  const [showSuccessIcon, setShowSuccessIcon] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const [
     showRequiredFieldConfirmationDialog,
     setShowRequiredFieldConfirmationDialog,
   ] = useState(false)
+  const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
   const [unSavedChanges, setUnSavedChanges] = useState(false)
@@ -158,11 +158,18 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
 
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    if (
+      values &&
+      selection &&
+      !isEqual(values, normalize(selection)) &&
+      !isDisableSave
+    ) {
       setShowConfirmationDialog(true)
       setNextAuthor(author)
+    } else if (isDisableSave && unSavedChanges) {
+      setShowRequiredFieldConfirmationDialog(true)
+      setNextAuthor(author)
     } else {
-      setShowSuccessIcon(false)
       setSelection(author)
     }
   }
@@ -173,7 +180,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setUnSavedChanges(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valuesRef.current, selection])
+  }, [valuesRef.current])
 
   const handleClose = () => {
     if (isDisableSave && unSavedChanges) {
@@ -181,6 +188,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     } else if (unSavedChanges) {
       setShowConfirmationDialog(true)
     } else {
+      setShowRequiredFieldConfirmationDialog(false)
+      setLastSavedAuthor(null)
       setOpen(false)
     }
   }
@@ -203,7 +212,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const handleCancel = () => {
     handleResetAuthor()
-
     if (nextAuthor) {
       setSelection(nextAuthor)
       setNextAuthor(null)
@@ -211,7 +219,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       createNewAuthor()
       setNewAuthor(false)
     }
-
     setShowConfirmationDialog(false)
   }
 
@@ -225,7 +232,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       ...values,
     }
     onSaveAuthor(author)
-    setShowSuccessIcon(true)
+    setLastSavedAuthor(author.id)
+    setUnSavedChanges(false)
     setSelection(author)
     setShowConfirmationDialog(false)
     dispatchAuthors({
@@ -266,7 +274,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       corresp: [],
       footnote: [],
     }
-    setShowSuccessIcon(false)
     setSelection(author)
   }
 
@@ -328,8 +335,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleResetAuthor = () => {
     actionsRef.current?.reset()
     setShowConfirmationDialog(false)
+    setShowRequiredFieldConfirmationDialog(false)
     setUnSavedChanges(false)
     if (!newAuthor && !nextAuthor) {
+      setLastSavedAuthor(null)
       setOpen(false)
     } else {
       setNewAuthor(false)
@@ -401,7 +410,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 onSelect={handleSelect}
                 onDelete={handleShowDeleteDialog}
                 moveAuthor={handleMoveAuthor}
-                showSuccessIcon={showSuccessIcon}
+                lastSavedAuthor={lastSavedAuthor}
               />
             </StyledSidebarContent>
           </ModalSidebar>

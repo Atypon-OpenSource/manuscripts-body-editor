@@ -217,8 +217,6 @@
   width: 100%;
   position: absolute;
   top: 0;
-  left: -10px;
-  display: flex;
   z-index: 3;
 }
 
@@ -825,12 +823,13 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .contributors-list .separator {
   margin-right: 4px;
 }
-.contributors .tools-panel {
+.block-contributors .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
   align-items: center;
   margin-top: 4px;
+  left: -10px;
 }
 .contributor .contributor-comment {
   left: 0;
@@ -1068,4 +1067,8 @@ th:hover > .table-context-menu-button,
   border: 1px solid #c9c9c9;
   background: #fff;
   box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
+}
+
+.ProseMirror .block-contributors .action-gutter {
+  right: 15px;
 }

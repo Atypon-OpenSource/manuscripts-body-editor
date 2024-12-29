@@ -213,13 +213,11 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
         <AvatarContainer data-cy="author-avatar">
           {isSelected && <DragHandle />}
           <Box>
-            {showSuccessIcon && isSelected && (
-              <StyledCrclTickAnimation size={36} />
-            )}
+            {showSuccessIcon && <StyledCrclTickAnimation size={36} />}
             <Avatar
               size={36}
               color={'#6e6e6e'}
-              opacity={showSuccessIcon && isSelected ? 0.05 : 1}
+              opacity={showSuccessIcon ? 0.05 : 1}
             />
           </Box>
           <AuthorNotes data-cy="author-notes">
