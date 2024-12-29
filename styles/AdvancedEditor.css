@@ -557,7 +557,6 @@ span.comment-marker {
     .keywords
   ):not(figure):not(figure .equation) {
   border-width: 2px 0 2px 0 !important;
-  border-radius: 3px !important;
   border-style: solid !important;
 }
 

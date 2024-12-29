@@ -171,7 +171,6 @@
 .ProseMirror .cross-reference {
   font-weight: bold;
   background-color: #ddf3fa;
-  border-radius: 5px;
   color: #353535;
   padding: 0 2px;
   cursor: pointer;
@@ -730,7 +729,7 @@
 .ProseMirror p .equation {
   display: inline;
   vertical-align: baseline;
-  margin: 0 5px;
+  padding: 0 5px;
 }
 
 .ProseMirror figcaption .equation-placeholder,
@@ -1002,7 +1001,7 @@
   position: absolute;
   background: #E2E2E2;
   pointer-events: none;
-} 
+}
 .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
   left: 0;
 }
