@@ -22,7 +22,7 @@ import {
   DraggableIcon,
   Tooltip,
 } from '@manuscripts/style-guide'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import styled from 'styled-components'
 
@@ -39,6 +39,7 @@ const AuthorContainer = styled.div`
   border: 1px solid transparent;
   border-left: 0;
   border-right: 0;
+  cursor: pointer;
   &:hover,
   &.active {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -193,22 +194,12 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
       }
     }
 
-    useEffect(() => {
-      if (isDragging || isOver) {
-        document.body.style.cursor = 'grabbing'
-      }
-      return () => {
-        document.body.style.cursor = 'default'
-      }
-    }, [isDragging, isOver])
-
     return (
       <AuthorContainer
         ref={ref}
         className={classes.join(' ')}
         onClick={onClick}
         data-cy="author-item"
-        style={{ cursor: isDragging ? 'grabbing' : 'default' }}
       >
         <AvatarContainer data-cy="author-avatar">
           {isSelected && <DragHandle />}

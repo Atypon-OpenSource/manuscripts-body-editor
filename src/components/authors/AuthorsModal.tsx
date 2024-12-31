@@ -32,7 +32,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { isEqual } from 'lodash'
+import { isEqual, omit } from 'lodash'
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -123,7 +123,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   addNewAuthor = false,
 }) => {
   const [isOpen, setOpen] = useState(true)
-  const [isDisableSave, setDisableSave] = useState(false)
+  const [isDisableSave, setDisableSave] = useState(true)
   const [isEmailRequired, setEmailRequired] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const [
@@ -135,6 +135,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [newAuthor, setNewAuthor] = useState(false)
   const [unSavedChanges, setUnSavedChanges] = useState(false)
   const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
+  const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
@@ -157,13 +158,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
-
-    if (
-      values &&
-      selection &&
-      !isEqual(values, normalize(selection)) &&
-      !isDisableSave
-    ) {
+    if (values && selection && unSavedChanges && !isDisableSave) {
       setShowConfirmationDialog(true)
       setNextAuthor(author)
     } else if (isDisableSave && unSavedChanges) {
@@ -173,14 +168,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setSelection(author)
     }
   }
-
-  useEffect(() => {
-    const values = valuesRef.current
-    if (values && selection && !isEqual(values, normalize(selection))) {
-      setUnSavedChanges(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valuesRef.current])
 
   const handleClose = () => {
     if (isDisableSave && unSavedChanges) {
@@ -215,6 +202,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (nextAuthor) {
       setSelection(nextAuthor)
       setNextAuthor(null)
+    } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
+      setNewAuthor(false)
+      setOpen(false)
     } else if (newAuthor) {
       createNewAuthor()
       setNewAuthor(false)
@@ -231,8 +221,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       ...selection,
       ...values,
     }
+
     onSaveAuthor(author)
     setLastSavedAuthor(author.id)
+    setTimeout(() => {
+      setLastSavedAuthor(null)
+    }, 3200)
     setUnSavedChanges(false)
     setSelection(author)
     setShowConfirmationDialog(false)
@@ -274,19 +268,24 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       corresp: [],
       footnote: [],
     }
+    setIsSwitchingAuthor(!!selection)
     setSelection(author)
   }
 
   const handleAddAuthor = () => {
     const values = valuesRef.current
-
+    setIsSwitchingAuthor(!!selection)
     if (values && selection && !isEqual(values, normalize(selection))) {
-      setShowConfirmationDialog(true)
+      if (isDisableSave) {
+        setShowRequiredFieldConfirmationDialog(true)
+      } else {
+        setShowConfirmationDialog(true)
+      }
       setNextAuthor(null)
-      setNewAuthor(true)
     } else {
       createNewAuthor()
     }
+    setNewAuthor(true)
   }
 
   const handleDeleteAuthor = () => {
@@ -347,6 +346,18 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleChangeAuthor = (values: ContributorAttrs) => {
+    const normalized = omit(
+      normalize(selection as ContributorAttrs),
+      'priority'
+    )
+    const updatedValues = omit(values, 'priority')
+    if (
+      updatedValues.id === normalized.id &&
+      !isEqual(updatedValues, normalized)
+    ) {
+      setUnSavedChanges(true)
+    }
+
     const isUnchanged = isEqual(
       normalize(selection as ContributorAttrs),
       values

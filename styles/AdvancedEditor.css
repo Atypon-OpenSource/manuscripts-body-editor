@@ -1070,4 +1070,5 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-contributors .action-gutter {
   right: 15px;
+  pointer-events: none;
 }
