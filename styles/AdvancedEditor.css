@@ -1043,3 +1043,20 @@ th:hover > .table-context-menu-button,
   top: 6px;
   pointer-events: none;
 }
+
+.ProseMirror .block-container .block-embed {
+  grid-template-columns: none;
+}
+
+.ProseMirror .block-container .block-embed .block {
+  text-align: center;
+  margin: 0 52px;
+}
+
+.tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
+  opacity: 0.5
+}
+
+.ProseMirror .block-embed .tools-panel {
+  position: relative;
+}
