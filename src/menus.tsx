@@ -44,6 +44,7 @@ import {
   insertSection,
   markActive,
 } from './commands'
+import { openEmbedMediaDialog } from './components/toolbar/InsertEmbedMediaDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import {
@@ -232,6 +233,13 @@ export const getEditorMenus = (
       },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-embed-media',
+        label: 'Embedded Media',
+        isActive: blockActive(schema.nodes.embed)(state),
+        isEnabled: isCommandValid(canInsert(schema.nodes.embed)),
+        run: () => openEmbedMediaDialog(editor.view),
       },
       {
         id: 'insert-link',

@@ -292,6 +292,11 @@ export const createBlock = (
         state.schema.nodes.equation.create(),
       ])
       break
+    case state.schema.nodes.embed:
+      node = state.schema.nodes.embed.create(attrs, [
+        createAndFillFigcaptionElement(state),
+      ])
+      break
     default:
       node = nodeType.createAndFill(attrs)
   }
@@ -301,6 +306,21 @@ export const createBlock = (
     const selection = createSelection(nodeType, position, tr.doc)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
+}
+
+export const insertEmbedMedia = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  attrs?: Attrs
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null) {
+    return false
+  }
+
+  createBlock(schema.nodes.embed, position, state, dispatch, attrs)
+
+  return true
 }
 
 export const insertInlineTableFootnote = (
