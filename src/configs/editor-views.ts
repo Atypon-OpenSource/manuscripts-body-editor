@@ -25,6 +25,7 @@ import boxElement from '../views/box_element'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
+import embedMedia from '../views/embed'
 import empty from '../views/empty'
 import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
@@ -63,6 +64,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
     affiliations: affiliations(props, dispatch),
+    embed: embedMedia(props),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
