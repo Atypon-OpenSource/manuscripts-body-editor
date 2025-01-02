@@ -82,6 +82,7 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
 
   let target: Element | null
 
+  //this is to support scrolling to nodes whose views are not managed by PM
   if (node.attrs.id) {
     target = view.dom.querySelector(`[id="${node.attrs.id}"]`)
   } else {
