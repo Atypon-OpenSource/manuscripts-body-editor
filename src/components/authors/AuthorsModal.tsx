@@ -136,6 +136,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [unSavedChanges, setUnSavedChanges] = useState(false)
   const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
+  const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
@@ -158,6 +159,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
+    setIsCreatingNewAuthor(false)
+
     if (values && selection && unSavedChanges && !isDisableSave) {
       setShowConfirmationDialog(true)
       setNextAuthor(author)
@@ -166,6 +169,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNextAuthor(author)
     } else {
       setSelection(author)
+      setNewAuthor(false)
     }
   }
 
@@ -189,9 +193,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (nextAuthor) {
       setSelection(nextAuthor)
       setNextAuthor(null)
-    } else if (newAuthor) {
-      createNewAuthor()
       setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+      setIsCreatingNewAuthor(false)
     }
 
     setShowConfirmationDialog(false)
@@ -202,12 +208,15 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (nextAuthor) {
       setSelection(nextAuthor)
       setNextAuthor(null)
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
     } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
       setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
       setOpen(false)
-    } else if (newAuthor) {
+    } else if (isCreatingNewAuthor) {
       createNewAuthor()
-      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
     }
     setShowConfirmationDialog(false)
   }
@@ -230,6 +239,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setUnSavedChanges(false)
     setSelection(author)
     setShowConfirmationDialog(false)
+    setNewAuthor(false)
+    setIsCreatingNewAuthor(false)
     dispatchAuthors({
       type: 'update',
       items: [author],
@@ -270,11 +281,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     setIsSwitchingAuthor(!!selection)
     setSelection(author)
+    setNewAuthor(true)
   }
 
   const handleAddAuthor = () => {
     const values = valuesRef.current
     setIsSwitchingAuthor(!!selection)
+    setIsCreatingNewAuthor(true)
     if (values && selection && !isEqual(values, normalize(selection))) {
       if (isDisableSave) {
         setShowRequiredFieldConfirmationDialog(true)
@@ -285,7 +298,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     } else {
       createNewAuthor()
     }
-    setNewAuthor(true)
   }
 
   const handleDeleteAuthor = () => {
@@ -336,13 +348,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
     setUnSavedChanges(false)
-    if (!newAuthor && !nextAuthor) {
+    if (!isCreatingNewAuthor && !nextAuthor) {
       setLastSavedAuthor(null)
       setOpen(false)
-    } else {
-      setNewAuthor(false)
+    } else if (isCreatingNewAuthor) {
       createNewAuthor()
     }
+    setIsCreatingNewAuthor(false)
   }
 
   const handleChangeAuthor = (values: ContributorAttrs) => {
@@ -443,7 +455,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
-                  newAuthor={newAuthor}
+                  newAuthor={
+                    newAuthor ||
+                    (isCreatingNewAuthor &&
+                      !showConfirmationDialog &&
+                      !showRequiredFieldConfirmationDialog)
+                  }
                   isDisableSave={isDisableSave}
                 />
                 <FormLabel>Details</FormLabel>

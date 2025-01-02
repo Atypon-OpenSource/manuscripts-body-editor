@@ -74,7 +74,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     if (!isDeleted(this.node)) {
-      this.handleEdit('')
+      this.handleEdit('', true)
     }
   }
 
