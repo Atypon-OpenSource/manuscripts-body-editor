@@ -19,28 +19,16 @@ import {
   ManuscriptNodeView,
   Target,
 } from '@manuscripts/transform'
-import { Location, NavigateFunction } from 'react-router-dom'
 
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { objectsKey } from '../plugins/objects'
 import { Trackable } from '../types'
-import { BaseNodeProps, BaseNodeView } from './base_node_view'
+import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-
-export interface CrossReferenceViewProps extends BaseNodeProps {
-  navigate: NavigateFunction
-  location: Location
-}
 
 export class CrossReferenceView
   extends BaseNodeView<Trackable<CrossReferenceNode>>
   implements ManuscriptNodeView
 {
-  public selectNode = () => {
-    // TODO: navigate to referenced item?
-    // TODO: show a list of referenced items?
-  }
-
   public handleClick = () => {
     const rids = this.node.attrs.rids
     if (!rids.length) {
@@ -52,11 +40,10 @@ export class CrossReferenceView
     })
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const attrs = this.node.attrs
-    const classes = ['cross-reference', ...getChangeClasses(attrs.dataTracked)]
-    this.dom.className = classes.join(' ')
 
     const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
     // attrs.label contains custom text inserted at cross-reference creation time

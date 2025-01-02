@@ -15,10 +15,8 @@
  */
 
 import { CitationNode, ManuscriptNodeView } from '@manuscripts/transform'
-import { DOMSerializer } from 'prosemirror-model'
 
 import { sanitize } from '../lib/dompurify'
-import { getChangeClasses } from '../lib/track-changes-utils'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -30,21 +28,18 @@ export class CitationView
 {
   public ignoreMutation = () => true
 
-  public initialise = () => {
-    if (!this.node.type.spec.toDOM) {
-      throw Error(`Node view ${this.node.type} doesn't have toDOM method`)
-    }
-    const outputSpec = this.node.type.spec.toDOM(this.node)
-    const { dom, contentDOM } = DOMSerializer.renderSpec(document, outputSpec)
-    this.dom = dom as HTMLElement
-    this.dom.className = 'citation-wrapper'
-    this.contentDOM = (contentDOM as HTMLElement) || undefined
-    this.eventHandlers()
+  public initialise() {
+    this.createDOM()
     this.updateContents()
-    return this
   }
 
-  public updateContents = () => {
+  public createDOM() {
+    this.dom = document.createElement('span')
+    this.dom.classList.add('citation')
+  }
+
+  public updateContents() {
+    super.updateContents()
     const bib = getBibliographyPluginState(this.view.state)
 
     if (!bib) {
@@ -52,17 +47,6 @@ export class CitationView
     }
 
     const id = this.node.attrs.id
-    const element = document.createElement('span')
-    element.id = id
-    element.classList.add('citation')
-    if (this.node.attrs.dataTracked?.length) {
-      const change = this.node.attrs.dataTracked[0]
-      element.setAttribute('data-track-id', change.id)
-      element.setAttribute('data-track-status', change.status)
-      element.setAttribute('data-track-op', change.operation)
-      element.classList.add(...getChangeClasses([change]))
-    }
-
     const text = bib.renderedCitations.get(id)
     const fragment = sanitize(
       text && text !== '[NO_PRINTED_FORM]' ? text : ' ',
@@ -70,12 +54,9 @@ export class CitationView
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
     )
-    element.appendChild(fragment)
     this.dom.innerHTML = ''
-    this.dom.appendChild(element)
-    this.setDomAttrs(this.node, this.dom, ['rids', 'contents', 'selectedText'])
+    this.dom.appendChild(fragment)
   }
-  public eventHandlers: () => void
 }
 
 export default createNodeView(CitationView)

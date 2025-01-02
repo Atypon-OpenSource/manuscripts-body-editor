@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  SecondaryButton,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -32,7 +28,10 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
-import { isDeleted } from '../lib/track-changes-utils'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '../lib/track-changes-utils'
 import {
   deleteNode,
   findChildByID,
@@ -46,7 +45,6 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
@@ -57,18 +55,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public ignoreMutation = () => true
   public stopEvent = () => true
 
-  public initialise = () => {
-    this.createDOM()
-    this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
-    this.createElement()
-    this.createGutter(
-      'action-gutter',
-      this.actionGutterButtons().filter(Boolean)
-    )
-    this.updateContents()
-  }
-
-  public updateContents = () => {
+  public updateContents() {
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return
@@ -80,7 +67,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
     this.buildAuthors(affs)
-    this.createEditButton()
     this.createLegend()
     this.updateSelection()
   }
@@ -88,7 +74,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     if (!isDeleted(this.node)) {
-      this.handleEdit('')
+      this.handleEdit('', true)
     }
   }
 
@@ -129,12 +115,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
 
-    if (attrs.dataTracked?.length) {
-      const change = attrs.dataTracked[0]
-      container.setAttribute('data-track-id', change.id)
-      container.setAttribute('data-track-status', change.status)
-      container.setAttribute('data-track-op', change.operation)
-    }
+    addTrackChangesAttributes(attrs, container)
 
     const name = authorLabel(attrs)
     container.innerHTML =
@@ -197,24 +178,34 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.dom.classList.add('block-container', `block-${this.node.type.name}`)
   }
 
-  createEditButton = () => {
+  public authorContextMenu = () => {
     const can = this.props.getCapabilities()
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'New Author',
+        action: () => this.handleEdit('', true),
+        icon: 'AddOutline',
+      })
+      componentProps.actions.push({
+        label: 'Edit',
+        action: () => this.handleEdit(''),
+        icon: 'Edit',
+      })
+    }
 
-    const button = ReactSubView(
+    this.contextMenu = ReactSubView(
       this.props,
-      SecondaryButton,
-      {
-        mini: true,
-        onClick: () => this.handleEdit(''),
-        className: 'edit-authors-button',
-        disabled: !can.editMetadata,
-        children: 'Edit Authors',
-      },
+      ContextMenu,
+      componentProps,
       this.node,
       this.getPos,
-      this.view
+      this.view,
+      'context-menu'
     )
-    this.container.appendChild(button)
+    return this.contextMenu
   }
 
   createLegend = () => {
@@ -291,7 +282,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
-  handleEdit = (id: string) => {
+  handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
 
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
@@ -305,7 +296,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     )
 
     const author = id ? contributors.filter((a) => a.id === id)[0] : undefined
-
     const componentProps: AuthorsModalProps = {
       author,
       authors: contributors,
@@ -313,6 +303,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       onSaveAuthor: this.handleSaveAuthor,
       onDeleteAuthor: this.handleDeleteAuthor,
       onSaveAffiliation: this.handleSaveAffiliation,
+      addNewAuthor: addNew,
     }
 
     this.popper?.remove()
@@ -357,12 +348,33 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   insertAffiliationNode = (attrs: AffiliationAttrs) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parent = findChildByType(this.view, schema.nodes.affiliations)!
-    const tr = this.view.state.tr
-    const node = schema.nodes.affiliation.create(attrs)
-    this.view.dispatch(tr.insert(parent.pos + 1, node))
+    const { view } = this
+    const { dispatch } = view
+    const affiliationsNodeType = schema.nodes.affiliations
+    const contributorsNodeType = schema.nodes.contributors
+    const affiliationNodeType = schema.nodes.affiliation
+
+    let affiliations = findChildByType(view, affiliationsNodeType)
+
+    if (!affiliations) {
+      const contributors = findChildByType(view, contributorsNodeType)
+
+      if (contributors) {
+        const { tr } = this.view.state
+        const affiliationsNode = affiliationsNodeType.create()
+        const insertPos = contributors.pos + contributors.node.nodeSize
+        dispatch(tr.insert(insertPos, affiliationsNode))
+        affiliations = findChildByType(view, affiliationsNodeType)
+      }
+    }
+
+    if (affiliations) {
+      const { tr } = this.view.state
+      const affiliationNode = affiliationNodeType.create(attrs)
+      dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
+    }
   }
+  public actionGutterButtons = (): HTMLElement[] => [this.authorContextMenu()]
 }
 
 export default createNodeView(ContributorsView)

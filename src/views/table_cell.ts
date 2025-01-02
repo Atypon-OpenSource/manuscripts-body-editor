@@ -46,8 +46,9 @@ export class TableCellView extends BlockView<ManuscriptNode> {
     }
   }
 
-  public updateContents = () => {
+  public updateContents() {
     // will remove old attribute of node view as it could change rowspan,colspan from update to table
+    super.updateContents()
     this.dom.getAttributeNames().map((attr) => {
       if (attr !== 'class') {
         this.dom.removeAttribute(attr)

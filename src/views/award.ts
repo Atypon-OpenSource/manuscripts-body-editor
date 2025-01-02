@@ -21,13 +21,13 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.contentDOM = this.dom
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
     if (!this.contentDOM) {
       return
     }
@@ -36,7 +36,9 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     this.contentDOM.classList.remove('block-container')
     const notAvailable = 'N/A'
     const { recipient, code, source } = this.node.attrs
-    if (!source) return
+    if (!source) {
+      return
+    }
 
     const fragment = document.createDocumentFragment()
 
@@ -50,7 +52,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     )
 
     fragment.appendChild(
-      this.createAwardElement('award-recipient', `Recipient: ${recipient ? recipient : notAvailable}`)
+      this.createAwardElement(
+        'award-recipient',
+        `Recipient: ${recipient ? recipient : notAvailable}`
+      )
     )
 
     this.contentDOM.appendChild(fragment)
