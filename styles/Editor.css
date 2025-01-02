@@ -171,7 +171,6 @@
 .ProseMirror .cross-reference {
   font-weight: bold;
   background-color: #ddf3fa;
-  border-radius: 5px;
   color: #353535;
   padding: 0 2px;
   cursor: pointer;
@@ -663,6 +662,13 @@
   transition: 0.2s all;
 }
 
+.ProseMirror .action-gutter {
+  position: relative;
+  cursor: ns-resize;
+  opacity: 0;
+  transition: 0.2s all;
+}
+
 .ProseMirror .block-section_title .block-gutter,
 .ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
@@ -671,6 +677,15 @@
 .ProseMirror
   .block-container:not(.block-section, .block-box_element):hover
   .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror:not(.ProseMirror-focused.popper-open)
+  .block-container:not(.block-section, .block-box_element):hover
+  .authors-container +
+  .action-gutter {
+    pointer-events: visible;
   opacity: 1;
   z-index: 2;
 }
@@ -715,7 +730,7 @@
 .ProseMirror p .equation {
   display: inline;
   vertical-align: baseline;
-  margin: 0 5px;
+  padding: 0 5px;
 }
 
 .ProseMirror figcaption .equation-placeholder,
@@ -987,7 +1002,7 @@
   position: absolute;
   background: #E2E2E2;
   pointer-events: none;
-} 
+}
 .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
   left: 0;
 }
