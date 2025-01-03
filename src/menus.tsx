@@ -44,7 +44,7 @@ import {
   insertSection,
   markActive,
 } from './commands'
-import { openEmbedDialog } from './components/toolbar/InsertEmbedMediaDialog'
+import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import {

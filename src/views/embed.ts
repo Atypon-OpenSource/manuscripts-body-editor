@@ -16,7 +16,7 @@
 
 import { EmbedNode } from '@manuscripts/transform'
 
-import { NoPreviewMessage } from '../components/toolbar/InsertEmbedMediaDialog'
+import { NoPreviewMessage } from '../components/toolbar/InsertEmbedDialog'
 import { getOEmbedHTML, getOEmbedUrl } from '../lib/oembed'
 import { Trackable } from '../types'
 import BlockView from './block_view'
