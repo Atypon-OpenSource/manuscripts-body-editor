@@ -1574,10 +1574,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.27":
-  version "2.0.27"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.27.tgz#b540e5c119581ee56c90c3361c79fd72ea3fbab1"
-  integrity sha512-H5cPTFam0sHAuw1pMQdL7Hfbpd90iMRjq8ZLsJDaWomDKsBHj2NhpiVleYQpWW2r4lWHrZY9t4av3YDvd5Euhg==
+"@manuscripts/style-guide@2.0.28":
+  version "2.0.28"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.28.tgz#a9ef6a46586f31a0d0cd1d5965012ba03963dc08"
+  integrity sha512-XYE1CPGkkTRaoImt3Wdu7Y6WcUIaLKfYUw0EI8aMSzVBY4yKj4Nqb/3SfwwHnzP6CXRh1K0+IGkoMhzib7hoXQ==
   dependencies:
     "@headlessui/react" "^2.1.10"
     "@manuscripts/json-schema" "2.2.11"
@@ -1601,13 +1601,13 @@
     react-router-dom "^5.3.4"
     react-select "^5.7.3"
     react-sizeme "^3.0.2"
-    react-tooltip "^5.26.0"
+    react-tooltip "^5.28.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.8.7-LEAN-4145.0":
-  version "1.8.7-LEAN-4145.0"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.8.7-LEAN-4145.0.tgz#b430069bcb67a65deb33fe2bc191539d646f4671"
-  integrity sha512-BLQLeHoCWFrNHNtGL1focSomJ0szO1TrsqnKeYkOwE4ScE0nj4qR2S/GdlsTeplB7uuk0zdoQRPUSaA5d8JPqw==
+"@manuscripts/track-changes-plugin@1.8.7-LEAN-4145.1":
+  version "1.8.7-LEAN-4145.1"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.8.7-LEAN-4145.1.tgz#d24b6af8d304cd81b5b241d933794eca29f3e739"
+  integrity sha512-nhF05izxV9qrJVc8CnRrzJEv+nyP0sbWM2N+6WW3MsTmNzt3ld25VsvcdBNK3dPzMIzCuqAGtHFgyOJQ0gAiiA==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
@@ -6814,10 +6814,10 @@ react-sizeme@^3.0.2:
     shallowequal "^1.1.0"
     throttle-debounce "^3.0.1"
 
-react-tooltip@^5.26.0:
-  version "5.27.1"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.27.1.tgz#a94481ba146d828d31642f14d6ab29b56998fcda"
-  integrity sha512-a+micPXcMOMt11CYlwJD4XShcqGziasHco4NPe1OFw298WBTILMyzUgNC1LAFViAe791JdHNVSJIpzhZm2MvDA==
+react-tooltip@^5.28.0:
+  version "5.28.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.28.0.tgz#c7b5343ab2d740a428494a3d8315515af1f26f46"
+  integrity sha512-R5cO3JPPXk6FRbBHMO0rI9nkUG/JKfalBSQfZedZYzmqaZQgq7GLzF8vcCWx6IhUCKg0yPqJhXIzmIO5ff15xg==
   dependencies:
     "@floating-ui/dom" "^1.6.1"
     classnames "^2.3.0"

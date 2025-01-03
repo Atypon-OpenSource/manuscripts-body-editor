@@ -21,33 +21,39 @@ const StyledIcon = styled(AttentionOrangeIcon)`
   margin-right: 8px;
 `
 
-const P = styled.p`
-  margin-bottom: 4px;
+const MessageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 90px;
 `
 
 const Header = () => (
   <>
-    <StyledIcon /> Delete author
+    <StyledIcon /> Empty required field
   </>
 )
 
 const Message = () => {
   return (
-    <>
-      <p>Are you sure you want to remove this author from the authors list?</p>
-      <P>Do you want to continue?</P>
-    </>
+    <MessageBox>
+      <div>
+        A required filed has been left empty. If you discard, any updates will
+        not be saved!
+      </div>
+      <div>Would you like to discard or continue editing?</div>
+    </MessageBox>
   )
 }
-export interface DeleteAuthorConfirmationDialogProps {
+export interface SaveAuthorConfirmationDialogProps {
   isOpen: boolean
-  onDelete: () => void
+  onSave: () => void
   onCancel: () => void
 }
 
-export const DeleteAuthorConfirmationDialog: React.FC<
-  DeleteAuthorConfirmationDialogProps
-> = ({ isOpen, onDelete, onCancel }) => {
+export const RequiredFieldConfirmationDialog: React.FC<
+  SaveAuthorConfirmationDialogProps
+> = ({ isOpen, onSave, onCancel }) => {
   return (
     <Dialog
       isOpen={isOpen}
@@ -56,12 +62,12 @@ export const DeleteAuthorConfirmationDialog: React.FC<
       message={<Message />}
       actions={{
         secondary: {
-          action: onDelete,
-          title: 'Delete',
+          action: onCancel,
+          title: 'Discard',
         },
         primary: {
-          action: onCancel,
-          title: 'Cancel',
+          action: onSave,
+          title: 'Continue editing',
         },
       }}
     />

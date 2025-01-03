@@ -13,9 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Category, Dialog } from '@manuscripts/style-guide'
+import { AttentionOrangeIcon, Category, Dialog } from '@manuscripts/style-guide'
 import React from 'react'
+import styled from 'styled-components'
 
+const StyledIcon = styled(AttentionOrangeIcon)`
+  margin-right: 8px;
+`
+
+const MessageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 72px;
+`
+
+const Header = () => (
+  <>
+    <StyledIcon /> Unsaved changes
+  </>
+)
+
+const Message = () => {
+  return (
+    <MessageBox>
+      <div>You&apos;ve made changes but not saved them!</div>
+      <div>Would you like to save or discard your changes?</div>
+    </MessageBox>
+  )
+}
 export interface SaveAuthorConfirmationDialogProps {
   isOpen: boolean
   onSave: () => void
@@ -29,8 +55,8 @@ export const SaveAuthorConfirmationDialog: React.FC<
     <Dialog
       isOpen={isOpen}
       category={Category.confirmation}
-      header="You've made changes to this option"
-      message="Would you like to save or discard your changes?"
+      header={<Header />}
+      message={<Message />}
       actions={{
         secondary: {
           action: onCancel,

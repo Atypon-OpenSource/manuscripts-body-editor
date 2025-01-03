@@ -965,12 +965,49 @@ export const insertContributors = (
   const contributors = state.schema.nodes.contributors.create({
     id: '',
   })
-  const affiliations = state.schema.nodes.affiliations.create({ id: '' })
 
-  const fragment = Fragment.fromArray([contributors, affiliations])
+  const tr = state.tr.insert(pos, contributors)
 
-  const tr = state.tr.insert(pos, fragment)
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
 
+  return true
+}
+
+export const insertAffiliation = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  // Check if another contributors node already exists
+  if (getChildOfType(state.doc, schema.nodes.affiliations, true)) {
+    return false
+  }
+  // Find the title node
+  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  let pos = title.pos + title.node.nodeSize
+
+  // Find the contributors node
+  const contributors = findChildrenByType(
+    state.doc,
+    state.schema.nodes.contributors
+  )[0]
+
+  // update the pos if the contributors node exists
+  if (contributors) {
+    pos = contributors.pos + contributors.node.nodeSize
+  }
+
+  const affiliations = state.schema.nodes.affiliations.create({
+    id: '',
+  })
+
+  const tr = state.tr.insert(pos, affiliations)
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
     if (view) {
