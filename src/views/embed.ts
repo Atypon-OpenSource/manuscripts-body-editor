@@ -17,7 +17,7 @@
 import { EmbedNode } from '@manuscripts/transform'
 
 import { NoPreviewMessage } from '../components/toolbar/InsertEmbedMediaDialog'
-import { getOEmbedJSON, getOEmbedUrl } from '../lib/oembed'
+import { getOEmbedHTML, getOEmbedUrl } from '../lib/oembed'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -25,7 +25,7 @@ import ReactSubView from './ReactSubView'
 
 export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
-
+  private href: string
   public ignoreMutation = () => true
   public stopEvent = () => true
 
@@ -47,8 +47,8 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
 
   public async updateContents() {
     super.updateContents()
-    if (this.container.getAttribute('media-link') !== this.node.attrs.href) {
-      this.container.setAttribute('media-link', this.node.attrs.href)
+    if (this.href !== this.node.attrs.href) {
+      this.href = this.node.attrs.href
       await this.updateOEmbedPreview()
     }
   }
@@ -59,11 +59,11 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
     preview.setAttribute('contenteditable', 'false')
     this.container.prepend(preview)
 
-    const oEmbedUrl = await getOEmbedUrl(this.node.attrs.href, 643, 363)
+    const oEmbedUrl = await getOEmbedUrl(this.href, 643, 363)
     if (oEmbedUrl) {
-      const oembedJSON = await getOEmbedJSON(oEmbedUrl)
-      if (oembedJSON) {
-        preview.innerHTML = oembedJSON.html
+      const oembedHTML = await getOEmbedHTML(oEmbedUrl,this.href)
+      if (oembedHTML) {
+        preview.innerHTML = oembedHTML
         return
       }
     }

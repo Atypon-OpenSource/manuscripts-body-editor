@@ -32,13 +32,17 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { Dispatch, insertEmbedMedia } from '../../commands'
-import { getOEmbedJSON, getOEmbedUrl, ProviderJson } from '../../lib/oembed'
+import { Dispatch, insertEmbed } from '../../commands'
+import {
+  getOEmbedHTML,
+  getOEmbedUrl,
+} from '../../lib/oembed'
 import { allowedHref } from '../../lib/url'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
+import {Open} from "../views/LinkForm";
 
-const Label = styled.div`
+const Label = styled.label`
   padding-bottom: 4px;
 `
 
@@ -64,32 +68,33 @@ const PreviewContainer = styled.div`
   padding: 6px ${(props) => props.theme.grid.unit * 4}px;
 `
 
-export type InsertTableDialogProps = {
+export type InsertEmbedDialogProps = {
   state: ManuscriptEditorState
   dispatch?: Dispatch
   operation: 'Insert' | 'Update'
 }
 
-export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
+export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   state,
   dispatch,
   operation,
 }) => {
   const [isOpen, setOpen] = useState(true)
   const [url, setUrl] = useState<string | undefined>(undefined)
-  const [oembedJSON, setOEmbedJSON] = useState<ProviderJson | undefined | null>(
+  const [type, setType] = useState<string | undefined>(undefined)
+  const [oembedHTML, setOEmbedHTML] = useState<string | undefined>(
     undefined
   )
 
   const action = () => {
     if (operation === 'Insert') {
-      insertEmbedMedia(state, dispatch, {
+      insertEmbed(state, dispatch, {
         href: url,
-        mimetype: oembedJSON?.type,
+        mimetype: type,
       })
       setOpen(false)
     } else {
-      //  TODO:: update embed href
+      //  TODO:: update embed href (LEAN-4219)
     }
   }
 
@@ -97,10 +102,8 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
     const url = e.target.value.trim()
     const oEmbedUrl = await getOEmbedUrl(url, 368, 217)
     if (oEmbedUrl) {
-      const oembedJSON = await getOEmbedJSON(oEmbedUrl)
-      setOEmbedJSON(oembedJSON)
-    } else {
-      setOEmbedJSON(null)
+      const oembedJSON = await getOEmbedHTML(oEmbedUrl, url, setType)
+      setOEmbedHTML(oembedJSON)
     }
     setUrl(url)
   }, 500)
@@ -112,8 +115,9 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <Label>Media link</Label>
+            <Label htmlFor={'embed-link'}>Media link</Label>
             <TextArea
+              id={'embed-link'}
               rows={2}
               cols={2}
               autoFocus={true}
@@ -122,15 +126,15 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
               onChange={debouncedUrlChange}
             />
           </Container>
-          {(oembedJSON && (
+          {(oembedHTML && (
             <Container>
               <Label>Preview</Label>
               <PreviewContainer
-                dangerouslySetInnerHTML={{ __html: oembedJSON.html }}
+                dangerouslySetInnerHTML={{ __html: oembedHTML }}
               />
             </Container>
           )) ||
-            (oembedJSON === null && url && <NoPreviewMessage url={url} />)}
+            (url && allowedHref(url) && <NoPreviewMessage url={url} />)}
         </MessageContainer>
 
         <ButtonGroup>
@@ -146,20 +150,27 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
   )
 }
 
+const Link = styled(Open)`
+   margin: 0;
+   top: 24px;
+   position: absolute;
+`
+
 export const NoPreviewMessage: React.FC<{ url: string }> = ({ url }) => (
   <Container>
     <AlertMessage type={AlertMessageType.info}>
       <pre>
-        Preview for that media is unavailable,{' '}
-        <a href={url} target="_blank" rel="noreferrer">
-          media link
-        </a>
+        No Preview Available,{' '}
+        <span>
+          <Label>Media Link</Label>
+          <Link id={'media-link'} href={url} target={'_blank'} rel={'noopener'}/>
+        </span>
       </pre>
     </AlertMessage>
   </Container>
 )
 
-export const openEmbedMediaDialog = (
+export const openEmbedDialog = (
   view?: EditorView,
   operation = 'Insert'
 ) => {
@@ -170,7 +181,7 @@ export const openEmbedMediaDialog = (
 
   const dialog = ReactSubView(
     getEditorProps(state),
-    InsertTableDialog,
+    InsertEmbedDialog,
     {
       state,
       dispatch,

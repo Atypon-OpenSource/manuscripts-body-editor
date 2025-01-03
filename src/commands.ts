@@ -308,7 +308,7 @@ export const createBlock = (
   }
 }
 
-export const insertEmbedMedia = (
+export const insertEmbed = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   attrs?: Attrs

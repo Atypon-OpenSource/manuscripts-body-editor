@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 import providers from 'oembed-providers'
+import React from "react";
 
 export type ProviderJson = {
   type: 'photo' | 'video' | 'link' | 'rich'
-  html: string
+  html?: string
+  url?: string
+  title?: string
 }
 
 /**
  * get oembed url by matching source link with provider scheme,
  * or hit head request to find link from header
  */
-export const getOEmbedUrl = (url: string, width: number, height: number) => {
+export const getOEmbedUrl = async (url: string, width: number, height: number) => {
   let oembedUrl
   for (const provider of providers) {
     if (provider) {
@@ -50,10 +53,11 @@ export const getOEmbedUrl = (url: string, width: number, height: number) => {
     params.set('format', 'json')
     params.append('maxwidth', width.toString())
     params.append('maxheight', height.toString())
-    return oembedUrl.concat('?').concat(params.toString())
+    return `${oembedUrl}?${params.toString()}`
   } else {
-    return fetch(url, { method: 'HEAD' }).then((response) => {
-      let url
+    try {
+    const response = await fetch(url, { method: 'HEAD' })
+      let oembedUrl
       const linkHeader = response.headers.get('link')
       if (linkHeader) {
         linkHeader.split(',').map((link: string) => {
@@ -63,12 +67,14 @@ export const getOEmbedUrl = (url: string, width: number, height: number) => {
             (typeMatch[1] === 'application/json+oembed' ||
               typeMatch[1] === 'text/xml+oembed')
           ) {
-            url = /<([^>]*)>/.exec(link)
+            oembedUrl = /<([^>]*)>/.exec(link)
           }
         })
       }
-      return url
-    })
+      return oembedUrl
+    }catch (e) {
+      return undefined
+    }
   }
 }
 
@@ -79,18 +85,30 @@ const globToRegex = (glob: string) => {
   return new RegExp(`^${regex}$`)
 }
 
-export const getOEmbedJSON = async (
-  oembedUrl: string
-): Promise<null | ProviderJson> => {
+export const getOEmbedHTML = async (
+  oembedUrl: string,
+  sourceLink: string,
+  setType?: React.Dispatch<React.SetStateAction<string | undefined>>
+) => {
   try {
     const response = await fetch(oembedUrl)
 
     if (response.status === 200) {
-      return await response.json()
+      const oembed = await response.json()
+      setType && setType(oembed.type)
+      return oembed.html || renderAlternativeHTML(oembed, sourceLink)
     } else {
-      return null
+      return undefined
     }
   } catch (e) {
-    return null
+    return undefined
   }
+}
+
+const renderAlternativeHTML = (oembed: ProviderJson, sourceLink: string) => {
+  if (oembed.type === 'photo') {
+    return `<img src="${oembed.url}"/>`
+  }
+
+  return `<a href="${sourceLink}" target="_blank">${oembed.title || 'Media link'}</a>`
 }

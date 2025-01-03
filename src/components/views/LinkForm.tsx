@@ -62,7 +62,7 @@ const Label = styled.label`
   font-size: ${(props) => props.theme.font.size.normal};
 `
 
-const Open = styled.a`
+export const Open = styled.a`
   display: inline-block;
   margin-left: ${(props) => props.theme.grid.unit * 2}px;
   text-transform: uppercase;
