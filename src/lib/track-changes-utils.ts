@@ -15,9 +15,12 @@
  */
 
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
-import { TrackedAttrs } from '@manuscripts/track-changes-plugin'
+import {
+  CHANGE_OPERATION,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
-import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
+import { Attrs, Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -147,4 +150,36 @@ export function sanitizeAttrsChange<T extends ProsemirrorNode>(
     acc[key] = newAttr[key]
     return acc
   }, {} as T['attrs'])
+}
+
+const classNames = new Map([
+  [CHANGE_OPERATION.insert, 'inserted'],
+  [CHANGE_OPERATION.delete, 'deleted'],
+  [CHANGE_OPERATION.set_node_attributes, 'set_attrs'],
+])
+export const addTrackChangesAttributes = (attrs: Attrs, dom: Element) => {
+  dom.removeAttribute('data-track-id')
+  dom.removeAttribute('data-track-op')
+  dom.removeAttribute('data-track-status')
+
+  const changes = attrs.dataTracked as TrackedAttrs[]
+  if (!changes || !changes.length) {
+    return
+  }
+  const change = changes[0]
+  dom.setAttribute('data-track-id', change.id)
+  dom.setAttribute('data-track-op', change.operation)
+  dom.setAttribute('data-track-status', change.status)
+}
+
+export const addTrackChangesClassNames = (attrs: Attrs, dom: Element) => {
+  dom.classList.remove(...classNames.values())
+
+  const changes = attrs.dataTracked as TrackedAttrs[]
+  if (!changes || !changes.length) {
+    return
+  }
+  const change = changes[0]
+  const className = classNames.get(change.operation)
+  className && dom.classList.add(className)
 }

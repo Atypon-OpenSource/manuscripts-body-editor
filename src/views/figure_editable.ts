@@ -15,7 +15,6 @@
  */
 
 import { FileCorruptedIcon } from '@manuscripts/style-guide'
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -32,34 +31,14 @@ import ReactSubView from './ReactSubView'
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
 
-  public viewProps: {
-    node: ManuscriptNode
-    getPos: () => number
-    view: ManuscriptEditorView
-  }
-
   public initialise = () => {
-    this.viewProps = {
-      node: this.node,
-      getPos: this.getPos,
-      view: this.view,
-    }
-
     this.createDOM()
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     const attrs = this.node.attrs
-
-    if (this.node.attrs.dataTracked?.length) {
-      const change = this.node.attrs.dataTracked[0]
-      this.dom.setAttribute('data-track-status', change.status)
-      this.dom.setAttribute('data-track-op', change.operation)
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-op')
-    }
 
     const src = attrs.src
     const files = this.props.getFiles()
@@ -136,7 +115,7 @@ export class FigureEditableView extends FigureView {
       })
 
       img.addEventListener('drop', async (e) => {
-        if (e.dataTransfer && e.dataTransfer.files) {
+        if (e.dataTransfer && e.dataTransfer.files.length) {
           e.preventDefault()
           await upload(e.dataTransfer.files[0])
         }

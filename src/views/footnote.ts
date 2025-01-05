@@ -28,7 +28,7 @@ import {
   findFootnotesContainerNode,
   getFootnotesElementState,
 } from '../lib/footnotes'
-import { getChangeClasses, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -39,12 +39,14 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
 
   public initialise = () => {
     this.dom = document.createElement('div')
+    this.dom.classList.add('footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     const id = this.node.attrs.id
     const fn = getFootnotesElementState(this.view.state, id)
     const pos = this.getPos()
@@ -79,17 +81,12 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     )
 
     this.dom.innerHTML = ''
-    this.dom.classList.value = ''
-    this.dom.classList.add('footnote')
-    this.dom.classList.add(...getChangeClasses(this.node.attrs.dataTracked))
-    this.dom.append(
-      // Only append scrollBtn if it's created
-      ...(scrollBtn ? [scrollBtn] : []),
-      marker,
-      ...(this.contentDOM ? [this.contentDOM] : []),
-      deleteBtn
-    )
+    scrollBtn && this.dom.appendChild(scrollBtn)
+    this.dom.appendChild(marker)
+    this.contentDOM && this.dom.appendChild(this.contentDOM)
+    this.dom.appendChild(deleteBtn)
   }
+
   // Helper function to create buttons
   private createButton = (
     className: string,
