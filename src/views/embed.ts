@@ -29,12 +29,6 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
   public ignoreMutation = () => true
   public stopEvent = () => true
 
-  public initialise() {
-    this.createDOM()
-    this.createElement()
-    this.updateContents()
-  }
-
   public createElement = () => {
     this.container = document.createElement('div')
     this.container.classList.add('block')
