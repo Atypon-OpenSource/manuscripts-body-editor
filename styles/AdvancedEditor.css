@@ -575,13 +575,15 @@ span.comment-marker {
 }
 
 /* Insert */
-.tracking-visible .ProseMirror .inserted {
+.tracking-visible .ProseMirror .inserted,
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
 
 .ProseMirror .selected-suggestion .inserted,
+.ProseMirror .block-award.selected-suggestion span,
 .ProseMirror .selected-suggestion [data-track-op='insert'] .block,
 .ProseMirror .selected-suggestion .deleted {
   background-color: var(--selected-pending-background-color) !important;
@@ -589,7 +591,7 @@ span.comment-marker {
 }
 
 .tracking-visible .ProseMirror .set_attrs,
-.tracking-visible .ProseMirror [data-track-op='set_attrs'] {
+.tracking-visible .ProseMirror .block-award[data-track-op='set_attrs'] span {
   background: var(--updated-pending-bg-color);
   color: var(--updated-pending-color);
   text-decoration: none;
@@ -611,7 +613,8 @@ span.comment-marker {
 
 .tracking-visible .ProseMirror .deleted::before,
 .tracking-visible .ProseMirror .deleted,
-.tracking-visible .ProseMirror p .equation.deleted {
+.tracking-visible .ProseMirror p .equation.deleted,
+.tracking-visible .ProseMirror .block-award[data-track-op='delete'] span {
   display: inline;
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
@@ -665,11 +668,13 @@ span.comment-marker {
 }
 
 /* */
+.block-award.selected-suggestion span,
 .selected-suggestion .inserted,
 .selected-suggestion .deleted {
   text-decoration: none !important;
 }
 
+.block-award.selected-suggestion span,
 .selected-suggestion .inserted:not(.citation.inserted),
 .selected-suggestion .deleted:not(.citation.deleted),
 figure.block .equation.set_attrs.selected-suggestion {
