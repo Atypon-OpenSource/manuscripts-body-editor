@@ -1120,6 +1120,13 @@ function toggleOffList(
       rootList.pos,
       rootList.pos + rootList.node.nodeSize,
       (node, pos) => {
+        // remove all the nodes that are not fully in the range
+        if (
+          pos < rootList!.pos ||
+          node.nodeSize > rootList!.pos + rootList!.node.nodeSize
+        ) {
+          return true
+        }
         const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
         const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
         const nodeRange = $fromPos.blockRange($toPos)
@@ -1130,10 +1137,11 @@ function toggleOffList(
         const targetLiftDepth = liftTarget(nodeRange)
         if (targetLiftDepth || targetLiftDepth === 0) {
           tr.lift(nodeRange, targetLiftDepth)
+          return false // do not descend as the content of this node will be lifted already anyway
         }
       }
     )
-    dispatch(skipTracking(tr))
+    dispatch(tr)
     return true
   } else {
     return false
