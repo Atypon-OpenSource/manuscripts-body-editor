@@ -48,7 +48,7 @@ const Field = styled.div`
   margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const FieldHeading = styled.div`
+export const FieldHeading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;

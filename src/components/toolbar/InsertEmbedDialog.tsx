@@ -37,7 +37,7 @@ import { getOEmbedHTML, getOEmbedUrl } from '../../lib/oembed'
 import { allowedHref } from '../../lib/url'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
-import { Open } from '../views/LinkForm'
+import { FieldHeading, Open } from '../views/LinkForm'
 
 const Label = styled.label`
   padding-bottom: 4px;
@@ -106,7 +106,17 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <Label htmlFor={'embed-link'}>Media link</Label>
+            <FieldHeading>
+              <Label htmlFor={'embed-link'}>Media link</Label>
+              {url && allowedHref(url) && (
+                <Open
+                  id={'media-link'}
+                  href={url}
+                  target={'_blank'}
+                  rel={'noopener'}
+                />
+              )}
+            </FieldHeading>
             <TextArea
               id={'embed-link'}
               rows={2}
@@ -125,7 +135,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
               />
             </Container>
           )) ||
-            (url && allowedHref(url) && <NoPreviewMessage url={url} />)}
+            (url && allowedHref(url) && <NoPreviewMessage />)}
         </MessageContainer>
 
         <ButtonGroup>
@@ -141,27 +151,10 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   )
 }
 
-const Link = styled(Open)`
-  margin: 0;
-  top: 24px;
-  position: absolute;
-`
-
-export const NoPreviewMessage: React.FC<{ url: string }> = ({ url }) => (
+export const NoPreviewMessage: React.FC = () => (
   <Container>
     <AlertMessage type={AlertMessageType.info}>
-      <pre>
-        No Preview Available,{' '}
-        <span>
-          <Label>Media Link</Label>
-          <Link
-            id={'media-link'}
-            href={url}
-            target={'_blank'}
-            rel={'noopener'}
-          />
-        </span>
-      </pre>
+      <pre>No Preview Available</pre>
     </AlertMessage>
   </Container>
 )
