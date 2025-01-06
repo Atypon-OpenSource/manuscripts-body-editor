@@ -61,7 +61,7 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
 
     const oEmbedUrl = await getOEmbedUrl(this.href, 643, 363)
     if (oEmbedUrl) {
-      const oembedHTML = await getOEmbedHTML(oEmbedUrl,this.href)
+      const oembedHTML = await getOEmbedHTML(oEmbedUrl, this.href)
       if (oembedHTML) {
         preview.innerHTML = oembedHTML
         return

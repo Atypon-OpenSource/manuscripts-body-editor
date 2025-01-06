@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import providers from 'oembed-providers'
-import React from "react";
 
 export type ProviderJson = {
   type: 'photo' | 'video' | 'link' | 'rich'
@@ -27,7 +26,11 @@ export type ProviderJson = {
  * get oembed url by matching source link with provider scheme,
  * or hit head request to find link from header
  */
-export const getOEmbedUrl = async (url: string, width: number, height: number) => {
+export const getOEmbedUrl = async (
+  url: string,
+  width: number,
+  height: number
+) => {
   let oembedUrl
   for (const provider of providers) {
     if (provider) {
@@ -56,7 +59,7 @@ export const getOEmbedUrl = async (url: string, width: number, height: number) =
     return `${oembedUrl}?${params.toString()}`
   } else {
     try {
-    const response = await fetch(url, { method: 'HEAD' })
+      const response = await fetch(url, { method: 'HEAD' })
       let oembedUrl
       const linkHeader = response.headers.get('link')
       if (linkHeader) {
@@ -72,7 +75,7 @@ export const getOEmbedUrl = async (url: string, width: number, height: number) =
         })
       }
       return oembedUrl
-    }catch (e) {
+    } catch (e) {
       return undefined
     }
   }
@@ -85,17 +88,12 @@ const globToRegex = (glob: string) => {
   return new RegExp(`^${regex}$`)
 }
 
-export const getOEmbedHTML = async (
-  oembedUrl: string,
-  sourceLink: string,
-  setType?: React.Dispatch<React.SetStateAction<string | undefined>>
-) => {
+export const getOEmbedHTML = async (oembedUrl: string, sourceLink: string) => {
   try {
     const response = await fetch(oembedUrl)
 
     if (response.status === 200) {
       const oembed = await response.json()
-      setType && setType(oembed.type)
       return oembed.html || renderAlternativeHTML(oembed, sourceLink)
     } else {
       return undefined
@@ -107,8 +105,10 @@ export const getOEmbedHTML = async (
 
 const renderAlternativeHTML = (oembed: ProviderJson, sourceLink: string) => {
   if (oembed.type === 'photo') {
-    return `<img src="${oembed.url}"/>`
+    return `<img src="${oembed.url}">`
   }
 
-  return `<a href="${sourceLink}" target="_blank">${oembed.title || 'Media link'}</a>`
+  return `<a href="${sourceLink}" target="_blank">${
+    oembed.title || 'Media link'
+  }</a>`
 }

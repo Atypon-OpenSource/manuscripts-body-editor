@@ -33,14 +33,11 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch, insertEmbed } from '../../commands'
-import {
-  getOEmbedHTML,
-  getOEmbedUrl,
-} from '../../lib/oembed'
+import { getOEmbedHTML, getOEmbedUrl } from '../../lib/oembed'
 import { allowedHref } from '../../lib/url'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
-import {Open} from "../views/LinkForm";
+import { Open } from '../views/LinkForm'
 
 const Label = styled.label`
   padding-bottom: 4px;
@@ -81,17 +78,11 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 }) => {
   const [isOpen, setOpen] = useState(true)
   const [url, setUrl] = useState<string | undefined>(undefined)
-  const [type, setType] = useState<string | undefined>(undefined)
-  const [oembedHTML, setOEmbedHTML] = useState<string | undefined>(
-    undefined
-  )
+  const [oembedHTML, setOEmbedHTML] = useState<string | undefined>(undefined)
 
   const action = () => {
     if (operation === 'Insert') {
-      insertEmbed(state, dispatch, {
-        href: url,
-        mimetype: type,
-      })
+      insertEmbed(state, dispatch, { href: url })
       setOpen(false)
     } else {
       //  TODO:: update embed href (LEAN-4219)
@@ -102,7 +93,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
     const url = e.target.value.trim()
     const oEmbedUrl = await getOEmbedUrl(url, 368, 217)
     if (oEmbedUrl) {
-      const oembedJSON = await getOEmbedHTML(oEmbedUrl, url, setType)
+      const oembedJSON = await getOEmbedHTML(oEmbedUrl, url)
       setOEmbedHTML(oembedJSON)
     }
     setUrl(url)
@@ -151,9 +142,9 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 }
 
 const Link = styled(Open)`
-   margin: 0;
-   top: 24px;
-   position: absolute;
+  margin: 0;
+  top: 24px;
+  position: absolute;
 `
 
 export const NoPreviewMessage: React.FC<{ url: string }> = ({ url }) => (
@@ -163,17 +154,19 @@ export const NoPreviewMessage: React.FC<{ url: string }> = ({ url }) => (
         No Preview Available,{' '}
         <span>
           <Label>Media Link</Label>
-          <Link id={'media-link'} href={url} target={'_blank'} rel={'noopener'}/>
+          <Link
+            id={'media-link'}
+            href={url}
+            target={'_blank'}
+            rel={'noopener'}
+          />
         </span>
       </pre>
     </AlertMessage>
   </Container>
 )
 
-export const openEmbedDialog = (
-  view?: EditorView,
-  operation = 'Insert'
-) => {
+export const openEmbedDialog = (view?: EditorView, operation = 'Insert') => {
   if (!view) {
     return
   }
