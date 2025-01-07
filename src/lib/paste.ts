@@ -22,7 +22,6 @@ import {
 import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
-import {ReplaceStep} from "prosemirror-transform";
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -124,7 +123,7 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    tr.step(new ReplaceStep(side, side, slice))
+    tr.replace(side, side, slice)
     dispatch(
       tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
     )

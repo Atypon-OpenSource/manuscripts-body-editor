@@ -123,7 +123,8 @@ export const addToStart = (
   if (
     !dispatch ||
     !(selection instanceof TextSelection) ||
-    selection.$from.node().type !== schema.nodes.paragraph
+    (selection.$from.node().type !== schema.nodes.paragraph &&
+      selection.$from.node().type !== schema.nodes.text_block)
   ) {
     return false
   }
@@ -150,7 +151,9 @@ export const addToStart = (
     if (from) {
       tr.insert(side, from)
     }
-    tr.setSelection(TextSelection.create(tr.doc, side + 1))
+    if (selection.$from.node().type !== schema.nodes.paragraph) {
+      tr.setSelection(TextSelection.create(tr.doc, side + 1))
+    }
     dispatch(tr.scrollIntoView())
     return true
   }
@@ -1444,7 +1447,7 @@ export const createAndFillTableElement = (
   const { numberOfColumns, numberOfRows, includeHeader } = config
   const createRow = (cellType: ManuscriptNodeType) => {
     const cells = Array.from({ length: numberOfColumns }, () =>
-      cellType.create({}, schema.nodes.paragraph.create())
+      cellType.create({}, schema.nodes.text_block.create())
     )
     return schema.nodes.table_row.create({}, cells)
   }
