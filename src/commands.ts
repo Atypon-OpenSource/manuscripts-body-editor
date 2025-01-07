@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AwardNode,
   BoxElementNode,
   FigureElementNode,
   FigureNode,
@@ -84,12 +85,12 @@ import {
   NodeWithPos,
 } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
-
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
 } from './lib/doc'
@@ -959,9 +960,7 @@ export const insertContributors = (
 
   // Find the title node
   const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
-
   const pos = title.pos + title.node.nodeSize
-
   const contributors = state.schema.nodes.contributors.create({
     id: '',
   })
@@ -1019,6 +1018,24 @@ export const insertAffiliation = (
   return true
 }
 
+export const insertAward = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  const award = schema.nodes.award.create() as AwardNode
+  const tr = state.tr
+  const awards = insertAwardsNode(tr)
+  const pos = awards.pos + awards.node.nodeSize - 1
+  tr.insert(pos, award)
+  const selection = NodeSelection.create(tr.doc, pos)
+  view && view.focus()
+  if (dispatch) {
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+  return true
+}
+
 export const insertKeywords = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
@@ -1028,7 +1045,6 @@ export const insertKeywords = (
   if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
     return false
   }
-
   // determine the position to insert the keywords node
   const supplements = findChildrenByType(
     state.doc,
