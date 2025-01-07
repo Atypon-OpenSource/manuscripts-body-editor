@@ -965,12 +965,49 @@ export const insertContributors = (
   const contributors = state.schema.nodes.contributors.create({
     id: '',
   })
-  const affiliations = state.schema.nodes.affiliations.create({ id: '' })
 
-  const fragment = Fragment.fromArray([contributors, affiliations])
+  const tr = state.tr.insert(pos, contributors)
 
-  const tr = state.tr.insert(pos, fragment)
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
 
+  return true
+}
+
+export const insertAffiliation = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  // Check if another contributors node already exists
+  if (getChildOfType(state.doc, schema.nodes.affiliations, true)) {
+    return false
+  }
+  // Find the title node
+  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  let pos = title.pos + title.node.nodeSize
+
+  // Find the contributors node
+  const contributors = findChildrenByType(
+    state.doc,
+    state.schema.nodes.contributors
+  )[0]
+
+  // update the pos if the contributors node exists
+  if (contributors) {
+    pos = contributors.pos + contributors.node.nodeSize
+  }
+
+  const affiliations = state.schema.nodes.affiliations.create({
+    id: '',
+  })
+
+  const tr = state.tr.insert(pos, affiliations)
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
     if (view) {
@@ -1087,6 +1124,13 @@ function toggleOffList(
       rootList.pos,
       rootList.pos + rootList.node.nodeSize,
       (node, pos) => {
+        // remove all the nodes that are not fully in the range
+        if (
+          pos < rootList!.pos ||
+          node.nodeSize > rootList!.pos + rootList!.node.nodeSize
+        ) {
+          return true
+        }
         const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
         const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
         const nodeRange = $fromPos.blockRange($toPos)
@@ -1097,10 +1141,11 @@ function toggleOffList(
         const targetLiftDepth = liftTarget(nodeRange)
         if (targetLiftDepth || targetLiftDepth === 0) {
           tr.lift(nodeRange, targetLiftDepth)
+          return false // do not descend as the content of this node will be lifted already anyway
         }
       }
     )
-    dispatch(skipTracking(tr))
+    dispatch(tr)
     return true
   } else {
     return false

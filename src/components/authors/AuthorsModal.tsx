@@ -32,8 +32,8 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { isEqual } from 'lodash'
-import React, { useReducer, useRef, useState } from 'react'
+import { isEqual, omit } from 'lodash'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer } from '../../lib/array-reducer'
@@ -47,13 +47,14 @@ import { AuthorAffiliations } from './AuthorAffiliations'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
+import { RequiredFieldConfirmationDialog } from './RequiredFieldConfirmationDialog'
 import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
 
 const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-  margin-left: ${(props) => props.theme.grid.unit * 2}px;
+  margin-left: ${(props) => props.theme.grid.unit * 4}px;
   cursor: pointer;
 `
 
@@ -75,6 +76,10 @@ const FormLabel = styled.legend`
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
+`
+
+const StyledSidebarContent = styled(SidebarContent)`
+  padding: 0;
 `
 
 const authorsReducer = arrayReducer<ContributorAttrs>((a, b) => a.id === b.id)
@@ -105,6 +110,7 @@ export interface AuthorsModalProps {
   onSaveAuthor: (author: ContributorAttrs) => void
   onDeleteAuthor: (author: ContributorAttrs) => void
   onSaveAffiliation: (affiliation: AffiliationAttrs) => void
+  addNewAuthor?: boolean
 }
 
 export const AuthorsModal: React.FC<AuthorsModalProps> = ({
@@ -114,12 +120,25 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   onSaveAuthor,
   onDeleteAuthor,
   onSaveAffiliation,
+  addNewAuthor = false,
 }) => {
   const [isOpen, setOpen] = useState(true)
+  const [isDisableSave, setDisableSave] = useState(true)
+  const [isEmailRequired, setEmailRequired] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
+  const [
+    showRequiredFieldConfirmationDialog,
+    setShowRequiredFieldConfirmationDialog,
+  ] = useState(false)
+  const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [newAuthor, setNewAuthor] = useState(false)
+  const [unSavedChanges, setUnSavedChanges] = useState(false)
+  const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
+  const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
+  const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
-
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
@@ -129,24 +148,77 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     $affiliations
   )
 
+  useEffect(() => {
+    if (addNewAuthor) {
+      handleAddAuthor()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addNewAuthor])
+
   const [selection, setSelection] = useState(author)
 
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    setIsCreatingNewAuthor(false)
+
+    if (values && selection && unSavedChanges && !isDisableSave) {
       setShowConfirmationDialog(true)
+      setNextAuthor(author)
+    } else if (isDisableSave && unSavedChanges) {
+      setShowRequiredFieldConfirmationDialog(true)
+      setNextAuthor(author)
     } else {
       setSelection(author)
+      setNewAuthor(false)
     }
   }
 
   const handleClose = () => {
-    const values = valuesRef.current
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    if (isDisableSave && unSavedChanges) {
+      setShowRequiredFieldConfirmationDialog(true)
+    } else if (unSavedChanges) {
       setShowConfirmationDialog(true)
     } else {
+      setShowRequiredFieldConfirmationDialog(false)
+      setLastSavedAuthor(null)
       setOpen(false)
     }
+  }
+
+  const handleSave = () => {
+    if (valuesRef.current && selection) {
+      handleSaveAuthor(valuesRef.current)
+    }
+
+    if (nextAuthor) {
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+      setIsCreatingNewAuthor(false)
+    }
+
+    setShowConfirmationDialog(false)
+  }
+
+  const handleCancel = () => {
+    handleResetAuthor()
+    if (nextAuthor) {
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+    } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+      setOpen(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+      setIsCreatingNewAuthor(false)
+    }
+    setShowConfirmationDialog(false)
   }
 
   const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
@@ -158,9 +230,17 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       ...selection,
       ...values,
     }
+
     onSaveAuthor(author)
+    setLastSavedAuthor(author.id)
+    setTimeout(() => {
+      setLastSavedAuthor(null)
+    }, 3200)
+    setUnSavedChanges(false)
     setSelection(author)
     setShowConfirmationDialog(false)
+    setNewAuthor(false)
+    setIsCreatingNewAuthor(false)
     dispatchAuthors({
       type: 'update',
       items: [author],
@@ -182,8 +262,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       state: copy,
     })
   }
-
-  const handleAddAuthor = () => {
+  const createNewAuthor = () => {
     const name = buildBibliographicName({ given: '', family: '' })
     const author: ContributorAttrs = {
       id: generateID(ObjectTypes.Contributor),
@@ -200,12 +279,25 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       corresp: [],
       footnote: [],
     }
-    onSaveAuthor(author)
+    setIsSwitchingAuthor(!!selection)
     setSelection(author)
-    dispatchAuthors({
-      type: 'update',
-      items: [author],
-    })
+    setNewAuthor(true)
+  }
+
+  const handleAddAuthor = () => {
+    const values = valuesRef.current
+    setIsSwitchingAuthor(!!selection)
+    setIsCreatingNewAuthor(true)
+    if (values && selection && !isEqual(values, normalize(selection))) {
+      if (isDisableSave) {
+        setShowRequiredFieldConfirmationDialog(true)
+      } else {
+        setShowConfirmationDialog(true)
+      }
+      setNextAuthor(null)
+    } else {
+      createNewAuthor()
+    }
   }
 
   const handleDeleteAuthor = () => {
@@ -254,10 +346,59 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleResetAuthor = () => {
     actionsRef.current?.reset()
     setShowConfirmationDialog(false)
+    setShowRequiredFieldConfirmationDialog(false)
+    setUnSavedChanges(false)
+    if (!isCreatingNewAuthor && !nextAuthor) {
+      setLastSavedAuthor(null)
+      setOpen(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+    }
+    setIsCreatingNewAuthor(false)
   }
 
   const handleChangeAuthor = (values: ContributorAttrs) => {
+    const normalized = omit(
+      normalize(selection as ContributorAttrs),
+      'priority'
+    )
+    const updatedValues = omit(values, 'priority')
+    if (
+      updatedValues.id === normalized.id &&
+      !isEqual(updatedValues, normalized)
+    ) {
+      setUnSavedChanges(true)
+    }
+
+    const isUnchanged = isEqual(
+      normalize(selection as ContributorAttrs),
+      values
+    )
     valuesRef.current = values
+    const { given, family } = values.bibliographicName
+    const { email, isCorresponding } = values
+    const isNameFilled = given?.length && family?.length
+    if (isNameFilled && !isCorresponding && !isUnchanged) {
+      setDisableSave(false)
+    } else if (
+      isCorresponding &&
+      email?.length &&
+      isNameFilled &&
+      !isUnchanged
+    ) {
+      setDisableSave(false)
+    } else {
+      setDisableSave(true)
+    }
+    if (isCorresponding && !email?.length) {
+      setEmailRequired(true)
+    } else {
+      setEmailRequired(false)
+    }
+  }
+
+  const handleShowDeleteDialog = () => {
+    setShowDeleteDialog((prev) => !prev)
   }
 
   return (
@@ -278,35 +419,49 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             <ModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
             </ModalSidebarHeader>
-            <SidebarContent>
+            <StyledSidebarContent>
               <AddAuthorButton
                 data-cy="add-author-button"
                 onClick={handleAddAuthor}
               >
-                <AddIcon width={40} height={40} />
-                <ActionTitle>Add Author</ActionTitle>
+                <AddIcon width={18} height={18} />
+                <ActionTitle>New Author</ActionTitle>
               </AddAuthorButton>
               <AuthorList
                 author={selection}
                 authors={authors}
                 onSelect={handleSelect}
+                onDelete={handleShowDeleteDialog}
                 moveAuthor={handleMoveAuthor}
+                lastSavedAuthor={lastSavedAuthor}
               />
-            </SidebarContent>
+            </StyledSidebarContent>
           </ModalSidebar>
           <ScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <AuthorForms>
+                <RequiredFieldConfirmationDialog
+                  isOpen={showRequiredFieldConfirmationDialog}
+                  onSave={() => setShowRequiredFieldConfirmationDialog(false)}
+                  onCancel={handleCancel}
+                />
                 <SaveAuthorConfirmationDialog
                   isOpen={showConfirmationDialog}
-                  onSave={() => handleSaveAuthor(valuesRef.current)}
-                  onCancel={handleResetAuthor}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
                 />
                 <AuthorActions
-                  author={selection}
                   onSave={() => handleSaveAuthor(valuesRef.current)}
                   onDelete={handleDeleteAuthor}
-                  onCancel={() => setOpen(false)}
+                  showDeleteDialog={showDeleteDialog}
+                  handleShowDeleteDialog={handleShowDeleteDialog}
+                  newAuthor={
+                    newAuthor ||
+                    (isCreatingNewAuthor &&
+                      !showConfirmationDialog &&
+                      !showRequiredFieldConfirmationDialog)
+                  }
+                  isDisableSave={isDisableSave}
                 />
                 <FormLabel>Details</FormLabel>
                 <AuthorDetailsForm
@@ -314,6 +469,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   onChange={handleChangeAuthor}
                   onSave={handleSaveAuthor}
                   actionsRef={actionsRef}
+                  isEmailRequired={isEmailRequired}
                 />
                 <FormLabel>Affiliations</FormLabel>
                 <AuthorAffiliations
