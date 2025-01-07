@@ -217,7 +217,6 @@
   width: 100%;
   position: absolute;
   top: 0;
-  left: 0;
   z-index: 3;
 }
 
@@ -525,6 +524,9 @@ span.comment-marker {
 .ProseMirror {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
+  --updated-pending-bg-color: #E6F7FC;
+  --updated-pending-color: #0284B0;
+  --accepted-bg-color: #e2e2e2;
   --deleted-color: #f35143;
   --deleted-pending-bg-color: #fff1f0;
   --updated-bg-color: #d9f6ff;
@@ -573,6 +575,20 @@ span.comment-marker {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
+}
+
+.ProseMirror .selected-suggestion .inserted,
+.ProseMirror .selected-suggestion [data-track-op='insert'] .block,
+.ProseMirror .selected-suggestion .deleted {
+  background-color: var(--selected-pending-background-color) !important;
+  color: var(--common-color) !important;
+}
+
+.tracking-visible .ProseMirror .set_attrs,
+.tracking-visible .ProseMirror [data-track-op='set_attrs'] {
+  background: var(--updated-pending-bg-color);
+  color: var(--updated-pending-color);
+  text-decoration: none;
 }
 
 .inserted:has(.selected-suggestion),
@@ -806,12 +822,13 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .contributors-list .separator {
   margin-right: 4px;
 }
-.contributors .tools-panel {
+.block-contributors .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
   align-items: center;
   margin-top: 4px;
+  left: -10px;
 }
 .contributor .contributor-comment {
   left: 0;
@@ -1040,6 +1057,18 @@ th:hover > .table-context-menu-button,
   border-width: 10px;
   right: -20px;
   top: 6px;
+  pointer-events: none;
+}
+
+.ProseMirror .block-contributors .context-menu > div {
+  border-radius: 4px;
+  border: 1px solid #c9c9c9;
+  background: #fff;
+  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
+}
+
+.ProseMirror .block-contributors .action-gutter {
+  right: 15px;
   pointer-events: none;
 }
 

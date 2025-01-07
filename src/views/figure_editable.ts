@@ -115,7 +115,7 @@ export class FigureEditableView extends FigureView {
       })
 
       img.addEventListener('drop', async (e) => {
-        if (e.dataTransfer && e.dataTransfer.files) {
+        if (e.dataTransfer && e.dataTransfer.files.length) {
           e.preventDefault()
           await upload(e.dataTransfer.files[0])
         }

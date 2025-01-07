@@ -180,5 +180,6 @@ export const addTrackChangesClassNames = (attrs: Attrs, dom: Element) => {
     return
   }
   const change = changes[0]
-  dom.classList.add(classNames.get(change.operation) || '')
+  const className = classNames.get(change.operation)
+  className && dom.classList.add(className)
 }

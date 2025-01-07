@@ -13,67 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  ButtonGroup,
-  DeleteIcon,
-  PrimaryButton,
-  SecondaryButton,
-} from '@manuscripts/style-guide'
-import React, { useState } from 'react'
+import { ButtonGroup, IconButton, PlusIcon } from '@manuscripts/style-guide'
+import React from 'react'
 import styled from 'styled-components'
 
-import { ContributorAttrs } from '../../lib/authors'
 import { DeleteAuthorConfirmationDialog } from './DeleteAuthorConfirmationDialog'
 
 const AuthorActionsContainer = styled.div`
   display: flex;
 `
 
-const RemoveButton = styled.div`
-  display: flex;
-  align-items: center;
-
-  svg {
-    cursor: pointer;
-  }
-`
-
 const StyledButtonGroup = styled(ButtonGroup)`
   flex: 1;
 `
 
+const StyledIconButton = styled(IconButton)`
+  color: #0d79d0;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  width: auto;
+  &:disabled {
+    color: #c9c9c9 !important;
+    background-color: unset !important;
+    border: unset;
+  }
+  svg {
+    margin-right: 4px;
+  }
+`
+
 export interface AuthorActionsProps {
-  author: ContributorAttrs
   onSave: () => void
   onDelete: () => void
-  onCancel: () => void
+  showDeleteDialog: boolean
+  handleShowDeleteDialog: () => void
+  newAuthor: boolean
+  isDisableSave: boolean
 }
 
 export const AuthorActions: React.FC<AuthorActionsProps> = ({
-  author,
   onSave,
   onDelete,
-  onCancel,
+  showDeleteDialog,
+  handleShowDeleteDialog,
+  newAuthor,
+  isDisableSave,
 }) => {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-
   return (
     <AuthorActionsContainer data-cy="author-action">
       <DeleteAuthorConfirmationDialog
-        author={author}
         isOpen={showDeleteDialog}
         onDelete={() => {
-          setShowDeleteDialog(true)
+          handleShowDeleteDialog()
           onDelete()
         }}
-        onCancel={() => setShowDeleteDialog(false)}
+        onCancel={() => handleShowDeleteDialog()}
       />
-      <RemoveButton onClick={() => setShowDeleteDialog(true)}>
-        <DeleteIcon />
-      </RemoveButton>
       <StyledButtonGroup>
-        <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
-        <PrimaryButton onClick={onSave}>Save</PrimaryButton>
+        <StyledIconButton
+          onClick={onSave}
+          disabled={isDisableSave}
+          type="submit"
+        >
+          <PlusIcon />
+          {newAuthor ? 'Save Details' : 'Update Details'}
+        </StyledIconButton>
       </StyledButtonGroup>
     </AuthorActionsContainer>
   )

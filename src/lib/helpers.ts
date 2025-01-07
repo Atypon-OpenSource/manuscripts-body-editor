@@ -15,6 +15,7 @@
  */
 
 import {
+  isInlineFootnoteNode,
   ManuscriptEditorState,
   ManuscriptNode,
   schema,
@@ -69,58 +70,45 @@ export const mergeSimilarItems =
   }
 
 export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
-  const { tr, selection } = view.state
-
-  // Get the nodes at the selection's start and end positions
-  const nodeAtFrom = tr.doc.nodeAt(selection.$from.pos)
-  const nodeAtTo = tr.doc.nodeAt(selection.$to.pos)
-  // Get the DOM element at the selection's position
-  const domAtSelectionFrom = view.domAtPos(selection.$from.pos)
-    .node as HTMLElement
-
-  if (!nodeAtFrom) {
+  const selection = view.state.selection
+  if (selection.empty) {
     return false
   }
 
-  // Determine the target element to scroll to
-  const targetElement =
-    nodeAtFrom.type === schema.nodes.bibliography_item
-      ? (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
-      : nodeAtTo?.type === schema.nodes.highlight_marker
-      ? (document.getElementById(nodeAtTo?.attrs.id) as HTMLElement)
-      : (document.getElementById(nodeAtFrom.attrs.id) as HTMLElement)
-
-  // Fallback to the DOM element at the selection's position
-  const scrollTarget = targetElement || domAtSelectionFrom
-
-  if (!scrollTarget) {
+  const node = view.state.doc.nodeAt(selection.from)
+  if (!node) {
     return false
   }
 
-  // Highlight the footnote marker if applicable
-  if (nodeAtFrom.type === schema.nodes.inline_footnote) {
-    const resolvedPos = view.state.doc.resolve(selection.$from.pos)
-    const targetNode = view.nodeDOM(resolvedPos.pos) as HTMLElement
+  let target: Element | null
 
-    if (targetNode) {
-      // Add the highlight class to the exact DOM node
-      targetNode.classList.add('highlight-footnote-marker')
-      setTimeout(
-        () => targetNode.classList.remove('highlight-footnote-marker'),
-        3000
-      )
-    }
+  //this is to support scrolling to nodes whose views are not managed by PM
+  if (node.attrs.id) {
+    target = view.dom.querySelector(`[id="${node.attrs.id}"]`)
+  } else {
+    target = view.domAtPos(selection.from).node as Element
+  }
+
+  if (!target) {
+    return false
   }
 
   // Set block alignment based on the node type
   const blockAlignment =
-    nodeAtFrom.type === schema.nodes.bibliography_item ? 'center' : 'start'
+    node.type === schema.nodes.bibliography_item ? 'center' : 'start'
 
   // Scroll the target element into view
-  scrollTarget.scrollIntoView({
+  target.scrollIntoView({
     behavior: 'smooth',
     block: blockAlignment,
   })
+
+  // Highlight the footnote marker if applicable
+  if (isInlineFootnoteNode(node)) {
+    const fn = target
+    fn.classList.add('highlight-footnote-marker')
+    setTimeout(() => fn.classList.remove('highlight-footnote-marker'), 3000)
+  }
 
   return true
 }
