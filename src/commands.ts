@@ -150,12 +150,9 @@ export const addToStart = (
     const from = $from.node().type.createAndFill()
     if (from) {
       tr.insert(side, from)
+      dispatch(tr.scrollIntoView())
+      return true
     }
-    if (selection.$from.node().type !== schema.nodes.paragraph) {
-      tr.setSelection(TextSelection.create(tr.doc, side + 1))
-    }
-    dispatch(tr.scrollIntoView())
-    return true
   }
   return false
 }
