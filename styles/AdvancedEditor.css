@@ -1059,3 +1059,7 @@ th:hover > .table-context-menu-button,
 .ProseMirror .block-embed .tools-panel {
   position: relative;
 }
+
+.ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
+  display: none;
+}

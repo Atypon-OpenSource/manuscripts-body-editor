@@ -15,8 +15,6 @@
  */
 
 import {
-  AlertMessage,
-  AlertMessageType,
   ButtonGroup,
   DialogModalBody,
   MessageContainer,
@@ -127,15 +125,16 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
               onChange={debouncedUrlChange}
             />
           </Container>
-          {(oembedHTML && (
+          {url && allowedHref(url) && (
             <Container>
               <Label>Preview</Label>
-              <PreviewContainer
-                dangerouslySetInnerHTML={{ __html: oembedHTML }}
-              />
+              {(oembedHTML && (
+                <PreviewContainer
+                  dangerouslySetInnerHTML={{ __html: oembedHTML }}
+                />
+              )) || <NoPreviewMessage />}
             </Container>
-          )) ||
-            (url && allowedHref(url) && <NoPreviewMessage />)}
+          )}
         </MessageContainer>
 
         <ButtonGroup>
@@ -151,12 +150,16 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   )
 }
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 50px 0;
+`
+
 export const NoPreviewMessage: React.FC = () => (
-  <Container>
-    <AlertMessage type={AlertMessageType.info}>
-      <pre>No Preview Available</pre>
-    </AlertMessage>
-  </Container>
+  <PreviewContainer>
+    <Wrapper>No Preview Available</Wrapper>
+  </PreviewContainer>
 )
 
 export const openEmbedDialog = (view?: EditorView, operation = 'Insert') => {
