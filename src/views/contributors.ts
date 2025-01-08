@@ -167,11 +167,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public createElement = () => {
     this.inner = document.createElement('div')
     this.inner.classList.add('authors-container', 'block')
-    this.dom.appendChild(this.inner)
+
+    this.contentDOM = document.createElement('div')
+    this.inner.appendChild(this.contentDOM)
 
     this.container = document.createElement('div')
     this.container.classList.add('contributors')
     this.inner.appendChild(this.container)
+
+    this.dom.appendChild(this.inner)
   }
 
   public createDOM = () => {
