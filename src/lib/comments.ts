@@ -19,6 +19,10 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import { NodeWithPos } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
+
+import { addNodeComment } from '../commands'
+import { findChildByID } from './view'
 
 export type CommentAttrs = CommentNode['attrs']
 export type HighlightMarkerAttrs = HighlightMarkerNode['attrs']
@@ -82,6 +86,31 @@ export const getCommentRange = (comment: CommentAttrs) => {
     pos: comment.selector.from,
     size: comment.selector.to - comment.selector.from,
   }
+}
+
+export const handleComment = (
+  node: ManuscriptNode,
+  view: EditorView,
+  targetChildByID = false // Add a flag to control child targeting
+): void => {
+  const { state } = view
+
+  if (targetChildByID) {
+    // retrieve the `itemID` from the node's attributes
+    const itemID = node?.attrs?.id
+
+    if (itemID) {
+      // Find the child node using `itemID`
+      const item = findChildByID(view, itemID)
+      if (item) {
+        addNodeComment(item.node, state, view.dispatch)
+        return
+      }
+    }
+  }
+
+  // Default behavior: Add the comment to the provided node
+  addNodeComment(node, state, view.dispatch)
 }
 
 export const createCommentMarker = (
