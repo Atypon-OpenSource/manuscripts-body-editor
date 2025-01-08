@@ -584,13 +584,6 @@ span.comment-marker {
   color: var(--common-color) !important;
 }
 
-.tracking-visible .ProseMirror .set_attrs,
-.tracking-visible .ProseMirror [data-track-op='set_attrs'] {
-  background: var(--updated-pending-bg-color);
-  color: var(--updated-pending-color);
-  text-decoration: none;
-}
-
 .inserted:has(.selected-suggestion),
 .inserted.selected-suggestion,
 .selected-suggestion:has(.inserted) {
@@ -1079,7 +1072,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-container .block-embed .block {
   text-align: center;
-  margin: 0 52px;
+  margin: 42px 52px;
 }
 
 .tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
@@ -1092,4 +1085,20 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
   display: none;
+}
+
+.ProseMirror .block-embed:hover .embed-context-menu {
+  visibility: visible;
+}
+
+.ProseMirror .block-embed .embed-context-menu {
+  visibility: hidden;
+  position: absolute;
+  width: fit-content;
+  right: 7%;
+  z-index: 10;
+  border-radius: 4px;
+  border: 1px solid #C9C9C9;
+  background: #FFF;
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
 }
