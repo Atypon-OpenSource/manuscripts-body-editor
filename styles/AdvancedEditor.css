@@ -1073,11 +1073,11 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-container .block-embed {
+.ProseMirror .block-embed {
   grid-template-columns: none;
 }
 
-.ProseMirror .block-container .block-embed .block {
+.ProseMirror .block-embed .block {
   text-align: center;
   margin: 0 52px;
 }
