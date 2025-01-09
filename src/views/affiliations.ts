@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { AffiliationNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
+import {
+  createCommentMarker,
+  handleComment,
+  handleCommentMarkerClick,
+  updateCommentSelection,
+} from '../lib/comments'
 import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { findChildByID } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
@@ -25,11 +32,13 @@ import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import ReactSubView from './ReactSubView'
 
 //todo update AffiliationNode to AffiliationsNode
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
+  contextMenu: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -54,8 +63,37 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
+
+    const comment = createCommentMarker('div', this.node.attrs.id)
+    this.container.prepend(comment)
+
     this.buildAffiliations(affs)
     this.updateSelection()
+  }
+
+  public affiliationsContextMenu = () => {
+    const can = this.props.getCapabilities()
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
+    }
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    return this.contextMenu
   }
 
   private buildAffiliations(affs: PluginState) {
@@ -127,7 +165,19 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
+
+    const marker = this.container.querySelector(
+      '.comment-marker'
+    ) as HTMLElement
+
+    marker.addEventListener('click', (event: Event) => {
+      handleCommentMarkerClick(event, this.view)
+    })
+    updateCommentSelection(marker, this.view)
   }
+  public actionGutterButtons = (): HTMLElement[] => [
+    this.affiliationsContextMenu(),
+  ]
 }
 
 export default createNodeView(AffiliationsView)

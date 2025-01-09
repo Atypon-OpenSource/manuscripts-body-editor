@@ -682,12 +682,11 @@
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
-  .block-container:not(.block-section, .block-box_element):hover
-  .authors-container +
-  .action-gutter {
+.block-container:not(.block-section, .block-box_element):hover
+.action-gutter {
     pointer-events: visible;
-  opacity: 1;
-  z-index: 2;
+    opacity: 1;
+    z-index: 2;
 }
 
 .ProseMirror .block-box_element:hover > .block-gutter {

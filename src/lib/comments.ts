@@ -19,6 +19,11 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import { NodeWithPos } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
+
+import { addNodeComment } from '../commands'
+import { commentsKey, setCommentSelection } from '../plugins/comments'
+import { findChildByID } from './view'
 
 export type CommentAttrs = CommentNode['attrs']
 export type HighlightMarkerAttrs = HighlightMarkerNode['attrs']
@@ -84,6 +89,31 @@ export const getCommentRange = (comment: CommentAttrs) => {
   }
 }
 
+export const handleComment = (
+  node: ManuscriptNode,
+  view: EditorView,
+  targetChildByID = false // Add a flag to control child targeting
+): void => {
+  const { state } = view
+
+  if (targetChildByID) {
+    // retrieve the `itemID` from the node's attributes
+    const itemID = node?.attrs?.id
+
+    if (itemID) {
+      // Find the child node using `itemID`
+      const item = findChildByID(view, itemID)
+      if (item) {
+        addNodeComment(item.node, state, view.dispatch)
+        return
+      }
+    }
+  }
+
+  // Default behavior: Add the comment to the provided node
+  addNodeComment(node, state, view.dispatch)
+}
+
 export const createCommentMarker = (
   tagName: string,
   key: CommentKey,
@@ -111,4 +141,42 @@ export const createCommentMarker = (
 
 const getMarkerID = (id: string) => {
   return `${id}-comment-marker`
+}
+
+export const handleCommentMarkerClick = (event: Event, view: EditorView) => {
+  const element = event.target as HTMLElement
+  // Handle click on comment marker
+  const marker = element.closest('.comment-marker') as HTMLElement
+  if (marker) {
+    const key = marker.dataset.key as CommentKey
+    const tr = view.state.tr
+    setCommentSelection(tr, key, undefined, false)
+    view.dispatch(tr)
+    return
+  }
+}
+export const updateCommentSelection = (
+  marker: HTMLElement,
+  view: EditorView
+) => {
+  const key = marker.dataset.key as CommentKey
+  const com = commentsKey.getState(view.state)
+  let isSelected = false
+
+  const comments = com?.commentsByKey.get(key)
+  if (!comments) {
+    marker.setAttribute('data-count', '0')
+  } else if (comments.length !== 1) {
+    marker.setAttribute('data-count', String(comments.length))
+  } else {
+    marker.removeAttribute('data-count')
+  }
+  if (key === com?.selection?.key) {
+    marker.classList.add('selected-comment')
+    isSelected = true
+  } else {
+    marker.classList.remove('selected-comment')
+  }
+
+  return isSelected
 }
