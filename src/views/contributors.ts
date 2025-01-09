@@ -29,10 +29,10 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import {
-  CommentKey,
   createCommentMarker,
   handleComment,
   handleCommentMarkerClick,
+  updateCommentSelection,
 } from '../lib/comments'
 import {
   addTrackChangesAttributes,
@@ -46,7 +46,6 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
-import { commentsKey } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -88,7 +87,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     ) as HTMLElement
 
     // prevent opening the author modal when a comment is selected.
-    const isCommentSelected = this.updateCommentSelection(marker)
+    const isCommentSelected = updateCommentSelection(marker, this.view)
 
     this.dom.classList.add('ProseMirror-selectednode')
 
@@ -288,7 +287,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     marker.addEventListener('click', (event: Event) => {
       handleCommentMarkerClick(event, this.view)
     })
-    this.updateCommentSelection(marker)
+    updateCommentSelection(marker, this.view)
   }
 
   public showContextMenu = (element: Element) => {
@@ -352,29 +351,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     this.container.appendChild(this.popper)
   }
-  updateCommentSelection = (marker: HTMLElement) => {
-    const key = marker.dataset.key as CommentKey
-    const com = commentsKey.getState(this.view.state)
-    let isSelected = false
-
-    const comments = com?.commentsByKey.get(key)
-    if (!comments) {
-      marker.setAttribute('data-count', '0')
-    } else if (comments.length !== 1) {
-      marker.setAttribute('data-count', String(comments.length))
-    } else {
-      marker.removeAttribute('data-count')
-    }
-    if (key === com?.selection?.key) {
-      marker.classList.add('selected-comment')
-      isSelected = true
-    } else {
-      marker.classList.remove('selected-comment')
-    }
-
-    return isSelected
-  }
-
   handleSaveAuthor = (author: ContributorAttrs) => {
     const update = updateNodeAttrs(this.view, schema.nodes.contributor, author)
     if (!update) {
