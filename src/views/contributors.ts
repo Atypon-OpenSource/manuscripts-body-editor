@@ -28,7 +28,12 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
-import { handleComment } from '../lib/comments'
+import {
+  CommentKey,
+  createCommentMarker,
+  handleComment,
+  handleCommentMarkerClick,
+} from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -41,6 +46,7 @@ import {
   updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
+import { commentsKey } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -67,14 +73,26 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
+
+    const comment = createCommentMarker('div', this.node.attrs.id)
+    this.container.prepend(comment)
+
     this.buildAuthors(affs)
     this.createLegend()
     this.updateSelection()
   }
 
   public selectNode = () => {
+    const marker = this.container.querySelector(
+      '.comment-marker'
+    ) as HTMLElement
+
+    // prevent opening the author modal when a comment is selected.
+    const isCommentSelected = this.updateCommentSelection(marker)
+
     this.dom.classList.add('ProseMirror-selectednode')
-    if (!isDeleted(this.node)) {
+
+    if (!isDeleted(this.node) && !isCommentSelected) {
       this.handleEdit('', true)
     }
   }
@@ -229,7 +247,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       }
     }
   }
-
   private handleClick = (event: Event) => {
     this.props.popper.destroy()
     const element = event.target as HTMLElement
@@ -253,6 +270,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   private updateSelection = () => {
     const state = this.view.state
     const selection = selectedSuggestionKey.getState(state)?.suggestion
+
     this.container
       .querySelectorAll('.selected-suggestion')
       .forEach((e) => e.classList.remove('selected-suggestion'))
@@ -262,6 +280,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
+
+    const marker = this.container.querySelector(
+      '.comment-marker'
+    ) as HTMLElement
+
+    marker.addEventListener('click', (event: Event) => {
+      handleCommentMarkerClick(event, this.view)
+    })
+    this.updateCommentSelection(marker)
   }
 
   public showContextMenu = (element: Element) => {
@@ -324,6 +351,28 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     )
 
     this.container.appendChild(this.popper)
+  }
+  updateCommentSelection = (marker: HTMLElement) => {
+    const key = marker.dataset.key as CommentKey
+    const com = commentsKey.getState(this.view.state)
+    let isSelected = false
+
+    const comments = com?.commentsByKey.get(key)
+    if (!comments) {
+      marker.setAttribute('data-count', '0')
+    } else if (comments.length !== 1) {
+      marker.setAttribute('data-count', String(comments.length))
+    } else {
+      marker.removeAttribute('data-count')
+    }
+    if (key === com?.selection?.key) {
+      marker.classList.add('selected-comment')
+      isSelected = true
+    } else {
+      marker.classList.remove('selected-comment')
+    }
+
+    return isSelected
   }
 
   handleSaveAuthor = (author: ContributorAttrs) => {

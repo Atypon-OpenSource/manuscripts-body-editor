@@ -603,7 +603,7 @@
   display: grid;
   grid-template-columns: 52px auto 52px;
 }
-.ProseMirror .block-container.block-contributors {
+.ProseMirror .block-contributors {
   grid-template-columns: 52px auto 100px;
 }
 .ProseMirror .block-container.block-section {
