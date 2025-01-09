@@ -28,6 +28,7 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -184,6 +185,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       actions: [],
     }
     if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
       componentProps.actions.push({
         label: 'New Author',
         action: () => this.handleEdit('', true),

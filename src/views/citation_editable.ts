@@ -19,7 +19,6 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
-import { addNodeComment } from '../commands'
 import {
   CitationEditor,
   CitationEditorProps,
@@ -28,6 +27,7 @@ import {
   CitationViewer,
   CitationViewerProps,
 } from '../components/references/CitationViewer'
+import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
 import { BibliographyItemAttrs } from '../lib/references'
 import { isDeleted } from '../lib/track-changes-utils'
@@ -91,12 +91,22 @@ export class CitationEditableView extends CitationView {
 
   public showContextMenu = () => {
     this.props.popper.destroy()
+
     const can = this.props.getCapabilities()
     const actions = [
-      { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
+      {
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      },
     ]
+
     if (can.editArticle) {
-      actions.unshift({ label: 'Edit', action: this.handleEdit, icon: 'Edit' })
+      actions.unshift({
+        label: 'Edit',
+        action: () => this.handleEdit(),
+        icon: 'Edit',
+      })
     }
     const componentProps: ContextMenuProps = {
       actions,
@@ -247,10 +257,6 @@ export class CitationEditableView extends CitationView {
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     return deleteNode(this.view, item.id)
-  }
-
-  private handleComment = () => {
-    addNodeComment(this.node, this.view.state, this.props.dispatch)
   }
 
   private insertBibliographyNode(attrs: BibliographyItemAttrs) {
