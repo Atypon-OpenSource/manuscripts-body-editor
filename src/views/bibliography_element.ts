@@ -103,7 +103,7 @@ export class BibliographyElementBlockView extends BlockView<
     }
     componentProps.actions.push({
       label: 'Comment',
-      action: () => handleComment(item, this.view, true),
+      action: () => handleComment(item, this.view),
       icon: 'AddComment',
     })
 

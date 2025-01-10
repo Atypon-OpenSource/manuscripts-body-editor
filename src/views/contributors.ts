@@ -57,6 +57,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   inner: HTMLElement
   popper?: HTMLElement
   version: string
+  commentMarker: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -73,8 +74,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
 
-    const comment = createCommentMarker('div', this.node.attrs.id)
-    this.container.prepend(comment)
+    this.commentMarker = createCommentMarker('div', this.node.attrs.id)
+
+    this.commentMarker.addEventListener('click', (event: Event) => {
+      handleCommentMarkerClick(event, this.view)
+    })
+    this.container.prepend(this.commentMarker)
 
     this.buildAuthors(affs)
     this.createLegend()
@@ -82,12 +87,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   public selectNode = () => {
-    const marker = this.container.querySelector(
-      '.comment-marker'
-    ) as HTMLElement
-
     // prevent opening the author modal when a comment is selected.
-    const isCommentSelected = updateCommentSelection(marker, this.view)
+    const isCommentSelected = updateCommentSelection(
+      this.commentMarker,
+      this.view
+    )
 
     this.dom.classList.add('ProseMirror-selectednode')
 
@@ -279,15 +283,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
-
-    const marker = this.container.querySelector(
-      '.comment-marker'
-    ) as HTMLElement
-
-    marker.addEventListener('click', (event: Event) => {
-      handleCommentMarkerClick(event, this.view)
-    })
-    updateCommentSelection(marker, this.view)
+    updateCommentSelection(this.commentMarker, this.view)
   }
 
   public showContextMenu = (element: Element) => {
