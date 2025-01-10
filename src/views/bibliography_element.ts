@@ -22,18 +22,22 @@ import {
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
-import { addNodeComment } from '../commands'
 import {
   ReferencesEditor,
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
-import { CommentKey, createCommentMarker } from '../lib/comments'
+import {
+  createCommentMarker,
+  handleComment,
+  handleCommentMarkerClick,
+  updateCommentSelection,
+} from '../lib/comments'
+import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
-import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -83,16 +87,10 @@ export class BibliographyElementBlockView extends BlockView<
     this.showPopper(citationID)
   }
 
-  private handleComment(itemID: string) {
-    const item = findChildByID(this.view, itemID)
-    if (item) {
-      addNodeComment(item.node, this.view.state, this.props.dispatch)
-    }
-  }
-
   private showContextMenu(element: HTMLElement) {
     this.props.popper.destroy()
     const can = this.props.getCapabilities()
+    const item = findNodeByID(this.view.state.doc, element.id)?.node
     const componentProps: ContextMenuProps = {
       actions: [],
     }
@@ -105,7 +103,7 @@ export class BibliographyElementBlockView extends BlockView<
     }
     componentProps.actions.push({
       label: 'Comment',
-      action: () => this.handleComment(element.id),
+      action: () => handleComment(item, this.view),
       icon: 'AddComment',
     })
 
@@ -123,15 +121,6 @@ export class BibliographyElementBlockView extends BlockView<
 
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
-    // Handle click on comment marker
-    const marker = element.closest('.comment-marker') as HTMLElement
-    if (marker) {
-      const key = marker.dataset.key as CommentKey
-      const tr = this.view.state.tr
-      setCommentSelection(tr, key, undefined, false)
-      this.view.dispatch(tr)
-      return
-    }
 
     if (this.props.getCapabilities().seeReferencesButtons) {
       const item = element.closest('.bib-item')
@@ -171,7 +160,11 @@ export class BibliographyElementBlockView extends BlockView<
 
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
-    wrapper.addEventListener('click', this.handleClick)
+
+    wrapper.addEventListener('click', (event: Event) => {
+      this.handleClick(event)
+      handleCommentMarkerClick(event, this.view)
+    })
 
     const [meta, bibliography] = bib.provider.makeBibliography()
 
@@ -218,7 +211,6 @@ export class BibliographyElementBlockView extends BlockView<
 
   private updateSelections = () => {
     const state = this.view.state
-    const com = commentsKey.getState(state)
     const suggestion = selectedSuggestionKey.getState(state)?.suggestion
 
     const items = this.container.querySelectorAll('.bib-item')
@@ -229,22 +221,8 @@ export class BibliographyElementBlockView extends BlockView<
       } else {
         item.classList.remove('selected-suggestion')
       }
-
       const marker = item.querySelector('.comment-marker') as HTMLElement
-      const key = marker.dataset.key as CommentKey
-      const comments = com?.commentsByKey.get(key)
-      if (!comments) {
-        marker.setAttribute('data-count', '0')
-      } else if (comments.length !== 1) {
-        marker.setAttribute('data-count', String(comments.length))
-      } else {
-        marker.removeAttribute('data-count')
-      }
-      if (key === com?.selection?.key) {
-        marker.classList.add('selected-comment')
-      } else {
-        marker.classList.remove('selected-comment')
-      }
+      updateCommentSelection(marker, this.view)
     })
   }
 }

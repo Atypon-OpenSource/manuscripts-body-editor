@@ -39,6 +39,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
   contextMenu: HTMLElement
+  commentMarker: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -64,8 +65,12 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
 
-    const comment = createCommentMarker('div', this.node.attrs.id)
-    this.container.prepend(comment)
+    this.commentMarker = createCommentMarker('div', this.node.attrs.id)
+
+    this.commentMarker.addEventListener('click', (event: Event) => {
+      handleCommentMarkerClick(event, this.view)
+    })
+    this.container.prepend(this.commentMarker)
 
     this.buildAffiliations(affs)
     this.updateSelection()
@@ -165,15 +170,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
-
-    const marker = this.container.querySelector(
-      '.comment-marker'
-    ) as HTMLElement
-
-    marker.addEventListener('click', (event: Event) => {
-      handleCommentMarkerClick(event, this.view)
-    })
-    updateCommentSelection(marker, this.view)
+    updateCommentSelection(this.commentMarker, this.view)
   }
   public actionGutterButtons = (): HTMLElement[] => [
     this.affiliationsContextMenu(),
