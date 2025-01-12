@@ -245,6 +245,11 @@
   position: relative;
 }
 
+#editor .manuscript-title + .comment-marker {
+  top: 0;
+  left: 60px;
+}
+
 .block > div.comment-marker,
 .figure-block > div.comment-marker {
   top: -25px;
