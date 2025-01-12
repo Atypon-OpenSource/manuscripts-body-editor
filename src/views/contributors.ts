@@ -52,7 +52,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   inner: HTMLElement
   popper?: HTMLElement
   version: string
-  commentMarker: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -76,7 +75,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
-
     if (!isDeleted(this.node)) {
       this.handleEdit('', true)
     }
@@ -255,7 +253,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   private updateSelection = () => {
     const state = this.view.state
     const selection = selectedSuggestionKey.getState(state)?.suggestion
-
     this.container
       .querySelectorAll('.selected-suggestion')
       .forEach((e) => e.classList.remove('selected-suggestion'))
