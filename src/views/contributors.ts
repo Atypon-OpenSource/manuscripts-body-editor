@@ -28,12 +28,7 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
-import {
-  createCommentMarker,
-  handleComment,
-  handleCommentMarkerClick,
-  updateCommentSelection,
-} from '../lib/comments'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -74,28 +69,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.version = affs.version
     this.container.innerHTML = ''
 
-    this.commentMarker = createCommentMarker('div', this.node.attrs.id)
-
-    this.commentMarker.addEventListener('click', (event: Event) => {
-      handleCommentMarkerClick(event, this.view)
-    })
-    this.container.prepend(this.commentMarker)
-
     this.buildAuthors(affs)
     this.createLegend()
     this.updateSelection()
   }
 
   public selectNode = () => {
-    // prevent opening the author modal when a comment is selected.
-    const isCommentSelected = updateCommentSelection(
-      this.commentMarker,
-      this.view
-    )
-
     this.dom.classList.add('ProseMirror-selectednode')
 
-    if (!isDeleted(this.node) && !isCommentSelected) {
+    if (!isDeleted(this.node)) {
       this.handleEdit('', true)
     }
   }
@@ -283,7 +265,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
-    updateCommentSelection(this.commentMarker, this.view)
   }
 
   public showContextMenu = (element: Element) => {

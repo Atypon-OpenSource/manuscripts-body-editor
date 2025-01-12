@@ -607,8 +607,8 @@
   display: grid;
   grid-template-columns: 52px auto 52px;
 }
-.ProseMirror .block-contributors {
-  grid-template-columns: 52px auto 100px;
+.ProseMirror .block-container.block-contributors {
+  grid-template-columns: 52px auto 100px !important;
 }
 .ProseMirror .block-container.block-section {
   position: relative;
