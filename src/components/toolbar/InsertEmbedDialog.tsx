@@ -20,6 +20,7 @@ import {
   MessageContainer,
   PrimaryBoldHeading,
   PrimaryButton,
+  PrimarySmallText,
   SecondaryButton,
   StyledModal,
   TextArea,
@@ -156,10 +157,34 @@ const Wrapper = styled.div`
   padding: 50px 0;
 `
 
-export const NoPreviewMessage: React.FC = () => (
+const NoPreviewMessage: React.FC = () => (
   <PreviewContainer>
-    <Wrapper>No Preview Available</Wrapper>
+    <Wrapper>Preview not available</Wrapper>
   </PreviewContainer>
+)
+
+const NoPreviewContainer = styled(PreviewContainer)`
+  flex-direction: column;
+  background: #fafafa;
+  padding: 16px 56px 16px 48px;
+`
+
+const Heading = styled(PrimaryBoldHeading)`
+  font-size: ${(props) => props.theme.font.size.medium};
+`
+
+export const NoPreviewMessageWithLink: React.FC<{ href: string }> = ({
+  href,
+}) => (
+  <NoPreviewContainer>
+    <Heading>Preview currently not available</Heading>
+    <PrimarySmallText>
+      <a href={href} target={'_blank'} rel="noreferrer">
+        Click here
+      </a>{' '}
+      to see the source media
+    </PrimarySmallText>
+  </NoPreviewContainer>
 )
 
 export const openEmbedDialog = (view?: EditorView, operation = 'Insert') => {

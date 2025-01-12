@@ -16,7 +16,7 @@
 
 import { EmbedNode } from '@manuscripts/transform'
 
-import { NoPreviewMessage } from '../components/toolbar/InsertEmbedDialog'
+import { NoPreviewMessageWithLink } from '../components/toolbar/InsertEmbedDialog'
 import { getOEmbedHTML, getOEmbedUrl } from '../lib/oembed'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -68,8 +68,8 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
     preview.appendChild(
       ReactSubView(
         this.props,
-        NoPreviewMessage,
-        { url: this.node.attrs.href },
+        NoPreviewMessageWithLink,
+        { href: this.node.attrs.href },
         this.node,
         this.getPos,
         this.view
