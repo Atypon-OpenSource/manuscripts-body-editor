@@ -28,11 +28,13 @@ import { Trackable, TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { undo } from 'prosemirror-history'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
+  newAward: boolean = false
 
   public updateContents() {
     super.updateContents()
@@ -110,7 +112,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     const componentProps: ContextMenuProps = {
       actions: [
         {
-          label: 'Edit',
+          label: 'Edit Funder Info',
           action: () => {
             this.props.popper.destroy()
             this.showAwardModal(this.node)
@@ -118,7 +120,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
           icon: 'Edit',
         },
         {
-          label: 'Delete',
+          label: 'Delete Funder Info',
           action: () => {
             this.props.popper.destroy()
             this.showDeleteAwardDialog()
@@ -143,7 +145,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     )
   }
 
-  showAwardModal = (award?: AwardNode) => {
+  showAwardModal = (award: AwardNode) => {
     this.dialog?.remove()
     this.popperContainer?.remove()
 
@@ -169,7 +171,9 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   }
 
   handleCancelAward = () => {
-    // TODO: Inserted award should be removed on cancel
+    if (this.newAward) {
+      undo(this.view.state, this.view.dispatch)
+    }
   }
 
   showDeleteAwardDialog = () => {
@@ -207,6 +211,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     super.selectNode()
     // check if award is empty and open the modal for it...
     if (!this.node.attrs.source) {
+      this.newAward = true;
       this.showAwardModal(this.node)
     }
   }

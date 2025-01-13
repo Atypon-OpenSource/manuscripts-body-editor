@@ -59,7 +59,7 @@ export const AwardForm = ({
 }: AwardFormProps) => {
   const [funders, setFunders] = useState<FunderOption[]>([]) // State to hold funder options
   const formRef = useRef<FormikProps<AwardAttrs>>(null)
-  const primaryButtonText = values.id ? 'Save funder' : 'Add funder'
+  const primaryButtonText = values.source ? 'Update funder' : 'Add funder'
 
   // Fetch funders only once, caching them for future use
   useEffect(() => {
@@ -145,6 +145,7 @@ export const AwardForm = ({
             </LabelContainer>
             <MultiValueInput
               inputType="text"
+              placeholder="Enter grant number and press enter"
               initialValues={values.code ? values.code.split(';') : []}
               onChange={(newValues) => {
                 formik.setFieldValue('code', newValues.join(';'))

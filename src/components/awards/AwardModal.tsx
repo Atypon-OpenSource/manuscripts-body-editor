@@ -91,13 +91,13 @@ export const AwardModal: React.FC<AwardModalProps> = ({
   return (
     <StyledModal
       isOpen={isOpen}
-      onRequestClose={() => handleClose()}
+      onRequestClose={handleCancel}
       shouldCloseOnOverlayClick={true}
     >
       <ModalContainer data-cy="award-modal">
         <ModalHeader>
           <CloseButton
-            onClick={() => handleClose()}
+            onClick={handleCancel}
             data-cy="modal-close-button"
           />
         </ModalHeader>

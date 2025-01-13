@@ -43,7 +43,10 @@ export const DeleteAwardDialog: React.FC<DeleteAwardDialogProps> = ({
       }}
       category={Category.warning}
       header={'Delete Funder Info'}
-      message={`Do you want to continue?`}
-    />
+      message={''}
+    >
+      <p>This action will delete the funder information.</p>
+      <p>Do you want to continue?</p>
+    </Dialog>
   )
 }
