@@ -94,11 +94,7 @@ export class InlineFootnoteView
     if (isDeleted(this.node)) {
       return
     }
-    if (this.isTableFootnote) {
-      this.showFootnotesSelector()
-    } else {
-      this.showContextMenu()
-    }
+    this.showContextMenu()
   }
 
   scrollToReferencedFootnote = () => {
