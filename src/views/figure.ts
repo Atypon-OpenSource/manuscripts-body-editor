@@ -20,6 +20,12 @@ import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
+export enum figurePositions {
+  left = 'half-left',
+  right = 'half-right',
+  default = '',
+}
+
 export class FigureView
   extends BaseNodeView<Trackable<FigureNode>>
   implements ManuscriptNodeView

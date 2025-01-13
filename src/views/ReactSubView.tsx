@@ -51,7 +51,10 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   const container = document.createElement('div')
   container.classList.add('tools-panel')
   if (classNames) {
-    container.classList.add(classNames)
+    const names = classNames.split(', ')
+    names.forEach((name) => {
+      container.classList.add(name)
+    })
     container.setAttribute('data-cy', classNames)
   }
   container.setAttribute('contenteditable', 'false')

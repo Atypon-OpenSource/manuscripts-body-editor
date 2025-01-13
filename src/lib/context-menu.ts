@@ -15,6 +15,12 @@
  */
 
 import {
+  ImageDefaultIcon,
+  ImageLeftIcon,
+  ImageRightIcon,
+  TriangleCollapsedIcon,
+} from '@manuscripts/style-guide'
+import {
   getListType,
   isInBibliographySection,
   isSectionTitleNode,
@@ -27,6 +33,8 @@ import {
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { findChildrenByType } from 'prosemirror-utils'
+import React, { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   addNodeComment,
@@ -35,8 +43,14 @@ import {
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
 } from '../commands'
+import { figurePositions } from '../views/figure'
 import { PopperManager } from './popper'
-import { isChildOfNodeTypes, isSelectionInNode } from './utils'
+import {
+  getMatchingChild,
+  isChildOfNodeTypes,
+  isSelectionInNode,
+  updateNodeAttributes,
+} from './utils'
 
 const popper = new PopperManager()
 
@@ -70,6 +84,9 @@ const hasAny = <T>(set: Set<T>, ...items: T[]) => {
 }
 
 export const contextMenuBtnClass = 'btn-context-menu'
+const contextSubmenuBtnClass = 'context-submenu-trigger'
+const contextSubmenuClass = 'context-submenu'
+
 export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
@@ -241,6 +258,53 @@ export class ContextMenu {
     const isBox = isBoxElementSectionTitle($pos, this.node)
     const type = isBox ? schema.nodes.box_element : this.node.type
 
+    if (type === schema.nodes.figure_element) {
+      const figure = getMatchingChild(
+        this.node,
+        (node) => node.type === schema.nodes.figure
+      )
+
+      if (figure) {
+        const attrType = figure.attrs.type
+        const { state, dispatch } = this.view
+        const submenuOptions = [
+          {
+            title: 'Left',
+            action: () =>
+              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+                ...figure.attrs,
+                type: figurePositions.left,
+              }),
+            Icon: ImageLeftIcon,
+            selected: attrType === figurePositions.left,
+          },
+          {
+            title: 'Default',
+            action: () =>
+              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+                ...figure.attrs,
+                type: figurePositions.default,
+              }),
+            Icon: ImageDefaultIcon,
+            selected: !attrType,
+          },
+          {
+            title: 'Right',
+            action: () =>
+              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+                ...figure.attrs,
+                type: figurePositions.right,
+              }),
+            Icon: ImageRightIcon,
+            selected: attrType === figurePositions.right,
+          },
+        ]
+        const submenuLabel = 'Position'
+        const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+        menu.appendChild(submenu)
+      }
+    }
+
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
@@ -330,24 +394,78 @@ export class ContextMenu {
     this.addPopperEventListeners()
   }
 
-  private createMenuItem = (contents: string, handler: EventListener) => {
+  private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
-    item.textContent = contents
+    const textNode = document.createTextNode(contents)
+    item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
+    item.prepend(textNode)
+    item.classList.add(contextSubmenuBtnClass)
+
+    item.addEventListener('mousedown', this.toggleSubmenu)
+
+    return item
+  }
+
+  private createMenuItem = (
+    contents: string,
+    handler: EventListener,
+    Icon: React.FC | null = null,
+    selected = false
+  ) => {
+    const item = document.createElement('div')
+    item.className = 'menu-item'
+    selected && item.classList.add('selected')
+    if (Icon) {
+      item.innerHTML = renderToStaticMarkup(createElement(Icon))
+    }
+    const textNode = document.createTextNode(contents)
+    item.appendChild(textNode)
+
     item.addEventListener('mousedown', (event) => {
       event.preventDefault()
       handler(event)
     })
+
+    // item.textContent = contents
+
     return item
   }
 
   private createMenuSection = (
-    createMenuItems: (section: HTMLElement) => void
+    createMenuItems: (section: HTMLElement) => void,
+    isSubmenu = false
   ) => {
     const section = document.createElement('div')
     section.className = 'menu-section'
+    isSubmenu && section.classList.add('menu')
     createMenuItems(section)
     return section
+  }
+
+  private createSubmenu = (
+    submenuLabel: string,
+    items: {
+      title: string
+      action: () => void
+      Icon: React.FC | null
+      selected: boolean
+    }[]
+  ) => {
+    const submenu = document.createElement('div')
+    submenu.classList.add('menu-section', contextSubmenuClass)
+    submenu.append(
+      this.createSubmenuTrigger(submenuLabel),
+      this.createMenuSection((section: HTMLElement) => {
+        items.forEach(({ title, action, Icon, selected }) => {
+          section.appendChild(
+            this.createMenuItem(title, action, Icon, selected)
+          )
+        })
+      }, true)
+    )
+
+    return submenu
   }
 
   private insertableTypes = (
@@ -449,7 +567,10 @@ export class ContextMenu {
     const mouseListener: EventListener = (event) => {
       const target = event.target as HTMLElement
       // if target is one of btn-context-menu buttons, do not destroy popper
-      if (target.classList.contains(contextMenuBtnClass)) {
+      if (
+        target.classList.contains(contextMenuBtnClass) ||
+        target.classList.contains(contextSubmenuBtnClass)
+      ) {
         return
       }
       window.requestAnimationFrame(() => {
@@ -484,5 +605,10 @@ export class ContextMenu {
       return parent
     }
     return this.node
+  }
+
+  private toggleSubmenu = (ev: MouseEvent) => {
+    const submenu = (ev.target as HTMLElement).nextElementSibling
+    submenu?.classList.toggle('show')
   }
 }

@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { FileCorruptedIcon } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+  FileCorruptedIcon,
+  ImageDefaultIcon,
+  ImageLeftIcon,
+  ImageRightIcon,
+} from '@manuscripts/style-guide'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -23,13 +30,16 @@ import {
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
 import { FileAttachment, groupFiles } from '../lib/files'
+import { updateNodeAttributes } from '../lib/utils'
 import { createEditableNodeView } from './creators'
-import { FigureView } from './figure'
+import { figurePositions, FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
+  positionMenuWrapper: HTMLDivElement
+  figurePosition: string
 
   public initialise = () => {
     this.createDOM()
@@ -43,6 +53,7 @@ export class FigureEditableView extends FigureView {
     const src = attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
+    this.figurePosition = attrs.type
 
     this.container.innerHTML = ''
 
@@ -82,7 +93,14 @@ export class FigureEditableView extends FigureView {
         this.setSrc(result.id)
       }
 
-      handleUpload = figureUploader(upload)
+      handleUpload = (event: Event) => {
+        const target = event.target as HTMLElement
+        if (target.dataset && target.dataset.action) {
+          return
+        }
+        const triggerUpload = figureUploader(upload)
+        triggerUpload()
+      }
 
       img.addEventListener('click', handleUpload)
 
@@ -147,6 +165,8 @@ export class FigureEditableView extends FigureView {
       )
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
+
+    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   private setSrc = (src: string) => {
@@ -206,12 +226,104 @@ export class FigureEditableView extends FigureView {
 
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')
-    instructions.textContent = 'Click to select an image file'
+    instructions.innerHTML = `
+      <p>Drag or click here to upload image <br>
+      or drag items here from the file inspector tabs <br>
+      <a data-action='open-other-files'>Other file</a> | 
+      <a data-action='open-supplement-files'>Supplements</a></p>
+    `
 
-    instructions.style.pointerEvents = 'none' // avoid interfering with dragleave event
     element.appendChild(instructions)
 
     return element
+  }
+
+  createPositionMenuWrapper = () => {
+    this.positionMenuWrapper = document.createElement('div')
+    this.positionMenuWrapper.classList.add('position-menu')
+
+    const positionMenuButton = document.createElement('div')
+    positionMenuButton.classList.add('position-menu-button')
+
+    let icon
+    switch (this.figurePosition) {
+      case figurePositions.left:
+        icon = ImageLeftIcon
+        break
+      case figurePositions.right:
+        icon = ImageRightIcon
+        break
+      default:
+        icon = ImageDefaultIcon
+        break
+    }
+    if (icon) {
+      positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
+    }
+    positionMenuButton.addEventListener('click', this.showPositionMenu)
+    this.positionMenuWrapper.appendChild(positionMenuButton)
+    return this.positionMenuWrapper
+  }
+
+  showPositionMenu = () => {
+    this.props.popper.destroy()
+    const { state, dispatch } = this.view
+    const figure = this.node
+
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Left',
+          action: () => {
+            this.props.popper.destroy()
+            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              ...figure.attrs,
+              type: figurePositions.left,
+            })
+          },
+          icon: 'ImageLeft',
+          selected: this.figurePosition === figurePositions.left,
+        },
+        {
+          label: 'Default',
+          action: () => {
+            this.props.popper.destroy()
+            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              ...figure.attrs,
+              type: figurePositions.default,
+            })
+          },
+          icon: 'ImageDefault',
+          selected: !this.figurePosition,
+        },
+        {
+          label: 'Right',
+          action: () => {
+            this.props.popper.destroy()
+            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              ...figure.attrs,
+              type: figurePositions.right,
+            })
+          },
+          icon: 'ImageRight',
+          selected: this.figurePosition === figurePositions.right,
+        },
+      ],
+    }
+    this.props.popper.show(
+      this.positionMenuWrapper,
+      ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'context-menu, position-menu'
+      ),
+      'left',
+      false
+    )
   }
 }
 

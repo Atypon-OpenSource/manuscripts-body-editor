@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 import {
-  AddIcon,
-  AttachIcon,
   Capabilities,
   DotsIcon,
   DropdownList,
@@ -23,7 +21,6 @@ import {
   IconButton,
   IconTextButton,
   isImageFile,
-  RoundIconButton,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
@@ -40,7 +37,7 @@ export interface FigureDropdownProps {
 
 export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
-  onUpload?: () => void
+  onUpload?: (event: Event) => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment) => void
 }
@@ -49,73 +46,6 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
   onAdd: (file: FileAttachment) => Promise<void>
   onUpload: () => void
   hasUploadedImage: boolean
-}
-
-export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
-  can,
-  files,
-  onAdd,
-  onUpload,
-  hasUploadedImage,
-}) => {
-  const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-
-  const supplements = files.supplements
-    .map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
-
-  const others = files.others.filter((f) => isImageFile(f.name))
-
-  return (
-    <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
-      <FilesButton disabled={hasUploadedImage}>
-        <AttachIcon />
-      </FilesButton>
-      {isOpen && (
-        <DropdownList
-          direction={'left'}
-          width={208}
-          height={187}
-          onClick={toggleOpen}
-          top={7}
-        >
-          <NestedDropdown
-            disabled={!can.replaceFile || supplements.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Supplements'}
-            list={
-              <>
-                {supplements.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <NestedDropdown
-            disabled={!can.replaceFile || others.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Other files'}
-            list={
-              <>
-                {others.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <UploadButton onClick={onUpload} disabled={!can.uploadFile}>
-            <AddIcon /> New file...
-          </UploadButton>
-        </DropdownList>
-      )}
-    </FilesDropdownWrapper>
-  )
 }
 
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
@@ -142,9 +72,6 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <ListItemButton onClick={onDownload} disabled={!showDownload}>
-            Download
-          </ListItemButton>
           <NestedDropdown
             disabled={!showReplace}
             parentToggleOpen={toggleOpen}
@@ -168,6 +95,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
               </>
             }
           />
+          <ListItemButton onClick={onDownload} disabled={!showDownload}>
+            Download
+          </ListItemButton>
           <ListItemButton onClick={onDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
@@ -223,9 +153,6 @@ const OptionsButton = styled(IconButton)`
   margin: ${(props) => props.theme.grid.unit}px;
   visibility: hidden;
   background: white;
-  position: absolute;
-  top: -4px;
-  right: 4%;
 
   &:hover {
     background: #f2fbfc !important;
@@ -268,26 +195,6 @@ const ListItemText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: start;
-`
-
-const FilesButton = styled(RoundIconButton)`
-  path {
-    stroke: #6e6e6e;
-  }
-
-  &:active,
-  &:focus {
-    path {
-      stroke: #1a9bc7;
-    }
-  }
-`
-
-const FilesDropdownWrapper = styled.div`
-  position: absolute;
-  top: 8px;
-  left: 70px;
-  z-index: 1;
 `
 
 const NestedListButton = styled(ListItemButton)`

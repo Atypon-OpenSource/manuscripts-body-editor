@@ -19,8 +19,9 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
+  ManuscriptTransaction,
 } from '@manuscripts/transform'
-import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import { Attrs, Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
@@ -129,4 +130,25 @@ export const createHeader = (typeName: string, text: string) => {
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const updateNodeAttributes = (
+  state: EditorState,
+  dispatch: (tr: ManuscriptTransaction) => void,
+  id: string,
+  attrs: Attrs
+) => {
+  let nodePosition = -1
+  state.doc.descendants((node, pos) => {
+    if (node.attrs.id === id) {
+      nodePosition = pos
+      return true
+    }
+  })
+
+  if (nodePosition !== -1) {
+    dispatch(state.tr.setNodeMarkup(nodePosition, null, attrs))
+    return true
+  }
+  return false
 }
