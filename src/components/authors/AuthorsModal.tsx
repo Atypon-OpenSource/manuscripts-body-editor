@@ -49,6 +49,7 @@ import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
 import { RequiredFieldConfirmationDialog } from './RequiredFieldConfirmationDialog'
 import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
+import { cloneDeep } from 'lodash'
 
 const AddAuthorButton = styled.div`
   display: flex;
@@ -248,9 +249,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleMoveAuthor = (from: number, to: number) => {
-    const copy = [...authors]
+    const copy = cloneDeep(authors)
     const order = copy.map((_, i) => (i === from ? to : i))
-    copy.sort((a, b) => order[authors.indexOf(a)] - order[authors.indexOf(b)])
+    copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
     copy.forEach((a, i) => {
       if (a.priority !== i) {
         a.priority = i
