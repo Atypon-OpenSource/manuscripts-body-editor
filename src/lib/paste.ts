@@ -23,8 +23,6 @@ import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
-import { createTableFromSlice } from './table'
-
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
 
@@ -67,6 +65,24 @@ export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
   return slice
 }
 
+export const transformPastedHTML = (html: string) => {
+  // add figure which is table_element node in DOM
+  if (html.includes('table')) {
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    doc.querySelectorAll('table').forEach((table) => {
+      if (table.parentElement?.tagName !== 'figure') {
+        const tableElement = document.createElement('figure')
+        tableElement.className = 'table'
+        table.removeAttribute('data-pm-slice')
+        table.parentElement?.insertBefore(tableElement, table)
+        tableElement.append(table)
+      }
+    })
+    return doc.body.innerHTML
+  }
+  return html
+}
+
 export const handlePaste = (
   view: ManuscriptEditorView,
   event: ClipboardEvent,
@@ -98,22 +114,6 @@ export const handlePaste = (
   }
 
   if (
-    slice.content.firstChild &&
-    (slice.content.firstChild.type == schema.nodes.table_row ||
-      slice.content.firstChild.type == schema.nodes.table_cell)
-  ) {
-    const newTable = createTableFromSlice(slice, view.state.schema)
-    if (newTable) {
-      const tr = view.state.tr.insert(
-        view.state.selection.$anchor.pos,
-        newTable
-      )
-      view.dispatch(tr)
-      return true
-    }
-  }
-
-  if (
     selection instanceof TextSelection &&
     selection.$anchor.parentOffset === 0 &&
     selection.$head.parentOffset === 0 &&
@@ -123,7 +123,7 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    tr.insert(side, slice.content)
+    tr.replace(side, side, slice)
     dispatch(
       tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
     )
