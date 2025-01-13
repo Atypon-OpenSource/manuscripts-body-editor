@@ -96,10 +96,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
     >
       <ModalContainer data-cy="award-modal">
         <ModalHeader>
-          <CloseButton
-            onClick={handleCancel}
-            data-cy="modal-close-button"
-          />
+          <CloseButton onClick={handleCancel} data-cy="modal-close-button" />
         </ModalHeader>
         <ModalBody>
           <ModalTitle>Add Funder information</ModalTitle>

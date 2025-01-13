@@ -104,18 +104,22 @@ export const AwardForm = ({
     if (!values.source) {
       errors.source = 'Funder name is required'
     }
-
     return errors // Return errors object to Formik
   }
 
   return (
     <Formik<AwardAttrs>
-      initialValues={values}
+      initialValues={{
+        ...values,
+        source: funders.some((funder) => funder.value === values.source)
+          ? values.source
+          : '',
+      }}
       onSubmit={(values, { setSubmitting }) => {
         onSave(values)
         setSubmitting(false)
       }}
-      enableReinitialize
+      enableReinitialize={true}
       validate={validate}
       validateOnChange={false}
       innerRef={formRef}
@@ -126,6 +130,7 @@ export const AwardForm = ({
             <Field type="hidden" name="id" />
             <LabelContainer>
               <Label htmlFor={'source'}>Funder name</Label>
+              <>{formik.values.source}</>
             </LabelContainer>
             <Field
               name="source"
@@ -134,7 +139,7 @@ export const AwardForm = ({
               value={
                 funders.find(
                   (funder) => funder.value === formik.values.source
-                ) || null
+                ) || ''
               }
             />
             {formik.errors.source && formik.touched.source && (

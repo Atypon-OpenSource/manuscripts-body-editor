@@ -16,6 +16,7 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { AwardNode, schema } from '@manuscripts/transform'
+import { undo } from 'prosemirror-history'
 
 import { AwardModal, AwardModalProps } from '../components/awards/AwardModal'
 import {
@@ -28,13 +29,12 @@ import { Trackable, TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { undo } from 'prosemirror-history'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
-  newAward: boolean = false
+  newAward = false
 
   public updateContents() {
     super.updateContents()
@@ -211,7 +211,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     super.selectNode()
     // check if award is empty and open the modal for it...
     if (!this.node.attrs.source) {
-      this.newAward = true;
+      this.newAward = true
       this.showAwardModal(this.node)
     }
   }
