@@ -188,9 +188,14 @@ export class InlineFootnoteView
   }
 
   selectNode = () => {
+    this.dom.classList.add('footnote-marker-selected')
     if (!this.node.attrs.rids.length) {
       this.showFootnotesSelector()
     }
+  }
+
+  public deselectNode() {
+    this.dom.classList.remove('footnote-marker-selected')
   }
 
   public ignoreMutation = () => true

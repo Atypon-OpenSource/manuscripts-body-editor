@@ -25,12 +25,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import {
-  NodeSelection,
-  Plugin,
-  PluginKey,
-  TextSelection,
-} from 'prosemirror-state'
+import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -267,7 +262,6 @@ export default (props: EditorProps) => {
     props: {
       decorations: (state) => {
         const fns = footnotesKey.getState(state)
-        const selection = state.selection
         if (!fns) {
           return DecorationSet.empty
         }
@@ -283,18 +277,6 @@ export default (props: EditorProps) => {
             const to = pos + node.nodeSize
             const label = fn.labels.get(node.attrs.id)
             decorations.push(Decoration.node(pos, to, {}, { label }))
-            if (
-              selection instanceof NodeSelection &&
-              selection.node.eq(node) &&
-              selection.from === pos
-            ) {
-              const to = pos + node.nodeSize
-              decorations.push(
-                Decoration.node(pos, to, {
-                  class: 'footnote-marker-selected',
-                })
-              )
-            }
           })
         })
         if (props.getCapabilities().editArticle) {
