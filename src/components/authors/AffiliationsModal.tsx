@@ -42,11 +42,11 @@ import {
 import { AffiliationForm, FormActions } from '../affiliations/AffiliationForm'
 import { AffiliationList } from './AffiliationList'
 import { affiliationsReducer, authorsReducer } from './AuthorsModal'
-import { FormPlaceholder } from './FormPlaceholder'
+import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from './ModalFormActions'
 import { isEqual } from 'lodash'
-import FormFooter from './FormFooter'
-import { ConfirmationDialog, DialogType } from './ConfirmationDialog'
+import FormFooter from '../form/FormFooter'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `
@@ -539,7 +539,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     isDisableSave={isDisableSave}
                   />
                   <AffiliationForm
-                    affiliations={affiliations}
                     values={normalize(selection)}
                     onSave={handleSaveAffiliation}
                     onChange={handleAffiliationChange}

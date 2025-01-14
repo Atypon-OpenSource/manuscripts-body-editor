@@ -41,10 +41,10 @@ import {
   ContributorAttrs,
 } from '../../lib/authors'
 import { affiliationsReducer, authorsReducer } from '../authors/AuthorsModal'
-import { ConfirmationDialog, DialogType } from '../Dialog/ConfirmationDialog'
-import FormFooter from '../Form/FormFooter'
-import { FormPlaceholder } from '../Form/FormPlaceholder'
-import { ModalFormActions } from '../Form/ModalFormActions'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
+import FormFooter from '../form/FormFooter'
+import { FormPlaceholder } from '../form/FormPlaceholder'
+import { ModalFormActions } from '../form/ModalFormActions'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
 const StyledSidebarContent = styled(SidebarContent)`

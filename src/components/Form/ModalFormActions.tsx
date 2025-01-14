@@ -17,7 +17,7 @@ import { ButtonGroup, IconButton, PlusIcon } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
-import { ConfirmationDialog, DialogType } from '../Dialog/ConfirmationDialog'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 
 const ActionsContainer = styled.div`
   display: flex;

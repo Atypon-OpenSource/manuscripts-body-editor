@@ -46,10 +46,10 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { ConfirmationDialog, DialogType } from '../Dialog/ConfirmationDialog'
-import FormFooter from '../Form/FormFooter'
-import { FormPlaceholder } from '../Form/FormPlaceholder'
-import { ModalFormActions } from '../Form/ModalFormActions'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
+import FormFooter from '../form/FormFooter'
+import { FormPlaceholder } from '../form/FormPlaceholder'
+import { ModalFormActions } from '../form/ModalFormActions'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 
