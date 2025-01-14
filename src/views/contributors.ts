@@ -302,7 +302,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       affiliations,
       onSaveAuthor: this.handleSaveAuthor,
       onDeleteAuthor: this.handleDeleteAuthor,
-      onSaveAffiliation: this.handleSaveAffiliation,
       addNewAuthor: addNew,
     }
 
@@ -316,6 +315,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.getPos,
       this.view
     )
+    console.dir(this.popper)
 
     this.container.appendChild(this.popper)
   }
@@ -329,14 +329,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   handleDeleteAuthor = (author: ContributorAttrs) => {
     deleteNode(this.view, author.id)
-  }
-
-  handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
-    if (!findChildByID(this.view, affiliation.id)) {
-      this.insertAffiliationNode(affiliation)
-    } else {
-      updateNodeAttrs(this.view, schema.nodes.affiliation, affiliation)
-    }
   }
 
   insertAuthorNode = (attrs: ContributorAttrs) => {

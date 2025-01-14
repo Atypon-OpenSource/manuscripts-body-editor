@@ -17,9 +17,9 @@ import { ButtonGroup, IconButton, PlusIcon } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
-import { DeleteAuthorConfirmationDialog } from './DeleteAuthorConfirmationDialog'
+import { ConfirmationDialog, DialogType } from '../Dialog/ConfirmationDialog'
 
-const AuthorActionsContainer = styled.div`
+const ActionsContainer = styled.div`
   display: flex;
 `
 
@@ -45,32 +45,37 @@ const StyledIconButton = styled(IconButton)`
   }
 `
 
-export interface AuthorActionsProps {
+export interface FormActionsProps {
+  type: string
   onSave: () => void
   onDelete: () => void
   showDeleteDialog: boolean
   handleShowDeleteDialog: () => void
-  newAuthor: boolean
+  newEntity: boolean
   isDisableSave: boolean
 }
 
-export const AuthorActions: React.FC<AuthorActionsProps> = ({
+export const ModalFormActions: React.FC<FormActionsProps> = ({
+  type,
   onSave,
   onDelete,
   showDeleteDialog,
   handleShowDeleteDialog,
-  newAuthor,
+  newEntity,
   isDisableSave,
 }) => {
+  console.log('isDisableSave', isDisableSave)
   return (
-    <AuthorActionsContainer data-cy="author-action">
-      <DeleteAuthorConfirmationDialog
+    <ActionsContainer data-cy={`${type}-action`}>
+      <ConfirmationDialog
         isOpen={showDeleteDialog}
-        onDelete={() => {
-          handleShowDeleteDialog()
+        onPrimary={() => {
           onDelete()
+          handleShowDeleteDialog()
         }}
-        onCancel={() => handleShowDeleteDialog()}
+        onSecondary={handleShowDeleteDialog}
+        type={DialogType.DELETE}
+        entityType={type}
       />
       <StyledButtonGroup>
         <StyledIconButton
@@ -79,9 +84,9 @@ export const AuthorActions: React.FC<AuthorActionsProps> = ({
           type="submit"
         >
           <PlusIcon />
-          {newAuthor ? 'Save Details' : 'Update Details'}
+          {newEntity ? 'Save Details' : 'Update Details'}
         </StyledIconButton>
       </StyledButtonGroup>
-    </AuthorActionsContainer>
+    </ActionsContainer>
   )
 }

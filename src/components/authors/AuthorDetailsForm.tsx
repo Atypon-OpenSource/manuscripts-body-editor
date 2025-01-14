@@ -22,7 +22,7 @@ import {
   TextFieldLabel,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
-import React, { MutableRefObject, useRef } from 'react'
+import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
@@ -71,6 +71,7 @@ interface AuthorDetailsFormProps {
   onSave: (values: ContributorAttrs) => void
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
+  selectedAffiliations?: string[]
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -79,8 +80,15 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   onSave,
   actionsRef,
   isEmailRequired,
+  selectedAffiliations,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+
+  useEffect(() => {
+    if (selectedAffiliations && formRef.current) {
+      formRef.current.setFieldValue('affiliations', selectedAffiliations)
+    }
+  }, [selectedAffiliations])
 
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
@@ -100,7 +108,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     >
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
-
         return (
           <ChangeHandlingForm onChange={onChange}>
             <Fieldset>
@@ -190,6 +197,18 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </Field>
                 </TextFieldLabel>
               </OrcidContainer>
+              <Field name="affiliations" type="hidden">
+                {(props: FieldProps) => {
+                  console.log(selectedAffiliations)
+                  return (
+                    <TextField
+                      type="hidden"
+                      {...props.field}
+                      value={selectedAffiliations || []}
+                    />
+                  )
+                }}
+              </Field>
             </Fieldset>
           </ChangeHandlingForm>
         )

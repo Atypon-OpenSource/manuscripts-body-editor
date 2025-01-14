@@ -14,22 +14,43 @@
  * limitations under the License.
  */
 
-import { AffiliationNode } from '@manuscripts/transform'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { AffiliationNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
-import { AffiliationAttrs, affiliationName } from '../lib/authors'
-import { addTrackChangesAttributes } from '../lib/track-changes-utils'
-import { findChildByID } from '../lib/view'
+import {
+  AffiliationsModal,
+  AffiliationsModalProps,
+} from '../components/affiliations/AffiliationsModal'
+import {
+  AffiliationAttrs,
+  affiliationName,
+  ContributorAttrs,
+} from '../lib/authors'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '../lib/track-changes-utils'
+import {
+  deleteNode,
+  findChildByID,
+  findChildByType,
+  findChildrenAttrsByType,
+  updateNodeAttrs,
+} from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import ReactSubView from './ReactSubView'
 
 //todo update AffiliationNode to AffiliationsNode
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
+  contextMenu: HTMLElement
   version: string
   container: HTMLElement
+  popper?: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -99,10 +120,9 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     return index1 - index2
   }
 
-  private handleClick(event: Event) {
+  private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     const item = element.closest('.affiliation')
-
     if (item) {
       const node = findChildByID(this.view, item.id)
       if (!node) {
@@ -127,6 +147,112 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
+  }
+
+  insertAffiliationNode = (attrs: AffiliationAttrs) => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const parent = findChildByType(this.view, schema.nodes.affiliations)!
+    const tr = this.view.state.tr
+    const node = schema.nodes.affiliation.create(attrs)
+    this.view.dispatch(tr.insert(parent.pos + 1, node))
+  }
+
+  handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
+    const update = updateNodeAttrs(
+      this.view,
+      schema.nodes.contributor,
+      affiliation
+    )
+    if (!update) {
+      this.insertAffiliationNode(affiliation)
+    }
+  }
+
+  handleDeleteAffiliation = (affiliation: AffiliationAttrs) => {
+    deleteNode(this.view, affiliation.id)
+  }
+
+  handleEdit = (addNew?: boolean) => {
+    console.log('handleEdit')
+    this.props.popper.destroy()
+    console.log('this.props.popper', this.props.popper)
+    const contributors: ContributorAttrs[] = findChildrenAttrsByType(
+      this.view,
+      schema.nodes.contributor
+    )
+
+    const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
+      this.view,
+      schema.nodes.affiliation
+    )
+
+    const componentProps: AffiliationsModalProps = {
+      authors: contributors,
+      affiliations,
+      onSaveAffiliation: this.handleSaveAffiliation,
+      onDeleteAffiliation: this.handleDeleteAffiliation,
+      onUpdateAuthors: this.handleUpdateAuthors,
+      addNewAffiliation: addNew,
+    }
+
+    this.popper?.remove()
+
+    this.popper = ReactSubView(
+      this.props,
+      AffiliationsModal,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view
+    )
+    console.dir(this.popper)
+    this.container.appendChild(this.popper)
+  }
+
+  public affiliationContextMenu = () => {
+    const can = this.props.getCapabilities()
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'New Author',
+        action: () => this.handleEdit(true),
+        icon: 'AddOutline',
+      })
+      componentProps.actions.push({
+        label: 'Edit',
+        action: () => this.handleEdit(),
+        icon: 'Edit',
+      })
+    }
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      'context-menu'
+    )
+    return this.contextMenu
+  }
+  public selectNode = () => {
+    this.dom.classList.add('ProseMirror-selectednode')
+    if (!isDeleted(this.node)) {
+      this.handleEdit(true)
+    }
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => [
+    this.affiliationContextMenu(),
+  ]
+
+  handleUpdateAuthors = (authors: ContributorAttrs[]) => {
+    authors.forEach((author) => {
+      updateNodeAttrs(this.view, schema.nodes.contributor, author)
+    })
   }
 }
 
