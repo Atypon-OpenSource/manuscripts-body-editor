@@ -216,7 +216,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
     if (can.editArticle) {
       componentProps.actions.push({
-        label: 'New Author',
+        label: 'New Affiliation',
         action: () => this.handleEdit(true),
         icon: 'AddOutline',
       })
