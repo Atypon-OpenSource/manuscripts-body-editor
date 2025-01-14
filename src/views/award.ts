@@ -16,7 +16,6 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { AwardNode, schema } from '@manuscripts/transform'
-import { undo } from 'prosemirror-history'
 
 import { AwardModal, AwardModalProps } from '../components/awards/AwardModal'
 import {
@@ -73,6 +72,15 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
     this.contentDOM.appendChild(fragment)
     this.updateClasses()
+  }
+
+  public selectNode() {
+    super.selectNode()
+    // check if award is empty and open the modal for it...
+    if (!this.node.attrs.source) {
+      this.newAward = true
+      this.showAwardModal(this.node)
+    }
   }
 
   private createAwardFragment = (
@@ -166,33 +174,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
-  handleSaveAward = (award: AwardAttrs) => {
-    updateNodeAttrs(this.view, schema.nodes.award, award)
-  }
-
-  handleCancelAward = () => {
-    if (this.newAward) {
-      undo(this.view.state, this.view.dispatch)
-    }
-  }
-
   showDeleteAwardDialog = () => {
     this.dialog?.remove()
-
-    const award = this.node
-    const pos = this.getPos()
-
-    const handleDelete = () => {
-      if (award) {
-        const tr = this.view.state.tr
-        const from = pos // Start position of the node
-        const to = pos + award.nodeSize // End position of the node
-        this.view.dispatch(tr.delete(from, to))
-      }
-    }
-
     const componentProps: DeleteAwardDialogProps = {
-      handleDelete: handleDelete,
+      handleDelete: this.handleDeleteAward,
     }
 
     this.popperContainer = ReactSubView(
@@ -207,12 +192,24 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 
-  public selectNode() {
-    super.selectNode()
-    // check if award is empty and open the modal for it...
-    if (!this.node.attrs.source) {
-      this.newAward = true
-      this.showAwardModal(this.node)
+  handleSaveAward = (award: AwardAttrs) => {
+    updateNodeAttrs(this.view, schema.nodes.award, award)
+  }
+
+  handleCancelAward = () => {
+    if (this.newAward) {
+      this.handleDeleteAward()
+    }
+  }
+
+  handleDeleteAward = () => {
+    const award = this.node
+    const pos = this.getPos()
+    if (award) {
+      const tr = this.view.state.tr
+      const from = pos
+      const to = pos + award.nodeSize
+      this.view.dispatch(tr.delete(from, to))
     }
   }
 }
