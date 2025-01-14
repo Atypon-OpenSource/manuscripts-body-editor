@@ -17,7 +17,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { AffiliationAttrs } from '../../lib/authors'
+import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 import { AffiliationItem } from './AffiliationItem'
 
 const AffiliationListContainer = styled.div`

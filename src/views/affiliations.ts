@@ -173,9 +173,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   }
 
   handleEdit = (addNew?: boolean) => {
-    console.log('handleEdit')
     this.props.popper.destroy()
-    console.log('this.props.popper', this.props.popper)
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
       this.view,
       schema.nodes.contributor

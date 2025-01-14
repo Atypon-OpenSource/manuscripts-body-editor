@@ -16,10 +16,8 @@
 import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import {
   AddIcon,
-  AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
-  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -27,11 +25,12 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
-  SelectedItemsBox,
   SidebarContent,
   StyledModal,
+  Drawer,
+  AddUserIcon,
+  SelectedItemsBox,
 } from '@manuscripts/style-guide'
-import { isEqual } from 'lodash'
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -40,13 +39,14 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { affiliationsReducer, authorsReducer } from '../authors/AuthorsModal'
-import { ConfirmationDialog, DialogType } from '../Dialog/ConfirmationDialog'
-import FormFooter from '../Form/FormFooter'
-import { FormPlaceholder } from '../Form/FormPlaceholder'
-import { ModalFormActions } from '../Form/ModalFormActions'
-import { AffiliationForm, FormActions } from './AffiliationForm'
+import { AffiliationForm, FormActions } from '../affiliations/AffiliationForm'
 import { AffiliationList } from './AffiliationList'
+import { affiliationsReducer, authorsReducer } from './AuthorsModal'
+import { FormPlaceholder } from './FormPlaceholder'
+import { ModalFormActions } from './ModalFormActions'
+import { isEqual } from 'lodash'
+import FormFooter from './FormFooter'
+import { ConfirmationDialog, DialogType } from './ConfirmationDialog'
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `
@@ -279,6 +279,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     })
     onUpdateAuthors(updatedAuthors)
 
+    // Update the selection with the new values to reset comparison base
     setSelection(affiliation)
     setNewAffiliation(false)
     setAffiliationAuthorMap((prevMap) => ({
@@ -286,13 +287,16 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       [affiliation.id]: selectedAuthorIds,
     }))
 
+    // Show success icon only for the saved affiliation
     setSavedAffiliationId(affiliation.id)
     setTimeout(() => {
       setSavedAffiliationId(undefined)
     }, 3200)
 
+    // Disable save button after successful save
     setIsDisableSave(true)
 
+    // Update valuesRef to match the saved state
     valuesRef.current = affiliation
   }
 
@@ -300,12 +304,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     valuesRef.current = values
     const isInstitutionEmpty = !values.institution?.trim()
 
+    // Check both affiliation changes and author changes
     const hasAffiliationChanges =
       selection && !isEqual(normalize(values), normalize(selection))
     const originalAuthors = affiliationAuthorMap[selection?.id || ''] || []
     const hasAuthorChanges =
       selection && !isEqual(originalAuthors.sort(), selectedAuthorIds.sort())
 
+    // Enable save if there are any changes and institution is not empty
     const shouldEnableSave =
       !isInstitutionEmpty && (hasAffiliationChanges || hasAuthorChanges)
     setIsDisableSave(!shouldEnableSave)
@@ -320,6 +326,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       return
     }
 
+    // Update authors to remove the deleted affiliation
     const updatedAuthors = authors.map((author) => ({
       ...author,
       affiliations: (author.affiliations || []).filter(
@@ -327,32 +334,34 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       ),
     }))
 
+    // Update local state and parent component
     dispatchAuthors({
       type: 'update',
       items: updatedAuthors,
     })
     onUpdateAuthors(updatedAuthors)
 
+    // Delete the affiliation
     onDeleteAffiliation(selection)
     dispatchAffiliations({
       type: 'delete',
       item: selection,
     })
 
+    // Clear selection and close delete dialog
     setSelection(undefined)
     setShowDeleteDialog(false)
   }
 
   const handleAuthorSelect = (authorId: string) => {
-    if (!selection) {
-      return
-    }
+    if (!selection) return
 
     const newSelectedAuthorIds = selectedAuthorIds.includes(authorId)
       ? selectedAuthorIds.filter((id) => id !== authorId)
       : [...selectedAuthorIds, authorId]
     setSelectedAuthorIds(newSelectedAuthorIds)
 
+    // Check both affiliation changes and author changes
     const hasAffiliationChanges = !isEqual(
       valuesRef.current,
       normalize(selection)
@@ -363,6 +372,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       newSelectedAuthorIds.sort()
     )
 
+    // Enable save if there are any changes and institution is not empty
     const isInstitutionEmpty = !valuesRef.current?.institution?.trim()
     const shouldEnableSave =
       !isInstitutionEmpty && (hasAffiliationChanges || hasAuthorChanges)
@@ -398,7 +408,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       } else {
         setShowConfirmationDialog(true)
       }
-      return
+      return // Add early return to prevent immediate creation
     }
 
     setNewAffiliation(true)
@@ -411,14 +421,15 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       handleAddAffiliation()
       setNewAffiliation(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addNewAffiliation])
 
   const handleConfirmationSave = () => {
+    // First save current changes
     handleSaveAffiliation(valuesRef.current)
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
 
+    // Then handle pending action
     if (pendingAction === 'new') {
       setNewAffiliation(true)
       setSelection(affiliation)
@@ -446,6 +457,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
 
+    // Process pending action without saving
     if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)
@@ -461,12 +473,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setSelectedAuthorIds([])
     }
 
+    // Reset form values
     if (pendingSelection) {
       valuesRef.current = normalize(pendingSelection)
     } else {
       valuesRef.current = undefined
     }
 
+    // Clear pending states
     setPendingSelection(null)
     setPendingAction(null)
 
@@ -525,6 +539,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     isDisableSave={isDisableSave}
                   />
                   <AffiliationForm
+                    affiliations={affiliations}
                     values={normalize(selection)}
                     onSave={handleSaveAffiliation}
                     onChange={handleAffiliationChange}

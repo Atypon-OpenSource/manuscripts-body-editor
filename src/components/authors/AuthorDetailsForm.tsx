@@ -199,7 +199,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </OrcidContainer>
               <Field name="affiliations" type="hidden">
                 {(props: FieldProps) => {
-                  console.log(selectedAffiliations)
                   return (
                     <TextField
                       type="hidden"
