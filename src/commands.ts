@@ -211,7 +211,7 @@ export const canInsert =
     }
 
     if (
-      type.spec.group?.includes('element') &&
+      isElementNodeType(type) &&
       type !== schema.nodes.paragraph &&
       findParentNodeOfType(schema.nodes.backmatter)(state.selection)
     ) {
