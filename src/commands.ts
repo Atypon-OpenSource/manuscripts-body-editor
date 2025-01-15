@@ -210,6 +210,14 @@ export const canInsert =
       return false
     }
 
+    if (
+      type.spec.group?.includes('element') &&
+      type !== schema.nodes.paragraph &&
+      findParentNodeOfType(schema.nodes.backmatter)(state.selection)
+    ) {
+      return false
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
