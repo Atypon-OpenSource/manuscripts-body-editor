@@ -40,7 +40,7 @@ const RemoveButton = styled.button`
 const FormFooter = ({ onCancel }: { onCancel: () => void }) => {
   return (
     <Footer>
-      <RemoveButton onClick={onCancel}>Cancel</RemoveButton>
+      <RemoveButton onClick={onCancel}>Close</RemoveButton>
     </Footer>
   )
 }

@@ -147,16 +147,16 @@ export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
 
 const normalize = (author: ContributorAttrs) => ({
   id: author.id,
-  role: author.role,
-  affiliations: author.affiliations || [],
+  role: author.role || 'author',
+  affiliations: (author.affiliations || []).sort(),
   bibliographicName: author.bibliographicName,
   email: author.email || '',
   isCorresponding: author.isCorresponding || false,
   ORCIDIdentifier: author.ORCIDIdentifier || '',
-  priority: author.priority,
+  priority: author.priority || 0,
   isJointContributor: author.isJointContributor || false,
-  userID: '',
-  invitationID: '',
+  userID: author.userID || '',
+  invitationID: author.invitationID || '',
   footnote: author.footnote || [],
   corresp: author.corresp || [],
 })
@@ -245,6 +245,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (values && selection) {
       const normalizedSelection = normalize(selection)
       const normalizedValues = normalize(values)
+
       const hasChanges = !isEqual(normalizedSelection, normalizedValues)
 
       if (hasChanges && !isDisableSave) {
@@ -272,10 +273,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
   }
   const handleClose = () => {
-    if (isDisableSave && unSavedChanges) {
-      setShowRequiredFieldConfirmationDialog(true)
-    } else if (unSavedChanges) {
-      setShowConfirmationDialog(true)
+    if (unSavedChanges) {
+      if (isDisableSave) {
+        setShowRequiredFieldConfirmationDialog(true)
+      } else {
+        setShowConfirmationDialog(true)
+      }
     } else {
       setShowRequiredFieldConfirmationDialog(false)
       setLastSavedAuthor(null)
@@ -395,7 +398,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const values = valuesRef.current
     setIsSwitchingAuthor(!!selection)
     setIsCreatingNewAuthor(true)
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    if (
+      values &&
+      selection &&
+      !isEqual(normalize(values), normalize(selection))
+    ) {
       if (isDisableSave) {
         setShowRequiredFieldConfirmationDialog(true)
       } else {
@@ -457,41 +464,34 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       normalize(selection as ContributorAttrs),
       'priority'
     )
-    const updatedValues = omit(values, 'priority')
-    if (
-      updatedValues.id === normalized.id &&
-      !isEqual(updatedValues, normalized)
-    ) {
+    const updatedValues = omit(normalize(values), 'priority')
+
+    const isSameAuthor = updatedValues.id === normalized.id
+    const hasChanges = !isEqual(updatedValues, normalized)
+
+    if (isSameAuthor && hasChanges) {
       setUnSavedChanges(true)
+    } else {
+      setUnSavedChanges(false)
     }
 
-    const isUnchanged = isEqual(
-      normalize(selection as ContributorAttrs),
-      values
-    )
-
-    valuesRef.current = values
+    valuesRef.current = { ...updatedValues, priority: values.priority }
 
     const { given, family } = values.bibliographicName
     const { email, isCorresponding } = values
     const isNameFilled = given?.length && family?.length
-    if (isNameFilled && !isCorresponding && !isUnchanged) {
-      setDisableSave(false)
-    } else if (
-      isCorresponding &&
-      email?.length &&
-      isNameFilled &&
-      !isUnchanged
-    ) {
-      setDisableSave(false)
+
+    if (hasChanges && isNameFilled) {
+      if (isCorresponding) {
+        setDisableSave(!email?.length)
+      } else {
+        setDisableSave(false)
+      }
     } else {
       setDisableSave(true)
     }
-    if (isCorresponding && !email?.length) {
-      setEmailRequired(true)
-    } else {
-      setEmailRequired(false)
-    }
+
+    setEmailRequired(isCorresponding)
   }
 
   const handleShowDeleteDialog = () => {
