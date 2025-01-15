@@ -56,9 +56,14 @@ import { AuthorList } from './AuthorList'
 const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-  margin-left: ${(props) => props.theme.grid.unit * 4}px;
+  padding: 12px 8px 12px 16px;
   cursor: pointer;
+  &[data-active='true'] {
+    background: ${(props) => props.theme.colors.background.fifth};
+    border: 1px solid ${(props) => props.theme.colors.border.primary};
+    border-left: 0;
+    border-right: 0;
+  }
 `
 
 const ActionTitle = styled.div`
@@ -66,7 +71,6 @@ const ActionTitle = styled.div`
 `
 
 const FormLabel = styled.legend`
-  margin-top: 12px;
   margin-bottom: 12px;
   font: ${(props) => props.theme.font.weight.normal}
     ${(props) => props.theme.font.size.xlarge} /
@@ -80,6 +84,7 @@ const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
   position: relative;
+  margin-top: 20px;
 `
 
 const StyledSidebarContent = styled(SidebarContent)`
@@ -127,6 +132,10 @@ const AffiliateButton = styled.button`
 `
 const StyledModalBody = styled(ModalBody)`
   position: relative;
+`
+
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin-bottom: 16px;
 `
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
@@ -522,13 +531,14 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         </ModalHeader>
         <StyledModalBody>
           <ModalSidebar data-cy="authors-sidebar">
-            <ModalSidebarHeader>
+            <StyledModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
-            </ModalSidebarHeader>
+            </StyledModalSidebarHeader>
             <StyledSidebarContent>
               <AddAuthorButton
                 data-cy="add-author-button"
                 onClick={handleAddAuthor}
+                data-active={isCreatingNewAuthor}
               >
                 <AddIcon width={18} height={18} />
                 <ActionTitle>New Author</ActionTitle>

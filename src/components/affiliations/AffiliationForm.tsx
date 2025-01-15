@@ -55,7 +55,6 @@ const DepartmentTextField = styled(TextArea)`
 `
 
 const FormLabel = styled.legend`
-  margin-top: 4px;
   &:not(:first-child) {
     margin-top: 24px;
   }

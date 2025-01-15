@@ -33,8 +33,9 @@ const StyledIconButton = styled(IconButton)`
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 1;
   width: auto;
+  height: 24px;
   &:disabled {
     color: #c9c9c9 !important;
     background-color: unset !important;

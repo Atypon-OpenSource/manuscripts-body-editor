@@ -53,9 +53,14 @@ const StyledSidebarContent = styled(SidebarContent)`
 const AddAffiliationButton = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-  margin-left: ${(props) => props.theme.grid.unit * 4}px;
+  padding: 12px 8px 12px 16px;
   cursor: pointer;
+  &[data-active='true'] {
+    background: ${(props) => props.theme.colors.background.fifth};
+    border: 1px solid ${(props) => props.theme.colors.border.primary};
+    border-left: 0;
+    border-right: 0;
+  }
 `
 
 const ActionTitle = styled.div`
@@ -66,6 +71,7 @@ const AffiliationForms = styled.div`
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
   height: 100%;
   position: relative;
+  margin-top: 20px;
 `
 
 const AuthorsSection = styled.div`
@@ -109,6 +115,10 @@ const AffiliateButton = styled.button`
 `
 const StyledModalBody = styled(ModalBody)`
   position: relative;
+`
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin-top: 8px;
+  margin-bottom: 16px;
 `
 
 const normalize = (affiliation: AffiliationAttrs) => ({
@@ -491,13 +501,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
         <StyledModalBody>
           <ModalSidebar>
-            <ModalSidebarHeader>
+            <StyledModalSidebarHeader>
               <ModalSidebarTitle>Affiliations</ModalSidebarTitle>
-            </ModalSidebarHeader>
+            </StyledModalSidebarHeader>
             <StyledSidebarContent>
               <AddAffiliationButton
                 data-cy="add-affiliation-button"
                 onClick={handleAddAffiliation}
+                data-active={newAffiliation}
               >
                 <AddIcon width={18} height={18} />
                 <ActionTitle>New Affiliation</ActionTitle>
