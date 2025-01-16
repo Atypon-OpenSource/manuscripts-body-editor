@@ -17,6 +17,7 @@
 import {
   OutlineBlockQuoteIcon,
   OutlineEquationIcon,
+  OutlineEmbedIcon,
   OutlineFigureIcon,
   OutlineManuscriptIcon,
   OutlineOrderedListIcon,
@@ -40,7 +41,7 @@ const icons: Map<
   [nodes.bibliography_section, OutlineSectionIcon],
   [nodes.blockquote_element, OutlineBlockQuoteIcon],
   [nodes.equation_element, OutlineEquationIcon],
-  [nodes.embed, OutlineFigureIcon],
+  [nodes.embed, OutlineEmbedIcon],
   [nodes.figure_element, OutlineFigureIcon],
   [nodes.paragraph, OutlineParagraphIcon],
   [nodes.pullquote_element, OutlinePullQuoteIcon],
