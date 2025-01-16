@@ -19,12 +19,7 @@ import { AffiliationNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import { AffiliationAttrs, affiliationName } from '../lib/authors'
-import {
-  createCommentMarker,
-  handleComment,
-  handleCommentMarkerClick,
-  updateCommentSelection,
-} from '../lib/comments'
+import { handleComment } from '../lib/comments'
 import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { findChildByID } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
@@ -39,7 +34,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   version: string
   container: HTMLElement
   contextMenu: HTMLElement
-  commentMarker: HTMLElement
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -64,13 +58,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
-
-    this.commentMarker = createCommentMarker('div', this.node.attrs.id)
-
-    this.commentMarker.addEventListener('click', (event: Event) => {
-      handleCommentMarkerClick(event, this.view)
-    })
-    this.container.prepend(this.commentMarker)
 
     this.buildAffiliations(affs)
     this.updateSelection()
@@ -170,7 +157,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       )
       item?.classList.add('selected-suggestion')
     }
-    updateCommentSelection(this.commentMarker, this.view)
   }
   public actionGutterButtons = (): HTMLElement[] => [
     this.affiliationsContextMenu(),
