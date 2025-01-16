@@ -30,7 +30,7 @@ import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export interface AwardFormProps {
   values: AwardAttrs
-  onSave: (values: AwardAttrs) => void
+  onSave: (values: AwardAttrs    ) => void
   onCancel: () => void
   onChange: (values: AwardAttrs) => void
 }
@@ -130,7 +130,6 @@ export const AwardForm = ({
             <Field type="hidden" name="id" />
             <LabelContainer>
               <Label htmlFor={'source'}>Funder name</Label>
-              <>{formik.values.source}</>
             </LabelContainer>
             <Field
               name="source"
