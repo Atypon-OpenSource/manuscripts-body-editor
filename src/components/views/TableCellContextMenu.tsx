@@ -35,12 +35,7 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  addColumns,
-  addHeaderRow,
-  addRows,
-  mergeCellsWithSpace,
-} from '../../commands'
+import { addColumns, addHeaderRow, addRows } from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -154,7 +149,7 @@ export const ContextMenu: React.FC<{
 
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
-        <ActionButton onClick={() => runCommand(mergeCellsWithSpace, true)}>
+        <ActionButton onClick={() => runCommand(mergeCells, true)}>
           Merge cells
         </ActionButton>
       )}
