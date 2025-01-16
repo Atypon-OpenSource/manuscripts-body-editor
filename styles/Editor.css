@@ -982,7 +982,6 @@
 }
 
 .ProseMirror .footnote-marker {
-  padding: 5px;
   margin: 0 5px;
   font-size: 75%;
   color: #0d79d0;
@@ -1030,7 +1029,6 @@
   border: 1px solid #bce7f6;
 }
 .ProseMirror .footnote-marker-selected:not(.selected-suggestion) {
-  padding: 5px;
   text-decoration: underline;
   background-color: #f2fbfc;
   border-color:  #0d79d0;
