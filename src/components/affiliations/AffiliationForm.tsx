@@ -66,6 +66,11 @@ const FormLabel = styled.legend`
   letter-spacing: -0.4px;
   color: ${(props) => props.theme.colors.text.secondary};
 `
+
+const MarginRightTextField = styled(AffiliationsTextField)`
+  margin-right: 4px;
+`
+
 export interface FormActions {
   reset: () => void
 }
@@ -137,11 +142,10 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="city">
               {(props: FieldProps) => (
-                <AffiliationsTextField
+                <MarginRightTextField
                   id="city"
                   placeholder="City"
                   {...props.field}
-                  style={{ marginRight: '4px' }}
                 />
               )}
             </Field>
@@ -158,11 +162,10 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="postCode">
               {(props: FieldProps) => (
-                <AffiliationsTextField
+                <MarginRightTextField
                   id="postCode"
                   placeholder="Postal Code"
                   {...props.field}
-                  style={{ marginRight: '4px' }}
                 />
               )}
             </Field>

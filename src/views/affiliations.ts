@@ -34,7 +34,6 @@ import {
 import {
   deleteNode,
   findChildByID,
-  findChildByType,
   findChildrenAttrsByType,
   updateNodeAttrs,
 } from '../lib/view'
@@ -151,10 +150,10 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
   insertAffiliationNode = (attrs: AffiliationAttrs) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parent = findChildByType(this.view, schema.nodes.affiliations)!
+    const pos = this.getPos()
     const tr = this.view.state.tr
     const node = schema.nodes.affiliation.create(attrs)
-    this.view.dispatch(tr.insert(parent.pos + 1, node))
+    this.view.dispatch(tr.insert(pos + 1, node))
   }
 
   handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
@@ -203,11 +202,10 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.getPos,
       this.view
     )
-    console.dir(this.popper)
     this.container.appendChild(this.popper)
   }
 
-  public affiliationContextMenu = () => {
+  public showContextMenu = () => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
@@ -243,9 +241,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
   }
 
-  public actionGutterButtons = (): HTMLElement[] => [
-    this.affiliationContextMenu(),
-  ]
+  public actionGutterButtons = (): HTMLElement[] => [this.showContextMenu()]
 
   handleUpdateAuthors = (authors: ContributorAttrs[]) => {
     authors.forEach((author) => {
