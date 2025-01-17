@@ -148,6 +148,7 @@ export const AwardForm = ({
               <Label htmlFor={'code'}>Grant number</Label>
             </LabelContainer>
             <MultiValueInput
+              id="code"
               inputType="text"
               placeholder="Enter grant number and press enter"
               initialValues={values.code ? values.code.split(';') : []}
