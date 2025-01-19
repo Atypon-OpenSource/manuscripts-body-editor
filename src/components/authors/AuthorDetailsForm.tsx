@@ -26,7 +26,7 @@ import React, { MutableRefObject, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
-import { ChangeHandlingForm } from './ChangeHandlingForm'
+import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelText = styled.div`
   font: ${(props) => props.theme.font.weight.normal}
