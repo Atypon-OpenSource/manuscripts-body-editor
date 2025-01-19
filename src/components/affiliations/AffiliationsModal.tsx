@@ -69,7 +69,6 @@ const ActionTitle = styled.div`
 const AffiliationForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  height: 100%;
   position: relative;
   margin-top: 20px;
 `
