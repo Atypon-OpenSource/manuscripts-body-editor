@@ -24,10 +24,7 @@ import {
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
 import { alertIcon, deleteIcon, scrollIcon } from '../icons'
-import {
-  findFootnotesContainerNode,
-  getFootnotesElementState,
-} from '../lib/footnotes'
+import { getFootnotesElementState } from '../lib/footnotes'
 import { isDeleted } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -49,7 +46,6 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     super.updateContents()
     const id = this.node.attrs.id
     const fn = getFootnotesElementState(this.view.state, id)
-    const pos = this.getPos()
 
     if (!fn) {
       return
@@ -63,17 +59,13 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       marker.classList.add('footnote-marker')
       marker.innerText = fn.labels.get(id) || ''
     }
-    const container = findFootnotesContainerNode(this.view.state.doc, pos)
 
     let scrollBtn: HTMLElement | null = null
-    if (container.node.type !== schema.nodes.table_element) {
-      // Only create the scroll button if the parent is not a table
-      scrollBtn = this.createButton(
-        'scroll-icon',
-        scrollIcon,
-        this.handleMarkerClick
-      )
-    }
+    scrollBtn = this.createButton(
+      'scroll-icon',
+      scrollIcon,
+      this.handleMarkerClick
+    )
     const deleteBtn = this.createButton(
       'delete-icon',
       deleteIcon,
