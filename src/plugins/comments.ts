@@ -253,12 +253,11 @@ const groupByKey = <T extends Comment>(comments: T[]): Map<CommentKey, T[]> => {
 
 const getDecorationPos = (node: ManuscriptNode, pos: number) => {
   switch (node.type) {
+    case schema.nodes.affiliations:
     case schema.nodes.paragraph:
       return pos
     case schema.nodes.keywords:
       return pos + 2
-    case schema.nodes.affiliations:
-      return pos
     default:
       return pos + 1
   }

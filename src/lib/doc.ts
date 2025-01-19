@@ -14,12 +14,44 @@
  * limitations under the License.
  */
 import {
+  AwardsNode,
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
   SupplementsNode,
 } from '@manuscripts/transform'
 import { findChildren, findChildrenByType } from 'prosemirror-utils'
+
+export const insertAwardsNode = (tr: ManuscriptTransaction) => {
+  const doc = tr.doc
+  const awards = findChildrenByType(doc, schema.nodes.awards)[0]
+  if (awards) {
+    return awards
+  }
+
+  // Find position to insert the awards node
+  const positions: number[] = []
+  const possibleNodesTypes = [
+    'doi',
+    'keywords',
+    'supplements',
+    'abstracts',
+    'body',
+  ]
+  doc.descendants((node, pos) => {
+    if (possibleNodesTypes.includes(node.type.name)) {
+      positions.push(pos)
+    }
+  })
+  const pos = positions.length === 0 ? 0 : Math.min(...positions)
+  // const node = schema.nodes.awards.create() as AwardsNode
+  const node = schema.nodes.awards.createAndFill() as AwardsNode
+  tr.insert(pos, node)
+  return {
+    node,
+    pos,
+  }
+}
 
 export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   const doc = tr.doc
