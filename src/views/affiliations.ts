@@ -159,9 +159,10 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
     const update = updateNodeAttrs(
       this.view,
-      schema.nodes.contributor,
+      schema.nodes.affiliation,
       affiliation
     )
+
     if (!update) {
       this.insertAffiliationNode(affiliation)
     }

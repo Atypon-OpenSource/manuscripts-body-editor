@@ -116,8 +116,19 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
       <AffiliationBox>
         <AffiliationName>{affiliation.institution}</AffiliationName>
         <AffiliationDetails>
-          {affiliation.city ? affiliation.city + ', ' : ''}
-          {affiliation.country}
+          {affiliation.city && (
+            <>
+              {affiliation.city}
+              {affiliation.county || affiliation.country ? ', ' : ''}
+            </>
+          )}
+          {affiliation.county && (
+            <>
+              {affiliation.county}
+              {affiliation.country ? ', ' : ''}
+            </>
+          )}
+          {affiliation.country && <>{affiliation.country}</>}
         </AffiliationDetails>
       </AffiliationBox>
       {showSuccessIcon && (

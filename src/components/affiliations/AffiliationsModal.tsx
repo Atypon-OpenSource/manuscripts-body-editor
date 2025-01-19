@@ -115,6 +115,7 @@ const AffiliateButton = styled.button`
 `
 const StyledModalBody = styled(ModalBody)`
   position: relative;
+  height: calc(90vh - 40px);
 `
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
@@ -192,7 +193,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     },
     priority: affiliations.length,
   }
-  console.log('Adasdasdas', affiliations)
   const [showAuthorDrawer, setShowAuthorDrawer] = useState(false)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [pendingSelection, setPendingSelection] =
@@ -230,7 +230,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   }
 
   const handleSelect = (affiliation: AffiliationAttrs) => {
-    console.log('xsadasdsa', selection)
     const values = valuesRef.current
     const hasAffiliationChanges =
       selection && !isEqual(values, normalize(selection))
@@ -241,7 +240,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     )
     const hasChanges = hasAffiliationChanges || hasAuthorChanges
     const isInstitutionEmpty = values?.institution?.trim() === ''
-
     if (hasChanges) {
       setPendingSelection(affiliation)
       setPendingAction('select')
@@ -268,16 +266,17 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     if (!values || !selection) {
       return
     }
+    setIsDisableSave(true)
     const affiliation = {
       ...normalize(selection),
       ...values,
     }
-
     onSaveAffiliation(affiliation)
     dispatchAffiliations({
       type: 'update',
       items: [affiliation],
     })
+    setSelection(affiliation)
     const updatedAuthors = authors.map((author) => ({
       ...author,
       affiliations: selectedIds.includes(author.id)
@@ -291,7 +290,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     })
     onUpdateAuthors(updatedAuthors)
 
-    setSelection(affiliation)
     setNewAffiliation(false)
     setAffiliationAuthorMap((prevMap) => ({
       ...prevMap,
@@ -302,22 +300,20 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setTimeout(() => {
       setSavedAffiliationId(undefined)
     }, 3200)
-
-    setIsDisableSave(true)
-
-    valuesRef.current = affiliation
   }
 
   const handleAffiliationChange = (values: AffiliationAttrs) => {
     valuesRef.current = values
+    if (!selection || selection.id !== values.id) {
+      setIsDisableSave(true)
+      return
+    }
     const isInstitutionEmpty = !values.institution?.trim()
-    console.log('handleSAveAffiliation', values, selection)
     const hasAffiliationChanges =
       selection && !isEqual(normalize(values), normalize(selection))
     const originalAuthors = affiliationAuthorMap[selection?.id || ''] || []
     const hasAuthorChanges =
       selection && !isEqual(originalAuthors.sort(), selectedIds.sort())
-
     const shouldEnableSave =
       !isInstitutionEmpty && (hasAffiliationChanges || hasAuthorChanges)
     setIsDisableSave(!shouldEnableSave)
@@ -350,9 +346,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       type: 'delete',
       item: selection,
     })
-
+    setSelectedIds([])
     setSelection(undefined)
-    setShowDeleteDialog(false)
   }
 
   const handleAuthorSelect = (authorId: string) => {
@@ -435,6 +430,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(true)
       setSelection(affiliation)
       setSelectedIds([])
+      setIsDisableSave(true)
     } else if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)
@@ -444,6 +440,15 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         )
         .map((author) => author.id)
       setSelectedIds(affiliatedAuthorIds)
+      // Reset values and save button state for the new selection
+      valuesRef.current = normalize(pendingSelection)
+      setIsDisableSave(true)
+
+      // Update affiliation author map for the new selection
+      setAffiliationAuthorMap((prevMap) => ({
+        ...prevMap,
+        [pendingSelection.id]: affiliatedAuthorIds,
+      }))
     }
 
     setPendingSelection(null)
@@ -474,7 +479,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
 
     if (pendingSelection) {
-      console.log('SAdasdsad', pendingSelection)
       valuesRef.current = normalize(pendingSelection)
     } else {
       valuesRef.current = undefined

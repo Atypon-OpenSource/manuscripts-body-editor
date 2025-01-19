@@ -132,6 +132,7 @@ const AffiliateButton = styled.button`
 `
 const StyledModalBody = styled(ModalBody)`
   position: relative;
+  height: calc(90vh - 40px);
 `
 
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
@@ -195,7 +196,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
   const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
   const [selectedAffiliations, setSelectedAffiliations] = useState<
-    SelectedAffiliation[]
+    {
+      id: string
+      label: string
+    }[]
   >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
@@ -204,18 +208,15 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     $authors.sort(authorComparator)
   )
   const [affiliations] = useReducer(affiliationsReducer, $affiliations)
-  interface SelectedAffiliation {
-    id: string
-    label: string
-    country: string
-    city: string
-  }
+
   const affiliationItems = affiliations.map((affiliation) => ({
     id: affiliation.id,
     label: affiliation.institution,
     country: affiliation.country,
     city: affiliation.city,
+    state: affiliation.county,
   }))
+
   const [selectedAffiliationIds, setSelectedAffiliationIds] = useState<
     string[]
   >([])
