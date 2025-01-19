@@ -74,8 +74,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   public selectNode = () => {
+    // Query the selected marker
+    const selectedMarker = document.querySelector(
+      '.comment-marker.selected-comment'
+    )
+
     this.dom.classList.add('ProseMirror-selectednode')
-    if (!isDeleted(this.node)) {
+
+    // Open the modal if the node is not deleted and the comment marker is not selected
+    if (!isDeleted(this.node) && !selectedMarker) {
       this.handleEdit('', true)
     }
   }

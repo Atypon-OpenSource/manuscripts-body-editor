@@ -245,9 +245,11 @@
   position: relative;
 }
 
-#editor .manuscript-title + .comment-marker {
-  top: 0;
+#editor .manuscript-title ~.comment-marker {
+  height: 0;
+  top: -13px;
   left: 60px;
+  display: block;
 }
 
 .block > div.comment-marker,
