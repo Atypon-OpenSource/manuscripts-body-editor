@@ -53,7 +53,7 @@ const StyledSidebarContent = styled(SidebarContent)`
 const AddAffiliationButton = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 8px 12px 16px;
+  padding: 12px 8px 12px 12px;
   cursor: pointer;
   &[data-active='true'] {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -254,6 +254,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(false)
       setSelection(affiliation)
       setSelectedIds(affiliatedAuthorIds)
+      setShowAuthorDrawer(false)
       setAffiliationAuthorMap((prevMap) => ({
         ...prevMap,
         [affiliation.id]: affiliatedAuthorIds,
@@ -294,7 +295,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       ...prevMap,
       [affiliation.id]: selectedIds,
     }))
-
+    setShowAuthorDrawer(false)
     setSavedAffiliationId(affiliation.id)
     setTimeout(() => {
       setSavedAffiliationId(undefined)
@@ -410,6 +411,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setNewAffiliation(true)
     setSelection(affiliation)
     setSelectedIds([])
+    setShowAuthorDrawer(false)
   }
 
   useEffect(() => {
@@ -461,7 +463,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleConfirmationCancel = () => {
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
-
+    setShowAuthorDrawer(false)
     if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)

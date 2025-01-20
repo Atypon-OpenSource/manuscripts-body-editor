@@ -56,7 +56,7 @@ import { AuthorList } from './AuthorList'
 const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 8px 12px 16px;
+  padding: 12px 8px 12px 12px;
   cursor: pointer;
   &[data-active='true'] {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -258,9 +258,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       } else {
         updateAffiliationSelection(author)
         setSelection(author)
+        setShowAffiliationDrawer(false)
         setNewAuthor(false)
       }
     } else {
+      setShowAffiliationDrawer(false)
       updateAffiliationSelection(author)
       setSelection(author)
       setNewAuthor(false)
@@ -296,6 +298,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setSelection(nextAuthor)
       setNextAuthor(null)
       setNewAuthor(false)
+      setShowAffiliationDrawer(false)
       setIsCreatingNewAuthor(false)
     } else if (isCreatingNewAuthor) {
       createNewAuthor()
@@ -329,6 +332,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
+    setShowAffiliationDrawer(false)
   }
 
   const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
@@ -349,6 +353,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelection(author)
     setShowConfirmationDialog(false)
     setNewAuthor(false)
+    setSelectedAffiliationIds([])
+    setSelectedAffiliations([])
+    setShowAffiliationDrawer(false)
     setIsCreatingNewAuthor(false)
     dispatchAuthors({
       type: 'update',
@@ -412,6 +419,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNextAuthor(null)
     } else {
       createNewAuthor()
+      setShowAffiliationDrawer(false)
     }
   }
 
