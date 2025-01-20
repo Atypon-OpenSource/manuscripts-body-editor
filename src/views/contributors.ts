@@ -315,7 +315,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.getPos,
       this.view
     )
-    console.dir(this.popper)
 
     this.container.appendChild(this.popper)
   }
