@@ -694,6 +694,13 @@
   z-index: 2;
 }
 
+.ProseMirror .block-container.block-affiliations:hover .action-gutter {
+    pointer-events: visible;
+  opacity: 1;
+  z-index: 2;
+}
+
+
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;

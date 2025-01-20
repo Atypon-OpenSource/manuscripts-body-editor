@@ -19,7 +19,6 @@
  * It also provides that information to components that display that indexing. Additionally it deletes affiliations that have been detached and not used anymore.
  */
 import {
-  AffiliationNode,
   isAffiliationNode,
   isContributorNode,
   ManuscriptNode,
@@ -33,8 +32,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../lib/authors'
-import { isInit } from '../lib/plugins'
-import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 
 export interface PluginState {
   version: string
@@ -76,16 +74,23 @@ export const buildPluginState = (
   ) {
     return $old
   }
-  const iAffiliations = new Set<string>()
 
-  contributors.sort(authorComparator).forEach((attrs) => {
-    attrs.affiliations.forEach((aff) => {
-      !deletedContribId.has(attrs.id) && iAffiliations.add(aff)
+  // Only index affiliations that are assigned to active contributors
+  const iAffiliations = new Set<string>()
+  contributors
+    .filter((contrib) => !deletedContribId.has(contrib.id))
+    .sort(authorComparator)
+    .forEach((attrs) => {
+      attrs.affiliations.forEach((aff) => {
+        iAffiliations.add(aff)
+      })
     })
-  })
+
+  // Create index map only for affiliated affiliations
   const indexedAffiliationIds = new Map<string, number>(
     [...iAffiliations].map((id, i) => [id, i + 1])
   )
+
   const version = String(id++)
   const decorations: Decoration[] = []
   nodes.forEach(([node, pos]) => {
@@ -122,49 +127,6 @@ export default () => {
           return buildPluginState(newState.doc, $old)
         }
       },
-    },
-
-    appendTransaction(transactions, oldState, newState) {
-      const affs = affiliationsKey.getState(newState)
-      if (!affs || !transactions.find((tr) => tr.docChanged || isInit(tr))) {
-        return
-      }
-      const $old = affiliationsKey.getState(oldState) as PluginState
-
-      const affiliations = new Map<string, [AffiliationNode, number]>()
-      newState.doc.descendants((node, pos) => {
-        if (isAffiliationNode(node)) {
-          affiliations.set(node.attrs.id, [node, pos])
-        }
-      })
-
-      const deleteIDs = []
-
-      for (const [id] of $old.indexedAffiliationIds.entries()) {
-        if (!affs.indexedAffiliationIds.has(id)) {
-          deleteIDs.push(id)
-        }
-      }
-
-      if (!deleteIDs.length) {
-        return
-      }
-
-      const tr = newState.tr
-      tr.setMeta('origin', 'affiliations')
-
-      for (const id of deleteIDs) {
-        const affiliation = affiliations.get(id)
-        if (!affiliation) {
-          continue
-        }
-        const [node, pos] = affiliation
-        if (node && !isPendingInsert(node)) {
-          tr.delete(pos, pos + node.nodeSize)
-        }
-      }
-
-      return tr
     },
 
     props: {

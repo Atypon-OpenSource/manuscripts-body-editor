@@ -21,7 +21,10 @@ import {
 } from '@manuscripts/json-schema'
 import {
   AddIcon,
+  AddInstitutionIcon,
+  AuthorPlaceholderIcon,
   CloseButton,
+  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -29,6 +32,7 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
+  SelectedItemsBox,
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
@@ -42,20 +46,24 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { AuthorActions } from './AuthorActions'
-import { AuthorAffiliations } from './AuthorAffiliations'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
+import FormFooter from '../form/FormFooter'
+import { FormPlaceholder } from '../form/FormPlaceholder'
+import { ModalFormActions } from '../form/ModalFormActions'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
-import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
-import { RequiredFieldConfirmationDialog } from './RequiredFieldConfirmationDialog'
-import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
 
 const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-  margin-left: ${(props) => props.theme.grid.unit * 4}px;
+  padding: 12px 8px 12px 12px;
   cursor: pointer;
+  &[data-active='true'] {
+    background: ${(props) => props.theme.colors.background.fifth};
+    border: 1px solid ${(props) => props.theme.colors.border.primary};
+    border-left: 0;
+    border-right: 0;
+  }
 `
 
 const ActionTitle = styled.div`
@@ -63,7 +71,6 @@ const ActionTitle = styled.div`
 `
 
 const FormLabel = styled.legend`
-  margin-top: 12px;
   margin-bottom: 12px;
   font: ${(props) => props.theme.font.weight.normal}
     ${(props) => props.theme.font.size.xlarge} /
@@ -76,29 +83,81 @@ const FormLabel = styled.legend`
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
+  position: relative;
+  margin-top: 20px;
 `
 
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `
 
-const authorsReducer = arrayReducer<ContributorAttrs>((a, b) => a.id === b.id)
-const affiliationsReducer = arrayReducer<AffiliationAttrs>(
+const AuthorsSection = styled.div`
+  margin-top: ${(props) => props.theme.grid.unit * 4}px;
+  padding-top: ${(props) => props.theme.grid.unit * 4}px;
+  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
+`
+
+const AuthorsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
+`
+
+const AuthorsTitle = styled.h3`
+  margin: 0;
+  font-weight: ${(props) => props.theme.font.weight.normal};
+  font-size: ${(props) => props.theme.font.size.large};
+  font-family: ${(props) => props.theme.font.family.sans};
+  color: ${(props) => props.theme.colors.text.secondary};
+`
+
+const AffiliateButton = styled.button`
+  color: ${(props) => props.theme.colors.brand.default};
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: ${(props) => props.theme.font.weight.normal}
+    ${(props) => props.theme.font.size.normal}
+    ${(props) => props.theme.font.family.sans};
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: ${(props) => props.theme.grid.unit * 2}px;
+  &:hover {
+    opacity: 0.8;
+  }
+`
+const StyledModalBody = styled(ModalBody)`
+  position: relative;
+  height: calc(90vh - 40px);
+`
+
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin-bottom: 16px;
+`
+
+export const authorsReducer = arrayReducer<ContributorAttrs>(
+  (a, b) => a.id === b.id
+)
+export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id
 )
 
 const normalize = (author: ContributorAttrs) => ({
   id: author.id,
-  role: author.role,
-  affiliations: author.affiliations || [],
+  role: author.role || 'author',
+  affiliations: (author.affiliations || []).sort(),
   bibliographicName: author.bibliographicName,
   email: author.email || '',
   isCorresponding: author.isCorresponding || false,
   ORCIDIdentifier: author.ORCIDIdentifier || '',
-  priority: author.priority,
+  priority: author.priority || 0,
   isJointContributor: author.isJointContributor || false,
-  userID: '',
-  invitationID: '',
+  userID: author.userID || '',
+  invitationID: author.invitationID || '',
   footnote: author.footnote || [],
   corresp: author.corresp || [],
 })
@@ -109,7 +168,6 @@ export interface AuthorsModalProps {
   affiliations: AffiliationAttrs[]
   onSaveAuthor: (author: ContributorAttrs) => void
   onDeleteAuthor: (author: ContributorAttrs) => void
-  onSaveAffiliation: (affiliation: AffiliationAttrs) => void
   addNewAuthor?: boolean
 }
 
@@ -119,7 +177,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   author,
   onSaveAuthor,
   onDeleteAuthor,
-  onSaveAffiliation,
   addNewAuthor = false,
 }) => {
   const [isOpen, setOpen] = useState(true)
@@ -137,17 +194,32 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
+  const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
+  const [selectedAffiliations, setSelectedAffiliations] = useState<
+    {
+      id: string
+      label: string
+    }[]
+  >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
   )
-  const [affiliations, dispatchAffiliations] = useReducer(
-    affiliationsReducer,
-    $affiliations
-  )
+  const [affiliations] = useReducer(affiliationsReducer, $affiliations)
 
+  const affiliationItems = affiliations.map((affiliation) => ({
+    id: affiliation.id,
+    label: affiliation.institution,
+    country: affiliation.country,
+    city: affiliation.city,
+    state: affiliation.county,
+  }))
+
+  const [selectedAffiliationIds, setSelectedAffiliationIds] = useState<
+    string[]
+  >([])
   useEffect(() => {
     if (addNewAuthor) {
       handleAddAuthor()
@@ -157,27 +229,59 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const [selection, setSelection] = useState(author)
 
+  useEffect(() => {
+    const currentAuthor = selection
+    const relevantAffiliations = affiliationItems.filter((item) =>
+      currentAuthor?.affiliations?.includes(item.id)
+    )
+    setSelectedAffiliations(relevantAffiliations)
+    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleSelect = (author: ContributorAttrs) => {
     const values = valuesRef.current
     setIsCreatingNewAuthor(false)
 
-    if (values && selection && unSavedChanges && !isDisableSave) {
-      setShowConfirmationDialog(true)
-      setNextAuthor(author)
-    } else if (isDisableSave && unSavedChanges) {
-      setShowRequiredFieldConfirmationDialog(true)
-      setNextAuthor(author)
+    if (values && selection) {
+      const normalizedSelection = normalize(selection)
+      const normalizedValues = normalize(values)
+
+      const hasChanges = !isEqual(normalizedSelection, normalizedValues)
+
+      if (hasChanges && !isDisableSave) {
+        setShowConfirmationDialog(true)
+        setNextAuthor(author)
+      } else if (hasChanges && isDisableSave) {
+        setShowRequiredFieldConfirmationDialog(true)
+        setNextAuthor(author)
+      } else {
+        updateAffiliationSelection(author)
+        setSelection(author)
+        setShowAffiliationDrawer(false)
+        setNewAuthor(false)
+      }
     } else {
+      setShowAffiliationDrawer(false)
+      updateAffiliationSelection(author)
       setSelection(author)
       setNewAuthor(false)
     }
   }
-
+  const updateAffiliationSelection = (author: ContributorAttrs) => {
+    const relevantAffiliations = affiliationItems.filter((item) =>
+      author.affiliations?.includes(item.id)
+    )
+    setSelectedAffiliations(relevantAffiliations)
+    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
+  }
   const handleClose = () => {
-    if (isDisableSave && unSavedChanges) {
-      setShowRequiredFieldConfirmationDialog(true)
-    } else if (unSavedChanges) {
-      setShowConfirmationDialog(true)
+    if (unSavedChanges) {
+      if (isDisableSave) {
+        setShowRequiredFieldConfirmationDialog(true)
+      } else {
+        setShowConfirmationDialog(true)
+      }
     } else {
       setShowRequiredFieldConfirmationDialog(false)
       setLastSavedAuthor(null)
@@ -194,6 +298,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setSelection(nextAuthor)
       setNextAuthor(null)
       setNewAuthor(false)
+      setShowAffiliationDrawer(false)
+      updateAffiliationSelection(nextAuthor)
       setIsCreatingNewAuthor(false)
     } else if (isCreatingNewAuthor) {
       createNewAuthor()
@@ -206,10 +312,17 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleCancel = () => {
     handleResetAuthor()
     if (nextAuthor) {
+      const affiliations = nextAuthor.affiliations || []
+      setSelectedAffiliationIds(affiliations)
+      setSelectedAffiliations(
+        affiliationItems.filter((item) => affiliations.includes(item.id))
+      )
+
       setSelection(nextAuthor)
       setNextAuthor(null)
       setNewAuthor(false)
       setIsCreatingNewAuthor(false)
+      setUnSavedChanges(false)
     } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
       setNewAuthor(false)
       setIsCreatingNewAuthor(false)
@@ -219,13 +332,14 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setIsCreatingNewAuthor(false)
     }
     setShowConfirmationDialog(false)
+    setShowRequiredFieldConfirmationDialog(false)
+    setShowAffiliationDrawer(false)
   }
 
   const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
     if (!values || !selection) {
       return
     }
-
     const author = {
       ...selection,
       ...values,
@@ -240,6 +354,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelection(author)
     setShowConfirmationDialog(false)
     setNewAuthor(false)
+    setShowAffiliationDrawer(false)
     setIsCreatingNewAuthor(false)
     dispatchAuthors({
       type: 'update',
@@ -280,6 +395,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       footnote: [],
     }
     setIsSwitchingAuthor(!!selection)
+    setSelectedAffiliations([])
+    setSelectedAffiliationIds([])
     setSelection(author)
     setNewAuthor(true)
   }
@@ -288,7 +405,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const values = valuesRef.current
     setIsSwitchingAuthor(!!selection)
     setIsCreatingNewAuthor(true)
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    if (
+      values &&
+      selection &&
+      !isEqual(normalize(values), normalize(selection))
+    ) {
       if (isDisableSave) {
         setShowRequiredFieldConfirmationDialog(true)
       } else {
@@ -297,6 +418,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNextAuthor(null)
     } else {
       createNewAuthor()
+      setShowAffiliationDrawer(false)
     }
   }
 
@@ -306,45 +428,33 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     onDeleteAuthor(selection)
     setSelection(undefined)
+    setUnSavedChanges(false)
     dispatchAuthors({
       type: 'delete',
       item: selection,
     })
   }
 
-  const handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
-    onSaveAffiliation(affiliation)
-    dispatchAffiliations({
-      type: 'update',
-      items: [affiliation],
-    })
-  }
-
-  const handleAddAffiliation = (affiliation: AffiliationAttrs) => {
-    if (!valuesRef.current) {
+  const handleRemoveAffiliation = (affId: string) => {
+    if (!selection) {
       return
     }
-    const values = valuesRef.current
-    const affiliations = values.affiliations || []
-    handleSaveAuthor({
-      ...values,
-      affiliations: [...affiliations, affiliation.id],
-    })
-  }
 
-  const handleRemoveAffiliation = (affiliation: AffiliationAttrs) => {
-    if (!valuesRef.current) {
-      return
-    }
-    const values = valuesRef.current
-    handleSaveAuthor({
-      ...values,
-      affiliations: values.affiliations?.filter((i) => i !== affiliation.id),
-    })
+    const newAffiliations = selectedAffiliationIds.filter((id) => id !== affId)
+
+    setSelectedAffiliationIds(newAffiliations)
+    setSelectedAffiliations(
+      affiliationItems.filter((item) => newAffiliations.includes(item.id))
+    )
   }
 
   const handleResetAuthor = () => {
     actionsRef.current?.reset()
+    const affiliations = selection?.affiliations || []
+    setSelectedAffiliationIds(affiliations)
+    setSelectedAffiliations(
+      affiliationItems.filter((item) => affiliations.includes(item.id))
+    )
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
     setUnSavedChanges(false)
@@ -362,43 +472,56 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       normalize(selection as ContributorAttrs),
       'priority'
     )
-    const updatedValues = omit(values, 'priority')
-    if (
-      updatedValues.id === normalized.id &&
-      !isEqual(updatedValues, normalized)
-    ) {
+    const updatedValues = omit(normalize(values), 'priority')
+
+    const isSameAuthor = updatedValues.id === normalized.id
+    const hasChanges = !isEqual(updatedValues, normalized)
+
+    if (isSameAuthor && hasChanges) {
       setUnSavedChanges(true)
+    } else {
+      setUnSavedChanges(false)
     }
 
-    const isUnchanged = isEqual(
-      normalize(selection as ContributorAttrs),
-      values
-    )
-    valuesRef.current = values
+    valuesRef.current = { ...updatedValues, priority: values.priority }
+
     const { given, family } = values.bibliographicName
     const { email, isCorresponding } = values
     const isNameFilled = given?.length && family?.length
-    if (isNameFilled && !isCorresponding && !isUnchanged) {
-      setDisableSave(false)
-    } else if (
-      isCorresponding &&
-      email?.length &&
-      isNameFilled &&
-      !isUnchanged
-    ) {
-      setDisableSave(false)
+
+    if (hasChanges && isNameFilled) {
+      if (isCorresponding) {
+        setDisableSave(!email?.length)
+      } else {
+        setDisableSave(false)
+      }
     } else {
       setDisableSave(true)
     }
-    if (isCorresponding && !email?.length) {
-      setEmailRequired(true)
-    } else {
-      setEmailRequired(false)
-    }
+
+    setEmailRequired(isCorresponding)
   }
 
   const handleShowDeleteDialog = () => {
     setShowDeleteDialog((prev) => !prev)
+  }
+
+  const handleAffiliationSelect = (affiliationId: string) => {
+    if (!selection) {
+      return
+    }
+
+    const currentAffiliations = selectedAffiliationIds || []
+    const isAlreadySelected = currentAffiliations.includes(affiliationId)
+
+    const newAffiliations = isAlreadySelected
+      ? currentAffiliations.filter((id) => id !== affiliationId)
+      : [...currentAffiliations, affiliationId]
+
+    setSelectedAffiliationIds(newAffiliations)
+    setSelectedAffiliations(
+      affiliationItems.filter((item) => newAffiliations.includes(item.id))
+    )
   }
 
   return (
@@ -414,15 +537,16 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             data-cy="modal-close-button"
           />
         </ModalHeader>
-        <ModalBody>
+        <StyledModalBody>
           <ModalSidebar data-cy="authors-sidebar">
-            <ModalSidebarHeader>
+            <StyledModalSidebarHeader>
               <ModalSidebarTitle>Authors</ModalSidebarTitle>
-            </ModalSidebarHeader>
+            </StyledModalSidebarHeader>
             <StyledSidebarContent>
               <AddAuthorButton
                 data-cy="add-author-button"
                 onClick={handleAddAuthor}
+                data-active={isCreatingNewAuthor}
               >
                 <AddIcon width={18} height={18} />
                 <ActionTitle>New Author</ActionTitle>
@@ -440,22 +564,29 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
           <ScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <AuthorForms>
-                <RequiredFieldConfirmationDialog
+                <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
-                  onSave={() => setShowRequiredFieldConfirmationDialog(false)}
-                  onCancel={handleCancel}
+                  onPrimary={() =>
+                    setShowRequiredFieldConfirmationDialog(false)
+                  }
+                  onSecondary={handleCancel}
+                  type={DialogType.REQUIRED}
+                  entityType="author"
                 />
-                <SaveAuthorConfirmationDialog
+                <ConfirmationDialog
                   isOpen={showConfirmationDialog}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
+                  onPrimary={handleSave}
+                  onSecondary={handleCancel}
+                  type={DialogType.SAVE}
+                  entityType="author"
                 />
-                <AuthorActions
+                <ModalFormActions
+                  type="author"
                   onSave={() => handleSaveAuthor(valuesRef.current)}
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
-                  newAuthor={
+                  newEntity={
                     newAuthor ||
                     (isCreatingNewAuthor &&
                       !showConfirmationDialog &&
@@ -470,21 +601,49 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   onSave={handleSaveAuthor}
                   actionsRef={actionsRef}
                   isEmailRequired={isEmailRequired}
+                  selectedAffiliations={selectedAffiliationIds}
                 />
-                <FormLabel>Affiliations</FormLabel>
-                <AuthorAffiliations
-                  author={selection}
-                  affiliations={affiliations}
-                  onSave={handleSaveAffiliation}
-                  onAdd={handleAddAffiliation}
-                  onRemove={handleRemoveAffiliation}
-                />
+                <AuthorsSection>
+                  <AuthorsHeader>
+                    <AuthorsTitle>Authors</AuthorsTitle>
+                    <AffiliateButton
+                      onClick={() => setShowAffiliationDrawer(true)}
+                      data-cy="affiliate-authors-button"
+                    >
+                      <AddInstitutionIcon width={16} height={16} />
+                      Assign Institutions
+                    </AffiliateButton>
+                  </AuthorsHeader>
+                  <SelectedItemsBox
+                    items={selectedAffiliations}
+                    onRemove={handleRemoveAffiliation}
+                    placeholder="No institutions assigned"
+                  />
+                </AuthorsSection>
+                {showAffiliationDrawer && (
+                  <Drawer
+                    items={affiliationItems}
+                    selectedIds={selectedAffiliationIds}
+                    title="Authors"
+                    onSelect={handleAffiliationSelect}
+                    onBack={() => setShowAffiliationDrawer(false)}
+                    width="100%"
+                  />
+                )}
               </AuthorForms>
             ) : (
-              <AuthorFormPlaceholder />
+              <FormPlaceholder
+                type="author"
+                title={'Author Details'}
+                message={
+                  'Select an author from the list to display their details here.'
+                }
+                placeholderIcon={<AuthorPlaceholderIcon />}
+              />
             )}
           </ScrollableModalContent>
-        </ModalBody>
+        </StyledModalBody>
+        <FormFooter onCancel={handleClose} />
       </ModalContainer>
     </StyledModal>
   )
