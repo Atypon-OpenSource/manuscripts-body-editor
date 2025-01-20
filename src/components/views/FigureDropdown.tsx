@@ -37,7 +37,7 @@ export interface FigureDropdownProps {
 
 export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
-  onUpload?: (event: Event) => void
+  onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment) => void
 }

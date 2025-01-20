@@ -93,7 +93,9 @@ export class FigureEditableView extends FigureView {
         this.setSrc(result.id)
       }
 
-      handleUpload = (event: Event) => {
+      handleUpload = figureUploader(upload)
+
+      const handlePlaceholderClick = (event: Event) => {
         const target = event.target as HTMLElement
         if (target.dataset && target.dataset.action) {
           return
@@ -102,7 +104,7 @@ export class FigureEditableView extends FigureView {
         triggerUpload()
       }
 
-      img.addEventListener('click', handleUpload)
+      img.addEventListener('click', handlePlaceholderClick)
 
       img.addEventListener('mouseenter', () => {
         img.classList.toggle('over', true)
