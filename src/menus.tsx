@@ -30,6 +30,7 @@ import {
   canInsert,
   insertAbstract,
   insertAffiliation,
+  insertAward,
   insertBackmatterSection,
   insertBlock,
   insertBoxElement,
@@ -149,6 +150,12 @@ export const getEditorMenus = (
             label: 'Affiliations',
             isEnabled: isCommandValid(insertAffiliation),
             run: doCommand(insertAffiliation),
+          },
+          {
+            id: 'insert-awards',
+            label: 'Funder Information',
+            isEnabled: isCommandValid(insertAward),
+            run: doCommand(insertAward),
           },
           {
             id: 'insert-keywords',

@@ -18,7 +18,6 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   FootnoteNode,
   InlineFootnoteNode,
-  isTableElementNode,
   ManuscriptNodeView,
 } from '@manuscripts/transform'
 import { NodeSelection, TextSelection } from 'prosemirror-state'
@@ -43,7 +42,6 @@ export class InlineFootnoteView
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
-  isTableFootnote: boolean
 
   showContextMenu = () => {
     this.props.popper.destroy()
@@ -94,11 +92,7 @@ export class InlineFootnoteView
     if (isDeleted(this.node)) {
       return
     }
-    if (this.isTableFootnote) {
-      this.showFootnotesSelector()
-    } else {
-      this.showContextMenu()
-    }
+    this.showContextMenu()
   }
 
   scrollToReferencedFootnote = () => {
@@ -184,17 +178,17 @@ export class InlineFootnoteView
     this.dom.classList.add('footnote-marker')
     this.dom.addEventListener('click', this.handleClick)
     this.updateContents()
-    const container = findFootnotesContainerNode(
-      this.view.state.doc,
-      this.getPos()
-    )
-    this.isTableFootnote = isTableElementNode(container.node)
   }
 
   selectNode = () => {
+    this.dom.classList.add('footnote-marker-selected')
     if (!this.node.attrs.rids.length) {
       this.showFootnotesSelector()
     }
+  }
+
+  public deselectNode() {
+    this.dom.classList.remove('footnote-marker-selected')
   }
 
   public ignoreMutation = () => true

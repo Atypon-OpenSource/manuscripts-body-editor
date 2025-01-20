@@ -20,6 +20,7 @@ import {
   MessageContainer,
   PrimaryBoldHeading,
   PrimaryButton,
+  PrimarySmallText,
   SecondaryButton,
   StyledModal,
   TextArea,
@@ -27,7 +28,7 @@ import {
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { debounce } from 'lodash'
 import { EditorView } from 'prosemirror-view'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch, insertEmbed } from '../../commands'
@@ -67,53 +68,35 @@ export type InsertEmbedDialogProps = {
   state: ManuscriptEditorState
   dispatch?: Dispatch
   operation: 'Insert' | 'Update'
-  pos?: number
 }
 
 export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   state,
   dispatch,
   operation,
-  pos,
 }) => {
-  const nodeAttr = pos ? state.doc.nodeAt(pos)?.attrs : undefined
   const [isOpen, setOpen] = useState(true)
-  const [url, setUrl] = useState<string | undefined>(
-    nodeAttr?.href || undefined
-  )
+  const [url, setUrl] = useState<string | undefined>(undefined)
   const [oembedHTML, setOEmbedHTML] = useState<string | undefined>(undefined)
 
   const action = () => {
     if (operation === 'Insert') {
       insertEmbed(state, dispatch, { href: url })
+      setOpen(false)
     } else {
-      dispatch &&
-        pos &&
-        dispatch(
-          state.tr.setNodeMarkup(pos, undefined, {
-            ...state.doc.nodeAt(pos)?.attrs,
-            href: url,
-          })
-        )
+      //  TODO:: update embed href (LEAN-4219)
     }
-    setOpen(false)
   }
-
-  useEffect(() => {
-    url && updateEmbedHTML(url)
-  }, [pos])
 
   const debouncedUrlChange = debounce(async (e) => {
     const url = e.target.value.trim()
-    await updateEmbedHTML(url)
+    const oEmbedUrl = await getOEmbedUrl(url, 368, 217)
+    if (oEmbedUrl) {
+      const oembedJSON = await getOEmbedHTML(oEmbedUrl, url)
+      setOEmbedHTML(oembedJSON)
+    }
     setUrl(url)
   }, 500)
-
-  const updateEmbedHTML = async (url: string) => {
-    const oEmbedUrl = await getOEmbedUrl(url, 368, 217)
-    const oembedJSON = oEmbedUrl && await getOEmbedHTML(oEmbedUrl, url)
-    setOEmbedHTML(oembedJSON)
-  }
 
   return (
     <StyledModal isOpen={isOpen} onRequestClose={() => setOpen(false)}>
@@ -137,7 +120,6 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
               id={'embed-link'}
               rows={2}
               cols={2}
-              defaultValue={url}
               autoFocus={true}
               required={true}
               placeholder={'https://youtube.com/...'}
@@ -175,17 +157,37 @@ const Wrapper = styled.div`
   padding: 50px 0;
 `
 
-export const NoPreviewMessage: React.FC = () => (
+const NoPreviewMessage: React.FC = () => (
   <PreviewContainer>
-    <Wrapper>No Preview Available</Wrapper>
+    <Wrapper>Preview not available</Wrapper>
   </PreviewContainer>
 )
 
-export const openEmbedDialog = (
-  view?: EditorView,
-  operation = 'Insert',
-  pos?: number
-) => {
+const NoPreviewContainer = styled(PreviewContainer)`
+  flex-direction: column;
+  background: #fafafa;
+  padding: 16px 56px 16px 48px;
+`
+
+const Heading = styled(PrimaryBoldHeading)`
+  font-size: ${(props) => props.theme.font.size.medium};
+`
+
+export const NoPreviewMessageWithLink: React.FC<{ href: string }> = ({
+  href,
+}) => (
+  <NoPreviewContainer>
+    <Heading>Preview currently not available</Heading>
+    <PrimarySmallText>
+      <a href={href} target={'_blank'} rel="noreferrer">
+        Click here
+      </a>{' '}
+      to see the source media
+    </PrimarySmallText>
+  </NoPreviewContainer>
+)
+
+export const openEmbedDialog = (view?: EditorView, operation = 'Insert') => {
   if (!view) {
     return
   }
@@ -198,7 +200,6 @@ export const openEmbedDialog = (
       state,
       dispatch,
       operation,
-      pos,
     },
     state.doc,
     () => 0,

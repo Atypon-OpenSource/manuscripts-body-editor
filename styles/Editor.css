@@ -162,6 +162,10 @@
   border-right: 1px solid #000;
 }
 
+.ProseMirror tbody p {
+  margin: 0;
+}
+
 .ProseMirror sup,
 .ProseMirror sub {
   line-height: 0;
@@ -690,6 +694,13 @@
   z-index: 2;
 }
 
+.ProseMirror .block-container.block-affiliations:hover .action-gutter {
+    pointer-events: visible;
+  opacity: 1;
+  z-index: 2;
+}
+
+
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
@@ -978,44 +989,21 @@
 }
 
 .ProseMirror .footnote-marker {
-  vertical-align: super;
-  font-size: 75%;
-  margin-bottom: 10px;
-  color: #0d79d0;
   margin: 0 5px;
-  position: relative;
-  display: inline-block;
+  font-size: 75%;
+  color: #0d79d0;
   cursor: pointer;
+  position: relative;
+  margin-bottom: 10px;
+  vertical-align: super;
+  display: inline-block;
+  border-color: transparent;
 }
 
 .ProseMirror .footnote .footnote-marker {
   color: inherit;
   cursor: default;
   margin-right: 2px;
-}
-.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before, .ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
-  content: '';
-  opacity: 0;
-  z-index: -1;
-  height: 30px;
-  margin: 0 12px;
-  position: absolute;
-  background: #E2E2E2;
-  pointer-events: none;
-}
-.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::before {
-  left: 0;
-}
-.ProseMirror .block-container:not(.block-footnotes_element) .footnote-marker::after {
-  right:-100px;
-}
-.ProseMirror .footnote-marker.highlight-footnote-marker::before, .ProseMirror .footnote-marker.highlight-footnote-marker::after {
-  opacity: 1 !important;
-  width: 45vw;
-  transition: opacity 0.3s ease-in-out;
-}
-.ProseMirror .block-container > .block:has(.highlight-footnote-marker.footnote-marker) {
-  overflow-x: hidden;
 }
 .ProseMirror .footnote {
   display: flex;
@@ -1046,6 +1034,11 @@
 .ProseMirror .footnote.footnote-selected:not(.selected-suggestion) {
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
+}
+.ProseMirror .footnote-marker-selected:not(.selected-suggestion) {
+  text-decoration: underline;
+  background-color: #f2fbfc;
+  border-color:  #0d79d0;
 }
 .ProseMirror .table-footer p {
   margin-bottom: 0;
