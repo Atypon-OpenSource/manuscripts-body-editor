@@ -158,7 +158,7 @@
   grid-template-columns: 52px auto 65px;
 }
 .ProseMirror .block-affiliations {
-  grid-template-columns: 52px auto 32px;
+  grid-template-columns: 52px auto 100px;
 }
 .ProseMirror .block-container.block-box_element > .block.box-element {
   position: relative;
@@ -249,12 +249,13 @@
   cursor: pointer;
   position: relative;
 }
-#editor .manuscript-title ~.comment-marker {
+.comment-marker:has(+ .block-affiliations) {
   height: 0;
   top: -13px;
   left: 60px;
   display: block;
 }
+
 .block:not(.affiliations) > div.comment-marker,
 .figure-block > div.comment-marker {
   top: -25px;

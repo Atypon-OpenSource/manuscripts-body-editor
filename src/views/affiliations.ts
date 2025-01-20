@@ -27,6 +27,7 @@ import {
   affiliationName,
   ContributorAttrs,
 } from '../lib/authors'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -43,7 +44,6 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { handleComment } from '../lib/comments'
 
 //todo update AffiliationNode to AffiliationsNode
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
@@ -75,34 +75,8 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
-
     this.buildAffiliations(affs)
     this.updateSelection()
-  }
-
-  public affiliationsContextMenu = () => {
-    const can = this.props.getCapabilities()
-    const componentProps: ContextMenuProps = {
-      actions: [],
-    }
-    if (can.editArticle) {
-      componentProps.actions.push({
-        label: 'Comment',
-        action: () => handleComment(this.node, this.view),
-        icon: 'AddComment',
-      })
-    }
-
-    this.contextMenu = ReactSubView(
-      this.props,
-      ContextMenu,
-      componentProps,
-      this.node,
-      this.getPos,
-      this.view,
-      'context-menu'
-    )
-    return this.contextMenu
   }
 
   private buildAffiliations(affs: PluginState) {
@@ -239,6 +213,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       actions: [],
     }
     if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
       componentProps.actions.push({
         label: 'New Affiliation',
         action: () => this.handleEdit(true),
