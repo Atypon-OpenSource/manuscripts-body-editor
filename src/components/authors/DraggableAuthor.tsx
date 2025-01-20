@@ -43,9 +43,6 @@ const AuthorContainer = styled.div`
   &:hover,
   &.active {
     background: ${(props) => props.theme.colors.background.fifth};
-  }
-
-  &.active {
     border-color: ${(props) => props.theme.colors.border.primary};
   }
 

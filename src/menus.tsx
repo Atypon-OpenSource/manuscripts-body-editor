@@ -30,6 +30,7 @@ import {
   canInsert,
   insertAbstract,
   insertAffiliation,
+  insertAward,
   insertBackmatterSection,
   insertBlock,
   insertBoxElement,
@@ -45,6 +46,7 @@ import {
   insertSection,
   markActive,
 } from './commands'
+import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import {
@@ -150,6 +152,12 @@ export const getEditorMenus = (
             run: doCommand(insertAffiliation),
           },
           {
+            id: 'insert-awards',
+            label: 'Funder Information',
+            isEnabled: isCommandValid(insertAward),
+            run: doCommand(insertAward),
+          },
+          {
             id: 'insert-keywords',
             label: 'Keywords',
             isEnabled: isCommandValid(insertKeywords),
@@ -239,6 +247,13 @@ export const getEditorMenus = (
       },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-embed-media',
+        label: 'Embedded Media',
+        isActive: blockActive(schema.nodes.embed)(state),
+        isEnabled: isCommandValid(canInsert(schema.nodes.embed)),
+        run: () => openEmbedDialog(editor.view),
       },
       {
         id: 'insert-link',

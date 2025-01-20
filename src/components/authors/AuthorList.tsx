@@ -32,7 +32,7 @@ const AuthorListTitle = styled.h2`
   font-weight: 400;
   line-height: 24px;
   margin-left: 14px;
-  margin-top: 28px;
+  margin-top: 20px;
 `
 
 interface AuthorListProps {

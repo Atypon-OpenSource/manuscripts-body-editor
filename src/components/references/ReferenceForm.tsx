@@ -36,25 +36,12 @@ import {
   TextField,
   Tooltip,
 } from '@manuscripts/style-guide'
-import {
-  Field,
-  FieldArray,
-  FieldProps,
-  Form,
-  Formik,
-  FormikProps,
-  useFormikContext,
-} from 'formik'
-import React, {
-  MutableRefObject,
-  PropsWithChildren,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { Field, FieldArray, FieldProps, Formik, FormikProps } from 'formik'
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { BibliographyItemAttrs } from '../../lib/references'
+import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelContainer = styled.div`
   display: flex;
@@ -160,13 +147,6 @@ export const ReferenceTextArea = styled(TextArea)`
     ${(props) => props.theme.grid.unit * 3}px;
   height: ${(props) => props.theme.grid.unit * 20}px;
   resize: none;
-`
-
-export const FlexForm = styled(Form)`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 `
 
 export const FormFields = styled.div`
@@ -291,26 +271,6 @@ const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
     value: i[0],
   })
 )
-
-interface ChangeHandlingFormProps<Values> {
-  onChange: (values: Values) => void
-}
-const ChangeHandlingForm = <Values,>(
-  props: PropsWithChildren<ChangeHandlingFormProps<Values>>
-) => {
-  const { values } = useFormikContext<Values>()
-
-  useEffect(() => {
-    // you might modify this to fit your use case
-    // like adding a `const prevValues = usePrevious(values)` above and checking for equality
-    // or debounce this whole function but make sure not to use stale values
-    props.onChange?.(values)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.onChange, values])
-
-  return <FlexForm>{props.children}</FlexForm>
-}
-
 export interface ReferenceFormActions {
   reset: () => void
 }

@@ -24,6 +24,12 @@ import { isTextSelection } from './commands'
 /**
  * Selecting multiple nodes without moving selection cursor
  */
+
+interface NodesSelectionJSON {
+  type: 'inlineNodes'
+  startNode: ResolvedPos
+  endNode: ResolvedPos
+}
 export class NodesSelection extends Selection {
   public $startNode: ResolvedPos
   public $endNode: ResolvedPos
@@ -48,7 +54,7 @@ export class NodesSelection extends Selection {
     return new NodesSelection($from, $to)
   }
 
-  toJSON(): any {
+  toJSON(): NodesSelectionJSON {
     return {
       type: 'inlineNodes',
       startNode: this.$startNode,
