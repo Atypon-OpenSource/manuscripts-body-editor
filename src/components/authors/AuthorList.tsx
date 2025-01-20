@@ -40,7 +40,11 @@ interface AuthorListProps {
   authors: ContributorAttrs[]
   onSelect: (item: ContributorAttrs) => void
   onDelete: () => void
-  moveAuthor: (index: number, target: number) => void
+  moveAuthor: (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => void
   lastSavedAuthor: string | null
 }
 

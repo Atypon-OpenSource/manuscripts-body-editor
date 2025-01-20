@@ -248,9 +248,22 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     })
   }
 
-  const handleMoveAuthor = (from: number, to: number) => {
+  const handleMoveAuthor = (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => {
     const copy = cloneDeep(authors)
-    const order = copy.map((_, i) => (i === from ? to : i))
+    const order = copy.map((a, i) => {
+      if (a.id === from.id) {
+        if (to.priority) {
+          return to.priority + shift
+        } else {
+          return authors.findIndex((i) => i === to) + shift
+        }
+      }
+      return i
+    })
     copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
     copy.forEach((a, i) => {
       if (a.priority !== i) {
