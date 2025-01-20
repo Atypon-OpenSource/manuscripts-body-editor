@@ -62,7 +62,6 @@ export const useEditor = (externalProps: ExternalProps) => {
         const since = await collabProvider.stepsSince(localVersion)
 
         if (since && since.version <= localVersion) {
-          console.log('detected run away update of document')
           return
         }
 

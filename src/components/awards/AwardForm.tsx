@@ -30,7 +30,7 @@ import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export interface AwardFormProps {
   values: AwardAttrs
-  onSave: (values: AwardAttrs    ) => void
+  onSave: (values: AwardAttrs) => void
   onCancel: () => void
   onChange: (values: AwardAttrs) => void
 }
