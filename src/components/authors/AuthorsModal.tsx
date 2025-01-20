@@ -32,7 +32,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { isEqual, omit } from 'lodash'
+import { cloneDeep, isEqual, omit } from 'lodash'
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -49,7 +49,6 @@ import { AuthorFormPlaceholder } from './AuthorFormPlaceholder'
 import { AuthorList } from './AuthorList'
 import { RequiredFieldConfirmationDialog } from './RequiredFieldConfirmationDialog'
 import { SaveAuthorConfirmationDialog } from './SaveAuthorConfirmationDialog'
-import { cloneDeep } from 'lodash'
 
 const AddAuthorButton = styled.div`
   display: flex;
