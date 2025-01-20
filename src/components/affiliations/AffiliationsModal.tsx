@@ -531,83 +531,81 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
             </StyledSidebarContent>
           </ModalSidebar>
           <ScrollableModalContent data-cy="affiliations-modal-content">
-            <AffiliationForms>
-              {selection ? (
-                <>
-                  <ModalFormActions
-                    type={'affiliation'}
-                    onSave={() => handleSaveAffiliation(valuesRef.current)}
-                    onDelete={handleDeleteAffiliation}
-                    showDeleteDialog={showDeleteDialog}
-                    handleShowDeleteDialog={handleShowDeleteDialog}
-                    newEntity={newAffiliation}
-                    isDisableSave={isDisableSave}
-                  />
-                  <AffiliationForm
-                    values={normalize(selection)}
-                    onSave={handleSaveAffiliation}
-                    onChange={handleAffiliationChange}
-                    actionsRef={actionsRef}
-                  ></AffiliationForm>
-                  <ConfirmationDialog
-                    isOpen={showRequiredFieldConfirmationDialog}
-                    onPrimary={() =>
-                      setShowRequiredFieldConfirmationDialog(false)
-                    }
-                    onSecondary={handleConfirmationCancel}
-                    type={DialogType.REQUIRED}
-                    entityType="affiliation"
-                  />
-                  <ConfirmationDialog
-                    isOpen={showConfirmationDialog}
-                    onPrimary={handleConfirmationSave}
-                    onSecondary={handleConfirmationCancel}
-                    type={DialogType.SAVE}
-                    entityType="affiliation"
-                  />
-                  <AuthorsSection>
-                    <AuthorsHeader>
-                      <AuthorsTitle>Authors</AuthorsTitle>
-                      <AffiliateButton
-                        onClick={() => setShowAuthorDrawer(true)}
-                        data-cy="affiliate-authors-button"
-                      >
-                        <AddUserIcon width={16} height={16} />
-                        Affiliate Authors
-                      </AffiliateButton>
-                    </AuthorsHeader>
-                    <SelectedItemsBox
-                      items={selectedAuthors}
-                      onRemove={(id) => {
-                        setSelectedIds((prev) =>
-                          prev.filter((authorId) => authorId !== id)
-                        )
-                      }}
-                      placeholder="No authors assigned"
-                    />
-                  </AuthorsSection>
-                </>
-              ) : (
-                <FormPlaceholder
-                  type="affiliation"
-                  title={'Affiliation Details'}
-                  message={
-                    "Select an affiliation from the list to display it's details here."
+            {selection ? (
+              <AffiliationForms>
+                <ModalFormActions
+                  type={'affiliation'}
+                  onSave={() => handleSaveAffiliation(valuesRef.current)}
+                  onDelete={handleDeleteAffiliation}
+                  showDeleteDialog={showDeleteDialog}
+                  handleShowDeleteDialog={handleShowDeleteDialog}
+                  newEntity={newAffiliation}
+                  isDisableSave={isDisableSave}
+                />
+                <AffiliationForm
+                  values={normalize(selection)}
+                  onSave={handleSaveAffiliation}
+                  onChange={handleAffiliationChange}
+                  actionsRef={actionsRef}
+                ></AffiliationForm>
+                <ConfirmationDialog
+                  isOpen={showRequiredFieldConfirmationDialog}
+                  onPrimary={() =>
+                    setShowRequiredFieldConfirmationDialog(false)
                   }
-                  placeholderIcon={<AffiliationPlaceholderIcon />}
+                  onSecondary={handleConfirmationCancel}
+                  type={DialogType.REQUIRED}
+                  entityType="affiliation"
                 />
-              )}
-              {showAuthorDrawer && (
-                <Drawer
-                  items={authorItems}
-                  selectedIds={selectedIds}
-                  title="Authors"
-                  onSelect={handleAuthorSelect}
-                  onBack={() => setShowAuthorDrawer(false)}
-                  width="100%"
+                <ConfirmationDialog
+                  isOpen={showConfirmationDialog}
+                  onPrimary={handleConfirmationSave}
+                  onSecondary={handleConfirmationCancel}
+                  type={DialogType.SAVE}
+                  entityType="affiliation"
                 />
-              )}
-            </AffiliationForms>
+                <AuthorsSection>
+                  <AuthorsHeader>
+                    <AuthorsTitle>Authors</AuthorsTitle>
+                    <AffiliateButton
+                      onClick={() => setShowAuthorDrawer(true)}
+                      data-cy="affiliate-authors-button"
+                    >
+                      <AddUserIcon width={16} height={16} />
+                      Affiliate Authors
+                    </AffiliateButton>
+                  </AuthorsHeader>
+                  <SelectedItemsBox
+                    items={selectedAuthors}
+                    onRemove={(id) => {
+                      setSelectedIds((prev) =>
+                        prev.filter((authorId) => authorId !== id)
+                      )
+                    }}
+                    placeholder="No authors assigned"
+                  />
+                </AuthorsSection>
+                {showAuthorDrawer && (
+                  <Drawer
+                    items={authorItems}
+                    selectedIds={selectedIds}
+                    title="Authors"
+                    onSelect={handleAuthorSelect}
+                    onBack={() => setShowAuthorDrawer(false)}
+                    width="100%"
+                  />
+                )}
+              </AffiliationForms>
+            ) : (
+              <FormPlaceholder
+                type="affiliation"
+                title={'Affiliation Details'}
+                message={
+                  "Select an affiliation from the list to display it's details here."
+                }
+                placeholderIcon={<AffiliationPlaceholderIcon />}
+              />
+            )}
           </ScrollableModalContent>
         </StyledModalBody>
         <FormFooter onCancel={handleClose} />

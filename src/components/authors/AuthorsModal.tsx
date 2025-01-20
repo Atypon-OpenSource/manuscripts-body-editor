@@ -299,6 +299,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNextAuthor(null)
       setNewAuthor(false)
       setShowAffiliationDrawer(false)
+      updateAffiliationSelection(nextAuthor)
       setIsCreatingNewAuthor(false)
     } else if (isCreatingNewAuthor) {
       createNewAuthor()
@@ -353,8 +354,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelection(author)
     setShowConfirmationDialog(false)
     setNewAuthor(false)
-    setSelectedAffiliationIds([])
-    setSelectedAffiliations([])
     setShowAffiliationDrawer(false)
     setIsCreatingNewAuthor(false)
     dispatchAuthors({
