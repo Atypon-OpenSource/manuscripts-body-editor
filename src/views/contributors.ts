@@ -178,7 +178,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.dom.classList.add('block-container', `block-${this.node.type.name}`)
   }
 
-  public authorContextMenu = () => {
+  public authorContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
@@ -194,18 +194,24 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-    }
 
-    this.contextMenu = ReactSubView(
-      this.props,
-      ContextMenu,
-      componentProps,
-      this.node,
-      this.getPos,
-      this.view,
-      'context-menu'
-    )
-    return this.contextMenu
+      this.contextMenu = ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'context-menu'
+      )
+      return this.contextMenu
+    }
+    return undefined
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.authorContextMenu()
+    return contextMenu ? [contextMenu] : []
   }
 
   createLegend = () => {
@@ -365,7 +371,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
   }
-  public actionGutterButtons = (): HTMLElement[] => [this.authorContextMenu()]
 }
 
 export default createNodeView(ContributorsView)
