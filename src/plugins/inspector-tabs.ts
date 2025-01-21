@@ -33,7 +33,7 @@ export enum InspectorPrimaryTabs {
   History = 'history',
   Files = 'files',
 }
-enum InspectorSecondaryTabs {
+export enum Files {
   OtherFiles = 'other-files',
   SupplementsFiles = 'supplements-files',
 }
@@ -63,29 +63,29 @@ export default () => {
           primaryTab: null,
           secondaryTab: null,
         }
-        
+
         switch (target.dataset.action) {
           case 'open-other-files':
             event.stopPropagation()
             inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
-            inspectorOpenTabs.secondaryTab = InspectorSecondaryTabs.OtherFiles
+            inspectorOpenTabs.secondaryTab = Files.OtherFiles
             break
           case 'open-supplement-files':
             event.stopPropagation()
             inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
-            inspectorOpenTabs.secondaryTab = InspectorSecondaryTabs.SupplementsFiles
+            inspectorOpenTabs.secondaryTab = Files.SupplementsFiles
             break
           default:
             break
         }
-        
+
         if (inspectorOpenTabs.primaryTab || inspectorOpenTabs.secondaryTab) {
           const tr = view.state.tr.setMeta(inspectorTabsKey, {
             inspectorOpenTabs,
           })
           view.dispatch(tr)
         }
-        
+
         return false
       },
     },
