@@ -1071,13 +1071,6 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-contributors .context-menu > div {
-  border-radius: 4px;
-  border: 1px solid #c9c9c9;
-  background: #fff;
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
-}
-
 .ProseMirror .block-contributors .action-gutter {
   right: 15px;
   pointer-events: none;
