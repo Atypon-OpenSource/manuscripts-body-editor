@@ -1090,7 +1090,7 @@ th:hover > .table-context-menu-button,
 }
 
 .tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
-  opacity: 0.5
+  opacity: 0.3
 }
 
 .ProseMirror .block-embed .tools-panel {
