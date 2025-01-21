@@ -108,16 +108,7 @@
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   font-size: 14px;
   min-width: 208px;
-  /* overflow: hidden; */
 }
-
-/* .popper .menu .menu-section {
-  padding: 4px 0;
-}
-
-.popper .menu .menu-section:not(:last-child) {
-  border-bottom: 1px solid #e2e2e2;
-} */
 
 .popper .menu-item {
   display: flex;

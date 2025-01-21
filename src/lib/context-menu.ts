@@ -43,14 +43,14 @@ import {
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
 } from '../commands'
-import { figurePositions } from '../views/figure'
+import { figurePositions } from '../views/figure_editable'
 import { PopperManager } from './popper'
 import {
   getMatchingChild,
   isChildOfNodeTypes,
   isSelectionInNode,
-  updateNodeAttributes,
 } from './utils'
+import { updateNodeAttrs } from './view'
 
 const popper = new PopperManager()
 
@@ -258,7 +258,10 @@ export class ContextMenu {
     const isBox = isBoxElementSectionTitle($pos, this.node)
     const type = isBox ? schema.nodes.box_element : this.node.type
 
-    if (type === schema.nodes.figure_element) {
+    if (
+      type === schema.nodes.figure_element ||
+      type === schema.nodes.image_element
+    ) {
       const figure = getMatchingChild(
         this.node,
         (node) => node.type === schema.nodes.figure
@@ -266,12 +269,11 @@ export class ContextMenu {
 
       if (figure) {
         const attrType = figure.attrs.type
-        const { state, dispatch } = this.view
         const submenuOptions = [
           {
             title: 'Left',
             action: () =>
-              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              updateNodeAttrs(this.view, schema.nodes.figure, {
                 ...figure.attrs,
                 type: figurePositions.left,
               }),
@@ -281,7 +283,7 @@ export class ContextMenu {
           {
             title: 'Default',
             action: () =>
-              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              updateNodeAttrs(this.view, schema.nodes.figure, {
                 ...figure.attrs,
                 type: figurePositions.default,
               }),
@@ -291,7 +293,7 @@ export class ContextMenu {
           {
             title: 'Right',
             action: () =>
-              updateNodeAttributes(state, dispatch, figure.attrs.id, {
+              updateNodeAttrs(this.view, schema.nodes.figure, {
                 ...figure.attrs,
                 type: figurePositions.right,
               }),
@@ -426,8 +428,6 @@ export class ContextMenu {
       event.preventDefault()
       handler(event)
     })
-
-    // item.textContent = contents
 
     return item
   }

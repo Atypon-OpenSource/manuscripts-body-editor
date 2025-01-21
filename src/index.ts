@@ -46,4 +46,4 @@ export {
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
-export * from './plugins/inspector-actions'
+export * from './plugins/inspector-tabs'

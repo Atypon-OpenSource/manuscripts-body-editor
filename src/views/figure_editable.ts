@@ -22,6 +22,7 @@ import {
   ImageLeftIcon,
   ImageRightIcon,
 } from '@manuscripts/style-guide'
+import { schema } from '@manuscripts/transform'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -30,11 +31,17 @@ import {
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
 import { FileAttachment, groupFiles } from '../lib/files'
-import { updateNodeAttributes } from '../lib/utils'
+import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
-import { figurePositions, FigureView } from './figure'
+import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+
+export enum figurePositions {
+  left = 'half-left',
+  right = 'half-right',
+  default = '',
+}
 
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
@@ -269,7 +276,6 @@ export class FigureEditableView extends FigureView {
 
   showPositionMenu = () => {
     this.props.popper.destroy()
-    const { state, dispatch } = this.view
     const figure = this.node
 
     const componentProps: ContextMenuProps = {
@@ -278,7 +284,7 @@ export class FigureEditableView extends FigureView {
           label: 'Left',
           action: () => {
             this.props.popper.destroy()
-            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+            updateNodeAttrs(this.view, schema.nodes.figure, {
               ...figure.attrs,
               type: figurePositions.left,
             })
@@ -290,7 +296,7 @@ export class FigureEditableView extends FigureView {
           label: 'Default',
           action: () => {
             this.props.popper.destroy()
-            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+            updateNodeAttrs(this.view, schema.nodes.figure, {
               ...figure.attrs,
               type: figurePositions.default,
             })
@@ -302,7 +308,7 @@ export class FigureEditableView extends FigureView {
           label: 'Right',
           action: () => {
             this.props.popper.destroy()
-            updateNodeAttributes(state, dispatch, figure.attrs.id, {
+            updateNodeAttrs(this.view, schema.nodes.figure, {
               ...figure.attrs,
               type: figurePositions.right,
             })

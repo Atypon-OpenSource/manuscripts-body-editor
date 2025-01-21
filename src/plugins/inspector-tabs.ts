@@ -1,5 +1,5 @@
 /*!
- * © 2022 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-export const inspectorActionPluginKey = new PluginKey('inspectorActionPlugin')
+export const inspectorTabsPluginKey = new PluginKey('inspectorTabsPlugin')
 
 interface InspectorOpenTabs {
   primaryTab: string | null
@@ -30,7 +30,7 @@ interface PluginState {
 
 export default () => {
   return new Plugin<PluginState>({
-    key: inspectorActionPluginKey,
+    key: inspectorTabsPluginKey,
     state: {
       init: () => ({
         inspectorOpenTabs: {
@@ -39,7 +39,7 @@ export default () => {
         },
       }),
       apply: (tr: Transaction, value: PluginState) => {
-        const meta = tr.getMeta(inspectorActionPluginKey)
+        const meta = tr.getMeta(inspectorTabsPluginKey)
         if (meta && meta.inspectorOpenTabs !== undefined) {
           return { ...value, inspectorOpenTabs: meta.inspectorOpenTabs }
         }
@@ -70,7 +70,7 @@ export default () => {
         }
 
         if (inspectorOpenTabs) {
-          const tr = view.state.tr.setMeta(inspectorActionPluginKey, {
+          const tr = view.state.tr.setMeta(inspectorTabsPluginKey, {
             inspectorOpenTabs,
           })
           view.dispatch(tr)
