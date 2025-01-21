@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 import { Form, useFormikContext } from 'formik'
-import React, { PropsWithChildren, useEffect } from 'react'
+import React, { MutableRefObject, PropsWithChildren, useEffect } from 'react'
 import styled from 'styled-components'
 
 export interface ChangeHandlingFormProps<Values> {
   onChange: (values: Values) => void
+  id: string
+  formRef?: MutableRefObject<HTMLFormElement | null>
 }
 
 export const ChangeHandlingForm = <Values,>(
@@ -34,7 +36,11 @@ export const ChangeHandlingForm = <Values,>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onChange, values])
 
-  return <FlexForm>{props.children}</FlexForm>
+  return (
+    <FlexForm id={props.id} ref={props.formRef}>
+      {props.children}
+    </FlexForm>
+  )
 }
 
 export const FlexForm = styled(Form)`
