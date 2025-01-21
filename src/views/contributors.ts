@@ -203,7 +203,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     return this.contextMenu
   }
@@ -277,7 +277,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }

@@ -108,7 +108,7 @@ export class CitationEditableView extends CitationView {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
   }
@@ -149,7 +149,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     } else {
       const componentProps: CitationViewerProps = {
@@ -163,7 +163,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     }
     this.props.popper.show(this.dom, this.editor, 'auto')

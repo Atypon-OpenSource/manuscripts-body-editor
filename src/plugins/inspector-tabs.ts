@@ -17,7 +17,7 @@
 import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
-export const inspectorTabsPluginKey = new PluginKey('inspectorTabsPlugin')
+export const inspectorTabsKey = new PluginKey('inspector_tabs')
 
 interface InspectorOpenTabs {
   primaryTab: string | null
@@ -28,9 +28,19 @@ interface PluginState {
   inspectorOpenTabs: InspectorOpenTabs
 }
 
+export enum InspectorPrimaryTabs {
+  Comments = 'comments',
+  History = 'history',
+  Files = 'files',
+}
+enum InspectorSecondaryTabs {
+  OtherFiles = 'other-files',
+  SupplementsFiles = 'supplements-files',
+}
+
 export default () => {
   return new Plugin<PluginState>({
-    key: inspectorTabsPluginKey,
+    key: inspectorTabsKey,
     state: {
       init: () => ({
         inspectorOpenTabs: {
@@ -39,7 +49,7 @@ export default () => {
         },
       }),
       apply: (tr: Transaction, value: PluginState) => {
-        const meta = tr.getMeta(inspectorTabsPluginKey)
+        const meta = tr.getMeta(inspectorTabsKey)
         if (meta && meta.inspectorOpenTabs !== undefined) {
           return { ...value, inspectorOpenTabs: meta.inspectorOpenTabs }
         }
@@ -53,29 +63,29 @@ export default () => {
           primaryTab: null,
           secondaryTab: null,
         }
-
+        
         switch (target.dataset.action) {
           case 'open-other-files':
             event.stopPropagation()
-            inspectorOpenTabs.primaryTab = 'files'
-            inspectorOpenTabs.secondaryTab = 'other-files'
+            inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
+            inspectorOpenTabs.secondaryTab = InspectorSecondaryTabs.OtherFiles
             break
           case 'open-supplement-files':
             event.stopPropagation()
-            inspectorOpenTabs.primaryTab = 'files'
-            inspectorOpenTabs.secondaryTab = 'supplements-files'
+            inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
+            inspectorOpenTabs.secondaryTab = InspectorSecondaryTabs.SupplementsFiles
             break
           default:
             break
         }
-
-        if (inspectorOpenTabs) {
-          const tr = view.state.tr.setMeta(inspectorTabsPluginKey, {
+        
+        if (inspectorOpenTabs.primaryTab || inspectorOpenTabs.secondaryTab) {
+          const tr = view.state.tr.setMeta(inspectorTabsKey, {
             inspectorOpenTabs,
           })
           view.dispatch(tr)
         }
-
+        
         return false
       },
     },

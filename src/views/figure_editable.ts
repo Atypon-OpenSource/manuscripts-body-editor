@@ -327,7 +327,7 @@ export class FigureEditableView extends FigureView {
         this.node,
         this.getPos,
         this.view,
-        'context-menu, position-menu'
+        ['context-menu', 'position-menu']
       ),
       'left',
       false

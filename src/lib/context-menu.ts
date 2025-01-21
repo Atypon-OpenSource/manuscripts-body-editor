@@ -85,7 +85,6 @@ const hasAny = <T>(set: Set<T>, ...items: T[]) => {
 
 export const contextMenuBtnClass = 'btn-context-menu'
 const contextSubmenuBtnClass = 'context-submenu-trigger'
-const contextSubmenuClass = 'context-submenu'
 
 export class ContextMenu {
   private readonly node: ManuscriptNode
@@ -453,7 +452,7 @@ export class ContextMenu {
     }[]
   ) => {
     const submenu = document.createElement('div')
-    submenu.classList.add('menu-section', contextSubmenuClass)
+    submenu.classList.add('menu-section', 'context-submenu')
     submenu.append(
       this.createSubmenuTrigger(submenuLabel),
       this.createMenuSection((section: HTMLElement) => {
