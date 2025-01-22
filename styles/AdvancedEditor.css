@@ -245,6 +245,13 @@
   position: relative;
 }
 
+.comment-marker:has(+ .block-contributors) {
+  height: 0;
+  top: -13px;
+  left: 60px;
+  display: block;
+}
+
 .block > div.comment-marker,
 .figure-block > div.comment-marker {
   top: -25px;
@@ -826,8 +833,7 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .contributors-list .separator {
   margin-right: 4px;
 }
-.block-contributors .tools-panel,
-.block-affiliations .tools-panel {
+.block-contributors .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
@@ -1065,38 +1071,24 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-
-.ProseMirror .block-contributors .context-menu > div,
-.ProseMirror .block-affiliations .context-menu > div  {
-  border-radius: 4px;
-  border: 1px solid #c9c9c9;
-  background: #fff;
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
-}
-
-.ProseMirror .block-contributors .action-gutter,
-.ProseMirror .block-affiliations .action-gutter {
-  right: 24px;
+.ProseMirror .block-contributors .action-gutter {
+  right: 15px;
   pointer-events: none;
 }
 
 .ProseMirror .block-embed {
   grid-template-columns: none;
 }
-
 .ProseMirror .block-embed .block {
   text-align: center;
   margin: 42px 52px;
 }
-
 .tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
   opacity: 0.3
 }
-
 .ProseMirror .block-embed .tools-panel {
   position: relative;
 }
-
 .ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
   display: none;
 }
