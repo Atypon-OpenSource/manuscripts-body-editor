@@ -611,7 +611,7 @@
   grid-template-columns: 52px auto 100px !important;
 }
 .ProseMirror .block-container.block-affiliations {
-  grid-template-columns: 52px auto 65px !important;
+  grid-template-columns: 52px auto 100px !important;
 }
 .ProseMirror .block-container.block-section {
   position: relative;
@@ -693,12 +693,11 @@
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
   .block-container:not(.block-section, .block-box_element):hover
-  .action-gutter {
+    .action-gutter {
     pointer-events: visible;
     opacity: 1;
     z-index: 2;
 }
-
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;

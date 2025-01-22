@@ -1543,6 +1543,7 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.figure_element ||
   type === schema.nodes.list ||
   type === schema.nodes.table_element ||
+  type === schema.nodes.affiliations ||
   type === schema.nodes.contributors
 
 export const addNodeComment = (
