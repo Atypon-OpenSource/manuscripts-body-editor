@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AwardNode,
   BoxElementNode,
   FigureElementNode,
   FigureNode,
@@ -86,6 +87,7 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
 } from './lib/doc'
@@ -296,6 +298,11 @@ export const createBlock = (
         state.schema.nodes.equation.create(),
       ])
       break
+    case state.schema.nodes.embed:
+      node = state.schema.nodes.embed.create(attrs, [
+        createAndFillFigcaptionElement(state),
+      ])
+      break
     default:
       node = nodeType.createAndFill(attrs)
   }
@@ -305,6 +312,21 @@ export const createBlock = (
     const selection = createSelection(nodeType, position, tr.doc)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
+}
+
+export const insertEmbed = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  attrs?: Attrs
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null) {
+    return false
+  }
+
+  createBlock(schema.nodes.embed, position, state, dispatch, attrs)
+
+  return true
 }
 
 export const insertInlineTableFootnote = (
@@ -963,9 +985,7 @@ export const insertContributors = (
 
   // Find the title node
   const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
-
   const pos = title.pos + title.node.nodeSize
-
   const contributors = state.schema.nodes.contributors.create({
     id: '',
   })
@@ -1023,6 +1043,24 @@ export const insertAffiliation = (
   return true
 }
 
+export const insertAward = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  const award = schema.nodes.award.create() as AwardNode
+  const tr = state.tr
+  const awards = insertAwardsNode(tr)
+  const pos = awards.pos + awards.node.nodeSize - 1
+  tr.insert(pos, award)
+  const selection = NodeSelection.create(tr.doc, pos)
+  view && view.focus()
+  if (dispatch) {
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
+  return true
+}
+
 export const insertKeywords = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
@@ -1032,7 +1070,6 @@ export const insertKeywords = (
   if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
     return false
   }
-
   // determine the position to insert the keywords node
   const supplements = findChildrenByType(
     state.doc,
@@ -1513,7 +1550,9 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
   type === schema.nodes.list ||
-  type === schema.nodes.table_element
+  type === schema.nodes.table_element ||
+  type === schema.nodes.affiliations ||
+  type === schema.nodes.contributors
 
 export const addNodeComment = (
   node: ManuscriptNode,
