@@ -206,11 +206,12 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.container.appendChild(this.popper)
   }
 
-  public showContextMenu = () => {
+  public showContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
     }
+
     if (can.editArticle) {
       componentProps.actions.push({
         label: 'New Affiliation',
@@ -222,18 +223,25 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
         action: () => this.handleEdit(),
         icon: 'Edit',
       })
+
+      this.contextMenu = ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'context-menu'
+      )
+      return this.contextMenu
     }
 
-    this.contextMenu = ReactSubView(
-      this.props,
-      ContextMenu,
-      componentProps,
-      this.node,
-      this.getPos,
-      this.view,
-      'context-menu'
-    )
-    return this.contextMenu
+    return undefined
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.showContextMenu()
+    return contextMenu ? [contextMenu] : []
   }
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
@@ -241,8 +249,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.handleEdit(true)
     }
   }
-
-  public actionGutterButtons = (): HTMLElement[] => [this.showContextMenu()]
 
   handleUpdateAuthors = (authors: ContributorAttrs[]) => {
     authors.forEach((author) => {
