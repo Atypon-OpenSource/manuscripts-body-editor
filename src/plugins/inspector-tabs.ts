@@ -19,9 +19,9 @@ import { EditorView } from 'prosemirror-view'
 
 export const inspectorTabsKey = new PluginKey('inspector_tabs')
 
-interface InspectorOpenTabs {
-  primaryTab: string | null
-  secondaryTab: string | null
+export interface InspectorOpenTabs {
+  primaryTab: InspectorPrimaryTabs | null
+  secondaryTab: InspectorSecondaryTabsFiles | null
 }
 
 interface PluginState {
@@ -29,13 +29,13 @@ interface PluginState {
 }
 
 export enum InspectorPrimaryTabs {
-  Comments = 'comments',
-  History = 'history',
-  Files = 'files',
+  Comments = 0,
+  History = 1,
+  Files = 2,
 }
-export enum Files {
-  OtherFiles = 'other-files',
-  SupplementsFiles = 'supplements-files',
+export enum InspectorSecondaryTabsFiles {
+  SupplementsFiles = 1,
+  OtherFiles = 2,
 }
 
 export default () => {
@@ -68,18 +68,23 @@ export default () => {
           case 'open-other-files':
             event.stopPropagation()
             inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
-            inspectorOpenTabs.secondaryTab = Files.OtherFiles
+            inspectorOpenTabs.secondaryTab =
+              InspectorSecondaryTabsFiles.OtherFiles
             break
           case 'open-supplement-files':
             event.stopPropagation()
             inspectorOpenTabs.primaryTab = InspectorPrimaryTabs.Files
-            inspectorOpenTabs.secondaryTab = Files.SupplementsFiles
+            inspectorOpenTabs.secondaryTab =
+              InspectorSecondaryTabsFiles.SupplementsFiles
             break
           default:
             break
         }
 
-        if (inspectorOpenTabs.primaryTab || inspectorOpenTabs.secondaryTab) {
+        if (
+          inspectorOpenTabs.primaryTab != null ||
+          inspectorOpenTabs.secondaryTab != null
+        ) {
           const tr = view.state.tr.setMeta(inspectorTabsKey, {
             inspectorOpenTabs,
           })

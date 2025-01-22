@@ -238,8 +238,8 @@ export class FigureEditableView extends FigureView {
     instructions.innerHTML = `
       <p>Drag or click here to upload image <br>
       or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>Other file</a> | 
-      <a data-action='open-supplement-files'>Supplements</a></p>
+      <a data-action='open-other-files'>'Other files'</a> | 
+      <a data-action='open-supplement-files'>'Supplements'</a></p>
     `
 
     element.appendChild(instructions)
