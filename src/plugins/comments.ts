@@ -255,6 +255,7 @@ const getDecorationPos = (node: ManuscriptNode, pos: number) => {
   switch (node.type) {
     case schema.nodes.affiliations:
     case schema.nodes.paragraph:
+    case schema.nodes.contributors:
       return pos
     case schema.nodes.keywords:
       return pos + 2

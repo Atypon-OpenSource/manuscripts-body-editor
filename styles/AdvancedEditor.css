@@ -256,6 +256,13 @@
   display: block;
 }
 
+.comment-marker:has(+ .block-contributors) {
+  height: 0;
+  top: -13px;
+  left: 60px;
+  display: block;
+}
+
 .block > div.comment-marker,
 .figure-block > div.comment-marker {
   top: -25px;
@@ -1083,20 +1090,16 @@ th:hover > .table-context-menu-button,
 .ProseMirror .block-embed {
   grid-template-columns: none;
 }
-
 .ProseMirror .block-embed .block {
   text-align: center;
   margin: 0 52px;
 }
-
 .tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
   opacity: 0.5
 }
-
 .ProseMirror .block-embed .tools-panel {
   position: relative;
 }
-
 .ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
   display: none;
 }

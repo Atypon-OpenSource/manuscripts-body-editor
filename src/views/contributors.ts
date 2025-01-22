@@ -28,6 +28,7 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -66,14 +67,22 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
+
     this.buildAuthors(affs)
     this.createLegend()
     this.updateSelection()
   }
 
   public selectNode = () => {
+    // Query the selected marker
+    const selectedMarker = document.querySelector(
+      '.comment-marker.selected-comment'
+    )
+
     this.dom.classList.add('ProseMirror-selectednode')
-    if (!isDeleted(this.node)) {
+
+    // Open the modal if the node is not deleted and the comment marker is not selected
+    if (!isDeleted(this.node) && !selectedMarker) {
       this.handleEdit('', true)
     }
   }
@@ -185,6 +194,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
     if (can.editArticle) {
       componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
+      componentProps.actions.push({
         label: 'New Author',
         action: () => this.handleEdit('', true),
         icon: 'AddOutline',
@@ -229,7 +243,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       }
     }
   }
-
   private handleClick = (event: Event) => {
     this.props.popper.destroy()
     const element = event.target as HTMLElement
@@ -324,7 +337,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     this.container.appendChild(this.popper)
   }
-
   handleSaveAuthor = (author: ContributorAttrs) => {
     const update = updateNodeAttrs(this.view, schema.nodes.contributor, author)
     if (!update) {
