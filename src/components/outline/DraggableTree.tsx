@@ -57,6 +57,7 @@ const excludedTypes = [
   schema.nodes.author_notes,
   schema.nodes.title,
   schema.nodes.image_element,
+  schema.nodes.embed,
 ]
 
 const childrenExcludedTypes = [
