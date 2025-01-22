@@ -611,7 +611,7 @@
   grid-template-columns: 52px auto 100px !important;
 }
 .ProseMirror .block-container.block-affiliations {
-  grid-template-columns: 52px auto 65px !important;
+  grid-template-columns: 52px auto 100px !important;
 }
 .ProseMirror .block-container.block-section {
   position: relative;
