@@ -265,6 +265,7 @@ export default (props: EditorProps) => {
         if (!fns) {
           return DecorationSet.empty
         }
+
         const decorations: Decoration[] = []
         fns.footnotesElements.forEach((fn) => {
           fn.footnotes.forEach(([node, pos]) => {
