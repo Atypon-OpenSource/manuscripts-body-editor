@@ -22,12 +22,12 @@ import {
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
-import { addNodeComment } from '../commands'
 import {
   ReferencesEditor,
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
-import { CommentKey, createCommentMarker } from '../lib/comments'
+import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
+import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
 import { addTrackChangesAttributes } from '../lib/track-changes-utils'
@@ -83,16 +83,11 @@ export class BibliographyElementBlockView extends BlockView<
     this.showPopper(citationID)
   }
 
-  private handleComment(itemID: string) {
-    const item = findChildByID(this.view, itemID)
-    if (item) {
-      addNodeComment(item.node, this.view.state, this.props.dispatch)
-    }
-  }
-
   private showContextMenu(element: HTMLElement) {
     this.props.popper.destroy()
     const can = this.props.getCapabilities()
+    const item = findNodeByID(this.view.state.doc, element.id)?.node
+
     const componentProps: ContextMenuProps = {
       actions: [],
     }
@@ -105,7 +100,7 @@ export class BibliographyElementBlockView extends BlockView<
     }
     componentProps.actions.push({
       label: 'Comment',
-      action: () => this.handleComment(element.id),
+      action: () => handleComment(item, this.view),
       icon: 'AddComment',
     })
 

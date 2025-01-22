@@ -28,6 +28,7 @@ import {
   authorLabel,
   ContributorAttrs,
 } from '../lib/authors'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -66,14 +67,22 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
     this.version = affs.version
     this.container.innerHTML = ''
+
     this.buildAuthors(affs)
     this.createLegend()
     this.updateSelection()
   }
 
   public selectNode = () => {
+    // Query the selected marker
+    const selectedMarker = document.querySelector(
+      '.comment-marker.selected-comment'
+    )
+
     this.dom.classList.add('ProseMirror-selectednode')
-    if (!isDeleted(this.node)) {
+
+    // Open the modal if the node is not deleted and the comment marker is not selected
+    if (!isDeleted(this.node) && !selectedMarker) {
       this.handleEdit('', true)
     }
   }
@@ -178,12 +187,17 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.dom.classList.add('block-container', `block-${this.node.type.name}`)
   }
 
-  public authorContextMenu = () => {
+  public authorContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
     }
     if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
       componentProps.actions.push({
         label: 'New Author',
         action: () => this.handleEdit('', true),
@@ -194,18 +208,24 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-    }
 
-    this.contextMenu = ReactSubView(
-      this.props,
-      ContextMenu,
-      componentProps,
-      this.node,
-      this.getPos,
-      this.view,
-      ['context-menu']
-    )
-    return this.contextMenu
+      this.contextMenu = ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['context-menu']
+      )
+      return this.contextMenu
+    }
+    return undefined
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.authorContextMenu()
+    return contextMenu ? [contextMenu] : []
   }
 
   createLegend = () => {
@@ -223,7 +243,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       }
     }
   }
-
   private handleClick = (event: Event) => {
     this.props.popper.destroy()
     const element = event.target as HTMLElement
@@ -318,7 +337,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     this.container.appendChild(this.popper)
   }
-
   handleSaveAuthor = (author: ContributorAttrs) => {
     const update = updateNodeAttrs(this.view, schema.nodes.contributor, author)
     if (!update) {
@@ -365,7 +383,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
   }
-  public actionGutterButtons = (): HTMLElement[] => [this.authorContextMenu()]
 }
 
 export default createNodeView(ContributorsView)
