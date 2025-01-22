@@ -85,12 +85,14 @@ export class FigureEditableView extends FigureView {
         }
       }
 
-      handleReplace = (file: FileAttachment) => {
-        this.setSrc(file.id)
-      }
-
       handleDetach = () => {
         this.setSrc('')
+      }
+    }
+
+    if (can.replaceFile) {
+      handleReplace = (file: FileAttachment) => {
+        this.setSrc(file.id)
       }
     }
 

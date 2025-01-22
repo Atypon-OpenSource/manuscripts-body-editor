@@ -64,6 +64,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
+  const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -75,7 +76,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
           <NestedDropdown
             disabled={!showReplace}
             parentToggleOpen={toggleOpen}
-            buttonText={'Replace'}
+            buttonText={replaceBtnText}
             moveLeft
             list={
               <>
@@ -90,7 +91,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                   </ListItemButton>
                 ))}
                 <UploadButton onClick={onUpload} disabled={!showUpload}>
-                  <UploadIcon /> Upload new...
+                  <UploadIcon /> XUpload new...
                 </UploadButton>
               </>
             }
@@ -119,7 +120,8 @@ const NestedDropdown: React.FC<{
   return (
     <DropdownWrapper ref={wrapperRef}>
       <NestedListButton onClick={toggleOpen} disabled={disabled}>
-        {buttonText} <TriangleCollapsedIcon />
+        <div>{buttonText}</div>
+        <TriangleCollapsedIcon />
       </NestedListButton>
       {isOpen && (
         <NestedListDropdownList
@@ -202,6 +204,9 @@ const NestedListButton = styled(ListItemButton)`
   &:active,
   &:focus {
     background: #f2fbfc;
+  }
+  svg {
+    margin-right: 0;
   }
 `
 
