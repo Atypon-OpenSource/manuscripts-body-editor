@@ -16,8 +16,8 @@
 
 import {
   OutlineBlockQuoteIcon,
-  OutlineEquationIcon,
   OutlineEmbedIcon,
+  OutlineEquationIcon,
   OutlineFigureIcon,
   OutlineManuscriptIcon,
   OutlineOrderedListIcon,
