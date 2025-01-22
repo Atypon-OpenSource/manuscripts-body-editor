@@ -19,7 +19,7 @@ import styled from 'styled-components'
 
 export interface ChangeHandlingFormProps<Values> {
   onChange: (values: Values) => void
-  id: string
+  id?: string
   formRef?: MutableRefObject<HTMLFormElement | null>
 }
 
