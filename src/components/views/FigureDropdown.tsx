@@ -91,7 +91,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                   </ListItemButton>
                 ))}
                 <UploadButton onClick={onUpload} disabled={!showUpload}>
-                  <UploadIcon /> XUpload new...
+                  <UploadIcon /> Upload new...
                 </UploadButton>
               </>
             }
