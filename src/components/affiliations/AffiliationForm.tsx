@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TextField } from '@manuscripts/style-guide'
-import { Field, FieldProps, Formik } from 'formik'
-import React from 'react'
+import { TextArea, TextField } from '@manuscripts/style-guide'
+import { Field, FieldProps, Formik, FormikProps } from 'formik'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
@@ -23,20 +23,13 @@ import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 const Row = styled.div`
   display: flex;
-  border-top: 1px solid ${(props) => props.theme.colors.border.field.default};
-  &:first-child {
-    border-top: none;
-  }
 `
 
 const AffiliationsTextField = styled(TextField)`
-  border: none;
   border-radius: 0;
   background: transparent;
-  &:not(:first-child) {
-    border-left: 1px solid ${(props) => props.theme.colors.border.field.default};
-  }
-
+  margin-bottom: 4px;
+  border-radius: ${(props) => props.theme.grid.radius.default};
   &[aria-invalid] {
     background: ${(props) => props.theme.colors.background.warning};
   }
@@ -46,19 +39,72 @@ const AffiliationsTextField = styled(TextField)`
   }
 `
 
+const DepartmentTextField = styled(TextArea)`
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 4px;
+  min-height: 60px;
+  border-radius: ${(props) => props.theme.grid.radius.default};
+  &[aria-invalid] {
+    background: ${(props) => props.theme.colors.background.warning};
+  }
+
+  &[aria-invalid]:focus {
+    background: transparent;
+  }
+`
+
+const FormLabel = styled.legend`
+  &:not(:first-child) {
+    margin-top: 24px;
+  }
+  margin-bottom: 12px;
+  font: ${(props) => props.theme.font.weight.normal}
+    ${(props) => props.theme.font.size.xlarge} /
+    ${(props) => props.theme.font.lineHeight.large}
+    ${(props) => props.theme.font.family.sans};
+  letter-spacing: -0.4px;
+  color: ${(props) => props.theme.colors.text.secondary};
+`
+
+const MarginRightTextField = styled(AffiliationsTextField)`
+  margin-right: 4px;
+`
+
+export interface FormActions {
+  reset: () => void
+}
 export interface AffiliationFormProps {
   values: AffiliationAttrs
   onSave: (values: AffiliationAttrs) => void
+  onChange: (values: AffiliationAttrs) => void
+  actionsRef?: React.MutableRefObject<FormActions | undefined>
 }
 
 export const AffiliationForm: React.FC<AffiliationFormProps> = ({
   values,
   onSave,
+  onChange,
+  actionsRef,
 }) => {
+  if (actionsRef && !actionsRef.current) {
+    actionsRef.current = {
+      reset: () => {
+        formRef.current?.resetForm()
+      },
+    }
+  }
+  const formRef = useRef<FormikProps<AffiliationAttrs>>(null)
   return (
-    <Formik<AffiliationAttrs> initialValues={values} onSubmit={onSave}>
+    <Formik<AffiliationAttrs>
+      initialValues={values}
+      onSubmit={onSave}
+      innerRef={formRef}
+      enableReinitialize={true}
+    >
       {() => (
-        <ChangeHandlingForm onChange={onSave}>
+        <ChangeHandlingForm onChange={onChange}>
+          <FormLabel>Institution*</FormLabel>
           <Row>
             <Field name="institution">
               {(props: FieldProps) => (
@@ -70,10 +116,11 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               )}
             </Field>
           </Row>
+          <FormLabel>Details</FormLabel>
           <Row>
             <Field name="department">
               {(props: FieldProps) => (
-                <AffiliationsTextField
+                <DepartmentTextField
                   id="department"
                   placeholder="Department"
                   {...props.field}
@@ -95,7 +142,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="city">
               {(props: FieldProps) => (
-                <AffiliationsTextField
+                <MarginRightTextField
                   id="city"
                   placeholder="City"
                   {...props.field}
@@ -115,7 +162,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="postCode">
               {(props: FieldProps) => (
-                <AffiliationsTextField
+                <MarginRightTextField
                   id="postCode"
                   placeholder="Postal Code"
                   {...props.field}
@@ -123,11 +170,11 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               )}
             </Field>
             <Field name="country">
-              {(props: FieldProps) => (
+              {({ field }: FieldProps) => (
                 <AffiliationsTextField
                   id="country"
                   placeholder="Country"
-                  {...props.field}
+                  {...field}
                 />
               )}
             </Field>

@@ -15,7 +15,6 @@
  */
 
 import {
-  isInlineFootnoteNode,
   ManuscriptEditorState,
   ManuscriptNode,
   schema,
@@ -102,13 +101,6 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
     behavior: 'smooth',
     block: blockAlignment,
   })
-
-  // Highlight the footnote marker if applicable
-  if (isInlineFootnoteNode(node)) {
-    const fn = target
-    fn.classList.add('highlight-footnote-marker')
-    setTimeout(() => fn.classList.remove('highlight-footnote-marker'), 3000)
-  }
 
   return true
 }

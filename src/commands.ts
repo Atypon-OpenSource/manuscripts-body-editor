@@ -290,6 +290,11 @@ export const createBlock = (
         state.schema.nodes.equation.create(),
       ])
       break
+    case state.schema.nodes.embed:
+      node = state.schema.nodes.embed.create(attrs, [
+        createAndFillFigcaptionElement(state),
+      ])
+      break
     default:
       node = nodeType.createAndFill(attrs)
   }
@@ -299,6 +304,21 @@ export const createBlock = (
     const selection = createSelection(nodeType, position, tr.doc)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
+}
+
+export const insertEmbed = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  attrs?: Attrs
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null) {
+    return false
+  }
+
+  createBlock(schema.nodes.embed, position, state, dispatch, attrs)
+
+  return true
 }
 
 export const insertInlineTableFootnote = (
@@ -1522,7 +1542,9 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.paragraph ||
   type === schema.nodes.figure_element ||
   type === schema.nodes.list ||
-  type === schema.nodes.table_element
+  type === schema.nodes.table_element ||
+  type === schema.nodes.affiliations ||
+  type === schema.nodes.contributors
 
 export const addNodeComment = (
   node: ManuscriptNode,
