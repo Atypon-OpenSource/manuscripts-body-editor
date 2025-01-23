@@ -535,7 +535,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
               <AffiliationForms>
                 <ModalFormActions
                   type={'affiliation'}
-                  formId={'affiliation-form'}
+                  form={'affiliation-form'}
                   onDelete={handleDeleteAffiliation}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
