@@ -27,6 +27,7 @@ import {
   affiliationName,
   ContributorAttrs,
 } from '../lib/authors'
+import { handleComment } from '../lib/comments'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -206,12 +207,18 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.container.appendChild(this.popper)
   }
 
-  public showContextMenu = () => {
+  public showContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
     }
+
     if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
       componentProps.actions.push({
         label: 'New Affiliation',
         action: () => this.handleEdit(true),
@@ -222,27 +229,40 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
         action: () => this.handleEdit(),
         icon: 'Edit',
       })
+
+      this.contextMenu = ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'context-menu'
+      )
+      return this.contextMenu
     }
 
-    this.contextMenu = ReactSubView(
-      this.props,
-      ContextMenu,
-      componentProps,
-      this.node,
-      this.getPos,
-      this.view,
-      'context-menu'
-    )
-    return this.contextMenu
+    return undefined
   }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.showContextMenu()
+    return contextMenu ? [contextMenu] : []
+  }
+
   public selectNode = () => {
+    // Query the selected marker
+    const selectedMarker = document.querySelector(
+      '.comment-marker.selected-comment'
+    )
+
     this.dom.classList.add('ProseMirror-selectednode')
-    if (!isDeleted(this.node)) {
+
+    // Open the modal if the node is not deleted and the comment marker is not selected
+    if (!isDeleted(this.node) && !selectedMarker) {
       this.handleEdit(true)
     }
   }
-
-  public actionGutterButtons = (): HTMLElement[] => [this.showContextMenu()]
 
   handleUpdateAuthors = (authors: ContributorAttrs[]) => {
     authors.forEach((author) => {
