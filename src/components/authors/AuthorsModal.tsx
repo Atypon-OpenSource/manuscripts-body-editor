@@ -589,7 +589,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   entityType="author"
                 />
                 <ModalFormActions
-                  formId={'author-details-form'}
+                  form={'author-details-form'}
                   type="author"
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
@@ -606,7 +606,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 <AuthorDetailsForm
                   values={normalize(selection)}
                   onChange={handleChangeAuthor}
-                  onSave={() => handleSaveAuthor(valuesRef.current)}
+                  onSave={handleSaveAuthor}
                   actionsRef={actionsRef}
                   isEmailRequired={isEmailRequired}
                   selectedAffiliations={selectedAffiliationIds}

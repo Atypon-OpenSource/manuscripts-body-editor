@@ -48,7 +48,7 @@ const StyledIconButton = styled(IconButton)`
 
 export interface FormActionsProps {
   type: string
-  formId: string
+  form: string
   onDelete: () => void
   showDeleteDialog: boolean
   handleShowDeleteDialog: () => void
@@ -58,7 +58,7 @@ export interface FormActionsProps {
 
 export const ModalFormActions: React.FC<FormActionsProps> = ({
   type,
-  formId,
+  form,
   onDelete,
   showDeleteDialog,
   handleShowDeleteDialog,
@@ -78,7 +78,7 @@ export const ModalFormActions: React.FC<FormActionsProps> = ({
         entityType={type}
       />
       <StyledButtonGroup>
-        <StyledIconButton disabled={isDisableSave} type="submit" form={formId}>
+        <StyledIconButton disabled={isDisableSave} type="submit" form={form}>
           <PlusIcon />
           {newEntity ? 'Save Details' : 'Update Details'}
         </StyledIconButton>
