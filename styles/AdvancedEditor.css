@@ -164,7 +164,12 @@
 .ProseMirror .block-container.block-box_element {
   grid-template-columns: auto;
 }
-
+.ProseMirror .block-contributors {
+  grid-template-columns: 52px auto 65px;
+}
+.ProseMirror .block-affiliations {
+  grid-template-columns: 52px auto 100px;
+}
 .ProseMirror .block-container.block-box_element > .block.box-element {
   position: relative;
   display: grid;
@@ -253,6 +258,12 @@
   left: 0;
   cursor: pointer;
   position: relative;
+}
+.comment-marker:has(+ .block-affiliations) {
+  height: 0;
+  top: -13px;
+  left: 60px;
+  display: block;
 }
 
 .comment-marker:has(+ .block-contributors) {
@@ -1081,7 +1092,7 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-contributors .action-gutter {
+.ProseMirror .block-contributors .action-gutter , .ProseMirror .block-affiliations .action-gutter{
   right: 15px;
   pointer-events: none;
 }
