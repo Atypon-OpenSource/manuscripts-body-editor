@@ -252,8 +252,10 @@
 
 .comment-marker:has(+ .block-contributors), .comment-marker:has(+ .block-affiliations) {
   height: 0;
-  top: -13px;
-  left: 60px;
+  top: 0;
+  right: 60px;
+  left: unset;
+  float: right;
   display: block;
 }
 
@@ -838,12 +840,12 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .contributors-list .separator {
   margin-right: 4px;
 }
-.block-contributors .tools-panel {
+.block-contributors .tools-panel, .block-affiliations .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 33px;
   left: -10px;
 }
 .contributor .contributor-comment {
