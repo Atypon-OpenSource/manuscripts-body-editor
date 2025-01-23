@@ -249,14 +249,8 @@
   cursor: pointer;
   position: relative;
 }
-.comment-marker:has(+ .block-affiliations) {
-  height: 0;
-  top: -13px;
-  left: 60px;
-  display: block;
-}
 
-.comment-marker:has(+ .block-contributors) {
+.comment-marker:has(+ .block-contributors), .comment-marker:has(+ .block-affiliations) {
   height: 0;
   top: -13px;
   left: 60px;
