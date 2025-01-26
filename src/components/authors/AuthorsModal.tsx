@@ -203,6 +203,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
+  const authorFormRef = useRef<HTMLFormElement | null>(null)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
@@ -290,23 +291,30 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleSave = () => {
-    if (valuesRef.current && selection) {
-      handleSaveAuthor(valuesRef.current)
-    }
+    if (!authorFormRef.current?.checkValidity()) {
+      setShowConfirmationDialog(false)
+      setTimeout(() => {
+        authorFormRef.current?.reportValidity()
+      }, 830)
+    } else {
+      if (valuesRef.current && selection) {
+        handleSaveAuthor(valuesRef.current)
+      }
 
-    if (nextAuthor) {
-      setSelection(nextAuthor)
-      setNextAuthor(null)
-      setNewAuthor(false)
-      setShowAffiliationDrawer(false)
-      updateAffiliationSelection(nextAuthor)
-      setIsCreatingNewAuthor(false)
-    } else if (isCreatingNewAuthor) {
-      createNewAuthor()
-      setIsCreatingNewAuthor(false)
-    }
+      if (nextAuthor) {
+        setSelection(nextAuthor)
+        setNextAuthor(null)
+        setNewAuthor(false)
+        setShowAffiliationDrawer(false)
+        updateAffiliationSelection(nextAuthor)
+        setIsCreatingNewAuthor(false)
+      } else if (isCreatingNewAuthor) {
+        createNewAuthor()
+        setIsCreatingNewAuthor(false)
+      }
 
-    setShowConfirmationDialog(false)
+      setShowConfirmationDialog(false)
+    }
   }
 
   const handleCancel = () => {
@@ -581,8 +589,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   entityType="author"
                 />
                 <ModalFormActions
+                  form={'author-details-form'}
                   type="author"
-                  onSave={() => handleSaveAuthor(valuesRef.current)}
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
@@ -602,6 +610,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   actionsRef={actionsRef}
                   isEmailRequired={isEmailRequired}
                   selectedAffiliations={selectedAffiliationIds}
+                  authorFormRef={authorFormRef}
                 />
                 <AuthorsSection>
                   <AuthorsHeader>
