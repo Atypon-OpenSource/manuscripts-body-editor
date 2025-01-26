@@ -31,6 +31,7 @@ export class InlineEquationView
   }
 
   public updateContents() {
+    super.updateContents()
     this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }

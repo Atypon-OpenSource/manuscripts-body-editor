@@ -577,7 +577,7 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation), .footnote-marker-selected {
+  ):not(figure):not(figure .equation), .footnote-marker-selected { 
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
 }
@@ -695,7 +695,7 @@ span.comment-marker {
 .block-award.selected-suggestion span,
 .selected-suggestion .inserted:not(.citation.inserted),
 .selected-suggestion .deleted:not(.citation.deleted),
-figure.block .equation.set_attrs.selected-suggestion {
+figure .selected-suggestion {
   background-color: transparent !important;
 }
 
