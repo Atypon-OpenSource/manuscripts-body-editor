@@ -212,6 +212,14 @@ export const canInsert =
       return false
     }
 
+    if (
+      isElementNodeType(type) &&
+      type !== schema.nodes.paragraph &&
+      findParentNodeOfType(schema.nodes.backmatter)(state.selection)
+    ) {
+      return false
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -1550,6 +1558,8 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.figure_element ||
   type === schema.nodes.list ||
   type === schema.nodes.table_element ||
+  type === schema.nodes.embed ||
+  type === schema.nodes.affiliations ||
   type === schema.nodes.contributors
 
 export const addNodeComment = (

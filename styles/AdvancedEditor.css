@@ -154,7 +154,12 @@
 .ProseMirror .block-container.block-box_element {
   grid-template-columns: auto;
 }
-
+.ProseMirror .block-contributors {
+  grid-template-columns: 52px auto 65px;
+}
+.ProseMirror .block-affiliations {
+  grid-template-columns: 52px auto 100px;
+}
 .ProseMirror .block-container.block-box_element > .block.box-element {
   position: relative;
   display: grid;
@@ -243,6 +248,12 @@
   left: 0;
   cursor: pointer;
   position: relative;
+}
+.comment-marker:has(+ .block-affiliations) {
+  height: 0;
+  top: -13px;
+  left: 60px;
+  display: block;
 }
 
 .comment-marker:has(+ .block-contributors) {
@@ -1071,7 +1082,7 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-contributors .action-gutter {
+.ProseMirror .block-contributors .action-gutter , .ProseMirror .block-affiliations .action-gutter{
   right: 15px;
   pointer-events: none;
 }
@@ -1081,14 +1092,30 @@ th:hover > .table-context-menu-button,
 }
 .ProseMirror .block-embed .block {
   text-align: center;
-  margin: 0 52px;
+  margin: 42px 52px;
 }
 .tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
-  opacity: 0.5
+  opacity: 0.3
 }
 .ProseMirror .block-embed .tools-panel {
   position: relative;
 }
 .ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
   display: none;
+}
+
+.ProseMirror .block-embed:hover .embed-context-menu {
+  visibility: visible;
+}
+
+.ProseMirror .block-embed .embed-context-menu {
+  visibility: hidden;
+  position: absolute;
+  width: fit-content;
+  right: 7%;
+  z-index: 10;
+  border-radius: 4px;
+  border: 1px solid #C9C9C9;
+  background: #FFF;
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
 }
