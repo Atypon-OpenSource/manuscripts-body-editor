@@ -45,7 +45,9 @@ const AuthorContainer = styled.div`
     background: ${(props) => props.theme.colors.background.fifth};
     border-color: ${(props) => props.theme.colors.border.primary};
   }
-
+  &.active {
+    pointer-events: none;
+  }
   &.dragging {
     opacity: 1;
     cursor: grabbing;
