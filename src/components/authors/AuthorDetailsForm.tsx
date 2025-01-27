@@ -69,6 +69,7 @@ interface AuthorDetailsFormProps {
   values: ContributorAttrs
   onChange: (values: ContributorAttrs) => void
   onSave: (values: ContributorAttrs) => void
+  authorFormRef?: MutableRefObject<HTMLFormElement | null>
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
@@ -81,6 +82,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   actionsRef,
   isEmailRequired,
   selectedAffiliations,
+  authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
 
@@ -109,7 +111,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
         return (
-          <ChangeHandlingForm onChange={onChange}>
+          <ChangeHandlingForm
+            onChange={onChange}
+            id="author-details-form"
+            formRef={authorFormRef}
+          >
             <Fieldset>
               <TextFieldGroupContainer>
                 <Field name={'bibliographicName.given'}>
@@ -140,8 +146,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     : 'Email address'
                   return (
                     <TextFieldWithError
-                      required={isEmailRequired}
                       id={'email'}
+                      type="email"
+                      required={isEmailRequired}
                       placeholder={placeholder}
                       {...props.field}
                     />
@@ -191,6 +198,8 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                       <TextField
                         id={'orcid'}
                         placeholder={'https://orcid.org/...'}
+                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
+                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
                         {...props.field}
                       />
                     )}

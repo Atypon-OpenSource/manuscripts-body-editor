@@ -103,7 +103,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
       enableReinitialize={true}
     >
       {() => (
-        <ChangeHandlingForm onChange={onChange}>
+        <ChangeHandlingForm onChange={onChange} id="affiliation-form">
           <FormLabel>Institution*</FormLabel>
           <Row>
             <Field name="institution">

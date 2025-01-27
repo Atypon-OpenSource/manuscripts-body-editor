@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { EmbedNode } from '@manuscripts/transform'
 
-import { NoPreviewMessageWithLink } from '../components/toolbar/InsertEmbedDialog'
+import { addNodeComment } from '../commands'
+import {
+  NoPreviewMessageWithLink,
+  openEmbedDialog,
+} from '../components/toolbar/InsertEmbedDialog'
+import { openDeleteEmbedDialog } from '../components/views/DeleteEmbedDialog'
 import { getOEmbedHTML, getOEmbedUrl } from '../lib/oembed'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -37,6 +43,7 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
 
     this.contentDOM = document.createElement('div')
     this.container.appendChild(this.contentDOM)
+    this.buildContextMenu(this.container)
   }
 
   public async updateContents() {
@@ -51,7 +58,13 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
     const preview = document.createElement('div')
     preview.classList.add('embed-media-preview')
     preview.setAttribute('contenteditable', 'false')
-    this.container.prepend(preview)
+
+    const oldPreview = this.container.querySelector('.embed-media-preview')
+    if (oldPreview) {
+      this.container.replaceChild(preview, oldPreview)
+    } else {
+      this.container.prepend(preview)
+    }
 
     const oEmbedUrl = await getOEmbedUrl(this.href, 643, 363)
     if (oEmbedUrl) {
@@ -62,6 +75,48 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
       }
     }
     this.showUnavailableMessage(preview)
+  }
+
+  private buildContextMenu = (preview: HTMLElement) => {
+    const can = this.props.getCapabilities()
+
+    if (!can.editArticle) {
+      return
+    }
+
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Comment',
+          action: () =>
+            addNodeComment(this.node, this.view.state, this.view.dispatch),
+          icon: 'AddComment',
+        },
+        {
+          label: 'Delete',
+          action: () =>
+            openDeleteEmbedDialog(this.view, this.node, this.getPos()),
+          icon: 'Delete',
+        },
+        {
+          label: 'Edit',
+          action: () => openEmbedDialog(this.view, 'Update', this.getPos()),
+          icon: 'Edit',
+        },
+      ],
+    }
+
+    preview.appendChild(
+      ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        'embed-context-menu'
+      )
+    )
   }
 
   private showUnavailableMessage(preview: HTMLElement) {
