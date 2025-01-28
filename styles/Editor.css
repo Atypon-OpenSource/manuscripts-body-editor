@@ -1008,7 +1008,7 @@
   position: relative;
   border: 1px solid transparent;
 }
-.footnote .delete-icon {
+.ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
 .ProseMirror .footnote.footnote-selected:not(.inserted, .deleted) .delete-icon {
