@@ -718,9 +718,10 @@ export const insertInlineFootnote = (
   const tr = state.tr
   const container = findFootnotesContainerNode(state.doc, pos)
   const fn = getFootnotesElementState(state, container.node.attrs.id)
-  const hasUnusedFootnotes = fn && fn.unusedFootnoteIDs.size > 0
+  const hasFootnotes =
+    fn && fn.footnotes.filter((fn) => !isDeleted(fn[0])).length > 0
 
-  const footnote = !hasUnusedFootnotes && createFootnote()
+  const footnote = !hasFootnotes && createFootnote()
   const node = schema.nodes.inline_footnote.create({
     rids: footnote ? [footnote.attrs.id] : [],
   })
