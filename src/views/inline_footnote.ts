@@ -133,8 +133,7 @@ export class InlineFootnoteView
       return []
     }
 
-    const footnotes = fn.footnotes
-      .map((n) => n[0])
+    const footnotes = fn.footnotes.map((n) => n[0])
 
     const props: FootnotesSelectorProps = {
       footnotes,
