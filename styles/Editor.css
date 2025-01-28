@@ -963,7 +963,7 @@
   position: absolute;
   right: -20px;
   cursor: pointer;
-  z-index: 1;
+  z-index: 3;
 }
 .delete-icon svg path {
   fill: #c9c9c9;
@@ -1008,10 +1008,10 @@
   position: relative;
   border: 1px solid transparent;
 }
-.ProseMirror .footnote .delete-icon {
+.footnote .delete-icon {
   visibility: hidden;
 }
-.ProseMirror .footnote.footnote-selected .delete-icon {
+.ProseMirror .footnote.footnote-selected:not(.inserted, .deleted) .delete-icon {
   visibility: visible;
 }
 .ProseMirror .footnote .scroll-icon {
