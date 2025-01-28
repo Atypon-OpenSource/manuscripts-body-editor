@@ -128,7 +128,11 @@ interface DraggableAuthorProps {
   isSelected: boolean
   onClick: () => void
   onDelete: () => void
-  moveAuthor: (from: number, to: number) => void
+  moveAuthor: (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => void
   showSuccessIcon?: boolean
 }
 
@@ -162,10 +166,8 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
           return
         }
         const side = getDropSide(ref.current, monitor)
-        const from = item.author.priority as number
-        const to = author.priority as number
         const diff = side === 'before' ? -0.5 : 0.5
-        moveAuthor(from, to + diff)
+        moveAuthor(item.author, author, diff)
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
