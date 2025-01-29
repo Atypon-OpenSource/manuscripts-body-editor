@@ -36,7 +36,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { isEqual, omit } from 'lodash'
+import { cloneDeep, isEqual, omit } from 'lodash'
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -370,10 +370,23 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     })
   }
 
-  const handleMoveAuthor = (from: number, to: number) => {
-    const copy = [...authors]
-    const order = copy.map((_, i) => (i === from ? to : i))
-    copy.sort((a, b) => order[authors.indexOf(a)] - order[authors.indexOf(b)])
+  const handleMoveAuthor = (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => {
+    const copy = cloneDeep(authors)
+    const order = copy.map((a, i) => {
+      if (a.id === from.id) {
+        if (to.priority) {
+          return to.priority + shift
+        } else {
+          return authors.findIndex((i) => i === to) + shift
+        }
+      }
+      return i
+    })
+    copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
     copy.forEach((a, i) => {
       if (a.priority !== i) {
         a.priority = i
