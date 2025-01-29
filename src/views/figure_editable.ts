@@ -39,12 +39,11 @@ export class FigureEditableView extends FigureView {
   public updateContents() {
     super.updateContents()
     const attrs = this.node.attrs
-    console.log('attrs:', attrs)
+
     const src = attrs.src
     const files = this.props.getFiles()
-    console.log('files:', files)
     const file = src && files.filter((f) => f.id === src)[0]
-    
+
     this.container.innerHTML = ''
 
     const can = this.props.getCapabilities()
