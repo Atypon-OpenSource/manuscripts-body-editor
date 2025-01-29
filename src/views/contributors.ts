@@ -57,6 +57,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public stopEvent = () => true
 
   public updateContents() {
+    super.updateContents()
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return
