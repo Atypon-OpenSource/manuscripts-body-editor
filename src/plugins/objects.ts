@@ -61,18 +61,26 @@ export default () => {
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'figure-label'
-                labelNode.textContent = target.label + ':'
 
-                node.forEach((child, offset) => {
-                  if (child.type.name === 'figcaption') {
-                    decorations.push(
-                      Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                        side: -1,
-                        key: `figure-label-${id}-${target.label}`,
-                      })
-                    )
-                  }
-                })
+                if (node.type.name === 'image_element') {
+                  labelNode.textContent = target.label
+                  decorations.push(
+                    Decoration.widget(pos + node.nodeSize - 1, labelNode)
+                  )
+                } else {
+                  labelNode.textContent = target.label + ':'
+
+                  node.forEach((child, offset) => {
+                    if (child.type.name === 'figcaption') {
+                      decorations.push(
+                        Decoration.widget(pos + 1 + offset + 1, labelNode, {
+                          side: -1,
+                          key: `figure-label-${id}-${target.label}`,
+                        })
+                      )
+                    }
+                  })
+                }
               }
             }
           })
