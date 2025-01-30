@@ -32,6 +32,7 @@ export class EquationView
 
   public createDOM = () => {
     this.dom = document.createElement('div')
+    this.dom.classList.add('equation')
   }
 
   public updateContents() {

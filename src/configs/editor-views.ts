@@ -69,6 +69,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
     figure_element: figureElement(props, dispatch),
+    image_element: figureElement(props, dispatch),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),
     general_table_footnote: generalTableFootnote(props, dispatch),

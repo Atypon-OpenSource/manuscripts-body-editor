@@ -236,6 +236,12 @@ export const getEditorMenus = (
         run: doCommand(insertBlock(schema.nodes.figure_element)),
       },
       {
+        id: 'insert-image-element',
+        label: 'Simple Image',
+        isEnabled: isCommandValid(canInsert(schema.nodes.image_element)),
+        run: doCommand(insertBlock(schema.nodes.image_element)),
+      },
+      {
         id: 'insert-table-element',
         label: 'Table',
         shortcut: {
