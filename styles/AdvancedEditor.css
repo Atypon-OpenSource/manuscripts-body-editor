@@ -249,17 +249,13 @@
   cursor: pointer;
   position: relative;
 }
-.comment-marker:has(+ .block-affiliations) {
-  height: 0;
-  top: -13px;
-  left: 60px;
-  display: block;
-}
 
-.comment-marker:has(+ .block-contributors) {
+.comment-marker:has(+ .block-contributors), .comment-marker:has(+ .block-affiliations) {
   height: 0;
-  top: -13px;
-  left: 60px;
+  top: 0;
+  right: 60px;
+  left: unset;
+  float: right;
   display: block;
 }
 
@@ -695,7 +691,7 @@ span.comment-marker {
 .block-award.selected-suggestion span,
 .selected-suggestion .inserted:not(.citation.inserted),
 .selected-suggestion .deleted:not(.citation.deleted),
-figure.block .equation.set_attrs.selected-suggestion {
+figure .selected-suggestion {
   background-color: transparent !important;
 }
 
@@ -844,12 +840,12 @@ figure.block:has(.equation.set_attrs.selected-suggestion) {
 .contributors-list .separator {
   margin-right: 4px;
 }
-.block-contributors .tools-panel {
+.block-contributors .tools-panel, .block-affiliations .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 33px;
   left: -10px;
 }
 .contributor .contributor-comment {
