@@ -1544,7 +1544,7 @@ const getParentNode = (selection: Selection) => {
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
-const isCommentingAllowed = (type: NodeType) =>
+export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
@@ -1560,7 +1560,8 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.table_element ||
   type === schema.nodes.embed ||
   type === schema.nodes.affiliations ||
-  type === schema.nodes.contributors
+  type === schema.nodes.contributors ||
+  type === schema.nodes.image_element
 
 export const addNodeComment = (
   node: ManuscriptNode,
