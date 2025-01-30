@@ -30,7 +30,7 @@ import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 import { BibliographyItemAttrs } from '../lib/references'
-import { addTrackChangesAttributes } from '../lib/track-changes-utils'
+import { addTrackChangesAttributes, addTrackChangesClassNames } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
@@ -182,7 +182,7 @@ export class BibliographyElementBlockView extends BlockView<
       element.prepend(comment)
 
       addTrackChangesAttributes(node.attrs, element)
-
+      addTrackChangesClassNames(node.attrs, element)
       wrapper.append(element)
     }
 
