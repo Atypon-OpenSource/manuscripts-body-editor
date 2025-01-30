@@ -287,6 +287,9 @@ export const createBlock = (
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
       break
+    case state.schema.nodes.image_element:
+      node = createImageElement(state)
+      break
     case state.schema.nodes.listing_element:
       node = state.schema.nodes.listing_element.create({}, [
         state.schema.nodes.listing.create(),
@@ -1522,6 +1525,10 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
+const createImageElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.image_element.create({}, [
+    state.schema.nodes.figure.create(),
+  ])
 /**
  * This to make sure we get block node
  */
