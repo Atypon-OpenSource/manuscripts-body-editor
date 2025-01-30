@@ -26,6 +26,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
+import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   addNodeComment,
@@ -33,6 +34,7 @@ import {
   findPosBeforeFirstSubsection,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
+  isCommentingAllowed,
 } from '../commands'
 import { PopperManager } from './popper'
 import { isChildOfNodeTypes, isSelectionInNode } from './utils'
@@ -58,11 +60,6 @@ export const sectionLevel = (depth: number) => {
   }
 }
 
-interface Actions {
-  addComment?: boolean
-  targetComment?: ManuscriptNode
-}
-
 type InsertableNodes = Nodes | 'subsection'
 
 const hasAny = <T>(set: Set<T>, ...items: T[]) => {
@@ -74,18 +71,15 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
-  private readonly actions: Actions
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
-    getPos: () => number,
-    actions: Actions = {}
+    getPos: () => number
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
-    this.actions = actions
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
@@ -265,8 +259,8 @@ export class ContextMenu {
       )
     }
 
-    const { addComment, targetComment } = this.actions
-    if (addComment && targetComment) {
+    const targetComment = this.getCommentTarget()
+    if (isCommentingAllowed(targetComment.type)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
@@ -470,5 +464,18 @@ export class ContextMenu {
 
   private trimTitle = (title: string, max: number) => {
     return title.length > max ? title.substring(0, max) + '…' : title
+  }
+
+  private getCommentTarget = () => {
+    if (this.node.type === schema.nodes.section_title) {
+      const $pos = this.resolvePos()
+      const parent = $pos.parent
+      if (parent.type === schema.nodes.keywords) {
+        const groups = findChildrenByType(parent, schema.nodes.keyword_group)
+        return groups.length ? groups[0].node : this.node
+      }
+      return parent
+    }
+    return this.node
   }
 }
