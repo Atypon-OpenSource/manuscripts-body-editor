@@ -20,8 +20,12 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
 
+import { isCommentingAllowed } from '../commands'
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
 import BlockView from './block_view'
 
@@ -97,9 +101,25 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
     }
 
     public createMenu = () => {
+      const targetComment = this.getCommentTarget()
+
       return new ContextMenu(this.node, this.view, this.getPos, {
-        addComment: true,
+        addComment: isCommentingAllowed(targetComment.type),
+        targetComment,
       })
+    }
+
+    public getCommentTarget = () => {
+      if (this.node.type === schema.nodes.section_title) {
+        const $pos = this.view.state.doc.resolve(this.getPos())
+        const parent = $pos.parent
+        if (parent.type === schema.nodes.keywords) {
+          const groups = findChildrenByType(parent, schema.nodes.keyword_group)
+          return groups.length ? groups[0].node : this.node
+        }
+        return parent
+      }
+      return this.node
     }
   }
 }

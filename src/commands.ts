@@ -1568,6 +1568,10 @@ export const addNodeComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  if (!isCommentingAllowed(node.type)) {
+    return false
+  }
+
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {

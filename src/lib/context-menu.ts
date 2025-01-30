@@ -26,7 +26,6 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
-import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   addNodeComment,
@@ -34,7 +33,6 @@ import {
   findPosBeforeFirstSubsection,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
-  isCommentingAllowed,
 } from '../commands'
 import { PopperManager } from './popper'
 import { isChildOfNodeTypes, isSelectionInNode } from './utils'
@@ -62,6 +60,7 @@ export const sectionLevel = (depth: number) => {
 
 interface Actions {
   addComment?: boolean
+  targetComment?: ManuscriptNode
 }
 
 type InsertableNodes = Nodes | 'subsection'
@@ -266,21 +265,18 @@ export class ContextMenu {
       )
     }
 
-    const { addComment } = this.actions
-    if (addComment) {
-      const target = this.getCommentTarget()
-      if (isCommentingAllowed(target.type)) {
-        menu.appendChild(
-          this.createMenuSection((section: HTMLElement) => {
-            section.appendChild(
-              this.createMenuItem('Comment', () => {
-                addNodeComment(target, this.view.state, this.view.dispatch)
-                popper.destroy()
-              })
-            )
-          })
-        )
-      }
+    const { addComment, targetComment } = this.actions
+    if (addComment && targetComment) {
+      menu.appendChild(
+        this.createMenuSection((section: HTMLElement) => {
+          section.appendChild(
+            this.createMenuItem('Comment', () => {
+              addNodeComment(targetComment, this.view.state, this.view.dispatch)
+              popper.destroy()
+            })
+          )
+        })
+      )
     }
 
     if (type === schema.nodes.table_element) {
@@ -474,18 +470,5 @@ export class ContextMenu {
 
   private trimTitle = (title: string, max: number) => {
     return title.length > max ? title.substring(0, max) + '…' : title
-  }
-
-  private getCommentTarget = () => {
-    if (this.node.type === schema.nodes.section_title) {
-      const $pos = this.resolvePos()
-      const parent = $pos.parent
-      if (parent.type === schema.nodes.keywords) {
-        const groups = findChildrenByType(parent, schema.nodes.keyword_group)
-        return groups.length ? groups[0].node : this.node
-      }
-      return parent
-    }
-    return this.node
   }
 }
