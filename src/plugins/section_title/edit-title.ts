@@ -25,7 +25,6 @@ import { EditorState, Transaction } from 'prosemirror-state'
  * This plugin ensures that specific section titles (e.g., graphical abstracts and keywords) cannot be edited directly.
  * It prevents modifications to these titles while allowing other actions, such as section deletion via the context menu.
  */
-import {} from 'prosemirror-state'
 
 export const preventTitleEdit = (tr: Transaction, oldState: EditorState) => {
   // Skip checks for track changes or context menu
