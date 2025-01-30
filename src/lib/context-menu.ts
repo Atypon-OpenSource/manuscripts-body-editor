@@ -34,6 +34,7 @@ import {
   findPosBeforeFirstSubsection,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
+  isCommentingAllowed,
 } from '../commands'
 import { PopperManager } from './popper'
 import { isChildOfNodeTypes, isSelectionInNode } from './utils'
@@ -267,17 +268,19 @@ export class ContextMenu {
 
     const { addComment } = this.actions
     if (addComment) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          section.appendChild(
-            this.createMenuItem('Comment', () => {
-              const target = this.getCommentTarget()
-              addNodeComment(target, this.view.state, this.view.dispatch)
-              popper.destroy()
-            })
-          )
-        })
-      )
+      const target = this.getCommentTarget()
+      if (isCommentingAllowed(target.type)) {
+        menu.appendChild(
+          this.createMenuSection((section: HTMLElement) => {
+            section.appendChild(
+              this.createMenuItem('Comment', () => {
+                addNodeComment(target, this.view.state, this.view.dispatch)
+                popper.destroy()
+              })
+            )
+          })
+        )
+      }
     }
 
     if (type === schema.nodes.table_element) {

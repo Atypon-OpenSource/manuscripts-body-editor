@@ -1544,7 +1544,7 @@ const getParentNode = (selection: Selection) => {
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
-const isCommentingAllowed = (type: NodeType) =>
+export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
@@ -1568,10 +1568,6 @@ export const addNodeComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (!isCommentingAllowed(node.type)) {
-    return false
-  }
-
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
