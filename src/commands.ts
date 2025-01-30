@@ -1560,7 +1560,8 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.table_element ||
   type === schema.nodes.embed ||
   type === schema.nodes.affiliations ||
-  type === schema.nodes.contributors
+  type === schema.nodes.contributors ||
+  type === schema.nodes.image_element
 
 export const addNodeComment = (
   node: ManuscriptNode,
