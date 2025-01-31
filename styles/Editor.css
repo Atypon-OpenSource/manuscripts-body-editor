@@ -357,8 +357,15 @@
 
 .ProseMirror .figure-label {
   font-weight: bold;
+  font-size: 14px;
   margin-right: 5px;
   white-space: nowrap;
+}
+
+.block-image_element .figure-label {
+  text-align: center;
+  grid-column-start: 1;
+  grid-column-end: -1;
 }
 
 .ProseMirror .executable-container {
@@ -705,7 +712,7 @@
     .action-gutter {
     pointer-events: visible;
     opacity: 1;
-    z-index: 2;
+    /* z-index: 2; */
 }
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;

@@ -65,6 +65,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   }
 
   public updateContents() {
+    super.updateContents()
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return

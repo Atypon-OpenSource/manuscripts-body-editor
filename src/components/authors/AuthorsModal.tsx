@@ -36,7 +36,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { isEqual, omit } from 'lodash'
+import { cloneDeep, isEqual, omit } from 'lodash'
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -203,6 +203,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
+  const authorFormRef = useRef<HTMLFormElement | null>(null)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
@@ -290,23 +291,30 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleSave = () => {
-    if (valuesRef.current && selection) {
-      handleSaveAuthor(valuesRef.current)
-    }
+    if (!authorFormRef.current?.checkValidity()) {
+      setShowConfirmationDialog(false)
+      setTimeout(() => {
+        authorFormRef.current?.reportValidity()
+      }, 830)
+    } else {
+      if (valuesRef.current && selection) {
+        handleSaveAuthor(valuesRef.current)
+      }
 
-    if (nextAuthor) {
-      setSelection(nextAuthor)
-      setNextAuthor(null)
-      setNewAuthor(false)
-      setShowAffiliationDrawer(false)
-      updateAffiliationSelection(nextAuthor)
-      setIsCreatingNewAuthor(false)
-    } else if (isCreatingNewAuthor) {
-      createNewAuthor()
-      setIsCreatingNewAuthor(false)
-    }
+      if (nextAuthor) {
+        setSelection(nextAuthor)
+        setNextAuthor(null)
+        setNewAuthor(false)
+        setShowAffiliationDrawer(false)
+        updateAffiliationSelection(nextAuthor)
+        setIsCreatingNewAuthor(false)
+      } else if (isCreatingNewAuthor) {
+        createNewAuthor()
+        setIsCreatingNewAuthor(false)
+      }
 
-    setShowConfirmationDialog(false)
+      setShowConfirmationDialog(false)
+    }
   }
 
   const handleCancel = () => {
@@ -362,10 +370,23 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     })
   }
 
-  const handleMoveAuthor = (from: number, to: number) => {
-    const copy = [...authors]
-    const order = copy.map((_, i) => (i === from ? to : i))
-    copy.sort((a, b) => order[authors.indexOf(a)] - order[authors.indexOf(b)])
+  const handleMoveAuthor = (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => {
+    const copy = cloneDeep(authors)
+    const order = copy.map((a, i) => {
+      if (a.id === from.id) {
+        if (to.priority) {
+          return to.priority + shift
+        } else {
+          return authors.findIndex((i) => i === to) + shift
+        }
+      }
+      return i
+    })
+    copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
     copy.forEach((a, i) => {
       if (a.priority !== i) {
         a.priority = i
@@ -530,7 +551,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer>
+      <ModalContainer data-cy="authors-modal">
         <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
@@ -581,8 +602,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   entityType="author"
                 />
                 <ModalFormActions
+                  form={'author-details-form'}
                   type="author"
-                  onSave={() => handleSaveAuthor(valuesRef.current)}
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
@@ -602,6 +623,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   actionsRef={actionsRef}
                   isEmailRequired={isEmailRequired}
                   selectedAffiliations={selectedAffiliationIds}
+                  authorFormRef={authorFormRef}
                 />
                 <AuthorsSection>
                   <AuthorsHeader>
@@ -615,6 +637,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     </AffiliateButton>
                   </AuthorsHeader>
                   <SelectedItemsBox
+                    data-cy="author-affiliations"
                     items={selectedAffiliations}
                     onRemove={handleRemoveAffiliation}
                     placeholder="No institutions assigned"
@@ -634,10 +657,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             ) : (
               <FormPlaceholder
                 type="author"
-                title={'Author Details'}
-                message={
-                  'Select an author from the list to display their details here.'
-                }
+                title="Author Details"
+                message="Select an author from the list to display their details here."
                 placeholderIcon={<AuthorPlaceholderIcon />}
               />
             )}

@@ -499,7 +499,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer>
+      <ModalContainer data-cy="affiliations-modal">
         <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
@@ -535,7 +535,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
               <AffiliationForms>
                 <ModalFormActions
                   type={'affiliation'}
-                  onSave={() => handleSaveAffiliation(valuesRef.current)}
+                  form={'affiliation-form'}
                   onDelete={handleDeleteAffiliation}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
@@ -544,7 +544,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                 />
                 <AffiliationForm
                   values={normalize(selection)}
-                  onSave={handleSaveAffiliation}
+                  onSave={() => handleSaveAffiliation(valuesRef.current)}
                   onChange={handleAffiliationChange}
                   actionsRef={actionsRef}
                 ></AffiliationForm>
@@ -576,6 +576,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     </AffiliateButton>
                   </AuthorsHeader>
                   <SelectedItemsBox
+                    data-cy="affiliation-authors"
                     items={selectedAuthors}
                     onRemove={(id) => {
                       setSelectedIds((prev) =>
@@ -599,10 +600,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
             ) : (
               <FormPlaceholder
                 type="affiliation"
-                title={'Affiliation Details'}
-                message={
-                  "Select an affiliation from the list to display it's details here."
-                }
+                title="Affiliation Details"
+                message="Select an affiliation from the list to display it's details here."
                 placeholderIcon={<AffiliationPlaceholderIcon />}
               />
             )}

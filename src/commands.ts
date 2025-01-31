@@ -212,6 +212,14 @@ export const canInsert =
       return false
     }
 
+    if (
+      isElementNodeType(type) &&
+      type !== schema.nodes.paragraph &&
+      findParentNodeOfType(schema.nodes.backmatter)(state.selection)
+    ) {
+      return false
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -278,6 +286,9 @@ export const createBlock = (
       break
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
+      break
+    case state.schema.nodes.image_element:
+      node = createImageElement(state)
       break
     case state.schema.nodes.listing_element:
       node = state.schema.nodes.listing_element.create({}, [
@@ -1514,6 +1525,10 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
+const createImageElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.image_element.create({}, [
+    state.schema.nodes.figure.create(),
+  ])
 /**
  * This to make sure we get block node
  */
