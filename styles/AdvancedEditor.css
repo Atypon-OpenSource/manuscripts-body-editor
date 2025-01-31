@@ -156,7 +156,7 @@
   padding-left: 100px;
   position: absolute;
   top: 4px;
-  left: calc( 100% - 96px );
+  left: calc( 100% - 100px );
   z-index: 2;
   cursor: pointer;
 }

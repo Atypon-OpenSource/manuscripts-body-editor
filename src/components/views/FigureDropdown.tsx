@@ -57,6 +57,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onReplace,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const supplements = files.supplements
+    .map((s) => s.file)
+    .filter((f) => isImageFile(f.name))
 
   const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
@@ -80,6 +83,16 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
             moveLeft
             list={
               <>
+                {supplements.map((file, index) => (
+                  <ListItemButton
+                    key={file.id}
+                    id={index.toString()}
+                    onClick={() => onReplace && onReplace(file)}
+                  >
+                    {getFileIcon(file.name)}
+                    <ListItemText>{file.name}</ListItemText>
+                  </ListItemButton>
+                ))}
                 {otherFiles.map((file, index) => (
                   <ListItemButton
                     key={file.id}

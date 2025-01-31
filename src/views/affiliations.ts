@@ -241,7 +241,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
         ['context-menu']
       )
       return this.contextMenu
-    
     }
 
     return undefined

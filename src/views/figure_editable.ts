@@ -23,6 +23,7 @@ import {
   ImageRightIcon,
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
+import { NodeSelection } from 'prosemirror-state'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -181,13 +182,13 @@ export class FigureEditableView extends FigureView {
   }
 
   private setSrc = (src: string) => {
-    const { selection, tr } = this.view.state
-
-    tr.setNodeMarkup(this.getPos(), undefined, {
+    const { tr } = this.view.state
+    const pos = this.getPos()
+    tr.setNodeMarkup(pos, undefined, {
       ...this.node.attrs,
       src: src,
-    }).setSelection(selection.map(tr.doc, tr.mapping))
-
+    })
+    tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
   }
 
