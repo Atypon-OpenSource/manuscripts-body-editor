@@ -42,6 +42,7 @@ import {
   findPosBeforeFirstSubsection,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
+  isCommentingAllowed,
 } from '../commands'
 import { figurePositions } from '../views/figure_editable'
 import { PopperManager } from './popper'
@@ -73,10 +74,6 @@ export const sectionLevel = (depth: number) => {
   }
 }
 
-interface Actions {
-  addComment?: boolean
-}
-
 type InsertableNodes = Nodes | 'subsection'
 
 const hasAny = <T>(set: Set<T>, ...items: T[]) => {
@@ -90,18 +87,15 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
-  private readonly actions: Actions
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
-    getPos: () => number,
-    actions: Actions = {}
+    getPos: () => number
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
-    this.actions = actions
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
@@ -330,14 +324,13 @@ export class ContextMenu {
       )
     }
 
-    const { addComment } = this.actions
-    if (addComment) {
+    const commentTarget = this.getCommentTarget()
+    if (isCommentingAllowed(commentTarget.type)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
-              const target = this.getCommentTarget()
-              addNodeComment(target, this.view.state, this.view.dispatch)
+              addNodeComment(commentTarget, this.view.state, this.view.dispatch)
               popper.destroy()
             })
           )
