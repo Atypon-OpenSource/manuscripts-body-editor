@@ -259,13 +259,13 @@ export class ContextMenu {
       )
     }
 
-    const targetComment = this.getCommentTarget()
-    if (isCommentingAllowed(targetComment.type)) {
+    const commentTarget = this.getCommentTarget()
+    if (isCommentingAllowed(commentTarget.type)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
-              addNodeComment(targetComment, this.view.state, this.view.dispatch)
+              addNodeComment(commentTarget, this.view.state, this.view.dispatch)
               popper.destroy()
             })
           )
