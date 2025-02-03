@@ -153,12 +153,14 @@
 }
 
 .ProseMirror .figure-block .position-menu {
-  padding-left: 100px;
   position: absolute;
   top: 4px;
-  left: calc( 100% - 100px );
+  left: calc( 100% + 4px );
   z-index: 2;
   cursor: pointer;
+}
+.ProseMirror .box-element .figure-block .position-menu {
+  left: calc( 100% + 20px );
 }
 
 .ProseMirror .block-container.block-box_element {

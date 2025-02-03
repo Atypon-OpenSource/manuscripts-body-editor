@@ -251,6 +251,7 @@ export class FigureEditableView extends FigureView {
   }
 
   createPositionMenuWrapper = () => {
+    const can = this.props.getCapabilities()
     this.positionMenuWrapper = document.createElement('div')
     this.positionMenuWrapper.classList.add('position-menu')
 
@@ -272,7 +273,9 @@ export class FigureEditableView extends FigureView {
     if (icon) {
       positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
     }
-    positionMenuButton.addEventListener('click', this.showPositionMenu)
+    if (can.editArticle) {
+      positionMenuButton.addEventListener('click', this.showPositionMenu)
+    }
     this.positionMenuWrapper.appendChild(positionMenuButton)
     return this.positionMenuWrapper
   }
