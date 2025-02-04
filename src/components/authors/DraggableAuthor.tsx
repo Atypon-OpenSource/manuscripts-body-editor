@@ -109,6 +109,7 @@ const RemoveButton = styled.div`
   display: flex;
   align-items: center;
   margin-right: 8px;
+  pointer-events: all;
   svg {
     cursor: pointer;
   }
