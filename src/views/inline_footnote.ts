@@ -81,7 +81,7 @@ export class InlineFootnoteView
         this.node,
         this.getPos,
         this.view,
-        'context-menu'
+        ['context-menu']
       ),
       'right-start',
       false
@@ -133,13 +133,7 @@ export class InlineFootnoteView
       return []
     }
 
-    const rids = this.node.attrs.rids
-
-    const footnotes = fn.footnotes
-      .map((n) => n[0])
-      .filter(
-        (n) => fn.unusedFootnoteIDs.has(n.attrs.id) || rids.includes(n.attrs.id)
-      )
+    const footnotes = fn.footnotes.map((n) => n[0])
 
     const props: FootnotesSelectorProps = {
       footnotes,
@@ -157,7 +151,7 @@ export class InlineFootnoteView
       this.node,
       this.getPos,
       this.view,
-      'footnote-editor'
+      ['footnote-editor']
     )
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
