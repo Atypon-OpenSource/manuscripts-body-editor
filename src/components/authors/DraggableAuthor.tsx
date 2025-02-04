@@ -45,9 +45,6 @@ const AuthorContainer = styled.div`
     background: ${(props) => props.theme.colors.background.fifth};
     border-color: ${(props) => props.theme.colors.border.primary};
   }
-  &.active {
-    pointer-events: none;
-  }
   &.dragging {
     opacity: 1;
     cursor: grabbing;
@@ -109,7 +106,6 @@ const RemoveButton = styled.div`
   display: flex;
   align-items: center;
   margin-right: 8px;
-  pointer-events: all;
   svg {
     cursor: pointer;
   }
