@@ -287,6 +287,9 @@ export const createBlock = (
     case state.schema.nodes.figure_element:
       node = createAndFillFigureElement(state)
       break
+    case state.schema.nodes.image_element:
+      node = createImageElement(state)
+      break
     case state.schema.nodes.listing_element:
       node = state.schema.nodes.listing_element.create({}, [
         state.schema.nodes.listing.create(),
@@ -1523,6 +1526,10 @@ const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
     state.schema.nodes.caption.create(),
   ])
 
+const createImageElement = (state: ManuscriptEditorState) =>
+  state.schema.nodes.image_element.create({}, [
+    state.schema.nodes.figure.create(),
+  ])
 /**
  * This to make sure we get block node
  */
@@ -1538,7 +1545,7 @@ const getParentNode = (selection: Selection) => {
 }
 
 // TODO:: remove this check when we allow all type of block node to have comment
-const isCommentingAllowed = (type: NodeType) =>
+export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.title ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
@@ -1554,7 +1561,8 @@ const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.table_element ||
   type === schema.nodes.embed ||
   type === schema.nodes.affiliations ||
-  type === schema.nodes.contributors
+  type === schema.nodes.contributors ||
+  type === schema.nodes.image_element
 
 export const addNodeComment = (
   node: ManuscriptNode,

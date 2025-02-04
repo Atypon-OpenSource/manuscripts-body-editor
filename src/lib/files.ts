@@ -113,7 +113,11 @@ export const groupFiles = (
   }
 
   doc.descendants((node, pos) => {
-    if (node.type === schema.nodes.figure_element && node.attrs.id !== gaID) {
+    if (
+      (node.type === schema.nodes.figure_element ||
+        node.type === schema.nodes.image_element) &&
+      node.attrs.id !== gaID
+    ) {
       figures.push(getFigureElementFiles(node, pos))
     }
 

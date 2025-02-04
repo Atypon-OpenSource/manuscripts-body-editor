@@ -551,7 +551,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer>
+      <ModalContainer data-cy="authors-modal">
         <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
@@ -637,6 +637,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     </AffiliateButton>
                   </AuthorsHeader>
                   <SelectedItemsBox
+                    data-cy="author-affiliations"
                     items={selectedAffiliations}
                     onRemove={handleRemoveAffiliation}
                     placeholder="No institutions assigned"
@@ -656,10 +657,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             ) : (
               <FormPlaceholder
                 type="author"
-                title={'Author Details'}
-                message={
-                  'Select an author from the list to display their details here.'
-                }
+                title="Author Details"
+                message="Select an author from the list to display their details here."
                 placeholderIcon={<AuthorPlaceholderIcon />}
               />
             )}
