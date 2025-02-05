@@ -241,6 +241,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [])
 
   const handleSelect = (author: ContributorAttrs) => {
+    if (author.id === selection?.id) {
+      return
+    }
     const values = valuesRef.current
     setIsCreatingNewAuthor(false)
 
@@ -567,7 +570,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               <AddAuthorButton
                 data-cy="add-author-button"
                 onClick={handleAddAuthor}
-                data-active={isCreatingNewAuthor}
+                data-active={isCreatingNewAuthor || newAuthor}
               >
                 <AddIcon width={18} height={18} />
                 <ActionTitle>New Author</ActionTitle>
