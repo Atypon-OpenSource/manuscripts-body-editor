@@ -150,6 +150,9 @@
   top: -12px;
   right: unset;
 }
+.popper .footnote-context-menu {
+  top: 0;
+}
 
 .popper .position-menu {
   top: -15px;
