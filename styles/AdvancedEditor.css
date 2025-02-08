@@ -669,6 +669,22 @@ span.comment-marker {
   top: calc(50% + 1px);
 }
 
+.tracking-hidden .inserted:has(.selected-suggestion),
+.tracking-hidden .inserted.selected-suggestion,
+.tracking-hidden .selected-suggestion:has(.inserted),
+.tracking-hidden .selected-suggestion:has(.set_attrs),
+.tracking-hidden .selected-suggestion.set_attrs {
+  border-color: black !important;
+}
+
+.tracking-hidden .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
+.tracking-hidden .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block,
+.tracking-hidden .selected-suggestion[data-track-op='set_attrs'] .block,
+.tracking-hidden .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+.tracking-hidden figure.block:has(.equation.set_attrs.selected-suggestion) {
+  box-shadow: inset 6px 0 0 black !important;
+  animation: none;
+}
 
 .selected-suggestion .equation.deleted:after,
 .selected-suggestion.equation.deleted:after {
