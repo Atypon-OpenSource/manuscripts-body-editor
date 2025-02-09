@@ -25,7 +25,7 @@ import {
 } from '../components/views/DeleteFootnoteDialog'
 import { alertIcon, deleteIcon, scrollIcon } from '../icons'
 import { getFootnotesElementState } from '../lib/footnotes'
-import { isDeleted } from '../lib/track-changes-utils'
+import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -169,7 +169,11 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     )
     tr.delete(pos, pos + this.node.nodeSize)
 
-    if (element && getEffectiveChildCount(element.node) <= 1) {
+    if (
+      element &&
+      getEffectiveChildCount(element.node) <= 1 &&
+      !isPendingInsert(this.node)
+    ) {
       tr.delete(
         tr.mapping.map(element.pos),
         tr.mapping.map(element.pos + element.node.nodeSize)
