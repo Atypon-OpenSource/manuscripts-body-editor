@@ -237,6 +237,7 @@ const buildOptions = (
           label: 'Paragraph',
           action: demoteSectionToParagraph,
           isDisabled: sectionDepth <= 1 && sectionOffset <= 1,
+          isSelected: false,
         },
         {
           nodeType: nodes.section,
@@ -248,8 +249,6 @@ const buildOptions = (
       return options
     }
     case parentElementType.schema.nodes.paragraph: {
-      const sectionDepth = $from.depth - 1
-      const minimumDepth = Math.max(1, sectionDepth)
       options.push(
         {
           nodeType: nodes.paragraph,
@@ -260,7 +259,9 @@ const buildOptions = (
         {
           nodeType: nodes.section,
           label: 'Heading',
-          action: promoteParagraphToSection(minimumDepth),
+          action: promoteParagraphToSection(),
+          isDisabled: false,
+          isSelected: false,
         }
       )
       return options
