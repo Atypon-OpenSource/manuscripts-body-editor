@@ -677,8 +677,9 @@ span.comment-marker {
   border-color: black !important;
 }
 
-.tracking-hidden .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
-.tracking-hidden .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block,
+.tracking-hidden .selected-suggestion[data-track-op='insert'] .block,
+.tracking-hidden .selected-suggestion[data-track-op='wrap_with_node'] .block,
+.tracking-hidden .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-hidden .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-hidden .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-hidden figure.block:has(.equation.set_attrs.selected-suggestion) {
