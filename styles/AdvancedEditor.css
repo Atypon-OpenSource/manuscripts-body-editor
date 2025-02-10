@@ -683,7 +683,7 @@ span.comment-marker {
 .tracking-hidden .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-hidden .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-hidden figure.block:has(.equation.set_attrs.selected-suggestion) {
-  box-shadow: inset 6px 0 0 black !important;
+  box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray !important;
   animation: none;
 }
 
