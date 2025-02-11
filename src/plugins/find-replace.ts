@@ -106,13 +106,17 @@ export default (props: EditorProps) => {
         return $old
       },
     },
-    appendTransaction(transactions, oldState, newState) {
-      const tr = newState.tr
-      const state = findReplaceKey.getState(oldState)
+    appendTransaction(transactions, oldEditorState, newEditorState) {
+      const tr = newEditorState.tr
+      const state = findReplaceKey.getState(oldEditorState)
 
       if (state?.matches && state.replaceValue) {
         state.matches.forEach(({ from, to }) => {
-          tr.replaceWith(from, to, newState.schema.text(state.replaceValue))
+          tr.replaceWith(
+            from,
+            to,
+            newEditorState.schema.text(state.replaceValue)
+          )
         })
       }
 
@@ -141,6 +145,22 @@ export default (props: EditorProps) => {
 
         return DecorationSet.create(state.doc, decorations)
       },
+    },
+    view() {
+      return {
+        update() {
+          const element = document.querySelector(
+            '.search-result.search-result-selected'
+          )
+          if (element) {
+            // @TODO - there is an identical function scrollIntoView in article-editor, think about maybe unifying
+            const rect = element.getBoundingClientRect()
+            if (rect.bottom > window.innerHeight || rect.top < 150) {
+              element.scrollIntoView()
+            }
+          }
+        },
+      }
     },
   })
 }
