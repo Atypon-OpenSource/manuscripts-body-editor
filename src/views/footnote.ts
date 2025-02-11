@@ -41,14 +41,14 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.classList.add('footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
-    this.dom.addEventListener('click', this.handleClick)
+    this.dom.addEventListener('mousedown', this.handleClick)
     this.updateContents()
   }
 
   public updateContents() {
     super.updateContents()
-    const id = this.node.attrs.id
-    const fn = getFootnotesElementState(this.view.state, id)
+
+    const { id, fn } = this.getFootnoteState()
 
     if (!fn) {
       return
@@ -68,22 +68,35 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.contentDOM && this.dom.appendChild(this.contentDOM)
   }
 
+  getFootnoteState() {
+    const id = this.node.attrs.id
+    const fn = getFootnotesElementState(this.view.state, id)
+    return { id, fn }
+  }
+
   showContextMenu(element: HTMLElement) {
     this.props.popper.destroy()
+
+    const can = this.props.getCapabilities()
+    const { id, fn } = this.getFootnoteState()
 
     const componentProps: ContextMenuProps = {
       actions: [],
     }
-    componentProps.actions.push({
-      label: 'Go to footnote Refernce',
-      action: () => this.handleMarkerClick(),
-      icon: 'Scroll',
-    })
-    componentProps.actions.push({
-      label: 'Delete',
-      action: () => this.handleDelete(),
-      icon: 'Delete',
-    })
+    if (!fn?.unusedFootnoteIDs.has(id)) {
+      componentProps.actions.push({
+        label: 'Go to footnote Refernce',
+        action: () => this.handleMarkerClick(),
+        icon: 'Scroll',
+      })
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Delete',
+        action: () => this.handleDelete(),
+        icon: 'Delete',
+      })
+    }
 
     this.contextMenu = ReactSubView(
       this.props,
@@ -99,12 +112,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
 
   handleClick = (event: Event) => {
     const element = event.target as HTMLElement
-
-    if (this.props.getCapabilities()) {
-      const item = element.closest('.footnote')
-      if (item) {
-        this.showContextMenu(item as HTMLElement)
-      }
+    const item = element.closest('.footnote')
+    if (item) {
+      this.showContextMenu(item as HTMLElement)
     }
   }
 
