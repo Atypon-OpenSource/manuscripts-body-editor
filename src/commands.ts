@@ -112,6 +112,7 @@ import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
+import { findReplaceKey } from './plugins/find-replace'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -1747,4 +1748,13 @@ export const autoComplete = (
     return true
   }
   return false
+}
+
+export const activateFindSearch = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr.setMeta(findReplaceKey, { active: true })
+  dispatch && dispatch(tr)
+  return true
 }

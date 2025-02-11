@@ -45,6 +45,7 @@ import {
   insertList,
   insertSection,
   markActive,
+  activateFindSearch,
 } from './commands'
 import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
@@ -114,6 +115,20 @@ export const getEditorMenus = (
         })(),
         isEnabled: isCommandValid(deleteClosestParentElement),
         run: doCommand(deleteClosestParentElement),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'find-replace',
+        role: 'find-replace',
+        label: 'Find and replace',
+        shortcut: {
+          mac: 'CommandOrControl+Shift+H',
+          pc: 'CommandOrControl+Shift+H',
+        },
+        isEnabled: isCommandValid(activateFindSearch),
+        run: doCommand(activateFindSearch),
       },
     ],
   }
