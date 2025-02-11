@@ -54,7 +54,9 @@ export class GeneralTableFootnoteView extends BaseNodeView<
 
   handleClick = (e: Event) => {
     const element = e.target as HTMLElement
-    if (this.props.getCapabilities()) {
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
       const item = element.closest('.general-table-footnote')
       if (item) {
         this.showContextMenu(item as HTMLElement)

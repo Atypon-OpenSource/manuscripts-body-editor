@@ -1020,7 +1020,7 @@
 }
 .ProseMirror .footnote {
   display: flex;
-  height: 35px;
+  min-height: 35px;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
