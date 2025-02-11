@@ -40,7 +40,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<
   public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('footnote', 'general-table-footnote')
-    this.dom.addEventListener('click', this.handleClick)
+    this.dom.addEventListener('mousedown', this.handleClick)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
