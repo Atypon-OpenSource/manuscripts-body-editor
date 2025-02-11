@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import {
-  getGroupCateogries,
+  getGroupCategories,
   isSectionNode,
   schema,
   SectionCategory,
@@ -156,7 +156,7 @@ export function buildPluginState(
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
       const group = isInBackmatter($pos) ? 'backmatter' : 'body'
-      const groupCategories = getGroupCateogries(categories, group)
+      const groupCategories = getGroupCategories(categories, group)
       decorations.push(
         Decoration.widget(pos + 1, (view) =>
           createButton(
