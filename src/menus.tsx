@@ -29,6 +29,7 @@ import {
   blockActive,
   canInsert,
   insertAbstract,
+  insertAbstractSection,
   insertAffiliation,
   insertAward,
   insertBackmatterSection,
@@ -65,6 +66,19 @@ export const getEditorMenus = (
 
   const insertBackmatterSectionMenu = (category: SectionCategory) => {
     const command = insertBackmatterSection(category)
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
+  const insertAbstractsSectionMenu = (category: SectionCategory) => {
+    let command = insertAbstractSection(category)
+    if (category.id === 'abstract') command = insertAbstract
+
+    // console.log(category)
     return {
       id: `insert-${category.id}`,
       label: category.titles[0],
@@ -117,6 +131,16 @@ export const getEditorMenus = (
       },
     ],
   }
+  console.log(props.sectionCategories)
+  const abstractsCategories = getGroupCateogries(props.sectionCategories,'abstracts')
+  const graphicalAbstractsCategories = getGroupCateogries(props.sectionCategories,'abstracts-graphic')
+  const allAbstractsCategories = [...abstractsCategories, ...graphicalAbstractsCategories]
+  console.log('===abstractsCategories====')
+  console.log(abstractsCategories)
+  console.log('===graphicalAbstractsCategories====')
+  console.log(graphicalAbstractsCategories)
+  console.log('===allAbstractsCategories====')
+  console.log(allAbstractsCategories)
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
@@ -128,16 +152,29 @@ export const getEditorMenus = (
         isEnabled: true,
         submenu: [
           {
-            id: 'insert-abstract',
-            label: 'Abstract',
-            isEnabled: isCommandValid(insertAbstract),
-            run: doCommand(insertAbstract),
-          },
-          {
-            id: 'insert-graphical-abstract',
-            label: 'Graphical Abstract',
-            isEnabled: isCommandValid(insertGraphicalAbstract),
-            run: doCommand(insertGraphicalAbstract),
+            id: 'insert-abstract-types',
+            label: 'Abstract Types',
+            isEnabled: true,
+            submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
+            
+            // id: 'insert-abstract-types',
+            // label: 'Abstract Types',
+            // isEnabled: true,
+            // submenu: 
+            // [
+            //   {
+            //     id: 'insert-abstract',
+            //     label: 'Abstract',
+            //     isEnabled: isCommandValid(insertAbstract),
+            //     run: doCommand(insertAbstract),
+            //   },
+            //   {
+            //     id: 'insert-graphical-abstract',
+            //     label: 'Graphical Abstract',
+            //     isEnabled: isCommandValid(insertGraphicalAbstract),
+            //     run: doCommand(insertGraphicalAbstract),
+            //   },
+            // ],
           },
           {
             id: 'insert-contributors',

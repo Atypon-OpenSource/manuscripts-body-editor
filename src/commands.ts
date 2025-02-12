@@ -84,6 +84,7 @@ import { EditorView } from 'prosemirror-view'
 
 import { CommentAttrs, getCommentKey, getCommentRange } from './lib/comments'
 import {
+  findAbstractsNode,
   findBackmatter,
   findBibliographySection,
   findBody,
@@ -804,37 +805,6 @@ export const insertBoxElement = (
 
   return true
 }
-export const insertGraphicalAbstract = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  view?: EditorView
-) => {
-  if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
-  ) {
-    return false
-  }
-  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
-
-  // Insert Graphical abstract at the end of abstracts section
-  const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill({}, [
-    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-    createAndFillFigureElement(state),
-  ]) as GraphicalAbstractSectionNode
-
-  const tr = state.tr.insert(pos, section)
-
-  if (dispatch) {
-    // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + 1)
-    if (view) {
-      view.focus()
-    }
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-  return true
-}
 
 export const insertSection =
   (subsection = false) =>
@@ -882,6 +852,33 @@ export const insertSection =
     }
     return true
   }
+
+export const insertAbstractSection = (category: SectionCategory) => 
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const abstracts = findAbstractsNode(state.doc)
+    const sections = findChildrenByType(abstracts.node, schema.nodes.abstracts)
+    console.log(sections)
+    // Check if the section already exists
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
+      return false
+    }
+    const pos = abstracts.pos + abstracts.node.content.size + 1
+    const attrs = { category: category.id }
+    const node = schema.nodes.section.create(attrs, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+    ])
+
+    const tr = state.tr.insert(pos, node)
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos)
+      view?.focus()
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
+  }
+
 export const insertBackmatterSection =
   (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
@@ -956,9 +953,7 @@ export const insertAbstract = (
   if (dispatch) {
     // Find the start position of the newly inserted section
     const sectionStart = tr.doc.resolve(pos)
-
     const sectionNode = sectionStart.nodeAfter
-
     if (sectionNode && sectionNode.firstChild) {
       // Calculate the position for the cursor within the paragraph node
       const paragraphPos = pos + sectionNode.firstChild.nodeSize + 2 // Adjusted calculation
@@ -973,6 +968,38 @@ export const insertAbstract = (
 
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
+  }
+  return true
+}
+
+export const insertGraphicalAbstract = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  if (
+    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
+  ) {
+    return false
+  }
+  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+
+  // Insert Graphical abstract at the end of abstracts section
+  const pos = abstracts.pos + abstracts.node.content.size + 1
+  const section = schema.nodes.graphical_abstract_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
+    createAndFillFigureElement(state),
+  ]) as GraphicalAbstractSectionNode
+
+  const tr = state.tr.insert(pos, section)
+
+  if (dispatch) {
+    // place cursor inside section title
+    const selection = TextSelection.create(tr.doc, pos + 1)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
 }

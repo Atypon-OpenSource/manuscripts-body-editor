@@ -58,6 +58,7 @@ function createMenu(
   usedCategoryIDs: Set<string>,
   onSelect: (category: SectionCategory) => void
 ) {
+  console.log("Categories: ", categories)
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
   categories.forEach((category) => {
@@ -146,16 +147,19 @@ export function buildPluginState(
 
   state.doc.descendants((node, pos) => {
     if (
-      node.type === schema.nodes.abstracts ||
+      // node.type === schema.nodes.abstracts ||
       node.type === schema.nodes.box_element
     ) {
       return false
     }
     if (isSectionNode(node)) {
+      console.log(node.type.name)
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
+      console.log(category)
       const $pos = state.doc.resolve(pos)
-      const group = isInBackmatter($pos) ? 'backmatter' : 'body'
+      const group = isInBackmatter($pos) ? 'backmatter' : ( isInAbstracts($pos) ? 'abstracts' : 'body' )
+
       const groupCategories = getGroupCateogries(categories, group)
       decorations.push(
         Decoration.widget(pos + 1, (view) =>
@@ -187,4 +191,7 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
 
 const isInBackmatter = ($pos: ResolvedPos) => {
   return !!findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)
+}
+const isInAbstracts = ($pos: ResolvedPos) => {
+  return !!findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)
 }
