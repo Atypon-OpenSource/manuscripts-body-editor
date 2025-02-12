@@ -22,10 +22,12 @@ import {
   ManuscriptEditorView,
   ManuscriptNodeType,
   nodeNames,
+  schema,
   SectionTitleNode,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
+import { hasParentNodeOfType } from 'prosemirror-utils'
 import React from 'react'
 import Select, {
   CSSObjectWithLabel,
@@ -298,6 +300,7 @@ export const TypeSelector: React.FC<{
   view?: ManuscriptEditorView
 }> = ({ state, dispatch, view }) => {
   const options = buildOptions(state, dispatch, view)
+  const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
   return (
     <StyledSelect
       onChange={(value: OnChangeValue<Option, false>) => {
@@ -315,7 +318,7 @@ export const TypeSelector: React.FC<{
         Option: OptionComponent,
       }}
       styles={customStyles}
-      isDisabled={options.length <= 1}
+      isDisabled={options.length <= 1 || !isInBody}
       isSearchable={false}
     />
   )
