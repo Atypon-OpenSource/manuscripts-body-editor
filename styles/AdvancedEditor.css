@@ -786,7 +786,8 @@ figure .selected-suggestion {
 .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .selected-suggestion[data-track-op='node_split'] .block,
 figure.block:has(.equation.set_attrs.selected-suggestion) {
-/*  */
+  box-shadow: inset 6px 0 0 black;
+  --fade-color: none;
 }
 
 .tracking-visible .subtree .deleted {
