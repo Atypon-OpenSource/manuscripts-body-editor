@@ -772,6 +772,16 @@ figure .selected-suggestion {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
+.selected-suggestion[data-track-op='node_split'] .block,
+.selected-suggestion[data-track-op='set_attrs'] .block,
+.selected-suggestion [data-track-op='set_attrs'] .block,
+.block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+figure.block:has(.equation.set_attrs.selected-suggestion) {
+  box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
+  --fade-color: none;
+}
+
+
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
 .tracking-visible .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
@@ -780,15 +790,6 @@ figure .selected-suggestion {
   box-shadow: inset 6px 0 0 var(--updated-border-color), inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--updated-bg-color);
-}
-
-.selected-suggestion[data-track-op='node_split'] .block,
-.selected-suggestion[data-track-op='set_attrs'] .block,
-.selected-suggestion [data-track-op='set_attrs'] .block,
-.block:has(figure.selected-suggestion[data-track-op='set_attrs']),
-figure.block:has(.equation.set_attrs.selected-suggestion) {
-  /*box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;*/
-  --fade-color: none;
 }
 
 .tracking-visible .subtree .deleted {
