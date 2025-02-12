@@ -19,6 +19,7 @@ import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
+import { isDeleted, isDeletedText } from '../lib/track-changes-utils'
 
 export type FindReplacePluginState = {
   value: string
@@ -40,6 +41,9 @@ function getMatches(doc: ProseMirrorNode, value?: string) {
   let matches: Array<{ from: number; to: number }> = []
 
   doc.descendants((node, pos) => {
+    if (isDeleted(node) || isDeletedText(node)) {
+      return
+    }
     if (node.isText && node.text) {
       let index = node.text.toLocaleLowerCase().indexOf(normalised)
       while (index !== -1) {
@@ -105,22 +109,6 @@ export default (props: EditorProps) => {
         }
         return $old
       },
-    },
-    appendTransaction(transactions, oldEditorState, newEditorState) {
-      const tr = newEditorState.tr
-      const state = findReplaceKey.getState(oldEditorState)
-
-      if (state?.matches && state.replaceValue) {
-        state.matches.forEach(({ from, to }) => {
-          tr.replaceWith(
-            from,
-            to,
-            newEditorState.schema.text(state.replaceValue)
-          )
-        })
-      }
-
-      return tr
     },
     props: {
       decorations: (state) => {
