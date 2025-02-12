@@ -1020,6 +1020,7 @@
 }
 .ProseMirror .footnote {
   display: flex;
+  min-height: 35px;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
@@ -1035,6 +1036,8 @@
   visibility: hidden;
   margin-left: -20px;
   transition: 0.2s all;
+}
+.footnote-context-menu [data-tooltip-id='Scroll'] svg {
   transform: rotate(180deg);
 }
 .ProseMirror .footnote:hover .scroll-icon {
