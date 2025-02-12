@@ -782,6 +782,13 @@ figure .selected-suggestion {
   --fade-color: var(--updated-bg-color);
 }
 
+.selected-suggestion [data-track-op='set_attrs'] .block,
+.block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+.selected-suggestion[data-track-op='node_split'] .block,
+figure.block:has(.equation.set_attrs.selected-suggestion) {
+/*  */
+}
+
 .tracking-visible .subtree .deleted {
   display: inline;
   text-decoration: line-through;
