@@ -602,7 +602,7 @@ span.comment-marker {
 
 /* Insert */
 .tracking-visible .ProseMirror .inserted,
-.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, .ProseMirror a.link.pending {
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, a.link.pending {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
