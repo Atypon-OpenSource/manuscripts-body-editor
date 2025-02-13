@@ -21,23 +21,38 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { isDeleted, isDeletedText } from '../lib/track-changes-utils'
 
-export type FindReplacePluginState = {
+export type SearchReplacePluginState = {
   value: string
   matches: Array<{ from: number; to: number }>
   replaceValue: string
   active: boolean // if the plugin actively display matches
+  advanced: boolean // enabling advanced view for search and replace
   currentMatch: number
+  caseSensitive: boolean
+  ignoreDiacritics: boolean
 }
 
-export const findReplaceKey = new PluginKey<FindReplacePluginState>(
+export const searchReplaceKey = new PluginKey<SearchReplacePluginState>(
   'findReplace'
 )
 
-function getMatches(doc: ProseMirrorNode, value?: string) {
+function removeDiacritics(str: string) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+function getMatches(
+  doc: ProseMirrorNode,
+  value: string,
+  caseSensitive: boolean,
+  ignoreDiacritics: boolean
+) {
   if (!value) {
     return []
   }
-  const normalised = value.toLocaleLowerCase()
+  let normalised = caseSensitive ? value : value.toLocaleLowerCase()
+  if (ignoreDiacritics) {
+    normalised = removeDiacritics(normalised)
+  }
   let matches: Array<{ from: number; to: number }> = []
 
   doc.descendants((node, pos) => {
@@ -45,15 +60,17 @@ function getMatches(doc: ProseMirrorNode, value?: string) {
       return
     }
     if (node.isText && node.text) {
-      let index = node.text.toLocaleLowerCase().indexOf(normalised)
+      let base = caseSensitive ? node.text : node.text.toLocaleLowerCase()
+      if (ignoreDiacritics) {
+        base = removeDiacritics(base)
+      }
+      let index = base.indexOf(normalised)
       while (index !== -1) {
         matches.push({
           from: pos + index,
           to: pos + index + normalised.length,
         })
-        index = node.text
-          .toLocaleLowerCase()
-          .indexOf(normalised, index + normalised.length)
+        index = base.indexOf(normalised, index + normalised.length)
       }
     }
   })
@@ -63,17 +80,20 @@ function getMatches(doc: ProseMirrorNode, value?: string) {
 
 function buildPluginState(
   state: EditorState,
-  oldData?: FindReplacePluginState,
-  newData?: Partial<FindReplacePluginState>,
+  oldData?: SearchReplacePluginState,
+  newData?: Partial<SearchReplacePluginState>,
   pointerChanged?: boolean
 ) {
   // this is need to allows components that update this plugin states to update it partially and not the entire state
-  const data: FindReplacePluginState = {
+  const data: SearchReplacePluginState = {
     value: '',
     replaceValue: '',
     active: false,
+    advanced: false,
     currentMatch: -1, // index of a currently selected match
     matches: [],
+    caseSensitive: false,
+    ignoreDiacritics: false,
     ...oldData,
     ...newData,
   }
@@ -84,26 +104,24 @@ function buildPluginState(
   }
 
   // creating a new set of matches if search value has changed and not falsy
-  if (!oldData || oldData.value !== newData?.value) {
-    data.matches = getMatches(state.doc, data.value)
-  }
+  data.matches = getMatches(state.doc, data.value)
   return data
 }
 
 export default (props: EditorProps) => {
-  return new Plugin<FindReplacePluginState>({
-    key: findReplaceKey,
+  return new Plugin<SearchReplacePluginState>({
+    key: searchReplaceKey,
     state: {
       init(config, instance) {
         return buildPluginState(instance)
       },
       apply(tr, value, oldState, newState) {
-        const $old = findReplaceKey.getState(oldState)
-        if (!$old || tr.getMeta(findReplaceKey) || tr.getMeta('pointer')) {
+        const $old = searchReplaceKey.getState(oldState)
+        if (!$old || tr.getMeta(searchReplaceKey) || tr.getMeta('pointer')) {
           return buildPluginState(
             newState,
             $old,
-            tr.getMeta(findReplaceKey),
+            tr.getMeta(searchReplaceKey),
             !!tr.getMeta('pointer')
           )
         }
@@ -112,7 +130,7 @@ export default (props: EditorProps) => {
     },
     props: {
       decorations: (state) => {
-        const pluginState = findReplaceKey.getState(state)
+        const pluginState = searchReplaceKey.getState(state)
 
         if (!pluginState || !pluginState.value || !pluginState.active) {
           return DecorationSet.empty

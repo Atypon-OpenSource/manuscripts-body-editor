@@ -45,7 +45,7 @@ import {
   insertList,
   insertSection,
   markActive,
-  activateFindSearch,
+  activateSearchReplace,
 } from './commands'
 import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
@@ -127,8 +127,8 @@ export const getEditorMenus = (
           mac: 'CommandOrControl+Shift+H',
           pc: 'CommandOrControl+Shift+H',
         },
-        isEnabled: isCommandValid(activateFindSearch),
-        run: doCommand(activateFindSearch),
+        isEnabled: isCommandValid(activateSearchReplace),
+        run: doCommand(activateSearchReplace),
       },
     ],
   }
