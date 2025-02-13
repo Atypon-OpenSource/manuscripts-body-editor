@@ -104,7 +104,12 @@ function buildPluginState(
   }
 
   // creating a new set of matches if search value has changed and not falsy
-  data.matches = getMatches(state.doc, data.value)
+  data.matches = getMatches(
+    state.doc,
+    data.value,
+    data.caseSensitive,
+    data.ignoreDiacritics
+  )
   return data
 }
 
@@ -132,7 +137,11 @@ export default (props: EditorProps) => {
       decorations: (state) => {
         const pluginState = searchReplaceKey.getState(state)
 
-        if (!pluginState || !pluginState.value || !pluginState.active) {
+        if (
+          !pluginState ||
+          !pluginState.value ||
+          (!pluginState.active && !pluginState.advanced)
+        ) {
           return DecorationSet.empty
         }
         const decorations: Decoration[] = []
