@@ -1094,3 +1094,11 @@
 .highlight {
   background-color: #ffeebf !important;
 }
+
+main[data-cy='editor-main'] [data-cy='editor-header'] [data-cy='toolbar'] {
+  max-width: 100%;
+}
+
+main[data-cy='editor-main'] .editor-body {
+  max-width: fit-content;
+}
