@@ -110,9 +110,9 @@ import {
 } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
+import { searchReplaceKey } from './plugins/search-replace'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
-import { searchReplaceKey } from './plugins/search-replace'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 

@@ -25,6 +25,7 @@ import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
 
 import {
+  activateSearchReplace,
   addInlineComment,
   blockActive,
   canInsert,
@@ -45,7 +46,6 @@ import {
   insertList,
   insertSection,
   markActive,
-  activateSearchReplace,
 } from './commands'
 import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'

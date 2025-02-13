@@ -18,7 +18,6 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { EditorProps } from '../configs/ManuscriptsEditor'
 import { isDeleted, isDeletedText } from '../lib/track-changes-utils'
 
 export type SearchReplacePluginState = {
@@ -53,7 +52,7 @@ function getMatches(
   if (ignoreDiacritics) {
     normalised = removeDiacritics(normalised)
   }
-  let matches: Array<{ from: number; to: number }> = []
+  const matches: Array<{ from: number; to: number }> = []
 
   doc.descendants((node, pos) => {
     if (isDeleted(node) || isDeletedText(node)) {
@@ -113,7 +112,7 @@ function buildPluginState(
   return data
 }
 
-export default (props: EditorProps) => {
+export default () => {
   return new Plugin<SearchReplacePluginState>({
     key: searchReplaceKey,
     state: {
