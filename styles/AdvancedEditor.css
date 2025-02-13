@@ -703,7 +703,6 @@ span.comment-marker {
   border-color: var(--updated-border-color) !important;
 }
 
-.selected-suggestion:has(.set_attrs),
 .selected-suggestion.set_attrs,
 .set_attrs span.selected-suggestion {
   border-color: black;
