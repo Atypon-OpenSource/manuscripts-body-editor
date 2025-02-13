@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection, Transaction } from 'prosemirror-state'
@@ -23,7 +24,7 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
-import { alertIcon, deleteIcon, scrollIcon } from '../icons'
+import { alertIcon } from '../icons'
 import { getFootnotesElementState } from '../lib/footnotes'
 import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
@@ -33,19 +34,21 @@ import ReactSubView from './ReactSubView'
 
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
+  contextMenu: HTMLDivElement
 
   public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('footnote')
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
+    this.dom.addEventListener('mousedown', this.handleClick)
     this.updateContents()
   }
 
   public updateContents() {
     super.updateContents()
-    const id = this.node.attrs.id
-    const fn = getFootnotesElementState(this.view.state, id)
+
+    const { id, fn } = this.getFootnoteState()
 
     if (!fn) {
       return
@@ -60,41 +63,64 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       marker.innerText = fn.labels.get(id) || ''
     }
 
-    let scrollBtn: HTMLElement | null = null
-    scrollBtn = this.createButton(
-      'scroll-icon',
-      scrollIcon,
-      this.handleMarkerClick
-    )
-    const deleteBtn = this.createButton(
-      'delete-icon',
-      deleteIcon,
-      this.handleDeleteClick
-    )
-
     this.dom.innerHTML = ''
-    scrollBtn && this.dom.appendChild(scrollBtn)
     this.dom.appendChild(marker)
     this.contentDOM && this.dom.appendChild(this.contentDOM)
-    this.dom.appendChild(deleteBtn)
   }
 
-  // Helper function to create buttons
-  private createButton = (
-    className: string,
-    icon: string,
-    eventHandler: (e: Event) => void
-  ): HTMLElement => {
-    const btn = document.createElement('span')
-    btn.classList.add(className)
-    btn.innerHTML = icon
-    btn.addEventListener('mousedown', eventHandler)
-    return btn
+  getFootnoteState() {
+    const id = this.node.attrs.id
+    const fn = getFootnotesElementState(this.view.state, id)
+    return { id, fn }
   }
 
-  handleMarkerClick = (e: Event) => {
-    e.preventDefault()
-    e.stopPropagation()
+  showContextMenu(element: HTMLElement) {
+    this.props.popper.destroy()
+
+    const can = this.props.getCapabilities()
+    const { id, fn } = this.getFootnoteState()
+
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (!fn?.unusedFootnoteIDs.has(id)) {
+      componentProps.actions.push({
+        label: 'Go to footnote Refernce',
+        action: () => this.handleMarkerClick(),
+        icon: 'Scroll',
+      })
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Delete',
+        action: () => this.handleDelete(),
+        icon: 'Delete',
+      })
+    }
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu', 'footnote-context-menu']
+    )
+    this.props.popper.show(element, this.contextMenu, 'right-start')
+  }
+
+  handleClick = (event: Event) => {
+    const element = event.target as HTMLElement
+    const item = element.closest('.footnote')
+    if (item) {
+      this.showContextMenu(item as HTMLElement)
+    }
+  }
+
+  handleMarkerClick = (e?: Event) => {
+    e?.preventDefault()
+    e?.stopPropagation()
 
     const id = this.node.attrs.id
     const fn = getFootnotesElementState(this.view.state, id)
