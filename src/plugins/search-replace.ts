@@ -26,7 +26,7 @@ export type SearchReplacePluginState = {
   matches: Array<{ from: number; to: number }>
   replaceValue: string
   active: boolean // if the plugin actively display matches
-  advanced: boolean // enabling advanced view for search and replace
+  activeAdvanced: boolean // enabling advanced view for search and replace
   currentMatch: number
   caseSensitive: boolean
   ignoreDiacritics: boolean
@@ -89,7 +89,7 @@ function buildPluginState(
     value: '',
     replaceValue: '',
     active: false,
-    advanced: false,
+    activeAdvanced: false,
     currentMatch: -1, // index of a currently selected match
     matches: [],
     caseSensitive: false,
@@ -140,7 +140,7 @@ export default (props: EditorProps) => {
         if (
           !pluginState ||
           !pluginState.value ||
-          (!pluginState.active && !pluginState.advanced)
+          (!pluginState.active && !pluginState.activeAdvanced)
         ) {
           return DecorationSet.empty
         }

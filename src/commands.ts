@@ -1768,7 +1768,7 @@ export const activateSearchReplace = (
 ) => {
   const pluginState = searchReplaceKey.getState(state)
   const tr = state.tr.setMeta(searchReplaceKey, {
-    advanced: !pluginState?.advanced,
+    activeAdvanced: !pluginState?.activeAdvanced,
   })
   dispatch && dispatch(tr)
   return true
