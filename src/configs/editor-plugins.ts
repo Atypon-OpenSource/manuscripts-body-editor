@@ -81,7 +81,7 @@ export default (props: EditorProps) => {
     section_category(props),
     cross_references(),
     inspector_tabs(),
-    search_replace(props),
+    search_replace(),
   ]
 
   if (props.collabProvider) {
