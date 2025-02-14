@@ -90,7 +90,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
         icon: 'Scroll',
       })
     }
-    if (can.editArticle) {
+    if (can.editArticle && !isDeleted(this.node)) {
       componentProps.actions.push({
         label: 'Delete',
         action: () => this.handleDelete(),
