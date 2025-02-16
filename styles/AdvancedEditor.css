@@ -632,7 +632,8 @@ span.comment-marker {
 
 .tracking-visible .inserted:has(.selected-suggestion),
 .tracking-visible .inserted.selected-suggestion,
-.tracking-visible .selected-suggestion:has(.inserted) {
+.tracking-visible .selected-suggestion:has(.inserted),
+.tracking-visible .inserted span.selected-suggestion {
   border-color: var(--inserted-pending-color) !important;
   text-decoration: none !important;
 }
@@ -684,7 +685,8 @@ span.comment-marker {
 
 .deleted:has(.selected-suggestion),
 .deleted.selected-suggestion,
-.selected-suggestion:has(.deleted) {
+.selected-suggestion:has(.deleted),
+.deleted span.selected-suggestion {
   border-color: var(--deleted-color) !important;
   text-decoration: none !important;
 }
@@ -696,7 +698,8 @@ span.comment-marker {
 }
 
 .tracking-visible .selected-suggestion:has(.set_attrs),
-.tracking-visible .selected-suggestion.set_attrs {
+.tracking-visible .selected-suggestion.set_attrs,
+.tracking-visible .set_attrs span.selected-suggestion {
   border-color: var(--updated-border-color) !important;
 }
 
