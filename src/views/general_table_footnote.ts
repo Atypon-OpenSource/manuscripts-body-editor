@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { GeneralTableFootnoteNode, schema } from '@manuscripts/transform'
 import {
   findChildrenByType,
@@ -24,7 +25,6 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
-import { deleteIcon } from '../icons'
 import { isDeleted } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -35,10 +35,12 @@ export class GeneralTableFootnoteView extends BaseNodeView<
   Trackable<GeneralTableFootnoteNode>
 > {
   dialog: HTMLElement
+  contextMenu: HTMLDivElement
 
   public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('footnote', 'general-table-footnote')
+    this.dom.addEventListener('mousedown', this.handleClick)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
@@ -46,19 +48,47 @@ export class GeneralTableFootnoteView extends BaseNodeView<
 
   public updateContents() {
     super.updateContents()
-    const deleteBtn = document.createElement('span')
-    deleteBtn.classList.add('delete-icon')
-    deleteBtn.innerHTML = deleteIcon
-    deleteBtn.addEventListener('mousedown', (e) => this.handleClick(e))
-
     this.dom.innerHTML = ''
     this.contentDOM && this.dom.appendChild(this.contentDOM)
-    this.dom.appendChild(deleteBtn)
   }
 
   handleClick = (e: Event) => {
-    e.preventDefault()
-    e.stopPropagation()
+    const element = e.target as HTMLElement
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
+      const item = element.closest('.general-table-footnote')
+      if (item) {
+        this.showContextMenu(item as HTMLElement)
+      }
+    }
+  }
+
+  showContextMenu(element: HTMLElement) {
+    this.props.popper.destroy()
+
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    componentProps.actions.push({
+      label: 'Delete',
+      action: () => this.handleDeleteClick(),
+      icon: 'Delete',
+    })
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu', 'footnote-context-menu']
+    )
+    this.props.popper.show(element, this.contextMenu, 'right-start')
+  }
+
+  handleDeleteClick = () => {
     const componentProps: DeleteFootnoteDialogProps = {
       header: 'Delete table general note',
       message: 'This action will entirely remove the table general note.',
