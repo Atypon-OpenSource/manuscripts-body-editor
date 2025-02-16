@@ -588,6 +588,7 @@ span.comment-marker {
   ):not(figure):not(figure .equation), .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
+  border-color: var(--common-color);
 }
 
 .block-bullet_list .selected-suggestion p,
