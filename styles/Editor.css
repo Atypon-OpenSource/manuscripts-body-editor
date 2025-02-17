@@ -1094,3 +1094,9 @@
 .highlight {
   background-color: #ffeebf !important;
 }
+
+@media (max-width: 1800px) {
+  main .editor-body {
+    max-width: fit-content;
+  }
+}
