@@ -15,6 +15,7 @@
  */
 
 import {
+  isElementNodeType,
   ManuscriptEditorView,
   ManuscriptSlice,
   schema,
@@ -115,6 +116,28 @@ export const handlePaste = (
 
   if (
     selection instanceof TextSelection &&
+    isElement(slice) &&
+    selection.$anchor.parentOffset > 0 &&
+    selection.$head.parentOffset > 0 &&
+    selection.$from.node().type === schema.nodes.paragraph
+  ) {
+    const { $from, $to } = selection
+    const side = (
+      !$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to
+    ).pos
+    // will use closed sides for elements(list) as in prosemirror-transform Fitter will
+    // join content in the element with side we need to insert depending on the schema,
+    // so for list first list item will be joined and that will make it hard for us
+    // to tracked and required changes in the schema
+    tr.replace(side, side, new Slice(slice.content, 0, 0))
+    dispatch(
+      tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
+    )
+    return true
+  }
+
+  if (
+    selection instanceof TextSelection &&
     selection.$anchor.parentOffset === 0 &&
     selection.$head.parentOffset === 0 &&
     selection.$from.node().type === schema.nodes.paragraph
@@ -123,7 +146,11 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    tr.replace(side, side, slice)
+    if (isElement(slice)) {
+      tr.replace(side, side, new Slice(slice.content, 0, 0))
+    } else {
+      tr.replace(side, side, slice)
+    }
     dispatch(
       tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
     )
@@ -131,4 +158,16 @@ export const handlePaste = (
   }
 
   return false
+}
+
+const isElement = (slice: Slice) => {
+  const { firstChild, lastChild } = slice.content
+  return (
+    (firstChild &&
+      isElementNodeType(firstChild.type) &&
+      firstChild.type !== schema.nodes.paragraph) ||
+    (lastChild &&
+      isElementNodeType(lastChild.type) &&
+      lastChild.type !== schema.nodes.paragraph)
+  )
 }
