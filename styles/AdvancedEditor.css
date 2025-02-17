@@ -237,6 +237,12 @@
   z-index: 3;
 }
 
+.popper[data-popper-placement] .tools-panel {
+  top: 0;
+  right: unset;
+  z-index: 3;
+}
+
 .tools-bottom {
   top: auto;
   bottom: 0;
