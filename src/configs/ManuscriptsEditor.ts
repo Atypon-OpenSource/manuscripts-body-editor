@@ -63,6 +63,12 @@ export interface EditorProps {
   navigate: NavigateFunction
   location: Location
   dispatch?: Dispatch
+  onEditorClick: (
+    pos: number,
+    node: ManuscriptNode,
+    nodePos: number,
+    event: MouseEvent
+  ) => void
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
@@ -99,6 +105,7 @@ export const createEditorView = (
     handleScrollToSelection: handleScrollToSelectedTarget,
     transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {
+      props.onEditorClick(pos, node, nodePos, event)
       // This to prevent changing editor selection when clicking on table cell context menu button
       if (
         event?.target &&
