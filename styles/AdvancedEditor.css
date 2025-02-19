@@ -155,12 +155,13 @@
 .ProseMirror .figure-block .position-menu {
   position: absolute;
   top: 4px;
-  left: calc( 100% + 4px );
+  left: calc( 100% - 96px );
   z-index: 2;
   cursor: pointer;
+  padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
-  left: calc( 100% + 20px );
+  left: calc( 100% - 82px );
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -234,6 +235,12 @@
   position: absolute;
   top: 12px;
   right: 12px;
+  z-index: 3;
+}
+
+.popper[data-popper-placement] .tools-panel {
+  top: 0;
+  right: unset;
   z-index: 3;
 }
 
