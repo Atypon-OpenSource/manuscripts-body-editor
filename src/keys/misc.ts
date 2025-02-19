@@ -19,6 +19,7 @@ import {
   chainCommands,
   createParagraphNear,
   exitCode,
+  joinBackward,
   joinDown,
   joinUp,
   lift,
@@ -49,12 +50,14 @@ import {
   selectAllIsolating,
 } from '../commands'
 import { EditorAction } from '../types'
+import { skipCommandTracking } from './list'
 
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
     undoInputRule,
     ignoreAtomBlockNodeBackward,
-    ignoreMetaNodeBackspaceCommand
+    ignoreMetaNodeBackspaceCommand,
+    skipCommandTracking(joinBackward)
   ),
   Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
