@@ -232,10 +232,8 @@
 }
 
 .ProseMirror .figure-block > .listing {
-  /*grid-row: listing;*/
   grid-column-start: 1;
   grid-column-end: -1;
-  /*margin-top: 0;*/
   padding: 0;
   min-height: 0;
   overflow: visible;
@@ -243,7 +241,6 @@
 }
 
 .ProseMirror .figure-block > figcaption {
-  /*grid-row: caption;*/
   grid-column-start: 1;
   grid-column-end: -1;
   margin-top: 0;
@@ -712,8 +709,8 @@
     .action-gutter {
     pointer-events: visible;
     opacity: 1;
-    /* z-index: 2; */
 }
+
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
@@ -802,7 +799,6 @@
 .ProseMirror pre {
   cursor: pointer;
   display: block;
-  /*min-height: 34px;*/
   padding: 5px;
   width: auto;
   min-width: 200px;
@@ -890,7 +886,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /*z-index: 2;*/
   cursor: pointer;
   background-size: contain;
   background-position: center center;
@@ -1020,6 +1015,7 @@
 }
 .ProseMirror .footnote {
   display: flex;
+  min-height: 35px;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
@@ -1035,6 +1031,8 @@
   visibility: hidden;
   margin-left: -20px;
   transition: 0.2s all;
+}
+.footnote-context-menu [data-tooltip-id='Scroll'] svg {
   transform: rotate(180deg);
 }
 .ProseMirror .footnote:hover .scroll-icon {
@@ -1090,4 +1088,10 @@
 }
 .highlight {
   background-color: #ffeebf !important;
+}
+
+@media (max-width: 1800px) {
+  main .editor-body {
+    max-width: fit-content;
+  }
 }
