@@ -90,10 +90,10 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
         icon: 'Scroll',
       })
     }
-    if (can.editArticle) {
+    if (can.editArticle && !isDeleted(this.node)) {
       componentProps.actions.push({
         label: 'Delete',
-        action: () => this.handleDelete(),
+        action: () => this.handleDeleteClick(),
         icon: 'Delete',
       })
     }
@@ -140,9 +140,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     }
   }
 
-  handleDeleteClick = (e: Event) => {
-    e.preventDefault()
-    e.stopPropagation()
+  handleDeleteClick = (e?: Event) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     const componentProps: DeleteFootnoteDialogProps = {
       header: 'Delete footnote',
       message:

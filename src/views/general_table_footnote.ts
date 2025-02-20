@@ -70,11 +70,13 @@ export class GeneralTableFootnoteView extends BaseNodeView<
     const componentProps: ContextMenuProps = {
       actions: [],
     }
-    componentProps.actions.push({
-      label: 'Delete',
-      action: () => this.handleDeleteClick(),
-      icon: 'Delete',
-    })
+    if (!isDeleted(this.node)) {
+      componentProps.actions.push({
+        label: 'Delete',
+        action: () => this.handleDeleteClick(),
+        icon: 'Delete',
+      })
+    }
 
     this.contextMenu = ReactSubView(
       this.props,
