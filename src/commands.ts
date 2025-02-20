@@ -110,6 +110,7 @@ import {
 } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
+import { searchReplaceKey } from './plugins/search-replace'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 
@@ -1747,4 +1748,28 @@ export const autoComplete = (
     return true
   }
   return false
+}
+
+export const activateSearch = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pluginState = searchReplaceKey.getState(state)
+  const tr = state.tr.setMeta(searchReplaceKey, {
+    active: !pluginState?.active,
+  })
+  dispatch && dispatch(tr)
+  return true
+}
+
+export const activateSearchReplace = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const pluginState = searchReplaceKey.getState(state)
+  const tr = state.tr.setMeta(searchReplaceKey, {
+    activeAdvanced: !pluginState?.activeAdvanced,
+  })
+  dispatch && dispatch(tr)
+  return true
 }

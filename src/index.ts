@@ -39,6 +39,10 @@ export * from './lib/math'
 export { objectsKey as objectsPluginKey } from './plugins/objects'
 export { footnotesKey as footnotesPluginKey } from './plugins/footnotes'
 export { bibliographyKey as bibliographyPluginKey } from './plugins/bibliography'
+export {
+  searchReplaceKey as searchReplacePluginKey,
+  SearchReplacePluginState,
+} from './plugins/search-replace'
 export { metadata, BibliographyItemAttrs } from './lib/references'
 export {
   authorLabel,
