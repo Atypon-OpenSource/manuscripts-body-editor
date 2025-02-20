@@ -169,6 +169,44 @@ const buildOptions = (
     view && view.focus()
   }
 
+  // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
+  const getDeepestSubsection = (subsection: Node) => {
+    while (
+      subsection.lastChild &&
+      isSectionNodeType(subsection.lastChild.type)
+    ) {
+      subsection = subsection.lastChild
+    }
+    return subsection
+  }
+
+  // Helper function to replace the deepest subsection with a new subsection
+  const replaceDeepestSubsection = (
+    parentNode: Node,
+    newSubsection: Node
+  ): Node => {
+    if (
+      !parentNode.lastChild ||
+      !isSectionNodeType(parentNode.lastChild.type)
+    ) {
+      return newSubsection // Replace the deepest subsection when found
+    }
+
+    const lastSubsectionIndex = parentNode.content.childCount - 1
+    const lastSubsection = parentNode.content.child(lastSubsectionIndex)
+
+    // Recursively replace the deepest subsection
+    const updatedSubsection = replaceDeepestSubsection(
+      lastSubsection,
+      newSubsection
+    )
+
+    // Replace the last subsection in the parent with the updated version
+    return parentNode.copy(
+      parentNode.content.replaceChild(lastSubsectionIndex, updatedSubsection)
+    )
+  }
+
   const demoteSectionToParagraph = () => {
     const sectionTitle = $from.node($from.depth)
     const afterSectionTitle = $from.after($from.depth)
@@ -190,16 +228,40 @@ const buildOptions = (
     )
 
     let anchor
+    let fragment
+
+    const sectionContent = section.content.cut(afterSectionTitleOffset)
 
     if (previousNode && isSectionNodeType(previousNode.type)) {
+      const hasSubsections =
+        previousNode.lastChild && isSectionNodeType(previousNode.lastChild.type)
+
+      if (hasSubsections) {
+        let deepestSubsection = previousNode.lastChild
+        deepestSubsection = getDeepestSubsection(deepestSubsection)
+
+        const updatedDeepestSubsection = deepestSubsection.copy(
+          deepestSubsection.content
+            .append(Fragment.from(paragraph)) // Append the paragraph
+            .append(sectionContent) // Append the remaining content
+        )
+
+        const updatedPreviousNode = replaceDeepestSubsection(
+          previousNode,
+          updatedDeepestSubsection
+        )
+        fragment = updatedPreviousNode.content
+      } else {
+        // If no subsections exist, just append to the main section
+        fragment = Fragment.from(previousNode.content)
+          .append(Fragment.from(paragraph))
+          .append(sectionContent)
+      }
+
       tr.replaceWith(
         beforeSection - previousNode.nodeSize,
         afterSection,
-        previousNode.copy(
-          Fragment.from(previousNode.content)
-            .append(Fragment.from(paragraph))
-            .append(section.content.cut(afterSectionTitleOffset))
-        )
+        previousNode.copy(fragment)
       )
 
       anchor = beforeSection
@@ -207,9 +269,7 @@ const buildOptions = (
       tr.replaceWith(
         beforeSection,
         afterSection,
-        Fragment.from(paragraph).append(
-          section.content.cut(afterSectionTitleOffset)
-        )
+        Fragment.from(paragraph).append(sectionContent)
       )
 
       anchor = beforeSection + 1
