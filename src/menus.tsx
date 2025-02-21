@@ -16,7 +16,7 @@
 
 import { MenuSpec } from '@manuscripts/style-guide'
 import {
-  getGroupCateogries,
+  getGroupCategories,
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
@@ -87,7 +87,7 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCateogries(props.sectionCategories, 'backmatter')
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -132,8 +132,8 @@ export const getEditorMenus = (
     ],
   }
   console.log(props.sectionCategories)
-  const abstractsCategories = getGroupCateogries(props.sectionCategories,'abstracts')
-  const graphicalAbstractsCategories = getGroupCateogries(props.sectionCategories,'abstracts-graphic')
+  const abstractsCategories = getGroupCategories(props.sectionCategories,'abstracts')
+  const graphicalAbstractsCategories = getGroupCategories(props.sectionCategories,'abstracts-graphic')
   const allAbstractsCategories = [...abstractsCategories, ...graphicalAbstractsCategories]
   console.log('===abstractsCategories====')
   console.log(abstractsCategories)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import {
-  getGroupCateogries,
+  getGroupCategories,
   isSectionNode,
   schema,
   SectionCategory,
@@ -158,9 +158,10 @@ export function buildPluginState(
       const category = categories.get(categoryID)
       console.log(category)
       const $pos = state.doc.resolve(pos)
-      const group = isInBackmatter($pos) ? 'backmatter' : ( isInAbstracts($pos) ? 'abstracts' : 'body' )
+      // const group = isInBackmatter($pos) ? 'backmatter' : ( isInAbstracts($pos) ? 'abstracts' : 'body' )     
+      const group = isInBackmatter($pos) ? 'backmatter' : 'body'
+      const groupCategories = getGroupCategories(categories, group)
 
-      const groupCategories = getGroupCateogries(categories, group)
       decorations.push(
         Decoration.widget(pos + 1, (view) =>
           createButton(
@@ -190,8 +191,11 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
 }
 
 const isInBackmatter = ($pos: ResolvedPos) => {
+  const backmatter = findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)
+  console.log("Backmatter: ", backmatter)
   return !!findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)
 }
+
 const isInAbstracts = ($pos: ResolvedPos) => {
   return !!findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)
 }
