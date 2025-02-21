@@ -28,7 +28,6 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
-  insertAbstract,
   insertAbstractSection,
   insertAffiliation,
   insertAward,
@@ -75,10 +74,15 @@ export const getEditorMenus = (
   }
 
   const insertAbstractsSectionMenu = (category: SectionCategory) => {
-    let command = insertAbstractSection(category)
-    if (category.id === 'abstract') command = insertAbstract
+    let command: Command
+    switch (category.id) {
+      case 'abstract-graphical':
+        command = insertGraphicalAbstract
+        break
+      default:
+        command = insertAbstractSection(category)
+    }
 
-    // console.log(category)
     return {
       id: `insert-${category.id}`,
       label: category.titles[0],
@@ -87,7 +91,6 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -131,16 +134,20 @@ export const getEditorMenus = (
       },
     ],
   }
-  console.log(props.sectionCategories)
-  const abstractsCategories = getGroupCategories(props.sectionCategories,'abstracts')
-  const graphicalAbstractsCategories = getGroupCategories(props.sectionCategories,'abstracts-graphic')
-  const allAbstractsCategories = [...abstractsCategories, ...graphicalAbstractsCategories]
-  console.log('===abstractsCategories====')
-  console.log(abstractsCategories)
-  console.log('===graphicalAbstractsCategories====')
-  console.log(graphicalAbstractsCategories)
-  console.log('===allAbstractsCategories====')
-  console.log(allAbstractsCategories)
+
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
+  const abstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts'
+  )
+  const graphicalAbstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts-graphic'
+  )
+  const allAbstractsCategories = [
+    ...abstractsCategories,
+    ...graphicalAbstractsCategories,
+  ]
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
@@ -156,25 +163,6 @@ export const getEditorMenus = (
             label: 'Abstract Types',
             isEnabled: true,
             submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
-            
-            // id: 'insert-abstract-types',
-            // label: 'Abstract Types',
-            // isEnabled: true,
-            // submenu: 
-            // [
-            //   {
-            //     id: 'insert-abstract',
-            //     label: 'Abstract',
-            //     isEnabled: isCommandValid(insertAbstract),
-            //     run: doCommand(insertAbstract),
-            //   },
-            //   {
-            //     id: 'insert-graphical-abstract',
-            //     label: 'Graphical Abstract',
-            //     isEnabled: isCommandValid(insertGraphicalAbstract),
-            //     run: doCommand(insertGraphicalAbstract),
-            //   },
-            // ],
           },
           {
             id: 'insert-contributors',

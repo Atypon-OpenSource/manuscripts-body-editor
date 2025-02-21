@@ -853,20 +853,46 @@ export const insertSection =
     return true
   }
 
-export const insertAbstractSection = (category: SectionCategory) => 
+export const insertAbstractSection =
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const abstracts = findAbstractsNode(state.doc)
-    const sections = findChildrenByType(abstracts.node, schema.nodes.abstracts)
-    console.log(sections)
+    const sections = findChildrenByType(abstracts.node, schema.nodes.section)
     // Check if the section already exists
     if (sections.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
-    const pos = abstracts.pos + abstracts.node.content.size + 1
+
+    // check if graphical abstract node exist to insert before it.
+    const ga = findChildrenByType(
+      state.doc,
+      schema.nodes.graphical_abstract_section
+    )[0]
+
+    let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
+    const content = []
+    content.push(
+      schema.nodes.section_title.create({}, schema.text(category.titles[0]))
+    )
+
+    switch (category.id) {
+      case 'abstract-key-image':
+        content.push(createImageElement(state))
+        break
+      case 'abstract':
+        pos = abstracts.pos + 1
+        content.push(
+          schema.nodes.paragraph.create({
+            placeholder: 'Type abstract here...',
+          })
+        )
+        break
+      default:
+        break
+    }
+
     const attrs = { category: category.id }
-    const node = schema.nodes.section.create(attrs, [
-      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
-    ])
+    const node = schema.nodes.section.create(attrs, content)
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -883,7 +909,6 @@ export const insertBackmatterSection =
   (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     const backmatter = findBackmatter(state.doc)
-
     const sections = findChildrenByType(backmatter.node, schema.nodes.section)
     // Check if the section already exists
     if (sections.some((s) => s.node.attrs.category === category.id)) {
@@ -892,17 +917,11 @@ export const insertBackmatterSection =
 
     // check if reference node exist to insert before it.
     const bibliography = findBibliographySection(state.doc)
+    const pos = bibliography
+      ? bibliography.pos
+      : backmatter.pos + backmatter.node.content.size + 1
 
-    let pos
-    if (bibliography) {
-      pos = bibliography.pos
-    } else {
-      pos = backmatter.pos + backmatter.node.content.size + 1
-    }
-
-    const attrs = {
-      category: category.id,
-    }
+    const attrs = { category: category.id }
     const node = schema.nodes.section.create(attrs, [
       schema.nodes.section_title.create({}, schema.text(category.titles[0])),
     ])
@@ -926,52 +945,6 @@ const findSelectedList = (selection: Selection) =>
     }) ||
   findParentNodeOfType([schema.nodes.list])(selection)
 
-export const insertAbstract = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  view?: EditorView
-) => {
-  if (
-    getMatchingChild(
-      state.doc,
-      (node) => node.attrs.category === 'abstract',
-      true
-    )
-  ) {
-    return false
-  }
-  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
-  // Insert abstract at the top of abstracts section
-  const pos = abstracts.pos + 1
-  const section = schema.nodes.section.createAndFill({ category: 'abstract' }, [
-    schema.nodes.section_title.create({}, schema.text('Abstract')),
-    schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
-  ]) as ManuscriptNode
-
-  const tr = state.tr.insert(pos, section)
-
-  if (dispatch) {
-    // Find the start position of the newly inserted section
-    const sectionStart = tr.doc.resolve(pos)
-    const sectionNode = sectionStart.nodeAfter
-    if (sectionNode && sectionNode.firstChild) {
-      // Calculate the position for the cursor within the paragraph node
-      const paragraphPos = pos + sectionNode.firstChild.nodeSize + 2 // Adjusted calculation
-
-      // Place cursor inside the paragraph element
-      const selection = TextSelection.create(tr.doc, paragraphPos)
-
-      if (view) {
-        // Focus the editor view before setting the selection
-        view.focus()
-      }
-
-      dispatch(tr.setSelection(selection).scrollIntoView())
-    }
-  }
-  return true
-}
-
 export const insertGraphicalAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
@@ -986,10 +959,13 @@ export const insertGraphicalAbstract = (
 
   // Insert Graphical abstract at the end of abstracts section
   const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill({}, [
-    schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-    createAndFillFigureElement(state),
-  ]) as GraphicalAbstractSectionNode
+  const section = schema.nodes.graphical_abstract_section.createAndFill(
+    { category: 'abstract-graphical' },
+    [
+      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
+      createAndFillFigureElement(state),
+    ]
+  ) as GraphicalAbstractSectionNode
 
   const tr = state.tr.insert(pos, section)
 
