@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 import {
+  ButtonGroup,
   CloseButton,
   IconButton,
   IconButtonGroup,
   ModalBody,
   ModalContainer,
-  PrimaryBoldHeading,
+  ModalHeader,
+  ModalSidebar,
+  ModalSidebarHeader,
+  ModalSidebarTitle,
+  PrimaryButton,
+  SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
 import { EditorView } from 'prosemirror-view'
@@ -72,44 +78,53 @@ const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
       shouldCloseOnOverlayClick={true}
     >
       <Container>
-        <Header>
-          <Heading>Insert special characters</Heading>
+        <ModalHeader>
           <CloseButton onClick={handleClose} />
-        </Header>
-        <Body>
-          <Select<OptionType>
-            onChange={handleRangeChange}
-            defaultValue={unicodeRanges[0]}
-            options={unicodeRanges}
-            components={{
-              Option: OptionComponent,
-            }}
-            styles={{
-              control: (provided) => ({
-                ...provided,
-                width: 'fit-content',
-              }),
-              menu: (provided) => ({
-                ...provided,
-                minWidth: '220px',
-              }),
-            }}
-            menuPosition="fixed"
-          />
-          <CharactersSetContainer>
-            <CharactersSet>
-              {generateCharacters(range[0], range[1]).map((character) => (
-                <Character
-                  key={character}
-                  value={character}
-                  onClick={addCharacter}
-                >
-                  {character}
-                </Character>
-              ))}
-            </CharactersSet>
-          </CharactersSetContainer>
-        </Body>
+        </ModalHeader>
+        <StyledModalBody>
+          <StyledModalSidebar>
+            <ModalSidebarHeader>
+              <ModalSidebarTitle>Insert special characters</ModalSidebarTitle>
+            </ModalSidebarHeader>
+            <StyledSidebarContent>
+              <Select<OptionType>
+                onChange={handleRangeChange}
+                defaultValue={unicodeRanges[0]}
+                options={unicodeRanges}
+                components={{
+                  Option: OptionComponent,
+                }}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    width: 'fit-content',
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    minWidth: '220px',
+                  }),
+                }}
+                menuPosition="fixed"
+              />
+              <CharactersSetContainer>
+                <CharactersSet>
+                  {generateCharacters(range[0], range[1]).map((character) => (
+                    <Character
+                      key={character}
+                      value={character}
+                      onClick={addCharacter}
+                    >
+                      {character}
+                    </Character>
+                  ))}
+                </CharactersSet>
+              </CharactersSetContainer>
+            </StyledSidebarContent>
+            <ButtonsContainer>
+              <PrimaryButton onClick={handleClose}>Close</PrimaryButton>
+            </ButtonsContainer>
+          </StyledModalSidebar>
+        </StyledModalBody>
       </Container>
     </StyledModal>
   )
@@ -127,25 +142,25 @@ const OptionComponent: React.FC<OptionProps<OptionType, false>> = ({
 }
 
 const Container = styled(ModalContainer)`
-  width: 350px;
+  padding: 8px;
+`
+
+const StyledModalSidebar = styled(ModalSidebar)`
+  background: white;
+  width: 30vw;
+`
+
+const StyledModalBody = styled(ModalBody)`
   height: 60vh;
-  padding: 8px;
 `
 
-const Body = styled(ModalBody)`
-  flex-direction: column;
-  padding: 8px;
-`
-
-const Header = styled.div`
+const StyledSidebarContent = styled(SidebarContent)`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
+  flex-direction: column;
 `
 
-const Heading = styled(PrimaryBoldHeading)`
-  font-size: 18px;
+const ButtonsContainer = styled(ButtonGroup)`
+  padding-top: ${(props) => props.theme.grid.unit * 5}px;
 `
 
 const OptionWrapper = styled.div<{ focused?: boolean }>`
@@ -162,7 +177,7 @@ const OptionWrapper = styled.div<{ focused?: boolean }>`
 `
 
 const CharactersSetContainer = styled.div`
-  height: 40vh;
+  flex: 1;
   overflow-y: scroll;
   margin: 18px 0;
   border: 1px solid #ddd;
@@ -179,9 +194,15 @@ const Character = styled(IconButton)`
   border-right: 1px solid #ddd;
   border-radius: unset;
 
-  :hover,
-  :focus {
+  :hover {
     background-color: #f0f0f0 !important;
+  }
+
+  :active,
+  :focus {
+    color: inherit !important;
+    border-bottom: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
   }
 `
 
