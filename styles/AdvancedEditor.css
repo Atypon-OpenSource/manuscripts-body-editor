@@ -155,12 +155,13 @@
 .ProseMirror .figure-block .position-menu {
   position: absolute;
   top: 4px;
-  left: calc( 100% + 4px );
+  left: calc( 100% - 96px );
   z-index: 2;
   cursor: pointer;
+  padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
-  left: calc( 100% + 20px );
+  left: calc( 100% - 82px );
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -609,7 +610,7 @@ span.comment-marker {
 
 /* Insert */
 .tracking-visible .ProseMirror .inserted,
-.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span {
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, .tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
