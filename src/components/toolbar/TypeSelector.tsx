@@ -156,7 +156,17 @@ const buildOptions = (
       sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
     }
 
-    items.push(parentSection.copy(sectionContent))
+    if (parentSection.type.name === 'body') {
+      const newSection = nodes.section.create({}, sectionContent)
+      items[0] = nodes.body.create(
+        {},
+        items[0]
+          ? items[0].content.append(Fragment.from(newSection))
+          : Fragment.from(newSection)
+      )
+    } else {
+      items.push(parentSection.copy(sectionContent))
+    }
 
     tr.replaceWith(beforeParentSection, afterParentSection, items)
     const anchor = beforeParentSection + offset + 2
