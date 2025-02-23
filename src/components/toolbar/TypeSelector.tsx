@@ -25,7 +25,7 @@ import {
   schema,
   SectionTitleNode,
 } from '@manuscripts/transform'
-import { Fragment } from 'prosemirror-model'
+import { Fragment, Node } from 'prosemirror-model'
 import { TextSelection, Transaction } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import React from 'react'
