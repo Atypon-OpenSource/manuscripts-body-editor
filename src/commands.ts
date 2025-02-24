@@ -104,11 +104,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
-import {
-  findParentNodeWithId,
-  getChildOfType,
-  getMatchingChild,
-} from './lib/utils'
+import { findParentNodeWithId, getChildOfType } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
