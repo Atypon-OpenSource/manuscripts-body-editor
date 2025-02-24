@@ -1089,6 +1089,6 @@
 
 @media (max-width: 1800px) {
   main .editor-body {
-    max-width: fit-content;
+    max-width: 850px;
   }
 }
