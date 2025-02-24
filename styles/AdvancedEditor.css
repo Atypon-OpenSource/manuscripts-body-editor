@@ -155,12 +155,13 @@
 .ProseMirror .figure-block .position-menu {
   position: absolute;
   top: 4px;
-  left: calc( 100% + 4px );
+  left: calc( 100% - 96px );
   z-index: 2;
   cursor: pointer;
+  padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
-  left: calc( 100% + 20px );
+  left: calc( 100% - 82px );
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -594,6 +595,7 @@ span.comment-marker {
   ):not(figure):not(figure .equation), .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
+  border-color: var(--common-color);
 }
 
 .block-bullet_list .selected-suggestion p,
@@ -608,7 +610,7 @@ span.comment-marker {
 
 /* Insert */
 .tracking-visible .ProseMirror .inserted,
-.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span {
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, .tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
@@ -629,9 +631,10 @@ span.comment-marker {
   text-decoration: none;
 }
 
-.inserted:has(.selected-suggestion),
-.inserted.selected-suggestion,
-.selected-suggestion:has(.inserted) {
+.tracking-visible .inserted:has(.selected-suggestion),
+.tracking-visible .inserted.selected-suggestion,
+.tracking-visible .selected-suggestion:has(.inserted),
+.tracking-visible .inserted span.selected-suggestion {
   border-color: var(--inserted-pending-color) !important;
   text-decoration: none !important;
 }
@@ -683,7 +686,8 @@ span.comment-marker {
 
 .deleted:has(.selected-suggestion),
 .deleted.selected-suggestion,
-.selected-suggestion:has(.deleted) {
+.selected-suggestion:has(.deleted),
+.deleted span.selected-suggestion {
   border-color: var(--deleted-color) !important;
   text-decoration: none !important;
 }
@@ -694,8 +698,9 @@ span.comment-marker {
   text-decoration: none;
 }
 
-.selected-suggestion:has(.set_attrs),
-.selected-suggestion.set_attrs {
+.tracking-visible .selected-suggestion:has(.set_attrs),
+.tracking-visible .selected-suggestion.set_attrs,
+.tracking-visible .set_attrs span.selected-suggestion {
   border-color: var(--updated-border-color) !important;
 }
 
@@ -713,15 +718,23 @@ figure .selected-suggestion {
   background-color: transparent !important;
 }
 
+.selected-suggestion[data-track-status='pending'] .block,
+.block:has(figure.selected-suggestion),
+figure.block:has(.equation.selected-suggestion)
+ {
+  box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
+  --fade-color: none;
+}
+
 /* Inserted Block */
 .tracking-visible .ProseMirror [data-track-op='insert'][data-track-status='pending'] .block,
 .tracking-visible .ProseMirror [data-track-op='wrap_with_node'][data-track-status='pending'] .block {
   box-shadow: inset 3px 0 0 var(--inserted-pending-color);
 }
 
-.selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
-.selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
-.selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block {
+.tracking-visible .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
+.tracking-visible .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
+.tracking-visible .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block {
   box-shadow: inset 6px 0 0 var(--inserted-pending-color), inset 9px 0 0 var(--inserted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--inserted-pending-bg-color);
@@ -757,11 +770,11 @@ figure .selected-suggestion {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
-.selected-suggestion[data-track-op='set_attrs'] .block,
-.selected-suggestion [data-track-op='set_attrs'] .block,
-.block:has(figure.selected-suggestion[data-track-op='set_attrs']),
-.selected-suggestion[data-track-op='node_split'] .block,
-figure.block:has(.equation.set_attrs.selected-suggestion) {
+.tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
+.tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
+.tracking-visible .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+.tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
+.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
   box-shadow: inset 6px 0 0 var(--updated-border-color), inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--updated-bg-color);
