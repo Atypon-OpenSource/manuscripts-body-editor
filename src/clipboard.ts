@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { schema, getJatsListType } from '@manuscripts/transform'
+import { getJatsListType, schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
 
 // we can override other node rules for clipboard here
