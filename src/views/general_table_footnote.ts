@@ -25,7 +25,7 @@ import {
   DeleteFootnoteDialog,
   DeleteFootnoteDialogProps,
 } from '../components/views/DeleteFootnoteDialog'
-import { isDeleted } from '../lib/track-changes-utils'
+import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -121,15 +121,16 @@ export class GeneralTableFootnoteView extends BaseNodeView<
     )!
     const element = findChildrenByType(
       footer.node,
-      schema.nodes.footnotes_element
+      schema.nodes.general_table_footnote
     )[0]
     if (element && !isDeleted(element.node)) {
-      const from = pos
-      const to = from + this.node.nodeSize
+      const from = tr.mapping.map(pos)
+      const to = tr.mapping.map(from + this.node.nodeSize)
       tr.delete(from, to)
-    } else {
-      const from = footer.pos
-      const to = from + footer.node.nodeSize
+    }
+    if (footer.node.childCount <= 1 && !isPendingInsert(element.node)) {
+      const from = tr.mapping.map(footer.pos)
+      const to = tr.mapping.map(from + footer.node.nodeSize)
       tr.delete(from, to)
     }
     this.view.dispatch(tr)
