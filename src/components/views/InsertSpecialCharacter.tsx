@@ -77,9 +77,9 @@ const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
     >
-      <Container>
+      <Container data-cy="special-characters-modal">
         <ModalHeader>
-          <CloseButton onClick={handleClose} />
+          <CloseButton onClick={handleClose} data-cy="modal-close-button" />
         </ModalHeader>
         <StyledModalBody>
           <StyledModalSidebar>
@@ -113,6 +113,7 @@ const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
                       key={character}
                       value={character}
                       onClick={addCharacter}
+                      data-cy="special-character"
                     >
                       {character}
                     </Character>
