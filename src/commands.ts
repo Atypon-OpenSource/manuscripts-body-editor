@@ -1729,7 +1729,7 @@ export const autoComplete = (
   dispatch?: Dispatch
 ) => {
   const complete = checkForCompletion(state)
-  if (complete) {
+  if (complete && complete.suggestion.length > 0) {
     const tr = state.tr.insertText(complete.suggestion, state.selection.from)
     const inserted = complete.title.substring(
       0,

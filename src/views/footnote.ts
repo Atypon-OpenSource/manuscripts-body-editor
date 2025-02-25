@@ -26,7 +26,7 @@ import {
 } from '../components/views/DeleteFootnoteDialog'
 import { alertIcon } from '../icons'
 import { getFootnotesElementState } from '../lib/footnotes'
-import { isDeleted } from '../lib/track-changes-utils'
+import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -90,10 +90,10 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
         icon: 'Scroll',
       })
     }
-    if (can.editArticle) {
+    if (can.editArticle && !isDeleted(this.node)) {
       componentProps.actions.push({
         label: 'Delete',
-        action: () => this.handleDelete(),
+        action: () => this.handleDeleteClick(),
         icon: 'Delete',
       })
     }
@@ -140,9 +140,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     }
   }
 
-  handleDeleteClick = (e: Event) => {
-    e.preventDefault()
-    e.stopPropagation()
+  handleDeleteClick = (e?: Event) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     const componentProps: DeleteFootnoteDialogProps = {
       header: 'Delete footnote',
       message:
@@ -193,10 +193,17 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       $pos,
       schema.nodes.footnotes_element
     )
-    if (element && getEffectiveChildCount(element.node) <= 1) {
-      tr.delete(element.pos, element.pos + element.node.nodeSize)
-    } else {
-      tr.delete(pos, pos + this.node.nodeSize)
+    tr.delete(pos, pos + this.node.nodeSize)
+
+    if (
+      element &&
+      getEffectiveChildCount(element.node) <= 1 &&
+      !isPendingInsert(this.node)
+    ) {
+      tr.delete(
+        tr.mapping.map(element.pos),
+        tr.mapping.map(element.pos + element.node.nodeSize)
+      )
     }
   }
 }
