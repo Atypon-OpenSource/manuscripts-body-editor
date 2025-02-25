@@ -13,14 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { schema } from '@manuscripts/transform'
+import { getJatsListType, schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
+
 // we can override other node rules for clipboard here
 // to avoid having a conflict with manuscripts-transform
 const nodes = [
   {
     tag: 'p',
     node: 'paragraph',
+  },
+  {
+    tag: 'ul, ol',
+    node: 'list',
+    getAttrs: (list: HTMLElement) => {
+      const dom = list
+      return {
+        listStyleType: getJatsListType(
+          dom.style.listStyleType ||
+            (dom.firstChild &&
+              (dom.firstChild as HTMLElement).style.listStyleType)
+        ),
+      }
+    },
   },
   // this is to avoid adding a new line, as it won't appear in google doc
   {
