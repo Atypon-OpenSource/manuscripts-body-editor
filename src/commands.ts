@@ -940,34 +940,22 @@ export const insertGraphicalAbstract =
       return false
     }
 
-    // Insert Graphical abstract at the end of abstracts section
-    let pos = abstracts.pos + abstracts.node.content.size + 1
-    const content = []
-    content.push(
-      schema.nodes.section_title.create({}, schema.text(category.titles[0]))
-    )
     const ga = findChildrenByType(
       state.doc,
       schema.nodes.graphical_abstract_section
     )[0]
 
-    switch (category.id) {
-      case 'abstract-graphical':
-        content.push(createAndFillFigureElement(state))
-        break
-      case 'abstract-key-image':
-        // if graphical abstract exists, insert before it
-        // else at the end of abstracts section
-        pos = ga ? ga.pos : pos
-        content.push(createImageElement(state))
-        break
-      default:
-        break
-    }
+    // insert at the end of abstracts section
+    let pos = abstracts.pos + abstracts.node.content.size + 1
+    // abstract-key-image insert before abstract-graphical
+    pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
 
     const node = schema.nodes.graphical_abstract_section.createAndFill(
       { category: category.id },
-      content
+      [
+        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        createAndFillFigureElement(state)
+      ]
     ) as GraphicalAbstractSectionNode
 
     const tr = state.tr.insert(pos, node)
