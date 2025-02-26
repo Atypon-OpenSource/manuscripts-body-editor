@@ -25,6 +25,8 @@ import {
 import { Fragment, Node } from 'prosemirror-model'
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state'
 
+import { Option } from './TypeSelector'
+
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
     case nodeType.schema.nodes.section:
@@ -37,6 +39,14 @@ export const optionName = (nodeType: ManuscriptNodeType) => {
 
 export const titleCase = (text: string) =>
   text.replace(/\b([a-z])/g, (match) => match.toUpperCase())
+
+export const findSelectedOption = (options: Option[]): Option | undefined => {
+  for (const option of options) {
+    if (option.isSelected) {
+      return option
+    }
+  }
+}
 
 // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
 const getDeepestSubsection = (subsection: Node) => {

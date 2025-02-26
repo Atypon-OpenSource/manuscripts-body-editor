@@ -32,12 +32,13 @@ import styled from 'styled-components'
 import { findClosestParentElement } from '../../lib/hierarchy'
 import {
   demoteSectionToParagraph,
+  findSelectedOption,
   optionName,
   promoteParagraphToSection,
   titleCase,
 } from './helpers'
 
-interface Option {
+export interface Option {
   action?: (
     state: EditorState,
     dispatch: (tr: Transaction) => void,
@@ -164,14 +165,6 @@ const StyledSelect = styled(Select<Option, false>)`
     border-color: ${(props) => props.theme.colors.border.secondary};
   }
 `
-
-const findSelectedOption = (options: Option[]): Option | undefined => {
-  for (const option of options) {
-    if (option.isSelected) {
-      return option
-    }
-  }
-}
 
 export const TypeSelector: React.FC<{
   state: EditorState
