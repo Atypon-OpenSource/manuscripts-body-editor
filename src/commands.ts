@@ -959,8 +959,7 @@ export const insertGraphicalAbstract =
         // if graphical abstract exists, insert before it
         // else at the end of abstracts section
         pos = ga ? ga.pos : pos
-        content.push(createAndFillFigureElement(state))
-        // content.push(createImageElement(state))
+        content.push(createImageElement(state))
         break
       default:
         break
