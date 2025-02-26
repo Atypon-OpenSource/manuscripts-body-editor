@@ -17,8 +17,8 @@
   -webkit-user-modify: read-write-plaintext-only;
 }
 
-.ProseMirror:focus {
-  outline: none;
+.ProseMirror .article-titles:not([type="primary"]) {
+  display: none;
 }
 
 .ProseMirror .ProseMirror-selectednode {
