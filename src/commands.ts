@@ -954,7 +954,7 @@ export const insertGraphicalAbstract =
       { category: category.id },
       [
         schema.nodes.section_title.create({}, schema.text(category.titles[0])),
-        createAndFillFigureElement(state)
+        createAndFillFigureElement(state),
       ]
     ) as GraphicalAbstractSectionNode
 
