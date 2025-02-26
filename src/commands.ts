@@ -866,29 +866,14 @@ export const insertAbstractSection =
     )[0]
 
     let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
-    const content = []
-    content.push(
-      schema.nodes.section_title.create({}, schema.text(category.titles[0]))
-    )
-
-    switch (category.id) {
-      case 'abstract-key-image':
-        content.push(createImageElement(state))
-        break
-      case 'abstract':
-        pos = abstracts.pos + 1
-        content.push(
-          schema.nodes.paragraph.create({
-            placeholder: 'Type abstract here...',
-          })
-        )
-        break
-      default:
-        break
+    if (category.id === 'abstract') {
+      pos = abstracts.pos + 1
     }
 
-    const attrs = { category: category.id }
-    const node = schema.nodes.section.create(attrs, content)
+    const node = schema.nodes.section.create({ category: category.id }, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+    ])
 
     const tr = state.tr.insert(pos, node)
     if (dispatch) {
@@ -941,40 +926,62 @@ const findSelectedList = (selection: Selection) =>
     }) ||
   findParentNodeOfType([schema.nodes.list])(selection)
 
-export const insertGraphicalAbstract = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  view?: EditorView
-) => {
-  if (
-    getChildOfType(state.doc, schema.nodes.graphical_abstract_section, true)
-  ) {
-    return false
-  }
-  const abstracts = findChildrenByType(state.doc, schema.nodes.abstracts)[0]
+export const insertGraphicalAbstract =
+  (category: SectionCategory) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const abstracts = findAbstractsNode(state.doc)
+    const sections = findChildrenByType(
+      abstracts.node,
+      schema.nodes.graphical_abstract_section
+    )
 
-  // Insert Graphical abstract at the end of abstracts section
-  const pos = abstracts.pos + abstracts.node.content.size + 1
-  const section = schema.nodes.graphical_abstract_section.createAndFill(
-    { category: 'abstract-graphical' },
-    [
-      schema.nodes.section_title.create({}, schema.text('Graphical Abstract')),
-      createAndFillFigureElement(state),
-    ]
-  ) as GraphicalAbstractSectionNode
-
-  const tr = state.tr.insert(pos, section)
-
-  if (dispatch) {
-    // place cursor inside section title
-    const selection = TextSelection.create(tr.doc, pos + 1)
-    if (view) {
-      view.focus()
+    // Check if the section already exists
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
+      return false
     }
-    dispatch(tr.setSelection(selection).scrollIntoView())
+
+    // Insert Graphical abstract at the end of abstracts section
+    let pos = abstracts.pos + abstracts.node.content.size + 1
+    const content = []
+    content.push(
+      schema.nodes.section_title.create({}, schema.text(category.titles[0]))
+    )
+    const ga = findChildrenByType(
+      state.doc,
+      schema.nodes.graphical_abstract_section
+    )[0]
+
+    switch (category.id) {
+      case 'abstract-graphical':
+        content.push(createAndFillFigureElement(state))
+        break
+      case 'abstract-key-image':
+        // if graphical abstract exists, insert before it
+        // else at the end of abstracts section
+        pos = ga ? ga.pos : pos
+        content.push(createAndFillFigureElement(state))
+        // content.push(createImageElement(state))
+        break
+      default:
+        break
+    }
+
+    const node = schema.nodes.graphical_abstract_section.createAndFill(
+      { category: category.id },
+      content
+    ) as GraphicalAbstractSectionNode
+
+    const tr = state.tr.insert(pos, node)
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos + 1)
+      if (view) {
+        view.focus()
+      }
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+    return true
   }
-  return true
-}
 
 export const insertContributors = (
   state: ManuscriptEditorState,

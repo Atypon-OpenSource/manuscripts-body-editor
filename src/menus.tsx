@@ -77,7 +77,8 @@ export const getEditorMenus = (
     let command: Command
     switch (category.id) {
       case 'abstract-graphical':
-        command = insertGraphicalAbstract
+      case 'abstract-key-image':
+        command = insertGraphicalAbstract(category)
         break
       default:
         command = insertAbstractSection(category)
