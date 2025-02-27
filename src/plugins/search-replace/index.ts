@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Node as ProseMirrorNode } from 'prosemirror-model'
-import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
+import { EditorState, Plugin, PluginKey, Selection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isDeleted, isDeletedText } from '../lib/track-changes-utils'
+import { getClosestMatch, getMatches } from './lib'
 
 export type SearchReplacePluginState = {
   value: string
@@ -29,77 +28,33 @@ export type SearchReplacePluginState = {
   currentMatch: number
   caseSensitive: boolean
   ignoreDiacritics: boolean
+  highlightCurrent: boolean
 }
 
 export const searchReplaceKey = new PluginKey<SearchReplacePluginState>(
   'findReplace'
 )
 
-function removeDiacritics(str: string) {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-}
-
-function getMatches(
-  doc: ProseMirrorNode,
-  value: string,
-  caseSensitive: boolean,
-  ignoreDiacritics: boolean
-) {
-  if (!value) {
-    return []
-  }
-  let normalised = caseSensitive ? value : value.toLocaleLowerCase()
-  if (ignoreDiacritics) {
-    normalised = removeDiacritics(normalised)
-  }
-  const matches: Array<{ from: number; to: number }> = []
-
-  doc.descendants((node, pos) => {
-    if (isDeleted(node) || isDeletedText(node)) {
-      return
-    }
-    if (node.isText && node.text) {
-      let base = caseSensitive ? node.text : node.text.toLocaleLowerCase()
-      if (ignoreDiacritics) {
-        base = removeDiacritics(base)
-      }
-      let index = base.indexOf(normalised)
-      while (index !== -1) {
-        matches.push({
-          from: pos + index,
-          to: pos + index + normalised.length,
-        })
-        index = base.indexOf(normalised, index + normalised.length)
-      }
-    }
-  })
-
-  return matches
-}
-
 function buildPluginState(
   state: EditorState,
   oldData?: SearchReplacePluginState,
   newData?: Partial<SearchReplacePluginState>,
+  selection?: Selection,
   pointerChanged?: boolean
 ) {
-  // this is need to allows components that update this plugin states to update it partially and not the entire state
+  // this is needed to allow components that update this plugin states to update it partially and not always the entire state
   const data: SearchReplacePluginState = {
     value: '',
     replaceValue: '',
     active: false,
     activeAdvanced: false,
     currentMatch: -1, // index of a currently selected match
+    highlightCurrent: false,
     matches: [],
     caseSensitive: false,
-    ignoreDiacritics: false,
+    ignoreDiacritics: true,
     ...oldData,
     ...newData,
-  }
-
-  // if user changes pointer position - we drop previous index so if next time user move selection it will be recalculated against the new pointer
-  if (pointerChanged) {
-    data.currentMatch = -1
   }
 
   // creating a new set of matches if search value has changed and not falsy
@@ -109,6 +64,26 @@ function buildPluginState(
     data.caseSensitive,
     data.ignoreDiacritics
   )
+
+  // if user changes pointer position - we drop previous index so if next time user move selection it will be recalculated against the new pointer
+  if (pointerChanged && selection && data.matches.length) {
+    data.currentMatch = getClosestMatch('right', selection, data.matches)
+  }
+
+  // pointer was changed not by the UI of Find & Search, stop highlight as some other component is managing the selection
+  if (!newData && pointerChanged) {
+    data.highlightCurrent = false
+  }
+
+  // setting new currentMatch if search value is updated
+  if (
+    selection &&
+    newData?.value &&
+    oldData?.value !== newData?.value &&
+    data.matches.length
+  ) {
+    data.currentMatch = getClosestMatch('right', selection, data.matches)
+  }
   return data
 }
 
@@ -121,12 +96,14 @@ export default () => {
       },
       apply(tr, value, oldState, newState) {
         const $old = searchReplaceKey.getState(oldState)
-        if (!$old || tr.getMeta(searchReplaceKey) || tr.getMeta('pointer')) {
+        const selectionChanged = !!tr.getMeta('pointer') || tr.selectionSet
+        if (!$old || tr.getMeta(searchReplaceKey) || selectionChanged) {
           return buildPluginState(
             newState,
             $old,
             tr.getMeta(searchReplaceKey),
-            !!tr.getMeta('pointer')
+            newState.selection,
+            selectionChanged
           )
         }
         return $old
@@ -147,7 +124,7 @@ export default () => {
 
         pluginState.matches.forEach(({ from, to }, i) => {
           let className = 'search-result'
-          if (pluginState.currentMatch === i) {
+          if (pluginState.highlightCurrent && pluginState.currentMatch === i) {
             className = className + ' search-result-selected'
           }
           decorations.push(

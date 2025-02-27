@@ -43,6 +43,7 @@ export {
   searchReplaceKey as searchReplacePluginKey,
   SearchReplacePluginState,
 } from './plugins/search-replace'
+export { getNewMatch, getClosestMatch } from './plugins/search-replace/lib'
 export { metadata, BibliographyItemAttrs } from './lib/references'
 export {
   authorLabel,
