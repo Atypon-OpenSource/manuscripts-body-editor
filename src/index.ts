@@ -51,4 +51,3 @@ export {
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
-export * from './plugins/inspector-tabs'

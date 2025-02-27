@@ -1688,7 +1688,7 @@ export const addHeaderRow =
       ).steps.pop()
       if (addRowStep && addRowStep instanceof ReplaceStep) {
         const { from, to, slice } = addRowStep
-        const cells = flatten(slice.content.firstChild as ManuscriptNode)
+        const cells = flatten(slice.content.firstChild as ManuscriptNode, false)
         const row = schema.nodes.table_row.create(
           undefined,
           cells.map((cell) =>
@@ -1729,7 +1729,7 @@ export const autoComplete = (
   dispatch?: Dispatch
 ) => {
   const complete = checkForCompletion(state)
-  if (complete) {
+  if (complete && complete.suggestion.length > 0) {
     const tr = state.tr.insertText(complete.suggestion, state.selection.from)
     const inserted = complete.title.substring(
       0,

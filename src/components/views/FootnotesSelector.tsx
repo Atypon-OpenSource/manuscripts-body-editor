@@ -201,7 +201,10 @@ const FootnoteItem: React.FC<{
   onSelect: (item: FootnoteNode) => void
 }> = ({ footnote, label, isSelected, onSelect }) => {
   return (
-    <FootnoteItemContainer onClick={() => onSelect(footnote)}>
+    <FootnoteItemContainer
+      onClick={() => onSelect(footnote)}
+      data-cy="footnote-item"
+    >
       <StatusIcon>
         {isSelected(footnote) ? (
           <AddedIcon data-cy={'plus-icon-ok'} />

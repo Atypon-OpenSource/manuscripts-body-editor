@@ -16,7 +16,7 @@
 
 import { MenuSpec } from '@manuscripts/style-guide'
 import {
-  getGroupCateogries,
+  getGroupCategories,
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
@@ -74,7 +74,7 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCateogries(props.sectionCategories, 'backmatter')
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',

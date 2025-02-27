@@ -1023,9 +1023,6 @@
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
-.ProseMirror .footnote.footnote-selected .delete-icon {
-  visibility: visible;
-}
 .ProseMirror .footnote .scroll-icon {
   cursor: pointer;
   visibility: hidden;
@@ -1088,10 +1085,4 @@
 }
 .highlight {
   background-color: #ffeebf !important;
-}
-
-@media (max-width: 1800px) {
-  main .editor-body {
-    max-width: fit-content;
-  }
 }
