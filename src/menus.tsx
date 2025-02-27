@@ -74,15 +74,10 @@ export const getEditorMenus = (
   }
 
   const insertAbstractsSectionMenu = (category: SectionCategory) => {
-    let command: Command
-    switch (category.id) {
-      case 'abstract-graphical':
-      case 'abstract-key-image':
-        command = insertGraphicalAbstract(category)
-        break
-      default:
-        command = insertAbstractSection(category)
-    }
+    const command =
+      category.group === 'abstracts-graphic'
+        ? insertGraphicalAbstract(category)
+        : insertAbstractSection(category)
 
     return {
       id: `insert-${category.id}`,
