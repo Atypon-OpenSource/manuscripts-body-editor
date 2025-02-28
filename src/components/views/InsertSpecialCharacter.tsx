@@ -89,20 +89,11 @@ const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
             <StyledSidebarContent>
               <Select<OptionType>
                 onChange={handleRangeChange}
+                classNamePrefix={'special-characters-ranges-select'}
                 defaultValue={unicodeRanges[0]}
                 options={unicodeRanges}
                 components={{
                   Option: OptionComponent,
-                }}
-                styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    width: 'fit-content',
-                  }),
-                  menu: (provided) => ({
-                    ...provided,
-                    minWidth: '220px',
-                  }),
                 }}
                 menuPosition="fixed"
               />

@@ -1147,3 +1147,11 @@ th:hover > .table-context-menu-button,
   background: #FFF;
   box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
 }
+
+.special-characters-ranges-select__control {
+  width: fit-content;
+}
+
+.special-characters-ranges-select__menu {
+  min-width: 220px;
+}
