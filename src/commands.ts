@@ -1767,13 +1767,14 @@ export const canIndent = () => (state: ManuscriptEditorState) => {
   return true
 }
 
-export const indent = () => (state: EditorState) => {
-  const { $from } = state.selection
-  const nodeType = $from.node().type
-  if (nodeType === schema.nodes.section_title) {
-    moveSectionToSubsection()
+export const indent =
+  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    const { $from } = state.selection
+    const nodeType = $from.node().type
+    if (nodeType === schema.nodes.section_title) {
+      moveSectionToSubsection()(state, dispatch, view)
+    }
   }
-}
 
 export const moveSectionToSubsection =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
