@@ -17,13 +17,12 @@ import {
   generateNodeID,
   ManuscriptEditorState,
   ManuscriptEditorView,
-  ManuscriptTransaction,
   SectionTitleNode,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
-export type Dispatch = (tr: ManuscriptTransaction) => void
+import { Dispatch } from '../../commands'
 
 export const handleParagraphIndentOrMove =
   (isIndent: boolean) =>
