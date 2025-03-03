@@ -1774,6 +1774,7 @@ export const canIndent = (state: ManuscriptEditorState) => {
       return false
     }
   }
+  return true
 }
 
 export const activateSearch = (
