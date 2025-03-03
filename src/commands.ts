@@ -1769,15 +1769,13 @@ export const canIndent = (state: ManuscriptEditorState) => {
 
   if (node.type === schema.nodes.paragraph) {
     const parentNode = $from.node($from.depth - 1)
-
-    // Only allow indentation if the parent is a section or body
+    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
     if (
-      parentNode?.type !== schema.nodes.section ||
+      parentNode?.type !== schema.nodes.section &&
       parentNode?.type !== schema.nodes.body
     ) {
       return false
     }
-
   }
 
   return true
