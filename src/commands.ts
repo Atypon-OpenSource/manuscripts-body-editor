@@ -1781,7 +1781,6 @@ export const canIndent = (state: ManuscriptEditorState) => {
     return false
   }
 
-  // Allow indentation for section titles
   return true
 }
 
