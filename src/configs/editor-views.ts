@@ -57,6 +57,7 @@ import { EditorProps } from './ManuscriptsEditor'
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
+    alt_title: empty('alt_title'),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     box_element: boxElement(props),
