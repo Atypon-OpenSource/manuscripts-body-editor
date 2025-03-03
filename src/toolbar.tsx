@@ -41,12 +41,12 @@ import {
   canIndent,
   canInsert,
   Dispatch,
+  indent,
   insertBlock,
   insertInlineCitation,
   insertList,
   markActive,
 } from './commands'
-import { indentParagraph } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
@@ -76,7 +76,7 @@ export const toolbar: ToolbarConfig = {
       title: 'Indent',
       content: <ToolbarIndentIcon />,
       isEnabled: (state) => canIndent(state),
-      run: indentParagraph(),
+      run: indent(),
     },
   },
   style: {
