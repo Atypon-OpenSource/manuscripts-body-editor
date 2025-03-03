@@ -1755,8 +1755,8 @@ export const canIndent = (state: ManuscriptEditorState) => {
   const { $from } = state.selection
   const node = $from.node($from.depth)
 
-  // Allow only section titles and paragraphs
-  const allowedNodeTypes = [schema.nodes.section_title, schema.nodes.paragraph]
+  // Allow paragraphs
+  const allowedNodeTypes = [schema.nodes.paragraph]
   if (!allowedNodeTypes.includes(node.type)) {
     return false
   }
@@ -1772,13 +1772,12 @@ export const canIndent = (state: ManuscriptEditorState) => {
 
     // Only allow indentation if the parent is a section or body
     if (
-      parentNode?.type === schema.nodes.section ||
-      parentNode?.type === schema.nodes.body
+      parentNode?.type !== schema.nodes.section ||
+      parentNode?.type !== schema.nodes.body
     ) {
-      return true
+      return false
     }
 
-    return false
   }
 
   return true
