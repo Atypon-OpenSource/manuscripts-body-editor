@@ -46,7 +46,7 @@ import {
   insertList,
   markActive,
 } from './commands'
-import { handleParagraphIndentOrMove } from './components/toolbar/helpers'
+import { indentParagraph } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
@@ -75,8 +75,8 @@ export const toolbar: ToolbarConfig = {
     indent: {
       title: 'Indent',
       content: <ToolbarIndentIcon />,
-      isEnabled: canIndent(schema.nodes.paragraph),
-      run: handleParagraphIndentOrMove(true),
+      isEnabled: (state) => canIndent(state),
+      run: indentParagraph(),
     },
   },
   style: {

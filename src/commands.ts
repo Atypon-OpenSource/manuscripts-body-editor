@@ -102,7 +102,7 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
-import { isDeleted, isPendingInsert } from './lib/track-changes-utils'
+import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
   getChildOfType,
@@ -1749,39 +1749,30 @@ export const autoComplete = (
   return false
 }
 
-// List of restricted node types that should not allow indentation
-// Add more restricted nodes here in the future as needed
+export const canIndent = (state: ManuscriptEditorState): boolean => {
+  const { $from } = state.selection
 
-export const isIndentingAllowed = (type: NodeType) =>
-  type === schema.nodes.footnote || type === schema.nodes.general_table_footnote
+  const node = $from.node($from.depth)
 
-export const canIndent =
-  (type: ManuscriptNodeType) =>
-  (state: ManuscriptEditorState): boolean => {
-    const { $from, $to } = state.selection
+  // Prevent indentation for frontmatter and backmatter sections
+  const isBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
 
-    const node = $from.node($from.depth)
+  // Ensure selection is valid
+  if (!isBody || isDeleted(node)) {
+    return false
+  }
 
-    //prevent indentation for frontmatter and backmatter sections
-    const isBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
-
-    // Ensure selection is valid
-    if (!$from || !$to || !isBody || isDeleted(node) || isPendingInsert(node)) {
+  // If the node type is "paragraph", check if the parent node is a section or body
+  if (node.type === schema.nodes.paragraph) {
+    const parentNode = $from.node($from.depth - 1)
+    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
+    if (
+      parentNode?.type !== schema.nodes.section &&
+      parentNode?.type !== schema.nodes.body
+    ) {
       return false
     }
-
-    // If the node type is "paragraph", check the parent node type
-    if (type === schema.nodes.paragraph) {
-      const parentNode = $from.node($from.depth - 1)
-
-      // If the parent node is restricted, prevent indentation
-      if (isIndentingAllowed(parentNode?.type)) {
-        return false
-      }
-    }
-
-    // Check if the selection is within the specified node type
-    const isTargetNode = $from.node().type === type
-
-    return isTargetNode
   }
+
+  return true
+}

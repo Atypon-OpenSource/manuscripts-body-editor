@@ -24,21 +24,17 @@ import { TextSelection } from 'prosemirror-state'
 
 import { Dispatch } from '../../commands'
 
-export const handleParagraphIndentOrMove =
-  (isIndent: boolean) =>
+export const indentParagraph =
+  () =>
   (
     state: ManuscriptEditorState,
     dispatch?: Dispatch,
     view?: ManuscriptEditorView
   ) => {
     const { $from } = state.selection
-    const { schema, tr, doc } = state
+    const { schema, tr } = state
 
-    const paragraph = $from.node($from.depth)
     const beforeParagraph = $from.before($from.depth)
-    const afterParagraph = $from.after($from.depth)
-    const $afterParagraph = doc.resolve(afterParagraph)
-    const afterParagraphOffset = $afterParagraph.parentOffset
 
     const sectionDepth = $from.depth - 1
     const parentSection = $from.node(sectionDepth)
@@ -46,15 +42,7 @@ export const handleParagraphIndentOrMove =
     const endIndex = $from.indexAfter(sectionDepth)
     const sectionEnd = $from.end(sectionDepth)
 
-    // Determine section title based on indentation or move action
-    const textContent = paragraph.textContent
-
-    const sectionTitle: SectionTitleNode = isIndent
-      ? schema.nodes.section_title.create()
-      : schema.nodes.section_title.create(
-          {},
-          textContent ? schema.text(textContent) : undefined
-        )
+    const sectionTitle: SectionTitleNode = schema.nodes.section_title.create()
 
     // Build section content
     let sectionContent = Fragment.from(sectionTitle).append(
@@ -63,7 +51,7 @@ export const handleParagraphIndentOrMove =
 
     if (endIndex < parentSection.childCount) {
       sectionContent = sectionContent.append(
-        parentSection.content.cut(afterParagraphOffset)
+        parentSection.content.cut(beforeParagraph)
       )
     }
 
