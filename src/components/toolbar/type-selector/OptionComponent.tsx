@@ -28,7 +28,6 @@ const OptionContainer = styled.div`
   font-size: 14px;
   cursor: pointer;
   padding: 8px;
-  min-width: 200px;
 
   &:hover {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -36,9 +35,7 @@ const OptionContainer = styled.div`
 `
 const OptionLabel = styled.span``
 
-const TickIconWrapper = styled.div`
-  margin-right: 16px;
-`
+const TickIconWrapper = styled.div``
 export const OptionComponent: React.FC<OptionProps<Option, false>> = ({
   innerProps,
   data,
