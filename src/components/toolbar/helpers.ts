@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   ManuscriptEditorState,
@@ -69,7 +70,7 @@ export const indentParagraph =
     tr.setSelection(TextSelection.create(tr.doc, sectionEnd + 1))
 
     if (dispatch) {
-      dispatch(tr.scrollIntoView())
+      dispatch(skipTracking(tr))
       view?.focus()
     }
   }
