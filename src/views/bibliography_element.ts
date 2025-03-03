@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+import '@citation-js/plugin-bibtex'
+import '@citation-js/plugin-ris'
+import '@citation-js/plugin-doi'
+import '@citation-js/plugin-csl'
+import '@citation-js/plugin-enw'
+import '@citation-js/plugin-pubmed'
+
+import * as Citation from '@citation-js/core'
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   BibliographyElementNode,
@@ -42,6 +50,66 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+
+// Citation.Cite.async('PMC6613236')
+//   .then(cite => {
+//     console.log('PUBMED: ')
+//     console.log(cite.format('bibliography'))
+//   }
+//   )
+const getCitation1 = async () => {
+  try {
+    const data = await Citation.Cite.async('10.7717/peerj-cs.214')
+    console.log('DOI ===>:   ')
+    console.log(data.format('data'))
+    console.log(data.format('bibliography'))
+  } catch (error) {
+    console.error('Error parsing DOI:', error)
+  }
+}
+
+const getCitation2 = async () => {
+  try {
+    const data = await Citation.Cite.async('PMC6613236')
+    console.log('PUBMED ===>:   ')
+    console.log(data.format('data'))
+    console.log(data.format('bibliography'))
+  } catch (error) {
+    console.error('Error parsing PUBMED:', error)
+  }
+}
+
+const getCitation3 = async () => {
+  const enwData = `%0 Journal Article
+%D 2018
+%@ 0903-4641
+%A Abbassi-Daloii, Tooba
+%A Yousefi, Soheil
+%A Sekhavati, Mohammad Hadi
+%A Tahmoorespur, Mojtaba
+%J APMIS
+%N 1
+%P 65-75
+%T Impact of heat shock protein 60KD in combination with outer membrane proteins on immune response against Brucella melitensis
+%R https://doi.org/10.1111/apm.12778
+%U https://onlinelibrary.wiley.com/doi/abs/10.1111/apm.12778
+%V 126
+%X Lorem ipsum dolor sit amet`
+
+  try {
+    // Using async method for proper parsing
+    const data = await Citation.Cite.async(enwData)
+    console.log('ENW ===>:   ')
+    console.log(data.format('data'))
+    console.log(data.format('bibliography')) // Should not return (N.d.)
+  } catch (error) {
+    console.error('Error parsing ENW data:', error)
+  }
+}
+
+getCitation1()
+getCitation2()
+getCitation3()
 
 export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
@@ -199,7 +267,7 @@ export class BibliographyElementBlockView extends BlockView<
     this.updateSelections()
   }
 
-  public createElement = () => {
+  public createElement = async () => {
     this.container = document.createElement('div')
     this.container.classList.add('block')
     this.container.contentEditable = 'false'
