@@ -1750,6 +1750,33 @@ export const autoComplete = (
   return false
 }
 
+export const canIndent = (state: ManuscriptEditorState) => {
+  const { $from } = state.selection
+
+  const node = $from.node($from.depth)
+
+  // Prevent indentation for frontmatter and backmatter sections
+  const isBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
+
+  // Ensure selection is valid
+  if (!isBody || isDeleted(node)) {
+    return false
+  }
+
+  // If the node type is "paragraph", check if the parent node is a section or body
+  if (node.type === schema.nodes.paragraph) {
+    const parentNode = $from.node($from.depth - 1)
+    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
+    if (
+      parentNode?.type !== schema.nodes.section &&
+      parentNode?.type !== schema.nodes.body
+    ) {
+      return false
+    }
+  }
+  return true
+}
+
 export const activateSearch = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
