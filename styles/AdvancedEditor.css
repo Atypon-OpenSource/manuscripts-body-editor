@@ -54,7 +54,8 @@
   font-size: 13.5pt !important;
 }
 
-.ProseMirror div.backmatter:not(.empty-node)::before,  .ProseMirror div.abstracts:not(.empty-node)::after {
+.ProseMirror div.backmatter:not(.empty-node)::before,
+.ProseMirror div.abstracts:not(.empty-node)::after {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
   display: block;
@@ -155,13 +156,13 @@
 .ProseMirror .figure-block .position-menu {
   position: absolute;
   top: 4px;
-  left: calc( 100% - 96px );
+  left: calc(100% - 96px);
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
-  left: calc( 100% - 82px );
+  left: calc(100% - 82px);
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -269,7 +270,8 @@
   position: relative;
 }
 
-.comment-marker:has(+ .block-contributors), .comment-marker:has(+ .block-affiliations) {
+.comment-marker:has(+ .block-contributors),
+.comment-marker:has(+ .block-affiliations) {
   height: 0;
   top: 0;
   right: 60px;
@@ -303,7 +305,8 @@ figure.block > .comment-marker {
   left: 0;
 }
 
-section > .comment-marker, .body > .comment-marker {
+section > .comment-marker,
+.body > .comment-marker {
   top: 12px;
   float: right;
   left: -64px;
@@ -561,8 +564,8 @@ span.comment-marker {
 .ProseMirror {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
-  --updated-pending-bg-color: #E6F7FC;
-  --updated-pending-color: #0284B0;
+  --updated-pending-bg-color: #e6f7fc;
+  --updated-pending-color: #0284b0;
   --accepted-bg-color: #e2e2e2;
   --deleted-color: #f35143;
   --deleted-pending-bg-color: #fff1f0;
@@ -592,7 +595,8 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation), .footnote-marker-selected {
+  ):not(figure):not(figure .equation),
+.footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
@@ -678,7 +682,6 @@ span.comment-marker {
   top: calc(50% + 1px);
 }
 
-
 .selected-suggestion .equation.deleted:after,
 .selected-suggestion.equation.deleted:after {
   content: none;
@@ -727,8 +730,14 @@ figure.block:has(.equation.selected-suggestion)
 }
 
 /* Inserted Block */
-.tracking-visible .ProseMirror [data-track-op='insert'][data-track-status='pending'] .block,
-.tracking-visible .ProseMirror [data-track-op='wrap_with_node'][data-track-status='pending'] .block {
+.tracking-visible
+  .ProseMirror
+  [data-track-op='insert'][data-track-status='pending']
+  .block,
+.tracking-visible
+  .ProseMirror
+  [data-track-op='wrap_with_node'][data-track-status='pending']
+  .block {
   box-shadow: inset 3px 0 0 var(--inserted-pending-color);
 }
 
@@ -751,13 +760,19 @@ figure.block:has(.equation.selected-suggestion)
   display: grid;
 }
 
-.tracking-visible .ProseMirror [data-track-status='pending'][data-track-op='delete'] .block {
+.tracking-visible
+  .ProseMirror
+  [data-track-status='pending'][data-track-op='delete']
+  .block {
   box-shadow: inset 3px 0 0 var(--deleted-color);
 }
 
-.selected-suggestion[data-track-status='pending'][data-track-op='delete'] .block,
-.selected-suggestion[data-track-status='pending'][data-track-op='delete'] .block {
-  box-shadow: inset 6px 0 0 var(--deleted-color), inset 9px 0 0 var(--deleted-pending-bg-color) !important;
+.selected-suggestion[data-track-status='pending'][data-track-op='delete']
+  .block,
+.selected-suggestion[data-track-status='pending'][data-track-op='delete']
+  .block {
+  box-shadow: inset 6px 0 0 var(--deleted-color),
+    inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--deleted-pending-bg-color);
 }
@@ -766,7 +781,10 @@ figure.block:has(.equation.selected-suggestion)
 .tracking-visible .ProseMirror [data-track-op='set_attrs'] .block,
 .tracking-visible .block:has(figure[data-track-op='set_attrs']),
 .tracking-visible figure.block:has(.equation.set_attrs),
-.tracking-visible .ProseMirror [data-track-op='node_split'][data-track-status='pending'] .block {
+.tracking-visible
+  .ProseMirror
+  [data-track-op='node_split'][data-track-status='pending']
+  .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
@@ -833,8 +851,10 @@ figure.block:has(.equation.selected-suggestion)
   text-decoration: underline;
 }
 
-.tracking-visible .contributor[data-track-status='pending'][data-track-op='set_attrs'],
-.tracking-visible .affiliation[data-track-status='pending'][data-track-op='set_attrs'] {
+.tracking-visible
+  .contributor[data-track-status='pending'][data-track-op='set_attrs'],
+.tracking-visible
+  .affiliation[data-track-status='pending'][data-track-op='set_attrs'] {
   background: var(--updated-bg-color);
   color: var(--common-color);
   border-color: var(--updated-border-color);
@@ -853,7 +873,7 @@ figure.block:has(.equation.selected-suggestion)
   margin: 15px 0px;
 }
 .block-award {
-  position: relative
+  position: relative;
 }
 .block-awards.empty-node {
   display: none;
@@ -872,7 +892,8 @@ figure.block:has(.equation.selected-suggestion)
 .contributors-list .separator {
   margin-right: 4px;
 }
-.block-contributors .tools-panel, .block-affiliations .tools-panel {
+.block-contributors .tools-panel,
+.block-affiliations .tools-panel {
   position: initial;
   display: flex;
   flex: 1;
@@ -1110,7 +1131,8 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-contributors .action-gutter , .ProseMirror .block-affiliations .action-gutter{
+.ProseMirror .block-contributors .action-gutter,
+.ProseMirror .block-affiliations .action-gutter {
   right: 15px;
   pointer-events: none;
 }
@@ -1122,13 +1144,18 @@ th:hover > .table-context-menu-button,
   text-align: center;
   margin: 42px 52px;
 }
-.tracking-visible .ProseMirror .block-embed[data-track-status='pending'][data-track-op='delete'] .block > * {
-  opacity: 0.3
+.tracking-visible
+  .ProseMirror
+  .block-embed[data-track-status='pending'][data-track-op='delete']
+  .block
+  > * {
+  opacity: 0.3;
 }
 .ProseMirror .block-embed .tools-panel {
   position: relative;
 }
-.ProseMirror .block-embed .block-gutter, .block-embed .action-gutter {
+.ProseMirror .block-embed .block-gutter,
+.block-embed .action-gutter {
   display: none;
 }
 
@@ -1143,7 +1170,14 @@ th:hover > .table-context-menu-button,
   right: 7%;
   z-index: 10;
   border-radius: 4px;
-  border: 1px solid #C9C9C9;
-  background: #FFF;
-  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.30);
+  border: 1px solid #c9c9c9;
+  background: #fff;
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.3);
+}
+
+.search-result {
+  background-color: #e5eb3e;
+}
+.search-result.search-result-selected {
+  background-color: #ffbdf8;
 }

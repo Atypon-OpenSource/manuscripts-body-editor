@@ -1574,10 +1574,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.0.36-LEAN-4356.1":
-  version "2.0.36-LEAN-4356.1"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.0.36-LEAN-4356.1.tgz#54ac2f38ecb403caf68055c7e8da53de44a8f092"
-  integrity sha512-Q06HEsvbEfMl+H0EikAgNv2T4YKmK4CCgmhsTmuzRHQFtGEwagZHIEEZWhI9qkZ29rIy86c3/1Vn/1EtzOhWEA==
+"@manuscripts/style-guide@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.1.0.tgz#85390865c36649d59359b5dc4a0a207506dfeb75"
+  integrity sha512-DMfDgYy2Ouu2DN89YnE29h0jjoCx7jOSECffFUZc/dB3y3Dc0SfNEg19HrtK3wbmkAA8Cgms+vntp0EdoNq+SQ==
   dependencies:
     "@headlessui/react" "^2.1.10"
     "@manuscripts/json-schema" "2.2.11"
@@ -1604,10 +1604,10 @@
     react-tooltip "^5.28.0"
     styled-components "^5.2.0"
 
-"@manuscripts/track-changes-plugin@1.9.4":
-  version "1.9.4"
-  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.9.4.tgz#f74137a0f6e26d20aa15bce744ca84301cefe7a1"
-  integrity sha512-eF4XqCWPFAeCsD3nEqm3sZ+5IsHIChZzQ+delDJ0npsbjhzGb8npNB9Z1YXH954yMloYAmk5UVylRZ54+3AsAg==
+"@manuscripts/track-changes-plugin@1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@manuscripts/track-changes-plugin/-/track-changes-plugin-1.10.0.tgz#6d01e7cc4ac2db3f0fa5c475016201fff40ea802"
+  integrity sha512-CMaPcP1AreXR4YQYRxTexoCKnDUiHuFCfmqs7ZCBO8HME3hPlDha+hAIpCNjaYhyt1SkKznV+mYweA/ZJ/0EcA==
   dependencies:
     debug "^4.3.4"
     prosemirror-commands "^1.5.0"
