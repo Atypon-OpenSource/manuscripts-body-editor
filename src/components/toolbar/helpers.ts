@@ -25,7 +25,7 @@ import {
 import { Fragment, Node } from 'prosemirror-model'
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state'
 
-import { Option } from './TypeSelector'
+import { Option } from './type-selector/TypeSelector'
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {

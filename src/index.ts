@@ -17,7 +17,7 @@
 export * from './commands'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
-export { TypeSelector } from './components/toolbar/TypeSelector'
+export { TypeSelector } from './components/toolbar/type-selector/TypeSelector'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'
 export * from './menus'

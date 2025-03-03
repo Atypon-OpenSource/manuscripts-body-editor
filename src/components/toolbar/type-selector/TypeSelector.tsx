@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TickIcon } from '@manuscripts/style-guide'
 import {
   ManuscriptEditorView,
   ManuscriptNodeType,
@@ -22,21 +21,18 @@ import {
 import { EditorState, Transaction } from 'prosemirror-state'
 import { hasParentNodeOfType } from 'prosemirror-utils'
 import React from 'react'
-import Select, {
-  CSSObjectWithLabel,
-  OnChangeValue,
-  OptionProps,
-} from 'react-select'
-import styled from 'styled-components'
+import { OnChangeValue } from 'react-select'
 
-import { findClosestParentElement } from '../../lib/hierarchy'
+import { findClosestParentElement } from '../../../lib/hierarchy'
 import {
   demoteSectionToParagraph,
   findSelectedOption,
   optionName,
   promoteParagraphToSection,
   titleCase,
-} from './helpers'
+} from '../helpers'
+import { OptionComponent } from './OptionComponent'
+import { customStyles, StyledSelect } from './styles'
 
 export interface Option {
   action?: (
@@ -48,41 +44,6 @@ export interface Option {
   isSelected: boolean
   label: string
   nodeType: ManuscriptNodeType
-}
-
-const OptionContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 8px;
-  min-width: 200px;
-
-  &:hover {
-    background: ${(props) => props.theme.colors.background.fifth};
-  }
-`
-const OptionLabel = styled.span``
-
-const TickIconWrapper = styled.div`
-  margin-right: 16px;
-`
-
-const OptionComponent: React.FC<OptionProps<Option, false>> = ({
-  innerProps,
-  data,
-}) => {
-  return (
-    <OptionContainer {...innerProps} ref={null}>
-      <OptionLabel>{titleCase(optionName(data.nodeType))}</OptionLabel>
-      {data.isSelected && (
-        <TickIconWrapper>
-          <TickIcon />
-        </TickIconWrapper>
-      )}
-    </OptionContainer>
-  )
 }
 
 const buildOptions = (state: EditorState): Option[] => {
@@ -160,12 +121,6 @@ const buildOptions = (state: EditorState): Option[] => {
   }
 }
 
-const StyledSelect = styled(Select<Option, false>)`
-  & > div:hover {
-    border-color: ${(props) => props.theme.colors.border.secondary};
-  }
-`
-
 export const TypeSelector: React.FC<{
   state: EditorState
   dispatch: (tr: Transaction) => void
@@ -194,46 +149,4 @@ export const TypeSelector: React.FC<{
       isSearchable={false}
     />
   )
-}
-
-const customStyles = {
-  control: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#e2e2e2',
-    boxShadow: 'none',
-    fontSize: '14px',
-    minHeight: 0,
-    padding: 0,
-    width: 200,
-    overflowX: 'hidden',
-    textOverflow: 'ellipsis',
-    cursor: 'pointer',
-    height: 32,
-  }),
-  indicatorSeparator: (): CSSObjectWithLabel => ({
-    display: 'none',
-  }),
-  dropdownIndicator: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    padding: '0 4px',
-  }),
-  menu: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    width: '200px',
-  }),
-  singleValue: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    padding: 0,
-  }),
-  valueContainer: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    padding: '1px 8px',
-  }),
-  container: (styles: CSSObjectWithLabel): CSSObjectWithLabel => ({
-    ...styles,
-    border: 'none',
-  }),
 }
