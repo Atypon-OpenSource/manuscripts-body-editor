@@ -34,6 +34,8 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
+  activateSearch,
+  activateSearchReplace,
   addToStart,
   autoComplete,
   ignoreAtomBlockNodeBackward,
@@ -96,6 +98,10 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-c': insertInlineCitation,
   'Mod-Alt-r': insertCrossReference,
   'Shift-Mod-Alt-e': insertInlineEquation,
+  'Shift-Ctrl-h': activateSearchReplace,
+  'Shift-Mod-h': activateSearchReplace,
+  'Mod-f': activateSearch,
+  'Ctrl-f': activateSearch,
 }
 
 export default customKeymap
