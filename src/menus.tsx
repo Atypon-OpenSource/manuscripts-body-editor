@@ -25,6 +25,7 @@ import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
 
 import {
+  activateSearchReplace,
   addInlineComment,
   blockActive,
   canInsert,
@@ -127,6 +128,20 @@ export const getEditorMenus = (
         })(),
         isEnabled: isCommandValid(deleteClosestParentElement),
         run: doCommand(deleteClosestParentElement),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'find-replace',
+        role: 'find-replace',
+        label: 'Find and replace',
+        shortcut: {
+          mac: 'CommandOrControl+Shift+H',
+          pc: 'CommandOrControl+Shift+H',
+        },
+        isEnabled: isCommandValid(activateSearchReplace),
+        run: doCommand(activateSearchReplace),
       },
     ],
   }

@@ -17,7 +17,7 @@
 export * from './commands'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
-export { LevelSelector } from './components/toolbar/LevelSelector'
+export { TypeSelector } from './components/toolbar/type-selector/TypeSelector'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'
 export * from './menus'
@@ -39,6 +39,11 @@ export * from './lib/math'
 export { objectsKey as objectsPluginKey } from './plugins/objects'
 export { footnotesKey as footnotesPluginKey } from './plugins/footnotes'
 export { bibliographyKey as bibliographyPluginKey } from './plugins/bibliography'
+export {
+  searchReplaceKey as searchReplacePluginKey,
+  SearchReplacePluginState,
+} from './plugins/search-replace'
+export { getNewMatch, getClosestMatch } from './plugins/search-replace/lib'
 export { metadata, BibliographyItemAttrs } from './lib/references'
 export {
   authorLabel,
