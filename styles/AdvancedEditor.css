@@ -1173,3 +1173,11 @@ th:hover > .table-context-menu-button,
 .search-result.search-result-selected {
   background-color: #ffbdf8;
 }
+
+.special-characters-ranges-select__control {
+  width: fit-content;
+}
+
+.special-characters-ranges-select__menu {
+  min-width: 220px;
+}
