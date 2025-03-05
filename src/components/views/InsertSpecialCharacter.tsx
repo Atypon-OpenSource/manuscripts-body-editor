@@ -41,7 +41,6 @@ const unicodeRanges = [
   { label: 'Latin', value: [0x0100, 0x024f] },
   { label: 'Greek and Coptic', value: [0x0370, 0x03ff] },
   { label: 'Mathematical Operators', value: [0x2200, 0x22ff] },
-  { label: 'Specials', value: [0xfffc, 0xfffd] },
   { label: 'Arrows', value: [0x2190, 0x21ff] },
 ]
 
