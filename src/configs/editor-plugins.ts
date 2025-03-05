@@ -39,6 +39,7 @@ import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
+import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import sections from '../plugins/sections'
@@ -78,6 +79,7 @@ export default (props: EditorProps) => {
     doi(),
     section_category(props),
     cross_references(),
+    search_replace(),
   ]
 
   if (props.collabProvider) {
