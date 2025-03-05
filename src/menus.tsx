@@ -29,7 +29,7 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
-  insertAbstract,
+  insertAbstractSection,
   insertAffiliation,
   insertAward,
   insertBackmatterSection,
@@ -74,7 +74,20 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
+  const insertAbstractsSectionMenu = (category: SectionCategory) => {
+    const command =
+      category.group === 'abstracts-graphic'
+        ? insertGraphicalAbstract(category)
+        : insertAbstractSection(category)
+
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -132,6 +145,20 @@ export const getEditorMenus = (
       },
     ],
   }
+
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
+  const abstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts'
+  )
+  const graphicalAbstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts-graphic'
+  )
+  const allAbstractsCategories = [
+    ...abstractsCategories,
+    ...graphicalAbstractsCategories,
+  ]
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
@@ -143,16 +170,10 @@ export const getEditorMenus = (
         isEnabled: true,
         submenu: [
           {
-            id: 'insert-abstract',
-            label: 'Abstract',
-            isEnabled: isCommandValid(insertAbstract),
-            run: doCommand(insertAbstract),
-          },
-          {
-            id: 'insert-graphical-abstract',
-            label: 'Graphical Abstract',
-            isEnabled: isCommandValid(insertGraphicalAbstract),
-            run: doCommand(insertGraphicalAbstract),
+            id: 'insert-abstract-types',
+            label: 'Abstract Types',
+            isEnabled: true,
+            submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
           },
           {
             id: 'insert-contributors',
