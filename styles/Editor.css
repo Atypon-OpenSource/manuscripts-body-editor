@@ -626,16 +626,16 @@
 .ProseMirror .block-container.block-affiliations {
   grid-template-columns: 52px auto 100px !important;
 }
-.ProseMirror .block-container.block-section {
+.ProseMirror .block-container.block-section, .ProseMirror .block-container.block-graphical_abstract_section {
   position: relative;
   display: grid;
   grid-template-columns: auto;
 }
-.ProseMirror .block-container.block-section section {
+.ProseMirror .block-container.block-section section, .ProseMirror .block-container.block-graphical_abstract_section section {
   position: relative;
 }
 
-.ProseMirror .block-container:not(.block-section):hover {
+.ProseMirror .block-container:not(.block-section, .block-graphical_abstract_section):hover {
   z-index: 2;
 }
 
@@ -698,14 +698,14 @@
 }
 
 .ProseMirror
-  .block-container:not(.block-section, .block-box_element):hover
+  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
   .block-gutter {
   opacity: 1;
   z-index: 2;
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
-  .block-container:not(.block-section, .block-box_element):hover
+  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
     .action-gutter {
     pointer-events: visible;
     opacity: 1;
