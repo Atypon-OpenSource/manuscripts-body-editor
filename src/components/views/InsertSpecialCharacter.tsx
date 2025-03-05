@@ -47,10 +47,14 @@ const unicodeRanges = [
 
 type OptionType = { value: number[]; label: string }
 
+const reservedCharacters = new Set([
+  0x0380, 0x0381, 0x0382, 0x0383, 0x03a2, 0x0378, 0x0379, 0x038b, 0x038d,
+])
+
 const generateCharacters = (start: number, end: number) =>
-  Array.from({ length: end - start + 1 }, (_, i) =>
-    String.fromCharCode(start + i)
-  )
+  Array.from({ length: end - start + 1 }, (_, i) => start + i)
+    .filter((c) => !reservedCharacters.has(c))
+    .map((c) => String.fromCharCode(c))
 
 const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
   view,
