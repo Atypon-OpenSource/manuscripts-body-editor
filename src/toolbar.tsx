@@ -16,7 +16,7 @@
 
 import {
   AddCommentIcon,
-  IndentIcon,
+  ToolbarIndentIcon,
   ToolbarBoldIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,
@@ -74,7 +74,7 @@ export const toolbar: ToolbarConfig = {
   format: {
     indent: {
       title: 'Indent',
-      content: <IndentIcon />,
+      content: <ToolbarIndentIcon />,
       isEnabled: canIndent(),
       run: indent(),
     },
