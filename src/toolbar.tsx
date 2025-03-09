@@ -21,6 +21,7 @@ import {
   ToolbarCitationIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
+  ToolbarIndentIcon,
   ToolbarItalicIcon,
   ToolbarOrderedListIcon,
   ToolbarSubscriptIcon,
@@ -71,7 +72,7 @@ export interface ToolbarConfig {
 }
 
 export const toolbar: ToolbarConfig = {
-  format: {
+  indentation: {
     indent: {
       title: 'Indent',
       content: <ToolbarIndentIcon />,
