@@ -16,7 +16,6 @@
 
 import {
   AddCommentIcon,
-  ToolbarIndentIcon,
   ToolbarBoldIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,

@@ -1747,16 +1747,27 @@ export const canIndent = () => (state: ManuscriptEditorState) => {
   const { $from } = state.selection
   const nodeType = $from.node().type
 
-  // We should also add paragraph once the implementation done
-  const allowedNodeTypes = [schema.nodes.section_title]
+  const allowedNodeTypes = [schema.nodes.section_title, schema.nodes.paragraph]
   if (!allowedNodeTypes.includes(nodeType)) {
     return false
   }
 
-  // Check if the selection is inside the body
-  const isBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
-  if (!isBody) {
+  const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
+  const isDeletedNode = isDeleted($from.node($from.depth))
+  if (!isInBody || isDeletedNode) {
     return false
+  }
+
+  const isParagraph = nodeType === schema.nodes.paragraph
+  if (isParagraph) {
+    const parentNode = $from.node($from.depth - 1)
+    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
+    if (
+      parentNode?.type !== schema.nodes.section &&
+      parentNode?.type !== schema.nodes.body
+    ) {
+      return false
+    }
   }
 
   return true
@@ -1768,6 +1779,8 @@ export const indent =
     const nodeType = $from.node().type
     if (nodeType === schema.nodes.section_title) {
       moveSectionToSubsection()(state, dispatch, view)
+    } else if (nodeType === schema.nodes.paragraph) {
+      indentParagraph()(state, dispatch, view)
     }
   }
 
@@ -1822,45 +1835,6 @@ export const moveSectionToSubsection =
     view && view.focus()
 
     return true
-  }
-
-export const canIndent = (state: ManuscriptEditorState) => {
-  const { $from } = state.selection
-  const node = $from.node($from.depth)
-
-  // Allow paragraphs
-  const allowedNodeTypes = [schema.nodes.paragraph]
-  if (!allowedNodeTypes.includes(node.type)) {
-    return false
-  }
-
-  // Prevent indentation for frontmatter and backmatter sections
-  const isBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
-  if (!isBody || isDeleted(node)) {
-    return false
-  }
-
-  if (node.type === schema.nodes.paragraph) {
-    const parentNode = $from.node($from.depth - 1)
-    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
-    if (
-      parentNode?.type !== schema.nodes.section &&
-      parentNode?.type !== schema.nodes.body
-    ) {
-      return false
-    }
-  }
-
-  return true
-}
-
-export const indent =
-  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
-    const { $from } = state.selection
-    const nodeType = $from.node().type
-    if (nodeType === schema.nodes.paragraph) {
-      indentParagraph()(state, dispatch, view)
-    }
   }
 
 export const indentParagraph =
