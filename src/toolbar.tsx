@@ -38,15 +38,14 @@ import React, { ReactNode } from 'react'
 import {
   addInlineComment,
   blockActive,
-  canIndent,
   canInsert,
   Dispatch,
-  indent,
   insertBlock,
   insertInlineCitation,
   insertList,
   markActive,
 } from './commands'
+import { canIndent, indent } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
