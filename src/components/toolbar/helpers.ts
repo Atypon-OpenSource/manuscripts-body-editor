@@ -262,7 +262,7 @@ export const isIndentationAllowed =
 
     const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
     const isDeletedNode = isDeleted($from.node($from.depth))
-    
+
     if (!isInBody || isDeletedNode) {
       return false
     }
@@ -373,12 +373,10 @@ export const indentParagraph =
     const sectionStart = $from.start(sectionDepth)
     const sectionEnd = $from.end(sectionDepth)
 
-    const sectionTitle: SectionTitleNode = schema.nodes.section_title.create()
-
     // Build section content
-    const sectionContent = Fragment.from(sectionTitle).append(
-      parentSection.content.cut(beforeParagraph - sectionStart)
-    )
+    const sectionContent = Fragment.from(
+      schema.nodes.section_title.create()
+    ).append(parentSection.content.cut(beforeParagraph - sectionStart))
 
     // Create new section
     const newSection = schema.nodes.section.create(
@@ -418,9 +416,7 @@ export const unindentParagraph =
     const paragraphPos = $from.before($from.depth)
     const parentSectionEnd = $from.end(parentSectionDepth)
 
-    const sectionTitle: SectionTitleNode = schema.nodes.section_title.create()
-
-    let sectionContent = Fragment.from(sectionTitle)
+    let sectionContent = Fragment.from(schema.nodes.section_title.create())
 
     sectionContent = sectionContent
       .append(Fragment.from(paragraph))
