@@ -46,7 +46,7 @@ export type ManuscriptFiles = {
   figures: ElementFiles[]
   supplements: NodeFile[]
   others: FileAttachment[]
-  mainFile: NodeFile[]
+  mainDocument: NodeFile[]
 }
 
 const MISSING_FILE: FileAttachment = {
@@ -76,7 +76,7 @@ export const groupFiles = (
   const fileMap = new Map(files.map((f) => [f.id, f]))
   const figures: ElementFiles[] = []
   const supplements: NodeFile[] = []
-  const mainFile: NodeFile[] = []
+  const mainDocument: NodeFile[] = []
   const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
     const figureFiles = []
     for (const figure of findChildrenByType(node, schema.nodes.figure)) {
@@ -150,7 +150,7 @@ export const groupFiles = (
       } else {
         file = MISSING_FILE
       }
-      mainFile.push({
+      mainDocument.push({
         node,
         pos,
         file,
@@ -162,6 +162,6 @@ export const groupFiles = (
     figures,
     supplements,
     others: [...fileMap.values()],
-    mainFile,
+    mainDocument,
   }
 }
