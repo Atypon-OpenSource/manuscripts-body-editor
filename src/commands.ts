@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AttachmentNode,
   AwardNode,
   BoxElementNode,
   FigureElementNode,
@@ -430,6 +431,56 @@ export const insertSupplement = (
   const supplements = insertSupplementsNode(tr)
   const pos = supplements.pos + supplements.node.nodeSize - 1
   tr.insert(pos, supplement)
+  if (dispatch) {
+    dispatch(skipTracking(tr))
+  }
+  return true
+}
+
+export const insertAttachments = (tr: Transaction) => {
+  const attachmentsNodes = findChildrenByType(tr.doc, schema.nodes.attachments)
+  if (attachmentsNodes.length) {
+    return {
+      node: attachmentsNodes[0].node,
+      pos: attachmentsNodes[0].pos,
+    }
+  }
+
+  const manuscriptNode = findChildrenByType(tr.doc, schema.nodes.manuscript)[0]
+  if (!manuscriptNode) {
+    return null
+  }
+
+  const pos = manuscriptNode.pos + 1
+  const node = schema.nodes.attachments.create({
+    id: generateNodeID(schema.nodes.attachments),
+  })
+  tr.insert(pos, node)
+  return { node, pos }
+}
+
+export const insertAttachment = (
+  file: FileAttachment,
+  state: ManuscriptEditorState,
+  type: string,
+  dispatch?: Dispatch
+) => {
+  const attachment = schema.nodes.attachment.createAndFill({
+    id: generateNodeID(schema.nodes.attachment),
+    href: file.id,
+    type: type,
+  }) as AttachmentNode
+
+  const tr = state.tr
+  const attachments = insertAttachments(tr)
+
+  if (!attachments) {
+    return false
+  }
+
+  const pos = attachments.pos + attachments.node.nodeSize - 1
+  tr.insert(pos, attachment)
+
   if (dispatch) {
     dispatch(skipTracking(tr))
   }
