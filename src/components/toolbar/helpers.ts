@@ -270,7 +270,6 @@ export const isIndentationAllowed =
     if (nodeType === schema.nodes.paragraph) {
       const parentNode = $from.node($from.depth - 1)
 
-      // Handle indentation and unindentation logic for paragraphs
       if (action === 'indent') {
         if (
           ![schema.nodes.section, schema.nodes.body].includes(parentNode?.type)
