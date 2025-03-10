@@ -262,6 +262,7 @@ export const isIndentationAllowed =
 
     const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
     const isDeletedNode = isDeleted($from.node($from.depth))
+    
     if (!isInBody || isDeletedNode) {
       return false
     }
