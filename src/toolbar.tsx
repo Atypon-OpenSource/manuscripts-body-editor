@@ -20,6 +20,7 @@ import {
   ToolbarCitationIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
+  ToolbarIndentIcon,
   ToolbarItalicIcon,
   ToolbarOrderedListIcon,
   ToolbarSubscriptIcon,
@@ -44,6 +45,7 @@ import {
   insertList,
   markActive,
 } from './commands'
+import { canIndent, indent } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
@@ -68,6 +70,14 @@ export interface ToolbarConfig {
 }
 
 export const toolbar: ToolbarConfig = {
+  indentation: {
+    indent: {
+      title: 'Indent',
+      content: <ToolbarIndentIcon />,
+      isEnabled: canIndent(),
+      run: indent(),
+    },
+  },
   style: {
     bold: {
       title: 'Toggle bold',
