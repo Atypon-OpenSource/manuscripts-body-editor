@@ -27,6 +27,7 @@ import {
   ToolbarSuperscriptIcon,
   ToolbarTableIcon,
   ToolbarUnderlineIcon,
+  ToolbarUnindentIcon,
   ToolbarUnorderedListIcon,
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
@@ -45,7 +46,10 @@ import {
   insertList,
   markActive,
 } from './commands'
-import { canIndent, indent } from './components/toolbar/helpers'
+import {
+  handleIndentationAction,
+  isIndentationAllowed,
+} from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
@@ -74,8 +78,14 @@ export const toolbar: ToolbarConfig = {
     indent: {
       title: 'Indent',
       content: <ToolbarIndentIcon />,
-      isEnabled: canIndent(),
-      run: indent(),
+      isEnabled: isIndentationAllowed('indent'),
+      run: handleIndentationAction('indent'),
+    },
+    unIndent: {
+      title: 'Unindent',
+      content: <ToolbarUnindentIcon />,
+      isEnabled: isIndentationAllowed('unindent'),
+      run: handleIndentationAction('unindent'),
     },
   },
   style: {
