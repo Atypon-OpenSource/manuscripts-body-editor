@@ -291,26 +291,6 @@ export const isIndentationAllowed =
     return true
   }
 
-export const indent =
-  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
-    const { $from } = state.selection
-    const nodeType = $from.node().type
-    if (nodeType === schema.nodes.section_title) {
-      indentSection()(state, dispatch, view)
-    } else if (nodeType === schema.nodes.paragraph) {
-      indentParagraph()(state, dispatch, view)
-    }
-  }
-
-export const unindent =
-  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
-    const { $from } = state.selection
-    const nodeType = $from.node().type
-    if (nodeType === schema.nodes.section_title) {
-      unindentSection()(state, dispatch, view)
-    }
-  }
-
 export const indentSection =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
     const {
@@ -450,4 +430,31 @@ export const unindentSection =
 
     dispatch(skipTracking(tr))
     view && view.focus()
+  }
+
+const unindentParagraph =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    /* Placeholder for unindentParagraph */
+  }
+
+const indentationHandlers = {
+  section_title: {
+    indent: indentSection,
+    unindent: unindentSection,
+  },
+  paragraph: {
+    indent: indentParagraph,
+    unindent: unindentParagraph,
+  },
+}
+
+export const changeIndentation =
+  (action: 'indent' | 'unindent') =>
+  (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    const { $from } = state.selection
+    const nodeName = $from.node().type.name as 'section_title' | 'paragraph'
+
+    const handler = indentationHandlers[nodeName]?.[action]
+    handler()(state, dispatch, view)
   }

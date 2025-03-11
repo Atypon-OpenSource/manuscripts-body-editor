@@ -47,9 +47,8 @@ import {
   markActive,
 } from './commands'
 import {
-  indent,
+  changeIndentation,
   isIndentationAllowed,
-  unindent,
 } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
@@ -80,13 +79,13 @@ export const toolbar: ToolbarConfig = {
       title: 'Indent',
       content: <ToolbarIndentIcon />,
       isEnabled: isIndentationAllowed('indent'),
-      run: indent(),
+      run: changeIndentation('indent'),
     },
     unindent: {
       title: 'Unindent',
       content: <ToolbarUnindentIcon />,
       isEnabled: isIndentationAllowed('unindent'),
-      run: unindent(),
+      run: changeIndentation('unindent'),
     },
   },
   style: {
