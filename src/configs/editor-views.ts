@@ -85,6 +85,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     placeholder: placeholder(props),
     placeholder_element: placeholderElement(props),
     section: section(props),
+    graphical_abstract_section: section(props),
     pullquote_element: pullquoteElement(props),
     section_title: sectionTitle(props),
     section_label: sectionLabel(props),

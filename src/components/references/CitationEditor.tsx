@@ -32,6 +32,7 @@ import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
+import { ExtBibliographyItemAttrs } from './ImportBibliographyForm'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
@@ -171,12 +172,23 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setSearching(false)
     setImporting(true)
   }
-  const handleSaveImport = (data: BibliographyItemAttrs[]) => {
+  const handleSaveImport = (data: ExtBibliographyItemAttrs[]) => {
     data.forEach((item) => {
-      item.id = generateID(ObjectTypes.BibliographyItem)
-      item.DOI && (item.doi = item.DOI) // in imorted data is DOI instead doi
-      handleSave(item)
-      handleCite([item])
+      // fix data
+      console.log('ITEM:::: ')
+      console.log(item)
+      const { DOI, 'container-title': containerTitle, ...rest } = item
+
+      const updatedItem = {
+        ...rest,
+        id: generateID(ObjectTypes.BibliographyItem),
+        doi: DOI || item.doi, // Preserve existing 'doi' if 'DOI' is undefined
+        containerTitle: containerTitle || item.containerTitle, // Preserve existing 'containerTitle' if 'container-title' is undefined
+      }
+      console.log('UPDATED ITEM:::: ')
+      console.log(updatedItem)
+      handleSave(updatedItem)
+      handleCite([updatedItem])
     })
   }
 

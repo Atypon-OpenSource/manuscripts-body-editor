@@ -19,6 +19,7 @@ import {
   ModalHeader,
   StyledModal,
 } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -26,7 +27,6 @@ import {
   ImportBibAttrs,
   ImportBibliographyForm,
 } from './ImportBibliographyForm'
-import { BibliographyItemAttrs } from '@manuscripts/transform'
 
 export interface ImportBibliographyModalProps {
   onCancel: () => void
@@ -45,9 +45,9 @@ export const ImportBibliographyModal: React.FC<
   const handleClose = () => setOpen(false)
   const handleChange = (values: ImportBibAttrs) => (valuesRef.current = values)
   const handleSave = () => {
-    const updatedValues = valuesRef.current
-    if (updatedValues) {
-      const bibliographyItems: BibliographyItemAttrs[] = updatedValues.data// Or map it accordingly
+    if (valuesRef.current) {
+      const data = valuesRef.current.data
+      const bibliographyItems: BibliographyItemAttrs[] = data // Or map it accordingly
       onSave(bibliographyItems)
       handleClose()
     }
