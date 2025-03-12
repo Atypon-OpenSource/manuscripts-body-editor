@@ -113,7 +113,6 @@ export const ImportBibliographyForm = ({
         cite.data.length ? formattedCitation : NO_CITATION
       )
       setFieldValue('data', cite.data.length ? cite.data : [])
-      console.log('data:', cite.data)
     } catch (error) {
       console.error('Citation generation error:', error)
       setFieldValue('citation', ERROR_CITATION)
