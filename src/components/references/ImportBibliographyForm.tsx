@@ -180,9 +180,9 @@ export const ImportBibliographyForm = ({
               type="file"
               onChange={handleFileChange(formik.setFieldValue)}
             />
-            <label htmlFor="fileInput">
+            <Label htmlFor="fileInput">
               Drag&Drop or Click here to upload a file.
-            </label>
+            </Label>
           </DropContainer>
 
           <LabelContainer>
@@ -228,7 +228,7 @@ export const ImportBibliographyForm = ({
 }
 const Preview = styled.div`
   min-height: 50px;
-  border-radius: 4px;
+  border-radius: ${(props) => props.theme.grid.radius.small};
   background: ${(props) => props.theme.colors.background.primary};
   font-family: ${(props) => props.theme.font.family.sans};
   font-size: ${(props) => props.theme.font.size.medium};
@@ -249,8 +249,9 @@ const LabelContainer = styled.div`
 `
 
 const Label = styled.label`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.large};
+  font-size: ${(props) => props.theme.font.size.normal};
+  line-height: ${(props) => props.theme.font.lineHeight.large};
+  font-family: ${(props) => props.theme.font.family.Lato};
   display: block;
   color: ${(props) => props.theme.colors.text.secondary};
 `
@@ -258,8 +259,8 @@ const Label = styled.label`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
-  gap: 8px;
+  margin-top: ${(props) => 4*props.theme.grid.unit}px;
+  gap: ${(props) => 2*props.theme.grid.unit}px;
 `
 
 const InputFile = styled.input`
@@ -273,9 +274,9 @@ const activeBoxStyle = css`
 
 const DropContainer = styled.div<{ active: boolean }>`
   background: ${(props) => props.theme.colors.background.secondary};
-  border: 1px dashed #e2e2e2;
+  border: 1px dashed ${(props) => props.theme.colors.border.secondary};
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: ${(props) => props.theme.grid.radius.default};
   cursor: pointer;
   ${({ active }) => active && activeBoxStyle}; /* Apply active style */
 
@@ -289,10 +290,10 @@ const DropContainer = styled.div<{ active: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    line-height: 24px;
+    text-align: center;
+    font-size: ${(props) => props.theme.font.size.normal};
+    line-height: ${(props) => props.theme.font.lineHeight.large};
     font-family: ${(props) => props.theme.font.family.Lato};
     color: ${(props) => props.theme.colors.text.onLight};
-    text-align: center;
   }
 `
