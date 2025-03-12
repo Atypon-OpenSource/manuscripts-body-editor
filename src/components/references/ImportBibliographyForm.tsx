@@ -181,12 +181,12 @@ export const ImportBibliographyForm = ({
               onChange={handleFileChange(formik.setFieldValue)}
             />
             <label htmlFor="fileInput">
-              Drag & Drop a file here or click to import data from file
+              Drag & Drop a file here <br/>or click to import data from file
             </label>
           </DropContainer>
 
           <LabelContainer>
-            <Label>Or copy&paste here</Label>
+            <Label>Or Copy&Paste here</Label>
           </LabelContainer>
           <Field name="fileContent">
             {({ field }: FieldProps) => (
@@ -277,12 +277,12 @@ const DropContainer = styled.div<{ active: boolean }>`
   box-sizing: border-box;
   border-radius: 8px;
   cursor: pointer;
-  ${(props) =>
-    props.active
-      ? css`
-          ${activeBoxStyle}
-        `
-      : css``}
+  ${({ active }) => active && activeBoxStyle}; /* Apply active style */
+
+  &:hover {
+    ${activeBoxStyle} /* Apply active style on hover */
+  }
+    
   & label {
     width: 100%;
     height: 80px;
@@ -293,5 +293,6 @@ const DropContainer = styled.div<{ active: boolean }>`
     line-height: 24px;
     font-family: ${(props) => props.theme.font.family.Lato};
     color: ${(props) => props.theme.colors.text.onLight};
+    text-align: center;
   }
 `
