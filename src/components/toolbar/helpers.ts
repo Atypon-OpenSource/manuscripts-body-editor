@@ -264,6 +264,14 @@ export const isIndentationAllowed =
       return false
     }
 
+    // It is not allowed to unindent the top level parent sections, headers and paragraphs
+    if (action === 'unindent') {
+      const grandparentNode = $from.node($from.depth - 2)
+      if (grandparentNode?.type === schema.nodes.body) {
+        return false
+      }
+    }
+
     if (nodeType === schema.nodes.paragraph) {
       if (action === 'indent') {
         const parentNode = $from.node($from.depth - 1)
@@ -276,14 +284,6 @@ export const isIndentationAllowed =
         }
       } else {
         // TODO:: Allow unindent paragraphs when the implementation ready
-        return false
-      }
-    }
-
-    // It is not allowed to unindent the top level parent sections
-    if (nodeType === schema.nodes.section_title && action === 'unindent') {
-      const grandparentNode = $from.node($from.depth - 2)
-      if (grandparentNode?.type === schema.nodes.body) {
         return false
       }
     }
