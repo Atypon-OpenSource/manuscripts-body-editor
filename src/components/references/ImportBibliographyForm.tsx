@@ -181,12 +181,12 @@ export const ImportBibliographyForm = ({
               onChange={handleFileChange(formik.setFieldValue)}
             />
             <label htmlFor="fileInput">
-              Drag & Drop a file here <br/>or click to import data from file
+              Drag&Drop or Click here to upload a file.
             </label>
           </DropContainer>
 
           <LabelContainer>
-            <Label>Or Copy&Paste here</Label>
+            <Label>Alternatively, you can directly Copy&Paste below, the text of the bibliography items.</Label>
           </LabelContainer>
           <Field name="fileContent">
             {({ field }: FieldProps) => (
@@ -282,7 +282,7 @@ const DropContainer = styled.div<{ active: boolean }>`
   &:hover {
     ${activeBoxStyle} /* Apply active style on hover */
   }
-    
+
   & label {
     width: 100%;
     height: 80px;
