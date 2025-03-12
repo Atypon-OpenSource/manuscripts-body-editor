@@ -280,7 +280,6 @@ export const isIndentationAllowed =
         const topLevelSection = $from.node($from.depth - 2)
         if (
           parentNode?.type !== schema.nodes.section ||
-          parentNode?.type === schema.nodes.body ||
           topLevelSection?.type === schema.nodes.body
         ) {
           return false
