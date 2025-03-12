@@ -398,27 +398,25 @@ export const unindentParagraph =
       selection: { $from },
       schema,
       tr,
-      doc,
     } = state
 
-    const sectionDepth = $from.depth - 1
-    const parentSectionDepth = sectionDepth - 1
-
-    const paragraph = $from.node($from.depth)
-    const parentSection = $from.node(parentSectionDepth)
-
-    const afterSection = $from.after(sectionDepth)
-    const $afterSection = doc.resolve(afterSection)
-    const afterSectionOffset = $afterSection.parentOffset
-
     const paragraphPos = $from.before($from.depth)
+
+    const sectionDepth = $from.depth - 1
+    const section = $from.node(sectionDepth)
+    const afterSection = $from.after(sectionDepth)
+    const sectionStart = $from.start(sectionDepth)
+
+    const parentSectionDepth = sectionDepth - 1
+    const parentSection = $from.node(parentSectionDepth)
+    const parentSectionStart = $from.start(parentSectionDepth)
     const parentSectionEnd = $from.end(parentSectionDepth)
 
     let sectionContent = Fragment.from(schema.nodes.section_title.create())
 
     sectionContent = sectionContent
-      .append(Fragment.from(paragraph))
-      .append(parentSection.content.cut(afterSectionOffset))
+      .append(section.content.cut(paragraphPos - sectionStart))
+      .append(parentSection.content.cut(afterSection - parentSectionStart))
 
     const newSection = schema.nodes.section.create(
       { id: generateNodeID(schema.nodes.section) },
