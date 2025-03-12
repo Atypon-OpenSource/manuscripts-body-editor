@@ -452,12 +452,17 @@ export const insertAttachment = (
     return false
   }
 
-  const attachmentsNode = tr.doc.nodeAt(attachments.pos)
+  const attachmentsNode = attachments.node
   if (attachmentsNode && attachmentsNode.childCount > 0) {
-    const firstChildPos = attachments.pos + 1
-    const firstChild = tr.doc.nodeAt(firstChildPos)
-    if (firstChild) {
-      tr.delete(firstChildPos, firstChildPos + firstChild.nodeSize)
+    const attachmentNode = findChildrenByType(
+      attachmentsNode,
+      schema.nodes.attachment
+    )[0]
+    if (attachmentNode) {
+      tr.delete(
+        attachmentNode.pos,
+        attachmentNode.pos + attachmentNode.node.nodeSize
+      )
     }
   }
   const attachment = schema.nodes.attachment.createAndFill({
