@@ -19,8 +19,12 @@ import {
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
+import { ResolvedPos } from 'prosemirror-model'
 import { EditorState } from 'prosemirror-state'
-import { findChildrenByType } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
@@ -147,21 +151,22 @@ export function buildPluginState(
     if (isSectionNode(node)) {
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
-      if (category && category.group) {
-        const groupCategories = getGroupCategories(categories, category.group)
-        decorations.push(
-          Decoration.widget(pos + 1, (view) =>
-            createButton(
-              view,
-              pos,
-              category,
-              groupCategories,
-              usedCategoryIDs,
-              can?.editArticle
-            )
+      const $pos = state.doc.resolve(pos)
+      const group = getGroup($pos)
+      const groupCategories = getGroupCategories(categories, group)
+      decorations.push(
+        Decoration.widget(pos + 1, (view) =>
+          createButton(
+            view,
+            pos,
+            category,
+            groupCategories,
+            usedCategoryIDs,
+            can?.editArticle
           )
         )
-      }
+      )
+      // }
       return false
     }
   })
@@ -176,4 +181,14 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
     node.attrs.category && used.add(node.attrs.category)
   })
   return used
+}
+
+const getGroup = ($pos: ResolvedPos) => {
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)) {
+    return 'abstracts'
+  }
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)) {
+    return 'backmatter'
+  }
+  return 'body'
 }
