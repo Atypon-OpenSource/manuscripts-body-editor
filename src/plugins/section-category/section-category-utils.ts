@@ -166,7 +166,6 @@ export function buildPluginState(
           )
         )
       )
-      // }
       return false
     }
   })
