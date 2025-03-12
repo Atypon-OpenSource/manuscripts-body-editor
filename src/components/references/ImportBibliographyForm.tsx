@@ -143,7 +143,7 @@ export const ImportBibliographyForm = ({
       ) => {
         await handleGenerateCitation(content, setFieldValue)
       },
-      500 // Delay in milliseconds
+      250
     )
   ).current
 
@@ -210,17 +210,6 @@ export const ImportBibliographyForm = ({
 
           <ButtonContainer>
             <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-            {/* <SecondaryButton
-              onClick={() =>
-                handleGenerateCitation(
-                  formik.values.fileContent,
-                  formik.setFieldValue
-                )
-              }
-              disabled={!formik.values.fileContent.trim()} // Disable if empty
-            >
-              Preview
-            </SecondaryButton> */}
             <PrimaryButton
               type="submit"
               disabled={

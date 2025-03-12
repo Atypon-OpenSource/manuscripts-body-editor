@@ -195,7 +195,6 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleSave = (attrs: BibliographyItemAttrs) => {
-    console.log(attrs)
     if (!findChildByID(this.view, attrs.id)) {
       this.insertBibliographyNode(attrs)
     } else {

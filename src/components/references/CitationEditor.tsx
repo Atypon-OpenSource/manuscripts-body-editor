@@ -175,18 +175,13 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const handleSaveImport = (data: ExtBibliographyItemAttrs[]) => {
     data.forEach((item) => {
       // fix data
-      console.log('ITEM:::: ')
-      console.log(item)
       const { DOI, 'container-title': containerTitle, ...rest } = item
-
       const updatedItem = {
         ...rest,
         id: generateID(ObjectTypes.BibliographyItem),
         doi: DOI || item.doi, // Preserve existing 'doi' if 'DOI' is undefined
         containerTitle: containerTitle || item.containerTitle, // Preserve existing 'containerTitle' if 'container-title' is undefined
       }
-      console.log('UPDATED ITEM:::: ')
-      console.log(updatedItem)
       handleSave(updatedItem)
       handleCite([updatedItem])
     })
