@@ -15,6 +15,7 @@
  */
 import {
   AwardsNode,
+  generateNodeID,
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
@@ -67,6 +68,28 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
     node,
     pos,
   }
+}
+
+export const insertAttachmentsNode = (tr: ManuscriptTransaction) => {
+  const attachmentsNodes = findChildrenByType(tr.doc, schema.nodes.attachments)
+  if (attachmentsNodes.length) {
+    return {
+      node: attachmentsNodes[0].node,
+      pos: attachmentsNodes[0].pos,
+    }
+  }
+
+  const manuscriptNode = findChildrenByType(tr.doc, schema.nodes.manuscript)[0]
+  if (!manuscriptNode) {
+    return null
+  }
+
+  const pos = manuscriptNode.pos + 1
+  const node = schema.nodes.attachments.create({
+    id: generateNodeID(schema.nodes.attachments),
+  })
+  tr.insert(pos, node)
+  return { node, pos }
 }
 
 export const insertFootnotesSection = (tr: ManuscriptTransaction) => {

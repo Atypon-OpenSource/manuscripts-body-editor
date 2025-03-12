@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AttachmentNode,
   AwardNode,
   BoxElementNode,
   FigureElementNode,
@@ -88,6 +89,7 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertAttachmentsNode,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -431,6 +433,48 @@ export const insertSupplement = (
   const supplements = insertSupplementsNode(tr)
   const pos = supplements.pos + supplements.node.nodeSize - 1
   tr.insert(pos, supplement)
+  if (dispatch) {
+    dispatch(skipTracking(tr))
+  }
+  return true
+}
+
+export const insertAttachment = (
+  file: FileAttachment,
+  state: ManuscriptEditorState,
+  type: string,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr
+
+  const attachments = insertAttachmentsNode(tr)
+  if (!attachments) {
+    return false
+  }
+
+  const attachmentsNode = attachments.node
+  if (attachmentsNode && attachmentsNode.childCount > 0) {
+    const attachmentNode = findChildrenByType(
+      attachmentsNode,
+      schema.nodes.attachment
+    )[0]
+    if (attachmentNode) {
+      tr.delete(
+        attachmentNode.pos,
+        attachmentNode.pos + attachmentNode.node.nodeSize
+      )
+    }
+  }
+  const attachment = schema.nodes.attachment.createAndFill({
+    id: generateNodeID(schema.nodes.attachment),
+    href: file.id,
+    type: type,
+  }) as AttachmentNode
+  const pos = attachments.pos + attachments.node.nodeSize - 1
+  const mappedPos = tr.mapping.map(pos)
+
+  tr.insert(mappedPos, attachment)
+
   if (dispatch) {
     dispatch(skipTracking(tr))
   }
