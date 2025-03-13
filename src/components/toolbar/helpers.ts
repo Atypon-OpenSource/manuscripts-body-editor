@@ -275,17 +275,17 @@ export const isIndentationAllowed =
     if (nodeType === schema.nodes.paragraph) {
       const parentNode = $from.node($from.depth - 1)
 
-      const isNotAllowedIndent = ![
+      const isIndentNotAllowed = ![
         schema.nodes.section,
         schema.nodes.body,
       ].includes(parentNode?.type)
-      const isNotAllowedUnindent = parentNode?.type !== schema.nodes.section
+      const isUnindentNotAllowed = parentNode?.type !== schema.nodes.section
 
-      if (action === 'indent' && isNotAllowedIndent) {
+      if (action === 'indent' && isIndentNotAllowed) {
         return false
       }
 
-      if (action === 'unindent' && isNotAllowedUnindent) {
+      if (action === 'unindent' && isUnindentNotAllowed) {
         return false
       }
     }
