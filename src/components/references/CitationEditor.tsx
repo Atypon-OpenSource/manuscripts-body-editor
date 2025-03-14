@@ -168,7 +168,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
 
   const handleImport = () => {
-    // open import modal
     setSearching(false)
     setImporting(true)
   }
@@ -179,8 +178,8 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       const updatedItem = {
         ...rest,
         id: generateID(ObjectTypes.BibliographyItem),
-        doi: DOI || item.doi, // Preserve existing 'doi' if 'DOI' is undefined
-        containerTitle: containerTitle || item.containerTitle, // Preserve existing 'containerTitle' if 'container-title' is undefined
+        doi: DOI || item.doi,
+        containerTitle: containerTitle || item.containerTitle,
       }
       handleSave(updatedItem)
       handleCite([updatedItem])

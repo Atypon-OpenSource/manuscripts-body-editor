@@ -20,13 +20,10 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  ImportBibAttrs,
-  ImportBibliographyForm,
-} from './ImportBibliographyForm'
+import { ImportBibliographyForm } from './ImportBibliographyForm'
 
 export interface ImportBibliographyModalProps {
   onCancel: () => void
@@ -37,20 +34,16 @@ export const ImportBibliographyModal: React.FC<
   ImportBibliographyModalProps
 > = ({ onCancel, onSave }) => {
   const [isOpen, setOpen] = useState(true)
-  const valuesRef = useRef<ImportBibAttrs>()
 
   const handleCancel = () => {
     handleClose()
   }
   const handleClose = () => setOpen(false)
-  const handleChange = (values: ImportBibAttrs) => (valuesRef.current = values)
-  const handleSave = () => {
-    if (valuesRef.current) {
-      const data = valuesRef.current.data
-      const bibliographyItems: BibliographyItemAttrs[] = data // Or map it accordingly
-      onSave(bibliographyItems)
-      handleClose()
-    }
+
+  const handleSave = (data: BibliographyItemAttrs[]) => {
+    const bibliographyItems: BibliographyItemAttrs[] = data
+    onSave(bibliographyItems)
+    handleClose()
   }
 
   return (
@@ -62,11 +55,7 @@ export const ImportBibliographyModal: React.FC<
         <ModalBody>
           <ModalTitle>Import Bibliography</ModalTitle>
           <p>BibTex, PubMed, RIS, ENW and DOI formats are supported</p>
-          <ImportBibliographyForm
-            onCancel={handleCancel}
-            onChange={handleChange}
-            onSave={handleSave}
-          />
+          <ImportBibliographyForm onCancel={handleCancel} onSave={handleSave} />
         </ModalBody>
       </ModalContainer>
     </StyledModal>

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// Plugins supporting the formats for citation-js
 import '@citation-js/plugin-bibtex'
 import '@citation-js/plugin-ris'
 import '@citation-js/plugin-doi'
@@ -28,203 +29,163 @@ import {
   TextArea,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import { Field, FieldProps, Formik, FormikProps } from 'formik'
+import { useFormik } from 'formik'
 import { debounce } from 'lodash'
-import React, { DragEvent, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-
-import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export interface ExtBibliographyItemAttrs extends BibliographyItemAttrs {
   DOI?: string
   'container-title'?: string
 }
-
-export type ImportBibAttrs = {
-  fileContent: string
-  citation?: string
-  data: ExtBibliographyItemAttrs[]
-}
 export interface ImportBibFormProps {
   onCancel: () => void
-  onChange: (values: ImportBibAttrs) => void
-  onSave: (values: ImportBibAttrs) => void
+  onSave: (data: ExtBibliographyItemAttrs[]) => void
 }
 
 export const ImportBibliographyForm = ({
   onCancel,
-  onChange,
   onSave,
 }: ImportBibFormProps) => {
-  const formRef = useRef<FormikProps<ImportBibAttrs>>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
 
-  const updateFileContent =
-    (setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']) =>
-    async (file: File) => {
-      const reader = new FileReader()
-      reader.onload = async (event) => {
-        if (event.target?.result) {
-          const content = event.target.result as string
-          setFieldValue('fileContent', content.trim())
-          await handleGenerateCitation(content, setFieldValue) // Auto-generate preview
+  const formik = useFormik({
+    initialValues: {
+      content: '',
+      preview: '',
+      data: [],
+    },
+    onSubmit: (values, { setSubmitting }) => {
+      onSave(values.data)
+      setSubmitting(false)
+    },
+    onReset: onCancel,
+  })
+
+  const generateData = useCallback(
+    async (fileContent: string) => {
+      const NO_CITATION = 'No citation available'
+      const ERROR_CITATION = 'Error generating citation'
+
+      try {
+        if (!fileContent.trim()) {
+          formik.setFieldValue('preview', NO_CITATION)
+          formik.setFieldValue('data', [])
+          return
         }
+
+        const cite = await Citation.Cite.async(fileContent.trim())
+        const formattedCitation = cite.format('bibliography', {
+          format: 'html',
+        })
+
+        formik.setFieldValue(
+          'preview',
+          cite.data.length ? formattedCitation : NO_CITATION
+        )
+        formik.setFieldValue('data', cite.data.length ? cite.data : [])
+      } catch (error) {
+        console.error('Citation generation error:', error)
+        formik.setFieldValue('preview', ERROR_CITATION)
+        formik.setFieldValue('data', [])
       }
-      reader.readAsText(file)
-    }
+    },
+    [formik]
+  )
 
-  const handleFileChange =
-    (setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      if (file) {
-        updateFileContent(setFieldValue)(file)
-        event.target.value = '' // Reset input
-      }
-    }
+  const debouncedGenerateData = useMemo(
+    () => debounce(generateData, 300),
+    [generateData]
+  )
 
-  const handleDrop =
-    (setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']) =>
-    (event: DragEvent<HTMLDivElement>) => {
-      setDragging(false)
-      event.preventDefault()
-      if (event.dataTransfer.files.length > 0) {
-        updateFileContent(setFieldValue)(event.dataTransfer.files[0])
-      }
-    }
+  useEffect(() => {
+    debouncedGenerateData(formik.values.content)
+  }, [formik.values.content, debouncedGenerateData])
 
-  const handleGenerateCitation = async (
-    fileContent: string,
-    setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']
-  ) => {
-    const NO_CITATION = 'No citation available'
-    const ERROR_CITATION = 'Error generating citation'
-    try {
-      if (!fileContent.trim()) {
-        setFieldValue('citation', NO_CITATION)
-        setFieldValue('data', [])
-        return
-      }
-      const cite = await Citation.Cite.async(fileContent.trim())
-      const formattedCitation = cite.format('bibliography', { format: 'html' })
-      setFieldValue(
-        'citation',
-        cite.data.length ? formattedCitation : NO_CITATION
-      )
-      setFieldValue('data', cite.data.length ? cite.data : [])
-    } catch (error) {
-      console.error('Citation generation error:', error)
-      setFieldValue('citation', ERROR_CITATION)
-      setFieldValue('data', [])
-    }
-  }
-
-  const handleCancel = () => {
-    formRef.current?.resetForm()
-    onCancel()
-  }
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setDragging(true)
-  }
-
-  const handleDragLeave = () => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
     setDragging(false)
+    const file = event.dataTransfer.files[0]
+    if (file) {
+      readFileContent(file)
+    }
   }
 
-  const debouncedHandleGenerateCitation = useRef(
-    debounce(
-      async (
-        content: string,
-        setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']
-      ) => {
-        await handleGenerateCitation(content, setFieldValue)
-      },
-      250
-    )
-  ).current
-
-  const handleFileContentChange =
-    (setFieldValue: FormikProps<ImportBibAttrs>['setFieldValue']) =>
-    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const content = event.target.value
-      setFieldValue('fileContent', content)
-      debouncedHandleGenerateCitation(content, setFieldValue) // Use debounced function
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      readFileContent(file)
     }
+  }
+
+  const readFileContent = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        formik.setFieldValue('content', e.target.result)
+      }
+    }
+    reader.readAsText(file)
+  }
 
   return (
-    <Formik<ImportBibAttrs>
-      initialValues={{ fileContent: '', citation: '', data: [] }}
-      onSubmit={(values, { setSubmitting }) => {
-        onSave(values)
-        setSubmitting(false)
-      }}
-      enableReinitialize
-      validateOnChange={false}
-      innerRef={formRef}
-    >
-      {(formik) => (
-        <ChangeHandlingForm onChange={onChange}>
-          <DropContainer
-            onDrop={handleDrop(formik.setFieldValue)}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            active={dragging}
-          >
-            <InputFile
-              id="fileInput"
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileChange(formik.setFieldValue)}
-            />
-            <Label htmlFor="fileInput">
-              Drag&Drop or Click here to upload a file.
-            </Label>
-          </DropContainer>
+    <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+      <DropContainer
+        onDrop={handleDrop}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragging(true)
+        }}
+        onDragLeave={() => setDragging(false)}
+        active={dragging}
+      >
+        <input
+          id="file"
+          name="file"
+          type="file"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+        <Label htmlFor="file">
+          Drag & Drop or Click here to upload a file.
+        </Label>
+      </DropContainer>
 
-          <LabelContainer>
-            <Label>Alternatively, you can directly Copy&Paste below, the text of the bibliography items.</Label>
-          </LabelContainer>
-          <Field name="fileContent">
-            {({ field }: FieldProps) => (
-              <TextArea
-                rows={4}
-                id="fileContent"
-                {...field}
-                className="TextArea"
-                onChange={handleFileContentChange(formik.setFieldValue)}
-              />
-            )}
-          </Field>
-          <LabelContainer>
-            <Label>Preview</Label>
-          </LabelContainer>
-          <Preview
-            dangerouslySetInnerHTML={{
-              __html: formik.values.citation || 'No preview...',
-            }}
-          />
-
-          <ButtonContainer>
-            <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-            <PrimaryButton
-              type="submit"
-              disabled={
-                !formik.dirty ||
-                formik.isSubmitting ||
-                !formik.values.data.length
-              }
-            >
-              Save
-            </PrimaryButton>
-          </ButtonContainer>
-        </ChangeHandlingForm>
-      )}
-    </Formik>
+      <LabelContainer>
+        <Label>
+          Alternatively, you can directly Copy&Paste below, the text of the
+          bibliography items.
+        </Label>
+      </LabelContainer>
+      <TextArea
+        name="content"
+        rows={6}
+        value={formik.values.content}
+        onChange={formik.handleChange}
+      ></TextArea>
+      <LabelContainer>
+        <Label>Preview</Label>
+      </LabelContainer>
+      <Preview
+        dangerouslySetInnerHTML={{
+          __html: formik.values.preview || 'No preview...',
+        }}
+      />
+      <ButtonContainer>
+        <SecondaryButton type="reset">Cancel</SecondaryButton>
+        <PrimaryButton
+          type="submit"
+          disabled={
+            !formik.dirty || formik.isSubmitting || !formik.values.data.length
+          }
+        >
+          Save
+        </PrimaryButton>
+      </ButtonContainer>
+    </form>
   )
 }
+
 const Preview = styled.div`
   min-height: 50px;
   border-radius: ${(props) => props.theme.grid.radius.small};
@@ -232,12 +193,6 @@ const Preview = styled.div`
   font-family: ${(props) => props.theme.font.family.sans};
   font-size: ${(props) => props.theme.font.size.medium};
   color: ${(props) => props.theme.colors.text.primary};
-
-  & * {
-    margin: 0;
-    padding: 0;
-    line-height: 1.5;
-  }
 `
 const LabelContainer = styled.div`
   display: flex;
@@ -258,12 +213,8 @@ const Label = styled.label`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: ${(props) => 4*props.theme.grid.unit}px;
-  gap: ${(props) => 2*props.theme.grid.unit}px;
-`
-
-const InputFile = styled.input`
-  display: none;
+  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
+  gap: ${(props) => 2 * props.theme.grid.unit}px;
 `
 
 const activeBoxStyle = css`
@@ -277,10 +228,10 @@ const DropContainer = styled.div<{ active: boolean }>`
   box-sizing: border-box;
   border-radius: ${(props) => props.theme.grid.radius.default};
   cursor: pointer;
-  ${({ active }) => active && activeBoxStyle}; /* Apply active style */
+  ${({ active }) => active && activeBoxStyle};
 
   &:hover {
-    ${activeBoxStyle} /* Apply active style on hover */
+    ${activeBoxStyle}
   }
 
   & label {
