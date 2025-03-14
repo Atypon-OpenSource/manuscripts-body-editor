@@ -16,6 +16,8 @@
 
 import { Dispatch } from '../commands'
 import affiliations from '../views/affiliations'
+import alt_title from '../views/alt_title'
+import altTitlesSection from '../views/altTitlesSection'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
 import awards from '../views/awards'
@@ -56,15 +58,18 @@ import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
-    title: title(props, dispatch),
-    alt_title: empty('alt_title'),
+    affiliations: affiliations(props, dispatch),
+    alt_title: alt_title(props),
+    alt_titles_section: altTitlesSection(props),
+    author_notes: authorNotes(props, dispatch),
+    awards: awards(props, dispatch),
+    award: award(props, dispatch),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     box_element: boxElement(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
-    affiliations: affiliations(props, dispatch),
     embed: embed(props),
     equation: equation(props),
     equation_element: equationElement(props),
@@ -95,8 +100,6 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     table_element_footer: tableElementFooter(props),
     comments: empty('comments'),
     supplements: empty('supplements'),
-    author_notes: authorNotes(props, dispatch),
-    awards: awards(props, dispatch),
-    award: award(props, dispatch),
+    title: title(props, dispatch),
   }
 }

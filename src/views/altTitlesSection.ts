@@ -14,22 +14,39 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode, SectionNode } from '@manuscripts/transform'
+import { AltTitlesSectionNode } from '@manuscripts/transform'
 
-import { sectionTitleKey } from '../plugins/section_title'
-import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { SectionView } from './section'
 
-export class SectionView<
-  T extends ManuscriptNode = SectionNode
-> extends BlockView<T> {
+export class AltTitlesSectionView extends SectionView<AltTitlesSectionNode> {
   public elementType = 'section'
   public element: HTMLElement
+  dropdownElement: HTMLDivElement
 
   public initialise() {
     this.createDOM()
     this.createElement()
     this.updateContents()
+  }
+
+  // @TODO - how to track the main title changes to disable titles when the main title is empty?
+
+  createDropDown() {
+    if (this.dropdownElement) {
+      return
+    }
+    const dropdown = document.createElement('div')
+    const button = document.createElement('button')
+    dropdown.classList.add('alt-titles-dropdown')
+    const toggleView = () => {
+      this.dom.classList.toggle('alt-titles-open')
+    }
+    button.addEventListener('click', () => {
+      toggleView()
+    })
+    dropdown.appendChild(button)
+    this.dropdownElement = dropdown
   }
 
   public createElement() {
@@ -38,26 +55,13 @@ export class SectionView<
   }
 
   public updateContents() {
+    this.createDropDown()
     super.updateContents()
-    this.dom.setAttribute('data-category', this.node.attrs.category)
-    this.handleSectionNumbering()
   }
 
   // handle sections numbering after track-changes process
   //todo move to plugin
-  handleSectionNumbering() {
-    const sections = sectionTitleKey.getState(this.view.state)
-    if (!sections) {
-      return
-    }
-    sections.forEach((sectionNumber, id) => {
-      const section = document.getElementById(id)
-      const sectionTitle = section?.querySelector('h1')
-      if (sectionTitle) {
-        sectionTitle.dataset.sectionNumber = sectionNumber
-      }
-    })
-  }
+  handleSectionNumbering() {}
 }
 
 export default createNodeView(SectionView)

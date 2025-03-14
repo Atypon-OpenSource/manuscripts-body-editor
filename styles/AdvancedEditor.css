@@ -614,7 +614,8 @@ span.comment-marker {
 
 /* Insert */
 .tracking-visible .ProseMirror .inserted,
-.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, .tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span,
+.tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
@@ -733,10 +734,18 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 3px 0 0 var(--inserted-pending-color);
 }
 
-.tracking-visible .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
-.tracking-visible .selected-suggestion [data-track-status='pending'][data-track-op='insert'] .block,
-.tracking-visible .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block {
-  box-shadow: inset 6px 0 0 var(--inserted-pending-color), inset 9px 0 0 var(--inserted-pending-bg-color) !important;
+.tracking-visible
+  .selected-suggestion[data-track-status='pending'][data-track-op='insert']
+  .block,
+.tracking-visible
+  .selected-suggestion
+  [data-track-status='pending'][data-track-op='insert']
+  .block,
+.tracking-visible
+  .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending']
+  .block {
+  box-shadow: inset 6px 0 0 var(--inserted-pending-color),
+    inset 9px 0 0 var(--inserted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--inserted-pending-bg-color);
 }
@@ -782,10 +791,12 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
-.tracking-visible .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+.tracking-visible
+  .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
-  box-shadow: inset 6px 0 0 var(--updated-border-color), inset 9px 0 0 var(--updated-bg-color) !important;
+  box-shadow: inset 6px 0 0 var(--updated-border-color),
+    inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--updated-bg-color);
 }
@@ -981,7 +992,16 @@ figure.block:has(.equation.selected-suggestion) {
 }
 .manuscript-title {
   margin-bottom: 20px;
+  position: relative;
 }
+.open-alt-titles {
+  position: absolute;
+  z-index: 2;
+  bottom: 0.5rem;
+  left: 100%;
+  transform: translateX(-100%);
+}
+
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
