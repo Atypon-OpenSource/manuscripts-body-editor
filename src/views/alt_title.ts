@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-import { ManuscriptNodeView, TitleNode } from '@manuscripts/transform'
+import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class TitleView
-  extends BaseNodeView<TitleNode>
+  extends BaseNodeView<AltTitleNode>
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
+
+  public updateContents() {}
 
   public initialise = () => {
     this.createDOM()
   }
 
   protected createDOM = () => {
-    const attrs = this.node.attrs
     this.dom = document.createElement('div')
-    this.dom.classList.add('manuscript-title')
+    this.dom.classList.add('manuscript-alt-title')
+    const label = document.createElement('div')
+    label.classList.add('alt-title-label')
+    label.innerHTML = this.node.attrs.type + ' title'
+    this.dom.setAttribute('data-type', this.node.attrs.type)
     this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('article-titles')
-    if (!this.node.childCount && attrs.placeholder) {
-      this.contentDOM.setAttribute('data-placeholder', attrs.placeholder)
-    }
+    this.contentDOM.classList.add('alt-title-text')
+
+    this.dom.appendChild(label)
     this.dom.appendChild(this.contentDOM)
+    this.updateContents()
   }
 }
 
