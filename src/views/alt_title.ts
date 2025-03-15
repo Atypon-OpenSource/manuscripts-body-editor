@@ -19,7 +19,7 @@ import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
-export class TitleView
+export class AltTitleView
   extends BaseNodeView<AltTitleNode>
   implements ManuscriptNodeView
 {
@@ -47,4 +47,4 @@ export class TitleView
   }
 }
 
-export default createNodeView(TitleView)
+export default createNodeView(AltTitleView)
