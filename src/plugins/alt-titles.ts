@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ArrowDownCircleIcon } from '@manuscripts/style-guide'
 import {
   AltTitleNode,
   ManuscriptEditorView,
@@ -101,7 +100,7 @@ export default () => {
           tr.selectionSet &&
           selectionInAltTitles(tr.selection.from, tr.selection.to, newState)
         ) {
-          // if selection was set in the titles, open them
+          // if selection was set in the titles - open them
           newState = { ...newState, collapsed: false }
         }
         if (tr.getMeta(altTitlesKey)) {

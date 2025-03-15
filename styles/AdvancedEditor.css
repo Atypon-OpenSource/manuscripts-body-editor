@@ -1020,10 +1020,27 @@ figure.block:has(.equation.selected-suggestion) {
 }
 .manuscript-alt-title {
   display: none;
-  margin: 0 var(--body-side-margin) 13px;
+  opacity: 0;
+  margin: -1rem var(--body-side-margin) 13px;
+}
+
+@keyframes alt-titles-in {
+  from {
+    opacity: 0;
+    margin-top: -1rem;
+  }
+
+  to {
+    margin-top: 0;
+    opacity: 1;
+  }
 }
 .manuscript-alt-title-open {
   display: block;
+  opacity: 1;
+  margin: 0 var(--body-side-margin) 13px;
+  animation-name: alt-titles-in;
+  animation-duration: 0.35s;
 }
 .alt-titles-closing-panel {
   border-bottom: 1px solid #e2e2e2;
