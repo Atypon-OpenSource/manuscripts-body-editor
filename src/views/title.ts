@@ -14,55 +14,16 @@
  * limitations under the License.
  */
 
-import {
-  AltTitleNode,
-  ManuscriptNodeView,
-  TitleNode,
-} from '@manuscripts/transform'
+import { ManuscriptNodeView, TitleNode } from '@manuscripts/transform'
 
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { altTitlesKey } from '../plugins/alt-titles'
-import { arrowDown } from '../icons'
 
 export class TitleView
   extends BaseNodeView<TitleNode>
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
-
-  altTitlesButton: HTMLElement
-
-  createOrOpenAltTitles() {
-    const tr = this.view.state.tr
-
-    if (this.props.dispatch) {
-      tr.setMeta(altTitlesKey, {
-        collapsed: false,
-      })
-      this.props.dispatch(skipTracking(tr))
-    }
-  }
-
-  // createAltTitlesButton() {
-  //   if (!this.altTitlesButton) {
-  //     this.altTitlesButton = document.createElement('button')
-  //     this.altTitlesButton.classList.add('alt-titles-open', 'button-reset')
-  //     this.altTitlesButton.innerHTML = arrowDown
-  //     this.altTitlesButton.addEventListener('click', (e) => {
-  //       e.preventDefault()
-  //       this.createOrOpenAltTitles()
-  //     })
-  //     this.dom.appendChild(this.altTitlesButton)
-  //   }
-  // }
-
-  public updateContents() {
-    if (this.node.textContent.length) {
-      // this.createAltTitlesButton()
-    }
-  }
 
   public initialise = () => {
     this.createDOM()
