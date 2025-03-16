@@ -78,13 +78,8 @@ export const insertAttachmentsNode = (tr: ManuscriptTransaction) => {
       pos: attachmentsNodes[0].pos,
     }
   }
-
-  const manuscriptNode = findChildrenByType(tr.doc, schema.nodes.manuscript)[0]
-  if (!manuscriptNode) {
-    return null
-  }
-
-  const pos = manuscriptNode.pos + 1
+  const comments = findChildrenByType(tr.doc, schema.nodes.comments)[0]
+  const pos = comments.pos + 1
   const node = schema.nodes.attachments.create({
     id: generateNodeID(schema.nodes.attachments),
   })

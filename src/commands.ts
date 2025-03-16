@@ -446,34 +446,24 @@ export const insertAttachment = (
   dispatch?: Dispatch
 ) => {
   const tr = state.tr
-
   const attachments = insertAttachmentsNode(tr)
   if (!attachments) {
     return false
   }
 
-  const attachmentsNode = attachments.node
-  if (attachmentsNode && attachmentsNode.childCount > 0) {
-    const attachmentNode = findChildrenByType(
-      attachmentsNode,
-      schema.nodes.attachment
-    )[0]
-    if (attachmentNode) {
-      tr.delete(
-        attachmentNode.pos,
-        attachmentNode.pos + attachmentNode.node.nodeSize
-      )
-    }
+  if (attachments.node.childCount > 0) {
+    const startPos = attachments.pos + 1
+    const endPos = attachments.pos + attachments.node.nodeSize - 1
+    tr.delete(startPos, endPos)
   }
+
   const attachment = schema.nodes.attachment.createAndFill({
     id: generateNodeID(schema.nodes.attachment),
     href: file.id,
     type: type,
   }) as AttachmentNode
-  const pos = attachments.pos + attachments.node.nodeSize - 1
-  const mappedPos = tr.mapping.map(pos)
 
-  tr.insert(mappedPos, attachment)
+  tr.insert(attachments.pos + 1, attachment)
 
   if (dispatch) {
     dispatch(skipTracking(tr))
