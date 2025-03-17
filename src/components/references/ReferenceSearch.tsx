@@ -20,6 +20,7 @@ import {
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
+  UploadIcon,
 } from '@manuscripts/style-guide'
 import { debounce } from 'lodash'
 import React, { useState } from 'react'
@@ -72,9 +73,18 @@ export const ReferenceSearch: React.FC<{
   sources: BibliographyItemSource[]
   items: BibliographyItemAttrs[]
   onAdd: () => void
+  onImport: () => void
   onCite: (items: BibliographyItemAttrs[]) => void
   onCancel: () => void
-}> = ({ query: initialQuery, sources, items, onAdd, onCite, onCancel }) => {
+}> = ({
+  query: initialQuery,
+  sources,
+  items,
+  onAdd,
+  onImport,
+  onCite,
+  onCancel,
+}) => {
   const [query, setQuery] = useState<string>(initialQuery || '')
   const [selections, setSelections] = useState(
     new Map<string, BibliographyItemAttrs>()
@@ -134,6 +144,10 @@ export const ReferenceSearch: React.FC<{
           <IconTextButton onClick={onAdd}>
             <AddNewIcon />
             Add new
+          </IconTextButton>
+          <IconTextButton onClick={onImport}>
+            <UploadIcon />
+            Import new
           </IconTextButton>
         </AddReferenceActions>
         <ButtonGroup>

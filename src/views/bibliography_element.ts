@@ -79,7 +79,6 @@ export class BibliographyElementBlockView extends BlockView<
   }
 
   public stopEvent = () => true
-
   public ignoreMutation = () => true
 
   private handleEdit(citationID: string) {
