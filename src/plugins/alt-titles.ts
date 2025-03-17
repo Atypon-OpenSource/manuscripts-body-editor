@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import {
 } from '@manuscripts/transform'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 import { arrowDown } from '../icons'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 
@@ -104,7 +104,11 @@ export default () => {
           newState = { ...newState, collapsed: false }
         }
         if (tr.getMeta(altTitlesKey)) {
-          newState = { ...newState, ...tr.getMeta(altTitlesKey) }
+          newState = {
+            ...newState,
+            ...tr.getMeta(altTitlesKey),
+            ...getTitlesData(tr.doc),
+          }
         }
         return newState
       },
@@ -164,7 +168,7 @@ export default () => {
             decorations.push(
               Decoration.widget(
                 lastTitleEnd,
-                (view: ManuscriptEditorView) => {
+                function createClosingPanel(view: EditorView) {
                   const closingPanel = document.createElement('div')
                   closingPanel.classList.add('alt-titles-closing-panel')
                   const button = document.createElement('button')
