@@ -273,17 +273,20 @@ export const isIndentationAllowed =
     }
 
     if (nodeType === schema.nodes.paragraph) {
-      if (action === 'indent') {
-        const parentNode = $from.node($from.depth - 1)
-        // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
-        if (
-          parentNode?.type !== schema.nodes.section &&
-          parentNode?.type !== schema.nodes.body
-        ) {
-          return false
-        }
-      } else {
-        // TODO:: Allow unindent paragraphs when the implementation ready
+      const parentNode = $from.node($from.depth - 1)
+
+      const isIndentNotAllowed = ![
+        schema.nodes.section,
+        schema.nodes.body,
+      ].includes(parentNode?.type)
+      
+      const isUnindentNotAllowed = parentNode?.type !== schema.nodes.section
+
+      if (action === 'indent' && isIndentNotAllowed) {
+        return false
+      }
+
+      if (action === 'unindent' && isUnindentNotAllowed) {
         return false
       }
     }
@@ -353,12 +356,10 @@ export const indentParagraph =
     const sectionStart = $from.start(sectionDepth)
     const sectionEnd = $from.end(sectionDepth)
 
-    const sectionTitle: SectionTitleNode = schema.nodes.section_title.create()
-
     // Build section content
-    const sectionContent = Fragment.from(sectionTitle).append(
-      parentSection.content.cut(beforeParagraph - sectionStart)
-    )
+    const sectionContent = Fragment.from(
+      schema.nodes.section_title.create()
+    ).append(parentSection.content.cut(beforeParagraph - sectionStart))
 
     // Create new section
     const newSection = schema.nodes.section.create(
@@ -432,10 +433,44 @@ export const unindentSection =
     view && view.focus()
   }
 
-const unindentParagraph =
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const unindentParagraph =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
-    /* Placeholder for unindentParagraph */
+    const {
+      selection: { $from },
+      schema,
+      tr,
+    } = state
+
+    const paragraphPos = $from.before($from.depth)
+
+    const sectionDepth = $from.depth - 1
+    const section = $from.node(sectionDepth)
+    const afterSection = $from.after(sectionDepth)
+    const sectionStart = $from.start(sectionDepth)
+
+    const parentSectionDepth = sectionDepth - 1
+    const parentSection = $from.node(parentSectionDepth)
+    const parentSectionStart = $from.start(parentSectionDepth)
+    const parentSectionEnd = $from.end(parentSectionDepth)
+
+    let sectionContent = Fragment.from(schema.nodes.section_title.create())
+
+    sectionContent = sectionContent
+      .append(section.content.cut(paragraphPos - sectionStart))
+      .append(parentSection.content.cut(afterSection - parentSectionStart))
+
+    const newSection = schema.nodes.section.create(
+      { id: generateNodeID(schema.nodes.section) },
+      sectionContent
+    )
+
+    tr.delete(paragraphPos, parentSectionEnd)
+    tr.insert(paragraphPos + 2, newSection)
+
+    tr.setSelection(TextSelection.create(tr.doc, parentSectionEnd + 2))
+
+    dispatch(skipTracking(tr))
+    view?.focus()
   }
 
 const indentationHandlers = {
