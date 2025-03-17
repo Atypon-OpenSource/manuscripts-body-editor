@@ -62,45 +62,45 @@ export const ImportBibliographyForm = ({
     onReset: onCancel,
   })
 
-  const generateData = useCallback(
-    async (fileContent: string) => {
-      const NO_CITATION = 'No citation available'
-      const ERROR_CITATION = 'Error generating citation'
-
-      try {
-        if (!fileContent.trim()) {
-          formik.setFieldValue('preview', NO_CITATION)
-          formik.setFieldValue('data', [])
-          return
-        }
-
-        const cite = await Citation.Cite.async(fileContent.trim())
-        const formattedCitation = cite.format('bibliography', {
-          format: 'html',
-        })
-
-        formik.setFieldValue(
-          'preview',
-          cite.data.length ? formattedCitation : NO_CITATION
-        )
-        formik.setFieldValue('data', cite.data.length ? cite.data : [])
-      } catch (error) {
-        console.error('Citation generation error:', error)
-        formik.setFieldValue('preview', ERROR_CITATION)
+  const generateData = useCallback(async (fileContent: string) => {
+    const NO_CITATION = 'No citation available'
+    const ERROR_CITATION = 'Error generating citation'
+    console.log('generateData', fileContent)
+    try {
+      if (!fileContent.trim()) {
+        formik.setFieldValue('preview', NO_CITATION)
         formik.setFieldValue('data', [])
+        return
       }
-    },
-    [formik]
-  )
+
+      const cite = await Citation.Cite.async(fileContent.trim())
+      const formattedCitation = cite.format('bibliography', {
+        format: 'html',
+      })
+
+      formik.setFieldValue(
+        'preview',
+        cite.data.length ? formattedCitation : NO_CITATION
+      )
+      formik.setFieldValue('data', cite.data.length ? cite.data : [])
+    } catch (error) {
+      console.error('Citation generation error:', error)
+      formik.setFieldValue('preview', ERROR_CITATION)
+      formik.setFieldValue('data', [])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const debouncedGenerateData = useMemo(
     () => debounce(generateData, 300),
-    [generateData]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   )
 
   useEffect(() => {
     debouncedGenerateData(formik.values.content)
-  }, [formik.values.content, debouncedGenerateData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.content])
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()

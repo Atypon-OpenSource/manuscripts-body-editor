@@ -48,7 +48,7 @@ export const ImportBibliographyModal: React.FC<
 
   return (
     <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
-      <ModalContainer data-cy="mport-bibliography-modal">
+      <ModalContainer data-cy="import-bibliography-modal">
         <ModalHeader>
           <CloseButton onClick={onCancel} data-cy="modal-close-button" />
         </ModalHeader>
