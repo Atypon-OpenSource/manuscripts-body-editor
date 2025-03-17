@@ -576,15 +576,32 @@ export const insertLink = (
     const attrs = {
       href: isLink(text) ? text.trim() : '',
     }
-    const range = new NodeRange(
-      selection.$from,
-      selection.$to,
-      selection.$from.depth
-    )
-    const wrapping = findWrapping(range, schema.nodes.link, attrs)
 
-    if (wrapping) {
-      tr.wrap(range, wrapping)
+    const isTrackedInsert = selection.$from.nodeAfter?.marks.some(
+      (mark) => mark.type.name === 'tracked_insert'
+    )
+
+    if (isTrackedInsert) {
+      const linkNode = schema.nodes.link.create(
+        attrs,
+        Fragment.from(
+          selection.$from.parent.content.cut(
+            selection.$from.parentOffset,
+            selection.$to.parentOffset
+          )
+        )
+      )
+      tr.replaceWith(selection.from, selection.to, linkNode)
+    } else {
+      const range = new NodeRange(
+        selection.$from,
+        selection.$to,
+        selection.$from.depth
+      )
+      const wrapping = findWrapping(range, schema.nodes.link, attrs)
+      if (wrapping) {
+        tr.wrap(range, wrapping)
+      }
     }
   } else {
     tr.insert(state.selection.anchor, schema.nodes.link.create())
