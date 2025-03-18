@@ -17,7 +17,6 @@
 import { schema, SectionTitleNode } from '@manuscripts/transform'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionLevel } from '../lib/context-menu'
 import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
