@@ -58,6 +58,7 @@ export function setupEditor() {
       left: 0,
       right: 0,
     },
+    handleScrollToSelection: () => true,
     nodeViews: createNodeViews(props, () => {}), // eslint-disable-line @typescript-eslint/no-empty-function
   })
 

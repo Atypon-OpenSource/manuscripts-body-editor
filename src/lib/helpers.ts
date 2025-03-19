@@ -68,40 +68,39 @@ export const mergeSimilarItems =
     }, [])
   }
 
-export const handleScrollToBibliographyItem = (view: EditorView) => {
-  const tr = view.state.tr
-
-  const node = tr.doc.nodeAt(tr.selection.$from.pos)
-
-  if (!node || node.type !== schema.nodes.bibliography_item) {
+export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
+  const selection = view.state.selection
+  if (selection.empty) {
     return false
   }
 
-  const bibliographyItemElement = document.querySelector(
-    `[id="${node.attrs.id}"]`
-  ) as HTMLElement
-
-  if (!bibliographyItemElement) {
+  const node = view.state.doc.nodeAt(selection.from)
+  if (!node) {
     return false
   }
-  const bibliographyItemRect = bibliographyItemElement.getBoundingClientRect()
-  const editorBodyElement = document.querySelector(
-    '.editor-body'
-  ) as HTMLElement
-  const parentRect = editorBodyElement.getBoundingClientRect()
 
-  if (
-    bibliographyItemRect.bottom > window.innerHeight ||
-    bibliographyItemRect.top < 150
-  ) {
-    let childTopOffset = bibliographyItemRect.top - parentRect.top
-    // to center the element vertically within the viewport.
-    childTopOffset =
-      childTopOffset - (window.innerHeight - bibliographyItemRect.height) / 2
+  let target: Element | null
 
-    const scrollToTop = editorBodyElement.scrollTop + childTopOffset
-    editorBodyElement.scrollTo({ top: scrollToTop, behavior: 'smooth' })
+  //this is to support scrolling to nodes whose views are not managed by PM
+  if (node.attrs.id) {
+    target = view.dom.querySelector(`[id="${node.attrs.id}"]`)
+  } else {
+    target = view.domAtPos(selection.from).node as Element
   }
+
+  if (!target) {
+    return false
+  }
+
+  // Set block alignment based on the node type
+  const blockAlignment =
+    node.type === schema.nodes.bibliography_item ? 'center' : 'start'
+
+  // Scroll the target element into view
+  target.scrollIntoView({
+    behavior: 'smooth',
+    block: blockAlignment,
+  })
 
   return true
 }

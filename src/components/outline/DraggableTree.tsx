@@ -33,7 +33,7 @@ import { useDrag, useDrop } from 'react-dnd'
 
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,
@@ -88,6 +88,14 @@ interface TreeBuilderOptions {
 }
 
 type TreeBuilder = (options: TreeBuilderOptions) => TreeItem
+
+const isAbstractOrBackmatter = (item: TreeItem) => {
+  return (
+    item.parent &&
+    (item.parent.type === schema.nodes.abstracts ||
+      item.parent.type === schema.nodes.backmatter)
+  )
+}
 
 const isManuscriptNode = (node: ManuscriptNode | undefined) => {
   return node?.type === schema.nodes.manuscript
@@ -177,10 +185,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
-      if (
-        tree.node.type === schema.nodes.bibliography_section ||
-        item.node.type === schema.nodes.bibliography_section
-      ) {
+      if (isAbstractOrBackmatter(item) || isAbstractOrBackmatter(tree)) {
         return false
       }
       if (!ref.current) {
@@ -195,6 +200,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       }
       // can't drop within itself
       if (item.pos <= tree.pos && item.endPos >= tree.endPos) {
+        return false
+      }
+      // can't drop immediately before/after itself
+      if (tree.pos === item.endPos || item.pos === tree.endPos) {
         return false
       }
 
@@ -214,11 +223,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       if (!ref.current || !view) {
         return
       }
-
       const side = getDropSide(ref.current, monitor)
-
       const pos = side === 'before' ? tree.pos - 1 : tree.endPos - 1
-
       let sourcePos = item.pos - 1
 
       const node = item.node.type.schema.nodes[item.node.type.name].create(
@@ -240,13 +246,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   })
 
   const isDeletedItem = isDeleted(node)
-  const isRejectedItem = isRejectedInsert(node)
 
   const isTop = isManuscriptNode(parent)
-
-  if (isRejectedItem) {
-    return null
-  }
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
@@ -269,7 +270,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
 
   return (
-    <Outline ref={ref} className={`${dragClass} ${dropClass}`}>
+    <Outline
+      ref={ref}
+      className={`${dragClass} ${dropClass} ${isDeletedItem && 'deleted'}`}
+    >
       {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (
@@ -282,11 +286,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
           <OutlineItemLink to={`#${node.attrs.id}`}>
             <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
-            <OutlineItemLinkText
-              className={`outline-text-${node.type.name} ${
-                isDeletedItem && 'deleted'
-              }`}
-            >
+            <OutlineItemLinkText className={`outline-text-${node.type.name}`}>
               {itemText(node)}
             </OutlineItemLinkText>
           </OutlineItemLink>

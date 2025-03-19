@@ -38,12 +38,15 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
   Base: T
 ) => {
   return class extends Base {
-    public gutterButtons = (): HTMLElement[] =>
-      [this.createAddButton(), this.createEditButton()].filter(isNotNull)
+    public gutterButtons() {
+      return [this.createAddButton(), this.createEditButton()].filter(isNotNull)
+    }
 
-    public actionGutterButtons = (): HTMLElement[] => []
+    public actionGutterButtons() {
+      return []
+    }
 
-    public createAddButton = (): HTMLElement | null => {
+    public createAddButton() {
       const hasAccess = this.props.getCapabilities()?.editArticle
       if (!hasAccess) {
         return null
@@ -74,7 +77,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       return button
     }
 
-    public createEditButton = (): HTMLElement | null => {
+    public createEditButton(): HTMLElement | null {
       if (!this.props.getCapabilities()?.editArticle) {
         return null
       }
@@ -94,15 +97,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
     }
 
     public createMenu = () => {
-      return new ContextMenu(
-        this.node,
-        this.view,
-        this.getPos,
-        {
-          addComment: true,
-        },
-        this.props
-      )
+      return new ContextMenu(this.node, this.view, this.getPos)
     }
   }
 }

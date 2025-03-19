@@ -15,9 +15,15 @@
  */
 
 import {
+  ImageDefaultIcon,
+  ImageLeftIcon,
+  ImageRightIcon,
+  TriangleCollapsedIcon,
+} from '@manuscripts/style-guide'
+import {
   getListType,
-  InlineFootnoteNode,
   isInBibliographySection,
+  isSectionTitleNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -25,31 +31,39 @@ import {
   Nodes,
   schema,
 } from '@manuscripts/transform'
-import { Attrs } from 'prosemirror-model'
-import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
+import { Attrs, ResolvedPos } from 'prosemirror-model'
+import { findChildrenByType } from 'prosemirror-utils'
+import React, { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   addNodeComment,
   createBlock,
   findPosBeforeFirstSubsection,
-  insertGeneralFootnote,
-  insertTableFootnote,
+  insertGeneralTableFootnote,
+  insertInlineTableFootnote,
+  isCommentingAllowed,
 } from '../commands'
-import { FootnotesSelector } from '../components/views/FootnotesSelector'
-import ReactSubView from '../views/ReactSubView'
-import { buildTableFootnoteLabels, FootnoteWithIndex } from './footnotes'
+import { figurePositions } from '../views/figure_editable'
 import { PopperManager } from './popper'
 import {
-  getActualAttrs,
-  isDeleted,
-  isRejectedInsert,
-} from './track-changes-utils'
-import { getChildOfType, isChildOfNodeTypes } from './utils'
-import { EditorProps } from '../configs/ManuscriptsEditor'
+  getMatchingChild,
+  isChildOfNodeTypes,
+  isSelectionInNode,
+} from './utils'
+import { updateNodeAttrs } from './view'
 
 const popper = new PopperManager()
 
-const readonlyTypes = [schema.nodes.keywords, schema.nodes.bibliography_element]
+const readonlyTypes = [
+  schema.nodes.keywords,
+  schema.nodes.bibliography_element,
+  schema.nodes.bibliography_section,
+]
+
+const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
+  isSectionTitleNode(node) &&
+  $pos.node($pos.depth - 1).type === schema.nodes.box_element
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -60,10 +74,6 @@ export const sectionLevel = (depth: number) => {
   }
 }
 
-interface Actions {
-  addComment?: boolean
-}
-
 type InsertableNodes = Nodes | 'subsection'
 
 const hasAny = <T>(set: Set<T>, ...items: T[]) => {
@@ -71,25 +81,21 @@ const hasAny = <T>(set: Set<T>, ...items: T[]) => {
 }
 
 export const contextMenuBtnClass = 'btn-context-menu'
+const contextSubmenuBtnClass = 'context-submenu-trigger'
+
 export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
-  private readonly actions: Actions
-  private readonly props?: EditorProps
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
-    getPos: () => number,
-    actions: Actions = {},
-    props?: EditorProps
+    getPos: () => number
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
-    this.actions = actions
-    this.props = props
   }
 
   public showAddMenu = (target: Element, after: boolean) => {
@@ -173,7 +179,7 @@ export class ContextMenu {
 
           if (types.has('list')) {
             section.appendChild(
-              this.createMenuItem('Bullet List', () => {
+              this.createMenuItem('Bulleted List', () => {
                 insertNode(schema.nodes.list, undefined, {
                   listStyleType: 'bullet',
                 })
@@ -242,13 +248,63 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const type = this.node.type
+    const isBox = isBoxElementSectionTitle($pos, this.node)
+    const type = isBox ? schema.nodes.box_element : this.node.type
+
+    if (
+      type === schema.nodes.figure_element ||
+      type === schema.nodes.image_element
+    ) {
+      const figure = getMatchingChild(
+        this.node,
+        (node) => node.type === schema.nodes.figure
+      )
+
+      if (figure) {
+        const attrType = figure.attrs.type
+        const submenuOptions = [
+          {
+            title: 'Left',
+            action: () =>
+              updateNodeAttrs(this.view, schema.nodes.figure, {
+                ...figure.attrs,
+                type: figurePositions.left,
+              }),
+            Icon: ImageLeftIcon,
+            selected: attrType === figurePositions.left,
+          },
+          {
+            title: 'Default',
+            action: () =>
+              updateNodeAttrs(this.view, schema.nodes.figure, {
+                ...figure.attrs,
+                type: figurePositions.default,
+              }),
+            Icon: ImageDefaultIcon,
+            selected: !attrType,
+          },
+          {
+            title: 'Right',
+            action: () =>
+              updateNodeAttrs(this.view, schema.nodes.figure, {
+                ...figure.attrs,
+                type: figurePositions.right,
+              }),
+            Icon: ImageRightIcon,
+            selected: attrType === figurePositions.right,
+          },
+        ]
+        const submenuLabel = 'Position'
+        const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+        menu.appendChild(submenu)
+      }
+    }
 
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const actualAttrs = getActualAttrs(this.node)
-          const listType = getListType(actualAttrs.listStyleType).style
+          const attrs = this.node.attrs
+          const listType = getListType(attrs.listStyleType).style
           if (listType === 'none' || listType === 'disc') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
@@ -258,7 +314,7 @@ export class ContextMenu {
             )
           } else {
             section.appendChild(
-              this.createMenuItem('Change to Bullet List', () => {
+              this.createMenuItem('Change to Bulleted list', () => {
                 this.changeNodeType(null, 'bullet')
                 popper.destroy()
               })
@@ -268,14 +324,13 @@ export class ContextMenu {
       )
     }
 
-    const { addComment } = this.actions
-    if (addComment) {
+    const commentTarget = this.getCommentTarget()
+    if (isCommentingAllowed(commentTarget.type)) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           section.appendChild(
             this.createMenuItem('Comment', () => {
-              const target = this.getCommentTarget()
-              addNodeComment(target, this.view.state, this.view.dispatch)
+              addNodeComment(commentTarget, this.view.state, this.view.dispatch)
               popper.destroy()
             })
           )
@@ -284,158 +339,27 @@ export class ContextMenu {
     }
 
     if (type === schema.nodes.table_element) {
-      // Check if the selection is inside the table.
-      const isInTable = hasParentNodeOfType(schema.nodes.table)(
-        this.view.state.selection
-      )
-      const tableElementFooter = findChildrenByType(
-        this.node,
-        schema.nodes.table_element_footer
-      )
-      let isDeletedOrRejected = false
-
-      const hasGeneralNote =
-        tableElementFooter.length &&
-        getChildOfType(
-          tableElementFooter[0].node,
-          schema.nodes.general_table_footnote,
-          true
-        )
-
-      if (hasGeneralNote) {
-        const generalFootnote = tableElementFooter[0]?.node.firstChild
-        if (generalFootnote) {
-          isDeletedOrRejected =
-            isDeleted(generalFootnote) || isRejectedInsert(generalFootnote)
-        }
+      const items: Node[] = []
+      const isInsideNode = isSelectionInNode(this.view.state, this.node)
+      if (isInsideNode && insertInlineTableFootnote(this.view.state)) {
+        const item = this.createMenuItem('Add Reference Note', () => {
+          insertInlineTableFootnote(this.view.state, this.view.dispatch)
+        })
+        items.push(item)
       }
-      if (!hasGeneralNote || isDeletedOrRejected) {
-        menu.appendChild(
-          this.createMenuSection((section: HTMLElement) => {
-            section.appendChild(
-              this.createMenuItem('Add General Note', () => {
-                insertGeneralFootnote(
-                  this.node,
-                  this.getPos(),
-                  this.view,
-                  tableElementFooter
-                )
-              })
-            )
-          })
-        )
+      const pos = this.getPos()
+      if (insertGeneralTableFootnote([this.node, pos], this.view.state)) {
+        const item = this.createMenuItem('Add General Note', () => {
+          insertGeneralTableFootnote(
+            [this.node, pos],
+            this.view.state,
+            this.view.dispatch
+          )
+        })
+        items.push(item)
       }
-
-      if (isInTable) {
-        menu.appendChild(
-          this.createMenuSection((section: HTMLElement) => {
-            section.appendChild(
-              this.createMenuItem('Add Reference Note', () => {
-                const footnotesElementWithPos = findChildrenByType(
-                  this.node,
-                  schema.nodes.footnotes_element
-                ).pop()
-                if (
-                  !footnotesElementWithPos ||
-                  !footnotesElementWithPos?.node.content.childCount ||
-                  isDeleted(footnotesElementWithPos.node) ||
-                  isRejectedInsert(footnotesElementWithPos.node)
-                ) {
-                  insertTableFootnote(this.node, this.getPos(), this.view)
-                } else {
-                  const tablesFootnoteLabels = buildTableFootnoteLabels(
-                    this.node
-                  )
-
-                  const footnotesWithPos = findChildrenByType(
-                    footnotesElementWithPos.node,
-                    schema.nodes.footnote
-                  )
-
-                  const footnotes = footnotesWithPos
-                    .filter(
-                      ({ node }) => !isDeleted(node) && !isRejectedInsert(node)
-                    )
-                    .map(({ node }) => ({
-                      node: node,
-                      index: tablesFootnoteLabels.get(node.attrs.id),
-                    })) as FootnoteWithIndex[]
-
-                  const targetDom = this.view.domAtPos(
-                    this.view.state.selection.from
-                  )
-                  const targetNode =
-                    targetDom.node.nodeType === Node.TEXT_NODE
-                      ? targetDom.node.parentNode
-                      : targetDom.node
-
-                  if (targetNode instanceof Element && this.props) {
-                    const popperContainer = ReactSubView(
-                      { ...this.props, dispatch: this.view.dispatch },
-                      FootnotesSelector,
-                      {
-                        notes: footnotes,
-                        onAdd: () => {
-                          insertTableFootnote(
-                            this.node,
-                            this.getPos(),
-                            this.view
-                          )
-                          this.props?.popper.destroy()
-                        },
-                        onInsert: (notes: FootnoteWithIndex[]) => {
-                          const insertedAt = this.view.state.selection.to
-                          let inlineFootnoteIndex = 1
-                          this.view.state.doc
-                            .slice(this.getPos(), insertedAt)
-                            .content.descendants((node) => {
-                              if (
-                                node.type === schema.nodes.inline_footnote &&
-                                !isRejectedInsert(node)
-                              ) {
-                                inlineFootnoteIndex++
-                                return false
-                              }
-                            })
-
-                          const node =
-                            this.view.state.schema.nodes.inline_footnote.create(
-                              {
-                                rids: notes.map(({ node }) => node.attrs.id),
-                                contents: notes
-                                  .map(({ index }) =>
-                                    index ? index : inlineFootnoteIndex
-                                  )
-                                  .join(),
-                              }
-                            ) as InlineFootnoteNode
-
-                          const tr = this.view.state.tr
-
-                          tr.insert(insertedAt, node)
-                          this.view.dispatch(tr)
-                          this.props?.popper.destroy()
-                        },
-                        onCancel: () => {
-                          this.props?.popper.destroy()
-                        },
-                      },
-                      this.node,
-                      this.getPos,
-                      this.view,
-                      'footnote-editor'
-                    )
-                    this.props?.popper.show(
-                      targetNode,
-                      popperContainer,
-                      'bottom-end'
-                    )
-                  }
-                }
-              })
-            )
-          })
-        )
+      if (items.length) {
+        menu.append(this.createMenuSection((e) => e.append(...items)))
       }
     }
 
@@ -445,8 +369,10 @@ export class ContextMenu {
     ) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const nodeName = nodeNames.get(type) || ''
-
+          let nodeName = nodeNames.get(type) || ''
+          if (type === schema.nodes.section_title) {
+            nodeName = nodeNames.get(schema.nodes.section) as string
+          }
           section.appendChild(
             this.createMenuItem(`Delete ${nodeName}`, () => {
               this.deleteNode(type)
@@ -462,24 +388,76 @@ export class ContextMenu {
     this.addPopperEventListeners()
   }
 
-  private createMenuItem = (contents: string, handler: EventListener) => {
+  private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
-    item.textContent = contents
+    const textNode = document.createTextNode(contents)
+    item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
+    item.prepend(textNode)
+    item.classList.add(contextSubmenuBtnClass)
+
+    item.addEventListener('mousedown', this.toggleSubmenu)
+
+    return item
+  }
+
+  private createMenuItem = (
+    contents: string,
+    handler: EventListener,
+    Icon: React.FC | null = null,
+    selected = false
+  ) => {
+    const item = document.createElement('div')
+    item.className = 'menu-item'
+    selected && item.classList.add('selected')
+    if (Icon) {
+      item.innerHTML = renderToStaticMarkup(createElement(Icon))
+    }
+    const textNode = document.createTextNode(contents)
+    item.appendChild(textNode)
+
     item.addEventListener('mousedown', (event) => {
       event.preventDefault()
       handler(event)
     })
+
     return item
   }
 
   private createMenuSection = (
-    createMenuItems: (section: HTMLElement) => void
+    createMenuItems: (section: HTMLElement) => void,
+    isSubmenu = false
   ) => {
     const section = document.createElement('div')
     section.className = 'menu-section'
+    isSubmenu && section.classList.add('menu')
     createMenuItems(section)
     return section
+  }
+
+  private createSubmenu = (
+    submenuLabel: string,
+    items: {
+      title: string
+      action: () => void
+      Icon: React.FC | null
+      selected: boolean
+    }[]
+  ) => {
+    const submenu = document.createElement('div')
+    submenu.classList.add('menu-section', 'context-submenu')
+    submenu.append(
+      this.createSubmenuTrigger(submenuLabel),
+      this.createMenuSection((section: HTMLElement) => {
+        items.forEach(({ title, action, Icon, selected }) => {
+          section.appendChild(
+            this.createMenuItem(title, action, Icon, selected)
+          )
+        })
+      }, true)
+    )
+
+    return submenu
   }
 
   private insertableTypes = (
@@ -544,21 +522,19 @@ export class ContextMenu {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
-          this.view.state.tr
-            .setMeta('fromContextMenu', true)
-            .delete($pos.before(), $pos.after())
+          this.view.state.tr.delete($pos.before(), $pos.after())
         )
 
         break
       }
 
-      case 'bibliography_element': {
+      case 'box_element': {
         const $pos = this.resolvePos()
 
         this.view.dispatch(
           this.view.state.tr.delete(
-            $pos.before($pos.depth),
-            $pos.after($pos.depth)
+            $pos.before($pos.depth - 1),
+            $pos.after($pos.depth - 1)
           )
         )
 
@@ -583,7 +559,10 @@ export class ContextMenu {
     const mouseListener: EventListener = (event) => {
       const target = event.target as HTMLElement
       // if target is one of btn-context-menu buttons, do not destroy popper
-      if (target.classList.contains(contextMenuBtnClass)) {
+      if (
+        target.classList.contains(contextMenuBtnClass) ||
+        target.classList.contains(contextSubmenuBtnClass)
+      ) {
         return
       }
       window.requestAnimationFrame(() => {
@@ -618,5 +597,10 @@ export class ContextMenu {
       return parent
     }
     return this.node
+  }
+
+  private toggleSubmenu = (ev: MouseEvent) => {
+    const submenu = (ev.target as HTMLElement).nextElementSibling
+    submenu?.classList.toggle('show')
   }
 }

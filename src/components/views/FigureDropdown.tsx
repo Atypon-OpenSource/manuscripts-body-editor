@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 import {
-  AddIcon,
-  AttachIcon,
   Capabilities,
   DotsIcon,
   DropdownList,
@@ -23,7 +21,6 @@ import {
   IconButton,
   IconTextButton,
   isImageFile,
-  RoundIconButton,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
@@ -48,72 +45,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
 export interface FigureElementOptionsProps extends FigureDropdownProps {
   onAdd: (file: FileAttachment) => Promise<void>
   onUpload: () => void
-}
-
-export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
-  can,
-  files,
-  onAdd,
-  onUpload,
-}) => {
-  const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-
-  const supplements = files.supplements
-    .map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
-
-  const others = files.others.filter((f) => isImageFile(f.name))
-
-  return (
-    <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
-      <FilesButton>
-        <AttachIcon />
-      </FilesButton>
-      {isOpen && (
-        <DropdownList
-          direction={'left'}
-          width={208}
-          height={187}
-          onClick={toggleOpen}
-          top={7}
-        >
-          <NestedDropdown
-            disabled={!can.replaceFile || supplements.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Supplements'}
-            list={
-              <>
-                {supplements.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <NestedDropdown
-            disabled={!can.replaceFile || others.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Other files'}
-            list={
-              <>
-                {others.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <UploadButton onClick={onUpload} disabled={!can.uploadFile}>
-            <AddIcon /> New file...
-          </UploadButton>
-        </DropdownList>
-      )}
-    </FilesDropdownWrapper>
-  )
+  hasUploadedImage: boolean
 }
 
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
@@ -125,6 +57,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onReplace,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const supplements = files.supplements
+    .map((s) => s.file)
+    .filter((f) => isImageFile(f.name))
 
   const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
@@ -132,6 +67,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
+  const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -140,16 +76,23 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <ListItemButton onClick={onDownload} disabled={!showDownload}>
-            Download
-          </ListItemButton>
           <NestedDropdown
             disabled={!showReplace}
             parentToggleOpen={toggleOpen}
-            buttonText={'Replace'}
+            buttonText={replaceBtnText}
             moveLeft
             list={
               <>
+                {supplements.map((file, index) => (
+                  <ListItemButton
+                    key={file.id}
+                    id={index.toString()}
+                    onClick={() => onReplace && onReplace(file)}
+                  >
+                    {getFileIcon(file.name)}
+                    <ListItemText>{file.name}</ListItemText>
+                  </ListItemButton>
+                ))}
                 {otherFiles.map((file, index) => (
                   <ListItemButton
                     key={file.id}
@@ -166,6 +109,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
               </>
             }
           />
+          <ListItemButton onClick={onDownload} disabled={!showDownload}>
+            Download
+          </ListItemButton>
           <ListItemButton onClick={onDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
@@ -187,7 +133,8 @@ const NestedDropdown: React.FC<{
   return (
     <DropdownWrapper ref={wrapperRef}>
       <NestedListButton onClick={toggleOpen} disabled={disabled}>
-        {buttonText} <TriangleCollapsedIcon />
+        <div>{buttonText}</div>
+        <TriangleCollapsedIcon />
       </NestedListButton>
       {isOpen && (
         <NestedListDropdownList
@@ -221,9 +168,6 @@ const OptionsButton = styled(IconButton)`
   margin: ${(props) => props.theme.grid.unit}px;
   visibility: hidden;
   background: white;
-  position: absolute;
-  top: -4px;
-  right: 4%;
 
   &:hover {
     background: #f2fbfc !important;
@@ -268,31 +212,14 @@ const ListItemText = styled.div`
   text-align: start;
 `
 
-const FilesButton = styled(RoundIconButton)`
-  path {
-    stroke: #6e6e6e;
-  }
-
-  &:active,
-  &:focus {
-    path {
-      stroke: #1a9bc7;
-    }
-  }
-`
-
-const FilesDropdownWrapper = styled.div`
-  position: absolute;
-  top: 8px;
-  left: 70px;
-  z-index: 1;
-`
-
 const NestedListButton = styled(ListItemButton)`
   width: 100%;
   &:active,
   &:focus {
     background: #f2fbfc;
+  }
+  svg {
+    margin-right: 0;
   }
 `
 

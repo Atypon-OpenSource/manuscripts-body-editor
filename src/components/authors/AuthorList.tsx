@@ -26,22 +26,39 @@ const AuthorListContainer = styled.div`
   flex: 1;
   overflow-y: visible;
 `
+const AuthorListTitle = styled.h2`
+  color: #6e6e6e;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-left: 14px;
+  margin-top: 20px;
+`
 
 interface AuthorListProps {
   author?: ContributorAttrs
   authors: ContributorAttrs[]
   onSelect: (item: ContributorAttrs) => void
-  moveAuthor: (index: number, target: number) => void
+  onDelete: () => void
+  moveAuthor: (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => void
+  lastSavedAuthor: string | null
 }
 
 export const AuthorList: React.FC<AuthorListProps> = ({
   author,
   authors,
   onSelect,
+  onDelete,
   moveAuthor,
+  lastSavedAuthor,
 }) => {
   return (
     <DndProvider backend={HTML5Backend}>
+      <AuthorListTitle>Existing Authors</AuthorListTitle>
       <AuthorListContainer data-cy="authors-list">
         {authors.map((a) => {
           return (
@@ -50,7 +67,9 @@ export const AuthorList: React.FC<AuthorListProps> = ({
               author={a}
               isSelected={a.id === author?.id}
               onClick={() => onSelect(a)}
+              onDelete={() => onDelete()}
               moveAuthor={moveAuthor}
+              showSuccessIcon={lastSavedAuthor === a.id}
             />
           )
         })}

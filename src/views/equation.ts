@@ -17,12 +17,12 @@
 import { EquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getActualAttrs } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class EquationView
-  extends BaseNodeView<EquationNode>
+  extends BaseNodeView<Trackable<EquationNode>>
   implements ManuscriptNodeView
 {
   public initialise = () => {
@@ -33,11 +33,11 @@ export class EquationView
   public createDOM = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('equation')
-    this.dom.setAttribute('id', this.node.attrs.id)
   }
 
-  public updateContents = () => {
-    this.dom.innerHTML = getActualAttrs(this.node).contents
+  public updateContents() {
+    super.updateContents()
+    this.dom.innerHTML = this.node.attrs.contents
     renderMath(this.dom)
   }
 

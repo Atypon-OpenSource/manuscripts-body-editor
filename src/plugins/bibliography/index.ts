@@ -16,7 +16,12 @@
 
 import { BibliographyItem, ObjectTypes } from '@manuscripts/json-schema'
 import { CitationProvider } from '@manuscripts/library'
-import { isCitationNode, ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  CitationNode,
+  isCitationNode,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import CiteProc from 'citeproc'
 import { isEqual, pickBy } from 'lodash'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
@@ -26,11 +31,7 @@ import { DecorationSet } from 'prosemirror-view'
 import { CSLProps } from '../../configs/ManuscriptsEditor'
 import { PopperManager } from '../../lib/popper'
 import { BibliographyItemAttrs } from '../../lib/references'
-import {
-  getActualAttrs,
-  isHidden,
-  isRejectedInsert,
-} from '../../lib/track-changes-utils'
+import { isHidden } from '../../lib/track-changes-utils'
 import {
   buildCitations,
   buildDecorations,
@@ -91,15 +92,15 @@ const buildBibliographyPluginState = (
   csl: CSLProps,
   $old?: PluginState
 ): PluginState => {
-  const nodes: CitationNodes = []
+  const nodesMap = new Map<string, [CitationNode, number]>()
   doc.descendants((node, pos) => {
-    if (isCitationNode(node) && !isRejectedInsert(node)) {
-      nodes.push([node, pos])
+    if (isCitationNode(node)) {
+      nodesMap.set(node.attrs.id, [node, pos])
     }
   })
 
+  const nodes = Array.from(nodesMap.values())
   const bibliographyItems = getBibliographyItemAttrs(doc)
-
   const citations = buildCitations(nodes)
 
   const $new: Partial<PluginState> = {
@@ -170,7 +171,7 @@ const getBibliographyItemAttrs = (doc: ManuscriptNode) => {
   const attrs = new Map<string, BibliographyItemAttrs>()
   findChildrenByType(doc, schema.nodes.bibliography_item)
     .filter((n) => !isHidden(n.node))
-    .map((n) => getActualAttrs(n.node) as BibliographyItemAttrs)
+    .map((n) => n.node.attrs as BibliographyItemAttrs)
     .forEach((a) => attrs.set(a.id, a))
   return attrs
 }

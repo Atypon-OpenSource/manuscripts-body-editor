@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Keyword } from '@manuscripts/json-schema'
+import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
-import {
-  Build,
-  buildKeyword,
-  ManuscriptEditorView,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 import React, {
   ChangeEvent,
   useCallback,
@@ -30,7 +26,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
-import { isDeleted, isRejectedInsert } from '../../lib/track-changes-utils'
+import { isDeleted } from '../../lib/track-changes-utils'
 
 const AddNewKeyword = styled.div`
   position: relative;
@@ -109,8 +105,7 @@ export const AddKeywordInline: React.FC<{
     node.content.descendants((descNode) => {
       if (
         descNode.type === descNode.type.schema.nodes.keyword &&
-        !isDeleted(descNode) &&
-        !isRejectedInsert(descNode)
+        !isDeleted(descNode)
       ) {
         keywords.push({
           id: descNode.attrs.id,
@@ -194,11 +189,17 @@ export const AddKeywordInline: React.FC<{
       <KeywordField
         value={newKeyword}
         onChange={handleInputChange}
+        onFocus={() =>
+          view.dispatch(
+            view.state.tr.setSelection(TextSelection.create(view.state.doc, 0))
+          )
+        }
         onKeyDown={(e) => {
           e.stopPropagation()
-          if (e.key == 'Enter') {
+          if (e.key === 'Enter') {
+            e.preventDefault() // Prevent focus loss
             handleAddKeyword()
-          } else if (e.key == 'Escape') {
+          } else if (e.key === 'Escape') {
             handleCancel()
           }
         }}

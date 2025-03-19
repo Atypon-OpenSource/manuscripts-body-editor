@@ -19,6 +19,9 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import { NodeWithPos } from 'prosemirror-utils'
+import { EditorView } from 'prosemirror-view'
+
+import { addNodeComment } from '../commands'
 
 export type CommentAttrs = CommentNode['attrs']
 export type HighlightMarkerAttrs = HighlightMarkerNode['attrs']
@@ -55,6 +58,10 @@ export type CommentSelection = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isNodeComment = (c: any): c is NodeComment => !c.range
+
+export const isReply = (comment: Comment) => {
+  return comment.node.attrs.target.includes('MPCommentAnnotation')
+}
 
 export const getCommentKey = (
   comment: CommentAttrs,
@@ -107,4 +114,10 @@ export const createCommentMarker = (
 
 const getMarkerID = (id: string) => {
   return `${id}-comment-marker`
+}
+
+export const handleComment = (node: ManuscriptNode, view: EditorView): void => {
+  const { state } = view
+
+  addNodeComment(node, state, view.dispatch)
 }

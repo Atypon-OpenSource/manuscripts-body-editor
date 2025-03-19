@@ -40,6 +40,7 @@ import {
 } from './configs/ManuscriptsEditor'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
+import { searchReplaceKey } from './plugins/search-replace'
 
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
@@ -62,7 +63,6 @@ export const useEditor = (externalProps: ExternalProps) => {
         const since = await collabProvider.stepsSince(localVersion)
 
         if (since && since.version <= localVersion) {
-          console.log('detected run away update of document')
           return
         }
 
@@ -116,7 +116,7 @@ export const useEditor = (externalProps: ExternalProps) => {
           setState(nextState)
         },
         250,
-        !tr.isGeneric || !tr.docChanged
+        !tr.isGeneric || !tr.docChanged || !tr.getMeta(searchReplaceKey)
       )
 
       return nextState

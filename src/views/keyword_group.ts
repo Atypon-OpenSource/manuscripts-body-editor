@@ -15,6 +15,7 @@
  */
 
 import { KeywordGroupNode } from '@manuscripts/transform'
+
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -45,7 +46,7 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
         this.node,
         this.getPos,
         this.view,
-        'keywords-editor'
+        ['keywords-editor']
       )
     }
 

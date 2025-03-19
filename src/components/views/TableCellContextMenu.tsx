@@ -21,6 +21,7 @@ import {
   PlusIcon,
 } from '@manuscripts/style-guide'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { schema } from '@manuscripts/transform'
 import { Command, EditorState } from 'prosemirror-state'
 import {
   CellSelection,
@@ -34,7 +35,7 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { addColumns, addRows, mergeCellsWithSpace } from '../../commands'
+import { addColumns, addHeaderRow, addRows } from '../../commands'
 
 /**
  * Return the number of selected rows/columns
@@ -47,11 +48,26 @@ const getSelectedCellsCount = (state: EditorState) => {
     selectedCells.rows = rect.bottom - rect.top
     selectedCells.columns = rect.right - rect.left
   }
-  const { rows, columns } = selectedCells
-  return {
-    rows: rows > 1 ? `${rows} rows` : `row`,
-    columns: columns > 1 ? `${columns} columns` : `column`,
+  return selectedCells
+}
+
+const isHeaderCellSelected = (state: EditorState) => {
+  if (state.selection instanceof CellSelection) {
+    const anchorNode = state.selection.$anchorCell.node(
+      state.selection.$anchorCell.depth
+    ).firstChild
+    const headNode = state.selection.$headCell.node(
+      state.selection.$headCell.depth
+    ).firstChild
+    return (
+      anchorNode?.type === schema.nodes.table_header ||
+      headNode?.type === schema.nodes.table_header
+    )
   }
+
+  return (
+    state.doc.nodeAt(state.selection.from)?.type === schema.nodes.table_header
+  )
 }
 
 const ColumnChangeWarningDialog: React.FC<{
@@ -93,11 +109,17 @@ export const ContextMenu: React.FC<{
 
   const isCellSelectionMerged = mergeCells(view.state)
   const isCellSelectionSplittable = splitCell(view.state)
-  const { rows, columns } = getSelectedCellsCount(view.state)
+  const count = getSelectedCellsCount(view.state)
+  const rows = count.rows > 1 ? `${count.rows} rows` : `row`
+  const columns = count.columns > 1 ? `${count.columns} columns` : `column`
+  const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
   return (
     <MenuDropdownList className={'table-ctx'}>
-      <ActionButton onClick={() => runCommand(addRows('top'))}>
+      <ActionButton
+        disabled={isHeaderCellSelected(view.state)}
+        onClick={() => runCommand(addRows('top'))}
+      >
         <PlusIcon /> Insert {rows} above
       </ActionButton>
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
@@ -110,8 +132,16 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
+      <ActionButton
+        disabled={count.rows !== 1}
+        onClick={() => runCommand(addHeaderRow(headerPosition))}
+      >
+        <PlusIcon /> Insert header row {headerPosition}
+      </ActionButton>
+      <Separator />
       <ActionButton onClick={() => runCommand(deleteRow)}>
-        <GrayDeleteIcon /> Delete {rows}
+        <GrayDeleteIcon /> Delete
+        {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
@@ -119,7 +149,7 @@ export const ContextMenu: React.FC<{
 
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
-        <ActionButton onClick={() => runCommand(mergeCellsWithSpace, true)}>
+        <ActionButton onClick={() => runCommand(mergeCells, true)}>
           Merge cells
         </ActionButton>
       )}

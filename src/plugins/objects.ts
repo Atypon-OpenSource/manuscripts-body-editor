@@ -47,13 +47,11 @@ export default () => {
     props: {
       decorations: (state) => {
         const decorations: Decoration[] = []
-
         const targets = objectsKey.getState(state)
 
         if (targets) {
           state.doc.descendants((node, pos) => {
             const { id } = node.attrs
-
             if (id) {
               const target = targets.get(id)
               const resolvedPos = state.doc.resolve(pos)
@@ -63,23 +61,30 @@ export default () => {
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'figure-label'
-                labelNode.textContent = target.label + ':'
 
-                node.forEach((child, offset) => {
-                  if (child.type.name === 'figcaption') {
-                    decorations.push(
-                      Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                        side: -1,
-                        key: `figure-label-${id}-${target.label}`,
-                      })
-                    )
-                  }
-                })
+                if (node.type.name === 'image_element') {
+                  labelNode.textContent = target.label
+                  decorations.push(
+                    Decoration.widget(pos + node.nodeSize - 1, labelNode)
+                  )
+                } else {
+                  labelNode.textContent = target.label + ':'
+
+                  node.forEach((child, offset) => {
+                    if (child.type.name === 'figcaption') {
+                      decorations.push(
+                        Decoration.widget(pos + 1 + offset + 1, labelNode, {
+                          side: -1,
+                          key: `figure-label-${id}-${target.label}`,
+                        })
+                      )
+                    }
+                  })
+                }
               }
             }
           })
         }
-
         return DecorationSet.create(state.doc, decorations)
       },
     },

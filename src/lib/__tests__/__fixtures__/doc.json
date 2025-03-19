@@ -1,0 +1,377 @@
+{
+  "type": "manuscript",
+  "attrs": {
+    "id": "manuscript",
+    "doi": "",
+    "prototype": "",
+    "primaryLanguageCode": "",
+    "articleType": ""
+  },
+  "content": [
+    {
+      "type": "title",
+      "attrs": {
+        "id": "titles",
+        "placeholder": "Insert title here...",
+        "dataTracked": null
+      }
+    },
+    { "type": "abstracts", "attrs": { "id": "" } },
+    {
+      "type": "body",
+      "attrs": { "id": "" },
+      "content": [
+        {
+          "type": "section",
+          "attrs": {
+            "id": "empty-section-1",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "empty-section-2",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "empty-section-3",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [{ "type": "text", "text": "An empty section" }]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-empty-paragraphs-1",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-1",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-2",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-empty-paragraphs-2",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-3",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-4",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-empty-paragraphs-3",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A section containing empty paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-5",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            },
+            {
+              "type": "paragraph",
+              "attrs": {
+                "id": "empty-paragraph-6",
+                "paragraphStyle": "",
+                "placeholder": "",
+                "dataTracked": null
+              }
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-list",
+            "category": "",
+            "titleSuppressed": false,
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a list" }
+              ]
+            },
+            {
+              "type": "list",
+              "attrs": {
+                "id": "list",
+                "dataTracked": null,
+                "listStyleType": "order"
+              },
+              "content": [
+                {
+                  "type": "list_item",
+                  "attrs": { "placeholder": "List item", "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "attrs": {
+                        "id": "",
+                        "placeholder": "",
+                        "dataTracked": null
+                      },
+                      "content": [
+                        { "type": "text", "text": "Test " },
+                        {
+                          "type": "inline_equation",
+                          "attrs": {
+                            "dataTracked": null,
+                            "id": null,
+                            "contents": "",
+                            "format": null
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-figure",
+            "category": "",
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a figure" }
+              ]
+            },
+            {
+              "type": "figure_element",
+              "attrs": {
+                "id": "figure-element",
+                "label": "",
+                "dataTracked": null
+              },
+              "content": [
+                {
+                  "type": "figure",
+                  "attrs": {
+                    "id": "figure",
+                    "src": "",
+                    "contentType": "",
+                    "dataTracked": null
+                  }
+                },
+                {
+                  "type": "figcaption",
+                  "attrs": { "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "caption_title",
+                      "attrs": {
+                        "placeholder": "Title...",
+                        "dataTracked": null
+                      }
+                    },
+                    {
+                      "type": "caption",
+                      "attrs": {
+                        "placeholder": "Caption...",
+                        "dataTracked": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "listing",
+                  "attrs": {
+                    "id": "",
+                    "contents": "",
+                    "language": "",
+                    "languageKey": "null",
+                    "isExpanded": false,
+                    "isExecuting": false,
+                    "dataTracked": null
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "section",
+          "attrs": {
+            "id": "section-with-table",
+            "category": "",
+            "dataTracked": null
+          },
+          "content": [
+            {
+              "type": "section_title",
+              "attrs": { "dataTracked": null },
+              "content": [
+                { "type": "text", "text": "A section containing a table" }
+              ]
+            },
+            {
+              "type": "table_element",
+              "attrs": {
+                "id": "table-element",
+                "label": "",
+                "dataTracked": null
+              },
+              "content": [
+                {
+                  "type": "figcaption",
+                  "attrs": { "dataTracked": null },
+                  "content": [
+                    {
+                      "type": "caption_title",
+                      "attrs": {
+                        "placeholder": "Title...",
+                        "dataTracked": null
+                      }
+                    },
+                    {
+                      "type": "caption",
+                      "attrs": {
+                        "placeholder": "Caption...",
+                        "dataTracked": null
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "table",
+                  "attrs": { "id": "table", "dataTracked": null },
+                  "content": [
+                    { "type": "table_row", "attrs": { "dataTracked": null } }
+                  ]
+                },
+                {
+                  "type": "listing",
+                  "attrs": {
+                    "id": "",
+                    "contents": "",
+                    "language": "",
+                    "languageKey": "null",
+                    "isExpanded": false,
+                    "isExecuting": false,
+                    "dataTracked": null
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "type": "backmatter", "attrs": { "id": "", "placeholder": " " } },
+    { "type": "comments", "attrs": { "id": "" } }
+  ]
+}

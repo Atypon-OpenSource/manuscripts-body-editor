@@ -22,12 +22,7 @@ import {
   LinkFormProps,
   LinkValue,
 } from '../components/views/LinkForm'
-import {
-  getActualAttrs,
-  getChangeClasses,
-  isDeleted,
-  isRejectedInsert,
-} from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
@@ -43,21 +38,14 @@ export class LinkEditableView extends LinkView {
     this.updateContents()
   }
 
-  public updateContents = () => {
-    if (isRejectedInsert(this.node)) {
-      this.dom.innerHTML = ''
-      this.contentDOM = undefined
-      return
-    }
-
+  public updateContents() {
+    super.updateContents()
     this.contentDOM = this.dom
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const href = attrs.href
     const title = attrs.title
 
-    const classes = ['link', ...getChangeClasses(this.node.attrs.dataTracked)]
-    this.dom.className = classes.join(' ')
     this.dom.setAttribute('href', allowedHref(href) ? href : '')
     this.dom.setAttribute('target', '_blank')
     this.dom.setAttribute('title', title || '')
@@ -65,6 +53,7 @@ export class LinkEditableView extends LinkView {
 
   protected createDOM = () => {
     this.dom = document.createElement('a')
+    this.dom.classList.add('link')
     this.dom.addEventListener('click', this.handleClick)
   }
 
@@ -79,7 +68,7 @@ export class LinkEditableView extends LinkView {
   }
 
   public deselectNode = () => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     if (!this.node.content.size || !attrs.href) {
       this.removeLink()
     }
@@ -91,7 +80,7 @@ export class LinkEditableView extends LinkView {
       return
     }
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
 
     const value: LinkValue = {
       href: attrs.href,
@@ -113,7 +102,7 @@ export class LinkEditableView extends LinkView {
       this.node,
       this.getPos,
       this.view,
-      'link-editor'
+      ['link-editor']
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')
@@ -126,7 +115,7 @@ export class LinkEditableView extends LinkView {
   }
 
   private handleCancel = () => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     if (!this.node.content.size || !attrs.href) {
       this.removeLink()
     }
@@ -141,7 +130,7 @@ export class LinkEditableView extends LinkView {
   private handleSave = (value: LinkValue) => {
     const tr = this.view.state.tr
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const pos = this.getPos()
 
     if (value.href !== attrs.href || value.title !== attrs.title) {

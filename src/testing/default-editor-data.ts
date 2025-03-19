@@ -16,14 +16,18 @@
 
 import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
-import { ActualManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  ActualManuscriptNode,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { DefaultTheme } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
-
+import sectionCategories from './section-categories.json'
 type TestData = {
   MANUSCRIPT: Manuscript
   MODEL: Model
@@ -86,7 +90,10 @@ export const defaultEditorProps: EditorProps = {
     upload: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
-  getCapabilities: () => getAllPermitted(),
+  getCapabilities: () => ({
+    ...getAllPermitted(),
+    editWithoutTracking: true,
+  }),
   cslProps: {
     style: '',
     locale: '',
@@ -94,4 +101,10 @@ export const defaultEditorProps: EditorProps = {
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
+  sectionCategories: new Map(
+    sectionCategories.map((category: SectionCategory) => [
+      category.id,
+      category,
+    ])
+  ),
 }

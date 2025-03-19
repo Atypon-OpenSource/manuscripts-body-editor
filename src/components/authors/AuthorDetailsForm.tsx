@@ -22,11 +22,11 @@ import {
   TextFieldLabel,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
-import React, { MutableRefObject, useRef } from 'react'
+import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
-import { ChangeHandlingForm } from './ChangeHandlingForm'
+import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelText = styled.div`
   font: ${(props) => props.theme.font.weight.normal}
@@ -34,6 +34,9 @@ export const LabelText = styled.div`
     ${(props) => props.theme.font.family.sans};
   letter-spacing: -0.2px;
   color: ${(props) => props.theme.colors.text.primary};
+  &::before {
+    margin-right: 8px !important;
+  }
 `
 
 export const Fieldset = styled.fieldset`
@@ -46,6 +49,18 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
+const TextFieldWithError = styled(TextField)`
+  &:required::placeholder {
+    color: ${(props) => props.theme.colors.text.error};
+  }
+`
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+`
+
 export interface FormActions {
   reset: () => void
 }
@@ -54,7 +69,10 @@ interface AuthorDetailsFormProps {
   values: ContributorAttrs
   onChange: (values: ContributorAttrs) => void
   onSave: (values: ContributorAttrs) => void
+  authorFormRef?: MutableRefObject<HTMLFormElement | null>
   actionsRef?: MutableRefObject<FormActions | undefined>
+  isEmailRequired?: boolean
+  selectedAffiliations?: string[]
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -62,8 +80,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   onChange,
   onSave,
   actionsRef,
+  isEmailRequired,
+  selectedAffiliations,
+  authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+
+  useEffect(() => {
+    if (selectedAffiliations && formRef.current) {
+      formRef.current.setFieldValue('affiliations', selectedAffiliations)
+    }
+  }, [selectedAffiliations])
 
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
@@ -78,14 +105,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       initialValues={values}
       onSubmit={onSave}
       enableReinitialize={true}
-      validateOnChange={false}
+      validateOnChange={true}
       innerRef={formRef}
     >
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
-
         return (
-          <ChangeHandlingForm onChange={onChange}>
+          <ChangeHandlingForm
+            onChange={onChange}
+            id="author-details-form"
+            formRef={authorFormRef}
+          >
             <Fieldset>
               <TextFieldGroupContainer>
                 <Field name={'bibliographicName.given'}>
@@ -110,47 +140,55 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </TextFieldGroupContainer>
 
               <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => (
-                  <TextField
-                    id={'email'}
-                    placeholder={'Email address'}
-                    {...props.field}
-                  />
-                )}
-              </Field>
-
-              <CheckboxLabel disabled={!isAuthor}>
-                <Field name={'isCorresponding'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      id={'isCorresponding'}
-                      checked={props.field.value}
-                      disabled={!isAuthor}
+                {(props: FieldProps) => {
+                  const placeholder = isEmailRequired
+                    ? '*Email address (required)'
+                    : 'Email address'
+                  return (
+                    <TextFieldWithError
+                      id={'email'}
+                      type="email"
+                      required={isEmailRequired}
+                      placeholder={placeholder}
                       {...props.field}
                     />
-                  )}
-                </Field>
-                <LabelText>Corresponding Author</LabelText>
-              </CheckboxLabel>
+                  )
+                }}
+              </Field>
+              <CheckboxContainer>
+                <CheckboxLabel disabled={!isAuthor}>
+                  <Field name={'isCorresponding'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        disabled={!isAuthor}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Corresponding Author</LabelText>
+                </CheckboxLabel>
 
-              <CheckboxLabel>
-                <Field name={'role'} type={'checkbox'}>
-                  {(props: FieldProps) => (
-                    <CheckboxField
-                      name={'role'}
-                      checked={isAuthor}
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          props.field.name,
-                          e.target.checked ? 'author' : 'other',
-                          false
-                        )
-                      }}
-                    />
-                  )}
-                </Field>
-                <LabelText>Include in Authors List</LabelText>
-              </CheckboxLabel>
+                <CheckboxLabel>
+                  <Field name={'role'} type={'checkbox'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        name={'role'}
+                        checked={isAuthor}
+                        onChange={(e) => {
+                          formik.setFieldValue(
+                            props.field.name,
+                            e.target.checked ? 'author' : 'other',
+                            false
+                          )
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <LabelText>Include in Authors List</LabelText>
+                </CheckboxLabel>
+              </CheckboxContainer>
 
               <OrcidContainer>
                 <TextFieldLabel>
@@ -160,12 +198,25 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                       <TextField
                         id={'orcid'}
                         placeholder={'https://orcid.org/...'}
+                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
+                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
                         {...props.field}
                       />
                     )}
                   </Field>
                 </TextFieldLabel>
               </OrcidContainer>
+              <Field name="affiliations" type="hidden">
+                {(props: FieldProps) => {
+                  return (
+                    <TextField
+                      type="hidden"
+                      {...props.field}
+                      value={selectedAffiliations || []}
+                    />
+                  )
+                }}
+              </Field>
             </Fieldset>
           </ChangeHandlingForm>
         )

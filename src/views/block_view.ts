@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptNode,
-  ManuscriptNodeView,
-  schema,
-} from '@manuscripts/transform'
-import { ResolvedPos } from 'prosemirror-model'
+import { ManuscriptNode, ManuscriptNodeView } from '@manuscripts/transform'
 
+import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
-
-const isGraphicalAbstractFigure = ($pos: ResolvedPos, doc: ManuscriptNode) =>
-  $pos.parent.type === schema.nodes.graphical_abstract_section &&
-  doc.nodeAt($pos.pos)?.type === schema.nodes.figure_element
 
 export default class BlockView<BlockNode extends ManuscriptNode>
   extends BaseNodeView<BlockNode>
   implements ManuscriptNodeView
 {
-  public viewAttributes = {
-    id: 'id',
-    placeholder: 'placeholder',
-    paragraphStyle: 'data-paragraph-style',
-  }
-
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
     this.createElement()
@@ -48,81 +34,48 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     this.updateContents()
   }
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     this.updateClasses()
-    this.updateAttributes()
-    this.onUpdateContent()
+    this.updatePlaceholder()
   }
 
-  // unfortunately we can't call updateContents in successors because they are not methods but props
-  // which means they're inited in the constructor and are not accessible via super.
-  // onUpdateContent is provided here to allow to execute additional actions on content update without a need to copy all the code
-  // @TODO - rewrite arrow props to methods
-  onUpdateContent() {
-    return
+  handleTrackChanges() {
+    addTrackChangesAttributes(this.node.attrs, this.dom)
   }
 
-  public updateClasses = () => {
+  public updateClasses() {
     if (!this.contentDOM) {
       return
     }
-
     this.contentDOM.classList.toggle('empty-node', !this.node.childCount)
   }
 
-  public updateAttributes = () => {
+  public updatePlaceholder() {
     if (!this.contentDOM) {
       return
     }
-
-    if (this.node.attrs.dataTracked?.length) {
-      const lastChange =
-        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
-      this.dom.setAttribute('data-track-status', lastChange.status)
-      this.dom.setAttribute('data-track-op', lastChange.operation)
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
-    }
-
-    for (const [key, target] of Object.entries(this.viewAttributes)) {
-      if (key in this.node.attrs) {
-        const value = this.node.attrs[key]
-
-        if (value) {
-          this.contentDOM.setAttribute(target, value)
-        } else {
-          this.contentDOM.removeAttribute(target)
-        }
-      }
+    if (this.node.attrs.placeholder) {
+      this.contentDOM.dataset.placeholder = this.node.attrs.placeholder
     }
   }
 
-  public createElement = () => {
+  public createElement() {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
-
     this.dom.appendChild(this.contentDOM)
   }
 
-  public createDOM = () => {
+  public createDOM() {
     this.dom = document.createElement('div')
     this.dom.classList.add('block-container')
     this.dom.classList.add(`block-${this.node.type.name}`)
   }
 
-  public createGutter = (className: string, buttons: HTMLElement[]) => {
+  public createGutter(className: string, buttons: HTMLElement[]) {
     const gutter = document.createElement('div')
     gutter.setAttribute('contenteditable', 'false')
     gutter.classList.add(className)
-    if (
-      isGraphicalAbstractFigure(
-        this.view.state.doc.resolve(this.getPos()),
-        this.view.state.doc
-      )
-    ) {
-      gutter.classList.add('graphical-abstract-figure')
-    }
 
     for (const button of buttons) {
       gutter.appendChild(button)
@@ -131,7 +84,11 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     this.dom.appendChild(gutter)
   }
 
-  public gutterButtons = (): HTMLElement[] => []
+  public gutterButtons(): HTMLElement[] {
+    return []
+  }
 
-  public actionGutterButtons = (): HTMLElement[] => []
+  public actionGutterButtons(): HTMLElement[] {
+    return []
+  }
 }

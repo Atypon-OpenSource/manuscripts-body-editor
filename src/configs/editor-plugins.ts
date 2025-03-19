@@ -30,6 +30,7 @@ import keys from '../keys'
 import affiliations from '../plugins/affiliations'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
+import cross_references from '../plugins/cross-references'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
@@ -38,15 +39,15 @@ import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
+import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
-import table_footnote from '../plugins/table-footnote'
 import table_editing_fix from '../plugins/tables-cursor-fix'
-import toc from '../plugins/toc'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
+
 export default (props: EditorProps) => {
   const allPlugins = [
     rules,
@@ -65,7 +66,6 @@ export default (props: EditorProps) => {
     elements(),
     persist(),
     sections(),
-    toc(),
     bibliography(props),
     objects(),
     affiliations(),
@@ -75,10 +75,11 @@ export default (props: EditorProps) => {
     tableEditing(),
     selected_suggestion(),
     footnotes(props),
-    table_footnote(),
     editorProps(props),
     doi(),
     section_category(props),
+    cross_references(),
+    search_replace(),
   ]
 
   if (props.collabProvider) {

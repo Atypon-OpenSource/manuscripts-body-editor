@@ -21,12 +21,12 @@ import {
   DeleteKeywordDialog,
   DeleteKeywordDialogProps,
 } from '../components/keywords/DeleteKeywordDialog'
-import { getChangeClasses } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { Trackable } from '../types'
 
+//todo fix
 const deleteIcon =
   '<svg width="8px" height="8px" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\n' +
   '    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\n' +
@@ -50,15 +50,12 @@ export class KeywordView
 
   public createDOM = () => {
     this.dom = document.createElement('span')
+    this.dom.classList.add('keyword')
     this.contentDOM = document.createElement('span')
   }
 
-  public updateContents = () => {
-    const classes = [
-      'keyword',
-      ...getChangeClasses(this.node.attrs.dataTracked),
-    ]
-    this.dom.className = classes.join(' ')
+  public updateContents() {
+    super.updateContents()
     this.dom.innerHTML = ''
     this.dom.appendChild(this.contentDOM as HTMLElement)
 
@@ -71,17 +68,6 @@ export class KeywordView
       svg.classList.add('delete-keyword')
       svg.addEventListener('click', this.showConfirmationDialog)
       this.dom.appendChild(svg)
-    }
-
-    if (this.node.attrs.dataTracked?.length) {
-      this.dom.setAttribute('data-track-id', this.node.attrs.dataTracked[0].id)
-      this.dom.setAttribute(
-        'data-track-status',
-        this.node.attrs.dataTracked[0].status
-      )
-    } else {
-      this.dom.removeAttribute('data-track-id')
-      this.dom.removeAttribute('data-track-status')
     }
   }
 
@@ -111,7 +97,7 @@ export class KeywordView
       this.node,
       this.getPos,
       this.view,
-      'keywords-delete'
+      ['keywords-delete']
     )
 
     if (this.dialog) {

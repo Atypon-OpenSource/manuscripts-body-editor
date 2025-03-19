@@ -1,0 +1,140 @@
+{
+  "doc": {
+    "type": "manuscript",
+    "attrs": {
+      "id": "MPManuscript:D1797375-EF63-49AF-B140-04B2FA6B8365"
+    },
+    "content": [
+      {
+        "type": "abstracts",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
+      },
+      {
+        "type": "body",
+        "attrs": {
+          "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71"
+        },
+        "content": [
+          {
+            "type": "section",
+            "attrs": {
+              "id": "MPSection:5346C94F-8C83-4585-811E-2209C269ED71",
+              "category": "",
+              "titleSuppressed": false,
+              "dataTracked": null,
+              "comments": null
+            },
+            "content": [
+              {
+                "type": "section_title",
+                "attrs": {
+                  "dataTracked": null
+                }
+              },
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "id": "MPParagraphElement:08E4B001-BB01-4666-9E33-9355AEC3CFC3",
+                  "paragraphStyle": "MPParagraphStyle:51671E8C-C9EE-461D-B6FF-756817829B3F",
+                  "placeholder": "",
+                  "dataTracked": null,
+                  "comments": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "test"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "backmatter",
+        "attrs": {
+          "id": "MPSection:05EA736A-BBE3-4904-B2F5-59E861208BA9"
+        },
+        "content": [
+          {
+            "type": "footnotes_section",
+            "attrs": {
+              "id": "footnotes_section_id",
+              "dataTracked": null
+            },
+            "content": [
+              {
+                "type": "section_title",
+                "attrs": {
+                  "dataTracked": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Footnotes"
+                  }
+                ]
+              },
+              {
+                "type": "footnotes_element",
+                "attrs": {
+                  "id": "footnotes_element_id",
+                  "kind": "footnote",
+                  "paragraphStyle": "",
+                  "dataTracked": null
+                },
+                "content": [
+                  {
+                    "type": "footnote",
+                    "attrs": {
+                      "id": "footnote_id",
+                      "kind": "footnote",
+                      "paragraphStyle": "",
+                      "placeholder": "",
+                      "dataTracked": null,
+                      "comments": null
+                    },
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "id": "paragraph_id",
+                          "paragraphStyle": "",
+                          "placeholder": "",
+                          "dataTracked": null,
+                          "comments": null
+                        },
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "a footnote"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "comments",
+        "attrs": {
+          "id": ""
+        },
+        "content": []
+      }
+    ]
+  },
+  "selection": {
+    "type": "text",
+    "anchor": 10,
+    "head": 10
+  }
+}

@@ -17,36 +17,30 @@
 import { InlineEquationNode, ManuscriptNodeView } from '@manuscripts/transform'
 
 import { renderMath } from '../lib/math'
-import { getActualAttrs, isRejectedInsert } from '../lib/track-changes-utils'
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class InlineEquationView
-  extends BaseNodeView<InlineEquationNode>
+  extends BaseNodeView<Trackable<InlineEquationNode>>
   implements ManuscriptNodeView
 {
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.updateContents()
   }
 
-  public updateContents = () => {
-    if (isRejectedInsert(this.node)) {
-      this.dom.innerHTML = ''
-    } else {
-      this.dom.innerHTML = getActualAttrs(this.node).contents
-      renderMath(this.dom)
-    }
+  public updateContents() {
+    super.updateContents()
+    this.dom.innerHTML = this.node.attrs.contents
+    renderMath(this.dom)
   }
 
   public ignoreMutation = () => true
 
-  protected createDOM = () => {
+  protected createDOM() {
     this.dom = document.createElement('span')
-    if (!isRejectedInsert(this.node)) {
-      this.dom.classList.add('equation')
-      this.dom.setAttribute('id', this.node.attrs.id)
-    }
+    this.dom.classList.add('equation')
   }
 }
 

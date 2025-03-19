@@ -15,33 +15,15 @@
  */
 
 import { EquationElementNode } from '@manuscripts/transform'
+
+import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { Trackable } from '../types'
 
 export class EquationElementView extends BlockView<
   Trackable<EquationElementNode>
 > {
   public elementType = 'figure'
-
-  public updateContents = () => {
-    const { label } = this.node.attrs
-    if (label) {
-      const labelEl = document.createElement('label')
-      labelEl.textContent = label
-      this.dom.appendChild(labelEl)
-    }
-
-    if (this.node.attrs.dataTracked?.length) {
-      const lastChange =
-        this.node.attrs.dataTracked[this.node.attrs.dataTracked.length - 1]
-      this.dom.setAttribute('data-track-status', lastChange.status)
-      this.dom.setAttribute('data-track-op', lastChange.operation)
-    } else {
-      this.dom.removeAttribute('data-track-status')
-      this.dom.removeAttribute('data-track-type')
-    }
-  }
 }
 
 export default createNodeView(EquationElementView)

@@ -19,7 +19,6 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
-import { addNodeComment } from '../commands'
 import {
   CitationEditor,
   CitationEditorProps,
@@ -28,9 +27,10 @@ import {
   CitationViewer,
   CitationViewerProps,
 } from '../components/references/CitationViewer'
+import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
 import { BibliographyItemAttrs } from '../lib/references'
-import { getActualAttrs, isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
@@ -47,6 +47,12 @@ export class CitationEditableView extends CitationView {
   private editor: HTMLElement
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
+
+  createDOM() {
+    super.createDOM()
+    this.dom.addEventListener('mouseup', this.handleClick)
+  }
+
   // we added this to stop select events in case th e user clicks on the comment,
   // so it won't interfere with the context menu
   public stopEvent = (event: Event) => {
@@ -58,14 +64,11 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public eventHandlers = () => {
-    this.dom.addEventListener('mouseup', this.handleClick)
-  }
   public handleClick = (event: MouseEvent) => {
     if (!this.can.seeReferencesButtons) {
       this.showPopper()
     } else if (!isDeleted(this.node) && event.button === 0) {
-      const attrs = getActualAttrs(this.node)
+      const attrs = this.node.attrs
       if (attrs.rids.length) {
         this.showContextMenu()
       }
@@ -74,7 +77,7 @@ export class CitationEditableView extends CitationView {
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
     if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
-      const attrs = getActualAttrs(this.node)
+      const attrs = this.node.attrs
       if (!attrs.rids.length) {
         this.showPopper()
       }
@@ -88,12 +91,22 @@ export class CitationEditableView extends CitationView {
 
   public showContextMenu = () => {
     this.props.popper.destroy()
+
     const can = this.props.getCapabilities()
     const actions = [
-      { label: 'Comment', action: this.handleComment, icon: 'AddComment' },
+      {
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      },
     ]
+
     if (can.editArticle) {
-      actions.unshift({ label: 'Edit', action: this.handleEdit, icon: 'Edit' })
+      actions.unshift({
+        label: 'Edit',
+        action: () => this.handleEdit(),
+        icon: 'Edit',
+      })
     }
     const componentProps: ContextMenuProps = {
       actions,
@@ -105,7 +118,7 @@ export class CitationEditableView extends CitationView {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
   }
@@ -118,7 +131,7 @@ export class CitationEditableView extends CitationView {
     }
     const can = this.props.getCapabilities()
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = attrs.rids
 
     const items = Array.from(bib.bibliographyItems.values())
@@ -146,7 +159,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     } else {
       const componentProps: CitationViewerProps = {
@@ -160,7 +173,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     }
     this.props.popper.show(this.dom, this.editor, 'auto')
@@ -190,7 +203,7 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleUncite = (id: string) => {
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = attrs.rids.filter((i) => i !== id)
     const pos = this.getPos()
     const tr = this.view.state.tr
@@ -214,7 +227,7 @@ export class CitationEditableView extends CitationView {
       return
     }
 
-    const attrs = getActualAttrs(this.node)
+    const attrs = this.node.attrs
     const rids = [...attrs.rids]
 
     items = items.filter((i) => !rids.includes(i.id))
@@ -244,10 +257,6 @@ export class CitationEditableView extends CitationView {
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     return deleteNode(this.view, item.id)
-  }
-
-  private handleComment = () => {
-    addNodeComment(this.node, this.view.state, this.props.dispatch)
   }
 
   private insertBibliographyNode(attrs: BibliographyItemAttrs) {

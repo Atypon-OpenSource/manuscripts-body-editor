@@ -25,7 +25,19 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
-  public onUpdateContent = () => {
+  public createElement = () => {
+    this.contentDOM = document.createElement(this.elementType)
+    this.contentDOM.className = 'block'
+    this.dom.appendChild(this.contentDOM)
+
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    if ($pos.parent.type === schema.nodes.bibliography_section) {
+      this.contentDOM.setAttribute('contenteditable', 'false')
+    }
+  }
+
+  public updateContents() {
+    super.updateContents()
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const parentSection = findParentNodeOfTypeClosestToPos(
@@ -33,19 +45,32 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
       schema.nodes.section
     )
     const sectionNumber = sectionTitleState?.get(parentSection?.node.attrs.id)
-    const level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
+    let level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
+
+    if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)) {
+      level = level - 2
+    }
+
     if (this.node.childCount) {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-      // the first level is hidden
-      // other levels are shifted by 1
-      this.contentDOM.setAttribute(
-        'data-placeholder',
-        `${sectionLevel(level)} heading`
-      )
+
+      if ($pos.node($pos.depth - 1).type === schema.nodes.box_element) {
+        this.contentDOM.setAttribute(
+          'data-placeholder',
+          `Optional box title...`
+        )
+        // the first level is hidden
+        // other levels are shifted by 1
+      } else {
+        this.contentDOM.setAttribute(
+          'data-placeholder',
+          `${sectionLevel(level)} heading`
+        )
+      }
     }
-    if (sectionTitleState) {
+    if (sectionTitleState && sectionNumber) {
       this.contentDOM.dataset.sectionNumber = sectionNumber
       this.contentDOM.dataset.titleLevel = level.toString()
     }

@@ -133,12 +133,16 @@
   padding: 10px;
 }
 
-.ProseMirror tr:first-of-type th {
+.ProseMirror tr th {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  background: #f2f2f2;
+  background: #E2E2E2;
   text-align: left;
   font-weight: bold;
+}
+
+.ProseMirror tr th:not(:last-child) {
+  border-right: 1px solid #C9C9C9;
 }
 
 .ProseMirror tr td {
@@ -158,6 +162,10 @@
   border-right: 1px solid #000;
 }
 
+.ProseMirror tbody p {
+  margin: 0;
+}
+
 .ProseMirror sup,
 .ProseMirror sub {
   line-height: 0;
@@ -167,7 +175,6 @@
 .ProseMirror .cross-reference {
   font-weight: bold;
   background-color: #ddf3fa;
-  border-radius: 5px;
   color: #353535;
   padding: 0 2px;
   cursor: pointer;
@@ -176,11 +183,6 @@
 .ProseMirror .cross-reference {
   text-decoration: none;
   color: inherit;
-}
-
-.ProseMirror .cross-reference.deleted.pending,
-.ProseMirror .cross-reference.deleted.accepted {
-  text-decoration: line-through;
 }
 
 .ProseMirror .bib-item.ProseMirror-selectednode,
@@ -230,10 +232,8 @@
 }
 
 .ProseMirror .figure-block > .listing {
-  /*grid-row: listing;*/
   grid-column-start: 1;
   grid-column-end: -1;
-  /*margin-top: 0;*/
   padding: 0;
   min-height: 0;
   overflow: visible;
@@ -241,7 +241,6 @@
 }
 
 .ProseMirror .figure-block > figcaption {
-  /*grid-row: caption;*/
   grid-column-start: 1;
   grid-column-end: -1;
   margin-top: 0;
@@ -255,15 +254,24 @@
   align-items: center;
   border-radius: 16px;
   border: 1px dashed #e2e2e2;
+  background-color: #fafafa;
   color: #6e6e6e;
   cursor: pointer;
   display: flex;
   justify-content: center;
   text-align: center;
   padding: 64px 32px;
+  max-width: 210px;
   min-height: 100px;
   white-space: normal;
+
+  font-size: 14px;
 }
+
+.ProseMirror .figure.placeholder a {
+  text-decoration: underline;
+}
+
 
 .ProseMirror .figure.placeholder.over {
   border-color: #bce7f6;
@@ -298,6 +306,10 @@
 
 .ProseMirror .block-table_element figcaption {
   text-align: left;
+}
+
+.ProseMirror .block-table_element .block-gutter {
+  padding-top: 1em;
 }
 
 .ProseMirror .caption-title:not(.empty-node) {
@@ -342,8 +354,15 @@
 
 .ProseMirror .figure-label {
   font-weight: bold;
+  font-size: 14px;
   margin-right: 5px;
   white-space: nowrap;
+}
+
+.block-image_element .figure-label {
+  text-align: center;
+  grid-column-start: 1;
+  grid-column-end: -1;
 }
 
 .ProseMirror .executable-container {
@@ -527,6 +546,10 @@
   overflow-wrap: normal;
 }
 
+.ProseMirror.manuscript-editor section.bibliography .block-section_title h1 {
+  user-select: none;
+}
+
 .ProseMirror section.title-suppressed > .block-section_title {
   display: none;
 }
@@ -558,14 +581,6 @@
   color: #c9c9c9;
   margin: 0;
 }
-
-.ProseMirror .empty-node::before {
-  position: absolute;
-  color: #c9c9c9;
-  cursor: text;
-  pointer-events: none;
-}
-
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
@@ -573,7 +588,7 @@
   position: absolute;
   color: #c9c9c9;
   font-style: italic;
-  font-family: "PT Sans";
+  font-family: 'PT Sans';
   font-size: 28px;
   font-weight: 400;
   line-height: 40px;
@@ -605,21 +620,30 @@
   display: grid;
   grid-template-columns: 52px auto 52px;
 }
-.ProseMirror .block-container.block-section {
+.ProseMirror .block-container.block-contributors {
+  grid-template-columns: 52px auto 100px !important;
+}
+.ProseMirror .block-container.block-affiliations {
+  grid-template-columns: 52px auto 100px !important;
+}
+.ProseMirror .block-container.block-section, .ProseMirror .block-container.block-graphical_abstract_section {
   position: relative;
   display: grid;
   grid-template-columns: auto;
 }
+.ProseMirror .block-container.block-section section, .ProseMirror .block-container.block-graphical_abstract_section section {
+  position: relative;
+}
 
-.ProseMirror .block-container:not(.block-section):hover {
+.ProseMirror .block-container:not(.block-section, .block-graphical_abstract_section):hover {
   z-index: 2;
 }
 
 .ProseMirror .block-container > .block {
-  padding: 0 12px;
   margin: 0;
+  z-index: 1;
+  padding: 0 12px;
 }
-
 .ProseMirror .block-container.block-figure_element > .block {
   display: grid;
 }
@@ -661,12 +685,33 @@
   transition: 0.2s all;
 }
 
+.ProseMirror .action-gutter {
+  position: relative;
+  cursor: ns-resize;
+  opacity: 0;
+  transition: 0.2s all;
+}
+
 .ProseMirror .block-section_title .block-gutter,
 .ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
 }
 
-.ProseMirror .block-container:not(.block-section):hover .block-gutter {
+.ProseMirror
+  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
+  .block-gutter {
+  opacity: 1;
+  z-index: 2;
+}
+
+.ProseMirror:not(.ProseMirror-focused.popper-open)
+  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
+    .action-gutter {
+    pointer-events: visible;
+    opacity: 1;
+}
+
+.ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
 }
@@ -695,6 +740,7 @@
   overflow-x: auto;
   justify-content: center;
   vertical-align: middle;
+  align-items: center;
 }
 
 .ProseMirror .equation svg {
@@ -705,7 +751,7 @@
 .ProseMirror p .equation {
   display: inline;
   vertical-align: baseline;
-  margin: 0 5px;
+  padding: 0 5px;
 }
 
 .ProseMirror figcaption .equation-placeholder,
@@ -753,7 +799,6 @@
 .ProseMirror pre {
   cursor: pointer;
   display: block;
-  /*min-height: 34px;*/
   padding: 5px;
   width: auto;
   min-width: 200px;
@@ -841,7 +886,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /*z-index: 2;*/
   cursor: pointer;
   background-size: contain;
   background-position: center center;
@@ -921,35 +965,14 @@
   margin: 16px 64px;
 }
 
-.ProseMirror .footnote::before {
-  content: attr(contents);
-  position: relative;
-  cursor: pointer;
-  vertical-align: super;
-  z-index: 1;
-  font-size: 75%;
-  color: #0d79d0;
-}
-
 .ProseMirror .table-footer {
   font-size: 14px;
   padding-top: 8px;
 }
 
-.ProseMirror .table-footnotes-element:has(> div):not(:first-child)::before {
-  content: '';
-  border-bottom: 1px dashed #c9c9c9;
-  display: block;
-  margin-bottom: 8px;
-}
-
-.ProseMirror .table-footnotes-element {
-  counter-reset: table_footnote;
-}
 .delete-icon {
   position: absolute;
   right: -20px;
-  top: 13px;
   cursor: pointer;
   z-index: 1;
 }
@@ -968,76 +991,83 @@
 .delete-icon:hover svg path {
   fill: #353535;
 }
-.ProseMirror .table-footnotes-element > div,
-.ProseMirror .block-footnotes_element > .block > div,
-.ProseMirror .general-table-footnote
- {
-  position: relative;
+
+.ProseMirror .table-footer .inserted {
+  margin-bottom: 5px;
 }
 
-.ProseMirror
-  .table-footnotes-element
-  > div:not(:has(.uncited-footnote))
-  p::before {
-  counter-increment: table_footnote;
-  content: counter(table_footnote);
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  vertical-align: super;
+.ProseMirror .footnote-marker {
+  margin: 0 5px;
   font-size: 75%;
+  color: #0d79d0;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 10px;
+  vertical-align: super;
+  display: inline-block;
+  border-color: transparent;
+}
+
+.ProseMirror .footnote .footnote-marker {
+  color: inherit;
+  cursor: default;
+  margin-right: 2px;
+}
+.ProseMirror .footnote {
+  display: flex;
+  min-height: 35px;
+  align-items: center;
+  position: relative;
+  border: 1px solid transparent;
+}
+.ProseMirror .footnote .delete-icon {
+  visibility: hidden;
+}
+.ProseMirror .footnote .scroll-icon {
+  cursor: pointer;
+  visibility: hidden;
+  margin-left: -20px;
+  transition: 0.2s all;
+}
+.footnote-context-menu [data-tooltip-id='Scroll'] svg {
+  transform: rotate(180deg);
+}
+.ProseMirror .footnote:hover .scroll-icon {
+  visibility: visible;
+}
+.ProseMirror .footnote .uncited-footnote {
   margin-right: 4px;
 }
 
-.ProseMirror .table-footer p {
-  margin-bottom: 0px;
-  margin-top: 0px;
-}
-
-.table-footer > div {
-  position: relative;
-}
-.general-table-footnote, .table-footnotes-element div {
-  padding: 4px;
-}
-.general-table-footnote > p {
-  padding-bottom: 8px;
-}
-
-.ProseMirror .table-footnotes-element .footnote-selected,
-.ProseMirror .block-footnotes_element .footnote-selected,
-.ProseMirror .general-table-footnote.footnote-selected
-{
+.ProseMirror .footnote.footnote-selected:not(.selected-suggestion) {
   background-color: #f2fbfc;
   border: 1px solid #bce7f6;
 }
-.ProseMirror .table-footer .inserted.pending {
-  margin-bottom: 5px;
+.ProseMirror .footnote-marker-selected:not(.selected-suggestion) {
+  text-decoration: underline;
+  background-color: #f2fbfc;
+  border-color:  #0d79d0;
 }
-.ProseMirror .footnote-label {
-  vertical-align: super;
-  font-size: 75%;
-  margin-right: 8px;
-  cursor: pointer;
-}
-
-.ProseMirror .table-footnotes-element > div:has(.uncited-footnote) {
-  position: relative;
+.ProseMirror .table-footer p {
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
-.ProseMirror .uncited-footnote {
-  display: flex;
-  position: absolute;
-  margin-right: 4px;
-  top: 6px;
-  right: 100%;
+.ProseMirror .footnote.general-table-footnote {
+  padding: 4px;
+  margin-bottom: 8px;
+}
+
+.ProseMirror .table-footer .footnotes-element:has(> div):not(:first-child) {
+  border-top: 1px dashed #c9c9c9;
+  padding-top: 8px;
 }
 
 .graphical-abstract .listing {
   display: none;
 }
 
-.ProseMirror .graphical-abstract-figure.block-gutter {
+.ProseMirror .graphical-abstract .block-figure_element .block-gutter {
   visibility: hidden;
 }
 

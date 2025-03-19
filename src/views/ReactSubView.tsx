@@ -20,8 +20,8 @@ import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { Dispatch } from '../commands'
-import { Trackable } from '../types'
 import { EditorProps } from '../configs/ManuscriptsEditor'
+import { Trackable } from '../types'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
@@ -46,12 +46,13 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   node: T,
   getPos: () => number,
   view: ManuscriptEditorView,
-  classNames = ''
+  classNames: string[] = []
 ): HTMLDivElement {
   const container = document.createElement('div')
   container.classList.add('tools-panel')
-  if (classNames) {
-    container.classList.add(classNames)
+  if (classNames.length) {
+    container.classList.add(...classNames)
+    container.setAttribute('data-cy', classNames[0])
   }
   container.setAttribute('contenteditable', 'false')
 

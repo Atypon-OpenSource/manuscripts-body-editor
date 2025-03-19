@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import {
+  isFootnoteNode,
+  isGeneralTableFootnoteNode,
+  ManuscriptEditorView,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-export const placeholderWidget =
+const placeholderWidget =
   (placeholder: string) =>
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
     const element = document.createElement('span')
@@ -26,14 +32,24 @@ export const placeholderWidget =
     element.textContent = placeholder
     element.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
-      view.dispatch(
-        view.state.tr.setSelection(
-          TextSelection.create(view.state.tr.doc, getPos() as number)
-        )
-      )
+      const pos = getPos() as number
+      const selection = TextSelection.create(view.state.tr.doc, pos)
+      view.dispatch(view.state.tr.setSelection(selection))
     })
     return element
   }
+
+const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
+  if (!parent || parent.textContent.length) {
+    return
+  }
+  if (parent.type === schema.nodes.body) {
+    return 'Start typing here...'
+  }
+  if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
+    return 'Type new footnote here'
+  }
+}
 
 /**
  * This plugin adds a placeholder decoration to empty nodes
@@ -44,19 +60,15 @@ export default () =>
       decorations: (state) => {
         const decorations: Decoration[] = []
 
-        const decorate = (node: ManuscriptNode, pos: number) => {
-          const { placeholder } = node.attrs
-
-          if (
-            placeholder &&
-            !node.isAtom &&
-            node.type.isBlock &&
-            node.childCount === 0
-          ) {
+        state.doc.descendants((node, pos, parent) => {
+          if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
             if (node.type === node.type.schema.nodes.paragraph) {
-              decorations.push(
-                Decoration.widget(pos + 1, placeholderWidget(placeholder))
-              )
+              const text = getParagraphPlaceholderText(parent)
+              if (text) {
+                decorations.push(
+                  Decoration.widget(pos + 1, placeholderWidget(text))
+                )
+              }
             } else {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
@@ -65,9 +77,7 @@ export default () =>
               )
             }
           }
-        }
-
-        state.doc.descendants(decorate)
+        })
 
         return DecorationSet.create(state.doc, decorations)
       },

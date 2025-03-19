@@ -69,6 +69,7 @@ export const initMathJax = () => {
 }
 
 export const renderMath = (node: HTMLElement) => {
+  /* eslint-disable */
   //@ts-ignore
   if (!window.MathJax) {
     initMathJax()
@@ -90,6 +91,7 @@ export const renderMath = (node: HTMLElement) => {
       window.MathJax.typeset([node])
     }
   }
+  /* eslint-enable */
 }
 
 function awaitMounting(node: HTMLElement) {

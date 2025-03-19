@@ -16,9 +16,9 @@
 
 import { FigureNode, ManuscriptNodeView } from '@manuscripts/transform'
 
+import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import { Trackable } from '../types'
 
 export class FigureView
   extends BaseNodeView<Trackable<FigureNode>>
@@ -26,14 +26,15 @@ export class FigureView
 {
   protected container: HTMLElement
 
-  public initialise = () => {
+  public initialise() {
     this.createDOM()
     this.updateContents()
   }
 
   public ignoreMutation = () => true
 
-  public updateContents = () => {
+  public updateContents() {
+    super.updateContents()
     while (this.container.hasChildNodes()) {
       this.container.removeChild(this.container.firstChild as Node)
     }
@@ -66,9 +67,8 @@ export class FigureView
     return element
   }
 
-  protected createDOM = () => {
+  protected createDOM() {
     this.dom = document.createElement('figure')
-    this.dom.setAttribute('id', this.node.attrs.id)
 
     this.container = document.createElement('div')
     this.container.className = 'figure'

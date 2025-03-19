@@ -15,18 +15,26 @@
  */
 
 import { MenuSpec } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import {
+  getGroupCategories,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { toggleMark } from 'prosemirror-commands'
 import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
 
 import {
+  activateSearchReplace,
   addInlineComment,
   blockActive,
   canInsert,
-  insertAbstract,
-  insertBackMatterSection,
+  insertAbstractSection,
+  insertAffiliation,
+  insertAward,
+  insertBackmatterSection,
   insertBlock,
+  insertBoxElement,
   insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
@@ -39,12 +47,15 @@ import {
   insertSection,
   markActive,
 } from './commands'
+import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
+import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 
 export const getEditorMenus = (
@@ -52,6 +63,31 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
+  const props = getEditorProps(state)
+
+  const insertBackmatterSectionMenu = (category: SectionCategory) => {
+    const command = insertBackmatterSection(category)
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
+  const insertAbstractsSectionMenu = (category: SectionCategory) => {
+    const command =
+      category.group === 'abstracts-graphic'
+        ? insertGraphicalAbstract(category)
+        : insertAbstractSection(category)
+
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
 
   const edit: MenuSpec = {
     id: 'edit',
@@ -94,8 +130,36 @@ export const getEditorMenus = (
         isEnabled: isCommandValid(deleteClosestParentElement),
         run: doCommand(deleteClosestParentElement),
       },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'find-replace',
+        role: 'find-replace',
+        label: 'Find and replace',
+        shortcut: {
+          mac: 'CommandOrControl+Shift+H',
+          pc: 'CommandOrControl+Shift+H',
+        },
+        isEnabled: isCommandValid(activateSearchReplace),
+        run: doCommand(activateSearchReplace),
+      },
     ],
   }
+
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
+  const abstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts'
+  )
+  const graphicalAbstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts-graphic'
+  )
+  const allAbstractsCategories = [
+    ...abstractsCategories,
+    ...graphicalAbstractsCategories,
+  ]
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
@@ -107,22 +171,28 @@ export const getEditorMenus = (
         isEnabled: true,
         submenu: [
           {
-            id: 'insert-abstract',
-            label: 'Abstract',
-            isEnabled: isCommandValid(insertAbstract),
-            run: doCommand(insertAbstract),
-          },
-          {
-            id: 'insert-graphical-abstract',
-            label: 'Graphical Abstract',
-            isEnabled: isCommandValid(insertGraphicalAbstract),
-            run: doCommand(insertGraphicalAbstract),
+            id: 'insert-abstract-types',
+            label: 'Abstract Types',
+            isEnabled: true,
+            submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
           },
           {
             id: 'insert-contributors',
-            label: 'Authors & Affiliations',
+            label: 'Authors',
             isEnabled: isCommandValid(insertContributors),
             run: doCommand(insertContributors),
+          },
+          {
+            id: 'insert-contributors',
+            label: 'Affiliations',
+            isEnabled: isCommandValid(insertAffiliation),
+            run: doCommand(insertAffiliation),
+          },
+          {
+            id: 'insert-awards',
+            label: 'Funder Information',
+            isEnabled: isCommandValid(insertAward),
+            run: doCommand(insertAward),
           },
           {
             id: 'insert-keywords',
@@ -136,90 +206,7 @@ export const getEditorMenus = (
         id: 'back-matter',
         label: 'Author Notes',
         isEnabled: true,
-        submenu: [
-          {
-            id: 'insert-acknowledgements',
-            label: 'Acknowledgements',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:acknowledgement')
-            ),
-          },
-          {
-            id: 'insert-availability',
-            label: 'Availability',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:availability')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:availability')
-            ),
-          },
-          {
-            id: 'insert-coi-statement',
-            label: 'COI Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:competing-interests')
-            ),
-          },
-          {
-            id: 'insert-con',
-            label: 'Contributed-by Information',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:con')
-            ),
-            run: doCommand(insertBackMatterSection('MPSectionCategory:con')),
-          },
-          {
-            id: 'insert-ethics-statement',
-            label: 'Ethics Statement',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:ethics-statement')
-            ),
-          },
-          {
-            id: 'insert-financial-disclosure',
-            label: 'Financial Disclosure',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:financial-disclosure')
-            ),
-          },
-          {
-            id: 'insert-supplementary-material',
-            label: 'Supplementary Material',
-            isEnabled: isCommandValid(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
-              )
-            ),
-            run: doCommand(
-              insertBackMatterSection(
-                'MPSectionCategory:supplementary-material'
-              )
-            ),
-          },
-          {
-            id: 'insert-supported-by',
-            label: 'Supported By',
-            isEnabled: isCommandValid(
-              insertBackMatterSection('MPSectionCategory:supported-by')
-            ),
-            run: doCommand(
-              insertBackMatterSection('MPSectionCategory:supported-by')
-            ),
-          },
-        ],
+        submenu: categories.map(insertBackmatterSectionMenu),
       },
       {
         id: 'insert-section',
@@ -266,6 +253,16 @@ export const getEditorMenus = (
         role: 'separator',
       },
       {
+        id: 'insert-boxed-text',
+        label: 'Boxed Text',
+        shortcut: {
+          mac: 'Option+CommandOrControl+B',
+          pc: 'CommandOrControl+Option+B',
+        },
+        isEnabled: isCommandValid(insertBoxElement),
+        run: doCommand(insertBoxElement),
+      },
+      {
         id: 'insert-figure-element',
         label: 'Figure Panel',
         shortcut: {
@@ -274,6 +271,12 @@ export const getEditorMenus = (
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.figure_element)),
         run: doCommand(insertBlock(schema.nodes.figure_element)),
+      },
+      {
+        id: 'insert-image-element',
+        label: 'Simple Image',
+        isEnabled: isCommandValid(canInsert(schema.nodes.image_element)),
+        run: doCommand(insertBlock(schema.nodes.image_element)),
       },
       {
         id: 'insert-table-element',
@@ -287,6 +290,13 @@ export const getEditorMenus = (
       },
       {
         role: 'separator',
+      },
+      {
+        id: 'insert-embed-media',
+        label: 'Embedded Media',
+        isActive: blockActive(schema.nodes.embed)(state),
+        isEnabled: isCommandValid(canInsert(schema.nodes.embed)),
+        run: () => openEmbedDialog(editor.view),
       },
       {
         id: 'insert-link',
@@ -353,7 +363,13 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+F',
         },
         isEnabled: isCommandValid(canInsert(schema.nodes.inline_footnote)),
-        run: doCommand(insertInlineFootnote('footnote')),
+        run: doCommand(insertInlineFootnote),
+      },
+      {
+        id: 'insert-special-character',
+        label: 'Special Characters',
+        isEnabled: isCommandValid(canInsert(schema.nodes.text)),
+        run: () => openInsertSpecialCharacterDialog(editor.view),
       },
       {
         id: 'insert-comment',
@@ -442,7 +458,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-bullet-list',
-        label: 'Bullet List',
+        label: 'Bulleted list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'bullet')),
         submenu: [
@@ -462,7 +478,7 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-ordered-list',
-        label: 'Ordered List',
+        label: 'Ordered list',
         component: ListMenuItem,
         isEnabled: isCommandValid(insertList(schema.nodes.list, 'order')),
         submenu: [

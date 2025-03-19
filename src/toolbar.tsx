@@ -20,12 +20,14 @@ import {
   ToolbarCitationIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
+  ToolbarIndentIcon,
   ToolbarItalicIcon,
   ToolbarOrderedListIcon,
   ToolbarSubscriptIcon,
   ToolbarSuperscriptIcon,
   ToolbarTableIcon,
   ToolbarUnderlineIcon,
+  ToolbarUnindentIcon,
   ToolbarUnorderedListIcon,
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
@@ -44,6 +46,10 @@ import {
   insertList,
   markActive,
 } from './commands'
+import {
+  changeIndentation,
+  isIndentationAllowed,
+} from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 
 export interface ToolbarButtonConfig {
@@ -68,6 +74,20 @@ export interface ToolbarConfig {
 }
 
 export const toolbar: ToolbarConfig = {
+  indentation: {
+    indent: {
+      title: 'Indent',
+      content: <ToolbarIndentIcon />,
+      isEnabled: isIndentationAllowed('indent'),
+      run: changeIndentation('indent'),
+    },
+    unindent: {
+      title: 'Unindent',
+      content: <ToolbarUnindentIcon />,
+      isEnabled: isIndentationAllowed('unindent'),
+      run: changeIndentation('unindent'),
+    },
+  },
   style: {
     bold: {
       title: 'Toggle bold',
@@ -109,7 +129,7 @@ export const toolbar: ToolbarConfig = {
   },
   list: {
     bullet_list: {
-      title: 'Wrap in bullet list',
+      title: 'Bulleted list',
       content: <ToolbarUnorderedListIcon />,
       isActive: blockActive(schema.nodes.list),
       isEnabled: insertList(schema.nodes.list, 'bullet'),
@@ -120,7 +140,7 @@ export const toolbar: ToolbarConfig = {
       },
     },
     ordered_list: {
-      title: 'Wrap in ordered list',
+      title: 'Ordered list',
       content: <ToolbarOrderedListIcon />,
       isActive: blockActive(schema.nodes.list),
       isEnabled: insertList(schema.nodes.list, 'order'),

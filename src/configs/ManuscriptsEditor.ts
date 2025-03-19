@@ -16,9 +16,9 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { SectionCategory, UserProfile } from '@manuscripts/json-schema'
+import { UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { Location, NavigateFunction } from 'react-router-dom'
@@ -27,9 +27,11 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
-import { handleScrollToBibliographyItem } from '../lib/helpers'
-import { handlePaste, transformPasted } from '../lib/paste'
+import { handleScrollToSelectedTarget } from '../lib/helpers'
+import { handlePaste, transformPasted, transformPastedHTML } from '../lib/paste'
+import { INIT_META } from '../lib/plugins'
 import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
@@ -56,11 +58,17 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-  sectionCategories: SectionCategory[]
+  sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
   dispatch?: Dispatch
+  onEditorClick: (
+    pos: number,
+    node: ManuscriptNode,
+    nodePos: number,
+    event: MouseEvent
+  ) => void
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
@@ -90,11 +98,14 @@ export const createEditorView = (
     dispatchTransaction: dispatch,
     nodeViews: views(props, dispatch),
     attributes: props.attributes,
+    transformPastedHTML,
     transformPasted,
     handlePaste,
     clipboardParser,
-    handleScrollToSelection: handleScrollToBibliographyItem,
+    handleScrollToSelection: handleScrollToSelectedTarget,
+    transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {
+      props.onEditorClick(pos, node, nodePos, event)
       // This to prevent changing editor selection when clicking on table cell context menu button
       if (
         event?.target &&
@@ -108,7 +119,7 @@ export const createEditorView = (
   })
 
   // running an init transaction allowing plugins to caught up with the document for the first time
-  const tr = view.state.tr.setMeta('INIT', true)
+  const tr = view.state.tr.setMeta(INIT_META, true)
 
   const nextState = view.state.apply(tr)
   view.updateState(nextState)

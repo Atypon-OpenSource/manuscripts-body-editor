@@ -15,6 +15,7 @@
  */
 
 import { TableElementNode } from '@manuscripts/transform'
+
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
@@ -26,24 +27,6 @@ export class TableElementView extends BlockView<TableElementNode> {
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.contentDOM)
-  }
-
-  public updateContents = () => {
-    const { suppressHeader, suppressFooter } = this.node.attrs
-
-    this.dom.classList.toggle('suppress-header', suppressHeader)
-    this.dom.classList.toggle('suppress-footer', suppressFooter)
-
-    if (this.contentDOM) {
-      this.contentDOM.setAttribute(
-        'data-paragraph-style',
-        this.node.attrs.paragraphStyle
-      )
-      this.contentDOM.setAttribute(
-        'data-table-style',
-        this.node.attrs.tableStyle
-      )
-    }
   }
 }
 
