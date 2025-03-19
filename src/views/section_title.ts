@@ -31,7 +31,14 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
     this.dom.appendChild(this.contentDOM)
 
     const $pos = this.view.state.doc.resolve(this.getPos())
-    if ($pos.parent.type === schema.nodes.bibliography_section) {
+
+    const protectedSectionTitles = [
+      schema.nodes.bibliography_section,
+      schema.nodes.footnotes_section,
+      schema.nodes.graphical_abstract_section,
+    ]
+
+    if (protectedSectionTitles.includes($pos.parent.type)) {
       this.contentDOM.setAttribute('contenteditable', 'false')
     }
   }
