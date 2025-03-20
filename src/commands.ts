@@ -1659,10 +1659,16 @@ export const addRows =
   (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
     if (dispatch) {
       const { tr } = state
-      const rect = selectedRect(state)
+      let rect = selectedRect(state)
       const selectedRows = rect.bottom - rect.top
       for (let i = 0; i < selectedRows; i++) {
         addRow(tr, rect, rect[direction])
+        // this to make sure next row has tracking attributes, so each step of addRow has a different location
+        rect = {
+          ...selectedRect(state.apply(tr)),
+          top: rect.top + 1,
+          bottom: rect.bottom + 1,
+        }
       }
       dispatch(tr)
     }
