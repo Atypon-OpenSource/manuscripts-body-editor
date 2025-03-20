@@ -87,9 +87,10 @@ export const insertFootnotesSection = (tr: ManuscriptTransaction) => {
       ? backmatterNode.content.child(backmatterNode.content.childCount - 1)
       : null
 
-  const insertPos = lastChild
-    ? backmatterPos + backmatterNode.content.size - lastChild.nodeSize // Insert before last child (refernces section)
-    : backmatterPos + backmatterNode.content.size // Insert at the end of backmatter
+  const insertPos =
+    lastChild && lastChild.type === schema.nodes.bibliography_section
+      ? backmatterPos + backmatterNode.content.size - lastChild.nodeSize // Insert before last child (refernces section)
+      : backmatterPos + backmatterNode.content.size // Insert at the end of backmatter
 
   const pos = tr.mapping.map(insertPos)
 
