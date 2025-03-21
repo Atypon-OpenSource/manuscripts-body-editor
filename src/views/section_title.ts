@@ -17,7 +17,6 @@
 import { schema, SectionTitleNode } from '@manuscripts/transform'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionLevel } from '../lib/context-menu'
 import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -64,10 +63,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
         // the first level is hidden
         // other levels are shifted by 1
       } else {
-        this.contentDOM.setAttribute(
-          'data-placeholder',
-          `${sectionLevel(level)} heading`
-        )
+        this.contentDOM.setAttribute('data-placeholder', `Subsection Heading`)
       }
     }
     if (sectionTitleState && sectionNumber) {
