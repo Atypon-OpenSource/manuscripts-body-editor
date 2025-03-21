@@ -59,6 +59,7 @@ const readonlyTypes = [
   schema.nodes.keywords,
   schema.nodes.bibliography_element,
   schema.nodes.bibliography_section,
+  schema.nodes.footnotes_section,
 ]
 
 const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
