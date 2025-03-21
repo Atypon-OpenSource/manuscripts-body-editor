@@ -40,7 +40,7 @@ function createMenuItem(
   isDisabled = false,
   isSelected = false
 ) {
-  const item = document.createElement('button')
+  const item = document.createElement('div')
   item.className = `menu-item ${isDisabled ? 'disabled' : ''} ${
     isSelected ? 'selected' : ''
   }`
