@@ -646,14 +646,22 @@ export const insertInlineEquation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const sourcePos = state.selection.from - 1
-
-  const tr = state.tr.replaceSelectionWith(
-    state.schema.nodes.inline_equation.create({
-      format: 'tex',
-      contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
-    })
-  )
+  let sourcePos = state.selection.from - 1
+  const tr = state.tr
+  // This is temporary to not allow adding equation with link content
+  if (state.selection.$from.node().type === schema.nodes.link) {
+    tr.setSelection(
+      TextSelection.create(tr.doc, state.selection.$from.end() + 1)
+    )
+    sourcePos = tr.selection.from - 1
+  } else {
+    tr.replaceSelectionWith(
+      state.schema.nodes.inline_equation.create({
+        format: 'tex',
+        contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
+      })
+    )
+  }
 
   if (dispatch) {
     const selection = NodeSelection.create(
