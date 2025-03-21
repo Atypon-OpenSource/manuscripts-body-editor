@@ -279,7 +279,7 @@ export const isIndentationAllowed =
         schema.nodes.section,
         schema.nodes.body,
       ].includes(parentNode?.type)
-      
+
       const isUnindentNotAllowed = parentNode?.type !== schema.nodes.section
 
       if (action === 'indent' && isIndentNotAllowed) {
@@ -467,7 +467,9 @@ export const unindentParagraph =
     tr.delete(paragraphPos, parentSectionEnd)
     tr.insert(paragraphPos + 2, newSection)
 
-    tr.setSelection(TextSelection.create(tr.doc, parentSectionEnd + 2))
+    tr.setSelection(
+      TextSelection.create(tr.doc, tr.mapping.map(paragraphPos) + 4)
+    )
 
     dispatch(skipTracking(tr))
     view?.focus()
