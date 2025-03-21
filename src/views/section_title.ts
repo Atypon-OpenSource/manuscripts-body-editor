@@ -25,6 +25,12 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
+  public protectedSectionTitles = [
+    schema.nodes.bibliography_section,
+    schema.nodes.footnotes_section,
+    schema.nodes.graphical_abstract_section,
+  ]
+
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
@@ -32,13 +38,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
 
     const $pos = this.view.state.doc.resolve(this.getPos())
 
-    const protectedSectionTitles = [
-      schema.nodes.bibliography_section,
-      schema.nodes.footnotes_section,
-      schema.nodes.graphical_abstract_section,
-    ]
-
-    if (protectedSectionTitles.includes($pos.parent.type)) {
+    if (this.protectedSectionTitles.includes($pos.parent.type)) {
       this.contentDOM.setAttribute('contenteditable', 'false')
     }
   }
