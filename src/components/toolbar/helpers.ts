@@ -245,45 +245,53 @@ export const promoteParagraphToSection = (
   view && view.focus()
 }
 
-export const canIndent = () => (state: EditorState) => {
-  const { $from } = state.selection
-  const nodeType = $from.node().type
-
-  const allowedNodeTypes = [schema.nodes.section_title, schema.nodes.paragraph]
-  if (!allowedNodeTypes.includes(nodeType)) {
-    return false
-  }
-
-  const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
-  const isDeletedNode = isDeleted($from.node($from.depth))
-  if (!isInBody || isDeletedNode) {
-    return false
-  }
-
-  const isParagraph = nodeType === schema.nodes.paragraph
-  if (isParagraph) {
-    const parentNode = $from.node($from.depth - 1)
-    // Allow indentation if the parent is a section or body (e.g., for orphan paragraphs like empty submissions)
-    if (
-      parentNode?.type !== schema.nodes.section &&
-      parentNode?.type !== schema.nodes.body
-    ) {
-      return false
-    }
-  }
-
-  return true
-}
-
-export const indent =
-  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+export const isIndentationAllowed =
+  (action: string) => (state: EditorState) => {
     const { $from } = state.selection
     const nodeType = $from.node().type
-    if (nodeType === schema.nodes.section_title) {
-      indentSection()(state, dispatch, view)
-    } else if (nodeType === schema.nodes.paragraph) {
-      indentParagraph()(state, dispatch, view)
+
+    const allowedNodeTypes = [
+      schema.nodes.section_title,
+      schema.nodes.paragraph,
+    ]
+    if (!allowedNodeTypes.includes(nodeType)) {
+      return false
     }
+
+    const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
+    const isDeletedNode = isDeleted($from.node($from.depth))
+    if (!isInBody || isDeletedNode) {
+      return false
+    }
+
+    // It is not allowed to unindent the top level parent sections, headers and paragraphs
+    if (action === 'unindent') {
+      const grandparentNode = $from.node($from.depth - 2)
+      if (grandparentNode?.type === schema.nodes.body) {
+        return false
+      }
+    }
+
+    if (nodeType === schema.nodes.paragraph) {
+      const parentNode = $from.node($from.depth - 1)
+
+      const isIndentNotAllowed = ![
+        schema.nodes.section,
+        schema.nodes.body,
+      ].includes(parentNode?.type)
+
+      const isUnindentNotAllowed = parentNode?.type !== schema.nodes.section
+
+      if (action === 'indent' && isIndentNotAllowed) {
+        return false
+      }
+
+      if (action === 'unindent' && isUnindentNotAllowed) {
+        return false
+      }
+    }
+
+    return true
   }
 
 export const indentSection =
@@ -348,12 +356,10 @@ export const indentParagraph =
     const sectionStart = $from.start(sectionDepth)
     const sectionEnd = $from.end(sectionDepth)
 
-    const sectionTitle: SectionTitleNode = schema.nodes.section_title.create()
-
     // Build section content
-    const sectionContent = Fragment.from(sectionTitle).append(
-      parentSection.content.cut(beforeParagraph - sectionStart)
-    )
+    const sectionContent = Fragment.from(
+      schema.nodes.section_title.create()
+    ).append(parentSection.content.cut(beforeParagraph - sectionStart))
 
     // Create new section
     const newSection = schema.nodes.section.create(
@@ -369,4 +375,121 @@ export const indentParagraph =
 
     dispatch(skipTracking(tr))
     view?.focus()
+  }
+
+export const unindentSection =
+  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    const {
+      selection: { $from },
+      schema,
+      tr,
+    } = state
+    const { nodes } = schema
+    const sectionDepth = $from.depth - 1
+    const section = $from.node(sectionDepth)
+    const beforeSection = $from.before(sectionDepth)
+    const sectionTitle = $from.node($from.depth)
+
+    const $beforeSection = tr.doc.resolve(beforeSection)
+    const beforeSectionOffset = $beforeSection.parentOffset
+    const afterSectionOffset = beforeSectionOffset + section.nodeSize
+
+    const parentSectionDepth = $from.depth - 2
+    const parentSection = $from.node(parentSectionDepth)
+    const startIndex = $from.index(parentSectionDepth)
+    const endIndex = $from.indexAfter(parentSectionDepth)
+    const beforeParentSection = $from.before(parentSectionDepth)
+    const afterParentSection = $from.after(parentSectionDepth)
+
+    const items = []
+
+    let offset = 0
+
+    if (startIndex > 0) {
+      const precedingSection = parentSection.cut(0, beforeSectionOffset)
+      items.push(precedingSection)
+      offset += precedingSection.nodeSize
+    }
+
+    items.push(section)
+
+    if (endIndex < parentSection.childCount) {
+      const fragment = Fragment.from(nodes.section_title.create()).append(
+        parentSection.content.cut(afterSectionOffset)
+      )
+
+      items.push(parentSection.copy(fragment))
+    }
+
+    tr.replaceWith(beforeParentSection, afterParentSection, items)
+
+    const anchor = beforeParentSection + offset + 2
+
+    tr.setSelection(
+      TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
+    )
+
+    dispatch(skipTracking(tr))
+    view && view.focus()
+  }
+
+export const unindentParagraph =
+  () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    const {
+      selection: { $from },
+      schema,
+      tr,
+    } = state
+
+    const paragraphPos = $from.before($from.depth)
+
+    const sectionDepth = $from.depth - 1
+    const section = $from.node(sectionDepth)
+    const afterSection = $from.after(sectionDepth)
+    const sectionStart = $from.start(sectionDepth)
+
+    const parentSectionDepth = sectionDepth - 1
+    const parentSection = $from.node(parentSectionDepth)
+    const parentSectionStart = $from.start(parentSectionDepth)
+    const parentSectionEnd = $from.end(parentSectionDepth)
+
+    let sectionContent = Fragment.from(schema.nodes.section_title.create())
+
+    sectionContent = sectionContent
+      .append(section.content.cut(paragraphPos - sectionStart))
+      .append(parentSection.content.cut(afterSection - parentSectionStart))
+
+    const newSection = schema.nodes.section.create(
+      { id: generateNodeID(schema.nodes.section) },
+      sectionContent
+    )
+
+    tr.delete(paragraphPos, parentSectionEnd)
+    tr.insert(paragraphPos + 2, newSection)
+
+    tr.setSelection(TextSelection.create(tr.doc, parentSectionEnd + 2))
+
+    dispatch(skipTracking(tr))
+    view?.focus()
+  }
+
+const indentationHandlers = {
+  section_title: {
+    indent: indentSection,
+    unindent: unindentSection,
+  },
+  paragraph: {
+    indent: indentParagraph,
+    unindent: unindentParagraph,
+  },
+}
+
+export const changeIndentation =
+  (action: 'indent' | 'unindent') =>
+  (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+    const { $from } = state.selection
+    const nodeName = $from.node().type.name as 'section_title' | 'paragraph'
+
+    const handler = indentationHandlers[nodeName]?.[action]
+    handler()(state, dispatch, view)
   }
