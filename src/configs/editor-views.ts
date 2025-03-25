@@ -54,11 +54,13 @@ import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
 import { EditorProps } from './ManuscriptsEditor'
+import alt_titles_section from '../views/alt_titles_section'
 
 export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
     alt_title: alt_title(props),
+    alt_titles_section: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     box_element: boxElement(props),

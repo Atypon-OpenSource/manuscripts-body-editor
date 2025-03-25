@@ -15,34 +15,42 @@
  */
 import {
   AltTitleNode,
+  AltTitlesSectionNode,
   ManuscriptEditorView,
   schema,
+  TitleNode,
 } from '@manuscripts/transform'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 import { arrowDown } from '../icons'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 
 export interface PluginState {
   collapsed: boolean
-  titleEnd: number | undefined
+  title: [TitleNode, number] | undefined
   runningTitle: [AltTitleNode, number] | undefined
   shortTitle: [AltTitleNode, number] | undefined
+  altTitlesSection: [AltTitlesSectionNode, number] | undefined
 }
 
 function getTitlesData(doc: ProseMirrorNode) {
-  let titleEnd: number | undefined
+  let title: [TitleNode, number] | undefined
   let runningTitle: [AltTitleNode, number] | undefined
   let shortTitle: [AltTitleNode, number] | undefined
+  let altTitlesSection: [AltTitlesSectionNode, number] | undefined
 
   doc.descendants((node, pos) => {
-    if (titleEnd && runningTitle && shortTitle) {
+    if (title && runningTitle && shortTitle && altTitlesSection) {
       return false
     }
     if (node.type === schema.nodes.title && node.nodeSize > 0) {
       // if title is empty we don't allow to edit alt titles
-      titleEnd = pos + node.nodeSize
+      title = [node as TitleNode, pos]
+    }
+    if (node.type === schema.nodes.alt_titles_section && node.nodeSize > 0) {
+      // if title is empty we don't allow to edit alt titles
+      altTitlesSection = [node as AltTitlesSectionNode, pos]
     }
     if (node.type === schema.nodes.alt_title) {
       if (node.attrs.type === 'running') {
@@ -53,7 +61,7 @@ function getTitlesData(doc: ProseMirrorNode) {
       }
     }
   })
-  return { titleEnd, runningTitle, shortTitle }
+  return { title, runningTitle, shortTitle, altTitlesSection }
 }
 
 function createAltTitlesButton(listener: () => void) {
@@ -123,23 +131,34 @@ export default () => {
         return null
       }
 
-      const { titleEnd, runningTitle, shortTitle } =
+      const { title, runningTitle, shortTitle, altTitlesSection } =
         altTitlesKey.getState(newState)!
       const schema = newState.schema
 
-      if (!titleEnd) {
+      if (!title) {
         return null
       }
-      if (!runningTitle) {
-        const title = schema.nodes.alt_title.create({
-          type: 'running',
-        })
-        tr.insert(titleEnd, title)
-      }
-      if (!shortTitle) {
-        const title = schema.nodes.alt_title.create({ type: 'short' })
-        const newPos = tr.mapping.map(titleEnd)
-        tr.insert(newPos, title)
+      const titleEnd = title[0].nodeSize + title[1]
+      if (!altTitlesSection) {
+        const section = schema.nodes.alt_titles_section.create({}, [
+          schema.nodes.alt_title.create({
+            type: 'running',
+          }),
+          schema.nodes.alt_title.create({ type: 'short' }),
+        ])
+        tr.insert(titleEnd, section)
+      } else {
+        if (!runningTitle) {
+          const title = schema.nodes.alt_title.create({
+            type: 'running',
+          })
+          tr.insert(titleEnd, title)
+        }
+        if (!shortTitle) {
+          const title = schema.nodes.alt_title.create({ type: 'short' })
+          const newPos = tr.mapping.map(titleEnd)
+          tr.insert(newPos, title)
+        }
       }
 
       return tr
@@ -148,57 +167,26 @@ export default () => {
       decorations: (state) => {
         const decorations: Decoration[] = []
         const pState = altTitlesKey.getState(state)
-        if (!pState) {
+        if (!pState || !pState.title) {
           return DecorationSet.empty
         }
 
         if (!pState.collapsed) {
-          let lastTitleEnd: number | undefined
           state.doc.descendants((node, pos) => {
-            if (node.type === state.schema.nodes.alt_title) {
+            if (node.type === state.schema.nodes.alt_titles_section) {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
-                  class: 'manuscript-alt-title-open',
+                  class: 'alt-titles-section-open',
                 })
               )
-              lastTitleEnd = pos + node.nodeSize
             }
           })
-          if (lastTitleEnd) {
-            decorations.push(
-              Decoration.widget(
-                lastTitleEnd,
-                function createClosingPanel(view: EditorView) {
-                  const closingPanel = document.createElement('div')
-                  closingPanel.classList.add('alt-titles-closing-panel')
-                  const button = document.createElement('button')
-                  button.classList.add(
-                    'alt-titles-closing-button',
-                    'button-reset'
-                  )
-
-                  button.innerHTML = arrowDown
-                  button.addEventListener('click', () => {
-                    const tr = view.state.tr.setMeta(altTitlesKey, {
-                      collapsed: true,
-                    })
-                    view.dispatch(tr)
-                  })
-                  closingPanel.appendChild(button)
-                  return closingPanel
-                },
-                {
-                  side: -1,
-                  key: 'title-' + lastTitleEnd,
-                }
-              )
-            )
-          }
-        } else {
+        } else if (pState.title[0].textContent.length) {
           // showing opening button only when titles are collapsed
+          const titleEnd = pState.title[0].nodeSize + pState.title[1]
           decorations.push(
             Decoration.widget(
-              pState.titleEnd! - 1,
+              titleEnd - 1,
               (view: ManuscriptEditorView) => {
                 return createAltTitlesButton(() => {
                   const tr = view.state.tr.setMeta(altTitlesKey, {
@@ -209,7 +197,7 @@ export default () => {
               },
               {
                 side: -1,
-                key: 'title-' + pState.titleEnd,
+                key: 'title-' + titleEnd,
               }
             )
           )

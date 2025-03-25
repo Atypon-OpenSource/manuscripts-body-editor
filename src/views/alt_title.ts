@@ -35,6 +35,7 @@ export class AltTitleView
     const label = document.createElement('div')
     label.classList.add('alt-title-label')
     label.innerHTML = this.node.attrs.type + ' title'
+    label.contentEditable = 'false'
     this.dom.setAttribute('data-type', this.node.attrs.type)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('alt-title-text')
