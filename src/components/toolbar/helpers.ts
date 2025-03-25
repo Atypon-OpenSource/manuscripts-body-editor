@@ -279,7 +279,7 @@ export const isIndentationAllowed =
         schema.nodes.section,
         schema.nodes.body,
       ].includes(parentNode?.type)
-      
+
       const isUnindentNotAllowed = parentNode?.type !== schema.nodes.section
 
       if (action === 'indent' && isIndentNotAllowed) {
