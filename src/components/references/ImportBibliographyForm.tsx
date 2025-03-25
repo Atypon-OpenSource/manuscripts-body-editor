@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-// Plugins supporting the formats for citation-js
-import '@citation-js/plugin-bibtex'
-import '@citation-js/plugin-ris'
-import '@citation-js/plugin-doi'
-import '@citation-js/plugin-csl'
-import '@citation-js/plugin-pubmed'
-import '@citation-js/plugin-enw'
-
-import * as Citation from '@citation-js/core'
+import { transformBibliography } from '@manuscripts/library'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -34,13 +26,11 @@ import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-export interface ExtBibliographyItemAttrs extends BibliographyItemAttrs {
-  DOI?: string
-  'container-title'?: string
-}
+import { ReferenceLine } from './ReferenceLine'
+
 export interface ImportBibFormProps {
   onCancel: () => void
-  onSave: (data: ExtBibliographyItemAttrs[]) => void
+  onSave: (data: BibliographyItemAttrs[]) => void
 }
 
 export const ImportBibliographyForm = ({
@@ -52,7 +42,7 @@ export const ImportBibliographyForm = ({
   const formik = useFormik({
     initialValues: {
       content: '',
-      preview: '',
+      err: '',
       data: [],
     },
     onSubmit: (values, { setSubmitting }) => {
@@ -62,45 +52,35 @@ export const ImportBibliographyForm = ({
     onReset: onCancel,
   })
 
-  const generateData = useCallback(async (fileContent: string) => {
+  const setDataField = useCallback(async (fileContent: string) => {
     const NO_CITATION = 'No citation available'
     const ERROR_CITATION = 'Error generating citation'
-    console.log('generateData', fileContent)
     try {
       if (!fileContent.trim()) {
-        formik.setFieldValue('preview', NO_CITATION)
+        formik.setFieldValue('err', NO_CITATION)
         formik.setFieldValue('data', [])
         return
       }
+      const data = await transformBibliography(fileContent.trim())
 
-      const cite = await Citation.Cite.async(fileContent.trim())
-      const formattedCitation = cite.format('bibliography', {
-        format: 'html',
-      })
-
-      formik.setFieldValue(
-        'preview',
-        cite.data.length ? formattedCitation : NO_CITATION
-      )
-      formik.setFieldValue('data', cite.data.length ? cite.data : [])
+      formik.setFieldValue('data', data ? data : [])
+      formik.setFieldValue('err', '')
     } catch (error) {
       console.error('Citation generation error:', error)
-      formik.setFieldValue('preview', ERROR_CITATION)
+      formik.setFieldValue('err', ERROR_CITATION)
       formik.setFieldValue('data', [])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const debouncedGenerateData = useMemo(
-    () => debounce(generateData, 300),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    () => debounce(setDataField, 300),
+    [setDataField]
   )
 
   useEffect(() => {
     debouncedGenerateData(formik.values.content)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.content])
+  }, [debouncedGenerateData, formik.values.content])
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -163,14 +143,13 @@ export const ImportBibliographyForm = ({
         value={formik.values.content}
         onChange={formik.handleChange}
       ></TextArea>
-      <LabelContainer>
-        <Label>Preview</Label>
-      </LabelContainer>
-      <Preview
-        dangerouslySetInnerHTML={{
-          __html: formik.values.preview || 'No preview...',
-        }}
-      />
+
+      <Preview>
+        {formik.values.err}
+        {formik.values.data.map((item: BibliographyItemAttrs) => (
+          <ReferenceLine item={item} key={item.id} />
+        ))}
+      </Preview>
       <ButtonContainer>
         <SecondaryButton type="reset">Cancel</SecondaryButton>
         <PrimaryButton
@@ -187,12 +166,12 @@ export const ImportBibliographyForm = ({
 }
 
 const Preview = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${(props) => 4 * props.theme.grid.unit}px;
   min-height: 50px;
-  border-radius: ${(props) => props.theme.grid.radius.small};
-  background: ${(props) => props.theme.colors.background.primary};
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  color: ${(props) => props.theme.colors.text.primary};
+  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
+  margin-bottom: ${(props) => props.theme.grid.unit}px;
 `
 const LabelContainer = styled.div`
   display: flex;

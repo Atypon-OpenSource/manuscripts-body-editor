@@ -24,7 +24,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { ImportBibliographyForm } from './ImportBibliographyForm'
-
 export interface ImportBibliographyModalProps {
   onCancel: () => void
   onSave: (data: BibliographyItemAttrs[]) => void
@@ -41,8 +40,7 @@ export const ImportBibliographyModal: React.FC<
   const handleClose = () => setOpen(false)
 
   const handleSave = (data: BibliographyItemAttrs[]) => {
-    const bibliographyItems: BibliographyItemAttrs[] = data
-    onSave(bibliographyItems)
+    onSave(data)
     handleClose()
   }
 

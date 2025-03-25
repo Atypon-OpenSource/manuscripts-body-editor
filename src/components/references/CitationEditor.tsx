@@ -32,7 +32,6 @@ import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
-import { ExtBibliographyItemAttrs } from './ImportBibliographyForm'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
@@ -171,18 +170,12 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setSearching(false)
     setImporting(true)
   }
-  const handleSaveImport = (data: ExtBibliographyItemAttrs[]) => {
+  const handleSaveImport = (data: BibliographyItemAttrs[]) => {
     data.forEach((item) => {
-      // fix data
-      const { DOI, 'container-title': containerTitle, ...rest } = item
-      const updatedItem = {
-        ...rest,
-        id: generateID(ObjectTypes.BibliographyItem),
-        doi: DOI || item.doi,
-        containerTitle: containerTitle || item.containerTitle,
-      }
-      handleSave(updatedItem)
-      handleCite([updatedItem])
+      const newItem = { ...item }
+      newItem.id = generateID(ObjectTypes.BibliographyItem)
+      handleSave(newItem)
+      handleCite([newItem])
     })
   }
 
