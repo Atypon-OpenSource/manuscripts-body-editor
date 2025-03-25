@@ -88,7 +88,7 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
     target = view.domAtPos(selection.from).node as Element
   }
 
-  if (!target) {
+  if (!target || !(target instanceof HTMLElement)) {
     return false
   }
 
