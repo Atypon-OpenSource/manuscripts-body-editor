@@ -1143,28 +1143,6 @@ th:hover > .table-context-menu-button,
 .ProseMirror .block-container:hover .section-category-button {
   opacity: 1;
 }
-.section-category.menu {
-  border-radius: 8px;
-  border: 1px solid #e2e2e2;
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.3);
-}
-
-.section-category.menu .menu-item {
-  padding: 7px 8px 8px 16px;
-  box-sizing: border-box;
-  min-width: 176px;
-  height: 37px;
-  padding-right: 40px;
-  font-family: Lato;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24px;
-  position: relative;
-  background: none;
-  border: unset;
-  display: flex;
-}
 
 .section-category.menu .menu-item.selected:after {
   top: 10.5px;
@@ -1176,12 +1154,6 @@ th:hover > .table-context-menu-button,
   border-bottom: 2px solid #36b260;
   border-right: 2px solid #36b260;
   transform: rotate(45deg);
-}
-
-.section-category.menu .menu-item.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .section-category.tooltip {
