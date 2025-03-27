@@ -86,6 +86,7 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  findFootnotesSection,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -890,9 +891,14 @@ export const insertBackmatterSection =
 
     // check if reference node exist to insert before it.
     const bibliography = findBibliographySection(state.doc)
-    const pos = bibliography
-      ? bibliography.pos
-      : backmatter.pos + backmatter.node.content.size + 1
+
+    // check if footnotes node exist to insert before it.
+    const footnotesSection = findFootnotesSection(state.doc)
+
+    const pos =
+      footnotesSection?.pos ??
+      bibliography?.pos ??
+      backmatter.pos + backmatter.node.content.size + 1
 
     const attrs = { category: category.id }
     const node = schema.nodes.section.create(attrs, [

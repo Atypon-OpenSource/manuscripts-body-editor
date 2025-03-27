@@ -59,6 +59,7 @@ const readonlyTypes = [
   schema.nodes.keywords,
   schema.nodes.bibliography_element,
   schema.nodes.bibliography_section,
+  schema.nodes.footnotes_section,
 ]
 
 const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
@@ -245,7 +246,7 @@ export class ContextMenu {
 
   public showEditMenu = (target: Element) => {
     const menu = document.createElement('div')
-    menu.className = 'menu'
+    menu.className = 'menu edit-menu'
 
     const $pos = this.resolvePos()
     const isBox = isBoxElementSectionTitle($pos, this.node)
@@ -445,7 +446,7 @@ export class ContextMenu {
     }[]
   ) => {
     const submenu = document.createElement('div')
-    submenu.classList.add('menu-section', 'context-submenu')
+    submenu.classList.add('context-submenu')
     submenu.append(
       this.createSubmenuTrigger(submenuLabel),
       this.createMenuSection((section: HTMLElement) => {
