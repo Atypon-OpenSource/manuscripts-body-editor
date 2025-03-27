@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AltTitleNode,
   AltTitlesSectionNode,
@@ -24,8 +23,8 @@ import {
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-
 import { arrowDown } from '../icons'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 
 export interface PluginState {
   collapsed: boolean
@@ -45,11 +44,11 @@ function getTitlesData(doc: ProseMirrorNode) {
     if (title && runningTitle && shortTitle && altTitlesSection) {
       return false
     }
-    if (node.type === schema.nodes.title && node.textContent.length > 0) {
+    if (node.type === schema.nodes.title) {
       // if title is empty we don't allow to edit alt titles
       title = [node as TitleNode, pos]
     }
-    if (node.type === schema.nodes.alt_titles_section) {
+    if (node.type === schema.nodes.alt_titles) {
       altTitlesSection = [node as AltTitlesSectionNode, pos]
     }
     if (node.type === schema.nodes.alt_title) {
@@ -173,7 +172,7 @@ export default () => {
 
         if (!pState.collapsed) {
           state.doc.descendants((node, pos) => {
-            if (node.type === state.schema.nodes.alt_titles_section) {
+            if (node.type === state.schema.nodes.alt_titles) {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
                   class: 'alt-titles-section-open',

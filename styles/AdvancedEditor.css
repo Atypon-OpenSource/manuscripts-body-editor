@@ -1035,10 +1035,10 @@ figure.block:has(.equation.selected-suggestion) {
     opacity: 1;
   }
 }
-.ProseMirror .block-alt_titles_section {
+.ProseMirror .block-alt_titles {
   display: none;
 }
-.ProseMirror .block-alt_titles_section.alt-titles-section-open {
+.ProseMirror .block-alt_titles.alt-titles-section-open {
   display: contents; /* covering the sides to prevent cursor setting into the parent block element */
 }
 /* covering the sides to prevent cursor setting into the parent block element */
