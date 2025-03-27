@@ -47,7 +47,6 @@ import {
 import {
   Attrs,
   Fragment,
-  NodeRange,
   NodeType,
   ResolvedPos,
   Slice,
@@ -67,7 +66,6 @@ import {
   selectedRect,
 } from 'prosemirror-tables'
 import {
-  findWrapping,
   liftTarget,
   ReplaceAroundStep,
   ReplaceStep,
@@ -575,17 +573,9 @@ export const insertLink = (
     const text = selectedText()
     const attrs = {
       href: isLink(text) ? text.trim() : '',
+      text,
     }
-    const range = new NodeRange(
-      selection.$from,
-      selection.$to,
-      selection.$from.depth
-    )
-    const wrapping = findWrapping(range, schema.nodes.link, attrs)
-
-    if (wrapping) {
-      tr.wrap(range, wrapping)
-    }
+    tr.replaceWith(selection.from, selection.to, schema.nodes.link.create({attrs}))
   } else {
     tr.insert(state.selection.anchor, schema.nodes.link.create())
   }
@@ -646,22 +636,14 @@ export const insertInlineEquation = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  let sourcePos = state.selection.from - 1
-  const tr = state.tr
-  // This is temporary to not allow adding equation with link content
-  if (state.selection.$from.node().type === schema.nodes.link) {
-    tr.setSelection(
-      TextSelection.create(tr.doc, state.selection.$from.end() + 1)
-    )
-    sourcePos = tr.selection.from - 1
-  } else {
-    tr.replaceSelectionWith(
-      state.schema.nodes.inline_equation.create({
-        format: 'tex',
-        contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
-      })
-    )
-  }
+  const sourcePos = state.selection.from - 1
+
+  const tr = state.tr.replaceSelectionWith(
+    state.schema.nodes.inline_equation.create({
+      format: 'tex',
+      contents: selectedText().replace(/^\$/, '').replace(/\$$/, ''),
+    })
+  )
 
   if (dispatch) {
     const selection = NodeSelection.create(
