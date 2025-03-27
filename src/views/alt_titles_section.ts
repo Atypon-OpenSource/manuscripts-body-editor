@@ -16,11 +16,11 @@
 
 import { AltTitlesSectionNode } from '@manuscripts/transform'
 
+import { arrowDown } from '../icons'
+import { altTitlesKey } from '../plugins/alt-titles'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { altTitlesKey } from '../plugins/alt-titles'
-import { arrowDown } from '../icons'
 
 export class FigureElementView extends BlockView<
   Trackable<AltTitlesSectionNode>

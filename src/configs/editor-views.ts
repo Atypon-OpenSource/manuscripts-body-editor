@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
+import { NodeViewCreator } from '../types'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
+import alt_titles_section from '../views/alt_titles_section'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
 import awards from '../views/awards'
@@ -54,9 +57,11 @@ import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
 import { EditorProps } from './ManuscriptsEditor'
-import alt_titles_section from '../views/alt_titles_section'
 
-export default (props: EditorProps, dispatch: Dispatch) => {
+export default (
+  props: EditorProps,
+  dispatch: Dispatch
+): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
     alt_title: alt_title(props),
