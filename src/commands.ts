@@ -160,13 +160,13 @@ export const addToStart = (
 
 export const markActive =
   (type: ManuscriptMarkType) =>
-    (state: ManuscriptEditorState): boolean => {
-      const { from, $from, to, empty } = state.selection
+  (state: ManuscriptEditorState): boolean => {
+    const { from, $from, to, empty } = state.selection
 
-      return empty
-        ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
-        : state.doc.rangeHasMark(from, to, type)
-    }
+    return empty
+      ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
+      : state.doc.rangeHasMark(from, to, type)
+  }
 
 export const isNodeSelection = (
   selection: Selection
@@ -440,37 +440,37 @@ export const insertSupplement = (
 
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-      const position = findBlockInsertPosition(state)
-      if (position === null) {
-        return false
-      }
-
-      createBlock(nodeType, position, state, dispatch, undefined)
-
-      return true
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const position = findBlockInsertPosition(state)
+    if (position === null) {
+      return false
     }
+
+    createBlock(nodeType, position, state, dispatch, undefined)
+
+    return true
+  }
 
 export const deleteBlock =
   (typeToDelete: string) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch) => {
-      const { selection, tr } = state
-      const { $head } = selection
-      const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
+  (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    const { selection, tr } = state
+    const { $head } = selection
+    const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
 
-      if (!depth) {
-        return false
-      }
-
-      if (dispatch) {
-        const start = $head.start(depth)
-        const end = $head.end(depth)
-        tr.delete(start - 1, end + 1)
-        dispatch(tr)
-      }
-
-      return true
+    if (!depth) {
+      return false
     }
+
+    if (dispatch) {
+      const start = $head.start(depth)
+      const end = $head.end(depth)
+      tr.delete(start - 1, end + 1)
+      dispatch(tr)
+    }
+
+    return true
+  }
 
 export const insertBreak: EditorAction = (state, dispatch) => {
   const br = state.schema.nodes.hard_break.create()
@@ -807,124 +807,124 @@ export const insertBoxElement = (
 
 export const insertSection =
   (subsection = false) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-      const nodes = schema.nodes
-      const $pos = state.selection.$from
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const nodes = schema.nodes
+    const $pos = state.selection.$from
 
-      let pos
-      if (findParentNodeOfTypeClosestToPos($pos, nodes.bibliography_section)) {
-        //disallow insert (sub)section in bibliography_section
-        return false
-      } else if (subsection) {
-        pos =
-          findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
-        if (!pos) {
-          return false
-        }
-        //move pos inside the section for a subsection
-        pos -= 1
-      } else if (findParentNodeOfTypeClosestToPos($pos, nodes.box_element)) {
-        //only subsections are allowed for box_element, which should be
-        //handled before
-        return false
-      } else if (findParentNodeOfTypeClosestToPos($pos, nodes.body)) {
-        pos = findPosAfterParentSection($pos)
-      }
-
+    let pos
+    if (findParentNodeOfTypeClosestToPos($pos, nodes.bibliography_section)) {
+      //disallow insert (sub)section in bibliography_section
+      return false
+    } else if (subsection) {
+      pos =
+        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
       if (!pos) {
-        //this means one of 2 things:
-        //- the selection points outside the body
-        //- the selection points inside the body, but to an element without a parent section
-        //for both cases, insert the section at the end of the body
-        const body = findBody(state.doc)
-        pos = body.pos + body.node.content.size + 1
+        return false
       }
-
-      const section = nodes.section.createAndFill() as SectionNode
-      const tr = state.tr.insert(pos, section)
-
-      if (dispatch) {
-        // place cursor inside section title
-        const selection = TextSelection.create(tr.doc, pos + 2)
-        view?.focus()
-        dispatch(tr.setSelection(selection).scrollIntoView())
-      }
-      return true
+      //move pos inside the section for a subsection
+      pos -= 1
+    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.box_element)) {
+      //only subsections are allowed for box_element, which should be
+      //handled before
+      return false
+    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.body)) {
+      pos = findPosAfterParentSection($pos)
     }
+
+    if (!pos) {
+      //this means one of 2 things:
+      //- the selection points outside the body
+      //- the selection points inside the body, but to an element without a parent section
+      //for both cases, insert the section at the end of the body
+      const body = findBody(state.doc)
+      pos = body.pos + body.node.content.size + 1
+    }
+
+    const section = nodes.section.createAndFill() as SectionNode
+    const tr = state.tr.insert(pos, section)
+
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos + 2)
+      view?.focus()
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+    return true
+  }
 
 export const insertAbstractSection =
   (category: SectionCategory) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-      const abstracts = findAbstractsNode(state.doc)
-      const sections = findChildrenByType(abstracts.node, schema.nodes.section)
-      // Check if the section already exists
-      if (sections.some((s) => s.node.attrs.category === category.id)) {
-        return false
-      }
-
-      // check if graphical abstract node exist to insert before it.
-      const ga = findChildrenByType(
-        state.doc,
-        schema.nodes.graphical_abstract_section
-      )[0]
-
-      let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
-      if (category.id === 'abstract') {
-        pos = abstracts.pos + 1
-      }
-
-      const node = schema.nodes.section.create({ category: category.id }, [
-        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
-        schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
-      ])
-
-      const tr = state.tr.insert(pos, node)
-      if (dispatch) {
-        // place cursor inside section title
-        const selection = TextSelection.create(tr.doc, pos)
-        view?.focus()
-        dispatch(tr.setSelection(selection).scrollIntoView())
-      }
-
-      return true
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const abstracts = findAbstractsNode(state.doc)
+    const sections = findChildrenByType(abstracts.node, schema.nodes.section)
+    // Check if the section already exists
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
+      return false
     }
+
+    // check if graphical abstract node exist to insert before it.
+    const ga = findChildrenByType(
+      state.doc,
+      schema.nodes.graphical_abstract_section
+    )[0]
+
+    let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
+    if (category.id === 'abstract') {
+      pos = abstracts.pos + 1
+    }
+
+    const node = schema.nodes.section.create({ category: category.id }, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+      schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
+    ])
+
+    const tr = state.tr.insert(pos, node)
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos)
+      view?.focus()
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
+  }
 
 export const insertBackmatterSection =
   (category: SectionCategory) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-      const backmatter = findBackmatter(state.doc)
-      const sections = findChildrenByType(backmatter.node, schema.nodes.section)
-      // Check if the section already exists
-      if (sections.some((s) => s.node.attrs.category === category.id)) {
-        return false
-      }
-
-      // check if reference node exist to insert before it.
-      const bibliography = findBibliographySection(state.doc)
-
-      // check if footnotes node exist to insert before it.
-      const footnotesSection = findFootnotesSection(state.doc)
-
-      const pos =
-        footnotesSection?.pos ??
-        bibliography?.pos ??
-        backmatter.pos + backmatter.node.content.size + 1
-
-      const attrs = { category: category.id }
-      const node = schema.nodes.section.create(attrs, [
-        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
-      ])
-
-      const tr = state.tr.insert(pos, node)
-      if (dispatch) {
-        // place cursor inside section title
-        const selection = TextSelection.create(tr.doc, pos)
-        view?.focus()
-        dispatch(tr.setSelection(selection).scrollIntoView())
-      }
-
-      return true
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const backmatter = findBackmatter(state.doc)
+    const sections = findChildrenByType(backmatter.node, schema.nodes.section)
+    // Check if the section already exists
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
+      return false
     }
+
+    // check if reference node exist to insert before it.
+    const bibliography = findBibliographySection(state.doc)
+
+    // check if footnotes node exist to insert before it.
+    const footnotesSection = findFootnotesSection(state.doc)
+
+    const pos =
+      footnotesSection?.pos ??
+      bibliography?.pos ??
+      backmatter.pos + backmatter.node.content.size + 1
+
+    const attrs = { category: category.id }
+    const node = schema.nodes.section.create(attrs, [
+      schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+    ])
+
+    const tr = state.tr.insert(pos, node)
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos)
+      view?.focus()
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+
+    return true
+  }
 
 const findSelectedList = (selection: Selection) =>
   (selection instanceof NodeSelection &&
@@ -936,47 +936,47 @@ const findSelectedList = (selection: Selection) =>
 
 export const insertGraphicalAbstract =
   (category: SectionCategory) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-      const abstracts = findAbstractsNode(state.doc)
-      const sections = findChildrenByType(
-        abstracts.node,
-        schema.nodes.graphical_abstract_section
-      )
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const abstracts = findAbstractsNode(state.doc)
+    const sections = findChildrenByType(
+      abstracts.node,
+      schema.nodes.graphical_abstract_section
+    )
 
-      // Check if the section already exists
-      if (sections.some((s) => s.node.attrs.category === category.id)) {
-        return false
-      }
-
-      const ga = findChildrenByType(
-        state.doc,
-        schema.nodes.graphical_abstract_section
-      )[0]
-
-      // insert at the end of abstracts section
-      let pos = abstracts.pos + abstracts.node.content.size + 1
-      // abstract-key-image insert before abstract-graphical
-      pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
-
-      const node = schema.nodes.graphical_abstract_section.createAndFill(
-        { category: category.id },
-        [
-          schema.nodes.section_title.create({}, schema.text(category.titles[0])),
-          createAndFillFigureElement(state),
-        ]
-      ) as GraphicalAbstractSectionNode
-
-      const tr = state.tr.insert(pos, node)
-      if (dispatch) {
-        // place cursor inside section title
-        const selection = TextSelection.create(tr.doc, pos + 1)
-        if (view) {
-          view.focus()
-        }
-        dispatch(tr.setSelection(selection).scrollIntoView())
-      }
-      return true
+    // Check if the section already exists
+    if (sections.some((s) => s.node.attrs.category === category.id)) {
+      return false
     }
+
+    const ga = findChildrenByType(
+      state.doc,
+      schema.nodes.graphical_abstract_section
+    )[0]
+
+    // insert at the end of abstracts section
+    let pos = abstracts.pos + abstracts.node.content.size + 1
+    // abstract-key-image insert before abstract-graphical
+    pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
+
+    const node = schema.nodes.graphical_abstract_section.createAndFill(
+      { category: category.id },
+      [
+        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        createAndFillFigureElement(state),
+      ]
+    ) as GraphicalAbstractSectionNode
+
+    const tr = state.tr.insert(pos, node)
+    if (dispatch) {
+      // place cursor inside section title
+      const selection = TextSelection.create(tr.doc, pos + 1)
+      if (view) {
+        view.focus()
+      }
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+    return true
+  }
 
 export const insertContributors = (
   state: ManuscriptEditorState,
@@ -1200,70 +1200,70 @@ function toggleOffList(
 
 export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
-    (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-      const list = findSelectedList(state.selection)
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const list = findSelectedList(state.selection)
 
-      if (list) {
-        if (!dispatch) {
-          return true
-        }
-
-        if (list.node.attrs.listStyleType === style) {
-          return toggleOffList(state, dispatch)
-        }
-
-        // list was found: update the type and style
-        // of every list at the same level
-        const nodes = findListsAtSameLevel(state.doc, list)
-        const tr = state.tr
-        for (const { node, pos } of nodes) {
-          tr.setNodeMarkup(
-            pos,
-            type,
-            {
-              ...node.attrs,
-              listStyleType: style,
-            },
-            node.marks
-          )
-        }
-        dispatch(tr)
+    if (list) {
+      if (!dispatch) {
         return true
-      } else {
-        // no list found, create new list
-        const { selection } = state
-        let tr = state.tr
-        const startPosition = selection.$from.pos + 1
-
-        return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
-          // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
-          // as we have another ReplaceStep that will make transaction more complicated, so to make it easy to tracker we dispatch first ReplaceAroundStep
-          // then will dispatch reminder steps in one transaction
-          const range = selection.$from.blockRange(selection.$to)
-          if (range && dispatch) {
-            tempTr.steps.map((step) => {
-              if (step instanceof ReplaceAroundStep) {
-                dispatch(tr.step(step))
-                tr = view?.state.tr || tr
-              } else {
-                tr.step(step)
-              }
-            })
-            if (startPosition) {
-              const selection = createSelection(
-                state.schema.nodes.paragraph,
-                startPosition,
-                tr.doc
-              )
-              view?.focus()
-              tr.setSelection(selection)
-            }
-
-            dispatch(tr)
-          }
-        })
       }
+
+      if (list.node.attrs.listStyleType === style) {
+        return toggleOffList(state, dispatch)
+      }
+
+      // list was found: update the type and style
+      // of every list at the same level
+      const nodes = findListsAtSameLevel(state.doc, list)
+      const tr = state.tr
+      for (const { node, pos } of nodes) {
+        tr.setNodeMarkup(
+          pos,
+          type,
+          {
+            ...node.attrs,
+            listStyleType: style,
+          },
+          node.marks
+        )
+      }
+      dispatch(tr)
+      return true
+    } else {
+      // no list found, create new list
+      const { selection } = state
+      let tr = state.tr
+      const startPosition = selection.$from.pos + 1
+
+      return wrapInList(type, { listStyleType: style })(state, (tempTr) => {
+        // if we dispatch all steps in this transaction track-changes-plugin will not be able to revert ReplaceAroundStep
+        // as we have another ReplaceStep that will make transaction more complicated, so to make it easy to tracker we dispatch first ReplaceAroundStep
+        // then will dispatch reminder steps in one transaction
+        const range = selection.$from.blockRange(selection.$to)
+        if (range && dispatch) {
+          tempTr.steps.map((step) => {
+            if (step instanceof ReplaceAroundStep) {
+              dispatch(tr.step(step))
+              tr = view?.state.tr || tr
+            } else {
+              tr.step(step)
+            }
+          })
+          if (startPosition) {
+            const selection = createSelection(
+              state.schema.nodes.paragraph,
+              startPosition,
+              tr.doc
+            )
+            view?.focus()
+            tr.setSelection(selection)
+          }
+
+          dispatch(tr)
+        }
+      })
     }
+  }
 
 export const insertBibliographySection = () => {
   return false
@@ -1662,73 +1662,73 @@ export const addInlineComment = (
 
 export const addRows =
   (direction: 'top' | 'bottom') =>
-    (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
-      if (dispatch) {
-        const { tr } = state
-        let rect = selectedRect(state)
-        const selectedRows = rect.bottom - rect.top
-        for (let i = 0; i < selectedRows; i++) {
-          addRow(tr, rect, rect[direction])
-          // this to make sure next row has tracking attributes, so each step of addRow has a different location
-          rect = {
-            ...selectedRect(state.apply(tr)),
-            top: rect.top + 1,
-            bottom: rect.bottom + 1,
-          }
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      let rect = selectedRect(state)
+      const selectedRows = rect.bottom - rect.top
+      for (let i = 0; i < selectedRows; i++) {
+        addRow(tr, rect, rect[direction])
+        // this to make sure next row has tracking attributes, so each step of addRow has a different location
+        rect = {
+          ...selectedRect(state.apply(tr)),
+          top: rect.top + 1,
+          bottom: rect.bottom + 1,
         }
-        dispatch(tr)
       }
-      return true
+      dispatch(tr)
     }
+    return true
+  }
 
 export const addHeaderRow =
   (direction: 'above' | 'below') =>
-    (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
-      if (dispatch) {
-        const { tr } = state
-        const rect = selectedRect(state)
-        const addRowStep = addRow(
-          state.tr,
-          rect,
-          rect[direction === 'below' ? 'bottom' : 'top']
-        ).steps.pop()
-        if (addRowStep && addRowStep instanceof ReplaceStep) {
-          const { from, to, slice } = addRowStep
-          const cells = flatten(slice.content.firstChild as ManuscriptNode, false)
-          const row = schema.nodes.table_row.create(
-            undefined,
-            cells.map((cell) =>
-              schema.nodes.table_header.create(cell.node.attrs, cell.node.content)
-            )
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state)
+      const addRowStep = addRow(
+        state.tr,
+        rect,
+        rect[direction === 'below' ? 'bottom' : 'top']
+      ).steps.pop()
+      if (addRowStep && addRowStep instanceof ReplaceStep) {
+        const { from, to, slice } = addRowStep
+        const cells = flatten(slice.content.firstChild as ManuscriptNode, false)
+        const row = schema.nodes.table_row.create(
+          undefined,
+          cells.map((cell) =>
+            schema.nodes.table_header.create(cell.node.attrs, cell.node.content)
           )
-          tr.step(
-            new ReplaceStep(
-              from,
-              to,
-              new Slice(Fragment.from(row), slice.openStart, slice.openEnd)
-            )
+        )
+        tr.step(
+          new ReplaceStep(
+            from,
+            to,
+            new Slice(Fragment.from(row), slice.openStart, slice.openEnd)
           )
-          dispatch(tr)
-        }
+        )
+        dispatch(tr)
       }
-      return true
     }
+    return true
+  }
 
 export const addColumns =
   (direction: 'right' | 'left') =>
-    (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
-      if (dispatch) {
-        const { tr } = state
-        const rect = selectedRect(state.apply(tr))
-        const selectedRows = rect.right - rect.left
-        for (let i = 0; i < selectedRows; i++) {
-          const command = direction === 'right' ? addColumnAfter : addColumnBefore
-          command(state.apply(tr), (t) => t.steps.map((s) => tr.step(s)))
-        }
-        dispatch(tr)
+  (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
+    if (dispatch) {
+      const { tr } = state
+      const rect = selectedRect(state.apply(tr))
+      const selectedRows = rect.right - rect.left
+      for (let i = 0; i < selectedRows; i++) {
+        const command = direction === 'right' ? addColumnAfter : addColumnBefore
+        command(state.apply(tr), (t) => t.steps.map((s) => tr.step(s)))
       }
-      return true
+      dispatch(tr)
     }
+    return true
+  }
 
 export const autoComplete = (
   state: ManuscriptEditorState,
