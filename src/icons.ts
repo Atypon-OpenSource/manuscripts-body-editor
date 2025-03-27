@@ -15,6 +15,7 @@
  */
 import {
   AlertIcon,
+  ArrowDownCircleIcon,
   DeleteIcon,
   EditIcon,
   ScrollIcon,
@@ -25,6 +26,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 const renderIcon = (c: React.FC) => renderToStaticMarkup(createElement(c))
 
+export const arrowDown = renderIcon(ArrowDownCircleIcon)
 export const alertIcon = renderIcon(AlertIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderToStaticMarkup(createElement(EditIcon))
