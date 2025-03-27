@@ -44,12 +44,11 @@ function getTitlesData(doc: ProseMirrorNode) {
     if (title && runningTitle && shortTitle && altTitlesSection) {
       return false
     }
-    if (node.type === schema.nodes.title && node.nodeSize > 0) {
+    if (node.type === schema.nodes.title && node.textContent.length > 0) {
       // if title is empty we don't allow to edit alt titles
       title = [node as TitleNode, pos]
     }
-    if (node.type === schema.nodes.alt_titles_section && node.nodeSize > 0) {
-      // if title is empty we don't allow to edit alt titles
+    if (node.type === schema.nodes.alt_titles_section) {
       altTitlesSection = [node as AltTitlesSectionNode, pos]
     }
     if (node.type === schema.nodes.alt_title) {
@@ -140,7 +139,7 @@ export default () => {
       }
       const titleEnd = title[0].nodeSize + title[1]
       if (!altTitlesSection) {
-        const section = schema.nodes.alt_titles_section.create({}, [
+        const section = schema.nodes.alt_titles.create({}, [
           schema.nodes.alt_title.create({
             type: 'running',
           }),

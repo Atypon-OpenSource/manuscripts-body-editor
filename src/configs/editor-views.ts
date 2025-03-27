@@ -60,7 +60,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
   return {
     title: title(props, dispatch),
     alt_title: alt_title(props),
-    alt_titles_section: alt_titles_section(props),
+    alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     box_element: boxElement(props),
