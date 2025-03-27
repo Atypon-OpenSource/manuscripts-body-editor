@@ -251,7 +251,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const handleChange = (values: BibliographyItemAttrs) => {
     valuesRef.current = values
   }
-
   if (items.length <= 0) {
     return <></>
   }
