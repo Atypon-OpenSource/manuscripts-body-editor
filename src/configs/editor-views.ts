@@ -98,5 +98,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),
+    long_desc: empty('long_desc'),
+    alt_text: empty('alt_text'),
   }
 }
