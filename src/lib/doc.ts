@@ -93,8 +93,25 @@ export const insertFootnotesSection = (tr: ManuscriptTransaction) => {
   if (section) {
     return section
   }
-  const backmatter = findBackmatter(doc)
-  const pos = backmatter.pos + 1
+
+  const backmatter = findChildrenByType(doc, schema.nodes.backmatter, true)
+
+  const backmatterNode = backmatter[0].node
+  const backmatterPos = backmatter[0].pos
+
+  // Find the last child node in the backmatter (references section)
+  const lastChild =
+    backmatterNode.content.childCount > 0
+      ? backmatterNode.content.child(backmatterNode.content.childCount - 1)
+      : null
+
+  const insertPos =
+    lastChild && lastChild.type === schema.nodes.bibliography_section
+      ? backmatterPos + backmatterNode.content.size - lastChild.nodeSize // Insert before last child (refernces section)
+      : backmatterPos + backmatterNode.content.size // Insert at the end of backmatter
+
+  const pos = tr.mapping.map(insertPos)
+
   const node = schema.nodes.footnotes_section.create({}, [
     schema.nodes.section_title.create({}, schema.text('Footnotes')),
   ])
@@ -122,6 +139,10 @@ export const findBackmatter = (doc: ManuscriptNode) => {
 
 export const findBibliographySection = (doc: ManuscriptNode) => {
   return findChildrenByType(doc, schema.nodes.bibliography_section)[0]
+}
+
+export const findFootnotesSection = (doc: ManuscriptNode) => {
+  return findChildrenByType(doc, schema.nodes.footnotes_section)[0]
 }
 
 export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {

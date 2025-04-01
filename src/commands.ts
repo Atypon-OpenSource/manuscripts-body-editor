@@ -90,6 +90,7 @@ import {
   findBibliographySection,
   findBody,
   insertAttachmentsNode,
+  findFootnotesSection,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -934,9 +935,14 @@ export const insertBackmatterSection =
 
     // check if reference node exist to insert before it.
     const bibliography = findBibliographySection(state.doc)
-    const pos = bibliography
-      ? bibliography.pos
-      : backmatter.pos + backmatter.node.content.size + 1
+
+    // check if footnotes node exist to insert before it.
+    const footnotesSection = findFootnotesSection(state.doc)
+
+    const pos =
+      footnotesSection?.pos ??
+      bibliography?.pos ??
+      backmatter.pos + backmatter.node.content.size + 1
 
     const attrs = { category: category.id }
     const node = schema.nodes.section.create(attrs, [
@@ -1693,10 +1699,16 @@ export const addRows =
   (state: EditorState, dispatch?: (tr: Transaction) => void): boolean => {
     if (dispatch) {
       const { tr } = state
-      const rect = selectedRect(state)
+      let rect = selectedRect(state)
       const selectedRows = rect.bottom - rect.top
       for (let i = 0; i < selectedRows; i++) {
         addRow(tr, rect, rect[direction])
+        // this to make sure next row has tracking attributes, so each step of addRow has a different location
+        rect = {
+          ...selectedRect(state.apply(tr)),
+          top: rect.top + 1,
+          bottom: rect.bottom + 1,
+        }
       }
       dispatch(tr)
     }
