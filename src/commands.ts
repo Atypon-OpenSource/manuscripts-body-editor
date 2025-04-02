@@ -89,8 +89,8 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
-  insertAttachmentsNode,
   findFootnotesSection,
+  insertAttachmentsNode,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -107,7 +107,11 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  isSelectionInBody,
+} from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -491,6 +495,10 @@ export const deleteBlock =
     const { selection, tr } = state
     const { $head } = selection
     const depth = nearestAncestor(isNodeOfType(typeToDelete))($head)
+
+    if (isSelectionInBody(state)) {
+      return false
+    }
 
     if (!depth) {
       return false

@@ -19,10 +19,13 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
 import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
+
+import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -124,9 +127,63 @@ export const isSelectionInNode = (
   return false
 }
 
+/**
+ * Checks if the selection is inside a "body" node.
+ * @param state - The current EditorState.
+ * @returns {boolean}
+ */
+export const isSelectionInBody = (state: EditorState): boolean => {
+  return isSelectionInNodeByType(state, 'body')
+}
+
+/**
+ * Checks if selection is inside a node by its type.
+ * @param state - The current EditorState.
+ * @param nodeType - The type name of the node.
+ * @returns {boolean}
+ */
+const isSelectionInNodeByType = (
+  state: EditorState,
+  nodeType: string
+): boolean => {
+  const { $from } = state.selection
+  return (
+    $from.node($from.depth)?.type.name === nodeType ||
+    $from.path.some((node) => node?.type?.name === nodeType)
+  )
+}
+
 export const createHeader = (typeName: string, text: string) => {
   const header = document.createElement('h1')
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const isBodyLocked = (state: EditorState) => {
+  const props = getEditorProps(state)
+  return hasAttachment(state.doc) && props.lockBody
+}
+
+/**
+ * Checks if document contains node of type "attachment"
+ * @param doc - The current document.
+ * @returns {boolean}
+ */
+const hasAttachment = (doc: ProseMirrorNode): boolean => {
+  let found = false
+
+  doc.descendants((node) => {
+    if (node.type === schema.nodes.attachment) {
+      found = true
+      return false
+    }
+    return !found
+  })
+
+  return found
+}
+
+export const isAllowed = (state: EditorState) => {
+  return !(isBodyLocked(state) && isSelectionInBody(state))
 }

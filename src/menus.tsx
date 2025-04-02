@@ -55,6 +55,7 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { isAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 
@@ -127,7 +128,8 @@ export const getEditorMenus = (
 
           return `Delete ${nodeName}`
         })(),
-        isEnabled: isCommandValid(deleteClosestParentElement),
+        isEnabled:
+          isAllowed(state) && isCommandValid(deleteClosestParentElement),
         run: doCommand(deleteClosestParentElement),
       },
       {
@@ -163,7 +165,7 @@ export const getEditorMenus = (
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
-    isEnabled: true,
+    isEnabled: isAllowed(state),
     submenu: [
       {
         id: 'front-matter',
@@ -382,7 +384,7 @@ export const getEditorMenus = (
   const format: MenuSpec = {
     id: 'format',
     label: 'Format',
-    isEnabled: true,
+    isEnabled: isAllowed(state),
     submenu: [
       {
         id: 'format-bold',
