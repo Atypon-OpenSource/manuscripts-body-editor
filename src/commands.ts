@@ -89,8 +89,8 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
-  insertAttachmentsNode,
   findFootnotesSection,
+  insertAttachmentsNode,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -122,6 +122,11 @@ export const addToStart = (
   dispatch?: Dispatch
 ): boolean => {
   const { selection } = state
+
+  const props = getEditorProps(state)
+  if (props.getCapabilities().editWithoutTracking) {
+    return false
+  }
 
   if (
     !dispatch ||
