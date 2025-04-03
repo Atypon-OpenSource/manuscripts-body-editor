@@ -123,6 +123,11 @@ export const addToStart = (
 ): boolean => {
   const { selection } = state
 
+  const props = getEditorProps(state)
+  if (props.getCapabilities().editWithoutTracking) {
+    return false
+  }
+
   if (
     !dispatch ||
     !(selection instanceof TextSelection) ||
@@ -153,9 +158,6 @@ export const addToStart = (
     const from = $from.node().type.createAndFill()
     if (from) {
       tr.insert(side, from)
-
-      // Move the cursor to the start of the newly inserted node
-      tr.setSelection(TextSelection.create(tr.doc, side + 1))
 
       dispatch(tr.scrollIntoView())
       return true
