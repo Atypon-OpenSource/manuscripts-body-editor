@@ -158,7 +158,6 @@ export const addToStart = (
     const from = $from.node().type.createAndFill()
     if (from) {
       tr.insert(side, from)
-
       dispatch(tr.scrollIntoView())
       return true
     }
