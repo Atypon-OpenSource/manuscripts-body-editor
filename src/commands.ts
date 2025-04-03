@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AttachmentNode,
   AwardNode,
   BoxElementNode,
   FigureElementNode,
@@ -88,6 +89,8 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  insertAttachmentsNode,
+  findFootnotesSection,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -431,6 +434,38 @@ export const insertSupplement = (
   const supplements = insertSupplementsNode(tr)
   const pos = supplements.pos + supplements.node.nodeSize - 1
   tr.insert(pos, supplement)
+  if (dispatch) {
+    dispatch(skipTracking(tr))
+  }
+  return true
+}
+
+export const insertAttachment = (
+  file: FileAttachment,
+  state: ManuscriptEditorState,
+  type: string,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr
+  const attachments = insertAttachmentsNode(tr)
+  if (!attachments) {
+    return false
+  }
+
+  if (attachments.node.childCount > 0) {
+    const startPos = attachments.pos + 1
+    const endPos = attachments.pos + attachments.node.nodeSize - 1
+    tr.delete(startPos, endPos)
+  }
+
+  const attachment = schema.nodes.attachment.createAndFill({
+    id: generateNodeID(schema.nodes.attachment),
+    href: file.id,
+    type: type,
+  }) as AttachmentNode
+
+  tr.insert(attachments.pos + 1, attachment)
+
   if (dispatch) {
     dispatch(skipTracking(tr))
   }
@@ -900,9 +935,14 @@ export const insertBackmatterSection =
 
     // check if reference node exist to insert before it.
     const bibliography = findBibliographySection(state.doc)
-    const pos = bibliography
-      ? bibliography.pos
-      : backmatter.pos + backmatter.node.content.size + 1
+
+    // check if footnotes node exist to insert before it.
+    const footnotesSection = findFootnotesSection(state.doc)
+
+    const pos =
+      footnotesSection?.pos ??
+      bibliography?.pos ??
+      backmatter.pos + backmatter.node.content.size + 1
 
     const attrs = { category: category.id }
     const node = schema.nodes.section.create(attrs, [
