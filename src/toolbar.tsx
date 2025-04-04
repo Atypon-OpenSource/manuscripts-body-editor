@@ -69,8 +69,9 @@ export interface ToolbarButtonConfig {
 }
 
 const wrapIsEnabled =
-  (command: (state: EditorState) => boolean) => (state: EditorState) =>
-    isAllowed(state) && command(state)
+  (command: (state: EditorState) => boolean) => (state: EditorState) => {
+    return isAllowed(state) && command(state)
+  }
 
 export interface ToolbarConfig {
   [key: string]: {

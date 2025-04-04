@@ -165,7 +165,7 @@ export const getEditorMenus = (
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
-    isEnabled: isAllowed(state),
+    isEnabled: true,
     submenu: [
       {
         id: 'front-matter',
@@ -217,7 +217,7 @@ export const getEditorMenus = (
           mac: 'CommandOrControl+Enter',
           pc: 'CommandOrControl+Enter',
         },
-        isEnabled: isCommandValid(insertSection()),
+        isEnabled: isAllowed(state) && isCommandValid(insertSection()),
         run: doCommand(insertSection()),
       },
       {
@@ -227,13 +227,14 @@ export const getEditorMenus = (
           mac: 'Shift+CommandOrControl+Enter',
           pc: 'Shift+CommandOrControl+Enter',
         },
-        isEnabled: isCommandValid(insertSection(true)),
+        isEnabled: isAllowed(state) && isCommandValid(insertSection(true)),
         run: doCommand(insertSection(true)),
       },
       {
         id: 'insert-paragraph',
         label: 'Paragraph',
-        isEnabled: isCommandValid(canInsert(schema.nodes.paragraph)),
+        isEnabled:
+          isAllowed(state) && isCommandValid(canInsert(schema.nodes.paragraph)),
         run: doCommand(insertBlock(schema.nodes.paragraph)),
       },
       {
@@ -242,13 +243,17 @@ export const getEditorMenus = (
       {
         id: 'insert-blockquote',
         label: 'Block Quote',
-        isEnabled: isCommandValid(canInsert(schema.nodes.blockquote_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.blockquote_element)),
         run: doCommand(insertBlock(schema.nodes.blockquote_element)),
       },
       {
         id: 'insert-pullquote',
         label: 'Pull Quote',
-        isEnabled: isCommandValid(canInsert(schema.nodes.pullquote_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.pullquote_element)),
         run: doCommand(insertBlock(schema.nodes.pullquote_element)),
       },
       {
@@ -261,7 +266,7 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+B',
           pc: 'CommandOrControl+Option+B',
         },
-        isEnabled: isCommandValid(insertBoxElement),
+        isEnabled: isAllowed(state) && isCommandValid(insertBoxElement),
         run: doCommand(insertBoxElement),
       },
       {
@@ -271,13 +276,17 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+P',
           pc: 'CommandOrControl+Option+P',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.figure_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.figure_element)),
         run: doCommand(insertBlock(schema.nodes.figure_element)),
       },
       {
         id: 'insert-image-element',
         label: 'Simple Image',
-        isEnabled: isCommandValid(canInsert(schema.nodes.image_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.image_element)),
         run: doCommand(insertBlock(schema.nodes.image_element)),
       },
       {
@@ -287,7 +296,9 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+T',
           pc: 'CommandOrControl+Option+T',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.table_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.table_element)),
         run: () => openInsertTableDialog(editor.state, editor.dispatch),
       },
       {
@@ -297,7 +308,8 @@ export const getEditorMenus = (
         id: 'insert-embed-media',
         label: 'Embedded Media',
         isActive: blockActive(schema.nodes.embed)(state),
-        isEnabled: isCommandValid(canInsert(schema.nodes.embed)),
+        isEnabled:
+          isAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
         run: () => openEmbedDialog(editor.view),
       },
       {
@@ -308,7 +320,8 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+H',
         },
         isActive: blockActive(schema.nodes.link)(state),
-        isEnabled: isCommandValid(canInsert(schema.nodes.link)),
+        isEnabled:
+          isAllowed(state) && isCommandValid(canInsert(schema.nodes.link)),
         run: doCommand(insertLink),
       },
       {
@@ -321,7 +334,9 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+E',
           pc: 'CommandOrControl+Option+E',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.equation_element)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.equation_element)),
         run: doCommand(insertBlock(schema.nodes.equation_element)),
       },
       {
@@ -331,7 +346,9 @@ export const getEditorMenus = (
           mac: 'Shift+Option+CommandOrControl+E',
           pc: 'Shift+CommandOrControl+Option+E',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.inline_equation)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.inline_equation)),
         run: doCommand(insertInlineEquation),
       },
       {
@@ -344,7 +361,8 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+C',
           pc: 'CommandOrControl+Option+C',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.citation)),
+        isEnabled:
+          isAllowed(state) && isCommandValid(canInsert(schema.nodes.citation)),
         run: doCommand(insertInlineCitation),
       },
       {
@@ -354,7 +372,9 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+R',
           pc: 'CommandOrControl+Option+R',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.cross_reference)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.cross_reference)),
         run: doCommand(insertCrossReference),
       },
       {
@@ -364,19 +384,22 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+F',
           pc: 'CommandOrControl+Option+F',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.inline_footnote)),
+        isEnabled:
+          isAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.inline_footnote)),
         run: doCommand(insertInlineFootnote),
       },
       {
         id: 'insert-special-character',
         label: 'Special Characters',
-        isEnabled: isCommandValid(canInsert(schema.nodes.text)),
+        isEnabled:
+          isAllowed(state) && isCommandValid(canInsert(schema.nodes.text)),
         run: () => openInsertSpecialCharacterDialog(editor.view),
       },
       {
         id: 'insert-comment',
         label: 'Comment',
-        isEnabled: isCommandValid(addInlineComment),
+        isEnabled: isAllowed(state) && isCommandValid(addInlineComment),
         run: doCommand(addInlineComment),
       },
     ],

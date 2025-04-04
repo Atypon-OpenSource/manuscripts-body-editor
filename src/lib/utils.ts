@@ -147,10 +147,14 @@ const isSelectionInNodeByType = (
   nodeType: string
 ): boolean => {
   const { $from } = state.selection
-  return (
-    $from.node($from.depth)?.type.name === nodeType ||
-    $from.path.some((node) => node?.type?.name === nodeType)
-  )
+
+  for (let depth = $from.depth; depth >= 0; depth--) {
+    if ($from.node(depth).type.name === nodeType) {
+      return true
+    }
+  }
+
+  return false
 }
 
 export const createHeader = (typeName: string, text: string) => {
