@@ -127,7 +127,7 @@ const exitBlock =
     return true
   }
 
-const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
+const leaveTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state
 
   if (!isTextSelection(selection)) {
@@ -140,8 +140,18 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
     return false
   }
 
-  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
+  const titleTypes = [
+    schema.nodes.alt_title,
+    schema.nodes.section_title,
+    schema.nodes.title,
+  ]
+
+  if (!titleTypes.includes($cursor.parent.type)) {
     return false
+  }
+
+  if ($cursor.parent.type === schema.nodes.alt_title) {
+    return true
   }
 
   if (isInGraphicalAbstractSection($cursor)) {
@@ -249,7 +259,7 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
+  Enter: chainCommands(leaveTitle, leaveFigcaption),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),

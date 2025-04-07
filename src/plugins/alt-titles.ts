@@ -122,7 +122,7 @@ export default () => {
     },
     appendTransaction: (transactions, _, newState) => {
       // in appendTransaction we check if alt_titles nodes exist before opening them for the first time because they are optional
-      const tr = newState.tr
+      let tr = newState.tr
       if (
         !transactions.some((tr) => tr.getMeta(altTitlesKey)) ||
         !altTitlesKey.getState(newState)
@@ -137,8 +137,9 @@ export default () => {
       if (!title) {
         return null
       }
-      const titleEnd = title[0].nodeSize + title[1]
+
       if (!altTitlesSection) {
+        const titleEnd = title[0].nodeSize + title[1]
         const section = schema.nodes.alt_titles.create({}, [
           schema.nodes.alt_title.create({
             type: 'running',
@@ -147,20 +148,24 @@ export default () => {
         ])
         tr.insert(titleEnd, section)
       } else {
+        const endPos = altTitlesSection[1] + altTitlesSection[0].nodeSize - 1
         if (!runningTitle) {
           const title = schema.nodes.alt_title.create({
             type: 'running',
           })
-          tr.insert(titleEnd, title)
+          tr.insert(endPos, title)
         }
         if (!shortTitle) {
           const title = schema.nodes.alt_title.create({ type: 'short' })
-          const newPos = tr.mapping.map(titleEnd)
+          const newPos = tr.mapping.map(endPos)
           tr.insert(newPos, title)
         }
       }
-
-      return tr
+      if (tr.docChanged) {
+        return tr.setMeta(altTitlesKey, 'created-missing-titles')
+      } else {
+        return null
+      }
     },
     props: {
       decorations: (state) => {
