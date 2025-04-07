@@ -62,7 +62,6 @@ export const ImportBibliographyForm = ({
         return
       }
       const data = await transformBibliography(fileContent.trim())
-
       formik.setFieldValue('data', data ? data : [])
       formik.setFieldValue('err', '')
     } catch (error) {
