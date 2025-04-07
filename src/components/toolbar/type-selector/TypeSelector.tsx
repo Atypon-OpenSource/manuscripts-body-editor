@@ -24,7 +24,7 @@ import React from 'react'
 import { OnChangeValue } from 'react-select'
 
 import { findClosestParentElement } from '../../../lib/hierarchy'
-import { isAllowed } from '../../../lib/utils'
+import { isEditAllowed } from '../../../lib/utils'
 import {
   demoteSectionToParagraph,
   findSelectedOption,
@@ -146,7 +146,7 @@ export const TypeSelector: React.FC<{
         Option: OptionComponent,
       }}
       styles={customStyles}
-      isDisabled={options.length <= 1 || !isInBody || !isAllowed(state)}
+      isDisabled={options.length <= 1 || !isInBody || !isEditAllowed(state)}
       isSearchable={false}
     />
   )

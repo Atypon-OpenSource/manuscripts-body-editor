@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { LockIcon } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 
+import { lockIcon } from '../icons'
 import { isBodyLocked, isSelectionInBody } from '../lib/utils'
 
+/**
+ * This plugin prevents editing in the body of the document when it is locked.
+ * It also adds a lock icon to indicate that the body is non-editable.
+ */
 export default () => {
   return new Plugin({
     state: {
@@ -86,7 +88,7 @@ const getDecorations = (doc: Node): Decoration[] => {
       decorations.push(
         Decoration.widget(pos + 1, () => {
           const div = document.createElement('div')
-          div.innerHTML = renderToStaticMarkup(createElement(LockIcon))
+          div.innerHTML = lockIcon
           div.className = 'icon'
           return div
         })
