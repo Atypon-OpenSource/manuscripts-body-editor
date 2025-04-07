@@ -16,17 +16,11 @@
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
-import { findGraphicalAbstractFigureElement } from './doc'
 import { isHidden } from './track-changes-utils'
-
-export type FileDesignation = {
-  id: string
-}
 
 export type FileAttachment = {
   id: string
   name: string
-  type: FileDesignation
   createdDate?: Date
 }
 
@@ -45,16 +39,13 @@ export type ElementFiles = {
 export type ManuscriptFiles = {
   figures: ElementFiles[]
   supplements: NodeFile[]
+  attachments: NodeFile[]
   others: FileAttachment[]
-  mainDocument: NodeFile[]
 }
 
 const MISSING_FILE: FileAttachment = {
   id: '',
-  name: 'Missing file',
-  type: {
-    id: 'missing',
-  },
+  name: '',
 }
 
 export type Upload = (file: File) => Promise<FileAttachment>
@@ -69,6 +60,8 @@ export type FileManagement = {
   previewLink: PreviewLink
 }
 
+const figureTypes = [schema.nodes.figure_element, schema.nodes.image_element]
+
 export const groupFiles = (
   doc: ManuscriptNode,
   files: FileAttachment[]
@@ -76,27 +69,28 @@ export const groupFiles = (
   const fileMap = new Map(files.map((f) => [f.id, f]))
   const figures: ElementFiles[] = []
   const supplements: NodeFile[] = []
-  const mainDocument: NodeFile[] = []
+  const attachments: NodeFile[] = []
+
+  const getFile = (href: string) => {
+    const file = fileMap.get(href)
+    if (file) {
+      fileMap.delete(href)
+      return file
+    } else {
+      return MISSING_FILE
+    }
+  }
+
   const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
     const figureFiles = []
     for (const figure of findChildrenByType(node, schema.nodes.figure)) {
       if (isHidden(figure.node)) {
         continue
       }
-      const src = figure.node.attrs.src
-      if (!src) {
-        continue
-      }
-      let file = fileMap.get(src)
-      if (file) {
-        fileMap.delete(src)
-      } else {
-        file = MISSING_FILE
-      }
       figureFiles.push({
         node: figure.node,
         pos: pos + figure.pos + 1,
-        file,
+        file: getFile(figure.node.attrs.src),
       })
     }
     return {
@@ -106,54 +100,25 @@ export const groupFiles = (
     }
   }
 
-  let gaID: string
-  const element = findGraphicalAbstractFigureElement(doc)
-  if (element) {
-    gaID = element.node.attrs.id
-    figures.push(getFigureElementFiles(element.node, element.pos))
-  }
-
   doc.descendants((node, pos) => {
-    if (
-      (node.type === schema.nodes.figure_element ||
-        node.type === schema.nodes.image_element) &&
-      node.attrs.id !== gaID
-    ) {
+    if (isHidden(node)) {
+      return
+    }
+    if (figureTypes.includes(node.type)) {
       figures.push(getFigureElementFiles(node, pos))
     }
-
     if (node.type === schema.nodes.supplement) {
-      if (isHidden(node)) {
-        return
-      }
-      const href = node.attrs.href
-      let file = fileMap.get(href)
-      if (file) {
-        fileMap.delete(href)
-      } else {
-        file = MISSING_FILE
-      }
       supplements.push({
         node,
         pos,
-        file,
+        file: getFile(node.attrs.href)
       })
     }
     if (node.type === schema.nodes.attachment) {
-      if (isHidden(node)) {
-        return
-      }
-      const href = node.attrs.href
-      let file = fileMap.get(href)
-      if (file) {
-        fileMap.delete(href)
-      } else {
-        file = MISSING_FILE
-      }
-      mainDocument.push({
+      attachments.push({
         node,
         pos,
-        file,
+        file: getFile(node.attrs.href)
       })
     }
   })
@@ -161,7 +126,7 @@ export const groupFiles = (
   return {
     figures,
     supplements,
+    attachments,
     others: [...fileMap.values()],
-    mainDocument,
   }
 }
