@@ -1206,10 +1206,9 @@ function toggleOffList(
       (node, pos) => {
         // remove all the nodes that are not fully in the range
         if (
-          // @ts-ignore
-          pos < rootList!.pos ||
-          // @ts-ignore
-          node.nodeSize > rootList!.pos + rootList!.node.nodeSize
+          rootList &&
+          (pos < rootList.pos ||
+            node.nodeSize > rootList.pos + rootList.node.nodeSize)
         ) {
           return true
         }
