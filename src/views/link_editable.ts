@@ -45,7 +45,8 @@ export class LinkEditableView extends LinkView {
     const attrs = this.node.attrs
     const href = attrs.href
     const title = attrs.title
-
+    // This to prevent joining other inline nodes to link LEAN-4374
+    this.dom.setAttribute('contenteditable', 'false')
     this.dom.setAttribute('href', allowedHref(href) ? href : '')
     this.dom.setAttribute('target', '_blank')
     this.dom.setAttribute('title', title || '')
