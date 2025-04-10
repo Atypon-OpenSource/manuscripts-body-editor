@@ -123,6 +123,11 @@ export const addToStart = (
 ): boolean => {
   const { selection } = state
 
+  const props = getEditorProps(state)
+  if (props.getCapabilities().editWithoutTracking) {
+    return false
+  }
+
   if (
     !dispatch ||
     !(selection instanceof TextSelection) ||
