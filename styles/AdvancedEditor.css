@@ -1,3 +1,22 @@
+* {
+  scroll-behavior: smooth;
+}
+
+.button-reset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+}
+
 .ProseMirror
   > div.body
   section:not(.toc)
@@ -614,7 +633,8 @@ span.comment-marker {
 
 /* Insert */
 .tracking-visible .ProseMirror .inserted,
-.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span, .tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
+.tracking-visible .ProseMirror .block-award[data-track-op='insert'] span,
+.tracking-visible .ProseMirror a.link[data-track-op='wrap_with_node'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
@@ -733,10 +753,18 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 3px 0 0 var(--inserted-pending-color);
 }
 
-.tracking-visible .selected-suggestion[data-track-status='pending'][data-track-op='insert'] .block,
-.tracking-visible .selected-suggestion [data-track-status='pending'][data-track-op='insert'] .block,
-.tracking-visible .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending'] .block {
-  box-shadow: inset 6px 0 0 var(--inserted-pending-color), inset 9px 0 0 var(--inserted-pending-bg-color) !important;
+.tracking-visible
+  .selected-suggestion[data-track-status='pending'][data-track-op='insert']
+  .block,
+.tracking-visible
+  .selected-suggestion
+  [data-track-status='pending'][data-track-op='insert']
+  .block,
+.tracking-visible
+  .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending']
+  .block {
+  box-shadow: inset 6px 0 0 var(--inserted-pending-color),
+    inset 9px 0 0 var(--inserted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--inserted-pending-bg-color);
 }
@@ -782,10 +810,12 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
-.tracking-visible .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
+.tracking-visible
+  .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
-  box-shadow: inset 6px 0 0 var(--updated-border-color), inset 9px 0 0 var(--updated-bg-color) !important;
+  box-shadow: inset 6px 0 0 var(--updated-border-color),
+    inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--updated-bg-color);
 }
@@ -972,20 +1002,81 @@ figure.block:has(.equation.selected-suggestion) {
   color: #6e6e6e;
 }
 
-* {
-  scroll-behavior: smooth;
-}
-
 .ProseMirror li.ProseMirror-selectednode:after {
   content: none;
 }
 .manuscript-title {
   margin-bottom: 20px;
+  position: relative;
 }
+
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
 
+.alt-title-text {
+  border-radius: 4px;
+  border: 1px solid #e2e2e2;
+  padding: 8px 16px;
+}
+
+.manuscript-alt-title {
+  display: block;
+  margin: 13px 0 13px;
+}
+@keyframes alt-titles-in {
+  from {
+    opacity: 0;
+    margin-top: -2rem;
+  }
+
+  to {
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+.ProseMirror .block-alt_titles {
+  display: none;
+}
+.ProseMirror .block-alt_titles.alt-titles-section-open {
+  display: contents; /* covering the sides to prevent cursor setting into the parent block element */
+}
+/* covering the sides to prevent cursor setting into the parent block element */
+.alt-titles-section {
+  opacity: 1;
+  animation-name: alt-titles-in;
+  animation-duration: 0.45s;
+  padding: 0 calc(var(--body-side-margin) - 12px);
+}
+.alt-titles-closing-panel {
+  border-bottom: 1px solid #e2e2e2;
+  position: relative;
+  padding-top: 0.2rem;
+  margin: 1rem calc(var(--body-side-margin) - 12px) 0;
+}
+.alt-titles-closing-button {
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  top: 50%;
+  transform: translate(100%, -50%) scaleY(-1);
+  background: #fff;
+  z-index: 2;
+}
+.alt-title-label {
+  font-size: 18px;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+  color: #6e6e6e;
+  line-height: 1.3;
+}
+.alt-titles-open {
+  position: absolute;
+  right: var(--body-side-margin);
+  transform: translateX(100%);
+  bottom: 0;
+  cursor: pointer;
+}
 .ProseMirror .table-context-menu-button svg {
   margin: 4px;
   pointer-events: none;

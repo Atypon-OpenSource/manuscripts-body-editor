@@ -26,8 +26,8 @@ import titleKeymap from './title'
 export default [
   keymap(keywordKeymap),
   keymap(listKeymap),
-  keymap(miscKeymap),
   keymap(titleKeymap),
+  keymap(miscKeymap),
   keymap(baseKeymap),
   keymap(highlightKeymap),
 ]

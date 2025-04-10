@@ -21,7 +21,6 @@ import { EditorAction } from '../types'
 
 const ignoreEnter: EditorAction = (state) => {
   const { selection } = state
-
   if (!isTextSelection(selection)) {
     return false
   }

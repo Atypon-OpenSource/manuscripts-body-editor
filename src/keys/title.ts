@@ -127,7 +127,7 @@ const exitBlock =
     return true
   }
 
-const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
+const leaveTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state
 
   if (!isTextSelection(selection)) {
@@ -140,8 +140,18 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
     return false
   }
 
-  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
+  const titleTypes = [
+    schema.nodes.alt_title,
+    schema.nodes.section_title,
+    schema.nodes.title,
+  ]
+
+  if (!titleTypes.includes($cursor.parent.type)) {
     return false
+  }
+
+  if ($cursor.parent.type === schema.nodes.alt_title) {
+    return true
   }
 
   if (isInGraphicalAbstractSection($cursor)) {
@@ -168,7 +178,7 @@ const leaveFigcaption: EditorAction = (state) => {
 }
 
 // ignore backspace at the start of section titles
-const protectSectionTitle: EditorAction = (
+const protectTitles: EditorAction = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   view?: ManuscriptEditorView
@@ -183,6 +193,14 @@ const protectSectionTitle: EditorAction = (
 
   if (!$cursor) {
     return false
+  }
+
+  // preventing deletion of alt_titles with backspace
+  if (
+    $cursor.parent.type === schema.nodes.alt_title &&
+    $cursor.pos === $cursor.before() + 1
+  ) {
+    return true
   }
 
   return (
@@ -245,11 +263,11 @@ const keepCaption = (state: ManuscriptEditorState) => {
 
 const titleKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
-    protectSectionTitle,
+    protectTitles,
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
+  Enter: chainCommands(leaveTitle, leaveFigcaption),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),
