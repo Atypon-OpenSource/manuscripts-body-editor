@@ -32,6 +32,7 @@ import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
+import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
 import { ReferencesModal } from './ReferencesModal'
@@ -152,6 +153,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   })
 
   const [searching, setSearching] = useState(false)
+  const [importing, setImporting] = useState(false)
 
   const handleAdd = () => {
     setSearching(false)
@@ -164,16 +166,38 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setEditingForm({ show: true, item: item })
   }
 
+  const handleImport = () => {
+    setSearching(false)
+    setImporting(true)
+  }
+  const handleSaveImport = (data: BibliographyItemAttrs[]) => {
+    data.forEach((item) => {
+      const newItem = { ...item }
+      newItem.id = generateID(ObjectTypes.BibliographyItem)
+      handleSave(newItem)
+      handleCite([newItem])
+    })
+  }
+
   const cited = useMemo(() => {
     return rids.flatMap((rid) => items.filter((i) => i.id === rid))
   }, [rids, items])
 
+  if (importing) {
+    return (
+      <ImportBibliographyModal
+        onCancel={() => setImporting(false)}
+        onSave={handleSaveImport}
+      />
+    )
+  }
   if (searching) {
     return (
       <ReferenceSearch
         sources={sources}
         items={items}
         onAdd={handleAdd}
+        onImport={handleImport}
         onCite={(items) => {
           setSearching(false)
           handleCite(items)
@@ -189,12 +213,12 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         sources={sources}
         items={items}
         onAdd={handleAdd}
+        onImport={handleImport}
         onCite={handleCite}
         onCancel={onCancel}
       />
     )
   }
-
   return (
     <>
       <Dialog
