@@ -1153,3 +1153,6 @@ th:hover > .table-context-menu-button,
 .special-characters-ranges-select__menu {
   min-width: 220px;
 }
+.embed-media-preview .tools-panel {
+  right: 6px;
+}
