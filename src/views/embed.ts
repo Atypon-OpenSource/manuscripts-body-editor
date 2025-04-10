@@ -44,11 +44,11 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
     this.contentDOM = document.createElement('div')
     this.container.appendChild(this.contentDOM)
     this.buildContextMenu(this.container)
-    this.container.appendChild(
+    this.dom.appendChild(
       createAccessibilityElementsButton(
         this.props,
         this.view,
-        this.container,
+        this.dom,
         this.getPos
       )
     )

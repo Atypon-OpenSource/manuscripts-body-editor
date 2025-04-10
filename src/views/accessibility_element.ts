@@ -15,6 +15,7 @@
  */
 import { LongDescNode, schema } from '@manuscripts/transform'
 
+import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
@@ -24,6 +25,22 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     this.createDOM()
     this.createElement()
     this.updateContents()
+  }
+
+  public updateContents() {
+    super.updateContents()
+    const state = this.view.state
+    const selection = selectedSuggestionKey.getState(state)?.suggestion
+    if (selection) {
+      const block = this.dom.parentNode?.parentElement?.classList.contains(
+        'block-container'
+      )
+        ? this.dom.parentNode?.parentElement
+        : this.dom.parentNode?.parentElement?.parentElement
+      block &&
+        !block.classList.contains('show_accessibility_element') &&
+        block.classList.toggle('show_accessibility_element')
+    }
   }
 
   public createDOM() {

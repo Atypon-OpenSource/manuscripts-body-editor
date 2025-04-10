@@ -1195,6 +1195,6 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .block-embed .accessibility_element_expander_button {
-  left: 100%;
-  top: -24px;
+  left: 94%;
+  top: calc(100% - 100px);
 }
