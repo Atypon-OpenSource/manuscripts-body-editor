@@ -107,7 +107,7 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import { findParentNodeWithId, getChildOfType, getInsertPos } from './lib/utils'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -311,6 +311,8 @@ export const createBlock = (
     case state.schema.nodes.embed:
       node = state.schema.nodes.embed.create(attrs, [
         createAndFillFigcaptionElement(state),
+        state.schema.nodes.alt_text.create(),
+        state.schema.nodes.long_desc.create(),
       ])
       break
     default:
@@ -373,7 +375,7 @@ export const insertGeneralTableFootnote = (
   const tr = state.tr
   const footer = insertTableElementFooter(tr, element)
 
-  const pos = footer.pos + 1
+  const pos = footer.pos + 2
   const node = schema.nodes.general_table_footnote.create({}, [
     schema.nodes.paragraph.create(),
   ])
@@ -715,7 +717,7 @@ export const insertTableElementFooter = (
     schema.nodes.table_element_footer
   )[0]
   if (footer) {
-    const pos = tr.mapping.map(table[1] + footer.pos + 1)
+    const pos = tr.mapping.map(table[1] + footer.pos)
     if (isDeleted(footer.node)) {
       reinstateNode(tr, footer.node, pos)
     }
@@ -724,7 +726,9 @@ export const insertTableElementFooter = (
       pos,
     }
   }
-  const pos = tr.mapping.map(table[1] + table[0].nodeSize - 2)
+  const pos = tr.mapping.map(
+    getInsertPos(schema.nodes.table_element_footer, table[0], table[1])
+  )
   const node = schema.nodes.table_element_footer.create()
   tr.insert(pos, node)
   return {
@@ -748,7 +752,6 @@ export const insertFootnotesElement = (
     pos = section.pos + section.node.nodeSize - 1
   }
   const node = schema.nodes.footnotes_element.create()
-  tr.insert(pos, node)
   return [node, pos] as [FootnotesElementNode, number]
 }
 
@@ -1547,6 +1550,8 @@ export const createAndFillTableElement = (
   return schema.nodes.table_element.createChecked({}, [
     createAndFillFigcaptionElement(state),
     schema.nodes.table.create({}, tableRows),
+    state.schema.nodes.alt_text.create(),
+    state.schema.nodes.long_desc.create(),
     schema.nodes.listing.create(),
   ])
 }
@@ -1557,6 +1562,8 @@ const createAndFillFigureElement = (state: ManuscriptEditorState) =>
       state.schema.nodes.figcaption.create(),
     ]),
     createAndFillFigcaptionElement(state),
+    state.schema.nodes.alt_text.create(),
+    state.schema.nodes.long_desc.create(),
     state.schema.nodes.listing.create(),
   ])
 

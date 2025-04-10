@@ -89,9 +89,8 @@
 
 .ProseMirror .figure-block {
   width: 100%;
-  border-color: #000 !important;
-  border-style: none !important;
-  border-width: 0pt !important;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
 
   padding: 4pt !important;
   gap: 4pt !important;
@@ -108,8 +107,6 @@
 
 .ProseMirror .figure-block > figure {
   width: 100%;
-  border: 1px solid #f2f2f2;
-  border-radius: 4px;
   position: relative;
   grid-column: 1/-1;
 }
@@ -574,6 +571,7 @@ span.comment-marker {
   --highlight-bg-color: #ffeebf;
   --common-color: #353535;
   --box-element-bg-color: #fafafa;
+  --label-color: #6E6E6E;
 }
 .ProseMirror ins,
 .ProseMirror del {
@@ -1115,9 +1113,12 @@ th:hover > .table-context-menu-button,
   > * {
   opacity: 0.3;
 }
+
 .ProseMirror .block-embed .tools-panel {
   position: relative;
+  right: 0;
 }
+
 .ProseMirror .block-embed .block-gutter,
 .block-embed .action-gutter {
   display: none;
@@ -1152,4 +1153,48 @@ th:hover > .table-context-menu-button,
 
 .special-characters-ranges-select__menu {
   min-width: 220px;
+}
+
+.ProseMirror .accessibility_element {
+  margin-top: 12px;
+  grid-column-start: 1;
+  grid-column-end: -1;
+  text-align: start;
+  display: none;
+}
+
+.ProseMirror .show_accessibility_element .accessibility_element {
+  display: block;
+}
+
+.ProseMirror .accessibility_element_label {
+  color: var(--label-color);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.369px;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.ProseMirror .accessibility_element_input {
+  border-radius: 4px;
+  border: 1px solid var(--accepted-bg-color);
+  background: #fff;
+  margin-top: 4px;
+  padding: 12px 8px;
+}
+
+.ProseMirror .accessibility_element_expander_button {
+  top: calc(100% - 32px);
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  position: relative;
+}
+
+.ProseMirror .block-embed .accessibility_element_expander_button {
+  left: 100%;
+  top: -24px;
 }

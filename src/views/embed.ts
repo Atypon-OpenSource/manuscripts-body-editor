@@ -22,6 +22,7 @@ import {
   NoPreviewMessageWithLink,
   openEmbedDialog,
 } from '../components/toolbar/InsertEmbedDialog'
+import { createAccessibilityElementsButton } from '../components/views/AccessibilityElementsExpanderButton'
 import { openDeleteEmbedDialog } from '../components/views/DeleteEmbedDialog'
 import { getOEmbedHTML } from '../lib/oembed'
 import { Trackable } from '../types'
@@ -43,6 +44,14 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
     this.contentDOM = document.createElement('div')
     this.container.appendChild(this.contentDOM)
     this.buildContextMenu(this.container)
+    this.container.appendChild(
+      createAccessibilityElementsButton(
+        this.props,
+        this.view,
+        this.container,
+        this.getPos
+      )
+    )
   }
 
   public async updateContents() {
