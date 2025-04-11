@@ -70,7 +70,6 @@ export class FigureEditableView extends FigureView {
   }
 
   createPullQuoteDOM() {
-    console.log('CREATING PULL QUOTE FIGURE')
     this.dom = document.createElement('figure')
 
     this.container = document.createElement('div')

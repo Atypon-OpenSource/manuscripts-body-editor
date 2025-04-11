@@ -313,6 +313,12 @@ export const createBlock = (
         createAndFillFigcaptionElement(state),
       ])
       break
+    case state.schema.nodes.pullquote_element:
+      node = state.schema.nodes.pullquote_element.create(attrs, [
+        state.schema.nodes.paragraph.create({}),
+        state.schema.nodes.attribution.create({}),
+      ])
+      break
     default:
       node = nodeType.createAndFill(attrs)
   }
