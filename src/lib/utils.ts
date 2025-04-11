@@ -20,13 +20,16 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
-import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import {
+  Node as ProseMirrorNode,
+  NodeType,
+  ResolvedPos,
+} from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import {
   findParentNode,
   findParentNodeOfTypeClosestToPos,
 } from 'prosemirror-utils'
-import { ResolvedPos } from 'prosemirror-model'
 
 export function* iterateChildren(
   node: ManuscriptNode,
