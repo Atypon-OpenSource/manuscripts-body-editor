@@ -37,6 +37,8 @@ import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+import { hasParent } from '../lib/utils'
+import { plusIcon } from '../icons'
 
 export enum figurePositions {
   left = 'half-left',
@@ -47,21 +49,48 @@ export enum figurePositions {
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
   positionMenuWrapper: HTMLDivElement
+  closeButton: HTMLButtonElement
   figurePosition: string
 
+  isInPullQuote: boolean
+
   public initialise = () => {
-    this.createDOM()
+    this.upload = this.upload.bind(this)
+    this.isInPullQuote = hasParent(
+      this.view.state.doc.resolve(this.getPos()),
+      schema.nodes.pullquote_element
+    )
+    if (this.isInPullQuote) {
+      this.createPullQuoteDOM()
+    } else {
+      this.createDOM()
+    }
+
     this.updateContents()
+  }
+
+  createPullQuoteDOM() {
+    console.log('CREATING PULL QUOTE FIGURE')
+    this.dom = document.createElement('figure')
+
+    this.container = document.createElement('div')
+    this.container.className = 'pullquote-figure'
+    this.container.contentEditable = 'false'
+    this.dom.appendChild(this.container)
+  }
+
+  upload = async (file: File) => {
+    const result = await this.props.fileManagement.upload(file)
+    this.setSrc(result.id)
   }
 
   public updateContents() {
     super.updateContents()
-    const attrs = this.node.attrs
 
-    const src = attrs.src
+    const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = attrs.type
+    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -74,43 +103,13 @@ export class FigureEditableView extends FigureView {
       ? this.createUnsupportedFormat(file.name)
       : this.createPlaceholder()
 
-    let handleDownload
-    let handleUpload
-    let handleReplace
-    let handleDetach
-
-    if (src) {
-      if (file) {
-        handleDownload = () => {
-          this.props.fileManagement.download(file)
-        }
-      }
-
-      handleDetach = () => {
-        this.setSrc('')
-      }
-    }
-
-    if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
-        this.setSrc(file.id)
-      }
-    }
-
     if (can.uploadFile) {
-      const upload = async (file: File) => {
-        const result = await this.props.fileManagement.upload(file)
-        this.setSrc(result.id)
-      }
-
-      handleUpload = figureUploader(upload)
-
       const handlePlaceholderClick = (event: Event) => {
         const target = event.target as HTMLElement
         if (target.dataset && target.dataset.action) {
           return
         }
-        const triggerUpload = figureUploader(upload)
+        const triggerUpload = figureUploader(this.upload)
         triggerUpload()
       }
 
@@ -147,13 +146,68 @@ export class FigureEditableView extends FigureView {
       img.addEventListener('drop', async (e) => {
         if (e.dataTransfer && e.dataTransfer.files.length) {
           e.preventDefault()
-          await upload(e.dataTransfer.files[0])
+          await this.upload(e.dataTransfer.files[0])
         }
       })
     }
 
     this.container.innerHTML = ''
     this.container.appendChild(img)
+
+    if (!this.isInPullQuote && !this.closeButton) {
+      this.manageReactTools()
+      this.container.appendChild(this.createPositionMenuWrapper())
+    } else {
+      const closeButton = document.createElement('button')
+      closeButton.innerHTML = plusIcon
+      closeButton.classList.add('figure-remove-button', 'button-reset')
+
+      closeButton.addEventListener('click', () => {
+        if (this.node.attrs.src) {
+          this.setSrc('')
+        } else {
+          const { tr } = this.view.state
+          tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+          this.view.dispatch(tr)
+        }
+      })
+      this.closeButton = closeButton
+      this.container.appendChild(closeButton)
+    }
+  }
+
+  handleOnClickClose() {}
+
+  private manageReactTools() {
+    let handleDownload
+    let handleUpload
+    let handleReplace
+    let handleDetach
+
+    const src = this.node.attrs.src
+    const files = this.props.getFiles()
+    const file = src && files.filter((f) => f.id === src)[0]
+
+    const can = this.props.getCapabilities()
+
+    if (src) {
+      if (file) {
+        handleDownload = () => {
+          this.props.fileManagement.download(file)
+        }
+      }
+      handleDetach = () => {
+        this.setSrc('')
+      }
+    }
+    if (can.replaceFile) {
+      handleReplace = (file: FileAttachment) => {
+        this.setSrc(file.id)
+      }
+    }
+    if (can.uploadFile) {
+      handleUpload = figureUploader(this.upload)
+    }
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
@@ -177,8 +231,6 @@ export class FigureEditableView extends FigureView {
       )
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
-
-    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   private setSrc = (src: string) => {
@@ -244,6 +296,10 @@ export class FigureEditableView extends FigureView {
       <a data-action='open-other-files'>'Other files'</a> | 
       <a data-action='open-supplement-files'>'Supplements'</a></p>
     `
+
+    if (this.isInPullQuote) {
+      instructions.innerHTML = `<div>Drag or click here to upload image</div>`
+    }
 
     element.appendChild(instructions)
 
