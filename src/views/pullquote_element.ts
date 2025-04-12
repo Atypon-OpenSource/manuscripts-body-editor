@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { PullquoteElementNode, schema } from '@manuscripts/transform'
+import { findChildrenByType } from 'prosemirror-utils'
 
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import ReactSubView from './ReactSubView'
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { findChildByType } from '../lib/view'
-import { findChildrenByType } from 'prosemirror-utils'
 
 export class PullquoteElementView extends BlockView<PullquoteElementNode> {
   public elementType = 'aside'
