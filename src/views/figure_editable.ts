@@ -39,6 +39,11 @@ import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 import { hasParent } from '../lib/utils'
 import { plusIcon } from '../icons'
+import {
+  addTrackChangesAttributes,
+  addTrackChangesClassNames,
+  isDeleted,
+} from '../lib/track-changes-utils'
 
 export enum figurePositions {
   left = 'half-left',
@@ -102,7 +107,7 @@ export class FigureEditableView extends FigureView {
       ? this.createUnsupportedFormat(file.name)
       : this.createPlaceholder()
 
-    if (can.uploadFile) {
+    if (can.uploadFile && !isDeleted(this.node)) {
       const handlePlaceholderClick = (event: Event) => {
         const target = event.target as HTMLElement
         if (target.dataset && target.dataset.action) {
@@ -153,26 +158,34 @@ export class FigureEditableView extends FigureView {
     this.container.innerHTML = ''
     this.container.appendChild(img)
 
-    if (!this.isInPullQuote && !this.closeButton) {
+    if (!this.isInPullQuote) {
       this.manageReactTools()
       this.container.appendChild(this.createPositionMenuWrapper())
-    } else {
-      const closeButton = document.createElement('button')
-      closeButton.innerHTML = plusIcon
-      closeButton.classList.add('figure-remove-button', 'button-reset')
+    }
 
-      closeButton.addEventListener('click', () => {
-        console.log(this.node.attrs.src)
-        if (this.node.attrs.src) {
-          this.setSrc('')
-        } else {
-          const { tr } = this.view.state
-          tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
-          this.view.dispatch(tr)
-        }
-      })
-      this.closeButton = closeButton
-      this.container.appendChild(closeButton)
+    if (this.isInPullQuote) {
+      if (!this.closeButton) {
+        const closeButton = document.createElement('button')
+        closeButton.innerHTML = plusIcon
+        closeButton.classList.add('figure-remove-button', 'button-reset')
+
+        closeButton.addEventListener('click', () => {
+          if (this.node.attrs.src) {
+            this.setSrc('')
+          } else {
+            const { tr } = this.view.state
+            tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
+            this.view.dispatch(tr)
+          }
+        })
+
+        this.closeButton = closeButton
+      }
+      if (!isDeleted(this.node)) {
+        this.container.appendChild(this.closeButton)
+      }
+      addTrackChangesAttributes(this.node.attrs, this.dom)
+      addTrackChangesClassNames(this.node.attrs, this.dom)
     }
   }
 

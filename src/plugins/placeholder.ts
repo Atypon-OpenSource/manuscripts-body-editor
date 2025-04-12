@@ -48,6 +48,15 @@ const getParagraphPlaceholderText = (
     return
   }
   if (isPullquoteElement(parent) && !node.textContent.length) {
+    let otherParagraphHasContent = false
+    parent.descendants((child) => {
+      if (child !== node && child.type === child.type.schema.nodes.paragraph) {
+        otherParagraphHasContent = true
+      }
+    })
+    if (otherParagraphHasContent) {
+      return
+    }
     return 'Insert pull quote here'
   }
   if (parent.textContent.length) {

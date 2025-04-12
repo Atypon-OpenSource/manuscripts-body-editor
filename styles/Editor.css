@@ -71,7 +71,7 @@
 }
 
 .ProseMirror .block-container > .block.pullquote {
-  padding: 7px 0 7px 48px;
+  padding: 0 0 7px 48px;
 }
 .ProseMirror .pullquote {
   column-gap: 30px;
@@ -96,7 +96,7 @@
   top: 0.3em;
   position: relative;
 }
-.ProseMirror .pullquote p:last-of-type::before {
+.ProseMirror .pullquote p:first-of-type::before {
   margin-left: -16px;
   left: -0.1em;
   top: 0.35em;
@@ -136,16 +136,20 @@
   max-width: 146px;
   min-width: 146px;
   border-radius: 16px;
+  position: relative;
+  z-index: 1;
 }
 .ProseMirror .pullquote-figure {
   position: relative;
   float: left;
+  text-decoration: inherit;
   margin: 10px 30px 0 0;
 }
 .ProseMirror .pullquote .figure.placeholder {
   box-sizing: border-box;
-  border: 1px dotted #e2e2e2;
+  border: 1px dashed #e2e2e2;
   padding: 16px;
+  text-decoration: inherit;
   max-width: 146px;
 }
 .ProseMirror .pullquote figure {
@@ -156,9 +160,7 @@
   background: #ddf3fa;
   color: #6e6e6e;
 }
-.tracking-visible .ProseMirror .pullquote .set_attrs {
-  background: transparent;
-}
+
 .ProseMirror .pullquote .figure.placeholder svg path {
   fill: #c9c9c9;
 }
@@ -172,6 +174,10 @@
   font-style: normal;
   font-size: 14px;
   line-height: 1.71;
+  text-decoration: inherit;
+}
+.ProseMirror .pullquote figure:not(.deleted) .figure div {
+  color: #6e6e6e;
   text-decoration: none;
 }
 .ProseMirror .figure-remove-button svg {
@@ -191,6 +197,7 @@
   border: 1px solid #f2f2f2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
   cursor: pointer;
+  z-index: 2;
 }
 .tracking-visible .ProseMirror .pullquote figure.inserted {
   text-decoration: none;
@@ -334,7 +341,6 @@
   border-radius: 16px;
   border: 1px dashed #e2e2e2;
   background-color: #fafafa;
-  color: #6e6e6e;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -343,7 +349,6 @@
   max-width: 210px;
   min-height: 100px;
   white-space: normal;
-
   font-size: 14px;
 }
 
