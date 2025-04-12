@@ -74,10 +74,7 @@
   padding: 7px 0 7px 48px;
 }
 .ProseMirror .pullquote {
-  display: grid;
   column-gap: 30px;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
 
   line-height: 2;
   font-size: 16px;
@@ -93,12 +90,16 @@
 .ProseMirror .pullquote p:first-of-type::before {
   font-family: 'PT Serif', serif;
   content: '“';
-  font-size: 32px;
+  font-size: 30px;
   line-height: 0;
   color: #6e6e6e;
+  top: 0.3em;
+  position: relative;
 }
 .ProseMirror .pullquote p:last-of-type::before {
   margin-left: -16px;
+  left: -0.1em;
+  top: 0.35em;
 }
 .ProseMirror .pullquote p:last-of-type::after {
   content: '”';
@@ -114,7 +115,6 @@
 }
 
 .ProseMirror .pullquote footer {
-  grid-row-start: 2;
   padding-left: 1em;
   color: #777;
   position: relative;
@@ -139,6 +139,8 @@
 }
 .ProseMirror .pullquote-figure {
   position: relative;
+  float: left;
+  margin: 10px 30px 0 0;
 }
 .ProseMirror .pullquote .figure.placeholder {
   box-sizing: border-box;
@@ -148,7 +150,6 @@
 }
 .ProseMirror .pullquote figure {
   margin: 0;
-  grid-row: 1 / 100;
 }
 .ProseMirror .pullquote footer.empty-node:after,
 .ProseMirror .pullquote .placeholder-text {

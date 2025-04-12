@@ -162,6 +162,7 @@ export class FigureEditableView extends FigureView {
       closeButton.classList.add('figure-remove-button', 'button-reset')
 
       closeButton.addEventListener('click', () => {
+        console.log(this.node.attrs.src)
         if (this.node.attrs.src) {
           this.setSrc('')
         } else {
