@@ -31,19 +31,19 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, groupFiles } from '../lib/files'
-import { updateNodeAttrs } from '../lib/view'
-import { createEditableNodeView } from './creators'
-import { FigureView } from './figure'
-import { figureUploader } from './figure_uploader'
-import ReactSubView from './ReactSubView'
-import { hasParent } from '../lib/utils'
 import { plusIcon } from '../icons'
+import { FileAttachment, groupFiles } from '../lib/files'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
   isDeleted,
 } from '../lib/track-changes-utils'
+import { hasParent } from '../lib/utils'
+import { updateNodeAttrs } from '../lib/view'
+import { createEditableNodeView } from './creators'
+import { FigureView } from './figure'
+import { figureUploader } from './figure_uploader'
+import ReactSubView from './ReactSubView'
 
 export enum figurePositions {
   left = 'half-left',
@@ -188,8 +188,6 @@ export class FigureEditableView extends FigureView {
       addTrackChangesClassNames(this.node.attrs, this.dom)
     }
   }
-
-  handleOnClickClose() {}
 
   private manageReactTools() {
     let handleDownload

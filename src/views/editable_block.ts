@@ -17,8 +17,8 @@
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
-import BlockView from './block_view'
 import { hasParent, isNotNull } from '../lib/utils'
+import BlockView from './block_view'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T

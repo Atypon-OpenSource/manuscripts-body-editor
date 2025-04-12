@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import { PullquoteElementNode } from '@manuscripts/transform'
+import { PullquoteElementNode, schema } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
+import ReactSubView from './ReactSubView'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { findChildByType } from '../lib/view'
+import { findChildrenByType } from 'prosemirror-utils'
 
 export class PullquoteElementView extends BlockView<PullquoteElementNode> {
   public elementType = 'aside'
-  // public footerElement: HTMLElement
+  contextMenu: HTMLElement
+
+  public ignoreMutation = () => true
+  public stopEvent = () => true
 
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
@@ -29,6 +36,44 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
     this.contentDOM.classList.add('pullquote')
 
     this.dom.appendChild(this.contentDOM)
+  }
+
+  handleAddFigure() {
+    const tr = this.view.state.tr
+    tr.insert(this.getPos() + 1, schema.nodes.figure.create())
+    this.view.dispatch(tr)
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.addFigureContextMenu()
+    return contextMenu ? [contextMenu] : []
+  }
+
+  addFigureContextMenu = (): HTMLElement | undefined => {
+    const can = this.props.getCapabilities()
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
+    if (can.editArticle) {
+      componentProps.actions.push({
+        label: 'Add Image',
+        action: () => this.handleAddFigure(),
+        icon: 'AddFigure',
+        disabled: !!findChildrenByType(this.node, schema.nodes.figure).length,
+      })
+
+      this.contextMenu = ReactSubView(
+        this.props,
+        ContextMenu,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['context-menu']
+      )
+      return this.contextMenu
+    }
+    return undefined
   }
 }
 
