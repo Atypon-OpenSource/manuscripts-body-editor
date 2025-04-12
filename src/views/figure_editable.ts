@@ -297,7 +297,7 @@ export class FigureEditableView extends FigureView {
     `
 
     if (this.isInPullQuote) {
-      instructions.innerHTML = `<div>Drag or click here to upload image</div>`
+      instructions.innerHTML = `${plusIcon}<div>Drag or click here to upload image</div>`
     }
 
     element.appendChild(instructions)
