@@ -111,14 +111,14 @@ export const groupFiles = (
       supplements.push({
         node,
         pos,
-        file: getFile(node.attrs.href)
+        file: getFile(node.attrs.href),
       })
     }
     if (node.type === schema.nodes.attachment) {
       attachments.push({
         node,
         pos,
-        file: getFile(node.attrs.href)
+        file: getFile(node.attrs.href),
       })
     }
   })
