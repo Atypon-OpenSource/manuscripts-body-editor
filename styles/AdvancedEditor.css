@@ -1187,14 +1187,19 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .accessibility_element_expander_button {
-  top: calc(100% - 32px);
-  width: 24px;
-  height: 24px;
+  top: calc(100% - 23px);
+  height: 8px;
   padding: 4px;
+  grid-column-end: -1;
+  justify-self: self-end;
   position: relative;
+  left: 33px;
+}
+
+.ProseMirror .block-table_element .accessibility_element_expander_button {
+  top: -32px;
 }
 
 .ProseMirror .block-embed .accessibility_element_expander_button {
-  left: 94%;
-  top: calc(100% - 100px);
+  top: -23px;
 }

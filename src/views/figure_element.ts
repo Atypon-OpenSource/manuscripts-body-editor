@@ -16,7 +16,6 @@
 
 import { FigureElementNode } from '@manuscripts/transform'
 
-import { createAccessibilityElementsButton } from '../components/views/AccessibilityElementsExpanderButton'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -36,14 +35,6 @@ export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.container.appendChild(this.contentDOM)
-    this.dom.appendChild(
-      createAccessibilityElementsButton(
-        this.props,
-        this.view,
-        this.dom,
-        this.getPos
-      )
-    )
   }
 }
 

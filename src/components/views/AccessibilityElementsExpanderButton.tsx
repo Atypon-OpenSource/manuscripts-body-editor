@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { ArrowDownCircleIcon, ExpanderButton } from '@manuscripts/style-guide'
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { findChildren } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
@@ -21,13 +22,15 @@ import React, { useState } from 'react'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { getInsertPos } from '../../lib/utils'
+import { accessibilityElementKey } from '../../plugins/accessibility_element'
 import ReactSubView from '../../views/ReactSubView'
 
 const InsertAccessibilityElementIfMissing = (
   view: EditorView,
   getPos: () => number
 ) => {
-  const $pos = view.state.tr.doc.resolve(getPos() + 1)
+  const tr = view.state.tr
+  const $pos = tr.doc.resolve(getPos())
   const node = $pos.node()
   const accessibilityElement = findChildren(
     node,
@@ -38,30 +41,33 @@ const InsertAccessibilityElementIfMissing = (
   )[0]
 
   if (!accessibilityElement) {
-    const insertPos = getInsertPos(schema.nodes.alt_text, node, $pos.pos)
+    const insertPos = getInsertPos(
+      schema.nodes.alt_text,
+      node,
+      $pos.pos - $pos.parentOffset - 1
+    )
 
-    view.dispatch(
-      view.state.tr
-        .insert(insertPos, schema.nodes.alt_text.create())
-        .insert(insertPos + 2, schema.nodes.long_desc.create())
+    tr.insert(insertPos, schema.nodes.alt_text.create()).insert(
+      insertPos + 2,
+      schema.nodes.long_desc.create()
     )
   }
+
+  view.dispatch(
+    skipTracking(tr.setMeta(accessibilityElementKey, node.attrs.id))
+  )
 }
 
 export const createAccessibilityElementsButton = (
   props: EditorProps,
   view: EditorView,
-  container: HTMLElement,
   getPos: () => number
 ) =>
   ReactSubView(
     { ...props, dispatch: view.dispatch },
     AccessibilityElementsExpanderButton,
     {
-      onExpand: () => {
-        InsertAccessibilityElementIfMissing(view, getPos)
-        container.classList.toggle('show_accessibility_element')
-      },
+      onExpand: () => InsertAccessibilityElementIfMissing(view, getPos),
     },
     view.state.selection.$from.node(),
     getPos,

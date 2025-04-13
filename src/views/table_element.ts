@@ -16,7 +16,6 @@
 
 import { TableElementNode } from '@manuscripts/transform'
 
-import { createAccessibilityElementsButton } from '../components/views/AccessibilityElementsExpanderButton'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
@@ -30,14 +29,6 @@ export class TableElementView extends BlockView<TableElementNode> {
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.dom.appendChild(this.contentDOM)
-    this.dom.appendChild(
-      createAccessibilityElementsButton(
-        this.props,
-        this.view,
-        this.dom,
-        this.getPos
-      )
-    )
   }
 }
 
