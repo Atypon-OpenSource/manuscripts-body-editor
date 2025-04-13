@@ -22,7 +22,7 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class FigureElementView extends BlockView<
+export class AltTitleSectionView extends BlockView<
   Trackable<AltTitlesSectionNode>
 > {
   private container: HTMLElement
@@ -60,4 +60,4 @@ export class FigureElementView extends BlockView<
   }
 }
 
-export default createNodeView(FigureElementView)
+export default createNodeView(AltTitleSectionView)
