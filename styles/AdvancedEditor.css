@@ -1007,11 +1007,76 @@ figure.block:has(.equation.selected-suggestion) {
 }
 .manuscript-title {
   margin-bottom: 20px;
+  position: relative;
 }
+
 .ProseMirror .manuscript-title.empty-node .article-titles::before {
   content: attr(data-placeholder);
 }
 
+.alt-title-text {
+  border-radius: 4px;
+  border: 1px solid #e2e2e2;
+  padding: 8px 16px;
+}
+
+.manuscript-alt-title {
+  display: block;
+  margin: 13px 0 13px;
+}
+@keyframes alt-titles-in {
+  from {
+    opacity: 0;
+    margin-top: -2rem;
+  }
+
+  to {
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+.ProseMirror .block-alt_titles {
+  display: none;
+}
+.ProseMirror .block-alt_titles.alt-titles-section-open {
+  display: contents; /* covering the sides to prevent cursor setting into the parent block element */
+}
+/* covering the sides to prevent cursor setting into the parent block element */
+.alt-titles-section {
+  opacity: 1;
+  animation-name: alt-titles-in;
+  animation-duration: 0.45s;
+  padding: 0 calc(var(--body-side-margin) - 12px);
+}
+.alt-titles-closing-panel {
+  border-bottom: 1px solid #e2e2e2;
+  position: relative;
+  padding-top: 0.2rem;
+  margin: 1rem calc(var(--body-side-margin) - 12px) 0;
+}
+.alt-titles-closing-button {
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  top: 50%;
+  transform: translate(100%, -50%) scaleY(-1);
+  background: #fff;
+  z-index: 2;
+}
+.alt-title-label {
+  font-size: 18px;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+  color: #6e6e6e;
+  line-height: 1.3;
+}
+.alt-titles-open {
+  position: absolute;
+  right: var(--body-side-margin);
+  transform: translateX(100%);
+  bottom: 0;
+  cursor: pointer;
+}
 .ProseMirror .table-context-menu-button svg {
   margin: 4px;
   pointer-events: none;
@@ -1178,4 +1243,7 @@ th:hover > .table-context-menu-button,
 
 .special-characters-ranges-select__menu {
   min-width: 220px;
+}
+.embed-media-preview .tools-panel {
+  right: 6px;
 }
