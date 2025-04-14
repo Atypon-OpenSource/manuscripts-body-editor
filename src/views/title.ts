@@ -39,6 +39,7 @@ export class TitleView
       this.contentDOM.setAttribute('data-placeholder', attrs.placeholder)
     }
     this.dom.appendChild(this.contentDOM)
+    this.updateContents()
   }
 }
 
