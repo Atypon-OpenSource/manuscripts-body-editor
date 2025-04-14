@@ -130,3 +130,19 @@ export const createHeader = (typeName: string, text: string) => {
   header.textContent = text
   return header
 }
+
+export const getInsertPos = (
+  type: ManuscriptNodeType,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  let insertPos = pos + parent.nodeSize - 2
+
+  parent.forEach((child, offset, index) => {
+    if (parent.canReplaceWith(index, index, type)) {
+      insertPos = pos + offset
+    }
+  })
+
+  return insertPos
+}

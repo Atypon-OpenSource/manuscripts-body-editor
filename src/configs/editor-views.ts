@@ -15,6 +15,7 @@
  */
 
 import { Dispatch } from '../commands'
+import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
@@ -98,7 +99,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),
-    long_desc: empty('long_desc'),
-    alt_text: empty('alt_text'),
+    long_desc: accessibilityElement(props, dispatch),
+    alt_text: accessibilityElement(props, dispatch),
   }
 }
