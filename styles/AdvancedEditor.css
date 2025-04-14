@@ -778,7 +778,7 @@ figure.block:has(.equation.selected-suggestion) {
   [data-track-op='node_split'][data-track-status='pending']
   .block,  .tracking-visible
   .ProseMirror
-  [data-track-op='node_move'][data-track-status='pending']
+  [data-track-op='move'][data-track-status='pending']
   .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
@@ -786,7 +786,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
 .tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
 .tracking-visible .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
-.tracking-visible .selected-suggestion[data-track-op='node_split'] .block, .tracking-visible .selected-suggestion[data-track-op='node_move'] .block,
+.tracking-visible .selected-suggestion[data-track-op='node_split'] .block, .tracking-visible .selected-suggestion[data-track-op='move'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
   box-shadow: inset 6px 0 0 var(--updated-border-color), inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
