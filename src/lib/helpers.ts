@@ -85,7 +85,13 @@ export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
   if (node.attrs.id) {
     target = view.dom.querySelector(`[id="${node.attrs.id}"]`)
   } else {
-    target = view.domAtPos(selection.from).node as Element
+    let node = view.domAtPos(selection.from).node
+
+    const ELEMENT_NODE = 1
+    while (node.nodeType !== ELEMENT_NODE && node.parentElement) {
+      node = node.parentElement
+    }
+    target = node as Element
   }
 
   if (!target || !(target instanceof HTMLElement)) {

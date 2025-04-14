@@ -17,6 +17,7 @@
 import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
+  AttachmentNode,
   AwardNode,
   BoxElementNode,
   FigureElementNode,
@@ -89,6 +90,7 @@ import {
   findBibliographySection,
   findBody,
   findFootnotesSection,
+  insertAttachmentsNode,
   insertAwardsNode,
   insertFootnotesSection,
   insertSupplementsNode,
@@ -120,6 +122,11 @@ export const addToStart = (
   dispatch?: Dispatch
 ): boolean => {
   const { selection } = state
+
+  const props = getEditorProps(state)
+  if (props.getCapabilities().editWithoutTracking) {
+    return false
+  }
 
   if (
     !dispatch ||
@@ -432,6 +439,38 @@ export const insertSupplement = (
   const supplements = insertSupplementsNode(tr)
   const pos = supplements.pos + supplements.node.nodeSize - 1
   tr.insert(pos, supplement)
+  if (dispatch) {
+    dispatch(skipTracking(tr))
+  }
+  return true
+}
+
+export const insertAttachment = (
+  file: FileAttachment,
+  state: ManuscriptEditorState,
+  type: string,
+  dispatch?: Dispatch
+) => {
+  const tr = state.tr
+  const attachments = insertAttachmentsNode(tr)
+  if (!attachments) {
+    return false
+  }
+
+  if (attachments.node.childCount > 0) {
+    const startPos = attachments.pos + 1
+    const endPos = attachments.pos + attachments.node.nodeSize - 1
+    tr.delete(startPos, endPos)
+  }
+
+  const attachment = schema.nodes.attachment.createAndFill({
+    id: generateNodeID(schema.nodes.attachment),
+    href: file.id,
+    type: type,
+  }) as AttachmentNode
+
+  tr.insert(attachments.pos + 1, attachment)
+
   if (dispatch) {
     dispatch(skipTracking(tr))
   }
@@ -1172,8 +1211,9 @@ function toggleOffList(
       (node, pos) => {
         // remove all the nodes that are not fully in the range
         if (
-          pos < rootList!.pos ||
-          node.nodeSize > rootList!.pos + rootList!.node.nodeSize
+          rootList &&
+          (pos < rootList.pos ||
+            node.nodeSize > rootList.pos + rootList.node.nodeSize)
         ) {
           return true
         }
