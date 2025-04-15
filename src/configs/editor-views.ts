@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
+import { NodeViewCreator } from '../types'
 import affiliations from '../views/affiliations'
+import alt_title from '../views/alt_title'
+import alt_titles_section from '../views/alt_titles_section'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
 import awards from '../views/awards'
@@ -54,10 +58,14 @@ import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
-export default (props: EditorProps, dispatch: Dispatch) => {
+export default (
+  props: EditorProps,
+  dispatch: Dispatch
+): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
-    alt_title: empty('alt_title'),
+    alt_title: alt_title(props),
+    alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
     box_element: boxElement(props),
@@ -98,5 +106,7 @@ export default (props: EditorProps, dispatch: Dispatch) => {
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),
+    long_desc: empty('long_desc'),
+    alt_text: empty('alt_text'),
   }
 }

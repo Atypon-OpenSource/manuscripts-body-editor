@@ -28,6 +28,7 @@ import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
 import affiliations from '../plugins/affiliations'
+import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
 import cross_references from '../plugins/cross-references'
@@ -42,7 +43,6 @@ import placeholder from '../plugins/placeholder'
 import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
-import sections from '../plugins/sections'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import rules from '../rules'
@@ -65,7 +65,6 @@ export default (props: EditorProps) => {
     table_editing_fix(),
     elements(),
     persist(),
-    sections(),
     bibliography(props),
     objects(),
     affiliations(),
@@ -80,6 +79,7 @@ export default (props: EditorProps) => {
     section_category(props),
     cross_references(),
     search_replace(),
+    alt_titles(),
   ]
 
   if (props.collabProvider) {
