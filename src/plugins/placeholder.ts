@@ -17,6 +17,7 @@
 import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
+  isPullquoteElement,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
@@ -39,8 +40,26 @@ const placeholderWidget =
     return element
   }
 
-const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
-  if (!parent || parent.textContent.length) {
+const getParagraphPlaceholderText = (
+  parent: ManuscriptNode | null,
+  node: ManuscriptNode
+) => {
+  if (!parent) {
+    return
+  }
+  if (isPullquoteElement(parent) && !node.textContent.length) {
+    let otherParagraphHasContent = false
+    parent.descendants((child) => {
+      if (child !== node && child.type === child.type.schema.nodes.paragraph) {
+        otherParagraphHasContent = true
+      }
+    })
+    if (otherParagraphHasContent) {
+      return
+    }
+    return 'Insert pull quote here'
+  }
+  if (parent.textContent.length) {
     return
   }
   if (parent.type === schema.nodes.body) {
@@ -63,7 +82,7 @@ export default () =>
         state.doc.descendants((node, pos, parent) => {
           if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
             if (node.type === node.type.schema.nodes.paragraph) {
-              const text = getParagraphPlaceholderText(parent)
+              const text = getParagraphPlaceholderText(parent, node)
               if (text) {
                 decorations.push(
                   Decoration.widget(pos + 1, placeholderWidget(text))

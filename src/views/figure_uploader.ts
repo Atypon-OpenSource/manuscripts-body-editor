@@ -24,6 +24,7 @@ export const figureUploader = (handler: UploadHandler) => {
   }
 
   const input = document.createElement('input')
+  // NOTE: figures in pullquotes should support only image, so if to be extended, it needs conditioning
   input.accept = 'image/*'
   input.type = 'file'
   input.addEventListener('change', handleFileChange)

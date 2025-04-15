@@ -20,9 +20,16 @@ import {
   ManuscriptNode,
   ManuscriptNodeType,
 } from '@manuscripts/transform'
-import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import {
+  Node as ProseMirrorNode,
+  NodeType,
+  ResolvedPos,
+} from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
-import { findParentNode } from 'prosemirror-utils'
+import {
+  findParentNode,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -129,4 +136,10 @@ export const createHeader = (typeName: string, text: string) => {
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const isNotNull = <T>(a: T | null): a is T => a !== null
+
+export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
+  return !!findParentNodeOfTypeClosestToPos($pos, type)
 }
