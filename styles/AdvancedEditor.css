@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .ProseMirror {
   --inserted-pending-bg-color: #e6ffdb;
   --inserted-pending-color: #01872e;
@@ -12,7 +11,8 @@
   --highlight-bg-color: #ffeebf;
   --common-color: #353535;
   --box-element-bg-color: #fafafa;
-=======
+}
+
 * {
   scroll-behavior: smooth;
 }
@@ -30,7 +30,6 @@
   -webkit-font-smoothing: inherit;
   -moz-osx-font-smoothing: inherit;
   -webkit-appearance: none;
->>>>>>> master
 }
 
 .ProseMirror
