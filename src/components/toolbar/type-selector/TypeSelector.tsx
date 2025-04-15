@@ -145,6 +145,7 @@ export const TypeSelector: React.FC<{
       components={{
         Option: OptionComponent,
       }}
+      classNamePrefix="type-selector"
       styles={customStyles}
       isDisabled={options.length <= 1 || !isInBody || !isEditAllowed(state)}
       isSearchable={false}
