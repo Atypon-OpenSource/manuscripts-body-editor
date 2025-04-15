@@ -73,6 +73,19 @@ export default () => {
           return false
         },
       },
+      handleClickOn: (view, pos, node, nodePos, event) => {
+        if (isSelectionInBody(view.state) && isBodyLocked(view.state)) {
+          event.preventDefault()
+          return true
+        }
+        return false
+      },
+      handleTripleClickOn: (view, pos, node, nodePos, event) => {
+        console.log('BINGO...')
+        console.log(node)
+        event.preventDefault()
+        return true
+      },
     },
   })
 }
@@ -93,6 +106,23 @@ const getDecorations = (doc: Node): Decoration[] => {
           return div
         })
       )
+
+      // Add a transparent overlay that blocks interaction
+      doc.descendants((node, pos) => {
+        if (node.type.name === 'figure') {
+          decorations.push(
+            Decoration.widget(
+              pos + 1, // inside the figure node
+              () => {
+                const overlay = document.createElement('div')
+                overlay.className = 'body-overlay'
+                return overlay
+              },
+              { side: 1 } // make sure it’s inside the node
+            )
+          )
+        }
+      })
     }
   })
   return decorations

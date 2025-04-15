@@ -1160,6 +1160,16 @@ th:hover > .table-context-menu-button,
   user-select: none;
   box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6E6E6E;
 }
+.ProseMirror .body-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: all;
+  background: rgba(255, 255, 255, 0);
+  z-index: 10;
+}
 
 .ProseMirror .non-editable .block {
   opacity: 50%;
