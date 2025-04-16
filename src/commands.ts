@@ -123,6 +123,11 @@ export const addToStart = (
 ): boolean => {
   const { selection } = state
 
+  const props = getEditorProps(state)
+  if (props.getCapabilities().editWithoutTracking) {
+    return false
+  }
+
   if (
     !dispatch ||
     !(selection instanceof TextSelection) ||
@@ -1206,8 +1211,9 @@ function toggleOffList(
       (node, pos) => {
         // remove all the nodes that are not fully in the range
         if (
-          pos < rootList!.pos ||
-          node.nodeSize > rootList!.pos + rootList!.node.nodeSize
+          rootList &&
+          (pos < rootList.pos ||
+            node.nodeSize > rootList.pos + rootList.node.nodeSize)
         ) {
           return true
         }
