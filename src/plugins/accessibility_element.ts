@@ -19,6 +19,7 @@ import {
 } from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
+import { AttrStep } from 'prosemirror-transform'
 import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
@@ -78,28 +79,47 @@ const insertAccessibilityElementIfMissing = (
   )
 }
 
-const createExpandButtonWidget = (
-  view: EditorView,
-  getPos: () => number | undefined
-): HTMLElement => {
-  const container = document.createElement('div')
-  container.className = 'accessibility_element_expander_button_container'
-  const button = document.createElement('button')
-  button.className = 'accessibility_element_expander_button'
-  button.innerHTML = arrowDown
-  button.onclick = () => insertAccessibilityElementIfMissing(view, getPos)
-  container.appendChild(button)
-  return container
-}
+const createExpandButtonWidget =
+  (newNodeId?: string | boolean) =>
+  (view: EditorView, getPos: () => number | undefined): HTMLElement => {
+    const container = document.createElement('div')
+    container.className = 'accessibility_element_expander_button_container'
+    const button = document.createElement('button')
+    button.className = 'accessibility_element_expander_button'
+    button.innerHTML = arrowDown
+    button.onclick = () => insertAccessibilityElementIfMissing(view, getPos)
+    container.appendChild(button)
 
-const buildDecoration = (doc: ManuscriptNode, shownNodes: Set<string>) => {
+    if (newNodeId) {
+      setTimeout(
+        () =>
+          view.dispatch(
+            skipTracking(
+              view.state.tr.setMeta(accessibilityElementKey, newNodeId)
+            )
+          ),
+        4000
+      )
+    }
+    return container
+  }
+
+const buildDecoration = (
+  doc: ManuscriptNode,
+  shownNodes: Set<string>,
+  newNodeId?: string
+) => {
   const decorations: Decoration[] = []
   doc.descendants((node, pos) => {
     if (parentOfAccessibilityElement.has(node.type)) {
       decorations.push(
-        Decoration.widget(pos + node.nodeSize - 1, createExpandButtonWidget, {
-          key: node.attrs.id,
-        })
+        Decoration.widget(
+          pos + node.nodeSize - 1,
+          createExpandButtonWidget(node.attrs.id === newNodeId && newNodeId),
+          {
+            key: node.attrs.id,
+          }
+        )
       )
     }
 
@@ -135,6 +155,22 @@ const getIdOfParentToAccessibilityElement = (
   }
 }
 
+// get Id for inserted parent node of accessibility element
+function getNewNodeId(tr: Transaction, shownElements: Set<string>) {
+  let newNodeId
+  tr.steps.map((step) => {
+    if (
+      step instanceof AttrStep &&
+      tr.doc.nodeAt(step.pos) &&
+      parentOfAccessibilityElement.has(tr.doc.nodeAt(step.pos)!.type)
+    ) {
+      newNodeId = step.value
+      shownElements.add(step.value)
+    }
+  })
+  return newNodeId
+}
+
 export default () => {
   return new Plugin<PluginState>({
     key: accessibilityElementKey,
@@ -157,9 +193,11 @@ export default () => {
             shownElements.add(nodeId)
         }
         if (selectedNodeId || nodeId || tr.docChanged) {
+          const newNodeId = getNewNodeId(tr, shownElements)
           decorationSet.decorations = buildDecoration(
             newState.doc,
-            shownElements
+            shownElements,
+            newNodeId
           )
         }
         return decorationSet
