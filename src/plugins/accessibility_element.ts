@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+import {
+  skipTracking,
+  trackChangesPluginKey,
+} from '@manuscripts/track-changes-plugin'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
-import { findParentNodeClosestToPos } from 'prosemirror-utils'
+import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { createAccessibilityElementsButton } from '../components/views/AccessibilityElementsExpanderButton'
-import { getEditorProps } from './editor-props'
+import { arrowDown } from '../icons'
+import { getInsertPos } from '../lib/utils'
 import { selectedSuggestionKey } from './selected-suggestion'
 
 export interface PluginState {
-  buttonsDecoration: Decoration[]
-  visibilityDecoration: Decoration[]
+  decorations: Decoration[]
   shownElements: Set<string>
 }
 
@@ -43,41 +45,70 @@ const parentOfAccessibilityElement = new Set([
 const accessibilityElementNods = (node: ManuscriptNode) =>
   node.type === schema.nodes.alt_text || node.type === schema.nodes.long_desc
 
+const insertAccessibilityElementIfMissing = (
+  view: EditorView,
+  getPos: () => number | undefined
+) => {
+  const tr = view.state.tr
+  const $pos = tr.doc.resolve(getPos() || 0)
+  const node = $pos.node()
+  const accessibilityElement = findChildren(
+    node,
+    (child) =>
+      child.type === schema.nodes.alt_text ||
+      child.type === schema.nodes.long_desc,
+    false
+  )[0]
+
+  if (!accessibilityElement) {
+    const insertPos = getInsertPos(
+      schema.nodes.alt_text,
+      node,
+      $pos.pos - $pos.parentOffset - 1
+    )
+
+    tr.insert(insertPos, schema.nodes.alt_text.create()).insert(
+      insertPos + 2,
+      schema.nodes.long_desc.create()
+    )
+  }
+
+  view.dispatch(
+    skipTracking(tr.setMeta(accessibilityElementKey, node.attrs.id))
+  )
+}
+
 const createExpandButtonWidget = (
   view: EditorView,
   getPos: () => number | undefined
 ): HTMLElement => {
-  const props = getEditorProps(view.state)
-  return createAccessibilityElementsButton(props, view, () => getPos() || 0)
+  const container = document.createElement('div')
+  container.className = 'accessibility_element_expander_button_container'
+  const button = document.createElement('button')
+  button.className = 'accessibility_element_expander_button'
+  button.innerHTML = arrowDown
+  button.onclick = () => insertAccessibilityElementIfMissing(view, getPos)
+  container.appendChild(button)
+  return container
 }
 
-const buildExpandButtonWidget = (doc: ManuscriptNode) => {
+const buildDecoration = (doc: ManuscriptNode, shownNodes: Set<string>) => {
   const decorations: Decoration[] = []
   doc.descendants((node, pos) => {
     if (parentOfAccessibilityElement.has(node.type)) {
       decorations.push(
-        Decoration.widget(pos + node.nodeSize - 1, createExpandButtonWidget)
+        Decoration.widget(pos + node.nodeSize - 1, createExpandButtonWidget, {
+          key: node.attrs.id,
+        })
       )
-      return false
     }
-  })
 
-  return decorations
-}
-
-const buildVisibilityDecoration = (
-  doc: ManuscriptNode,
-  shownNodes: Set<string>
-) => {
-  const decorations: Decoration[] = []
-  doc.descendants((node, pos) => {
     if (shownNodes.has(node.attrs.id)) {
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {
           class: 'show_accessibility_element',
         })
       )
-      return false
     }
   })
 
@@ -110,41 +141,26 @@ export default () => {
     state: {
       init(config, instance) {
         return {
-          buttonsDecoration: buildExpandButtonWidget(instance.doc),
-          visibilityDecoration: [],
+          decorations: buildDecoration(instance.doc, new Set()),
           shownElements: new Set(),
         }
       },
       apply(tr, decorationSet, oldState, newState) {
         const { shownElements } = decorationSet
-
-        const id = getIdOfParentToAccessibilityElement(newState, tr)
-        if (id) {
-          shownElements.add(id)
-          decorationSet.visibilityDecoration = buildVisibilityDecoration(
-            newState.doc,
-            shownElements
-          )
+        const selectedNodeId = getIdOfParentToAccessibilityElement(newState, tr)
+        if (selectedNodeId) {
+          shownElements.add(selectedNodeId)
         }
-
-        if (tr.docChanged) {
-          decorationSet.buttonsDecoration = buildExpandButtonWidget(
-            newState.doc
-          )
-          decorationSet.visibilityDecoration = buildVisibilityDecoration(
+        const nodeId = tr.getMeta(accessibilityElementKey)
+        if (nodeId) {
+          ;(shownElements.has(nodeId) && shownElements.delete(nodeId)) ||
+            shownElements.add(nodeId)
+        }
+        if (selectedNodeId || nodeId || tr.docChanged) {
+          decorationSet.decorations = buildDecoration(
             newState.doc,
             shownElements
           )
-        } else {
-          const nodeId = tr.getMeta(accessibilityElementKey)
-          if (nodeId) {
-            ;(shownElements.has(nodeId) && shownElements.delete(nodeId)) ||
-              shownElements.add(nodeId)
-            decorationSet.visibilityDecoration = buildVisibilityDecoration(
-              newState.doc,
-              shownElements
-            )
-          }
         }
         return decorationSet
       },
@@ -153,10 +169,7 @@ export default () => {
       decorations: (state) => {
         const pluginState = accessibilityElementKey.getState(state)
         if (pluginState) {
-          return DecorationSet.create(state.doc, [
-            ...pluginState.buttonsDecoration,
-            ...pluginState.visibilityDecoration,
-          ])
+          return DecorationSet.create(state.doc, [...pluginState.decorations])
         }
       },
     },

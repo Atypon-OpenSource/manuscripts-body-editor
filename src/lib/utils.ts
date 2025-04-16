@@ -136,7 +136,7 @@ export const getInsertPos = (
   parent: ManuscriptNode,
   pos: number
 ) => {
-  let insertPos = pos + parent.nodeSize - 2
+  let insertPos = pos + parent.nodeSize - 1
 
   parent.forEach((child, offset, index) => {
     if (parent.canReplaceWith(index, index, type)) {

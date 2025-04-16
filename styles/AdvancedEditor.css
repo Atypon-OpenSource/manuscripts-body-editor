@@ -1186,20 +1186,31 @@ th:hover > .table-context-menu-button,
   padding: 12px 8px;
 }
 
-.ProseMirror .accessibility_element_expander_button {
-  top: calc(100% - 23px);
-  height: 8px;
-  padding: 4px;
-  grid-column-end: -1;
+.ProseMirror .accessibility_element_expander_button_container {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
   justify-self: self-end;
+}
+
+.ProseMirror .show_accessibility_element .accessibility_element_expander_button svg {
+  transform: rotate(180deg);
+}
+
+.ProseMirror .accessibility_element_expander_button {
+  cursor: pointer;
+  background: unset;
+  z-index: 10;
+  border: none;
+  padding: 4px;
   position: relative;
-  left: 33px;
 }
 
-.ProseMirror .block-table_element .accessibility_element_expander_button {
-  top: -32px;
+.ProseMirror .block-embed .accessibility_element_expander_button_container {
+  right: 36px;
+  bottom: 36px;
 }
 
-.ProseMirror .block-embed .accessibility_element_expander_button {
-  top: -23px;
+.ProseMirror .block-table_element .accessibility_element_expander_button_container {
+  left: 93%;
 }
