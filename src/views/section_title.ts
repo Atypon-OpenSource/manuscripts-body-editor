@@ -70,7 +70,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
         // the first level is hidden
         // other levels are shifted by 1
       } else {
-        this.contentDOM.setAttribute('data-placeholder', `Subsection Heading`)
+        this.contentDOM.setAttribute('data-placeholder', `Type heading here`)
       }
     }
     if (sectionTitleState && sectionNumber) {
