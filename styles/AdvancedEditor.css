@@ -804,9 +804,6 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='node_split'][data-track-status='pending']
-  .block,  .tracking-visible
-  .ProseMirror
-  [data-track-op='move'][data-track-status='pending']
   .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
