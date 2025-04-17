@@ -239,9 +239,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       sourcePos = tr.mapping.map(sourcePos)
       tr.delete(sourcePos, sourcePos + item.node.nodeSize)
 
-      if (item.node.type === schema.nodes.paragraph) {
-        tr.setMeta('NodeMove', true)
-      }
+      tr.setMeta('NodeMove', true)
 
       view.dispatch(tr)
     },
