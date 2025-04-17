@@ -15,7 +15,7 @@
  */
 
 import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { Target } from '@manuscripts/transform'
+import { schema, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
@@ -68,9 +68,13 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   }
 
   public getTargets = () => {
+    const excludedTypes = [schema.nodes.image_element.name]
+
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
 
-    return Array.from(targets.values())
+    return Array.from(targets.values()).filter(
+      (t) => !excludedTypes.includes(t.type)
+    )
   }
 
   public handleCancel = () => {

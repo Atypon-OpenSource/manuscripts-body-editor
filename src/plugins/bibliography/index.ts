@@ -156,12 +156,11 @@ const getBibliographyItem = (
   if (!attrs) {
     return
   }
-  const { id, containerTitle, doi, ...rest } = attrs
+
+  const { id, ...rest } = attrs
   const item = {
     _id: id,
     objectType: ObjectTypes.BibliographyItem,
-    'container-title': containerTitle,
-    DOI: doi,
     ...rest,
   } as BibliographyItem
   return pickBy(item, (v) => v !== undefined) as BibliographyItem

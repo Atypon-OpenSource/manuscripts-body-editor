@@ -1,4 +1,19 @@
-import { BibliographyItemType } from "@manuscripts/transform";
+/*!
+ * © 2025 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { BibliographyItemType } from '@manuscripts/transform'
 
 export const bibliographyItemTypes: [BibliographyItemType, string][] = [
   ['article-journal', 'Journal Article'],
@@ -15,8 +30,8 @@ export const bibliographyItemTypes: [BibliographyItemType, string][] = [
 
 interface FieldConfigObject {
   [fieldName: string]: {
-    [key in BibliographyItemType]: boolean;
-  };
+    [key in BibliographyItemType]: boolean
+  }
 }
 
 export const fieldConfigObject: FieldConfigObject = {
@@ -92,7 +107,7 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: true,
     other: true,
   },
-  source: {
+  'container-title': {
     'article-journal': true,
     book: true,
     chapter: true,
@@ -104,7 +119,7 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: false,
     other: true,
   },
-  series: {
+  'collection-title': {
     'article-journal': false,
     book: true,
     chapter: true,
@@ -176,7 +191,7 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: true,
     other: true,
   },
-  'publisher': {
+  publisher: {
     'article-journal': false,
     book: true,
     chapter: true,
@@ -248,7 +263,7 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: false,
     other: false,
   },
-  'elocationID': {
+  elocationID: {
     'article-journal': true,
     book: false,
     chapter: false,
@@ -260,7 +275,8 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: false,
     other: false,
   },
-  'links': { // type: ext-link
+  links: {
+    // type: ext-link
     'article-journal': true,
     book: true,
     chapter: true,
@@ -308,7 +324,19 @@ export const fieldConfigObject: FieldConfigObject = {
     webpage: false,
     other: true,
   },
-  'pubIds': { //type: doi, etc...
+  DOI: {
+    'article-journal': true,
+    book: true,
+    chapter: true,
+    'paper-conference': true,
+    dataset: true,
+    preprint: true,
+    standard: false,
+    thesis: true,
+    webpage: false,
+    other: false,
+  },
+  URL: {
     'article-journal': true,
     book: true,
     chapter: true,

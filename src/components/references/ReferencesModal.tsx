@@ -112,19 +112,34 @@ const topTrigger = 0.2 // says: notify when x% of the offsetHeight remains hidde
 const bottomTrigger = 0.8 // says: notify when x% of the offsetHeight remains hidden at the bottom
 const dropLimit = 36 // basically maximum amount of items that can exist at the same time
 
+// TODO: add all the attributes
 const normalize = (item: BibliographyItemAttrs) => ({
   id: item.id,
   type: item.type,
   author: item.author || [],
+  editor: item.editor || [],
   issued: item.issued,
-  containerTitle: item.containerTitle || '',
-  doi: item.doi || '',
+  ['container-title']: item['container-title'] || '',
+  ['collection-title']: item['collection-title'] || '',
+  DOI: item.DOI || '',
+  URL: item.URL || '',
   volume: item.volume || '',
   issue: item.issue || '',
   supplement: item.supplement || '',
+  edition: item.edition || '',
   page: item.page || '',
+  ['number-of-pages']: item['number-of-pages'] || '',
   title: item.title || '',
   literal: item.literal || '',
+  std: item.std || '',
+  publisher: item.publisher || '',
+  ['publisher-place']: item['publisher-place'] || '',
+  event: item.event || '',
+  ['event-place']: item['event-place'] || '',
+  ['event-date']: item['event-date'],
+  institution: item.institution || '',
+  elocationID: item.elocationID || '',
+  accessed: item.accessed,
 })
 
 export interface ReferencesModalProps {
@@ -213,6 +228,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   }
 
   const handleSave = (values: BibliographyItemAttrs | undefined) => {
+    console.log('handleSave', values)
     if (!values || !selection) {
       return
     }
@@ -226,6 +242,8 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     if (currentCitationCount === undefined) {
       citationCounts.set(item.id, 1) // update the citation count in the Map
     }
+    console.log('Item::: ')
+    console.log(item)
     onSave(item)
     setSelection(item)
     setConfirm(false)
@@ -251,7 +269,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const handleChange = (values: BibliographyItemAttrs) => {
     valuesRef.current = values
   }
-
   if (items.length <= 0) {
     return <></>
   }
