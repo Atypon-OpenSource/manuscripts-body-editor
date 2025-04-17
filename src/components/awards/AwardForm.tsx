@@ -17,12 +17,13 @@
 import {
   MultiValueInput,
   PrimaryButton,
+  SearchIcon,
   SecondaryButton,
-  SelectField,
   TextField,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
-import React, { useEffect, useRef, useState } from 'react'
+import debounce from 'lodash/debounce'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { AwardAttrs } from '../../views/award'
@@ -57,42 +58,50 @@ export const AwardForm = ({
   onCancel,
   onChange,
 }: AwardFormProps) => {
-  const [funders, setFunders] = useState<FunderOption[]>([]) // State to hold funder options
+  const [funders, setFunders] = useState<FunderOption[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [isSearchHovered, setIsSearchHovered] = useState(false)
   const formRef = useRef<FormikProps<AwardAttrs>>(null)
   const primaryButtonText = values.source ? 'Update funder' : 'Add funder'
 
-  // Fetch funders only once, caching them for future use
-  useEffect(() => {
-    const fetchFunders = async () => {
-      try {
-        const response = await fetch('https://api.crossref.org/funders')
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        const funderOptions: FunderOption[] = data.message.items.map(
-          (funder: Funder) => ({
-            value: funder.name,
-            label: funder.name,
-          })
-        )
-        funderOptions.sort((a, b) => a.label.localeCompare(b.label))
-        // Cache the funders data
-        sessionStorage.setItem('funders', JSON.stringify(funderOptions))
-        setFunders(funderOptions)
-      } catch (error) {
-        console.error('Error fetching funders:', error)
-      }
+  const searchFunders = async (query: string) => {
+    if (!query) {
+      setFunders([])
+      return
     }
 
-    // Check if funders are already cached in sessionStorage
-    const storedFunders = sessionStorage.getItem('funders')
-    if (storedFunders) {
-      setFunders(JSON.parse(storedFunders))
-    } else {
-      fetchFunders()
+    setIsLoading(true)
+    try {
+      const response = await fetch(
+        `https://api.crossref.org/funders?query=${encodeURIComponent(query)}`
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      const funderOptions: FunderOption[] = data.message.items.map(
+        (funder: Funder) => ({
+          value: funder.name,
+          label: funder.name,
+        })
+      )
+      funderOptions.sort((a, b) => a.label.localeCompare(b.label))
+      setFunders(funderOptions)
+    } catch (error) {
+      console.error('Error fetching funders:', error)
+      setFunders([])
+    } finally {
+      setIsLoading(false)
     }
-  }, []) // Only run on mount
+  }
+
+  const debouncedSearch = debounce(searchFunders, 300)
+
+  const handleFunderSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value
+    debouncedSearch(query)
+  }
 
   const handleCancel = () => {
     formRef.current?.resetForm()
@@ -109,12 +118,7 @@ export const AwardForm = ({
 
   return (
     <Formik<AwardAttrs>
-      initialValues={{
-        ...values,
-        source: funders.some((funder) => funder.value === values.source)
-          ? values.source
-          : '',
-      }}
+      initialValues={values}
       onSubmit={(values, { setSubmitting }) => {
         onSave(values)
         setSubmitting(false)
@@ -131,18 +135,48 @@ export const AwardForm = ({
             <LabelContainer>
               <Label htmlFor={'source'}>Funder name</Label>
             </LabelContainer>
-            <Field
-              name="source"
-              component={SelectField}
-              options={funders}
-              value={
-                funders.find(
-                  (funder) => funder.value === formik.values.source
-                ) || ''
-              }
-            />
+            <SearchContainer
+              onMouseEnter={() => setIsSearchHovered(true)}
+              onMouseLeave={() => setIsSearchHovered(false)}
+            >
+              <SearchIconContainer active={isSearchHovered || isSearchFocused}>
+                <SearchIcon />
+              </SearchIconContainer>
+              <Field name="source">
+                {(props: FieldProps) => (
+                  <StyledTextField
+                    id="source"
+                    placeholder="Search for funder..."
+                    onChange={(e) => {
+                      props.field.onChange(e)
+                      handleFunderSearch(e)
+                    }}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    value={props.field.value || ''}
+                    autoFocus={true}
+                  />
+                )}
+              </Field>
+              {isLoading && <LoadingText>Loading...</LoadingText>}
+              {funders.length > 0 && (
+                <SearchResults>
+                  {funders.map((funder) => (
+                    <SearchResultItem
+                      key={funder.value}
+                      onClick={() => {
+                        formik.setFieldValue('source', funder.value)
+                        setFunders([])
+                      }}
+                    >
+                      {funder.label}
+                    </SearchResultItem>
+                  ))}
+                </SearchResults>
+              )}
+            </SearchContainer>
             {formik.errors.source && formik.touched.source && (
-              <div style={{ color: 'red' }}>{formik.errors.source}</div>
+              <ErrorText>{formik.errors.source}</ErrorText>
             )}
             <LabelContainer>
               <Label htmlFor={'code'}>Grant number</Label>
@@ -163,7 +197,7 @@ export const AwardForm = ({
               {(props: FieldProps) => (
                 <TextField
                   id="recipient"
-                  placeholder="Enter full name "
+                  placeholder="Enter full name"
                   {...props.field}
                 />
               )}
@@ -205,4 +239,70 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   margin-top: 16px;
   gap: 8px;
+`
+
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+`
+
+const SearchIconContainer = styled.span<{ active?: boolean }>`
+  display: flex;
+  left: ${(props) => props.theme.grid.unit * 4}px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+
+  path {
+    stroke: ${(props) =>
+      props.active
+        ? props.theme.colors.brand.medium
+        : props.theme.colors.text.primary};
+  }
+`
+
+const StyledTextField = styled(TextField)`
+  padding-left: ${(props) => props.theme.grid.unit * 11}px;
+  &:hover,
+  &:focus {
+    background-color: ${(props) => props.theme.colors.background.fifth};
+  }
+`
+
+const SearchResults = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid ${(props) => props.theme.colors.border.secondary};
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+`
+
+const SearchResultItem = styled.div`
+  padding: 8px 12px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.colors.background.fifth};
+  }
+`
+
+const LoadingText = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${(props) => props.theme.colors.text.secondary};
+  font-size: ${(props) => props.theme.font.size.small};
+`
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.text.error};
+  font-size: ${(props) => props.theme.font.size.small};
+  margin-top: 4px;
 `
