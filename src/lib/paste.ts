@@ -59,7 +59,8 @@ const wrapInSection = (slice: ManuscriptSlice) => {
 const closeAtomSlice = (slice: ManuscriptSlice) => {
   // close slice to prevent drop of node https://github.com/ProseMirror/prosemirror-transform/blob/137ff74738bd1b50d49416cd6cfdbbf52cb059ef/src/replace.ts#L231
   if (slice.content.firstChild?.isAtom) {
-    slice = new Slice(slice.content, 0 , 0)
+    slice.openStart = 0
+    slice.openEnd = 0
   }
 }
 
