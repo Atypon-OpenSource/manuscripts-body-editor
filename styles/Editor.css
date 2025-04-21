@@ -1,3 +1,6 @@
+:root {
+  --body-side-margin: 65px;
+}
 .ProseMirror.manuscript-editor {
   font-size: 16px;
   line-height: 1.5;
@@ -136,13 +139,13 @@
 .ProseMirror tr th {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  background: #E2E2E2;
+  background: #e2e2e2;
   text-align: left;
   font-weight: bold;
 }
 
 .ProseMirror tr th:not(:last-child) {
-  border-right: 1px solid #C9C9C9;
+  border-right: 1px solid #c9c9c9;
 }
 
 .ProseMirror tr td {
@@ -271,7 +274,6 @@
 .ProseMirror .figure.placeholder a {
   text-decoration: underline;
 }
-
 
 .ProseMirror .figure.placeholder.over {
   border-color: #bce7f6;
@@ -584,6 +586,14 @@
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
+
+.ProseMirror h1.empty-node::before {
+  color: #6e6e6e;
+  font-family: 'PT Sans', sans-serif;
+  font-style: italic;
+  line-height: 32px;
+}
+
 .ProseMirror .empty-node .article-titles::before {
   position: absolute;
   color: #c9c9c9;
@@ -626,16 +636,22 @@
 .ProseMirror .block-container.block-affiliations {
   grid-template-columns: 52px auto 100px !important;
 }
-.ProseMirror .block-container.block-section, .ProseMirror .block-container.block-graphical_abstract_section {
+.ProseMirror .block-container.block-section,
+.ProseMirror .block-container.block-graphical_abstract_section {
   position: relative;
   display: grid;
   grid-template-columns: auto;
 }
-.ProseMirror .block-container.block-section section, .ProseMirror .block-container.block-graphical_abstract_section section {
+.ProseMirror .block-container.block-section section,
+.ProseMirror .block-container.block-graphical_abstract_section section {
   position: relative;
 }
 
-.ProseMirror .block-container:not(.block-section, .block-graphical_abstract_section):hover {
+.ProseMirror
+  .block-container:not(
+    .block-section,
+    .block-graphical_abstract_section
+  ):hover {
   z-index: 2;
 }
 
@@ -698,17 +714,25 @@
 }
 
 .ProseMirror
-  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):hover
   .block-gutter {
   opacity: 1;
   z-index: 2;
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
-  .block-container:not(.block-section, .block-box_element, .block-graphical_abstract_section):hover
-    .action-gutter {
-    pointer-events: visible;
-    opacity: 1;
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):hover
+  .action-gutter {
+  pointer-events: visible;
+  opacity: 1;
 }
 
 .ProseMirror .block-box_element:hover > .block-gutter {
@@ -1046,7 +1070,7 @@
 .ProseMirror .footnote-marker-selected:not(.selected-suggestion) {
   text-decoration: underline;
   background-color: #f2fbfc;
-  border-color:  #0d79d0;
+  border-color: #0d79d0;
 }
 .ProseMirror .table-footer p {
   margin-bottom: 0;
@@ -1081,7 +1105,8 @@
   font-size: 28px;
   font-weight: 700;
   line-height: 1.43;
-  padding-left: 65px;
+  padding-left: var(--body-side-margin);
+  padding-right: var(--body-side-margin);
 }
 .highlight {
   background-color: #ffeebf !important;

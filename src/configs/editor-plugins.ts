@@ -29,6 +29,7 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../keys'
 import accessibility_element from '../plugins/accessibility_element'
 import affiliations from '../plugins/affiliations'
+import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
 import cross_references from '../plugins/cross-references'
@@ -79,6 +80,7 @@ export default (props: EditorProps) => {
     section_category(props),
     cross_references(),
     search_replace(),
+    alt_titles(),
     accessibility_element(),
   ]
 
