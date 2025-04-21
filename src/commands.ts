@@ -108,6 +108,7 @@ import {
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
 import { findParentNodeWithId, getChildOfType, getInsertPos } from './lib/utils'
+import { expandAccessibilitySection } from './plugins/accessibility_element'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -286,42 +287,40 @@ export const createBlock = (
   dispatch?: Dispatch,
   attrs?: Attrs
 ) => {
-  let node
+  let node: ManuscriptNode
   switch (nodeType) {
-    case state.schema.nodes.table_element:
-      node = createAndFillTableElement(state)
+    case schema.nodes.table_element:
+      node = createAndFillTableElement(attrs)
       break
-    case state.schema.nodes.figure_element:
-      node = createAndFillFigureElement(state)
+    case schema.nodes.figure_element:
+      node = createAndFillFigureElement(attrs)
       break
-    case state.schema.nodes.image_element:
-      node = createImageElement(state)
+    case schema.nodes.image_element:
+      node = createImageElement(attrs)
       break
-    case state.schema.nodes.listing_element:
-      node = state.schema.nodes.listing_element.create({}, [
-        state.schema.nodes.listing.create(),
-        createAndFillFigcaptionElement(state),
+    case schema.nodes.listing_element:
+      node = schema.nodes.listing_element.create({}, [
+        schema.nodes.listing.create(),
+        createAndFillFigcaptionElement(),
       ])
       break
-    case state.schema.nodes.equation_element:
-      node = state.schema.nodes.equation_element.create({}, [
-        state.schema.nodes.equation.create(),
+    case schema.nodes.equation_element:
+      node = schema.nodes.equation_element.create({}, [
+        schema.nodes.equation.create(),
       ])
       break
-    case state.schema.nodes.embed:
-      node = state.schema.nodes.embed.create(attrs, [
-        createAndFillFigcaptionElement(state),
-        state.schema.nodes.alt_text.create(),
-        state.schema.nodes.long_desc.create(),
-      ])
+    case schema.nodes.embed:
+      node = createEmbedElement(attrs)
       break
     default:
-      node = nodeType.createAndFill(attrs)
+      node = nodeType.createAndFill(attrs) as ManuscriptNode
   }
 
-  const tr = state.tr.insert(position, node as ManuscriptNode)
+  const tr = state.tr.insert(position, node)
+
   if (dispatch) {
     const selection = createSelection(nodeType, position, tr.doc)
+    expandAccessibilitySection(tr, node)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 }
@@ -420,7 +419,7 @@ export const insertTable = (
   if (!pos) {
     return false
   }
-  const node = createAndFillTableElement(state, config)
+  const node = createAndFillTableElement(config)
   const tr = state.tr.insert(pos, node)
   tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
   dispatch && dispatch(tr)
@@ -1531,7 +1530,7 @@ const DEFAULT_TABLE_CONFIG: TableConfig = {
  * The table can optionally include a header row.
  */
 export const createAndFillTableElement = (
-  state: ManuscriptEditorState,
+  attrs?: Attrs,
   config = DEFAULT_TABLE_CONFIG
 ) => {
   const { numberOfColumns, numberOfRows, includeHeader } = config
@@ -1548,36 +1547,67 @@ export const createAndFillTableElement = (
     tableRows.push(createRow(schema.nodes.table_cell))
   }
 
-  return schema.nodes.table_element.createChecked({}, [
-    createAndFillFigcaptionElement(state),
-    schema.nodes.table.create({}, tableRows),
-    state.schema.nodes.alt_text.create(),
-    state.schema.nodes.long_desc.create(),
-    schema.nodes.listing.create(),
-  ])
+  return schema.nodes.table_element.createChecked(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.table_element),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.table.create({}, tableRows),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+      schema.nodes.listing.create(),
+    ]
+  )
 }
 
-const createAndFillFigureElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.figure_element.create({}, [
-    state.schema.nodes.figure.create({}, [
-      state.schema.nodes.figcaption.create(),
-    ]),
-    createAndFillFigcaptionElement(state),
-    state.schema.nodes.alt_text.create(),
-    state.schema.nodes.long_desc.create(),
-    state.schema.nodes.listing.create(),
+const createAndFillFigureElement = (attrs?: Attrs) =>
+  schema.nodes.figure_element.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.figure_element),
+    },
+    [
+      schema.nodes.figure.create({}, [schema.nodes.figcaption.create()]),
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+      schema.nodes.listing.create(),
+    ]
+  )
+
+const createAndFillFigcaptionElement = () =>
+  schema.nodes.figcaption.create({}, [
+    schema.nodes.caption_title.create(),
+    schema.nodes.caption.create(),
   ])
 
-const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.figcaption.create({}, [
-    state.schema.nodes.caption_title.create(),
-    state.schema.nodes.caption.create(),
-  ])
+const createImageElement = (attrs?: Attrs) =>
+  schema.nodes.image_element.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.image_element),
+    },
+    [
+      schema.nodes.figure.create(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
 
-const createImageElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.image_element.create({}, [
-    state.schema.nodes.figure.create(),
-  ])
+const createEmbedElement = (attrs?: Attrs) =>
+  schema.nodes.embed.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.embed),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
 /**
  * This to make sure we get block node
  */

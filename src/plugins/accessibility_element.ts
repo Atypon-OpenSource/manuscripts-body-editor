@@ -14,116 +14,88 @@
  * limitations under the License.
  */
 import {
-  skipTracking,
-  trackChangesPluginKey,
-} from '@manuscripts/track-changes-plugin'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
-import { AttrStep } from 'prosemirror-transform'
-import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
+  ManuscriptNode,
+  ManuscriptTransaction,
+  schema,
+} from '@manuscripts/transform'
+import { Plugin, PluginKey, Selection } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { arrowDown } from '../icons'
-import { getInsertPos } from '../lib/utils'
-import { selectedSuggestionKey } from './selected-suggestion'
 
 export interface PluginState {
-  decorations: Decoration[]
-  shownElements: Set<string>
+  expandButtonDecorations: Decoration[]
+  expandedElementDecorations: Decoration[]
+  expandedElementIDs: Set<string>
 }
 
 export const accessibilityElementKey = new PluginKey<PluginState>(
   'accessibility-element'
 )
 
-const parentOfAccessibilityElement = new Set([
-  schema.nodes.figure_element,
-  schema.nodes.image_element,
-  schema.nodes.table_element,
-  schema.nodes.embed,
-])
+const nodeTypes = [schema.nodes.alt_text, schema.nodes.long_desc]
 
-const accessibilityElementNods = (node: ManuscriptNode) =>
-  node.type === schema.nodes.alt_text || node.type === schema.nodes.long_desc
-
-const insertAccessibilityElementIfMissing = (
-  view: EditorView,
-  getPos: () => number | undefined
-) => {
+const handleExpandButtonClick = (view: EditorView, node: ManuscriptNode) => {
   const tr = view.state.tr
-  const $pos = tr.doc.resolve(getPos() || 0)
-  const node = $pos.node()
-  const accessibilityElement = findChildren(
-    node,
-    (child) =>
-      child.type === schema.nodes.alt_text ||
-      child.type === schema.nodes.long_desc,
-    false
-  )[0]
-
-  if (!accessibilityElement) {
-    const insertPos = getInsertPos(
-      schema.nodes.alt_text,
-      node,
-      $pos.pos - $pos.parentOffset - 1
-    )
-
-    tr.insert(insertPos, schema.nodes.alt_text.create()).insert(
-      insertPos + 2,
-      schema.nodes.long_desc.create()
-    )
-  }
-
-  view.dispatch(
-    skipTracking(tr.setMeta(accessibilityElementKey, node.attrs.id))
-  )
+  toggleAccessibilitySection(tr, node)
+  view.dispatch(tr)
 }
 
 const createExpandButtonWidget =
-  (newNodeId?: string | boolean) =>
-  (view: EditorView, getPos: () => number | undefined): HTMLElement => {
+  (node: ManuscriptNode) =>
+  (view: EditorView): HTMLElement => {
     const container = document.createElement('div')
     container.className = 'accessibility_element_expander_button_container'
     const button = document.createElement('button')
     button.className = 'accessibility_element_expander_button'
     button.innerHTML = arrowDown
-    button.onclick = () => insertAccessibilityElementIfMissing(view, getPos)
+    button.onclick = () => handleExpandButtonClick(view, node)
     container.appendChild(button)
-
-    if (newNodeId) {
-      setTimeout(
-        () =>
-          view.dispatch(
-            skipTracking(
-              view.state.tr.setMeta(accessibilityElementKey, newNodeId)
-            )
-          ),
-        4000
-      )
-    }
     return container
   }
 
-const buildDecoration = (
-  doc: ManuscriptNode,
-  shownNodes: Set<string>,
-  newNodeId?: string
+const isSelectionWithin = (
+  node: ManuscriptNode,
+  pos: number,
+  selection?: Selection
 ) => {
+  if (!selection || !nodeTypes.includes(node.type)) {
+    return false
+  }
+  const to = pos + node.nodeSize
+  return selection.from >= pos && selection.to <= to
+}
+
+const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
   const decorations: Decoration[] = []
   doc.descendants((node, pos) => {
-    if (parentOfAccessibilityElement.has(node.type)) {
+    if (node.type.spec.content?.includes('alt_text')) {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize - 1,
-          createExpandButtonWidget(node.attrs.id === newNodeId && newNodeId),
+          createExpandButtonWidget(node),
           {
             key: node.attrs.id,
           }
         )
       )
     }
+  })
 
-    if (shownNodes.has(node.attrs.id)) {
+  return decorations
+}
+
+const buildExpandedElementsDecorations = (
+  doc: ManuscriptNode,
+  expandedElementIDs: Set<string>,
+  selection?: Selection
+) => {
+  const decorations: Decoration[] = []
+  doc.descendants((node, pos) => {
+    if (
+      expandedElementIDs.has(node.attrs.id) ||
+      isSelectionWithin(node, pos, selection)
+    ) {
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {
           class: 'show_accessibility_element',
@@ -135,81 +107,110 @@ const buildDecoration = (
   return decorations
 }
 
-// get id of parent to accessibility element if tracked suggestion of them selected
-const getIdOfParentToAccessibilityElement = (
-  newState: EditorState,
-  tr: Transaction
-) => {
-  const selection = selectedSuggestionKey.getState(newState)?.suggestion
-  const changeSet = trackChangesPluginKey.getState(newState)?.changeSet
-  if (selection && changeSet) {
-    const $pos = tr.doc.resolve(changeSet.get(selection.id)?.from || 0)
-    if (accessibilityElementNods($pos.parent)) {
-      const contentNode = findParentNodeClosestToPos($pos, (node) =>
-        parentOfAccessibilityElement.has(node.type)
-      )
-      if (contentNode?.node) {
-        return contentNode.node.attrs.id
-      }
-    }
-  }
-}
-
-// get Id for inserted parent node of accessibility element
-function getNewNodeId(tr: Transaction, shownElements: Set<string>) {
-  let newNodeId
-  tr.steps.map((step) => {
-    if (
-      step instanceof AttrStep &&
-      tr.doc.nodeAt(step.pos) &&
-      parentOfAccessibilityElement.has(tr.doc.nodeAt(step.pos)!.type)
-    ) {
-      newNodeId = step.value
-      shownElements.add(step.value)
-    }
-  })
-  return newNodeId
-}
-
 export default () => {
   return new Plugin<PluginState>({
     key: accessibilityElementKey,
     state: {
       init(config, instance) {
         return {
-          decorations: buildDecoration(instance.doc, new Set()),
-          shownElements: new Set(),
+          expandButtonDecorations: buildExpandButtonDecorations(instance.doc),
+          expandedElementDecorations: [],
+          expandedElementIDs: new Set(),
         }
       },
-      apply(tr, decorationSet, oldState, newState) {
-        const { shownElements } = decorationSet
-        const selectedNodeId = getIdOfParentToAccessibilityElement(newState, tr)
-        if (selectedNodeId) {
-          shownElements.add(selectedNodeId)
+      apply(tr, value, oldState, newState) {
+        const s = {
+          expandButtonDecorations: value.expandButtonDecorations,
+          expandedElementDecorations: value.expandedElementDecorations,
+          expandedElementIDs: new Set(value.expandedElementIDs),
         }
-        const nodeId = tr.getMeta(accessibilityElementKey)
-        if (nodeId) {
-          ;(shownElements.has(nodeId) && shownElements.delete(nodeId)) ||
-            shownElements.add(nodeId)
+
+        if (tr.docChanged) {
+          s.expandButtonDecorations = buildExpandButtonDecorations(newState.doc)
         }
-        if (selectedNodeId || nodeId || tr.docChanged) {
-          const newNodeId = getNewNodeId(tr, shownElements)
-          decorationSet.decorations = buildDecoration(
+
+        let expandedElementIDsChanged = false
+        const meta = tr.getMeta(accessibilityElementKey)
+        if (meta) {
+          expandedElementIDsChanged = true
+          const isExpanded = s.expandedElementIDs.has(meta.id)
+          if (
+            meta.action === 'add' ||
+            (meta.action === 'toggle' && !isExpanded)
+          ) {
+            s.expandedElementIDs.add(meta.id)
+          } else if (
+            meta.action === 'remove' ||
+            (meta.action === 'toggle' && isExpanded)
+          ) {
+            s.expandedElementIDs.delete(meta.id)
+          }
+        }
+
+        if (tr.selectionSet) {
+          const $pos = tr.selection.$from
+          for (let i = $pos.depth; i >= 0; i--) {
+            const node = $pos.node(i)
+            if (nodeTypes.includes(node.type)) {
+              const parent = $pos.node(i - 1)
+              s.expandedElementIDs.add(parent.attrs.id)
+              expandedElementIDsChanged = true
+              break
+            }
+          }
+        }
+
+        if (expandedElementIDsChanged) {
+          s.expandedElementDecorations = buildExpandedElementsDecorations(
             newState.doc,
-            shownElements,
-            newNodeId
+            s.expandedElementIDs
           )
         }
-        return decorationSet
+        return s
       },
     },
     props: {
       decorations: (state) => {
         const pluginState = accessibilityElementKey.getState(state)
         if (pluginState) {
-          return DecorationSet.create(state.doc, [...pluginState.decorations])
+          return DecorationSet.create(state.doc, [
+            ...pluginState.expandButtonDecorations,
+            ...pluginState.expandedElementDecorations,
+          ])
         }
       },
     },
+  })
+}
+
+export const expandAccessibilitySection = (
+  tr: ManuscriptTransaction,
+  node: ManuscriptNode
+) => {
+  if (node.attrs.id && node.type.spec.content?.includes('alt_text')) {
+    tr.setMeta(accessibilityElementKey, {
+      action: 'add',
+      id: node.attrs.id,
+    })
+  }
+}
+
+export const collapseAccessibilitySection = (
+  tr: ManuscriptTransaction,
+  node: ManuscriptNode
+) => {
+  tr.setMeta(accessibilityElementKey, {
+    action: 'remove',
+    id: node.attrs.id,
+  })
+}
+
+export const toggleAccessibilitySection = (
+  tr: ManuscriptTransaction,
+  node: ManuscriptNode
+) => {
+  tr.setMeta(accessibilityElementKey, {
+    action: 'toggle',
+    id: node.attrs.id,
   })
 }
