@@ -21,7 +21,7 @@ import {
 import { Plugin, PluginKey, Selection } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { arrowDown } from '../icons'
+import { createAltTitlesButton } from './alt-titles'
 
 export interface PluginState {
   expandButtonDecorations: Decoration[]
@@ -40,19 +40,6 @@ const handleExpandButtonClick = (view: EditorView, node: ManuscriptNode) => {
   toggleAccessibilitySection(tr, node)
   view.dispatch(tr)
 }
-
-const createExpandButtonWidget =
-  (node: ManuscriptNode) =>
-  (view: EditorView): HTMLElement => {
-    const container = document.createElement('div')
-    container.className = 'accessibility_element_expander_button_container'
-    const button = document.createElement('button')
-    button.className = 'accessibility_element_expander_button'
-    button.innerHTML = arrowDown
-    button.onclick = () => handleExpandButtonClick(view, node)
-    container.appendChild(button)
-    return container
-  }
 
 const isSelectionWithin = (
   node: ManuscriptNode,
@@ -73,7 +60,15 @@ const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize - 1,
-          createExpandButtonWidget(node),
+          (view) => {
+            const container = document.createElement('div')
+            container.className =
+              'accessibility_element_expander_button_container'
+            container.appendChild(
+              createAltTitlesButton(() => handleExpandButtonClick(view, node))
+            )
+            return container
+          },
           {
             key: node.attrs.id,
           }
@@ -193,16 +188,6 @@ export const expandAccessibilitySection = (
       id: node.attrs.id,
     })
   }
-}
-
-export const collapseAccessibilitySection = (
-  tr: ManuscriptTransaction,
-  node: ManuscriptNode
-) => {
-  tr.setMeta(accessibilityElementKey, {
-    action: 'remove',
-    id: node.attrs.id,
-  })
 }
 
 export const toggleAccessibilitySection = (

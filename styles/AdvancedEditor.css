@@ -1284,17 +1284,12 @@ th:hover > .table-context-menu-button,
   justify-self: self-end;
 }
 
-.ProseMirror .show_accessibility_element .accessibility_element_expander_button svg {
+.ProseMirror .show_accessibility_element .alt-titles-open svg {
   transform: rotate(180deg);
 }
 
-.ProseMirror .accessibility_element_expander_button {
-  cursor: pointer;
-  background: unset;
-  z-index: 10;
-  border: none;
-  padding: 4px;
-  position: relative;
+.ProseMirror .accessibility_element_expander_button_container .alt-titles-open {
+  right: calc(100% - 6px);
 }
 
 .ProseMirror .block-embed .accessibility_element_expander_button_container {
