@@ -21,7 +21,7 @@ import {
 import { Plugin, PluginKey, Selection } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { createAltTitlesButton } from './alt-titles'
+import { createToggleButton } from '../lib/utils'
 
 export interface PluginState {
   expandButtonDecorations: Decoration[]
@@ -65,7 +65,7 @@ const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
             container.className =
               'accessibility_element_expander_button_container'
             container.appendChild(
-              createAltTitlesButton(() => handleExpandButtonClick(view, node))
+              createToggleButton(() => handleExpandButtonClick(view, node))
             )
             return container
           },

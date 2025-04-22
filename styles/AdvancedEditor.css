@@ -1068,7 +1068,7 @@ figure.block:has(.equation.selected-suggestion) {
   color: #6e6e6e;
   line-height: 1.3;
 }
-.alt-titles-open {
+.toggle-button-open {
   position: absolute;
   right: var(--body-side-margin);
   transform: translateX(100%);
@@ -1284,11 +1284,11 @@ th:hover > .table-context-menu-button,
   justify-self: self-end;
 }
 
-.ProseMirror .show_accessibility_element .alt-titles-open svg {
+.ProseMirror .show_accessibility_element .toggle-button-open svg {
   transform: rotate(180deg);
 }
 
-.ProseMirror .accessibility_element_expander_button_container .alt-titles-open {
+.ProseMirror .accessibility_element_expander_button_container .toggle-button-open {
   right: calc(100% - 6px);
 }
 

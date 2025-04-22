@@ -24,6 +24,8 @@ import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
+import { arrowDown } from '../icons'
+
 export function* iterateChildren(
   node: ManuscriptNode,
   recurse = false
@@ -129,6 +131,17 @@ export const createHeader = (typeName: string, text: string) => {
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const createToggleButton = (listener: () => void) => {
+  const altTitlesButton = document.createElement('button')
+  altTitlesButton.classList.add('toggle-button-open', 'button-reset')
+  altTitlesButton.innerHTML = arrowDown
+  altTitlesButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    listener()
+  })
+  return altTitlesButton
 }
 
 export const getInsertPos = (
