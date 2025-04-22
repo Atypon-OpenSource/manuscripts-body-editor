@@ -170,7 +170,7 @@ export const ReferenceForm: React.FC<{
             <FormFields ref={fieldsRef}>
               <FormField>
                 <LabelContainer>
-                  <Label htmlFor={'citation-item-type'}>Type XXX</Label>
+                  <Label htmlFor={'citation-item-type'}>Type</Label>
                 </LabelContainer>
 
                 <Field
@@ -197,23 +197,6 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
-              
-              {/* data-title ??? */}
-              {shouldRenderField(
-                'data-title',
-                formik.values.type as BibliographyItemType
-              ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'data-title'}>Data Title</Label>
-                  </LabelContainer>
-                  <Field name={'data-title'}>
-                    {(props: FieldProps) => (
-                      <ReferenceTextArea id={'data-title'} {...props.field} />
-                    )}
-                  </Field>
-                </FormField>
-              )}
 
               {shouldRenderField(
                 'std',
@@ -230,6 +213,7 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
+
               {shouldRenderField(
                 'author',
                 formik.values.type as BibliographyItemType
@@ -273,6 +257,7 @@ export const ReferenceForm: React.FC<{
                   )}
                 />
               )}
+
               {shouldRenderField(
                 'editor',
                 formik.values.type as BibliographyItemType
@@ -323,7 +308,9 @@ export const ReferenceForm: React.FC<{
               ) && (
                 <FormField>
                   <LabelContainer>
-                    <Label htmlFor={"issued['date-parts'][0][0]"}>Year</Label>
+                    <Label htmlFor={"issued['date-parts'][0][0]"}>
+                      Issued (Year)
+                    </Label>
                   </LabelContainer>
 
                   <YearField
@@ -332,7 +319,6 @@ export const ReferenceForm: React.FC<{
                     step={1}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       const { value } = event.target
-
                       if (value) {
                         if (formik.values.issued) {
                           // NOTE: this assumes that "issued" is already a complete object
@@ -450,6 +436,7 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
+
               {shouldRenderField(
                 'edition',
                 formik.values.type as BibliographyItemType
@@ -521,6 +508,7 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
+
               {shouldRenderField(
                 'event-place',
                 formik.values.type as BibliographyItemType
@@ -537,23 +525,49 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
-              {/* TODO: this is not correct, it should be a date */}
+
               {shouldRenderField(
                 'event-date',
                 formik.values.type as BibliographyItemType
               ) && (
                 <FormField>
                   <LabelContainer>
-                    <Label htmlFor={'event-date'}>Event Date</Label>
+                    <Label htmlFor={"event-date['date-parts'][0][0]"}>
+                      Event date (Year)
+                    </Label>
                   </LabelContainer>
 
-                  <Field name={'event-date'}>
-                    {(props: FieldProps) => (
-                      <ReferenceTextField id={'event-date'} {...props.field} />
-                    )}
-                  </Field>
+                  <YearField
+                    name={"event-date['date-parts'][0][0]"}
+                    type={'number'}
+                    step={1}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const { value } = event.target
+
+                      if (value) {
+                        if (formik.values['event-date']) {
+                          // NOTE: this assumes that "event-date" is already a complete object
+                          formik.setFieldValue(
+                            "event-date['date-parts'][0][0]",
+                            Number(value)
+                          )
+                        } else {
+                          formik.setFieldValue(
+                            'event-date',
+                            buildBibliographicDate({
+                              'date-parts': [[Number(value)]],
+                            })
+                          )
+                        }
+                      } else {
+                        // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
+                        formik.setFieldValue('event-date', '')
+                      }
+                    }}
+                  />
                 </FormField>
               )}
+
               {shouldRenderField(
                 'institution',
                 formik.values.type as BibliographyItemType
@@ -570,8 +584,6 @@ export const ReferenceForm: React.FC<{
                   </Field>
                 </FormField>
               )}
-
-              {/* TODO: fpage, lpage ??? */}
 
               {shouldRenderField(
                 'page',
@@ -598,7 +610,6 @@ export const ReferenceForm: React.FC<{
                   <LabelContainer>
                     <Label htmlFor={'number-of-pages'}>Number of pages</Label>
                   </LabelContainer>
-
                   <Field name={'umber-of-pages'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField
@@ -611,19 +622,16 @@ export const ReferenceForm: React.FC<{
               )}
 
               {shouldRenderField(
-                'elocationID',
+                'locator',
                 formik.values.type as BibliographyItemType
               ) && (
                 <FormField>
                   <LabelContainer>
-                    <Label htmlFor={'elocationID'}>
-                      Electronic Location Identifier
-                    </Label>
+                    <Label htmlFor={'locator'}>Locator</Label>
                   </LabelContainer>
-
-                  <Field name={'elocationID'}>
+                  <Field name={'locator'}>
                     {(props: FieldProps) => (
-                      <ReferenceTextField id={'elocationID'} {...props.field} />
+                      <ReferenceTextField id={'locator'} {...props.field} />
                     )}
                   </Field>
                 </FormField>
@@ -637,7 +645,6 @@ export const ReferenceForm: React.FC<{
                   <LabelContainer>
                     <Label htmlFor={'DOI'}>DOI</Label>
                   </LabelContainer>
-
                   <Field name={'DOI'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField
@@ -658,7 +665,6 @@ export const ReferenceForm: React.FC<{
                   <LabelContainer>
                     <Label htmlFor={'URL'}>URL</Label>
                   </LabelContainer>
-
                   <Field name={'URL'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'URL'} {...props.field} />
@@ -673,14 +679,38 @@ export const ReferenceForm: React.FC<{
               ) && (
                 <FormField>
                   <LabelContainer>
-                    <Label htmlFor={'accessed'}>Access date</Label>
+                    <Label htmlFor={"accessed['date-parts'][0][0]"}>
+                      Accessed (Year)
+                    </Label>
                   </LabelContainer>
+                  <YearField
+                    name={"accessed['date-parts'][0][0]"}
+                    type={'number'}
+                    step={1}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const { value } = event.target
 
-                  <Field name={'accessed'}>
-                    {(props: FieldProps) => (
-                      <ReferenceTextField id={'accessed'} {...props.field} />
-                    )}
-                  </Field>
+                      if (value) {
+                        if (formik.values['event-date']) {
+                          // NOTE: this assumes that "accessed" is already a complete object
+                          formik.setFieldValue(
+                            "accessed['date-parts'][0][0]",
+                            Number(value)
+                          )
+                        } else {
+                          formik.setFieldValue(
+                            'accessed',
+                            buildBibliographicDate({
+                              'date-parts': [[Number(value)]],
+                            })
+                          )
+                        }
+                      } else {
+                        // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
+                        formik.setFieldValue('accessed', '')
+                      }
+                    }}
+                  />
                 </FormField>
               )}
             </FormFields>
