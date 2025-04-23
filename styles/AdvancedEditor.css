@@ -1283,7 +1283,11 @@ th:hover > .table-context-menu-button,
   justify-self: self-end;
 }
 
-.ProseMirror :not(.hide_accessibility_element) .toggle-button-open svg {
+.ProseMirror .hide_accessibility_element .toggle-button-open svg {
+  transform: rotate(0deg);
+}
+
+.ProseMirror .toggle-button-open svg {
   transform: rotate(180deg);
 }
 
