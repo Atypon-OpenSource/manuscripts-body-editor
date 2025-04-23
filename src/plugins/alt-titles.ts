@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AltTitleNode,
   AltTitlesSectionNode,
@@ -23,8 +24,8 @@ import {
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
 import { arrowDown } from '../icons'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
 
 export interface PluginState {
   collapsed: boolean
@@ -122,7 +123,7 @@ export default () => {
     },
     appendTransaction: (transactions, _, newState) => {
       // in appendTransaction we check if alt_titles nodes exist before opening them for the first time because they are optional
-      let tr = newState.tr
+      const tr = newState.tr
       if (
         !transactions.some((tr) => tr.getMeta(altTitlesKey)) ||
         !altTitlesKey.getState(newState)
