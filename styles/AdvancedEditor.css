@@ -1251,11 +1251,10 @@ th:hover > .table-context-menu-button,
   grid-column-start: 1;
   grid-column-end: -1;
   text-align: start;
-  display: none;
 }
 
-.ProseMirror .show_accessibility_element .accessibility_element {
-  display: block;
+.ProseMirror .hide_accessibility_element .accessibility_element {
+  display: none;
 }
 
 .ProseMirror .accessibility_element_label {
@@ -1284,7 +1283,7 @@ th:hover > .table-context-menu-button,
   justify-self: self-end;
 }
 
-.ProseMirror .show_accessibility_element .toggle-button-open svg {
+.ProseMirror :not(.hide_accessibility_element) .toggle-button-open svg {
   transform: rotate(180deg);
 }
 
