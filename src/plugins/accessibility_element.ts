@@ -26,7 +26,7 @@ import { createToggleButton } from '../lib/utils'
 export interface PluginState {
   expandButtonDecorations: Decoration[]
   expandedElementDecorations: Decoration[]
-  closedElementIDs: Set<string>
+  expandedElementIDs: Set<string>
 }
 
 export const accessibilityElementKey = new PluginKey<PluginState>(
@@ -93,7 +93,7 @@ const buildExpandedElementsDecorations = (
     ) {
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {
-          class: 'hide_accessibility_element',
+          class: 'show_accessibility_element',
         })
       )
     }
@@ -110,14 +110,14 @@ export default () => {
         return {
           expandButtonDecorations: buildExpandButtonDecorations(instance.doc),
           expandedElementDecorations: [],
-          closedElementIDs: new Set(),
+          expandedElementIDs: new Set(),
         }
       },
       apply(tr, value, oldState, newState) {
         const s = {
           expandButtonDecorations: value.expandButtonDecorations,
           expandedElementDecorations: value.expandedElementDecorations,
-          closedElementIDs: new Set(value.closedElementIDs),
+          expandedElementIDs: new Set(value.expandedElementIDs),
         }
 
         if (tr.docChanged) {
@@ -128,17 +128,17 @@ export default () => {
         const meta = tr.getMeta(accessibilityElementKey)
         if (meta) {
           expandedElementIDsChanged = true
-          const isClosed = s.closedElementIDs.has(meta.id)
+          const isExpanded = s.expandedElementIDs.has(meta.id)
           if (
             meta.action === 'add' ||
-            (meta.action === 'toggle' && !isClosed)
+            (meta.action === 'toggle' && !isExpanded)
           ) {
-            s.closedElementIDs.add(meta.id)
+            s.expandedElementIDs.add(meta.id)
           } else if (
             meta.action === 'remove' ||
-            (meta.action === 'toggle' && isClosed)
+            (meta.action === 'toggle' && isExpanded)
           ) {
-            s.closedElementIDs.delete(meta.id)
+            s.expandedElementIDs.delete(meta.id)
           }
         }
 
@@ -148,7 +148,7 @@ export default () => {
             const node = $pos.node(i)
             if (nodeTypes.includes(node.type)) {
               const parent = $pos.node(i - 1)
-              s.closedElementIDs.delete(parent.attrs.id)
+              s.expandedElementIDs.add(parent.attrs.id)
               expandedElementIDsChanged = true
               break
             }
@@ -158,7 +158,7 @@ export default () => {
         if (expandedElementIDsChanged || tr.docChanged) {
           s.expandedElementDecorations = buildExpandedElementsDecorations(
             newState.doc,
-            s.closedElementIDs
+            s.expandedElementIDs
           )
         }
         return s
