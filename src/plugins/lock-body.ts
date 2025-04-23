@@ -104,6 +104,18 @@ const getDecorations = (doc: Node): Decoration[] => {
           return div
         })
       )
+
+      decorations.push(
+        Decoration.widget(
+          pos + 1,
+          () => {
+            const overlay = document.createElement('div')
+            overlay.className = 'body-overlay'
+            return overlay
+          },
+          { side: 1 }
+        )
+      )
     }
 
     if (node.type.name === 'figure') {
@@ -112,7 +124,7 @@ const getDecorations = (doc: Node): Decoration[] => {
           pos + 1,
           () => {
             const overlay = document.createElement('div')
-            overlay.className = 'body-overlay'
+            overlay.className = 'figure-overlay'
             return overlay
           },
           { side: 1 }

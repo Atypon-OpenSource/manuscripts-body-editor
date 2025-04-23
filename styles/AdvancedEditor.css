@@ -1251,7 +1251,8 @@ th:hover > .table-context-menu-button,
   user-select: none;
   box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6E6E6E;
 }
-.ProseMirror .body-overlay {
+.ProseMirror .non-editable .body-overlay,
+.ProseMirror .non-editable .figure-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -1260,6 +1261,9 @@ th:hover > .table-context-menu-button,
   pointer-events: all;
   background: rgba(255, 255, 255, 0);
   z-index: 10;
+}
+.ProseMirror .non-editable .body-overlay {
+  width: 52px
 }
 .ProseMirror .non-editable .block {
   opacity: 50%;
