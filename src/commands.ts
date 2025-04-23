@@ -421,6 +421,7 @@ export const insertTable = (
   }
   const node = createAndFillTableElement(config)
   const tr = state.tr.insert(pos, node)
+  expandAccessibilitySection(tr, node)
   tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
   dispatch && dispatch(tr)
   return true
@@ -741,6 +742,7 @@ export const insertFootnotesElement = (
   container: [ManuscriptNode, number]
 ) => {
   let pos
+  const node = schema.nodes.footnotes_element.create()
   if (isTableElementNode(container[0])) {
     //table footnote
     const footer = insertTableElementFooter(tr, container)
@@ -749,8 +751,8 @@ export const insertFootnotesElement = (
     //regular footnote
     const section = insertFootnotesSection(tr)
     pos = section.pos + section.node.nodeSize - 1
+    tr.insert(pos, node)
   }
-  const node = schema.nodes.footnotes_element.create()
   return [node, pos] as [FootnotesElementNode, number]
 }
 
