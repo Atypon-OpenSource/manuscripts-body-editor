@@ -76,8 +76,9 @@ export const AwardForm = ({
 
       setIsLoading(true)
       try {
+        const formattedQuery = query.replace(/\s+/g, '+');
         const response = await fetch(
-          `https://api.crossref.org/funders?query=${encodeURIComponent(query)}`
+          `https://api.crossref.org/funders?query=${encodeURIComponent(formattedQuery)}`
         )
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
