@@ -49,10 +49,21 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
-const TextFieldWithError = styled(TextField)`
+const TextFieldWithError = styled(TextField)<{ hasError?: boolean }>`
   &:required::placeholder {
     color: ${(props) => props.theme.colors.text.error};
   }
+  ${(props) =>
+    props.hasError &&
+    `
+    border-color: ${props.theme.colors.border.error};
+  `}
+`
+
+const ErrorMessage = styled.div`
+  color: ${(props) => props.theme.colors.text.error};
+  font-size: 0.8rem;
+  margin-top: 4px;
 `
 
 const CheckboxContainer = styled.div`
@@ -63,6 +74,10 @@ const CheckboxContainer = styled.div`
 
 export interface FormActions {
   reset: () => void
+}
+
+export const isValidEmail = (email: string): boolean => {
+  return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
 }
 
 interface AuthorDetailsFormProps {
@@ -85,6 +100,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
@@ -98,6 +114,16 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
         formRef.current?.resetForm()
       },
     }
+  }
+
+  const validateEmail = (email: string): string | undefined => {
+    if (!email) {
+      return isEmailRequired ? 'Email is required' : undefined
+    }
+    if (!isValidEmail(email)) {
+      return 'Please enter a valid email address'
+    }
+    return undefined
   }
 
   return (
@@ -139,19 +165,29 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </TextFieldGroupContainer>
 
-              <Field name={'email'} type={'email'}>
+              <Field name={'email'} type={'email'} validate={validateEmail}>
                 {(props: FieldProps) => {
                   const placeholder = isEmailRequired
                     ? '*Email address (required)'
                     : 'Email address'
+                  const error = formik.touched.email && formik.errors.email
                   return (
-                    <TextFieldWithError
-                      id={'email'}
-                      type="email"
-                      required={isEmailRequired}
-                      placeholder={placeholder}
-                      {...props.field}
-                    />
+                    <div>
+                      <TextFieldWithError
+                        id={'email'}
+                        type="email"
+                        required={isEmailRequired}
+                        placeholder={placeholder}
+                        hasError={!!error}
+                        {...props.field}
+                        ref={emailRef}
+                        onBlur={(e) => {
+                          props.field.onBlur(e)
+                          formik.validateField('email')
+                        }}
+                      />
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                    </div>
                   )
                 }}
               </Field>

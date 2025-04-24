@@ -50,7 +50,11 @@ import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
-import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
+import {
+  AuthorDetailsForm,
+  FormActions,
+  isValidEmail,
+} from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 
 const AddAuthorButton = styled.div`
@@ -294,30 +298,40 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const handleSave = () => {
+    const currentValues = valuesRef.current
+
+    if (currentValues?.email && !isValidEmail(currentValues.email)) {
+      return // Prevent save if invalid
+    }
+
+    if (currentValues?.isCorresponding && !currentValues.email) {
+      setShowRequiredFieldConfirmationDialog(true)
+      return
+    }
+
     if (!authorFormRef.current?.checkValidity()) {
       setShowConfirmationDialog(false)
-      setTimeout(() => {
-        authorFormRef.current?.reportValidity()
-      }, 830)
-    } else {
-      if (valuesRef.current && selection) {
-        handleSaveAuthor(valuesRef.current)
-      }
-
-      if (nextAuthor) {
-        setSelection(nextAuthor)
-        setNextAuthor(null)
-        setNewAuthor(false)
-        setShowAffiliationDrawer(false)
-        updateAffiliationSelection(nextAuthor)
-        setIsCreatingNewAuthor(false)
-      } else if (isCreatingNewAuthor) {
-        createNewAuthor()
-        setIsCreatingNewAuthor(false)
-      }
-
-      setShowConfirmationDialog(false)
+      setTimeout(() => authorFormRef.current?.reportValidity(), 830)
+      return
     }
+
+    if (valuesRef.current && selection) {
+      handleSaveAuthor(valuesRef.current)
+    }
+
+    if (nextAuthor) {
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+      setNewAuthor(false)
+      setShowAffiliationDrawer(false)
+      updateAffiliationSelection(nextAuthor)
+      setIsCreatingNewAuthor(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+      setIsCreatingNewAuthor(false)
+    }
+
+    setShowConfirmationDialog(false)
   }
 
   const handleCancel = () => {
