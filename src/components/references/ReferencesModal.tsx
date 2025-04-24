@@ -35,7 +35,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { BibliographyItemAttrs } from '../../lib/references'
-import { ReferenceForm, ReferenceFormActions } from './ReferenceForm'
+import {
+  ReferenceForm,
+  ReferenceFormActions,
+} from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
 
 const ReferencesModalContainer = styled(ModalContainer)`
@@ -117,7 +120,7 @@ const normalize = (item: BibliographyItemAttrs) => ({
   type: item.type,
   author: item.author || [],
   editor: item.editor || [],
-  issued: item.issued || { 'date-parts': [['']] },
+  issued: item.issued,
   ['container-title']: item['container-title'] || '',
   ['collection-title']: item['collection-title'] || '',
   DOI: item.DOI || '',
@@ -135,10 +138,10 @@ const normalize = (item: BibliographyItemAttrs) => ({
   ['publisher-place']: item['publisher-place'] || '',
   event: item.event || '',
   ['event-place']: item['event-place'] || '',
-  ['event-date']: item['event-date'] || { 'date-parts': [['']] },
+  ['event-date']: item['event-date'],
   institution: item.institution || '',
   locator: item.locator || '',
-  accessed: item.accessed || { 'date-parts': [['']] },
+  accessed: item.accessed,
 })
 
 export interface ReferencesModalProps {

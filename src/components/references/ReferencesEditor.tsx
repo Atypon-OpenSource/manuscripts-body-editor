@@ -17,6 +17,7 @@ import React, { useReducer, useState } from 'react'
 
 import { attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
+import { cleanItemValues } from '../../lib/utils'
 import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
@@ -31,10 +32,11 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [items, dispatch] = useReducer(itemsReducer, props.items)
 
   const handleSave = (item: BibliographyItemAttrs) => {
-    props.onSave(item)
+    const cleanedItem = cleanItemValues(item)
+    props.onSave(cleanedItem)
     dispatch({
       type: 'update',
-      items: [item],
+      items: [cleanedItem],
     })
   }
 

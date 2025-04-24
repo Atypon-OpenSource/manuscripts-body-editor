@@ -36,13 +36,11 @@ import { BibliographyItemType } from '@manuscripts/transform'
 import { Field, FieldArray, FieldProps, Formik, FormikProps } from 'formik'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 
-import { BibliographyItemAttrs } from '../../lib/references'
-import { ChangeHandlingForm } from '../ChangeHandlingForm'
-import {
-  bibliographyItemTypes,
-  fieldConfigObject,
-} from './ReferenceForm/config'
-import { PersonDropDown } from './ReferenceForm/PersonDropDown'
+import { BibliographyItemAttrs } from '../../../lib/references'
+import { shouldRenderField } from '../../../lib/utils'
+import { ChangeHandlingForm } from '../../ChangeHandlingForm'
+import { bibliographyItemTypes } from './config'
+import { PersonDropDown } from './PersonDropDown'
 import {
   Actions,
   Button,
@@ -54,7 +52,7 @@ import {
   ReferenceTextArea,
   ReferenceTextField,
   YearField,
-} from './ReferenceForm/styled-components'
+} from './styled-components'
 
 const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
   (i) => ({
@@ -62,14 +60,6 @@ const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
     value: i[0],
   })
 )
-
-const shouldRenderField = (
-  field: string,
-  itemType: BibliographyItemType
-): boolean => {
-  return fieldConfigObject[field]?.[itemType] ?? false
-}
-
 export interface ReferenceFormActions {
   reset: () => void
 }
@@ -92,14 +82,13 @@ export const ReferenceForm: React.FC<{
   actionsRef,
 }) => {
   const fieldsRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
 
   useEffect(() => {
     if (fieldsRef.current) {
       fieldsRef.current.scrollTop = 0
     }
   }, [values])
-
-  const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
@@ -144,7 +133,7 @@ export const ReferenceForm: React.FC<{
               <ButtonGroup>
                 <IconButton
                   as="a"
-                  href={`https://doi.org/${formik.values.doi}`}
+                  href={`https://doi.org/${formik.values.DOI}`}
                   target={'_blank'}
                 >
                   <LinkIcon />
@@ -487,7 +476,7 @@ export const ReferenceForm: React.FC<{
 
                   <Field name={'publisher'}>
                     {(props: FieldProps) => (
-                      <ReferenceTextField id={'publisher'} {...props.field} />
+                      <ReferenceTextField id="publisher" {...props.field} />
                     )}
                   </Field>
                 </FormField>
