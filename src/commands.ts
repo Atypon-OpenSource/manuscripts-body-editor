@@ -227,6 +227,12 @@ export const canInsert =
       return false
     }
 
+    if (type === schema.nodes.table_element) {
+      if ($from.node(-1).type === schema.nodes.list_item) {
+        return false
+      }
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
