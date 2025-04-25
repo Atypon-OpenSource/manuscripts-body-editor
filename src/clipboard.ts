@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import { getJatsListType, schema } from '@manuscripts/transform'
-import { DOMParser, Fragment, ResolvedPos, Slice } from 'prosemirror-model'
-import { EditorView } from 'prosemirror-view'
+import { DOMParser, Fragment, Slice } from 'prosemirror-model'
 
 import { allowedHref } from './lib/url'
 
