@@ -326,12 +326,12 @@ export class ContextMenu {
     }
 
     if (type === schema.nodes.pullquote_element) {
-      const figure = findChildrenByType(this.node, schema.nodes.figure)
+      const figure = findChildrenByType(this.node, schema.nodes.quote_image)
       if (!figure.length) {
         menu.appendChild(
           this.createMenuItem('Add Image', () => {
             const tr = this.view.state.tr
-            tr.insert(this.getPos() + 1, schema.nodes.figure.create())
+            tr.insert(this.getPos() + 1, schema.nodes.quote_image.create())
             this.view.dispatch(tr)
             popper.destroy()
           })

@@ -39,7 +39,7 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
 
   handleAddFigure() {
     const tr = this.view.state.tr
-    tr.insert(this.getPos() + 1, schema.nodes.figure.create())
+    tr.insert(this.getPos() + 1, schema.nodes.quote_image.create())
     this.view.dispatch(tr)
   }
 
@@ -58,7 +58,8 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
         label: 'Add Image',
         action: () => this.handleAddFigure(),
         icon: 'AddFigure',
-        disabled: !!findChildrenByType(this.node, schema.nodes.figure).length,
+        disabled: !!findChildrenByType(this.node, schema.nodes.quote_image)
+          .length,
       })
 
       this.contextMenu = ReactSubView(

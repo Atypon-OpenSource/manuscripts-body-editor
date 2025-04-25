@@ -55,6 +55,7 @@ import sectionTitle from '../views/section_title_editable'
 import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
+import quoteImage from '../views/quote_image_editable'
 import title from '../views/title_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -68,6 +69,7 @@ export default (
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
+    quote_image: quoteImage(props, dispatch),
     box_element: boxElement(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),

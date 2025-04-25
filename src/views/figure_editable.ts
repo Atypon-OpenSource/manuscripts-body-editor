@@ -54,33 +54,12 @@ export enum figurePositions {
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
   positionMenuWrapper: HTMLDivElement
-  closeButton: HTMLButtonElement
   figurePosition: string
 
-  isInPullQuote: boolean
-
-  public initialise = () => {
+  public initialise() {
     this.upload = this.upload.bind(this)
-    this.isInPullQuote = hasParent(
-      this.view.state.doc.resolve(this.getPos()),
-      schema.nodes.pullquote_element
-    )
-    if (this.isInPullQuote) {
-      this.createPullQuoteDOM()
-    } else {
-      this.createDOM()
-    }
-
+    this.createDOM()
     this.updateContents()
-  }
-
-  createPullQuoteDOM() {
-    this.dom = document.createElement('figure')
-
-    this.container = document.createElement('div')
-    this.container.className = 'pullquote-figure'
-    this.container.contentEditable = 'false'
-    this.dom.appendChild(this.container)
   }
 
   upload = async (file: File) => {
@@ -158,35 +137,12 @@ export class FigureEditableView extends FigureView {
     this.container.innerHTML = ''
     this.container.appendChild(img)
 
-    if (!this.isInPullQuote) {
-      this.manageReactTools()
-      this.container.appendChild(this.createPositionMenuWrapper())
-    }
+    this.addTools()
+  }
 
-    if (this.isInPullQuote) {
-      if (!this.closeButton) {
-        const closeButton = document.createElement('button')
-        closeButton.innerHTML = plusIcon
-        closeButton.classList.add('figure-remove-button', 'button-reset')
-
-        closeButton.addEventListener('click', () => {
-          if (this.node.attrs.src) {
-            this.setSrc('')
-          } else {
-            const { tr } = this.view.state
-            tr.delete(this.getPos(), this.getPos() + this.node.nodeSize)
-            this.view.dispatch(tr)
-          }
-        })
-
-        this.closeButton = closeButton
-      }
-      if (!isDeleted(this.node)) {
-        this.container.appendChild(this.closeButton)
-      }
-      addTrackChangesAttributes(this.node.attrs, this.dom)
-      addTrackChangesClassNames(this.node.attrs, this.dom)
-    }
+  protected addTools() {
+    this.manageReactTools()
+    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   private manageReactTools() {
@@ -244,7 +200,7 @@ export class FigureEditableView extends FigureView {
     }
   }
 
-  private setSrc = (src: string) => {
+  protected setSrc = (src: string) => {
     const { tr } = this.view.state
     const pos = this.getPos()
     tr.setNodeMarkup(pos, undefined, {
@@ -288,14 +244,14 @@ export class FigureEditableView extends FigureView {
     return element
   }
 
-  private createImg = (src: string) => {
+  protected createImg = (src: string) => {
     const img = document.createElement('img')
     img.classList.add('figure-image')
     img.src = src
     return img
   }
 
-  private createPlaceholder = () => {
+  protected createPlaceholder = () => {
     const element = document.createElement('div')
     element.classList.add('figure', 'placeholder')
 
@@ -308,12 +264,7 @@ export class FigureEditableView extends FigureView {
       <a data-action='open-supplement-files'>'Supplements'</a></p>
     `
 
-    if (this.isInPullQuote) {
-      instructions.innerHTML = `${plusIcon}<div>Drag or click here to upload image</div>`
-    }
-
     element.appendChild(instructions)
-
     return element
   }
 

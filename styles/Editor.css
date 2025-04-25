@@ -670,6 +670,14 @@
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
+
+.ProseMirror h1.empty-node::before {
+  color: #6e6e6e;
+  font-family: 'PT Sans', sans-serif;
+  font-style: italic;
+  line-height: 32px;
+}
+
 .ProseMirror .empty-node .article-titles::before {
   position: absolute;
   color: #c9c9c9;
