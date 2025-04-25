@@ -31,14 +31,8 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { plusIcon } from '../icons'
 import { FileAttachment, groupFiles } from '../lib/files'
-import {
-  addTrackChangesAttributes,
-  addTrackChangesClassNames,
-  isDeleted,
-} from '../lib/track-changes-utils'
-import { hasParent } from '../lib/utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'

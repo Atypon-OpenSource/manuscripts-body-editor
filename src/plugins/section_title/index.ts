@@ -60,7 +60,7 @@ const getPluginState = (doc: ProseMirrorNode): PluginState => {
   const bodyNodes = findChildrenByType(doc, schema.nodes.body)
   const bodyNode = bodyNodes[0]
   const sectionNumberMap = new Map<string, string>()
-  // calculateSectionLevels(bodyNode.node, bodyNode.pos, sectionNumberMap)
+  calculateSectionLevels(bodyNode.node, bodyNode.pos, sectionNumberMap)
 
   return sectionNumberMap
 }
