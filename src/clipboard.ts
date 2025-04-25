@@ -52,12 +52,7 @@ export const clipboardParser = new DOMParser(schema, [
   ...DOMParser.fromSchema(schema).rules,
 ])
 
-export const clipboardTextParser = (
-  text: string,
-  $context: ResolvedPos,
-  plainText: boolean,
-  view: EditorView
-): any => {
+export const clipboardTextParser = (text: string): any => {
   if (allowedHref(text)) {
     const link = schema.nodes.link.create({ href: text }, schema.text(text))
     return Slice.maxOpen(Fragment.from(link))
