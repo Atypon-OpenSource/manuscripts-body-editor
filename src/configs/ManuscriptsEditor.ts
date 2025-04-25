@@ -25,7 +25,7 @@ import { Location, NavigateFunction } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
-import {clipboardParser, clipboardTextParser} from '../clipboard'
+import { clipboardParser, clipboardTextParser } from '../clipboard'
 import { Dispatch } from '../commands'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
