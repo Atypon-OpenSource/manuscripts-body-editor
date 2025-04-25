@@ -45,6 +45,7 @@ import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
+import prevent_empty from '../plugins/prevent-empty'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -80,6 +81,7 @@ export default (props: EditorProps) => {
     cross_references(),
     search_replace(),
     alt_titles(),
+    prevent_empty(),
   ]
 
   if (props.collabProvider) {
