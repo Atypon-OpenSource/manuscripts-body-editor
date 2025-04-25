@@ -50,7 +50,7 @@ export const clipboardParser = new DOMParser(schema, [
   ...nodes,
   ...DOMParser.fromSchema(schema).rules,
 ])
-
+// @ts-ignore
 export const clipboardTextParser = (text: string): any => {
   if (allowedHref(text)) {
     const link = schema.nodes.link.create({ href: text }, schema.text(text))
