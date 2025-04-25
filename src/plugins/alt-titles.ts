@@ -123,7 +123,7 @@ export default () => {
     },
     appendTransaction: (transactions, _, newState) => {
       // in appendTransaction we check if alt_titles nodes exist before opening them for the first time because they are optional
-      const tr = newState.tr
+      let tr = newState.tr
       if (
         !transactions.some((tr) => tr.getMeta(altTitlesKey)) ||
         !altTitlesKey.getState(newState)
