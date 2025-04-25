@@ -27,7 +27,7 @@ import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
-import { fieldConfigObject } from '../components/references/ReferenceForm/config'
+import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -140,9 +140,9 @@ export const createHeader = (typeName: string, text: string) => {
 // and field name
 export const shouldRenderField = (
   field: string,
-  itemType: BibliographyItemType
+  type: BibliographyItemType
 ): boolean => {
-  return fieldConfigObject[field]?.[itemType] ?? false
+  return fieldConfigMap[type]?.has(field) ?? false
 }
 
 // It will clean unnecessary fields from the item
@@ -164,10 +164,10 @@ export const cleanItemValues = (item: BibliographyItemAttrs) => {
         case 'issued':
         case 'accessed':
         case 'event-date':
-          cleanedItem[key] = { 'date-parts': [['']] } as BibliographicDate
+          cleanedItem[key] = {} as BibliographicDate
           break
         default:
-          cleanedItem[key] = '' as string
+          cleanedItem[key] = ''
       }
     }
   }
