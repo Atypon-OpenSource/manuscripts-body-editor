@@ -30,7 +30,6 @@ import {
   isSectionNodeType,
   isTableElementNode,
   KeywordsNode,
-  ListNode,
   ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptMarkType,
@@ -69,7 +68,6 @@ import {
 } from 'prosemirror-tables'
 import {
   findWrapping,
-  liftTarget,
   ReplaceAroundStep,
   ReplaceStep,
 } from 'prosemirror-transform'
@@ -1185,59 +1183,43 @@ const findListsAtSameLevel = (doc: ManuscriptNode, list: NodeWithPos) => {
 
 function toggleOffList(
   state: EditorState,
-  dispatch: (tr: ManuscriptTransaction) => void
-) {
-  const {
-    selection: { $from },
-    tr,
-  } = state
+  dispatch?: (tr: ManuscriptTransaction) => void
+): boolean {
+  const { selection, schema } = state
+  const list = findSelectedList(selection)
 
-  let rootList = findRootList($from)
+  if (!list?.node) {
+    return false
+  }
 
-  if (
-    state.selection instanceof NodeSelection &&
-    state.selection.node.type === schema.nodes.list
-  ) {
-    rootList = {
-      pos: state.selection.from,
-      node: state.selection.node as ListNode,
+  const paragraphs: ManuscriptNode[] = []
+  for (let i = 0; i < list.node.content.childCount; i++) {
+    const item = list.node.content.child(i)
+    if (item.type === schema.nodes.list_item) {
+      const paragraphContent =
+        item.content.firstChild?.type === schema.nodes.paragraph
+          ? item.content.firstChild.content
+          : Fragment.empty
+
+      paragraphs.push(schema.nodes.paragraph.create({}, paragraphContent))
     }
   }
 
-  if (rootList) {
-    state.doc.nodesBetween(
-      rootList.pos,
-      rootList.pos + rootList.node.nodeSize,
-      (node, pos) => {
-        // remove all the nodes that are not fully in the range
-        if (
-          rootList &&
-          (pos < rootList.pos ||
-            node.nodeSize > rootList.pos + rootList.node.nodeSize)
-        ) {
-          return true
-        }
-        const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
-        const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
-        const nodeRange = $fromPos.blockRange($toPos)
-        if (!nodeRange) {
-          return
-        }
-
-        const targetLiftDepth = liftTarget(nodeRange)
-        if (targetLiftDepth || targetLiftDepth === 0) {
-          tr.lift(nodeRange, targetLiftDepth)
-          return false // do not descend as the content of this node will be lifted already anyway
-        }
-      }
-    )
-    dispatch(tr)
-    return true
-  } else {
+  if (paragraphs.length === 0) {
     return false
   }
-}
 
+  const tr = state.tr.replaceWith(
+    list.pos,
+    list.pos + list.node.nodeSize,
+    Fragment.from(paragraphs)
+  )
+
+  if (dispatch) {
+    dispatch(tr)
+  }
+  return true
+}
 export const insertList =
   (type: ManuscriptNodeType, style?: string) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
