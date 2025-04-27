@@ -117,6 +117,8 @@ export const handlePaste = (
   if (
     selection instanceof TextSelection &&
     isElement(slice) &&
+    slice.openStart !== 1 &&
+    slice.openEnd !== 1 &&
     selection.$anchor.parentOffset > 0 &&
     selection.$head.parentOffset > 0 &&
     selection.$from.node().type === schema.nodes.paragraph
@@ -147,7 +149,7 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    if (isElement(slice) && $from.depth === slice.openStart) {
+    if (isElement(slice) && slice.openStart !== 1 && slice.openEnd !== 1) {
       tr.replace(side, side, new Slice(slice.content, 0, 0))
     } else {
       tr.replace(side, side, slice)
