@@ -123,7 +123,7 @@ export default () => {
     },
     appendTransaction: (transactions, _, newState) => {
       // in appendTransaction we check if alt_titles nodes exist before opening them for the first time because they are optional
-      let tr = newState.tr
+      const tr = newState.tr
       if (
         !transactions.some((tr) => tr.getMeta(altTitlesKey)) ||
         !altTitlesKey.getState(newState)
@@ -132,6 +132,7 @@ export default () => {
       }
 
       const { title, runningTitle, shortTitle, altTitlesSection } =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         altTitlesKey.getState(newState)!
       const schema = newState.schema
 
