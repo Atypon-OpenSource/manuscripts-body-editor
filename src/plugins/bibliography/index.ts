@@ -156,7 +156,6 @@ const getBibliographyItem = (
   if (!attrs) {
     return
   }
-
   const { id, ...rest } = attrs
   const item = {
     _id: id,

@@ -83,8 +83,21 @@ const parseCSLData = (data: CSL.Data): BibliographyItemAttrs => ({
   issue: data.issue ? String(data.issue) : undefined,
   page: data.page,
   title: data.title,
+  editor: data.editor?.map(buildBibliographicName),
+  edition: data.edition ? String(data.edition) : undefined,
+  'collection-title': data['collection-title'],
+  'publisher-place': data['publisher-place'],
+  publisher: data.publisher,
+  event: data.event,
+  'event-date': buildBibliographicDate(data['event-date'] as BibliographicDate),
+  'event-place': data['event-place'],
+  URL: data.URL,
+  accessed: buildBibliographicDate(data.accessed as BibliographicDate),
+  'number-of-pages': data['number-of-pages']
+    ? String(data['number-of-pages'])
+    : undefined,
+  locator: data.locator,
 })
-
 export const Crossref: BibliographyItemSource = {
   id: 'crossref',
   label: 'External sources',
