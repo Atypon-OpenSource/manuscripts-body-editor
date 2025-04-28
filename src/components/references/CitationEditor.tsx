@@ -117,7 +117,11 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       type: 'update',
       items: [item],
     })
+    if (!rids.includes(item.id)) {
+      handleCite([item])
+    }
   }
+
   const handleDelete = (item: BibliographyItemAttrs) => {
     onDelete(item)
     dispatchItems({
@@ -161,8 +165,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       id: generateID(ObjectTypes.BibliographyItem),
       type: 'article-journal',
     }
-    handleSave(item)
-    handleCite([item])
     setEditingForm({ show: true, item: item })
   }
 
@@ -182,6 +184,20 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const cited = useMemo(() => {
     return rids.flatMap((rid) => items.filter((i) => i.id === rid))
   }, [rids, items])
+
+  if (editingForm.show) {
+    return (
+      <ReferencesModal
+        isOpen={editingForm.show}
+        onCancel={() => setEditingForm({ show: false })}
+        items={items}
+        citationCounts={citationCounts}
+        item={editingForm.item}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
+    )
+  }
 
   if (importing) {
     return (
@@ -264,15 +280,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
           </CitedItem>
         ))}
       </CitedItems>
-      <ReferencesModal
-        isOpen={editingForm.show}
-        onCancel={() => setEditingForm({ show: false })}
-        items={items}
-        citationCounts={citationCounts}
-        item={editingForm.item}
-        onSave={handleSave}
-        onDelete={handleDelete}
-      />
       <Actions>
         <IconTextButton />
         <ButtonGroup>
