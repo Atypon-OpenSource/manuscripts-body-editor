@@ -131,11 +131,10 @@ export default () => {
         return null
       }
 
-      const pluginState = altTitlesKey.getState(newState)
-      if (!pluginState) {
-        return null
-      }
-      const { title, runningTitle, shortTitle, altTitlesSection } = pluginState
+      const { title, runningTitle, shortTitle, altTitlesSection } =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        altTitlesKey.getState(newState)!
+
       const schema = newState.schema
 
       if (!title) {
