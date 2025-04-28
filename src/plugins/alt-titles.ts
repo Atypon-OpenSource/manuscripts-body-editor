@@ -134,6 +134,7 @@ export default () => {
       const { title, runningTitle, shortTitle, altTitlesSection } =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         altTitlesKey.getState(newState)!
+
       const schema = newState.schema
 
       if (!title) {
