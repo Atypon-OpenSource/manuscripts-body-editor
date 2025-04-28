@@ -17,8 +17,8 @@
 import {
   MultiValueInput,
   PrimaryButton,
+  SearchIcon,
   SecondaryButton,
-  SelectField,
   TextField,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
@@ -27,6 +27,7 @@ import styled from 'styled-components'
 
 import { AwardAttrs } from '../../views/award'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import { useDebounce } from '../hooks/use-debounce'
 
 export interface AwardFormProps {
   values: AwardAttrs
@@ -57,15 +58,30 @@ export const AwardForm = ({
   onCancel,
   onChange,
 }: AwardFormProps) => {
-  const [funders, setFunders] = useState<FunderOption[]>([]) // State to hold funder options
+  const [funders, setFunders] = useState<FunderOption[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const formRef = useRef<FormikProps<AwardAttrs>>(null)
   const primaryButtonText = values.source ? 'Update funder' : 'Add funder'
 
-  // Fetch funders only once, caching them for future use
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+
   useEffect(() => {
-    const fetchFunders = async () => {
+    const searchFunders = async () => {
+      const query = debouncedSearchQuery
+      if (!query) {
+        setFunders([])
+        return
+      }
+
+      setIsLoading(true)
       try {
-        const response = await fetch('https://api.crossref.org/funders')
+        const formattedQuery = query.replace(/\s+/g, '+')
+        const response = await fetch(
+          `https://api.crossref.org/funders?query=${encodeURIComponent(
+            formattedQuery
+          )}`
+        )
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -77,22 +93,21 @@ export const AwardForm = ({
           })
         )
         funderOptions.sort((a, b) => a.label.localeCompare(b.label))
-        // Cache the funders data
-        sessionStorage.setItem('funders', JSON.stringify(funderOptions))
         setFunders(funderOptions)
       } catch (error) {
         console.error('Error fetching funders:', error)
+        setFunders([])
+      } finally {
+        setIsLoading(false)
       }
     }
 
-    // Check if funders are already cached in sessionStorage
-    const storedFunders = sessionStorage.getItem('funders')
-    if (storedFunders) {
-      setFunders(JSON.parse(storedFunders))
-    } else {
-      fetchFunders()
-    }
-  }, []) // Only run on mount
+    searchFunders()
+  }, [debouncedSearchQuery])
+
+  const handleFunderSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value)
+  }
 
   const handleCancel = () => {
     formRef.current?.resetForm()
@@ -109,12 +124,7 @@ export const AwardForm = ({
 
   return (
     <Formik<AwardAttrs>
-      initialValues={{
-        ...values,
-        source: funders.some((funder) => funder.value === values.source)
-          ? values.source
-          : '',
-      }}
+      initialValues={values}
       onSubmit={(values, { setSubmitting }) => {
         onSave(values)
         setSubmitting(false)
@@ -131,18 +141,43 @@ export const AwardForm = ({
             <LabelContainer>
               <Label htmlFor={'source'}>Funder name</Label>
             </LabelContainer>
-            <Field
-              name="source"
-              component={SelectField}
-              options={funders}
-              value={
-                funders.find(
-                  (funder) => funder.value === formik.values.source
-                ) || ''
-              }
-            />
+            <SearchContainer>
+              <SearchIconContainer>
+                <SearchIcon />
+              </SearchIconContainer>
+              <Field name="source">
+                {(props: FieldProps) => (
+                  <StyledTextField
+                    id="source"
+                    placeholder="Search for funder..."
+                    onChange={(e) => {
+                      props.field.onChange(e)
+                      handleFunderSearch(e)
+                    }}
+                    value={props.field.value || ''}
+                    autoFocus={true}
+                  />
+                )}
+              </Field>
+              {isLoading && <LoadingText>Loading...</LoadingText>}
+              {funders.length > 0 && (
+                <SearchResults>
+                  {funders.map((funder) => (
+                    <SearchResultItem
+                      key={funder.value}
+                      onClick={() => {
+                        formik.setFieldValue('source', funder.value)
+                        setFunders([])
+                      }}
+                    >
+                      {funder.label}
+                    </SearchResultItem>
+                  ))}
+                </SearchResults>
+              )}
+            </SearchContainer>
             {formik.errors.source && formik.touched.source && (
-              <div style={{ color: 'red' }}>{formik.errors.source}</div>
+              <ErrorText>{formik.errors.source}</ErrorText>
             )}
             <LabelContainer>
               <Label htmlFor={'code'}>Grant number</Label>
@@ -163,7 +198,7 @@ export const AwardForm = ({
               {(props: FieldProps) => (
                 <TextField
                   id="recipient"
-                  placeholder="Enter full name "
+                  placeholder="Enter full name"
                   {...props.field}
                 />
               )}
@@ -205,4 +240,74 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   margin-top: 16px;
   gap: 8px;
+`
+
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+`
+
+const SearchIconContainer = styled.span`
+  display: flex;
+  left: ${(props) => props.theme.grid.unit * 4}px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+
+  path {
+    stroke: ${(props) => props.theme.colors.text.primary};
+  }
+
+  ${SearchContainer}:hover &,
+  ${SearchContainer}:focus-within & {
+    path {
+      stroke: ${(props) => props.theme.colors.brand.medium};
+    }
+  }
+`
+
+const StyledTextField = styled(TextField)`
+  padding-left: ${(props) => props.theme.grid.unit * 11}px;
+  &:hover,
+  &:focus {
+    background-color: ${(props) => props.theme.colors.background.fifth};
+  }
+`
+
+const SearchResults = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid ${(props) => props.theme.colors.border.secondary};
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+`
+
+const SearchResultItem = styled.div`
+  padding: 8px 12px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.colors.background.fifth};
+  }
+`
+
+const LoadingText = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${(props) => props.theme.colors.text.secondary};
+  font-size: ${(props) => props.theme.font.size.small};
+`
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.text.error};
+  font-size: ${(props) => props.theme.font.size.small};
+  margin-top: 4px;
 `
