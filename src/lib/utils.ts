@@ -27,6 +27,7 @@ import {
 import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findChildrenByType, findParentNode } from 'prosemirror-utils'
+
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'

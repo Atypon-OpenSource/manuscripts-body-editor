@@ -142,6 +142,7 @@ const normalize = (item: BibliographyItemAttrs) => ({
   institution: item.institution || '',
   locator: item.locator || '',
   accessed: item.accessed,
+  comment: item.comment || '',
 })
 
 export interface ReferencesModalProps {
