@@ -72,12 +72,29 @@ const CheckboxContainer = styled.div`
   gap: 32px;
 `
 
-export interface FormActions {
-  reset: () => void
-}
+const EMAIL_PATTERN = '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$'
+const EMAIL_PATTERN_TITLE =
+  'Please enter a valid email address'
 
 export const isValidEmail = (email: string): boolean => {
-  return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+  return new RegExp(EMAIL_PATTERN, 'i').test(email)
+}
+
+export const validateEmail = (
+  email: string,
+  isRequired = false
+): string | undefined => {
+  if (!email) {
+    return isRequired ? 'Email is required' : undefined
+  }
+  if (!isValidEmail(email)) {
+    return EMAIL_PATTERN_TITLE
+  }
+  return undefined
+}
+
+export interface FormActions {
+  reset: () => void
 }
 
 interface AuthorDetailsFormProps {
@@ -177,6 +194,8 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                         id={'email'}
                         type="email"
                         required={isEmailRequired}
+                        pattern={EMAIL_PATTERN}
+                        title={EMAIL_PATTERN_TITLE}
                         placeholder={placeholder}
                         hasError={!!error}
                         {...props.field}
