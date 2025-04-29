@@ -345,7 +345,7 @@ export const ReferenceForm: React.FC<{
               <ButtonGroup>
                 <IconButton
                   as="a"
-                  href={`https://doi.org/${formik.values.doi}`}
+                  href={`https://doi.org/${formik.values.DOI}`}
                   target={'_blank'}
                 >
                   <LinkIcon />
@@ -471,7 +471,7 @@ export const ReferenceForm: React.FC<{
                   <Label htmlFor={'container-title'}>Container Title</Label>
                 </LabelContainer>
 
-                <Field name={'containerTitle'}>
+                <Field name={'container-title'}>
                   {(props: FieldProps) => (
                     <ReferenceTextArea
                       id={'container-title'}
@@ -522,7 +522,7 @@ export const ReferenceForm: React.FC<{
                   <Label htmlFor={'doi'}>DOI</Label>
                 </LabelContainer>
 
-                <Field name={'doi'}>
+                <Field name={'DOI'}>
                   {(props: FieldProps) => (
                     <ReferenceTextField
                       id={'doi'}

@@ -21,7 +21,7 @@ export type BibliographyItemAttrs = TrackableAttributes<BibliographyItemNode>
 export type CitationAttrs = TrackableAttributes<CitationNode>
 
 export const metadata = (item: BibliographyItemAttrs): string => {
-  return [authors(item), item.containerTitle, issuedYear(item)]
+  return [authors(item), item['container-title'], issuedYear(item)]
     .filter(Boolean)
     .join(', ')
 }
