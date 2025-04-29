@@ -18,6 +18,7 @@ import {
   ArrowDownCircleIcon,
   DeleteIcon,
   EditIcon,
+  LockIcon,
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
@@ -33,4 +34,6 @@ export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderToStaticMarkup(createElement(EditIcon))
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
+export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
+

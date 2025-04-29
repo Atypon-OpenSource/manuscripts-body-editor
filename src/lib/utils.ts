@@ -19,6 +19,7 @@ import {
   isSectionNodeType,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
 import {
   Node as ProseMirrorNode,
@@ -29,7 +30,11 @@ import { EditorState, Selection } from 'prosemirror-state'
 import {
   findParentNode,
   findParentNodeOfTypeClosestToPos,
+  findChildrenByType
 } from 'prosemirror-utils'
+
+import { arrowDown } from '../icons'
+import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -110,12 +115,6 @@ export const isChildOfNodeTypes = (
   return false
 }
 
-/**
- * Check if selection is inside the given node
- * @param state - the editor state
- * @param targetNode - the node to check if the selection is inside
- * @return boolean
- */
 export const isSelectionInNode = (
   state: EditorState,
   targetNode: ProseMirrorNode
@@ -131,6 +130,25 @@ export const isSelectionInNode = (
   return false
 }
 
+export const isSelectionInBody = (state: EditorState): boolean => {
+  return isSelectionInNodeByType(state, 'body')
+}
+
+const isSelectionInNodeByType = (
+  state: EditorState,
+  nodeType: string
+): boolean => {
+  const { $from } = state.selection
+
+  for (let depth = $from.depth; depth >= 0; depth--) {
+    if ($from.node(depth).type.name === nodeType) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export const createHeader = (typeName: string, text: string) => {
   const header = document.createElement('h1')
   header.classList.add(`title-${typeName}`, 'authors-info-header')
@@ -142,4 +160,45 @@ export const isNotNull = <T>(a: T | null): a is T => a !== null
 
 export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
   return !!findParentNodeOfTypeClosestToPos($pos, type)
+}
+
+export const isBodyLocked = (state: EditorState) => {
+  const props = getEditorProps(state)
+  return (
+    !!findChildrenByType(state.doc, schema.nodes.attachment).length &&
+    props.lockBody
+  )
+}
+
+// It checks if the selection is inside a body node and if the body is locked
+// the body is locked if feature lockBody is set true and there is an attachment node in document
+export const isEditAllowed = (state: EditorState) => {
+  return !(isBodyLocked(state) && isSelectionInBody(state))
+}
+
+export const createToggleButton = (listener: () => void) => {
+  const altTitlesButton = document.createElement('button')
+  altTitlesButton.classList.add('toggle-button-open', 'button-reset')
+  altTitlesButton.innerHTML = arrowDown
+  altTitlesButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    listener()
+  })
+  return altTitlesButton
+}
+
+export const getInsertPos = (
+  type: ManuscriptNodeType,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  let insertPos = pos + parent.nodeSize - 1
+
+  parent.forEach((child, offset, index) => {
+    if (parent.canReplaceWith(index, index, type)) {
+      insertPos = pos + offset
+    }
+  })
+
+  return insertPos
 }

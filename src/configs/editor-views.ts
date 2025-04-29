@@ -17,6 +17,7 @@ import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
+import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
 import alt_titles_section from '../views/alt_titles_section'
@@ -108,7 +109,7 @@ export default (
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),
-    long_desc: empty('long_desc'),
-    alt_text: empty('alt_text'),
+    long_desc: accessibilityElement(props, dispatch),
+    alt_text: accessibilityElement(props, dispatch),
   }
 }

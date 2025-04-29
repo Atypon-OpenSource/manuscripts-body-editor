@@ -288,6 +288,14 @@
                   ]
                 },
                 {
+                  "type": "alt_text",
+                  "attrs": { "id": "" }
+                },
+                {
+                  "type": "long_desc",
+                  "attrs": { "id": "" }
+                },
+                {
                   "type": "listing",
                   "attrs": {
                     "id": "",
@@ -352,6 +360,14 @@
                   "content": [
                     { "type": "table_row", "attrs": { "dataTracked": null } }
                   ]
+                },
+                {
+                  "type": "alt_text",
+                  "attrs": { "id": "" }
+                },
+                {
+                  "type": "long_desc",
+                  "attrs": { "id": "" }
                 },
                 {
                   "type": "listing",

@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 import { getJatsListType, schema } from '@manuscripts/transform'
+<<<<<<< HEAD
 import { DOMParser, Fragment, Slice } from 'prosemirror-model'
 
 import { allowedHref } from './lib/url'
+=======
+import { DOMParser } from 'prosemirror-model'
+>>>>>>> ba8dcb02ffc0fd519d761e5af1925451c758ce6b
 
 // we can override other node rules for clipboard here
 // to avoid having a conflict with manuscripts-transform
@@ -50,11 +54,3 @@ export const clipboardParser = new DOMParser(schema, [
   ...nodes,
   ...DOMParser.fromSchema(schema).rules,
 ])
-export const clipboardTextParser = (text: string): any => {
-  if (allowedHref(text)) {
-    const link = schema.nodes.link.create({ href: text }, schema.text(text))
-    return Slice.maxOpen(Fragment.from(link))
-  }
-
-  return undefined
-}
