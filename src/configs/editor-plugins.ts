@@ -27,6 +27,7 @@ import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
+import accessibility_element from '../plugins/accessibility_element'
 import affiliations from '../plugins/affiliations'
 import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
@@ -82,6 +83,7 @@ export default (props: EditorProps) => {
     search_replace(),
     lock_body(),
     alt_titles(),
+    accessibility_element(),
   ]
 
   if (props.collabProvider) {

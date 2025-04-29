@@ -25,7 +25,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { arrowDown } from '../icons'
+import { createToggleButton } from '../lib/utils'
 
 export interface PluginState {
   collapsed: boolean
@@ -62,17 +62,6 @@ function getTitlesData(doc: ProseMirrorNode) {
     }
   })
   return { title, runningTitle, shortTitle, altTitlesSection }
-}
-
-function createAltTitlesButton(listener: () => void) {
-  const altTitlesButton = document.createElement('button')
-  altTitlesButton.classList.add('alt-titles-open', 'button-reset')
-  altTitlesButton.innerHTML = arrowDown
-  altTitlesButton.addEventListener('click', (e) => {
-    e.preventDefault()
-    listener()
-  })
-  return altTitlesButton
 }
 
 function selectionInAltTitles(from: number, to: number, state: PluginState) {
@@ -195,7 +184,7 @@ export default () => {
             Decoration.widget(
               titleEnd - 1,
               (view: ManuscriptEditorView) => {
-                return createAltTitlesButton(() => {
+                return createToggleButton(() => {
                   const tr = view.state.tr.setMeta(altTitlesKey, {
                     collapsed: false,
                   })

@@ -27,8 +27,8 @@ import {
 import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findChildrenByType, findParentNode } from 'prosemirror-utils'
-
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
+import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
@@ -201,4 +201,31 @@ export const isBodyLocked = (state: EditorState) => {
 // the body is locked if feature lockBody is set true and there is an attachment node in document
 export const isEditAllowed = (state: EditorState) => {
   return !(isBodyLocked(state) && isSelectionInBody(state))
+}
+
+export const createToggleButton = (listener: () => void) => {
+  const altTitlesButton = document.createElement('button')
+  altTitlesButton.classList.add('toggle-button-open', 'button-reset')
+  altTitlesButton.innerHTML = arrowDown
+  altTitlesButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    listener()
+  })
+  return altTitlesButton
+}
+
+export const getInsertPos = (
+  type: ManuscriptNodeType,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  let insertPos = pos + parent.nodeSize - 1
+
+  parent.forEach((child, offset, index) => {
+    if (parent.canReplaceWith(index, index, type)) {
+      insertPos = pos + offset
+    }
+  })
+
+  return insertPos
 }
