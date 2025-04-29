@@ -126,10 +126,7 @@
   content: '— ';
   margin-left: -1em;
 }
-.ProseMirror .pullquote footer.empty-node:after {
-  font-style: italic;
-  content: 'Insert reference here';
-}
+
 .ProseMirror .pullquote footer.empty-node .ProseMirror-trailingBreak {
   display: none;
 }

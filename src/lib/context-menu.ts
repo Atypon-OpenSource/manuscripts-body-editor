@@ -336,6 +336,20 @@ export class ContextMenu {
             popper.destroy()
           })
         )
+      } else {
+        const found = figure[0]
+        menu.appendChild(
+          this.createMenuItem('Remove Image', () => {
+            const tr = this.view.state.tr
+            console.log(found)
+            tr.delete(
+              this.getPos() + 1 + found.pos,
+              this.getPos() + 1 + found.pos + found.node.nodeSize
+            )
+            this.view.dispatch(tr)
+            popper.destroy()
+          })
+        )
       }
     }
 

@@ -81,6 +81,14 @@ export default () =>
 
         state.doc.descendants((node, pos, parent) => {
           if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
+            if (node.type === node.type.schema.nodes.attribution) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Insert reference here')
+                )
+              )
+            }
             if (node.type === node.type.schema.nodes.paragraph) {
               const text = getParagraphPlaceholderText(parent, node)
               if (text) {
