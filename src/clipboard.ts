@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 import { getJatsListType, schema } from '@manuscripts/transform'
-<<<<<<< HEAD
-import { DOMParser, Fragment, Slice } from 'prosemirror-model'
-
-import { allowedHref } from './lib/url'
-=======
 import { DOMParser } from 'prosemirror-model'
->>>>>>> ba8dcb02ffc0fd519d761e5af1925451c758ce6b
 
 // we can override other node rules for clipboard here
 // to avoid having a conflict with manuscripts-transform
