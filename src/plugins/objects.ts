@@ -65,7 +65,10 @@ export default () => {
                 if (node.type.name === 'image_element') {
                   labelNode.textContent = target.label
                   decorations.push(
-                    Decoration.widget(pos + node.nodeSize - 1, labelNode)
+                    Decoration.widget(
+                      pos + (node.firstChild?.nodeSize || 0) + 1,
+                      labelNode
+                    )
                   )
                 } else {
                   labelNode.textContent = target.label + ':'
