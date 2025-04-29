@@ -702,6 +702,22 @@ export const ReferenceForm: React.FC<{
                   />
                 </FormField>
               )}
+              {shouldRenderField(
+                'comment',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormField>
+                  <LabelContainer>
+                    <Label>Comment</Label>
+                  </LabelContainer>
+
+                  <Field name={'comment'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'comment'} {...props.field} />
+                    )}
+                  </Field>
+                </FormField>
+              )}
             </FormFields>
           </ChangeHandlingForm>
         )
