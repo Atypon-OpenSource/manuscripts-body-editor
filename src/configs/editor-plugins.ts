@@ -37,6 +37,7 @@ import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
+import lock_body from '../plugins/lock-body'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -80,6 +81,7 @@ export default (props: EditorProps) => {
     section_category(props),
     cross_references(),
     search_replace(),
+    lock_body(),
     alt_titles(),
     accessibility_element(),
   ]

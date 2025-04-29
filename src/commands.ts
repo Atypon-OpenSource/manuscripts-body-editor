@@ -851,47 +851,63 @@ export const insertBoxElement = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const nodes = schema.nodes
+    const { nodes } = schema
     const $pos = state.selection.$from
 
-    let pos
-    if (findParentNodeOfTypeClosestToPos($pos, nodes.bibliography_section)) {
-      //disallow insert (sub)section in bibliography_section
+    const isInBibliography = findParentNodeOfTypeClosestToPos(
+      $pos,
+      nodes.bibliography_section
+    )
+    const isInBox = findParentNodeOfTypeClosestToPos($pos, nodes.box_element)
+    const isInBody = findParentNodeOfTypeClosestToPos($pos, nodes.body)
+    const isInMainTitle = findParentNodeOfTypeClosestToPos($pos, nodes.title)
+
+    if (isInMainTitle && isBodyLocked(state)) {
       return false
-    } else if (subsection) {
-      pos =
-        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
-      if (!pos) {
-        return false
-      }
-      //move pos inside the section for a subsection
-      pos -= 1
-    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.box_element)) {
-      //only subsections are allowed for box_element, which should be
-      //handled before
-      return false
-    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.body)) {
-      pos = findPosAfterParentSection($pos)
     }
 
-    if (!pos) {
-      //this means one of 2 things:
-      //- the selection points outside the body
-      //- the selection points inside the body, but to an element without a parent section
-      //for both cases, insert the section at the end of the body
+    // Disallow inserting (sub)sections in bibliography
+    if (isInBibliography) {
+      return false
+    }
+    // Only subsections are allowed in box_element
+    if (isInBox && !subsection) {
+      return false
+    }
+
+    let insertPos: number | null = null
+
+    if (subsection) {
+      insertPos =
+        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
+      if (!insertPos) {
+        return false
+      }
+      // Move position inside the parent section for the subsection
+      insertPos -= 1
+    } else {
+      if (isInBody) {
+        insertPos = findPosAfterParentSection($pos)
+      }
+    }
+
+    if (insertPos == null) {
+      // Insert at the end of the body if:
+      // - selection is outside the body
+      // - selection is inside the body but not within a section
       const body = findBody(state.doc)
-      pos = body.pos + body.node.content.size + 1
+      insertPos = body.pos + body.node.content.size + 1
     }
 
     const section = nodes.section.createAndFill() as SectionNode
-    const tr = state.tr.insert(pos, section)
+    const tr = state.tr.insert(insertPos, section)
 
     if (dispatch) {
-      // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + 2)
+      const selection = TextSelection.create(tr.doc, insertPos + 2) // Place cursor inside section title
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
+
     return true
   }
 
