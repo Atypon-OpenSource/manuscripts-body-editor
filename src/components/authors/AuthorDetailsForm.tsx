@@ -73,26 +73,11 @@ const CheckboxContainer = styled.div`
 `
 
 const EMAIL_PATTERN = '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$'
-const EMAIL_PATTERN_TITLE =
-  'Please enter a valid email address'
+const EMAIL_PATTERN_TITLE = 'Please enter a valid email address'
 
 export const isValidEmail = (email: string): boolean => {
   return new RegExp(EMAIL_PATTERN, 'i').test(email)
 }
-
-export const validateEmail = (
-  email: string,
-  isRequired = false
-): string | undefined => {
-  if (!email) {
-    return isRequired ? 'Email is required' : undefined
-  }
-  if (!isValidEmail(email)) {
-    return EMAIL_PATTERN_TITLE
-  }
-  return undefined
-}
-
 export interface FormActions {
   reset: () => void
 }
@@ -119,6 +104,19 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
   const emailRef = useRef<HTMLInputElement>(null)
 
+  const validateEmail = (
+    email: string,
+    isRequired = false
+  ): string | undefined => {
+    if (!email) {
+      return isRequired ? 'Email is required' : undefined
+    }
+    if (!isValidEmail(email)) {
+      return EMAIL_PATTERN_TITLE
+    }
+    return undefined
+  }
+
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
       formRef.current.setFieldValue('affiliations', selectedAffiliations)
@@ -131,16 +129,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
         formRef.current?.resetForm()
       },
     }
-  }
-
-  const validateEmail = (email: string): string | undefined => {
-    if (!email) {
-      return isEmailRequired ? 'Email is required' : undefined
-    }
-    if (!isValidEmail(email)) {
-      return 'Please enter a valid email address'
-    }
-    return undefined
   }
 
   return (
