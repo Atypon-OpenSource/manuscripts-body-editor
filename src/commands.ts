@@ -107,7 +107,12 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
-import { findParentNodeWithId, getChildOfType, getInsertPos } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  getInsertPos,
+  isBodyLocked,
+} from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
