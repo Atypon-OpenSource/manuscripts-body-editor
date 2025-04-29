@@ -28,9 +28,8 @@ import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findChildrenByType, findParentNode } from 'prosemirror-utils'
 
-import { getEditorProps } from '../plugins/editor-props'
-
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
+import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -152,7 +151,6 @@ export const createHeader = (typeName: string, text: string) => {
   return header
 }
 
-<<<<<<< HEAD
 // It will check if the field should be rendered based on selected item type
 // and field name
 export const shouldRenderField = (
@@ -189,7 +187,8 @@ export const cleanItemValues = (item: BibliographyItemAttrs) => {
     }
   }
   return cleanedItem
-=======
+}
+
 export const isBodyLocked = (state: EditorState) => {
   const props = getEditorProps(state)
   return (
@@ -202,5 +201,4 @@ export const isBodyLocked = (state: EditorState) => {
 // the body is locked if feature lockBody is set true and there is an attachment node in document
 export const isEditAllowed = (state: EditorState) => {
   return !(isBodyLocked(state) && isSelectionInBody(state))
->>>>>>> master
 }
