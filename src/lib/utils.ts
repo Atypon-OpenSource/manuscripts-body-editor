@@ -25,9 +25,8 @@ import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findChildrenByType, findParentNode } from 'prosemirror-utils'
 
-import { getEditorProps } from '../plugins/editor-props'
-
 import { arrowDown } from '../icons'
+import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
   node: ManuscriptNode,

@@ -25,8 +25,6 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { arrowDown } from '../icons'
-
 import { createToggleButton } from '../lib/utils'
 
 export interface PluginState {
