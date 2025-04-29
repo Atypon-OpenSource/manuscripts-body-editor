@@ -28,9 +28,9 @@ import {
 } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import {
+  findChildrenByType,
   findParentNode,
   findParentNodeOfTypeClosestToPos,
-  findChildrenByType
 } from 'prosemirror-utils'
 
 import { arrowDown } from '../icons'

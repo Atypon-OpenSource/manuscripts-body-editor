@@ -36,4 +36,3 @@ export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
-
