@@ -1,3 +1,18 @@
+.ProseMirror {
+  --inserted-pending-bg-color: #e6ffdb;
+  --inserted-pending-color: #01872e;
+  --updated-pending-bg-color: #e6f7fc;
+  --updated-pending-color: #0284b0;
+  --accepted-bg-color: #e2e2e2;
+  --deleted-color: #f35143;
+  --deleted-pending-bg-color: #fff1f0;
+  --updated-bg-color: #d9f6ff;
+  --updated-border-color: #1a9bc7;
+  --highlight-bg-color: #ffeebf;
+  --common-color: #353535;
+  --box-element-bg-color: #fafafa;
+}
+
 * {
   scroll-behavior: smooth;
 }
@@ -49,11 +64,11 @@
   content: none;
 }
 
-.ProseMirror > div .block-section_title > h1 {
-  font-size: 16pt !important;
-  font-style: normal !important;
-  font-weight: bold !important;
-  color: #000 !important;
+.ProseMirror h1 {
+  font-size: 16pt;
+  font-style: normal;
+  font-weight: bold;
+  color: var(--common-color);
   text-align: left;
   padding-top: 8pt !important;
   padding-bottom: 5pt !important;
@@ -61,16 +76,17 @@
   text-indent: 0pt;
   display: inline;
 }
+
 .ProseMirror .block-section_title h1[data-title-level] {
-  font-size: 12pt !important;
+  font-size: 12pt;
 }
 
 .ProseMirror .block-section_title h1[data-title-level='1'] {
-  font-size: 16pt !important;
+  font-size: 16pt;
 }
 
 .ProseMirror .block-section_title h1[data-title-level='2'] {
-  font-size: 13.5pt !important;
+  font-size: 13.5pt;
 }
 
 .ProseMirror div.backmatter:not(.empty-node)::before,
@@ -80,9 +96,9 @@
   display: block;
   margin: 11pt 49pt;
 }
-.ProseMirror div.backmatter .block-section_title > h1 {
-  font-size: 13.5pt !important;
-  color: #6e6e6e !important;
+.ProseMirror div.backmatter .block-section_title h1 {
+  font-size: 13.5pt;
+  color: #6e6e6e;
 }
 .completion-bearer {
   pointer-events: none;
@@ -95,15 +111,15 @@
 }
 
 .ProseMirror p.block {
-  font-size: 12pt !important;
-  font-style: normal !important;
-  font-weight: normal !important;
-  color: #353535 !important;
-  text-align: left !important;
+  font-size: 12pt;
+  font-style: normal;
+  font-weight: normal;
+  color: var(--common-color);
+  text-align: left;
   padding-top: 10pt !important;
   padding-bottom: 10pt !important;
-  line-height: 2 !important;
-  text-indent: 0pt !important;
+  line-height: 1.5;
+  text-indent: 0pt;
 }
 
 .ProseMirror .figure-block {
@@ -413,23 +429,21 @@ span.comment-marker {
   border-radius: 0 0 32px 32px;
 }
 
-.ProseMirror > .keywords > .block-section_title > h1 {
-  color: #353535 !important;
-  font-size: 12px !important;
-  font-style: italic !important;
-  font-weight: 400 !important;
-  line-height: 16px !important;
+.ProseMirror .keywords h1 {
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.33;
 }
 .ProseMirror h1.authors-info-header {
-  color: #353535 !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  line-height: 24px !important;
-  margin: 0 !important;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .ProseMirror h1.title-awards {
-  margin: 0 64px !important;
+  margin: 0 64px;
 }
 
 .ProseMirror .block-award,
@@ -442,15 +456,15 @@ span.comment-marker {
 }
 
 .keywords .keyword {
+  position: relative;
   display: inline-block;
-  color: #353535;
+  color: var(--common-color);
   background-color: #f2f2f2;
   font-family: Lato, sans-serif;
   font-size: 14px;
   line-height: 16px;
   border: 1px solid transparent;
   border-radius: 6px;
-  position: relative;
   cursor: default;
   padding: 4px 8px;
   border: 1px solid #c9c9c9;
@@ -580,20 +594,6 @@ span.comment-marker {
   right: 0;
 }
 
-.ProseMirror {
-  --inserted-pending-bg-color: #e6ffdb;
-  --inserted-pending-color: #01872e;
-  --updated-pending-bg-color: #e6f7fc;
-  --updated-pending-color: #0284b0;
-  --accepted-bg-color: #e2e2e2;
-  --deleted-color: #f35143;
-  --deleted-pending-bg-color: #fff1f0;
-  --updated-bg-color: #d9f6ff;
-  --updated-border-color: #1a9bc7;
-  --highlight-bg-color: #ffeebf;
-  --common-color: #353535;
-  --box-element-bg-color: #fafafa;
-}
 .ProseMirror ins,
 .ProseMirror del {
   text-decoration: none;
@@ -1166,12 +1166,12 @@ th:hover > .table-context-menu-button,
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  color: #353535;
+  color: var(--common-color);
   line-height: 16px;
 }
 
 .section-category.tooltip span {
-  color: #353535;
+  color: var(--common-color);
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
@@ -1243,6 +1243,39 @@ th:hover > .table-context-menu-button,
 
 .special-characters-ranges-select__menu {
   min-width: 220px;
+}
+
+.ProseMirror .non-editable {
+  position: relative;
+  pointer-events: none; 
+  user-select: none;
+  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6E6E6E;
+}
+.ProseMirror .non-editable .body-overlay,
+.ProseMirror .non-editable .figure-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: all;
+  background: rgba(255, 255, 255, 0);
+  z-index: 10;
+}
+.ProseMirror .non-editable .body-overlay {
+  width: 52px
+}
+.ProseMirror .non-editable .block {
+  opacity: 50%;
+}
+/* we dont want to multiply transparency for nested children */
+.ProseMirror .non-editable .block .block {
+  opacity: 100%;
+}
+.ProseMirror .non-editable .icon {
+  position: absolute;
+  left: 30px;
+  top: 16px;
 }
 .embed-media-preview .tools-panel {
   right: 6px;
