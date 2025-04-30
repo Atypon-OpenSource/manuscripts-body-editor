@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { BibliographicDate, BibliographicName } from '@manuscripts/json-schema'
 import {
+  BibliographyItemAttrs,
+  BibliographyItemType,
   isElementNodeType,
   isSectionNodeType,
   ManuscriptNode,
@@ -33,6 +36,7 @@ import {
   findParentNodeOfTypeClosestToPos,
 } from 'prosemirror-utils'
 
+import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'
 
@@ -156,10 +160,49 @@ export const createHeader = (typeName: string, text: string) => {
   return header
 }
 
+<<<<<<< HEAD
 export const isNotNull = <T>(a: T | null): a is T => a !== null
 
 export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
   return !!findParentNodeOfTypeClosestToPos($pos, type)
+=======
+// It will check if the field should be rendered based on selected item type
+// and field name
+export const shouldRenderField = (
+  field: string,
+  type: BibliographyItemType
+): boolean => {
+  return fieldConfigMap[type]?.has(field) ?? false
+}
+
+// It will clean unnecessary fields from the item
+// id and type will be kept
+export const cleanItemValues = (item: BibliographyItemAttrs) => {
+  const type = item.type as BibliographyItemType
+  const cleanedItem: BibliographyItemAttrs = { ...item }
+
+  for (const key of Object.keys(item) as (keyof BibliographyItemAttrs)[]) {
+    if (!shouldRenderField(key, type)) {
+      switch (key) {
+        case 'id':
+        case 'type':
+          break
+        case 'author':
+        case 'editor':
+          cleanedItem[key] = [] as BibliographicName[]
+          break
+        case 'issued':
+        case 'accessed':
+        case 'event-date':
+          cleanedItem[key] = {} as BibliographicDate
+          break
+        default:
+          cleanedItem[key] = ''
+      }
+    }
+  }
+  return cleanedItem
+>>>>>>> 78fbaa2c999d861a05a71f652ada50d53b83040c
 }
 
 export const isBodyLocked = (state: EditorState) => {
