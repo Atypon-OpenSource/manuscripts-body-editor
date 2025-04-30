@@ -130,6 +130,7 @@ export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
     'publisher',
     'accessed',
     'comment',
+    'URL',
   ]),
   other: new Set([
     'author',
@@ -139,5 +140,6 @@ export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
     'publisher-place',
     'publisher',
     'comment',
+    'URL',
   ]),
 }
