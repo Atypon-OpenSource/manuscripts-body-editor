@@ -25,6 +25,8 @@ import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
+import { allowedHref } from './url'
+
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
 
@@ -80,12 +82,24 @@ const wrapInSection = (slice: ManuscriptSlice) => {
   }
 }
 
+const closeAtomSlice = (slice: ManuscriptSlice) => {
+  // close slice to prevent drop of node https://github.com/ProseMirror/prosemirror-transform/blob/137ff74738bd1b50d49416cd6cfdbbf52cb059ef/src/replace.ts#L231
+  if (slice.content.firstChild?.isAtom) {
+    // @ts-ignore
+    slice.openStart = 0
+    // @ts-ignore
+    slice.openEnd = 0
+  }
+}
+
 export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
   wrapInSection(slice)
 
   removeFirstParagraphIfEmpty(slice)
 
   removeIDs(slice)
+
+  closeAtomSlice(slice)
 
   return slice
 }
@@ -124,6 +138,15 @@ export const handlePaste = (
 
   tr.setMeta('uiEvent', 'paste')
   tr.setMeta('paste', true)
+
+  const clipboardData = event.clipboardData
+
+  const text = clipboardData?.getData('text/plain')
+  if (text && allowedHref(text)) {
+    const link = schema.nodes.link.create({ href: text }, schema.text(text))
+    dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
+    return true
+  }
 
   const parent = findParentNode((node) => node.type === schema.nodes.section)(
     tr.selection

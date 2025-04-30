@@ -69,6 +69,7 @@ export interface EditorProps {
     nodePos: number,
     event: MouseEvent
   ) => void
+  lockBody: boolean
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>

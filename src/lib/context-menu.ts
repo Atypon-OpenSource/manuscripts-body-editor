@@ -325,6 +325,34 @@ export class ContextMenu {
       )
     }
 
+    if (type === schema.nodes.pullquote_element) {
+      const figure = findChildrenByType(this.node, schema.nodes.quote_image)
+      if (!figure.length) {
+        menu.appendChild(
+          this.createMenuItem('Add Image', () => {
+            const tr = this.view.state.tr
+            tr.insert(this.getPos() + 1, schema.nodes.quote_image.create())
+            this.view.dispatch(tr)
+            popper.destroy()
+          })
+        )
+      } else {
+        const found = figure[0]
+        menu.appendChild(
+          this.createMenuItem('Remove Image', () => {
+            const tr = this.view.state.tr
+            console.log(found)
+            tr.delete(
+              this.getPos() + 1 + found.pos,
+              this.getPos() + 1 + found.pos + found.node.nodeSize
+            )
+            this.view.dispatch(tr)
+            popper.destroy()
+          })
+        )
+      }
+    }
+
     const commentTarget = this.getCommentTarget()
     if (isCommentingAllowed(commentTarget.type)) {
       menu.appendChild(
