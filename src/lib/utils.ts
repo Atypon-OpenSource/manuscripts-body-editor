@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { BibliographicDate, BibliographicName } from '@manuscripts/json-schema'
 import {
+  BibliographyItemAttrs,
+  BibliographyItemType,
   isElementNodeType,
   isSectionNodeType,
   ManuscriptNode,
@@ -25,6 +28,7 @@ import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import { findChildrenByType, findParentNode } from 'prosemirror-utils'
 
+import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'
 
@@ -146,6 +150,44 @@ export const createHeader = (typeName: string, text: string) => {
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+// It will check if the field should be rendered based on selected item type
+// and field name
+export const shouldRenderField = (
+  field: string,
+  type: BibliographyItemType
+): boolean => {
+  return fieldConfigMap[type]?.has(field) ?? false
+}
+
+// It will clean unnecessary fields from the item
+// id and type will be kept
+export const cleanItemValues = (item: BibliographyItemAttrs) => {
+  const type = item.type as BibliographyItemType
+  const cleanedItem: BibliographyItemAttrs = { ...item }
+
+  for (const key of Object.keys(item) as (keyof BibliographyItemAttrs)[]) {
+    if (!shouldRenderField(key, type)) {
+      switch (key) {
+        case 'id':
+        case 'type':
+          break
+        case 'author':
+        case 'editor':
+          cleanedItem[key] = [] as BibliographicName[]
+          break
+        case 'issued':
+        case 'accessed':
+        case 'event-date':
+          cleanedItem[key] = {} as BibliographicDate
+          break
+        default:
+          cleanedItem[key] = ''
+      }
+    }
+  }
+  return cleanedItem
 }
 
 export const isBodyLocked = (state: EditorState) => {
