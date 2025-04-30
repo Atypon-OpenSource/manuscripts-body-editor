@@ -304,6 +304,10 @@ export const ReferenceForm: React.FC<{
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
+  const validateReference = (values: BibliographyItemAttrs) => {
+    return !values.title?.trim() ? { __error: true } : {}
+  }
+
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
       reset: () => {
@@ -318,6 +322,7 @@ export const ReferenceForm: React.FC<{
       onSubmit={onSave}
       enableReinitialize={true}
       innerRef={formRef}
+      validate={validateReference}
     >
       {(formik) => {
         return (
@@ -364,7 +369,12 @@ export const ReferenceForm: React.FC<{
               </ButtonGroup>
               <ButtonGroup>
                 <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
-                <PrimaryButton type="submit">Save</PrimaryButton>
+                <PrimaryButton
+                  type="submit"
+                  disabled={!formik.isValid || !formik.dirty}
+                >
+                  Save
+                </PrimaryButton>
               </ButtonGroup>
             </Actions>
 
