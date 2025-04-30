@@ -25,6 +25,7 @@ import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
 import { Selection, TextSelection } from 'prosemirror-state'
 
 import {
+  autoComplete,
   Dispatch,
   isAtEndOfTextBlock,
   isAtStartOfTextBlock,
@@ -267,7 +268,7 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(leaveTitle, leaveFigcaption),
+  Enter: chainCommands(autoComplete, leaveTitle, leaveFigcaption),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),
