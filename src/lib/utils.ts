@@ -160,12 +160,12 @@ export const createHeader = (typeName: string, text: string) => {
   return header
 }
 
-<<<<<<< HEAD
 export const isNotNull = <T>(a: T | null): a is T => a !== null
 
 export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
   return !!findParentNodeOfTypeClosestToPos($pos, type)
-=======
+}
+
 // It will check if the field should be rendered based on selected item type
 // and field name
 export const shouldRenderField = (
@@ -202,7 +202,6 @@ export const cleanItemValues = (item: BibliographyItemAttrs) => {
     }
   }
   return cleanedItem
->>>>>>> 78fbaa2c999d861a05a71f652ada50d53b83040c
 }
 
 export const isBodyLocked = (state: EditorState) => {
