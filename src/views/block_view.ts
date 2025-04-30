@@ -27,14 +27,14 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     this.createDOM()
     this.createGutter('block-gutter', this.gutterButtons().filter(Boolean))
     this.createElement()
-    this.createGutter(
-      'action-gutter',
-      this.actionGutterButtons().filter(Boolean)
-    )
     this.updateContents()
   }
 
   public updateContents() {
+    this.createGutter(
+      'action-gutter',
+      this.actionGutterButtons().filter(Boolean)
+    )
     super.updateContents()
     this.updateClasses()
     this.updatePlaceholder()
@@ -72,16 +72,21 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     this.dom.classList.add(`block-${this.node.type.name}`)
   }
 
+  gutter: Record<string, HTMLElement> = {}
+
   public createGutter(className: string, buttons: HTMLElement[]) {
-    const gutter = document.createElement('div')
-    gutter.setAttribute('contenteditable', 'false')
-    gutter.classList.add(className)
+    if (this.gutter[className]) {
+      this.gutter[className].remove()
+    }
+    this.gutter[className] = document.createElement('div')
+    this.gutter[className].setAttribute('contenteditable', 'false')
+    this.gutter[className].classList.add(className)
 
     for (const button of buttons) {
-      gutter.appendChild(button)
+      this.gutter[className].appendChild(button)
     }
 
-    this.dom.appendChild(gutter)
+    this.dom.appendChild(this.gutter[className])
   }
 
   public gutterButtons(): HTMLElement[] {

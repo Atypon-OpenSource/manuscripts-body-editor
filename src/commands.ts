@@ -317,6 +317,12 @@ export const createBlock = (
     case schema.nodes.embed:
       node = createEmbedElement(attrs)
       break
+    case state.schema.nodes.pullquote_element:
+      node = state.schema.nodes.pullquote_element.create(attrs, [
+        state.schema.nodes.paragraph.create({}),
+        state.schema.nodes.attribution.create({}),
+      ])
+      break
     default:
       node = nodeType.createAndFill(attrs) as ManuscriptNode
   }

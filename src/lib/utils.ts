@@ -24,9 +24,17 @@ import {
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
-import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import {
+  Node as ProseMirrorNode,
+  NodeType,
+  ResolvedPos,
+} from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
-import { findChildrenByType, findParentNode } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNode,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
 
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
@@ -150,6 +158,12 @@ export const createHeader = (typeName: string, text: string) => {
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const isNotNull = <T>(a: T | null): a is T => a !== null
+
+export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
+  return !!findParentNodeOfTypeClosestToPos($pos, type)
 }
 
 // It will check if the field should be rendered based on selected item type
