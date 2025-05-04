@@ -22,6 +22,8 @@ import { createNodeView } from './creators'
 export class TableElementView extends BlockView<TableElementNode> {
   public elementType = 'figure'
 
+  public ignoreMutation = () => true
+
   public createElement = () => {
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('block')
