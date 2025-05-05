@@ -137,6 +137,7 @@ export const handlePaste = (
     return true
   }
 
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     isElement(slice) &&
@@ -161,6 +162,7 @@ export const handlePaste = (
     return true
   }
 
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     selection.$from.depth === slice.openStart &&
