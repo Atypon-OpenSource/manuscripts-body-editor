@@ -17,6 +17,7 @@ import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
+import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
 import alt_titles_section from '../views/alt_titles_section'
@@ -49,6 +50,7 @@ import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
 import pullquoteElement from '../views/pullquote_element_editable'
+import quoteImage from '../views/quote_image_editable'
 import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
@@ -68,6 +70,7 @@ export default (
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
+    quote_image: quoteImage(props, dispatch),
     box_element: boxElement(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
@@ -106,7 +109,7 @@ export default (
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),
-    long_desc: empty('long_desc'),
-    alt_text: empty('alt_text'),
+    long_desc: accessibilityElement(props, dispatch),
+    alt_text: accessibilityElement(props, dispatch),
   }
 }

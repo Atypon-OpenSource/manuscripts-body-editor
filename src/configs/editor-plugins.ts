@@ -27,6 +27,7 @@ import { history } from 'prosemirror-history'
 import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
+import accessibility_element from '../plugins/accessibility_element'
 import affiliations from '../plugins/affiliations'
 import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
@@ -36,6 +37,7 @@ import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
+import lock_body from '../plugins/lock-body'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -79,7 +81,9 @@ export default (props: EditorProps) => {
     section_category(props),
     cross_references(),
     search_replace(),
+    lock_body(),
     alt_titles(),
+    accessibility_element(),
   ]
 
   if (props.collabProvider) {

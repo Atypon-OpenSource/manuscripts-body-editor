@@ -69,6 +69,7 @@ export interface EditorProps {
     nodePos: number,
     event: MouseEvent
   ) => void
+  lockBody: boolean
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
@@ -102,7 +103,6 @@ export const createEditorView = (
     transformPasted,
     handlePaste,
     clipboardParser,
-    clipboardTextParser,
     handleScrollToSelection: handleScrollToSelectedTarget,
     transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {
