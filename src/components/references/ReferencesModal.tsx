@@ -35,7 +35,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { BibliographyItemAttrs } from '../../lib/references'
-import { ReferenceForm, ReferenceFormActions } from './ReferenceForm'
+import {
+  ReferenceForm,
+  ReferenceFormActions,
+} from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
 
 const ReferencesModalContainer = styled(ModalContainer)`
@@ -116,15 +119,30 @@ const normalize = (item: BibliographyItemAttrs) => ({
   id: item.id,
   type: item.type,
   author: item.author || [],
+  editor: item.editor || [],
   issued: item.issued,
-  'container-title': item['container-title'] || '',
+  ['container-title']: item['container-title'] || '',
+  ['collection-title']: item['collection-title'] || '',
   DOI: item.DOI || '',
+  URL: item.URL || '',
   volume: item.volume || '',
   issue: item.issue || '',
   supplement: item.supplement || '',
+  edition: item.edition || '',
   page: item.page || '',
+  ['number-of-pages']: item['number-of-pages'] || '',
   title: item.title || '',
   literal: item.literal || '',
+  std: item.std || '',
+  publisher: item.publisher || '',
+  ['publisher-place']: item['publisher-place'] || '',
+  event: item.event || '',
+  ['event-place']: item['event-place'] || '',
+  ['event-date']: item['event-date'],
+  institution: item.institution || '',
+  locator: item.locator || '',
+  accessed: item.accessed,
+  comment: item.comment || '',
 })
 
 export interface ReferencesModalProps {
@@ -226,6 +244,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     if (currentCitationCount === undefined) {
       citationCounts.set(item.id, 1) // update the citation count in the Map
     }
+
     onSave(item)
     setSelection(item)
     setConfirm(false)

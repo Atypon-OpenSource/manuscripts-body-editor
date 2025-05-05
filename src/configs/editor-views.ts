@@ -50,6 +50,7 @@ import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
 import pullquoteElement from '../views/pullquote_element_editable'
+import quoteImage from '../views/quote_image_editable'
 import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
@@ -69,6 +70,7 @@ export default (
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
     blockquote_element: blockquoteElement(props),
+    quote_image: quoteImage(props, dispatch),
     box_element: boxElement(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),

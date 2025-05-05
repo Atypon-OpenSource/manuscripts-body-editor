@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptNode,
-  ManuscriptNodeType,
-  schema,
-} from '@manuscripts/transform'
-import { ResolvedPos } from 'prosemirror-model'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
+import { hasParent, isNotNull } from '../lib/utils'
 import BlockView from './block_view'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
-
-const isNotNull = <T>(a: T | null): a is T => a !== null
-
-const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
-  return !!findParentNodeOfTypeClosestToPos($pos, type)
-}
 
 export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
   Base: T

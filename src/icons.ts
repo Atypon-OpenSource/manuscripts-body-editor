@@ -19,6 +19,7 @@ import {
   DeleteIcon,
   EditIcon,
   LockIcon,
+  PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
 } from '@manuscripts/style-guide'
@@ -34,3 +35,4 @@ export const editIcon = renderToStaticMarkup(createElement(EditIcon))
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
+export const plusIcon = renderIcon(PlusIcon)

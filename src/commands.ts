@@ -233,6 +233,12 @@ export const canInsert =
       return false
     }
 
+    if (type === schema.nodes.table_element) {
+      if ($from.node(-1).type === schema.nodes.list_item) {
+        return false
+      }
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -316,6 +322,12 @@ export const createBlock = (
       break
     case schema.nodes.embed:
       node = createEmbedElement(attrs)
+      break
+    case state.schema.nodes.pullquote_element:
+      node = state.schema.nodes.pullquote_element.create(attrs, [
+        state.schema.nodes.paragraph.create({}),
+        state.schema.nodes.attribution.create({}),
+      ])
       break
     default:
       node = nodeType.createAndFill(attrs) as ManuscriptNode
