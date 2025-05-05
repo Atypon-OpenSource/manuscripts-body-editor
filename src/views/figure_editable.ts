@@ -32,6 +32,7 @@ import {
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
 import { FileAttachment, groupFiles } from '../lib/files'
+import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
@@ -49,19 +50,24 @@ export class FigureEditableView extends FigureView {
   positionMenuWrapper: HTMLDivElement
   figurePosition: string
 
-  public initialise = () => {
+  public initialise() {
+    this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
   }
 
+  upload = async (file: File) => {
+    const result = await this.props.fileManagement.upload(file)
+    this.setSrc(result.id)
+  }
+
   public updateContents() {
     super.updateContents()
-    const attrs = this.node.attrs
 
-    const src = attrs.src
+    const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = attrs.type
+    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -74,43 +80,13 @@ export class FigureEditableView extends FigureView {
       ? this.createUnsupportedFormat(file.name)
       : this.createPlaceholder()
 
-    let handleDownload
-    let handleUpload
-    let handleReplace
-    let handleDetach
-
-    if (src) {
-      if (file) {
-        handleDownload = () => {
-          this.props.fileManagement.download(file)
-        }
-      }
-
-      handleDetach = () => {
-        this.setSrc('')
-      }
-    }
-
-    if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
-        this.setSrc(file.id)
-      }
-    }
-
-    if (can.uploadFile) {
-      const upload = async (file: File) => {
-        const result = await this.props.fileManagement.upload(file)
-        this.setSrc(result.id)
-      }
-
-      handleUpload = figureUploader(upload)
-
+    if (can.uploadFile && !isDeleted(this.node)) {
       const handlePlaceholderClick = (event: Event) => {
         const target = event.target as HTMLElement
         if (target.dataset && target.dataset.action) {
           return
         }
-        const triggerUpload = figureUploader(upload)
+        const triggerUpload = figureUploader(this.upload)
         triggerUpload()
       }
 
@@ -147,13 +123,52 @@ export class FigureEditableView extends FigureView {
       img.addEventListener('drop', async (e) => {
         if (e.dataTransfer && e.dataTransfer.files.length) {
           e.preventDefault()
-          await upload(e.dataTransfer.files[0])
+          await this.upload(e.dataTransfer.files[0])
         }
       })
     }
 
     this.container.innerHTML = ''
     this.container.appendChild(img)
+
+    this.addTools()
+  }
+
+  protected addTools() {
+    this.manageReactTools()
+    this.container.appendChild(this.createPositionMenuWrapper())
+  }
+
+  private manageReactTools() {
+    let handleDownload
+    let handleUpload
+    let handleReplace
+    let handleDetach
+
+    const src = this.node.attrs.src
+    const files = this.props.getFiles()
+    const file = src && files.filter((f) => f.id === src)[0]
+
+    const can = this.props.getCapabilities()
+
+    if (src) {
+      if (file) {
+        handleDownload = () => {
+          this.props.fileManagement.download(file)
+        }
+      }
+      handleDetach = () => {
+        this.setSrc('')
+      }
+    }
+    if (can.replaceFile) {
+      handleReplace = (file: FileAttachment) => {
+        this.setSrc(file.id)
+      }
+    }
+    if (can.uploadFile) {
+      handleUpload = figureUploader(this.upload)
+    }
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
@@ -177,11 +192,9 @@ export class FigureEditableView extends FigureView {
       )
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
-
-    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
-  private setSrc = (src: string) => {
+  protected setSrc = (src: string) => {
     const { tr } = this.view.state
     const pos = this.getPos()
     tr.setNodeMarkup(pos, undefined, {
@@ -225,14 +238,14 @@ export class FigureEditableView extends FigureView {
     return element
   }
 
-  private createImg = (src: string) => {
+  protected createImg = (src: string) => {
     const img = document.createElement('img')
     img.classList.add('figure-image')
     img.src = src
     return img
   }
 
-  private createPlaceholder = () => {
+  protected createPlaceholder = () => {
     const element = document.createElement('div')
     element.classList.add('figure', 'placeholder')
 
@@ -246,7 +259,6 @@ export class FigureEditableView extends FigureView {
     `
 
     element.appendChild(instructions)
-
     return element
   }
 
