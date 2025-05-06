@@ -157,7 +157,7 @@ describe('editor view', () => {
     )
 
     const figureElement = sectionWithFigure.content.child(1)
-    expect(figureElement.childCount).toBe(3)
+    expect(figureElement.childCount).toBe(5)
     expect(figureElement.type).toBe(schema.nodes.figure_element)
     expect(figureElement.content.child(0).type).toBe(schema.nodes.figure)
     expect(figureElement.content.child(1).type).toBe(schema.nodes.figcaption)
@@ -170,7 +170,7 @@ describe('editor view', () => {
     )
 
     const tableElement = sectionWithTable.content.child(1)
-    expect(tableElement.childCount).toBe(3)
+    expect(tableElement.childCount).toBe(5)
     expect(tableElement.type).toBe(tableElement.type.schema.nodes.table_element)
     expect(tableElement.content.child(0).type).toBe(
       tableElement.type.schema.nodes.figcaption

@@ -30,6 +30,7 @@ import styled from 'styled-components'
 
 import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
+import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
@@ -110,14 +111,18 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
 }) => {
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
-
   const handleSave = (item: BibliographyItemAttrs) => {
-    onSave(item)
+    const cleanedItem = cleanItemValues(item)
+    onSave(cleanedItem)
     dispatchItems({
       type: 'update',
-      items: [item],
+      items: [cleanedItem],
     })
+    if (!rids.includes(item.id)) {
+      handleCite([item])
+    }
   }
+
   const handleDelete = (item: BibliographyItemAttrs) => {
     onDelete(item)
     dispatchItems({
@@ -161,8 +166,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       id: generateID(ObjectTypes.BibliographyItem),
       type: 'article-journal',
     }
-    handleSave(item)
-    handleCite([item])
     setEditingForm({ show: true, item: item })
   }
 
@@ -182,6 +185,20 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const cited = useMemo(() => {
     return rids.flatMap((rid) => items.filter((i) => i.id === rid))
   }, [rids, items])
+
+  if (editingForm.show) {
+    return (
+      <ReferencesModal
+        isOpen={editingForm.show}
+        onCancel={() => setEditingForm({ show: false })}
+        items={items}
+        citationCounts={citationCounts}
+        item={editingForm.item}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
+    )
+  }
 
   if (importing) {
     return (
@@ -264,15 +281,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
           </CitedItem>
         ))}
       </CitedItems>
-      <ReferencesModal
-        isOpen={editingForm.show}
-        onCancel={() => setEditingForm({ show: false })}
-        items={items}
-        citationCounts={citationCounts}
-        item={editingForm.item}
-        onSave={handleSave}
-        onDelete={handleDelete}
-      />
       <Actions>
         <IconTextButton />
         <ButtonGroup>
