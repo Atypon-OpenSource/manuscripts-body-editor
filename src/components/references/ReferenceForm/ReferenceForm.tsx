@@ -162,7 +162,7 @@ export const ReferenceForm: React.FC<{
                   disabled={!formik.isValid || !formik.dirty}
                 >
                   Save
-                </PrimaryButton>{' '}
+                </PrimaryButton>
               </ButtonGroup>
             </Actions>
 
