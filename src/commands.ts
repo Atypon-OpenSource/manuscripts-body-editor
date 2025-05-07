@@ -1043,6 +1043,7 @@ export const insertGraphicalAbstract =
     ) as GraphicalAbstractSectionNode
 
     const tr = state.tr.insert(pos, node)
+    node.lastChild && expandAccessibilitySection(tr, node.lastChild)
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos + 1)
