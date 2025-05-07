@@ -271,6 +271,10 @@
   z-index: 3;
 }
 
+.tools-panel button svg {
+  max-width: 16px;
+}
+
 .popper[data-popper-placement] .tools-panel {
   top: 0;
   right: unset;
