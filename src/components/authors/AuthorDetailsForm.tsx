@@ -102,7 +102,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
-  const emailRef = useRef<HTMLInputElement>(null)
 
   const validateEmail = (
     email: string,
@@ -188,7 +187,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                             : 'Email address'
                         }
                         hasError={!!error}
-                        ref={emailRef}
                       />
                       {error && typeof error === 'string' && (
                         <ErrorMessage>{error}</ErrorMessage>
