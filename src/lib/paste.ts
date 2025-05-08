@@ -15,6 +15,7 @@
  */
 
 import {
+  generateNodeID,
   isElementNodeType,
   ManuscriptEditorView,
   ManuscriptSlice,
@@ -39,14 +40,37 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
-// remove `id` from pasted content
-const removeIDs = (slice: ManuscriptSlice) => {
+const updateInlineFootnoteToNewRids = (
+  slice: Slice,
+  footnotesIdsMap: Map<string, string>
+) => {
   slice.content.descendants((node) => {
-    if (node.attrs.id) {
+    if (node.type === schema.nodes.inline_footnote) {
       // @ts-ignore
-      node.attrs.id = null
+      node.attrs.rids = node.attrs.rids.map((rid) => footnotesIdsMap.get(rid))
     }
   })
+}
+
+// remove `id` from pasted content
+const removeIDs = (slice: ManuscriptSlice) => {
+  const footnotesIdsMap = new Map()
+  slice.content.descendants((node) => {
+    let id = null
+    if (node.type === schema.nodes.footnote) {
+      // will keep id for footnote to not lose connection with inline_footnote
+      const newId = generateNodeID(node.type)
+      footnotesIdsMap.set(node.attrs.id, newId)
+      id = newId
+    }
+
+    if (node.attrs.id) {
+      // @ts-ignore
+      node.attrs.id = id
+    }
+  })
+
+  updateInlineFootnoteToNewRids(slice, footnotesIdsMap)
 }
 
 const wrapInSection = (slice: ManuscriptSlice) => {
