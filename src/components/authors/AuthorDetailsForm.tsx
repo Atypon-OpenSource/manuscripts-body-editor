@@ -171,29 +171,28 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </TextFieldGroupContainer>
 
               <Field name={'email'} type={'email'} validate={validateEmail}>
-                {(props: FieldProps) => {
-                  const placeholder = isEmailRequired
-                    ? '*Email address (required)'
-                    : 'Email address'
-                  const error = formik.touched.email && formik.errors.email
+                {({ field, form }: FieldProps) => {
+                  const error = form.touched.email && form.errors.email
                   return (
                     <div>
                       <TextFieldWithError
+                        {...field}
                         id={'email'}
                         type="email"
                         required={isEmailRequired}
                         pattern={EMAIL_PATTERN}
                         title={EMAIL_PATTERN_TITLE}
-                        placeholder={placeholder}
+                        placeholder={
+                          isEmailRequired
+                            ? '*Email address (required)'
+                            : 'Email address'
+                        }
                         hasError={!!error}
-                        {...props.field}
                         ref={emailRef}
-                        onBlur={(e) => {
-                          props.field.onBlur(e)
-                          formik.validateField('email')
-                        }}
                       />
-                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                      {error && typeof error === 'string' && (
+                        <ErrorMessage>{error}</ErrorMessage>
+                      )}
                     </div>
                   )
                 }}
