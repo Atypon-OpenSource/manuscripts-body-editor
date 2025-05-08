@@ -93,7 +93,11 @@ export const ReferenceForm: React.FC<{
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const validateReference = (values: BibliographyItemAttrs) => {
-    return !values.title?.trim() ? { __error: true } : {}
+    const errors: Partial<BibliographyItemAttrs> = {}
+    if (!values.title?.trim()) {
+      errors.title = 'Title is required'
+    }
+    return errors
   }
 
   if (actionsRef && !actionsRef.current) {
