@@ -44,6 +44,7 @@ describe('authorComparator', () => {
         invitationID: '',
         corresp: [],
         footnote: [],
+        prefix: '',
       },
       {
         id: 'MPContributor:y',
@@ -62,6 +63,7 @@ describe('authorComparator', () => {
         invitationID: '',
         corresp: [],
         footnote: [],
+        prefix: '',
       },
       {
         id: 'MPContributor:z',
@@ -80,6 +82,7 @@ describe('authorComparator', () => {
         invitationID: '',
         corresp: [],
         footnote: [],
+        prefix: '',
       },
     ]
     contribs.sort(authorComparator)
