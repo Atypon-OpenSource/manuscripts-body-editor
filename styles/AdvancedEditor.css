@@ -426,6 +426,10 @@ span.comment-marker {
   border-radius: 0 0 32px 32px;
 }
 
+.ProseMirror .bibliography:has(.empty-node) {
+  display: none;
+}
+
 .ProseMirror .keywords h1 {
   font-size: 12px;
   font-style: italic;
