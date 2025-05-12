@@ -23,6 +23,7 @@
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
     "prepare": "husky install",
     "preversion": "concurrently 'yarn:typecheck' 'yarn:lint' 'yarn:test'",
+    "pretest": "yarn prebuild",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
     "version": "yarn build"
