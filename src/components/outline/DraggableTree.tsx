@@ -56,6 +56,8 @@ const excludedTypes = [
   schema.nodes.contributors,
   schema.nodes.author_notes,
   schema.nodes.title,
+  schema.nodes.alt_titles,
+  schema.nodes.alt_title,
 ]
 
 const childrenExcludedTypes = [
@@ -116,6 +118,7 @@ export const buildTree: TreeBuilder = ({
       if (isExcluded(childNode.type)) {
         return
       }
+
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
