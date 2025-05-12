@@ -26,8 +26,8 @@ const nodes = [
   {
     tag: 'ul, ol',
     node: 'list',
-    getAttrs: (list: HTMLElement) => {
-      const dom = list
+    getAttrs: (list: HTMLElement | string) => {
+      const dom = list as HTMLElement
       return {
         listStyleType: getJatsListType(
           dom.style.listStyleType ||
