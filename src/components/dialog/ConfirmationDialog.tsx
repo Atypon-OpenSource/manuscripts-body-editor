@@ -32,9 +32,14 @@ export enum DialogType {
   SAVE = 'save',
   DELETE = 'delete',
   REQUIRED = 'required',
+  INVALID = 'invalid',
 }
 
-const getDialogConfig = (dialogType: DialogType, entityType: string) => {
+const getDialogConfig = (
+  dialogType: DialogType,
+  entityType: string,
+  fieldName?: string
+) => {
   const configs = {
     [DialogType.SAVE]: {
       title: 'Unsaved changes',
@@ -74,6 +79,20 @@ const getDialogConfig = (dialogType: DialogType, entityType: string) => {
       },
       minHeight: '90px',
     },
+    [DialogType.INVALID]: {
+      title: 'Invalid field value',
+      message: {
+        primary: `The ${
+          fieldName || 'field'
+        } is not in a valid format. If you discard, any updates will not be saved!`,
+        secondary: 'Would you like to discard or continue editing?',
+      },
+      buttons: {
+        primary: 'Continue editing',
+        secondary: 'Discard',
+      },
+      minHeight: '90px',
+    },
   }
 
   return configs[dialogType]
@@ -85,6 +104,7 @@ interface ConfirmationDialogProps {
   entityType: string
   onPrimary: () => void
   onSecondary: () => void
+  fieldName?: string // New optional prop for invalid field name
 }
 
 export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -93,8 +113,9 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   entityType,
   onPrimary,
   onSecondary,
+  fieldName,
 }) => {
-  const config = getDialogConfig(type, entityType)
+  const config = getDialogConfig(type, entityType, fieldName)
 
   const Header = () => (
     <>

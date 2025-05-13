@@ -26,6 +26,7 @@ import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
+import { validateEmail } from '../../lib/fieldValidators'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelText = styled.div`
@@ -72,12 +73,6 @@ const CheckboxContainer = styled.div`
   gap: 32px;
 `
 
-const EMAIL_PATTERN = '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$'
-const EMAIL_PATTERN_TITLE = 'Please enter a valid email address'
-
-export const isValidEmail = (email: string): boolean => {
-  return new RegExp(EMAIL_PATTERN, 'i').test(email)
-}
 export interface FormActions {
   reset: () => void
 }
@@ -90,6 +85,7 @@ interface AuthorDetailsFormProps {
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
+  onValidationChange?: (isValid: boolean) => void
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -100,21 +96,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   isEmailRequired,
   selectedAffiliations,
   authorFormRef,
+  onValidationChange,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
-
-  const validateEmail = (
-    email: string,
-    isRequired = false
-  ): string | undefined => {
-    if (!email) {
-      return isRequired ? 'Email is required' : undefined
-    }
-    if (!isValidEmail(email)) {
-      return EMAIL_PATTERN_TITLE
-    }
-    return undefined
-  }
 
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
@@ -137,6 +121,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       enableReinitialize={true}
       validateOnChange={true}
       innerRef={formRef}
+      validate={(values) => {
+        const errors: Partial<ContributorAttrs> = {}
+        const emailValidation = validateEmail(values.email, isEmailRequired)
+        if (!emailValidation.isValid && emailValidation.error) {
+          errors.email = emailValidation.error
+        }
+
+        onValidationChange?.(Object.keys(errors).length === 0)
+
+        return errors
+      }}
     >
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
@@ -169,7 +164,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </TextFieldGroupContainer>
 
-              <Field name={'email'} type={'email'} validate={validateEmail}>
+              <Field name={'email'} type={'email'}>
                 {({ field, form }: FieldProps) => {
                   const error = form.touched.email && form.errors.email
                   return (
@@ -179,8 +174,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                         id={'email'}
                         type="email"
                         required={isEmailRequired}
-                        pattern={EMAIL_PATTERN}
-                        title={EMAIL_PATTERN_TITLE}
                         placeholder={
                           isEmailRequired
                             ? '*Email address (required)'
