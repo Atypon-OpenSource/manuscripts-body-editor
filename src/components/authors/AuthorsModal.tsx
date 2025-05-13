@@ -245,7 +245,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   // Reusable form validation
-  const validateForm = (
+  const validateFormFields = (
     values: ContributorAttrs,
     requireEmail: boolean
   ): { dialogType: 'required' | 'invalid' | 'none'; fieldName?: string } => {
@@ -315,7 +315,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         showDialog('save')
         setNextAuthor(author)
       } else if (hasChanges && (!isFormValid || isDisableSave)) {
-        const validation = validateForm(
+        const validation = validateFormFields(
           values,
           values.isCorresponding || isEmailRequired
         )
@@ -350,7 +350,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (unSavedChanges) {
       const values = valuesRef.current
       if (values) {
-        const validation = validateForm(
+        const validation = validateFormFields(
           values,
           values.isCorresponding || isEmailRequired
         )
@@ -378,7 +378,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       return
     }
 
-    const validation = validateForm(
+    const validation = validateFormFields(
       currentValues,
       currentValues.isCorresponding
     )
@@ -518,7 +518,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       selection &&
       !isEqual(normalize(values), normalize(selection))
     ) {
-      const validation = validateForm(
+      const validation = validateFormFields(
         values,
         values.isCorresponding || isEmailRequired
       )
@@ -597,7 +597,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
     valuesRef.current = { ...updatedValues, priority: values.priority }
 
-    const validation = validateForm(values, values.isCorresponding)
+    const validation = validateFormFields(values, values.isCorresponding)
     const isNameFilled =
       validation.dialogType !== 'required' || validation.fieldName !== 'name'
 
