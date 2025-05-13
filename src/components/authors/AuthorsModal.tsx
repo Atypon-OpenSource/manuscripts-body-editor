@@ -188,18 +188,16 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isDisableSave, setDisableSave] = useState(true)
   const [isFormValid, setIsFormValid] = useState(true)
   const [isEmailRequired, setEmailRequired] = useState(false)
-  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
-  const [
-    showRequiredFieldConfirmationDialog,
-    setShowRequiredFieldConfirmationDialog,
-  ] = useState(false)
-  const [
-    showInvalidFieldConfirmationDialog,
-    setShowInvalidFieldConfirmationDialog,
-  ] = useState(false)
-  const [invalidFieldName, setInvalidFieldName] = useState<string | undefined>(
-    undefined
-  )
+  const [dialogState, setDialogState] = useState<{
+    showConfirmation: boolean
+    showRequiredField: boolean
+    showInvalidField: boolean
+    fieldName?: string
+  }>({
+    showConfirmation: false,
+    showRequiredField: false,
+    showInvalidField: false,
+  })
   const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
@@ -209,10 +207,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
   const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
   const [selectedAffiliations, setSelectedAffiliations] = useState<
-    {
-      id: string
-      label: string
-    }[]
+    { id: string; label: string }[]
   >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
@@ -241,12 +236,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     type: 'save' | 'required' | 'invalid' | 'none',
     fieldName?: string
   ) => {
-    setShowConfirmationDialog(type === 'save')
-    setShowRequiredFieldConfirmationDialog(type === 'required')
-    setShowInvalidFieldConfirmationDialog(type === 'invalid')
-    if (type !== 'none') {
-      setInvalidFieldName(fieldName)
-    }
+    setDialogState({
+      showConfirmation: type === 'save',
+      showRequiredField: type === 'required',
+      showInvalidField: type === 'invalid',
+      fieldName: type === 'invalid' ? fieldName : undefined,
+    })
   }
 
   // Reusable form validation
@@ -433,10 +428,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       createNewAuthor()
       setIsCreatingNewAuthor(false)
     }
-    if (
-      !showInvalidFieldConfirmationDialog &&
-      !showRequiredFieldConfirmationDialog
-    ) {
+    if (!dialogState.showInvalidField && !dialogState.showRequiredField) {
       showDialog('none')
     }
     setShowAffiliationDrawer(false)
@@ -683,22 +675,22 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             {selection ? (
               <AuthorForms>
                 <ConfirmationDialog
-                  isOpen={showRequiredFieldConfirmationDialog}
+                  isOpen={dialogState.showRequiredField}
                   onPrimary={() => showDialog('none')}
                   onSecondary={handleCancel}
                   type={DialogType.REQUIRED}
                   entityType="author"
                 />
                 <ConfirmationDialog
-                  isOpen={showInvalidFieldConfirmationDialog}
+                  isOpen={dialogState.showInvalidField}
                   onPrimary={() => showDialog('none')}
                   onSecondary={handleCancel}
                   type={DialogType.INVALID}
                   entityType="author"
-                  fieldName={invalidFieldName}
+                  fieldName={dialogState.fieldName}
                 />
                 <ConfirmationDialog
-                  isOpen={showConfirmationDialog}
+                  isOpen={dialogState.showConfirmation}
                   onPrimary={handleSave}
                   onSecondary={handleCancel}
                   type={DialogType.SAVE}
@@ -713,9 +705,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   newEntity={
                     newAuthor ||
                     (isCreatingNewAuthor &&
-                      !showConfirmationDialog &&
-                      !showRequiredFieldConfirmationDialog &&
-                      !showInvalidFieldConfirmationDialog)
+                      !dialogState.showConfirmation &&
+                      !dialogState.showRequiredField &&
+                      !dialogState.showInvalidField)
                   }
                   isDisableSave={isDisableSave}
                 />
