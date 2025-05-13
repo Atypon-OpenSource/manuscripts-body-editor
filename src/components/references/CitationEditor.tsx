@@ -30,6 +30,7 @@ import styled from 'styled-components'
 
 import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { BibliographyItemAttrs } from '../../lib/references'
+import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
@@ -110,12 +111,12 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
 }) => {
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
-
   const handleSave = (item: BibliographyItemAttrs) => {
-    onSave(item)
+    const cleanedItem = cleanItemValues(item)
+    onSave(cleanedItem)
     dispatchItems({
       type: 'update',
-      items: [item],
+      items: [cleanedItem],
     })
     if (!rids.includes(item.id)) {
       handleCite([item])

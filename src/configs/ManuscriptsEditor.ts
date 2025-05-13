@@ -25,7 +25,11 @@ import { Location, NavigateFunction } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
+<<<<<<< HEAD
 import { clipboardParser, clipboardTextParser } from '../clipboard'
+=======
+import { clipboardParser } from '../clipboard'
+>>>>>>> 6b42d043086508e4f6e02acd84f7d5579e76d748
 import { Dispatch } from '../commands'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
@@ -69,6 +73,7 @@ export interface EditorProps {
     nodePos: number,
     event: MouseEvent
   ) => void
+  lockBody: boolean
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
@@ -102,7 +107,6 @@ export const createEditorView = (
     transformPasted,
     handlePaste,
     clipboardParser,
-    clipboardTextParser,
     handleScrollToSelection: handleScrollToSelectedTarget,
     transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {

@@ -73,18 +73,15 @@
   content: '— ';
 }
 
+.ProseMirror .block-container > .block.pullquote {
+  padding: 0 0 7px 48px;
+}
 .ProseMirror .pullquote {
-  padding: 32px 0 32px 32px !important;
-  border-top: 5px solid #e2e2e2;
-  border-bottom: 5px solid #e2e2e2;
-}
+  column-gap: 30px;
 
-.ProseMirror .pullquote p {
-  font-style: italic;
-  line-height: 1.2;
-  font-size: 32px;
+  line-height: 2;
+  font-size: 16px;
 }
-
 .ProseMirror .pullquote p i {
   font-style: normal;
 }
@@ -92,17 +89,28 @@
 .ProseMirror .pullquote p:first-of-type {
   margin-top: 0;
 }
-
-.ProseMirror .pullquote p:first-of-type:before {
-  content: open-quote;
-  display: block;
-  font-size: 2em;
-  margin-right: 8px;
-  color: #777;
+.ProseMirror .pullquote p:last-of-type::after,
+.ProseMirror .pullquote p:first-of-type::before {
+  font-family: 'PT Serif', serif;
+  content: '“';
+  font-size: 30px;
   line-height: 0;
+  color: #6e6e6e;
+  top: 0.3em;
   position: relative;
-  top: 0.5em;
-  left: -0.5em;
+}
+.ProseMirror .pullquote p:first-of-type::before {
+  margin-left: -16px;
+  left: -0.1em;
+  top: 0.35em;
+}
+.ProseMirror .pullquote p:last-of-type::after {
+  content: '”';
+  margin-left: 8px;
+}
+
+.ProseMirror .pullquote p .placeholder-text ~ .ProseMirror-trailingBreak {
+  display: none;
 }
 
 .ProseMirror .pullquote p:last-of-type {
@@ -110,14 +118,89 @@
 }
 
 .ProseMirror .pullquote footer {
-  margin-top: 24px;
-  margin-left: 8px;
-  font-size: 18px;
+  padding-left: 1em;
   color: #777;
+  position: relative;
 }
-
 .ProseMirror .pullquote footer:before {
   content: '— ';
+  margin-left: -1em;
+}
+
+.ProseMirror .pullquote footer.empty-node .ProseMirror-trailingBreak {
+  display: none;
+}
+.ProseMirror .pullquote .figure-image,
+.ProseMirror .pullquote .figure,
+.ProseMirror .pullquote .figure.placeholder {
+  max-width: 146px;
+  min-width: 146px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+}
+.ProseMirror .pullquote-figure {
+  position: relative;
+  float: left;
+  text-decoration: inherit;
+  margin: 10px 30px 0 0;
+}
+.ProseMirror .pullquote .figure.placeholder {
+  box-sizing: border-box;
+  border: 1px dashed #e2e2e2;
+  padding: 16px;
+  text-decoration: inherit;
+  max-width: 146px;
+}
+.ProseMirror .pullquote figure {
+  margin: 0;
+}
+.ProseMirror .pullquote footer.empty-node:after,
+.ProseMirror .pullquote .placeholder-text {
+  background: #ddf3fa;
+  color: #6e6e6e;
+}
+
+.ProseMirror .pullquote .figure.placeholder svg path {
+  fill: #c9c9c9;
+}
+.ProseMirror .pullquote .figure.placeholder svg {
+  height: 23px;
+  width: 25.4px;
+  margin-bottom: 4px;
+  margin-top: 29px;
+}
+.ProseMirror .pullquote .figure div {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.71;
+  text-decoration: inherit;
+}
+.ProseMirror .pullquote figure:not(.deleted) .figure div {
+  color: #6e6e6e;
+  text-decoration: none;
+}
+.ProseMirror .figure-remove-button svg {
+  width: 15px;
+  height: 15px;
+  transform: rotate(45deg);
+}
+.ProseMirror .figure-remove-button {
+  position: absolute;
+  top: 0;
+  transform: translate(40%, -40%);
+  right: 0;
+  line-height: 0;
+  background: #fff;
+  border-radius: 50%;
+  padding: 0.22em;
+  border: 1px solid #f2f2f2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 2;
+}
+.tracking-visible .ProseMirror .pullquote figure.inserted {
+  text-decoration: none;
 }
 
 .ProseMirror img {
@@ -258,7 +341,6 @@
   border-radius: 16px;
   border: 1px dashed #e2e2e2;
   background-color: #fafafa;
-  color: #6e6e6e;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -267,7 +349,6 @@
   max-width: 210px;
   min-height: 100px;
   white-space: normal;
-
   font-size: 14px;
 }
 

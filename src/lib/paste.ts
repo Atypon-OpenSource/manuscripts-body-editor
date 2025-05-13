@@ -15,6 +15,7 @@
  */
 
 import {
+  generateNodeID,
   isElementNodeType,
   ManuscriptEditorView,
   ManuscriptSlice,
@@ -23,6 +24,8 @@ import {
 import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
+
+import { allowedHref } from './url'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -37,14 +40,37 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
-// remove `id` from pasted content
-const removeIDs = (slice: ManuscriptSlice) => {
+const updateInlineFootnoteToNewRids = (
+  slice: Slice,
+  footnotesIdsMap: Map<string, string>
+) => {
   slice.content.descendants((node) => {
-    if (node.attrs.id) {
+    if (node.type === schema.nodes.inline_footnote) {
       // @ts-ignore
-      node.attrs.id = null
+      node.attrs.rids = node.attrs.rids.map((rid) => footnotesIdsMap.get(rid))
     }
   })
+}
+
+// remove `id` from pasted content
+const removeIDs = (slice: ManuscriptSlice) => {
+  const footnotesIdsMap = new Map()
+  slice.content.descendants((node) => {
+    let id = null
+    if (node.type === schema.nodes.footnote) {
+      // will keep id for footnote to not lose connection with inline_footnote
+      const newId = generateNodeID(node.type)
+      footnotesIdsMap.set(node.attrs.id, newId)
+      id = newId
+    }
+
+    if (node.attrs.id) {
+      // @ts-ignore
+      node.attrs.id = id
+    }
+  })
+
+  updateInlineFootnoteToNewRids(slice, footnotesIdsMap)
 }
 
 const wrapInSection = (slice: ManuscriptSlice) => {
@@ -112,6 +138,16 @@ export const handlePaste = (
 
   tr.setMeta('uiEvent', 'paste')
   tr.setMeta('paste', true)
+
+  const clipboardData = event.clipboardData
+
+  const text = clipboardData?.getData('text/plain')
+  if (text && allowedHref(text)) {
+    const link = schema.nodes.link.create({ href: text }, schema.text(text))
+    dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
+    return true
+  }
+
   const parent = findParentNode((node) => node.type === schema.nodes.section)(
     tr.selection
   )
