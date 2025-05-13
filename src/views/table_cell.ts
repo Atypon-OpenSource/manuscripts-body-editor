@@ -26,11 +26,12 @@ import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import {ViewMutationRecord} from "prosemirror-view";
 
 export class TableCellView extends BlockView<ManuscriptNode> {
   public contentDOM: HTMLElement
 
-  public ignoreMutation(mutation: MutationRecord) {
+  public ignoreMutation(mutation: ViewMutationRecord) {
     return mutation.type === 'attributes' && mutation.attributeName === 'class'
   }
 
