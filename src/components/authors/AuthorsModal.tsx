@@ -329,10 +329,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       } else {
         updateAffiliationSelection(author)
         setSelection(author)
+        setShowAffiliationDrawer(false)
         showDialog('none')
         setNewAuthor(false)
       }
     } else {
+      setShowAffiliationDrawer(false)
       updateAffiliationSelection(author)
       setSelection(author)
       showDialog('none')
@@ -375,6 +377,15 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const currentValues = valuesRef.current
 
     if (!currentValues) {
+      return
+    }
+
+    // Check native form validity first
+    if (!authorFormRef.current?.checkValidity()) {
+      showDialog('invalid', 'unknown')
+      setTimeout(() => {
+        authorFormRef.current?.reportValidity()
+      }, 830)
       return
     }
 
