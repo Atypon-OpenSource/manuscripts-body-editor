@@ -84,11 +84,8 @@ export default (props: EditorProps) => {
     search_replace(),
     lock_body(),
     alt_titles(),
-<<<<<<< HEAD
-    prevent_empty(),
-=======
     accessibility_element(),
->>>>>>> 6b42d043086508e4f6e02acd84f7d5579e76d748
+    prevent_empty(),
   ]
 
   if (props.collabProvider) {
