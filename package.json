@@ -22,6 +22,7 @@
     "dependencies-versions": "node versions.mjs > src/versions.ts",
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
     "prepare": "husky install",
+    "pretest": "yarn prebuild",
     "preversion": "concurrently 'yarn:typecheck' 'yarn:lint' 'yarn:test'",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
