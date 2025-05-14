@@ -58,6 +58,7 @@ const excludedTypes = [
   schema.nodes.title,
   schema.nodes.alt_titles,
   schema.nodes.alt_title,
+  schema.nodes.hero_image,
 ]
 
 const childrenExcludedTypes = [
