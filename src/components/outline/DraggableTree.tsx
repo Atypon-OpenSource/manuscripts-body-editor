@@ -234,7 +234,6 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       const node = item.node.type.schema.nodes[item.node.type.name].create(
         {
           ...item.node.attrs,
-          id: '',
         },
         item.node.content
       )
