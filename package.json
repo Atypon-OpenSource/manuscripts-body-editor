@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "2.8.62",
+  "version": "2.8.63",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -24,7 +24,6 @@
     "prepare": "husky install",
     "pretest": "yarn prebuild",
     "preversion": "concurrently 'yarn:typecheck' 'yarn:lint' 'yarn:test'",
-    "pretest": "yarn prebuild",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
     "version": "yarn build"
