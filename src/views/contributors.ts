@@ -100,9 +100,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
-      if (author.role !== 'author') {
-        return
-      }
       const jointAuthors = this.isJointFirstAuthor(authors, i)
       wrapper.appendChild(this.buildAuthor(author, jointAuthors))
       if (i !== authors.length - 1) {
