@@ -107,7 +107,13 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { isDeleted } from './lib/track-changes-utils'
-import { findParentNodeWithId, getChildOfType } from './lib/utils'
+import {
+  findParentNodeWithId,
+  getChildOfType,
+  getInsertPos,
+  isBodyLocked,
+} from './lib/utils'
+import { expandAccessibilitySection } from './plugins/accessibility_element'
 import { setCommentSelection } from './plugins/comments'
 import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -227,6 +233,12 @@ export const canInsert =
       return false
     }
 
+    if (type === schema.nodes.table_element) {
+      if ($from.node(-1).type === schema.nodes.list_item) {
+        return false
+      }
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -286,40 +298,46 @@ export const createBlock = (
   dispatch?: Dispatch,
   attrs?: Attrs
 ) => {
-  let node
+  let node: ManuscriptNode
   switch (nodeType) {
-    case state.schema.nodes.table_element:
-      node = createAndFillTableElement(state)
+    case schema.nodes.table_element:
+      node = createAndFillTableElement(attrs)
       break
-    case state.schema.nodes.figure_element:
-      node = createAndFillFigureElement(state)
+    case schema.nodes.figure_element:
+      node = createAndFillFigureElement(attrs)
       break
-    case state.schema.nodes.image_element:
-      node = createImageElement(state)
+    case schema.nodes.image_element:
+      node = createImageElement(attrs)
       break
-    case state.schema.nodes.listing_element:
-      node = state.schema.nodes.listing_element.create({}, [
-        state.schema.nodes.listing.create(),
-        createAndFillFigcaptionElement(state),
+    case schema.nodes.listing_element:
+      node = schema.nodes.listing_element.create({}, [
+        schema.nodes.listing.create(),
+        createAndFillFigcaptionElement(),
       ])
       break
-    case state.schema.nodes.equation_element:
-      node = state.schema.nodes.equation_element.create({}, [
-        state.schema.nodes.equation.create(),
+    case schema.nodes.equation_element:
+      node = schema.nodes.equation_element.create({}, [
+        schema.nodes.equation.create(),
       ])
       break
-    case state.schema.nodes.embed:
-      node = state.schema.nodes.embed.create(attrs, [
-        createAndFillFigcaptionElement(state),
+    case schema.nodes.embed:
+      node = createEmbedElement(attrs)
+      break
+    case state.schema.nodes.pullquote_element:
+      node = state.schema.nodes.pullquote_element.create(attrs, [
+        state.schema.nodes.paragraph.create({}),
+        state.schema.nodes.attribution.create({}),
       ])
       break
     default:
-      node = nodeType.createAndFill(attrs)
+      node = nodeType.createAndFill(attrs) as ManuscriptNode
   }
 
-  const tr = state.tr.insert(position, node as ManuscriptNode)
+  const tr = state.tr.insert(position, node)
+
   if (dispatch) {
     const selection = createSelection(nodeType, position, tr.doc)
+    expandAccessibilitySection(tr, node)
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
 }
@@ -373,7 +391,7 @@ export const insertGeneralTableFootnote = (
   const tr = state.tr
   const footer = insertTableElementFooter(tr, element)
 
-  const pos = footer.pos + 1
+  const pos = footer.pos + 2
   const node = schema.nodes.general_table_footnote.create({}, [
     schema.nodes.paragraph.create(),
   ])
@@ -418,8 +436,9 @@ export const insertTable = (
   if (!pos) {
     return false
   }
-  const node = createAndFillTableElement(state, config)
+  const node = createAndFillTableElement(config)
   const tr = state.tr.insert(pos, node)
+  expandAccessibilitySection(tr, node)
   tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
   dispatch && dispatch(tr)
   return true
@@ -715,7 +734,7 @@ export const insertTableElementFooter = (
     schema.nodes.table_element_footer
   )[0]
   if (footer) {
-    const pos = tr.mapping.map(table[1] + footer.pos + 1)
+    const pos = tr.mapping.map(table[1] + footer.pos)
     if (isDeleted(footer.node)) {
       reinstateNode(tr, footer.node, pos)
     }
@@ -724,7 +743,9 @@ export const insertTableElementFooter = (
       pos,
     }
   }
-  const pos = tr.mapping.map(table[1] + table[0].nodeSize - 2)
+  const pos = tr.mapping.map(
+    getInsertPos(schema.nodes.table_element_footer, table[0], table[1])
+  )
   const node = schema.nodes.table_element_footer.create()
   tr.insert(pos, node)
   return {
@@ -738,6 +759,7 @@ export const insertFootnotesElement = (
   container: [ManuscriptNode, number]
 ) => {
   let pos
+  const node = schema.nodes.footnotes_element.create()
   if (isTableElementNode(container[0])) {
     //table footnote
     const footer = insertTableElementFooter(tr, container)
@@ -746,9 +768,8 @@ export const insertFootnotesElement = (
     //regular footnote
     const section = insertFootnotesSection(tr)
     pos = section.pos + section.node.nodeSize - 1
+    tr.insert(pos, node)
   }
-  const node = schema.nodes.footnotes_element.create()
-  tr.insert(pos, node)
   return [node, pos] as [FootnotesElementNode, number]
 }
 
@@ -847,47 +868,63 @@ export const insertBoxElement = (
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const nodes = schema.nodes
+    const { nodes } = schema
     const $pos = state.selection.$from
 
-    let pos
-    if (findParentNodeOfTypeClosestToPos($pos, nodes.bibliography_section)) {
-      //disallow insert (sub)section in bibliography_section
+    const isInBibliography = findParentNodeOfTypeClosestToPos(
+      $pos,
+      nodes.bibliography_section
+    )
+    const isInBox = findParentNodeOfTypeClosestToPos($pos, nodes.box_element)
+    const isInBody = findParentNodeOfTypeClosestToPos($pos, nodes.body)
+    const isInMainTitle = findParentNodeOfTypeClosestToPos($pos, nodes.title)
+
+    if (isInMainTitle && isBodyLocked(state)) {
       return false
-    } else if (subsection) {
-      pos =
-        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
-      if (!pos) {
-        return false
-      }
-      //move pos inside the section for a subsection
-      pos -= 1
-    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.box_element)) {
-      //only subsections are allowed for box_element, which should be
-      //handled before
-      return false
-    } else if (findParentNodeOfTypeClosestToPos($pos, nodes.body)) {
-      pos = findPosAfterParentSection($pos)
     }
 
-    if (!pos) {
-      //this means one of 2 things:
-      //- the selection points outside the body
-      //- the selection points inside the body, but to an element without a parent section
-      //for both cases, insert the section at the end of the body
+    // Disallow inserting (sub)sections in bibliography
+    if (isInBibliography) {
+      return false
+    }
+    // Only subsections are allowed in box_element
+    if (isInBox && !subsection) {
+      return false
+    }
+
+    let insertPos: number | null = null
+
+    if (subsection) {
+      insertPos =
+        findPosBeforeFirstSubsection($pos) || findPosAfterParentSection($pos)
+      if (!insertPos) {
+        return false
+      }
+      // Move position inside the parent section for the subsection
+      insertPos -= 1
+    } else {
+      if (isInBody) {
+        insertPos = findPosAfterParentSection($pos)
+      }
+    }
+
+    if (insertPos == null) {
+      // Insert at the end of the body if:
+      // - selection is outside the body
+      // - selection is inside the body but not within a section
       const body = findBody(state.doc)
-      pos = body.pos + body.node.content.size + 1
+      insertPos = body.pos + body.node.content.size + 1
     }
 
     const section = nodes.section.createAndFill() as SectionNode
-    const tr = state.tr.insert(pos, section)
+    const tr = state.tr.insert(insertPos, section)
 
     if (dispatch) {
-      // place cursor inside section title
-      const selection = TextSelection.create(tr.doc, pos + 2)
+      const selection = TextSelection.create(tr.doc, insertPos + 2) // Place cursor inside section title
       view?.focus()
       dispatch(tr.setSelection(selection).scrollIntoView())
     }
+
     return true
   }
 
@@ -1006,6 +1043,7 @@ export const insertGraphicalAbstract =
     ) as GraphicalAbstractSectionNode
 
     const tr = state.tr.insert(pos, node)
+    node.lastChild && expandAccessibilitySection(tr, node.lastChild)
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1528,7 +1566,7 @@ const DEFAULT_TABLE_CONFIG: TableConfig = {
  * The table can optionally include a header row.
  */
 export const createAndFillTableElement = (
-  state: ManuscriptEditorState,
+  attrs?: Attrs,
   config = DEFAULT_TABLE_CONFIG
 ) => {
   const { numberOfColumns, numberOfRows, includeHeader } = config
@@ -1545,32 +1583,67 @@ export const createAndFillTableElement = (
     tableRows.push(createRow(schema.nodes.table_cell))
   }
 
-  return schema.nodes.table_element.createChecked({}, [
-    createAndFillFigcaptionElement(state),
-    schema.nodes.table.create({}, tableRows),
-    schema.nodes.listing.create(),
-  ])
+  return schema.nodes.table_element.createChecked(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.table_element),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.table.create({}, tableRows),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+      schema.nodes.listing.create(),
+    ]
+  )
 }
 
-const createAndFillFigureElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.figure_element.create({}, [
-    state.schema.nodes.figure.create({}, [
-      state.schema.nodes.figcaption.create(),
-    ]),
-    createAndFillFigcaptionElement(state),
-    state.schema.nodes.listing.create(),
+const createAndFillFigureElement = (attrs?: Attrs) =>
+  schema.nodes.figure_element.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.figure_element),
+    },
+    [
+      schema.nodes.figure.create({}, [schema.nodes.figcaption.create()]),
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+      schema.nodes.listing.create(),
+    ]
+  )
+
+const createAndFillFigcaptionElement = () =>
+  schema.nodes.figcaption.create({}, [
+    schema.nodes.caption_title.create(),
+    schema.nodes.caption.create(),
   ])
 
-const createAndFillFigcaptionElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.figcaption.create({}, [
-    state.schema.nodes.caption_title.create(),
-    state.schema.nodes.caption.create(),
-  ])
+const createImageElement = (attrs?: Attrs) =>
+  schema.nodes.image_element.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.image_element),
+    },
+    [
+      schema.nodes.figure.create(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
 
-const createImageElement = (state: ManuscriptEditorState) =>
-  state.schema.nodes.image_element.create({}, [
-    state.schema.nodes.figure.create(),
-  ])
+const createEmbedElement = (attrs?: Attrs) =>
+  schema.nodes.embed.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.embed),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
 /**
  * This to make sure we get block node
  */

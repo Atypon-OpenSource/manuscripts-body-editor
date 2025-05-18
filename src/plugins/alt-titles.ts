@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AltTitleNode,
   AltTitlesSectionNode,
@@ -23,8 +24,8 @@ import {
 import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-import { arrowDown } from '../icons'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+
+import { createToggleButton } from '../lib/utils'
 
 export interface PluginState {
   collapsed: boolean
@@ -61,17 +62,6 @@ function getTitlesData(doc: ProseMirrorNode) {
     }
   })
   return { title, runningTitle, shortTitle, altTitlesSection }
-}
-
-function createAltTitlesButton(listener: () => void) {
-  const altTitlesButton = document.createElement('button')
-  altTitlesButton.classList.add('alt-titles-open', 'button-reset')
-  altTitlesButton.innerHTML = arrowDown
-  altTitlesButton.addEventListener('click', (e) => {
-    e.preventDefault()
-    listener()
-  })
-  return altTitlesButton
 }
 
 function selectionInAltTitles(from: number, to: number, state: PluginState) {
@@ -122,7 +112,7 @@ export default () => {
     },
     appendTransaction: (transactions, _, newState) => {
       // in appendTransaction we check if alt_titles nodes exist before opening them for the first time because they are optional
-      let tr = newState.tr
+      const tr = newState.tr
       if (
         !transactions.some((tr) => tr.getMeta(altTitlesKey)) ||
         !altTitlesKey.getState(newState)
@@ -131,7 +121,9 @@ export default () => {
       }
 
       const { title, runningTitle, shortTitle, altTitlesSection } =
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         altTitlesKey.getState(newState)!
+
       const schema = newState.schema
 
       if (!title) {
@@ -192,7 +184,7 @@ export default () => {
             Decoration.widget(
               titleEnd - 1,
               (view: ManuscriptEditorView) => {
-                return createAltTitlesButton(() => {
+                return createToggleButton(() => {
                   const tr = view.state.tr.setMeta(altTitlesKey, {
                     collapsed: false,
                   })
