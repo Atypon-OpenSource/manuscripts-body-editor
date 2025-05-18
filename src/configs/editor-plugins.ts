@@ -62,7 +62,9 @@ export default (props: EditorProps) => {
       debug: props.debug,
       initialStatus: props.getCapabilities().editWithoutTracking
         ? TrackChangesStatus.disabled
-        : TrackChangesStatus.enabled,
+        : props.getCapabilities().editArticle
+        ? TrackChangesStatus.enabled
+        : TrackChangesStatus.viewSnapshots,
     }),
     section_title(),
     table_editing_fix(),

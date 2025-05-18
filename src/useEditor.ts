@@ -131,12 +131,9 @@ export const useEditor = (externalProps: ExternalProps) => {
       if (!el) {
         return
       }
-      view.current = createEditorView(
-        props,
-        el,
-        view.current?.state || state,
-        dispatch
-      )
+      const freshState = createEditorState(props)
+
+      view.current = createEditorView(props, el, freshState || state, dispatch)
       setState(view.current.state)
     },
     [canEdit] // eslint-disable-line react-hooks/exhaustive-deps
