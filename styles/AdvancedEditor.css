@@ -430,6 +430,10 @@ span.comment-marker {
   display: none;
 }
 
+.ProseMirror div.backmatter:has(:only-child.bibliography > .empty-node)::before {
+  border-bottom: none;
+}
+
 .ProseMirror .keywords h1 {
   font-size: 12px;
   font-style: italic;
