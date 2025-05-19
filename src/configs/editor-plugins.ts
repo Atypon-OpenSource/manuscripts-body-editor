@@ -42,6 +42,7 @@ import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
+import prevent_empty from '../plugins/prevent-empty'
 import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
@@ -84,6 +85,7 @@ export default (props: EditorProps) => {
     lock_body(),
     alt_titles(),
     accessibility_element(),
+    prevent_empty(),
   ]
 
   if (props.collabProvider) {

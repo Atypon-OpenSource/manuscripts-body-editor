@@ -15,6 +15,7 @@
  */
 
 import {
+  generateNodeID,
   isElementNodeType,
   ManuscriptEditorView,
   ManuscriptSlice,
@@ -39,14 +40,37 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
-// remove `id` from pasted content
-const removeIDs = (slice: ManuscriptSlice) => {
+const updateInlineFootnoteToNewRids = (
+  slice: Slice,
+  footnotesIdsMap: Map<string, string>
+) => {
   slice.content.descendants((node) => {
-    if (node.attrs.id) {
+    if (node.type === schema.nodes.inline_footnote) {
       // @ts-ignore
-      node.attrs.id = null
+      node.attrs.rids = node.attrs.rids.map((rid) => footnotesIdsMap.get(rid))
     }
   })
+}
+
+// remove `id` from pasted content
+const removeIDs = (slice: ManuscriptSlice) => {
+  const footnotesIdsMap = new Map()
+  slice.content.descendants((node) => {
+    let id = null
+    if (node.type === schema.nodes.footnote) {
+      // will keep id for footnote to not lose connection with inline_footnote
+      const newId = generateNodeID(node.type)
+      footnotesIdsMap.set(node.attrs.id, newId)
+      id = newId
+    }
+
+    if (node.attrs.id) {
+      // @ts-ignore
+      node.attrs.id = id
+    }
+  })
+
+  updateInlineFootnoteToNewRids(slice, footnotesIdsMap)
 }
 
 const wrapInSection = (slice: ManuscriptSlice) => {
@@ -137,9 +161,12 @@ export const handlePaste = (
     return true
   }
 
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     isElement(slice) &&
+    slice.openStart !== 1 &&
+    slice.openEnd !== 1 &&
     selection.$anchor.parentOffset > 0 &&
     selection.$head.parentOffset > 0 &&
     selection.$from.node().type === schema.nodes.paragraph
@@ -159,8 +186,10 @@ export const handlePaste = (
     return true
   }
 
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
+    selection.$from.depth === slice.openStart &&
     selection.$anchor.parentOffset === 0 &&
     selection.$head.parentOffset === 0 &&
     selection.$from.node().type === schema.nodes.paragraph
@@ -169,7 +198,7 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    if (isElement(slice)) {
+    if (isElement(slice) && slice.openStart !== 1 && slice.openEnd !== 1) {
       tr.replace(side, side, new Slice(slice.content, 0, 0))
     } else {
       tr.replace(side, side, slice)
