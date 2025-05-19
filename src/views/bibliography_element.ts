@@ -170,7 +170,7 @@ export class BibliographyElementBlockView extends BlockView<
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
 
-    const [meta, bibliography] = bib.provider.makeBibliography()
+    const [meta, bibliography] = bib.engine.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]

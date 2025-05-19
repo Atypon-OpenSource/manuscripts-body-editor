@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getJatsListType, schema } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
 
 // we can override other node rules for clipboard here
@@ -29,7 +29,7 @@ const nodes = [
     getAttrs: (list: HTMLElement) => {
       const dom = list
       return {
-        listStyleType: getJatsListType(
+        listStyleType: getListStyleType(
           dom.style.listStyleType ||
             (dom.firstChild &&
               (dom.firstChild as HTMLElement).style.listStyleType)
@@ -48,3 +48,24 @@ export const clipboardParser = new DOMParser(schema, [
   ...nodes,
   ...DOMParser.fromSchema(schema).rules,
 ])
+
+export const getListStyleType = (cssStyle: string | null) => {
+  switch (cssStyle) {
+    case 'disc':
+      return 'bullet'
+    case 'decimal':
+      return 'order'
+    case 'lower-alpha':
+      return 'alpha-lower'
+    case 'upper-alpha':
+      return 'alpha-upper'
+    case 'lower-roman':
+      return 'roman-lower'
+    case 'upper-roman':
+      return 'roman-upper'
+    case 'simple':
+      return 'none'
+    default:
+      return 'none'
+  }
+}

@@ -21,9 +21,8 @@ import {
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
 import {
-  getListType,
   isInBibliographySection,
-  isSectionTitleNode,
+  isSectionTitleNode, ListStyleType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -304,19 +303,22 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const attrs = this.node.attrs
-          const listType = getListType(attrs.listStyleType).style
-          if (listType === 'none' || listType === 'disc') {
+          const type = this.node.attrs.listStyleType as ListStyleType
+          if (type === 'simple' || type === 'bullet') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(null, 'order')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'order')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
           } else {
             section.appendChild(
               this.createMenuItem('Change to Bulleted list', () => {
-                this.changeNodeType(null, 'bullet')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'bullet')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
@@ -530,19 +532,6 @@ export class ContextMenu {
     checkNode('pullquote_element')
 
     return insertable
-  }
-
-  private changeNodeType = (
-    nodeType: ManuscriptNodeType | null,
-    listType: string
-  ) => {
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
-        id: this.node.attrs.id,
-        listStyleType: listType,
-      })
-    )
-    popper.destroy()
   }
 
   private deleteNode = (nodeType: ManuscriptNodeType) => {

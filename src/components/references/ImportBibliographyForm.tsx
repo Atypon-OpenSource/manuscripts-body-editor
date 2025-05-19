@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { transformBibliography } from '@manuscripts/library'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -25,6 +24,7 @@ import { useFormik } from 'formik'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { importBibliographyItems } from '../../lib/references'
 
 import { ReferenceLine } from './ReferenceLine'
 
@@ -57,17 +57,17 @@ export const ImportBibliographyForm = ({
     const ERROR_CITATION = 'Error generating citation'
     try {
       if (!fileContent.trim()) {
-        formik.setFieldValue('err', NO_CITATION)
-        formik.setFieldValue('data', [])
+        await formik.setFieldValue('err', NO_CITATION)
+        await formik.setFieldValue('data', [])
         return
       }
-      const data = await transformBibliography(fileContent.trim())
-      formik.setFieldValue('data', data ? data : [])
-      formik.setFieldValue('err', '')
+      const data = await importBibliographyItems(fileContent.trim())
+      await formik.setFieldValue('data', data ? data : [])
+      await formik.setFieldValue('err', '')
     } catch (error) {
       console.error('Citation generation error:', error)
-      formik.setFieldValue('err', ERROR_CITATION)
-      formik.setFieldValue('data', [])
+      await formik.setFieldValue('err', ERROR_CITATION)
+      await formik.setFieldValue('data', [])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

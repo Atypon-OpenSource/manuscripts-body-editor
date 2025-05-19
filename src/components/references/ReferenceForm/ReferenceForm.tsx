@@ -15,10 +15,6 @@
  */
 
 import {
-  buildBibliographicDate,
-  buildBibliographicName,
-} from '@manuscripts/json-schema'
-import {
   AddAuthorIcon,
   ButtonGroup,
   Category,
@@ -39,7 +35,7 @@ import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { BibliographyItemAttrs } from '../../../lib/references'
 import { shouldRenderField } from '../../../lib/utils'
 import { ChangeHandlingForm } from '../../ChangeHandlingForm'
-import { bibliographyItemTypes } from './config'
+import { bibliographyItemTypes } from '../../../lib/references'
 import { PersonDropDown } from './PersonDropDown'
 import {
   Actions,
@@ -83,6 +79,8 @@ export const ReferenceForm: React.FC<{
 }) => {
   const fieldsRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
+  const [newAuthorIndex, setNewAuthorIndex] = useState<number>()
+  const [newEditorIndex, setNewEditorIndex] = useState<number>()
 
   useEffect(() => {
     if (fieldsRef.current) {
@@ -229,14 +227,15 @@ export const ReferenceForm: React.FC<{
                         <Label>Authors</Label>
 
                         <Button
-                          onClick={() =>
-                            push(
-                              buildBibliographicName({
+                          onClick={() => {
+                            setNewAuthorIndex(formik.values.author?.length)
+                            push({
                                 given: '',
                                 family: '',
-                                isNew: true,
-                              })
+                              }
                             )
+                          }
+
                           }
                         >
                           <AddAuthorIcon height={17} width={17} />
@@ -244,12 +243,12 @@ export const ReferenceForm: React.FC<{
                       </LabelContainer>
 
                       <div>
-                        {formik.values.author &&
-                          formik.values.author.map((author, index) => (
+                        {formik.values.author?.map((author, index) => (
                             <PersonDropDown
                               key={index}
                               index={index}
                               person={author}
+                              isNew={newAuthorIndex === index}
                               remove={remove}
                               onChange={formik.handleChange}
                               type="author"
@@ -273,14 +272,14 @@ export const ReferenceForm: React.FC<{
                         <Label>Editors</Label>
 
                         <Button
-                          onClick={() =>
-                            push(
-                              buildBibliographicName({
-                                given: '',
-                                family: '',
-                                isNew: true,
-                              })
-                            )
+                          onClick={() => {
+                            setNewEditorIndex(formik.values.editor?.length)
+                            push({
+                              given: '',
+                              family: '',
+                            })
+                          }
+
                           }
                         >
                           <AddAuthorIcon height={17} width={17} />
@@ -288,12 +287,12 @@ export const ReferenceForm: React.FC<{
                       </LabelContainer>
 
                       <div>
-                        {formik.values.editor &&
-                          formik.values.editor.map((editor, index) => (
+                        {formik.values.editor?.map((editor, index) => (
                             <PersonDropDown
                               key={index}
                               index={index}
                               person={editor}
+                              isNew={newEditorIndex === index}
                               remove={remove}
                               onChange={formik.handleChange}
                               type="editor"
@@ -332,9 +331,9 @@ export const ReferenceForm: React.FC<{
                         } else {
                           formik.setFieldValue(
                             'issued',
-                            buildBibliographicDate({
+                            {
                               'date-parts': [[Number(value)]],
-                            })
+                            }
                           )
                         }
                       } else {
@@ -557,9 +556,9 @@ export const ReferenceForm: React.FC<{
                         } else {
                           formik.setFieldValue(
                             'event-date',
-                            buildBibliographicDate({
+                            {
                               'date-parts': [[Number(value)]],
-                            })
+                            }
                           )
                         }
                       } else {
@@ -703,9 +702,9 @@ export const ReferenceForm: React.FC<{
                         } else {
                           formik.setFieldValue(
                             'accessed',
-                            buildBibliographicDate({
+                            {
                               'date-parts': [[Number(value)]],
-                            })
+                            }
                           )
                         }
                       } else {
