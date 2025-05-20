@@ -98,7 +98,7 @@ const getDialogConfig = (
   return configs[dialogType]
 }
 
-interface ConfirmationDialogProps {
+export interface ConfirmationDialogProps {
   isOpen: boolean
   type: DialogType
   entityType: string
