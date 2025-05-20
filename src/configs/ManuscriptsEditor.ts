@@ -21,12 +21,13 @@ import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import { Location, NavigateFunction } from 'react-router-dom'
+import { Location, NavigateFunction, Params } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { SnapshotLabel } from '../components/tools/CompareDocumentsModal'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
@@ -62,6 +63,7 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
+  params: Params
   dispatch?: Dispatch
   onEditorClick: (
     pos: number,
@@ -70,13 +72,18 @@ export interface EditorProps {
     event: MouseEvent
   ) => void
   lockBody: boolean
+  snapshots?: SnapshotLabel[]
+  getSnapshot?: (id: string) => Promise<any>
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
 
-export const createEditorState = (props: EditorProps) =>
+export const createEditorState = (
+  props: EditorProps,
+  snapshot?: ManuscriptNode
+) =>
   EditorState.create({
-    doc: props.doc,
+    doc: snapshot || props.doc,
     schema,
     plugins: plugins(props),
   })

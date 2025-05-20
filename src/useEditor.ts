@@ -31,13 +31,14 @@ import {
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import {
   createEditorState,
   createEditorView,
   ExternalProps,
 } from './configs/ManuscriptsEditor'
+import { compareDocuments } from './lib/compare-documents'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -50,11 +51,16 @@ export const useEditor = (externalProps: ExternalProps) => {
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
+  const params = useParams()
+
+  const [isComparingDocuments, setIsComparingDocuments] = useState<boolean>(
+    Boolean(params.originalId && params.comparisonId)
+  )
   const location = useLocation()
   const { collabProvider } = props
 
   // Receiving steps from backend
-  if (collabProvider) {
+  if (collabProvider && !isComparingDocuments) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async () => {
       if (state && view.current) {
@@ -97,7 +103,9 @@ export const useEditor = (externalProps: ExternalProps) => {
 
       if (
         collabProvider &&
-        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
+        (!trackState ||
+          trackState.status !== TrackChangesStatus.viewSnapshots) &&
+        !isComparingDocuments
       ) {
         const sendable = sendableSteps(nextState)
 
@@ -186,6 +194,46 @@ export const useEditor = (externalProps: ExternalProps) => {
   )
 
   useEffect(() => {
+    const fetchSnapshots = async () => {
+      if (state) {
+        if (props.params.originalId && props.params.comparisonId) {
+          if (props.getSnapshot) {
+            try {
+              const originalSnapshot = await props.getSnapshot(
+                props.params.originalId
+              )
+              const comparisonSnapshot = await props.getSnapshot(
+                props.params.comparisonId
+              )
+              if (originalSnapshot && comparisonSnapshot) {
+                const manuscript = compareDocuments(
+                  originalSnapshot,
+                  comparisonSnapshot
+                )
+                // update the editorState with the new manuscript
+                if (state) {
+                  const newState = createEditorState(props, manuscript)
+                  setState(newState)
+                  view.current?.updateState(newState)
+                  setIsComparingDocuments(false)
+                }
+              }
+            } catch (error) {
+              setIsComparingDocuments(false)
+              console.error('Error comparing documents:', error)
+            }
+          }
+        } else {
+          setIsComparingDocuments(false)
+        }
+      }
+    }
+
+    fetchSnapshots()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.params.originalId, props.params.comparisonId])
+
+  useEffect(() => {
     // This will be evaluated on every route change. So, if
     // the route has changed and the node id is defined, we want to
     // focus that node.
@@ -204,5 +252,6 @@ export const useEditor = (externalProps: ExternalProps) => {
     replaceState,
     view: view.current,
     dispatch,
+    isComparingDocuments,
   }
 }

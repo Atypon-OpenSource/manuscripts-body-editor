@@ -60,9 +60,12 @@ export default (props: EditorProps) => {
     trackChangesPlugin({
       userID: props.userID,
       debug: props.debug,
-      initialStatus: props.getCapabilities().editWithoutTracking
-        ? TrackChangesStatus.disabled
-        : TrackChangesStatus.enabled,
+      initialStatus:
+        props.params.originalId && props.params.comparisonId
+          ? TrackChangesStatus.viewSnapshots
+          : props.getCapabilities().editWithoutTracking
+          ? TrackChangesStatus.disabled
+          : TrackChangesStatus.enabled,
     }),
     section_title(),
     table_editing_fix(),

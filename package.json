@@ -75,7 +75,7 @@
     "@manuscripts/eslint-config": "^0.5.1",
     "@types/codemirror": "^5.60.5",
     "@types/dompurify": "^2.4.0",
-    "@types/jest": "^29.2.4",
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.14.202",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
