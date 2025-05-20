@@ -169,25 +169,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </Field>
                   <LabelText>Corresponding Author</LabelText>
                 </CheckboxLabel>
-
-                <CheckboxLabel>
-                  <Field name={'role'} type={'checkbox'}>
-                    {(props: FieldProps) => (
-                      <CheckboxField
-                        name={'role'}
-                        checked={isAuthor}
-                        onChange={(e) => {
-                          formik.setFieldValue(
-                            props.field.name,
-                            e.target.checked ? 'author' : 'other',
-                            false
-                          )
-                        }}
-                      />
-                    )}
-                  </Field>
-                  <LabelText>Include in Authors List</LabelText>
-                </CheckboxLabel>
               </CheckboxContainer>
 
               <OrcidContainer>
