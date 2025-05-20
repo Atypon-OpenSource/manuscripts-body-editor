@@ -79,7 +79,9 @@ const TableChangeWarningDialog: React.FC<{
     isOpen={isOpen}
     category={Category.confirmation}
     header={"This change can't be tracked"}
-    message="Adding or deleting rows or columns won't be marked as change. Do you want to continue?"
+    message={
+      "Deleting rows or adding/deleting columns won't be marked as change. Do you want to continue?"
+    }
     actions={{
       primary: { action: primaryAction, title: 'Ok' },
       secondary: { action: secondaryAction, title: 'Cancel' },
@@ -99,7 +101,7 @@ export const ContextMenu: React.FC<{
     close()
   }
 
-  const [rowAction, setRowAction] = useState<Command>()
+  const [rowDeleteAction, setRowDeleteAction] = useState<Command>()
   const [columnAction, setColumnAction] = useState<Command>()
 
   const isCellSelectionMerged = mergeCells(view.state)
@@ -113,11 +115,11 @@ export const ContextMenu: React.FC<{
     <MenuDropdownList className={'table-ctx'}>
       <ActionButton
         disabled={isHeaderCellSelected(view.state)}
-        onClick={() => setRowAction(() => addRows('top'))}
+        onClick={() => runCommand(addRows('top'))}
       >
         <PlusIcon /> Insert {rows} above
       </ActionButton>
-      <ActionButton onClick={() => setRowAction(() => addRows('bottom'))}>
+      <ActionButton onClick={() => runCommand(addRows('bottom'))}>
         <PlusIcon /> Insert {rows} below
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
@@ -134,14 +136,13 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert header row {headerPosition}
       </ActionButton>
       <Separator />
-      <ActionButton onClick={() => setRowAction(() => deleteRow)}>
+      <ActionButton onClick={() => setRowDeleteAction(() => deleteRow)}>
         <GrayDeleteIcon /> Delete
         {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
-
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
         <ActionButton onClick={() => runCommand(mergeCells, true)}>
@@ -154,14 +155,14 @@ export const ContextMenu: React.FC<{
         </ActionButton>
       )}
       <TableChangeWarningDialog
-        isOpen={!!rowAction}
+        isOpen={!!rowDeleteAction}
         primaryAction={() => {
-          if (rowAction) {
-            runCommand(rowAction, true)
-            setRowAction(undefined)
+          if (rowDeleteAction) {
+            runCommand(rowDeleteAction, true)
+            setRowDeleteAction(undefined)
           }
         }}
-        secondaryAction={() => setRowAction(undefined)}
+        secondaryAction={() => setRowDeleteAction(undefined)}
       />
       <TableChangeWarningDialog
         isOpen={!!columnAction}
