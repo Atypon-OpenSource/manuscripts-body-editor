@@ -80,7 +80,7 @@ const TableChangeWarningDialog: React.FC<{
     category={Category.confirmation}
     header={"This change can't be tracked"}
     message={
-      "Deleting rows or adding/deleting columns won't be marked as change. Do you want to continue?"
+      "This action won't be marked as chnage. Do you want to continue?"
     }
     actions={{
       primary: { action: primaryAction, title: 'Ok' },
