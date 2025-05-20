@@ -33,7 +33,6 @@ export const compareNodeById = (
 
   const originalMap = new Map<string, ManuscriptNode>()
   const comparisonMap = new Map<string, ManuscriptNode>()
-  console.log('originalNode', originalNode)
   originalNode.forEach((item) => {
     originalMap.set(item.attrs.id, item)
   })
