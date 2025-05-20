@@ -46,7 +46,11 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { ConfirmationDialog, DialogType, ConfirmationDialogProps } from '../dialog/ConfirmationDialog'
+import {
+  ConfirmationDialog,
+  ConfirmationDialogProps,
+  DialogType,
+} from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
@@ -207,7 +211,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isOpen, setOpen] = useState(true)
   const [isDisableSave, setDisableSave] = useState(true)
   const [isEmailRequired, setEmailRequired] = useState(false)
-  const [dialogState, setDialogState] = useState<Partial<ConfirmationDialogProps> | undefined>(undefined)
+  const [dialogState, setDialogState] = useState<
+    Partial<ConfirmationDialogProps> | undefined
+  >(undefined)
   const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
@@ -295,7 +301,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         const validation = validateFormFields(values)
         if (validation.dialogType !== 'none') {
           showDialog({
-            type: validation.dialogType === 'required' ? DialogType.REQUIRED : DialogType.INVALID,
+            type:
+              validation.dialogType === 'required'
+                ? DialogType.REQUIRED
+                : DialogType.INVALID,
             entityType: 'author',
             fieldName: validation.fieldName,
             onPrimary: () => setDialogState(undefined),
@@ -333,7 +342,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       if (isDisableSave) {
         const validation = validateFormFields(valuesRef.current!)
         showDialog({
-          type: validation.dialogType === 'required' ? DialogType.REQUIRED : DialogType.INVALID,
+          type:
+            validation.dialogType === 'required'
+              ? DialogType.REQUIRED
+              : DialogType.INVALID,
           entityType: 'author',
           fieldName: validation.fieldName,
           onPrimary: () => setDialogState(undefined),
@@ -498,7 +510,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       if (isDisableSave) {
         const validation = validateFormFields(values)
         showDialog({
-          type: validation.dialogType === 'required' ? DialogType.REQUIRED : DialogType.INVALID,
+          type:
+            validation.dialogType === 'required'
+              ? DialogType.REQUIRED
+              : DialogType.INVALID,
           entityType: 'author',
           fieldName: validation.fieldName,
           onPrimary: () => setDialogState(undefined),
@@ -659,7 +674,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     type={dialogState.type ?? DialogType.REQUIRED}
                     entityType={dialogState.entityType ?? 'author'}
                     fieldName={dialogState.fieldName}
-                    onPrimary={dialogState.onPrimary ?? (() => setDialogState(undefined))}
+                    onPrimary={
+                      dialogState.onPrimary ?? (() => setDialogState(undefined))
+                    }
                     onSecondary={dialogState.onSecondary ?? (() => {})}
                   />
                 )}
@@ -669,10 +686,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   onDelete={handleDeleteAuthor}
                   showDeleteDialog={showDeleteDialog}
                   handleShowDeleteDialog={handleShowDeleteDialog}
-                  newEntity={
-                    newAuthor ||
-                    (isCreatingNewAuthor && !dialogState)
-                  }
+                  newEntity={newAuthor || (isCreatingNewAuthor && !dialogState)}
                   isDisableSave={isDisableSave}
                 />
                 <FormLabel>Details</FormLabel>
