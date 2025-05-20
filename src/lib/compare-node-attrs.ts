@@ -27,7 +27,7 @@ import {
 // it is used only for nodes that do not have a textnode content
 
 export const compareNodeAttrs = (
-  wrapperAttrs: Record<string, any>,
+  wrapperAttrs: Record<string, unknown>,
   originalNode: ManuscriptNode,
   comparisonNode: ManuscriptNode,
   itemNodeType: NodeType,

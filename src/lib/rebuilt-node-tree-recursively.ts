@@ -24,18 +24,10 @@ import {
   createDeleteAttrsDataTracked,
   createInsertAttrsDataTracked,
 } from './create-dataTracked-attrs'
-
+import { NodeComparison } from './distrubte-nodes'
 export const rebuildProseMirrorNodeTree = (
   nodeId: string,
-  nodeMap: Map<
-    string,
-    {
-      originalNode?: ManuscriptNode
-      comparisonNode?: ManuscriptNode
-      children?: Map<string, any>
-      status?: string
-    }
-  >
+  nodeMap: Map<string, NodeComparison>
 ): ManuscriptNode => {
   const entry = nodeMap.get(nodeId)
   if (!entry) {
@@ -59,9 +51,7 @@ export const rebuildProseMirrorNodeTree = (
   if (entry.status === 'deleted') {
     const finalAttrs = {
       ...baseNode.attrs,
-      dataTracked: [
-        createDeleteAttrsDataTracked(baseNode.attrs.id, baseNode.content),
-      ],
+      dataTracked: [createDeleteAttrsDataTracked('', baseNode.attrs)],
     }
     return baseNode.type.create(
       finalAttrs,
@@ -70,9 +60,7 @@ export const rebuildProseMirrorNodeTree = (
   } else if (entry.status === 'inserted') {
     const finalAttrs = {
       ...baseNode.attrs,
-      dataTracked: [
-        createInsertAttrsDataTracked(baseNode.attrs.id, baseNode.content),
-      ],
+      dataTracked: [createInsertAttrsDataTracked('', baseNode.attrs)],
     }
     return baseNode.type.create(
       finalAttrs,

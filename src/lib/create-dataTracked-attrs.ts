@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export const createSetAttrsDataTracked = (
   authorID: string,
-  oldAttrs: Record<string, any>
+  oldAttrs: Record<string, unknown>
 ) => {
   return {
     id: uuidv4(),
@@ -38,7 +38,7 @@ export const createSetAttrsDataTracked = (
 
 export const createDeleteAttrsDataTracked = (
   authorID: string,
-  oldAttrs: Record<string, any>
+  oldAttrs: Record<string, unknown>
 ) => {
   return {
     id: uuidv4(),
@@ -54,7 +54,7 @@ export const createDeleteAttrsDataTracked = (
 
 export const createInsertAttrsDataTracked = (
   authorID: string,
-  newAttrs: Record<string, any>
+  newAttrs: Record<string, unknown>
 ) => {
   return {
     id: uuidv4(),

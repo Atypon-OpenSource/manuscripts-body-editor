@@ -27,7 +27,7 @@ import {
 } from './create-dataTracked-attrs'
 
 interface NodeWithAttrs extends ManuscriptNode {
-  attrs: Record<string, any>
+  attrs: Record<string, unknown>
 }
 
 /**
@@ -212,7 +212,6 @@ const compareTable = (
 
   const matches = findRowMatches(originalRows, comparisonRows)
   const matchedOrigIndices = new Set(matches.map((m) => m.origIndex))
-  const matchedCompIndices = new Set(matches.map((m) => m.compIndex))
 
   for (let compIndex = 0; compIndex < comparisonRows.length; compIndex++) {
     const match = matches.find((m) => m.compIndex === compIndex)
@@ -737,18 +736,4 @@ const cleanTextForComparison = (text: string): string => {
   cleaned = cleaned.replace(/\s+/g, ' ').trim()
 
   return cleaned
-}
-
-/**
- * Simple node equality check
- */
-const isEqualNode = (node1: ManuscriptNode, node2: ManuscriptNode): boolean => {
-  if (node1.type.name !== node2.type.name) {
-    return false
-  }
-  if (node1.content.childCount !== node2.content.childCount) {
-    return false
-  }
-
-  return node1.textContent === node2.textContent
 }

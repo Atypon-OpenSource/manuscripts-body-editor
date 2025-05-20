@@ -38,10 +38,10 @@ import {
   createEditorView,
   ExternalProps,
 } from './configs/ManuscriptsEditor'
+import { compareDocuments } from './lib/compare-documents'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
-import { compareDocuments } from './lib/compare-documents'
 
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
@@ -52,13 +52,13 @@ export const useEditor = (externalProps: ExternalProps) => {
     createEditorState(props)
   )
   const params = useParams()
-  
+
   const [isComparingDocuments, setIsComparingDocuments] = useState<boolean>(
     Boolean(params.originalId && params.comparisonId)
   )
   const location = useLocation()
   const { collabProvider } = props
-  
+
   // Receiving steps from backend
   if (collabProvider && !isComparingDocuments) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -103,8 +103,9 @@ export const useEditor = (externalProps: ExternalProps) => {
 
       if (
         collabProvider &&
-        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
-        && !isComparingDocuments
+        (!trackState ||
+          trackState.status !== TrackChangesStatus.viewSnapshots) &&
+        !isComparingDocuments
       ) {
         const sendable = sendableSteps(nextState)
 
@@ -205,7 +206,10 @@ export const useEditor = (externalProps: ExternalProps) => {
                 props.params.comparisonId
               )
               if (originalSnapshot && comparisonSnapshot) {
-                const manuscript = compareDocuments(originalSnapshot, comparisonSnapshot)
+                const manuscript = compareDocuments(
+                  originalSnapshot,
+                  comparisonSnapshot
+                )
                 // update the editorState with the new manuscript
                 if (state) {
                   const newState = createEditorState(props, manuscript)
@@ -226,6 +230,7 @@ export const useEditor = (externalProps: ExternalProps) => {
     }
 
     fetchSnapshots()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.params.originalId, props.params.comparisonId])
 
   useEffect(() => {

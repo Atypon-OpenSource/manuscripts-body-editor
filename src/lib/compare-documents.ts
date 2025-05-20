@@ -237,7 +237,7 @@ const compareKeywords = (
 }
 
 const compareSectionNodes = (
-  comparisonNodeAttrs: any,
+  comparisonNodeAttrs: Record<string, unknown>,
   childrenMap: Map<string, NodeComparison>,
   sectionNodeType: NodeType
 ) => {
