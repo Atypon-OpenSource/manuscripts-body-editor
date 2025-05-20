@@ -264,15 +264,20 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selection])
 
-  const showDialog = (props: Partial<ConfirmationDialogProps>) => {
+  // Unified helper function to show dialogs
+  const showDialog = (
+    type: DialogType,
+    fieldName?: string,
+    onPrimary?: () => void,
+    onSecondary?: () => void
+  ) => {
     setDialogState({
       isOpen: true,
-      type: props.type ?? DialogType.REQUIRED,
-      entityType: props.entityType ?? 'author',
-      fieldName: props.fieldName,
-      onPrimary: props.onPrimary ?? (() => setDialogState(undefined)),
-      onSecondary: props.onSecondary ?? (() => {}),
-      ...props,
+      type,
+      entityType: 'author',
+      fieldName,
+      onPrimary: onPrimary ?? (() => setDialogState(undefined)),
+      onSecondary: onSecondary ?? (() => {}),
     })
   }
 
@@ -290,26 +295,19 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       const hasChanges = !isEqual(normalizedSelection, normalizedValues)
 
       if (hasChanges && !isDisableSave) {
-        showDialog({
-          type: DialogType.SAVE,
-          entityType: 'author',
-          onPrimary: handleSave,
-          onSecondary: handleCancel,
-        })
+        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
         setNextAuthor(author)
       } else if (hasChanges && isDisableSave) {
         const validation = validateFormFields(values)
         if (validation.dialogType !== 'none') {
-          showDialog({
-            type:
-              validation.dialogType === 'required'
-                ? DialogType.REQUIRED
-                : DialogType.INVALID,
-            entityType: 'author',
-            fieldName: validation.fieldName,
-            onPrimary: () => setDialogState(undefined),
-            onSecondary: handleCancel,
-          })
+          showDialog(
+            validation.dialogType === 'required'
+              ? DialogType.REQUIRED
+              : DialogType.INVALID,
+            validation.fieldName,
+            undefined,
+            handleCancel
+          )
           setNextAuthor(author)
         } else {
           updateAffiliationSelection(author)
@@ -341,23 +339,18 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (unSavedChanges) {
       if (isDisableSave) {
         const validation = validateFormFields(valuesRef.current!)
-        showDialog({
-          type:
+        if (validation.dialogType !== 'none') {
+          showDialog(
             validation.dialogType === 'required'
               ? DialogType.REQUIRED
               : DialogType.INVALID,
-          entityType: 'author',
-          fieldName: validation.fieldName,
-          onPrimary: () => setDialogState(undefined),
-          onSecondary: handleCancel,
-        })
+            validation.fieldName,
+            undefined,
+            handleCancel
+          )
+        }
       } else {
-        showDialog({
-          type: DialogType.SAVE,
-          entityType: 'author',
-          onPrimary: handleSave,
-          onSecondary: handleCancel,
-        })
+        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
       }
     } else {
       setDialogState(undefined)
@@ -477,7 +470,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const name = buildBibliographicName({ given: '', family: '' })
     const author: ContributorAttrs = {
       id: generateID(ObjectTypes.Contributor),
-      role: 'author',
+      role: '',
       affiliations: [],
       bibliographicName: name,
       email: '',
@@ -509,25 +502,21 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     ) {
       if (isDisableSave) {
         const validation = validateFormFields(values)
-        showDialog({
-          type:
+        if (validation.dialogType !== 'none') {
+          showDialog(
             validation.dialogType === 'required'
               ? DialogType.REQUIRED
               : DialogType.INVALID,
-          entityType: 'author',
-          fieldName: validation.fieldName,
-          onPrimary: () => setDialogState(undefined),
-          onSecondary: handleCancel,
-        })
+            validation.fieldName,
+            undefined,
+            handleCancel
+          )
+        }
+        setNextAuthor(null)
       } else {
-        showDialog({
-          type: DialogType.SAVE,
-          entityType: 'author',
-          onPrimary: handleSave,
-          onSecondary: handleCancel,
-        })
+        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
+        setNextAuthor(null)
       }
-      setNextAuthor(null)
     } else {
       createNewAuthor()
       setShowAffiliationDrawer(false)

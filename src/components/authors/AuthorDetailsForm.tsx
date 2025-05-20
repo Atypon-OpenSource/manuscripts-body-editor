@@ -26,7 +26,6 @@ import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
-import { validateEmail } from '../../lib/fieldValidators'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export const LabelText = styled.div`
@@ -99,6 +98,23 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   onValidationChange,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+
+  // validate email format
+  const validateEmail = (
+    email: string | undefined,
+    isRequired: boolean | undefined
+  ): { isValid: boolean; error?: string } => {
+    if (isRequired && !email) {
+      return { isValid: false, error: 'Email is required' }
+    }
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email)) {
+        return { isValid: false, error: 'Please enter a valid email address' }
+      }
+    }
+    return { isValid: true }
+  }
 
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
