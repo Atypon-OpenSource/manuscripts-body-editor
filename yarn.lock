@@ -1655,10 +1655,10 @@
     "@manuscripts/json-schema" "2.2.10"
     citeproc "^2.4.62"
 
-"@manuscripts/style-guide@2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.1.10.tgz#80082803d49baea65e2db438e44eb8150b328c41"
-  integrity sha512-znGmDo2pXTqstNienN8r9qz6LZHyl3M/UwNhYux0PZDxTrSLe0YFA6IKaTEnkNshGOU5ItF7c7TL18XwkvHd3Q==
+"@manuscripts/style-guide@2.1.12":
+  version "2.1.12"
+  resolved "https://registry.yarnpkg.com/@manuscripts/style-guide/-/style-guide-2.1.12.tgz#03b2b179a1b7050c9e12603d41e01f061424e36f"
+  integrity sha512-i/Wv5mZAw0BPMatpRx2fBqbg3ro5iARenHIZqG6ATvJxcQgT4iEPdyqrcBJpAYdrbvQgsI8SVOx6IjRwpAwX9g==
   dependencies:
     "@headlessui/react" "^2.1.10"
     "@manuscripts/json-schema" "2.2.11"

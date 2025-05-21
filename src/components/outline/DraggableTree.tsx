@@ -158,7 +158,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [isOpen, setOpen] = useState(depth === 0)
   const ref = useRef<HTMLDivElement>(null)
   // Disable drag-and-drop functionality when the body is locked
-  const disableDragAndDrop = view ? isBodyLocked(view.state) : true
+  const disableDragAndDrop = view
+    ? isBodyLocked(view.state) || !can?.editArticle
+    : true
 
   const { node, items, parent } = tree
 
