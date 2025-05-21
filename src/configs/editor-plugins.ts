@@ -52,6 +52,7 @@ import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps) => {
+  const isComparingMode = props.params.originalId && props.params.comparisonId
   const allPlugins = [
     rules,
     ...keys,
@@ -60,12 +61,11 @@ export default (props: EditorProps) => {
     trackChangesPlugin({
       userID: props.userID,
       debug: props.debug,
-      initialStatus:
-        props.params.originalId && props.params.comparisonId
-          ? TrackChangesStatus.viewSnapshots
-          : props.getCapabilities().editWithoutTracking
-          ? TrackChangesStatus.disabled
-          : TrackChangesStatus.enabled,
+      initialStatus: props.getCapabilities().editWithoutTracking
+        ? TrackChangesStatus.disabled
+        : props.getCapabilities().editArticle && !isComparingMode
+        ? TrackChangesStatus.enabled
+        : TrackChangesStatus.viewSnapshots,
     }),
     section_title(),
     table_editing_fix(),
