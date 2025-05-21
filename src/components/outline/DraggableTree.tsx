@@ -34,6 +34,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted } from '../../lib/track-changes-utils'
+import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import {
   Outline,
@@ -156,6 +157,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [dropSide, setDropSide] = useState<DropSide>()
   const [isOpen, setOpen] = useState(depth === 0)
   const ref = useRef<HTMLDivElement>(null)
+  // Disable drag-and-drop functionality when the body is locked
+  const disableDragAndDrop = view
+    ? isBodyLocked(view.state) || !can?.editArticle
+    : true
 
   const { node, items, parent } = tree
 
@@ -179,7 +184,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     type: 'outline',
     item: tree,
     canDrag: () => {
-      return depth !== 0
+      return depth !== 0 && !disableDragAndDrop
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -189,6 +194,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
+      if (disableDragAndDrop) {
+        return false
+      }
       if (isAbstractOrBackmatter(item) || isAbstractOrBackmatter(tree)) {
         return false
       }
@@ -217,14 +225,14 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       return tree.parent.canReplace(index, index, Fragment.from(item.node))
     },
     hover(item, monitor) {
-      if (!ref.current || !monitor.canDrop()) {
+      if (disableDragAndDrop || !ref.current || !monitor.canDrop()) {
         return
       }
       const side = getDropSide(ref.current, monitor)
       setDropSide(side)
     },
     drop(item: TreeItem, monitor) {
-      if (!ref.current || !view) {
+      if (disableDragAndDrop || !ref.current || !view) {
         return
       }
       const side = getDropSide(ref.current, monitor)
@@ -272,12 +280,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   const dragClass = isDragging ? 'dragging' : ''
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
+  const deletedClass = isDeletedItem ? 'deleted' : ''
 
   return (
-    <Outline
-      ref={ref}
-      className={`${dragClass} ${dropClass} ${isDeletedItem && 'deleted'}`}
-    >
+    <Outline ref={ref} className={`${dragClass} ${dropClass} ${deletedClass}`}>
       {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
           {items.length ? (

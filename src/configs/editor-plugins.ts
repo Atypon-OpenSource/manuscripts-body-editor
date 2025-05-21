@@ -42,6 +42,7 @@ import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
 import placeholder from '../plugins/placeholder'
+import prevent_empty from '../plugins/prevent-empty'
 import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
@@ -61,7 +62,9 @@ export default (props: EditorProps) => {
       debug: props.debug,
       initialStatus: props.getCapabilities().editWithoutTracking
         ? TrackChangesStatus.disabled
-        : TrackChangesStatus.enabled,
+        : props.getCapabilities().editArticle
+        ? TrackChangesStatus.enabled
+        : TrackChangesStatus.viewSnapshots,
     }),
     section_title(),
     table_editing_fix(),
@@ -84,6 +87,7 @@ export default (props: EditorProps) => {
     lock_body(),
     alt_titles(),
     accessibility_element(),
+    prevent_empty(),
   ]
 
   if (props.collabProvider) {
