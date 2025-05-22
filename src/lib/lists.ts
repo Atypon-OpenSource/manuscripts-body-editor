@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ListStyleType} from "@manuscripts/transform";
+import { ListStyleType } from '@manuscripts/transform'
 
 export const parseCssListStyleType = (style: string | null) => {
   switch (style) {
