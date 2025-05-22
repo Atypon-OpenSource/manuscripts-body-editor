@@ -70,7 +70,7 @@ const isHeaderCellSelected = (state: EditorState) => {
   )
 }
 
-const ColumnChangeWarningDialog: React.FC<{
+const TableChangeWarningDialog: React.FC<{
   isOpen: boolean
   primaryAction: () => void
   secondaryAction: () => void
@@ -79,16 +79,12 @@ const ColumnChangeWarningDialog: React.FC<{
     isOpen={isOpen}
     category={Category.confirmation}
     header={"This change can't be tracked"}
-    message="This column action won't be marked as chnage. Do you want to continue?"
+    message={
+      "This action won't be marked as chnage. Do you want to continue?"
+    }
     actions={{
-      primary: {
-        action: primaryAction,
-        title: 'Ok',
-      },
-      secondary: {
-        action: secondaryAction,
-        title: 'Cancel',
-      },
+      primary: { action: primaryAction, title: 'Ok' },
+      secondary: { action: secondaryAction, title: 'Cancel' },
     }}
   />
 )
@@ -105,6 +101,7 @@ export const ContextMenu: React.FC<{
     close()
   }
 
+  const [rowDeleteAction, setRowDeleteAction] = useState<Command>()
   const [columnAction, setColumnAction] = useState<Command>()
 
   const isCellSelectionMerged = mergeCells(view.state)
@@ -139,14 +136,13 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert header row {headerPosition}
       </ActionButton>
       <Separator />
-      <ActionButton onClick={() => runCommand(deleteRow)}>
+      <ActionButton onClick={() => setRowDeleteAction(() => deleteRow)}>
         <GrayDeleteIcon /> Delete
         {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
         <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
-
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
         <ActionButton onClick={() => runCommand(mergeCells, true)}>
@@ -158,8 +154,17 @@ export const ContextMenu: React.FC<{
           Split cells
         </ActionButton>
       )}
-
-      <ColumnChangeWarningDialog
+      <TableChangeWarningDialog
+        isOpen={!!rowDeleteAction}
+        primaryAction={() => {
+          if (rowDeleteAction) {
+            runCommand(rowDeleteAction, true)
+            setRowDeleteAction(undefined)
+          }
+        }}
+        secondaryAction={() => setRowDeleteAction(undefined)}
+      />
+      <TableChangeWarningDialog
         isOpen={!!columnAction}
         primaryAction={() => {
           if (columnAction) {
