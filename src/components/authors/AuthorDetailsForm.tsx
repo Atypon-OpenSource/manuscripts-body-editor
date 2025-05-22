@@ -49,10 +49,21 @@ const OrcidContainer = styled.div`
   margin: 16px 0 0;
 `
 
-const TextFieldWithError = styled(TextField)`
+const TextFieldWithError = styled(TextField)<{ hasError?: boolean }>`
   &:required::placeholder {
     color: ${(props) => props.theme.colors.text.error};
   }
+  ${(props) =>
+    props.hasError &&
+    `
+    border-color: ${props.theme.colors.border.error};
+  `}
+`
+
+const ErrorMessage = styled.div`
+  color: ${(props) => props.theme.colors.text.error};
+  font-size: 0.8rem;
+  margin-top: 4px;
 `
 
 const CheckboxContainer = styled.div`
@@ -73,6 +84,7 @@ interface AuthorDetailsFormProps {
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
+  onValidationChange?: (isValid: boolean) => void
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -83,8 +95,26 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   isEmailRequired,
   selectedAffiliations,
   authorFormRef,
+  onValidationChange,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
+
+  // validate email format
+  const validateEmail = (
+    email: string | undefined,
+    isRequired: boolean | undefined
+  ): { isValid: boolean; error?: string } => {
+    if (isRequired && !email) {
+      return { isValid: false, error: 'Email is required' }
+    }
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email)) {
+        return { isValid: false, error: 'Please enter a valid email address' }
+      }
+    }
+    return { isValid: true }
+  }
 
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
@@ -107,6 +137,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       enableReinitialize={true}
       validateOnChange={true}
       innerRef={formRef}
+      validate={(values) => {
+        const errors: Partial<ContributorAttrs> = {}
+        const emailValidation = validateEmail(values.email, isEmailRequired)
+        if (!emailValidation.isValid && emailValidation.error) {
+          errors.email = emailValidation.error
+        }
+
+        onValidationChange?.(Object.keys(errors).length === 0)
+
+        return errors
+      }}
     >
       {(formik) => {
         const isAuthor = formik.values.role === 'author'
@@ -140,18 +181,26 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </TextFieldGroupContainer>
 
               <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => {
-                  const placeholder = isEmailRequired
-                    ? '*Email address (required)'
-                    : 'Email address'
+                {({ field, form }: FieldProps) => {
+                  const error = form.touched.email && form.errors.email
                   return (
-                    <TextFieldWithError
-                      id={'email'}
-                      type="email"
-                      required={isEmailRequired}
-                      placeholder={placeholder}
-                      {...props.field}
-                    />
+                    <div>
+                      <TextFieldWithError
+                        {...field}
+                        id={'email'}
+                        type="email"
+                        required={isEmailRequired}
+                        placeholder={
+                          isEmailRequired
+                            ? '*Email address (required)'
+                            : 'Email address'
+                        }
+                        hasError={!!error}
+                      />
+                      {error && typeof error === 'string' && (
+                        <ErrorMessage>{error}</ErrorMessage>
+                      )}
+                    </div>
                   )
                 }}
               </Field>
