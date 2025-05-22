@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { ListNode, ListStyleType, ManuscriptNode } from '@manuscripts/transform'
+import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
+import { writeCssListStyleType } from '../lib/lists'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
@@ -28,7 +29,7 @@ export class ListView extends BlockView<Trackable<ListNode>> {
     super.updateContents()
     if (this.contentDOM) {
       const type = this.node.attrs.listStyleType
-      this.contentDOM.style.listStyleType = getCssListStyleType(type)
+      this.contentDOM.style.listStyleType = writeCssListStyleType(type)
     }
   }
 }
@@ -36,29 +37,10 @@ export class ListView extends BlockView<Trackable<ListNode>> {
 export const listCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
   const type = node.attrs.listStyleType
-  dom.style.listStyleType = getCssListStyleType(type)
+  dom.style.listStyleType = writeCssListStyleType(type)
 }
 export default createNodeOrElementView(
   EditableBlock(ListView),
   'ul',
   listCallback
 )
-
-export const getCssListStyleType = (type: ListStyleType) => {
-  switch (type) {
-    case 'bullet':
-      return 'disc'
-    case 'order':
-      return 'decimal'
-    case 'alpha-lower':
-      return 'lower-alpha'
-    case 'alpha-upper':
-      return 'upper-alpha'
-    case 'roman-lower':
-      return 'lower-roman'
-    case 'roman-upper':
-      return 'upper-roman'
-    case 'simple':
-      return 'none'
-  }
-}

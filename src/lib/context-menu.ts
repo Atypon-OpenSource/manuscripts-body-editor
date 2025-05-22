@@ -23,7 +23,7 @@ import {
 import {
   isInBibliographySection,
   isSectionTitleNode,
-  ListStyleType,
+  ListNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -304,7 +304,8 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const type = this.node.attrs.listStyleType as ListStyleType
+          const list = this.node as ListNode
+          const type = list.attrs.listStyleType
           if (type === 'simple' || type === 'bullet') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
