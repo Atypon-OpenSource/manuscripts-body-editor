@@ -17,6 +17,7 @@
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   BibliographyElementNode,
+  BibliographyItemAttrs,
   BibliographyItemNode,
   schema,
 } from '@manuscripts/transform'
@@ -29,7 +30,6 @@ import {
 import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
-import { BibliographyItemAttrs } from '../lib/references'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
@@ -170,7 +170,7 @@ export class BibliographyElementBlockView extends BlockView<
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
 
-    const [meta, bibliography] = bib.provider.makeBibliography()
+    const [meta, bibliography] = bib.engine.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]

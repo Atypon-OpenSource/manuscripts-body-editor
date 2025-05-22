@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getJatsListType, schema } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
+
+import { parseCssListStyleType } from './lib/lists'
 
 // we can override other node rules for clipboard here
 // to avoid having a conflict with manuscripts-transform
@@ -27,13 +29,15 @@ const nodes = [
     tag: 'ul, ol',
     node: 'list',
     getAttrs: (list: HTMLElement) => {
-      const dom = list
+      let type = list.style.listStyleType
+      if (!type) {
+        const item = list.firstElementChild as HTMLElement
+        if (item) {
+          type = item.style.listStyleType
+        }
+      }
       return {
-        listStyleType: getJatsListType(
-          dom.style.listStyleType ||
-            (dom.firstChild &&
-              (dom.firstChild as HTMLElement).style.listStyleType)
-        ),
+        listStyleType: parseCssListStyleType(type),
       }
     },
   },

@@ -15,10 +15,10 @@
  */
 
 import { AddedIcon, AddIcon, SecondaryButton } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs } from '../../lib/references'
 import { ReferenceLine } from './ReferenceLine'
 
 const StatusIcon = styled.div`

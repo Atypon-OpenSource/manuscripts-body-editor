@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 
-import {
-  getListType,
-  JatsStyleType,
-  ListNode,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ListNode, ManuscriptNode } from '@manuscripts/transform'
 
+import { writeCssListStyleType } from '../lib/lists'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import { EditableBlock } from './editable_block'
+
 export class ListView extends BlockView<Trackable<ListNode>> {
   public elementType = 'ul'
 
   public updateContents() {
     super.updateContents()
-    const actualAttrs = this.node.attrs
     if (this.contentDOM) {
-      const type = actualAttrs.listStyleType as JatsStyleType
-      this.contentDOM.style.listStyleType = getListType(type).style
+      const type = this.node.attrs.listStyleType
+      this.contentDOM.style.listStyleType = writeCssListStyleType(type)
     }
   }
 }
 
 export const listCallback = (node: ManuscriptNode, dom: HTMLElement) => {
   dom.classList.add('list')
-  const type = node.attrs.listStyleType as JatsStyleType
-  dom.style.listStyleType = getListType(type).style
+  const type = node.attrs.listStyleType
+  dom.style.listStyleType = writeCssListStyleType(type)
 }
 export default createNodeOrElementView(
   EditableBlock(ListView),

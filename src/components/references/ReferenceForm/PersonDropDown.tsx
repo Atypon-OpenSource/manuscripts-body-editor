@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BibliographicName } from '@manuscripts/json-schema'
 import { DeleteIcon } from '@manuscripts/style-guide'
 import { Field, FieldProps } from 'formik'
 import React, { useState } from 'react'
@@ -30,8 +29,9 @@ import {
   ToggleButton,
 } from './styled-components'
 
-type PersonDropDownProps = {
-  person: BibliographicName
+export type PersonDropDownProps = {
+  person: CSL.Person
+  isNew: boolean
   index: number
   remove: (index: number) => void
   onChange: (e: React.ChangeEvent) => void
@@ -39,9 +39,9 @@ type PersonDropDownProps = {
 }
 
 export const PersonDropDown = (props: PersonDropDownProps) => {
-  const { person, index, remove, onChange, type } = props
+  const { person, isNew, index, remove, onChange, type } = props
 
-  const [isOpen, setIsOpen] = useState(!!person['isNew'])
+  const [isOpen, setIsOpen] = useState(isNew)
   const fullName = [person.given, person.family].join(' ').trim()
   const title = fullName.length > 0 ? fullName : `Edit ${type} name`
   const prefix = `${type}.${index}`

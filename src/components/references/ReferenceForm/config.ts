@@ -15,19 +15,6 @@
  */
 import { BibliographyItemType } from '@manuscripts/transform'
 
-export const bibliographyItemTypes: [BibliographyItemType, string][] = [
-  ['article-journal', 'Journal Article'],
-  ['book', 'Book'],
-  ['chapter', 'Chapter'],
-  ['confproc', 'Conference Paper'],
-  ['thesis', 'Thesis'],
-  ['webpage', 'Web Page'],
-  ['other', 'Other'],
-  ['standard', 'Standard'],
-  ['dataset', 'Dataset'],
-  ['preprint', 'Preprint'],
-]
-
 export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
   'article-journal': new Set([
     'author',

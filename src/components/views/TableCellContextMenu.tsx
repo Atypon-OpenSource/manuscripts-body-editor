@@ -79,9 +79,7 @@ const TableChangeWarningDialog: React.FC<{
     isOpen={isOpen}
     category={Category.confirmation}
     header={"This change can't be tracked"}
-    message={
-      "This action won't be marked as chnage. Do you want to continue?"
-    }
+    message={"This action won't be marked as change. Do you want to continue?"}
     actions={{
       primary: { action: primaryAction, title: 'Ok' },
       secondary: { action: secondaryAction, title: 'Cancel' },

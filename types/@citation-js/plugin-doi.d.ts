@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { createNodeOrElementView } from './creators'
-import { EditableBlock } from './editable_block'
-import { orderedListCallback, OrderedListView } from './ordered_list'
-
-export default createNodeOrElementView(
-  EditableBlock(OrderedListView),
-  'ol',
-  orderedListCallback
-)
+declare module '@citation-js/plugin-doi'

@@ -22,11 +22,11 @@ import {
   SecondaryButton,
   UploadIcon,
 } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { debounce } from 'lodash'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs } from '../../lib/references'
 import {
   BibliographyItemSource,
   DocumentReferenceSource,
