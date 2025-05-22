@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import {
   ButtonGroup,
   Category,
@@ -25,7 +24,11 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
-import { BibliographyItemAttrs } from '@manuscripts/transform'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
 import React, { useMemo, useReducer, useState } from 'react'
 import styled from 'styled-components'
 
@@ -163,7 +166,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const handleAdd = () => {
     setSearching(false)
     const item: BibliographyItemAttrs = {
-      id: generateID(ObjectTypes.BibliographyItem),
+      id: generateNodeID(schema.nodes.bibliography_item),
       type: 'article-journal',
     }
     setEditingForm({ show: true, item: item })
@@ -176,7 +179,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const handleSaveImport = (data: BibliographyItemAttrs[]) => {
     data.forEach((item) => {
       const newItem = { ...item }
-      newItem.id = generateID(ObjectTypes.BibliographyItem)
+      newItem.id = generateNodeID(schema.nodes.bibliography_item)
       handleSave(newItem)
       handleCite([newItem])
     })

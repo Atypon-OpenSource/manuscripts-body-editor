@@ -249,10 +249,7 @@ export class CitationEditableView extends CitationView {
 
     const tr = this.view.state.tr
     const pos = this.getPos()
-    tr.setNodeMarkup(pos, undefined, {
-      ...attrs,
-      rids,
-    })
+    tr.setNodeAttribute(pos, 'rids', rids)
 
     this.view.dispatch(tr)
     this.handleCancel()

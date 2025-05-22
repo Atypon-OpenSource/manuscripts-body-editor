@@ -15,7 +15,7 @@
  */
 import { ListStyleType } from '@manuscripts/transform'
 
-export const parseCssListStyleType = (style: string | null) => {
+export const parseCssListStyleType = (style: string): ListStyleType => {
   switch (style) {
     case 'disc':
       return 'bullet'
@@ -29,10 +29,10 @@ export const parseCssListStyleType = (style: string | null) => {
       return 'roman-lower'
     case 'upper-roman':
       return 'roman-upper'
-    case 'simple':
-      return 'none'
+    case 'none':
+      return 'simple'
     default:
-      return 'none'
+      return 'simple'
   }
 }
 

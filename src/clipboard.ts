@@ -29,8 +29,15 @@ const nodes = [
     tag: 'ul, ol',
     node: 'list',
     getAttrs: (list: HTMLElement) => {
+      let type = list.style.listStyleType
+      if (!type) {
+        const item = list.firstElementChild as HTMLElement
+        if (item) {
+          type = item.style.listStyleType
+        }
+      }
       return {
-        listStyleType: parseCssListStyleType(list.style.listStyleType),
+        listStyleType: parseCssListStyleType(type),
       }
     },
   },

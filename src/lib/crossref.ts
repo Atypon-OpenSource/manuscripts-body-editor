@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
+import { generateNodeID, schema } from '@manuscripts/transform'
+
 import {
   BibliographyItemSearch,
   BibliographyItemSource,
 } from '../components/references/BibliographyItemSource'
 
+type CrossrefItem = {
+  [key: string]: unknown
+}
+
 type CrossrefResponse = {
   message: {
-    items: CSL.Data[]
+    items: CrossrefItem[]
     'total-results': number
   }
 }
@@ -53,7 +59,7 @@ const searchAsync = async (
     throw new Error('There was a problem searching for this query.')
   }
   const data = (await response.json()) as CrossrefResponse
-  const items = data.message.items
+  const items = data.message.items.map(fixItem)
   const total = data.message['total-results']
 
   return {
@@ -66,4 +72,19 @@ export const Crossref: BibliographyItemSource = {
   id: 'crossref',
   label: 'External sources',
   search,
+}
+
+const fixItem = (item: CrossrefItem): CSL.Data => {
+  for (const key in item) {
+    if (key === 'author' || key === 'editor') {
+      continue
+    }
+    const value = item[key]
+    if (Array.isArray(value)) {
+      const [data] = item[key] as string[]
+      item[key] = data || undefined
+    }
+  }
+  item.id = generateNodeID(schema.nodes.bibliography_item)
+  return item as CSL.Data
 }
