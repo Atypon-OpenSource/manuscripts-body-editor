@@ -17,6 +17,7 @@
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   BibliographyElementNode,
+  BibliographyItemAttrs,
   BibliographyItemNode,
   schema,
 } from '@manuscripts/transform'
@@ -29,7 +30,6 @@ import {
 import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
-import { BibliographyItemAttrs } from '../lib/references'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,

@@ -24,8 +24,8 @@ import { useFormik } from 'formik'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { importBibliographyItems } from '../../lib/references'
 
+import { importBibliographyItems } from '../../lib/references'
 import { ReferenceLine } from './ReferenceLine'
 
 export interface ImportBibFormProps {

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ListNode, ListStyleType,
-  ManuscriptNode,
-} from '@manuscripts/transform'
+import { ListNode, ListStyleType, ManuscriptNode } from '@manuscripts/transform'
 
 import { Trackable } from '../types'
 import BlockView from './block_view'

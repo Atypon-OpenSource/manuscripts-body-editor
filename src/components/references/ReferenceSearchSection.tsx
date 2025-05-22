@@ -18,10 +18,10 @@ import {
   TriangleCollapsedIcon,
   TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs } from '../../lib/references'
 import {
   BibliographyItemSearch,
   BibliographyItemSource,

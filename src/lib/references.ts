@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Cite } from '@citation-js/core'
 import {
-  BibliographyItemNode,
+  BibliographyItemAttrs,
   BibliographyItemType,
-  CitationNode
 } from '@manuscripts/transform'
-
-import { TrackableAttributes } from '../types'
-import {Cite} from "@citation-js/core";
-
-export type BibliographyItemAttrs = TrackableAttributes<BibliographyItemNode>
-export type CitationAttrs = TrackableAttributes<CitationNode>
 
 export const metadata = (item: BibliographyItemAttrs): string => {
   return [authors(item), item['container-title'], issuedYear(item)]
@@ -62,7 +56,6 @@ export const authors = (item: BibliographyItemAttrs): string => {
   return authors.join(', ')
 }
 
-
 const loadCitationJsPlugins = async () => {
   try {
     await Promise.all([
@@ -98,4 +91,3 @@ export const bibliographyItemTypes: [BibliographyItemType, string][] = [
   ['dataset', 'Dataset'],
   ['preprint', 'Preprint'],
 ]
-

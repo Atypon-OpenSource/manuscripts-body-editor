@@ -15,16 +15,18 @@
  */
 
 import {
-  CitationNode, isBibliographyElementNode, isBibliographyItemNode,
+  BibliographyItemAttrs,
+  buildCiteprocCitation,
+  CitationNode,
+  isBibliographyElementNode,
+  isBibliographyItemNode,
   isCitationNode,
   ManuscriptNode,
-  BibliographyItemAttrs,
-  buildCiteprocCitation
 } from '@manuscripts/transform'
 import * as Citeproc from 'citeproc'
 import { isEqual } from 'lodash'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
-import {Decoration, DecorationSet} from 'prosemirror-view'
+import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
@@ -127,6 +129,7 @@ const buildBibliographyPluginState = (
 
     const engine = new Citeproc.Engine(
       {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         retrieveLocale: () => csl.locale!,
         retrieveItem: (id: string) => {
           const item = bibliographyItems.get(id)
@@ -141,7 +144,9 @@ const buildBibliographyPluginState = (
     )
 
     //create new citations since citeproc modifies the ones passed
-    const citationTexts = engine.rebuildProcessorState(nodes.map(([node]) => buildCiteprocCitation(node.attrs)))
+    const citationTexts = engine.rebuildProcessorState(
+      nodes.map(([node]) => buildCiteprocCitation(node.attrs))
+    )
 
     $new.version = String(version++)
     $new.citationCounts = citationCounts
@@ -224,7 +229,6 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
 
   return decorations
 }
-
 
 export const getBibliographyPluginState = (state: EditorState) => {
   return bibliographyKey.getState(state)

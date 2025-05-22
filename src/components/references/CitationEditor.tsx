@@ -25,11 +25,11 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useMemo, useReducer, useState } from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
-import { BibliographyItemAttrs } from '../../lib/references'
 import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'

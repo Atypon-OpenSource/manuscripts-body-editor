@@ -22,7 +22,8 @@ import {
 } from '@manuscripts/style-guide'
 import {
   isInBibliographySection,
-  isSectionTitleNode, ListStyleType,
+  isSectionTitleNode,
+  ListStyleType,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
