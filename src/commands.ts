@@ -234,7 +234,7 @@ export const canInsert =
     }
 
     if (type === schema.nodes.table_element) {
-      if ($from.node(-1).type === schema.nodes.list_item) {
+      if (findParentNodeOfType(schema.nodes.list_item)(state.selection)) {
         return false
       }
     }
