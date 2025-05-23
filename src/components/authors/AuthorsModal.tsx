@@ -148,7 +148,7 @@ export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
 
 const normalize = (author: ContributorAttrs) => ({
   id: author.id,
-  role: author.role || 'author',
+  role: author.role || '',
   affiliations: (author.affiliations || []).sort(),
   bibliographicName: author.bibliographicName,
   email: author.email || '',
