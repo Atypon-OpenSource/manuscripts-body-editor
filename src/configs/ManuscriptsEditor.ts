@@ -21,7 +21,7 @@ import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import { Location, NavigateFunction, Params } from 'react-router-dom'
+import { Location, NavigateFunction } from 'react-router-dom'
 import { DefaultTheme } from 'styled-components'
 
 import { CollabProvider } from '../classes/collabProvider'
@@ -63,7 +63,8 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
-  params: Params
+  enableCompare?: boolean
+  submissionId?: string
   dispatch?: Dispatch
   onEditorClick: (
     pos: number,

@@ -31,14 +31,13 @@ import {
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import {
   createEditorState,
   createEditorView,
   ExternalProps,
 } from './configs/ManuscriptsEditor'
-import { compareDocuments } from './lib/compare-documents'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
@@ -51,13 +50,18 @@ export const useEditor = (externalProps: ExternalProps) => {
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
-  const params = useParams()
-
-  const [isComparingDocuments, setIsComparingDocuments] = useState<boolean>(
-    Boolean(params.originalId && params.comparisonId)
-  )
+  const isComparingDocuments = props.enableCompare || false
   const location = useLocation()
   const { collabProvider } = props
+
+  // Update editor state when document changes (e.g., when switching to comparison mode)
+  useEffect(() => {
+    if (view.current && isComparingDocuments) {
+      const newState = createEditorState(props)
+      setState(newState)
+      view.current.updateState(newState)
+    }
+  }, [props.doc]) // Re-run when document changes
 
   // Receiving steps from backend
   if (collabProvider && !isComparingDocuments) {
@@ -194,46 +198,6 @@ export const useEditor = (externalProps: ExternalProps) => {
     },
     [state]
   )
-
-  useEffect(() => {
-    const fetchSnapshots = async () => {
-      if (state) {
-        if (props.params.originalId && props.params.comparisonId) {
-          if (props.getSnapshot) {
-            try {
-              const originalSnapshot = await props.getSnapshot(
-                props.params.originalId
-              )
-              const comparisonSnapshot = await props.getSnapshot(
-                props.params.comparisonId
-              )
-              if (originalSnapshot && comparisonSnapshot) {
-                const manuscript = compareDocuments(
-                  originalSnapshot,
-                  comparisonSnapshot
-                )
-                // update the editorState with the new manuscript
-                if (state) {
-                  const newState = createEditorState(props, manuscript)
-                  setState(newState)
-                  view.current?.updateState(newState)
-                  setIsComparingDocuments(false)
-                }
-              }
-            } catch (error) {
-              setIsComparingDocuments(false)
-              console.error('Error comparing documents:', error)
-            }
-          }
-        } else {
-          setIsComparingDocuments(false)
-        }
-      }
-    }
-
-    fetchSnapshots()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.params.originalId, props.params.comparisonId])
 
   useEffect(() => {
     // This will be evaluated on every route change. So, if

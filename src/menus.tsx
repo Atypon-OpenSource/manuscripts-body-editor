@@ -563,7 +563,7 @@ export const getEditorMenus = (
                 snapshots: props.snapshots || [],
                 loading: false,
                 error: null,
-                submissionId: props.params?.id,
+                submissionId: props.submissionId || '',
                 onCancel: () => {
                   view.focus()
                   container.remove()

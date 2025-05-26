@@ -52,7 +52,7 @@ import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps) => {
-  const isComparingMode = props.params.originalId && props.params.comparisonId
+  const isComparingMode = props.enableCompare || false
   const allPlugins = [
     rules,
     ...keys,
