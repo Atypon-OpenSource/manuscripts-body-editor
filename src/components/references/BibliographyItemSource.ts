@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import * as fuzzysort from 'fuzzysort'
-
-import { BibliographyItemAttrs } from '../../lib/references'
 
 export interface BibliographyItemSource {
   id: string

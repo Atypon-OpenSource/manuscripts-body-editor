@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs } from '../../lib/references'
 import { ReferenceLine } from './ReferenceLine'
 
 export const CitedItems = styled.div`

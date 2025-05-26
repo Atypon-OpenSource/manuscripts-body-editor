@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { BibliographicDate, BibliographicName } from '@manuscripts/json-schema'
 import {
   BibliographyItemAttrs,
   BibliographyItemType,
@@ -189,12 +188,10 @@ export const cleanItemValues = (item: BibliographyItemAttrs) => {
           break
         case 'author':
         case 'editor':
-          cleanedItem[key] = [] as BibliographicName[]
-          break
         case 'issued':
         case 'accessed':
         case 'event-date':
-          cleanedItem[key] = {} as BibliographicDate
+          cleanedItem[key] = undefined
           break
         default:
           cleanedItem[key] = ''

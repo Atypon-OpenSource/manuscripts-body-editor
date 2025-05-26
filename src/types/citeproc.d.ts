@@ -28,21 +28,9 @@ declare module 'citeproc' {
     }
   }
 
-  type VariableWrapper = (
-    params: {
-      context: string
-      itemData: CSL.Data
-      variableNames: [string]
-    },
-    prePunct: string,
-    str: string,
-    postPunct: string
-  ) => string
-
   interface SystemOptions {
     retrieveLocale: (id: string) => string | Document | Locale
     retrieveItem: (id: string) => CSL.Data
-    variableWrapper: VariableWrapper
   }
 
   interface BibliographyMetadata {
