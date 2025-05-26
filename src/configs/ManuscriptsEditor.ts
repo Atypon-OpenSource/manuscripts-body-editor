@@ -70,6 +70,7 @@ export interface EditorProps {
     event: MouseEvent
   ) => void
   lockBody: boolean
+  isViewingMode?: boolean
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
