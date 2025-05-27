@@ -928,7 +928,7 @@ figure.block:has(.equation.selected-suggestion) {
   position: initial;
   display: flex;
   flex: 1;
-  align-items: center;
+  align-items: flex-start;
 }
 .contributor .contributor-comment {
   left: 0;
@@ -994,13 +994,6 @@ figure.block:has(.equation.selected-suggestion) {
 .affiliation .affiliation-label {
   font-weight: bold;
   margin-right: 4px;
-}
-
-.block-affiliations .block {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .ProseMirror .doi-container {
