@@ -21,6 +21,7 @@ import {
   ImageDefaultIcon,
   ImageLeftIcon,
   ImageRightIcon,
+  PlusIcon,
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
@@ -38,6 +39,7 @@ import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 export enum figurePositions {
   left = 'half-left',
@@ -49,6 +51,9 @@ export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
   positionMenuWrapper: HTMLDivElement
   figurePosition: string
+  addImageButton: HTMLButtonElement | null = null
+  imagesContainer: HTMLDivElement
+  imageToolContainers: Map<number, HTMLDivElement> = new Map()
 
   public initialise() {
     this.upload = this.upload.bind(this)
@@ -56,133 +61,127 @@ export class FigureEditableView extends FigureView {
     this.updateContents()
   }
 
-  upload = async (file: File) => {
-    const result = await this.props.fileManagement.upload(file)
-    this.setSrc(result.id)
+  upload = async (file: File, index = 0): Promise<void> => {
+    try {
+      const result = await this.props.fileManagement.upload(file)
+      this.addImage(result.id, index)
+    } catch (error) {
+      console.error('Upload failed:', error)
+      throw error
+    }
   }
 
   public updateContents() {
     super.updateContents()
 
-    const src = this.node.attrs.src
+    const src = this.node.attrs.src || ''
+    const images = Array.isArray(src) ? src : [src]
     const files = this.props.getFiles()
-    const file = src && files.filter((f) => f.id === src)[0]
     this.figurePosition = this.node.attrs.type
-
-    this.container.innerHTML = ''
-
     const can = this.props.getCapabilities()
 
-    const link = file && this.props.fileManagement.previewLink(file)
-    const img = link
-      ? this.createImg(link)
-      : file
-      ? this.createUnsupportedFormat(file.name)
-      : this.createPlaceholder()
+    this.container.innerHTML = ''
+    this.imageToolContainers.clear()
 
-    if (can.uploadFile && !isDeleted(this.node)) {
-      const handlePlaceholderClick = (event: Event) => {
-        const target = event.target as HTMLElement
-        if (target.dataset && target.dataset.action) {
-          return
-        }
-        const triggerUpload = figureUploader(this.upload)
-        triggerUpload()
+    this.imagesContainer = document.createElement('div')
+    this.imagesContainer.classList.add('figure-images-container')
+
+    images.forEach((imageSrc, index) => {
+      const file = imageSrc && files.find((f) => f.id === imageSrc)
+      const imgContainer = document.createElement('div')
+      imgContainer.classList.add('figure-image-container')
+
+      const imgElement = imageSrc
+        ? file
+          ? this.props.fileManagement.previewLink(file)
+            ? this.createImg(
+                this.props.fileManagement.previewLink(file) as string
+              )
+            : this.createUnsupportedFormat(file, index)
+          : this.createPlaceholder(index)
+        : this.createPlaceholder(index)
+
+      imgContainer.appendChild(imgElement)
+
+      if (can.editArticle && !isDeleted(this.node) && file) {
+        const toolContainer = this.createImageToolContainer(index, file)
+        imgContainer.appendChild(toolContainer)
+        this.imageToolContainers.set(index, toolContainer)
       }
 
-      img.addEventListener('click', handlePlaceholderClick)
+      this.imagesContainer.appendChild(imgContainer)
+    })
 
-      img.addEventListener('mouseenter', () => {
-        img.classList.toggle('over', true)
-      })
+    if (can.uploadFile && !isDeleted(this.node)) {
+      const lastImage = images[images.length - 1]
+      const isLastPlaceholderEmpty = lastImage === '' || !lastImage
+      const parent = findParentNodeOfTypeClosestToPos(
+        this.view.state.tr.doc.resolve(this.getPos()),
+        schema.nodes.figure_element
+      )
 
-      img.addEventListener('mouseleave', () => {
-        img.classList.toggle('over', false)
-      })
+      if (!this.addImageButton) {
+        if (parent?.node.type === schema.nodes.figure_element) {}
+        this.addImageButton = document.createElement('button')
+        this.addImageButton.classList.add('add-image-button')
+        this.addImageButton.innerHTML = renderToStaticMarkup(
+          createElement(PlusIcon, { className: 'icon' })
+        )
+        this.addImageButton.title = 'Add another image'
+        this.addImageButton.addEventListener('click', () => {
+          this.addNewImagePlaceholder()
+        })
+      }
 
-      img.addEventListener('dragenter', (event) => {
-        event.preventDefault()
-        img.classList.toggle('over', true)
-      })
+      if (isLastPlaceholderEmpty) {
+        this.addImageButton.classList.add('disabled')
+      } else {
+        this.addImageButton.classList.remove('disabled')
+      }
 
-      img.addEventListener('dragleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener('dragover', (e) => {
-        if (e.dataTransfer && e.dataTransfer.items) {
-          for (const item of e.dataTransfer.items) {
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
-              e.preventDefault()
-              e.dataTransfer.dropEffect = 'copy'
-            }
-          }
-        }
-      })
-
-      img.addEventListener('drop', async (e) => {
-        if (e.dataTransfer && e.dataTransfer.files.length) {
-          e.preventDefault()
-          await this.upload(e.dataTransfer.files[0])
-        }
-      })
+      if (!this.imagesContainer.contains(this.addImageButton) && 
+          parent?.node.type === schema.nodes.figure_element) {
+        this.imagesContainer.appendChild(this.addImageButton)
+      }
+    } else {
+      if (this.addImageButton) {
+        this.addImageButton.remove()
+        this.addImageButton = null
+      }
     }
 
-    this.container.innerHTML = ''
-    this.container.appendChild(img)
-
+    this.container.appendChild(this.imagesContainer)
     this.addTools()
   }
 
-  protected addTools() {
-    this.manageReactTools()
-    this.container.appendChild(this.createPositionMenuWrapper())
-  }
-
-  private manageReactTools() {
-    let handleDownload
-    let handleUpload
-    let handleReplace
-    let handleDetach
-
-    const src = this.node.attrs.src
-    const files = this.props.getFiles()
-    const file = src && files.filter((f) => f.id === src)[0]
+  private createImageToolContainer(
+    index: number,
+    file?: FileAttachment
+  ): HTMLDivElement {
+    const toolContainer = document.createElement('div')
+    toolContainer.classList.add('image-tool-container')
 
     const can = this.props.getCapabilities()
+    const files = this.props.getFiles()
+    const doc = this.view.state.doc
 
-    if (src) {
-      if (file) {
-        handleDownload = () => {
-          this.props.fileManagement.download(file)
-        }
-      }
-      handleDetach = () => {
-        this.setSrc('')
-      }
-    }
-    if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
-        this.setSrc(file.id)
-      }
-    }
-    if (can.uploadFile) {
-      handleUpload = figureUploader(this.upload)
-    }
-
-    this.reactTools?.remove()
-    if (this.props.dispatch && this.props.theme) {
-      const files = this.props.getFiles()
-      const doc = this.view.state.doc
+    if (file) {
       const componentProps: FigureOptionsProps = {
         can,
         files: groupFiles(doc, files),
-        onDownload: handleDownload,
-        onUpload: handleUpload,
-        onDetach: handleDetach,
-        onReplace: handleReplace,
+        onDownload: () => this.props.fileManagement.download(file),
+        onUpload: () => {
+          const triggerUpload = figureUploader((file: File) =>
+            this.upload(file, index)
+          )
+          triggerUpload()
+        },
+        onDetach: () => this.detachImage(index),
+        onReplace: (newFile: FileAttachment) =>
+          this.addImage(newFile.id, index),
       }
-      this.reactTools = ReactSubView(
+
+      const reactTools = ReactSubView(
         this.props,
         FigureOptions,
         componentProps,
@@ -190,8 +189,197 @@ export class FigureEditableView extends FigureView {
         this.getPos,
         this.view
       )
-      this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+
+      toolContainer.appendChild(reactTools)
     }
+
+    return toolContainer
+  }
+
+  private addNewImagePlaceholder() {
+    const currentImages = this.getCurrentImages()
+    this.setImages([...currentImages, ''])
+  }
+
+  private addImage(src: string, index: number) {
+    const currentImages = this.getCurrentImages()
+    const newImages = [...currentImages]
+    newImages[index] = src
+    this.setImages(newImages)
+  }
+
+  private detachImage(index: number) {
+    const currentImages = this.getCurrentImages()
+    const newImages = [...currentImages]
+    newImages[index] = ''
+    this.setImages(newImages)
+  }
+
+  private getCurrentImages(): string[] {
+    const src = this.node.attrs.src || ''
+    return Array.isArray(src) ? src : [src]
+  }
+
+  private setImages(images: string[]) {
+    const src = images.length === 1 ? images[0] : images
+    const { tr } = this.view.state
+    const pos = this.getPos()
+    tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      src,
+    })
+    tr.setSelection(NodeSelection.create(tr.doc, pos))
+    this.view.dispatch(tr)
+  }
+
+  protected createImg = (src: string) => {
+    const img = document.createElement('img')
+    img.classList.add('figure-image')
+    img.src = src
+    return img
+  }
+
+  protected createPlaceholder = (index: number) => {
+    const element = document.createElement('div')
+    element.classList.add('figure', 'placeholder')
+    element.dataset.index = index.toString()
+
+    const instructions = document.createElement('div')
+    instructions.classList.add('instructions')
+    instructions.innerHTML = `
+      <p>Drag or click here to upload image <br>
+      or drag items here from the file inspector tabs <br>
+      <a data-action='open-other-files'>'Other files'</a> | 
+      <a data-action='open-supplement-files'>'Supplements'</a></p>
+    `
+
+    const can = this.props.getCapabilities()
+    if (can.uploadFile && !isDeleted(this.node)) {
+      const handlePlaceholderClick = (event: Event) => {
+        const target = event.target as HTMLElement
+        if (target.dataset?.action) {
+          return
+        }
+        const triggerUpload = figureUploader((file: File) =>
+          this.upload(file, index)
+        )
+        triggerUpload()
+      }
+
+      element.addEventListener('click', handlePlaceholderClick)
+
+      element.addEventListener('dragenter', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        element.classList.add('drag-over')
+      })
+
+      element.addEventListener('dragover', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        element.classList.add('drag-over')
+        if (event.dataTransfer) {
+          event.dataTransfer.dropEffect = 'copy'
+        }
+      })
+
+      element.addEventListener('dragleave', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        element.classList.remove('drag-over')
+      })
+
+      element.addEventListener('drop', async (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        element.classList.remove('drag-over')
+
+        if (event.dataTransfer?.files?.length) {
+          const originalContent = instructions.innerHTML
+          instructions.innerHTML = '<p>Uploading image...</p>'
+          
+          try {
+            await this.upload(event.dataTransfer.files[0], index)
+          } catch (error) {
+            console.error('Upload failed:', error)
+            instructions.innerHTML = originalContent
+          }
+        }
+      })
+
+      element.addEventListener('mouseenter', () => {
+        element.classList.add('over')
+      })
+
+      element.addEventListener('mouseleave', () => {
+        element.classList.remove('over')
+      })
+    }
+
+    element.appendChild(instructions)
+    return element
+  }
+
+  protected createUnsupportedFormat = (file: FileAttachment, index: number) => {
+    const element = document.createElement('div')
+    element.classList.add('figure', 'placeholder')
+    element.dataset.fileId = file.id
+    element.dataset.index = index.toString()
+
+    const instructions = document.createElement('div')
+    instructions.classList.add('instructions')
+
+    const iconHtml = renderToStaticMarkup(
+      createElement(FileCorruptedIcon, { className: 'icon' })
+    )
+
+    instructions.innerHTML = `
+    <div>
+      <div class="unsupported-icon-wrapper">${iconHtml}</div>
+      <div>${file.name}</div>
+      <div class="unsupported-format-label">
+        Unsupported file format
+      </div>
+      <div>
+        ${
+          this.props.getCapabilities()?.editArticle
+            ? 'Click to replace with supported image'
+            : 'Unsupported file format'
+        }
+      </div>
+    </div>
+  `
+
+    const can = this.props.getCapabilities()
+    if (can.uploadFile && !isDeleted(this.node)) {
+      element.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement
+        if (target.dataset?.action) {
+          return
+        }
+
+        const triggerUpload = figureUploader((newFile: File) => {
+          this.detachImage(index)
+          return this.upload(newFile, index)
+        })
+        triggerUpload()
+      })
+
+      element.addEventListener('mouseenter', () => {
+        element.classList.add('over')
+      })
+
+      element.addEventListener('mouseleave', () => {
+        element.classList.remove('over')
+      })
+    }
+
+    element.appendChild(instructions)
+    return element
+  }
+
+  protected addTools() {
+    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   protected setSrc = (src: string) => {
@@ -203,63 +391,6 @@ export class FigureEditableView extends FigureView {
     })
     tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
-  }
-
-  private createUnsupportedFormat = (name: string) => {
-    const element = document.createElement('div')
-    element.classList.add('figure', 'placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.classList.add('instructions')
-
-    // Convert the React component to a static HTML string
-    const iconHtml = renderToStaticMarkup(
-      createElement(FileCorruptedIcon, { className: 'icon' })
-    )
-
-    instructions.innerHTML = `
-    <div>
-      <div class="unsupported-icon-wrapper">${iconHtml}</div>
-      <div>${name}</div>
-      <div class="unsupported-format-label">
-        Unsupported file format
-      </div>
-      <div>
-        ${
-          this.props.getCapabilities()?.editArticle
-            ? 'Click to add image'
-            : 'No image here yet…'
-        }
-      </div>
-    </div>
-  `
-
-    element.appendChild(instructions)
-    return element
-  }
-
-  protected createImg = (src: string) => {
-    const img = document.createElement('img')
-    img.classList.add('figure-image')
-    img.src = src
-    return img
-  }
-
-  protected createPlaceholder = () => {
-    const element = document.createElement('div')
-    element.classList.add('figure', 'placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.classList.add('instructions')
-    instructions.innerHTML = `
-      <p>Drag or click here to upload image <br>
-      or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>'Other files'</a> | 
-      <a data-action='open-supplement-files'>'Supplements'</a></p>
-    `
-
-    element.appendChild(instructions)
-    return element
   }
 
   createPositionMenuWrapper = () => {

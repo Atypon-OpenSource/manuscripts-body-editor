@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { findChildrenByType } from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
 
@@ -82,17 +81,35 @@ export const groupFiles = (
   }
 
   const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
-    const figureFiles = []
-    for (const figure of findChildrenByType(node, schema.nodes.figure)) {
-      if (isHidden(figure.node)) {
-        continue
-      }
-      figureFiles.push({
-        node: figure.node,
-        pos: pos + figure.pos + 1,
-        file: getFile(figure.node.attrs.src),
+    const figureFiles: NodeFile[] = []
+    
+    // Handle figure_element nodes
+    if (node.type === schema.nodes.figure_element) {
+      // Find all figure nodes within this figure_element
+      node.forEach((child, offset) => {
+        if (child.type === schema.nodes.figure) {
+          const src = child.attrs.src
+          if (typeof src === 'string' && src) {
+            figureFiles.push({
+              node: child,
+              pos: pos + offset + 1,
+              file: getFile(src)
+            })
+          } else if (Array.isArray(src)) {
+            src.forEach(id => {
+              if (id) {
+                figureFiles.push({
+                  node: child,
+                  pos: pos + offset + 1,
+                  file: getFile(id)
+                })
+              }
+            })
+          }
+        }
       })
     }
+
     return {
       node,
       pos,
