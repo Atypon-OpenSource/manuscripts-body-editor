@@ -82,7 +82,7 @@ export const groupFiles = (
 
   const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
     const figureFiles: NodeFile[] = []
-    
+
     // Handle figure_element nodes
     if (node.type === schema.nodes.figure_element) {
       // Find all figure nodes within this figure_element
@@ -93,15 +93,15 @@ export const groupFiles = (
             figureFiles.push({
               node: child,
               pos: pos + offset + 1,
-              file: getFile(src)
+              file: getFile(src),
             })
           } else if (Array.isArray(src)) {
-            src.forEach(id => {
+            src.forEach((id) => {
               if (id) {
                 figureFiles.push({
                   node: child,
                   pos: pos + offset + 1,
-                  file: getFile(id)
+                  file: getFile(id),
                 })
               }
             })

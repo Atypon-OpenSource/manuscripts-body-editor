@@ -25,6 +25,7 @@ import {
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -39,7 +40,6 @@ import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 export enum figurePositions {
   left = 'half-left',
@@ -121,7 +121,6 @@ export class FigureEditableView extends FigureView {
       )
 
       if (!this.addImageButton) {
-        if (parent?.node.type === schema.nodes.figure_element) {}
         this.addImageButton = document.createElement('button')
         this.addImageButton.classList.add('add-image-button')
         this.addImageButton.innerHTML = renderToStaticMarkup(
@@ -139,8 +138,10 @@ export class FigureEditableView extends FigureView {
         this.addImageButton.classList.remove('disabled')
       }
 
-      if (!this.imagesContainer.contains(this.addImageButton) && 
-          parent?.node.type === schema.nodes.figure_element) {
+      if (
+        !this.imagesContainer.contains(this.addImageButton) &&
+        parent?.node.type === schema.nodes.figure_element
+      ) {
         this.imagesContainer.appendChild(this.addImageButton)
       }
     } else {
@@ -297,7 +298,7 @@ export class FigureEditableView extends FigureView {
         if (event.dataTransfer?.files?.length) {
           const originalContent = instructions.innerHTML
           instructions.innerHTML = '<p>Uploading image...</p>'
-          
+
           try {
             await this.upload(event.dataTransfer.files[0], index)
           } catch (error) {
