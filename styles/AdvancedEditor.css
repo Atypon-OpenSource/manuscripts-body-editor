@@ -929,8 +929,6 @@ figure.block:has(.equation.selected-suggestion) {
   display: flex;
   flex: 1;
   align-items: center;
-  margin-top: 33px;
-  left: -10px;
 }
 .contributor .contributor-comment {
   left: 0;
