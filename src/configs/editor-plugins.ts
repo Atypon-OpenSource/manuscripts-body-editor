@@ -52,7 +52,6 @@ import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (props: EditorProps) => {
-  const isComparingMode = props.enableCompare || false
   const allPlugins = [
     rules,
     ...keys,
@@ -63,7 +62,7 @@ export default (props: EditorProps) => {
       debug: props.debug,
       initialStatus: props.getCapabilities().editWithoutTracking
         ? TrackChangesStatus.disabled
-        : props.getCapabilities().editArticle && !isComparingMode
+        : props.getCapabilities().editArticle && !props.isComparingMode
         ? TrackChangesStatus.enabled
         : TrackChangesStatus.viewSnapshots,
     }),

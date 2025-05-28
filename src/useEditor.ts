@@ -50,21 +50,21 @@ export const useEditor = (externalProps: ExternalProps) => {
   const [state, setState] = useState<EditorState>(() =>
     createEditorState(props)
   )
-  const isComparingDocuments = props.enableCompare || false
   const location = useLocation()
   const { collabProvider } = props
 
   // Update editor state when document changes (e.g., when switching to comparison mode)
   useEffect(() => {
-    if (view.current && isComparingDocuments) {
+    if (view.current && props.isComparingMode) {
       const newState = createEditorState(props)
       setState(newState)
       view.current.updateState(newState)
     }
-  }, [props.doc]) // Re-run when document changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.doc, props.isComparingMode]) // Re-run when document changes
 
   // Receiving steps from backend
-  if (collabProvider && !isComparingDocuments) {
+  if (collabProvider && !props.isComparingMode) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async () => {
       if (state && view.current) {
@@ -109,7 +109,7 @@ export const useEditor = (externalProps: ExternalProps) => {
         collabProvider &&
         (!trackState ||
           trackState.status !== TrackChangesStatus.viewSnapshots) &&
-        !isComparingDocuments
+        !props.isComparingMode
       ) {
         const sendable = sendableSteps(nextState)
 
@@ -218,6 +218,6 @@ export const useEditor = (externalProps: ExternalProps) => {
     replaceState,
     view: view.current,
     dispatch,
-    isComparingDocuments,
+    isComparingDocuments: props.isComparingMode,
   }
 }

@@ -50,7 +50,6 @@ import {
 import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
-import { CompareDocumentsModal } from './components/tools/CompareDocumentsModal'
 import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
 import {
   deleteClosestParentElement,
@@ -59,7 +58,7 @@ import {
 import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
-import ReactSubView from './views/ReactSubView'
+
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
 ): MenuSpec[] => {
@@ -544,43 +543,6 @@ export const getEditorMenus = (
       },
     ],
   }
-  const tools: MenuSpec = {
-    id: 'tools',
-    label: 'Tools',
-    isEnabled: true,
-    submenu: [
-      {
-        id: 'tools-compare-documents',
-        label: 'Compare Documents',
-        isEnabled: editor !== undefined,
-        run: () => {
-          if (editor?.view && editor?.state) {
-            const view = editor.view
-            const container = ReactSubView(
-              getEditorProps(editor.state),
-              CompareDocumentsModal,
-              {
-                snapshots: props.snapshots || [],
-                loading: false,
-                error: null,
-                submissionId: props.submissionId || '',
-                onCancel: () => {
-                  view.focus()
-                  container.remove()
-                },
-              },
-              editor.state.doc,
-              () => 0,
-              view,
-              ['compare-documents-modal']
-            )
 
-            view.dom.appendChild(container)
-          }
-        },
-      },
-    ],
-  }
-
-  return [edit, insert, format, tools]
+  return [edit, insert, format]
 }

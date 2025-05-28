@@ -27,7 +27,6 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
-import { SnapshotLabel } from '../components/tools/CompareDocumentsModal'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
@@ -42,6 +41,17 @@ export type CSLProps = {
   locale?: string
 }
 
+export type ManuscriptSnapshot = {
+  id: string
+  name: string
+  snapshot: ManuscriptNode
+  createdAt: string
+}
+
+export type SnapshotLabel = Pick<
+  ManuscriptSnapshot,
+  'id' | 'name' | 'createdAt'
+>
 export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
@@ -63,7 +73,7 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
-  enableCompare?: boolean
+  isComparingMode?: boolean
   submissionId?: string
   dispatch?: Dispatch
   onEditorClick: (
