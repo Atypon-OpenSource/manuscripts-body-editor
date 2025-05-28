@@ -184,7 +184,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     type: 'outline',
     item: tree,
     canDrag: () => {
-      return depth !== 0 && !disableDragAndDrop
+      // Prevent dragging if the node is deleted, the body is locked, or editing is not allowed
+      return depth !== 0 && !disableDragAndDrop && !isDeleted(node)
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
