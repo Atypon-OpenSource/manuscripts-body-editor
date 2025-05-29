@@ -124,6 +124,12 @@ export const Outline = styled.div`
   & .subtree.collapsed {
     display: none;
   }
+
+  & .hero-image {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #ddd;
+  }
 `
 
 export const OutlineItemPlaceholder = styled.span``
