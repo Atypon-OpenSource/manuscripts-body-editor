@@ -48,6 +48,7 @@ import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
+import move_node from '../plugins/move-node'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -88,6 +89,7 @@ export default (props: EditorProps) => {
     alt_titles(),
     accessibility_element(),
     prevent_empty(),
+    move_node(),
   ]
 
   if (props.collabProvider) {

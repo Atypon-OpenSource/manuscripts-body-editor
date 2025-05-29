@@ -124,7 +124,8 @@ export const buildTree: TreeBuilder = ({
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
-          childNode.attrs.id)
+          childNode.attrs.id &&
+          !isDeleted(childNode))
       ) {
         items.push(
           buildTree({
