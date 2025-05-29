@@ -124,7 +124,8 @@ export const buildTree: TreeBuilder = ({
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
-          childNode.attrs.id)
+          childNode.attrs.id &&
+          !isDeleted(childNode))
       ) {
         items.push(
           buildTree({
@@ -184,7 +185,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     type: 'outline',
     item: tree,
     canDrag: () => {
-      return depth !== 0 && !disableDragAndDrop
+      // Prevent dragging if the node is deleted, the body is locked, or editing is not allowed
+      return depth !== 0 && !disableDragAndDrop && !isDeleted(node)
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -242,7 +244,6 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       const node = item.node.type.schema.nodes[item.node.type.name].create(
         {
           ...item.node.attrs,
-          id: '',
         },
         item.node.content
       )

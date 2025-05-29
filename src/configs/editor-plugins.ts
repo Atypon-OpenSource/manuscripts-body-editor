@@ -38,6 +38,7 @@ import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import lock_body from '../plugins/lock-body'
+import move_node from '../plugins/move-node'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -88,6 +89,7 @@ export default (props: EditorProps) => {
     alt_titles(),
     accessibility_element(),
     prevent_empty(),
+    move_node(),
   ]
 
   if (props.collabProvider) {
