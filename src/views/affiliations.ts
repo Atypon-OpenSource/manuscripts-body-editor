@@ -256,6 +256,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   }
 
   public showContextMenu = (element: Element) => {
+    const affiliationNameBlock = element.querySelector('.affiliation-name')
     this.props.popper.destroy() // destroy the old context menu
     const componentProps: ContextMenuProps = {
       actions: [
@@ -275,7 +276,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.view,
       ['context-menu']
     )
-    this.props.popper.show(element, this.contextMenu, 'right-start')
+    this.props.popper.show(
+      affiliationNameBlock || element,
+      this.contextMenu,
+      'right-start'
+    )
   }
 
   public actionGutterButtons = (): HTMLElement[] => {
