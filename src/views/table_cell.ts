@@ -19,6 +19,7 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
+import { ViewMutationRecord } from 'prosemirror-view'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -26,7 +27,6 @@ import { ContextMenu } from '../components/views/TableCellContextMenu'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import {ViewMutationRecord} from "prosemirror-view";
 
 export class TableCellView extends BlockView<ManuscriptNode> {
   public contentDOM: HTMLElement
