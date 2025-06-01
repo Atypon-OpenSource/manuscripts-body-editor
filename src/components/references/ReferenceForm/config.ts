@@ -26,6 +26,7 @@ export const bibliographyItemTypes: [BibliographyItemType, string][] = [
   ['standard', 'Standard'],
   ['dataset', 'Dataset'],
   ['preprint', 'Preprint'],
+  ['literal', 'Literal'],
 ]
 
 export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
@@ -142,4 +143,5 @@ export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
     'comment',
     'URL',
   ]),
+  literal: new Set(['literal']),
 }
