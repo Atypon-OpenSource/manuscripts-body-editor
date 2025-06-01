@@ -87,7 +87,12 @@ export default () => {
 const isTableShapeSelected = (state: EditorState) => {
   if (state.selection instanceof CellSelection) {
     const rect = selectedRect(state)
-    return rect.bottom === rect.map.height && rect.right === rect.map.width
+    return (
+      rect.left === 0 &&
+      rect.top === 0 &&
+      rect.right === rect.map.width &&
+      rect.bottom === rect.map.height
+    )
   }
   return false
 }

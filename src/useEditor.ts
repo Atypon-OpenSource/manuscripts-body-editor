@@ -124,7 +124,7 @@ export const useEditor = (externalProps: ExternalProps) => {
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const canEdit = props.getCapabilities().editArticle
+  const isViewingMode = props.isViewingMode
 
   const onRender = useCallback(
     (el: HTMLDivElement | null) => {
@@ -136,7 +136,7 @@ export const useEditor = (externalProps: ExternalProps) => {
       view.current = createEditorView(props, el, freshState || state, dispatch)
       setState(view.current.state)
     },
-    [canEdit] // eslint-disable-line react-hooks/exhaustive-deps
+    [isViewingMode] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const isCommandValid = useCallback(
