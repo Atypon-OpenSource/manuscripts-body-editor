@@ -148,7 +148,7 @@ export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
 
 const normalize = (author: ContributorAttrs) => ({
   id: author.id,
-  role: author.role || 'author',
+  role: author.role || '',
   affiliations: (author.affiliations || []).sort(),
   bibliographicName: author.bibliographicName,
   email: author.email || '',
@@ -160,6 +160,7 @@ const normalize = (author: ContributorAttrs) => ({
   invitationID: author.invitationID || '',
   footnote: author.footnote || [],
   corresp: author.corresp || [],
+  prefix: author.prefix || '',
 })
 
 export interface AuthorsModalProps {
@@ -405,7 +406,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const name = buildBibliographicName({ given: '', family: '' })
     const author: ContributorAttrs = {
       id: generateID(ObjectTypes.Contributor),
-      role: 'author',
+      role: '',
       affiliations: [],
       bibliographicName: name,
       email: '',
@@ -417,6 +418,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       invitationID: '',
       corresp: [],
       footnote: [],
+      prefix: '',
     }
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])

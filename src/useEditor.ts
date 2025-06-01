@@ -124,18 +124,20 @@ export const useEditor = (externalProps: ExternalProps) => {
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const onRender = useCallback((el: HTMLDivElement | null) => {
-    if (!el) {
-      return
-    }
-    view.current = createEditorView(
-      props,
-      el,
-      view.current?.state || state,
-      dispatch
-    )
-    setState(view.current.state)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const isViewingMode = props.isViewingMode
+
+  const onRender = useCallback(
+    (el: HTMLDivElement | null) => {
+      if (!el) {
+        return
+      }
+      const freshState = createEditorState(props)
+
+      view.current = createEditorView(props, el, freshState || state, dispatch)
+      setState(view.current.state)
+    },
+    [isViewingMode] // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   const isCommandValid = useCallback(
     (command: Command): boolean => command(state),

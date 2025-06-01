@@ -189,6 +189,12 @@ export class BibliographyElementBlockView extends BlockView<
       wrapper.append(element)
     }
 
+    if (!bibliography.length) {
+      this.dom.classList.add('empty-node')
+    } else {
+      this.dom.classList.remove('empty-node')
+    }
+
     const oldContent = this.container.querySelector('.contents')
     if (oldContent) {
       this.container.replaceChild(wrapper, oldContent)

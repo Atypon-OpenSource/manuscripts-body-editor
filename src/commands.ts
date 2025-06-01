@@ -234,7 +234,7 @@ export const canInsert =
     }
 
     if (type === schema.nodes.table_element) {
-      if ($from.node(-1).type === schema.nodes.list_item) {
+      if (findParentNodeOfType(schema.nodes.list_item)(state.selection)) {
         return false
       }
     }
@@ -1043,6 +1043,7 @@ export const insertGraphicalAbstract =
     ) as GraphicalAbstractSectionNode
 
     const tr = state.tr.insert(pos, node)
+    node.lastChild && expandAccessibilitySection(tr, node.lastChild)
     if (dispatch) {
       // place cursor inside section title
       const selection = TextSelection.create(tr.doc, pos + 1)
