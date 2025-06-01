@@ -24,8 +24,8 @@ importers:
         specifier: 1.10.7-LEAN-2023.0
         version: 1.10.7-LEAN-2023.0
       '@manuscripts/transform':
-        specifier: 3.0.67-LEAN-2023.0
-        version: 3.0.67-LEAN-2023.0(prosemirror-state@1.4.3)
+        specifier: 3.0.67-LEAN-2023.1
+        version: 3.0.67-LEAN-2023.1(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1164,8 +1164,8 @@ packages:
   '@manuscripts/track-changes-plugin@1.10.7-LEAN-2023.0':
     resolution: {integrity: sha512-7UoDZaAAEHN1QGVZ1wmw6xX3Tq9i9bMsXcWyO/BYSBr8f+IYe1Prf2YSuO142tC1aKaaIbZQfLlTCNOTBsma/g==}
 
-  '@manuscripts/transform@3.0.67-LEAN-2023.0':
-    resolution: {integrity: sha512-vp2GUDXXsw9rlByerkAvCMSnVmNeJiZ01KGjAjnj7yujIvPHlad+OkBxOGbElgvm2SFc3ZAraxcgYsAUszD6gw==}
+  '@manuscripts/transform@3.0.67-LEAN-2023.1':
+    resolution: {integrity: sha512-D1GQVcG4Nyv7Ox8eZch4giGAGO3taYPCBYE1RyKDeK/ghi/Rom3iQ1UshBBYcyqHceXt6ECSCVDdcoQz+C9jkA==}
 
   '@messageformat/parser@5.1.1':
     resolution: {integrity: sha512-3p0YRGCcTUCYvBKLIxtDDyrJ0YijGIwrTRu1DT8gIviIDZru8H23+FkY6MJBzM1n9n20CiM4VeDYuBsrrwnLjg==}
@@ -5969,11 +5969,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@3.0.67-LEAN-2023.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@3.0.67-LEAN-2023.1(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       '@manuscripts/library': 1.3.14-LEAN-2023.0
-      debug: 4.4.0(supports-color@5.5.0)
       jszip: 3.10.1
       lodash: 4.17.21
       mime: 3.0.0
@@ -5986,7 +5985,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - prosemirror-state
-      - supports-color
 
   '@messageformat/parser@5.1.1':
     dependencies:
