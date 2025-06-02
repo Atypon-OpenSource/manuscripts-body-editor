@@ -32,7 +32,13 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import { isEqual } from 'lodash'
-import React, { useEffect, useReducer, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 
 import {
@@ -177,7 +183,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   ] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const [showAuthorDrawer, setShowAuthorDrawer] = useState(false)
-  const [selectedAuthorIds, setselectedAuthorIds] = useState<string[]>([])
+  const [selectedAuthorIds, setSelectedAuthorIds] = useState<string[]>([])
   const [pendingSelection, setPendingSelection] =
     useState<AffiliationAttrs | null>(null)
   const [pendingAction, setPendingAction] = useState<
@@ -187,8 +193,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     string | undefined
   >(undefined)
   const [affiliationAuthorMap, setAffiliationAuthorMap] = useState<
-    Record<string, string[]>
-  >({})
+    Map<string, string[]>
+  >(new Map())
 
   useEffect(() => {
     if (!selection) {
@@ -198,11 +204,12 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const affiliatedAuthorIds = authors
       .filter((author) => author.affiliations?.includes(currentAffiliation.id))
       .map((author) => author.id)
-    setselectedAuthorIds(affiliatedAuthorIds)
-    setAffiliationAuthorMap((prevMap) => ({
-      ...prevMap,
-      [currentAffiliation.id]: affiliatedAuthorIds,
-    }))
+    setSelectedAuthorIds(affiliatedAuthorIds)
+    setAffiliationAuthorMap((prevMap) => {
+      const newMap = new Map(prevMap)
+      newMap.set(currentAffiliation.id, affiliatedAuthorIds)
+      return newMap
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -210,7 +217,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const values = valuesRef.current
     const hasAffiliationChanges =
       selection && !isEqual(values, normalize(selection))
-    const originalAuthors = affiliationAuthorMap[selection?.id || ''] || []
+    const originalAuthors = selection
+      ? affiliationAuthorMap.get(selection.id) ?? []
+      : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
       selectedAuthorIds.sort()
@@ -233,7 +242,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const values = valuesRef.current
     const hasAffiliationChanges =
       selection && !isEqual(values, normalize(selection))
-    const originalAuthors = affiliationAuthorMap[selection?.id || ''] || []
+    const originalAuthors = selection
+      ? affiliationAuthorMap.get(selection.id) ?? []
+      : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
       selectedAuthorIds.sort()
@@ -254,54 +265,77 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         .map((author) => author.id)
       setNewAffiliation(false)
       setSelection(affiliation)
-      setselectedAuthorIds(affiliatedAuthorIds)
+      setSelectedAuthorIds(affiliatedAuthorIds)
       setShowAuthorDrawer(false)
-      setAffiliationAuthorMap((prevMap) => ({
-        ...prevMap,
-        [affiliation.id]: affiliatedAuthorIds,
+      setAffiliationAuthorMap((prevMap) => {
+        const newMap = new Map(prevMap)
+        newMap.set(affiliation.id, affiliatedAuthorIds)
+        return newMap
+      })
+    }
+  }
+
+  const handleSaveAffiliation = useCallback(
+    (values: AffiliationAttrs | undefined) => {
+      if (!values || !selection) {
+        return
+      }
+
+      setIsDisableSave(true)
+
+      const affiliation = {
+        ...normalize(selection),
+        ...values,
+      }
+
+      onSaveAffiliation(affiliation)
+
+      dispatchAffiliations({
+        type: 'update',
+        items: [affiliation],
+      })
+
+      setSelection(affiliation)
+
+      const updatedAuthors = authors.map((author) => ({
+        ...author,
+        affiliations: selectedAuthorIds.includes(author.id)
+          ? [...new Set([...(author.affiliations || []), affiliation.id])]
+          : (author.affiliations || []).filter((id) => id !== affiliation.id),
       }))
-    }
-  }
 
-  const handleSaveAffiliation = (values: AffiliationAttrs | undefined) => {
-    if (!values || !selection) {
-      return
-    }
-    setIsDisableSave(true)
-    const affiliation = {
-      ...normalize(selection),
-      ...values,
-    }
-    onSaveAffiliation(affiliation)
-    dispatchAffiliations({
-      type: 'update',
-      items: [affiliation],
-    })
-    setSelection(affiliation)
-    const updatedAuthors = authors.map((author) => ({
-      ...author,
-      affiliations: selectedAuthorIds.includes(author.id)
-        ? [...new Set([...(author.affiliations || []), affiliation.id])]
-        : (author.affiliations || []).filter((id) => id !== affiliation.id),
-    }))
+      dispatchAuthors({
+        type: 'update',
+        items: updatedAuthors,
+      })
 
-    dispatchAuthors({
-      type: 'update',
-      items: updatedAuthors,
-    })
-    onUpdateAuthors(updatedAuthors)
+      onUpdateAuthors(updatedAuthors)
 
-    setNewAffiliation(false)
-    setAffiliationAuthorMap((prevMap) => ({
-      ...prevMap,
-      [affiliation.id]: selectedAuthorIds,
-    }))
-    setShowAuthorDrawer(false)
-    setSavedAffiliationId(affiliation.id)
-    setTimeout(() => {
-      setSavedAffiliationId(undefined)
-    }, 3200)
-  }
+      setNewAffiliation(false)
+
+      setAffiliationAuthorMap((prevMap) => {
+        const newMap = new Map(prevMap)
+        newMap.set(affiliation.id, selectedAuthorIds)
+        return newMap
+      })
+
+      setShowAuthorDrawer(false)
+      setSavedAffiliationId(affiliation.id)
+
+      setTimeout(() => {
+        setSavedAffiliationId(undefined)
+      }, 3200)
+    },
+    [
+      authors,
+      dispatchAffiliations,
+      dispatchAuthors,
+      onSaveAffiliation,
+      onUpdateAuthors,
+      selectedAuthorIds,
+      selection,
+    ]
+  )
 
   const handleAffiliationChange = (values: AffiliationAttrs) => {
     valuesRef.current = values
@@ -312,7 +346,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const isInstitutionEmpty = !values.institution?.trim()
     const hasAffiliationChanges =
       selection && !isEqual(normalize(values), normalize(selection))
-    const originalAuthors = affiliationAuthorMap[selection?.id || ''] || []
+    const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges =
       selection && !isEqual(originalAuthors.sort(), selectedAuthorIds.sort())
     const shouldEnableSave =
@@ -347,7 +381,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       type: 'delete',
       item: selection,
     })
-    setselectedAuthorIds([])
+    setSelectedAuthorIds([])
     setSelection(undefined)
   }
 
@@ -359,13 +393,13 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const newSelectedAuthorIds = selectedAuthorIds.includes(authorId)
       ? selectedAuthorIds.filter((id) => id !== authorId)
       : [...selectedAuthorIds, authorId]
-    setselectedAuthorIds(newSelectedAuthorIds)
+    setSelectedAuthorIds(newSelectedAuthorIds)
 
     const hasAffiliationChanges = !isEqual(
       valuesRef.current,
       normalize(selection)
     )
-    const originalAuthors = affiliationAuthorMap[selection.id] || []
+    const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
       newSelectedAuthorIds.sort()
@@ -428,7 +462,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     setNewAffiliation(true)
     setSelection(emptyAffiliation)
-    setselectedAuthorIds([])
+    setSelectedAuthorIds([])
     setShowAuthorDrawer(false)
   }
 
@@ -440,7 +474,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addNewAffiliation])
 
-  const handleConfirmationSave = () => {
+  const handleConfirmationSave = useCallback(() => {
     handleSaveAffiliation(valuesRef.current)
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
@@ -448,35 +482,43 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     if (pendingAction === 'new') {
       setNewAffiliation(true)
       setSelection(affiliation)
-      setselectedAuthorIds([])
+      setSelectedAuthorIds([])
       setIsDisableSave(true)
     } else if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)
+
       const affiliatedAuthorIds = authors
         .filter((author) =>
           author.affiliations?.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
-      setselectedAuthorIds(affiliatedAuthorIds)
-      // Reset values and save button state for the new selection
+
+      setSelectedAuthorIds(affiliatedAuthorIds)
+
       valuesRef.current = normalize(pendingSelection)
       setIsDisableSave(true)
 
-      // Update affiliation author map for the new selection
-      setAffiliationAuthorMap((prevMap) => ({
-        ...prevMap,
-        [pendingSelection.id]: affiliatedAuthorIds,
-      }))
+      setAffiliationAuthorMap((prevMap) => {
+        const newMap = new Map(prevMap)
+        newMap.set(pendingSelection.id, affiliatedAuthorIds)
+        return newMap
+      })
     }
-
-    setPendingSelection(null)
-    setPendingAction(null)
 
     if (pendingAction === 'close') {
       setIsOpen(false)
     }
-  }
+
+    setPendingSelection(null)
+    setPendingAction(null)
+  }, [
+    authors,
+    affiliation,
+    pendingAction,
+    pendingSelection,
+    handleSaveAffiliation,
+  ])
 
   const handleConfirmationCancel = () => {
     setShowConfirmationDialog(false)
@@ -490,11 +532,11 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
           author.affiliations?.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
-      setselectedAuthorIds(affiliatedAuthorIds)
+      setSelectedAuthorIds(affiliatedAuthorIds)
     } else if (pendingAction === 'new') {
       setNewAffiliation(true)
       setSelection(affiliation)
-      setselectedAuthorIds([])
+      setSelectedAuthorIds([])
     }
 
     if (pendingSelection) {
@@ -597,7 +639,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     data-cy="affiliation-authors"
                     items={selectedAuthors}
                     onRemove={(id) => {
-                      setselectedAuthorIds((prev) =>
+                      setSelectedAuthorIds((prev) =>
                         prev.filter((authorId) => authorId !== id)
                       )
                     }}
