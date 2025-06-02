@@ -35,7 +35,7 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import { cloneDeep, isEqual, omit } from 'lodash'
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer } from '../../lib/array-reducer'
@@ -51,16 +51,13 @@ import { ModalFormActions } from '../form/ModalFormActions'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 import { normalize } from './lib'
-import { DrawerGroup } from './GenericDrawerGroup'
 import { AffiliationsDrawer } from './AffiliationDrawer'
-import { CRediTRole } from '@manuscripts/transform'
-import { CreditVocabTerm } from '@manuscripts/transform'
-import { CRediTDrawer } from './CreditDrawer'
+import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { CRediTDrawer } from './CRediTDrawer'
+import { useManageCRediT } from './useManageCRediT'
+import { useManageAffiliations } from './useManageAffiliations'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
-  (a, b) => a.id === b.id
-)
-export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id
 )
 
@@ -96,16 +93,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
-  const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
 
   const [showCRediTDrawer, setShowCRediTDrawer] = useState(false)
 
-  const [selectedAffiliations, setSelectedAffiliations] = useState<
-    {
-      id: string
-      institution: string
-    }[]
-  >([])
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
   const authorFormRef = useRef<HTMLFormElement | null>(null)
@@ -113,7 +103,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     authorsReducer,
     $authors.sort(authorComparator)
   )
-  const [affiliations] = useReducer(affiliationsReducer, $affiliations)
 
   useEffect(() => {
     if (addNewAuthor) {
@@ -123,6 +112,16 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [addNewAuthor])
 
   const [selection, setSelection] = useState(author)
+
+  const {
+    showAffiliationDrawer,
+    setShowAffiliationDrawer,
+    selectedAffiliations,
+    setSelectedAffiliations,
+    removeAffiliation,
+    selectAffiliation,
+    affiliations,
+  } = useManageAffiliations(selection, $affiliations)
 
   useEffect(() => {
     const currentAuthor = selection
@@ -312,6 +311,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])
+    setSelectedCRediTRoles([])
     setSelection(author)
     setNewAuthor(true)
   }
@@ -348,18 +348,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       type: 'delete',
       item: selection,
     })
-  }
-
-  const removeAffiliation = (affId: string) => {
-    if (!selection) {
-      return
-    }
-    const newAffiliations = selectedAffiliations
-      .map((a) => a.id)
-      .filter((id) => id !== affId)
-    setSelectedAffiliations(
-      affiliations.filter((item) => newAffiliations.includes(item.id))
-    )
   }
 
   const handleResetAuthor = () => {
@@ -410,57 +398,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setEmailRequired(isCorresponding)
   }
 
-  const selectAffiliation = (affiliationId: string) => {
-    if (!selection) {
-      return
-    }
-
-    const currentAffiliations = selectedAffiliations.map((a) => a.id)
-    const isAlreadySelected = currentAffiliations.includes(affiliationId)
-
-    const newAffiliations = isAlreadySelected
-      ? currentAffiliations.filter((id) => id !== affiliationId)
-      : [...currentAffiliations, affiliationId]
-
-    setSelectedAffiliations(
-      affiliations.filter((item) => newAffiliations.includes(item.id))
-    )
-  }
-
-  const vocabTermItems = useMemo(() => {
-    return Object.values(CreditVocabTerm).map((c) => ({
-      vocabTerm: c,
-      id: c,
-    }))
-  }, [])
-
-  useEffect(() => {
-    setSelectedCRediTRoles(selection?.CRediTRoles ? selection?.CRediTRoles : [])
-  }, [selection])
-
-  const [selectedCRediTRoles, setSelectedCRediTRoles] = useState<CRediTRole[]>(
-    []
-  )
-
-  const selectCRediTRole = (role: string) => {
-    setSelectedCRediTRoles((prev) => {
-      const clear = prev.filter((t) => t.vocabTerm !== role)
-      if (clear.length !== prev.length) {
-        return clear
-      }
-      const newTerm = vocabTermItems.find((t) => t.vocabTerm === role)
-      if (newTerm) {
-        return [...prev, { vocabTerm: newTerm.vocabTerm }]
-      }
-      return prev
-    })
-  }
-
-  const removeCReditRole = (role: string) => {
-    setSelectedCRediTRoles((prev) => {
-      return prev.filter((r) => r.vocabTerm !== role)
-    })
-  }
+  const {
+    removeCRediTRole,
+    selectCRediTRole,
+    selectedCRediTRoles,
+    setSelectedCRediTRoles,
+    vocabTermItems,
+  } = useManageCRediT(selection)
 
   return (
     <StyledModal
@@ -562,7 +506,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   />
                   <DrawerGroup<{ id: string; vocabTerm: string }>
                     Drawer={CRediTDrawer}
-                    removeItem={removeCReditRole}
+                    removeItem={removeCRediTRole}
                     selectedItems={selectedCRediTRoles.map((r) => ({
                       id: r.vocabTerm,
                       ...r,
