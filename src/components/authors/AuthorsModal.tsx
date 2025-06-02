@@ -48,14 +48,14 @@ import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
+import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { AffiliationsDrawer } from './AffiliationDrawer'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
-import { normalize } from './lib'
-import { AffiliationsDrawer } from './AffiliationDrawer'
-import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { CRediTDrawer } from './CRediTDrawer'
-import { useManageCRediT } from './useManageCRediT'
+import { normalize } from './lib'
 import { useManageAffiliations } from './useManageAffiliations'
+import { useManageCRediT } from './useManageCRediT'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id

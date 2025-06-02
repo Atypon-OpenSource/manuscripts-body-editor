@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import React from 'react'
 import { DrawerProps, SelectedItemsBox } from '@manuscripts/style-guide'
+import React from 'react'
 import styled from 'styled-components'
+
 import { PartialExcept } from '../../types'
 
+// @ts-ignore
 type Base = {
   id: string
-} & Record<string, any>
+} & Record<string, string | object | boolean | number | null>
 
 interface DrawerGroupProps<T extends Base> {
   removeItem: (id: string) => void
@@ -76,8 +78,8 @@ export function DrawerGroup<T extends Base>({
         <SelectedItemsBox
           data-cy={cy + '-selected-items'}
           items={selectedItems.map((i) => ({
-            id: i.id || '',
-            label: (i as T)[labelField] ?? '',
+            id: String(i.id),
+            label: String((i as T)[labelField as keyof T] ?? ''),
           }))}
           onRemove={removeItem}
           placeholder={`No ${title}s assigned`}

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 import { useReducer, useState } from 'react'
-import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
+
 import { arrayReducer } from '../../lib/array-reducer'
+import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 
 export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id

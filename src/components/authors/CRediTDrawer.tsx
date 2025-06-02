@@ -21,8 +21,9 @@ import {
   DrawerProps,
 } from '@manuscripts/style-guide'
 import React from 'react'
-import { CheckboxContainer, LabelText } from './AuthorDetailsForm'
 import styled from 'styled-components'
+
+import { CheckboxContainer, LabelText } from './AuthorDetailsForm'
 
 interface CRediTDrawerProps {
   items: { id: string; vocabTerm: string }[]

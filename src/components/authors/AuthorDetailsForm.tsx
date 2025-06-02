@@ -21,13 +21,13 @@ import {
   TextFieldGroupContainer,
   TextFieldLabel,
 } from '@manuscripts/style-guide'
+import { CRediTRole } from '@manuscripts/transform'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-import { CRediTRole } from '@manuscripts/transform'
 
 export const LabelText = styled.div`
   font: ${(props) => props.theme.font.weight.normal}

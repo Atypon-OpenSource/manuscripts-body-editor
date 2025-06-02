@@ -39,15 +39,15 @@ import {
   ContributorAttrs,
 } from '../../lib/authors'
 import { authorsReducer } from '../authors/AuthorsModal'
+import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
+import { GenericDrawer } from '../modal-drawer/GenericDrawer'
+import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
-import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
-import { GenericDrawer } from '../modal-drawer/GenericDrawer'
-import { affiliationsReducer } from '../authors/useManageAffiliations'
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `

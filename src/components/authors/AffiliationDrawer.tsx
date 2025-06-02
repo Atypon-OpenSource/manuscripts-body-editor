@@ -26,6 +26,7 @@ import {
   DrawerProps,
 } from '@manuscripts/style-guide'
 import React from 'react'
+
 import { AffiliationAttrs } from '../../lib/authors'
 
 interface AffiliationsDrawerProps {

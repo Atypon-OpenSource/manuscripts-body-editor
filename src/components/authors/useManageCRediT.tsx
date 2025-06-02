@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CRediTRole, CreditVocabTerm } from '@manuscripts/transform'
 import { useEffect, useMemo, useState } from 'react'
 
-import { CRediTRole } from '@manuscripts/transform'
-import { CreditVocabTerm } from '@manuscripts/transform'
 import { ContributorAttrs } from '../../lib/authors'
 
 export const useManageCRediT = (selection: ContributorAttrs | undefined) => {
