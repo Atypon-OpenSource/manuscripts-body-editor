@@ -16,19 +16,27 @@
 
 import { ContributorAttrs } from '../../lib/authors'
 
-export const normalize = (author: ContributorAttrs) => ({
-  id: author.id,
-  role: author.role || 'author',
-  affiliations: (author.affiliations || []).sort(),
-  bibliographicName: author.bibliographicName,
-  email: author.email || '',
-  isCorresponding: author.isCorresponding || false,
-  ORCIDIdentifier: author.ORCIDIdentifier || '',
-  priority: author.priority || 0,
-  isJointContributor: author.isJointContributor || false,
-  userID: author.userID || '',
-  invitationID: author.invitationID || '',
-  footnote: author.footnote || [],
-  corresp: author.corresp || [],
-  prefix: author.prefix || '',
-})
+export const normalize = (author: ContributorAttrs) => {
+  const basic: ContributorAttrs = {
+    id: author.id,
+    role: author.role || 'author',
+    affiliations: (author.affiliations || []).sort(),
+    bibliographicName: author.bibliographicName,
+    email: author.email || '',
+    isCorresponding: author.isCorresponding || false,
+    ORCIDIdentifier: author.ORCIDIdentifier || '',
+    priority: author.priority || 0,
+    isJointContributor: author.isJointContributor || false,
+    userID: author.userID || '',
+    invitationID: author.invitationID || '',
+    footnote: author.footnote || [],
+    corresp: author.corresp || [],
+    prefix: author.prefix || '',
+  }
+
+  if (author.CRediTRoles && Array.isArray(author.CRediTRoles)) {
+    basic.CRediTRoles = author.CRediTRoles
+  }
+
+  return basic
+}

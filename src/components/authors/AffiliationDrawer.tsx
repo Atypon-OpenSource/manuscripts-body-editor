@@ -26,17 +26,18 @@ import {
   DrawerProps,
 } from '@manuscripts/style-guide'
 import React from 'react'
+import { AffiliationAttrs } from '../../lib/authors'
 
-interface GenericDrawerProps {
-  items: { id: string; label: string }[]
+interface AffiliationsDrawerProps {
+  items: AffiliationAttrs[]
   selectedItems: {
     id: string
   }[]
   onSelect: (id: string) => void
 }
 
-export const GenericDrawer: React.FC<
-  GenericDrawerProps & Omit<DrawerProps, 'children'>
+export const AffiliationsDrawer: React.FC<
+  AffiliationsDrawerProps & Omit<DrawerProps, 'children'>
 > = ({ items, selectedItems = [], onSelect, ...drawerProps }) => {
   return (
     <Drawer {...drawerProps}>
@@ -56,7 +57,22 @@ export const GenericDrawer: React.FC<
               )}
             </DrawerIcon>
             <DrawerLabelContainer>
-              <DrawerItemLabel>{item.label}</DrawerItemLabel>
+              <DrawerItemLabel>{item.institution}</DrawerItemLabel>
+              <DrawerItemMeta>
+                {item.city && (
+                  <>
+                    {item.city}
+                    {item.county || item.country ? ', ' : ''}
+                  </>
+                )}
+                {item.county && (
+                  <>
+                    {item.county}
+                    {item.country ? ', ' : ''}
+                  </>
+                )}
+                {item.country && <>{item.country}</>}
+              </DrawerItemMeta>
             </DrawerLabelContainer>
           </DrawerListItem>
         ))}

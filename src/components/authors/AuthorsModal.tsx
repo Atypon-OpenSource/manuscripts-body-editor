@@ -35,7 +35,7 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import { cloneDeep, isEqual, omit } from 'lodash'
-import React, { useEffect, useReducer, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer } from '../../lib/array-reducer'
@@ -51,9 +51,12 @@ import { ModalFormActions } from '../form/ModalFormActions'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 import { normalize } from './lib'
-import { AffiliationDrawerGroup } from './AffiliationDrawerGroup'
 import { DrawerGroup } from './GenericDrawerGroup'
 import { AffiliationsDrawer } from './AffiliationDrawer'
+import { CRediTRole } from '@manuscripts/transform'
+import { GenericDrawer } from './GenericDrawer'
+import { CreditVocabTerm } from '@manuscripts/transform'
+import { CRediTDrawer } from './CreditDrawer'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -95,6 +98,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
   const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
+
+  const [showCRediTDrawer, setShowCRediTDrawer] = useState(false)
+
   const [selectedAffiliations, setSelectedAffiliations] = useState<
     {
       id: string
@@ -345,15 +351,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     })
   }
 
-  const handleRemoveAffiliation = (affId: string) => {
+  const removeAffiliation = (affId: string) => {
     if (!selection) {
       return
     }
-
     const newAffiliations = selectedAffiliations
       .map((a) => a.id)
       .filter((id) => id !== affId)
-
     setSelectedAffiliations(
       affiliations.filter((item) => newAffiliations.includes(item.id))
     )
@@ -407,7 +411,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setEmailRequired(isCorresponding)
   }
 
-  const handleAffiliationSelect = (affiliationId: string) => {
+  const selectAffiliation = (affiliationId: string) => {
     if (!selection) {
       return
     }
@@ -422,6 +426,41 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelectedAffiliations(
       affiliations.filter((item) => newAffiliations.includes(item.id))
     )
+  }
+
+  const vocabTermItems = useMemo(() => {
+    return Object.values(CreditVocabTerm).map((c) => ({
+      vocabTerm: c,
+      id: c,
+    }))
+  }, [])
+
+  useEffect(() => {
+    setSelectedCRediTRoles(selection?.CRediTRoles ? selection?.CRediTRoles : [])
+  }, [selection])
+
+  const [selectedCRediTRoles, setSelectedCRediTRoles] = useState<CRediTRole[]>(
+    []
+  )
+
+  const selectCRediTRole = (role: string) => {
+    setSelectedCRediTRoles((prev) => {
+      const clear = prev.filter((t) => t.vocabTerm !== role)
+      if (clear.length !== prev.length) {
+        return clear
+      }
+      const newTerm = vocabTermItems.find((t) => t.vocabTerm === role)
+      if (newTerm) {
+        return [...prev, { vocabTerm: newTerm.vocabTerm }]
+      }
+      return prev
+    })
+  }
+
+  const removeCReditRole = (role: string) => {
+    setSelectedCRediTRoles((prev) => {
+      return prev.filter((r) => r.vocabTerm !== role)
+    })
   }
 
   return (
@@ -503,18 +542,37 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   isEmailRequired={isEmailRequired}
                   selectedAffiliations={selectedAffiliations.map((a) => a.id)}
                   authorFormRef={authorFormRef}
+                  selectedCRediTRoles={selectedCRediTRoles}
                 />
                 <DrawerGroup<AffiliationAttrs>
                   Drawer={AffiliationsDrawer}
-                  removeItem={handleRemoveAffiliation}
+                  removeItem={removeAffiliation}
                   selectedItems={selectedAffiliations}
-                  onSelect={handleAffiliationSelect}
+                  onSelect={selectAffiliation}
                   items={affiliations}
                   showDrawer={showAffiliationDrawer}
                   setShowDrawer={setShowAffiliationDrawer}
-                  title="Affiliate Author"
+                  title="Affiliations"
+                  buttonText="Assign Institutions"
                   cy="affiliations"
                   labelField="institution"
+                  Icon={<AddInstitutionIcon width={16} height={16} />}
+                />
+                <DrawerGroup<{ id: string; vocabTerm: string }>
+                  Drawer={CRediTDrawer}
+                  removeItem={removeCReditRole}
+                  selectedItems={selectedCRediTRoles.map((r) => ({
+                    id: r.vocabTerm,
+                    ...r,
+                  }))}
+                  onSelect={selectCRediTRole}
+                  items={vocabTermItems}
+                  showDrawer={showCRediTDrawer}
+                  setShowDrawer={setShowCRediTDrawer}
+                  title="Contributions (CRediT)"
+                  buttonText="Assign CRediT Roles"
+                  cy="credit-taxnonomy"
+                  labelField="vocabTerm"
                   Icon={<AddInstitutionIcon width={16} height={16} />}
                 />
               </AuthorForms>
@@ -564,8 +622,8 @@ const FormLabel = styled.legend`
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  position: relative;
   margin-top: 20px;
+  position: relative;
 `
 
 const StyledSidebarContent = styled(SidebarContent)`

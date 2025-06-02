@@ -27,6 +27,7 @@ import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import { CRediTRole } from '@manuscripts/transform'
 
 export const LabelText = styled.div`
   font: ${(props) => props.theme.font.weight.normal}
@@ -55,7 +56,7 @@ const TextFieldWithError = styled(TextField)`
   }
 `
 
-const CheckboxContainer = styled.div`
+export const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 32px;
@@ -73,6 +74,7 @@ interface AuthorDetailsFormProps {
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
+  selectedCRediTRoles: CRediTRole[]
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -82,6 +84,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   actionsRef,
   isEmailRequired,
   selectedAffiliations,
+  selectedCRediTRoles,
   authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
@@ -91,6 +94,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       formRef.current.setFieldValue('affiliations', selectedAffiliations)
     }
   }, [selectedAffiliations])
+
+  useEffect(() => {
+    if (selectedCRediTRoles && formRef.current) {
+      formRef.current.setFieldValue('CRediTRoles', selectedCRediTRoles)
+    }
+  }, [selectedCRediTRoles])
 
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
@@ -187,17 +196,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </Field>
                 </TextFieldLabel>
               </OrcidContainer>
-              <Field name="affiliations" type="hidden">
-                {(props: FieldProps) => {
-                  return (
-                    <TextField
-                      type="hidden"
-                      {...props.field}
-                      value={selectedAffiliations || []}
-                    />
-                  )
-                }}
-              </Field>
             </Fieldset>
           </ChangeHandlingForm>
         )

@@ -15,11 +15,7 @@
  */
 
 import React from 'react'
-import {
-  AddInstitutionIcon,
-  DrawerProps,
-  SelectedItemsBox,
-} from '@manuscripts/style-guide'
+import { DrawerProps, SelectedItemsBox } from '@manuscripts/style-guide'
 import styled from 'styled-components'
 import { PartialExcept } from '../../types'
 
@@ -33,13 +29,14 @@ interface DrawerGroupProps<T extends Base> {
   items: T[]
   showDrawer: boolean
   setShowDrawer: (on: boolean) => void
-  onSelect: (affiliationId: string) => void
+  onSelect: (id: string) => void
   title: string
-  labelField: string
+  labelField: keyof T
   Drawer: React.ComponentType<
     EmbeddedDrawerProps<T> & Omit<DrawerProps, 'children'>
   >
   cy: string
+  buttonText: string
   Icon?: React.ReactNode
 }
 
@@ -61,6 +58,7 @@ export function DrawerGroup<T extends Base>({
   Drawer,
   cy,
   Icon,
+  buttonText,
 }: DrawerGroupProps<T>) {
   return (
     <>
@@ -72,15 +70,14 @@ export function DrawerGroup<T extends Base>({
             data-cy={cy + 'assign-button'}
           >
             {Icon}
-            {`Assign ${title}s`}
+            {buttonText}
           </AssignButton>
         </DrawerSectionHeader>
         <SelectedItemsBox
           data-cy={cy + '-selected-items'}
           items={selectedItems.map((i) => ({
-            // @TODO - fix type to require id here
             id: i.id || '',
-            label: i[labelField] || '',
+            label: (i as T)[labelField] ?? '',
           }))}
           onRemove={removeItem}
           placeholder={`No ${title}s assigned`}

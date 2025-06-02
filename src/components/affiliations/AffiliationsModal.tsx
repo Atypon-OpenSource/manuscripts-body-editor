@@ -45,6 +45,8 @@ import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
+import { DrawerGroup } from '../authors/GenericDrawerGroup'
+import { GenericDrawer } from '../authors/GenericDrawer'
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `
@@ -102,6 +104,13 @@ export interface AffiliationsModalProps {
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
   addNewAffiliation?: boolean
+}
+
+function makeAuthorItems(authors: ContributorAttrs[]) {
+  return authors.map((author) => ({
+    id: author.id,
+    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
+  }))
 }
 
 export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
@@ -309,7 +318,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setSelection(undefined)
   }
 
-  const handleAuthorSelect = (authorId: string) => {
+  const selectAuthor = (authorId: string) => {
     if (!selection) {
       return
     }
@@ -334,11 +343,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       !isInstitutionEmpty && (hasAffiliationChanges || hasAuthorChanges)
     setIsDisableSave(!shouldEnableSave)
   }
-
-  const authorItems = authors.map((author) => ({
-    id: author.id,
-    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
-  }))
 
   const selectedAuthors = selectedIds
     .map((authorId) => {
@@ -523,39 +527,24 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={DialogType.SAVE}
                   entityType="affiliation"
                 />
-
-                {/* <AuthorsSection>
-                  <AuthorsHeader>
-                    <AuthorsTitle>Authors</AuthorsTitle>
-                    <AffiliateButton
-                      onClick={() => setShowAuthorDrawer(true)}
-                      data-cy="affiliate-authors-button"
-                    >
-                      <AddUserIcon width={16} height={16} />
-                      Affiliate Authors
-                    </AffiliateButton>
-                  </AuthorsHeader>
-                  <SelectedItemsBox
-                    data-cy="affiliation-authors"
-                    items={selectedAuthors}
-                    onRemove={(id) => {
-                      setSelectedIds((prev) =>
-                        prev.filter((authorId) => authorId !== id)
-                      )
-                    }}
-                    placeholder="No authors assigned"
-                  />
-                </AuthorsSection>
-                {showAuthorDrawer && (
-                  <Drawer
-                    items={authorItems}
-                    selectedIds={selectedIds}
-                    title="Authors"
-                    onSelect={handleAuthorSelect}
-                    onBack={() => setShowAuthorDrawer(false)}
-                    width="100%"
-                  />
-                )} */}
+                <DrawerGroup<{ id: string; label: string }>
+                  Drawer={GenericDrawer}
+                  removeItem={(id) => {
+                    setSelectedIds((prev) =>
+                      prev.filter((authorId) => authorId !== id)
+                    )
+                  }}
+                  selectedItems={selectedAuthors}
+                  onSelect={selectAuthor}
+                  items={makeAuthorItems(authors)}
+                  showDrawer={showAuthorDrawer}
+                  setShowDrawer={setShowAuthorDrawer}
+                  title="Authors"
+                  cy="affiliations"
+                  labelField="label"
+                  buttonText="Assign Authors"
+                  Icon={<AddUserIcon width={16} height={16} />}
+                />
               </AffiliationForms>
             ) : (
               <FormPlaceholder
