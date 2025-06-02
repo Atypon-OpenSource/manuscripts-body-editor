@@ -1,5 +1,5 @@
 /*!
- * © 2024 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import {
   AddInstitutionIcon,
   AuthorPlaceholderIcon,
   CloseButton,
-  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -32,7 +31,6 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
-  SelectedItemsBox,
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
@@ -52,92 +50,10 @@ import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
-
-const AddAuthorButton = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 12px 8px 12px 12px;
-  cursor: pointer;
-  &[data-active='true'] {
-    background: ${(props) => props.theme.colors.background.fifth};
-    border: 1px solid ${(props) => props.theme.colors.border.primary};
-    border-left: 0;
-    border-right: 0;
-  }
-`
-
-const ActionTitle = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 2}px;
-`
-
-const FormLabel = styled.legend`
-  margin-bottom: 12px;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.xlarge} /
-    ${(props) => props.theme.font.lineHeight.large}
-    ${(props) => props.theme.font.family.sans};
-  letter-spacing: -0.4px;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const AuthorForms = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 3}px;
-  padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  position: relative;
-  margin-top: 20px;
-`
-
-const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
-`
-
-const AuthorsSection = styled.div`
-  margin-top: ${(props) => props.theme.grid.unit * 4}px;
-  padding-top: ${(props) => props.theme.grid.unit * 4}px;
-  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
-`
-
-const AuthorsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
-`
-
-const AuthorsTitle = styled.h3`
-  margin: 0;
-  font-weight: ${(props) => props.theme.font.weight.normal};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-family: ${(props) => props.theme.font.family.sans};
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const AffiliateButton = styled.button`
-  color: ${(props) => props.theme.colors.brand.default};
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.normal}
-    ${(props) => props.theme.font.family.sans};
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: ${(props) => props.theme.grid.unit * 2}px;
-  &:hover {
-    opacity: 0.8;
-  }
-`
-const StyledModalBody = styled(ModalBody)`
-  position: relative;
-  height: calc(90vh - 40px);
-`
-
-const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
-  margin-bottom: 16px;
-`
+import { normalize } from './lib'
+import { AffiliationDrawerGroup } from './AffiliationDrawerGroup'
+import { DrawerGroup } from './GenericDrawerGroup'
+import { AffiliationsDrawer } from './AffiliationDrawer'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -145,23 +61,6 @@ export const authorsReducer = arrayReducer<ContributorAttrs>(
 export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
   (a, b) => a.id === b.id
 )
-
-const normalize = (author: ContributorAttrs) => ({
-  id: author.id,
-  role: author.role || 'author',
-  affiliations: (author.affiliations || []).sort(),
-  bibliographicName: author.bibliographicName,
-  email: author.email || '',
-  isCorresponding: author.isCorresponding || false,
-  ORCIDIdentifier: author.ORCIDIdentifier || '',
-  priority: author.priority || 0,
-  isJointContributor: author.isJointContributor || false,
-  userID: author.userID || '',
-  invitationID: author.invitationID || '',
-  footnote: author.footnote || [],
-  corresp: author.corresp || [],
-  prefix: author.prefix || '',
-})
 
 export interface AuthorsModalProps {
   author?: ContributorAttrs
@@ -189,7 +88,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setShowRequiredFieldConfirmationDialog,
   ] = useState(false)
   const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
   const [newAuthor, setNewAuthor] = useState(false)
   const [unSavedChanges, setUnSavedChanges] = useState(false)
   const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
@@ -199,7 +98,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [selectedAffiliations, setSelectedAffiliations] = useState<
     {
       id: string
-      label: string
+      institution: string
     }[]
   >([])
   const valuesRef = useRef<ContributorAttrs>()
@@ -211,17 +110,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   )
   const [affiliations] = useReducer(affiliationsReducer, $affiliations)
 
-  const affiliationItems = affiliations.map((affiliation) => ({
-    id: affiliation.id,
-    label: affiliation.institution,
-    country: affiliation.country,
-    city: affiliation.city,
-    state: affiliation.county,
-  }))
-
-  const [selectedAffiliationIds, setSelectedAffiliationIds] = useState<
-    string[]
-  >([])
   useEffect(() => {
     if (addNewAuthor) {
       handleAddAuthor()
@@ -233,15 +121,14 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   useEffect(() => {
     const currentAuthor = selection
-    const relevantAffiliations = affiliationItems.filter((item) =>
+    const relevantAffiliations = affiliations.filter((item) =>
       currentAuthor?.affiliations?.includes(item.id)
     )
     setSelectedAffiliations(relevantAffiliations)
-    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleSelect = (author: ContributorAttrs) => {
+  const selectAuthor = (author: ContributorAttrs) => {
     if (author.id === selection?.id) {
       return
     }
@@ -274,11 +161,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
   }
   const updateAffiliationSelection = (author: ContributorAttrs) => {
-    const relevantAffiliations = affiliationItems.filter((item) =>
+    const relevantAffiliations = affiliations.filter((item) =>
       author.affiliations?.includes(item.id)
     )
     setSelectedAffiliations(relevantAffiliations)
-    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
   }
   const handleClose = () => {
     if (unSavedChanges) {
@@ -324,10 +210,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const handleCancel = () => {
     handleResetAuthor()
     if (nextAuthor) {
-      const affiliations = nextAuthor.affiliations || []
-      setSelectedAffiliationIds(affiliations)
+      const nextAuthorAffiliations = nextAuthor.affiliations || []
       setSelectedAffiliations(
-        affiliationItems.filter((item) => affiliations.includes(item.id))
+        affiliations.filter((item) => nextAuthorAffiliations.includes(item.id))
       )
 
       setSelection(nextAuthor)
@@ -374,7 +259,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     })
   }
 
-  const handleMoveAuthor = (
+  const moveAuthor = (
     from: ContributorAttrs,
     to: ContributorAttrs,
     shift: number
@@ -422,7 +307,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])
-    setSelectedAffiliationIds([])
     setSelection(author)
     setNewAuthor(true)
   }
@@ -466,20 +350,20 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       return
     }
 
-    const newAffiliations = selectedAffiliationIds.filter((id) => id !== affId)
+    const newAffiliations = selectedAffiliations
+      .map((a) => a.id)
+      .filter((id) => id !== affId)
 
-    setSelectedAffiliationIds(newAffiliations)
     setSelectedAffiliations(
-      affiliationItems.filter((item) => newAffiliations.includes(item.id))
+      affiliations.filter((item) => newAffiliations.includes(item.id))
     )
   }
 
   const handleResetAuthor = () => {
     actionsRef.current?.reset()
-    const affiliations = selection?.affiliations || []
-    setSelectedAffiliationIds(affiliations)
+    const selectedAffs = selection?.affiliations || []
     setSelectedAffiliations(
-      affiliationItems.filter((item) => affiliations.includes(item.id))
+      affiliations.filter((item) => selectedAffs.includes(item.id))
     )
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
@@ -502,12 +386,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
     const isSameAuthor = updatedValues.id === normalized.id
     const hasChanges = !isEqual(updatedValues, normalized)
-
-    if (isSameAuthor && hasChanges) {
-      setUnSavedChanges(true)
-    } else {
-      setUnSavedChanges(false)
-    }
+    setUnSavedChanges(isSameAuthor && hasChanges)
 
     valuesRef.current = { ...updatedValues, priority: values.priority }
 
@@ -528,25 +407,20 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setEmailRequired(isCorresponding)
   }
 
-  const handleShowDeleteDialog = () => {
-    setShowDeleteDialog((prev) => !prev)
-  }
-
   const handleAffiliationSelect = (affiliationId: string) => {
     if (!selection) {
       return
     }
 
-    const currentAffiliations = selectedAffiliationIds || []
+    const currentAffiliations = selectedAffiliations.map((a) => a.id)
     const isAlreadySelected = currentAffiliations.includes(affiliationId)
 
     const newAffiliations = isAlreadySelected
       ? currentAffiliations.filter((id) => id !== affiliationId)
       : [...currentAffiliations, affiliationId]
 
-    setSelectedAffiliationIds(newAffiliations)
     setSelectedAffiliations(
-      affiliationItems.filter((item) => newAffiliations.includes(item.id))
+      affiliations.filter((item) => newAffiliations.includes(item.id))
     )
   }
 
@@ -580,9 +454,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               <AuthorList
                 author={selection}
                 authors={authors}
-                onSelect={handleSelect}
-                onDelete={handleShowDeleteDialog}
-                moveAuthor={handleMoveAuthor}
+                onSelect={selectAuthor}
+                onDelete={() => setShowDeleteDialog((prev) => !prev)}
+                moveAuthor={moveAuthor}
                 lastSavedAuthor={lastSavedAuthor}
               />
             </StyledSidebarContent>
@@ -610,8 +484,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   form={'author-details-form'}
                   type="author"
                   onDelete={handleDeleteAuthor}
-                  showDeleteDialog={showDeleteDialog}
-                  handleShowDeleteDialog={handleShowDeleteDialog}
+                  showingDeleteDialog={showingDeleteDialog}
+                  showDeleteDialog={() => setShowDeleteDialog((prev) => !prev)}
                   newEntity={
                     newAuthor ||
                     (isCreatingNewAuthor &&
@@ -627,37 +501,22 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   onSave={handleSaveAuthor}
                   actionsRef={actionsRef}
                   isEmailRequired={isEmailRequired}
-                  selectedAffiliations={selectedAffiliationIds}
+                  selectedAffiliations={selectedAffiliations.map((a) => a.id)}
                   authorFormRef={authorFormRef}
                 />
-                <AuthorsSection>
-                  <AuthorsHeader>
-                    <AuthorsTitle>Authors</AuthorsTitle>
-                    <AffiliateButton
-                      onClick={() => setShowAffiliationDrawer(true)}
-                      data-cy="affiliate-authors-button"
-                    >
-                      <AddInstitutionIcon width={16} height={16} />
-                      Assign Institutions
-                    </AffiliateButton>
-                  </AuthorsHeader>
-                  <SelectedItemsBox
-                    data-cy="author-affiliations"
-                    items={selectedAffiliations}
-                    onRemove={handleRemoveAffiliation}
-                    placeholder="No institutions assigned"
-                  />
-                </AuthorsSection>
-                {showAffiliationDrawer && (
-                  <Drawer
-                    items={affiliationItems}
-                    selectedIds={selectedAffiliationIds}
-                    title="Authors"
-                    onSelect={handleAffiliationSelect}
-                    onBack={() => setShowAffiliationDrawer(false)}
-                    width="100%"
-                  />
-                )}
+                <DrawerGroup<AffiliationAttrs>
+                  Drawer={AffiliationsDrawer}
+                  removeItem={handleRemoveAffiliation}
+                  selectedItems={selectedAffiliations}
+                  onSelect={handleAffiliationSelect}
+                  items={affiliations}
+                  showDrawer={showAffiliationDrawer}
+                  setShowDrawer={setShowAffiliationDrawer}
+                  title="Affiliate Author"
+                  cy="affiliations"
+                  labelField="institution"
+                  Icon={<AddInstitutionIcon width={16} height={16} />}
+                />
               </AuthorForms>
             ) : (
               <FormPlaceholder
@@ -674,3 +533,50 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     </StyledModal>
   )
 }
+
+const AddAuthorButton = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px 8px 12px 12px;
+  cursor: pointer;
+  &[data-active='true'] {
+    background: ${(props) => props.theme.colors.background.fifth};
+    border: 1px solid ${(props) => props.theme.colors.border.primary};
+    border-left: 0;
+    border-right: 0;
+  }
+`
+
+const ActionTitle = styled.div`
+  padding-left: ${(props) => props.theme.grid.unit * 2}px;
+`
+
+const FormLabel = styled.legend`
+  margin-bottom: 12px;
+  font: ${(props) => props.theme.font.weight.normal}
+    ${(props) => props.theme.font.size.xlarge} /
+    ${(props) => props.theme.font.lineHeight.large}
+    ${(props) => props.theme.font.family.sans};
+  letter-spacing: -0.4px;
+  color: ${(props) => props.theme.colors.text.secondary};
+`
+
+const AuthorForms = styled.div`
+  padding-left: ${(props) => props.theme.grid.unit * 3}px;
+  padding-right: ${(props) => props.theme.grid.unit * 3}px;
+  position: relative;
+  margin-top: 20px;
+`
+
+const StyledSidebarContent = styled(SidebarContent)`
+  padding: 0;
+`
+
+const StyledModalBody = styled(ModalBody)`
+  position: relative;
+  height: calc(90vh - 40px);
+`
+
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin-bottom: 16px;
+`

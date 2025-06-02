@@ -19,7 +19,6 @@ import {
   AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
-  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -27,7 +26,6 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
-  SelectedItemsBox,
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
@@ -73,45 +71,6 @@ const AffiliationForms = styled.div`
   margin-top: 20px;
 `
 
-const AuthorsSection = styled.div`
-  margin-top: ${(props) => props.theme.grid.unit * 4}px;
-  padding-top: ${(props) => props.theme.grid.unit * 4}px;
-  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
-`
-
-const AuthorsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
-`
-
-const AuthorsTitle = styled.h3`
-  margin: 0;
-  font-weight: ${(props) => props.theme.font.weight.normal};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-family: ${(props) => props.theme.font.family.sans};
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const AffiliateButton = styled.button`
-  color: ${(props) => props.theme.colors.brand.default};
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.normal}
-    ${(props) => props.theme.font.family.sans};
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: ${(props) => props.theme.grid.unit * 2}px;
-  &:hover {
-    opacity: 0.8;
-  }
-`
 const StyledModalBody = styled(ModalBody)`
   position: relative;
   height: calc(90vh - 40px);
@@ -157,7 +116,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [selection, setSelection] = useState<AffiliationAttrs | undefined>(
     undefined
   )
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
   const valuesRef = useRef<AffiliationAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
@@ -537,8 +496,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={'affiliation'}
                   form={'affiliation-form'}
                   onDelete={handleDeleteAffiliation}
-                  showDeleteDialog={showDeleteDialog}
-                  handleShowDeleteDialog={handleShowDeleteDialog}
+                  showingDeleteDialog={showingDeleteDialog}
+                  showDeleteDialog={handleShowDeleteDialog}
                   newEntity={newAffiliation}
                   isDisableSave={isDisableSave}
                 />
@@ -564,7 +523,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={DialogType.SAVE}
                   entityType="affiliation"
                 />
-                <AuthorsSection>
+
+                {/* <AuthorsSection>
                   <AuthorsHeader>
                     <AuthorsTitle>Authors</AuthorsTitle>
                     <AffiliateButton
@@ -595,7 +555,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     onBack={() => setShowAuthorDrawer(false)}
                     width="100%"
                   />
-                )}
+                )} */}
               </AffiliationForms>
             ) : (
               <FormPlaceholder
