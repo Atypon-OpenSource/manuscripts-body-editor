@@ -29,6 +29,9 @@ importers:
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
+      citeproc:
+        specifier: 2.4.63
+        version: 2.4.63
       codemirror:
         specifier: 5.65.19
         version: 5.65.19
