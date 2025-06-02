@@ -1911,14 +1911,15 @@ const createHeroImage = (attrs?: Attrs) =>
   )
 
 export const insertHeroImage =
-  () => (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+  () =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     if (getChildOfType(state.doc, schema.nodes.hero_image, true)) {
       return false
     }
     const backmatter = findBackmatter(state.doc)
 
     const position = backmatter.pos + backmatter.node.content.size + 1
-
+    view?.focus()
     createBlock(schema.nodes.hero_image, position, state, dispatch)
 
     return true

@@ -307,7 +307,8 @@
 }
 
 .comment-marker:has(+ .block-contributors),
-.comment-marker:has(+ .block-affiliations) {
+.comment-marker:has(+ .block-affiliations),
+.comment-marker:has(+ .block-hero_image) {
   height: 0;
   top: 0;
   right: 60px;
