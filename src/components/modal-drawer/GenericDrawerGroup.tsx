@@ -20,10 +20,10 @@ import styled from 'styled-components'
 
 import { PartialExcept } from '../../types'
 
-// @ts-ignore
 type Base = {
   id: string
-} & Record<string, string | object | boolean | number | null>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} & Record<string, any>
 
 interface DrawerGroupProps<T extends Base> {
   removeItem: (id: string) => void
