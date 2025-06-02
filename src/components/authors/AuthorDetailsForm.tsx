@@ -118,6 +118,15 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           >
             <Fieldset>
               <TextFieldGroupContainer>
+                <Field name={'prefix'}>
+                  {(props: FieldProps) => (
+                    <TextField
+                      id={'prefix'}
+                      placeholder={'Prefix'}
+                      {...props.field}
+                    />
+                  )}
+                </Field>
                 <Field name={'bibliographicName.given'}>
                   {(props: FieldProps) => (
                     <TextField
@@ -155,6 +164,15 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   )
                 }}
               </Field>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                  <TextField
+                    id={'role'}
+                    placeholder={'Role'}
+                    {...props.field}
+                  />
+                )}
+              </Field>
               <CheckboxContainer>
                 <CheckboxLabel disabled={!isAuthor}>
                   <Field name={'isCorresponding'}>
@@ -168,25 +186,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     )}
                   </Field>
                   <LabelText>Corresponding Author</LabelText>
-                </CheckboxLabel>
-
-                <CheckboxLabel>
-                  <Field name={'role'} type={'checkbox'}>
-                    {(props: FieldProps) => (
-                      <CheckboxField
-                        name={'role'}
-                        checked={isAuthor}
-                        onChange={(e) => {
-                          formik.setFieldValue(
-                            props.field.name,
-                            e.target.checked ? 'author' : 'other',
-                            false
-                          )
-                        }}
-                      />
-                    )}
-                  </Field>
-                  <LabelText>Include in Authors List</LabelText>
                 </CheckboxLabel>
               </CheckboxContainer>
 

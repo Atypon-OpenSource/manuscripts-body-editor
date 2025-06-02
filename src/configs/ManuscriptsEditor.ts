@@ -85,6 +85,7 @@ export interface EditorProps {
   lockBody: boolean
   snapshots?: SnapshotLabel[]
   getSnapshot?: (id: string) => Promise<any>
+  isViewingMode?: boolean
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
