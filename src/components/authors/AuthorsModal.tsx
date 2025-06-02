@@ -22,6 +22,7 @@ import {
 import {
   AddIcon,
   AddInstitutionIcon,
+  AddRoleIcon,
   AuthorPlaceholderIcon,
   CloseButton,
   ModalBody,
@@ -519,7 +520,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     buttonText="Assign CRediT Roles"
                     cy="credit-taxnonomy"
                     labelField="vocabTerm"
-                    Icon={<AddInstitutionIcon width={16} height={16} />}
+                    Icon={<AddRoleIcon width={16} height={16} />}
                   />
                 </AuthorForms>
               ) : (
