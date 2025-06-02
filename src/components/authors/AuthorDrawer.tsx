@@ -28,17 +28,17 @@ import {
 import React from 'react'
 import { AffiliationAttrs } from '../../lib/authors'
 
-interface AffiliationsDrawerProps {
+interface AuthorDrawerProps {
   items: AffiliationAttrs[]
-  selectedAffiliations?: {
+  selectedItems: {
     id: string
   }[]
   onSelect: (id: string) => void
 }
 
-export const AffiliationsDrawer: React.FC<
-  AffiliationsDrawerProps & Omit<DrawerProps, 'children'>
-> = ({ items, selectedAffiliations = [], onSelect, ...drawerProps }) => {
+export const AuthorDrawer: React.FC<
+  AuthorDrawerProps & Omit<DrawerProps, 'children'>
+> = ({ items, selectedItems = [], onSelect, ...drawerProps }) => {
   return (
     <Drawer {...drawerProps}>
       <DrawerItemsList>
@@ -46,11 +46,11 @@ export const AffiliationsDrawer: React.FC<
           <DrawerListItem
             data-cy="item"
             key={item.id}
-            selected={selectedAffiliations?.map((a) => a.id).includes(item.id)}
+            selected={selectedItems?.map((a) => a.id).includes(item.id)}
             onClick={() => onSelect(item.id)}
           >
             <DrawerIcon>
-              {selectedAffiliations?.map((a) => a.id).includes(item.id) ? (
+              {selectedItems?.map((a) => a.id).includes(item.id) ? (
                 <AddedIcon width={22} height={22} />
               ) : (
                 <AddIcon width={22} height={22} />
