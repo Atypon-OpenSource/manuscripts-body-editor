@@ -40,18 +40,6 @@ export type CSLProps = {
   style?: string
   locale?: string
 }
-
-export type ManuscriptSnapshot = {
-  id: string
-  name: string
-  snapshot: ManuscriptNode
-  createdAt: string
-}
-
-export type SnapshotLabel = Pick<
-  ManuscriptSnapshot,
-  'id' | 'name' | 'createdAt'
->
 export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
@@ -83,8 +71,6 @@ export interface EditorProps {
     event: MouseEvent
   ) => void
   lockBody: boolean
-  snapshots?: SnapshotLabel[]
-  getSnapshot?: (id: string) => Promise<any>
   isViewingMode?: boolean
 }
 

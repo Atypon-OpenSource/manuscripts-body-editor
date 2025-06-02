@@ -218,6 +218,5 @@ export const useEditor = (externalProps: ExternalProps) => {
     replaceState,
     view: view.current,
     dispatch,
-    isComparingDocuments: props.isComparingMode,
   }
 }

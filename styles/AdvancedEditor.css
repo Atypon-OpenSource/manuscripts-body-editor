@@ -900,12 +900,13 @@ figure.block:has(.equation.selected-suggestion) {
   border-color: var(--updated-border-color);
 }
 
+/* Needed for the snapshot comparison */
 .tracking-visible .block-list [data-track-op="insert"][data-track-status="pending"] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
-
+/* Needed for the snapshot comparison */
 .tracking-visible .block-list [data-track-op="delete"][data-track-status="pending"] {
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
