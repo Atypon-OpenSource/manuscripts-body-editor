@@ -19,7 +19,6 @@ import {
   AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
-  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -27,7 +26,6 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
-  SelectedItemsBox,
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
@@ -40,11 +38,14 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { affiliationsReducer, authorsReducer } from '../authors/AuthorsModal'
+import { authorsReducer } from '../authors/AuthorsModal'
+import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
+import { GenericDrawer } from '../modal-drawer/GenericDrawer'
+import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
 const StyledSidebarContent = styled(SidebarContent)`
@@ -73,45 +74,6 @@ const AffiliationForms = styled.div`
   margin-top: 20px;
 `
 
-const AuthorsSection = styled.div`
-  margin-top: ${(props) => props.theme.grid.unit * 4}px;
-  padding-top: ${(props) => props.theme.grid.unit * 4}px;
-  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
-`
-
-const AuthorsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
-`
-
-const AuthorsTitle = styled.h3`
-  margin: 0;
-  font-weight: ${(props) => props.theme.font.weight.normal};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-family: ${(props) => props.theme.font.family.sans};
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const AffiliateButton = styled.button`
-  color: ${(props) => props.theme.colors.brand.default};
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.normal}
-    ${(props) => props.theme.font.family.sans};
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: ${(props) => props.theme.grid.unit * 2}px;
-  &:hover {
-    opacity: 0.8;
-  }
-`
 const StyledModalBody = styled(ModalBody)`
   position: relative;
   height: calc(90vh - 40px);
@@ -145,6 +107,13 @@ export interface AffiliationsModalProps {
   addNewAffiliation?: boolean
 }
 
+function makeAuthorItems(authors: ContributorAttrs[]) {
+  return authors.map((author) => ({
+    id: author.id,
+    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
+  }))
+}
+
 export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   authors: $authors,
   affiliations: $affiliations,
@@ -157,7 +126,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [selection, setSelection] = useState<AffiliationAttrs | undefined>(
     undefined
   )
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
   const valuesRef = useRef<AffiliationAttrs>()
   const actionsRef = useRef<FormActions>()
   const [authors, dispatchAuthors] = useReducer(
@@ -350,7 +319,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setSelection(undefined)
   }
 
-  const handleAuthorSelect = (authorId: string) => {
+  const selectAuthor = (authorId: string) => {
     if (!selection) {
       return
     }
@@ -375,11 +344,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       !isInstitutionEmpty && (hasAffiliationChanges || hasAuthorChanges)
     setIsDisableSave(!shouldEnableSave)
   }
-
-  const authorItems = authors.map((author) => ({
-    id: author.id,
-    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
-  }))
 
   const selectedAuthors = selectedIds
     .map((authorId) => {
@@ -537,8 +501,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={'affiliation'}
                   form={'affiliation-form'}
                   onDelete={handleDeleteAffiliation}
-                  showDeleteDialog={showDeleteDialog}
-                  handleShowDeleteDialog={handleShowDeleteDialog}
+                  showingDeleteDialog={showingDeleteDialog}
+                  showDeleteDialog={handleShowDeleteDialog}
                   newEntity={newAffiliation}
                   isDisableSave={isDisableSave}
                 />
@@ -564,38 +528,24 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={DialogType.SAVE}
                   entityType="affiliation"
                 />
-                <AuthorsSection>
-                  <AuthorsHeader>
-                    <AuthorsTitle>Authors</AuthorsTitle>
-                    <AffiliateButton
-                      onClick={() => setShowAuthorDrawer(true)}
-                      data-cy="affiliate-authors-button"
-                    >
-                      <AddUserIcon width={16} height={16} />
-                      Affiliate Authors
-                    </AffiliateButton>
-                  </AuthorsHeader>
-                  <SelectedItemsBox
-                    data-cy="affiliation-authors"
-                    items={selectedAuthors}
-                    onRemove={(id) => {
-                      setSelectedIds((prev) =>
-                        prev.filter((authorId) => authorId !== id)
-                      )
-                    }}
-                    placeholder="No authors assigned"
-                  />
-                </AuthorsSection>
-                {showAuthorDrawer && (
-                  <Drawer
-                    items={authorItems}
-                    selectedIds={selectedIds}
-                    title="Authors"
-                    onSelect={handleAuthorSelect}
-                    onBack={() => setShowAuthorDrawer(false)}
-                    width="100%"
-                  />
-                )}
+                <DrawerGroup<{ id: string; label: string }>
+                  Drawer={GenericDrawer}
+                  removeItem={(id) => {
+                    setSelectedIds((prev) =>
+                      prev.filter((authorId) => authorId !== id)
+                    )
+                  }}
+                  selectedItems={selectedAuthors}
+                  onSelect={selectAuthor}
+                  items={makeAuthorItems(authors)}
+                  showDrawer={showAuthorDrawer}
+                  setShowDrawer={setShowAuthorDrawer}
+                  title="Authors"
+                  cy="affiliations"
+                  labelField="label"
+                  buttonText="Assign Authors"
+                  Icon={<AddUserIcon width={16} height={16} />}
+                />
               </AffiliationForms>
             ) : (
               <FormPlaceholder
