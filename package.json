@@ -12,7 +12,7 @@
     "styles"
   ],
   "scripts": {
-    "build": "npm-run-all --parallel 'build:*'",
+    "build": "npm-run-all --parallel build:*",
     "build:cjs": "tsc --outDir dist/cjs --module commonjs",
     "build:es": "tsc --outDir dist/es --declarationDir dist/types --declaration",
     "dev": "pnpm dependencies-versions && npm-run-all --parallel 'build:* --watch'",
