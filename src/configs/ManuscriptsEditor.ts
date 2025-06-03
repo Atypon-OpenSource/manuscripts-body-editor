@@ -62,7 +62,6 @@ export interface EditorProps {
   navigate: NavigateFunction
   location: Location
   isComparingMode?: boolean
-  submissionId?: string
   dispatch?: Dispatch
   onEditorClick: (
     pos: number,
@@ -76,12 +75,9 @@ export interface EditorProps {
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
 
-export const createEditorState = (
-  props: EditorProps,
-  snapshot?: ManuscriptNode
-) =>
+export const createEditorState = (props: EditorProps) =>
   EditorState.create({
-    doc: snapshot || props.doc,
+    doc: props.doc,
     schema,
     plugins: plugins(props),
   })

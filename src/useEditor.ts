@@ -61,7 +61,7 @@ export const useEditor = (externalProps: ExternalProps) => {
       view.current.updateState(newState)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.doc, props.isComparingMode]) // Re-run when document changes
+  }, [props.doc, props.isComparingMode])
 
   // Receiving steps from backend
   if (collabProvider && !props.isComparingMode) {
