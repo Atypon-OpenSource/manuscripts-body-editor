@@ -113,5 +113,6 @@ export default (
     long_desc: accessibilityElement(props, dispatch),
     alt_text: accessibilityElement(props, dispatch),
     hero_image: heroImage(props, dispatch),
+    trans_abstract: empty('trans_abstract'),
   }
 }

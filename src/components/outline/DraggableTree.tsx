@@ -62,6 +62,7 @@ const excludedTypes = [
   schema.nodes.alt_title,
   schema.nodes.alt_text,
   schema.nodes.long_desc,
+  schema.nodes.trans_abstract,
 ]
 
 const childrenExcludedTypes = [
