@@ -39,6 +39,7 @@ import figureElement from '../views/figure_element_editable'
 import footnote from '../views/footnote'
 import footnotesElement from '../views/footnotes_element'
 import generalTableFootnote from '../views/general_table_footnote'
+import heroImage from '../views/hero_image_editable'
 import inlineEquation from '../views/inline_equation_editable'
 import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
@@ -111,6 +112,6 @@ export default (
     award: award(props, dispatch),
     long_desc: accessibilityElement(props, dispatch),
     alt_text: accessibilityElement(props, dispatch),
-    hero_image: empty('hero_image'),
+    hero_image: heroImage(props, dispatch),
   }
 }

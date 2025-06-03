@@ -20,6 +20,7 @@ import {
 } from '@manuscripts/style-guide'
 import {
   isElementNodeType,
+  isHeroImageNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -59,7 +60,8 @@ const excludedTypes = [
   schema.nodes.title,
   schema.nodes.alt_titles,
   schema.nodes.alt_title,
-  schema.nodes.hero_image,
+  schema.nodes.alt_text,
+  schema.nodes.long_desc,
 ]
 
 const childrenExcludedTypes = [
@@ -259,8 +261,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   })
 
   const isDeletedItem = isDeleted(node)
+  const isHeroImage = isHeroImageNode(node)
 
-  const isTop = isManuscriptNode(parent)
+  const isTop = isManuscriptNode(parent) && !isHeroImage
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
@@ -282,11 +285,17 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const dragClass = isDragging ? 'dragging' : ''
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
   const deletedClass = isDeletedItem ? 'deleted' : ''
-
+  const heroImageClass = isHeroImage ? 'hero-image' : ''
   return (
-    <Outline ref={ref} className={`${dragClass} ${dropClass} ${deletedClass}`}>
+    <Outline
+      ref={ref}
+      className={`${dragClass} ${dropClass} ${deletedClass} ${heroImageClass}`}
+    >
       {!isTop && node.type.name != 'manuscript' && (
-        <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
+        <OutlineItem
+          depth={isHeroImage ? 1 : depth}
+          onContextMenu={handleContextMenu}
+        >
           {items.length ? (
             <OutlineItemArrow onClick={toggleOpen}>
               {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}
