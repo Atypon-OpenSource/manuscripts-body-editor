@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "2.8.86",
+  "version": "2.9.0",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -33,7 +33,7 @@
     "@manuscripts/library": "1.3.14",
     "@manuscripts/style-guide": "2.1.13",
     "@manuscripts/track-changes-plugin": "1.10.8",
-    "@manuscripts/transform": "3.0.69",
+    "@manuscripts/transform": "3.1.0",
     "@popperjs/core": "^2.11.8",
     "astrocite-eutils": "^0.16.4",
     "codemirror": "^5.58.1",
@@ -64,7 +64,14 @@
     "react-is": "^18.3.1",
     "react-router-dom": "^6.25.0",
     "react-select": "^5.7.3",
-    "styled-components": "^5.2.0"
+    "styled-components": "^5.2.0",
+    "@citation-js/core": "^0.7.18",
+    "@citation-js/plugin-bibtex": "^0.7.18",
+    "@citation-js/plugin-csl": "^0.7.18",
+    "@citation-js/plugin-doi": "^0.7.18",
+    "@citation-js/plugin-enw": "^0.3.0",
+    "@citation-js/plugin-pubmed": "^0.3.0",
+    "@citation-js/plugin-ris": "^0.7.18"
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
@@ -83,6 +90,7 @@
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
+    "@types/csl": "npm:csl-json@0.1.0",
     "concurrently": "^7.6.0",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
