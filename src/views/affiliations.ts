@@ -123,17 +123,22 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
-    const item = element.closest('.affiliation')
-    if (item) {
-      const node = findChildByID(this.view, item.id)
-      if (!node) {
-        return
-      }
-      const view = this.view
-      const tr = view.state.tr
-      tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
-      view.dispatch(tr)
+    const affiliation = element.closest('.affiliation')
+    if (!affiliation) {
+      return
     }
+    const { node, pos } = findChildByID(this.view, affiliation.id) || {}
+    if (!node || !pos) {
+      return
+    }
+    if (!isDeleted(node)) {
+      this.showContextMenu(affiliation)
+    }
+
+    const view = this.view
+    const tr = view.state.tr
+    tr.setSelection(NodeSelection.create(view.state.doc, pos))
+    view.dispatch(tr)
   }
 
   private updateSelection() {
@@ -174,7 +179,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     deleteNode(this.view, affiliation.id)
   }
 
-  handleEdit = (addNew?: boolean) => {
+  handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
       this.view,
@@ -186,7 +191,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       schema.nodes.affiliation
     )
 
+    const affiliation = id
+      ? affiliations.filter((a) => a.id === id)[0]
+      : undefined
     const componentProps: AffiliationsModalProps = {
+      affiliation,
       authors: contributors,
       affiliations,
       onSaveAffiliation: this.handleSaveAffiliation,
@@ -208,7 +217,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.container.appendChild(this.popper)
   }
 
-  public showContextMenu = (): HTMLElement | undefined => {
+  public showGroupContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
     const componentProps: ContextMenuProps = {
       actions: [],
@@ -222,12 +231,12 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       })
       componentProps.actions.push({
         label: 'New Affiliation',
-        action: () => this.handleEdit(true),
+        action: () => this.handleEdit('', true),
         icon: 'AddOutline',
       })
       componentProps.actions.push({
         label: 'Edit',
-        action: () => this.handleEdit(),
+        action: () => this.handleEdit(''),
         icon: 'Edit',
       })
 
@@ -246,8 +255,36 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     return undefined
   }
 
+  public showContextMenu = (element: Element) => {
+    const affiliationNameBlock = element.querySelector('.affiliation-name')
+    this.props.popper.destroy() // destroy the old context menu
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Edit',
+          action: () => this.handleEdit(element.id),
+          icon: 'Edit',
+        },
+      ],
+    }
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    this.props.popper.show(
+      affiliationNameBlock || element,
+      this.contextMenu,
+      'right-start'
+    )
+  }
+
   public actionGutterButtons = (): HTMLElement[] => {
-    const contextMenu = this.showContextMenu()
+    const contextMenu = this.showGroupContextMenu()
     return contextMenu ? [contextMenu] : []
   }
 
@@ -261,7 +298,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
     // Open the modal if the node is not deleted and the comment marker is not selected
     if (!isDeleted(this.node) && !selectedMarker) {
-      this.handleEdit(true)
+      this.handleEdit('', true)
     }
   }
 
