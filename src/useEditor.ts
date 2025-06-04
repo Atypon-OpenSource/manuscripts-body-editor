@@ -53,8 +53,18 @@ export const useEditor = (externalProps: ExternalProps) => {
   const location = useLocation()
   const { collabProvider } = props
 
+  // Update editor state when document changes (e.g., when switching to comparison mode)
+  useEffect(() => {
+    if (view.current && props.isComparingMode) {
+      const newState = createEditorState(props)
+      setState(newState)
+      view.current.updateState(newState)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.doc, props.isComparingMode])
+
   // Receiving steps from backend
-  if (collabProvider) {
+  if (collabProvider && !props.isComparingMode) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async () => {
       if (state && view.current) {
@@ -97,7 +107,9 @@ export const useEditor = (externalProps: ExternalProps) => {
 
       if (
         collabProvider &&
-        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
+        (!trackState ||
+          trackState.status !== TrackChangesStatus.viewSnapshots) &&
+        !props.isComparingMode
       ) {
         const sendable = sendableSteps(nextState)
 
