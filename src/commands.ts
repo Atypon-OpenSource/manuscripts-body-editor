@@ -309,6 +309,9 @@ export const createBlock = (
     case schema.nodes.image_element:
       node = createImageElement(attrs)
       break
+    case schema.nodes.hero_image:
+      node = createHeroImage(attrs)
+      break
     case schema.nodes.listing_element:
       node = schema.nodes.listing_element.create({}, [
         schema.nodes.listing.create(),
@@ -1676,7 +1679,8 @@ export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.embed ||
   type === schema.nodes.affiliations ||
   type === schema.nodes.contributors ||
-  type === schema.nodes.image_element
+  type === schema.nodes.image_element ||
+  type === schema.nodes.hero_image
 
 export const addNodeComment = (
   node: ManuscriptNode,
@@ -1892,3 +1896,31 @@ export const activateSearchReplace = (
   dispatch && dispatch(tr)
   return true
 }
+
+const createHeroImage = (attrs?: Attrs) =>
+  schema.nodes.hero_image.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.hero_image),
+    },
+    [
+      schema.nodes.figure.create(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
+
+export const insertHeroImage =
+  () =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (getChildOfType(state.doc, schema.nodes.hero_image, true)) {
+      return false
+    }
+    const backmatter = findBackmatter(state.doc)
+
+    const position = backmatter.pos + backmatter.node.content.size + 1
+    view?.focus()
+    createBlock(schema.nodes.hero_image, position, state, dispatch)
+
+    return true
+  }

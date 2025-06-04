@@ -108,8 +108,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       validateOnChange={true}
       innerRef={formRef}
     >
-      {(formik) => {
-        const isAuthor = formik.values.role === 'author'
+      {() => {
         return (
           <ChangeHandlingForm
             onChange={onChange}
@@ -118,6 +117,15 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           >
             <Fieldset>
               <TextFieldGroupContainer>
+                <Field name={'prefix'}>
+                  {(props: FieldProps) => (
+                    <TextField
+                      id={'prefix'}
+                      placeholder={'Prefix'}
+                      {...props.field}
+                    />
+                  )}
+                </Field>
                 <Field name={'bibliographicName.given'}>
                   {(props: FieldProps) => (
                     <TextField
@@ -155,14 +163,22 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   )
                 }}
               </Field>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                  <TextField
+                    id={'role'}
+                    placeholder={'Role'}
+                    {...props.field}
+                  />
+                )}
+              </Field>
               <CheckboxContainer>
-                <CheckboxLabel disabled={!isAuthor}>
+                <CheckboxLabel>
                   <Field name={'isCorresponding'}>
                     {(props: FieldProps) => (
                       <CheckboxField
                         id={'isCorresponding'}
                         checked={props.field.value}
-                        disabled={!isAuthor}
                         {...props.field}
                       />
                     )}

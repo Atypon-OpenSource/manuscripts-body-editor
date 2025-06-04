@@ -446,7 +446,8 @@
 }
 
 .comment-marker:has(+ .block-contributors),
-.comment-marker:has(+ .block-affiliations) {
+.comment-marker:has(+ .block-affiliations),
+.comment-marker:has(+ .block-hero_image) {
   height: 0;
   top: 0;
   right: 60px;
@@ -573,7 +574,8 @@ span.comment-marker {
   display: none;
 }
 
-.ProseMirror div.backmatter:has(:only-child.bibliography > .empty-node)::before {
+.ProseMirror
+  div.backmatter:has(:only-child.bibliography > .empty-node)::before {
   border-bottom: none;
 }
 
@@ -964,6 +966,8 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='node_split'][data-track-status='pending']
+  .block, .tracking-visible
+  .selected-suggestion[data-track-op='move'][data-track-status='pending']
   .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
@@ -973,7 +977,9 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
-.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
+.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion), .tracking-visible
+.selected-suggestion[data-track-op='move'][data-track-status='pending']
+.block  {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -988,6 +994,11 @@ figure.block:has(.equation.selected-suggestion) {
 .subtree .deleted {
   display: none;
 }
+
+.ProseMirror .move-deleted-node {
+  display: none !important;
+}
+
 
 .citation-wrapper {
   position: relative;
@@ -1079,9 +1090,7 @@ figure.block:has(.equation.selected-suggestion) {
   position: initial;
   display: flex;
   flex: 1;
-  align-items: center;
-  margin-top: 33px;
-  left: -10px;
+  align-items: flex-start;
 }
 .contributor .contributor-comment {
   left: 0;
@@ -1147,13 +1156,6 @@ figure.block:has(.equation.selected-suggestion) {
 .affiliation .affiliation-label {
   font-weight: bold;
   margin-right: 4px;
-}
-
-.block-affiliations .block {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .ProseMirror .doi-container {
@@ -1412,7 +1414,7 @@ th:hover > .table-context-menu-button,
   position: relative;
   pointer-events: none;
   user-select: none;
-  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6E6E6E;
+  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6e6e6e;
 }
 .ProseMirror .non-editable .body-overlay,
 .ProseMirror .non-editable .figure-overlay {
@@ -1426,7 +1428,7 @@ th:hover > .table-context-menu-button,
   z-index: 10;
 }
 .ProseMirror .non-editable .body-overlay {
-  width: 52px
+  width: 52px;
 }
 .ProseMirror .non-editable .block {
   opacity: 50%;
@@ -1486,7 +1488,9 @@ th:hover > .table-context-menu-button,
   transform: rotate(180deg);
 }
 
-.ProseMirror .accessibility_element_expander_button_container .toggle-button-open {
+.ProseMirror
+  .accessibility_element_expander_button_container
+  .toggle-button-open {
   right: calc(100% - 6px);
 }
 
@@ -1495,6 +1499,49 @@ th:hover > .table-context-menu-button,
   bottom: 36px;
 }
 
-.ProseMirror .block-table_element .accessibility_element_expander_button_container {
+.ProseMirror
+  .block-table_element
+  .accessibility_element_expander_button_container {
   left: 93%;
+}
+
+.hero-image-container {
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  background: white;
+  padding: 0 !important;
+}
+
+.ProseMirror div.backmatter:has(+ .block-container.block-hero_image)::after {
+  content: '';
+  display: block;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 0 35pt 32px 35pt;
+}
+
+.hero-image-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 8px 12px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #6e6e6e;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+.hero-image-container .figure-block {
+  border: none !important;
+}
+
+.hero-image-container .position-menu {
+  display: none !important;
+}
+.hero-image-toggle-btn svg {
+  width: 16px;
+  height: 9px;
+}
+.hero-image-toggle-btn.collapsed svg {
+  transform: rotate(180deg);
 }
