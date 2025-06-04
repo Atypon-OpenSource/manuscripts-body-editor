@@ -60,7 +60,11 @@ export type FileManagement = {
   previewLink: PreviewLink
 }
 
-const figureTypes = [schema.nodes.figure_element, schema.nodes.image_element]
+const figureTypes = [
+  schema.nodes.figure_element,
+  schema.nodes.image_element,
+  schema.nodes.hero_image,
+]
 
 export const groupFiles = (
   doc: ManuscriptNode,
