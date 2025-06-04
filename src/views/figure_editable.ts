@@ -144,6 +144,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
+    let handleDelete
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -169,6 +170,15 @@ export class FigureEditableView extends FigureView {
     if (can.uploadFile) {
       handleUpload = figureUploader(this.upload)
     }
+    if (can.editArticle) {
+      handleDelete = () => {
+        const pos = this.getPos()
+        const tr = this.view.state.tr
+        // Delete the figure node
+        tr.delete(pos, pos + this.node.nodeSize)
+        this.view.dispatch(tr)
+      }
+    }
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
@@ -181,6 +191,8 @@ export class FigureEditableView extends FigureView {
         onUpload: handleUpload,
         onDetach: handleDetach,
         onReplace: handleReplace,
+        onDelete: handleDelete,
+        figureIndex: this.getFigureIndex(),
       }
       this.reactTools = ReactSubView(
         this.props,
@@ -203,6 +215,17 @@ export class FigureEditableView extends FigureView {
     })
     tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
+  }
+
+  private getFigureIndex(): number {
+    const figures: number[] = []
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.type === schema.nodes.figure) {
+        figures.push(pos)
+      }
+    })
+    const currentPos = this.getPos()
+    return figures.indexOf(currentPos)
   }
 
   private createUnsupportedFormat = (name: string) => {
