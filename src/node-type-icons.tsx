@@ -54,6 +54,7 @@ const icons: Map<
   [nodes.graphical_abstract_section, OutlineSectionIcon],
   [nodes.footnotes_section, OutlineSectionIcon],
   [nodes.image_element, OutlineImageIcon],
+  [nodes.hero_image, OutlineImageIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType, listType?: string) => {
