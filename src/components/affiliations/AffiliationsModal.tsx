@@ -54,55 +54,7 @@ import { GenericDrawer } from '../modal-drawer/GenericDrawer'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
-const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
-`
-const AddAffiliationButton = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 12px 8px 12px 12px;
-  cursor: pointer;
-  &[data-active='true'] {
-    background: ${(props) => props.theme.colors.background.fifth};
-    border: 1px solid ${(props) => props.theme.colors.border.primary};
-    border-left: 0;
-    border-right: 0;
-  }
-`
-
-const ActionTitle = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 2}px;
-`
-const AffiliationForms = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 3}px;
-  padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  position: relative;
-  margin-top: 20px;
-`
-
-const StyledModalBody = styled(ModalBody)`
-  position: relative;
-  height: calc(90vh - 40px);
-`
-const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
-  margin-top: 8px;
-  margin-bottom: 16px;
-`
-
-const normalize = (affiliation: AffiliationAttrs) => ({
-  id: affiliation.id || generateID(ObjectTypes.Affiliation),
-  institution: affiliation.institution,
-  department: affiliation.department,
-  addressLine1: affiliation.addressLine1,
-  addressLine2: affiliation.addressLine2,
-  addressLine3: affiliation.addressLine3,
-  postCode: affiliation.postCode,
-  country: affiliation.country,
-  county: affiliation.county,
-  city: affiliation.city,
-  email: affiliation.email,
-  priority: affiliation.priority,
-})
+import { normalizeAffiliation } from '../../lib/normalize'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs
@@ -185,7 +137,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleClose = () => {
     const values = valuesRef.current
     const hasAffiliationChanges =
-      selection && !isEqual(values, normalize(selection))
+      selection && !isEqual(values, normalizeAffiliation(selection))
     const originalAuthors = selection
       ? affiliationAuthorMap.get(selection.id) ?? []
       : []
@@ -210,7 +162,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleSelect = (affiliation: AffiliationAttrs) => {
     const values = valuesRef.current
     const hasAffiliationChanges =
-      selection && !isEqual(values, normalize(selection))
+      selection && !isEqual(values, normalizeAffiliation(selection))
     const originalAuthors = selection
       ? affiliationAuthorMap.get(selection.id) ?? []
       : []
@@ -249,21 +201,16 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       if (!values || !selection) {
         return
       }
-
       setIsDisableSave(true)
-
       const affiliation = {
-        ...normalize(selection),
+        ...normalizeAffiliation(selection),
         ...values,
       }
-
       onSaveAffiliation(affiliation)
-
       dispatchAffiliations({
         type: 'update',
         items: [affiliation],
       })
-
       setSelection(affiliation)
 
       const updatedAuthors = authors.map((author) => ({
@@ -279,9 +226,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       })
 
       onUpdateAuthors(updatedAuthors)
-
       setNewAffiliation(false)
-
       setAffiliationAuthorMap((prevMap) => {
         const newMap = new Map(prevMap)
         newMap.set(affiliation.id, selectedAuthorIds)
@@ -314,7 +259,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const isInstitutionEmpty = !values.institution?.trim()
     const hasAffiliationChanges =
-      selection && !isEqual(normalize(values), normalize(selection))
+      selection &&
+      !isEqual(normalizeAffiliation(values), normalizeAffiliation(selection))
     const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges =
       selection && !isEqual(originalAuthors.sort(), selectedAuthorIds.sort())
@@ -366,7 +312,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     const hasAffiliationChanges = !isEqual(
       valuesRef.current,
-      normalize(selection)
+      normalizeAffiliation(selection)
     )
     const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges = !isEqual(
@@ -460,7 +406,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       setSelectedAuthorIds(affiliatedAuthorIds)
 
-      valuesRef.current = normalize(pendingSelection)
+      valuesRef.current = normalizeAffiliation(pendingSelection)
       setIsDisableSave(true)
 
       setAffiliationAuthorMap((prevMap) => {
@@ -504,7 +450,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
 
     if (pendingSelection) {
-      valuesRef.current = normalize(pendingSelection)
+      valuesRef.current = normalizeAffiliation(pendingSelection)
     } else {
       valuesRef.current = undefined
     }
@@ -567,7 +513,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   isDisableSave={isDisableSave}
                 />
                 <AffiliationForm
-                  values={normalize(selection)}
+                  values={normalizeAffiliation(selection)}
                   onSave={() => handleSaveAffiliation(valuesRef.current)}
                   onChange={handleAffiliationChange}
                   actionsRef={actionsRef}
@@ -622,3 +568,38 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     </StyledModal>
   )
 }
+
+const StyledSidebarContent = styled(SidebarContent)`
+  padding: 0;
+`
+const AddAffiliationButton = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px 8px 12px 12px;
+  cursor: pointer;
+  &[data-active='true'] {
+    background: ${(props) => props.theme.colors.background.fifth};
+    border: 1px solid ${(props) => props.theme.colors.border.primary};
+    border-left: 0;
+    border-right: 0;
+  }
+`
+
+const ActionTitle = styled.div`
+  padding-left: ${(props) => props.theme.grid.unit * 2}px;
+`
+const AffiliationForms = styled.div`
+  padding-left: ${(props) => props.theme.grid.unit * 3}px;
+  padding-right: ${(props) => props.theme.grid.unit * 3}px;
+  position: relative;
+  margin-top: 20px;
+`
+
+const StyledModalBody = styled(ModalBody)`
+  position: relative;
+  height: calc(90vh - 40px);
+`
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin-top: 8px;
+  margin-bottom: 16px;
+`

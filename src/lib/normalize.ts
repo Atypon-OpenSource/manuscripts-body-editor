@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { ContributorAttrs } from '../../lib/authors'
+import { generateID, ObjectTypes } from '@manuscripts/json-schema'
+import { AffiliationAttrs, ContributorAttrs } from './authors'
 
-export const normalize = (author: ContributorAttrs) => {
+export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
     id: author.id,
     role: author.role || 'author',
@@ -40,3 +41,18 @@ export const normalize = (author: ContributorAttrs) => {
 
   return basic
 }
+
+export const normalizeAffiliation = (affiliation: AffiliationAttrs) => ({
+  id: affiliation.id || generateID(ObjectTypes.Affiliation),
+  institution: affiliation.institution,
+  department: affiliation.department,
+  addressLine1: affiliation.addressLine1,
+  addressLine2: affiliation.addressLine2,
+  addressLine3: affiliation.addressLine3,
+  postCode: affiliation.postCode,
+  country: affiliation.country,
+  county: affiliation.county,
+  city: affiliation.city,
+  email: affiliation.email,
+  priority: affiliation.priority,
+})
