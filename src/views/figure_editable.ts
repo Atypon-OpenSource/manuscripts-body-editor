@@ -144,7 +144,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
-    let handleDelete
+    let handleDelete: (() => void) | undefined // Type explicitly as possibly undefined
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
