@@ -25,7 +25,7 @@ import styled from 'styled-components'
 
 import { CheckboxContainer, LabelText } from './AuthorDetailsForm'
 
-interface CRediTDrawerProps {
+interface CreditDrawerProps {
   items: { id: string; vocabTerm: string }[]
   selectedItems: {
     id: string
@@ -33,8 +33,8 @@ interface CRediTDrawerProps {
   onSelect: (id: string) => void
 }
 
-export const CRediTDrawer: React.FC<
-  CRediTDrawerProps & Omit<DrawerProps, 'children'>
+export const CreditDrawer: React.FC<
+  CreditDrawerProps & Omit<DrawerProps, 'children'>
 > = ({ items, selectedItems = [], onSelect, ...drawerProps }) => {
   return (
     <Drawer {...drawerProps}>
