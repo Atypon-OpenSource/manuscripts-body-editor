@@ -44,7 +44,7 @@ export {
   SearchReplacePluginState,
 } from './plugins/search-replace'
 export { getNewMatch, getClosestMatch } from './plugins/search-replace/lib'
-export { metadata, BibliographyItemAttrs } from './lib/references'
+export { metadata, bibliographyItemTypes } from './lib/references'
 export {
   authorLabel,
   affiliationLabel,

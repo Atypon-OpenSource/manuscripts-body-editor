@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { transformBibliography } from '@manuscripts/library'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -26,6 +25,7 @@ import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { importBibliographyItems } from '../../lib/references'
 import { ReferenceLine } from './ReferenceLine'
 
 export interface ImportBibFormProps {
@@ -61,7 +61,7 @@ export const ImportBibliographyForm = ({
         formik.setFieldValue('data', [])
         return
       }
-      const data = await transformBibliography(fileContent.trim())
+      const data = await importBibliographyItems(fileContent.trim())
       formik.setFieldValue('data', data ? data : [])
       formik.setFieldValue('err', '')
     } catch (error) {

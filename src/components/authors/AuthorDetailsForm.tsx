@@ -108,8 +108,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       validateOnChange={true}
       innerRef={formRef}
     >
-      {(formik) => {
-        const isAuthor = formik.values.role === 'author'
+      {() => {
         return (
           <ChangeHandlingForm
             onChange={onChange}
@@ -174,13 +173,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 )}
               </Field>
               <CheckboxContainer>
-                <CheckboxLabel disabled={!isAuthor}>
+                <CheckboxLabel>
                   <Field name={'isCorresponding'}>
                     {(props: FieldProps) => (
                       <CheckboxField
                         id={'isCorresponding'}
                         checked={props.field.value}
-                        disabled={!isAuthor}
                         {...props.field}
                       />
                     )}
