@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CRediTRole, CreditVocabTerm } from '@manuscripts/transform'
+import { CreditRole, CreditVocabTerm } from '@manuscripts/transform'
 import { useEffect, useMemo, useState } from 'react'
 
 import { ContributorAttrs } from '../../lib/authors'
 
-export const useManageCRediT = (selection: ContributorAttrs | undefined) => {
+export const useManageCredit = (selection: ContributorAttrs | undefined) => {
   const vocabTermItems = useMemo(() => {
     return Object.values(CreditVocabTerm).map((c) => ({
       vocabTerm: c,
@@ -27,15 +27,15 @@ export const useManageCRediT = (selection: ContributorAttrs | undefined) => {
   }, [])
 
   useEffect(() => {
-    setSelectedCRediTRoles(selection?.CRediTRoles ? selection?.CRediTRoles : [])
+    setSelectedCreditRoles(selection?.CreditRoles ? selection?.CreditRoles : [])
   }, [selection])
 
-  const [selectedCRediTRoles, setSelectedCRediTRoles] = useState<CRediTRole[]>(
+  const [selectedCreditRoles, setSelectedCreditRoles] = useState<CreditRole[]>(
     []
   )
 
-  const selectCRediTRole = (role: string) => {
-    setSelectedCRediTRoles((prev) => {
+  const selectCreditRole = (role: string) => {
+    setSelectedCreditRoles((prev) => {
       const clear = prev.filter((t) => t.vocabTerm !== role)
       if (clear.length !== prev.length) {
         return clear
@@ -48,16 +48,16 @@ export const useManageCRediT = (selection: ContributorAttrs | undefined) => {
     })
   }
 
-  const removeCRediTRole = (role: string) => {
-    setSelectedCRediTRoles((prev) => {
+  const removeCreditRole = (role: string) => {
+    setSelectedCreditRoles((prev) => {
       return prev.filter((r) => r.vocabTerm !== role)
     })
   }
   return {
-    removeCRediTRole,
-    selectCRediTRole,
-    selectedCRediTRoles,
-    setSelectedCRediTRoles,
+    removeCreditRole,
+    selectCreditRole,
+    selectedCreditRoles,
+    setSelectedCreditRoles,
     vocabTermItems,
   }
 }

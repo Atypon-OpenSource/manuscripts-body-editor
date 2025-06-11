@@ -17,8 +17,6 @@
 import {
   BibliographicName,
   buildBibliographicName,
-  generateID,
-  ObjectTypes,
 } from '@manuscripts/json-schema'
 import {
   AddIcon,
@@ -60,10 +58,11 @@ import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationsDrawer } from './AffiliationDrawer'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
-import { CRediTDrawer } from './CRediTDrawer'
+import { CreditDrawer } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
-import { useManageCRediT } from './useManageCRediT'
+import { useManageCredit } from './useManageCredit'
 import { normalizeAuthor } from '../../lib/normalize'
+import { generateNodeID, schema } from '@manuscripts/transform'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -102,7 +101,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
 
-  const [showCRediTDrawer, setShowCRediTDrawer] = useState(false)
+  const [showCreditDrawer, setShowCreditDrawer] = useState(false)
 
   const valuesRef = useRef<ContributorAttrs>()
   const actionsRef = useRef<FormActions>()
@@ -302,7 +301,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const author = createEmptyAuthor(name, authors.length)
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])
-    setSelectedCRediTRoles([])
+    setSelectedCreditRoles([])
     setSelection(author)
     setNewAuthor(true)
   }
@@ -390,12 +389,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const {
-    removeCRediTRole,
-    selectCRediTRole,
-    selectedCRediTRoles,
-    setSelectedCRediTRoles,
+    removeCreditRole,
+    selectCreditRole,
+    selectedCreditRoles,
+    setSelectedCreditRoles,
     vocabTermItems,
-  } = useManageCRediT(selection)
+  } = useManageCredit(selection)
 
   return (
     <StyledModal
@@ -476,7 +475,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     isEmailRequired={isEmailRequired}
                     selectedAffiliations={selectedAffiliations.map((a) => a.id)}
                     authorFormRef={authorFormRef}
-                    selectedCRediTRoles={selectedCRediTRoles}
+                    selectedCreditRoles={selectedCreditRoles}
                   />
                   <DrawerGroup<AffiliationAttrs>
                     Drawer={AffiliationsDrawer}
@@ -493,18 +492,18 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     Icon={<AddInstitutionIcon width={16} height={16} />}
                   />
                   <DrawerGroup<{ id: string; vocabTerm: string }>
-                    Drawer={CRediTDrawer}
-                    removeItem={removeCRediTRole}
-                    selectedItems={selectedCRediTRoles.map((r) => ({
+                    Drawer={CreditDrawer}
+                    removeItem={removeCreditRole}
+                    selectedItems={selectedCreditRoles.map((r) => ({
                       id: r.vocabTerm,
                       ...r,
                     }))}
-                    onSelect={selectCRediTRole}
+                    onSelect={selectCreditRole}
                     items={vocabTermItems}
-                    showDrawer={showCRediTDrawer}
-                    setShowDrawer={setShowCRediTDrawer}
-                    title="Contributions (CRediT)"
-                    buttonText="Assign CRediT Roles"
+                    showDrawer={showCreditDrawer}
+                    setShowDrawer={setShowCreditDrawer}
+                    title="Contributions (Credit)"
+                    buttonText="Assign Credit Roles"
                     cy="credit-taxnonomy"
                     labelField="vocabTerm"
                     Icon={<AddRoleIcon width={16} height={16} />}
@@ -532,7 +531,7 @@ function createEmptyAuthor(
   priority: number
 ): ContributorAttrs {
   return {
-    id: generateID(ObjectTypes.Contributor),
+    id: generateNodeID(schema.nodes.contributor),
     role: '',
     affiliations: [],
     bibliographicName: name,

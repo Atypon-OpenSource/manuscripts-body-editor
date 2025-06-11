@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import {
   AddIcon,
   AddUserIcon,
@@ -55,6 +54,7 @@ import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
 import { normalizeAffiliation } from '../../lib/normalize'
+import { generateNodeID, schema } from '@manuscripts/transform'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs
@@ -342,23 +342,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const values = valuesRef.current
     const hasChanges = !isDisableSave
     const isInstitutionEmpty = values?.institution?.trim() === ''
-    const emptyAffiliation: AffiliationAttrs = {
-      id: generateID(ObjectTypes.Affiliation),
-      institution: '',
-      department: '',
-      addressLine1: '',
-      addressLine2: '',
-      addressLine3: '',
-      postCode: '',
-      country: '',
-      county: '',
-      city: '',
-      email: {
-        href: '',
-        text: '',
-      },
-      priority: affiliations.length,
-    }
+    const emptyAffiliation = createEmptyAffiliation(affiliations.length)
 
     if (hasChanges) {
       setPendingAction('new')
@@ -567,6 +551,26 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       </ModalContainer>
     </StyledModal>
   )
+}
+
+function createEmptyAffiliation(priority: number): AffiliationAttrs {
+  return {
+    id: generateNodeID(schema.nodes.affiliation),
+    institution: '',
+    department: '',
+    addressLine1: '',
+    addressLine2: '',
+    addressLine3: '',
+    postCode: '',
+    country: '',
+    county: '',
+    city: '',
+    email: {
+      href: '',
+      text: '',
+    },
+    priority: priority,
+  }
 }
 
 const StyledSidebarContent = styled(SidebarContent)`

@@ -21,7 +21,7 @@ import {
   TextFieldGroupContainer,
   TextFieldLabel,
 } from '@manuscripts/style-guide'
-import { CRediTRole } from '@manuscripts/transform'
+import { CreditRole } from '@manuscripts/transform'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
@@ -74,7 +74,7 @@ interface AuthorDetailsFormProps {
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
-  selectedCRediTRoles: CRediTRole[]
+  selectedCreditRoles: CreditRole[]
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -84,7 +84,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   actionsRef,
   isEmailRequired,
   selectedAffiliations,
-  selectedCRediTRoles,
+  selectedCreditRoles,
   authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
@@ -96,10 +96,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   }, [selectedAffiliations])
 
   useEffect(() => {
-    if (selectedCRediTRoles && formRef.current) {
-      formRef.current.setFieldValue('CRediTRoles', selectedCRediTRoles)
+    if (selectedCreditRoles && formRef.current) {
+      formRef.current.setFieldValue('CreditRoles', selectedCreditRoles)
     }
-  }, [selectedCRediTRoles])
+  }, [selectedCreditRoles])
 
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import { AffiliationAttrs, ContributorAttrs } from './authors'
+import { generateNodeID, schema } from '@manuscripts/transform'
 
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
@@ -35,15 +35,15 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     prefix: author.prefix || '',
   }
 
-  if (author.CRediTRoles && Array.isArray(author.CRediTRoles)) {
-    basic.CRediTRoles = author.CRediTRoles
+  if (author.CreditRoles && Array.isArray(author.CreditRoles)) {
+    basic.CreditRoles = author.CreditRoles
   }
 
   return basic
 }
 
 export const normalizeAffiliation = (affiliation: AffiliationAttrs) => ({
-  id: affiliation.id || generateID(ObjectTypes.Affiliation),
+  id: affiliation.id || generateNodeID(schema.nodes.affiliation),
   institution: affiliation.institution,
   department: affiliation.department,
   addressLine1: affiliation.addressLine1,
