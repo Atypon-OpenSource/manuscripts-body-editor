@@ -41,7 +41,6 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onDetach?: () => void
   onReplace?: (file: FileAttachment) => void
   onDelete?: () => void
-  figureIndex?: number
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -58,7 +57,6 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onDetach,
   onReplace,
   onDelete,
-  figureIndex,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const supplements = files.supplements
@@ -72,7 +70,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
-  const showDelete = onDelete && can.editArticle && figureIndex !== 0 // // Skip displaying the delete option for the first figure
+  const showDelete = onDelete && can.detachFile
 
   return (
     <DropdownWrapper ref={wrapperRef}>

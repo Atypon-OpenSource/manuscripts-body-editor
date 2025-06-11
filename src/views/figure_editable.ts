@@ -170,13 +170,19 @@ export class FigureEditableView extends FigureView {
     if (can.uploadFile) {
       handleUpload = figureUploader(this.upload)
     }
-    if (can.editArticle) {
-      handleDelete = () => {
-        const pos = this.getPos()
-        const tr = this.view.state.tr
-        // Delete the figure node
-        tr.delete(pos, pos + this.node.nodeSize)
-        this.view.dispatch(tr)
+
+    if (can.detachFile) {
+      const FigureIndex = this.getFigureIndex()
+
+      // Only assign handleDelete if it's NOT the  first figure (index 0)
+      if (FigureIndex !== 0) {
+        handleDelete = () => {
+          const pos = this.getPos()
+          const tr = this.view.state.tr
+          // Delete the figure node
+          tr.delete(pos, pos + this.node.nodeSize)
+          this.view.dispatch(tr)
+        }
       }
     }
 
@@ -192,7 +198,6 @@ export class FigureEditableView extends FigureView {
         onDetach: handleDetach,
         onReplace: handleReplace,
         onDelete: handleDelete,
-        figureIndex: this.getFigureIndex(),
       }
       this.reactTools = ReactSubView(
         this.props,
@@ -217,6 +222,9 @@ export class FigureEditableView extends FigureView {
     this.view.dispatch(tr)
   }
 
+  /**
+   * Calculates the index of the current figure node
+   */
   private getFigureIndex(): number {
     const figures: number[] = []
     this.view.state.doc.descendants((node, pos) => {

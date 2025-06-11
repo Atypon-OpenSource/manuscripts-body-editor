@@ -14,48 +14,25 @@
  * limitations under the License.
  */
 
-import { PlusIcon } from '@manuscripts/style-guide'
-import { FigureElementNode, schema } from '@manuscripts/transform'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { schema } from '@manuscripts/transform'
 
-import { Trackable } from '../types'
-import BlockView from './block_view'
+import { createAddFigureButton } from '../icons'
 import { createNodeView } from './creators'
+import { ImageElementView } from './image_element'
 
-export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
-  private container: HTMLElement
+export class FigureElementView extends ImageElementView {
   private addFigureBtn: HTMLButtonElement
 
   public ignoreMutation = () => true
 
   public createElement = () => {
-    this.container = document.createElement('div')
-    this.container.classList.add('block')
-    this.dom.appendChild(this.container)
-
-    // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
-
-    // Display the button only when it's a figure panel, not a simple image
-
-    if (this.node.type === schema.nodes.figure_element) {
-      this.addFigureElementButtons()
-    }
+    super.createElement()
+    this.addFigureElementButtons()
   }
 
   private addFigureElementButtons() {
     if (this.props.getCapabilities()?.editArticle) {
-      this.addFigureBtn = document.createElement('button')
-      this.addFigureBtn.className = 'add-figure-button'
-      this.addFigureBtn.innerHTML = renderToStaticMarkup(
-        createElement(PlusIcon)
-      )
-      this.addFigureBtn.title = 'Add figure'
-      this.addFigureBtn.addEventListener('click', this.addFigure)
+      this.addFigureBtn = createAddFigureButton(this.addFigure)
       this.container.prepend(this.addFigureBtn)
     }
   }

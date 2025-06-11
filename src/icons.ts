@@ -38,3 +38,14 @@ export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
+export const createAddFigureButton = (
+  onClick: () => void
+): HTMLButtonElement => {
+  const button = document.createElement('button')
+  button.className = 'add-figure-button'
+  button.innerHTML = renderToStaticMarkup(createElement(PlusIcon))
+  button.title = 'Add figure'
+  button.type = 'button'
+  button.addEventListener('click', onClick)
+  return button
+}
