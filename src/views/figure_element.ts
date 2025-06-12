@@ -16,13 +16,11 @@
 
 import { schema } from '@manuscripts/transform'
 
-import { createAddFigureButton } from '../icons'
+import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
 
 export class FigureElementView extends ImageElementView {
-  private addFigureBtn: HTMLButtonElement
-
   public ignoreMutation = () => true
 
   public createElement = () => {
@@ -32,8 +30,13 @@ export class FigureElementView extends ImageElementView {
 
   private addFigureElementButtons() {
     if (this.props.getCapabilities()?.editArticle) {
-      this.addFigureBtn = createAddFigureButton(this.addFigure)
-      this.container.prepend(this.addFigureBtn)
+      const addFigureBtn = Object.assign(document.createElement('button'), {
+        className: 'add-figure-button',
+        innerHTML: addFigureBtnIcon,
+        title: 'Add figure',
+      })
+      addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(addFigureBtn)
     }
   }
   private addFigure = () => {
@@ -57,7 +60,6 @@ export class FigureElementView extends ImageElementView {
 
     const finalInsertPos = hasFigures ? lastFigureEndPos : figureElementPos + 1
 
-    // Create new figure node
     const figureNode = state.schema.nodes.figure.create()
 
     tr.insert(finalInsertPos, figureNode)

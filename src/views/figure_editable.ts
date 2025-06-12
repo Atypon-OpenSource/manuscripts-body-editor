@@ -172,10 +172,10 @@ export class FigureEditableView extends FigureView {
     }
 
     if (can.detachFile) {
-      const FigureIndex = this.getFigureIndex()
+      const index = this.getFigureIndex()
 
       // Only assign handleDelete if it's NOT the  first figure (index 0)
-      if (FigureIndex !== 0) {
+      if (index !== 0) {
         handleDelete = () => {
           const pos = this.getPos()
           const tr = this.view.state.tr
