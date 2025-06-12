@@ -31,6 +31,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import { dragBtnIcon } from '../icons'
 import { FileAttachment, groupFiles } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
@@ -79,6 +80,8 @@ export class FigureEditableView extends FigureView {
       : file
       ? this.createUnsupportedFormat(file.name)
       : this.createPlaceholder()
+
+    const dragIcon = this.createDraggableIcon()
 
     if (can.uploadFile && !isDeleted(this.node)) {
       const handlePlaceholderClick = (event: Event) => {
@@ -129,9 +132,18 @@ export class FigureEditableView extends FigureView {
     }
 
     this.container.innerHTML = ''
+    this.container.appendChild(dragIcon)
     this.container.appendChild(img)
 
     this.addTools()
+  }
+
+  public createDraggableIcon = () => {
+    const element = document.createElement('button')
+    element.classList.add('drag-icon')
+    element.title = 'Drag to reorder'
+    element.innerHTML = dragBtnIcon
+    return element
   }
 
   protected addTools() {
@@ -144,6 +156,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
+    let handleDelete: (() => void) | undefined // Type explicitly as possibly undefined
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -170,6 +183,21 @@ export class FigureEditableView extends FigureView {
       handleUpload = figureUploader(this.upload)
     }
 
+    if (can.detachFile) {
+      const index = this.getFigureIndex()
+
+      // Only assign handleDelete if it's NOT the  first figure (index 0)
+      if (index !== 0) {
+        handleDelete = () => {
+          const pos = this.getPos()
+          const tr = this.view.state.tr
+          // Delete the figure node
+          tr.delete(pos, pos + this.node.nodeSize)
+          this.view.dispatch(tr)
+        }
+      }
+    }
+
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
       const files = this.props.getFiles()
@@ -181,6 +209,7 @@ export class FigureEditableView extends FigureView {
         onUpload: handleUpload,
         onDetach: handleDetach,
         onReplace: handleReplace,
+        onDelete: handleDelete,
       }
       this.reactTools = ReactSubView(
         this.props,
@@ -203,6 +232,20 @@ export class FigureEditableView extends FigureView {
     })
     tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
+  }
+
+  /**
+   * Calculates the index of the current figure node
+   */
+  private getFigureIndex(): number {
+    const figures: number[] = []
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.type === schema.nodes.figure) {
+        figures.push(pos)
+      }
+    })
+    const currentPos = this.getPos()
+    return figures.indexOf(currentPos)
   }
 
   private createUnsupportedFormat = (name: string) => {
