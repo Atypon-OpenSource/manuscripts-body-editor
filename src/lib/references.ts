@@ -90,4 +90,5 @@ export const bibliographyItemTypes: [BibliographyItemType, string][] = [
   ['standard', 'Standard'],
   ['dataset', 'Dataset'],
   ['preprint', 'Preprint'],
+  ['literal', 'Literal'],
 ]
