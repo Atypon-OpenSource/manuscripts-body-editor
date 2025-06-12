@@ -18,6 +18,7 @@ import {
   ArrowDownCircleIcon,
   ArrowUpIcon,
   DeleteIcon,
+  DraggableIcon,
   EditIcon,
   LockIcon,
   PlusIcon,
@@ -39,3 +40,4 @@ export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
 export const addFigureBtnIcon = renderToStaticMarkup(createElement(PlusIcon))
+export const dragBtnIcon = renderToStaticMarkup(createElement(DraggableIcon))
