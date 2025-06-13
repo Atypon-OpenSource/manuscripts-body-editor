@@ -23,7 +23,6 @@
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
     "prepare": "husky install",
     "preversion": "npm-run-all --parallel typecheck lint test",
-    "pretest": "pnpm prebuild",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
     "version": "pnpm build"
