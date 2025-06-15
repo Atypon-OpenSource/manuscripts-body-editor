@@ -58,11 +58,7 @@ export const createDecoration = (
 }
 
 export const getNodeDescription = (node: ManuscriptNode): string => {
-  const nodeType = nodeNames.get(node.type) || node.type?.name
-  const nodeText = node.textContent?.trim().slice(0, 30)
-  return nodeText
-    ? `${nodeType} "${nodeText}${nodeText.length > 30 ? '...' : ''}"`
-    : nodeType
+  return nodeNames.get(node.type) || node.type?.name || ''
 }
 
 export const addWarning = (
