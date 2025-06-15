@@ -44,7 +44,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import { normalizeAffiliation } from '../../lib/normalize'
+import { checkID } from '../../lib/normalize'
 import { authorsReducer } from '../authors/AuthorsModal'
 import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
@@ -137,7 +137,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleClose = () => {
     const values = valuesRef.current
     const hasAffiliationChanges =
-      selection && !isEqual(values, normalizeAffiliation(selection))
+      selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
       ? affiliationAuthorMap.get(selection.id) ?? []
       : []
@@ -162,7 +162,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleSelect = (affiliation: AffiliationAttrs) => {
     const values = valuesRef.current
     const hasAffiliationChanges =
-      selection && !isEqual(values, normalizeAffiliation(selection))
+      selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
       ? affiliationAuthorMap.get(selection.id) ?? []
       : []
@@ -203,7 +203,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       }
       setIsDisableSave(true)
       const affiliation = {
-        ...normalizeAffiliation(selection),
+        ...checkID(selection, 'affiliation'),
         ...values,
       }
       onSaveAffiliation(affiliation)
@@ -260,7 +260,10 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const isInstitutionEmpty = !values.institution?.trim()
     const hasAffiliationChanges =
       selection &&
-      !isEqual(normalizeAffiliation(values), normalizeAffiliation(selection))
+      !isEqual(
+        checkID(values, 'affiliation'),
+        checkID(selection, 'affiliation')
+      )
     const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges =
       selection && !isEqual(originalAuthors.sort(), selectedAuthorIds.sort())
@@ -312,7 +315,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     const hasAffiliationChanges = !isEqual(
       valuesRef.current,
-      normalizeAffiliation(selection)
+      checkID(selection, 'affiliation')
     )
     const originalAuthors = affiliationAuthorMap.get(selection.id) ?? []
     const hasAuthorChanges = !isEqual(
@@ -390,7 +393,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       setSelectedAuthorIds(affiliatedAuthorIds)
 
-      valuesRef.current = normalizeAffiliation(pendingSelection)
+      valuesRef.current = checkID(pendingSelection, 'affiliation')
       setIsDisableSave(true)
 
       setAffiliationAuthorMap((prevMap) => {
@@ -434,7 +437,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
 
     if (pendingSelection) {
-      valuesRef.current = normalizeAffiliation(pendingSelection)
+      valuesRef.current = checkID(pendingSelection, 'affiliation')
     } else {
       valuesRef.current = undefined
     }
@@ -497,7 +500,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   isDisableSave={isDisableSave}
                 />
                 <AffiliationForm
-                  values={normalizeAffiliation(selection)}
+                  values={checkID(selection, 'affiliation')}
                   onSave={() => handleSaveAffiliation(valuesRef.current)}
                   onChange={handleAffiliationChange}
                   actionsRef={actionsRef}

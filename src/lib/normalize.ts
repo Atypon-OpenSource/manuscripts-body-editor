@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { generateNodeID, schema } from '@manuscripts/transform'
+import { generateNodeID, Nodes, schema } from '@manuscripts/transform'
 
-import { AffiliationAttrs, ContributorAttrs } from './authors'
+import { ContributorAttrs } from './authors'
 
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
@@ -43,17 +43,11 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
   return basic
 }
 
-export const normalizeAffiliation = (affiliation: AffiliationAttrs) => ({
-  id: affiliation.id || generateNodeID(schema.nodes.affiliation),
-  institution: affiliation.institution,
-  department: affiliation.department,
-  addressLine1: affiliation.addressLine1,
-  addressLine2: affiliation.addressLine2,
-  addressLine3: affiliation.addressLine3,
-  postCode: affiliation.postCode,
-  country: affiliation.country,
-  county: affiliation.county,
-  city: affiliation.city,
-  email: affiliation.email,
-  priority: affiliation.priority,
-})
+type WithID = { id: string | undefined }
+
+export const checkID = <T extends WithID>(attrs: T, nodeType: Nodes) => {
+  return {
+    ...attrs,
+    id: attrs.id || generateNodeID(schema.nodes[nodeType]),
+  }
+}
