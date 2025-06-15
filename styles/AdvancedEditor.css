@@ -625,11 +625,24 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation),
+  ):not(figure):not(figure .equation):not(.warning-highlight),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
+}
+
+.ProseMirror .warning-highlight {
+  border: 1px solid #f35143;
+  background: #fff1f0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror .warning-highlight.selected-suggestion {
+  border: 2px solid #f35143!important;
+  background: #fff1f0;
 }
 
 .block-bullet_list .selected-suggestion p,
