@@ -345,7 +345,6 @@ export class ContextMenu {
         menu.appendChild(
           this.createMenuItem('Remove Image', () => {
             const tr = this.view.state.tr
-            console.log(found)
             tr.delete(
               this.getPos() + 1 + found.pos,
               this.getPos() + 1 + found.pos + found.node.nodeSize
