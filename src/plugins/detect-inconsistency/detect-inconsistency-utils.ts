@@ -105,7 +105,7 @@ export const buildPluginState = (
     }
 
     state.doc.descendants((node, pos) => {
-      if (node.type === schema.nodes.title && node.type.name === 'title') {
+      if (node.type === schema.nodes.title) {
         const isEmpty = node.content.size === 0
         if (isEmpty) {
           addWarning(
