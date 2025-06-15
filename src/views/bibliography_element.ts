@@ -175,11 +175,31 @@ export class BibliographyElementBlockView extends BlockView<
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
+      const node = nodes.get(id) as BibliographyItemNode
+      const isUnstructured = node.attrs.type === 'literal'
+
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = fragment
+
+      if (isUnstructured) {
+        const cslLeftMarginDiv = tempDiv.querySelector('.csl-left-margin')
+        let cslRightInlineDiv = tempDiv.querySelector('.csl-right-inline')
+
+        if (!cslRightInlineDiv && cslLeftMarginDiv) {
+          cslRightInlineDiv = document.createElement('div')
+          cslRightInlineDiv.classList.add('csl-right-inline')
+          cslLeftMarginDiv.after(cslRightInlineDiv)
+        }
+
+        if (cslRightInlineDiv) {
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+        }
+      }
+
       const element = sanitize(
-        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
+        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${tempDiv.innerHTML}</div></div>`
       ).firstElementChild as HTMLElement
 
-      const node = nodes.get(id) as BibliographyItemNode
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
