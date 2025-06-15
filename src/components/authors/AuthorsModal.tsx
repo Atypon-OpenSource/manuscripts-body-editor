@@ -34,6 +34,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
+import { generateNodeID, schema } from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
 import React, {
   useCallback,
@@ -50,6 +51,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
+import { normalizeAuthor } from '../../lib/normalize'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
@@ -61,8 +63,6 @@ import { AuthorList } from './AuthorList'
 import { CreditDrawer } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
-import { normalizeAuthor } from '../../lib/normalize'
-import { generateNodeID, schema } from '@manuscripts/transform'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id

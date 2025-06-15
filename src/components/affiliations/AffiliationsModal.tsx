@@ -28,6 +28,7 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
+import { generateNodeID, schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import React, {
   useCallback,
@@ -43,6 +44,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
+import { normalizeAffiliation } from '../../lib/normalize'
 import { authorsReducer } from '../authors/AuthorsModal'
 import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
@@ -53,8 +55,6 @@ import { GenericDrawer } from '../modal-drawer/GenericDrawer'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
-import { normalizeAffiliation } from '../../lib/normalize'
-import { generateNodeID, schema } from '@manuscripts/transform'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs

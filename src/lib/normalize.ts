@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { AffiliationAttrs, ContributorAttrs } from './authors'
 import { generateNodeID, schema } from '@manuscripts/transform'
+
+import { AffiliationAttrs, ContributorAttrs } from './authors'
 
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
