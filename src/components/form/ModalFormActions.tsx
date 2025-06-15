@@ -50,8 +50,8 @@ export interface FormActionsProps {
   type: string
   form: string
   onDelete: () => void
-  showDeleteDialog: boolean
-  handleShowDeleteDialog: () => void
+  showingDeleteDialog: boolean
+  showDeleteDialog: () => void
   newEntity: boolean
   isDisableSave: boolean
 }
@@ -60,20 +60,20 @@ export const ModalFormActions: React.FC<FormActionsProps> = ({
   type,
   form,
   onDelete,
+  showingDeleteDialog,
   showDeleteDialog,
-  handleShowDeleteDialog,
   newEntity,
   isDisableSave,
 }) => {
   return (
     <ActionsContainer data-cy={`${type}-action`}>
       <ConfirmationDialog
-        isOpen={showDeleteDialog}
+        isOpen={showingDeleteDialog}
         onPrimary={() => {
           onDelete()
-          handleShowDeleteDialog()
+          showDeleteDialog()
         }}
-        onSecondary={handleShowDeleteDialog}
+        onSecondary={showDeleteDialog}
         type={DialogType.DELETE}
         entityType={type}
       />

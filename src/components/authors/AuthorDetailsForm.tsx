@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import {
   TextFieldGroupContainer,
   TextFieldLabel,
 } from '@manuscripts/style-guide'
+import { CreditRole } from '@manuscripts/transform'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
@@ -55,7 +56,7 @@ const TextFieldWithError = styled(TextField)`
   }
 `
 
-const CheckboxContainer = styled.div`
+export const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 32px;
@@ -73,6 +74,7 @@ interface AuthorDetailsFormProps {
   actionsRef?: MutableRefObject<FormActions | undefined>
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
+  selectedCreditRoles: CreditRole[]
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -82,6 +84,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   actionsRef,
   isEmailRequired,
   selectedAffiliations,
+  selectedCreditRoles,
   authorFormRef,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
@@ -91,6 +94,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       formRef.current.setFieldValue('affiliations', selectedAffiliations)
     }
   }, [selectedAffiliations])
+
+  useEffect(() => {
+    if (selectedCreditRoles && formRef.current) {
+      formRef.current.setFieldValue('creditRoles', selectedCreditRoles)
+    }
+  }, [selectedCreditRoles])
 
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
@@ -203,17 +212,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </Field>
                 </TextFieldLabel>
               </OrcidContainer>
-              <Field name="affiliations" type="hidden">
-                {(props: FieldProps) => {
-                  return (
-                    <TextField
-                      type="hidden"
-                      {...props.field}
-                      value={selectedAffiliations || []}
-                    />
-                  )
-                }}
-              </Field>
             </Fieldset>
           </ChangeHandlingForm>
         )

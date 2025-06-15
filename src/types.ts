@@ -63,3 +63,6 @@ export type Trackable<T extends ManuscriptNode> = Omit<T, 'attrs'> & {
 export type WidgetDecoration = Decoration & {
   type: { toDOM: () => HTMLElement; spec: Decoration['spec'] }
 }
+
+export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> &
+  Pick<T, K>
