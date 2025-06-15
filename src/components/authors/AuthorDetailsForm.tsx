@@ -97,7 +97,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
 
   useEffect(() => {
     if (selectedCreditRoles && formRef.current) {
-      formRef.current.setFieldValue('CreditRoles', selectedCreditRoles)
+      formRef.current.setFieldValue('creditRoles', selectedCreditRoles)
     }
   }, [selectedCreditRoles])
 
