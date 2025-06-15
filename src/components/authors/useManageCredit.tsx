@@ -27,7 +27,7 @@ export const useManageCredit = (selection: ContributorAttrs | undefined) => {
   }, [])
 
   useEffect(() => {
-    setSelectedCreditRoles(selection?.CreditRoles ? selection?.CreditRoles : [])
+    setSelectedCreditRoles(selection?.creditRoles ? selection?.creditRoles : [])
   }, [selection])
 
   const [selectedCreditRoles, setSelectedCreditRoles] = useState<CreditRole[]>(

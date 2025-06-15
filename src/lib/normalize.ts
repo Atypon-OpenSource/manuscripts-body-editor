@@ -35,8 +35,8 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     prefix: author.prefix || '',
   }
 
-  if (author.CreditRoles && Array.isArray(author.CreditRoles)) {
-    basic.CreditRoles = author.CreditRoles
+  if (author.creditRoles && Array.isArray(author.creditRoles)) {
+    basic.creditRoles = author.creditRoles
   }
 
   return basic
