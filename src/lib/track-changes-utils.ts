@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
+import {EditAttrsTrackingIcon} from '@manuscripts/style-guide'
 import {
   CHANGE_OPERATION,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
-import { schema } from '@manuscripts/transform'
-import { Attrs, Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import {schema} from '@manuscripts/transform'
+import {Attrs, Fragment, Node as ProsemirrorNode} from 'prosemirror-model'
+import {createElement} from 'react'
+import {renderToStaticMarkup} from 'react-dom/server'
 
 export function isDeleted(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(({ operation }) => operation === 'delete')
+  }
+  return false
+}
+
+export const isDeletedFromStructuralChange = (node: ProsemirrorNode) => {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(({ operation, moveNodeId }) => operation === 'delete' && moveNodeId)
   }
   return false
 }
@@ -175,6 +183,10 @@ export const addTrackChangesAttributes = (attrs: Attrs, dom: Element) => {
   dom.setAttribute('data-track-id', change.id)
   dom.setAttribute('data-track-op', change.operation)
   dom.setAttribute('data-track-status', change.status)
+
+  if (change.operation === CHANGE_OPERATION.reference && change.moveNodeId) {
+    dom.setAttribute('data-track-op', 'change_node')
+  }
 }
 
 export const addTrackChangesClassNames = (attrs: Attrs, dom: Element) => {

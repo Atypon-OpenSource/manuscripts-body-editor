@@ -13,24 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  CHANGE_STATUS,
+  skipTracking,
+  trackChangesPluginKey,
+  trackCommands,
+} from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isSectionNodeType,
-  ManuscriptEditorView,
+  ManuscriptEditorView, ManuscriptNode,
   ManuscriptNodeType,
   nodeNames,
   schema,
-  SectionTitleNode,
 } from '@manuscripts/transform'
-import { Fragment, Node } from 'prosemirror-model'
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
-import { EditorView } from 'prosemirror-view'
+import {Fragment, Node } from 'prosemirror-model'
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state'
+import {hasParentNodeOfType} from 'prosemirror-utils'
+import {EditorView} from 'prosemirror-view'
 
-import { Dispatch } from '../../commands'
-import { isDeleted } from '../../lib/track-changes-utils'
-import { Option } from './type-selector/TypeSelector'
+import {Dispatch} from '../../commands'
+import {isDeleted} from '../../lib/track-changes-utils'
+import {Option} from './type-selector/TypeSelector'
+import {selectedSuggestionKey} from "../../plugins/selected-suggestion";
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
@@ -54,11 +59,69 @@ export const findSelectedOption = (options: Option[]): Option | undefined => {
 }
 
 // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
-const getDeepestSubsection = (subsection: Node) => {
+const getDeepestSubsection = (subsection: Node, position: number): [Node, number] => {
   while (subsection.lastChild && isSectionNodeType(subsection.lastChild.type)) {
+    position += subsection.nodeSize - subsection.lastChild.nodeSize
     subsection = subsection.lastChild
   }
-  return subsection
+  return [subsection, position];
+}
+
+const getInsertPos = (
+  type: ManuscriptNodeType,
+  parent: ManuscriptNode,
+  pos: number,
+) => {
+  let insertPos = pos + parent.nodeSize - 1
+
+  parent.forEach((child, offset) => {
+    if (child.type.compatibleContent(type)) {
+      insertPos = pos + offset + child.nodeSize
+    }
+  })
+
+  return insertPos
+}
+
+/**
+ *  That to make sure beforeSection is not a deleted node from another convert_node change,
+ *  if it's deleted will check previous section and update insertPos.
+ */
+const ignoreDeletedSection = (state: EditorState, beforeSection: number, insertPos: number) => {
+  const changes = trackChangesPluginKey.getState(state)?.changeSet.changeTree || []
+  // if the beforeSection deleted from another StructuralChange will move the insert to the next previous node
+  const beforeDeletedContent = [...changes].reverse().find((c, i) =>
+    c.to === beforeSection &&
+    c.dataTracked.operation === 'delete' &&
+    c.dataTracked.moveNodeId &&
+    (changes[i - 1]?.dataTracked.operation !== 'delete')
+  )?.from
+  if (beforeDeletedContent) {
+    insertPos = beforeDeletedContent
+  }
+  return insertPos;
+}
+
+/**
+ * When converting again a tracked node as convert
+ * - if the selection on the same start point of conversion change will be rejected
+ * - or if the selection was on part of the content will use change moveNodeId to create a reference change
+ */
+const handleConversionOnSameNode = (state: EditorState, dispatch: (tr: Transaction) => void, offset: number = 0) => {
+  const selection = selectedSuggestionKey.getState(state)?.suggestion
+  const changeSet = trackChangesPluginKey.getState(state)?.changeSet
+  if (selection && changeSet) {
+    const { groupChanges } = changeSet
+    const selectedGroup = selection && groupChanges.find(c => c[0].dataTracked.moveNodeId === selection.moveNodeId)
+    const selectedChange = selectedGroup && selectedGroup.find(c => c.from === state.selection.$from.before(state.selection.$from.depth) - offset)
+    if (selectedChange && selectedChange.dataTracked.operation === 'change_node') {
+      trackCommands.setChangeStatuses(CHANGE_STATUS.rejected, selectedGroup.map(c => c.id))(state, dispatch)
+      return true
+    } else {
+      return selection.moveNodeId
+    }
+  }
+  return undefined
 }
 
 // Helper function to replace the deepest subsection with a new subsection
@@ -117,59 +180,37 @@ export const demoteSectionToParagraph = (
     sectionTitle.content
   )
 
-  let anchor
-  let fragment
-
-  const sectionContent = section.content.cut(afterSectionTitleOffset)
-
+  let insertPos = beforeSection
+  const sectionContent = section.content.cut(afterSectionTitleOffset);
   if (previousNode && isSectionNodeType(previousNode.type)) {
-    const hasSubsections =
-      previousNode.lastChild && isSectionNodeType(previousNode.lastChild.type)
-
+    const hasSubsections = previousNode.lastChild && isSectionNodeType(previousNode.lastChild.type);
     if (hasSubsections) {
-      const deepestSubsection = getDeepestSubsection(previousNode.lastChild)
-
-      const updatedDeepestSubsection = deepestSubsection.copy(
-        deepestSubsection.content
-          .append(Fragment.from(paragraph)) // Append the paragraph
-          .append(sectionContent) // Append the remaining content
-      )
-
-      const updatedPreviousNode = replaceDeepestSubsection(
-        previousNode,
-        updatedDeepestSubsection
-      )
-      fragment = updatedPreviousNode.content
-    } else {
-      // If no subsections exist, just append to the main section
-      fragment = Fragment.from(previousNode.content)
-        .append(Fragment.from(paragraph))
-        .append(sectionContent)
+      const [deepestSubsection, position] = getDeepestSubsection(previousNode.lastChild, beforeSection - previousNode.lastChild.nodeSize - 2);
+      insertPos = getInsertPos(nodes.paragraph, deepestSubsection, position + 1)
     }
-
-    tr.replaceWith(
-      beforeSection - previousNode.nodeSize,
-      afterSection,
-      previousNode.copy(fragment)
-    )
-
-    anchor = beforeSection
-  } else {
-    tr.replaceWith(
-      beforeSection,
-      afterSection,
-      Fragment.from(paragraph).append(sectionContent)
-    )
-
-    anchor = beforeSection + 1
+    else {
+      insertPos = getInsertPos(nodes.paragraph, previousNode, beforeSection - previousNode.nodeSize + 1)
+    }
   }
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
-  )
+  const selectedMoveNodeId = handleConversionOnSameNode(state, dispatch, 1)
+  if (typeof selectedMoveNodeId === 'string') {
+    tr.setMeta('change-node-id', selectedMoveNodeId)
+  } else if (selectedMoveNodeId) {
+    return
+  }
 
-  dispatch(skipTracking(tr))
-  view && view.focus()
+  insertPos = ignoreDeletedSection(state, beforeSection, insertPos)
+
+  tr.insert(insertPos, Fragment.from(paragraph).append(sectionContent))
+  tr.delete(tr.mapping.map(beforeSection), tr.mapping.map(afterSection))
+  tr.setMeta('change-node', 'paragraph')
+
+  tr.setSelection(
+    TextSelection.create(tr.doc, insertPos + sectionTitle.content.size + 1)
+  )
+  dispatch((tr));
+  view && view.focus();
 }
 
 export const promoteParagraphToSection = (
@@ -177,71 +218,55 @@ export const promoteParagraphToSection = (
   dispatch: (tr: Transaction) => void,
   view?: ManuscriptEditorView
 ) => {
-  const {
-    doc,
-    selection: { $from },
-    schema,
-    tr,
-  } = state
-  const { nodes } = schema
-  const paragraph = $from.node($from.depth)
-  const beforeParagraph = $from.before($from.depth)
-  const $beforeParagraph = doc.resolve(beforeParagraph)
-  const beforeParagraphOffset = $beforeParagraph.parentOffset
-  const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize
+  const { doc, selection: { $from }, schema, tr } = state
+  const { nodes } = schema;
+  const paragraph = $from.node($from.depth);
+  const beforeParagraph = $from.before($from.depth);
+  const $beforeParagraph = doc.resolve(beforeParagraph);
+  const beforeParagraphOffset = $beforeParagraph.parentOffset;
+  const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize;
+  const sectionDepth = $from.depth - 1;
+  const parentSection = $from.node(sectionDepth);
+  const endIndex = $from.indexAfter(sectionDepth);
+  let afterParentSection = $from.after(sectionDepth);
+  let insertPos = afterParentSection;
+  const textContent = paragraph.textContent;
 
-  const sectionDepth = $from.depth - 1
-  const parentSection = $from.node(sectionDepth)
-  const startIndex = $from.index(sectionDepth)
-  const endIndex = $from.indexAfter(sectionDepth)
-  const beforeParentSection = $from.before(sectionDepth)
-  const afterParentSection = $from.after(sectionDepth)
-
-  const items: Node[] = []
-  let offset = 0
-
-  if (startIndex > 0) {
-    // add the original section with content up to the paragraph
-    const precedingSection = parentSection.cut(0, beforeParagraphOffset)
-    items.push(precedingSection)
-    offset += precedingSection.nodeSize
-  }
-
-  const textContent = paragraph.textContent
-
-  const sectionTitle: SectionTitleNode = textContent
+  const sectionTitle = textContent
     ? nodes.section_title.create({}, schema.text(textContent))
-    : nodes.section_title.create()
-
+    : nodes.section_title.create();
   let sectionContent = Fragment.from(sectionTitle)
-  if (endIndex < parentSection.childCount) {
-    sectionContent = sectionContent.append(
-      parentSection.content.cut(afterParagraphOffset)
-    )
-  } else {
-    sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
-  }
 
   if (parentSection.type.name === 'body') {
-    const newSection = nodes.section.create({}, sectionContent)
-    items[0] = nodes.body.create(
-      {},
-      items[0]
-        ? items[0].content.append(Fragment.from(newSection))
-        : Fragment.from(newSection)
-    )
-  } else {
-    items.push(parentSection.copy(sectionContent))
+    afterParentSection = beforeParagraph + paragraph.nodeSize
+    // get position before first section in body, starting from the selection node index
+    parentSection.forEach((node, offset, index) => {
+      if (node.type !== nodes.section && index > tr.doc.resolve(beforeParagraph).index()) {
+        const pos = $from.start($from.depth - 1)
+        afterParentSection = pos + offset + node.nodeSize
+        sectionContent = sectionContent.append(Fragment.from(node))
+      }
+    })
+    insertPos = afterParentSection
+  } else if (endIndex < parentSection.childCount) {
+    sectionContent = sectionContent.append(parentSection.content.cut(afterParagraphOffset));
+  }
+  else {
+    sectionContent = sectionContent.append(Fragment.from(paragraph.copy()));
   }
 
-  tr.replaceWith(beforeParentSection, afterParentSection, items)
-  const anchor = beforeParentSection + offset + 2
+  const selectedMoveNodeId = handleConversionOnSameNode(state, dispatch)
+  if (typeof selectedMoveNodeId === 'string') {
+    tr.setMeta('change-node-id', selectedMoveNodeId)
+  } else if (selectedMoveNodeId) {
+     return
+  }
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
-  )
+  tr.insert(insertPos, nodes.section.create({}, sectionContent))
+  tr.delete(beforeParagraph, afterParentSection)
+  tr.setMeta('change-node', 'section')
 
-  dispatch(skipTracking(tr))
+  dispatch(tr)
   view && view.focus()
 }
 

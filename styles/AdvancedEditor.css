@@ -815,6 +815,8 @@ figure.block:has(.equation.selected-suggestion) {
   [data-track-op='node_split'][data-track-status='pending']
   .block, .tracking-visible
   .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .block, .tracking-visible
+  .selected-suggestion[data-track-op='change_node'][data-track-status='pending']
   .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
@@ -826,6 +828,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion), .tracking-visible
 .selected-suggestion[data-track-op='move'][data-track-status='pending']
+.block, .tracking-visibleAdd .selected-suggestion[data-track-op='change_node'][data-track-status='pending']
 .block  {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
