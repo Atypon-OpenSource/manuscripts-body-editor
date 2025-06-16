@@ -23,7 +23,7 @@ import {
 } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
-import { createDecoration, Warning } from './detect-inconsistency-utils'
+import { createDecoration, Inconsistency } from './detect-inconsistency-utils'
 
 export type ValidatorContext = {
   pluginStates: {
@@ -40,7 +40,7 @@ export type NodeValidator = (
   node: ManuscriptNode,
   pos: number,
   context: ValidatorContext
-) => Warning[]
+) => Inconsistency[]
 
 const getNodeDescription = (node: ManuscriptNode): string => {
   return nodeNames.get(node.type) || node.type?.name || 'node'
@@ -49,9 +49,9 @@ const getNodeDescription = (node: ManuscriptNode): string => {
 const createWarning = (
   node: ManuscriptNode,
   pos: number,
-  category: Warning['category'],
-  severity: Warning['severity']
-): Warning => {
+  category: Inconsistency['category'],
+  severity: Inconsistency['severity']
+): Inconsistency => {
   const nodeDescription = getNodeDescription(node)
   const message =
     category === 'empty-content'
@@ -69,23 +69,23 @@ const createWarning = (
 }
 
 const validateTitle: NodeValidator = (node, pos, context) => {
-  const warnings: Warning[] = []
+  const inconsistencies: Inconsistency[] = []
   const isEmpty = node.content.size === 0
 
   if (isEmpty) {
-    const warning = createWarning(node, pos, 'empty-content', 'warning')
-    warnings.push(warning)
+    const inconsistency = createWarning(node, pos, 'empty-content', 'warning')
+    inconsistencies.push(inconsistency)
 
     if (context.showDecorations) {
       context.decorations.push(createDecoration(node, pos, context.selectedPos))
     }
   }
 
-  return warnings
+  return inconsistencies
 }
 
 const validateCrossReference: NodeValidator = (node, pos, context) => {
-  const warnings: Warning[] = []
+  const inconsistencies: Inconsistency[] = []
   const figures = Array.from(context.pluginStates.objects?.keys() ?? [])
 
   const isInFigures = node.attrs.rids.every((rid: string) =>
@@ -93,19 +93,24 @@ const validateCrossReference: NodeValidator = (node, pos, context) => {
   )
 
   if (!isInFigures) {
-    const warning = createWarning(node, pos, 'missing-reference', 'warning')
-    warnings.push(warning)
+    const inconsistency = createWarning(
+      node,
+      pos,
+      'missing-reference',
+      'warning'
+    )
+    inconsistencies.push(inconsistency)
 
     if (context.showDecorations) {
       context.decorations.push(createDecoration(node, pos, context.selectedPos))
     }
   }
 
-  return warnings
+  return inconsistencies
 }
 
 const validateCitation: NodeValidator = (node, pos, context) => {
-  const warnings: Warning[] = []
+  const inconsistencies: Inconsistency[] = []
 
   if (context.pluginStates.bibliography) {
     const isInBibliography = node.attrs.rids.every((rid: string) =>
@@ -113,8 +118,13 @@ const validateCitation: NodeValidator = (node, pos, context) => {
     )
 
     if (!isInBibliography) {
-      const warning = createWarning(node, pos, 'missing-reference', 'warning')
-      warnings.push(warning)
+      const inconsistency = createWarning(
+        node,
+        pos,
+        'missing-reference',
+        'warning'
+      )
+      inconsistencies.push(inconsistency)
 
       if (context.showDecorations) {
         context.decorations.push(
@@ -124,11 +134,11 @@ const validateCitation: NodeValidator = (node, pos, context) => {
     }
   }
 
-  return warnings
+  return inconsistencies
 }
 
 const validateInlineFootnote: NodeValidator = (node, pos, context) => {
-  const warnings: Warning[] = []
+  const inconsistencies: Inconsistency[] = []
 
   if (context.pluginStates.footnotes) {
     const isInFootnote = node.attrs.rids.every((rid: string) =>
@@ -136,8 +146,13 @@ const validateInlineFootnote: NodeValidator = (node, pos, context) => {
     )
 
     if (!isInFootnote) {
-      const warning = createWarning(node, pos, 'missing-reference', 'warning')
-      warnings.push(warning)
+      const inconsistency = createWarning(
+        node,
+        pos,
+        'missing-reference',
+        'warning'
+      )
+      inconsistencies.push(inconsistency)
 
       if (context.showDecorations) {
         context.decorations.push(
@@ -147,7 +162,7 @@ const validateInlineFootnote: NodeValidator = (node, pos, context) => {
     }
   }
 
-  return warnings
+  return inconsistencies
 }
 
 export const validators: Record<string, NodeValidator> = {

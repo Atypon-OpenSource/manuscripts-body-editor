@@ -23,7 +23,7 @@ import { DecorationSet } from 'prosemirror-view'
 
 import { buildPluginState, PluginState } from './detect-inconsistency-utils'
 
-export { Warning } from './detect-inconsistency-utils'
+export { Inconsistency } from './detect-inconsistency-utils'
 
 export const detectInconsistencyKey = new PluginKey<PluginState>(
   'detectInconsistency'

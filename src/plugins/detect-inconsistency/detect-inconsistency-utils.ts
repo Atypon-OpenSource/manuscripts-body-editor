@@ -23,7 +23,7 @@ import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
 import { ValidatorContext, validators } from './validators'
 
-export type Warning = {
+export type Inconsistency = {
   type: 'warning'
   category: 'missing-reference' | 'empty-content'
   severity: 'error' | 'warning'
@@ -34,7 +34,7 @@ export type Warning = {
 
 export type PluginState = {
   decorations: DecorationSet
-  warnings: Array<Warning>
+  inconsistencies: Array<Inconsistency>
   showDecorations: boolean
 }
 
@@ -57,7 +57,7 @@ export const buildPluginState = (
   state: ManuscriptEditorState,
   showDecorations: boolean
 ): PluginState => {
-  const warnings: Warning[] = []
+  const inconsistencies: Inconsistency[] = []
   const decorations: Decoration[] = []
 
   const selection = state.selection
@@ -81,13 +81,13 @@ export const buildPluginState = (
   state.doc.descendants((node, pos) => {
     const validator = validators[node.type.name]
     if (validator) {
-      warnings.push(...validator(node, pos, context))
+      inconsistencies.push(...validator(node, pos, context))
     }
   })
 
   return {
     decorations: DecorationSet.create(state.doc, decorations),
-    warnings,
+    inconsistencies,
     showDecorations,
   }
 }

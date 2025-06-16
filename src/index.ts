@@ -52,4 +52,4 @@ export {
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
-export type { Warning } from './plugins/detect-inconsistency'
+export type { Inconsistency } from './plugins/detect-inconsistency'
