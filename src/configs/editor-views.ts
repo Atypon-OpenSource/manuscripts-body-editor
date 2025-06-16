@@ -67,6 +67,8 @@ export default (
 ): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
+    subtitle: empty('subtitle'),
+    subtitles: empty('subtitles'),
     alt_title: alt_title(props),
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
