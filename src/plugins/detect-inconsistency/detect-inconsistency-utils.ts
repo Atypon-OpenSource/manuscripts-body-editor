@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptEditorState,
-  ManuscriptNode,
-  nodeNames,
-  schema,
-} from '@manuscripts/transform'
+import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
+import { ValidatorContext, validators } from './validators'
 
 export type Warning = {
   type: 'warning'
@@ -47,7 +43,7 @@ export const createDecoration = (
   pos: number,
   selectedPos: number | null
 ) => {
-  const classNames = ['warning-highlight']
+  const classNames = ['inconsistency-highlight']
   if (selectedPos === pos) {
     classNames.push('selected-suggestion')
   }
@@ -57,32 +53,6 @@ export const createDecoration = (
   })
 }
 
-export const getNodeDescription = (node: ManuscriptNode): string => {
-  return nodeNames.get(node.type) || node.type?.name || ''
-}
-
-export const addWarning = (
-  warnings: Warning[],
-  decorations: Decoration[],
-  node: ManuscriptNode,
-  pos: number,
-  category: Warning['category'],
-  severity: Warning['severity'],
-  message: string,
-  showDecorations: boolean,
-  selectedPos: number | null
-) => {
-  warnings.push({
-    type: 'warning',
-    category,
-    severity,
-    message,
-    node,
-    pos,
-  })
-  showDecorations && decorations.push(createDecoration(node, pos, selectedPos))
-}
-
 export const buildPluginState = (
   state: ManuscriptEditorState,
   showDecorations: boolean
@@ -90,105 +60,30 @@ export const buildPluginState = (
   const warnings: Warning[] = []
   const decorations: Decoration[] = []
 
-  try {
-    const selection = state.selection
-    let selectedPos: number | null = null
+  const selection = state.selection
+  let selectedPos: number | null = null
 
-    if (selection instanceof NodeSelection) {
-      selectedPos = selection.from
-    }
+  if (selection instanceof NodeSelection) {
+    selectedPos = selection.from
+  }
 
-    const pluginStates = {
+  const context: ValidatorContext = {
+    pluginStates: {
       bibliography: getBibliographyPluginState(state)?.bibliographyItems,
       objects: objectsKey.getState(state),
-      footnotes: footnotesKey.getState(state),
-    }
-
-    state.doc.descendants((node, pos) => {
-      if (node.type === schema.nodes.title) {
-        const isEmpty = node.content.size === 0
-        if (isEmpty) {
-          addWarning(
-            warnings,
-            decorations,
-            node,
-            pos,
-            'empty-content',
-            'warning',
-            `${getNodeDescription(node)} is empty`,
-            showDecorations,
-            selectedPos
-          )
-        }
-      } else if (node.attrs && node.attrs.rids) {
-        if (node.type === schema.nodes.cross_reference) {
-          const figures = Array.from(pluginStates.objects?.keys() ?? [])
-
-          const isInFigures = node.attrs.rids.every((rid: string) =>
-            figures.includes(rid)
-          )
-          if (!isInFigures) {
-            addWarning(
-              warnings,
-              decorations,
-              node,
-              pos,
-              'missing-reference',
-              'warning',
-              `${getNodeDescription(node)} has no linked reference`,
-              showDecorations,
-              selectedPos
-            )
-          }
-        } else if (node.type === schema.nodes.citation) {
-          if (pluginStates.bibliography) {
-            const bibliographyItem = node.attrs.rids.every((rid: string) =>
-              pluginStates.bibliography?.get(rid)
-            )
-            if (!bibliographyItem) {
-              addWarning(
-                warnings,
-                decorations,
-                node,
-                pos,
-                'missing-reference',
-                'warning',
-                `${getNodeDescription(node)} has no linked reference`,
-                showDecorations,
-                selectedPos
-              )
-            }
-          }
-        } else if (node.type === schema.nodes.inline_footnote) {
-          if (pluginStates.footnotes) {
-            const footnoteElement = node.attrs.rids.every((rid: string) =>
-              pluginStates.footnotes?.footnotesElementIDs.get(rid)
-            )
-            if (!footnoteElement) {
-              addWarning(
-                warnings,
-                decorations,
-                node,
-                pos,
-                'missing-reference',
-                'warning',
-                `${getNodeDescription(node)} has no linked reference`,
-                showDecorations,
-                selectedPos
-              )
-            }
-          }
-        }
-      }
-    })
-  } catch (error) {
-    console.error('Error building inconsistency plugin state:', error)
-    return {
-      decorations: DecorationSet.empty,
-      warnings: [],
-      showDecorations: false,
-    }
+      footnotes: footnotesKey.getState(state)?.footnotesElementIDs,
+    },
+    showDecorations,
+    selectedPos,
+    decorations,
   }
+
+  state.doc.descendants((node, pos) => {
+    const validator = validators[node.type.name]
+    if (validator) {
+      warnings.push(...validator(node, pos, context))
+    }
+  })
 
   return {
     decorations: DecorationSet.create(state.doc, decorations),

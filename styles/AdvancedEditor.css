@@ -632,7 +632,7 @@ span.comment-marker {
   border-color: var(--common-color);
 }
 
-.ProseMirror .warning-highlight {
+.ProseMirror .inconsistency-highlight {
   border: 1px solid #f35143;
   background: #fff1f0;
   border-radius: 4px;
@@ -640,7 +640,7 @@ span.comment-marker {
   position: relative;
 }
 
-.ProseMirror .warning-highlight.selected-suggestion {
+.ProseMirror .inconsistency-highlight.selected-suggestion {
   border: 2px solid #f35143!important;
   background: #fff1f0;
 }
