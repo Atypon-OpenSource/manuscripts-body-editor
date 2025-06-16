@@ -24,6 +24,7 @@ import {
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -144,7 +145,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
-    let handleDelete: (() => void) | undefined // Type explicitly as possibly undefined
+    let handleDelete: (() => void) | undefined
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -172,18 +173,37 @@ export class FigureEditableView extends FigureView {
     }
 
     if (can.detachFile) {
-      const index = this.getFigureIndex()
-
-      // Only assign handleDelete if it's NOT the  first figure (index 0)
-      if (index !== 0) {
-        handleDelete = () => {
-          const pos = this.getPos()
-          const tr = this.view.state.tr
-          // Delete the figure node
-          tr.delete(pos, pos + this.node.nodeSize)
-          this.view.dispatch(tr)
-        }
+      // Helper function to count non-deleted figures in current figure element
+      const countFigures = () => {
+        const element = findParentNodeOfTypeClosestToPos(
+          this.view.state.doc.resolve(this.getPos()),
+          schema.nodes.figure_element
+        )
+        let count = 0
+        element?.node.descendants((node) => {
+          if (node.type === schema.nodes.figure && !isDeleted(node)) {
+            count++
+          }
+        })
+        return count
       }
+
+      const figureCount = countFigures()
+
+      handleDelete =
+        figureCount > 1
+          ? () => {
+              const currentCount = countFigures()
+              const pos = this.getPos()
+              if (currentCount <= 1) {
+                // prevent deletion if only one figure remains
+                return
+              }
+              const tr = this.view.state.tr
+              tr.delete(pos, pos + this.node.nodeSize)
+              this.view.dispatch(tr)
+            }
+          : undefined
     }
 
     this.reactTools?.remove()
@@ -220,20 +240,6 @@ export class FigureEditableView extends FigureView {
     })
     tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
-  }
-
-  /**
-   * Calculates the index of the current figure node
-   */
-  private getFigureIndex(): number {
-    const figures: number[] = []
-    this.view.state.doc.descendants((node, pos) => {
-      if (node.type === schema.nodes.figure) {
-        figures.push(pos)
-      }
-    })
-    const currentPos = this.getPos()
-    return figures.indexOf(currentPos)
   }
 
   private createUnsupportedFormat = (name: string) => {
