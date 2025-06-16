@@ -129,4 +129,5 @@ export const fieldConfigMap: Record<BibliographyItemType, Set<string>> = {
     'comment',
     'URL',
   ]),
+  literal: new Set(['literal']),
 }
