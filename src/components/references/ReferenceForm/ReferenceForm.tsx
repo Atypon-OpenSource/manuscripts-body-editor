@@ -94,8 +94,15 @@ export const ReferenceForm: React.FC<{
 
   const validateReference = (values: BibliographyItemAttrs) => {
     const errors: Partial<BibliographyItemAttrs> = {}
-    if (!values.title?.trim()) {
-      errors.title = 'Title is required'
+
+    if (values.type === 'literal') {
+      if (!values.literal?.trim()) {
+        errors.literal = 'Literal is required for unstructured references'
+      }
+    } else {
+      if (!values.title?.trim()) {
+        errors.title = 'Title is required'
+      }
     }
     return errors
   }
@@ -201,6 +208,22 @@ export const ReferenceForm: React.FC<{
                 </FormField>
               )}
 
+              {shouldRenderField(
+                'literal',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormField>
+                  <LabelContainer>
+                    <Label>Text</Label>
+                  </LabelContainer>
+
+                  <Field name={'literal'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'literal'} {...props.field} />
+                    )}
+                  </Field>
+                </FormField>
+              )}
               {shouldRenderField(
                 'std',
                 formik.values.type as BibliographyItemType

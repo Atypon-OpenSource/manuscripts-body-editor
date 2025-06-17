@@ -175,11 +175,36 @@ export class BibliographyElementBlockView extends BlockView<
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
+      const node = nodes.get(id) as BibliographyItemNode
+      const isUnstructured = node.attrs.type === 'literal'
+
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = fragment
+
+      if (isUnstructured) {
+        const cslLeftMarginDiv = tempDiv.querySelector('.csl-left-margin')
+        let cslRightInlineDiv = tempDiv.querySelector('.csl-right-inline')
+        const cslEntry = tempDiv.querySelector('.csl-entry')
+
+        if (cslRightInlineDiv) {
+          // Overwrite existing inline content
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+        } else if (cslLeftMarginDiv) {
+          // Right inline missing, but left margin present — add right inline after it
+          cslRightInlineDiv = document.createElement('div')
+          cslRightInlineDiv.classList.add('csl-right-inline')
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+          cslLeftMarginDiv.after(cslRightInlineDiv)
+        } else if (cslEntry) {
+          // No left/right structure — overwrite the entry element content
+          cslEntry.textContent = node.attrs.literal ?? ''
+        }
+      }
+
       const element = sanitize(
-        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
+        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${tempDiv.innerHTML}</div></div>`
       ).firstElementChild as HTMLElement
 
-      const node = nodes.get(id) as BibliographyItemNode
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
