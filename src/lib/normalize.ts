@@ -21,7 +21,7 @@ import { ContributorAttrs } from './authors'
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
     id: author.id,
-    role: author.role || 'author',
+    role: author.role || '',
     affiliations: (author.affiliations || []).sort(),
     bibliographicName: author.bibliographicName,
     email: author.email || '',

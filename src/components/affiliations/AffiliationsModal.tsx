@@ -536,7 +536,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   title="Authors"
                   cy="affiliations"
                   labelField="label"
-                  buttonText="Assign Authors"
+                  buttonText="Affiliate Authors"
                   Icon={<AddUserIcon width={16} height={16} />}
                 />
               </AffiliationForms>
