@@ -184,15 +184,20 @@ export class BibliographyElementBlockView extends BlockView<
       if (isUnstructured) {
         const cslLeftMarginDiv = tempDiv.querySelector('.csl-left-margin')
         let cslRightInlineDiv = tempDiv.querySelector('.csl-right-inline')
-
-        if (!cslRightInlineDiv && cslLeftMarginDiv) {
-          cslRightInlineDiv = document.createElement('div')
-          cslRightInlineDiv.classList.add('csl-right-inline')
-          cslLeftMarginDiv.after(cslRightInlineDiv)
-        }
+        const cslEntry = tempDiv.querySelector('.csl-entry')
 
         if (cslRightInlineDiv) {
+          // Overwrite existing inline content
           cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+        } else if (cslLeftMarginDiv) {
+          // Right inline missing, but left margin present — add right inline after it
+          cslRightInlineDiv = document.createElement('div')
+          cslRightInlineDiv.classList.add('csl-right-inline')
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+          cslLeftMarginDiv.after(cslRightInlineDiv)
+        } else if (cslEntry) {
+          // No left/right structure — overwrite the entry element content
+          cslEntry.textContent = node.attrs.literal ?? ''
         }
       }
 
