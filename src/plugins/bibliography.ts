@@ -110,9 +110,6 @@ const buildBibliographyPluginState = (
     return $new as PluginState
   }
 
-  console.log(isEqual(citations, $old?.citations))
-  console.log(isEqual(bibliographyItems, $old?.bibliographyItems))
-
   if (
     $old &&
     isEqual(citations, $old.citations) &&

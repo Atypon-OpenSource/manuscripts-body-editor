@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import purify, { Config } from 'dompurify'
+type OEmbedProvider = {
+  provider_url: string
+  provider_name: string
+  endpoints: {
+    schemes?: string[]
+    url: string
+    discovery?: boolean
+    formats?: string[]
+  }[]
+}
 
-type Sanitize = (
-  dirty: string,
-  config?: Pick<Config, 'USE_PROFILES' | 'ALLOWED_TAGS'>
-) => DocumentFragment
-
-export const sanitize: Sanitize = (dirty, config) =>
-  purify.sanitize(dirty, {
-    RETURN_DOM_FRAGMENT: true,
-    ...config,
-  })
+declare module 'oembed-providers' {
+  const providers: Array<OEmbedProvider>
+  export default providers
+}
