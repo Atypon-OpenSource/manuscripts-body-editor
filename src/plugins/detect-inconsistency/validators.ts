@@ -117,7 +117,7 @@ const validateCitation: NodeValidator = (node, pos, context) => {
       context.pluginStates.bibliography?.get(rid)
     )
 
-    if (!isInBibliography) {
+    if (!isInBibliography || node.attrs.rids.length === 0) {
       const inconsistency = createWarning(
         node,
         pos,
