@@ -1113,6 +1113,12 @@
   border-color: transparent;
 }
 
+.ProseMirror .footnote-marker:empty {
+  vertical-align: baseline;
+  min-height: 18px;
+  min-width: 5px;
+}
+
 .ProseMirror .footnote .footnote-marker {
   color: inherit;
   cursor: default;
