@@ -40,6 +40,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment) => void
+  onDelete?: () => void
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -55,6 +56,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onUpload,
   onDetach,
   onReplace,
+  onDelete,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
   const supplements = files.supplements
@@ -68,6 +70,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
+  const showDelete = onDelete && can.detachFile
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -115,6 +118,9 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
           <ListItemButton onClick={onDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
+          {showDelete && (
+            <ListItemButton onClick={onDelete}>Delete</ListItemButton>
+          )}
         </OptionsDropdownList>
       )}
     </DropdownWrapper>
