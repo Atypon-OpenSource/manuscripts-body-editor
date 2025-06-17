@@ -24,6 +24,7 @@ import {
 } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -144,6 +145,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
+    let handleDelete: (() => void) | undefined
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -170,6 +172,40 @@ export class FigureEditableView extends FigureView {
       handleUpload = figureUploader(this.upload)
     }
 
+    if (can.detachFile) {
+      // Helper function to count non-deleted figures in current figure element
+      const countFigures = () => {
+        const element = findParentNodeOfTypeClosestToPos(
+          this.view.state.doc.resolve(this.getPos()),
+          schema.nodes.figure_element
+        )
+        let count = 0
+        element?.node.descendants((node) => {
+          if (node.type === schema.nodes.figure && !isDeleted(node)) {
+            count++
+          }
+        })
+        return count
+      }
+
+      const figureCount = countFigures()
+
+      handleDelete =
+        figureCount > 1
+          ? () => {
+              const currentCount = countFigures()
+              const pos = this.getPos()
+              if (currentCount <= 1) {
+                // prevent deletion if only one figure remains
+                return
+              }
+              const tr = this.view.state.tr
+              tr.delete(pos, pos + this.node.nodeSize)
+              this.view.dispatch(tr)
+            }
+          : undefined
+    }
+
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
       const files = this.props.getFiles()
@@ -181,6 +217,7 @@ export class FigureEditableView extends FigureView {
         onUpload: handleUpload,
         onDetach: handleDetach,
         onReplace: handleReplace,
+        onDelete: handleDelete,
       }
       this.reactTools = ReactSubView(
         this.props,

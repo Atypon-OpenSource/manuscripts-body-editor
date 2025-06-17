@@ -14,27 +14,56 @@
  * limitations under the License.
  */
 
-import { FigureElementNode } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
 
-import { Trackable } from '../types'
-import BlockView from './block_view'
+import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
+import { ImageElementView } from './image_element'
 
-export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
-  private container: HTMLElement
-
+export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
 
   public createElement = () => {
-    this.container = document.createElement('div')
-    this.container.classList.add('block')
-    this.dom.appendChild(this.container)
+    super.createElement()
+    this.addFigureElementButtons()
+  }
 
-    // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+  private addFigureElementButtons() {
+    if (this.props.getCapabilities()?.editArticle) {
+      const addFigureBtn = Object.assign(document.createElement('button'), {
+        className: 'add-figure-button',
+        innerHTML: addFigureBtnIcon,
+        title: 'Add figure',
+      })
+      addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(addFigureBtn)
+    }
+  }
+  private addFigure = () => {
+    const { state } = this.view
+    const { tr } = state
+    const figureElementPos = this.getPos()
+
+    // Find the position after the last figure node
+    let insertPos = figureElementPos + 1
+    let lastFigureEndPos = insertPos
+    let hasFigures = false
+
+    // Iterate through all child nodes
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        lastFigureEndPos = insertPos + node.nodeSize
+        hasFigures = true
+      }
+      insertPos += node.nodeSize
+    })
+
+    const finalInsertPos = hasFigures ? lastFigureEndPos : figureElementPos + 1
+
+    const figureNode = state.schema.nodes.figure.create()
+
+    tr.insert(finalInsertPos, figureNode)
+    this.view.dispatch(tr)
   }
 }
 
