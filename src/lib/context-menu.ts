@@ -21,7 +21,6 @@ import {
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
 import {
-  isInBibliographySection,
   isSectionTitleNode,
   ListNode,
   ManuscriptEditorView,
@@ -99,14 +98,11 @@ export class ContextMenu {
     this.getPos = getPos
   }
 
+  // TODO: remove the after logic, if it's not needed anymore, since it will be always true
   public showAddMenu = (target: Element, after: boolean) => {
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
-    // we don`t want to add section after 'REFERENCES'
-    if (isInBibliographySection($pos)) {
-      after = false
-    }
     const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
     const endPos = $pos.end()
     const types = this.insertableTypes(after, insertPos, endPos)
