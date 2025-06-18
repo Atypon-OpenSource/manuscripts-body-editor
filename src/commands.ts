@@ -439,7 +439,7 @@ export const insertTable = (
   if (!pos) {
     return false
   }
-  const node = createAndFillTableElement(config)
+  const node = createAndFillTableElement(undefined, config)
   const tr = state.tr.insert(pos, node)
   expandAccessibilitySection(tr, node)
   tr.setSelection(NodeSelection.create(tr.doc, pos)).scrollIntoView()
