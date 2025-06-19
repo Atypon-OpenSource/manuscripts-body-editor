@@ -63,7 +63,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
         event.preventDefault()
 
         const menu = this.createMenu()
-        menu.showAddMenu(event.currentTarget as Element, true)
+        menu.showAddMenu(event.currentTarget as Element)
       })
 
       return button
