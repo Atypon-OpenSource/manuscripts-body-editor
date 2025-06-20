@@ -40,7 +40,6 @@ export type CSLProps = {
   style?: string
   locale?: string
 }
-
 export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
@@ -62,6 +61,7 @@ export interface EditorProps {
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
+  isComparingMode?: boolean
   dispatch?: Dispatch
   onEditorClick: (
     pos: number,
