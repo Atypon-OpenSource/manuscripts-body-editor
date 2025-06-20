@@ -780,6 +780,8 @@
   cursor: ns-resize;
   opacity: 0;
   transition: 0.2s all;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .ProseMirror .action-gutter {

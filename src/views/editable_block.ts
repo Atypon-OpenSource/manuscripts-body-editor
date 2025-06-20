@@ -42,25 +42,28 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       }
 
       const $pos = this.view.state.doc.resolve(this.getPos())
-      if (hasParent($pos, schema.nodes.keywords)) {
+      const nodeType = this.node.type
+      if (
+        nodeType === schema.nodes.hero_image ||
+        hasParent($pos, [
+          schema.nodes.keywords,
+          schema.nodes.bibliography_section,
+          schema.nodes.footnotes_section,
+        ])
+      ) {
         return null
       }
 
-      const after = !hasParent($pos, schema.nodes.bibliography_section)
-
       const button = document.createElement('a')
       button.classList.add('add-block', contextMenuBtnClass)
-      button.classList.add(after ? 'add-block-after' : 'add-block-before')
-      button.setAttribute(
-        'aria-label',
-        `Add an element ${after ? 'below' : 'above'}`
-      )
+      button.classList.add('add-block-after')
+      button.setAttribute('aria-label', `Add an element below`)
       button.setAttribute('data-balloon-pos', 'down-left')
       button.addEventListener('mousedown', (event) => {
         event.preventDefault()
 
         const menu = this.createMenu()
-        menu.showAddMenu(event.currentTarget as Element, after)
+        menu.showAddMenu(event.currentTarget as Element)
       })
 
       return button

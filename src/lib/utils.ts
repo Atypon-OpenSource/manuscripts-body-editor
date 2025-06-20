@@ -161,7 +161,15 @@ export const createHeader = (typeName: string, text: string) => {
 
 export const isNotNull = <T>(a: T | null): a is T => a !== null
 
-export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
+export const hasParent = (
+  $pos: ResolvedPos,
+  type: ManuscriptNodeType | ManuscriptNodeType[]
+) => {
+  if (Array.isArray(type)) {
+    return type.some(
+      (nodeType) => !!findParentNodeOfTypeClosestToPos($pos, nodeType)
+    )
+  }
   return !!findParentNodeOfTypeClosestToPos($pos, type)
 }
 
