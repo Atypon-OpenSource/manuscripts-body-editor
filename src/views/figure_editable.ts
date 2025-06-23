@@ -31,7 +31,6 @@ import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 import {
   fileCorruptedIcon,
-  draggableIcon,
   imageLeftIcon,
   imageRightIcon,
   imageDefaultIcon,
