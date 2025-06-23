@@ -42,8 +42,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1
       '@manuscripts/transform':
-        specifier: 4.1.2-LEAN-4611-v0.0
-        version: 4.1.2-LEAN-4611-v0.0(prosemirror-state@1.4.3)
+        specifier: 4.2.0
+        version: 4.2.0(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1180,8 +1180,8 @@ packages:
   '@manuscripts/track-changes-plugin@2.0.1':
     resolution: {integrity: sha512-PtFbN927mwar93qgGuhA1AHqtwpniWRP/PQ6uxCbpptYRM5NPXxLNeIF7z0ziiD9Jf9d7cJXPJbG9vJ4LYXlzw==}
 
-  '@manuscripts/transform@4.1.2-LEAN-4611-v0.0':
-    resolution: {integrity: sha512-wxBmc/LFBum5OiB0XF6MW3KofwHjMz25+XEfaj7gybAlUKIEdE7ahxjbXJkhFTLkRMXz/d34r3gI6diLPcGylg==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.1.2-LEAN-4611-v0.0.tgz}
+  '@manuscripts/transform@4.2.0':
+    resolution: {integrity: sha512-ra1NKtS1dPZh5iC9Z0EjCrWnkJoJmy8GdeFmCtFQS9sCARKaOIG5u6bHtewk55wbbXG4vFFCCmfhy/MwajSGZg==}
     engines: {node: '>=20.16.0'}
 
   '@messageformat/parser@5.1.1':
@@ -5955,7 +5955,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.1.2-LEAN-4611-v0.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.2.0(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
