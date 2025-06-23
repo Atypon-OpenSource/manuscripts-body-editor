@@ -24,6 +24,8 @@ const Footer = styled.div`
   height: 40px;
   box-shadow: 0px -2px 12px 0px rgba(216, 216, 216, 0.26);
   border-radius: 0px 0px 8px 8px;
+  position: relative;
+  z-index: 3;
 `
 const RemoveButton = styled.button`
   background-color: #0d79d0;
