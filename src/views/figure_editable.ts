@@ -21,7 +21,16 @@ import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { FigureOptions, FigureOptionsProps } from '../components/views/FigureDropdown'
+import {
+  FigureOptions,
+  FigureOptionsProps,
+} from '../components/views/FigureDropdown'
+import {
+  fileCorruptedIcon,
+  imageDefaultIcon,
+  imageLeftIcon,
+  imageRightIcon,
+} from '../icons'
 import { FileAttachment, groupFiles } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
@@ -29,12 +38,6 @@ import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
-import {
-  fileCorruptedIcon,
-  imageLeftIcon,
-  imageRightIcon,
-  imageDefaultIcon,
-} from '../icons' // Ensure draggableIcon is imported
 
 export enum figurePositions {
   left = 'half-left',
