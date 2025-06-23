@@ -135,7 +135,7 @@
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 
-  margin: 16px 0 0;
+  margin: 16px 0 0 !important;
   box-sizing: border-box;
   justify-self: center;
   position: relative;
