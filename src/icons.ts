@@ -18,7 +18,12 @@ import {
   ArrowDownCircleIcon,
   ArrowUpIcon,
   DeleteIcon,
+  DraggableIcon,
   EditIcon,
+  FileCorruptedIcon,
+  ImageDefaultIcon,
+  ImageLeftIcon,
+  ImageRightIcon,
   LockIcon,
   PlusIcon,
   ScrollIcon,
@@ -39,3 +44,14 @@ export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
 export const addFigureBtnIcon = renderToStaticMarkup(createElement(PlusIcon))
+export const fileCorruptedIcon = renderToStaticMarkup(
+  createElement(FileCorruptedIcon)
+)
+export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
+export const imageLeftIcon = renderToStaticMarkup(createElement(ImageLeftIcon))
+export const imageRightIcon = renderToStaticMarkup(
+  createElement(ImageRightIcon)
+)
+export const imageDefaultIcon = renderToStaticMarkup(
+  createElement(ImageDefaultIcon)
+)

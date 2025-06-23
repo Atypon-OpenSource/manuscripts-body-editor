@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FileCorruptedIcon,
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
@@ -32,6 +25,13 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import {
+  draggableIcon,
+  fileCorruptedIcon,
+  imageDefaultIcon,
+  imageLeftIcon,
+  imageRightIcon,
+} from '../icons' // Ensure draggableIcon is imported
 import { FileAttachment, groupFiles } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
@@ -91,7 +91,10 @@ export class FigureEditableView extends FigureView {
         triggerUpload()
       }
 
-      img.addEventListener('click', handlePlaceholderClick)
+      // Only add click listener if there's no src (it's a placeholder)
+      if (!src) {
+        img.addEventListener('click', handlePlaceholderClick)
+      }
 
       img.addEventListener('mouseenter', () => {
         img.classList.toggle('over', true)
@@ -138,6 +141,17 @@ export class FigureEditableView extends FigureView {
   protected addTools() {
     this.manageReactTools()
     this.container.appendChild(this.createPositionMenuWrapper())
+
+    // Add draggableIcon only if src exists (image is uploaded)
+    const src = this.node.attrs.src
+    if (src) {
+      const draggableIconWrapper = document.createElement('div')
+      draggableIconWrapper.classList.add('draggable-icon-wrapper') // Add a class for styling if needed
+      draggableIconWrapper.innerHTML = renderToStaticMarkup(
+        createElement(draggableIcon)
+      )
+      this.dom.insertBefore(draggableIconWrapper, this.dom.firstChild)
+    }
   }
 
   private manageReactTools() {
@@ -250,9 +264,7 @@ export class FigureEditableView extends FigureView {
     instructions.classList.add('instructions')
 
     // Convert the React component to a static HTML string
-    const iconHtml = renderToStaticMarkup(
-      createElement(FileCorruptedIcon, { className: 'icon' })
-    )
+    const iconHtml = fileCorruptedIcon
 
     instructions.innerHTML = `
     <div>
@@ -291,7 +303,7 @@ export class FigureEditableView extends FigureView {
     instructions.innerHTML = `
       <p>Drag or click here to upload image <br>
       or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>'Other files'</a> | 
+      <a data-action='open-other-files'>'Other files'</a> |
       <a data-action='open-supplement-files'>'Supplements'</a></p>
     `
 
@@ -310,13 +322,13 @@ export class FigureEditableView extends FigureView {
     let icon
     switch (this.figurePosition) {
       case figurePositions.left:
-        icon = ImageLeftIcon
+        icon = imageLeftIcon
         break
       case figurePositions.right:
-        icon = ImageRightIcon
+        icon = imageRightIcon
         break
       default:
-        icon = ImageDefaultIcon
+        icon = imageDefaultIcon
         break
     }
     if (icon) {
@@ -389,5 +401,6 @@ export class FigureEditableView extends FigureView {
     )
   }
 }
+alert('ggbbmm')
 
 export default createEditableNodeView(FigureEditableView)
