@@ -51,6 +51,7 @@ import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
+import ext_link from '../plugins/ext_link'
 
 export default (props: EditorProps) => {
   const allPlugins = [
@@ -90,6 +91,8 @@ export default (props: EditorProps) => {
     accessibility_element(),
     prevent_empty(),
     move_node(),
+    ext_link(),
+
   ]
 
   if (props.collabProvider) {
