@@ -415,6 +415,43 @@ export class ContextMenu {
       )
     }
 
+    if (type === schema.nodes.box_element) {
+      const tr = this.view.state.tr
+      const boxElementNode = $pos.node($pos.depth - 1)
+      const boxStartPos = $pos.start($pos.depth - 1)
+
+      const figcaptions = findChildrenByType(
+        boxElementNode,
+        schema.nodes.figcaption
+      )
+      const hasLabel = figcaptions.length > 0
+
+      menu.insertBefore(
+        this.createMenuItem(hasLabel ? 'Hide Label' : 'Show Label', () => {
+
+          if (hasLabel) {
+            const figcaptionNode = figcaptions[0].node
+            const figcaptionPos = boxStartPos + figcaptions[0].pos
+
+            tr.delete(figcaptionPos, figcaptionPos + figcaptionNode.nodeSize)
+
+          } else {
+            const newFigcaption = schema.nodes.figcaption.create({}, [
+              schema.nodes.caption_title.create(),
+            ])
+
+            tr.insert(boxStartPos, newFigcaption)
+          }
+
+          this.view.dispatch(tr)
+          popper.destroy()
+
+        }),
+        
+        menu.firstChild
+      )
+    }
+
     popper.show(target, menu, 'right', true)
 
     this.addPopperEventListeners()
