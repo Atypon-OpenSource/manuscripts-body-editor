@@ -200,7 +200,7 @@ export class ContextMenu {
       )
     }
 
-    if (hasAny(types, 'figure_element', 'equation_element')) {
+    if (hasAny(types, 'figure_element', 'equation_element', 'image_element')) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
           if (types.has('figure_element')) {
