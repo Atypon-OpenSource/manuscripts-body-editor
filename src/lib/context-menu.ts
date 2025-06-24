@@ -428,13 +428,11 @@ export class ContextMenu {
 
       menu.insertBefore(
         this.createMenuItem(hasLabel ? 'Hide Label' : 'Show Label', () => {
-
           if (hasLabel) {
             const figcaptionNode = figcaptions[0].node
             const figcaptionPos = boxStartPos + figcaptions[0].pos
 
             tr.delete(figcaptionPos, figcaptionPos + figcaptionNode.nodeSize)
-
           } else {
             const newFigcaption = schema.nodes.figcaption.create({}, [
               schema.nodes.caption_title.create(),
@@ -445,9 +443,8 @@ export class ContextMenu {
 
           this.view.dispatch(tr)
           popper.destroy()
-
         }),
-        
+
         menu.firstChild
       )
     }
