@@ -36,6 +36,7 @@ import cross_references from '../plugins/cross-references'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
+import ext_link from '../plugins/ext_link'
 import footnotes from '../plugins/footnotes'
 import lock_body from '../plugins/lock-body'
 import move_node from '../plugins/move-node'
@@ -51,7 +52,6 @@ import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
-import ext_link from '../plugins/ext_link'
 
 export default (props: EditorProps) => {
   const allPlugins = [
@@ -91,8 +91,7 @@ export default (props: EditorProps) => {
     accessibility_element(),
     prevent_empty(),
     move_node(),
-    ext_link(),
-
+    ext_link(props),
   ]
 
   if (props.collabProvider) {

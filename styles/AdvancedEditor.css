@@ -127,8 +127,8 @@
   border: 1px solid #f2f2f2;
   border-radius: 4px;
 
-  padding: 4pt !important;
-  gap: 4pt !important;
+  padding: 8px;
+  gap: 8px !important;
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
@@ -1295,7 +1295,8 @@ th:hover > .table-context-menu-button,
   right: 6px;
 }
 
-.ProseMirror .accessibility_element {
+.ProseMirror .accessibility_element,
+.ProseMirror .ext-link-editor-container{
   margin-top: 12px;
   grid-column-start: 1;
   grid-column-end: -1;
@@ -1303,7 +1304,8 @@ th:hover > .table-context-menu-button,
   display: none;
 }
 
-.ProseMirror .show_accessibility_element .accessibility_element {
+.ProseMirror .show_accessibility_element .accessibility_element,
+.ProseMirror .show_accessibility_element .ext-link-editor-container {
   display: block;
 }
 
