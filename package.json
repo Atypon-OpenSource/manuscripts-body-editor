@@ -25,7 +25,8 @@
     "preversion": "npm-run-all --parallel typecheck lint test",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
-    "version": "pnpm build"
+    "version": "pnpm build",
+    "unlink-all": "rm pnpm-workspace.yaml && pnpm install"
   },
   "dependencies": {
     "@iarna/word-count": "1.1.2",
