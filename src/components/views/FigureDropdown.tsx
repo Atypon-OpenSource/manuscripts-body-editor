@@ -28,11 +28,16 @@ import {
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
-import { FileAttachment, ManuscriptFiles } from '../../lib/files'
+import {
+  FileAttachment,
+  ManuscriptFiles,
+  memoGroupFiles,
+} from '../../lib/files'
+import { Node as ManuscriptNode } from 'prosemirror-model'
 
 export interface FigureDropdownProps {
   can: Capabilities
-  files: ManuscriptFiles
+  getFiles: () => FileAttachment[]
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
@@ -40,6 +45,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment) => void
+  getDoc: () => ManuscriptNode
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -48,26 +54,44 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
   hasUploadedImage: boolean
 }
 
+function getSupplements(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+) {
+  return groupFiles(getDoc(), getFiles())
+    .supplements.map((s) => s.file)
+    .filter((f) => isImageFile(f.name))
+}
+
+function getOtherFiles(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+) {
+  return groupFiles(getDoc(), getFiles()).others.filter((f) =>
+    isImageFile(f.name)
+  )
+}
+
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
   can,
-  files,
+  getDoc,
+  getFiles,
   onDownload,
   onUpload,
   onDetach,
   onReplace,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const supplements = files.supplements
-    .map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
-
-  const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
+
+  const groupFiles = memoGroupFiles()
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -83,26 +107,30 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
             moveLeft
             list={
               <>
-                {supplements.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={() => onReplace && onReplace(file)}
-                  >
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-                {otherFiles.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={() => onReplace && onReplace(file)}
-                  >
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
+                {getSupplements(getFiles, getDoc, groupFiles).map(
+                  (file, index) => (
+                    <ListItemButton
+                      key={file.id}
+                      id={index.toString()}
+                      onClick={() => onReplace && onReplace(file)}
+                    >
+                      {getFileIcon(file.name)}
+                      <ListItemText>{file.name}</ListItemText>
+                    </ListItemButton>
+                  )
+                )}
+                {getOtherFiles(getFiles, getDoc, groupFiles).map(
+                  (file, index) => (
+                    <ListItemButton
+                      key={file.id}
+                      id={index.toString()}
+                      onClick={() => onReplace && onReplace(file)}
+                    >
+                      {getFileIcon(file.name)}
+                      <ListItemText>{file.name}</ListItemText>
+                    </ListItemButton>
+                  )
+                )}
                 <UploadButton onClick={onUpload} disabled={!showUpload}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
