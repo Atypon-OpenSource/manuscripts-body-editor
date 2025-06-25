@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "3.2.0",
+  "version": "3.2.3",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -25,7 +25,8 @@
     "preversion": "npm-run-all --parallel typecheck lint test",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
-    "version": "pnpm build"
+    "version": "pnpm build",
+    "unlink-all": "rm pnpm-workspace.yaml && pnpm install"
   },
   "dependencies": {
     "@iarna/word-count": "1.1.2",
