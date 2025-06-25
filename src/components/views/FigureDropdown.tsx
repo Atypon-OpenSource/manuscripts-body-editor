@@ -25,6 +25,7 @@ import {
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { Node as ManuscriptNode } from 'prosemirror-model'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
@@ -33,7 +34,6 @@ import {
   ManuscriptFiles,
   memoGroupFiles,
 } from '../../lib/files'
-import { Node as ManuscriptNode } from 'prosemirror-model'
 
 export interface FigureDropdownProps {
   can: Capabilities
