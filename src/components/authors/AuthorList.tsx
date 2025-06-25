@@ -57,7 +57,7 @@ export const AuthorList: React.FC<AuthorListProps> = ({
   lastSavedAuthor,
 }) => {
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={HTML5Backend} context={window}>
       <AuthorListTitle>Existing Authors</AuthorListTitle>
       <AuthorListContainer data-cy="authors-list">
         {authors.map((a) => {
