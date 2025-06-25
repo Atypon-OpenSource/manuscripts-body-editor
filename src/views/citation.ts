@@ -49,7 +49,11 @@ export class CitationView
     const id = this.node.attrs.id
     const text = bib.renderedCitations.get(id)
     const fragment = sanitize(
-      text && text !== '(n.d.)' ? text : 'Missing citation data',
+      text === '(n.d.)'
+        ? 'Missing citation data'
+        : text && text !== '[NO_PRINTED_FORM]'
+        ? text
+        : ' ',
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
