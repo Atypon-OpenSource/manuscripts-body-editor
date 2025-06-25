@@ -21,7 +21,6 @@ import {
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
 import {
-  isInBibliographySection,
   isSectionTitleNode,
   ListNode,
   ManuscriptEditorView,
@@ -99,17 +98,13 @@ export class ContextMenu {
     this.getPos = getPos
   }
 
-  public showAddMenu = (target: Element, after: boolean) => {
+  public showAddMenu = (target: Element) => {
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
-    // we don`t want to add section after 'REFERENCES'
-    if (isInBibliographySection($pos)) {
-      after = false
-    }
-    const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
+    const insertPos = $pos.after($pos.depth)
     const endPos = $pos.end()
-    const types = this.insertableTypes(after, insertPos, endPos)
+    const types = this.insertableTypes(insertPos, endPos)
 
     const insertNode = (
       type: ManuscriptNodeType,
@@ -119,7 +114,7 @@ export class ContextMenu {
       const { state, dispatch } = this.view
 
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
 
       createBlock(type, pos, state, dispatch, attrs)
@@ -139,7 +134,7 @@ export class ContextMenu {
               schema.nodes.backmatter,
             ])
           ) {
-            const labelPosition = after ? 'After' : 'Before'
+            const labelPosition = 'After'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
 
@@ -527,7 +522,6 @@ export class ContextMenu {
   }
 
   private insertableTypes = (
-    after: boolean,
     insertPos: number,
     endPos: number
   ): Set<InsertableNodes> => {
@@ -539,7 +533,7 @@ export class ContextMenu {
 
     const getPos = (pos?: number) => {
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
       return pos
     }
