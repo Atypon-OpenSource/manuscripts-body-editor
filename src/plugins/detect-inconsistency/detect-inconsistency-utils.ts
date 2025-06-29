@@ -28,6 +28,7 @@ export type Inconsistency = {
   category: 'missing-reference' | 'empty-content'
   severity: 'error' | 'warning'
   message: string
+  nodeDescription: string
   node: ManuscriptNode
   pos: number
 }

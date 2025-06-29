@@ -54,15 +54,14 @@ const createWarning = (
 ): Inconsistency => {
   const nodeDescription = getNodeDescription(node)
   const message =
-    category === 'empty-content'
-      ? `${nodeDescription} is empty`
-      : `${nodeDescription} has no linked reference`
+    category === 'empty-content' ? `Is empty` : `Has no linked reference`
 
   return {
     type: 'warning',
     category,
     severity,
     message,
+    nodeDescription,
     node,
     pos,
   }
