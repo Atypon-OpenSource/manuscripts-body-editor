@@ -20,6 +20,7 @@ import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { checkForCompletion } from './autocompletion'
+import {isDeletedFromStructuralChange} from "../../lib/track-changes-utils";
 
 type NumberingArray = number[]
 export type PluginState = Map<string, string>
@@ -34,7 +35,7 @@ const calculateSectionLevels = (
 ) => {
   node.forEach((childNode, offset) => {
     if (
-      childNode.type === schema.nodes.section ||
+      (childNode.type === schema.nodes.section && !isDeletedFromStructuralChange(childNode)) ||
       childNode.type === schema.nodes.box_element
     ) {
       numbering[numbering.length - 1] += 1
