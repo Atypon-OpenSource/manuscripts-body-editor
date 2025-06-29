@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "3.0.3-LEAN-4614.1",
+  "version": "3.2.4",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -25,7 +25,8 @@
     "preversion": "npm-run-all --parallel typecheck lint test",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
-    "version": "pnpm build"
+    "version": "pnpm build",
+    "unlink-all": "rm pnpm-workspace.yaml && pnpm install"
   },
   "dependencies": {
     "@iarna/word-count": "1.1.2",
@@ -37,9 +38,9 @@
     "@citation-js/plugin-pubmed": "0.3.0",
     "@citation-js/plugin-ris": "0.7.18",
     "@manuscripts/json-schema": "2.2.12",
-    "@manuscripts/style-guide": "3.0.2-LEAN-4614.0",
+    "@manuscripts/style-guide": "3.1.0",
     "@manuscripts/track-changes-plugin": "2.0.1",
-    "@manuscripts/transform": "4.0.0",
+    "@manuscripts/transform": "4.2.0",
     "@popperjs/core": "2.11.8",
     "citeproc": "2.4.63",
     "codemirror": "5.65.19",

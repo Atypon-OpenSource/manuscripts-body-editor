@@ -122,6 +122,8 @@
   text-indent: 0pt;
 }
 
+/* Figures */
+
 .ProseMirror .figure-block {
   width: 100%;
   border: 1px solid #f2f2f2;
@@ -132,6 +134,11 @@
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+
+  margin: 16px 0 0 !important;
+  box-sizing: border-box;
+  justify-self: center;
+  position: relative;
 }
 
 .ProseMirror .figure-group {
@@ -144,7 +151,139 @@
   width: 100%;
   position: relative;
   grid-column: 1/-1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
 }
+
+.ProseMirror  .figure-images-container  .figure-image-container {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.ProseMirror .block-figure_element .add-figure-button {
+  border: 0px;
+  left: 53px;
+  width: 25px;
+  z-index: 1;
+  height: 25px;
+  bottom: 220px;
+  cursor: pointer;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #6E6E6E;
+}
+
+.ProseMirror .block-figure_element .add-figure-button.disabled {
+  background-color: #E2E2E2 !important;
+}
+
+.ProseMirror .block-figure_element .add-figure-button svg path {
+  fill: #FFFFFF !important;
+}
+
+
+.ProseMirror .figure-block:hover .options-button {
+  visibility: visible;
+}
+
+.ProseMirror .block:focus-within .figure-block,
+.ProseMirror .block:hover .figure-block {
+  border-color: #e2e2e2;
+}
+
+.ProseMirror .figure-block[data-alignment='left'] {
+  justify-self: flex-start;
+}
+
+.ProseMirror .figure-block[data-alignment='right'] {
+  justify-self: flex-end;
+}
+
+.ProseMirror .figure-block .expanded-listing .executable-attachments {
+  display: block;
+}
+
+.ProseMirror .figure-block > .listing {
+  grid-column-start: 1;
+  grid-column-end: -1;
+  padding: 0;
+  min-height: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.ProseMirror .figure-block figure {
+  padding-bottom: 20px;
+}
+
+.ProseMirror .figure-block > figcaption {
+  grid-column-start: 1;
+  grid-column-end: -1;
+  margin-top: 30px;
+}
+
+.ProseMirror .figure-caption {
+  display: none;
+}
+
+.ProseMirror .figure.placeholder {
+  align-items: center;
+  border-radius: 16px;
+  border: 1px dashed #e2e2e2;
+  background-color: #fafafa;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 32px;
+  max-width: 210px;
+  min-height: 100px;
+  white-space: normal;
+  font-size: 14px;
+}
+
+.ProseMirror .figure.placeholder a {
+  text-decoration: underline;
+}
+
+.ProseMirror .figure.placeholder.over {
+  border-color: #bce7f6;
+}
+
+.ProseMirror .figure-image {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ProseMirror .figure-embed {
+  width: 640px;
+  max-width: 90%;
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.ProseMirror .figure-embed .figure-embed-object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+}
+
+.ProseMirror figcaption {
+  background: white;
+  font-size: 14px;
+  margin-top: 1em;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.ProseMirror .block-table_element figcaption {
+  text-align: left;
+}
+
 
 .ProseMirror .figure-block > figcaption .figure-label {
   display: initial !important;
@@ -698,6 +837,10 @@ span.comment-marker {
   text-decoration: line-through;
 }
 
+.tracking-visible .ProseMirror figure.deleted {
+  display: flex;
+}
+
 .tracking-visible .ProseMirror .block.deleted {
   display: block;
 }
@@ -809,9 +952,17 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block {
+  .block,  .tracking-visible
+  .ProseMirror .figure-block
+   figure[data-track-status='pending'].deleted img {
   box-shadow: inset 3px 0 0 var(--deleted-color);
 }
+
+.tracking-visible
+.ProseMirror .figure-block
+ figure[data-track-status='pending'].deleted img {
+  padding-left: 3px;
+ }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
   .block,
