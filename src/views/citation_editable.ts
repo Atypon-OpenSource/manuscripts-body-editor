@@ -68,7 +68,10 @@ export class CitationEditableView extends CitationView {
   }
 
   public handleClick = (event: MouseEvent) => {
-    if (!this.can.seeReferencesButtons) {
+    if (
+      !this.can.seeReferencesButtons ||
+      this.dom.classList.contains('inconsistency-highlight')
+    ) {
       this.showPopper()
     } else if (!isDeleted(this.node) && event.button === 0) {
       const attrs = this.node.attrs
@@ -79,7 +82,11 @@ export class CitationEditableView extends CitationView {
   }
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
-    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
+    if (
+      this.can.seeReferencesButtons &&
+      !isDeleted(this.node) &&
+      !this.dom.classList.contains('inconsistency-highlight')
+    ) {
       const attrs = this.node.attrs
       if (!attrs.rids.length) {
         this.showPopper()
