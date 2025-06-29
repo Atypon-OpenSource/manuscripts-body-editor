@@ -21,6 +21,7 @@ import {
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
 import {
+  isInGraphicalAbstractSection,
   isSectionTitleNode,
   ListNode,
   ManuscriptEditorView,
@@ -391,6 +392,10 @@ export class ContextMenu {
     }
 
     if (
+      !(
+        type === schema.nodes.figure_element &&
+        isInGraphicalAbstractSection($pos)
+      ) &&
       !readonlyTypes.includes(type) &&
       !readonlyTypes.includes($pos.parent.type)
     ) {
