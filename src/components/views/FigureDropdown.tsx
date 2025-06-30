@@ -44,7 +44,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
-  onReplace?: (file: FileAttachment, isSupplemental?: boolean) => void
+  onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
 }
