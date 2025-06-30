@@ -67,6 +67,21 @@ const figureTypes = [
   schema.nodes.hero_image,
 ]
 
+export function memoGroupFiles() {
+  let prevFiles: FileAttachment[] = []
+  let prevDoc: ManuscriptNode | undefined = undefined
+  let result: ManuscriptFiles | undefined
+
+  return function (doc: ManuscriptNode, files: FileAttachment[]) {
+    if (result && prevDoc === doc && prevFiles === files) {
+      return result
+    }
+    prevDoc = doc
+    prevFiles = files
+    return groupFiles(doc, files)
+  }
+}
+
 export const groupFiles = (
   doc: ManuscriptNode,
   files: FileAttachment[]
