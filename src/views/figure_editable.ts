@@ -32,7 +32,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, groupFiles } from '../lib/files'
+import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
@@ -208,11 +208,10 @@ export class FigureEditableView extends FigureView {
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
-      const files = this.props.getFiles()
-      const doc = this.view.state.doc
       const componentProps: FigureOptionsProps = {
         can,
-        files: groupFiles(doc, files),
+        getDoc: () => this.view.state.doc,
+        getFiles: this.props.getFiles,
         onDownload: handleDownload,
         onUpload: handleUpload,
         onDetach: handleDetach,
