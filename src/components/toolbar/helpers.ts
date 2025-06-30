@@ -25,7 +25,7 @@ import {
 } from '@manuscripts/transform'
 import { Fragment, Node } from 'prosemirror-model'
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
@@ -113,6 +113,10 @@ export const demoteSectionToParagraph = (
   const paragraph = nodes.paragraph.create(
     {
       id: generateNodeID(nodes.paragraph),
+      dataTracked: [
+        ...(sectionTitle.attrs.dataTracked || []),
+        ...(section.attrs.dataTracked || []),
+      ],
     },
     sectionTitle.content
   )
@@ -140,6 +144,7 @@ export const demoteSectionToParagraph = (
         updatedDeepestSubsection
       )
       fragment = updatedPreviousNode.content
+      tr.setMeta('section-level', sectionDepth)
     } else {
       // If no subsections exist, just append to the main section
       fragment = Fragment.from(previousNode.content)
@@ -155,8 +160,11 @@ export const demoteSectionToParagraph = (
 
     anchor = beforeSection
   } else {
+    if (!previousNode) {
+      tr.setMeta('track-without-reference', true)
+    }
     tr.replaceWith(
-      beforeSection,
+      beforeSection - (previousNode?.nodeSize || 0),
       afterSection,
       Fragment.from(paragraph).append(sectionContent)
     )
@@ -164,11 +172,13 @@ export const demoteSectionToParagraph = (
     anchor = beforeSection + 1
   }
 
+  tr.setMeta('is-structural-change', true)
+  tr.setMeta('action', 'convert-paragraph')
   tr.setSelection(
     TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
   )
 
-  dispatch(skipTracking(tr))
+  dispatch(tr)
   view && view.focus()
 }
 
@@ -194,8 +204,8 @@ export const promoteParagraphToSection = (
   const parentSection = $from.node(sectionDepth)
   const startIndex = $from.index(sectionDepth)
   const endIndex = $from.indexAfter(sectionDepth)
-  const beforeParentSection = $from.before(sectionDepth)
-  const afterParentSection = $from.after(sectionDepth)
+  let beforeParentSection = $from.before(sectionDepth)
+  let afterParentSection = $from.after(sectionDepth)
 
   const items: Node[] = []
   let offset = 0
@@ -210,7 +220,10 @@ export const promoteParagraphToSection = (
   const textContent = paragraph.textContent
 
   const sectionTitle: SectionTitleNode = textContent
-    ? nodes.section_title.create({}, schema.text(textContent))
+    ? nodes.section_title.create(
+        { ...paragraph.attrs },
+        schema.text(textContent)
+      )
     : nodes.section_title.create()
 
   let sectionContent = Fragment.from(sectionTitle)
@@ -223,25 +236,54 @@ export const promoteParagraphToSection = (
   }
 
   if (parentSection.type.name === 'body') {
-    const newSection = nodes.section.create({}, sectionContent)
-    items[0] = nodes.body.create(
-      {},
-      items[0]
-        ? items[0].content.append(Fragment.from(newSection))
-        : Fragment.from(newSection)
-    )
+    const resolvePos = findChildrenByType(parentSection, nodes.section)[0]
+    if (resolvePos) {
+      const { pos } = resolvePos
+      items[0] = nodes.section.create(
+        {},
+        Fragment.from(sectionTitle).append(
+          parentSection.slice(afterParagraphOffset, pos).content
+        )
+      )
+      afterParentSection = beforeParentSection + pos
+      beforeParentSection = beforeParagraph
+    } else {
+      items[0] = nodes.section.create(
+        {},
+        Fragment.from(sectionTitle).append(
+          parentSection.slice(afterParagraphOffset).content
+        )
+      )
+    }
+
+    if ($beforeParagraph.index() === 0) {
+      tr.setMeta('track-without-reference', true)
+      if (!resolvePos) {
+        beforeParentSection = beforeParentSection + 1
+        afterParentSection = afterParentSection - 1
+      }
+    } else {
+      if ($beforeParagraph.nodeBefore) {
+        beforeParentSection =
+          $beforeParagraph.pos - $beforeParagraph.nodeBefore.nodeSize
+        items.unshift($beforeParagraph.nodeBefore)
+      }
+    }
   } else {
-    items.push(parentSection.copy(sectionContent))
+    items.push(parentSection.type.create(undefined, sectionContent))
   }
 
   tr.replaceWith(beforeParentSection, afterParentSection, items)
+  tr.setMeta('is-structural-change', true)
+  tr.setMeta('action', 'convert-section')
+
   const anchor = beforeParentSection + offset + 2
 
   tr.setSelection(
     TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
   )
 
-  dispatch(skipTracking(tr))
+  dispatch(tr)
   view && view.focus()
 }
 
