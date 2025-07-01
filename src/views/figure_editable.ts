@@ -168,7 +168,7 @@ export class FigureEditableView extends FigureView {
         this.setSrc(file.id)
         if (isSupplement) {
           const tr = this.view.state.tr
-          this.props.doc.descendants((node, pos) => {
+          this.view.state.doc.descendants((node, pos) => {
             if (node.type === node.type.schema.nodes.supplement) {
               const href = (node as SupplementNode).attrs.href
               if (href === file.id) {
