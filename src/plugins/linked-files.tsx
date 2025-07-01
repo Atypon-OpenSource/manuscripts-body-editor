@@ -50,13 +50,14 @@ export default (props: EditorProps) =>
     },
 
     view(editorView) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
+        console.log('requestAnimationFrame called for extLinkPlugin')
         const decoSet = DecorationSet.create(
           editorView.state.doc,
           getDecorations(editorView.state, props, editorView)
         )
         editorView.dispatch(editorView.state.tr.setMeta(pluginKey, decoSet))
-      }, 0)
+      })
 
       return {
         update(view, prevState) {

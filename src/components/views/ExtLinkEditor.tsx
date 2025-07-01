@@ -101,7 +101,6 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
           <IconButton onClick={handleRemove} aria-label="Remove linked file">
             <DeleteIcon />
           </IconButton>
-          {/* <button onClick={handleRemove}>Remove</button> */}
         </LinkedFileInfoBox>
       )}
 
