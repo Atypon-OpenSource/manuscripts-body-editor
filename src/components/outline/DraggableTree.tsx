@@ -37,6 +37,7 @@ import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted } from '../../lib/track-changes-utils'
 import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
+import { PluginState, sectionTitleKey } from '../../plugins/section_title'
 import {
   Outline,
   OutlineItem,
@@ -125,7 +126,6 @@ export const buildTree: TreeBuilder = ({
       if (isExcluded(childNode.type)) {
         return
       }
-
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
@@ -169,17 +169,29 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     : true
 
   const { node, items, parent } = tree
+  const sectionTitleState: PluginState | undefined = view
+    ? sectionTitleKey.getState(view.state)
+    : undefined
 
   const itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
+    let sectionNumber =
+      node.type.name === 'section' && sectionTitleState
+        ? sectionTitleState.get(node.attrs.id) ?? ''
+        : ''
+    sectionNumber = sectionNumber ? `${sectionNumber}.` : ''
 
     if (text) {
-      return text.trim()
+      return `${sectionNumber} ${text.trim()}`
     }
 
     const placeholder = nodeTitlePlaceholder(node.type)
 
-    return <OutlineItemPlaceholder>{placeholder}</OutlineItemPlaceholder>
+    return (
+      <OutlineItemPlaceholder>
+        {sectionNumber} {placeholder}
+      </OutlineItemPlaceholder>
+    )
   }
 
   const toggleOpen = () => {
@@ -289,6 +301,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
   const deletedClass = isDeletedItem ? 'deleted' : ''
   const heroImageClass = isHeroImage ? 'hero-image' : ''
+
   return (
     <Outline
       ref={ref}
