@@ -182,7 +182,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     sectionNumber = sectionNumber ? `${sectionNumber}.` : ''
 
     if (text) {
-      return `${sectionNumber} ${text.trim()}`
+      return `${sectionNumber}${sectionNumber ? ' ' : ''}${text.trim()}`
     }
 
     const placeholder = nodeTitlePlaceholder(node.type)
