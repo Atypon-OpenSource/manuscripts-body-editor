@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FileCorruptedIcon,
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import {
+  draggableIcon,
+  fileCorruptedIcon,
+  imageDefaultIcon,
+  imageLeftIcon,
+  imageRightIcon,
+} from '../icons'
 import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
@@ -39,6 +37,18 @@ import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
+
+// Global drag state manager
+const figureDragState = {
+  activeDrag: null as { id: string; pos: number } | null,
+  getActiveDrag: () => figureDragState.activeDrag,
+  setActiveDrag: (id: string, pos: number) => {
+    figureDragState.activeDrag = { id, pos }
+  },
+  clearActiveDrag: () => {
+    figureDragState.activeDrag = null
+  },
+}
 
 export enum figurePositions {
   left = 'half-left',
@@ -50,11 +60,165 @@ export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
   positionMenuWrapper: HTMLDivElement
   figurePosition: string
+  private isDragging = false
+  private dragHandle: HTMLDivElement | undefined
 
   public initialise() {
     this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
+    if (this.props.getCapabilities().editArticle) {
+      this.setupDragAndDrop()
+    }
+  }
+
+  private setupDragAndDrop() {
+    this.container.draggable = false
+
+    // Drag events for container
+    this.container.addEventListener('dragstart', (e) => {
+      if (!e.dataTransfer) {
+        return
+      }
+      this.isDragging = true
+      const pos = this.getPos()
+      const figureId = this.node.attrs.id
+      figureDragState.setActiveDrag(figureId, pos)
+      e.dataTransfer.setData('text/plain', figureId)
+      this.container.classList.add('dragging')
+      // Add drag-active to siblings only
+      const parent = this.container.parentElement
+      if (parent) {
+        Array.from(parent.children).forEach((el) => {
+          if (el !== this.container && el.classList.contains('figure')) {
+            el.classList.add('drag-active')
+          }
+        })
+      }
+    })
+
+    // Drag events for drag handle (if present)
+    if (this.dragHandle) {
+      this.dragHandle.addEventListener('dragstart', (e) => {
+        if (!e.dataTransfer) {
+          return
+        }
+        this.isDragging = true
+        const pos = this.getPos()
+        const figureId = this.node.attrs.id
+        figureDragState.setActiveDrag(figureId, pos)
+        e.dataTransfer.setData('text/plain', figureId)
+        this.container.classList.add('dragging')
+        // Add drag-active to siblings only
+        const parent = this.container.parentElement
+        if (parent) {
+          Array.from(parent.children).forEach((el) => {
+            if (el !== this.container && el.classList.contains('figure')) {
+              el.classList.add('drag-active')
+            }
+          })
+        }
+      })
+    }
+
+    this.container.addEventListener('dragend', () => {
+      this.isDragging = false
+      figureDragState.clearActiveDrag()
+      this.container.classList.remove('dragging')
+      const parent = this.container.parentElement
+      if (parent) {
+        Array.from(parent.children).forEach((el) => {
+          el.classList.remove(
+            'drag-active',
+            'drop-target-above',
+            'drop-target-below'
+          )
+        })
+      }
+    })
+
+    this.container.addEventListener('dragover', (e) => {
+      if (!this.isDragging) {
+        e.preventDefault()
+        const rect = this.container.getBoundingClientRect()
+        const relativeY = e.clientY - rect.top
+        const isAbove = relativeY < rect.height / 2
+        this.container.classList.remove(
+          'drop-target-above',
+          'drop-target-below'
+        )
+        this.container.classList.add(
+          isAbove ? 'drop-target-above' : 'drop-target-below'
+        )
+      }
+    })
+
+    this.container.addEventListener('dragleave', (e) => {
+      if (!this.container.contains(e.relatedTarget as Node)) {
+        this.container.classList.remove(
+          'drop-target-above',
+          'drop-target-below'
+        )
+      }
+    })
+
+    this.container.addEventListener('drop', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const activeDrag = figureDragState.getActiveDrag()
+      let fromPos: number | null = null
+      let figureId: string | null = null
+      if (activeDrag) {
+        fromPos = activeDrag.pos
+        figureId = activeDrag.id
+      } else {
+        figureId = e.dataTransfer?.getData('text/plain') || null
+        if (figureId) {
+          fromPos = this.findFigurePosition(figureId)
+        }
+      }
+      if (fromPos === null) {
+        return
+      }
+      const toPos = this.getPos()
+      if (fromPos === toPos) {
+        return
+      } // prevent self-move
+      const rect = this.container.getBoundingClientRect()
+      const insertBefore = e.clientY < rect.top + rect.height / 2
+      this.moveFigure(fromPos, toPos, insertBefore)
+      this.container.classList.remove('drop-target-above', 'drop-target-below')
+    })
+  }
+
+  private findFigurePosition(figureId: string): number | null {
+    let foundPos: number | null = null
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.type === schema.nodes.figure && node.attrs.id === figureId) {
+        foundPos = pos
+        return false
+      }
+    })
+    return foundPos
+  }
+
+  private moveFigure(
+    fromPos: number,
+    targetPos: number,
+    insertBefore: boolean
+  ) {
+    const { state } = this.view
+    const { tr } = state
+    const fromNode = state.doc.nodeAt(fromPos)
+    if (!fromNode) {
+      return
+    }
+    if (fromNode.type !== schema.nodes.figure) {
+      return
+    }
+    tr.delete(fromPos, fromPos + fromNode.nodeSize)
+    tr.insert(targetPos, fromNode)
+    this.view.dispatch(tr)
   }
 
   upload = async (file: File) => {
@@ -64,6 +228,7 @@ export class FigureEditableView extends FigureView {
 
   public updateContents() {
     super.updateContents()
+    this.container.classList.remove('dragging')
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -138,6 +303,25 @@ export class FigureEditableView extends FigureView {
   protected addTools() {
     this.manageReactTools()
     this.container.appendChild(this.createPositionMenuWrapper())
+    const $pos = this.view.state.doc.resolve(this.getPos())
+
+    const parent = $pos.parent
+    // Create drag handle for for figure elements ( not simple image)
+    if (
+      this.props.getCapabilities()?.editArticle &&
+      parent.type === schema.nodes.figure_element
+    ) {
+      const dragHandle = document.createElement('div')
+      dragHandle.className = 'drag-handler'
+      dragHandle.innerHTML = draggableIcon
+      dragHandle.draggable = true
+
+      dragHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation()
+      })
+
+      this.container.appendChild(dragHandle)
+    }
   }
 
   private manageReactTools() {
@@ -248,10 +432,7 @@ export class FigureEditableView extends FigureView {
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')
 
-    // Convert the React component to a static HTML string
-    const iconHtml = renderToStaticMarkup(
-      createElement(FileCorruptedIcon, { className: 'icon' })
-    )
+    const iconHtml = fileCorruptedIcon
 
     instructions.innerHTML = `
     <div>
@@ -309,17 +490,17 @@ export class FigureEditableView extends FigureView {
     let icon
     switch (this.figurePosition) {
       case figurePositions.left:
-        icon = ImageLeftIcon
+        icon = imageLeftIcon
         break
       case figurePositions.right:
-        icon = ImageRightIcon
+        icon = imageRightIcon
         break
       default:
-        icon = ImageDefaultIcon
+        icon = imageDefaultIcon
         break
     }
     if (icon) {
-      positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
+      positionMenuButton.innerHTML = icon
     }
     if (can.editArticle) {
       positionMenuButton.addEventListener('click', this.showPositionMenu)

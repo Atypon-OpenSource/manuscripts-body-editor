@@ -335,6 +335,45 @@
 .ProseMirror .box-element .figure-block .position-menu {
   left: calc(100% - 82px);
 }
+/* Drag Figure Styles */
+.ProseMirror .figure-block .drag-handler {
+  opacity: 0;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  cursor: move;
+  border-radius: 4px;
+  position: absolute;
+  left: 0;
+  bottom: 20px;
+  text-align: center;
+  align-items: center;
+  pointer-events: auto;
+  transition: opacity 0.2s;
+  background-color:  #FAFAFA;
+  border: 1px solid #F2F2F2;
+
+}
+.ProseMirror .figure-block .figure:hover .drag-handler {
+  opacity: 1;
+}
+
+/* Drop area blue dotted outline */
+.ProseMirror .figure-block .figure.drop-target-above,
+.ProseMirror .figure-block .figure.drop-target-below {
+  border: 2px dotted #20AEDF !important;
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.ProseMirror .figure-block .figure.drop-target-above::before { top: 0; }
+.ProseMirror .figure-block .figure.drop-target-below::after { bottom: 0; }
+
+.ProseMirror .figure.dragging {
+  opacity: 0.6;
+  z-index: 1000;
+  transition: opacity 0.2s;
+}
 
 .ProseMirror .block-container.block-box_element {
   grid-template-columns: auto;
@@ -968,8 +1007,8 @@ figure.block:has(.equation.selected-suggestion) {
   [data-track-op='node_split'][data-track-status='pending']
   .block, .tracking-visible
   .selected-suggestion[data-track-op='move'][data-track-status='pending']
-  .block {
-  box-shadow: inset 3px 0 0 var(--updated-border-color);
+  .block , .block:has(figure.selected-suggestion, [data-track-op='move'][data-track-status='pending']){
+    box-shadow: inset 3px 0 0 var(--updated-border-color) ;
 }
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
