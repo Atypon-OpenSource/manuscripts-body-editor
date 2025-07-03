@@ -44,7 +44,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
-  onReplace?: (file: FileAttachment) => void
+  onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
 }
@@ -115,7 +115,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                     <ListItemButton
                       key={file.id}
                       id={index.toString()}
-                      onClick={() => onReplace && onReplace(file)}
+                      onClick={() => onReplace && onReplace(file, true)}
                     >
                       {getFileIcon(file.name)}
                       <ListItemText>{file.name}</ListItemText>

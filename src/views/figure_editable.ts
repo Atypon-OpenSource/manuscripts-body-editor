@@ -343,8 +343,27 @@ export class FigureEditableView extends FigureView {
       }
     }
     if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
+      handleReplace = (file: FileAttachment, isSupplement = false) => {
         this.setSrc(file.id)
+        if (isSupplement) {
+          const tr = this.view.state.tr
+          this.view.state.doc.descendants((node, pos) => {
+            if (node.type === node.type.schema.nodes.supplement) {
+              const href = (node as SupplementNode).attrs.href
+              if (href === file.id) {
+                tr.delete(pos, pos + node.nodeSize)
+                this.view.dispatch(tr)
+              }
+            }
+
+            if (
+              node.type !== node.type.schema.nodes.supplements &&
+              node.type !== node.type.schema.nodes.manuscript
+            ) {
+              return false
+            }
+          })
+        }
       }
     }
     if (can.uploadFile) {
