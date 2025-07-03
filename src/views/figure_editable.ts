@@ -143,7 +143,7 @@ export class FigureEditableView extends FigureView {
         const rect = this.container.getBoundingClientRect()
         const relativeY = e.clientY - rect.top
         const isAbove = relativeY < rect.height / 2
-        this.container.classList.remove(
+        this.container.classList.remove(  // Add a blue dotted border to indicate the drop zone
           'drop-target-above',
           'drop-target-below'
         )
@@ -184,9 +184,7 @@ export class FigureEditableView extends FigureView {
       if (fromPos === toPos) {
         return
       } // prevent self-move
-      const rect = this.container.getBoundingClientRect()
-      const insertBefore = e.clientY < rect.top + rect.height / 2
-      this.moveFigure(fromPos, toPos, insertBefore)
+      this.moveFigure(fromPos, toPos)
       this.container.classList.remove('drop-target-above', 'drop-target-below')
     })
   }
@@ -212,6 +210,7 @@ export class FigureEditableView extends FigureView {
     if (fromNode.type !== schema.nodes.figure) {
       return
     }
+
     tr.delete(fromPos, fromPos + fromNode.nodeSize)
     tr.insert(targetPos, fromNode)
     this.view.dispatch(tr)
