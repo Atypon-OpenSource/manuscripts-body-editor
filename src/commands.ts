@@ -1069,14 +1069,7 @@ export const insertContributors = (
   }
 
   // Find the title node
-  let title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
-  const altTitles = findChildrenByType(
-    state.doc,
-    state.schema.nodes.alt_titles
-  )[0]
-  if (altTitles) {
-    title = altTitles
-  }
+  const title = getLastTitleNode(state)
   const pos = title.pos + title.node.nodeSize
   const contributors = state.schema.nodes.contributors.create({
     id: '',
@@ -1105,14 +1098,7 @@ export const insertAffiliation = (
     return false
   }
   // Find the title node
-  let title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
-  const altTitles = findChildrenByType(
-    state.doc,
-    state.schema.nodes.alt_titles
-  )[0]
-  if (altTitles) {
-    title = altTitles
-  }
+  const title = getLastTitleNode(state)
   let pos = title.pos + title.node.nodeSize
 
   // Find the contributors node
@@ -1140,6 +1126,19 @@ export const insertAffiliation = (
   }
 
   return true
+}
+
+const getLastTitleNode = (state: ManuscriptEditorState) => {
+  const altTitleNode = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitleNode) {
+    return altTitleNode
+  }
+
+  const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  return titleNode
 }
 
 export const insertAward = (
