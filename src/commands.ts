@@ -1069,7 +1069,14 @@ export const insertContributors = (
   }
 
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  let title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const altTitles = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitles) {
+    title = altTitles
+  }
   const pos = title.pos + title.node.nodeSize
   const contributors = state.schema.nodes.contributors.create({
     id: '',
@@ -1098,7 +1105,14 @@ export const insertAffiliation = (
     return false
   }
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  let title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const altTitles = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitles) {
+    title = altTitles
+  }
   let pos = title.pos + title.node.nodeSize
 
   // Find the contributors node
