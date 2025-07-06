@@ -143,7 +143,8 @@ export class FigureEditableView extends FigureView {
         const rect = this.container.getBoundingClientRect()
         const relativeY = e.clientY - rect.top
         const isAbove = relativeY < rect.height / 2
-        this.container.classList.remove(  // Add a blue dotted border to indicate the drop zone
+        this.container.classList.remove(
+          // Add a blue dotted border to indicate the drop zone
           'drop-target-above',
           'drop-target-below'
         )
