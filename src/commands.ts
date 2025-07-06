@@ -111,6 +111,7 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
+  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1126,19 +1127,6 @@ export const insertAffiliation = (
   }
 
   return true
-}
-
-const getLastTitleNode = (state: ManuscriptEditorState) => {
-  const altTitleNode = findChildrenByType(
-    state.doc,
-    state.schema.nodes.alt_titles
-  )[0]
-  if (altTitleNode) {
-    return altTitleNode
-  }
-
-  const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
-  return titleNode
 }
 
 export const insertAward = (
