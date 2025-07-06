@@ -113,10 +113,6 @@ export const demoteSectionToParagraph = (
   const paragraph = nodes.paragraph.create(
     {
       id: generateNodeID(nodes.paragraph),
-      dataTracked: [
-        ...(sectionTitle.attrs.dataTracked || []),
-        ...(section.attrs.dataTracked || []),
-      ],
     },
     sectionTitle.content
   )
@@ -160,13 +156,10 @@ export const demoteSectionToParagraph = (
 
     anchor = beforeSection
   } else {
-    if (!previousNode) {
-      tr.setMeta('track-without-reference', true)
-    }
     tr.replaceWith(
       beforeSection - (previousNode?.nodeSize || 0),
       afterSection,
-      Fragment.from(paragraph).append(sectionContent)
+      Fragment.from(previousNode).append(Fragment.from(paragraph)).append(sectionContent)
     )
 
     anchor = beforeSection + 1
@@ -217,13 +210,10 @@ export const promoteParagraphToSection = (
     offset += precedingSection.nodeSize
   }
 
-  const textContent = paragraph.textContent
+  const textContent = findChildrenByType(paragraph, schema.nodes.text).map(({node}) => node)
 
   const sectionTitle: SectionTitleNode = textContent
-    ? nodes.section_title.create(
-        { ...paragraph.attrs },
-        schema.text(textContent)
-      )
+    ? nodes.section_title.create({}, Fragment.from(textContent))
     : nodes.section_title.create()
 
   let sectionContent = Fragment.from(sectionTitle)
@@ -231,8 +221,6 @@ export const promoteParagraphToSection = (
     sectionContent = sectionContent.append(
       parentSection.content.cut(afterParagraphOffset)
     )
-  } else {
-    sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
   }
 
   if (parentSection.type.name === 'body') {
@@ -257,7 +245,6 @@ export const promoteParagraphToSection = (
     }
 
     if ($beforeParagraph.index() === 0) {
-      tr.setMeta('track-without-reference', true)
       if (!resolvePos) {
         beforeParentSection = beforeParentSection + 1
         afterParentSection = afterParentSection - 1
@@ -266,7 +253,9 @@ export const promoteParagraphToSection = (
       if ($beforeParagraph.nodeBefore) {
         beforeParentSection =
           $beforeParagraph.pos - $beforeParagraph.nodeBefore.nodeSize
+        afterParentSection = afterParentSection - 1
         items.unshift($beforeParagraph.nodeBefore)
+        offset = $beforeParagraph.nodeBefore.nodeSize - 2
       }
     }
   } else {
