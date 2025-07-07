@@ -159,7 +159,9 @@ export const demoteSectionToParagraph = (
     tr.replaceWith(
       beforeSection - (previousNode?.nodeSize || 0),
       afterSection,
-      Fragment.from(previousNode).append(Fragment.from(paragraph)).append(sectionContent)
+      Fragment.from(previousNode)
+        .append(Fragment.from(paragraph))
+        .append(sectionContent)
     )
 
     anchor = beforeSection + 1
@@ -210,7 +212,9 @@ export const promoteParagraphToSection = (
     offset += precedingSection.nodeSize
   }
 
-  const textContent = findChildrenByType(paragraph, schema.nodes.text).map(({node}) => node)
+  const textContent = findChildrenByType(paragraph, schema.nodes.text).map(
+    ({ node }) => node
+  )
 
   const sectionTitle: SectionTitleNode = textContent
     ? nodes.section_title.create({}, Fragment.from(textContent))
