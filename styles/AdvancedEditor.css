@@ -911,8 +911,7 @@ figure.block:has(.equation.selected-suggestion) {
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
   .block,
 .tracking-visible
-  .selected-suggestion
-  [data-track-status='pending'][data-track-op='insert']
+  .selected-suggestion[data-track-status='pending'][data-track-op='insert']
   .block,
 .tracking-visible
   .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending']
