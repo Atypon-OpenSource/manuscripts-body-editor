@@ -1467,10 +1467,6 @@ th:hover > .table-context-menu-button,
   display: none;
 }
 
-.ProseMirror .accessibility_element:focus-visible {
-  outline: none;
-}
-
 .ProseMirror .show_accessibility_element .accessibility_element {
   display: block;
 }
@@ -1561,4 +1557,9 @@ th:hover > .table-context-menu-button,
 }
 .hero-image-toggle-btn.collapsed svg {
   transform: rotate(180deg);
+}
+
+.ProseMirror .block-image_element .block:focus-visible,
+.ProseMirror .block-figure_element .block:focus-visible {
+  outline: none;
 }

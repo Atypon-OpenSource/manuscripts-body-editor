@@ -63,7 +63,6 @@ export default class BlockView<BlockNode extends ManuscriptNode>
   public createElement() {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
-    this.dom.setAttribute('contenteditable', 'true')
     this.dom.appendChild(this.contentDOM)
   }
 
@@ -71,13 +70,6 @@ export default class BlockView<BlockNode extends ManuscriptNode>
     this.dom = document.createElement('div')
     this.dom.classList.add('block-container')
     this.dom.classList.add(`block-${this.node.type.name}`)
-
-    if (
-      this.node.type.name === 'image_element' ||
-      this.node.type.name === 'figure_element'
-    ) {
-      this.dom.setAttribute('contenteditable', 'false')
-    }
   }
 
   gutter: Record<string, HTMLElement> = {}
