@@ -176,7 +176,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 {(props: FieldProps) => (
                   <TextField
                     id={'role'}
-                    placeholder={'Role'}
+                    placeholder={'Job Title'}
                     {...props.field}
                   />
                 )}
