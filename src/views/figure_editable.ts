@@ -22,7 +22,7 @@ import {
   ImageLeftIcon,
   ImageRightIcon,
 } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { createElement } from 'react'
@@ -32,7 +32,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, groupFiles } from '../lib/files'
+import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
@@ -164,8 +164,27 @@ export class FigureEditableView extends FigureView {
       }
     }
     if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
+      handleReplace = (file: FileAttachment, isSupplement = false) => {
         this.setSrc(file.id)
+        if (isSupplement) {
+          const tr = this.view.state.tr
+          this.view.state.doc.descendants((node, pos) => {
+            if (node.type === node.type.schema.nodes.supplement) {
+              const href = (node as SupplementNode).attrs.href
+              if (href === file.id) {
+                tr.delete(pos, pos + node.nodeSize)
+                this.view.dispatch(tr)
+              }
+            }
+
+            if (
+              node.type !== node.type.schema.nodes.supplements &&
+              node.type !== node.type.schema.nodes.manuscript
+            ) {
+              return false
+            }
+          })
+        }
       }
     }
     if (can.uploadFile) {
@@ -208,11 +227,10 @@ export class FigureEditableView extends FigureView {
 
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
-      const files = this.props.getFiles()
-      const doc = this.view.state.doc
       const componentProps: FigureOptionsProps = {
         can,
-        files: groupFiles(doc, files),
+        getDoc: () => this.view.state.doc,
+        getFiles: this.props.getFiles,
         onDownload: handleDownload,
         onUpload: handleUpload,
         onDetach: handleDetach,
