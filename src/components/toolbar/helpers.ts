@@ -166,7 +166,7 @@ export const demoteSectionToParagraph = (
   }
 
   tr.setMeta('is-structural-change', true)
-  tr.setMeta('action', 'convert-paragraph')
+  tr.setMeta('action', 'convert-to-paragraph')
   tr.setSelection(
     TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
   )
@@ -264,7 +264,7 @@ export const promoteParagraphToSection = (
 
   tr.replaceWith(beforeParentSection, afterParentSection, items)
   tr.setMeta('is-structural-change', true)
-  tr.setMeta('action', 'convert-section')
+  tr.setMeta('action', 'convert-to-section')
 
   const anchor = beforeParentSection + offset + 2
 
