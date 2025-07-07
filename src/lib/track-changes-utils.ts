@@ -172,8 +172,12 @@ export const addTrackChangesAttributes = (attrs: Attrs, dom: Element) => {
     return
   }
   const change = changes[0]
+  const op =
+    changes.find((c) => c.operation === CHANGE_OPERATION.structure)
+      ?.operation || change.operation
+
   dom.setAttribute('data-track-id', change.id)
-  dom.setAttribute('data-track-op', change.operation)
+  dom.setAttribute('data-track-op', op)
   dom.setAttribute('data-track-status', change.status)
 }
 
