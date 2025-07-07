@@ -206,19 +206,17 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-
-      this.contextMenu = ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu']
-      )
-      return this.contextMenu
     }
-    return undefined
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    return this.contextMenu
   }
 
   public actionGutterButtons = (): HTMLElement[] => {

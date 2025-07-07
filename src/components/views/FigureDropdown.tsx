@@ -25,21 +25,27 @@ import {
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { Node as ManuscriptNode } from 'prosemirror-model'
 import React, { SyntheticEvent } from 'react'
 import styled from 'styled-components'
 
-import { FileAttachment, ManuscriptFiles } from '../../lib/files'
+import {
+  FileAttachment,
+  ManuscriptFiles,
+  memoGroupFiles,
+} from '../../lib/files'
 
 export interface FigureDropdownProps {
   can: Capabilities
-  files: ManuscriptFiles
+  getFiles: () => FileAttachment[]
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
-  onReplace?: (file: FileAttachment) => void
+  onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
+  getDoc: () => ManuscriptNode
   onDelete?: () => void
 }
 
@@ -49,9 +55,30 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
   hasUploadedImage: boolean
 }
 
+function getSupplements(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+) {
+  return groupFiles(getDoc(), getFiles())
+    .supplements.map((s) => s.file)
+    .filter((f) => isImageFile(f.name))
+}
+
+function getOtherFiles(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+) {
+  return groupFiles(getDoc(), getFiles()).others.filter((f) =>
+    isImageFile(f.name)
+  )
+}
+
 export const FigureOptions: React.FC<FigureOptionsProps> = ({
   can,
-  files,
+  getDoc,
+  getFiles,
   onDownload,
   onUpload,
   onDetach,
@@ -59,11 +86,6 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onDelete,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-  const supplements = files.supplements
-    .map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
-
-  const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
@@ -71,6 +93,8 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showReplace = onReplace && can.replaceFile
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
   const showDelete = onDelete && can.detachFile
+
+  const groupFiles = memoGroupFiles()
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -86,26 +110,30 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
             moveLeft
             list={
               <>
-                {supplements.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={() => onReplace && onReplace(file)}
-                  >
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-                {otherFiles.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={() => onReplace && onReplace(file)}
-                  >
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
+                {getSupplements(getFiles, getDoc, groupFiles).map(
+                  (file, index) => (
+                    <ListItemButton
+                      key={file.id}
+                      id={index.toString()}
+                      onClick={() => onReplace && onReplace(file, true)}
+                    >
+                      {getFileIcon(file.name)}
+                      <ListItemText>{file.name}</ListItemText>
+                    </ListItemButton>
+                  )
+                )}
+                {getOtherFiles(getFiles, getDoc, groupFiles).map(
+                  (file, index) => (
+                    <ListItemButton
+                      key={file.id}
+                      id={index.toString()}
+                      onClick={() => onReplace && onReplace(file)}
+                    >
+                      {getFileIcon(file.name)}
+                      <ListItemText>{file.name}</ListItemText>
+                    </ListItemButton>
+                  )
+                )}
                 <UploadButton onClick={onUpload} disabled={!showUpload}>
                   <UploadIcon /> Upload new...
                 </UploadButton>
