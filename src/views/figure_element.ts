@@ -22,23 +22,65 @@ import { ImageElementView } from './image_element'
 
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
+  private addFigureBtn: HTMLButtonElement
 
   public createElement = () => {
     super.createElement()
     this.addFigureElementButtons()
+    this.updateButtonPosition()
   }
 
   private addFigureElementButtons() {
     if (this.props.getCapabilities()?.editArticle) {
-      const addFigureBtn = Object.assign(document.createElement('button'), {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
         className: 'add-figure-button',
         innerHTML: addFigureBtnIcon,
         title: 'Add figure',
       })
-      addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.container.prepend(addFigureBtn)
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
     }
   }
+
+  private updateButtonPosition() {
+    let bottomPosition: number
+
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    // Check if accessibility elements are expanded
+    const isAccessibilityExpanded =
+      this.container.closest('.show_accessibility_element') !== null
+
+    if (isAccessibilityExpanded) {
+      const accessibilityElements = this.container.querySelectorAll(
+        '.accessibility_element'
+      )
+      let accessibilityHeight = 0
+
+      accessibilityElements.forEach((element) => {
+        if (element instanceof HTMLElement) {
+          accessibilityHeight += element.offsetHeight
+        }
+      })
+
+      // Position button above accessibility elements
+      bottomPosition = Math.max(accessibilityHeight + 60)
+    } else {
+      // When accessibility elements are collapsed, add fixed position
+      bottomPosition = 45
+    }
+
+    this.addFigureBtn.style.bottom = `${bottomPosition}px`
+  }
+
+  public updateContents() {
+    super.updateContents()
+    // Use setTimeout to ensure DOM is updated before calculating position
+    setTimeout(() => this.updateButtonPosition(), 0)
+  }
+
   private addFigure = () => {
     const { state } = this.view
     const { tr } = state
