@@ -173,9 +173,8 @@ export const addTrackChangesAttributes = (attrs: Attrs, dom: Element) => {
   }
   const change = changes[0]
   const op =
-    change.operation === 'reference' && change.isStructureRef
-      ? CHANGE_OPERATION.structure
-      : change.operation
+    changes.find((c) => c.operation === CHANGE_OPERATION.structure)
+      ?.operation || change.operation
 
   dom.setAttribute('data-track-id', change.id)
   dom.setAttribute('data-track-op', op)

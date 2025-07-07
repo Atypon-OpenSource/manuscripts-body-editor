@@ -257,7 +257,6 @@ export const promoteParagraphToSection = (
       if ($beforeParagraph.nodeBefore) {
         beforeParentSection =
           $beforeParagraph.pos - $beforeParagraph.nodeBefore.nodeSize
-        afterParentSection = afterParentSection - 1
         items.unshift($beforeParagraph.nodeBefore)
         offset = $beforeParagraph.nodeBefore.nodeSize - 2
       }
