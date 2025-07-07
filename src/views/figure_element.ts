@@ -20,6 +20,14 @@ import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
 
+// Constants for button positioning
+const buttonPositionConfig = {
+  // Minimum spacing above accessibility elements when expanded (in pixels)
+  accessibilityElementsSpacing: 60,
+  // Fixed bottom position when accessibility elements are collapsed (in pixels)
+  collapsedBottomPosition: 45,
+} as const
+
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
   private addFigureBtn: HTMLButtonElement
@@ -65,11 +73,12 @@ export class FigureElementView extends ImageElementView {
         }
       })
 
-      // Position button above accessibility elements
-      bottomPosition = Math.max(accessibilityHeight + 60)
+      // Position button above accessibility elements with minimum spacing
+      bottomPosition =
+        accessibilityHeight + buttonPositionConfig.accessibilityElementsSpacing
     } else {
-      // When accessibility elements are collapsed, add fixed position
-      bottomPosition = 45
+      // When accessibility elements are collapsed, use fixed position
+      bottomPosition = buttonPositionConfig.collapsedBottomPosition
     }
 
     this.addFigureBtn.style.bottom = `${bottomPosition}px`
