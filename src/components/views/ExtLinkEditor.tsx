@@ -21,6 +21,7 @@ import {
   LinkIcon,
 } from '@manuscripts/style-guide'
 import { ManuscriptNode } from '@manuscripts/transform'
+import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -29,13 +30,15 @@ import { FileManagement } from '../../lib/files'
 import { DragAndDropUploader } from '../DragAndDropUploader'
 export interface ExtLinkEditorProps {
   node: ManuscriptNode
-  onUpdate: (attrs: { extLink: string }) => void
+  nodePos: number
+  view: EditorView
   editorProps: EditorProps
 }
 
 export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
   node,
-  onUpdate,
+  nodePos,
+  view,
   editorProps,
 }) => {
   const [isEditing, setIsEditing] = useState(false)
@@ -46,6 +49,14 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
   const extLink = node.attrs.extLink
   const files = editorProps.getFiles()
   const file = extLink ? files.find((f) => f.id === extLink) : undefined
+
+  const onUpdate = (newAttrs: { extLink: string }) => {
+    const tr = view.state.tr.setNodeMarkup(nodePos, undefined, {
+      ...node.attrs,
+      ...newAttrs,
+    })
+    view.dispatch(tr)
+  }
 
   const handleFileUpload = async (file: File) => {
     setUploadError(null)

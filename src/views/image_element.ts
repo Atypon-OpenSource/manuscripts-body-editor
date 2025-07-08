@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-import { FigureElementNode } from '@manuscripts/transform'
+import { ImageElementNode, schema } from '@manuscripts/transform'
 
+import {
+  ExtLinkEditor,
+  ExtLinkEditorProps,
+} from '../components/views/ExtLinkEditor'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import ReactSubView from './ReactSubView'
 
-export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
+export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
+  public extLinkEditorContainer: HTMLDivElement
 
   public ignoreMutation = () => true
 
@@ -35,6 +41,41 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.container.appendChild(this.contentDOM)
+  }
+
+  public updateContents() {
+    super.updateContents()
+
+    // If the node is an image element, add the external link editor
+    if (this.node.type === schema.nodes.image_element) {
+      this.addExternalLinkedFileEditor.call(this)
+    }
+  }
+
+  private addExternalLinkedFileEditor() {
+    this.extLinkEditorContainer?.remove()
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: ExtLinkEditorProps = {
+        node: this.node,
+        nodePos: this.getPos(),
+        view: this.view,
+        editorProps: this.props,
+      }
+      this.extLinkEditorContainer = ReactSubView(
+        this.props,
+        ExtLinkEditor,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['ext-link-editor-container']
+      )
+
+      // Delay injection to avoid being overwritten
+      requestAnimationFrame(() => {
+        this.contentDOM?.appendChild(this.extLinkEditorContainer)
+      })
+    }
   }
 }
 

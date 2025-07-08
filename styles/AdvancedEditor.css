@@ -245,8 +245,12 @@
   font-size: 14px;
 }
 
-.ProseMirror .figure.placeholder a {
+.ProseMirror a[data-action] {
   text-decoration: underline;
+  cursor: pointer;
+}
+.ProseMirror a[data-action]:hover {
+  text-decoration: none;
 }
 
 .ProseMirror .figure.placeholder.over {
@@ -1471,6 +1475,10 @@ th:hover > .table-context-menu-button,
 .ProseMirror .show_accessibility_element .accessibility_element,
 .ProseMirror .show_accessibility_element .ext-link-editor-container {
   display: block;
+}
+
+.ProseMirror .ext-link-editor-container {
+  position: static;
 }
 
 .ProseMirror .accessibility_element_label {
