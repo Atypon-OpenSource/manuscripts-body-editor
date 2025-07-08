@@ -189,7 +189,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
     return (
       <OutlineItemPlaceholder>
-        {sectionNumber && `${sectionNumber} `}{placeholder}
+        {sectionNumber && `${sectionNumber} `}
+        {placeholder}
       </OutlineItemPlaceholder>
     )
   }
