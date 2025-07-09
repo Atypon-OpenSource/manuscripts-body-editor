@@ -19,15 +19,6 @@ import { schema } from '@manuscripts/transform'
 import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
-
-// Constants for button positioning
-const buttonPositionConfig = {
-  // Minimum spacing above accessibility elements when expanded (in pixels)
-  accessibilityElementsSpacing: 60,
-  // Fixed bottom position when accessibility elements are collapsed (in pixels)
-  collapsedBottomPosition: 45,
-} as const
-
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
   private addFigureBtn: HTMLButtonElement
@@ -51,37 +42,18 @@ export class FigureElementView extends ImageElementView {
   }
 
   private updateButtonPosition() {
-    let bottomPosition: number
-
     if (!this.addFigureBtn) {
       return
     }
 
-    // Check if accessibility elements are expanded
-    const isAccessibilityExpanded =
-      this.container.closest('.show_accessibility_element') !== null
+    // Find the last figure in the figure element node
+    const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
 
-    if (isAccessibilityExpanded) {
-      const accessibilityElements = this.container.querySelectorAll(
-        '.accessibility_element'
-      )
-      let accessibilityHeight = 0
-
-      accessibilityElements.forEach((element) => {
-        if (element instanceof HTMLElement) {
-          accessibilityHeight += element.offsetHeight
-        }
-      })
-
-      // Position button above accessibility elements with minimum spacing
-      bottomPosition =
-        accessibilityHeight + buttonPositionConfig.accessibilityElementsSpacing
-    } else {
-      // When accessibility elements are collapsed, use fixed position
-      bottomPosition = buttonPositionConfig.collapsedBottomPosition
-    }
-
-    this.addFigureBtn.style.bottom = `${bottomPosition}px`
+    // Position button after the last figure with consistent spacing
+    const lastFigureBottom = lastFigure.offsetTop + lastFigure.offsetHeight
+    const topPosition = lastFigureBottom + 20
+    this.addFigureBtn.style.top = `${topPosition}px`
   }
 
   public updateContents() {
