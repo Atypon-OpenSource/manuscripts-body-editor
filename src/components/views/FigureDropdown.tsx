@@ -233,8 +233,8 @@ const ListItemButton = styled(IconTextButton)`
   }
 
   &:is([disabled]) {
-    background: white !important;
-    color: #353535 !important;
+    background: white;
+    color: #353535;
     opacity: 0.4;
   }
 `
