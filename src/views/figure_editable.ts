@@ -15,7 +15,7 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { schema, SupplementNode } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
@@ -173,25 +173,29 @@ export class FigureEditableView extends FigureView {
       e.preventDefault()
       e.stopPropagation()
       const activeDrag = figureDragState.getActiveDrag()
-      let fromPos: number | null = null
+      let figure: { pos: number; node: ManuscriptNode } | null = null
       let figureId: string | null = null
+
       if (activeDrag) {
-        fromPos = activeDrag.pos
         figureId = activeDrag.id
+        figure = this.getFigureById(figureId)
       } else {
         figureId = e.dataTransfer?.getData('text/plain') || null
         if (figureId) {
-          fromPos = this.findFigurePosition(figureId)
+          figure = this.getFigureById(figureId)
         }
       }
-      if (fromPos === null) {
+
+      if (!figure) {
         return
       }
+
       const toPos = this.getPos()
-      if (fromPos === toPos) {
+      if (figure.pos === toPos) {
         return
       } // prevent self-move
-      this.moveFigure(fromPos, toPos)
+
+      this.moveFigure(figure.pos, figure.node, toPos)
       this.clearTargetClass(this.container, [
         'drop-target-above',
         'drop-target-below',
@@ -199,24 +203,22 @@ export class FigureEditableView extends FigureView {
     })
   }
 
-  private findFigurePosition(figureId: string) {
-    let foundPos: number | null = null
+  private getFigureById(
+    figureId: string
+  ): { pos: number; node: ManuscriptNode } | null {
+    let result: { pos: number; node: ManuscriptNode } | null = null
     this.view.state.doc.descendants((node, pos) => {
       if (node.type === schema.nodes.figure && node.attrs.id === figureId) {
-        foundPos = pos
+        result = { pos, node }
         return false
       }
     })
-    return foundPos
+    return result
   }
 
-  private moveFigure(fromPos: number, targetPos: number) {
+  private moveFigure(fromPos: number, fromNode: any, targetPos: number) {
     const { state } = this.view
     const { tr } = state
-    const fromNode = state.doc.nodeAt(fromPos)
-    if (!fromNode) {
-      return
-    }
 
     tr.delete(fromPos, fromPos + fromNode.nodeSize)
     tr.insert(targetPos, fromNode)
