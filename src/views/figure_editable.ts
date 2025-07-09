@@ -38,18 +38,6 @@ import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-// Global drag state manager
-const figureDragState = {
-  activeDrag: null as { id: string; pos: number } | null,
-  getActiveDrag: () => figureDragState.activeDrag,
-  setActiveDrag: (id: string, pos: number) => {
-    figureDragState.activeDrag = { id, pos }
-  },
-  clearActiveDrag: () => {
-    figureDragState.activeDrag = null
-  },
-}
-
 export enum figurePositions {
   left = 'half-left',
   right = 'half-right',
@@ -62,6 +50,7 @@ export class FigureEditableView extends FigureView {
   figurePosition: string
   private isDragging = false
   private dragHandle: HTMLDivElement | undefined
+  private static currentDragFigureId: string | null = null
 
   public initialise() {
     this.upload = this.upload.bind(this)
@@ -77,7 +66,7 @@ export class FigureEditableView extends FigureView {
   }
 
   private setupDragAndDrop() {
-    this.container.draggable = false
+    this.container.draggable = true
 
     // Drag events for container
     this.container.addEventListener('dragstart', (e) => {
@@ -85,10 +74,13 @@ export class FigureEditableView extends FigureView {
         return
       }
       this.isDragging = true
-      const pos = this.getPos()
       const figureId = this.node.attrs.id
-      figureDragState.setActiveDrag(figureId, pos)
+      // Store the figure ID in static variable as backup
+      FigureEditableView.currentDragFigureId = figureId
+      // Set data in multiple formats to ensure it's preserved
       e.dataTransfer.setData('text/plain', figureId)
+      e.dataTransfer.setData('application/figure-id', figureId)
+      e.dataTransfer.setData('text/figure-id', figureId)
       this.container.classList.add('dragging')
       // Add drag-active to siblings only
       const parent = this.container.parentElement
@@ -109,10 +101,11 @@ export class FigureEditableView extends FigureView {
           return
         }
         this.isDragging = true
-        const pos = this.getPos()
         const figureId = this.node.attrs.id
-        figureDragState.setActiveDrag(figureId, pos)
+        // Set data in multiple formats to ensure it's preserved
         e.dataTransfer.setData('text/plain', figureId)
+        e.dataTransfer.setData('application/figure-id', figureId)
+        e.dataTransfer.setData('text/figure-id', figureId)
         this.container.classList.add('dragging')
         // Add drag-active to siblings only
         const parent = this.container.parentElement
@@ -129,7 +122,8 @@ export class FigureEditableView extends FigureView {
 
     this.container.addEventListener('dragend', () => {
       this.isDragging = false
-      figureDragState.clearActiveDrag()
+      // Clear the static variable when drag ends
+      FigureEditableView.currentDragFigureId = null
       this.clearTargetClass(this.container, ['dragging'])
       const parent = this.container.parentElement
       if (parent) {
@@ -172,20 +166,25 @@ export class FigureEditableView extends FigureView {
     this.container.addEventListener('drop', (e) => {
       e.preventDefault()
       e.stopPropagation()
-      const activeDrag = figureDragState.getActiveDrag()
-      let figure: { pos: number; node: ManuscriptNode } | null = null
-      let figureId: string | null = null
 
-      if (activeDrag) {
-        figureId = activeDrag.id
-        figure = this.getFigureById(figureId)
-      } else {
-        figureId = e.dataTransfer?.getData('text/plain') || null
-        if (figureId) {
-          figure = this.getFigureById(figureId)
-        }
+      // Try multiple data formats to ensure we get the figure ID
+      const textPlain = e.dataTransfer?.getData('text/plain')
+      const appFigureId = e.dataTransfer?.getData('application/figure-id')
+      const textFigureId = e.dataTransfer?.getData('text/figure-id')
+
+      const figureId =
+        textPlain ||
+        appFigureId ||
+        textFigureId ||
+        FigureEditableView.currentDragFigureId ||
+        null
+      null
+
+      if (!figureId) {
+        return
       }
 
+      const figure = this.getFigureById(figureId)
       if (!figure) {
         return
       }
