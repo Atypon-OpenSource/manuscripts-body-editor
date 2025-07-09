@@ -216,7 +216,11 @@ export class FigureEditableView extends FigureView {
     return result
   }
 
-  private moveFigure(fromPos: number, fromNode: any, targetPos: number) {
+  private moveFigure(
+    fromPos: number,
+    fromNode: ManuscriptNode,
+    targetPos: number
+  ) {
     const { state } = this.view
     const { tr } = state
 
