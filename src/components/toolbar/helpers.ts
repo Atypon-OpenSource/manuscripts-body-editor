@@ -228,37 +228,31 @@ export const promoteParagraphToSection = (
   }
 
   if (parentSection.type.name === 'body') {
-    const resolvePos = findChildrenByType(parentSection, nodes.section)[0]
-    if (resolvePos) {
-      const { pos } = resolvePos
-      items[0] = nodes.section.create(
-        {},
-        Fragment.from(sectionTitle).append(
-          parentSection.slice(afterParagraphOffset, pos).content
-        )
-      )
+    const firstSection = findChildrenByType(parentSection, nodes.section)[0]
+    let content = parentSection.slice(afterParagraphOffset).content
+    if (firstSection) {
+      const { pos } = firstSection
+      content = parentSection.slice(afterParagraphOffset, pos).content
       afterParentSection = beforeParentSection + pos
       beforeParentSection = beforeParagraph
-    } else {
-      items[0] = nodes.section.create(
-        {},
-        Fragment.from(sectionTitle).append(
-          parentSection.slice(afterParagraphOffset).content
-        )
-      )
     }
 
+    items[0] = nodes.section.create(
+      {},
+      Fragment.from(sectionTitle).append(content)
+    )
+
     if ($beforeParagraph.index() === 0) {
-      if (!resolvePos) {
+      if (!firstSection) {
         beforeParentSection = beforeParentSection + 1
         afterParentSection = afterParentSection - 1
       }
     } else {
-      if ($beforeParagraph.nodeBefore) {
-        beforeParentSection =
-          $beforeParagraph.pos - $beforeParagraph.nodeBefore.nodeSize
-        items.unshift($beforeParagraph.nodeBefore)
-        offset = $beforeParagraph.nodeBefore.nodeSize - 2
+      const nodeBefore = $beforeParagraph.nodeBefore
+      if (nodeBefore) {
+        beforeParentSection = $beforeParagraph.pos - nodeBefore.nodeSize
+        items.unshift(nodeBefore)
+        offset = nodeBefore.nodeSize - 2
       }
     }
   } else {

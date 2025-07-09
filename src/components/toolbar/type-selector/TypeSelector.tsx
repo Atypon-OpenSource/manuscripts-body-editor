@@ -129,6 +129,13 @@ export const TypeSelector: React.FC<{
 }> = ({ state, dispatch, view }) => {
   const options = buildOptions(state)
   const isInBody = hasParentNodeOfType(schema.nodes.body)(state.selection)
+  const $from = state.selection.$from
+  const sectionDepth = ($from.depth || 1) - 1
+  const parentSection = $from.node(sectionDepth)
+  const hasValidParent =
+    parentSection.type === schema.nodes.body ||
+    parentSection.type === schema.nodes.section
+
   return (
     <StyledSelect
       onChange={(value: OnChangeValue<Option, false>) => {
@@ -147,7 +154,12 @@ export const TypeSelector: React.FC<{
       }}
       classNamePrefix="type-selector"
       styles={customStyles}
-      isDisabled={options.length <= 1 || !isInBody || !isEditAllowed(state)}
+      isDisabled={
+        options.length <= 1 ||
+        !isInBody ||
+        !hasValidParent ||
+        !isEditAllowed(state)
+      }
       isSearchable={false}
     />
   )
