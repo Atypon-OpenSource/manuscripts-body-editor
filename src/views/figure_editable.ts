@@ -93,8 +93,9 @@ export class FigureEditableView extends FigureView {
       // Add drag-active to siblings only
       const parent = this.container.parentElement
       if (parent) {
-        Array.from(parent.children).forEach((el) => {
-          if (el !== this.container && el.classList.contains('figure')) {
+        const siblingFigures = parent.querySelectorAll('.figure')
+        siblingFigures.forEach((el) => {
+          if (el !== this.container) {
             el.classList.add('drag-active')
           }
         })
@@ -116,8 +117,9 @@ export class FigureEditableView extends FigureView {
         // Add drag-active to siblings only
         const parent = this.container.parentElement
         if (parent) {
-          Array.from(parent.children).forEach((el) => {
-            if (el !== this.container && el.classList.contains('figure')) {
+          const figures = parent.querySelectorAll('.figure')
+          figures.forEach((el) => {
+            if (el !== this.container) {
               el.classList.add('drag-active')
             }
           })
@@ -131,7 +133,8 @@ export class FigureEditableView extends FigureView {
       this.clearTargetClass(this.container, ['dragging'])
       const parent = this.container.parentElement
       if (parent) {
-        Array.from(parent.children).forEach((el) => {
+        const figures = parent.querySelectorAll('.figure')
+        figures.forEach((el) => {
           this.clearTargetClass(el, [
             'drag-active',
             'drop-target-above',
@@ -212,9 +215,6 @@ export class FigureEditableView extends FigureView {
     const { tr } = state
     const fromNode = state.doc.nodeAt(fromPos)
     if (!fromNode) {
-      return
-    }
-    if (fromNode.type !== schema.nodes.figure) {
       return
     }
 
