@@ -111,6 +111,7 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
+  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1069,7 +1070,7 @@ export const insertContributors = (
   }
 
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const title = getLastTitleNode(state)
   const pos = title.pos + title.node.nodeSize
   const contributors = state.schema.nodes.contributors.create({
     id: '',
@@ -1098,7 +1099,7 @@ export const insertAffiliation = (
     return false
   }
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const title = getLastTitleNode(state)
   let pos = title.pos + title.node.nodeSize
 
   // Find the contributors node
