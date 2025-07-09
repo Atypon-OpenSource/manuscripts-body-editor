@@ -15,7 +15,7 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
@@ -72,6 +72,10 @@ export class FigureEditableView extends FigureView {
     }
   }
 
+  private clearTargetClass(target: Element, classes: string[]) {
+    target.classList.remove(...classes)
+  }
+
   private setupDragAndDrop() {
     this.container.draggable = false
 
@@ -124,15 +128,15 @@ export class FigureEditableView extends FigureView {
     this.container.addEventListener('dragend', () => {
       this.isDragging = false
       figureDragState.clearActiveDrag()
-      this.container.classList.remove('dragging')
+      this.clearTargetClass(this.container, ['dragging'])
       const parent = this.container.parentElement
       if (parent) {
         Array.from(parent.children).forEach((el) => {
-          el.classList.remove(
+          this.clearTargetClass(el, [
             'drag-active',
             'drop-target-above',
-            'drop-target-below'
-          )
+            'drop-target-below',
+          ])
         })
       }
     })
@@ -143,11 +147,10 @@ export class FigureEditableView extends FigureView {
         const rect = this.container.getBoundingClientRect()
         const relativeY = e.clientY - rect.top
         const isAbove = relativeY < rect.height / 2
-        this.container.classList.remove(
-          // Add a blue dotted border to indicate the drop zone
+        this.clearTargetClass(this.container, [
           'drop-target-above',
-          'drop-target-below'
-        )
+          'drop-target-below',
+        ])
         this.container.classList.add(
           isAbove ? 'drop-target-above' : 'drop-target-below'
         )
@@ -156,10 +159,10 @@ export class FigureEditableView extends FigureView {
 
     this.container.addEventListener('dragleave', (e) => {
       if (!this.container.contains(e.relatedTarget as Node)) {
-        this.container.classList.remove(
+        this.clearTargetClass(this.container, [
           'drop-target-above',
-          'drop-target-below'
-        )
+          'drop-target-below',
+        ])
       }
     })
 
@@ -186,11 +189,14 @@ export class FigureEditableView extends FigureView {
         return
       } // prevent self-move
       this.moveFigure(fromPos, toPos)
-      this.container.classList.remove('drop-target-above', 'drop-target-below')
+      this.clearTargetClass(this.container, [
+        'drop-target-above',
+        'drop-target-below',
+      ])
     })
   }
 
-  private findFigurePosition(figureId: string): number | null {
+  private findFigurePosition(figureId: string) {
     let foundPos: number | null = null
     this.view.state.doc.descendants((node, pos) => {
       if (node.type === schema.nodes.figure && node.attrs.id === figureId) {
@@ -224,7 +230,7 @@ export class FigureEditableView extends FigureView {
 
   public updateContents() {
     super.updateContents()
-    this.container.classList.remove('dragging')
+    this.clearTargetClass(this.container, ['dragging'])
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
