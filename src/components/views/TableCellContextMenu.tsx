@@ -192,9 +192,9 @@ const ActionButton = styled(IconTextButton)`
     background: #f2fbfc;
   }
   :disabled {
-    opacity: 0.4;
     color: #353535;
-    background-color: #fff;
+    background-color: #ffffff;
+    opacity: 0.4;
   }
 `
 
