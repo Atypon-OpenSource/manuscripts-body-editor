@@ -51,14 +51,12 @@ export class FigureEditableView extends FigureView {
   private isDragging = false
   private dragHandle: HTMLDivElement | undefined
   private static currentDragFigureId: string | null = null
+  private dragAndDropInitialized = false
 
   public initialise() {
     this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
-    if (this.props.getCapabilities().editArticle) {
-      this.setupDragAndDrop()
-    }
   }
 
   private clearTargetClass(
@@ -116,6 +114,7 @@ export class FigureEditableView extends FigureView {
           ])
         })
       }
+      // TODO: Check if setting decorations will work for this case
     })
 
     this.container.addEventListener('dragover', (e) => {
@@ -200,6 +199,15 @@ export class FigureEditableView extends FigureView {
   public updateContents() {
     super.updateContents()
     this.clearTargetClass(this.container, ['dragging'])
+
+    // Setup drag and drop if capabilities allow, not already initialized
+    if (
+      this.props.getCapabilities().editArticle &&
+      !this.dragAndDropInitialized
+    ) {
+      this.setupDragAndDrop()
+      this.dragAndDropInitialized = true
+    }
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
