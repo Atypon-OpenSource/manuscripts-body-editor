@@ -431,6 +431,34 @@ export const insertFigure = (
   return true
 }
 
+export const insertMedia = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  attrs?: Attrs
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null) {
+    return false
+  }
+
+  const media = schema.nodes.media.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.media),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
+
+  const tr = state.tr.insert(position, media)
+  dispatch && dispatch(tr)
+
+  return true
+}
+
 export const insertTable = (
   config: TableConfig,
   state: ManuscriptEditorState,
@@ -1681,7 +1709,8 @@ export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.affiliations ||
   type === schema.nodes.contributors ||
   type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image
+  type === schema.nodes.hero_image ||
+  type === schema.nodes.media
 
 export const addNodeComment = (
   node: ManuscriptNode,

@@ -45,6 +45,7 @@ import {
   insertKeywords,
   insertLink,
   insertList,
+  insertMedia,
   insertSection,
   markActive,
 } from './commands'
@@ -319,6 +320,14 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
         run: () => openEmbedDialog(editor.view),
+      },
+      {
+        id: 'insert-media',
+        label: 'Media',
+        isActive: blockActive(schema.nodes.media)(state),
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.media)),
+        run: doCommand(insertMedia),
       },
       {
         id: 'insert-link',
