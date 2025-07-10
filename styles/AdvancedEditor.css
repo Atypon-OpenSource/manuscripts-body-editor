@@ -803,11 +803,26 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation),
+  ):not(figure):not(figure .equation):not(.inconsistency-highlight),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
+}
+
+.ProseMirror .inconsistency-highlight {
+  border: 1px solid #f35143!important;
+  background: #fff1f0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror .inconsistency-highlight.selected-suggestion,
+.ProseMirror .inconsistency-highlight.footnote-marker-selected,
+.ProseMirror .inconsistency-highlight.ProseMirror-selectednode {
+  border: 2px solid #f35143!important;
+  background: #fff1f0;
 }
 
 .block-bullet_list .selected-suggestion p,
