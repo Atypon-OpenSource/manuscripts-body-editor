@@ -191,6 +191,11 @@ const ActionButton = styled(IconTextButton)`
   :hover {
     background: #f2fbfc;
   }
+  :disabled {
+    color: #353535;
+    background-color: #ffffff;
+    opacity: 0.4;
+  }
 `
 
 const Separator = styled.div`
