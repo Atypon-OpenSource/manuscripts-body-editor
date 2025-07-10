@@ -25,9 +25,15 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
 
   public ignoreMutation = () => true
 
+  public createDOM() {
+    super.createDOM()
+    this.dom.setAttribute('contenteditable', 'false')
+  }
+
   public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('block')
+    this.container.setAttribute('contenteditable', 'true')
     this.dom.appendChild(this.container)
 
     // figure group
