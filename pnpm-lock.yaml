@@ -36,8 +36,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.1.4
-        version: 3.1.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.1.5-LEAN-4091.0
+        version: 3.1.5-LEAN-4091.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
         specifier: 2.0.3
         version: 2.0.3
@@ -1173,8 +1173,8 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.1.4':
-    resolution: {integrity: sha512-+Y37ryxhRPriDPD6vYL+gJ9+U26jprPNWRUWol4OlDRgygKHP1FBowUeAaBdWNeE0X18kZuF6bbqZYVKr7zErw==}
+  '@manuscripts/style-guide@3.1.5-LEAN-4091.0':
+    resolution: {integrity: sha512-uNmIxfwk+Lkc1cfshhi/6OWDjhAeaWhQu/tFJnriX9I/YLG05yhCzipXlLX/hZxgve3xlmjAhpOOWPRSDSFugw==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/style-guide/-/@manuscripts/style-guide-3.1.5-LEAN-4091.0.tgz}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.0.3':
@@ -5911,7 +5911,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.1.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.1.5-LEAN-4091.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
