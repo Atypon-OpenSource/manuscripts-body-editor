@@ -61,8 +61,28 @@ export class FigureEditableView extends FigureView {
     }
   }
 
-  private clearTargetClass(target: Element, classes: string[]) {
+  private clearTargetClass(
+    target: Element,
+    classes: string[] = ['drop-target-above', 'drop-target-below']
+  ) {
     target.classList.remove(...classes)
+  }
+
+  private handleDragStart() {
+    this.isDragging = true
+    const figureId = this.node.attrs.id
+    FigureEditableView.currentDragFigureId = figureId
+    this.container.classList.add('dragging')
+    // Add drag-active to siblings only
+    const parent = this.container.parentElement
+    if (parent) {
+      const siblingFigures = parent.querySelectorAll('.figure')
+      siblingFigures.forEach((el) => {
+        if (el !== this.container) {
+          el.classList.add('drag-active')
+        }
+      })
+    }
   }
 
   private setupDragAndDrop() {
@@ -70,40 +90,13 @@ export class FigureEditableView extends FigureView {
 
     // Drag events for container
     this.container.addEventListener('dragstart', () => {
-      this.isDragging = true
-      const figureId = this.node.attrs.id
-      // Store the figure ID in static variable
-      FigureEditableView.currentDragFigureId = figureId
-      this.container.classList.add('dragging')
-      // Add drag-active to siblings only
-      const parent = this.container.parentElement
-      if (parent) {
-        const siblingFigures = parent.querySelectorAll('.figure')
-        siblingFigures.forEach((el) => {
-          if (el !== this.container) {
-            el.classList.add('drag-active')
-          }
-        })
-      }
+      this.handleDragStart()
     })
 
     // Drag events for drag handle (if present)
     if (this.dragHandle) {
       this.dragHandle.addEventListener('dragstart', () => {
-        this.isDragging = true
-        const figureId = this.node.attrs.id
-        FigureEditableView.currentDragFigureId = figureId
-        this.container.classList.add('dragging')
-        // Add drag-active to siblings only
-        const parent = this.container.parentElement
-        if (parent) {
-          const figures = parent.querySelectorAll('.figure')
-          figures.forEach((el) => {
-            if (el !== this.container) {
-              el.classList.add('drag-active')
-            }
-          })
-        }
+        this.handleDragStart()
       })
     }
 
@@ -131,10 +124,7 @@ export class FigureEditableView extends FigureView {
         const rect = this.container.getBoundingClientRect()
         const relativeY = e.clientY - rect.top
         const isAbove = relativeY < rect.height / 2
-        this.clearTargetClass(this.container, [
-          'drop-target-above',
-          'drop-target-below',
-        ])
+        this.clearTargetClass(this.container)
         this.container.classList.add(
           isAbove ? 'drop-target-above' : 'drop-target-below'
         )
@@ -143,10 +133,7 @@ export class FigureEditableView extends FigureView {
 
     this.container.addEventListener('dragleave', (e) => {
       if (!this.container.contains(e.relatedTarget as Node)) {
-        this.clearTargetClass(this.container, [
-          'drop-target-above',
-          'drop-target-below',
-        ])
+        this.clearTargetClass(this.container)
       }
     })
 
@@ -172,10 +159,7 @@ export class FigureEditableView extends FigureView {
       } // prevent self-move
 
       this.moveFigure(figure.pos, figure.node, toPos)
-      this.clearTargetClass(this.container, [
-        'drop-target-above',
-        'drop-target-below',
-      ])
+      this.clearTargetClass(this.container)
     })
   }
 
