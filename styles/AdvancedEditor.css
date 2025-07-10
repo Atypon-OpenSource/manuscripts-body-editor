@@ -189,8 +189,17 @@
   visibility: visible;
 }
 
+.ProseMirror .media-preview:hover .options-button {
+  visibility: visible;
+}
+
 .ProseMirror .block:focus-within .figure-block,
 .ProseMirror .block:hover .figure-block {
+  border-color: #e2e2e2;
+}
+
+.ProseMirror .block:focus-within .media-preview,
+.ProseMirror .block:hover .media-preview {
   border-color: #e2e2e2;
 }
 
@@ -200,6 +209,14 @@
 
 .ProseMirror .figure-block[data-alignment='right'] {
   justify-self: flex-end;
+}
+
+.ProseMirror .figure-block[data-alignment='left'] .media-preview {
+  align-items: flex-start;
+}
+
+.ProseMirror .figure-block[data-alignment='right'] .media-preview {
+  align-items: flex-end;
 }
 
 .ProseMirror .figure-block .expanded-listing .executable-attachments {
@@ -1472,6 +1489,14 @@ th:hover > .table-context-menu-button,
 }
 .embed-media-preview .tools-panel {
   right: 6px;
+}
+
+.ProseMirror .media-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f2f2f2;
 }
 
 .ProseMirror .accessibility_element {

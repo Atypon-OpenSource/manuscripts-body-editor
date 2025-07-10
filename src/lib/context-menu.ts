@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-  TriangleCollapsedIcon,
-} from '@manuscripts/style-guide'
+import { TriangleCollapsedIcon } from '@manuscripts/style-guide'
 import {
   isInGraphicalAbstractSection,
   isSectionTitleNode,
@@ -44,14 +39,13 @@ import {
   insertInlineTableFootnote,
   isCommentingAllowed,
 } from '../commands'
-import { figurePositions } from '../views/figure_editable'
+import { createPositionOptions } from './media'
 import { PopperManager } from './popper'
 import {
   getMatchingChild,
   isChildOfNodeTypes,
   isSelectionInNode,
 } from './utils'
-import { updateNodeAttrs } from './view'
 
 const popper = new PopperManager()
 
@@ -259,42 +253,29 @@ export class ContextMenu {
 
       if (figure) {
         const attrType = figure.attrs.type
-        const submenuOptions = [
-          {
-            title: 'Left',
-            action: () =>
-              updateNodeAttrs(this.view, schema.nodes.figure, {
-                ...figure.attrs,
-                type: figurePositions.left,
-              }),
-            Icon: ImageLeftIcon,
-            selected: attrType === figurePositions.left,
-          },
-          {
-            title: 'Default',
-            action: () =>
-              updateNodeAttrs(this.view, schema.nodes.figure, {
-                ...figure.attrs,
-                type: figurePositions.default,
-              }),
-            Icon: ImageDefaultIcon,
-            selected: !attrType,
-          },
-          {
-            title: 'Right',
-            action: () =>
-              updateNodeAttrs(this.view, schema.nodes.figure, {
-                ...figure.attrs,
-                type: figurePositions.right,
-              }),
-            Icon: ImageRightIcon,
-            selected: attrType === figurePositions.right,
-          },
-        ]
+        const submenuOptions = createPositionOptions(
+          schema.nodes.figure,
+          figure,
+          attrType,
+          this.view
+        )
         const submenuLabel = 'Position'
         const submenu = this.createSubmenu(submenuLabel, submenuOptions)
         menu.appendChild(submenu)
       }
+    }
+
+    if (type === schema.nodes.media) {
+      const attrType = this.node.attrs.type
+      const submenuOptions = createPositionOptions(
+        schema.nodes.media,
+        this.node,
+        attrType,
+        this.view
+      )
+      const submenuLabel = 'Position'
+      const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+      menu.appendChild(submenu)
     }
 
     if (type === schema.nodes.list) {
@@ -470,14 +451,14 @@ export class ContextMenu {
   private createMenuItem = (
     contents: string,
     handler: EventListener,
-    Icon: React.FC | null = null,
+    IconComponent: React.FC | null = null,
     selected = false
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
     selected && item.classList.add('selected')
-    if (Icon) {
-      item.innerHTML = renderToStaticMarkup(createElement(Icon))
+    if (IconComponent) {
+      item.innerHTML = renderToStaticMarkup(createElement(IconComponent))
     }
     const textNode = document.createTextNode(contents)
     item.appendChild(textNode)
@@ -506,7 +487,7 @@ export class ContextMenu {
     items: {
       title: string
       action: () => void
-      Icon: React.FC | null
+      IconComponent: React.FC | null
       selected: boolean
     }[]
   ) => {
@@ -515,9 +496,9 @@ export class ContextMenu {
     submenu.append(
       this.createSubmenuTrigger(submenuLabel),
       this.createMenuSection((section: HTMLElement) => {
-        items.forEach(({ title, action, Icon, selected }) => {
+        items.forEach(({ title, action, IconComponent, selected }) => {
           section.appendChild(
-            this.createMenuItem(title, action, Icon, selected)
+            this.createMenuItem(title, action, IconComponent, selected)
           )
         })
       }, true)
