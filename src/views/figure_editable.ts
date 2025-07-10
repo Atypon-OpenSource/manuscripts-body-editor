@@ -164,9 +164,6 @@ export class FigureEditableView extends FigureView {
         return
       } // prevent self-move
 
-      console.log('toPos', toPos)
-      console.log('figure.pos', figure.pos)
-
       this.moveFigure(figure.pos, figure.node, toPos)
       this.clearTargetClass(this.container)
     })
