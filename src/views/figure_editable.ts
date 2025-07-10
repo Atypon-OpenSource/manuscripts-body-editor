@@ -48,7 +48,6 @@ export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
   positionMenuWrapper: HTMLDivElement
   figurePosition: string
-  private isDragging = false
   private dragHandle: HTMLDivElement | undefined
   private static currentDragFigureId: string | null = null
   private dragAndDropInitialized = false
@@ -67,7 +66,6 @@ export class FigureEditableView extends FigureView {
   }
 
   private handleDragStart() {
-    this.isDragging = true
     const figureId = this.node.attrs.id
     FigureEditableView.currentDragFigureId = figureId
     this.container.classList.add('dragging')
@@ -88,7 +86,10 @@ export class FigureEditableView extends FigureView {
 
     // Drag events for container
     this.container.addEventListener('dragstart', () => {
-      this.handleDragStart()
+      // Only start figure dragging if we have a figure ID (to avoid conflicts with other drag events of image)
+      if (this.node.attrs.id) {
+        this.handleDragStart()
+      }
     })
 
     // Drag events for drag handle (if present)
@@ -99,7 +100,6 @@ export class FigureEditableView extends FigureView {
     }
 
     this.container.addEventListener('dragend', () => {
-      this.isDragging = false
       // Clear the static variable when drag ends
       FigureEditableView.currentDragFigureId = null
       this.clearTargetClass(this.container, ['dragging'])
@@ -118,8 +118,10 @@ export class FigureEditableView extends FigureView {
     })
 
     this.container.addEventListener('dragover', (e) => {
-      if (!this.isDragging) {
+      // Only handle figure drops when we're dragging a figure (to avoid conflicts with other drag events for image)
+      if (FigureEditableView.currentDragFigureId) {
         e.preventDefault()
+        e.stopPropagation()
         const rect = this.container.getBoundingClientRect()
         const relativeY = e.clientY - rect.top
         const isAbove = relativeY < rect.height / 2
@@ -137,6 +139,11 @@ export class FigureEditableView extends FigureView {
     })
 
     this.container.addEventListener('drop', (e) => {
+      // Only handle figure drops when we're dragging a figure (to avoid conflicts with other drop events for image)
+      if (!FigureEditableView.currentDragFigureId) {
+        return
+      }
+
       e.preventDefault()
       e.stopPropagation()
 
