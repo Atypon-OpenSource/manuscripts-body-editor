@@ -69,18 +69,11 @@ export class FigureEditableView extends FigureView {
     this.container.draggable = true
 
     // Drag events for container
-    this.container.addEventListener('dragstart', (e) => {
-      if (!e.dataTransfer) {
-        return
-      }
+    this.container.addEventListener('dragstart', () => {
       this.isDragging = true
       const figureId = this.node.attrs.id
-      // Store the figure ID in static variable as backup
+      // Store the figure ID in static variable
       FigureEditableView.currentDragFigureId = figureId
-      // Set data in multiple formats to ensure it's preserved
-      e.dataTransfer.setData('text/plain', figureId)
-      e.dataTransfer.setData('application/figure-id', figureId)
-      e.dataTransfer.setData('text/figure-id', figureId)
       this.container.classList.add('dragging')
       // Add drag-active to siblings only
       const parent = this.container.parentElement
@@ -96,16 +89,10 @@ export class FigureEditableView extends FigureView {
 
     // Drag events for drag handle (if present)
     if (this.dragHandle) {
-      this.dragHandle.addEventListener('dragstart', (e) => {
-        if (!e.dataTransfer) {
-          return
-        }
+      this.dragHandle.addEventListener('dragstart', () => {
         this.isDragging = true
         const figureId = this.node.attrs.id
-        // Set data in multiple formats to ensure it's preserved
-        e.dataTransfer.setData('text/plain', figureId)
-        e.dataTransfer.setData('application/figure-id', figureId)
-        e.dataTransfer.setData('text/figure-id', figureId)
+        FigureEditableView.currentDragFigureId = figureId
         this.container.classList.add('dragging')
         // Add drag-active to siblings only
         const parent = this.container.parentElement
@@ -167,18 +154,8 @@ export class FigureEditableView extends FigureView {
       e.preventDefault()
       e.stopPropagation()
 
-      // Try multiple data formats to ensure we get the figure ID
-      const textPlain = e.dataTransfer?.getData('text/plain')
-      const appFigureId = e.dataTransfer?.getData('application/figure-id')
-      const textFigureId = e.dataTransfer?.getData('text/figure-id')
-
-      const figureId =
-        textPlain ||
-        appFigureId ||
-        textFigureId ||
-        FigureEditableView.currentDragFigureId ||
-        null
-      null
+      // Get figure ID from static variable
+      const figureId = FigureEditableView.currentDragFigureId
 
       if (!figureId) {
         return
@@ -209,7 +186,10 @@ export class FigureEditableView extends FigureView {
     this.view.state.doc.descendants((node, pos) => {
       if (node.type === schema.nodes.figure && node.attrs.id === figureId) {
         result = { pos, node }
-        return false
+        return false // Stop descending into children
+      }
+      if (result) {
+        return false // Stop entire traversal since we found the result
       }
     })
     return result
