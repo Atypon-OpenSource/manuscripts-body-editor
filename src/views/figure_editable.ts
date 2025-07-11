@@ -185,10 +185,13 @@ export class FigureEditableView extends FigureView {
     return result
   }
 
-  private moveFigure(fromPos: number, fromNode: ManuscriptNode, toPos: number) {
+  private moveFigure(
+    fromPos: number,
+    fromNode: ManuscriptNode,
+    targetPos: number
+  ) {
     const { state } = this.view
     const { tr } = state
-    const targetPos = tr.mapping.map(toPos)
 
     tr.delete(fromPos, fromPos + fromNode.nodeSize)
     tr.insert(targetPos, fromNode)
