@@ -50,10 +50,17 @@ export class FigureElementView extends ImageElementView {
     const figures = this.container.querySelectorAll('figure')
     const lastFigure = figures[figures.length - 1] as HTMLElement
 
-    // Position button after the last figure with consistent spacing
-    const lastFigureBottom = lastFigure.offsetTop + lastFigure.offsetHeight
-    const topPosition = lastFigureBottom + 20
-    this.addFigureBtn.style.top = `${topPosition}px`
+    if (!lastFigure) {
+      return
+    }
+
+    // Use getBoundingClientRect for more reliable measurements
+    const lastFigureRect = lastFigure.getBoundingClientRect()
+    const containerRect = this.container.getBoundingClientRect()
+
+    // Calculate position relative to the container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
   }
 
   public updateContents() {
