@@ -33,6 +33,7 @@ import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
 import cross_references from '../plugins/cross-references'
+import detect_inconsistency from '../plugins/detect-inconsistency'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
@@ -85,6 +86,7 @@ export default (props: EditorProps) => {
     doi(),
     section_category(props),
     cross_references(),
+    detect_inconsistency(),
     search_replace(),
     lock_body(),
     alt_titles(),
