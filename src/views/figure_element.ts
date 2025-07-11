@@ -26,8 +26,21 @@ export class FigureElementView extends ImageElementView {
   public createElement = () => {
     super.createElement()
     this.addFigureElementButtons()
-    // Use setTimeout for initial positioning as well
-    setTimeout(() => this.updateButtonPosition(), 0)
+    console.log('createElement: Setting up button positioning')
+    setTimeout(() => {
+      console.log('createElement: Executing button positioning')
+      this.updateButtonPosition()
+    }, 0)
+  }
+
+  public initialise() {
+    super.initialise()
+    console.log('initialise: Setting up button positioning')
+    // Use setTimeout for initial positioning
+    setTimeout(() => {
+      console.log('initialise: Executing button positioning')
+      this.updateButtonPosition()
+    }, 0)
   }
 
   private addFigureElementButtons() {
@@ -66,8 +79,12 @@ export class FigureElementView extends ImageElementView {
 
   public updateContents() {
     super.updateContents()
+    console.log('updateContents: Setting up button positioning')
     // Use setTimeout to ensure DOM is updated before calculating position
-    setTimeout(() => this.updateButtonPosition(), 1000)
+    setTimeout(() => {
+      console.log('updateContents: Executing button positioning')
+      this.updateButtonPosition()
+    }, 0)
   }
 
   private addFigure = () => {
