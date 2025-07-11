@@ -19,100 +19,68 @@ import { schema } from '@manuscripts/transform'
 import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
-
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
-  private addFigureBtn: HTMLButtonElement | null = null
-  private pendingUpdate: number | null = null
+  private addFigureBtn: HTMLButtonElement
 
-  public createElement() {
-    console.log('[Figure] Creating element')
+  public createElement = () => {
     super.createElement()
-    this.createAddButton()
-    this.schedulePositionUpdate()
+    this.addFigureElementButtons()
+    // Use setTimeout for initial positioning as well
+    setTimeout(() => this.updateButtonPosition(), 0)
   }
 
-  private createAddButton() {
-    if (!this.props.getCapabilities()?.editArticle) {
-      console.log('[Figure] Edit capabilities not available, skipping button')
-      return
+  private addFigureElementButtons() {
+    if (this.props.getCapabilities()?.editArticle) {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
+        className: 'add-figure-button',
+        innerHTML: addFigureBtnIcon,
+        title: 'Add figure',
+      })
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
     }
-
-    console.log('[Figure] Creating add button')
-    this.addFigureBtn = document.createElement('button')
-    this.addFigureBtn.className = 'add-figure-button'
-    this.addFigureBtn.innerHTML = addFigureBtnIcon
-    this.addFigureBtn.title = 'Add figure'
-    this.addFigureBtn.addEventListener('click', this.addFigure)
-    this.container.prepend(this.addFigureBtn)
   }
 
-  private schedulePositionUpdate() {
-    if (this.pendingUpdate) {
-      console.log('[Figure] Cancelling pending update')
-      cancelAnimationFrame(this.pendingUpdate)
-    }
-
-    console.log('[Figure] Scheduling position update')
-    this.pendingUpdate = requestAnimationFrame(() => {
-      this.positionButton()
-      this.pendingUpdate = null
-    })
-  }
-
-  private positionButton() {
+  private updateButtonPosition() {
     if (!this.addFigureBtn) {
-      console.warn('[Figure] No button to position')
       return
     }
 
-    console.log('[Figure] Positioning button')
+    // Find the last figure in the figure element node
     const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
 
-    if (figures.length === 0) {
-      console.warn('[Figure] No figures found')
+    if (!lastFigure) {
       return
     }
 
-    const lastFigure = figures[figures.length - 1]
-    const figureRect = lastFigure.getBoundingClientRect()
+    // Use getBoundingClientRect for more reliable measurements
+    const lastFigureRect = lastFigure.getBoundingClientRect()
     const containerRect = this.container.getBoundingClientRect()
-    const top = figureRect.bottom - containerRect.top + 10
 
-    console.log('[Figure] Position values:', {
-      figureBottom: figureRect.bottom,
-      containerTop: containerRect.top,
-      calculatedTop: top,
-    })
-
-    this.addFigureBtn.style.top = `${top}px`
-    console.log('[Figure] Button positioned at', top, 'px')
+    // Calculate position relative to the container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
   }
 
   public updateContents() {
-    console.log('[Figure] Updating contents')
     super.updateContents()
-    this.schedulePositionUpdate()
-  }
-
-  public destroy() {
-    console.log('[Figure] Destroying')
-    if (this.pendingUpdate) {
-      cancelAnimationFrame(this.pendingUpdate)
-    }
-    super.destroy()
+    // Use setTimeout to ensure DOM is updated before calculating position
+    setTimeout(() => this.updateButtonPosition(), 1000)
   }
 
   private addFigure = () => {
-    console.log('[Figure] Add figure triggered')
     const { state } = this.view
     const { tr } = state
     const figureElementPos = this.getPos()
 
+    // Find the position after the last figure node
     let insertPos = figureElementPos + 1
     let lastFigureEndPos = insertPos
     let hasFigures = false
 
+    // Iterate through all child nodes
     this.node.forEach((node) => {
       if (node.type === schema.nodes.figure) {
         lastFigureEndPos = insertPos + node.nodeSize
@@ -122,9 +90,9 @@ export class FigureElementView extends ImageElementView {
     })
 
     const finalInsertPos = hasFigures ? lastFigureEndPos : figureElementPos + 1
-    console.log('[Figure] Inserting new figure at position', finalInsertPos)
 
     const figureNode = state.schema.nodes.figure.create()
+
     tr.insert(finalInsertPos, figureNode)
     this.view.dispatch(tr)
   }
