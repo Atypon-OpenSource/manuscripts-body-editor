@@ -31,7 +31,7 @@ export class FigureElementView extends ImageElementView {
   public initialise() {
     super.initialise()
     // Use setTimeout for initial positioning
-    setTimeout(() => this.updateButtonPosition(), 100)
+    setTimeout(() => this.updateButtonPosition(), 3200)
   }
 
   private addFigureElementButtons() {
