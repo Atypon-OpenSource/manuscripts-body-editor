@@ -26,21 +26,13 @@ export class FigureElementView extends ImageElementView {
   public createElement = () => {
     super.createElement()
     this.addFigureElementButtons()
-    console.log('createElement: Setting up button positioning')
-    setTimeout(() => {
-      console.log('createElement: Executing button positioning')
-      this.updateButtonPosition('createElement')
-    }, 7000)
+    setTimeout(() => this.updateButtonPosition(), 0)
   }
 
   public initialise() {
     super.initialise()
-    console.log('initialise: Setting up button positioning')
     // Use setTimeout for initial positioning
-    setTimeout(() => {
-      console.log('initialise: Executing button positioning')
-      this.updateButtonPosition('initialise')
-    }, 7000)
+    setTimeout(() => this.updateButtonPosition(), 100)
   }
 
   private addFigureElementButtons() {
@@ -55,9 +47,8 @@ export class FigureElementView extends ImageElementView {
     }
   }
 
-  private updateButtonPosition(caller?: string) {
+  private updateButtonPosition() {
     if (!this.addFigureBtn) {
-      console.log(`${caller || 'updateButtonPosition'}: No addFigureBtn found`)
       return
     }
 
@@ -66,7 +57,6 @@ export class FigureElementView extends ImageElementView {
     const lastFigure = figures[figures.length - 1] as HTMLElement
 
     if (!lastFigure) {
-      console.log(`${caller || 'updateButtonPosition'}: No lastFigure found`)
       return
     }
 
@@ -76,32 +66,13 @@ export class FigureElementView extends ImageElementView {
 
     // Calculate position relative to the container
     const relativeTop = lastFigureRect.bottom - containerRect.top + 20
-
-    console.log(
-      `${caller || 'updateButtonPosition'}: Button position calculated:`,
-      {
-        lastFigureBottom: lastFigureRect.bottom,
-        containerTop: containerRect.top,
-        relativeTop,
-        figuresCount: figures.length,
-      }
-    )
-
     this.addFigureBtn.style.top = `${relativeTop}px`
-    console.log(
-      `${caller || 'updateButtonPosition'}: Set button top to:`,
-      relativeTop
-    )
   }
 
   public updateContents() {
     super.updateContents()
-    console.log('updateContents: Setting up button positioning')
     // Use setTimeout to ensure DOM is updated before calculating position
-    setTimeout(() => {
-      console.log('updateContents: Executing button positioning')
-      this.updateButtonPosition('updateContents')
-    }, 7000)
+    setTimeout(() => this.updateButtonPosition(), 0)
   }
 
   private addFigure = () => {
