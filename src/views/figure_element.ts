@@ -29,8 +29,8 @@ export class FigureElementView extends ImageElementView {
     console.log('createElement: Setting up button positioning')
     setTimeout(() => {
       console.log('createElement: Executing button positioning')
-      this.updateButtonPosition()
-    }, 0)
+      this.updateButtonPosition('createElement')
+    }, 7000)
   }
 
   public initialise() {
@@ -39,8 +39,8 @@ export class FigureElementView extends ImageElementView {
     // Use setTimeout for initial positioning
     setTimeout(() => {
       console.log('initialise: Executing button positioning')
-      this.updateButtonPosition()
-    }, 0)
+      this.updateButtonPosition('initialise')
+    }, 7000)
   }
 
   private addFigureElementButtons() {
@@ -55,8 +55,9 @@ export class FigureElementView extends ImageElementView {
     }
   }
 
-  private updateButtonPosition() {
+  private updateButtonPosition(caller?: string) {
     if (!this.addFigureBtn) {
+      console.log(`${caller || 'updateButtonPosition'}: No addFigureBtn found`)
       return
     }
 
@@ -65,6 +66,7 @@ export class FigureElementView extends ImageElementView {
     const lastFigure = figures[figures.length - 1] as HTMLElement
 
     if (!lastFigure) {
+      console.log(`${caller || 'updateButtonPosition'}: No lastFigure found`)
       return
     }
 
@@ -74,7 +76,22 @@ export class FigureElementView extends ImageElementView {
 
     // Calculate position relative to the container
     const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+
+    console.log(
+      `${caller || 'updateButtonPosition'}: Button position calculated:`,
+      {
+        lastFigureBottom: lastFigureRect.bottom,
+        containerTop: containerRect.top,
+        relativeTop,
+        figuresCount: figures.length,
+      }
+    )
+
     this.addFigureBtn.style.top = `${relativeTop}px`
+    console.log(
+      `${caller || 'updateButtonPosition'}: Set button top to:`,
+      relativeTop
+    )
   }
 
   public updateContents() {
@@ -83,8 +100,8 @@ export class FigureElementView extends ImageElementView {
     // Use setTimeout to ensure DOM is updated before calculating position
     setTimeout(() => {
       console.log('updateContents: Executing button positioning')
-      this.updateButtonPosition()
-    }, 0)
+      this.updateButtonPosition('updateContents')
+    }, 7000)
   }
 
   private addFigure = () => {
