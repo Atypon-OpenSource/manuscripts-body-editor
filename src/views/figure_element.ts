@@ -19,26 +19,61 @@ import { schema } from '@manuscripts/transform'
 import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
-
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
+  private addFigureBtn: HTMLButtonElement
 
   public createElement = () => {
     super.createElement()
     this.addFigureElementButtons()
   }
 
+  public initialise() {
+    super.initialise()
+    // Use setTimeout for initial positioning
+    setTimeout(() => this.updateButtonPosition(), 3200)
+  }
+
   private addFigureElementButtons() {
     if (this.props.getCapabilities()?.editArticle) {
-      const addFigureBtn = Object.assign(document.createElement('button'), {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
         className: 'add-figure-button',
         innerHTML: addFigureBtnIcon,
         title: 'Add figure',
       })
-      addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.container.prepend(addFigureBtn)
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
     }
   }
+
+  private updateButtonPosition() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    // Find the last figure in the figure element node
+    const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
+
+    if (!lastFigure) {
+      return
+    }
+
+    // Use getBoundingClientRect for more reliable measurements
+    const lastFigureRect = lastFigure.getBoundingClientRect()
+    const containerRect = this.container.getBoundingClientRect()
+
+    // Calculate position relative to the container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
+  }
+
+  public updateContents() {
+    super.updateContents()
+    // Use setTimeout to ensure DOM is updated before calculating position
+    setTimeout(() => this.updateButtonPosition(), 0)
+  }
+
   private addFigure = () => {
     const { state } = this.view
     const { tr } = state
