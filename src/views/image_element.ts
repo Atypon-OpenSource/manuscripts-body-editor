@@ -53,11 +53,26 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.container.appendChild(this.contentDOM)
 
+    this.addTools()
+  }
+
+  public updateContents() {
+    super.updateContents()
+    this.addTools()
+  }
+
+  protected addTools() {
     this.addPositionMenu()
   }
 
   protected addPositionMenu() {
     if (this.props.getCapabilities()?.editArticle) {
+      // Remove existing position menu if it exists
+      const existingMenu = this.container.querySelector('.position-menu')
+      if (existingMenu) {
+        existingMenu.remove()
+      }
+
       this.container.prepend(this.createPositionMenuWrapper())
     }
   }
