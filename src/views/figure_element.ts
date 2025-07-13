@@ -30,7 +30,8 @@ export class FigureElementView extends ImageElementView {
 
   public initialise() {
     super.initialise()
-    requestAnimationFrame(() => this.updateButtonPosition())
+    // Use setTimeout for initial positioning
+    setTimeout(() => this.updateButtonPosition(), 2000)
   }
 
   private addFigureElementButtons() {
@@ -58,23 +59,19 @@ export class FigureElementView extends ImageElementView {
       return
     }
 
+    // Use getBoundingClientRect for more reliable measurements
     const lastFigureRect = lastFigure.getBoundingClientRect()
     const containerRect = this.container.getBoundingClientRect()
 
+    // Calculate position relative to the container
     const relativeTop = lastFigureRect.bottom - containerRect.top + 20
     this.addFigureBtn.style.top = `${relativeTop}px`
   }
 
   public updateContents() {
     super.updateContents()
-
-    // Use requestAnimationFrame to ensure proper positioning after DOM updates
-    // This is especially important for imported figures that may load asynchronously
-    requestAnimationFrame(() => this.updateButtonPosition())
-  }
-
-  public destroy() {
-    super.destroy()
+    // Use setTimeout to ensure DOM is updated before calculating position
+    setTimeout(() => this.updateButtonPosition(), 0)
   }
 
   private addFigure = () => {
