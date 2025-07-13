@@ -427,7 +427,7 @@ export class ContextMenu {
       const hasLabel = figcaptions.length > 0
 
       menu.insertBefore(
-        this.createMenuItem(hasLabel ? 'Hide Label' : 'Show Label', () => {
+        this.createMenuItem(hasLabel ? 'Delete Label' : 'Add Label', () => {
           if (hasLabel) {
             const figcaptionNode = figcaptions[0].node
             const figcaptionPos = boxStartPos + figcaptions[0].pos
