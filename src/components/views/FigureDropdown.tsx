@@ -201,7 +201,7 @@ const OptionsButton = styled(IconButton)`
   height: ${(props) => props.theme.grid.unit * 6}px;
   margin: ${(props) => props.theme.grid.unit}px;
   visibility: hidden;
-  background: white;
+  background: #ffffff;
 
   &:hover {
     background: #f2fbfc !important;
@@ -233,8 +233,8 @@ const ListItemButton = styled(IconTextButton)`
   }
 
   &:is([disabled]) {
-    background: white !important;
-    color: #353535 !important;
+    background: #ffffff;
+    color: #353535;
     opacity: 0.4;
   }
 `
