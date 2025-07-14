@@ -26,7 +26,7 @@ import {
   useDropdown,
 } from '@manuscripts/style-guide'
 import { Node as ManuscriptNode } from 'prosemirror-model'
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -34,19 +34,24 @@ import {
   ManuscriptFiles,
   memoGroupFiles,
 } from '../../lib/files'
+import { ReactViewComponentProps } from '../../views/ReactSubView'
+import { FigureNode } from '@manuscripts/transform'
 
 export interface FigureDropdownProps {
   can: Capabilities
   getFiles: () => FileAttachment[]
 }
 
-export interface FigureOptionsProps extends FigureDropdownProps {
+export interface FigureOptionsProps
+  extends ReactViewComponentProps<FigureNode>,
+    FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
+  hasSiblings: () => boolean
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -84,6 +89,8 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onDetach,
   onReplace,
   onDelete,
+  hasSiblings,
+  container,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -92,7 +99,23 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showDetach = onDetach && can.detachFile
   const showReplace = onReplace && can.replaceFile
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
-  const showDelete = onDelete && can.detachFile
+  const showDelete = () => {
+    if (!hasSiblings()) {
+      return false
+    }
+    if (onDelete && can.detachFile) {
+      return true
+    }
+    return false
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      container.classList.add('figure-dropdown-active')
+    } else {
+      container.classList.remove('figure-dropdown-active')
+    }
+  }, [isOpen])
 
   const groupFiles = memoGroupFiles()
 
@@ -146,7 +169,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
           <ListItemButton onClick={onDetach} disabled={!showDetach}>
             Detach
           </ListItemButton>
-          {showDelete && (
+          {showDelete() && (
             <ListItemButton onClick={onDelete}>Delete</ListItemButton>
           )}
         </OptionsDropdownList>

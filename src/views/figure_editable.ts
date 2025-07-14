@@ -140,6 +140,21 @@ export class FigureEditableView extends FigureView {
     this.container.appendChild(this.createPositionMenuWrapper())
   }
 
+  // Helper function to count non-deleted figures in current figure element
+  countFigures() {
+    const parent = findParentNodeOfTypeClosestToPos(
+      this.view.state.doc.resolve(this.getPos()),
+      schema.nodes.figure_element
+    )
+    let count = 0
+    parent?.node.descendants((node) => {
+      if (node.type === schema.nodes.figure && !isDeleted(node)) {
+        count++
+      }
+    })
+    return count
+  }
+
   private manageReactTools() {
     let handleDownload
     let handleUpload
@@ -192,37 +207,12 @@ export class FigureEditableView extends FigureView {
     }
 
     if (can.detachFile) {
-      // Helper function to count non-deleted figures in current figure element
-      const countFigures = () => {
-        const element = findParentNodeOfTypeClosestToPos(
-          this.view.state.doc.resolve(this.getPos()),
-          schema.nodes.figure_element
-        )
-        let count = 0
-        element?.node.descendants((node) => {
-          if (node.type === schema.nodes.figure && !isDeleted(node)) {
-            count++
-          }
-        })
-        return count
+      handleDelete = () => {
+        const pos = this.getPos()
+        const tr = this.view.state.tr
+        tr.delete(pos, pos + this.node.nodeSize)
+        this.view.dispatch(tr)
       }
-
-      const figureCount = countFigures()
-
-      handleDelete =
-        figureCount > 1
-          ? () => {
-              const currentCount = countFigures()
-              const pos = this.getPos()
-              if (currentCount <= 1) {
-                // prevent deletion if only one figure remains
-                return
-              }
-              const tr = this.view.state.tr
-              tr.delete(pos, pos + this.node.nodeSize)
-              this.view.dispatch(tr)
-            }
-          : undefined
     }
 
     this.reactTools?.remove()
@@ -236,6 +226,9 @@ export class FigureEditableView extends FigureView {
         onDetach: handleDetach,
         onReplace: handleReplace,
         onDelete: handleDelete,
+        hasSiblings: () => {
+          return this.countFigures() > 1
+        },
       }
       this.reactTools = ReactSubView(
         this.props,

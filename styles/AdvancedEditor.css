@@ -158,7 +158,7 @@
   align-items: center;
 }
 
-.ProseMirror  .figure-images-container  .figure-image-container {
+.ProseMirror .figure-images-container .figure-image-container {
   position: relative;
   margin-bottom: 30px;
 }
@@ -173,17 +173,16 @@
   cursor: pointer;
   position: absolute;
   border-radius: 50%;
-  background-color: #6E6E6E;
+  background-color: #6e6e6e;
 }
 
 .ProseMirror .block-figure_element .add-figure-button.disabled {
-  background-color: #E2E2E2 !important;
+  background-color: #e2e2e2 !important;
 }
 
 .ProseMirror .block-figure_element .add-figure-button svg path {
-  fill: #FFFFFF !important;
+  fill: #ffffff !important;
 }
-
 
 .ProseMirror .figure-block:hover .options-button {
   visibility: visible;
@@ -283,7 +282,6 @@
 .ProseMirror .block-table_element figcaption {
   text-align: left;
 }
-
 
 .ProseMirror .figure-block > figcaption .figure-label {
   display: initial !important;
@@ -408,6 +406,10 @@
   top: 12px;
   right: 12px;
   z-index: 3;
+}
+
+.tools-panel.figure-dropdown-active {
+  z-index: 4;
 }
 
 .tools-panel button svg {
@@ -772,7 +774,7 @@ span.comment-marker {
 }
 
 .ProseMirror .inconsistency-highlight {
-  border: 1px solid #f35143!important;
+  border: 1px solid #f35143 !important;
   background: #fff1f0;
   border-radius: 4px;
   box-sizing: border-box;
@@ -782,7 +784,7 @@ span.comment-marker {
 .ProseMirror .inconsistency-highlight.selected-suggestion,
 .ProseMirror .inconsistency-highlight.footnote-marker-selected,
 .ProseMirror .inconsistency-highlight.ProseMirror-selectednode {
-  border: 2px solid #f35143!important;
+  border: 2px solid #f35143 !important;
   background: #fff1f0;
 }
 
@@ -952,17 +954,22 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block,  .tracking-visible
-  .ProseMirror .figure-block
-   figure[data-track-status='pending'].deleted img {
+  .block,
+.tracking-visible
+  .ProseMirror
+  .figure-block
+  figure[data-track-status='pending'].deleted
+  img {
   box-shadow: inset 3px 0 0 var(--deleted-color);
 }
 
 .tracking-visible
-.ProseMirror .figure-block
- figure[data-track-status='pending'].deleted img {
+  .ProseMirror
+  .figure-block
+  figure[data-track-status='pending'].deleted
+  img {
   padding-left: 3px;
- }
+}
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
   .block,
@@ -981,7 +988,8 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='node_split'][data-track-status='pending']
-  .block, .tracking-visible
+  .block,
+.tracking-visible
   .selected-suggestion[data-track-op='move'][data-track-status='pending']
   .block {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
@@ -992,9 +1000,10 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
-.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion), .tracking-visible
-.selected-suggestion[data-track-op='move'][data-track-status='pending']
-.block  {
+.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion),
+.tracking-visible
+  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .block {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -1013,7 +1022,6 @@ figure.block:has(.equation.selected-suggestion) {
 .ProseMirror .move-deleted-node {
   display: none !important;
 }
-
 
 .citation-wrapper {
   position: relative;
@@ -1069,13 +1077,17 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 /* Needed for the snapshot comparison */
-.tracking-visible .block-list [data-track-op="insert"][data-track-status="pending"] {
+.tracking-visible
+  .block-list
+  [data-track-op='insert'][data-track-status='pending'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
 /* Needed for the snapshot comparison */
-.tracking-visible .block-list [data-track-op="delete"][data-track-status="pending"] {
+.tracking-visible
+  .block-list
+  [data-track-op='delete'][data-track-status='pending'] {
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
