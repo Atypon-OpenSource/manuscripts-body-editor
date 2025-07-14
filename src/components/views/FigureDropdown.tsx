@@ -25,6 +25,7 @@ import {
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node as ManuscriptNode } from 'prosemirror-model'
 import React, { SyntheticEvent, useEffect } from 'react'
 import styled from 'styled-components'
@@ -35,7 +36,6 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
-import { FigureNode } from '@manuscripts/transform'
 
 export interface FigureDropdownProps {
   can: Capabilities
@@ -115,7 +115,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
     } else {
       container.classList.remove('figure-dropdown-active')
     }
-  }, [isOpen])
+  }, [isOpen, container.classList])
 
   const groupFiles = memoGroupFiles()
 
