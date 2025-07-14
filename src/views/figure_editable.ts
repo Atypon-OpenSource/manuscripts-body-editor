@@ -14,42 +14,24 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FileCorruptedIcon,
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-} from '@manuscripts/style-guide'
 import { schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
+import { fileCorruptedIcon } from '../icons'
 import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
-import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
-
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
-  positionMenuWrapper: HTMLDivElement
-  figurePosition: string
 
   public initialise() {
     this.upload = this.upload.bind(this)
@@ -68,7 +50,6 @@ export class FigureEditableView extends FigureView {
     const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -137,7 +118,6 @@ export class FigureEditableView extends FigureView {
 
   protected addTools() {
     this.manageReactTools()
-    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   private manageReactTools() {
@@ -268,9 +248,7 @@ export class FigureEditableView extends FigureView {
     instructions.classList.add('instructions')
 
     // Convert the React component to a static HTML string
-    const iconHtml = renderToStaticMarkup(
-      createElement(FileCorruptedIcon, { className: 'icon' })
-    )
+    const iconHtml = fileCorruptedIcon
 
     instructions.innerHTML = `
     <div>
@@ -315,96 +293,6 @@ export class FigureEditableView extends FigureView {
 
     element.appendChild(instructions)
     return element
-  }
-
-  createPositionMenuWrapper = () => {
-    const can = this.props.getCapabilities()
-    this.positionMenuWrapper = document.createElement('div')
-    this.positionMenuWrapper.classList.add('position-menu')
-
-    const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
-
-    let icon
-    switch (this.figurePosition) {
-      case figurePositions.left:
-        icon = ImageLeftIcon
-        break
-      case figurePositions.right:
-        icon = ImageRightIcon
-        break
-      default:
-        icon = ImageDefaultIcon
-        break
-    }
-    if (icon) {
-      positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
-    }
-    if (can.editArticle) {
-      positionMenuButton.addEventListener('click', this.showPositionMenu)
-    }
-    this.positionMenuWrapper.appendChild(positionMenuButton)
-    return this.positionMenuWrapper
-  }
-
-  showPositionMenu = () => {
-    this.props.popper.destroy()
-    const figure = this.node
-
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Left',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.left,
-            })
-          },
-          icon: 'ImageLeft',
-          selected: this.figurePosition === figurePositions.left,
-        },
-        {
-          label: 'Default',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.default,
-            })
-          },
-          icon: 'ImageDefault',
-          selected: !this.figurePosition,
-        },
-        {
-          label: 'Right',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.right,
-            })
-          },
-          icon: 'ImageRight',
-          selected: this.figurePosition === figurePositions.right,
-        },
-      ],
-    }
-    this.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu', 'position-menu']
-      ),
-      'left',
-      false
-    )
   }
 }
 
