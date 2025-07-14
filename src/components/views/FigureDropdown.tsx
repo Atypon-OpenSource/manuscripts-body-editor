@@ -110,10 +110,11 @@ export const FigureOptions: React.FC<WrappedProps> = ({
   }
 
   useEffect(() => {
+    const activeClass = 'figure-dropdown-active'
     if (isOpen) {
-      container.classList.add('figure-dropdown-active')
+      container.classList.add(activeClass)
     } else {
-      container.classList.remove('figure-dropdown-active')
+      container.classList.remove(activeClass)
     }
   }, [isOpen, container.classList])
 
