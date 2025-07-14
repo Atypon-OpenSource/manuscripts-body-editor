@@ -324,9 +324,9 @@ export const getEditorMenus = (
       {
         id: 'insert-media',
         label: 'Media',
-        isActive: blockActive(schema.nodes.media)(state),
+        isActive: blockActive(schema.nodes.embed)(state),
         isEnabled:
-          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.media)),
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
         run: doCommand(insertMedia),
       },
       {

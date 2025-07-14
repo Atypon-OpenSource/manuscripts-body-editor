@@ -16,6 +16,7 @@
 import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
+import { conditionalMediaViews } from '../lib/view'
 import { NodeViewCreator } from '../types'
 import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
@@ -30,7 +31,6 @@ import boxElement from '../views/box_element'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
-import embed from '../views/embed'
 import empty from '../views/empty'
 import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
@@ -48,7 +48,6 @@ import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
 import list from '../views/list'
 import list_item from '../views/list_item'
-import media from '../views/media'
 import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
@@ -81,7 +80,7 @@ export default (
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
     affiliations: affiliations(props, dispatch),
-    embed: embed(props),
+    embed: conditionalMediaViews(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
@@ -118,6 +117,5 @@ export default (
     alt_text: accessibilityElement(props, dispatch),
     hero_image: heroImage(props, dispatch),
     trans_abstract: empty('trans_abstract'),
-    media: media(props, dispatch),
   }
 }

@@ -441,10 +441,11 @@ export const insertMedia = (
     return false
   }
 
-  const media = schema.nodes.media.create(
+  const embed = schema.nodes.embed.create(
     {
       ...attrs,
-      id: generateNodeID(schema.nodes.media),
+      id: generateNodeID(schema.nodes.embed),
+      mediaType: 'uploaded',
     },
     [
       createAndFillFigcaptionElement(),
@@ -453,7 +454,7 @@ export const insertMedia = (
     ]
   )
 
-  const tr = state.tr.insert(position, media)
+  const tr = state.tr.insert(position, embed)
   dispatch && dispatch(tr)
 
   return true
@@ -1709,8 +1710,7 @@ export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.affiliations ||
   type === schema.nodes.contributors ||
   type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image ||
-  type === schema.nodes.media
+  type === schema.nodes.hero_image
 
 export const addNodeComment = (
   node: ManuscriptNode,

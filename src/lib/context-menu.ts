@@ -265,10 +265,10 @@ export class ContextMenu {
       }
     }
 
-    if (type === schema.nodes.media) {
+    if (type === schema.nodes.embed) {
       const attrType = this.node.attrs.type
       const submenuOptions = createPositionOptions(
-        schema.nodes.media,
+        schema.nodes.embed,
         this.node,
         attrType,
         this.view

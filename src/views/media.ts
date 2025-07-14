@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MediaNode, schema } from '@manuscripts/transform'
+import { EmbedNode, schema } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -29,12 +29,13 @@ import {
   setElementPositionAlignment,
   showPositionMenu,
 } from '../lib/media'
+import { isUploadedMedia } from '../lib/view'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createEditableNodeView } from './creators'
 import { EditableBlock } from './editable_block'
 
-export class MediaView extends BlockView<Trackable<MediaNode>> {
+export class MediaView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
   public reactTools: HTMLDivElement | null = null
   positionMenuWrapper: HTMLDivElement
@@ -47,9 +48,17 @@ export class MediaView extends BlockView<Trackable<MediaNode>> {
     mimeSubtype?: string
   } = {}
 
+  public createDOM(): void {
+    super.createDOM()
+    if (isUploadedMedia(this.node, this.props)) {
+      this.dom.classList.remove('block-embed')
+      this.dom.classList.add('block-media')
+    }
+  }
+
   public createElement = () => {
     this.container = document.createElement('div')
-    this.container.classList.add('figure-block', 'block')
+    this.container.classList.add('block', 'figure-block')
     this.dom.appendChild(this.container)
 
     this.contentDOM = document.createElement('div')
@@ -81,9 +90,8 @@ export class MediaView extends BlockView<Trackable<MediaNode>> {
     const positionChanged = this.mediaPosition !== type
     const contentChanged =
       !this.initialized || !isEqual(this.previousAttrs, currentAttrs)
-
     if (positionChanged) {
-      this.mediaPosition = type
+      this.mediaPosition = type || 'default'
       setElementPositionAlignment(this.container, this.mediaPosition)
     }
 
@@ -256,7 +264,7 @@ export class MediaView extends BlockView<Trackable<MediaNode>> {
 
   showPositionMenu = () => {
     showPositionMenu(
-      schema.nodes.media,
+      schema.nodes.embed,
       this.node,
       this.mediaPosition,
       this.positionMenuWrapper,

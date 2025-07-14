@@ -1496,7 +1496,6 @@ th:hover > .table-context-menu-button,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f2f2f2;
 }
 
 .ProseMirror .accessibility_element {
