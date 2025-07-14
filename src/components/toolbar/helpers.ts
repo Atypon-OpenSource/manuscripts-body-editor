@@ -29,8 +29,12 @@ import { hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
-import { isDeleted } from '../../lib/track-changes-utils'
+import { isDeleted, isMoved } from '../../lib/track-changes-utils'
 import { Option } from './type-selector/TypeSelector'
+
+export const shouldSkipNode = (node: Node): boolean => {
+  return isMoved(node) || isDeleted(node)
+}
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
@@ -312,9 +316,13 @@ export const indentSection =
     const parentSection = $from.node(parentSectionDepth)
     const startIndex = $from.index(parentSectionDepth)
 
+    // Check if there's a valid previous section to indent into
     const previousSection =
       startIndex > 0 ? parentSection.child(startIndex - 1) : null
-    const isValidContainer = previousSection?.type === nodes.section
+    const isValidContainer =
+      previousSection &&
+      // !shouldSkipNode(previousSection) &&
+      previousSection.type === nodes.section
 
     let anchor
     if (!previousSection || !isValidContainer) {
@@ -323,25 +331,35 @@ export const indentSection =
       const newParentSectionContent = Fragment.fromArray([emptyTitle, section])
       const newParentSection = nodes.section.create({}, newParentSectionContent)
 
-      tr.replaceWith(beforeSection, afterSection, newParentSection)
+      tr.insert(beforeSection, newParentSection)
+
+      // Delete the original section (now at shifted position)
+      const newBeforeSection = beforeSection + newParentSection.nodeSize
+      const newAfterSection = afterSection + newParentSection.nodeSize
+
+      tr.delete(newBeforeSection, newAfterSection)
 
       anchor = beforeSection + 1
     } else {
       // Moving section into previous section as subsection
-      const newPreviousSection = previousSection.copy(
-        previousSection.content.append(Fragment.from(section))
-      )
-
       const beforePreviousSection = beforeSection - previousSection.nodeSize
+      const insertPos = beforePreviousSection + previousSection.nodeSize - 1
+      tr.insert(insertPos, section)
 
-      tr.replaceWith(beforePreviousSection, afterSection, newPreviousSection)
+      // Delete the original section (positions have shifted due to insert)
+      const newBeforeSection = beforeSection + section.nodeSize
+      const newAfterSection = afterSection + section.nodeSize
+      tr.delete(newBeforeSection, newAfterSection)
 
       anchor = beforePreviousSection + 1
     }
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-    dispatch(skipTracking(tr))
+    // Add metadata to help track changes plugin identify the change
+    tr.setMeta('action', 'indentation')
+
+    dispatch(tr)
     view && view.focus()
   }
 

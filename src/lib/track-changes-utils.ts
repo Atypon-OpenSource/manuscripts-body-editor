@@ -17,6 +17,7 @@
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
 import {
   CHANGE_OPERATION,
+  CHANGE_STATUS,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
@@ -28,6 +29,19 @@ export function isDeleted(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(({ operation }) => operation === 'delete')
+  }
+  return false
+}
+
+export function isMoved(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, status, moveNodeId }) =>
+        operation === CHANGE_OPERATION.delete &&
+        status === CHANGE_STATUS.pending &&
+        moveNodeId
+    )
   }
   return false
 }
