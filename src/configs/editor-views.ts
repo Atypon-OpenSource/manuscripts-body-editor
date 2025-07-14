@@ -48,6 +48,7 @@ import keywordGroup from '../views/keyword_group'
 import link from '../views/link_editable'
 import list from '../views/list'
 import list_item from '../views/list_item'
+import media from '../views/media'
 import paragraph from '../views/paragraph_editable'
 import placeholder from '../views/placeholder'
 import placeholderElement from '../views/placeholder_element_editable'
@@ -117,5 +118,6 @@ export default (
     alt_text: accessibilityElement(props, dispatch),
     hero_image: heroImage(props, dispatch),
     trans_abstract: empty('trans_abstract'),
+    media: media(props, dispatch),
   }
 }
