@@ -42,9 +42,7 @@ export interface FigureDropdownProps {
   getFiles: () => FileAttachment[]
 }
 
-export interface FigureOptionsProps
-  extends ReactViewComponentProps<FigureNode>,
-    FigureDropdownProps {
+export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
@@ -80,7 +78,9 @@ function getOtherFiles(
   )
 }
 
-export const FigureOptions: React.FC<FigureOptionsProps> = ({
+type WrappedProps = FigureOptionsProps & ReactViewComponentProps<FigureNode>
+
+export const FigureOptions: React.FC<WrappedProps> = ({
   can,
   getDoc,
   getFiles,

@@ -22,7 +22,9 @@ import { ThemeProvider } from 'styled-components'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
 
-export interface ReactViewComponentProps {
+export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
+  nodeAttrs: NodeT['attrs']
+  setNodeAttrs: (nextAttrs: Partial<NodeT['attrs']>) => void
   viewProps: {
     view: ManuscriptEditorView
     getPos: () => number
