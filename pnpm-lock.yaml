@@ -39,8 +39,8 @@ importers:
         specifier: 3.1.5
         version: 3.1.5(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.0.3
-        version: 2.0.3
+        specifier: 2.0.4
+        version: 2.0.4
       '@manuscripts/transform':
         specifier: 4.2.7
         version: 4.2.7(prosemirror-state@1.4.3)
@@ -1177,8 +1177,8 @@ packages:
     resolution: {integrity: sha512-OdufA8QjUNFqA6o+OeKUNVqS+n0A7Cplef9jX55gbSS8QcDihx569tyiZxG818UDIH+TYv6bDLJTXDyy6UcZOw==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.0.3':
-    resolution: {integrity: sha512-YkP0To42MSisYLK4OrGmx3HDX2C5/3o/wpQd3HrO508nuh+CxG1RjC00debm3lfGWXNkqB7i88p38Dk8BqI+4A==}
+  '@manuscripts/track-changes-plugin@2.0.4':
+    resolution: {integrity: sha512-i76xmC8pp+cjPgq2V2Qaqk+kr7lC8jSwymFRsRdzo0PQK5P1OJbdOHX/r2idzz1L37bTd5lWNOCdIVSeBqUM/g==}
 
   '@manuscripts/transform@4.2.7':
     resolution: {integrity: sha512-0RRqT+RE44InmfJivoLcpaKPYp3ICUnRRUaNRjMrTtKQqmezhiVHuzr9E9iRJ3E5ixVSl0tFl7UdpMgQ4S5zig==}
@@ -5943,7 +5943,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.0.3':
+  '@manuscripts/track-changes-plugin@2.0.4':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
