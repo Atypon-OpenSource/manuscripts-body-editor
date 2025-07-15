@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
+
 import {
   ExtLinkEditor,
   ExtLinkEditorProps,
 } from '../components/views/ExtLinkEditor'
-
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { ImageElementNode, FigureNode, schema } from '@manuscripts/transform'
-
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
-
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
 
 export enum figurePositions {
   left = 'half-left',
