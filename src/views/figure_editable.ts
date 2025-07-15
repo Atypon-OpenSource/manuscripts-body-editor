@@ -32,26 +32,17 @@ import {
 } from '../icons'
 import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
-import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
-
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
-  positionMenuWrapper: HTMLDivElement
-  figurePosition: string
   private dragHandle: HTMLDivElement | undefined
   private static currentDragFigureId: string | null = null
   private dragAndDropInitialized = false
-
+  
   public initialise() {
     this.upload = this.upload.bind(this)
     this.createDOM()
@@ -219,7 +210,6 @@ export class FigureEditableView extends FigureView {
     const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -437,6 +427,7 @@ export class FigureEditableView extends FigureView {
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')
 
+    // Convert the React component to a static HTML string
     const iconHtml = fileCorruptedIcon
 
     instructions.innerHTML = `
@@ -482,96 +473,6 @@ export class FigureEditableView extends FigureView {
 
     element.appendChild(instructions)
     return element
-  }
-
-  createPositionMenuWrapper = () => {
-    const can = this.props.getCapabilities()
-    this.positionMenuWrapper = document.createElement('div')
-    this.positionMenuWrapper.classList.add('position-menu')
-
-    const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
-
-    let icon
-    switch (this.figurePosition) {
-      case figurePositions.left:
-        icon = imageLeftIcon
-        break
-      case figurePositions.right:
-        icon = imageRightIcon
-        break
-      default:
-        icon = imageDefaultIcon
-        break
-    }
-    if (icon) {
-      positionMenuButton.innerHTML = icon
-    }
-    if (can.editArticle) {
-      positionMenuButton.addEventListener('click', this.showPositionMenu)
-    }
-    this.positionMenuWrapper.appendChild(positionMenuButton)
-    return this.positionMenuWrapper
-  }
-
-  showPositionMenu = () => {
-    this.props.popper.destroy()
-    const figure = this.node
-
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Left',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.left,
-            })
-          },
-          icon: 'ImageLeft',
-          selected: this.figurePosition === figurePositions.left,
-        },
-        {
-          label: 'Default',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.default,
-            })
-          },
-          icon: 'ImageDefault',
-          selected: !this.figurePosition,
-        },
-        {
-          label: 'Right',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.right,
-            })
-          },
-          icon: 'ImageRight',
-          selected: this.figurePosition === figurePositions.right,
-        },
-      ],
-    }
-    this.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu', 'position-menu']
-      ),
-      'left',
-      false
-    )
   }
 }
 
