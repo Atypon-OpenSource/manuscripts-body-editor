@@ -399,55 +399,44 @@ export const unindentSection =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
     const {
       selection: { $from },
-      schema,
       tr,
     } = state
-    const { nodes } = schema
     const sectionDepth = $from.depth - 1
     const section = $from.node(sectionDepth)
     const beforeSection = $from.before(sectionDepth)
+    const afterSection = $from.after(sectionDepth)
     const sectionTitle = $from.node($from.depth)
 
-    const $beforeSection = tr.doc.resolve(beforeSection)
-    const beforeSectionOffset = $beforeSection.parentOffset
-    const afterSectionOffset = beforeSectionOffset + section.nodeSize
-
     const parentSectionDepth = $from.depth - 2
-    const parentSection = $from.node(parentSectionDepth)
-    const startIndex = $from.index(parentSectionDepth)
-    const endIndex = $from.indexAfter(parentSectionDepth)
-    const beforeParentSection = $from.before(parentSectionDepth)
     const afterParentSection = $from.after(parentSectionDepth)
 
-    const items = []
+    // Insert the unindented section at the parent level
+    tr.insert(afterParentSection, section)
 
-    let offset = 0
+    // Delete the original section (positions inside parent haven't changed)
+    tr.delete(beforeSection, afterSection)
 
-    if (startIndex > 0) {
-      const precedingSection = parentSection.cut(0, beforeSectionOffset)
-      items.push(precedingSection)
-      offset += precedingSection.nodeSize
-    }
+    /*
+     * TODO: Sibling reorganization logic removed for now
+     * Previously, we had logic here to handle: if (endIndex < parentSection.childCount)
+     * This would create a new section for siblings that come after the unindented section.
+     * This was removed to simplify UX because it created complex track changes operations - 3 operations couldn't be detected as move.
+     *
+     * For now, siblings remain in their original position within the parent section.
+     * This can be revisited later when we have time to properly handle the complex
+     * tracking scenarios and ensure reliable accept/reject behavior.
+     */
 
-    items.push(section)
-
-    if (endIndex < parentSection.childCount) {
-      const fragment = Fragment.from(nodes.section_title.create()).append(
-        parentSection.content.cut(afterSectionOffset)
-      )
-
-      items.push(parentSection.copy(fragment))
-    }
-
-    tr.replaceWith(beforeParentSection, afterParentSection, items)
-
-    const anchor = beforeParentSection + offset + 2
+    const anchor = afterParentSection + 2
 
     tr.setSelection(
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    dispatch(skipTracking(tr))
+    // Add metadata to help track changes plugin identify the change
+    tr.setMeta('action', 'indentation')
+
+    dispatch(tr)
     view && view.focus()
   }
 
