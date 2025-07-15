@@ -169,7 +169,6 @@
   width: 25px;
   z-index: 1;
   height: 25px;
-  bottom: 220px;
   cursor: pointer;
   position: absolute;
   border-radius: 50%;
@@ -328,10 +327,10 @@
   text-align: center !important;
 }
 
-.ProseMirror .figure-block .position-menu {
+.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu {
   position: absolute;
-  top: 4px;
-  left: calc(100% - 96px);
+  top: 15px;
+  right: 35px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;
@@ -768,11 +767,26 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation),
+  ):not(figure):not(figure .equation):not(.inconsistency-highlight),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
+}
+
+.ProseMirror .inconsistency-highlight {
+  border: 1px solid #f35143!important;
+  background: #fff1f0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror .inconsistency-highlight.selected-suggestion,
+.ProseMirror .inconsistency-highlight.footnote-marker-selected,
+.ProseMirror .inconsistency-highlight.ProseMirror-selectednode {
+  border: 2px solid #f35143!important;
+  background: #fff1f0;
 }
 
 .block-bullet_list .selected-suggestion p,
@@ -1567,4 +1581,9 @@ th:hover > .table-context-menu-button,
 }
 .hero-image-toggle-btn.collapsed svg {
   transform: rotate(180deg);
+}
+
+.ProseMirror .block-image_element .block:focus-visible,
+.ProseMirror .block-figure_element .block:focus-visible {
+  outline: none;
 }
