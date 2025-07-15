@@ -70,8 +70,8 @@ export class FigureEditableView extends FigureView {
 
     // Drag events for container
     this.container.addEventListener('dragstart', () => {
-      // Only start figure dragging if we have a figure ID (to avoid conflicts with other drag events of image)
-      if (this.node.attrs.id) {
+      // Only start figure dragging if we have a figure ID and figure is not deleted
+      if (this.node.attrs.id && !isDeleted(this.node)) {
         this.handleDragStart()
       }
     })
@@ -271,14 +271,14 @@ export class FigureEditableView extends FigureView {
 
   protected addTools() {
     this.manageReactTools()
-    this.container.appendChild(this.createPositionMenuWrapper())
     const $pos = this.view.state.doc.resolve(this.getPos())
 
     const parent = $pos.parent
     // Create drag handle for for figure elements ( not simple image)
     if (
       this.props.getCapabilities()?.editArticle &&
-      parent.type === schema.nodes.figure_element
+      parent.type === schema.nodes.figure_element &&
+      !isDeleted(this.node)
     ) {
       const dragHandle = document.createElement('div')
       dragHandle.className = 'drag-handler'
