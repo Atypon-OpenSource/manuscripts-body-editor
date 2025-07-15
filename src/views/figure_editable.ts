@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
@@ -23,13 +22,7 @@ import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import {
-  draggableIcon,
-  fileCorruptedIcon,
-  imageDefaultIcon,
-  imageLeftIcon,
-  imageRightIcon,
-} from '../icons'
+import { draggableIcon, fileCorruptedIcon } from '../icons'
 import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
@@ -42,7 +35,7 @@ export class FigureEditableView extends FigureView {
   private dragHandle: HTMLDivElement | undefined
   private static currentDragFigureId: string | null = null
   private dragAndDropInitialized = false
-  
+
   public initialise() {
     this.upload = this.upload.bind(this)
     this.createDOM()
