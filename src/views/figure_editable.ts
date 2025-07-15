@@ -142,7 +142,6 @@ export class FigureEditableView extends FigureView {
       if (!figure) {
         return
       }
-
       const toPos = this.getPos()
       if (figure.pos === toPos) {
         return
@@ -178,7 +177,7 @@ export class FigureEditableView extends FigureView {
     const { tr } = state
 
     tr.delete(fromPos, fromPos + fromNode.nodeSize)
-    tr.insert(targetPos, fromNode)
+    tr.insert(this.view.state.tr.mapping.map(targetPos), fromNode)
     this.view.dispatch(tr)
   }
 
