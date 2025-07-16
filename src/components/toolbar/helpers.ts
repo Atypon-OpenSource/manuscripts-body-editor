@@ -112,6 +112,7 @@ export const demoteSectionToParagraph = (
   const previousNode = $beforeSection.nodeBefore
   const paragraph = nodes.paragraph.create(
     {
+      ...section.attrs,
       id: generateNodeID(nodes.paragraph),
     },
     sectionTitle.content
@@ -140,7 +141,6 @@ export const demoteSectionToParagraph = (
         updatedDeepestSubsection
       )
       fragment = updatedPreviousNode.content
-      tr.setMeta('section-level', sectionDepth)
     } else {
       // If no subsections exist, just append to the main section
       fragment = Fragment.from(previousNode.content)
@@ -167,8 +167,7 @@ export const demoteSectionToParagraph = (
     anchor = beforeSection + 1
   }
 
-  tr.setMeta('is-structural-change', true)
-  tr.setMeta('action', 'convert-to-paragraph')
+  tr.setMeta('structure-change-action', 'convert-to-paragraph')
   tr.setSelection(
     TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
   )
@@ -203,6 +202,7 @@ export const promoteParagraphToSection = (
   let afterParentSection = $from.after(sectionDepth)
 
   const items: Node[] = []
+  const attrs = { ...paragraph.attrs, id: generateNodeID(nodes.section) }
   let offset = 0
 
   if (startIndex > 0) {
@@ -229,17 +229,18 @@ export const promoteParagraphToSection = (
 
   if (parentSection.type.name === 'body') {
     const firstSection = findChildrenByType(parentSection, nodes.section)[0]
-    let content = parentSection.slice(afterParagraphOffset).content
+    // that will include all nodes that are not section at the body level
+    let remainingContent = parentSection.slice(afterParagraphOffset).content
     if (firstSection) {
       const { pos } = firstSection
-      content = parentSection.slice(afterParagraphOffset, pos).content
+      remainingContent = parentSection.slice(afterParagraphOffset, pos).content
       afterParentSection = beforeParentSection + pos
       beforeParentSection = beforeParagraph
     }
 
     items[0] = nodes.section.create(
-      {},
-      Fragment.from(sectionTitle).append(content)
+      attrs,
+      Fragment.from(sectionTitle).append(remainingContent)
     )
 
     if ($beforeParagraph.index() === 0) {
@@ -256,12 +257,11 @@ export const promoteParagraphToSection = (
       }
     }
   } else {
-    items.push(parentSection.type.create(undefined, sectionContent))
+    items.push(parentSection.type.create(attrs, sectionContent))
   }
 
   tr.replaceWith(beforeParentSection, afterParentSection, items)
-  tr.setMeta('is-structural-change', true)
-  tr.setMeta('action', 'convert-to-section')
+  tr.setMeta('structure-change-action', 'convert-to-section')
 
   const anchor = beforeParentSection + offset + 2
 
