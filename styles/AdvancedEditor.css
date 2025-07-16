@@ -169,7 +169,6 @@
   width: 25px;
   z-index: 1;
   height: 25px;
-  bottom: 220px;
   cursor: pointer;
   position: absolute;
   border-radius: 50%;
@@ -341,10 +340,10 @@
   text-align: center !important;
 }
 
-.ProseMirror .figure-block .position-menu {
+.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu {
   position: absolute;
-  top: 4px;
-  left: calc(100% - 96px);
+  top: 15px;
+  right: 35px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;

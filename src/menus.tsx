@@ -269,7 +269,9 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+B',
           pc: 'CommandOrControl+Option+B',
         },
-        isEnabled: isEditAllowed(state) && isCommandValid(insertBoxElement),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.box_element)),
         run: doCommand(insertBoxElement),
       },
       {

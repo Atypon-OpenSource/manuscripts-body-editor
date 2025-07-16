@@ -240,6 +240,17 @@ export const canInsert =
       }
     }
 
+    // Prevent inserting a box_element if:
+    //  it's not inside a body node (invalid context), OR
+    //  it's already nested inside another box_element (disallowed nesting)
+    if (
+      type === schema.nodes.box_element &&
+      (!hasParentNodeOfType(schema.nodes.body)(state.selection) ||
+        hasParentNodeOfType(schema.nodes.box_element)(state.selection))
+    ) {
+      return false
+    }
+
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
       0
@@ -864,29 +875,28 @@ export const insertBoxElement = (
   dispatch?: Dispatch
 ) => {
   const selection = state.selection
+  const { nodes } = schema
 
   // Check if the selection is inside the body
-  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
-  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
-
+  const isBody = hasParentNodeOfType(nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(nodes.box_element)(selection)
   // If selection is not in the body, disable the option
   if (!isBody || isBoxText) {
     return false
   }
 
   const position = findBlockInsertPosition(state)
-
-  const paragraph = schema.nodes.paragraph.create({})
+  const paragraph = nodes.paragraph.create({})
 
   // Create a section node with a section title and a paragraph
-  const section = schema.nodes.section.createAndFill({}, [
-    schema.nodes.section_title.create(),
+  const section = nodes.section.createAndFill({}, [
+    nodes.section_title.create(),
     paragraph,
   ]) as ManuscriptNode
 
   // Create the BoxElement node with a figcaption and the section
-  const node = schema.nodes.box_element.createAndFill({}, [
-    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+  const node = nodes.box_element.createAndFill({}, [
+    nodes.figcaption.create({}, [nodes.caption_title.create()]),
     section,
   ]) as BoxElementNode
 

@@ -15,41 +15,104 @@
  */
 
 import { schema } from '@manuscripts/transform'
+import { Node } from 'prosemirror-model'
 
 import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
 import { ImageElementView } from './image_element'
-
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
+  private addFigureBtn: HTMLButtonElement
+  private resizeObserver: ResizeObserver | null = null
 
   public createElement = () => {
     super.createElement()
     this.addFigureElementButtons()
   }
 
+  public initialise() {
+    super.initialise()
+    // Position button after initial render
+    requestAnimationFrame(() => this.updateButtonPosition())
+    this.setupResizeObserver()
+  }
+
+  private setupResizeObserver() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
+
+    this.resizeObserver = new ResizeObserver(() => {
+      // Reposition button when figure dimensions change
+      requestAnimationFrame(() => this.updateButtonPosition())
+    })
+
+    // Observe all current figures
+    this.container.querySelectorAll('figure').forEach((figure) => {
+      this.resizeObserver?.observe(figure)
+    })
+  }
+
   private addFigureElementButtons() {
     if (this.props.getCapabilities()?.editArticle) {
-      const addFigureBtn = Object.assign(document.createElement('button'), {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
         className: 'add-figure-button',
         innerHTML: addFigureBtnIcon,
         title: 'Add figure',
       })
-      addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.container.prepend(addFigureBtn)
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
     }
   }
+
+  private updateButtonPosition() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
+
+    if (!lastFigure) {
+      return // No figures found
+    }
+
+    const lastFigureRect = lastFigure.getBoundingClientRect()
+    const containerRect = this.container.getBoundingClientRect()
+
+    // Calculate position relative to container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
+  }
+
+  /**
+   * Updates button position and re-observes figures.
+   */
+  public update(node: Node): boolean {
+    const handledBySuper = super.update(node)
+
+    if (handledBySuper) {
+      this.setupResizeObserver() // Re-observe figures after node update
+      requestAnimationFrame(() => this.updateButtonPosition()) // Reposition after DOM update
+    }
+
+    return handledBySuper
+  }
+
+  public updateContents() {
+    super.updateContents()
+    requestAnimationFrame(() => this.updateButtonPosition())
+  }
+
   private addFigure = () => {
     const { state } = this.view
     const { tr } = state
     const figureElementPos = this.getPos()
 
-    // Find the position after the last figure node
     let insertPos = figureElementPos + 1
     let lastFigureEndPos = insertPos
     let hasFigures = false
 
-    // Iterate through all child nodes
     this.node.forEach((node) => {
       if (node.type === schema.nodes.figure) {
         lastFigureEndPos = insertPos + node.nodeSize
@@ -64,6 +127,15 @@ export class FigureElementView extends ImageElementView {
 
     tr.insert(finalInsertPos, figureNode)
     this.view.dispatch(tr)
+  }
+
+  public destroy() {
+    // Disconnect ResizeObserver on destroy
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
+    super.destroy()
   }
 }
 

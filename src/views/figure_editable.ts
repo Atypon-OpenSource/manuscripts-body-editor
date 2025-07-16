@@ -23,20 +23,12 @@ import {
   createFileHandlers,
   createFileUploader,
   createMediaPlaceholder,
-  createPositionMenuWrapper,
   createReactTools,
   createUnsupportedFormat,
-  showPositionMenu,
 } from '../lib/media'
 import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
-
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
 
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement | null = null
@@ -60,7 +52,6 @@ export class FigureEditableView extends FigureView {
     const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -85,7 +76,6 @@ export class FigureEditableView extends FigureView {
 
   protected addTools() {
     this.manageReactTools()
-    this.container.appendChild(this.createPositionMenuWrapper())
   }
 
   private manageReactTools() {
@@ -178,27 +168,6 @@ export class FigureEditableView extends FigureView {
 
   protected createPlaceholder = () => {
     return createMediaPlaceholder('figure')
-  }
-
-  createPositionMenuWrapper = () => {
-    this.positionMenuWrapper = createPositionMenuWrapper(
-      this.figurePosition,
-      this.showPositionMenu,
-      this.props
-    )
-    return this.positionMenuWrapper
-  }
-
-  showPositionMenu = () => {
-    showPositionMenu(
-      schema.nodes.figure,
-      this.node,
-      this.figurePosition,
-      this.positionMenuWrapper,
-      this.view,
-      this.getPos,
-      this.props
-    )
   }
 }
 
