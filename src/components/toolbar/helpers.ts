@@ -481,7 +481,10 @@ export const unindentParagraph =
       TextSelection.create(tr.doc, tr.mapping.map(paragraphPos) + 4)
     )
 
-    dispatch(skipTracking(tr))
+    // Set indentation metadata for track changes
+    tr.setMeta('action', 'indentation')
+
+    dispatch(tr)
     view?.focus()
   }
 
