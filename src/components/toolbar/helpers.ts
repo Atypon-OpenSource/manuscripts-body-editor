@@ -385,13 +385,16 @@ export const indentParagraph =
       sectionContent
     )
 
-    // Replace original paragraph and moved nodes with the new section
-    tr.replaceWith(beforeParagraph, sectionEnd, newSection)
+    // Set indentation metadata for track changes
+    tr.setMeta('action', 'indentation')
+
+    tr.delete(beforeParagraph, sectionEnd)
+    tr.insert(beforeParagraph, newSection)
 
     // Set selection inside the title of the new section
     tr.setSelection(TextSelection.create(tr.doc, beforeParagraph + 2))
 
-    dispatch(skipTracking(tr))
+    dispatch(tr)
     view?.focus()
   }
 
