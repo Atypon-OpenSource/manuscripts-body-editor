@@ -16,6 +16,7 @@
 import {
   CHANGE_OPERATION,
   trackChangesPluginKey,
+  TrackedChange,
 } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
@@ -95,12 +96,13 @@ export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
   if ($pos) {
     return trackChangesPluginKey
       .getState(state)
-      ?.changeSet.groupChanges.find(
-        (changes) =>
-          (changes.length > 1 ||
-            changes[0].dataTracked.operation === CHANGE_OPERATION.structure) &&
-          $pos.pos >= changes[0].from &&
-          $pos.pos <= changes[changes.length - 1].to
-      )
+      ?.changeSet.groupChanges.find((c) => isPositionAtRange(c, $pos.pos))
   }
 }
+
+// check if position is at the range of group changes
+const isPositionAtRange = (changes: TrackedChange[], pos: number) =>
+  (changes.length > 1 ||
+    changes[0].dataTracked.operation === CHANGE_OPERATION.structure) &&
+  pos >= changes[0].from &&
+  pos <= changes[changes.length - 1].to
