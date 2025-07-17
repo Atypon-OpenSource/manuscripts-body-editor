@@ -153,7 +153,7 @@ const DragAndDropContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding: 16px;
-  border: 1px solid ${(props) => props.theme.colors.border.secondary};
+  border: 1px dashed ${(props) => props.theme.colors.border.secondary};
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.background.secondary};
   color: ${(props) => props.theme.colors.text.primary};
