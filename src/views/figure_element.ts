@@ -33,7 +33,10 @@ export class FigureElementView extends ImageElementView {
   public initialise() {
     super.initialise()
     // Position button after initial render
-    requestAnimationFrame(() => this.updateButtonPosition())
+    requestAnimationFrame(() => {
+      this.updateButtonPosition()
+      this.updateAddButtonState()
+    })
     this.setupResizeObserver()
   }
 
@@ -85,6 +88,31 @@ export class FigureElementView extends ImageElementView {
     this.addFigureBtn.style.top = `${relativeTop}px`
   }
 
+  private updateAddButtonState() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    // Check if there's already an empty figure placeholder
+    let hasEmptyFigure = false
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        // Check if this figure is empty (no src or empty src)
+        const src = node.attrs.src || ''
+        if (src.trim().length === 0) {
+          hasEmptyFigure = true
+        }
+      }
+    })
+
+    // Disable button if there's already an empty figure
+    if (hasEmptyFigure) {
+      this.addFigureBtn.classList.add('disabled')
+    } else {
+      this.addFigureBtn.classList.remove('disabled')
+    }
+  }
+
   /**
    * Updates button position and re-observes figures.
    */
@@ -93,7 +121,10 @@ export class FigureElementView extends ImageElementView {
 
     if (handledBySuper) {
       this.setupResizeObserver() // Re-observe figures after node update
-      requestAnimationFrame(() => this.updateButtonPosition()) // Reposition after DOM update
+      requestAnimationFrame(() => {
+        this.updateButtonPosition() // Reposition after DOM update
+        this.updateAddButtonState() // Update button state after DOM update
+      })
     }
 
     return handledBySuper
@@ -101,7 +132,10 @@ export class FigureElementView extends ImageElementView {
 
   public updateContents() {
     super.updateContents()
-    requestAnimationFrame(() => this.updateButtonPosition())
+    requestAnimationFrame(() => {
+      this.updateButtonPosition()
+      this.updateAddButtonState()
+    })
   }
 
   private addFigure = () => {
