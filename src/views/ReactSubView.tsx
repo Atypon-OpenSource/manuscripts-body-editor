@@ -16,6 +16,7 @@
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
@@ -82,7 +83,9 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   }
   const root = createRoot(container)
 
-  root.render(<Wrapped />)
+  flushSync(() => {
+    root.render(<Wrapped />)
+  })
 
   return container
 }

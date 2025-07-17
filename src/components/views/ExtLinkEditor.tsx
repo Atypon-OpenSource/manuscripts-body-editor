@@ -23,7 +23,7 @@ import {
 import { ManuscriptNode } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { FileManagement } from '../../lib/files'
@@ -33,6 +33,8 @@ export interface ExtLinkEditorProps {
   nodePos: number
   view: EditorView
   editorProps: EditorProps
+  isEditing: boolean
+  setIsEditing: (val: boolean) => void
 }
 
 export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
@@ -40,8 +42,10 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
   nodePos,
   view,
   editorProps,
+  isEditing,
+  setIsEditing,
 }) => {
-  const [isEditing, setIsEditing] = useState(false)
+  // const [isEditing, setIsEditing] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
   const fileManagement = editorProps.fileManagement as FileManagement
@@ -80,7 +84,7 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
   }
 
   return (
-    <ThemeProvider theme={editorProps.theme}>
+    <div>
       {!isEditing && !extLink && (
         <IconTextButton
           onClick={() => setIsEditing(true)}
@@ -91,7 +95,7 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
         </IconTextButton>
       )}
 
-      {isEditing && (
+      {isEditing && !extLink && (
         <ExtLinkEditorContainer>
           <DragAndDropUploader
             upload={handleFileUpload}
@@ -121,7 +125,7 @@ export const ExtLinkEditor: React.FC<ExtLinkEditorProps> = ({
           <p>{uploadError}</p>
         </div>
       )}
-    </ThemeProvider>
+    </div>
   )
 }
 const ExtLinkEditorContainer = styled.div`

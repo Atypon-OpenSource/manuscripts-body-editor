@@ -38,6 +38,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public extLinkEditorContainer: HTMLDivElement
   private positionMenuWrapper: HTMLDivElement
   private figurePosition: string
+  private isEditingExtLink = false
 
   public ignoreMutation = () => true
 
@@ -57,16 +58,15 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.contentDOM.classList.add('figure-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.container.appendChild(this.contentDOM)
-
     this.addTools()
   }
 
   public updateContents() {
     super.updateContents()
     this.addTools()
-    // If the node is an image element, add the external link editor
+
     if (this.node.type === schema.nodes.image_element) {
-      this.addExternalLinkedFileEditor.call(this)
+      this.addExternalLinkedFileEditor()
     }
   }
 
@@ -243,14 +243,19 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   }
 
   private addExternalLinkedFileEditor() {
-    this.extLinkEditorContainer?.remove()
     if (this.props.dispatch && this.props.theme) {
       const componentProps: ExtLinkEditorProps = {
         node: this.node,
         nodePos: this.getPos(),
         view: this.view,
         editorProps: this.props,
+        isEditing: this.isEditingExtLink,
+        setIsEditing: (val) => {
+          this.isEditingExtLink = val
+          this.updateContents()
+        },
       }
+      this.extLinkEditorContainer?.remove()
       this.extLinkEditorContainer = ReactSubView(
         this.props,
         ExtLinkEditor,
@@ -260,7 +265,6 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         this.view,
         ['ext-link-editor-container']
       )
-
       // Delay injection to avoid being overwritten
       requestAnimationFrame(() => {
         this.contentDOM?.appendChild(this.extLinkEditorContainer)

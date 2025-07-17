@@ -170,5 +170,6 @@ const DragAndDropContainer = styled.div`
   }
   span {
     text-decoration: underline;
+    cursor: pointer;
   }
 `
