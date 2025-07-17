@@ -18,6 +18,7 @@ import {
   ArrowDownCircleIcon,
   ArrowUpIcon,
   DeleteIcon,
+  DraggableIcon,
   EditIcon,
   FileCorruptedIcon,
   ImageDefaultIcon,
@@ -53,3 +54,4 @@ export const imageDefaultIcon = renderToStaticMarkup(
 export const fileCorruptedIcon = renderToStaticMarkup(
   createElement(FileCorruptedIcon)
 )
+export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
