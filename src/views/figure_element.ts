@@ -32,11 +32,6 @@ export class FigureElementView extends ImageElementView {
 
   public initialise() {
     super.initialise()
-    // Position button after initial render
-    requestAnimationFrame(() => {
-      this.updateButtonPosition()
-      this.updateAddButtonState()
-    })
     this.setupResizeObserver()
   }
 
