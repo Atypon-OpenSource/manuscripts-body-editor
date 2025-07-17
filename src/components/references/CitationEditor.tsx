@@ -169,6 +169,10 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       id: generateNodeID(schema.nodes.bibliography_item),
       type: 'article-journal',
     }
+    dispatchItems({
+      type: 'update',
+      items: [item, ...items],
+    })
     setEditingForm({ show: true, item: item })
   }
 
