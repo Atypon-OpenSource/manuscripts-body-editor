@@ -103,8 +103,10 @@ export class FigureElementView extends ImageElementView {
     // Disable button if there's already an empty figure
     if (hasEmptyFigure) {
       this.addFigureBtn.classList.add('disabled')
+      this.addFigureBtn.disabled = true
     } else {
       this.addFigureBtn.classList.remove('disabled')
+      this.addFigureBtn.disabled = false
     }
   }
 
