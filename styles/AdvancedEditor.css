@@ -129,8 +129,8 @@
   border: 1px solid #f2f2f2;
   border-radius: 4px;
 
-  padding: 4pt !important;
-  gap: 4pt !important;
+  padding: 8px;
+  gap: 8px !important;
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
@@ -244,8 +244,12 @@
   font-size: 14px;
 }
 
-.ProseMirror .figure.placeholder a {
+.ProseMirror a[data-action] {
   text-decoration: underline;
+  cursor: pointer;
+}
+.ProseMirror a[data-action]:hover {
+  text-decoration: none;
 }
 
 .ProseMirror .figure.placeholder.over {
@@ -1473,7 +1477,8 @@ th:hover > .table-context-menu-button,
   right: 6px;
 }
 
-.ProseMirror .accessibility_element {
+.ProseMirror .accessibility_element,
+.ProseMirror .ext-link-editor-container{
   margin-top: 12px;
   grid-column-start: 1;
   grid-column-end: -1;
@@ -1481,8 +1486,13 @@ th:hover > .table-context-menu-button,
   display: none;
 }
 
-.ProseMirror .show_accessibility_element .accessibility_element {
+.ProseMirror .show_accessibility_element .accessibility_element,
+.ProseMirror .show_accessibility_element .ext-link-editor-container {
   display: block;
+}
+
+.ProseMirror .ext-link-editor-container {
+  position: static;
 }
 
 .ProseMirror .accessibility_element_label {

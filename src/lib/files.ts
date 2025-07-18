@@ -40,6 +40,7 @@ export type ManuscriptFiles = {
   figures: ElementFiles[]
   supplements: NodeFile[]
   attachments: NodeFile[]
+  linkedFiles: NodeFile[]
   others: FileAttachment[]
 }
 
@@ -88,6 +89,7 @@ export const groupFiles = (
   const fileMap = new Map(files.map((f) => [f.id, f]))
   const figures: ElementFiles[] = []
   const supplements: NodeFile[] = []
+  const linkedFiles: NodeFile[] = []
   const attachments: NodeFile[] = []
 
   const getFile = (href: string) => {
@@ -126,6 +128,15 @@ export const groupFiles = (
     if (figureTypes.includes(node.type)) {
       figures.push(getFigureElementFiles(node, pos))
     }
+    if (node.type === schema.nodes.image_element) {
+      if (node.attrs.extLink) {
+        linkedFiles.push({
+          node,
+          pos,
+          file: getFile(node.attrs.extLink),
+        })
+      }
+    }
     if (node.type === schema.nodes.supplement) {
       supplements.push({
         node,
@@ -146,6 +157,7 @@ export const groupFiles = (
     figures,
     supplements,
     attachments,
+    linkedFiles,
     others: [...fileMap.values()],
   }
 }
