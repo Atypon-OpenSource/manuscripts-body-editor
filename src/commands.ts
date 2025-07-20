@@ -150,13 +150,8 @@ export const addToStart = (
     $from,
     $to,
   } = selection
-  const parentSize = $from.node().content.size
 
-  if (
-    (startOffset === 0 && endOffset === 0) ||
-    startOffset === parentSize ||
-    endOffset === parentSize
-  ) {
+  if (startOffset === 0 && endOffset === 0) {
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - (startOffset === 0 ? 1 : 0)
