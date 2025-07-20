@@ -13,110 +13,262 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { EmbedNode, schema } from '@manuscripts/transform'
+import { isEqual } from 'lodash'
+import { NodeSelection } from 'prosemirror-state'
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { EmbedNode } from '@manuscripts/transform'
-
-import { addNodeComment } from '../commands'
 import {
   NoPreviewMessageWithLink,
   openEmbedDialog,
 } from '../components/toolbar/InsertEmbedDialog'
-import { openDeleteEmbedDialog } from '../components/views/DeleteEmbedDialog'
+import {
+  addInteractionHandlers,
+  createFileHandlers,
+  createFileUploader,
+  createMediaPlaceholder,
+  createPositionMenuWrapper,
+  createReactTools,
+  createUnsupportedFormat,
+  FileHandlers,
+  getMediaTypeInfo,
+  setElementPositionAlignment,
+  showPositionMenu,
+} from '../lib/media'
 import { getOEmbedHTML } from '../lib/oembed'
+import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import BlockView from './block_view'
-import { createNodeView } from './creators'
+import { createEditableNodeView } from './creators'
+import { EditableBlock } from './editable_block'
 import ReactSubView from './ReactSubView'
 
-export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
+export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
-  private href: string
+  private figureBlock: HTMLElement
+  public reactTools: HTMLDivElement | null = null
+  positionMenuWrapper: HTMLDivElement
+  mediaPosition: string
   public ignoreMutation = () => true
-  public stopEvent = () => true
+  private initialized = false
+  private previousAttrs: {
+    href?: string
+    mimetype?: string
+    mimeSubtype?: string
+  } = {}
 
   public createElement = () => {
     this.container = document.createElement('div')
     this.container.classList.add('block')
     this.dom.appendChild(this.container)
+    const figureBlock = document.createElement('div')
+    figureBlock.classList.add('figure-block')
+    this.container.appendChild(figureBlock)
 
     this.contentDOM = document.createElement('div')
-    this.container.appendChild(this.contentDOM)
-    this.buildContextMenu(this.container)
+    figureBlock.appendChild(this.contentDOM)
+
+    this.figureBlock = figureBlock
   }
 
-  public async updateContents() {
+  upload = async (file: File) => {
+    const mediaInfo = getMediaTypeInfo(file.name)
+
+    const result = await this.props.fileManagement.upload(file)
+
+    const pos = this.getPos()
+    const tr = this.view.state.tr
+    tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      href: result.id,
+      mimetype: mediaInfo.mimetype,
+      mimeSubtype: mediaInfo.mimeSubtype,
+    })
+
+    this.view.dispatch(tr)
+  }
+
+  public updateContents() {
     super.updateContents()
-    if (this.href !== this.node.attrs.href) {
-      this.href = this.node.attrs.href
-      await this.updateOEmbedPreview()
+    const { href, mimetype, mimeSubtype, type } = this.node.attrs
+
+    const currentAttrs = { href, mimetype, mimeSubtype }
+    const positionChanged = this.mediaPosition !== type
+    const contentChanged =
+      !this.initialized || !isEqual(this.previousAttrs, currentAttrs)
+
+    if (positionChanged) {
+      this.mediaPosition = type || 'default'
+      setElementPositionAlignment(this.container, this.mediaPosition)
+    }
+
+    if (contentChanged) {
+      this.initialized = true
+      this.previousAttrs = currentAttrs
+      this.updateMediaPreview()
+      this.manageReactTools()
+    }
+
+    this.managePositionMenu()
+  }
+
+  private manageReactTools() {
+    this.reactTools?.remove()
+
+    if (this.isUploadedFile()) {
+      const handlers = createFileHandlers(
+        this.node,
+        this.view,
+        this.getPos,
+        this.props,
+        this.setHref
+      )
+
+      const can = this.props.getCapabilities()
+      if (can.uploadFile) {
+        handlers.handleUpload = createFileUploader(
+          this.upload,
+          'video/*,audio/*'
+        )
+      }
+
+      this.reactTools = createReactTools(
+        this.node,
+        this.view,
+        this.getPos,
+        this.props,
+        handlers
+      )
+    } else if (this.isEmbedLink()) {
+      const handlers = this.createEmbedHandlers()
+
+      this.reactTools = createReactTools(
+        this.node,
+        this.view,
+        this.getPos,
+        this.props,
+        handlers
+      )
+    }
+
+    if (this.reactTools) {
+      const preview = this.figureBlock.querySelector('.media-preview')
+      if (preview) {
+        preview.insertBefore(this.reactTools, preview.firstChild)
+      } else {
+        this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+      }
     }
   }
 
-  private async updateOEmbedPreview() {
+  protected setHref = (href: string) => {
+    const { tr } = this.view.state
+    const pos = this.getPos()
+    tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      href: href,
+    })
+    tr.setSelection(NodeSelection.create(tr.doc, pos))
+    this.view.dispatch(tr)
+  }
+
+  private isUploadedFile(): boolean {
+    const { href } = this.node.attrs
+    if (!href) {
+      return false
+    }
+
+    const files = this.props.getFiles()
+    return files.some((file) => file.id === href)
+  }
+
+  private isEmbedLink(): boolean {
+    const { href } = this.node.attrs
+    return !!(href && allowedHref(href) && !this.isUploadedFile())
+  }
+
+  private async updateMediaPreview() {
     const preview = document.createElement('div')
-    preview.classList.add('embed-media-preview')
+    preview.classList.add('media-preview')
     preview.setAttribute('contenteditable', 'false')
 
-    const oldPreview = this.container.querySelector('.embed-media-preview')
+    const oldPreview = this.figureBlock.querySelector('.media-preview')
     if (oldPreview) {
-      this.container.replaceChild(preview, oldPreview)
+      this.figureBlock.replaceChild(preview, oldPreview)
     } else {
-      this.container.prepend(preview)
+      this.figureBlock.prepend(preview)
     }
 
-    const html = await getOEmbedHTML(this.href, 643, 363)
-    if (html) {
-      preview.innerHTML = html
-    } else {
-      this.showUnavailableMessage(preview)
-    }
-  }
+    const href = this.node.attrs.href
 
-  private buildContextMenu = (preview: HTMLElement) => {
+    let object: HTMLElement
+
+    if (!href) {
+      object = createMediaPlaceholder('media', this.view, this.getPos)
+    } else if (this.isUploadedFile()) {
+      const files = this.props.getFiles()
+      const file = files.find((f) => f.id === href)
+
+      if (file) {
+        const isValidMediaFile =
+          getMediaTypeInfo(file.name).isAudio ||
+          getMediaTypeInfo(file.name).isVideo
+        object = isValidMediaFile
+          ? this.createMedia() ||
+            createUnsupportedFormat(
+              file.name,
+              this.props.getCapabilities().editArticle
+            )
+          : createUnsupportedFormat(
+              file.name,
+              this.props.getCapabilities().editArticle
+            )
+      } else {
+        object = createMediaPlaceholder('media', this.view, this.getPos)
+      }
+    } else if (this.isEmbedLink()) {
+      object = await this.createEmbedPreview()
+    } else {
+      object = createMediaPlaceholder('media', this.view, this.getPos)
+    }
+
     const can = this.props.getCapabilities()
-
-    if (!can.editArticle) {
-      return
+    if (can.uploadFile && object.classList.contains('placeholder')) {
+      addInteractionHandlers(object, this.upload, 'video/*,audio/*')
     }
 
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Comment',
-          action: () =>
-            addNodeComment(this.node, this.view.state, this.view.dispatch),
-          icon: 'AddComment',
-        },
-        {
-          label: 'Delete',
-          action: () =>
-            openDeleteEmbedDialog(this.view, this.node, this.getPos()),
-          icon: 'Delete',
-        },
-        {
-          label: 'Edit',
-          action: () => openEmbedDialog(this.view, this.getPos()),
-          icon: 'Edit',
-        },
-      ],
-    }
-
-    preview.appendChild(
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['embed-context-menu']
-      )
-    )
+    preview.appendChild(object)
   }
 
-  private showUnavailableMessage(preview: HTMLElement) {
-    preview.appendChild(
+  private createEmbedHandlers(): FileHandlers {
+    const handlers: FileHandlers = {}
+
+    handlers.handleReplaceEmbed = () => {
+      openEmbedDialog(this.view, this.getPos())
+    }
+
+    return handlers
+  }
+
+  private async createEmbedPreview(): Promise<HTMLElement> {
+    const container = document.createElement('div')
+    container.classList.add('embed-preview')
+
+    try {
+      const html = await getOEmbedHTML(this.node.attrs.href, 643, 363)
+      if (html) {
+        container.innerHTML = html
+      } else {
+        this.showUnavailableMessage(container)
+      }
+    } catch (error) {
+      this.showUnavailableMessage(container)
+    }
+
+    return container
+  }
+
+  private showUnavailableMessage(container: HTMLElement) {
+    container.appendChild(
       ReactSubView(
         this.props,
         NoPreviewMessageWithLink,
@@ -127,6 +279,97 @@ export class EmbedMediaView extends BlockView<Trackable<EmbedNode>> {
       )
     )
   }
+
+  public createMedia = () => {
+    const { href } = this.node.attrs
+    if (!href) {
+      return null
+    }
+
+    const files = this.props.getFiles()
+    const file = files.find((f) => f.id === href)
+    if (!file) {
+      return null
+    }
+
+    let mediaUrl: string | undefined
+    if (file.id) {
+      mediaUrl = file.id
+    }
+
+    if (!mediaUrl) {
+      return null
+    }
+
+    const mediaInfo = getMediaTypeInfo(file.name)
+
+    if (mediaInfo.isVideo) {
+      const video = document.createElement('video')
+      video.controls = true
+      video.style.maxWidth = '100%'
+      video.style.height = '250px'
+
+      const source = document.createElement('source')
+      source.src = mediaUrl
+
+      video.appendChild(source)
+      video.appendChild(
+        document.createTextNode('Your browser does not support the video tag.')
+      )
+
+      return video
+    } else if (mediaInfo.isAudio) {
+      const audio = document.createElement('audio')
+      audio.controls = true
+      audio.style.width = '100%'
+
+      const source = document.createElement('source')
+      source.src = mediaUrl
+
+      audio.appendChild(source)
+      audio.appendChild(
+        document.createTextNode('Your browser does not support the audio tag.')
+      )
+
+      return audio
+    } else {
+      return createUnsupportedFormat(
+        file.name,
+        this.props.getCapabilities().editArticle
+      )
+    }
+  }
+
+  private managePositionMenu() {
+    const existingMenu = this.container.querySelector('.position-menu')
+    if (existingMenu) {
+      existingMenu.remove()
+    }
+
+    this.positionMenuWrapper = this.createPositionMenuWrapper()
+    this.container.prepend(this.positionMenuWrapper)
+  }
+
+  createPositionMenuWrapper = () => {
+    this.positionMenuWrapper = createPositionMenuWrapper(
+      this.mediaPosition,
+      this.showPositionMenu,
+      this.props
+    )
+    return this.positionMenuWrapper
+  }
+
+  showPositionMenu = () => {
+    showPositionMenu(
+      schema.nodes.embed,
+      this.node,
+      this.mediaPosition,
+      this.positionMenuWrapper,
+      this.view,
+      this.getPos,
+      this.props
+    )
+  }
 }
 
-export default createNodeView(EmbedMediaView)
+export default createEditableNodeView(EditableBlock(EmbedView))

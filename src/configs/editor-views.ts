@@ -16,7 +16,6 @@
 import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
-import { conditionalMediaViews } from '../lib/view'
 import { NodeViewCreator } from '../types'
 import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
@@ -31,6 +30,7 @@ import boxElement from '../views/box_element'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
+import embed from '../views/embed'
 import empty from '../views/empty'
 import equation from '../views/equation_editable'
 import equationElement from '../views/equation_element_editable'
@@ -80,7 +80,7 @@ export default (
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
     affiliations: affiliations(props, dispatch),
-    embed: conditionalMediaViews(props, dispatch),
+    embed: embed(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),

@@ -16,20 +16,13 @@
 
 import {
   ManuscriptEditorView,
-  ManuscriptNode,
   ManuscriptNodeType,
-  ManuscriptNodeView,
   schema,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
 import { NodeSelection } from 'prosemirror-state'
 import * as utils from 'prosemirror-utils'
 
-import { Dispatch } from '../commands'
-import { EditorProps } from '../configs/ManuscriptsEditor'
-import { NodeViewCreator } from '../types'
-import embed from '../views/embed'
-import media from '../views/media'
 import { isHidden, sanitizeAttrsChange } from './track-changes-utils'
 
 const metaNodeTypes = [
@@ -102,24 +95,5 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const pos = child.pos
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
-  }
-}
-
-export const isUploadedMedia = (node: ManuscriptNode, props: EditorProps) => {
-  const { href, mediaType } = node.attrs
-  const files = props.getFiles()
-  const file = files.find((f) => f.id === href)
-  return file || mediaType === 'uploaded'
-}
-
-export const conditionalMediaViews = (
-  props: EditorProps,
-  dispatch: Dispatch
-): NodeViewCreator<ManuscriptNodeView> => {
-  return (node, view, getPos, decorations) => {
-    if (isUploadedMedia(node, props)) {
-      return media(props, dispatch)(node, view, getPos, decorations)
-    }
-    return embed(props)(node, view, getPos, decorations)
   }
 }

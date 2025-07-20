@@ -357,21 +357,6 @@ export const createBlock = (
   }
 }
 
-export const insertEmbed = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  attrs?: Attrs
-) => {
-  const position = findBlockInsertPosition(state)
-  if (position === null) {
-    return false
-  }
-
-  createBlock(schema.nodes.embed, position, state, dispatch, attrs)
-
-  return true
-}
-
 export const insertInlineTableFootnote = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -442,7 +427,7 @@ export const insertFigure = (
   return true
 }
 
-export const insertMedia = (
+export const insertEmbed = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   attrs?: Attrs
@@ -456,7 +441,6 @@ export const insertMedia = (
     {
       ...attrs,
       id: generateNodeID(schema.nodes.embed),
-      mediaType: 'uploaded',
     },
     [
       createAndFillFigcaptionElement(),

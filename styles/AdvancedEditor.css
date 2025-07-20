@@ -192,6 +192,10 @@
   visibility: visible;
 }
 
+.ProseMirror .media-preview audio{
+  margin-top: 40px;
+}
+
 .ProseMirror .block:focus-within .figure-block,
 .ProseMirror .block:hover .figure-block {
   border-color: #e2e2e2;
@@ -210,11 +214,11 @@
   justify-self: flex-end;
 }
 
-.ProseMirror .figure-block[data-alignment='left'] .media-preview {
+.ProseMirror .block[data-alignment='left'] .media-preview {
   align-items: flex-start;
 }
 
-.ProseMirror .figure-block[data-alignment='right'] .media-preview {
+.ProseMirror .block[data-alignment='right'] .media-preview {
   align-items: flex-end;
 }
 
@@ -259,6 +263,9 @@
   min-height: 100px;
   white-space: normal;
   font-size: 14px;
+}
+.ProseMirror .block-embed  .media-preview .placeholder {
+  padding: 16px 32px;
 }
 
 .ProseMirror .figure.placeholder a {
@@ -340,7 +347,7 @@
   text-align: center !important;
 }
 
-.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu {
+.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu, .ProseMirror .block-embed .position-menu {
   position: absolute;
   top: 15px;
   right: 35px;
@@ -1398,13 +1405,6 @@ th:hover > .table-context-menu-button,
   pointer-events: none;
 }
 
-.ProseMirror .block-embed {
-  grid-template-columns: none;
-}
-.ProseMirror .block-embed .block {
-  text-align: center;
-  margin: 42px 52px;
-}
 .tracking-visible
   .ProseMirror
   .block-embed[data-track-status='pending'][data-track-op='delete']
@@ -1413,30 +1413,10 @@ th:hover > .table-context-menu-button,
   opacity: 0.3;
 }
 
-.ProseMirror .block-embed .tools-panel {
+.ProseMirror .embed-preview .tools-panel {
   position: relative;
   right: 0;
-}
-
-.ProseMirror .block-embed .block-gutter,
-.block-embed .action-gutter {
-  display: none;
-}
-
-.ProseMirror .block-embed:hover .embed-context-menu {
-  visibility: visible;
-}
-
-.ProseMirror .block-embed .embed-context-menu {
-  visibility: hidden;
-  position: absolute;
-  width: fit-content;
-  right: 7%;
-  z-index: 10;
-  border-radius: 4px;
-  border: 1px solid #c9c9c9;
-  background: #fff;
-  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.3);
+  top: 0;
 }
 
 .search-result {
@@ -1545,10 +1525,10 @@ th:hover > .table-context-menu-button,
   right: calc(100% - 6px);
 }
 
-.ProseMirror .block-embed .accessibility_element_expander_button_container {
+/* .ProseMirror .block-embed .accessibility_element_expander_button_container {
   right: 36px;
   bottom: 36px;
-}
+} */
 
 .ProseMirror
   .block-table_element
@@ -1598,6 +1578,64 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .block-image_element .block:focus-visible,
-.ProseMirror .block-figure_element .block:focus-visible {
+.ProseMirror .block-figure_element .block:focus-visible,
+.ProseMirror .block-embed .block:focus-visible {
   outline: none;
+}
+
+.ProseMirror .block-embed .placeholder .placeholder-content {
+  padding: 16px;
+  text-align: center;
+}
+
+.ProseMirror .block-embed .placeholder .placeholder-divider {
+  font-weight: bold;
+  color: #666;
+  margin: 16px 0 12px 0;
+  position: relative;
+}
+
+.ProseMirror .block-embed .placeholder .placeholder-divider::before,
+.ProseMirror .block-embed .placeholder .placeholder-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 1px;
+  background: #ddd;
+}
+
+.ProseMirror .block-embed .placeholder .placeholder-divider::before {
+  left: 10%;
+}
+
+.ProseMirror .block-embed .placeholder .placeholder-divider::after {
+  right: 10%;
+}
+
+.ProseMirror .block-embed .placeholder .embed-option {
+  margin-top: 12px;
+}
+
+.ProseMirror .block-embed .placeholder .embed-link-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 8px 0;
+  transition: background 0.2s ease;
+}
+
+.ProseMirror .block-embed .placeholder .embed-link-button:hover {
+  background: #0056b3;
+}
+
+.ProseMirror .block-embed .placeholder .embed-help {
+  font-size: 12px;
+  color: #666;
+  margin: 4px 0 0 0;
 }

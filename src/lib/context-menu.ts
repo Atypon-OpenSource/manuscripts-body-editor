@@ -451,14 +451,18 @@ export class ContextMenu {
   private createMenuItem = (
     contents: string,
     handler: EventListener,
-    IconComponent: React.FC | null = null,
+    IconComponent: React.FC | string | null = null,
     selected = false
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
     selected && item.classList.add('selected')
     if (IconComponent) {
-      item.innerHTML = renderToStaticMarkup(createElement(IconComponent))
+      if (typeof IconComponent === 'string') {
+        item.innerHTML = IconComponent
+      } else {
+        item.innerHTML = renderToStaticMarkup(createElement(IconComponent))
+      }
     }
     const textNode = document.createTextNode(contents)
     item.appendChild(textNode)
@@ -487,7 +491,8 @@ export class ContextMenu {
     items: {
       title: string
       action: () => void
-      IconComponent: React.FC | null
+      IconComponent: React.FC | string | null
+      iconName: string
       selected: boolean
     }[]
   ) => {

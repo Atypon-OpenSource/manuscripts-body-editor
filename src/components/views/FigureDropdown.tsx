@@ -45,6 +45,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
+  onReplaceEmbed?: () => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
 }
@@ -83,6 +84,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onUpload,
   onDetach,
   onReplace,
+  onReplaceEmbed,
   onDelete,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
@@ -90,9 +92,12 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
-  const showReplace = onReplace && can.replaceFile
+  const showReplace =
+    (onReplace && can.replaceFile) || (onReplaceEmbed && can.editArticle)
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
   const showDelete = onDelete && can.detachFile
+
+  const isEmbedMode = !!onReplaceEmbed
 
   const groupFiles = memoGroupFiles()
 
@@ -103,49 +108,62 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <NestedDropdown
-            disabled={!showReplace}
-            parentToggleOpen={toggleOpen}
-            buttonText={replaceBtnText}
-            moveLeft
-            list={
-              <>
-                {getSupplements(getFiles, getDoc, groupFiles).map(
-                  (file, index) => (
-                    <ListItemButton
-                      key={file.id}
-                      id={index.toString()}
-                      onClick={() => onReplace && onReplace(file, true)}
-                    >
-                      {getFileIcon(file.name)}
-                      <ListItemText>{file.name}</ListItemText>
-                    </ListItemButton>
-                  )
-                )}
-                {getOtherFiles(getFiles, getDoc, groupFiles).map(
-                  (file, index) => (
-                    <ListItemButton
-                      key={file.id}
-                      id={index.toString()}
-                      onClick={() => onReplace && onReplace(file)}
-                    >
-                      {getFileIcon(file.name)}
-                      <ListItemText>{file.name}</ListItemText>
-                    </ListItemButton>
-                  )
-                )}
-                <UploadButton onClick={onUpload} disabled={!showUpload}>
-                  <UploadIcon /> Upload new...
-                </UploadButton>
-              </>
-            }
-          />
-          <ListItemButton onClick={onDownload} disabled={!showDownload}>
-            Download
-          </ListItemButton>
-          <ListItemButton onClick={onDetach} disabled={!showDetach}>
-            Detach
-          </ListItemButton>
+          {showReplace && isEmbedMode && (
+            <ListItemButton onClick={() => onReplaceEmbed && onReplaceEmbed()}>
+              Edit Link
+            </ListItemButton>
+          )}
+          {showReplace && !isEmbedMode && (
+            <NestedDropdown
+              disabled={!showReplace}
+              parentToggleOpen={toggleOpen}
+              buttonText={replaceBtnText}
+              moveLeft
+              list={
+                <>
+                  {getSupplements(getFiles, getDoc, groupFiles).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file, true)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
+                  {getOtherFiles(getFiles, getDoc, groupFiles).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
+                  {showUpload && (
+                    <UploadButton onClick={onUpload} disabled={!showUpload}>
+                      <UploadIcon /> Upload new...
+                    </UploadButton>
+                  )}
+                </>
+              }
+            />
+          )}
+          {showDownload && (
+            <ListItemButton onClick={onDownload} disabled={!showDownload}>
+              Download
+            </ListItemButton>
+          )}
+          {showDetach && (
+            <ListItemButton onClick={onDetach} disabled={!showDetach}>
+              Detach
+            </ListItemButton>
+          )}
           {showDelete && (
             <ListItemButton onClick={onDelete}>Delete</ListItemButton>
           )}

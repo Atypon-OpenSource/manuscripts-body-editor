@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FileCorruptedIcon,
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-} from '@manuscripts/style-guide'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -29,16 +22,21 @@ import {
   schema,
   SupplementNode,
 } from '@manuscripts/transform'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
 
+import { openEmbedDialog } from '../components/toolbar/InsertEmbedDialog'
 import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
 import { EditorProps } from '../configs/ManuscriptsEditor'
+import {
+  fileCorruptedIcon,
+  imageDefaultIcon,
+  imageLeftIcon,
+  imageRightIcon,
+} from '../icons'
 import { Trackable } from '../types'
-import { figurePositions } from '../views/figure_editable'
+import { figurePositions } from '../views/image_element'
 import ReactSubView from '../views/ReactSubView'
 import { FileAttachment } from './files'
 import { updateNodeAttrs } from './view'
@@ -136,21 +134,21 @@ export const createPositionOptions = <T extends ManuscriptNode>(
     {
       title: 'Left',
       action: createAction(figurePositions.left),
-      IconComponent: ImageLeftIcon,
+      IconComponent: imageLeftIcon,
       iconName: 'ImageLeft',
       selected: currentPosition === figurePositions.left,
     },
     {
       title: 'Center',
       action: createAction(figurePositions.default),
-      IconComponent: ImageDefaultIcon,
+      IconComponent: imageDefaultIcon,
       iconName: 'ImageDefault',
       selected: !currentPosition,
     },
     {
       title: 'Right',
       action: createAction(figurePositions.right),
-      IconComponent: ImageRightIcon,
+      IconComponent: imageRightIcon,
       iconName: 'ImageRight',
       selected: currentPosition === figurePositions.right,
     },
@@ -188,9 +186,7 @@ export const createUnsupportedFormat = (
   const instructions = document.createElement('div')
   instructions.classList.add('instructions')
 
-  const iconHtml = renderToStaticMarkup(
-    createElement(FileCorruptedIcon, { className: 'icon' })
-  )
+  const iconHtml = fileCorruptedIcon
 
   instructions.innerHTML = `
     <div>
@@ -210,7 +206,9 @@ export const createUnsupportedFormat = (
 }
 
 export const createMediaPlaceholder = (
-  mediaType: 'media' | 'figure' = 'media'
+  mediaType: 'media' | 'figure' = 'media',
+  view?: ManuscriptEditorView,
+  getPos?: () => number
 ): HTMLElement => {
   const element = document.createElement('div')
   element.classList.add('figure', 'placeholder')
@@ -221,11 +219,35 @@ export const createMediaPlaceholder = (
   const uploadText = mediaType === 'media' ? 'media' : 'image'
 
   instructions.innerHTML = `
-    <p>Drag or click here to upload ${uploadText} <br>
-    or drag items here from the file inspector tabs <br>
-    <a data-action='open-other-files'>'Other files'</a> |
-    <a data-action='open-supplement-files'>'Supplements'</a></p>
+    <div class="placeholder-content">
+      <p>Drag or click here to upload ${uploadText} <br>
+      or drag items here from the file inspector tabs <br>
+      <a data-action='open-other-files'>'Other files'</a> |
+      <a data-action='open-supplement-files'>'Supplements'</a></p>
+      ${
+        mediaType === 'media' && view && getPos
+          ? `
+        <div class="placeholder-divider">OR</div>
+        <div class="embed-option">
+          <button class="embed-link-button" type="button">
+            Add External Link
+          </button>
+        </div>
+      `
+          : ''
+      }
+    </div>
   `
+
+  if (mediaType === 'media' && view && getPos) {
+    const embedButton = instructions.querySelector('.embed-link-button')
+    if (embedButton) {
+      embedButton.addEventListener('click', (e) => {
+        e.stopPropagation()
+        openEmbedDialog(view, getPos())
+      })
+    }
+  }
 
   element.appendChild(instructions)
   return element
@@ -235,6 +257,7 @@ export interface FileHandlers {
   handleDownload?: () => void
   handleUpload?: () => void
   handleReplace?: (file: FileAttachment, isSupplement?: boolean) => void
+  handleReplaceEmbed?: () => void
   handleDetach?: () => void
   handleDelete?: () => void
 }
@@ -309,6 +332,7 @@ export const createReactTools = <T extends ManuscriptNode>(
     onUpload: handlers.handleUpload,
     onDetach: handlers.handleDetach,
     onReplace: handlers.handleReplace,
+    onReplaceEmbed: handlers.handleReplaceEmbed,
     onDelete: handlers.handleDelete,
   }
 
@@ -463,17 +487,17 @@ export const createPositionMenuWrapper = (
   let icon
   switch (currentPosition) {
     case figurePositions.left:
-      icon = ImageLeftIcon
+      icon = imageLeftIcon
       break
     case figurePositions.right:
-      icon = ImageRightIcon
+      icon = imageRightIcon
       break
     default:
-      icon = ImageDefaultIcon
+      icon = imageDefaultIcon
       break
   }
   if (icon) {
-    positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
+    positionMenuButton.innerHTML = icon
   }
   if (can.editArticle) {
     positionMenuButton.addEventListener('click', onClick)
