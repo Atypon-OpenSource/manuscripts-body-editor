@@ -44,7 +44,7 @@ import {
   insertInlineTableFootnote,
   isCommentingAllowed,
 } from '../commands'
-import { figurePositions } from '../views/figure_editable'
+import { figurePositions } from '../views/image_element'
 import { PopperManager } from './popper'
 import {
   getMatchingChild,
