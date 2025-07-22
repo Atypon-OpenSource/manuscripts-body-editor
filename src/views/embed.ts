@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { EmbedNode, schema } from '@manuscripts/transform'
+import { EmbedNode } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -26,13 +26,10 @@ import {
   createFileHandlers,
   createFileUploader,
   createMediaPlaceholder,
-  createPositionMenuWrapper,
   createReactTools,
   createUnsupportedFormat,
   FileHandlers,
   getMediaTypeInfo,
-  setElementPositionAlignment,
-  showPositionMenu,
 } from '../lib/media'
 import { getOEmbedHTML } from '../lib/oembed'
 import { allowedHref } from '../lib/url'
@@ -46,8 +43,6 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
   private figureBlock: HTMLElement
   public reactTools: HTMLDivElement | null = null
-  positionMenuWrapper: HTMLDivElement
-  mediaPosition: string
   public ignoreMutation = () => true
   private initialized = false
   private previousAttrs: {
@@ -89,17 +84,11 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
   public updateContents() {
     super.updateContents()
-    const { href, mimetype, mimeSubtype, type } = this.node.attrs
+    const { href, mimetype, mimeSubtype } = this.node.attrs
 
     const currentAttrs = { href, mimetype, mimeSubtype }
-    const positionChanged = this.mediaPosition !== type
     const contentChanged =
       !this.initialized || !isEqual(this.previousAttrs, currentAttrs)
-
-    if (positionChanged) {
-      this.mediaPosition = type || 'default'
-      setElementPositionAlignment(this.container, this.mediaPosition)
-    }
 
     if (contentChanged) {
       this.initialized = true
@@ -107,8 +96,6 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
       this.updateMediaPreview()
       this.manageReactTools()
     }
-
-    this.managePositionMenu()
   }
 
   private manageReactTools() {
@@ -338,37 +325,6 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
         this.props.getCapabilities().editArticle
       )
     }
-  }
-
-  private managePositionMenu() {
-    const existingMenu = this.container.querySelector('.position-menu')
-    if (existingMenu) {
-      existingMenu.remove()
-    }
-
-    this.positionMenuWrapper = this.createPositionMenuWrapper()
-    this.container.prepend(this.positionMenuWrapper)
-  }
-
-  createPositionMenuWrapper = () => {
-    this.positionMenuWrapper = createPositionMenuWrapper(
-      this.mediaPosition,
-      this.showPositionMenu,
-      this.props
-    )
-    return this.positionMenuWrapper
-  }
-
-  showPositionMenu = () => {
-    showPositionMenu(
-      schema.nodes.embed,
-      this.node,
-      this.mediaPosition,
-      this.positionMenuWrapper,
-      this.view,
-      this.getPos,
-      this.props
-    )
   }
 }
 

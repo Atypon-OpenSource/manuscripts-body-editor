@@ -223,27 +223,24 @@ export const createMediaPlaceholder = (
       <p>Drag or click here to upload ${uploadText} <br>
       or drag items here from the file inspector tabs <br>
       <a data-action='open-other-files'>'Other files'</a> |
-      <a data-action='open-supplement-files'>'Supplements'</a></p>
+      <a data-action='open-supplement-files'>'Supplements'</a>
       ${
         mediaType === 'media' && view && getPos
-          ? `
-        <div class="placeholder-divider">OR</div>
-        <div class="embed-option">
-          <button class="embed-link-button" type="button">
-            Add External Link
-          </button>
-        </div>
-      `
+          ? "| <a data-action='add-external-link'>'External link'</a>"
           : ''
       }
+      </p>
     </div>
   `
 
   if (mediaType === 'media' && view && getPos) {
-    const embedButton = instructions.querySelector('.embed-link-button')
-    if (embedButton) {
-      embedButton.addEventListener('click', (e) => {
+    const embedLink = instructions.querySelector(
+      "[data-action='add-external-link']"
+    )
+    if (embedLink) {
+      embedLink.addEventListener('click', (e) => {
         e.stopPropagation()
+        e.preventDefault()
         openEmbedDialog(view, getPos())
       })
     }

@@ -265,19 +265,6 @@ export class ContextMenu {
       }
     }
 
-    if (type === schema.nodes.embed) {
-      const attrType = this.node.attrs.type
-      const submenuOptions = createPositionOptions(
-        schema.nodes.embed,
-        this.node,
-        attrType,
-        this.view
-      )
-      const submenuLabel = 'Position'
-      const submenu = this.createSubmenu(submenuLabel, submenuOptions)
-      menu.appendChild(submenu)
-    }
-
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {

@@ -18,6 +18,7 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
+import { draggableIcon } from '../icons'
 import {
   addInteractionHandlers,
   createFileHandlers,
@@ -26,7 +27,6 @@ import {
   createReactTools,
   createUnsupportedFormat,
 } from '../lib/media'
-import { draggableIcon } from '../icons'
 import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
