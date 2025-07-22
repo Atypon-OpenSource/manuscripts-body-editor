@@ -318,7 +318,7 @@ export const indentSection =
 
     // Check if there's a valid previous section to indent into
     // Look backwards through siblings to find a valid (non-deleted, non-moved) section
-    let previousSection = null
+    let previousSection: Node | null = null
     for (let i = startIndex - 1; i >= 0; i--) {
       const candidate = parentSection.child(i)
       if (candidate.type === nodes.section && !shouldSkipNode(candidate)) {
@@ -346,7 +346,7 @@ export const indentSection =
     } else {
       // Moving section into previous section as subsection
       // Find the actual position of the previous section by walking through the document
-      let beforePreviousSection = null
+      let beforePreviousSection: number | null = null
 
       $from.doc.descendants((node, pos) => {
         if (node === previousSection) {
