@@ -317,15 +317,18 @@ export const indentSection =
     const startIndex = $from.index(parentSectionDepth)
 
     // Check if there's a valid previous section to indent into
-    const previousSection =
-      startIndex > 0 ? parentSection.child(startIndex - 1) : null
-    const isValidContainer =
-      previousSection &&
-      // !shouldSkipNode(previousSection) &&
-      previousSection.type === nodes.section
+    // Look backwards through siblings to find a valid (non-deleted, non-moved) section
+    let previousSection = null
+    for (let i = startIndex - 1; i >= 0; i--) {
+      const candidate = parentSection.child(i)
+      if (candidate.type === nodes.section && !shouldSkipNode(candidate)) {
+        previousSection = candidate
+        break
+      }
+    }
 
     let anchor
-    if (!previousSection || !isValidContainer) {
+    if (!previousSection) {
       // No valid previous section, creating new parent section
       const emptyTitle = nodes.section_title.create()
       const newParentSectionContent = Fragment.fromArray([emptyTitle, section])
@@ -342,7 +345,20 @@ export const indentSection =
       anchor = beforeSection + 1
     } else {
       // Moving section into previous section as subsection
-      const beforePreviousSection = beforeSection - previousSection.nodeSize
+      // Find the actual position of the previous section by walking through the document
+      let beforePreviousSection = null
+
+      $from.doc.descendants((node, pos) => {
+        if (node === previousSection) {
+          beforePreviousSection = pos
+          return false // stop iteration
+        }
+      })
+
+      if (beforePreviousSection === null) {
+        return false
+      }
+
       const insertPos = beforePreviousSection + previousSection.nodeSize - 1
       tr.insert(insertPos, section)
 
@@ -351,7 +367,7 @@ export const indentSection =
       const newAfterSection = afterSection + section.nodeSize
       tr.delete(newBeforeSection, newAfterSection)
 
-      anchor = beforePreviousSection + 1
+      anchor = insertPos + 1
     }
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
