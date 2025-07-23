@@ -39,8 +39,8 @@ import {
   insertInlineTableFootnote,
   isCommentingAllowed,
 } from '../commands'
-import { createPositionOptions } from './media'
 import { PopperManager } from './popper'
+import { createPositionOptions } from './position-menu'
 import {
   getMatchingChild,
   isChildOfNodeTypes,

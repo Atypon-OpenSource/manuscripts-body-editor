@@ -17,7 +17,7 @@
 import { ContextMenu } from '@manuscripts/style-guide'
 import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
 
-import { createPositionMenuWrapper } from '../lib/media'
+import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'

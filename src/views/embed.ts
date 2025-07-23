@@ -42,6 +42,7 @@ import ReactSubView from './ReactSubView'
 export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
   private figureBlock: HTMLElement
+  private preview: HTMLElement | null = null
   public reactTools: HTMLDivElement | null = null
   public ignoreMutation = () => true
   private initialized = false
@@ -101,48 +102,41 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private manageReactTools() {
     this.reactTools?.remove()
 
+    let handlers: FileHandlers | undefined
+    const can = this.props.getCapabilities()
+
     if (this.isUploadedFile()) {
-      const handlers = createFileHandlers(
+      handlers = createFileHandlers(
         this.node,
         this.view,
         this.getPos,
         this.props,
         this.setHref
       )
-
-      const can = this.props.getCapabilities()
       if (can.uploadFile) {
         handlers.handleUpload = createFileUploader(
           this.upload,
           'video/*,audio/*'
         )
       }
-
-      this.reactTools = createReactTools(
-        this.node,
-        this.view,
-        this.getPos,
-        this.props,
-        handlers
-      )
     } else if (this.isEmbedLink()) {
-      const handlers = this.createEmbedHandlers()
-
-      this.reactTools = createReactTools(
-        this.node,
-        this.view,
-        this.getPos,
-        this.props,
-        handlers
-      )
+      handlers = this.createEmbedHandlers()
     }
 
-    if (this.reactTools) {
-      const preview = this.figureBlock.querySelector('.media-preview')
-      if (preview) {
-        preview.insertBefore(this.reactTools, preview.firstChild)
-      } else {
-        this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+    if (handlers) {
+      this.reactTools = createReactTools(
+        this.node,
+        this.view,
+        this.getPos,
+        this.props,
+        handlers
+      )
+      if (this.reactTools) {
+        if (this.preview) {
+          this.preview.insertBefore(this.reactTools, this.preview.firstChild)
+        } else {
+          this.dom.insertBefore(this.reactTools, this.dom.firstChild)
+        }
       }
     }
   }
@@ -178,12 +172,15 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     preview.classList.add('media-preview')
     preview.setAttribute('contenteditable', 'false')
 
-    const oldPreview = this.figureBlock.querySelector('.media-preview')
+    const oldPreview = this.preview
+      ? this.preview
+      : this.figureBlock.querySelector('.media-preview')
     if (oldPreview) {
       this.figureBlock.replaceChild(preview, oldPreview)
     } else {
       this.figureBlock.prepend(preview)
     }
+    this.preview = preview
 
     const href = this.node.attrs.href
 
