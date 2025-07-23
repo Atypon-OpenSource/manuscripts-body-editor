@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
+import { draggableIcon } from '../icons'
 import {
-  FigureOptions,
-  FigureOptionsProps,
-} from '../components/views/FigureDropdown'
-import { draggableIcon, fileCorruptedIcon } from '../icons'
-import { FileAttachment } from '../lib/files'
+  addInteractionHandlers,
+  createFileHandlers,
+  createFileUploader,
+  createMediaPlaceholder,
+  createReactTools,
+  createUnsupportedFormat,
+} from '../lib/media'
 import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
-import { figureUploader } from './figure_uploader'
-import ReactSubView from './ReactSubView'
 
 export class FigureEditableView extends FigureView {
-  public reactTools: HTMLDivElement
+  public reactTools: HTMLDivElement | null = null
+  positionMenuWrapper: HTMLDivElement
+  figurePosition: string
   private dragHandle: HTMLDivElement | undefined
   private static currentDragFigureId: string | null = null
   private dragAndDropInitialized = false
@@ -215,51 +218,7 @@ export class FigureEditableView extends FigureView {
       : this.createPlaceholder()
 
     if (can.uploadFile && !isDeleted(this.node)) {
-      const handlePlaceholderClick = (event: Event) => {
-        const target = event.target as HTMLElement
-        if (target.dataset && target.dataset.action) {
-          return
-        }
-        const triggerUpload = figureUploader(this.upload)
-        triggerUpload()
-      }
-
-      img.addEventListener('click', handlePlaceholderClick)
-
-      img.addEventListener('mouseenter', () => {
-        img.classList.toggle('over', true)
-      })
-
-      img.addEventListener('mouseleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener('dragenter', (event) => {
-        event.preventDefault()
-        img.classList.toggle('over', true)
-      })
-
-      img.addEventListener('dragleave', () => {
-        img.classList.toggle('over', false)
-      })
-
-      img.addEventListener('dragover', (e) => {
-        if (e.dataTransfer && e.dataTransfer.items) {
-          for (const item of e.dataTransfer.items) {
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
-              e.preventDefault()
-              e.dataTransfer.dropEffect = 'copy'
-            }
-          }
-        }
-      })
-
-      img.addEventListener('drop', async (e) => {
-        if (e.dataTransfer && e.dataTransfer.files.length) {
-          e.preventDefault()
-          await this.upload(e.dataTransfer.files[0])
-        }
-      })
+      addInteractionHandlers(img, this.upload, 'image/*')
     }
 
     this.container.innerHTML = ''
@@ -293,54 +252,19 @@ export class FigureEditableView extends FigureView {
   }
 
   private manageReactTools() {
-    let handleDownload
-    let handleUpload
-    let handleReplace
-    let handleDetach
-    let handleDelete: (() => void) | undefined
+    this.reactTools?.remove()
 
-    const src = this.node.attrs.src
-    const files = this.props.getFiles()
-    const file = src && files.filter((f) => f.id === src)[0]
+    const handlers = createFileHandlers(
+      this.node,
+      this.view,
+      this.getPos,
+      this.props,
+      this.setSrc
+    )
 
     const can = this.props.getCapabilities()
-
-    if (src) {
-      if (file) {
-        handleDownload = () => {
-          this.props.fileManagement.download(file)
-        }
-      }
-      handleDetach = () => {
-        this.setSrc('')
-      }
-    }
-    if (can.replaceFile) {
-      handleReplace = (file: FileAttachment, isSupplement = false) => {
-        this.setSrc(file.id)
-        if (isSupplement) {
-          const tr = this.view.state.tr
-          this.view.state.doc.descendants((node, pos) => {
-            if (node.type === node.type.schema.nodes.supplement) {
-              const href = (node as SupplementNode).attrs.href
-              if (href === file.id) {
-                tr.delete(pos, pos + node.nodeSize)
-                this.view.dispatch(tr)
-              }
-            }
-
-            if (
-              node.type !== node.type.schema.nodes.supplements &&
-              node.type !== node.type.schema.nodes.manuscript
-            ) {
-              return false
-            }
-          })
-        }
-      }
-    }
     if (can.uploadFile) {
-      handleUpload = figureUploader(this.upload)
+      handlers.handleUpload = createFileUploader(this.upload, 'image/*')
     }
 
     if (can.detachFile) {
@@ -361,7 +285,7 @@ export class FigureEditableView extends FigureView {
 
       const figureCount = countFigures()
 
-      handleDelete =
+      handlers.handleDelete =
         figureCount > 1
           ? () => {
               const currentCount = countFigures()
@@ -377,26 +301,15 @@ export class FigureEditableView extends FigureView {
           : undefined
     }
 
-    this.reactTools?.remove()
-    if (this.props.dispatch && this.props.theme) {
-      const componentProps: FigureOptionsProps = {
-        can,
-        getDoc: () => this.view.state.doc,
-        getFiles: this.props.getFiles,
-        onDownload: handleDownload,
-        onUpload: handleUpload,
-        onDetach: handleDetach,
-        onReplace: handleReplace,
-        onDelete: handleDelete,
-      }
-      this.reactTools = ReactSubView(
-        this.props,
-        FigureOptions,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view
-      )
+    this.reactTools = createReactTools(
+      this.node,
+      this.view,
+      this.getPos,
+      this.props,
+      handlers
+    )
+
+    if (this.reactTools) {
       this.dom.insertBefore(this.reactTools, this.dom.firstChild)
     }
   }
@@ -413,34 +326,10 @@ export class FigureEditableView extends FigureView {
   }
 
   private createUnsupportedFormat = (name: string) => {
-    const element = document.createElement('div')
-    element.classList.add('figure', 'placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.classList.add('instructions')
-
-    // Convert the React component to a static HTML string
-    const iconHtml = fileCorruptedIcon
-
-    instructions.innerHTML = `
-    <div>
-      <div class="unsupported-icon-wrapper">${iconHtml}</div>
-      <div>${name}</div>
-      <div class="unsupported-format-label">
-        Unsupported file format
-      </div>
-      <div>
-        ${
-          this.props.getCapabilities()?.editArticle
-            ? 'Click to add image'
-            : 'No image here yet…'
-        }
-      </div>
-    </div>
-  `
-
-    element.appendChild(instructions)
-    return element
+    return createUnsupportedFormat(
+      name,
+      this.props.getCapabilities().editArticle
+    )
   }
 
   protected createImg = (src: string) => {
@@ -451,20 +340,7 @@ export class FigureEditableView extends FigureView {
   }
 
   protected createPlaceholder = () => {
-    const element = document.createElement('div')
-    element.classList.add('figure', 'placeholder')
-
-    const instructions = document.createElement('div')
-    instructions.classList.add('instructions')
-    instructions.innerHTML = `
-      <p>Drag or click here to upload image <br>
-      or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>'Other files'</a> | 
-      <a data-action='open-supplement-files'>'Supplements'</a></p>
-    `
-
-    element.appendChild(instructions)
-    return element
+    return createMediaPlaceholder('figure')
   }
 }
 

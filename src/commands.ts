@@ -355,21 +355,6 @@ export const createBlock = (
   }
 }
 
-export const insertEmbed = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  attrs?: Attrs
-) => {
-  const position = findBlockInsertPosition(state)
-  if (position === null) {
-    return false
-  }
-
-  createBlock(schema.nodes.embed, position, state, dispatch, attrs)
-
-  return true
-}
-
 export const insertInlineTableFootnote = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -437,6 +422,34 @@ export const insertFigure = (
   ]) as FigureElementNode
   const tr = state.tr.insert(position, element)
   dispatch(tr)
+  return true
+}
+
+export const insertEmbed = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  attrs?: Attrs
+) => {
+  const position = findBlockInsertPosition(state)
+  if (position === null) {
+    return false
+  }
+
+  const embed = schema.nodes.embed.create(
+    {
+      ...attrs,
+      id: generateNodeID(schema.nodes.embed),
+    },
+    [
+      createAndFillFigcaptionElement(),
+      schema.nodes.alt_text.create(),
+      schema.nodes.long_desc.create(),
+    ]
+  )
+
+  const tr = state.tr.insert(position, embed)
+  dispatch && dispatch(tr)
+
   return true
 }
 
