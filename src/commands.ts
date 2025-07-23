@@ -150,13 +150,11 @@ export const addToStart = (
     $from,
     $to,
   } = selection
-  const parentSize = $from.node().content.size
 
-  if (
-    (startOffset === 0 && endOffset === 0) ||
-    startOffset === parentSize ||
-    endOffset === parentSize
-  ) {
+  // Check if the cursor is at the start of a paragraph or text block.
+  // This ensures that a new node is added above the current node only when
+  // the cursor is at the very beginning of the parent node.
+  if (startOffset === 0 && endOffset === 0) {
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - (startOffset === 0 ? 1 : 0)
