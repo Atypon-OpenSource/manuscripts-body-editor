@@ -567,7 +567,7 @@ export const findPosBeforeFirstSubsection = (
   for (let d = $pos.depth; d >= 0; d--) {
     const parentNode = $pos.node(d)
     if (isSectionNodeType(parentNode.type)) {
-      const parentStartPos = $pos.start(d) // // Get the start position of the parent section
+      const parentStartPos = $pos.start(d) // Get the start position of the parent section
       parentNode.descendants((node, pos, parent) => {
         // Only consider direct children of the section
         if (
