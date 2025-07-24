@@ -36,8 +36,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.1.7-LEAN-4610.1
-        version: 3.1.7-LEAN-4610.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.1.7-LEAN-4610.2
+        version: 3.1.7-LEAN-4610.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
         specifier: 2.0.7
         version: 2.0.7
@@ -1173,8 +1173,8 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.1.7-LEAN-4610.1':
-    resolution: {integrity: sha512-EJO7D851+tyZSkf6qHkkAFnsTGe2lLIgIkHtUDKN0OMzTuBCrVxRsatQKTJb/2UTfy3hIpSvc8dizFeUMXlsXA==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/style-guide/-/@manuscripts/style-guide-3.1.7-LEAN-4610.1.tgz}
+  '@manuscripts/style-guide@3.1.7-LEAN-4610.2':
+    resolution: {integrity: sha512-gANAqhJnQepkzh4zzItxMkPFbg8xl/Ehz+xJv3nwZgPihRKhYaI98hHPppUSAAtvN+CXJe5obox8BoFz/hc2fw==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/style-guide/-/@manuscripts/style-guide-3.1.7-LEAN-4610.2.tgz}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.0.7':
@@ -5911,7 +5911,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.1.7-LEAN-4610.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.1.7-LEAN-4610.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
