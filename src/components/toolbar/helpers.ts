@@ -372,8 +372,12 @@ export const indentSection =
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-    // Add metadata to help track changes plugin identify the change
-    tr.setMeta('action', 'indentation')
+    // Set indentation metadata for track changes
+    tr.setMeta('indentation', {
+      type: 'indent',
+      nodeType: 'section',
+      ...(!previousSection && { createsContainer: true }),
+    })
 
     dispatch(tr)
     view && view.focus()
@@ -402,7 +406,10 @@ export const indentParagraph =
     )
 
     // Set indentation metadata for track changes
-    tr.setMeta('action', 'indentation')
+    tr.setMeta('indentation', {
+      type: 'indent',
+      nodeType: 'paragraph',
+    })
 
     tr.delete(beforeParagraph, sectionEnd)
     tr.insert(beforeParagraph, newSection)
@@ -452,8 +459,11 @@ export const unindentSection =
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    // Add metadata to help track changes plugin identify the change
-    tr.setMeta('action', 'indentation')
+    // Set indentation metadata for track changes
+    tr.setMeta('indentation', {
+      type: 'unindent',
+      nodeType: 'section',
+    })
 
     dispatch(tr)
     view && view.focus()
@@ -498,7 +508,10 @@ export const unindentParagraph =
     )
 
     // Set indentation metadata for track changes
-    tr.setMeta('action', 'indentation')
+    tr.setMeta('indentation', {
+      type: 'unindent',
+      nodeType: 'paragraph',
+    })
 
     dispatch(tr)
     view?.focus()
