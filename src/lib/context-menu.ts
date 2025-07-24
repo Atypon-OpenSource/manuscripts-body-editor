@@ -21,9 +21,9 @@ import {
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
 import {
-  getListType,
-  isInBibliographySection,
+  isInGraphicalAbstractSection,
   isSectionTitleNode,
+  ListNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -44,7 +44,7 @@ import {
   insertInlineTableFootnote,
   isCommentingAllowed,
 } from '../commands'
-import { figurePositions } from '../views/figure_editable'
+import { figurePositions } from '../views/image_element'
 import { PopperManager } from './popper'
 import {
   getMatchingChild,
@@ -99,17 +99,13 @@ export class ContextMenu {
     this.getPos = getPos
   }
 
-  public showAddMenu = (target: Element, after: boolean) => {
+  public showAddMenu = (target: Element) => {
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
-    // we don`t want to add section after 'REFERENCES'
-    if (isInBibliographySection($pos)) {
-      after = false
-    }
-    const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
+    const insertPos = $pos.after($pos.depth)
     const endPos = $pos.end()
-    const types = this.insertableTypes(after, insertPos, endPos)
+    const types = this.insertableTypes(insertPos, endPos)
 
     const insertNode = (
       type: ManuscriptNodeType,
@@ -119,7 +115,7 @@ export class ContextMenu {
       const { state, dispatch } = this.view
 
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
 
       createBlock(type, pos, state, dispatch, attrs)
@@ -139,7 +135,7 @@ export class ContextMenu {
               schema.nodes.backmatter,
             ])
           ) {
-            const labelPosition = after ? 'After' : 'Before'
+            const labelPosition = 'After'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
 
@@ -304,19 +300,23 @@ export class ContextMenu {
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const attrs = this.node.attrs
-          const listType = getListType(attrs.listStyleType).style
-          if (listType === 'none' || listType === 'disc') {
+          const list = this.node as ListNode
+          const type = list.attrs.listStyleType
+          if (type === 'simple' || type === 'bullet') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(null, 'order')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'order')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
           } else {
             section.appendChild(
               this.createMenuItem('Change to Bulleted list', () => {
-                this.changeNodeType(null, 'bullet')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'bullet')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
@@ -341,7 +341,6 @@ export class ContextMenu {
         menu.appendChild(
           this.createMenuItem('Remove Image', () => {
             const tr = this.view.state.tr
-            console.log(found)
             tr.delete(
               this.getPos() + 1 + found.pos,
               this.getPos() + 1 + found.pos + found.node.nodeSize
@@ -393,6 +392,10 @@ export class ContextMenu {
     }
 
     if (
+      !(
+        type === schema.nodes.figure_element &&
+        isInGraphicalAbstractSection($pos)
+      ) &&
       !readonlyTypes.includes(type) &&
       !readonlyTypes.includes($pos.parent.type)
     ) {
@@ -409,6 +412,40 @@ export class ContextMenu {
             })
           )
         })
+      )
+    }
+
+    if (type === schema.nodes.box_element) {
+      const tr = this.view.state.tr
+      const boxElementNode = $pos.node($pos.depth - 1)
+      const boxStartPos = $pos.start($pos.depth - 1)
+
+      const figcaptions = findChildrenByType(
+        boxElementNode,
+        schema.nodes.figcaption
+      )
+      const hasLabel = figcaptions.length > 0
+
+      menu.insertBefore(
+        this.createMenuItem(hasLabel ? 'Delete Label' : 'Add Label', () => {
+          if (hasLabel) {
+            const figcaptionNode = figcaptions[0].node
+            const figcaptionPos = boxStartPos + figcaptions[0].pos
+
+            tr.delete(figcaptionPos, figcaptionPos + figcaptionNode.nodeSize)
+          } else {
+            const newFigcaption = schema.nodes.figcaption.create({}, [
+              schema.nodes.caption_title.create(),
+            ])
+
+            tr.insert(boxStartPos, newFigcaption)
+          }
+
+          this.view.dispatch(tr)
+          popper.destroy()
+        }),
+
+        menu.firstChild
       )
     }
 
@@ -490,7 +527,6 @@ export class ContextMenu {
   }
 
   private insertableTypes = (
-    after: boolean,
     insertPos: number,
     endPos: number
   ): Set<InsertableNodes> => {
@@ -502,7 +538,7 @@ export class ContextMenu {
 
     const getPos = (pos?: number) => {
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
       return pos
     }
@@ -530,19 +566,6 @@ export class ContextMenu {
     checkNode('pullquote_element')
 
     return insertable
-  }
-
-  private changeNodeType = (
-    nodeType: ManuscriptNodeType | null,
-    listType: string
-  ) => {
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
-        id: this.node.attrs.id,
-        listStyleType: listType,
-      })
-    )
-    popper.destroy()
   }
 
   private deleteNode = (nodeType: ManuscriptNodeType) => {

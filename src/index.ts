@@ -43,11 +43,13 @@ export {
   searchReplaceKey as searchReplacePluginKey,
   SearchReplacePluginState,
 } from './plugins/search-replace'
+export { detectInconsistencyKey as detectInconsistencyPluginKey } from './plugins/detect-inconsistency'
 export { getNewMatch, getClosestMatch } from './plugins/search-replace/lib'
-export { metadata, BibliographyItemAttrs } from './lib/references'
+export { metadata, bibliographyItemTypes } from './lib/references'
 export {
   authorLabel,
   affiliationLabel,
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
+export type { Inconsistency } from './plugins/detect-inconsistency'

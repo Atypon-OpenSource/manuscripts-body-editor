@@ -21,13 +21,8 @@ type Sanitize = (
   config?: Pick<Config, 'USE_PROFILES' | 'ALLOWED_TAGS'>
 ) => DocumentFragment
 
-export interface Purify {
-  sanitize: Sanitize
-}
-
 export const sanitize: Sanitize = (dirty, config) =>
   purify.sanitize(dirty, {
     RETURN_DOM_FRAGMENT: true,
-    RETURN_DOM_IMPORT: true,
     ...config,
   })

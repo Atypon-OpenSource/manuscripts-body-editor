@@ -100,9 +100,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
-      if (author.role !== 'author') {
-        return
-      }
       const jointAuthors = this.isJointFirstAuthor(authors, i)
       wrapper.appendChild(this.buildAuthor(author, jointAuthors))
       if (i !== authors.length - 1) {
@@ -209,19 +206,17 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-
-      this.contextMenu = ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu']
-      )
-      return this.contextMenu
     }
-    return undefined
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    return this.contextMenu
   }
 
   public actionGutterButtons = (): HTMLElement[] => {

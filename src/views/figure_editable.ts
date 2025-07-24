@@ -14,46 +14,171 @@
  * limitations under the License.
  */
 
-import {
-  ContextMenu,
-  ContextMenuProps,
-  FileCorruptedIcon,
-  ImageDefaultIcon,
-  ImageLeftIcon,
-  ImageRightIcon,
-} from '@manuscripts/style-guide'
-import { schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import {
   FigureOptions,
   FigureOptionsProps,
 } from '../components/views/FigureDropdown'
-import { FileAttachment, groupFiles } from '../lib/files'
+import { draggableIcon, fileCorruptedIcon } from '../icons'
+import { FileAttachment } from '../lib/files'
 import { isDeleted } from '../lib/track-changes-utils'
-import { updateNodeAttrs } from '../lib/view'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { figureUploader } from './figure_uploader'
 import ReactSubView from './ReactSubView'
 
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
-
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement
-  positionMenuWrapper: HTMLDivElement
-  figurePosition: string
+  private dragHandle: HTMLDivElement | undefined
+  private static currentDragFigureId: string | null = null
+  private dragAndDropInitialized = false
 
   public initialise() {
     this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
+  }
+
+  private clearTargetClass(
+    target: Element,
+    classes: string[] = ['drop-target-above', 'drop-target-below']
+  ) {
+    target.classList.remove(...classes)
+  }
+
+  private handleDragStart() {
+    const figureId = this.node.attrs.id
+    FigureEditableView.currentDragFigureId = figureId
+    this.container.classList.add('dragging')
+    // Add drag-active to siblings only
+    const parent = this.container.parentElement
+    if (parent) {
+      const siblingFigures = parent.querySelectorAll('.figure')
+      siblingFigures.forEach((el) => {
+        if (el !== this.container) {
+          el.classList.add('drag-active')
+        }
+      })
+    }
+  }
+
+  private setupDragAndDrop() {
+    this.container.draggable = true
+
+    // Drag events for container
+    this.container.addEventListener('dragstart', () => {
+      // Only start figure dragging if we have a figure ID and figure is not deleted
+      if (this.node.attrs.id && !isDeleted(this.node)) {
+        this.handleDragStart()
+      }
+    })
+
+    // Drag events for drag handle (if present)
+    if (this.dragHandle) {
+      this.dragHandle.addEventListener('dragstart', () => {
+        this.handleDragStart()
+      })
+    }
+
+    this.container.addEventListener('dragend', () => {
+      // Clear the static variable when drag ends
+      FigureEditableView.currentDragFigureId = null
+      this.clearTargetClass(this.container, ['dragging'])
+      const parent = this.container.parentElement
+      if (parent) {
+        const figures = parent.querySelectorAll('.figure')
+        figures.forEach((el) => {
+          this.clearTargetClass(el, [
+            'drag-active',
+            'drop-target-above',
+            'drop-target-below',
+          ])
+        })
+      }
+      // TODO: Check if setting decorations will work for this case
+    })
+
+    this.container.addEventListener('dragover', (e) => {
+      // Only handle figure drops when we're dragging a figure (to avoid conflicts with other drag events for image)
+      if (FigureEditableView.currentDragFigureId) {
+        e.preventDefault()
+        e.stopPropagation()
+        const rect = this.container.getBoundingClientRect()
+        const relativeY = e.clientY - rect.top
+        const isAbove = relativeY < rect.height / 2
+        this.clearTargetClass(this.container)
+        this.container.classList.add(
+          isAbove ? 'drop-target-above' : 'drop-target-below'
+        )
+      }
+    })
+
+    this.container.addEventListener('dragleave', (e) => {
+      if (!this.container.contains(e.relatedTarget as Node)) {
+        this.clearTargetClass(this.container)
+      }
+    })
+
+    this.container.addEventListener('drop', (e) => {
+      // Only handle figure drops when we're dragging a figure (to avoid conflicts with other drop events for image)
+      if (!FigureEditableView.currentDragFigureId) {
+        return
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+
+      // Get figure ID from static variable
+      const figureId = FigureEditableView.currentDragFigureId
+
+      if (!figureId) {
+        return
+      }
+
+      const figure = this.getFigureById(figureId)
+      if (!figure) {
+        return
+      }
+      const toPos = this.getPos()
+      if (figure.pos === toPos) {
+        return
+      } // prevent self-move
+
+      this.moveFigure(figure.pos, figure.node, toPos)
+      this.clearTargetClass(this.container)
+    })
+  }
+
+  private getFigureById(
+    figureId: string
+  ): { pos: number; node: ManuscriptNode } | null {
+    let result: { pos: number; node: ManuscriptNode } | null = null
+    this.view.state.doc.descendants((node, pos) => {
+      if (node.type === schema.nodes.figure && node.attrs.id === figureId) {
+        result = { pos, node }
+        return false // Stop descending into children
+      }
+      if (result) {
+        return false // Stop entire traversal since we found the result
+      }
+    })
+    return result
+  }
+
+  private moveFigure(
+    fromPos: number,
+    fromNode: ManuscriptNode,
+    targetPos: number
+  ) {
+    const { state } = this.view
+    const { tr } = state
+
+    tr.delete(fromPos, fromPos + fromNode.nodeSize)
+    tr.insert(this.view.state.tr.mapping.map(targetPos), fromNode)
+    this.view.dispatch(tr)
   }
 
   upload = async (file: File) => {
@@ -63,11 +188,20 @@ export class FigureEditableView extends FigureView {
 
   public updateContents() {
     super.updateContents()
+    this.clearTargetClass(this.container, ['dragging'])
+
+    // Setup drag and drop if capabilities allow, not already initialized
+    if (
+      this.props.getCapabilities().editArticle &&
+      !this.dragAndDropInitialized
+    ) {
+      this.setupDragAndDrop()
+      this.dragAndDropInitialized = true
+    }
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
     const file = src && files.filter((f) => f.id === src)[0]
-    this.figurePosition = this.node.attrs.type
 
     this.container.innerHTML = ''
 
@@ -136,7 +270,26 @@ export class FigureEditableView extends FigureView {
 
   protected addTools() {
     this.manageReactTools()
-    this.container.appendChild(this.createPositionMenuWrapper())
+    const $pos = this.view.state.doc.resolve(this.getPos())
+
+    const parent = $pos.parent
+    // Create drag handle for for figure elements ( not simple image)
+    if (
+      this.props.getCapabilities()?.editArticle &&
+      parent.type === schema.nodes.figure_element &&
+      !isDeleted(this.node)
+    ) {
+      const dragHandle = document.createElement('div')
+      dragHandle.className = 'drag-handler'
+      dragHandle.innerHTML = draggableIcon
+      dragHandle.draggable = true
+
+      dragHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation()
+      })
+
+      this.container.appendChild(dragHandle)
+    }
   }
 
   private manageReactTools() {
@@ -144,6 +297,7 @@ export class FigureEditableView extends FigureView {
     let handleUpload
     let handleReplace
     let handleDetach
+    let handleDelete: (() => void) | undefined
 
     const src = this.node.attrs.src
     const files = this.props.getFiles()
@@ -162,25 +316,78 @@ export class FigureEditableView extends FigureView {
       }
     }
     if (can.replaceFile) {
-      handleReplace = (file: FileAttachment) => {
+      handleReplace = (file: FileAttachment, isSupplement = false) => {
         this.setSrc(file.id)
+        if (isSupplement) {
+          const tr = this.view.state.tr
+          this.view.state.doc.descendants((node, pos) => {
+            if (node.type === node.type.schema.nodes.supplement) {
+              const href = (node as SupplementNode).attrs.href
+              if (href === file.id) {
+                tr.delete(pos, pos + node.nodeSize)
+                this.view.dispatch(tr)
+              }
+            }
+
+            if (
+              node.type !== node.type.schema.nodes.supplements &&
+              node.type !== node.type.schema.nodes.manuscript
+            ) {
+              return false
+            }
+          })
+        }
       }
     }
     if (can.uploadFile) {
       handleUpload = figureUploader(this.upload)
     }
 
+    if (can.detachFile) {
+      // Helper function to count non-deleted figures in current figure element
+      const countFigures = () => {
+        const element = findParentNodeOfTypeClosestToPos(
+          this.view.state.doc.resolve(this.getPos()),
+          schema.nodes.figure_element
+        )
+        let count = 0
+        element?.node.descendants((node) => {
+          if (node.type === schema.nodes.figure && !isDeleted(node)) {
+            count++
+          }
+        })
+        return count
+      }
+
+      const figureCount = countFigures()
+
+      handleDelete =
+        figureCount > 1
+          ? () => {
+              const currentCount = countFigures()
+              const pos = this.getPos()
+              if (currentCount <= 1) {
+                // prevent deletion if only one figure remains
+                return
+              }
+              const tr = this.view.state.tr
+              tr.delete(pos, pos + this.node.nodeSize)
+              this.view.dispatch(tr)
+            }
+          : undefined
+    }
+
     this.reactTools?.remove()
     if (this.props.dispatch && this.props.theme) {
-      const files = this.props.getFiles()
-      const doc = this.view.state.doc
       const componentProps: FigureOptionsProps = {
         can,
-        files: groupFiles(doc, files),
+        getDoc: () => this.view.state.doc,
+        getFiles: this.props.getFiles,
         onDownload: handleDownload,
         onUpload: handleUpload,
         onDetach: handleDetach,
         onReplace: handleReplace,
+        onDelete: handleDelete,
       }
       this.reactTools = ReactSubView(
         this.props,
@@ -213,9 +420,7 @@ export class FigureEditableView extends FigureView {
     instructions.classList.add('instructions')
 
     // Convert the React component to a static HTML string
-    const iconHtml = renderToStaticMarkup(
-      createElement(FileCorruptedIcon, { className: 'icon' })
-    )
+    const iconHtml = fileCorruptedIcon
 
     instructions.innerHTML = `
     <div>
@@ -260,96 +465,6 @@ export class FigureEditableView extends FigureView {
 
     element.appendChild(instructions)
     return element
-  }
-
-  createPositionMenuWrapper = () => {
-    const can = this.props.getCapabilities()
-    this.positionMenuWrapper = document.createElement('div')
-    this.positionMenuWrapper.classList.add('position-menu')
-
-    const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
-
-    let icon
-    switch (this.figurePosition) {
-      case figurePositions.left:
-        icon = ImageLeftIcon
-        break
-      case figurePositions.right:
-        icon = ImageRightIcon
-        break
-      default:
-        icon = ImageDefaultIcon
-        break
-    }
-    if (icon) {
-      positionMenuButton.innerHTML = renderToStaticMarkup(createElement(icon))
-    }
-    if (can.editArticle) {
-      positionMenuButton.addEventListener('click', this.showPositionMenu)
-    }
-    this.positionMenuWrapper.appendChild(positionMenuButton)
-    return this.positionMenuWrapper
-  }
-
-  showPositionMenu = () => {
-    this.props.popper.destroy()
-    const figure = this.node
-
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Left',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.left,
-            })
-          },
-          icon: 'ImageLeft',
-          selected: this.figurePosition === figurePositions.left,
-        },
-        {
-          label: 'Default',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.default,
-            })
-          },
-          icon: 'ImageDefault',
-          selected: !this.figurePosition,
-        },
-        {
-          label: 'Right',
-          action: () => {
-            this.props.popper.destroy()
-            updateNodeAttrs(this.view, schema.nodes.figure, {
-              ...figure.attrs,
-              type: figurePositions.right,
-            })
-          },
-          icon: 'ImageRight',
-          selected: this.figurePosition === figurePositions.right,
-        },
-      ],
-    }
-    this.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu', 'position-menu']
-      ),
-      'left',
-      false
-    )
   }
 }
 

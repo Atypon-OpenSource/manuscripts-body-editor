@@ -39,6 +39,8 @@ import figureElement from '../views/figure_element_editable'
 import footnote from '../views/footnote'
 import footnotesElement from '../views/footnotes_element'
 import generalTableFootnote from '../views/general_table_footnote'
+import heroImage from '../views/hero_image_editable'
+import imageElement from '../views/image_element_editable'
 import inlineEquation from '../views/inline_equation_editable'
 import inlineFootnote from '../views/inline_footnote_editable'
 import keyword from '../views/keyword'
@@ -66,6 +68,8 @@ export default (
 ): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
+    subtitle: empty('subtitle'),
+    subtitles: empty('subtitles'),
     alt_title: alt_title(props),
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
@@ -81,7 +85,7 @@ export default (
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
     figure_element: figureElement(props, dispatch),
-    image_element: figureElement(props, dispatch),
+    image_element: imageElement(props, dispatch),
     footnote: footnote(props),
     footnotes_element: footnotesElement(props),
     general_table_footnote: generalTableFootnote(props, dispatch),
@@ -111,6 +115,7 @@ export default (
     award: award(props, dispatch),
     long_desc: accessibilityElement(props, dispatch),
     alt_text: accessibilityElement(props, dispatch),
-    hero_image: empty('hero_image'),
+    hero_image: heroImage(props, dispatch),
+    trans_abstract: empty('trans_abstract'),
   }
 }

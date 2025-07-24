@@ -53,8 +53,18 @@ export const useEditor = (externalProps: ExternalProps) => {
   const location = useLocation()
   const { collabProvider } = props
 
+  // Update editor state when document changes (e.g., when switching to comparison mode)
+  useEffect(() => {
+    if (view.current && props.isComparingMode) {
+      const newState = createEditorState(props)
+      setState(newState)
+      view.current.updateState(newState)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.doc, props.isComparingMode])
+
   // Receiving steps from backend
-  if (collabProvider) {
+  if (collabProvider && !props.isComparingMode) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     collabProvider.onNewSteps(async () => {
       if (state && view.current) {
@@ -97,7 +107,9 @@ export const useEditor = (externalProps: ExternalProps) => {
 
       if (
         collabProvider &&
-        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
+        (!trackState ||
+          trackState.status !== TrackChangesStatus.viewSnapshots) &&
+        !props.isComparingMode
       ) {
         const sendable = sendableSteps(nextState)
 
@@ -124,18 +136,20 @@ export const useEditor = (externalProps: ExternalProps) => {
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const onRender = useCallback((el: HTMLDivElement | null) => {
-    if (!el) {
-      return
-    }
-    view.current = createEditorView(
-      props,
-      el,
-      view.current?.state || state,
-      dispatch
-    )
-    setState(view.current.state)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const isViewingMode = props.isViewingMode
+
+  const onRender = useCallback(
+    (el: HTMLDivElement | null) => {
+      if (!el) {
+        return
+      }
+      const freshState = createEditorState(props)
+
+      view.current = createEditorView(props, el, freshState || state, dispatch)
+      setState(view.current.state)
+    },
+    [isViewingMode] // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   const isCommandValid = useCallback(
     (command: Command): boolean => command(state),

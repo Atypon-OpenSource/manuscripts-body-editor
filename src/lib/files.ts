@@ -60,7 +60,26 @@ export type FileManagement = {
   previewLink: PreviewLink
 }
 
-const figureTypes = [schema.nodes.figure_element, schema.nodes.image_element]
+const figureTypes = [
+  schema.nodes.figure_element,
+  schema.nodes.image_element,
+  schema.nodes.hero_image,
+]
+
+export function memoGroupFiles() {
+  let prevFiles: FileAttachment[] = []
+  let prevDoc: ManuscriptNode | undefined = undefined
+  let result: ManuscriptFiles | undefined
+
+  return function (doc: ManuscriptNode, files: FileAttachment[]) {
+    if (result && prevDoc === doc && prevFiles === files) {
+      return result
+    }
+    prevDoc = doc
+    prevFiles = files
+    return groupFiles(doc, files)
+  }
+}
 
 export const groupFiles = (
   doc: ManuscriptNode,

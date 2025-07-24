@@ -38,6 +38,7 @@ import {
   insertContributors,
   insertCrossReference,
   insertGraphicalAbstract,
+  insertHeroImage,
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
@@ -267,7 +268,9 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+B',
           pc: 'CommandOrControl+Option+B',
         },
-        isEnabled: isEditAllowed(state) && isCommandValid(insertBoxElement),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.box_element)),
         run: doCommand(insertBoxElement),
       },
       {
@@ -289,6 +292,12 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.image_element)),
         run: doCommand(insertBlock(schema.nodes.image_element)),
+      },
+      {
+        id: 'insert-hero-image',
+        label: 'Hero Image',
+        isEnabled: isEditAllowed(state) && isCommandValid(insertHeroImage()),
+        run: doCommand(insertHeroImage()),
       },
       {
         id: 'insert-table-element',

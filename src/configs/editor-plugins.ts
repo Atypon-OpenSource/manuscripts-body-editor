@@ -33,11 +33,13 @@ import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
 import comments from '../plugins/comments'
 import cross_references from '../plugins/cross-references'
+import detect_inconsistency from '../plugins/detect-inconsistency'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
 import lock_body from '../plugins/lock-body'
+import move_node from '../plugins/move-node'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
@@ -60,9 +62,12 @@ export default (props: EditorProps) => {
     trackChangesPlugin({
       userID: props.userID,
       debug: props.debug,
-      initialStatus: props.getCapabilities().editWithoutTracking
-        ? TrackChangesStatus.disabled
-        : TrackChangesStatus.enabled,
+      initialStatus:
+        props.isViewingMode || props.isComparingMode
+          ? TrackChangesStatus.viewSnapshots
+          : props.getCapabilities().editWithoutTracking
+          ? TrackChangesStatus.disabled
+          : TrackChangesStatus.enabled,
     }),
     section_title(),
     table_editing_fix(),
@@ -81,11 +86,13 @@ export default (props: EditorProps) => {
     doi(),
     section_category(props),
     cross_references(),
+    detect_inconsistency(),
     search_replace(),
     lock_body(),
     alt_titles(),
     accessibility_element(),
     prevent_empty(),
+    move_node(),
   ]
 
   if (props.collabProvider) {

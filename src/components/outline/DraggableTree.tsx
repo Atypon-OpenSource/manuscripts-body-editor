@@ -20,6 +20,7 @@ import {
 } from '@manuscripts/style-guide'
 import {
   isElementNodeType,
+  isHeroImageNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -36,6 +37,7 @@ import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted } from '../../lib/track-changes-utils'
 import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
+import { PluginState, sectionTitleKey } from '../../plugins/section_title'
 import {
   Outline,
   OutlineItem,
@@ -59,7 +61,11 @@ const excludedTypes = [
   schema.nodes.title,
   schema.nodes.alt_titles,
   schema.nodes.alt_title,
-  schema.nodes.hero_image,
+  schema.nodes.alt_text,
+  schema.nodes.long_desc,
+  schema.nodes.trans_abstract,
+  schema.nodes.subtitles,
+  schema.nodes.subtitle,
 ]
 
 const childrenExcludedTypes = [
@@ -120,11 +126,11 @@ export const buildTree: TreeBuilder = ({
       if (isExcluded(childNode.type)) {
         return
       }
-
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
-          childNode.attrs.id)
+          childNode.attrs.id &&
+          !isDeleted(childNode))
       ) {
         items.push(
           buildTree({
@@ -158,20 +164,35 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [isOpen, setOpen] = useState(depth === 0)
   const ref = useRef<HTMLDivElement>(null)
   // Disable drag-and-drop functionality when the body is locked
-  const disableDragAndDrop = view ? isBodyLocked(view.state) : true
+  const disableDragAndDrop = view
+    ? isBodyLocked(view.state) || !can?.editArticle
+    : true
 
   const { node, items, parent } = tree
+  const sectionTitleState: PluginState | undefined = view
+    ? sectionTitleKey.getState(view.state)
+    : undefined
 
   const itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
+    let sectionNumber =
+      node.type.name === 'section' && sectionTitleState
+        ? sectionTitleState.get(node.attrs.id) ?? ''
+        : ''
+    sectionNumber = sectionNumber ? `${sectionNumber}.` : ''
 
     if (text) {
-      return text.trim()
+      return `${sectionNumber}${sectionNumber ? ' ' : ''}${text.trim()}`
     }
 
     const placeholder = nodeTitlePlaceholder(node.type)
 
-    return <OutlineItemPlaceholder>{placeholder}</OutlineItemPlaceholder>
+    return (
+      <OutlineItemPlaceholder>
+        {sectionNumber && `${sectionNumber} `}
+        {placeholder}
+      </OutlineItemPlaceholder>
+    )
   }
 
   const toggleOpen = () => {
@@ -182,7 +203,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     type: 'outline',
     item: tree,
     canDrag: () => {
-      return depth !== 0 && !disableDragAndDrop
+      // Prevent dragging if the node is deleted, the body is locked, or editing is not allowed
+      return depth !== 0 && !disableDragAndDrop && !isDeleted(node)
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -240,7 +262,6 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       const node = item.node.type.schema.nodes[item.node.type.name].create(
         {
           ...item.node.attrs,
-          id: '',
         },
         item.node.content
       )
@@ -256,8 +277,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   })
 
   const isDeletedItem = isDeleted(node)
+  const isHeroImage = isHeroImageNode(node)
 
-  const isTop = isManuscriptNode(parent)
+  const isTop = isManuscriptNode(parent) && !isHeroImage
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
@@ -279,11 +301,18 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const dragClass = isDragging ? 'dragging' : ''
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
   const deletedClass = isDeletedItem ? 'deleted' : ''
+  const heroImageClass = isHeroImage ? 'hero-image' : ''
 
   return (
-    <Outline ref={ref} className={`${dragClass} ${dropClass} ${deletedClass}`}>
+    <Outline
+      ref={ref}
+      className={`${dragClass} ${dropClass} ${deletedClass} ${heroImageClass}`}
+    >
       {!isTop && node.type.name != 'manuscript' && (
-        <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
+        <OutlineItem
+          depth={isHeroImage ? 1 : depth}
+          onContextMenu={handleContextMenu}
+        >
           {items.length ? (
             <OutlineItemArrow onClick={toggleOpen}>
               {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}

@@ -14,27 +14,159 @@
  * limitations under the License.
  */
 
-import { FigureElementNode } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
+import { Node } from 'prosemirror-model'
 
-import { Trackable } from '../types'
-import BlockView from './block_view'
+import { addFigureBtnIcon } from '../icons'
 import { createNodeView } from './creators'
-
-export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
-  private container: HTMLElement
-
+import { ImageElementView } from './image_element'
+export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
+  private addFigureBtn: HTMLButtonElement
+  private resizeObserver: ResizeObserver | null = null
 
   public createElement = () => {
-    this.container = document.createElement('div')
-    this.container.classList.add('block')
-    this.dom.appendChild(this.container)
+    super.createElement()
+    this.addFigureElementButtons()
+  }
 
-    // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+  public initialise() {
+    super.initialise()
+    this.setupResizeObserver()
+  }
+
+  private setupResizeObserver() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
+
+    this.resizeObserver = new ResizeObserver(() => {
+      // Reposition button when figure dimensions change
+      requestAnimationFrame(() => this.updateButtonPosition())
+    })
+
+    // Observe all current figures
+    this.container.querySelectorAll('figure').forEach((figure) => {
+      this.resizeObserver?.observe(figure)
+    })
+  }
+
+  private addFigureElementButtons() {
+    if (this.props.getCapabilities()?.editArticle) {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
+        className: 'add-figure-button',
+        innerHTML: addFigureBtnIcon,
+        title: 'Add figure',
+      })
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
+    }
+  }
+
+  private updateButtonPosition() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
+
+    if (!lastFigure) {
+      return // No figures found
+    }
+
+    const lastFigureRect = lastFigure.getBoundingClientRect()
+    const containerRect = this.container.getBoundingClientRect()
+
+    // Calculate position relative to container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
+  }
+
+  private updateAddButtonState() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    // Check if there's already an empty figure placeholder
+    let hasEmptyFigure = false
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        // Check if this figure is empty (no src or empty src)
+        const src = node.attrs.src || ''
+        if (src.trim().length === 0) {
+          hasEmptyFigure = true
+        }
+      }
+    })
+
+    // Disable button if there's already an empty figure
+    if (hasEmptyFigure) {
+      this.addFigureBtn.classList.add('disabled')
+      this.addFigureBtn.disabled = true
+    } else {
+      this.addFigureBtn.classList.remove('disabled')
+      this.addFigureBtn.disabled = false
+    }
+  }
+
+  /**
+   * Updates button position and re-observes figures.
+   */
+  public update(node: Node): boolean {
+    const handledBySuper = super.update(node)
+
+    if (handledBySuper) {
+      this.setupResizeObserver() // Re-observe figures after node update
+      requestAnimationFrame(() => {
+        this.updateButtonPosition() // Reposition after DOM update
+        this.updateAddButtonState() // Update button state after DOM update
+      })
+    }
+
+    return handledBySuper
+  }
+
+  public updateContents() {
+    super.updateContents()
+    requestAnimationFrame(() => {
+      this.updateButtonPosition()
+      this.updateAddButtonState()
+    })
+  }
+
+  private addFigure = () => {
+    const { state } = this.view
+    const { tr } = state
+    const figureElementPos = this.getPos()
+
+    let insertPos = figureElementPos + 1
+    let lastFigureEndPos = insertPos
+    let hasFigures = false
+
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        lastFigureEndPos = insertPos + node.nodeSize
+        hasFigures = true
+      }
+      insertPos += node.nodeSize
+    })
+
+    const finalInsertPos = hasFigures ? lastFigureEndPos : figureElementPos + 1
+
+    const figureNode = state.schema.nodes.figure.create()
+
+    tr.insert(finalInsertPos, figureNode)
+    this.view.dispatch(tr)
+  }
+
+  public destroy() {
+    // Disconnect ResizeObserver on destroy
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
+    super.destroy()
   }
 }
 

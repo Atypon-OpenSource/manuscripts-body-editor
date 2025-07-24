@@ -1,5 +1,5 @@
 /*!
- * © 2024 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,15 @@
  */
 
 import {
+  BibliographicName,
   buildBibliographicName,
-  generateID,
-  ObjectTypes,
 } from '@manuscripts/json-schema'
 import {
   AddIcon,
   AddInstitutionIcon,
+  AddRoleIcon,
   AuthorPlaceholderIcon,
   CloseButton,
-  Drawer,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -32,12 +31,18 @@ import {
   ModalSidebarHeader,
   ModalSidebarTitle,
   ScrollableModalContent,
-  SelectedItemsBox,
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
+import { generateNodeID, schema } from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
-import React, { useEffect, useReducer, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer } from '../../lib/array-reducer'
@@ -46,16 +51,552 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
-import {
-  ConfirmationDialog,
-  ConfirmationDialogProps,
-  DialogType,
-} from '../dialog/ConfirmationDialog'
+import { normalizeAuthor } from '../../lib/normalize'
+import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
+import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { AffiliationsDrawer } from './AffiliationDrawer'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
+import { CreditDrawer } from './CreditDrawer'
+import { useManageAffiliations } from './useManageAffiliations'
+import { useManageCredit } from './useManageCredit'
+
+export const authorsReducer = arrayReducer<ContributorAttrs>(
+  (a, b) => a.id === b.id
+)
+
+const validateFormFields = (
+  values: ContributorAttrs
+): { dialogType: 'required' | 'invalid' | 'none'; fieldName?: string } => {
+  const { given, family } = values.bibliographicName
+  const { email, isCorresponding } = values
+
+  // Check for required name fields
+  if (!given || !family) {
+    return { dialogType: 'required', fieldName: 'name' }
+  }
+
+  // Check email requirements
+  const isEmailRequired = isCorresponding
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (isEmailRequired && !email) {
+    return { dialogType: 'required', fieldName: 'email' }
+  }
+  if (email && !emailRegex.test(email)) {
+    return { dialogType: 'invalid', fieldName: 'email' }
+  }
+
+  return { dialogType: 'none' }
+}
+
+export interface AuthorsModalProps {
+  author?: ContributorAttrs
+  authors: ContributorAttrs[]
+  affiliations: AffiliationAttrs[]
+  onSaveAuthor: (author: ContributorAttrs) => void
+  onDeleteAuthor: (author: ContributorAttrs) => void
+  addNewAuthor?: boolean
+}
+
+export const AuthorsModal: React.FC<AuthorsModalProps> = ({
+  authors: $authors,
+  affiliations: $affiliations,
+  author,
+  onSaveAuthor,
+  onDeleteAuthor,
+  addNewAuthor = false,
+}) => {
+  const [isOpen, setOpen] = useState(true)
+  const [isDisableSave, setDisableSave] = useState(true)
+  const [isEmailRequired, setEmailRequired] = useState(false)
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
+  const [
+    showRequiredFieldConfirmationDialog,
+    setShowRequiredFieldConfirmationDialog,
+  ] = useState(false)
+  const [showInvalidFieldDialog, setShowInvalidFieldDialog] = useState(false)
+  const [invalidFieldName, setInvalidFieldName] = useState<string>('')
+  const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
+  const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [newAuthor, setNewAuthor] = useState(false)
+  const [unSavedChanges, setUnSavedChanges] = useState(false)
+  const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
+  const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
+  const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
+
+  const [showCreditDrawer, setShowCreditDrawer] = useState(false)
+
+  const valuesRef = useRef<ContributorAttrs>()
+  const actionsRef = useRef<FormActions>()
+  const authorFormRef = useRef<HTMLFormElement | null>(null)
+  const [authors, dispatchAuthors] = useReducer(
+    authorsReducer,
+    $authors.sort(authorComparator)
+  )
+
+  useEffect(() => {
+    if (addNewAuthor) {
+      addAuthor()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addNewAuthor])
+
+  const [selection, setSelection] = useState(author)
+
+  const {
+    showAffiliationDrawer,
+    setShowAffiliationDrawer,
+    selectedAffiliations,
+    setSelectedAffiliations,
+    removeAffiliation,
+    selectAffiliation,
+    affiliations,
+  } = useManageAffiliations(selection, $affiliations)
+
+  useEffect(() => {
+    const currentAuthor = selection
+    const relevantAffiliations = affiliations.filter((item) =>
+      currentAuthor?.affiliations?.includes(item.id)
+    )
+    setSelectedAffiliations(relevantAffiliations)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const selectAuthor = (author: ContributorAttrs) => {
+    if (author.id === selection?.id) {
+      return
+    }
+    const values = valuesRef.current
+    setIsCreatingNewAuthor(false)
+
+    if (values && selection) {
+      const normalizedSelection = normalizeAuthor(selection)
+      const normalizedValues = normalizeAuthor(values)
+
+      const hasChanges = !isEqual(normalizedSelection, normalizedValues)
+
+      if (hasChanges && !isDisableSave) {
+        setShowConfirmationDialog(true)
+        setNextAuthor(author)
+      } else if (hasChanges && isDisableSave) {
+        const validation = validateFormFields(values)
+        if (validation.dialogType === 'invalid') {
+          setInvalidFieldName(validation.fieldName || '')
+          setShowInvalidFieldDialog(true)
+        } else {
+          setShowRequiredFieldConfirmationDialog(true)
+        }
+        setNextAuthor(author)
+      } else {
+        updateAffiliationSelection(author)
+        setSelection(author)
+        setShowAffiliationDrawer(false)
+        setNewAuthor(false)
+      }
+    } else {
+      setShowAffiliationDrawer(false)
+      updateAffiliationSelection(author)
+      setSelection(author)
+      setNewAuthor(false)
+    }
+  }
+  const updateAffiliationSelection = (author: ContributorAttrs) => {
+    const relevantAffiliations = affiliations.filter((item) =>
+      author.affiliations?.includes(item.id)
+    )
+    setSelectedAffiliations(relevantAffiliations)
+  }
+  const close = () => {
+    if (unSavedChanges) {
+      if (isDisableSave) {
+        const validation = validateFormFields(valuesRef.current!)
+        if (validation.dialogType === 'invalid') {
+          setInvalidFieldName(validation.fieldName || '')
+          setShowInvalidFieldDialog(true)
+        } else {
+          setShowRequiredFieldConfirmationDialog(true)
+        }
+      } else {
+        setShowConfirmationDialog(true)
+      }
+    } else {
+      setShowRequiredFieldConfirmationDialog(false)
+      setShowInvalidFieldDialog(false)
+      setLastSavedAuthor(null)
+      setOpen(false)
+    }
+  }
+
+  const save = () => {
+    if (!authorFormRef.current?.checkValidity()) {
+      setShowConfirmationDialog(false)
+      setTimeout(() => {
+        authorFormRef.current?.reportValidity()
+      }, 830)
+    } else {
+      if (valuesRef.current && selection) {
+        saveAuthor(valuesRef.current)
+      }
+
+      if (nextAuthor) {
+        setSelection(nextAuthor)
+        setNextAuthor(null)
+        setNewAuthor(false)
+        setShowAffiliationDrawer(false)
+        updateAffiliationSelection(nextAuthor)
+        setIsCreatingNewAuthor(false)
+      } else if (isCreatingNewAuthor) {
+        createNewAuthor()
+        setIsCreatingNewAuthor(false)
+      }
+
+      setShowConfirmationDialog(false)
+    }
+  }
+
+  const cancel = () => {
+    resetAuthor()
+    if (nextAuthor) {
+      const nextAuthorAffiliations = nextAuthor.affiliations || []
+      setSelectedAffiliations(
+        affiliations.filter((item) => nextAuthorAffiliations.includes(item.id))
+      )
+      setSelection(nextAuthor)
+      setNextAuthor(null)
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+      setUnSavedChanges(false)
+    } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
+      setNewAuthor(false)
+      setIsCreatingNewAuthor(false)
+      setOpen(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+      setIsCreatingNewAuthor(false)
+    }
+    setShowConfirmationDialog(false)
+    setShowRequiredFieldConfirmationDialog(false)
+    setShowInvalidFieldDialog(false)
+    setShowAffiliationDrawer(false)
+  }
+
+  const saveAuthor = (values: ContributorAttrs | undefined) => {
+    if (!values || !selection) {
+      return
+    }
+    const author = {
+      ...selection,
+      ...values,
+    }
+
+    onSaveAuthor(author)
+    setLastSavedAuthor(author.id)
+    setTimeout(() => {
+      setLastSavedAuthor(null)
+    }, 3200)
+    setUnSavedChanges(false)
+    setSelection(author)
+    setShowConfirmationDialog(false)
+    setShowInvalidFieldDialog(false)
+    setNewAuthor(false)
+    setShowAffiliationDrawer(false)
+    setIsCreatingNewAuthor(false)
+    dispatchAuthors({
+      type: 'update',
+      items: [author],
+    })
+  }
+
+  const moveAuthor = useCallback(
+    (from: ContributorAttrs, to: ContributorAttrs, shift: number) => {
+      const copy = cloneDeep(authors)
+      const order = copy.map((a, i) => {
+        if (a.id === from.id) {
+          if (to.priority) {
+            return to.priority + shift
+          } else {
+            return authors.findIndex((i) => i === to) + shift
+          }
+        }
+        return i
+      })
+      copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
+      copy.forEach((a, i) => {
+        if (a.priority !== i) {
+          a.priority = i
+          onSaveAuthor(a)
+        }
+      })
+      dispatchAuthors({
+        type: 'set',
+        state: copy,
+      })
+    },
+    [authors, dispatchAuthors, onSaveAuthor]
+  )
+  const createNewAuthor = () => {
+    const name = buildBibliographicName({ given: '', family: '' })
+    const author = createEmptyAuthor(name, authors.length)
+    setIsSwitchingAuthor(!!selection)
+    setSelectedAffiliations([])
+    setSelectedCreditRoles([])
+    setSelection(author)
+    setNewAuthor(true)
+  }
+
+  const addAuthor = () => {
+    const values = valuesRef.current
+    setIsSwitchingAuthor(!!selection)
+    setIsCreatingNewAuthor(true)
+    if (
+      values &&
+      selection &&
+      !isEqual(normalizeAuthor(values), normalizeAuthor(selection))
+    ) {
+      if (isDisableSave) {
+        const validation = validateFormFields(values)
+        if (validation.dialogType === 'invalid') {
+          setInvalidFieldName(validation.fieldName || '')
+          setShowInvalidFieldDialog(true)
+        } else {
+          setShowRequiredFieldConfirmationDialog(true)
+        }
+      } else {
+        setShowConfirmationDialog(true)
+      }
+      setNextAuthor(null)
+    } else {
+      createNewAuthor()
+      setShowAffiliationDrawer(false)
+    }
+  }
+
+  const deleteAuthor = () => {
+    if (!selection) {
+      return
+    }
+    onDeleteAuthor(selection)
+    setSelection(undefined)
+    setUnSavedChanges(false)
+    dispatchAuthors({
+      type: 'delete',
+      item: selection,
+    })
+  }
+
+  const resetAuthor = () => {
+    actionsRef.current?.reset()
+    const selectedAffs = selection?.affiliations || []
+    setSelectedAffiliations(
+      affiliations.filter((item) => selectedAffs.includes(item.id))
+    )
+    setShowConfirmationDialog(false)
+    setShowRequiredFieldConfirmationDialog(false)
+    setShowInvalidFieldDialog(false)
+    setUnSavedChanges(false)
+    if (!isCreatingNewAuthor && !nextAuthor) {
+      setLastSavedAuthor(null)
+      setOpen(false)
+    } else if (isCreatingNewAuthor) {
+      createNewAuthor()
+    }
+    setIsCreatingNewAuthor(false)
+  }
+
+  const changeAuthor = (values: ContributorAttrs) => {
+    const normalized = omit(
+      normalizeAuthor(selection as ContributorAttrs),
+      'priority'
+    )
+    const updatedValues = omit(normalizeAuthor(values), 'priority')
+
+    const isSameAuthor = updatedValues.id === normalized.id
+    const hasChanges = !isEqual(updatedValues, normalized)
+    setUnSavedChanges(isSameAuthor && hasChanges)
+
+    valuesRef.current = { ...updatedValues, priority: values.priority }
+
+    const validation = validateFormFields(values)
+    if (hasChanges) {
+      setDisableSave(validation.dialogType !== 'none')
+    } else {
+      setDisableSave(true)
+    }
+
+    setEmailRequired(values.isCorresponding)
+  }
+
+  const {
+    removeCreditRole,
+    selectCreditRole,
+    selectedCreditRoles,
+    setSelectedCreditRoles,
+    vocabTermItems,
+  } = useManageCredit(selection)
+
+  return (
+    <StyledModal
+      isOpen={isOpen}
+      onRequestClose={() => close()}
+      shouldCloseOnOverlayClick={true}
+    >
+      <ModalContainer data-cy="authors-modal">
+        <ModalHeader>
+          <CloseButton onClick={() => close()} data-cy="modal-close-button" />
+        </ModalHeader>
+        <StyledModalBody>
+          <ModalSidebar data-cy="authors-sidebar">
+            <StyledModalSidebarHeader>
+              <ModalSidebarTitle>Authors</ModalSidebarTitle>
+            </StyledModalSidebarHeader>
+            <StyledSidebarContent>
+              <AddAuthorButton
+                data-cy="add-author-button"
+                onClick={addAuthor}
+                data-active={isCreatingNewAuthor || newAuthor}
+              >
+                <AddIcon width={18} height={18} />
+                <ActionTitle>New Author</ActionTitle>
+              </AddAuthorButton>
+              <AuthorList
+                author={selection}
+                authors={authors}
+                onSelect={selectAuthor}
+                onDelete={() => setShowDeleteDialog((prev) => !prev)}
+                moveAuthor={moveAuthor}
+                lastSavedAuthor={lastSavedAuthor}
+              />
+            </StyledSidebarContent>
+          </ModalSidebar>
+          <DrawerRelativeParent>
+            <ScrollableModalContent data-cy="author-modal-content">
+              {selection ? (
+                <AuthorForms>
+                  <ConfirmationDialog
+                    isOpen={showRequiredFieldConfirmationDialog}
+                    onPrimary={() =>
+                      setShowRequiredFieldConfirmationDialog(false)
+                    }
+                    onSecondary={cancel}
+                    type={DialogType.REQUIRED}
+                    entityType="author"
+                  />
+                  <ConfirmationDialog
+                    isOpen={showInvalidFieldDialog}
+                    onPrimary={() => setShowInvalidFieldDialog(false)}
+                    onSecondary={cancel}
+                    type={DialogType.INVALID}
+                    entityType="author"
+                    fieldName={invalidFieldName}
+                  />
+                  <ConfirmationDialog
+                    isOpen={showConfirmationDialog}
+                    onPrimary={save}
+                    onSecondary={cancel}
+                    type={DialogType.SAVE}
+                    entityType="author"
+                  />
+                  <ModalFormActions
+                    form={'author-details-form'}
+                    type="author"
+                    onDelete={deleteAuthor}
+                    showingDeleteDialog={showingDeleteDialog}
+                    showDeleteDialog={() =>
+                      setShowDeleteDialog((prev) => !prev)
+                    }
+                    newEntity={
+                      newAuthor ||
+                      (isCreatingNewAuthor &&
+                        !showConfirmationDialog &&
+                        !showRequiredFieldConfirmationDialog &&
+                        !showInvalidFieldDialog)
+                    }
+                    isDisableSave={isDisableSave}
+                  />
+                  <FormLabel>Details</FormLabel>
+                  <AuthorDetailsForm
+                    values={normalizeAuthor(selection)}
+                    onChange={changeAuthor}
+                    onSave={saveAuthor}
+                    actionsRef={actionsRef}
+                    isEmailRequired={isEmailRequired}
+                    selectedAffiliations={selectedAffiliations.map((a) => a.id)}
+                    authorFormRef={authorFormRef}
+                    selectedCreditRoles={selectedCreditRoles}
+                  />
+                  <DrawerGroup<AffiliationAttrs>
+                    Drawer={AffiliationsDrawer}
+                    removeItem={removeAffiliation}
+                    selectedItems={selectedAffiliations}
+                    onSelect={selectAffiliation}
+                    items={affiliations}
+                    showDrawer={showAffiliationDrawer}
+                    setShowDrawer={setShowAffiliationDrawer}
+                    title="Affiliations"
+                    buttonText="Assign Institutions"
+                    cy="affiliations"
+                    labelField="institution"
+                    Icon={<AddInstitutionIcon width={16} height={16} />}
+                  />
+                  <DrawerGroup<{ id: string; vocabTerm: string }>
+                    Drawer={CreditDrawer}
+                    removeItem={removeCreditRole}
+                    selectedItems={selectedCreditRoles.map((r) => ({
+                      id: r.vocabTerm,
+                      ...r,
+                    }))}
+                    onSelect={selectCreditRole}
+                    items={vocabTermItems}
+                    showDrawer={showCreditDrawer}
+                    setShowDrawer={setShowCreditDrawer}
+                    title="Contributions (Credit)"
+                    buttonText="Assign Credit Roles"
+                    cy="credit-taxnonomy"
+                    labelField="vocabTerm"
+                    Icon={<AddRoleIcon width={16} height={16} />}
+                  />
+                </AuthorForms>
+              ) : (
+                <FormPlaceholder
+                  type="author"
+                  title="Author Details"
+                  message="Select an author from the list to display their details here."
+                  placeholderIcon={<AuthorPlaceholderIcon />}
+                />
+              )}
+            </ScrollableModalContent>
+          </DrawerRelativeParent>
+        </StyledModalBody>
+        <FormFooter onCancel={close} />
+      </ModalContainer>
+    </StyledModal>
+  )
+}
+
+function createEmptyAuthor(
+  name: BibliographicName,
+  priority: number
+): ContributorAttrs {
+  return {
+    id: generateNodeID(schema.nodes.contributor),
+    role: '',
+    affiliations: [],
+    bibliographicName: name,
+    email: '',
+    isCorresponding: false,
+    ORCIDIdentifier: '',
+    priority,
+    isJointContributor: false,
+    userID: '',
+    invitationID: '',
+    corresp: [],
+    footnote: [],
+    prefix: '',
+  }
+}
 
 const AddAuthorButton = styled.div`
   display: flex;
@@ -87,7 +628,6 @@ const FormLabel = styled.legend`
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  position: relative;
   margin-top: 20px;
 `
 
@@ -95,45 +635,6 @@ const StyledSidebarContent = styled(SidebarContent)`
   padding: 0;
 `
 
-const AuthorsSection = styled.div`
-  margin-top: ${(props) => props.theme.grid.unit * 4}px;
-  padding-top: ${(props) => props.theme.grid.unit * 4}px;
-  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
-`
-
-const AuthorsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
-`
-
-const AuthorsTitle = styled.h3`
-  margin: 0;
-  font-weight: ${(props) => props.theme.font.weight.normal};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-family: ${(props) => props.theme.font.family.sans};
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const AffiliateButton = styled.button`
-  color: ${(props) => props.theme.colors.brand.default};
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.normal}
-    ${(props) => props.theme.font.family.sans};
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: ${(props) => props.theme.grid.unit * 2}px;
-  &:hover {
-    opacity: 0.8;
-  }
-`
 const StyledModalBody = styled(ModalBody)`
   position: relative;
   height: calc(90vh - 40px);
@@ -142,593 +643,6 @@ const StyledModalBody = styled(ModalBody)`
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 16px;
 `
-
-export const authorsReducer = arrayReducer<ContributorAttrs>(
-  (a, b) => a.id === b.id
-)
-export const affiliationsReducer = arrayReducer<AffiliationAttrs>(
-  (a, b) => a.id === b.id
-)
-
-const normalize = (author: ContributorAttrs) => ({
-  id: author.id,
-  role: author.role || 'author',
-  affiliations: (author.affiliations || []).sort(),
-  bibliographicName: author.bibliographicName,
-  email: author.email || '',
-  isCorresponding: author.isCorresponding || false,
-  ORCIDIdentifier: author.ORCIDIdentifier || '',
-  priority: author.priority || 0,
-  isJointContributor: author.isJointContributor || false,
-  userID: author.userID || '',
-  invitationID: author.invitationID || '',
-  footnote: author.footnote || [],
-  corresp: author.corresp || [],
-  prefix: author.prefix || '',
-})
-
-const validateFormFields = (
-  values: ContributorAttrs
-): { dialogType: 'required' | 'invalid' | 'none'; fieldName?: string } => {
-  const { given, family } = values.bibliographicName
-  const { email, isCorresponding } = values
-
-  // Check for required name fields
-  if (!given || !family) {
-    return { dialogType: 'required', fieldName: 'name' }
-  }
-
-  // Check email requirements
-  const isEmailRequired = isCorresponding
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (isEmailRequired && !email) {
-    return { dialogType: 'required', fieldName: 'email' }
-  }
-  if (email && !emailRegex.test(email)) {
-    return { dialogType: 'invalid', fieldName: 'field' }
-  }
-
-  return { dialogType: 'none' }
-}
-
-export interface AuthorsModalProps {
-  author?: ContributorAttrs
-  authors: ContributorAttrs[]
-  affiliations: AffiliationAttrs[]
-  onSaveAuthor: (author: ContributorAttrs) => void
-  onDeleteAuthor: (author: ContributorAttrs) => void
-  addNewAuthor?: boolean
-}
-
-export const AuthorsModal: React.FC<AuthorsModalProps> = ({
-  authors: $authors,
-  affiliations: $affiliations,
-  author,
-  onSaveAuthor,
-  onDeleteAuthor,
-  addNewAuthor = false,
-}) => {
-  const [isOpen, setOpen] = useState(true)
-  const [isDisableSave, setDisableSave] = useState(true)
-  const [isEmailRequired, setEmailRequired] = useState(false)
-  const [dialogState, setDialogState] = useState<
-    Partial<ConfirmationDialogProps> | undefined
-  >(undefined)
-  const [lastSavedAuthor, setLastSavedAuthor] = useState<string | null>(null)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [newAuthor, setNewAuthor] = useState(false)
-  const [unSavedChanges, setUnSavedChanges] = useState(false)
-  const [nextAuthor, setNextAuthor] = useState<ContributorAttrs | null>(null)
-  const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
-  const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
-  const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
-  const [selectedAffiliations, setSelectedAffiliations] = useState<
-    { id: string; label: string }[]
-  >([])
-  const valuesRef = useRef<ContributorAttrs>()
-  const actionsRef = useRef<FormActions>()
-  const authorFormRef = useRef<HTMLFormElement | null>(null)
-  const [authors, dispatchAuthors] = useReducer(
-    authorsReducer,
-    $authors.sort(authorComparator)
-  )
-  const [affiliations] = useReducer(affiliationsReducer, $affiliations)
-
-  const affiliationItems = affiliations.map((affiliation) => ({
-    id: affiliation.id,
-    label: affiliation.institution,
-    country: affiliation.country,
-    city: affiliation.city,
-    state: affiliation.county,
-  }))
-
-  const [selectedAffiliationIds, setSelectedAffiliationIds] = useState<
-    string[]
-  >([])
-  const [selection, setSelection] = useState(author)
-
-  useEffect(() => {
-    if (addNewAuthor) {
-      handleAddAuthor()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addNewAuthor])
-
-  useEffect(() => {
-    const currentAuthor = selection
-    const relevantAffiliations = affiliationItems.filter((item) =>
-      currentAuthor?.affiliations?.includes(item.id)
-    )
-    setSelectedAffiliations(relevantAffiliations)
-    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selection])
-
-  // Unified helper function to show dialogs
-  const showDialog = (
-    type: DialogType,
-    fieldName?: string,
-    onPrimary?: () => void,
-    onSecondary?: () => void
-  ) => {
-    setDialogState({
-      isOpen: true,
-      type,
-      entityType: 'author',
-      fieldName,
-      onPrimary: onPrimary ?? (() => setDialogState(undefined)),
-      onSecondary: onSecondary ?? (() => {}),
-    })
-  }
-
-  const handleSelect = (author: ContributorAttrs) => {
-    if (author.id === selection?.id) {
-      return
-    }
-    const values = valuesRef.current
-    setIsCreatingNewAuthor(false)
-
-    if (values && selection) {
-      const normalizedSelection = normalize(selection)
-      const normalizedValues = normalize(values)
-
-      const hasChanges = !isEqual(normalizedSelection, normalizedValues)
-
-      if (hasChanges && !isDisableSave) {
-        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
-        setNextAuthor(author)
-      } else if (hasChanges && isDisableSave) {
-        const validation = validateFormFields(values)
-        if (validation.dialogType !== 'none') {
-          showDialog(
-            validation.dialogType === 'required'
-              ? DialogType.REQUIRED
-              : DialogType.INVALID,
-            validation.fieldName,
-            undefined,
-            handleCancel
-          )
-          setNextAuthor(author)
-        } else {
-          updateAffiliationSelection(author)
-          setSelection(author)
-          setShowAffiliationDrawer(false)
-          setNewAuthor(false)
-        }
-      } else {
-        updateAffiliationSelection(author)
-        setSelection(author)
-        setShowAffiliationDrawer(false)
-        setNewAuthor(false)
-      }
-    } else {
-      setShowAffiliationDrawer(false)
-      updateAffiliationSelection(author)
-      setSelection(author)
-      setNewAuthor(false)
-    }
-  }
-  const updateAffiliationSelection = (author: ContributorAttrs) => {
-    const relevantAffiliations = affiliationItems.filter((item) =>
-      author.affiliations?.includes(item.id)
-    )
-    setSelectedAffiliations(relevantAffiliations)
-    setSelectedAffiliationIds(relevantAffiliations.map((item) => item.id))
-  }
-  const handleClose = () => {
-    if (unSavedChanges) {
-      if (isDisableSave) {
-        const validation = validateFormFields(valuesRef.current!)
-        if (validation.dialogType !== 'none') {
-          showDialog(
-            validation.dialogType === 'required'
-              ? DialogType.REQUIRED
-              : DialogType.INVALID,
-            validation.fieldName,
-            undefined,
-            handleCancel
-          )
-        }
-      } else {
-        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
-      }
-    } else {
-      setDialogState(undefined)
-      setLastSavedAuthor(null)
-      setOpen(false)
-    }
-  }
-
-  const handleSave = () => {
-    if (!authorFormRef.current?.checkValidity()) {
-      setDialogState(undefined)
-      setTimeout(() => {
-        authorFormRef.current?.reportValidity()
-      }, 830)
-    } else {
-      if (valuesRef.current && selection) {
-        handleSaveAuthor(valuesRef.current)
-      }
-
-      if (nextAuthor) {
-        setSelection(nextAuthor)
-        setNextAuthor(null)
-        setNewAuthor(false)
-        setShowAffiliationDrawer(false)
-        updateAffiliationSelection(nextAuthor)
-        setIsCreatingNewAuthor(false)
-      } else if (isCreatingNewAuthor) {
-        createNewAuthor()
-        setIsCreatingNewAuthor(false)
-      }
-
-      setDialogState(undefined)
-    }
-  }
-
-  const handleCancel = () => {
-    handleResetAuthor()
-    if (nextAuthor) {
-      const affiliations = nextAuthor.affiliations || []
-      setSelectedAffiliationIds(affiliations)
-      setSelectedAffiliations(
-        affiliationItems.filter((item) => affiliations.includes(item.id))
-      )
-
-      setSelection(nextAuthor)
-      setNextAuthor(null)
-      setNewAuthor(false)
-      setIsCreatingNewAuthor(false)
-      setUnSavedChanges(false)
-    } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
-      setNewAuthor(false)
-      setIsCreatingNewAuthor(false)
-      setOpen(false)
-    } else if (isCreatingNewAuthor) {
-      createNewAuthor()
-      setIsCreatingNewAuthor(false)
-    }
-    setDialogState(undefined)
-    setShowAffiliationDrawer(false)
-  }
-
-  const handleSaveAuthor = (values: ContributorAttrs | undefined) => {
-    if (!values || !selection) {
-      return
-    }
-    const author = {
-      ...selection,
-      ...values,
-    }
-
-    onSaveAuthor(author)
-    setLastSavedAuthor(author.id)
-    setTimeout(() => {
-      setLastSavedAuthor(null)
-    }, 3200)
-    setUnSavedChanges(false)
-    setSelection(author)
-    setDialogState(undefined)
-    setNewAuthor(false)
-    setShowAffiliationDrawer(false)
-    setIsCreatingNewAuthor(false)
-    dispatchAuthors({
-      type: 'update',
-      items: [author],
-    })
-  }
-
-  const handleMoveAuthor = (
-    from: ContributorAttrs,
-    to: ContributorAttrs,
-    shift: number
-  ) => {
-    const copy = cloneDeep(authors)
-    const order = copy.map((a, i) => {
-      if (a.id === from.id) {
-        if (to.priority) {
-          return to.priority + shift
-        } else {
-          return authors.findIndex((i) => i === to) + shift
-        }
-      }
-      return i
-    })
-    copy.sort((a, b) => order[copy.indexOf(a)] - order[copy.indexOf(b)])
-    copy.forEach((a, i) => {
-      if (a.priority !== i) {
-        a.priority = i
-        onSaveAuthor(a)
-      }
-    })
-    dispatchAuthors({
-      type: 'set',
-      state: copy,
-    })
-  }
-  const createNewAuthor = () => {
-    const name = buildBibliographicName({ given: '', family: '' })
-    const author: ContributorAttrs = {
-      id: generateID(ObjectTypes.Contributor),
-      role: '',
-      affiliations: [],
-      bibliographicName: name,
-      email: '',
-      isCorresponding: false,
-      ORCIDIdentifier: '',
-      priority: authors.length,
-      isJointContributor: false,
-      userID: '',
-      invitationID: '',
-      corresp: [],
-      footnote: [],
-      prefix: '',
-    }
-    setIsSwitchingAuthor(!!selection)
-    setSelectedAffiliations([])
-    setSelectedAffiliationIds([])
-    setSelection(author)
-    setNewAuthor(true)
-  }
-
-  const handleAddAuthor = () => {
-    const values = valuesRef.current
-    setIsSwitchingAuthor(!!selection)
-    setIsCreatingNewAuthor(true)
-    if (
-      values &&
-      selection &&
-      !isEqual(normalize(values), normalize(selection))
-    ) {
-      if (isDisableSave) {
-        const validation = validateFormFields(values)
-        if (validation.dialogType !== 'none') {
-          showDialog(
-            validation.dialogType === 'required'
-              ? DialogType.REQUIRED
-              : DialogType.INVALID,
-            validation.fieldName,
-            undefined,
-            handleCancel
-          )
-        }
-        setNextAuthor(null)
-      } else {
-        showDialog(DialogType.SAVE, undefined, handleSave, handleCancel)
-        setNextAuthor(null)
-      }
-    } else {
-      createNewAuthor()
-      setShowAffiliationDrawer(false)
-    }
-  }
-
-  const handleDeleteAuthor = () => {
-    if (!selection) {
-      return
-    }
-    onDeleteAuthor(selection)
-    setSelection(undefined)
-    setUnSavedChanges(false)
-    dispatchAuthors({
-      type: 'delete',
-      item: selection,
-    })
-  }
-
-  const handleRemoveAffiliation = (affId: string) => {
-    if (!selection) {
-      return
-    }
-
-    const newAffiliations = selectedAffiliationIds.filter((id) => id !== affId)
-
-    setSelectedAffiliationIds(newAffiliations)
-    setSelectedAffiliations(
-      affiliationItems.filter((item) => newAffiliations.includes(item.id))
-    )
-  }
-
-  const handleResetAuthor = () => {
-    actionsRef.current?.reset()
-    const affiliations = selection?.affiliations || []
-    setSelectedAffiliationIds(affiliations)
-    setSelectedAffiliations(
-      affiliationItems.filter((item) => affiliations.includes(item.id))
-    )
-    setDialogState(undefined)
-    setUnSavedChanges(false)
-    if (!isCreatingNewAuthor && !nextAuthor) {
-      setLastSavedAuthor(null)
-      setOpen(false)
-    } else if (isCreatingNewAuthor) {
-      createNewAuthor()
-    }
-    setIsCreatingNewAuthor(false)
-  }
-
-  const handleChangeAuthor = (values: ContributorAttrs) => {
-    const normalized = omit(
-      normalize(selection as ContributorAttrs),
-      'priority'
-    )
-    const updatedValues = omit(normalize(values), 'priority')
-
-    const isSameAuthor = updatedValues.id === normalized.id
-    const hasChanges = !isEqual(updatedValues, normalized)
-
-    if (isSameAuthor && hasChanges) {
-      setUnSavedChanges(true)
-    } else {
-      setUnSavedChanges(false)
-    }
-
-    valuesRef.current = { ...updatedValues, priority: values.priority }
-
-    const validation = validateFormFields(values)
-    if (hasChanges) {
-      setDisableSave(validation.dialogType !== 'none')
-    } else {
-      setDisableSave(true)
-    }
-
-    setEmailRequired(values.isCorresponding)
-  }
-
-  const handleShowDeleteDialog = () => {
-    setShowDeleteDialog((prev) => !prev)
-  }
-
-  const handleAffiliationSelect = (affiliationId: string) => {
-    if (!selection) {
-      return
-    }
-
-    const currentAffiliations = selectedAffiliationIds || []
-    const isAlreadySelected = currentAffiliations.includes(affiliationId)
-
-    const newAffiliations = isAlreadySelected
-      ? currentAffiliations.filter((id) => id !== affiliationId)
-      : [...currentAffiliations, affiliationId]
-
-    setSelectedAffiliationIds(newAffiliations)
-    setSelectedAffiliations(
-      affiliationItems.filter((item) => newAffiliations.includes(item.id))
-    )
-  }
-
-  return (
-    <StyledModal
-      isOpen={isOpen}
-      onRequestClose={() => handleClose()}
-      shouldCloseOnOverlayClick={true}
-    >
-      <ModalContainer data-cy="authors-modal">
-        <ModalHeader>
-          <CloseButton
-            onClick={() => handleClose()}
-            data-cy="modal-close-button"
-          />
-        </ModalHeader>
-        <StyledModalBody>
-          <ModalSidebar data-cy="authors-sidebar">
-            <StyledModalSidebarHeader>
-              <ModalSidebarTitle>Authors</ModalSidebarTitle>
-            </StyledModalSidebarHeader>
-            <StyledSidebarContent>
-              <AddAuthorButton
-                data-cy="add-author-button"
-                onClick={handleAddAuthor}
-                data-active={isCreatingNewAuthor || newAuthor}
-              >
-                <AddIcon width={18} height={18} />
-                <ActionTitle>New Author</ActionTitle>
-              </AddAuthorButton>
-              <AuthorList
-                author={selection}
-                authors={authors}
-                onSelect={handleSelect}
-                onDelete={handleShowDeleteDialog}
-                moveAuthor={handleMoveAuthor}
-                lastSavedAuthor={lastSavedAuthor}
-              />
-            </StyledSidebarContent>
-          </ModalSidebar>
-          <ScrollableModalContent data-cy="author-modal-content">
-            {selection ? (
-              <AuthorForms>
-                {dialogState && (
-                  <ConfirmationDialog
-                    isOpen={true}
-                    type={dialogState.type ?? DialogType.REQUIRED}
-                    entityType={dialogState.entityType ?? 'author'}
-                    fieldName={dialogState.fieldName}
-                    onPrimary={
-                      dialogState.onPrimary ?? (() => setDialogState(undefined))
-                    }
-                    onSecondary={dialogState.onSecondary ?? (() => {})}
-                  />
-                )}
-                <ModalFormActions
-                  form={'author-details-form'}
-                  type="author"
-                  onDelete={handleDeleteAuthor}
-                  showDeleteDialog={showDeleteDialog}
-                  handleShowDeleteDialog={handleShowDeleteDialog}
-                  newEntity={newAuthor || (isCreatingNewAuthor && !dialogState)}
-                  isDisableSave={isDisableSave}
-                />
-                <FormLabel>Details</FormLabel>
-                <AuthorDetailsForm
-                  values={normalize(selection)}
-                  onChange={handleChangeAuthor}
-                  onSave={handleSaveAuthor}
-                  actionsRef={actionsRef}
-                  isEmailRequired={isEmailRequired}
-                  selectedAffiliations={selectedAffiliationIds}
-                  authorFormRef={authorFormRef}
-                />
-                <AuthorsSection>
-                  <AuthorsHeader>
-                    <AuthorsTitle>Authors</AuthorsTitle>
-                    <AffiliateButton
-                      onClick={() => setShowAffiliationDrawer(true)}
-                      data-cy="affiliate-authors-button"
-                    >
-                      <AddInstitutionIcon width={16} height={16} />
-                      Assign Institutions
-                    </AffiliateButton>
-                  </AuthorsHeader>
-                  <SelectedItemsBox
-                    data-cy="author-affiliations"
-                    items={selectedAffiliations}
-                    onRemove={handleRemoveAffiliation}
-                    placeholder="No institutions assigned"
-                  />
-                </AuthorsSection>
-                {showAffiliationDrawer && (
-                  <Drawer
-                    items={affiliationItems}
-                    selectedIds={selectedAffiliationIds}
-                    title="Authors"
-                    onSelect={handleAffiliationSelect}
-                    onBack={() => setShowAffiliationDrawer(false)}
-                    width="100%"
-                  />
-                )}
-              </AuthorForms>
-            ) : (
-              <FormPlaceholder
-                type="author"
-                title="Author Details"
-                message="Select an author from the list to display their details here."
-                placeholderIcon={<AuthorPlaceholderIcon />}
-              />
-            )}
-          </ScrollableModalContent>
-        </StyledModalBody>
-        <FormFooter onCancel={handleClose} />
-      </ModalContainer>
-    </StyledModal>
-  )
-}
+const DrawerRelativeParent = styled.div`
+  position: relative;
+`

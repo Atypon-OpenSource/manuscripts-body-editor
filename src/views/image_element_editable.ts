@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import { createNodeOrElementView } from './creators'
+import { createEditableNodeView } from './creators'
 import { EditableBlock } from './editable_block'
-import { orderedListCallback, OrderedListView } from './ordered_list'
+import { ImageElementView } from './image_element'
 
-export default createNodeOrElementView(
-  EditableBlock(OrderedListView),
-  'ol',
-  orderedListCallback
-)
+export default createEditableNodeView(EditableBlock(ImageElementView))

@@ -122,6 +122,8 @@
   text-indent: 0pt;
 }
 
+/* Figures */
+
 .ProseMirror .figure-block {
   width: 100%;
   border: 1px solid #f2f2f2;
@@ -132,6 +134,11 @@
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+
+  margin: 16px 0 0 !important;
+  box-sizing: border-box;
+  justify-self: center;
+  position: relative;
 }
 
 .ProseMirror .figure-group {
@@ -144,7 +151,138 @@
   width: 100%;
   position: relative;
   grid-column: 1/-1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
 }
+
+.ProseMirror  .figure-images-container  .figure-image-container {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.ProseMirror .block-figure_element .add-figure-button {
+  border: 0px;
+  left: 53px;
+  width: 25px;
+  z-index: 1;
+  height: 25px;
+  cursor: pointer;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #6E6E6E;
+}
+
+.ProseMirror .block-figure_element .add-figure-button.disabled {
+  background-color: #E2E2E2 !important;
+}
+
+.ProseMirror .block-figure_element .add-figure-button svg path {
+  fill: #FFFFFF !important;
+}
+
+
+.ProseMirror .figure-block:hover .options-button {
+  visibility: visible;
+}
+
+.ProseMirror .block:focus-within .figure-block,
+.ProseMirror .block:hover .figure-block {
+  border-color: #e2e2e2;
+}
+
+.ProseMirror .figure-block[data-alignment='left'] {
+  justify-self: flex-start;
+}
+
+.ProseMirror .figure-block[data-alignment='right'] {
+  justify-self: flex-end;
+}
+
+.ProseMirror .figure-block .expanded-listing .executable-attachments {
+  display: block;
+}
+
+.ProseMirror .figure-block > .listing {
+  grid-column-start: 1;
+  grid-column-end: -1;
+  padding: 0;
+  min-height: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.ProseMirror .figure-block figure {
+  padding-bottom: 20px;
+}
+
+.ProseMirror .figure-block > figcaption {
+  grid-column-start: 1;
+  grid-column-end: -1;
+  margin-top: 30px;
+}
+
+.ProseMirror .figure-caption {
+  display: none;
+}
+
+.ProseMirror .figure.placeholder {
+  align-items: center;
+  border-radius: 16px;
+  border: 1px dashed #e2e2e2;
+  background-color: #fafafa;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 32px;
+  max-width: 210px;
+  min-height: 100px;
+  white-space: normal;
+  font-size: 14px;
+}
+
+.ProseMirror .figure.placeholder a {
+  text-decoration: underline;
+}
+
+.ProseMirror .figure.placeholder.over {
+  border-color: #bce7f6;
+}
+
+.ProseMirror .figure-image {
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.ProseMirror .figure-embed {
+  width: 640px;
+  max-width: 90%;
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.ProseMirror .figure-embed .figure-embed-object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+}
+
+.ProseMirror figcaption {
+  background: white;
+  font-size: 14px;
+  margin-top: 1em;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.ProseMirror .block-table_element figcaption {
+  text-align: left;
+}
+
 
 .ProseMirror .figure-block > figcaption .figure-label {
   display: initial !important;
@@ -185,16 +323,55 @@
   text-align: center !important;
 }
 
-.ProseMirror .figure-block .position-menu {
+.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu {
   position: absolute;
-  top: 4px;
-  left: calc(100% - 96px);
+  top: 15px;
+  right: 35px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
   left: calc(100% - 82px);
+}
+/* Drag Figure Styles */
+.ProseMirror .figure-block .drag-handler {
+  opacity: 0;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  cursor: move;
+  border-radius: 4px;
+  position: absolute;
+  left: 0;
+  bottom: 20px;
+  text-align: center;
+  align-items: center;
+  pointer-events: auto;
+  transition: opacity 0.2s;
+  background-color:  #FAFAFA;
+  border: 1px solid #F2F2F2;
+
+}
+.ProseMirror .figure-block .figure:hover .drag-handler {
+  opacity: 1;
+}
+
+/* Drop area blue dotted outline */
+.ProseMirror .figure-block .figure.drop-target-above,
+.ProseMirror .figure-block .figure.drop-target-below {
+  border: 2px dotted #20AEDF !important;
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.ProseMirror .figure-block .figure.drop-target-above::before { top: 0; }
+.ProseMirror .figure-block .figure.drop-target-below::after { bottom: 0; }
+
+.ProseMirror .figure.dragging {
+  opacity: 0.6;
+  z-index: 1000;
+  transition: opacity 0.2s;
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -271,6 +448,10 @@
   z-index: 3;
 }
 
+.tools-panel button svg {
+  max-width: 16px;
+}
+
 .popper[data-popper-placement] .tools-panel {
   top: 0;
   right: unset;
@@ -303,7 +484,8 @@
 }
 
 .comment-marker:has(+ .block-contributors),
-.comment-marker:has(+ .block-affiliations) {
+.comment-marker:has(+ .block-affiliations),
+.comment-marker:has(+ .block-hero_image) {
   height: 0;
   top: 0;
   right: 60px;
@@ -424,6 +606,15 @@ span.comment-marker {
 
 .bibliography-comment-button {
   border-radius: 0 0 32px 32px;
+}
+
+.ProseMirror .bibliography:has(.empty-node) {
+  display: none;
+}
+
+.ProseMirror
+  div.backmatter:has(:only-child.bibliography > .empty-node)::before {
+  border-bottom: none;
 }
 
 .ProseMirror .keywords h1 {
@@ -611,11 +802,26 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation),
+  ):not(figure):not(figure .equation):not(.inconsistency-highlight),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
+}
+
+.ProseMirror .inconsistency-highlight {
+  border: 1px solid #f35143!important;
+  background: #fff1f0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror .inconsistency-highlight.selected-suggestion,
+.ProseMirror .inconsistency-highlight.footnote-marker-selected,
+.ProseMirror .inconsistency-highlight.ProseMirror-selectednode {
+  border: 2px solid #f35143!important;
+  background: #fff1f0;
 }
 
 .block-bullet_list .selected-suggestion p,
@@ -667,6 +873,10 @@ span.comment-marker {
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
+}
+
+.tracking-visible .ProseMirror figure.deleted {
+  display: flex;
 }
 
 .tracking-visible .ProseMirror .block.deleted {
@@ -780,9 +990,17 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block {
+  .block,  .tracking-visible
+  .ProseMirror .figure-block
+   figure[data-track-status='pending'].deleted img {
   box-shadow: inset 3px 0 0 var(--deleted-color);
 }
+
+.tracking-visible
+.ProseMirror .figure-block
+ figure[data-track-status='pending'].deleted img {
+  padding-left: 3px;
+ }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
   .block,
@@ -801,8 +1019,10 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='node_split'][data-track-status='pending']
-  .block {
-  box-shadow: inset 3px 0 0 var(--updated-border-color);
+  .block, .tracking-visible
+  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .block , .block:has(figure.selected-suggestion, [data-track-op='move'][data-track-status='pending']){
+    box-shadow: inset 3px 0 0 var(--updated-border-color) ;
 }
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
@@ -810,7 +1030,9 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
-.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion) {
+.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion), .tracking-visible
+.selected-suggestion[data-track-op='move'][data-track-status='pending']
+.block  {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -825,6 +1047,11 @@ figure.block:has(.equation.selected-suggestion) {
 .subtree .deleted {
   display: none;
 }
+
+.ProseMirror .move-deleted-node {
+  display: none !important;
+}
+
 
 .citation-wrapper {
   position: relative;
@@ -879,6 +1106,19 @@ figure.block:has(.equation.selected-suggestion) {
   border-color: var(--updated-border-color);
 }
 
+/* Needed for the snapshot comparison */
+.tracking-visible .block-list [data-track-op="insert"][data-track-status="pending"] {
+  background: var(--inserted-pending-bg-color);
+  color: var(--inserted-pending-color);
+  text-decoration: underline;
+}
+/* Needed for the snapshot comparison */
+.tracking-visible .block-list [data-track-op="delete"][data-track-status="pending"] {
+  background: var(--deleted-pending-bg-color);
+  color: var(--deleted-color);
+  text-decoration: line-through;
+}
+
 .selected-suggestion.contributor,
 .selected-suggestion.affiliation {
   text-decoration: none !important;
@@ -916,9 +1156,7 @@ figure.block:has(.equation.selected-suggestion) {
   position: initial;
   display: flex;
   flex: 1;
-  align-items: center;
-  margin-top: 33px;
-  left: -10px;
+  align-items: flex-start;
 }
 .contributor .contributor-comment {
   left: 0;
@@ -984,13 +1222,6 @@ figure.block:has(.equation.selected-suggestion) {
 .affiliation .affiliation-label {
   font-weight: bold;
   margin-right: 4px;
-}
-
-.block-affiliations .block {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .ProseMirror .doi-container {
@@ -1249,7 +1480,7 @@ th:hover > .table-context-menu-button,
   position: relative;
   pointer-events: none;
   user-select: none;
-  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6E6E6E;
+  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6e6e6e;
 }
 .ProseMirror .non-editable .body-overlay,
 .ProseMirror .non-editable .figure-overlay {
@@ -1263,7 +1494,7 @@ th:hover > .table-context-menu-button,
   z-index: 10;
 }
 .ProseMirror .non-editable .body-overlay {
-  width: 52px
+  width: 52px;
 }
 .ProseMirror .non-editable .block {
   opacity: 50%;
@@ -1323,7 +1554,9 @@ th:hover > .table-context-menu-button,
   transform: rotate(180deg);
 }
 
-.ProseMirror .accessibility_element_expander_button_container .toggle-button-open {
+.ProseMirror
+  .accessibility_element_expander_button_container
+  .toggle-button-open {
   right: calc(100% - 6px);
 }
 
@@ -1332,6 +1565,54 @@ th:hover > .table-context-menu-button,
   bottom: 36px;
 }
 
-.ProseMirror .block-table_element .accessibility_element_expander_button_container {
+.ProseMirror
+  .block-table_element
+  .accessibility_element_expander_button_container {
   left: 93%;
+}
+
+.hero-image-container {
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  background: white;
+  padding: 0 !important;
+}
+
+.ProseMirror div.backmatter:has(+ .block-container.block-hero_image)::after {
+  content: '';
+  display: block;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 0 35pt 32px 35pt;
+}
+
+.hero-image-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 8px 12px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #6e6e6e;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+.hero-image-container .figure-block {
+  border: none !important;
+}
+
+.hero-image-container .position-menu {
+  display: none !important;
+}
+.hero-image-toggle-btn svg {
+  width: 16px;
+  height: 9px;
+}
+.hero-image-toggle-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+
+.ProseMirror .block-image_element .block:focus-visible,
+.ProseMirror .block-figure_element .block:focus-visible {
+  outline: none;
 }

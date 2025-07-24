@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BibliographyItemNode, CitationNode } from '@manuscripts/transform'
-
-import { TrackableAttributes } from '../types'
-
-export type BibliographyItemAttrs = TrackableAttributes<BibliographyItemNode>
-export type CitationAttrs = TrackableAttributes<CitationNode>
+import { Cite } from '@citation-js/core'
+import {
+  BibliographyItemAttrs,
+  BibliographyItemType,
+} from '@manuscripts/transform'
 
 export const metadata = (item: BibliographyItemAttrs): string => {
   return [authors(item), item['container-title'], issuedYear(item)]
@@ -56,3 +55,40 @@ export const authors = (item: BibliographyItemAttrs): string => {
 
   return authors.join(', ')
 }
+
+const loadCitationJsPlugins = async () => {
+  try {
+    await Promise.all([
+      import('@citation-js/plugin-bibtex'),
+      import('@citation-js/plugin-ris'),
+      import('@citation-js/plugin-doi'),
+      import('@citation-js/plugin-csl'),
+      import('@citation-js/plugin-pubmed'),
+      import('@citation-js/plugin-enw'),
+    ])
+  } catch (error) {
+    console.error('Failed to load citation plugins:', error)
+  }
+}
+
+export const importBibliographyItems = async (
+  data: string
+): Promise<BibliographyItemAttrs[]> => {
+  await loadCitationJsPlugins()
+  const cite = await Cite.async(data.trim())
+  return cite.data
+}
+
+export const bibliographyItemTypes: [BibliographyItemType, string][] = [
+  ['article-journal', 'Journal Article'],
+  ['book', 'Book'],
+  ['chapter', 'Chapter'],
+  ['confproc', 'Conference Paper'],
+  ['thesis', 'Thesis'],
+  ['webpage', 'Web Page'],
+  ['other', 'Other'],
+  ['standard', 'Standard'],
+  ['dataset', 'Dataset'],
+  ['preprint', 'Preprint'],
+  ['literal', 'Unstructured'],
+]

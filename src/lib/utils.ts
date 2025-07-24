@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { BibliographicDate, BibliographicName } from '@manuscripts/json-schema'
 import {
   BibliographyItemAttrs,
   BibliographyItemType,
   isElementNodeType,
   isSectionNodeType,
+  ManuscriptEditorState,
   ManuscriptNode,
   ManuscriptNodeType,
   schema,
@@ -162,7 +162,15 @@ export const createHeader = (typeName: string, text: string) => {
 
 export const isNotNull = <T>(a: T | null): a is T => a !== null
 
-export const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
+export const hasParent = (
+  $pos: ResolvedPos,
+  type: ManuscriptNodeType | ManuscriptNodeType[]
+) => {
+  if (Array.isArray(type)) {
+    return type.some(
+      (nodeType) => !!findParentNodeOfTypeClosestToPos($pos, nodeType)
+    )
+  }
   return !!findParentNodeOfTypeClosestToPos($pos, type)
 }
 
@@ -189,12 +197,10 @@ export const cleanItemValues = (item: BibliographyItemAttrs) => {
           break
         case 'author':
         case 'editor':
-          cleanedItem[key] = [] as BibliographicName[]
-          break
         case 'issued':
         case 'accessed':
         case 'event-date':
-          cleanedItem[key] = {} as BibliographicDate
+          cleanedItem[key] = undefined
           break
         default:
           cleanedItem[key] = ''
@@ -243,4 +249,17 @@ export const getInsertPos = (
   })
 
   return insertPos
+}
+
+export const getLastTitleNode = (state: ManuscriptEditorState) => {
+  const altTitleNode = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitleNode) {
+    return altTitleNode
+  }
+
+  const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  return titleNode
 }
