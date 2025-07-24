@@ -212,10 +212,15 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const close = () => {
     if (unSavedChanges) {
       if (isDisableSave) {
-        const validation = validateFormFields(valuesRef.current!)
-        if (validation.dialogType === 'invalid') {
-          setInvalidFieldName(validation.fieldName || '')
-          setShowInvalidFieldDialog(true)
+        const currentValues = valuesRef.current
+        if (currentValues) {
+          const validation = validateFormFields(currentValues)
+          if (validation.dialogType === 'invalid') {
+            setInvalidFieldName(validation.fieldName || '')
+            setShowInvalidFieldDialog(true)
+          } else {
+            setShowRequiredFieldConfirmationDialog(true)
+          }
         } else {
           setShowRequiredFieldConfirmationDialog(true)
         }
