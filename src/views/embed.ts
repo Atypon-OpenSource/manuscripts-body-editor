@@ -130,7 +130,8 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
         this.getPos,
         this.props,
         handlers,
-        true
+        true,
+        () => false
       )
       if (this.reactTools) {
         if (this.preview) {
