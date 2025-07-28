@@ -24,8 +24,9 @@ import {
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { FigureNode } from '@manuscripts/transform'
 import { Node as ManuscriptNode } from 'prosemirror-model'
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useEffect } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -34,6 +35,7 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { getMediaTypeInfo } from '../../lib/media'
+import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 export interface FigureDropdownProps {
   can: Capabilities
@@ -49,6 +51,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   getDoc: () => ManuscriptNode
   onDelete?: () => void
   isEmbed: boolean
+  hasSiblings: () => boolean
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -85,7 +88,9 @@ function getOtherFiles(
   )
 }
 
-export const FigureOptions: React.FC<FigureOptionsProps> = ({
+type WrappedProps = FigureOptionsProps & ReactViewComponentProps<FigureNode>
+
+export const FigureOptions: React.FC<WrappedProps> = ({
   can,
   getDoc,
   getFiles,
@@ -96,6 +101,8 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onReplaceEmbed,
   onDelete,
   isEmbed,
+  hasSiblings,
+  container,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -105,7 +112,24 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   const showReplace =
     (onReplace && can.replaceFile) || (onReplaceEmbed && can.editArticle)
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
-  const showDelete = onDelete && can.detachFile
+  const showDelete = () => {
+    if (!hasSiblings()) {
+      return false
+    }
+    if (onDelete && can.detachFile) {
+      return true
+    }
+    return false
+  }
+
+  useEffect(() => {
+    const activeClass = 'figure-dropdown-active'
+    if (isOpen) {
+      container.classList.add(activeClass)
+    } else {
+      container.classList.remove(activeClass)
+    }
+  }, [isOpen, container.classList])
 
   const isEmbedMode = !!onReplaceEmbed
 
@@ -174,7 +198,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
               Detach
             </ListItemButton>
           )}
-          {showDelete && (
+          {showDelete() && (
             <ListItemButton onClick={onDelete}>Delete</ListItemButton>
           )}
         </OptionsDropdownList>

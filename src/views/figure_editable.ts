@@ -251,6 +251,21 @@ export class FigureEditableView extends FigureView {
     }
   }
 
+  // Helper function to count non-deleted figures in current figure element
+  countFigures() {
+    const parent = findParentNodeOfTypeClosestToPos(
+      this.view.state.doc.resolve(this.getPos()),
+      schema.nodes.figure_element
+    )
+    let count = 0
+    parent?.node.descendants((node) => {
+      if (node.type === schema.nodes.figure && !isDeleted(node)) {
+        count++
+      }
+    })
+    return count
+  }
+
   private manageReactTools() {
     this.reactTools?.remove()
 
@@ -268,46 +283,21 @@ export class FigureEditableView extends FigureView {
     }
 
     if (can.detachFile) {
-      // Helper function to count non-deleted figures in current figure element
-      const countFigures = () => {
-        const element = findParentNodeOfTypeClosestToPos(
-          this.view.state.doc.resolve(this.getPos()),
-          schema.nodes.figure_element
-        )
-        let count = 0
-        element?.node.descendants((node) => {
-          if (node.type === schema.nodes.figure && !isDeleted(node)) {
-            count++
-          }
-        })
-        return count
+      handlers.handleDelete = () => {
+        const pos = this.getPos()
+        const tr = this.view.state.tr
+        tr.delete(pos, pos + this.node.nodeSize)
+        this.view.dispatch(tr)
       }
-
-      const figureCount = countFigures()
-
-      handlers.handleDelete =
-        figureCount > 1
-          ? () => {
-              const currentCount = countFigures()
-              const pos = this.getPos()
-              if (currentCount <= 1) {
-                // prevent deletion if only one figure remains
-                return
-              }
-              const tr = this.view.state.tr
-              tr.delete(pos, pos + this.node.nodeSize)
-              this.view.dispatch(tr)
-            }
-          : undefined
     }
-
     this.reactTools = createReactTools(
       this.node,
       this.view,
       this.getPos,
       this.props,
       handlers,
-      false
+      false,
+      () => this.countFigures() > 1
     )
 
     if (this.reactTools) {
