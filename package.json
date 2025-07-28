@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "3.2.33",
+  "version": "3.2.34-LEAN-4647.0",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -40,7 +40,7 @@
     "@manuscripts/json-schema": "2.2.12",
     "@manuscripts/style-guide": "3.1.7-LEAN-4647.0",
     "@manuscripts/track-changes-plugin": "2.0.8-LEAN-4647.0",
-    "@manuscripts/transform": "4.2.9",
+    "@manuscripts/transform": "4.2.10-LEAN-4647.0",
     "@popperjs/core": "2.11.8",
     "citeproc": "2.4.63",
     "codemirror": "5.65.19",
