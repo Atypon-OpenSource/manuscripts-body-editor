@@ -276,8 +276,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
       return null
     }
 
-    let mediaUrl: string | undefined
-    mediaUrl = file.link || file.id
+    const mediaUrl = file.link || file.id
 
     if (!mediaUrl) {
       return null
