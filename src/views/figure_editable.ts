@@ -306,7 +306,8 @@ export class FigureEditableView extends FigureView {
       this.view,
       this.getPos,
       this.props,
-      handlers
+      handlers,
+      false
     )
 
     if (this.reactTools) {

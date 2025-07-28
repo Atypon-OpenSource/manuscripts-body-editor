@@ -20,7 +20,6 @@ import {
   getFileIcon,
   IconButton,
   IconTextButton,
-  isImageFile,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
@@ -34,6 +33,7 @@ import {
   ManuscriptFiles,
   memoGroupFiles,
 } from '../../lib/files'
+import { getMediaTypeInfo } from '../../lib/media'
 
 export interface FigureDropdownProps {
   can: Capabilities
@@ -48,6 +48,7 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onReplaceEmbed?: () => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
+  isEmbed: boolean
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -59,20 +60,28 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
 function getSupplements(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
-  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean
 ) {
   return groupFiles(getDoc(), getFiles())
     .supplements.map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
+    .filter((f) =>
+      isEmbed
+        ? getMediaTypeInfo(f.name).isVideo || getMediaTypeInfo(f.name).isAudio
+        : getMediaTypeInfo(f.name).isImage
+    )
 }
 
 function getOtherFiles(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
-  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean
 ) {
   return groupFiles(getDoc(), getFiles()).others.filter((f) =>
-    isImageFile(f.name)
+    isEmbed
+      ? getMediaTypeInfo(f.name).isVideo || getMediaTypeInfo(f.name).isAudio
+      : getMediaTypeInfo(f.name).isImage
   )
 }
 
@@ -86,6 +95,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
   onReplace,
   onReplaceEmbed,
   onDelete,
+  isEmbed,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -121,7 +131,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
               moveLeft
               list={
                 <>
-                  {getSupplements(getFiles, getDoc, groupFiles).map(
+                  {getSupplements(getFiles, getDoc, groupFiles, isEmbed).map(
                     (file, index) => (
                       <ListItemButton
                         key={file.id}
@@ -133,7 +143,7 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
                       </ListItemButton>
                     )
                   )}
-                  {getOtherFiles(getFiles, getDoc, groupFiles).map(
+                  {getOtherFiles(getFiles, getDoc, groupFiles, isEmbed).map(
                     (file, index) => (
                       <ListItemButton
                         key={file.id}
