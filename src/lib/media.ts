@@ -238,7 +238,8 @@ export const createReactTools = <T extends ManuscriptNode>(
   getPos: () => number,
   props: EditorProps,
   handlers: FileHandlers,
-  isEmbed: boolean
+  isEmbed: boolean,
+  hasSiblings: () => boolean
 ): HTMLDivElement | null => {
   if (!props.dispatch || !props.theme) {
     return null
@@ -256,6 +257,7 @@ export const createReactTools = <T extends ManuscriptNode>(
     onReplaceEmbed: handlers.handleReplaceEmbed,
     onDelete: handlers.handleDelete,
     isEmbed,
+    hasSiblings,
   }
 
   return ReactSubView(props, FigureOptions, componentProps, node, getPos, view)
