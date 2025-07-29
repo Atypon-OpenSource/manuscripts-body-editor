@@ -15,8 +15,12 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
+import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
+import {
+  ExtLinkEditor,
+  ExtLinkEditorProps,
+} from '../components/views/ExtLinkEditor'
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -29,10 +33,12 @@ export enum figurePositions {
   default = '',
 }
 
-export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
+export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
+  public extLinkEditorContainer: HTMLDivElement
   private positionMenuWrapper: HTMLDivElement
   private figurePosition: string
+  private isEditingExtLink = false
 
   public ignoreMutation = () => true
 
@@ -44,21 +50,25 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
   public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('block')
-    this.container.setAttribute('contenteditable', 'true')
+    this.container.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
 
     // figure group
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('figure-block')
+    this.contentDOM.setAttribute('contenteditable', 'false')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.container.appendChild(this.contentDOM)
-
     this.addTools()
   }
 
   public updateContents() {
     super.updateContents()
     this.addTools()
+
+    if (this.node.type === schema.nodes.image_element) {
+      this.addExternalLinkedFileEditor()
+    }
   }
 
   protected addTools() {
@@ -231,6 +241,36 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
 
     this.view.dispatch(tr)
     this.figurePosition = position
+  }
+
+  private addExternalLinkedFileEditor() {
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: ExtLinkEditorProps = {
+        node: this.node,
+        nodePos: this.getPos(),
+        view: this.view,
+        editorProps: this.props,
+        isEditing: this.isEditingExtLink,
+        setIsEditing: (val) => {
+          this.isEditingExtLink = val
+          this.updateContents()
+        },
+      }
+      this.extLinkEditorContainer?.remove()
+      this.extLinkEditorContainer = ReactSubView(
+        this.props,
+        ExtLinkEditor,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['ext-link-editor-container']
+      )
+      // Delay injection to avoid being overwritten
+      requestAnimationFrame(() => {
+        this.contentDOM?.appendChild(this.extLinkEditorContainer)
+      })
+    }
   }
 }
 

@@ -81,7 +81,9 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   }
   const root = createRoot(container)
 
-  root.render(<Wrapped />)
+  queueMicrotask(() => {
+    root.render(<Wrapped />)
+  })
 
   return container
 }
