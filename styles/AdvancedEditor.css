@@ -946,8 +946,7 @@ figure .selected-suggestion {
   background-color: transparent !important;
 }
 
-.selected-suggestion[data-track-status='pending'] .block,
-.selected-suggestion [data-track-status='pending'] .block,
+.selected-suggestion[data-track-status='pending'] .block:not(.box-element),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -958,7 +957,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
@@ -968,7 +967,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .selected-suggestion
   [data-track-status='pending'][data-track-op='insert']
