@@ -80,7 +80,7 @@ export default (
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),
     affiliations: affiliations(props, dispatch),
-    embed: embed(props),
+    embed: embed(props, dispatch),
     equation: equation(props),
     equation_element: equationElement(props),
     figure: figure(props, dispatch),
