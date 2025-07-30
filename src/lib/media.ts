@@ -246,6 +246,8 @@ export const createReactTools = <T extends ManuscriptNode>(
   }
 
   const can = props.getCapabilities()
+  const currentFileHref = node.attrs.href
+
   const componentProps: FigureOptionsProps = {
     can,
     getDoc: () => view.state.doc,
@@ -258,6 +260,7 @@ export const createReactTools = <T extends ManuscriptNode>(
     onDelete: handlers.handleDelete,
     isEmbed,
     hasSiblings,
+    currentFileHref,
   }
 
   return ReactSubView(props, FigureOptions, componentProps, node, getPos, view)
