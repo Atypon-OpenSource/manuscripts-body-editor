@@ -15,6 +15,7 @@
  */
 module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
   moduleNameMapper: {
     '^.+\\.css$': '<rootDir>/src/__mocks__/styleMock.ts',
   },
