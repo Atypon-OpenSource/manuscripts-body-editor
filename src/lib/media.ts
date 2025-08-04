@@ -42,7 +42,11 @@ export interface MediaTypeInfo {
   mimeSubtype?: string
 }
 
-export const getMediaTypeInfo = (filename: string): MediaTypeInfo => {
+export const getMediaTypeInfo = (
+  filenameOrFile: string | File
+): MediaTypeInfo => {
+  const filename =
+    typeof filenameOrFile === 'string' ? filenameOrFile : filenameOrFile.name
   const extension = filename.toLowerCase().split('.').pop() || ''
 
   const videoExtensions = [
@@ -69,24 +73,42 @@ export const getMediaTypeInfo = (filename: string): MediaTypeInfo => {
     'tif',
   ]
 
-  const isVideo = videoExtensions.includes(extension)
-  const isAudio = audioExtensions.includes(extension)
-  const isImage = imageExtensions.includes(extension)
-  const isSupported = isVideo || isAudio || isImage
-
   let mimetype: string | undefined
   let mimeSubtype: string | undefined
 
-  if (isVideo) {
-    mimetype = 'video'
-    mimeSubtype = extension === 'mov' ? 'quicktime' : extension
-  } else if (isAudio) {
-    mimetype = 'audio'
-    mimeSubtype = extension === 'm4a' ? 'mp4' : extension
-  } else if (isImage) {
-    mimetype = 'image'
-    mimeSubtype = extension === 'jpg' ? 'jpeg' : extension
+  // If we have a File object, use its actual MIME type
+  if (typeof filenameOrFile !== 'string' && filenameOrFile.type) {
+    const [mimeTypeFromFile, mimeSubtypeFromFile] =
+      filenameOrFile.type.split('/')
+    if (mimeTypeFromFile && mimeSubtypeFromFile) {
+      mimetype = mimeTypeFromFile
+      mimeSubtype = mimeSubtypeFromFile
+    }
   }
+
+  // Fall back to extension-based detection if no MIME type from file
+  if (!mimetype || !mimeSubtype) {
+    const isVideo = videoExtensions.includes(extension)
+    const isAudio = audioExtensions.includes(extension)
+    const isImage = imageExtensions.includes(extension)
+
+    if (isVideo) {
+      mimetype = 'video'
+      mimeSubtype = extension === 'mov' ? 'quicktime' : extension
+    } else if (isAudio) {
+      mimetype = 'audio'
+      mimeSubtype = extension === 'm4a' ? 'mp4' : extension
+    } else if (isImage) {
+      mimetype = 'image'
+      mimeSubtype = extension === 'jpg' ? 'jpeg' : extension
+    }
+  }
+
+  // Determine media type categories based on actual MIME type or extension
+  const isVideo = mimetype === 'video' || videoExtensions.includes(extension)
+  const isAudio = mimetype === 'audio' || audioExtensions.includes(extension)
+  const isImage = mimetype === 'image' || imageExtensions.includes(extension)
+  const isSupported = isVideo || isAudio || isImage
 
   return {
     extension,

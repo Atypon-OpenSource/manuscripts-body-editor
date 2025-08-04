@@ -67,7 +67,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   }
 
   upload = async (file: File) => {
-    const mediaInfo = getMediaTypeInfo(file.name)
+    const mediaInfo = getMediaTypeInfo(file)
 
     const result = await this.props.fileManagement.upload(file)
 
