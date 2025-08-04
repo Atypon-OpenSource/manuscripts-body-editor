@@ -19,6 +19,7 @@ import {
   BibliographyItemType,
   isElementNodeType,
   isSectionNodeType,
+  ManuscriptEditorState,
   ManuscriptNode,
   ManuscriptNodeType,
   schema,
@@ -272,4 +273,16 @@ export const filterBlockNodes = (
   })
 
   return Fragment.fromArray(updatedNodes)
+}
+export const getLastTitleNode = (state: ManuscriptEditorState) => {
+  const altTitleNode = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitleNode) {
+    return altTitleNode
+  }
+
+  const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  return titleNode
 }

@@ -158,7 +158,7 @@
   align-items: center;
 }
 
-.ProseMirror  .figure-images-container  .figure-image-container {
+.ProseMirror .figure-images-container .figure-image-container {
   position: relative;
   margin-bottom: 30px;
 }
@@ -169,21 +169,19 @@
   width: 25px;
   z-index: 1;
   height: 25px;
-  bottom: 220px;
   cursor: pointer;
   position: absolute;
   border-radius: 50%;
-  background-color: #6E6E6E;
+  background-color: #6e6e6e;
 }
 
 .ProseMirror .block-figure_element .add-figure-button.disabled {
-  background-color: #E2E2E2 !important;
+  background-color: #e2e2e2 !important;
 }
 
 .ProseMirror .block-figure_element .add-figure-button svg path {
-  fill: #FFFFFF !important;
+  fill: #ffffff !important;
 }
-
 
 .ProseMirror .figure-block:hover .options-button {
   visibility: visible;
@@ -284,7 +282,6 @@
   text-align: left;
 }
 
-
 .ProseMirror .figure-block > figcaption .figure-label {
   display: initial !important;
 }
@@ -324,16 +321,55 @@
   text-align: center !important;
 }
 
-.ProseMirror .figure-block .position-menu {
+.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu {
   position: absolute;
-  top: 4px;
-  left: calc(100% - 96px);
+  top: 15px;
+  right: 35px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;
 }
 .ProseMirror .box-element .figure-block .position-menu {
   left: calc(100% - 82px);
+}
+/* Drag Figure Styles */
+.ProseMirror .figure-block .drag-handler {
+  opacity: 0;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  cursor: move;
+  border-radius: 4px;
+  position: absolute;
+  left: 0;
+  bottom: 20px;
+  text-align: center;
+  align-items: center;
+  pointer-events: auto;
+  transition: opacity 0.2s;
+  background-color:  #FAFAFA;
+  border: 1px solid #F2F2F2;
+
+}
+.ProseMirror .figure-block .figure:hover .drag-handler {
+  opacity: 1;
+}
+
+/* Drop area blue dotted outline */
+.ProseMirror .figure-block .figure.drop-target-above,
+.ProseMirror .figure-block .figure.drop-target-below {
+  border: 2px dotted #20AEDF !important;
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.ProseMirror .figure-block .figure.drop-target-above::before { top: 0; }
+.ProseMirror .figure-block .figure.drop-target-below::after { bottom: 0; }
+
+.ProseMirror .figure.dragging {
+  opacity: 0.6;
+  z-index: 1000;
+  transition: opacity 0.2s;
 }
 
 .ProseMirror .block-container.block-box_element {
@@ -408,6 +444,10 @@
   top: 12px;
   right: 12px;
   z-index: 3;
+}
+
+.tools-panel.figure-dropdown-active {
+  z-index: 4;
 }
 
 .tools-panel button svg {
@@ -764,11 +804,26 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation),
+  ):not(figure):not(figure .equation):not(.inconsistency-highlight),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
   border-color: var(--common-color);
+}
+
+.ProseMirror .inconsistency-highlight {
+  border: 1px solid #f35143 !important;
+  background: #fff1f0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror .inconsistency-highlight.selected-suggestion,
+.ProseMirror .inconsistency-highlight.footnote-marker-selected,
+.ProseMirror .inconsistency-highlight.ProseMirror-selectednode {
+  border: 2px solid #f35143 !important;
+  background: #fff1f0;
 }
 
 .block-bullet_list .selected-suggestion p,
@@ -887,8 +942,7 @@ figure .selected-suggestion {
   background-color: transparent !important;
 }
 
-.selected-suggestion[data-track-status='pending'] .block,
-.selected-suggestion [data-track-status='pending'] .block,
+.selected-suggestion[data-track-status='pending'] .block:not(.box-element),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -899,7 +953,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
@@ -909,7 +963,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .selected-suggestion
   [data-track-status='pending'][data-track-op='insert']
@@ -937,17 +991,22 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block,  .tracking-visible
-  .ProseMirror .figure-block
-   figure[data-track-status='pending'].deleted img {
+  .block,
+.tracking-visible
+  .ProseMirror
+  .figure-block
+  figure[data-track-status='pending'].deleted
+  img {
   box-shadow: inset 3px 0 0 var(--deleted-color);
 }
 
 .tracking-visible
-.ProseMirror .figure-block
- figure[data-track-status='pending'].deleted img {
+  .ProseMirror
+  .figure-block
+  figure[data-track-status='pending'].deleted
+  img {
   padding-left: 3px;
- }
+}
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
   .block,
@@ -966,10 +1025,11 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='node_split'][data-track-status='pending']
-  .block, .tracking-visible
+  .block,
+.tracking-visible
   .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
-  .block {
-  box-shadow: inset 3px 0 0 var(--updated-border-color);
+  .block , .block:has(figure.selected-suggestion, [data-track-op='move'][data-track-status='pending']){
+    box-shadow: inset 3px 0 0 var(--updated-border-color) ;
 }
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
@@ -977,9 +1037,10 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
-.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion), .tracking-visible
-.selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
-.block  {
+.tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion),
+.tracking-visible
+  .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
+  .block {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -998,7 +1059,6 @@ figure.block:has(.equation.selected-suggestion) {
 .ProseMirror .move-deleted-node {
   display: none !important;
 }
-
 
 .citation-wrapper {
   position: relative;
@@ -1054,13 +1114,17 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 /* Needed for the snapshot comparison */
-.tracking-visible .block-list [data-track-op="insert"][data-track-status="pending"] {
+.tracking-visible
+  .block-list
+  [data-track-op='insert'][data-track-status='pending'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
   text-decoration: underline;
 }
 /* Needed for the snapshot comparison */
-.tracking-visible .block-list [data-track-op="delete"][data-track-status="pending"] {
+.tracking-visible
+  .block-list
+  [data-track-op='delete'][data-track-status='pending'] {
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
   text-decoration: line-through;
@@ -1557,4 +1621,9 @@ th:hover > .table-context-menu-button,
 }
 .hero-image-toggle-btn.collapsed svg {
   transform: rotate(180deg);
+}
+
+.ProseMirror .block-image_element .block:focus-visible,
+.ProseMirror .block-figure_element .block:focus-visible {
+  outline: none;
 }

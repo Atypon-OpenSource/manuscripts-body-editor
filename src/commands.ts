@@ -111,6 +111,7 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
+  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -149,13 +150,11 @@ export const addToStart = (
     $from,
     $to,
   } = selection
-  const parentSize = $from.node().content.size
 
-  if (
-    (startOffset === 0 && endOffset === 0) ||
-    startOffset === parentSize ||
-    endOffset === parentSize
-  ) {
+  // Check if the cursor is at the start of a paragraph or text block.
+  // This ensures that a new node is added above the current node only when
+  // the cursor is at the very beginning of the parent node.
+  if (startOffset === 0 && endOffset === 0) {
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - (startOffset === 0 ? 1 : 0)
@@ -237,6 +236,17 @@ export const canInsert =
       if (findParentNodeOfType(schema.nodes.list_item)(state.selection)) {
         return false
       }
+    }
+
+    // Prevent inserting a box_element if:
+    //  it's not inside a body node (invalid context), OR
+    //  it's already nested inside another box_element (disallowed nesting)
+    if (
+      type === schema.nodes.box_element &&
+      (!hasParentNodeOfType(schema.nodes.body)(state.selection) ||
+        hasParentNodeOfType(schema.nodes.box_element)(state.selection))
+    ) {
+      return false
     }
 
     const initDepth =
@@ -556,14 +566,17 @@ export const findPosBeforeFirstSubsection = (
     const parentNode = $pos.node(d)
     if (isSectionNodeType(parentNode.type)) {
       const parentStartPos = $pos.start(d) // Get the start position of the parent section
-      parentNode.descendants((node, pos) => {
+      parentNode.descendants((node, pos, parent) => {
+        // Only consider direct children of the section
         if (
           node.type === schema.nodes.section &&
+          parent === parentNode &&
           posBeforeFirstSubsection === null
         ) {
           // Found the first subsection, set the position before it
           posBeforeFirstSubsection = parentStartPos + pos
         }
+        // Stop descending if we've found the position
         return posBeforeFirstSubsection === null
       })
       break // Stop iterating after finding the parent section
@@ -834,29 +847,28 @@ export const insertBoxElement = (
   dispatch?: Dispatch
 ) => {
   const selection = state.selection
+  const { nodes } = schema
 
   // Check if the selection is inside the body
-  const isBody = hasParentNodeOfType(schema.nodes.body)(selection)
-  const isBoxText = hasParentNodeOfType(schema.nodes.box_element)(selection)
-
+  const isBody = hasParentNodeOfType(nodes.body)(selection)
+  const isBoxText = hasParentNodeOfType(nodes.box_element)(selection)
   // If selection is not in the body, disable the option
   if (!isBody || isBoxText) {
     return false
   }
 
   const position = findBlockInsertPosition(state)
-
-  const paragraph = schema.nodes.paragraph.create({})
+  const paragraph = nodes.paragraph.create({})
 
   // Create a section node with a section title and a paragraph
-  const section = schema.nodes.section.createAndFill({}, [
-    schema.nodes.section_title.create(),
+  const section = nodes.section.createAndFill({}, [
+    nodes.section_title.create(),
     paragraph,
   ]) as ManuscriptNode
 
   // Create the BoxElement node with a figcaption and the section
-  const node = schema.nodes.box_element.createAndFill({}, [
-    schema.nodes.figcaption.create({}, [schema.nodes.caption_title.create()]),
+  const node = nodes.box_element.createAndFill({}, [
+    nodes.figcaption.create({}, [nodes.caption_title.create()]),
     section,
   ]) as BoxElementNode
 
@@ -1069,7 +1081,7 @@ export const insertContributors = (
   }
 
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const title = getLastTitleNode(state)
   const pos = title.pos + title.node.nodeSize
   const contributors = state.schema.nodes.contributors.create({
     id: '',
@@ -1098,7 +1110,7 @@ export const insertAffiliation = (
     return false
   }
   // Find the title node
-  const title = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  const title = getLastTitleNode(state)
   let pos = title.pos + title.node.nodeSize
 
   // Find the contributors node
