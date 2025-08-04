@@ -19,6 +19,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { isShadowDelete } from '../../lib/track-changes-utils'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -35,7 +36,8 @@ const calculateSectionLevels = (
   node.forEach((childNode, offset) => {
     if (
       childNode.type === schema.nodes.section ||
-      childNode.type === schema.nodes.box_element
+      (childNode.type === schema.nodes.box_element &&
+        !isShadowDelete(childNode))
     ) {
       numbering[numbering.length - 1] += 1
       const sectionNumber = numbering.join('.')

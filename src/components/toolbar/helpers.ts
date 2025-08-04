@@ -34,7 +34,8 @@ import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
-import { isDeleted } from '../../lib/track-changes-utils'
+import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
+import { filterBlockNodes } from '../../lib/utils'
 import { Option } from './type-selector/TypeSelector'
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
@@ -61,6 +62,16 @@ export const findSelectedOption = (options: Option[]): Option | undefined => {
 // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
 const getDeepestSubsectionPosition = (subsection: Node, position: number) => {
   while (subsection.lastChild && isSectionNodeType(subsection.lastChild.type)) {
+    if (isDeleted(subsection.lastChild)) {
+      return (
+        position +
+        jumpToPreviousNode(
+          subsection.nodeSize - subsection.lastChild.nodeSize - 2,
+          subsection
+        ) +
+        1
+      )
+    }
     position += subsection.nodeSize - subsection.lastChild.nodeSize
     subsection = subsection.lastChild
   }
@@ -97,32 +108,16 @@ const getDataTracked = (node: Node) => {
   return change ? [change] : null
 }
 
-const isThereInsertDeleteChange = (node: Node) => {
-  const dataTracked = node.attrs.dataTracked as TrackedAttrs[] | null
-  return dataTracked?.find(
-    (c) => c.operation === 'insert' || c.operation === 'delete'
-  )
-}
-
 /** This to not include convert change in a deleted section of move */
 const jumpToPreviousNode = (beforeSection: number, doc: Node) => {
   const $beforeSection = doc.resolve(beforeSection)
-  const previousNode = $beforeSection.nodeBefore
   let pos = beforeSection
-  const dataTracked = (
-    previousNode?.attrs.dataTracked as TrackedAttrs[] | null
-  )?.find((c) => c.operation === 'delete' && c.moveNodeId)
-  if (dataTracked) {
-    for (let i = $beforeSection.index() - 1; i > 0; i--) {
-      pos = $beforeSection.posAtIndex(i)
-      const node = doc.resolve(pos).node()
-      const dataTracked = (
-        node?.attrs.dataTracked as TrackedAttrs[] | null
-      )?.find((c) => c.operation === 'delete' && c.moveNodeId)
-      if (!dataTracked && i > 0) {
-        pos = $beforeSection.posAtIndex(i)
-        break
-      }
+  for (let i = $beforeSection.index() - 1; i >= 0; i--) {
+    pos = $beforeSection.posAtIndex(i)
+    const node = doc.resolve(pos + 1).node()
+    if (!isDeleted(node) && i >= 0) {
+      pos = $beforeSection.posAtIndex(i + 1)
+      break
     }
   }
 
@@ -191,16 +186,13 @@ export const demoteSectionToParagraph = (
     TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
   )
 
-  const parent = tr.doc.resolve(beforeSection).node()
-  if (!isThereInsertDeleteChange(parent)) {
+  dispatch(
     setAction(
       tr,
       TrackChangesAction.structuralChangeAction,
       'convert-to-paragraph'
     )
-  }
-
-  dispatch(tr)
+  )
   view && view.focus()
 }
 
@@ -278,7 +270,12 @@ export const promoteParagraphToSection = (
       )
     )
   }
-  tr.insert(afterParentSection, items[items.length - 1])
+  const content = filterBlockNodes(
+    Fragment.from(items[items.length - 1]),
+    (node) => !isShadowDelete(node)
+  )
+  tr.insert(afterParentSection, content)
+
   tr.delete(beforeParagraph, afterParentSection - 1)
   const anchor = afterParentSection + 1
 
