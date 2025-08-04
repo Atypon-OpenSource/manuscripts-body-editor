@@ -34,7 +34,7 @@ import {
   ManuscriptFiles,
   memoGroupFiles,
 } from '../../lib/files'
-import { getMediaTypeInfo } from '../../lib/media'
+import { getMediaTypeInfo } from '../../lib/get-media-type'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 export interface FigureDropdownProps {

@@ -21,6 +21,7 @@ import {
   NoPreviewMessageWithLink,
   openEmbedDialog,
 } from '../components/toolbar/InsertEmbedDialog'
+import { getMediaTypeInfo } from '../lib/get-media-type'
 import {
   addInteractionHandlers,
   createFileHandlers,
@@ -29,7 +30,6 @@ import {
   createReactTools,
   createUnsupportedFormat,
   FileHandlers,
-  getMediaTypeInfo,
 } from '../lib/media'
 import { getOEmbedHTML } from '../lib/oembed'
 import { allowedHref } from '../lib/url'
