@@ -36,6 +36,7 @@ import { EditorView } from 'prosemirror-view'
 import { Dispatch } from '../../commands'
 import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { filterBlockNodes } from '../../lib/utils'
+import { selectedSuggestionKey } from '../../plugins/selected-suggestion'
 import { Option } from './type-selector/TypeSelector'
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
@@ -115,7 +116,7 @@ const jumpToPreviousNode = (beforeSection: number, doc: Node) => {
   for (let i = $beforeSection.index() - 1; i >= 0; i--) {
     pos = $beforeSection.posAtIndex(i)
     const node = doc.resolve(pos + 1).node()
-    if (!isDeleted(node) && i >= 0) {
+    if (!(isDeleted(node) && node.type !== schema.nodes.paragraph) && i >= 0) {
       pos = $beforeSection.posAtIndex(i + 1)
       break
     }
@@ -172,19 +173,21 @@ export const demoteSectionToParagraph = (
     } else {
       beforeSection = beforeSection - 1
     }
-    anchor = beforeSection
+    anchor = beforeSection + 1
   } else {
     anchor = beforeSection + 1
   }
 
-  tr.insert(beforeSection, Fragment.from(paragraph).append(sectionContent))
+  const content = filterBlockNodes(
+    Fragment.from(paragraph).append(sectionContent),
+    (node) => !isShadowDelete(node)
+  )
+  tr.insert(beforeSection, content)
 
   const afterSection = tr.mapping.map($from.after(sectionDepth))
   tr.delete(afterSection - section.nodeSize, afterSection)
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
-  )
+  tr.setSelection(TextSelection.create(tr.doc, anchor))
 
   dispatch(
     setAction(
@@ -213,13 +216,14 @@ export const promoteParagraphToSection = (
   const $beforeParagraph = doc.resolve(beforeParagraph)
   const beforeParagraphOffset = $beforeParagraph.parentOffset
   const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize
+  const selectedChange = selectedSuggestionKey.getState(state)?.suggestion
 
   const sectionDepth = $from.depth - 1
   const parentSection = $from.node(sectionDepth)
   const startIndex = $from.index(sectionDepth)
   const endIndex = $from.indexAfter(sectionDepth)
   let afterParentSection = $from.after(sectionDepth)
-
+  let offset = 0
   const items: Node[] = []
 
   if (startIndex > 0) {
@@ -242,6 +246,7 @@ export const promoteParagraphToSection = (
     )
   } else {
     sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
+    offset = 2
   }
 
   if (parentSection.type.name === 'body') {
@@ -277,11 +282,11 @@ export const promoteParagraphToSection = (
   tr.insert(afterParentSection, content)
 
   tr.delete(beforeParagraph, afterParentSection - 1)
-  const anchor = afterParentSection + 1
+  const anchor = selectedChange
+    ? afterParentSection - content.size + 2
+    : tr.mapping.map(afterParentSection) - offset
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
-  )
+  tr.setSelection(TextSelection.create(tr.doc, anchor))
 
   dispatch(
     setAction(
