@@ -195,9 +195,8 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
       const file = files.find((f) => f.id === href)
 
       if (file) {
-        const isValidMediaFile =
-          getMediaTypeInfo(file.name).isAudio ||
-          getMediaTypeInfo(file.name).isVideo
+        const mediaInfo = getMediaTypeInfo(file.name)
+        const isValidMediaFile = mediaInfo.isAudio || mediaInfo.isVideo
         object = isValidMediaFile
           ? this.createMedia() ||
             createUnsupportedFormat(

@@ -74,9 +74,10 @@ function getSupplements(
       if (currentFileHref && f.id === currentFileHref) {
         return false
       }
+      const mediaInfo = getMediaTypeInfo(f.name)
       return isEmbed
-        ? getMediaTypeInfo(f.name).isVideo || getMediaTypeInfo(f.name).isAudio
-        : getMediaTypeInfo(f.name).isImage
+        ? mediaInfo.isVideo || mediaInfo.isAudio
+        : mediaInfo.isImage
     })
 }
 
@@ -91,9 +92,8 @@ function getOtherFiles(
     if (currentFileHref && f.id === currentFileHref) {
       return false
     }
-    return isEmbed
-      ? getMediaTypeInfo(f.name).isVideo || getMediaTypeInfo(f.name).isAudio
-      : getMediaTypeInfo(f.name).isImage
+    const mediaInfo = getMediaTypeInfo(f.name)
+    return isEmbed ? mediaInfo.isVideo || mediaInfo.isAudio : mediaInfo.isImage
   })
 }
 
