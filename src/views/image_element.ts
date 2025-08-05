@@ -25,7 +25,7 @@ import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { createSubViewAsync } from './ReactSubView'
 
 export enum figurePositions {
   left = 'half-left',
@@ -35,6 +35,7 @@ export enum figurePositions {
 
 export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
+  public subcontainer: HTMLElement
   public extLinkEditorContainer: HTMLDivElement
   private positionMenuWrapper: HTMLDivElement
   private figurePosition: string
@@ -54,11 +55,16 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.dom.appendChild(this.container)
 
     // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
+    this.subcontainer = document.createElement('div')
+    this.subcontainer.classList.add('figure-block-group')
+
+    this.contentDOM = document.createElement('div')
     this.contentDOM.setAttribute('contenteditable', 'false')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+    this.contentDOM.classList.add('figure-block')
+
+    this.subcontainer.appendChild(this.contentDOM)
+    this.container.appendChild(this.subcontainer)
     this.addTools()
   }
 
@@ -256,8 +262,8 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
           this.updateContents()
         },
       }
-      this.extLinkEditorContainer?.remove()
-      this.extLinkEditorContainer = ReactSubView(
+
+      createSubViewAsync(
         this.props,
         ExtLinkEditor,
         componentProps,
@@ -265,10 +271,10 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         this.getPos,
         this.view,
         ['ext-link-editor-container']
-      )
-      // Delay injection to avoid being overwritten
-      requestAnimationFrame(() => {
-        this.contentDOM?.appendChild(this.extLinkEditorContainer)
+      ).then((elem) => {
+        this.extLinkEditorContainer?.remove()
+        this.extLinkEditorContainer = elem
+        this.subcontainer?.appendChild(this.extLinkEditorContainer)
       })
     }
   }
