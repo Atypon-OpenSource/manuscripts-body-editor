@@ -116,7 +116,7 @@ const jumpToPreviousNode = (beforeSection: number, doc: Node) => {
   for (let i = $beforeSection.index() - 1; i >= 0; i--) {
     pos = $beforeSection.posAtIndex(i)
     const node = doc.resolve(pos + 1).node()
-    if (!(isDeleted(node) && node.type !== schema.nodes.paragraph) && i >= 0) {
+    if (!(isDeleted(node) && node.type === schema.nodes.section) && i >= 0) {
       pos = $beforeSection.posAtIndex(i + 1)
       break
     }
