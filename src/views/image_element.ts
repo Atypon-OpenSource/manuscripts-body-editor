@@ -263,7 +263,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         },
       }
 
-      createSubViewAsync(
+      return createSubViewAsync(
         this.props,
         ExtLinkEditor,
         componentProps,
@@ -275,6 +275,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         this.extLinkEditorContainer?.remove()
         this.extLinkEditorContainer = elem
         this.subcontainer?.appendChild(this.extLinkEditorContainer)
+        return
       })
     }
   }

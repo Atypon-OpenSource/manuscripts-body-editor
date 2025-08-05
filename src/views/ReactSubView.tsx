@@ -16,12 +16,12 @@
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
-import { flushSync } from 'react-dom'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
