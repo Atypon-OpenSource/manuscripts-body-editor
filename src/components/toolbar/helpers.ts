@@ -36,7 +36,6 @@ import { EditorView } from 'prosemirror-view'
 import { Dispatch } from '../../commands'
 import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { filterBlockNodes } from '../../lib/utils'
-import { selectedSuggestionKey } from '../../plugins/selected-suggestion'
 import { Option } from './type-selector/TypeSelector'
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
@@ -187,15 +186,16 @@ export const demoteSectionToParagraph = (
   const afterSection = tr.mapping.map($from.after(sectionDepth))
   tr.delete(afterSection - section.nodeSize, afterSection)
 
+  setAction(
+    tr,
+    TrackChangesAction.structuralChangeAction,
+    'convert-to-paragraph'
+  )
+  setAction(tr, TrackChangesAction.setMappingOffset, 1)
+
   tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-  dispatch(
-    setAction(
-      tr,
-      TrackChangesAction.structuralChangeAction,
-      'convert-to-paragraph'
-    )
-  )
+  dispatch(tr)
   view && view.focus()
 }
 
@@ -216,14 +216,12 @@ export const promoteParagraphToSection = (
   const $beforeParagraph = doc.resolve(beforeParagraph)
   const beforeParagraphOffset = $beforeParagraph.parentOffset
   const afterParagraphOffset = beforeParagraphOffset + paragraph.nodeSize
-  const selectedChange = selectedSuggestionKey.getState(state)?.suggestion
 
   const sectionDepth = $from.depth - 1
   const parentSection = $from.node(sectionDepth)
   const startIndex = $from.index(sectionDepth)
   const endIndex = $from.indexAfter(sectionDepth)
   let afterParentSection = $from.after(sectionDepth)
-  let offset = 0
   const items: Node[] = []
 
   if (startIndex > 0) {
@@ -246,7 +244,6 @@ export const promoteParagraphToSection = (
     )
   } else {
     sectionContent = sectionContent.append(Fragment.from(paragraph.copy()))
-    offset = 2
   }
 
   if (parentSection.type.name === 'body') {
@@ -280,21 +277,16 @@ export const promoteParagraphToSection = (
     (node) => !isShadowDelete(node)
   )
   tr.insert(afterParentSection, content)
-
   tr.delete(beforeParagraph, afterParentSection - 1)
-  const anchor = selectedChange
-    ? afterParentSection - content.size + 2
-    : tr.mapping.map(afterParentSection) - offset
 
-  tr.setSelection(TextSelection.create(tr.doc, anchor))
+  setAction(tr, TrackChangesAction.structuralChangeAction, 'convert-to-section')
+  setAction(tr, TrackChangesAction.setMappingOffset, 2)
 
-  dispatch(
-    setAction(
-      tr,
-      TrackChangesAction.structuralChangeAction,
-      'convert-to-section'
-    )
+  tr.setSelection(
+    TextSelection.create(tr.doc, tr.mapping.map(afterParentSection))
   )
+
+  dispatch(tr)
   view && view.focus()
 }
 
