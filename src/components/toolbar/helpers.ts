@@ -186,16 +186,15 @@ export const demoteSectionToParagraph = (
   const afterSection = tr.mapping.map($from.after(sectionDepth))
   tr.delete(afterSection - section.nodeSize, afterSection)
 
-  setAction(
-    tr,
-    TrackChangesAction.structuralChangeAction,
-    'convert-to-paragraph'
-  )
-  setAction(tr, TrackChangesAction.setMappingOffset, 1)
-
   tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-  dispatch(tr)
+  dispatch(
+    setAction(
+      tr,
+      TrackChangesAction.structuralChangeAction,
+      'convert-to-paragraph'
+    )
+  )
   view && view.focus()
 }
 
@@ -279,14 +278,16 @@ export const promoteParagraphToSection = (
   tr.insert(afterParentSection, content)
   tr.delete(beforeParagraph, afterParentSection - 1)
 
-  setAction(tr, TrackChangesAction.structuralChangeAction, 'convert-to-section')
-  setAction(tr, TrackChangesAction.setMappingOffset, 2)
+  const anchor = tr.mapping.map(afterParentSection) - content.size + 2
+  tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, tr.mapping.map(afterParentSection))
+  dispatch(
+    setAction(
+      tr,
+      TrackChangesAction.structuralChangeAction,
+      'convert-to-section'
+    )
   )
-
-  dispatch(tr)
   view && view.focus()
 }
 
