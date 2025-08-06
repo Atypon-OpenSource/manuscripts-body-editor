@@ -430,28 +430,32 @@ export const unindentSection =
     const sectionDepth = $from.depth - 1
     const section = $from.node(sectionDepth)
     const beforeSection = $from.before(sectionDepth)
-    const afterSection = $from.after(sectionDepth)
     const sectionTitle = $from.node($from.depth)
 
+    const $beforeSection = tr.doc.resolve(beforeSection)
+    const beforeSectionOffset = $beforeSection.parentOffset
+    const afterSectionOffset = beforeSectionOffset + section.nodeSize
+
     const parentSectionDepth = $from.depth - 2
+    const parentSection = $from.node(parentSectionDepth)
+    const endIndex = $from.indexAfter(parentSectionDepth)
     const afterParentSection = $from.after(parentSectionDepth)
 
+    const hasFollowingSiblings = endIndex < parentSection.childCount
+
+    let extendedSection = section
+
+    if (hasFollowingSiblings) {
+      // If there are following siblings, we need to extend the section
+      const siblingsContent = parentSection.content.cut(afterSectionOffset)
+      extendedSection = section.copy(section.content.append(siblingsContent))
+    }
+
     // Insert the unindented section at the parent level
-    tr.insert(afterParentSection, section)
+    tr.insert(afterParentSection, Fragment.from(extendedSection))
 
     // Delete the original section (positions inside parent haven't changed)
-    tr.delete(beforeSection, afterSection)
-
-    /*
-     * TODO: Sibling reorganization logic removed for now
-     * Previously, we had logic here to handle: if (endIndex < parentSection.childCount)
-     * This would create a new section for siblings that come after the unindented section.
-     * This was removed to simplify UX because it created complex track changes operations - 3 operations couldn't be detected as move.
-     *
-     * For now, siblings remain in their original position within the parent section.
-     * This can be revisited later when we have time to properly handle the complex
-     * tracking scenarios and ensure reliable accept/reject behavior.
-     */
+    tr.delete(beforeSection, afterParentSection)
 
     const anchor = afterParentSection + 2
 
