@@ -37,6 +37,7 @@ import {
   insertBoxElement,
   insertContributors,
   insertCrossReference,
+  insertEmbed,
   insertGraphicalAbstract,
   insertHeroImage,
   insertInlineCitation,
@@ -48,7 +49,6 @@ import {
   insertSection,
   markActive,
 } from './commands'
-import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
@@ -320,7 +320,7 @@ export const getEditorMenus = (
         isActive: blockActive(schema.nodes.embed)(state),
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
-        run: () => openEmbedDialog(editor.view),
+        run: doCommand(insertEmbed),
       },
       {
         id: 'insert-link',

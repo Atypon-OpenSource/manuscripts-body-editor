@@ -36,14 +36,14 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.1.6
-        version: 3.1.6(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.1.7
+        version: 3.1.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.0.8
-        version: 2.0.8
+        specifier: 2.0.9
+        version: 2.0.9
       '@manuscripts/transform':
-        specifier: 4.2.10-LEAN-4812.0
-        version: 4.2.10-LEAN-4812.0(prosemirror-state@1.4.3)
+        specifier: 4.2.10
+        version: 4.2.10(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1173,15 +1173,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.1.6':
-    resolution: {integrity: sha512-wPflO2eBWhENrG4YiA0fHWsb3FhEtdEIU6qhFDAgR79EUeyyGPBRewOt5L2LGv8CtjkFR8cG79i4THHj9yuv7Q==}
+  '@manuscripts/style-guide@3.1.7':
+    resolution: {integrity: sha512-Jb5CqzHr9WiWxYcZtVdhdtlZ3C1HHnNr+k9GspgiKX87eVPUSdDbMQ0a+HxsJtXEyakmUUQm/rxcuguH6Da5HQ==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.0.8':
-    resolution: {integrity: sha512-3kgcL9+lvbtn/g8fsKE4nNwSqA3gjYFsAfhGRi3oM/hW2FoKsoDeZNyt2wjXPphQKwMW1z4p1SpttAxQykjf3A==}
+  '@manuscripts/track-changes-plugin@2.0.9':
+    resolution: {integrity: sha512-n87duuqDsAjvJTCb+ALY8BCH5WRmFXmmb/zhP8wGlnhoDsdVvjHEx3boLtg0FVR/C+qSpqVCKbuXYXq/5+f87Q==}
 
-  '@manuscripts/transform@4.2.10-LEAN-4812.0':
-    resolution: {integrity: sha512-gAt0/EaYbUY7C+wDqgSP5aIAbGOF0BWzPV98JWpaKEdNliiiWhlsAUg/ksxZxrv4PBY/I3XOBGtRNQRzUTamaA==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.2.10-LEAN-4812.0.tgz}
+  '@manuscripts/transform@4.2.10':
+    resolution: {integrity: sha512-WbDw9li5/AwM3onF7pK9qVKiHknss7rFs/fHFsb6py9QxNfz5cXwmlbEPiyRL72V698JKkpj7qWMqxia4Cfr2Q==}
     engines: {node: '>=20.16.0'}
 
   '@messageformat/parser@5.1.1':
@@ -5911,7 +5911,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.1.6(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.1.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
@@ -5943,7 +5943,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.0.8':
+  '@manuscripts/track-changes-plugin@2.0.9':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -5955,7 +5955,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.2.10-LEAN-4812.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.2.10(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
