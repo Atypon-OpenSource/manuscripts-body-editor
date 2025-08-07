@@ -161,6 +161,7 @@ export class InlineFootnoteView
     const state = this.view.state
     const fn = getFootnotesElementState(state, this.node.attrs.id)
     if (!fn) {
+      this.dom.innerText = ''
       return
     }
 

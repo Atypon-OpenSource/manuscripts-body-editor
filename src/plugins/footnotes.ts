@@ -52,11 +52,6 @@ export type FootnotesElementState = {
    */
   unusedFootnoteIDs: Set<string>
   /**
-   * A list of inline_footnote nodes with rids that updated due to having a rid not
-   * referenced to footnote
-   */
-  updatedInlineFootnoteRids: [InlineFootnoteNode, string[], number][]
-  /**
    * A list of footnote nodes, in reference order. i.e. footnote nodes
    * that are referenced earlier appear earlier in the list.
    */
@@ -121,7 +116,6 @@ const buildFootnotesElementState = (
     element,
     inlineFootnotes: [],
     unusedFootnoteIDs: new Set(),
-    updatedInlineFootnoteRids: [],
     footnotes: [],
     labels: new Map(),
   }
@@ -151,13 +145,8 @@ const buildFootnotesElementState = (
   const orderedFootnoteIDs: string[] = []
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
-    const rids = inlineFootnote.attrs.rids
-    if (rids.some((rid) => !footnoteIDs.has(rid))) {
-      fn.updatedInlineFootnoteRids.push([
-        node as InlineFootnoteNode,
-        rids.filter((rid) => footnoteIDs.has(rid)),
-        pos,
-      ])
+    const rids = inlineFootnote.attrs.rids.filter((rid) => footnoteIDs.has(rid))
+    if (!rids.length) {
       return
     }
     if (container[1]) {
@@ -243,9 +232,6 @@ export default (props: EditorProps) => {
         const footnotes = newState.footnotes.map(([node]) => node)
 
         if (hasChanged(newState, oldState)) {
-          newState.updatedInlineFootnoteRids.forEach(([node, rids, pos]) =>
-            tr.setNodeMarkup(pos, undefined, { ...node.attrs, rids })
-          )
           const newElement = schema.nodes.footnotes_element.create(
             element.attrs,
             // footnotes here is already in the correct order.
