@@ -243,7 +243,7 @@ export default (props: EditorProps) => {
         const footnotes = newState.footnotes.map(([node]) => node)
 
         if (hasChanged(newState, oldState)) {
-          newState.updatedInlineFootnoteRids.map(([node, rids, pos]) =>
+          newState.updatedInlineFootnoteRids.forEach(([node, rids, pos]) =>
             tr.setNodeMarkup(pos, undefined, { ...node.attrs, rids })
           )
           const newElement = schema.nodes.footnotes_element.create(
