@@ -152,7 +152,7 @@ const buildFootnotesElementState = (
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
     const rids = inlineFootnote.attrs.rids
-    if (rids.length || rids.some((rid) => !footnoteIDs.has(rid))) {
+    if (!rids.length || rids.some((rid) => !footnoteIDs.has(rid))) {
       fn.updatedInlineFootnoteRids.push([
         node as InlineFootnoteNode,
         rids.filter((rid) => footnoteIDs.has(rid)),
