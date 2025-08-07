@@ -65,7 +65,7 @@ const getDeepestSubsectionPosition = (subsection: Node, position: number) => {
     if (isDeleted(subsection.lastChild)) {
       return (
         position +
-        jumpToPreviousNode(
+        jumpToPreviousValidNode(
           subsection.nodeSize - subsection.lastChild.nodeSize - 2,
           subsection
         ) +
@@ -78,38 +78,15 @@ const getDeepestSubsectionPosition = (subsection: Node, position: number) => {
   return position + subsection.content.size
 }
 
-// Helper function to replace the deepest subsection with a new subsection
-const replaceDeepestSubsection = (
-  parentNode: Node,
-  newSubsection: Node
-): Node => {
-  if (!parentNode.lastChild || !isSectionNodeType(parentNode.lastChild.type)) {
-    return newSubsection // Replace the deepest subsection when found
-  }
-
-  const lastSubsectionIndex = parentNode.content.childCount - 1
-  const lastSubsection = parentNode.content.child(lastSubsectionIndex)
-
-  // Recursively replace the deepest subsection
-  const updatedSubsection = replaceDeepestSubsection(
-    lastSubsection,
-    newSubsection
-  )
-
-  // Replace the last subsection in the parent with the updated version
-  return parentNode.copy(
-    parentNode.content.replaceChild(lastSubsectionIndex, updatedSubsection)
-  )
-}
-
-const getDataTracked = (node: Node) => {
+const getInsertDataTracked = (node: Node) => {
   const dataTracked = node.attrs.dataTracked as TrackedAttrs[] | null
   const change = dataTracked?.find((c) => c.operation === 'insert')
   return change ? [change] : null
 }
 
-/** This to not include convert change in a deleted section of move */
-const jumpToPreviousNode = (beforeSection: number, doc: Node) => {
+/** Look at current position if node is deleted move to the previous sibling and
+ * check if it's deleted until we find a valid node */
+const jumpToPreviousValidNode = (beforeSection: number, doc: Node) => {
   const $beforeSection = doc.resolve(beforeSection)
   let pos = beforeSection
   for (let i = $beforeSection.index() - 1; i >= 0; i--) {
@@ -145,13 +122,13 @@ export const demoteSectionToParagraph = (
   const sectionDepth = $from.depth - 1
   const section = $from.node(sectionDepth)
   let beforeSection = $from.before(sectionDepth)
-  beforeSection = jumpToPreviousNode(beforeSection, doc)
+  beforeSection = jumpToPreviousValidNode(beforeSection, doc)
   const $beforeSection = doc.resolve(beforeSection)
   const previousNode = $beforeSection.nodeBefore
   const paragraph = nodes.paragraph.create(
     {
       id: generateNodeID(nodes.paragraph),
-      dataTracked: getDataTracked(section),
+      dataTracked: getInsertDataTracked(section),
     },
     sectionTitle.content
   )
@@ -260,13 +237,13 @@ export const promoteParagraphToSection = (
       }
     })
     items[0] = nodes.section.create(
-      { dataTracked: getDataTracked(paragraph) },
+      { dataTracked: getInsertDataTracked(paragraph) },
       sectionContent
     )
   } else {
     items.push(
       parentSection.type.create(
-        { dataTracked: getDataTracked(paragraph) },
+        { dataTracked: getInsertDataTracked(paragraph) },
         sectionContent
       )
     )
