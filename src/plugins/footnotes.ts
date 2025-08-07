@@ -152,7 +152,7 @@ const buildFootnotesElementState = (
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
     const rids = inlineFootnote.attrs.rids
-    if (rids.some((rid) => !footnoteIDs.has(rid))) {
+    if (rids.length || rids.some((rid) => !footnoteIDs.has(rid))) {
       fn.updatedInlineFootnoteRids.push([
         node as InlineFootnoteNode,
         rids.filter((rid) => footnoteIDs.has(rid)),
@@ -236,16 +236,42 @@ export default (props: EditorProps) => {
 
       const tr = newState.tr
 
+      if ($old && $new.footnotesElements.size < $old.footnotesElements.size) {
+        // delete any inline_footnote nodes that don't belong to any footnote element
+        $old.footnotesElements.forEach((state, elementId) => {
+          if (!$new.footnotesElements.has(elementId)) {
+            state.inlineFootnotes.forEach(([node, pos]) => {
+              if (tr.doc.nodeAt(pos)?.eq(node)) {
+                tr.delete(
+                  tr.mapping.map(pos),
+                  tr.mapping.map(pos) + node.nodeSize
+                )
+              }
+            })
+          }
+        })
+      }
+
       $new.footnotesElements.forEach((newState, key) => {
         const element = newState.element[0]
-        const pos = newState.element[1]
+        const pos = tr.mapping.map(newState.element[1])
         const oldState = $old?.footnotesElements.get(key)
         const footnotes = newState.footnotes.map(([node]) => node)
 
         if (hasChanged(newState, oldState)) {
-          newState.updatedInlineFootnoteRids.map(([node, rids, pos]) =>
-            tr.setNodeMarkup(pos, undefined, { ...node.attrs, rids })
-          )
+          newState.updatedInlineFootnoteRids.forEach(([node, rids, pos]) => {
+            if (rids.length) {
+              tr.setNodeMarkup(tr.mapping.map(pos), undefined, {
+                ...node.attrs,
+                rids,
+              })
+            } else {
+              tr.delete(
+                tr.mapping.map(pos),
+                tr.mapping.map(pos) + node.nodeSize
+              )
+            }
+          })
           const newElement = schema.nodes.footnotes_element.create(
             element.attrs,
             // footnotes here is already in the correct order.
