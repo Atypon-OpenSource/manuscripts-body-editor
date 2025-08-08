@@ -20,7 +20,6 @@ import {
   getFileIcon,
   IconButton,
   IconTextButton,
-  isImageFile,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
@@ -35,6 +34,7 @@ import {
   ManuscriptFiles,
   memoGroupFiles,
 } from '../../lib/files'
+import { getMediaTypeInfo } from '../../lib/get-media-type'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 export interface FigureDropdownProps {
@@ -47,9 +47,12 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onUpload?: () => void
   onDetach?: () => void
   onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
+  onReplaceEmbed?: () => void
   getDoc: () => ManuscriptNode
   onDelete?: () => void
+  isEmbed: boolean
   hasSiblings: () => boolean
+  currentFileHref?: string
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -61,21 +64,37 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
 function getSupplements(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
-  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean,
+  currentFileHref?: string
 ) {
   return groupFiles(getDoc(), getFiles())
     .supplements.map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
+    .filter((f) => {
+      if (currentFileHref && f.id === currentFileHref) {
+        return false
+      }
+      const mediaInfo = getMediaTypeInfo(f.name)
+      return isEmbed
+        ? mediaInfo.isVideo || mediaInfo.isAudio
+        : mediaInfo.isImage
+    })
 }
 
 function getOtherFiles(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
-  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean,
+  currentFileHref?: string
 ) {
-  return groupFiles(getDoc(), getFiles()).others.filter((f) =>
-    isImageFile(f.name)
-  )
+  return groupFiles(getDoc(), getFiles()).others.filter((f) => {
+    if (currentFileHref && f.id === currentFileHref) {
+      return false
+    }
+    const mediaInfo = getMediaTypeInfo(f.name)
+    return isEmbed ? mediaInfo.isVideo || mediaInfo.isAudio : mediaInfo.isImage
+  })
 }
 
 type WrappedProps = FigureOptionsProps & ReactViewComponentProps<FigureNode>
@@ -88,16 +107,20 @@ export const FigureOptions: React.FC<WrappedProps> = ({
   onUpload,
   onDetach,
   onReplace,
+  onReplaceEmbed,
   onDelete,
+  isEmbed,
   hasSiblings,
   container,
+  currentFileHref,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
-  const showReplace = onReplace && can.replaceFile
+  const showReplace =
+    (onReplace && can.replaceFile) || (onReplaceEmbed && can.editArticle)
   const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
   const showDelete = () => {
     if (!hasSiblings()) {
@@ -118,6 +141,8 @@ export const FigureOptions: React.FC<WrappedProps> = ({
     }
   }, [isOpen, container.classList])
 
+  const isEmbedMode = !!onReplaceEmbed
+
   const groupFiles = memoGroupFiles()
 
   return (
@@ -127,15 +152,26 @@ export const FigureOptions: React.FC<WrappedProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <NestedDropdown
-            disabled={!showReplace}
-            parentToggleOpen={toggleOpen}
-            buttonText={replaceBtnText}
-            moveLeft
-            list={
-              <>
-                {getSupplements(getFiles, getDoc, groupFiles).map(
-                  (file, index) => (
+          {showReplace && isEmbedMode && (
+            <ListItemButton onClick={() => onReplaceEmbed && onReplaceEmbed()}>
+              Edit Link
+            </ListItemButton>
+          )}
+          {showReplace && !isEmbedMode && (
+            <NestedDropdown
+              disabled={!showReplace}
+              parentToggleOpen={toggleOpen}
+              buttonText={replaceBtnText}
+              moveLeft
+              list={
+                <>
+                  {getSupplements(
+                    getFiles,
+                    getDoc,
+                    groupFiles,
+                    isEmbed,
+                    currentFileHref
+                  ).map((file, index) => (
                     <ListItemButton
                       key={file.id}
                       id={index.toString()}
@@ -144,10 +180,14 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                       {getFileIcon(file.name)}
                       <ListItemText>{file.name}</ListItemText>
                     </ListItemButton>
-                  )
-                )}
-                {getOtherFiles(getFiles, getDoc, groupFiles).map(
-                  (file, index) => (
+                  ))}
+                  {getOtherFiles(
+                    getFiles,
+                    getDoc,
+                    groupFiles,
+                    isEmbed,
+                    currentFileHref
+                  ).map((file, index) => (
                     <ListItemButton
                       key={file.id}
                       id={index.toString()}
@@ -156,20 +196,26 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                       {getFileIcon(file.name)}
                       <ListItemText>{file.name}</ListItemText>
                     </ListItemButton>
-                  )
-                )}
-                <UploadButton onClick={onUpload} disabled={!showUpload}>
-                  <UploadIcon /> Upload new...
-                </UploadButton>
-              </>
-            }
-          />
-          <ListItemButton onClick={onDownload} disabled={!showDownload}>
-            Download
-          </ListItemButton>
-          <ListItemButton onClick={onDetach} disabled={!showDetach}>
-            Detach
-          </ListItemButton>
+                  ))}
+                  {showUpload && (
+                    <UploadButton onClick={onUpload} disabled={!showUpload}>
+                      <UploadIcon /> Upload new...
+                    </UploadButton>
+                  )}
+                </>
+              }
+            />
+          )}
+          {showDownload && (
+            <ListItemButton onClick={onDownload} disabled={!showDownload}>
+              Download
+            </ListItemButton>
+          )}
+          {showDetach && (
+            <ListItemButton onClick={onDetach} disabled={!showDetach}>
+              Detach
+            </ListItemButton>
+          )}
           {showDelete() && (
             <ListItemButton onClick={onDelete}>Delete</ListItemButton>
           )}
