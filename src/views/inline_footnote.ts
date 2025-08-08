@@ -161,11 +161,11 @@ export class InlineFootnoteView
     const state = this.view.state
     const fn = getFootnotesElementState(state, this.node.attrs.id)
     if (!fn) {
-      this.dom.style.display = 'none'
+      this.dom.innerText = '?'
       return
     }
 
-    this.dom.innerText = fn.labels.get(this.node.attrs.id) || ''
+    this.dom.innerText = fn.labels.get(this.node.attrs.id) || '?'
   }
 
   public initialise = () => {
