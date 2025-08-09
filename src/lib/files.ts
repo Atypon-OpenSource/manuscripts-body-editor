@@ -49,7 +49,10 @@ const MISSING_FILE: FileAttachment = {
   name: '',
 }
 
-export type Upload = (file: File) => Promise<FileAttachment>
+export type Upload = (
+  file: File,
+  OnProgress?: (percentage: number) => void
+) => Promise<FileAttachment>
 
 export type Download = (file: FileAttachment) => void
 
