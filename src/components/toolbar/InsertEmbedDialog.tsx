@@ -102,7 +102,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
     [url] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const operation = pos ? 'Update' : 'Insert'
+  const operation = pos !== undefined && attrs?.href ? 'Update' : 'Insert'
 
   return (
     <StyledModal isOpen={isOpen} onRequestClose={() => setOpen(false)}>
