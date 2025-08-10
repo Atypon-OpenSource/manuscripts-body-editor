@@ -21,6 +21,7 @@ import { isHidden } from './track-changes-utils'
 export type FileAttachment = {
   id: string
   name: string
+  link?: string
   createdDate?: Date
 }
 

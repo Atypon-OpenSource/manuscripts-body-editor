@@ -628,7 +628,8 @@
   z-index: 1;
   padding: 0 12px;
 }
-.ProseMirror .block-container.block-figure_element > .block {
+.ProseMirror .block-container.block-figure_element > .block,
+.ProseMirror .block-container.block-embed > .block {
   display: grid;
 }
 
@@ -1067,7 +1068,8 @@
   display: none;
 }
 
-.ProseMirror .graphical-abstract .block-figure_element .block-gutter {
+.ProseMirror .graphical-abstract .block-figure_element .block-gutter,
+.ProseMirror .graphical-abstract .block-embed .block-gutter {
   visibility: hidden;
 }
 

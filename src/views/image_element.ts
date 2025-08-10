@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { ContextMenu } from '@manuscripts/style-guide'
 import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
 import {
   ExtLinkEditor,
   ExtLinkEditorProps,
 } from '../components/views/ExtLinkEditor'
-import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView, { createSubViewAsync } from './ReactSubView'
+import { createPositionMenuWrapper } from '../lib/position-menu'
 
 export enum figurePositions {
   left = 'half-left',
@@ -89,42 +89,17 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         existingMenu.remove()
       }
 
-      this.container.prepend(this.createPositionMenuWrapper())
-    }
-  }
+      const firstFigure = this.getFirstFigure()
+      this.figurePosition = firstFigure?.attrs.type || figurePositions.default
 
-  private createPositionMenuWrapper = () => {
-    const can = this.props.getCapabilities()
-    this.positionMenuWrapper = document.createElement('div')
-    this.positionMenuWrapper.classList.add('position-menu')
+      this.positionMenuWrapper = createPositionMenuWrapper(
+        this.figurePosition,
+        this.showPositionMenu,
+        this.props
+      )
 
-    const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
-
-    // Get the current position from the first figure in the element
-    const firstFigure = this.getFirstFigure()
-    this.figurePosition = firstFigure?.attrs.type || figurePositions.default
-
-    let icon
-    switch (this.figurePosition) {
-      case figurePositions.left:
-        icon = imageLeftIcon
-        break
-      case figurePositions.right:
-        icon = imageRightIcon
-        break
-      default:
-        icon = imageDefaultIcon
-        break
+      this.container.prepend(this.positionMenuWrapper)
     }
-    if (icon) {
-      positionMenuButton.innerHTML = icon
-    }
-    if (can.editArticle) {
-      positionMenuButton.addEventListener('click', this.showPositionMenu)
-    }
-    this.positionMenuWrapper.appendChild(positionMenuButton)
-    return this.positionMenuWrapper
   }
 
   /**
@@ -180,39 +155,47 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   }
 
   private showPositionMenu = () => {
+    const firstFigure = this.getFirstFigure()
+    if (!firstFigure) {
+      return
+    }
+
     this.props.popper.destroy()
 
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Left',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.left)
-          },
-          icon: 'ImageLeft',
-          selected: this.figurePosition === figurePositions.left,
+    const options = [
+      {
+        label: 'Left',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.left)
         },
-        {
-          label: 'Default',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.default)
-          },
-          icon: 'ImageDefault',
-          selected: !this.figurePosition,
+        icon: 'ImageLeft',
+        selected: this.figurePosition === figurePositions.left,
+      },
+      {
+        label: 'Default',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.default)
         },
-        {
-          label: 'Right',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.right)
-          },
-          icon: 'ImageRight',
-          selected: this.figurePosition === figurePositions.right,
+        icon: 'ImageDefault',
+        selected: !this.figurePosition,
+      },
+      {
+        label: 'Right',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.right)
         },
-      ],
+        icon: 'ImageRight',
+        selected: this.figurePosition === figurePositions.right,
+      },
+    ]
+
+    const componentProps = {
+      actions: options,
     }
+
     this.props.popper.show(
       this.positionMenuWrapper,
       ReactSubView(
