@@ -21,11 +21,11 @@ import {
   ExtLinkEditor,
   ExtLinkEditorProps,
 } from '../components/views/ExtLinkEditor'
+import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView, { createSubViewAsync } from './ReactSubView'
-import { createPositionMenuWrapper } from '../lib/position-menu'
 
 export enum figurePositions {
   left = 'half-left',
