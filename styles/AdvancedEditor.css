@@ -129,8 +129,8 @@
   border: 1px solid #f2f2f2;
   border-radius: 4px;
 
-  padding: 4pt !important;
-  gap: 4pt !important;
+  padding: 8px;
+  gap: 8px !important;
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
@@ -139,6 +139,27 @@
   box-sizing: border-box;
   justify-self: center;
   position: relative;
+}
+.ProseMirror .figure-block-group {
+  width: 100%;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  position: relative;
+  padding: 8px;
+  gap: 8px !important;
+
+  grid-template-columns: repeat(3, auto) !important;
+  grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+}
+
+.ProseMirror .figure-block-group .figure-block {
+  border: none;
+  border-radius: 0;
+  position: static;
+  padding: 0;
+  margin: 0 !important;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
 }
 
 .ProseMirror .figure-group {
@@ -267,8 +288,12 @@
   padding: 16px 32px;
 }
 
-.ProseMirror .figure.placeholder a {
+.ProseMirror a[data-action] {
   text-decoration: underline;
+  cursor: pointer;
+}
+.ProseMirror a[data-action]:hover {
+  text-decoration: none;
 }
 
 .ProseMirror .figure.placeholder.over {
@@ -345,7 +370,9 @@
   text-align: center !important;
 }
 
-.ProseMirror .block-figure_element .position-menu, .ProseMirror .block-image_element .position-menu, .ProseMirror .block-embed .position-menu {
+.ProseMirror .block-figure_element .position-menu,
+.ProseMirror .block-image_element .position-menu, 
+ProseMirror .block-embed .position-menu {
   position: absolute;
   top: 15px;
   right: 35px;
@@ -371,9 +398,8 @@
   align-items: center;
   pointer-events: auto;
   transition: opacity 0.2s;
-  background-color:  #FAFAFA;
-  border: 1px solid #F2F2F2;
-
+  background-color: #fafafa;
+  border: 1px solid #f2f2f2;
 }
 .ProseMirror .figure-block .figure:hover .drag-handler {
   opacity: 1;
@@ -382,13 +408,17 @@
 /* Drop area blue dotted outline */
 .ProseMirror .figure-block .figure.drop-target-above,
 .ProseMirror .figure-block .figure.drop-target-below {
-  border: 2px dotted #20AEDF !important;
+  border: 2px dotted #20aedf !important;
   transition: border 0.2s, box-shadow 0.2s;
   position: relative;
 }
 
-.ProseMirror .figure-block .figure.drop-target-above::before { top: 0; }
-.ProseMirror .figure-block .figure.drop-target-below::after { bottom: 0; }
+.ProseMirror .figure-block .figure.drop-target-above::before {
+  top: 0;
+}
+.ProseMirror .figure-block .figure.drop-target-below::after {
+  bottom: 0;
+}
 
 .ProseMirror .figure.dragging {
   opacity: 0.6;
@@ -1047,8 +1077,12 @@ figure.block:has(.equation.selected-suggestion) {
   .block,
 .tracking-visible
   .selected-suggestion[data-track-op='move'][data-track-status='pending']
-  .block , .block:has(figure.selected-suggestion, [data-track-op='move'][data-track-status='pending']){
-    box-shadow: inset 3px 0 0 var(--updated-border-color) ;
+  .block,
+.block:has(
+    figure.selected-suggestion,
+    [data-track-op='move'][data-track-status='pending']
+  ) {
+  box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
 .tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
@@ -1522,7 +1556,8 @@ th:hover > .table-context-menu-button,
   justify-content: center;
 }
 
-.ProseMirror .accessibility_element {
+.ProseMirror .accessibility_element,
+.ProseMirror .ext-link-editor-container {
   margin-top: 12px;
   grid-column-start: 1;
   grid-column-end: -1;
@@ -1530,8 +1565,13 @@ th:hover > .table-context-menu-button,
   display: none;
 }
 
-.ProseMirror .show_accessibility_element .accessibility_element {
+.ProseMirror .show_accessibility_element .accessibility_element,
+.ProseMirror .show_accessibility_element .ext-link-editor-container {
   display: block;
+}
+
+.ProseMirror .ext-link-editor-container {
+  position: static;
 }
 
 .ProseMirror .accessibility_element_label {
@@ -1543,6 +1583,11 @@ th:hover > .table-context-menu-button,
   letter-spacing: -0.369px;
   margin-top: 12px;
   cursor: pointer;
+}
+
+.ProseMirror .accessibility_element_input:focus,
+.ProseMirror .accessibility_element_input:focus-visible {
+  outline: none;
 }
 
 .ProseMirror .accessibility_element_input {
