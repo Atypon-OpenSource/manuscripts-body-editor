@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  skipTracking,
+  setAction,
+  TrackChangesAction,
+} from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isSectionNodeType,
@@ -372,7 +376,7 @@ export const indentSection =
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-    tr.setMeta('action', 'indent')
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
 
     dispatch(tr)
     view && view.focus()
@@ -400,7 +404,7 @@ export const indentParagraph =
       sectionContent
     )
 
-    tr.setMeta('action', 'indent')
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
 
     tr.delete(beforeParagraph, sectionEnd)
     tr.insert(beforeParagraph, newSection)
@@ -456,7 +460,7 @@ export const unindentSection =
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    tr.setMeta('action', 'unindent')
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
 
     dispatch(tr)
     view && view.focus()
@@ -500,7 +504,7 @@ export const unindentParagraph =
       TextSelection.create(tr.doc, paragraphPos + newSection.nodeSize)
     )
 
-    tr.setMeta('action', 'unindent')
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
 
     dispatch(tr)
     view?.focus()
