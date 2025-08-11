@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 import {
-  skipTracking,
   setAction,
+  skipTracking,
   TrackChangesAction,
 } from '@manuscripts/track-changes-plugin'
 import {
