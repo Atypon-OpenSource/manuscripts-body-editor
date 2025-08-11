@@ -145,8 +145,8 @@ const buildFootnotesElementState = (
   const orderedFootnoteIDs: string[] = []
   inlineFootnotes.forEach(({ node, pos }) => {
     const inlineFootnote = node as InlineFootnoteNode
-    const rids = inlineFootnote.attrs.rids
-    if (rids.some((rid) => !footnoteIDs.has(rid))) {
+    const rids = inlineFootnote.attrs.rids.filter((rid) => footnoteIDs.has(rid))
+    if (!rids.length) {
       return
     }
     if (container[1]) {

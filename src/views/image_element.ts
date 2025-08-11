@@ -15,13 +15,17 @@
  */
 
 import { ContextMenu } from '@manuscripts/style-guide'
-import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
+import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
+import {
+  ExtLinkEditor,
+  ExtLinkEditorProps,
+} from '../components/views/ExtLinkEditor'
 import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { createSubViewAsync } from './ReactSubView'
 
 export enum figurePositions {
   left = 'half-left',
@@ -29,10 +33,13 @@ export enum figurePositions {
   default = '',
 }
 
-export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
+export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
+  public subcontainer: HTMLElement
+  public extLinkEditorContainer: HTMLDivElement
   private positionMenuWrapper: HTMLDivElement
   private figurePosition: string
+  private isEditingExtLink = false
 
   public ignoreMutation = () => true
 
@@ -44,21 +51,30 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
   public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('block')
-    this.container.setAttribute('contenteditable', 'true')
+    this.container.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
 
     // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+    this.subcontainer = document.createElement('div')
+    this.subcontainer.classList.add('figure-block-group')
 
+    this.contentDOM = document.createElement('div')
+    this.contentDOM.setAttribute('contenteditable', 'false')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.classList.add('figure-block')
+
+    this.subcontainer.appendChild(this.contentDOM)
+    this.container.appendChild(this.subcontainer)
     this.addTools()
   }
 
   public updateContents() {
     super.updateContents()
     this.addTools()
+
+    if (this.node.type === schema.nodes.image_element) {
+      this.addExternalLinkedFileEditor()
+    }
   }
 
   protected addTools() {
@@ -214,6 +230,37 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
 
     this.view.dispatch(tr)
     this.figurePosition = position
+  }
+
+  private addExternalLinkedFileEditor() {
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: ExtLinkEditorProps = {
+        node: this.node,
+        nodePos: this.getPos(),
+        view: this.view,
+        editorProps: this.props,
+        isEditing: this.isEditingExtLink,
+        setIsEditing: (val) => {
+          this.isEditingExtLink = val
+          this.updateContents()
+        },
+      }
+
+      return createSubViewAsync(
+        this.props,
+        ExtLinkEditor,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['ext-link-editor-container']
+      ).then((elem) => {
+        this.extLinkEditorContainer?.remove()
+        this.extLinkEditorContainer = elem
+        this.subcontainer?.appendChild(this.extLinkEditorContainer)
+        return
+      })
+    }
   }
 }
 
