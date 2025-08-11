@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
+import { ContextMenu } from '@manuscripts/style-guide'
+import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
-import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
+import {
+  ExtLinkEditor,
+  ExtLinkEditorProps,
+} from '../components/views/ExtLinkEditor'
+import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { createSubViewAsync } from './ReactSubView'
 
 export enum figurePositions {
   left = 'half-left',
@@ -29,10 +33,13 @@ export enum figurePositions {
   default = '',
 }
 
-export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
+export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
+  public subcontainer: HTMLElement
+  public extLinkEditorContainer: HTMLDivElement
   private positionMenuWrapper: HTMLDivElement
   private figurePosition: string
+  private isEditingExtLink = false
 
   public ignoreMutation = () => true
 
@@ -44,21 +51,30 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
   public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('block')
-    this.container.setAttribute('contenteditable', 'true')
+    this.container.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
 
     // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+    this.subcontainer = document.createElement('div')
+    this.subcontainer.classList.add('figure-block-group')
 
+    this.contentDOM = document.createElement('div')
+    this.contentDOM.setAttribute('contenteditable', 'false')
+    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    this.contentDOM.classList.add('figure-block')
+
+    this.subcontainer.appendChild(this.contentDOM)
+    this.container.appendChild(this.subcontainer)
     this.addTools()
   }
 
   public updateContents() {
     super.updateContents()
     this.addTools()
+
+    if (this.node.type === schema.nodes.image_element) {
+      this.addExternalLinkedFileEditor()
+    }
   }
 
   protected addTools() {
@@ -73,42 +89,17 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
         existingMenu.remove()
       }
 
-      this.container.prepend(this.createPositionMenuWrapper())
-    }
-  }
+      const firstFigure = this.getFirstFigure()
+      this.figurePosition = firstFigure?.attrs.type || figurePositions.default
 
-  private createPositionMenuWrapper = () => {
-    const can = this.props.getCapabilities()
-    this.positionMenuWrapper = document.createElement('div')
-    this.positionMenuWrapper.classList.add('position-menu')
+      this.positionMenuWrapper = createPositionMenuWrapper(
+        this.figurePosition,
+        this.showPositionMenu,
+        this.props
+      )
 
-    const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
-
-    // Get the current position from the first figure in the element
-    const firstFigure = this.getFirstFigure()
-    this.figurePosition = firstFigure?.attrs.type || figurePositions.default
-
-    let icon
-    switch (this.figurePosition) {
-      case figurePositions.left:
-        icon = imageLeftIcon
-        break
-      case figurePositions.right:
-        icon = imageRightIcon
-        break
-      default:
-        icon = imageDefaultIcon
-        break
+      this.container.prepend(this.positionMenuWrapper)
     }
-    if (icon) {
-      positionMenuButton.innerHTML = icon
-    }
-    if (can.editArticle) {
-      positionMenuButton.addEventListener('click', this.showPositionMenu)
-    }
-    this.positionMenuWrapper.appendChild(positionMenuButton)
-    return this.positionMenuWrapper
   }
 
   /**
@@ -164,39 +155,47 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
   }
 
   private showPositionMenu = () => {
+    const firstFigure = this.getFirstFigure()
+    if (!firstFigure) {
+      return
+    }
+
     this.props.popper.destroy()
 
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Left',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.left)
-          },
-          icon: 'ImageLeft',
-          selected: this.figurePosition === figurePositions.left,
+    const options = [
+      {
+        label: 'Left',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.left)
         },
-        {
-          label: 'Default',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.default)
-          },
-          icon: 'ImageDefault',
-          selected: !this.figurePosition,
+        icon: 'ImageLeft',
+        selected: this.figurePosition === figurePositions.left,
+      },
+      {
+        label: 'Default',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.default)
         },
-        {
-          label: 'Right',
-          action: () => {
-            this.props.popper.destroy()
-            this.updateAllFiguresPosition(figurePositions.right)
-          },
-          icon: 'ImageRight',
-          selected: this.figurePosition === figurePositions.right,
+        icon: 'ImageDefault',
+        selected: !this.figurePosition,
+      },
+      {
+        label: 'Right',
+        action: () => {
+          this.props.popper.destroy()
+          this.updateAllFiguresPosition(figurePositions.right)
         },
-      ],
+        icon: 'ImageRight',
+        selected: this.figurePosition === figurePositions.right,
+      },
+    ]
+
+    const componentProps = {
+      actions: options,
     }
+
     this.props.popper.show(
       this.positionMenuWrapper,
       ReactSubView(
@@ -231,6 +230,37 @@ export class ImageElementView extends BlockView<Trackable<FigureElementNode>> {
 
     this.view.dispatch(tr)
     this.figurePosition = position
+  }
+
+  private addExternalLinkedFileEditor() {
+    if (this.props.dispatch && this.props.theme) {
+      const componentProps: ExtLinkEditorProps = {
+        node: this.node,
+        nodePos: this.getPos(),
+        view: this.view,
+        editorProps: this.props,
+        isEditing: this.isEditingExtLink,
+        setIsEditing: (val) => {
+          this.isEditingExtLink = val
+          this.updateContents()
+        },
+      }
+
+      return createSubViewAsync(
+        this.props,
+        ExtLinkEditor,
+        componentProps,
+        this.node,
+        this.getPos,
+        this.view,
+        ['ext-link-editor-container']
+      ).then((elem) => {
+        this.extLinkEditorContainer?.remove()
+        this.extLinkEditorContainer = elem
+        this.subcontainer?.appendChild(this.extLinkEditorContainer)
+        return
+      })
+    }
   }
 }
 
