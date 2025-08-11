@@ -406,7 +406,9 @@ export const indentParagraph =
     tr.insert(beforeParagraph, newSection)
 
     // Set selection inside the title of the new section
-    tr.setSelection(TextSelection.create(tr.doc, beforeParagraph + 2))
+    tr.setSelection(
+      TextSelection.create(tr.doc, beforeParagraph + newSection.nodeSize - 2)
+    )
 
     dispatch(tr)
     view?.focus()
@@ -495,7 +497,7 @@ export const unindentParagraph =
     tr.insert(paragraphPos + 2, newSection)
 
     tr.setSelection(
-      TextSelection.create(tr.doc, tr.mapping.map(paragraphPos) + 4)
+      TextSelection.create(tr.doc, paragraphPos + newSection.nodeSize)
     )
 
     tr.setMeta('action', 'unindent')
