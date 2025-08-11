@@ -24,6 +24,7 @@ import React from 'react'
 import { OnChangeValue } from 'react-select'
 
 import { findClosestParentElement } from '../../../lib/hierarchy'
+import { isDeleted } from '../../../lib/track-changes-utils'
 import { isEditAllowed } from '../../../lib/utils'
 import {
   demoteSectionToParagraph,
@@ -74,40 +75,40 @@ const buildOptions = (state: EditorState): Option[] => {
       const beforeSection = $from.before(sectionDepth)
       const $beforeSection = doc.resolve(beforeSection)
       const sectionOffset = $beforeSection.parentOffset
-
-      options.push(
-        {
+      const section = $from.node(sectionDepth)
+      !isDeleted(section) &&
+        options.push({
           nodeType: nodes.paragraph,
           label: 'Paragraph',
           action: demoteSectionToParagraph,
-          isDisabled: sectionDepth <= 1 && sectionOffset <= 1,
+          isDisabled:
+            (sectionDepth <= 1 && sectionOffset <= 1) || isDeleted(section),
           isSelected: false,
-        },
-        {
-          nodeType: nodes.section,
-          label: 'Heading',
-          isDisabled: true,
-          isSelected: true,
-        }
-      )
+        })
+      options.push({
+        nodeType: nodes.section,
+        label: 'Heading',
+        isDisabled: true,
+        isSelected: true,
+      })
       return options
     }
     case parentElementType.schema.nodes.paragraph: {
-      options.push(
-        {
-          nodeType: nodes.paragraph,
-          label: 'Paragraph',
-          isDisabled: true,
-          isSelected: true,
-        },
-        {
+      const paragraph = $from.node($from.depth)
+      options.push({
+        nodeType: nodes.paragraph,
+        label: 'Paragraph',
+        isDisabled: true,
+        isSelected: true,
+      })
+      !isDeleted(paragraph) &&
+        options.push({
           nodeType: nodes.section,
           label: 'Heading',
           action: promoteParagraphToSection,
-          isDisabled: false,
+          isDisabled: isDeleted(paragraph),
           isSelected: false,
-        }
-      )
+        })
       return options
     }
     default: {

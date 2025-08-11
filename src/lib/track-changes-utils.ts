@@ -32,6 +32,16 @@ export function isDeleted(node: ProsemirrorNode) {
   return false
 }
 
+export function isShadowDelete(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, moveNodeId }) => operation === 'delete' && moveNodeId
+    )
+  }
+  return false
+}
+
 export function isPendingInsert(node: ProsemirrorNode) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
