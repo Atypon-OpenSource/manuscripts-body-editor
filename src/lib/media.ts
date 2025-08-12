@@ -118,14 +118,12 @@ type Handleable = { href?: string; src?: string }
 
 export const createFileHandlers = <T extends Handleable>(
   attrs: T,
+  fileAttrKey: keyof Handleable,
   view: ManuscriptEditorView,
   props: EditorProps,
   setAttr: (value: string) => void
 ): FileHandlers => {
   const handlers: FileHandlers = {}
-  const fileAttrKey: keyof Handleable = Object.keys(attrs).includes('src')
-    ? 'src'
-    : 'href'
 
   const controlAttr = attrs[fileAttrKey]
   const files = props.getFiles()

@@ -271,6 +271,7 @@ export class FigureEditableView extends FigureView {
 
     const handlers = createFileHandlers(
       this.node.attrs,
+      'src',
       this.view,
       this.props,
       this.setSrc
