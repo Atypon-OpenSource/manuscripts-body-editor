@@ -86,7 +86,7 @@ export default (props: EditorProps) => {
     doi(),
     section_category(props),
     cross_references(),
-    detect_inconsistency(),
+    detect_inconsistency(props),
     search_replace(),
     lock_body(),
     alt_titles(),

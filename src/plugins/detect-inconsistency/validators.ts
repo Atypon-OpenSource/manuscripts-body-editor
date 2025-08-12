@@ -23,6 +23,8 @@ import {
 } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
+import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { allowedHref } from '../../lib/url'
 import { createDecoration, Inconsistency } from './detect-inconsistency-utils'
 
 export type ValidatorContext = {
@@ -34,6 +36,7 @@ export type ValidatorContext = {
   showDecorations: boolean
   selectedPos: number | null
   decorations: Decoration[]
+  props: EditorProps
 }
 
 export type NodeValidator = (
@@ -53,8 +56,19 @@ const createWarning = (
   severity: Inconsistency['severity']
 ): Inconsistency => {
   const nodeDescription = getNodeDescription(node)
-  const message =
-    category === 'empty-content' ? `Is empty` : `Has no linked reference`
+  const message = (() => {
+    switch (node.type) {
+      case schema.nodes.figure_element:
+      case schema.nodes.image_element:
+        return 'Has no uploaded file'
+      case schema.nodes.embed:
+        return 'Has no link or uploaded file'
+      case schema.nodes.link:
+        return 'Url is empty'
+      default:
+        return category === 'empty-content' ? `Is empty` : `Has no linked reference`
+    }
+  })()
 
   return {
     type: 'warning',
@@ -164,9 +178,57 @@ const validateInlineFootnote: NodeValidator = (node, pos, context) => {
   return inconsistencies
 }
 
+const validateFigureElement: NodeValidator = (node, pos, context) => {
+  const inconsistencies: Inconsistency[] = []
+  const files = new Set(context.props.getFiles().map((f) => f.id))
+
+  node.forEach((child) => {
+    if (child.type === schema.nodes.figure) {
+      if (!files.has(child.attrs.src)) {
+        const inconsistency = createWarning(
+          node,
+          pos,
+          'missing-reference',
+          'error'
+        )
+        inconsistencies.push(inconsistency)
+      }
+    }
+  })
+
+  return inconsistencies
+}
+
+const validateMedia: NodeValidator = (node, pos, context) => {
+  const inconsistencies: Inconsistency[] = []
+  const files = new Set(context.props.getFiles().map((f) => f.id))
+
+  if (!(files.has(node.attrs.href) || allowedHref(node.attrs.href))) {
+    const inconsistency = createWarning(node, pos, 'missing-reference', 'error')
+    inconsistencies.push(inconsistency)
+  }
+
+  return inconsistencies
+}
+
+const validateLink: NodeValidator = (node, pos) => {
+  const inconsistencies: Inconsistency[] = []
+
+  if (!allowedHref(node.attrs.href)) {
+    const inconsistency = createWarning(node, pos, 'missing-reference', 'error')
+    inconsistencies.push(inconsistency)
+  }
+
+  return inconsistencies
+}
+
 export const validators: Record<string, NodeValidator> = {
   [schema.nodes.title.name]: validateTitle,
   [schema.nodes.cross_reference.name]: validateCrossReference,
   [schema.nodes.citation.name]: validateCitation,
   [schema.nodes.inline_footnote.name]: validateInlineFootnote,
+  [schema.nodes.figure_element.name]: validateFigureElement,
+  [schema.nodes.image_element.name]: validateFigureElement,
+  [schema.nodes.embed.name]: validateMedia,
+  [schema.nodes.link.name]: validateLink,
 }
