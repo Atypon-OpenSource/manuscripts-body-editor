@@ -290,7 +290,6 @@ export class FigureEditableView extends FigureView {
         this.view.dispatch(tr)
       }
     }
-    console.log(handlers)
     this.reactTools = createReactTools(
       this.node,
       this.view,
