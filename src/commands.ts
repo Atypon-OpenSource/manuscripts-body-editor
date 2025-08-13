@@ -214,6 +214,15 @@ export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
     const { $from, $to } = state.selection
 
+    const props = getEditorProps(state)
+    const allowed = props?.allowedElementTypes
+    if (allowed && Array.isArray(allowed)) {
+      const typeName = type.name
+      if (!allowed.includes(typeName)) {
+        return false
+      }
+    }
+
     // disable block comment insertion just for title node, LEAN-2746
     if (
       ($from.node().type === schema.nodes.title ||
@@ -525,6 +534,9 @@ export const insertAttachment = (
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    if (!canInsert(nodeType)(state)) {
+      return false
+    }
     const position = findBlockInsertPosition(state)
     if (position === null) {
       return false

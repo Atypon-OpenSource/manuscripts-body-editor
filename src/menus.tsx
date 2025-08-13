@@ -184,24 +184,28 @@ export const getEditorMenus = (
             label: 'Authors',
             isEnabled: isCommandValid(insertContributors),
             run: doCommand(insertContributors),
+            isAllowed: props.allowedElementTypes?.includes('contributors'),
           },
           {
             id: 'insert-contributors',
             label: 'Affiliations',
             isEnabled: isCommandValid(insertAffiliation),
             run: doCommand(insertAffiliation),
+            isAllowed: props.allowedElementTypes?.includes('affiliations'),
           },
           {
             id: 'insert-awards',
             label: 'Funder Information',
             isEnabled: isCommandValid(insertAward),
             run: doCommand(insertAward),
+            isAllowed: props.allowedElementTypes?.includes('awards'),
           },
           {
             id: 'insert-keywords',
             label: 'Keywords',
             isEnabled: isCommandValid(insertKeywords),
             run: doCommand(insertKeywords),
+            isAllowed: props.allowedElementTypes?.includes('keywords'),
           },
         ],
       },
@@ -210,6 +214,7 @@ export const getEditorMenus = (
         label: 'Author Notes',
         isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
+        isAllowed: props.allowedElementTypes?.includes('author_notes'),
       },
       {
         id: 'insert-section',
@@ -220,6 +225,7 @@ export const getEditorMenus = (
         },
         isEnabled: isEditAllowed(state) && isCommandValid(insertSection()),
         run: doCommand(insertSection()),
+        isAllowed: props.allowedElementTypes?.includes('section'),
       },
       {
         id: 'insert-subsection',
@@ -230,6 +236,7 @@ export const getEditorMenus = (
         },
         isEnabled: isEditAllowed(state) && isCommandValid(insertSection(true)),
         run: doCommand(insertSection(true)),
+        isAllowed: props.allowedElementTypes?.includes('section'),
       },
       {
         id: 'insert-paragraph',
@@ -238,6 +245,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.paragraph)),
         run: doCommand(insertBlock(schema.nodes.paragraph)),
+        isAllowed: props.allowedElementTypes?.includes('paragraph'),
       },
       {
         role: 'separator',
@@ -249,6 +257,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.blockquote_element)),
         run: doCommand(insertBlock(schema.nodes.blockquote_element)),
+        isAllowed: props.allowedElementTypes?.includes('blockquote_element'),
       },
       {
         id: 'insert-pullquote',
@@ -257,6 +266,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.pullquote_element)),
         run: doCommand(insertBlock(schema.nodes.pullquote_element)),
+        isAllowed: props.allowedElementTypes?.includes('pullquote_element'),
       },
       {
         role: 'separator',
@@ -272,6 +282,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.box_element)),
         run: doCommand(insertBoxElement),
+        isAllowed: props.allowedElementTypes?.includes('box_element'),
       },
       {
         id: 'insert-figure-element',
@@ -284,6 +295,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.figure_element)),
         run: doCommand(insertBlock(schema.nodes.figure_element)),
+        isAllowed: props.allowedElementTypes?.includes('figure_element'),
       },
       {
         id: 'insert-image-element',
@@ -292,12 +304,14 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.image_element)),
         run: doCommand(insertBlock(schema.nodes.image_element)),
+        isAllowed: props.allowedElementTypes?.includes('image_element'),
       },
       {
         id: 'insert-hero-image',
         label: 'Hero Image',
         isEnabled: isEditAllowed(state) && isCommandValid(insertHeroImage()),
         run: doCommand(insertHeroImage()),
+        isAllowed: props.allowedElementTypes?.includes('hero_image'),
       },
       {
         id: 'insert-table-element',
@@ -310,6 +324,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.table_element)),
         run: () => openInsertTableDialog(editor.state, editor.dispatch),
+        isAllowed: props.allowedElementTypes?.includes('table_element'),
       },
       {
         role: 'separator',
@@ -321,6 +336,7 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
         run: doCommand(insertEmbed),
+        isAllowed: props.allowedElementTypes?.includes('embed'),
       },
       {
         id: 'insert-link',
@@ -333,6 +349,7 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.link)),
         run: doCommand(insertLink),
+        isAllowed: props.allowedElementTypes?.includes('link'),
       },
       {
         role: 'separator',
@@ -348,6 +365,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.equation_element)),
         run: doCommand(insertBlock(schema.nodes.equation_element)),
+        isAllowed: props.allowedElementTypes?.includes('equation_element'),
       },
       {
         id: 'insert-inline-equation',
@@ -360,6 +378,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.inline_equation)),
         run: doCommand(insertInlineEquation),
+        isAllowed: props.allowedElementTypes?.includes('inline_equation'),
       },
       {
         role: 'separator',
@@ -375,6 +394,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.citation)),
         run: doCommand(insertInlineCitation),
+        isAllowed: props.allowedElementTypes?.includes('citation'),
       },
       {
         id: 'insert-cross-reference',
@@ -387,6 +407,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.cross_reference)),
         run: doCommand(insertCrossReference),
+        isAllowed: props.allowedElementTypes?.includes('cross_reference'),
       },
       {
         id: 'insert-footnote',
@@ -399,6 +420,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.inline_footnote)),
         run: doCommand(insertInlineFootnote),
+        isAllowed: props.allowedElementTypes?.includes('inline_footnote'),
       },
       {
         id: 'insert-special-character',
@@ -406,12 +428,14 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.text)),
         run: () => openInsertSpecialCharacterDialog(editor.view),
+        isAllowed: props.allowedElementTypes?.includes('text'),
       },
       {
         id: 'insert-comment',
         label: 'Comment',
         isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
         run: doCommand(addInlineComment),
+        isAllowed: props.allowedElementTypes?.includes('comment'),
       },
     ],
   }
