@@ -66,7 +66,9 @@ const createWarning = (
       case schema.nodes.link:
         return 'Url is empty'
       default:
-        return category === 'empty-content' ? `Is empty` : `Has no linked reference`
+        return category === 'empty-content'
+          ? `Is empty`
+          : `Has no linked reference`
     }
   })()
 
