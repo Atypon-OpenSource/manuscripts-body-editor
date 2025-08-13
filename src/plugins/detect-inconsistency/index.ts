@@ -21,6 +21,7 @@
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { buildPluginState, PluginState } from './detect-inconsistency-utils'
 
 export { Inconsistency } from './detect-inconsistency-utils'
@@ -29,17 +30,17 @@ export const detectInconsistencyKey = new PluginKey<PluginState>(
   'detectInconsistency'
 )
 
-export default () => {
+export default (props: EditorProps) => {
   return new Plugin<PluginState>({
     key: detectInconsistencyKey,
     state: {
-      init: (_, state) => buildPluginState(state, false),
+      init: (_, state) => buildPluginState(state, props, false),
       apply: (tr, value, newState) => {
         const showDecorations =
           tr.getMeta(detectInconsistencyKey) !== undefined
             ? tr.getMeta(detectInconsistencyKey)
             : value.showDecorations
-        return buildPluginState(newState, showDecorations)
+        return buildPluginState(newState, props, showDecorations)
       },
     },
     props: {

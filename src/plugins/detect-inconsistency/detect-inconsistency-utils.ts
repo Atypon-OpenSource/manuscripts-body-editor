@@ -18,6 +18,7 @@ import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
@@ -56,6 +57,7 @@ export const createDecoration = (
 
 export const buildPluginState = (
   state: ManuscriptEditorState,
+  props: EditorProps,
   showDecorations: boolean
 ): PluginState => {
   const inconsistencies: Inconsistency[] = []
@@ -77,6 +79,7 @@ export const buildPluginState = (
     showDecorations,
     selectedPos,
     decorations,
+    props,
   }
 
   state.doc.descendants((node, pos) => {
