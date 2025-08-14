@@ -212,7 +212,7 @@
   visibility: visible;
 }
 
-.ProseMirror .media-preview audio{
+.ProseMirror .media-preview audio {
   margin-top: 40px;
 }
 
@@ -284,7 +284,7 @@
   white-space: normal;
   font-size: 14px;
 }
-.ProseMirror .block-embed  .media-preview .placeholder {
+.ProseMirror .block-embed .media-preview .placeholder {
   padding: 16px 32px;
 }
 
@@ -371,11 +371,11 @@
 }
 
 .ProseMirror .block-figure_element .position-menu,
-.ProseMirror .block-image_element .position-menu, 
+.ProseMirror .block-image_element .position-menu,
 ProseMirror .block-embed .position-menu {
   position: absolute;
-  top: 15px;
-  right: 35px;
+  top: 8px;
+  right: 21px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;

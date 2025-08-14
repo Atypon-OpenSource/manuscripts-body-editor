@@ -270,9 +270,9 @@ export class FigureEditableView extends FigureView {
     this.reactTools?.remove()
 
     const handlers = createFileHandlers(
-      this.node,
+      this.node.attrs,
+      'src',
       this.view,
-      this.getPos,
       this.props,
       this.setSrc
     )

@@ -107,9 +107,9 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
     if (this.isUploadedFile()) {
       handlers = createFileHandlers(
-        this.node,
+        this.node.attrs,
+        'href',
         this.view,
-        this.getPos,
         this.props,
         this.setHref
       )
