@@ -39,6 +39,7 @@ import {
   insertInlineTableFootnote,
   isCommentingAllowed,
 } from '../commands'
+import { editorPropsKey } from '../plugins/editor-props'
 import { PopperManager } from './popper'
 import { createPositionOptions } from './position-menu'
 import {
@@ -508,6 +509,8 @@ export class ContextMenu {
     const insertable = new Set<InsertableNodes>()
 
     const doc = this.view.state.doc
+    const props = editorPropsKey.getState(this.view.state)
+    const allowed = props?.allowedElementTypes
 
     const getPos = (pos?: number) => {
       if (pos === undefined) {
@@ -523,6 +526,9 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
+      if (allowed && !allowed.includes(node)) {
+        return
+      }
       canInsertAt(nodes[node], pos) && insertable.add(node)
     }
 
