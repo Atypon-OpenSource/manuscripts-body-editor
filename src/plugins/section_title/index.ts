@@ -19,7 +19,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isShadowDelete } from '../../lib/track-changes-utils'
+import { getViewableContent } from '../move-node'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -36,8 +36,7 @@ const calculateSectionLevels = (
   node.forEach((childNode, offset) => {
     if (
       childNode.type === schema.nodes.section ||
-      (childNode.type === schema.nodes.box_element &&
-        !isShadowDelete(childNode))
+      childNode.type === schema.nodes.box_element
     ) {
       numbering[numbering.length - 1] += 1
       const sectionNumber = numbering.join('.')
@@ -88,7 +87,7 @@ export default () => {
     },
     state: {
       init: (_, state: EditorState) => {
-        return getPluginState(state.doc)
+        return getPluginState(getViewableContent(state.doc))
       },
       apply: (
         tr: Transaction,
@@ -97,7 +96,8 @@ export default () => {
         newState: EditorState
       ) => {
         if (tr.docChanged) {
-          return getPluginState(newState.doc)
+          const content = getViewableContent(getViewableContent(newState.doc))
+          return getPluginState(content)
         }
         return oldSectionNumberMap
       },

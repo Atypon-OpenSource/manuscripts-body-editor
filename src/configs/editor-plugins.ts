@@ -69,6 +69,7 @@ export default (props: EditorProps) => {
           ? TrackChangesStatus.disabled
           : TrackChangesStatus.enabled,
     }),
+    move_node(),
     section_title(),
     table_editing_fix(),
     elements(),
@@ -92,7 +93,6 @@ export default (props: EditorProps) => {
     alt_titles(),
     accessibility_element(),
     prevent_empty(),
-    move_node(),
   ]
 
   if (props.collabProvider) {

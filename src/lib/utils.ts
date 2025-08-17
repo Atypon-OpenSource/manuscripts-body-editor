@@ -26,6 +26,7 @@ import {
 } from '@manuscripts/transform'
 import {
   Fragment,
+  Node as PMNode,
   Node as ProseMirrorNode,
   NodeType,
   ResolvedPos,
@@ -40,6 +41,7 @@ import {
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'
+import { isShadowDelete } from './track-changes-utils'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -285,4 +287,33 @@ export const getLastTitleNode = (state: ManuscriptEditorState) => {
 
   const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
   return titleNode
+}
+
+/** traverse viewable nodes, that are not tracked as delete with moveNodeId */
+export const descendants = (
+  doc: ProseMirrorNode,
+  callback: (
+    node: ProseMirrorNode,
+    pos: number,
+    parent: ProseMirrorNode | null,
+    index: number
+  ) => void | boolean
+) => {
+  doc.descendants((node, pos, parent, index) => {
+    if (isShadowDelete(node)) {
+      return false
+    }
+    callback(node, pos, parent, index)
+  })
+}
+
+export const filterChildrenByType = (node: PMNode, nodeType: NodeType) => {
+  const nodes: { node: PMNode; pos: number }[] = []
+  node.descendants((child, pos) => {
+    if (isShadowDelete(child)) {
+      return false
+    }
+    nodes.push({ node: child, pos })
+  })
+  return nodes.filter(({ node }) => node.type === nodeType)
 }

@@ -19,11 +19,33 @@ import {
   CHANGE_STATUS,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
-import { Plugin } from 'prosemirror-state'
+import { ManuscriptNode } from '@manuscripts/transform'
+import { Fragment } from 'prosemirror-model'
+import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
+import { isShadowDelete } from '../lib/track-changes-utils'
+import { filterBlockNodes } from '../lib/utils'
+
+const viewableContentKey = new PluginKey<ManuscriptNode>('viewable-content')
+
+/** document filtered out from delete with moveNodeId */
+export const getViewableContent = (doc: ManuscriptNode) =>
+  filterBlockNodes(Fragment.from(doc), (node) => !isShadowDelete(node))
+    .firstChild || doc
 
 export default () => {
   return new Plugin({
+    key: viewableContentKey,
+    state: {
+      init: (config, state) => getViewableContent(state.doc),
+      apply: (tr, doc) => {
+        if (tr.docChanged) {
+          return getViewableContent(tr.doc)
+        }
+        return doc
+      },
+    },
     props: {
       decorations(state) {
         const decos: Decoration[] = []

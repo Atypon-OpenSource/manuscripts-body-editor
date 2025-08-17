@@ -30,6 +30,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { CSLProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
+import { descendants } from '../lib/utils'
 
 export const bibliographyKey = new PluginKey<PluginState>('bibliography')
 
@@ -87,7 +88,7 @@ const buildBibliographyPluginState = (
 ): PluginState => {
   const nodesMap = new Map<string, [CitationNode, number]>()
   const bibliographyItems = new Map<string, BibliographyItemAttrs>()
-  doc.descendants((node, pos) => {
+  descendants(doc, (node, pos) => {
     if (isCitationNode(node)) {
       nodesMap.set(node.attrs.id, [node, pos])
     }

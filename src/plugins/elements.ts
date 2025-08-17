@@ -18,6 +18,8 @@ import { isSectionNodeType, schema } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { descendants } from '../lib/utils'
+
 /**
  * This plugin simply sets `element: true` in a Decoration spec for each element (a non-section node that is a child of a section).
  * `createNodeOrElementView` uses this to decide whether to create a NodeView or just a regular DOM element.
@@ -33,7 +35,7 @@ export default () => {
 
         // TODO: only calculate these when something changes
 
-        state.doc.descendants((node, pos, parent) => {
+        descendants(state.doc, (node, pos, parent) => {
           if (
             parent &&
             (isSectionNodeType(parent.type) ||
