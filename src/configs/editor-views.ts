@@ -56,6 +56,8 @@ import quoteImage from '../views/quote_image_editable'
 import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
+import subtitle from '../views/subtitle_editable'
+import subtitles from '../views/subtitles_editable'
 import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
@@ -68,8 +70,8 @@ export default (
 ): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
-    subtitle: empty('subtitle'),
-    subtitles: empty('subtitles'),
+    subtitles: subtitles(props, dispatch),
+    subtitle: subtitle(props, dispatch),
     alt_title: alt_title(props),
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),

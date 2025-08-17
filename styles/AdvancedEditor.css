@@ -550,6 +550,13 @@ ProseMirror .block-embed .position-menu {
   display: block;
 }
 
+.block-subtitles .comment-marker {
+  top: 0;
+  left: -10px;
+  float: right;
+  position: relative;
+}
+
 .block > div.comment-marker,
 .figure-block > div.comment-marker {
   top: -25px;

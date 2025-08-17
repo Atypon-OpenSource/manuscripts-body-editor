@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-import { baseKeymap } from 'prosemirror-commands'
-import { keymap } from 'prosemirror-keymap'
+import { createEditableNodeView } from './creators'
+import { EditableBlock } from './editable_block'
+import { SubtitlesView } from './subtitles'
 
-import highlightKeymap from './highlight'
-import keywordKeymap from './keyword'
-import listKeymap from './list'
-import miscKeymap from './misc'
-import subtitleKeymap from './subtitle'
-import titleKeymap from './title'
-
-export default [
-  keymap(keywordKeymap),
-  keymap(listKeymap),
-  keymap(subtitleKeymap),
-  keymap(titleKeymap),
-  keymap(miscKeymap),
-  keymap(baseKeymap),
-  keymap(highlightKeymap),
-]
+export default createEditableNodeView(EditableBlock(SubtitlesView))

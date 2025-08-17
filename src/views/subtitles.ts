@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2025 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-import { baseKeymap } from 'prosemirror-commands'
-import { keymap } from 'prosemirror-keymap'
+import { ManuscriptNodeView, SubtitlesNode } from '@manuscripts/transform'
 
-import highlightKeymap from './highlight'
-import keywordKeymap from './keyword'
-import listKeymap from './list'
-import miscKeymap from './misc'
-import subtitleKeymap from './subtitle'
-import titleKeymap from './title'
+import { Trackable } from '../types'
+import BlockView from './block_view'
+import { createNodeView } from './creators'
 
-export default [
-  keymap(keywordKeymap),
-  keymap(listKeymap),
-  keymap(subtitleKeymap),
-  keymap(titleKeymap),
-  keymap(miscKeymap),
-  keymap(baseKeymap),
-  keymap(highlightKeymap),
-]
+export class SubtitlesView
+  extends BlockView<Trackable<SubtitlesNode>>
+  implements ManuscriptNodeView
+{
+  public createElement = () => {
+    this.contentDOM = document.createElement('div')
+    this.dom.appendChild(this.contentDOM)
+  }
+}
+
+export default createNodeView(SubtitlesView)

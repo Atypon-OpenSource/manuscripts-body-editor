@@ -551,6 +551,22 @@
   color: #c9c9c9;
   margin: 0;
 }
+
+.ProseMirror .add-subtitle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: var(--body-side-margin);
+}
+
+.ProseMirror .add-subtitle-text {
+  margin-left: 8px;
+}
+
+.ProseMirror .add-subtitle svg rect {
+  fill: #6E6E6E !important;
+}
+
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
@@ -1085,6 +1101,19 @@
   line-height: 1.43;
   padding-left: var(--body-side-margin);
   padding-right: var(--body-side-margin);
+}
+.manuscript-subtitle {
+  font-family: Lato;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  padding: 0px 12px;
+  align-items: center;
+}
+.ProseMirror .manuscript-subtitle.empty-node::before {
+  content: 'Type subtitle here... ';
+  color: #c9c9c9;
 }
 .highlight {
   background-color: #ffeebf !important;
