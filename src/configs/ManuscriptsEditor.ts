@@ -71,7 +71,7 @@ export interface EditorProps {
   ) => void
   lockBody: boolean
   isViewingMode?: boolean
-  allowedElementTypes?: string[] | undefined
+  hiddenNodeTypes?: string[] | undefined
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>

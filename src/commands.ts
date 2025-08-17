@@ -215,10 +215,10 @@ export const canInsert =
     const { $from, $to } = state.selection
 
     const props = getEditorProps(state)
-    const allowed = props?.allowedElementTypes
-    if (allowed && Array.isArray(allowed)) {
+    const hidden = props?.hiddenNodeTypes
+    if (hidden && Array.isArray(hidden)) {
       const typeName = type.name
-      if (!allowed.includes(typeName)) {
+      if (hidden.includes(typeName)) {
         return false
       }
     }

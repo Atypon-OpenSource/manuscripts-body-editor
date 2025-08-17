@@ -510,7 +510,7 @@ export class ContextMenu {
 
     const doc = this.view.state.doc
     const props = editorPropsKey.getState(this.view.state)
-    const allowed = props?.allowedElementTypes
+    const hidden = props?.hiddenNodeTypes
 
     const getPos = (pos?: number) => {
       if (pos === undefined) {
@@ -526,13 +526,16 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
-      if (allowed && !allowed.includes(node)) {
+      if (hidden && hidden.includes(nodes[node].name)) {
         return
       }
       canInsertAt(nodes[node], pos) && insertable.add(node)
     }
 
-    if (canInsertAt(nodes.section, endPos)) {
+    if (
+      canInsertAt(nodes.section, endPos) &&
+      (!hidden || !hidden.includes(nodes.section.name))
+    ) {
       insertable.add('subsection')
     }
     checkNode('section', insertPos)
