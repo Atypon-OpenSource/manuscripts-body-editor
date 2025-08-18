@@ -16,6 +16,6 @@
 
 import { createEditableNodeView } from './creators'
 import { EditableBlock } from './editable_block'
-import { TransAbstractView } from './trans_abstract'
+import { TransAbstractView } from './translated_abstract'
 
 export default createEditableNodeView(EditableBlock(TransAbstractView))
