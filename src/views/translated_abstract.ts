@@ -16,7 +16,7 @@
 
 import { TransAbstractNode } from '@manuscripts/transform'
 
-import LanguageDropdown from '../components/LanguageDropdown/LanguageDropdown'
+import LanguageDropdown from '../components/LanguageDropdown'
 import { getLanguageDisplayName } from '../components/LanguageDropdown/languages'
 import { translateIcon } from '../icons'
 import { Trackable } from '../types'

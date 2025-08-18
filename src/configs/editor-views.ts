@@ -61,7 +61,7 @@ import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
-import transAbstract from '../views/trans_abstract_editable'
+import transAbstract from '../views/translated_abstract_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (
