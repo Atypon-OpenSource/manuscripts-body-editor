@@ -210,17 +210,21 @@ export const blockActive =
     return false
   }
 
+export const isNodeTypeHidden = (
+  hidden: string[],
+  nodeTypeName: string
+): boolean => {
+  return hidden.includes(nodeTypeName)
+}
+
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
     const { $from, $to } = state.selection
 
     const props = getEditorProps(state)
     const hidden = props?.hiddenNodeTypes
-    if (hidden && Array.isArray(hidden)) {
-      const typeName = type.name
-      if (hidden.includes(typeName)) {
-        return false
-      }
+    if (hidden?.length && isNodeTypeHidden(hidden, type.name)) {
+      return false
     }
 
     // disable block comment insertion just for title node, LEAN-2746

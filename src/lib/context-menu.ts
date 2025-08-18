@@ -38,6 +38,7 @@ import {
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
   isCommentingAllowed,
+  isNodeTypeHidden,
 } from '../commands'
 import { editorPropsKey } from '../plugins/editor-props'
 import { PopperManager } from './popper'
@@ -526,7 +527,7 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
-      if (hidden && hidden.includes(nodes[node].name)) {
+      if (hidden?.length && isNodeTypeHidden(hidden, nodes[node].name)) {
         return
       }
       canInsertAt(nodes[node], pos) && insertable.add(node)
@@ -534,7 +535,7 @@ export class ContextMenu {
 
     if (
       canInsertAt(nodes.section, endPos) &&
-      (!hidden || !hidden.includes(nodes.section.name))
+      !(hidden?.length && isNodeTypeHidden(hidden, nodes.section.name))
     ) {
       insertable.add('subsection')
     }
