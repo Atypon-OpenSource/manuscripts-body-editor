@@ -839,9 +839,6 @@ span.comment-marker {
   0% {
     background: var(--fade-color);
   }
-  100% {
-    background: transparent;
-  }
 }
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
@@ -1033,7 +1030,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .ProseMirror
   .figure-block
@@ -1051,9 +1048,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block,
-.selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block {
+  .block:not(.box-element) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
