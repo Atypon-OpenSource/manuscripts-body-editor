@@ -16,9 +16,9 @@
 
 import { TransAbstractNode } from '@manuscripts/transform'
 
-import LanguageDropdown from '../components/LanguageDropdown'
+import LanguageDropdown from '../components/LanguageDropdown/LanguageDropdown'
+import { getLanguageDisplayName } from '../components/LanguageDropdown/languages'
 import { translateIcon } from '../icons'
-import { getLanguageDisplayName } from '../lib/languages'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -36,7 +36,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
   public createElement() {
     super.createElement()
     if (this.contentDOM) {
-      this.contentDOM.className = 'trans-abstract'
+      this.contentDOM.classList.add('trans-abstract')
     }
   }
 
@@ -49,10 +49,6 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
   public destroy() {
     this.cleanupLanguageButton()
     super.destroy()
-  }
-
-  public deselectNode() {
-    this.dom.classList.remove('ProseMirror-selectednode')
   }
 
   private updateLanguageAttributes() {
@@ -72,7 +68,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
 
   private createLanguageButton() {
     this.languageButton = document.createElement('button')
-    this.languageButton.className = 'language-selector-btn'
+    this.languageButton.classList.add('language-selector-btn')
     this.languageButton.setAttribute('data-cy', 'language-selector-btn')
 
     this.updateButtonContent()
@@ -88,9 +84,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
     }
   }
 
-  private updateButtonContent(
-    languageCode: string = this.node.attrs.lang || 'en'
-  ) {
+  private updateButtonContent(languageCode = this.node.attrs.lang || 'en') {
     if (!this.languageButton) {
       return
     }

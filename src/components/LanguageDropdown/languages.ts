@@ -92,7 +92,7 @@ export const loadAllLanguages = async (): Promise<LanguageOption[]> => {
 export const getSelectedLanguageName = (
   selectedLanguage: string,
   allLanguages: LanguageOption[]
-): string => {
+) => {
   if (!allLanguages.length) {
     return 'English (Default)'
   }
@@ -131,7 +131,7 @@ export const getLanguageDisplayName = (languageCode: string): string => {
 }
 
 // Sort languages with common languages first, then alphabetically
-export const sortLanguages = (
+export const sortLanguagesByCommonality = (
   languages: LanguageOption[]
 ): LanguageOption[] => {
   return [...languages].sort((a, b) => {

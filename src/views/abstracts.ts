@@ -32,7 +32,7 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
 
   public createDOM() {
     this.dom = document.createElement(this.elementType)
-    this.dom.className = 'abstracts'
+    this.dom.classList.add('abstracts')
   }
 
   public createElement() {
@@ -44,7 +44,7 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
   private addTranslationBtn() {
     if (this.props.getCapabilities()?.editArticle) {
       const btnContainer = document.createElement('div')
-      btnContainer.className = 'add-translation-container'
+      btnContainer.classList.add('add-translation-container')
       btnContainer.addEventListener('click', () => this.addTranslation())
 
       const addTranslationBtn = Object.assign(
@@ -59,7 +59,7 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
       // Create text element
       const textElement = document.createElement('span')
       textElement.textContent = 'Add translation'
-      textElement.className = 'add-translation-text'
+      textElement.classList.add('add-translation-text')
 
       // Add button and text to container
       btnContainer.appendChild(addTranslationBtn)

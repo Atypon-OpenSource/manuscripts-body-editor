@@ -20,15 +20,15 @@ import {
   TickIcon,
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import {
   getSelectedLanguageName,
   LanguageOption,
   loadAllLanguages,
-  sortLanguages,
-} from '../lib/languages'
+  sortLanguagesByCommonality,
+} from './languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -76,7 +76,8 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
     const loadLanguages = async () => {
       try {
         const languages = await loadAllLanguages()
-        setAllLanguages(languages)
+        const sortedLanguages = sortLanguagesByCommonality(languages)
+        setAllLanguages(sortedLanguages)
       } catch (error) {
         console.error('Failed to load language data:', error)
         setAllLanguages([])
@@ -85,11 +86,6 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
 
     loadLanguages()
   }, [])
-
-  // Prepare language options with common languages first
-  const languageOptions = useMemo(() => {
-    return sortLanguages(allLanguages)
-  }, [allLanguages])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -145,7 +141,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       {isOpen && (
         <DropdownMenu direction="right" width={231} height={400} top={18}>
           {!showButton && <DropdownTitle>Choose language</DropdownTitle>}
-          {languageOptions.map((language) => (
+          {allLanguages.map((language) => (
             <LanguageOptionItem
               key={language.code}
               language={language}
