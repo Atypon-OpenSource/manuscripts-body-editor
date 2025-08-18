@@ -69,6 +69,7 @@ const figureTypes = [
   schema.nodes.figure_element,
   schema.nodes.image_element,
   schema.nodes.hero_image,
+  schema.nodes.embed,
 ]
 
 export function memoGroupFiles() {
@@ -108,16 +109,28 @@ export const groupFiles = (
 
   const getFigureElementFiles = (node: ManuscriptNode, pos: number) => {
     const figureFiles = []
-    for (const figure of findChildrenByType(node, schema.nodes.figure)) {
-      if (isHidden(figure.node)) {
-        continue
+
+    if (node.type === schema.nodes.embed) {
+      if (node.attrs.href) {
+        figureFiles.push({
+          node,
+          pos,
+          file: getFile(node.attrs.href),
+        })
       }
-      figureFiles.push({
-        node: figure.node,
-        pos: pos + figure.pos + 1,
-        file: getFile(figure.node.attrs.src),
-      })
+    } else {
+      for (const figure of findChildrenByType(node, schema.nodes.figure)) {
+        if (isHidden(figure.node)) {
+          continue
+        }
+        figureFiles.push({
+          node: figure.node,
+          pos: pos + figure.pos + 1,
+          file: getFile(figure.node.attrs.src),
+        })
+      }
     }
+
     return {
       node,
       pos,
