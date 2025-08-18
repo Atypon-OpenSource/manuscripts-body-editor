@@ -903,6 +903,8 @@ export const insertBoxElement = (
 
   if (position && dispatch) {
     const tr = state.tr.insert(position, node)
+    const sectionTitlePosition = position + 4
+    tr.setSelection(TextSelection.create(tr.doc, sectionTitlePosition))
     dispatch(tr)
   }
 
