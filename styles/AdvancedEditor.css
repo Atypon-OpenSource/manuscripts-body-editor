@@ -184,24 +184,12 @@
   margin-bottom: 30px;
 }
 
-.ProseMirror .block-figure_element .add-figure-button {
+.ProseMirror .block-figure_element .add-button {
   border: 0px;
   left: 53px;
   width: 25px;
-  z-index: 1;
   height: 25px;
-  cursor: pointer;
   position: absolute;
-  border-radius: 50%;
-  background-color: #6e6e6e;
-}
-
-.ProseMirror .block-figure_element .add-figure-button.disabled {
-  background-color: #e2e2e2 !important;
-}
-
-.ProseMirror .block-figure_element .add-figure-button svg path {
-  fill: #ffffff !important;
 }
 
 .ProseMirror .figure-block:hover .options-button {
@@ -1734,3 +1722,78 @@ th:hover > .table-context-menu-button,
   color: #666;
   margin: 4px 0 0 0;
 }
+
+.ProseMirror .add-button {
+  border: 0px;
+  z-index: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #6e6e6e;
+}
+
+.ProseMirror .add-button.disabled {
+  background-color: #e2e2e2 !important;
+}
+
+.ProseMirror .add-button svg path {
+  fill: #ffffff !important;
+}
+
+/*  Abstract translations */
+.ProseMirror .abstracts {
+  position: relative;
+}
+
+.ProseMirror .abstracts .add-translation-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  padding: 6px 12px;
+  position: absolute;
+  right: 50px;
+  z-index: 5;
+  cursor: pointer;
+}
+.ProseMirror .abstracts .add-translation-text {
+  font-size: 14px;
+  color:#353535
+}
+.ProseMirror .abstracts .add-translation-container .add-button {
+  margin: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ProseMirror .abstracts .add-translation-container .add-button svg {
+  width: 10px;
+  height: 8px;
+}
+.ProseMirror .block-trans_abstract .language-selector-btn {
+  position: absolute;
+  z-index: 9;
+  top: 40px;
+  border: 0px;
+  background: transparent;
+  right: 60px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #6E6E6E;
+  cursor: pointer;
+}
+.abstracts-language-dropdown {
+  right: -142px !important;
+  top: -86px !important;
+}
+
+.ProseMirror .block-trans_abstract p.empty-node[data-placeholder]  {
+  font-style: italic;
+  color: #c9c9c9;
+  margin: 0;
+}
+ 
