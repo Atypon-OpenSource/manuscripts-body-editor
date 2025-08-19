@@ -28,7 +28,6 @@ const createAddSubtitleButton = (handler: () => void) => {
 
   button.addEventListener('mousedown', (e) => {
     e.preventDefault()
-    e.stopPropagation()
     handler()
   })
 
