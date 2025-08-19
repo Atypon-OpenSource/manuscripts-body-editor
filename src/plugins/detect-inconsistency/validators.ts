@@ -180,23 +180,14 @@ const validateInlineFootnote: NodeValidator = (node, pos, context) => {
   return inconsistencies
 }
 
-const validateFigureElement: NodeValidator = (node, pos, context) => {
+const validateFigure: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
   const files = new Set(context.props.getFiles().map((f) => f.id))
 
-  node.forEach((child) => {
-    if (child.type === schema.nodes.figure) {
-      if (!files.has(child.attrs.src)) {
-        const inconsistency = createWarning(
-          node,
-          pos,
-          'missing-reference',
-          'error'
-        )
-        inconsistencies.push(inconsistency)
-      }
-    }
-  })
+  if (!files.has(node.attrs.src)) {
+    const inconsistency = createWarning(node, pos, 'missing-reference', 'error')
+    inconsistencies.push(inconsistency)
+  }
 
   return inconsistencies
 }
@@ -229,8 +220,7 @@ export const validators: Record<string, NodeValidator> = {
   [schema.nodes.cross_reference.name]: validateCrossReference,
   [schema.nodes.citation.name]: validateCitation,
   [schema.nodes.inline_footnote.name]: validateInlineFootnote,
-  [schema.nodes.figure_element.name]: validateFigureElement,
-  [schema.nodes.image_element.name]: validateFigureElement,
+  [schema.nodes.figure.name]: validateFigure,
   [schema.nodes.embed.name]: validateMedia,
   [schema.nodes.link.name]: validateLink,
 }
