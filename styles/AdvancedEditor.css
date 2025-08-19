@@ -212,7 +212,7 @@
   visibility: visible;
 }
 
-.ProseMirror .media-preview audio{
+.ProseMirror .media-preview audio {
   margin-top: 40px;
 }
 
@@ -284,7 +284,7 @@
   white-space: normal;
   font-size: 14px;
 }
-.ProseMirror .block-embed  .media-preview .placeholder {
+.ProseMirror .block-embed .media-preview .placeholder {
   padding: 16px 32px;
 }
 
@@ -371,11 +371,11 @@
 }
 
 .ProseMirror .block-figure_element .position-menu,
-.ProseMirror .block-image_element .position-menu, 
+.ProseMirror .block-image_element .position-menu,
 ProseMirror .block-embed .position-menu {
   position: absolute;
-  top: 15px;
-  right: 35px;
+  top: 8px;
+  right: 21px;
   z-index: 2;
   cursor: pointer;
   padding-left: 100px;
@@ -851,9 +851,6 @@ span.comment-marker {
   0% {
     background: var(--fade-color);
   }
-  100% {
-    background: transparent;
-  }
 }
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
@@ -1045,7 +1042,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block,
+  .block:not(.box-element),
 .tracking-visible
   .ProseMirror
   .figure-block
@@ -1063,9 +1060,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block,
-.selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block {
+  .block:not(.box-element) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
