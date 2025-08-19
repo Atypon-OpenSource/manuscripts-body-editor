@@ -373,7 +373,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
     const { given, family } = values.bibliographicName
     const { email, isCorresponding } = values
-    const isNameFilled = given?.length && family?.length
+    const isNameFilled = given?.length || family?.length
 
     if (hasChanges && isNameFilled) {
       if (isCorresponding) {

@@ -47,9 +47,10 @@ export const affiliationName = (affiliation: AffiliationAttrs) => {
 
 export const authorLabel = (author: ContributorAttrs) => {
   const name = author.bibliographicName
+
   const parts = [
     author.prefix,
-    initials(name),
+    name.family ? initials(name) : name.given,
     name.family,
     name.suffix,
   ].filter(Boolean)
