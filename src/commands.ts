@@ -211,10 +211,10 @@ export const blockActive =
   }
 
 export const isNodeTypeHidden = (
-  hidden: string[],
-  nodeTypeName: string
+  hiddenNodeTypes: ManuscriptNodeType[],
+  nodeType: ManuscriptNodeType
 ): boolean => {
-  return hidden.includes(nodeTypeName)
+  return hiddenNodeTypes.includes(nodeType)
 }
 
 export const canInsert =
@@ -223,7 +223,7 @@ export const canInsert =
 
     const props = getEditorProps(state)
     const hidden = props?.hiddenNodeTypes
-    if (hidden?.length && isNodeTypeHidden(hidden, type.name)) {
+    if (hidden?.length && isNodeTypeHidden(hidden, type)) {
       return false
     }
 

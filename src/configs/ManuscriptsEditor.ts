@@ -18,7 +18,12 @@ import 'prosemirror-view/style/prosemirror.css'
 
 import { UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
+import {
+  ManuscriptNode,
+  ManuscriptNodeType,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { Location, NavigateFunction } from 'react-router-dom'
@@ -71,7 +76,7 @@ export interface EditorProps {
   ) => void
   lockBody: boolean
   isViewingMode?: boolean
-  hiddenNodeTypes?: string[] | undefined
+  hiddenNodeTypes?: ManuscriptNodeType[] | undefined
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>

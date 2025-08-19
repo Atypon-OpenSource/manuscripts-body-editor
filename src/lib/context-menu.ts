@@ -527,7 +527,7 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
-      if (hidden?.length && isNodeTypeHidden(hidden, nodes[node].name)) {
+      if (hidden?.length && isNodeTypeHidden(hidden, nodes[node])) {
         return
       }
       canInsertAt(nodes[node], pos) && insertable.add(node)
@@ -535,7 +535,7 @@ export class ContextMenu {
 
     if (
       canInsertAt(nodes.section, endPos) &&
-      !(hidden?.length && isNodeTypeHidden(hidden, nodes.section.name))
+      !(hidden?.length && isNodeTypeHidden(hidden, nodes.section))
     ) {
       insertable.add('subsection')
     }
