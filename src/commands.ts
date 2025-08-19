@@ -1950,3 +1950,23 @@ export const insertHeroImage =
 
     return true
   }
+
+export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isTextSelection(selection)) {
+    return false
+  }
+
+  // Check where the cursor is positioned
+  const cursorParent = selection.$from.node()
+
+  if (
+    cursorParent.type === state.schema.nodes.subtitle ||
+    cursorParent.type === state.schema.nodes.subtitles
+  ) {
+    return true // Prevent Enter in subtitle area
+  }
+
+  return false
+}

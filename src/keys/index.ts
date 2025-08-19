@@ -21,13 +21,11 @@ import highlightKeymap from './highlight'
 import keywordKeymap from './keyword'
 import listKeymap from './list'
 import miscKeymap from './misc'
-import subtitleKeymap from './subtitle'
 import titleKeymap from './title'
 
 export default [
   keymap(keywordKeymap),
   keymap(listKeymap),
-  keymap(subtitleKeymap),
   keymap(titleKeymap),
   keymap(miscKeymap),
   keymap(baseKeymap),
