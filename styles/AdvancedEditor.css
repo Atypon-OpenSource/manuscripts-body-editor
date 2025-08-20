@@ -1790,4 +1790,6 @@ th:hover > .table-context-menu-button,
   color: #c9c9c9;
   margin: 0;
 }
- 
+.ProseMirror .block-trans_abstract section.block.trans-abstract {
+  padding: 0 !important;
+} 

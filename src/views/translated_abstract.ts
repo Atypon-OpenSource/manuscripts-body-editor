@@ -90,7 +90,10 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
     }
 
     const languageName = getLanguageDisplayName(languageCode)
-    this.languageButton.innerHTML = `${languageName} ${translateIcon}`
+    // Ensure English shows as "English (Default)"
+    const finalLanguageName =
+      languageCode === 'en' ? 'English (Default)' : languageName
+    this.languageButton.innerHTML = `${finalLanguageName} ${translateIcon}`
   }
 
   private handleButtonClick = (e: MouseEvent) => {
