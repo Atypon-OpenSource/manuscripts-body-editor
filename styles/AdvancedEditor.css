@@ -1729,3 +1729,7 @@ th:hover > .table-context-menu-button,
   color: #666;
   margin: 4px 0 0 0;
 }
+
+.prosemirror-dropcursor-block {
+  background-color: transparent !important;
+}
