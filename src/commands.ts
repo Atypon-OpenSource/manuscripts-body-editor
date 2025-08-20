@@ -106,6 +106,7 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
+import { templateAllows } from './lib/template'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -210,20 +211,11 @@ export const blockActive =
     return false
   }
 
-export const isNodeTypeHidden = (
-  hiddenNodeTypes: ManuscriptNodeType[],
-  nodeType: ManuscriptNodeType
-): boolean => {
-  return hiddenNodeTypes.includes(nodeType)
-}
-
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
     const { $from, $to } = state.selection
 
-    const props = getEditorProps(state)
-    const hidden = props?.hiddenNodeTypes
-    if (hidden?.length && isNodeTypeHidden(hidden, type)) {
+    if (!templateAllows(state, type)) {
       return false
     }
 
