@@ -26,7 +26,6 @@ import {
 } from '@manuscripts/transform'
 import {
   Fragment,
-  Node as PMNode,
   Node as ProseMirrorNode,
   NodeType,
   ResolvedPos,
@@ -305,15 +304,4 @@ export const visibleDescendants = (
     }
     callback(node, pos, parent, index)
   })
-}
-
-export const findVisibleChildrenByType = (node: PMNode, nodeType: NodeType) => {
-  const nodes: { node: PMNode; pos: number }[] = []
-  node.descendants((child, pos) => {
-    if (isShadowDelete(child)) {
-      return false
-    }
-    nodes.push({ node: child, pos })
-  })
-  return nodes.filter(({ node }) => node.type === nodeType)
 }

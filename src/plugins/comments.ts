@@ -36,7 +36,6 @@ import {
   isReply,
   NodeComment,
 } from '../lib/comments'
-import { findVisibleChildrenByType, visibleDescendants } from '../lib/utils'
 
 export const commentsKey = new PluginKey<PluginState>('comments')
 const COMMENT_SELECTION = 'comment-selection'
@@ -116,7 +115,7 @@ export const clearCommentSelection = (tr: ManuscriptTransaction) => {
 }
 
 const findCommentRanges = (doc: ManuscriptNode) => {
-  const nodes = findVisibleChildrenByType(doc, schema.nodes.highlight_marker)
+  const nodes = findChildrenByType(doc, schema.nodes.highlight_marker)
 
   const ranges = new Map<string, CommentRange>()
 
@@ -166,7 +165,7 @@ const buildPluginState = (
   const decorations: Decoration[] = []
   const allComments: Comment[] = []
 
-  visibleDescendants(doc, (node, pos) => {
+  doc.descendants((node, pos) => {
     const id = node.attrs.id
     const comments = commentsByTarget.get(id)
     if (!comments || !comments.length) {

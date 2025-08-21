@@ -20,7 +20,6 @@ import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { visibleDescendants } from '../lib/utils'
 import { objectsKey } from './objects'
 
 export default () => {
@@ -58,7 +57,7 @@ export default () => {
  */
 function createDecorations(doc: Node): Decoration[] {
   const decorations: Decoration[] = []
-  visibleDescendants(doc, (node, pos) => {
+  doc.descendants((node, pos) => {
     if (node.type === schema.nodes.cross_reference) {
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, {

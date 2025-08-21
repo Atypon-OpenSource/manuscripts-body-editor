@@ -19,12 +19,9 @@ import {
   isInGraphicalAbstractSection,
   Target,
 } from '@manuscripts/transform'
+import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-
-import { visibleDescendants } from '../lib/utils'
-import { getVisibleContent } from './move-node'
-
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 /**
@@ -36,14 +33,14 @@ export default () => {
 
     state: {
       init: (config, state) => {
-        return buildTargets(getVisibleContent(state.doc))
+        return buildTargets(Fragment.from(state.doc.content))
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(getVisibleContent(tr.doc))
+        return buildTargets(Fragment.from(tr.doc.content))
       },
     },
     props: {
@@ -52,7 +49,7 @@ export default () => {
         const targets = objectsKey.getState(state)
 
         if (targets) {
-          visibleDescendants(state.doc, (node, pos) => {
+          state.doc.descendants((node, pos) => {
             const { id } = node.attrs
             if (id) {
               const target = targets.get(id)

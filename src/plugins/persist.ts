@@ -23,7 +23,6 @@ import {
 import { Plugin } from 'prosemirror-state'
 
 import { isInit } from '../lib/plugins'
-import { visibleDescendants } from '../lib/utils'
 
 /**
  * This plugin ensures that all nodes which need ids (i.e. `id` is defined in the node spec's attributes) are given an id, and that there aren't any duplicate ids in the document.
@@ -42,7 +41,7 @@ export default () => {
       }
       const ids = new Set<string>()
       const tr = newState.tr
-      visibleDescendants(newState.doc, (node, pos, parent) => {
+      newState.doc.descendants((node, pos, parent) => {
         if (
           !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||

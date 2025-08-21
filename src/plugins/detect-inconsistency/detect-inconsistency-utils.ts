@@ -18,7 +18,6 @@ import { ManuscriptEditorState, ManuscriptNode } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { visibleDescendants } from '../../lib/utils'
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
@@ -80,7 +79,7 @@ export const buildPluginState = (
     decorations,
   }
 
-  visibleDescendants(state.doc, (node, pos) => {
+  state.doc.descendants((node, pos) => {
     const validator = validators[node.type.name]
     if (validator) {
       inconsistencies.push(...validator(node, pos, context))

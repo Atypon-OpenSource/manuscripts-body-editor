@@ -36,7 +36,6 @@ import {
   findParentFootnote,
 } from '../lib/footnotes'
 import { isInit } from '../lib/plugins'
-import { findVisibleChildrenByType } from '../lib/utils'
 
 /**
  * The state for a single footnotes_element.
@@ -134,7 +133,7 @@ const buildFootnotesElementState = (
 
   // process inline_footnote nodes
   let index = 0
-  const inlineFootnotes = findVisibleChildrenByType(
+  const inlineFootnotes = findChildrenByType(
     container[0],
     schema.nodes.inline_footnote
   )
