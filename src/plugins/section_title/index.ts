@@ -19,7 +19,6 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { getVisibleContent } from '../move-node'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -87,7 +86,7 @@ export default () => {
     },
     state: {
       init: (_, state: EditorState) => {
-        return getPluginState(getVisibleContent(state.doc))
+        return getPluginState(state.doc)
       },
       apply: (
         tr: Transaction,
@@ -96,8 +95,7 @@ export default () => {
         newState: EditorState
       ) => {
         if (tr.docChanged) {
-          const content = getVisibleContent(getVisibleContent(newState.doc))
-          return getPluginState(content)
+          return getPluginState(newState.doc)
         }
         return oldSectionNumberMap
       },

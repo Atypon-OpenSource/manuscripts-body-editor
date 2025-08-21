@@ -22,6 +22,7 @@ import {
 import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 /**
