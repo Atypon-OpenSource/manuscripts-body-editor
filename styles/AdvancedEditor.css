@@ -1729,3 +1729,7 @@ th:hover > .table-context-menu-button,
   color: #666;
   margin: 4px 0 0 0;
 }
+
+.ProseMirror a.link:empty::before {
+  content: "\00a0";
+}
