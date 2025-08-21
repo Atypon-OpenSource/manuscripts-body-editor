@@ -18,7 +18,6 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
-  SupplementNode,
 } from '@manuscripts/transform'
 
 import { openEmbedDialog } from '../components/toolbar/InsertEmbedDialog'
@@ -115,37 +114,40 @@ export interface FileHandlers {
   handleDelete?: () => void
 }
 
-export const createFileHandlers = <T extends ManuscriptNode>(
-  node: Trackable<T>,
+type Handleable = { href?: string; src?: string }
+
+export const createFileHandlers = <T extends Handleable>(
+  attrs: T,
+  fileAttrKey: keyof Handleable,
   view: ManuscriptEditorView,
-  getPos: () => number,
   props: EditorProps,
-  setHref: (href: string) => void
+  setAttr: (value: string) => void
 ): FileHandlers => {
   const handlers: FileHandlers = {}
-  const href = node.attrs.href
+
+  const controlAttr = attrs[fileAttrKey]
   const files = props.getFiles()
-  const file = href && files.find((f) => f.id === href)
+  const file = controlAttr && files.find((f) => f.id === controlAttr)
   const can = props.getCapabilities()
 
-  if (href && file) {
+  if (controlAttr && file) {
     handlers.handleDownload = () => {
       props.fileManagement.download(file)
     }
     handlers.handleDetach = () => {
-      setHref('')
+      setAttr('')
     }
   }
 
   if (can.replaceFile) {
     handlers.handleReplace = (file: FileAttachment, isSupplement = false) => {
-      setHref(file.id)
+      setAttr(file.id)
       if (isSupplement) {
         const tr = view.state.tr
         view.state.doc.descendants((node, pos) => {
           if (node.type === schema.nodes.supplement) {
-            const href = (node as SupplementNode).attrs.href
-            if (href === file.id) {
+            const attr = node.attrs[fileAttrKey]
+            if (attr === file.id) {
               tr.delete(pos, pos + node.nodeSize)
               view.dispatch(tr)
             }
@@ -179,7 +181,6 @@ export const createReactTools = <T extends ManuscriptNode>(
   }
 
   const can = props.getCapabilities()
-  const currentFileHref = node.attrs.href
 
   const componentProps: FigureOptionsProps = {
     can,
@@ -193,7 +194,6 @@ export const createReactTools = <T extends ManuscriptNode>(
     onDelete: handlers.handleDelete,
     isEmbed,
     hasSiblings,
-    currentFileHref,
   }
 
   return ReactSubView(props, FigureOptions, componentProps, node, getPos, view)
