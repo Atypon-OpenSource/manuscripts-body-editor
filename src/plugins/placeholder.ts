@@ -99,13 +99,6 @@ export default () =>
               }
             } else if (node.type === node.type.schema.nodes.section_title) {
               const $pos = state.doc.resolve(pos)
-              let level = $pos.depth > 1 ? $pos.depth - 1 : $pos.depth
-
-              if (
-                findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)
-              ) {
-                level = level - 2
-              }
 
               let placeholderText = 'Type heading here'
               if (
