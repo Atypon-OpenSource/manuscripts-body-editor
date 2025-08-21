@@ -138,9 +138,7 @@ export class FigureElementView extends ImageElementView {
       const figureView = (
         figureElement as HTMLElement & { __figureView?: FigureEditableView }
       ).__figureView
-      if (figureView && figureView.addTools) {
-        figureView.addTools()
-      }
+      figureView?.addTools()
     })
   }
 
