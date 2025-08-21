@@ -22,8 +22,8 @@ import {
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { getVisibleContent } from '../lib/utils'
-import { getViewableContent } from './move-node'
+import { visibleDescendants } from '../lib/utils'
+import { getVisibleContent } from './move-node'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
@@ -36,14 +36,14 @@ export default () => {
 
     state: {
       init: (config, state) => {
-        return buildTargets(getViewableContent(state.doc))
+        return buildTargets(getVisibleContent(state.doc))
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(getViewableContent(tr.doc))
+        return buildTargets(getVisibleContent(tr.doc))
       },
     },
     props: {
@@ -52,7 +52,7 @@ export default () => {
         const targets = objectsKey.getState(state)
 
         if (targets) {
-          getVisibleContent(state.doc, (node, pos) => {
+          visibleDescendants(state.doc, (node, pos) => {
             const { id } = node.attrs
             if (id) {
               const target = targets.get(id)

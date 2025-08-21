@@ -290,7 +290,7 @@ export const getLastTitleNode = (state: ManuscriptEditorState) => {
 }
 
 /** traverse viewable nodes, that are not tracked as delete with moveNodeId */
-export const getVisibleContent = (
+export const visibleDescendants = (
   doc: ProseMirrorNode,
   callback: (
     node: ProseMirrorNode,

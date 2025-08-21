@@ -36,7 +36,7 @@ import {
   isReply,
   NodeComment,
 } from '../lib/comments'
-import { getVisibleContent, findVisibleChildrenByType } from '../lib/utils'
+import { findVisibleChildrenByType, visibleDescendants } from '../lib/utils'
 
 export const commentsKey = new PluginKey<PluginState>('comments')
 const COMMENT_SELECTION = 'comment-selection'
@@ -166,7 +166,7 @@ const buildPluginState = (
   const decorations: Decoration[] = []
   const allComments: Comment[] = []
 
-  getVisibleContent(doc, (node, pos) => {
+  visibleDescendants(doc, (node, pos) => {
     const id = node.attrs.id
     const comments = commentsByTarget.get(id)
     if (!comments || !comments.length) {
