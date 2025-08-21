@@ -28,6 +28,7 @@ import {
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
+  TranslateIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -43,7 +44,7 @@ export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
 export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
 export const plusIcon = renderIcon(PlusIcon)
-export const addFigureBtnIcon = renderToStaticMarkup(createElement(PlusIcon))
+export const addBtnIcon = renderToStaticMarkup(createElement(PlusIcon))
 export const imageRightIcon = renderToStaticMarkup(
   createElement(ImageRightIcon)
 )
@@ -55,3 +56,4 @@ export const fileCorruptedIcon = renderToStaticMarkup(
   createElement(FileCorruptedIcon)
 )
 export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
+export const translateIcon = renderToStaticMarkup(createElement(TranslateIcon))
