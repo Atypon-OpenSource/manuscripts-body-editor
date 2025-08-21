@@ -43,10 +43,10 @@ export class FigureEditableView extends FigureView {
     this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
-    // Store reference to this view on the DOM element for external access
-    ;(
-      this.dom as HTMLElement & { __figureView?: FigureEditableView }
-    ).__figureView = this
+    const domElement = this.dom as HTMLElement & {
+      __figureView?: FigureEditableView
+    }
+    domElement.__figureView = this
   }
 
   public update(newNode: ManuscriptNode): boolean {
