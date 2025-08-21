@@ -18,7 +18,7 @@ import { isSectionNodeType, schema } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { descendants } from '../lib/utils'
+import { getVisibleContent } from '../lib/utils'
 
 /**
  * This plugin simply sets `element: true` in a Decoration spec for each element (a non-section node that is a child of a section).
@@ -35,7 +35,7 @@ export default () => {
 
         // TODO: only calculate these when something changes
 
-        descendants(state.doc, (node, pos, parent) => {
+        getVisibleContent(state.doc, (node, pos, parent) => {
           if (
             parent &&
             (isSectionNodeType(parent.type) ||

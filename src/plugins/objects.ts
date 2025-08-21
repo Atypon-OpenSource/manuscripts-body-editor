@@ -22,7 +22,7 @@ import {
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { descendants } from '../lib/utils'
+import { getVisibleContent } from '../lib/utils'
 import { getViewableContent } from './move-node'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
@@ -52,7 +52,7 @@ export default () => {
         const targets = objectsKey.getState(state)
 
         if (targets) {
-          descendants(state.doc, (node, pos) => {
+          getVisibleContent(state.doc, (node, pos) => {
             const { id } = node.attrs
             if (id) {
               const target = targets.get(id)
