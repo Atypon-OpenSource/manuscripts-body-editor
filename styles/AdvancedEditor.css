@@ -1793,3 +1793,6 @@ th:hover > .table-context-menu-button,
 .ProseMirror .block-trans_abstract section.block.trans-abstract {
   padding: 0 !important;
 } 
+.ProseMirror .abstracts.empty-node .add-translation-container {
+  display: none;
+}
