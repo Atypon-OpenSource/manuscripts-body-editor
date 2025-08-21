@@ -287,21 +287,3 @@ export const getLastTitleNode = (state: ManuscriptEditorState) => {
   const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
   return titleNode
 }
-
-/** traverse viewable nodes, that are not tracked as delete with moveNodeId */
-export const visibleDescendants = (
-  doc: ProseMirrorNode,
-  callback: (
-    node: ProseMirrorNode,
-    pos: number,
-    parent: ProseMirrorNode | null,
-    index: number
-  ) => void | boolean
-) => {
-  doc.descendants((node, pos, parent, index) => {
-    if (isShadowDelete(node)) {
-      return false
-    }
-    callback(node, pos, parent, index)
-  })
-}
