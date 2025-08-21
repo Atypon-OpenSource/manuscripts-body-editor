@@ -452,7 +452,7 @@ export const unindentSection =
     tr.insert(afterParentSection, Fragment.from(extendedSection))
 
     // Delete the original section (positions inside parent haven't changed)
-    tr.delete(beforeSection, afterParentSection)
+    tr.delete(beforeSection, beforeSection + extendedSection.nodeSize)
 
     const anchor = afterParentSection + 2
 
