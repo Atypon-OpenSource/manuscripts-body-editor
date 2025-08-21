@@ -40,7 +40,6 @@ import {
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
 import { getEditorProps } from '../plugins/editor-props'
-import { isShadowDelete } from './track-changes-utils'
 
 export function* iterateChildren(
   node: ManuscriptNode,
