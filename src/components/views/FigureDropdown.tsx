@@ -52,7 +52,6 @@ export interface FigureOptionsProps extends FigureDropdownProps {
   onDelete?: () => void
   isEmbed: boolean
   hasSiblings: () => boolean
-  currentFileHref?: string
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -65,15 +64,11 @@ function getSupplements(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
   groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
-  isEmbed: boolean,
-  currentFileHref?: string
+  isEmbed: boolean
 ) {
   return groupFiles(getDoc(), getFiles())
     .supplements.map((s) => s.file)
     .filter((f) => {
-      if (currentFileHref && f.id === currentFileHref) {
-        return false
-      }
       const mediaInfo = getMediaTypeInfo(f.name)
       return isEmbed
         ? mediaInfo.isVideo || mediaInfo.isAudio
@@ -85,13 +80,9 @@ function getOtherFiles(
   getFiles: () => FileAttachment[],
   getDoc: () => ManuscriptNode,
   groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
-  isEmbed: boolean,
-  currentFileHref?: string
+  isEmbed: boolean
 ) {
   return groupFiles(getDoc(), getFiles()).others.filter((f) => {
-    if (currentFileHref && f.id === currentFileHref) {
-      return false
-    }
     const mediaInfo = getMediaTypeInfo(f.name)
     return isEmbed ? mediaInfo.isVideo || mediaInfo.isAudio : mediaInfo.isImage
   })
@@ -112,7 +103,6 @@ export const FigureOptions: React.FC<WrappedProps> = ({
   isEmbed,
   hasSiblings,
   container,
-  currentFileHref,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
 
@@ -165,38 +155,30 @@ export const FigureOptions: React.FC<WrappedProps> = ({
               moveLeft
               list={
                 <>
-                  {getSupplements(
-                    getFiles,
-                    getDoc,
-                    groupFiles,
-                    isEmbed,
-                    currentFileHref
-                  ).map((file, index) => (
-                    <ListItemButton
-                      key={file.id}
-                      id={index.toString()}
-                      onClick={() => onReplace && onReplace(file, true)}
-                    >
-                      {getFileIcon(file.name)}
-                      <ListItemText>{file.name}</ListItemText>
-                    </ListItemButton>
-                  ))}
-                  {getOtherFiles(
-                    getFiles,
-                    getDoc,
-                    groupFiles,
-                    isEmbed,
-                    currentFileHref
-                  ).map((file, index) => (
-                    <ListItemButton
-                      key={file.id}
-                      id={index.toString()}
-                      onClick={() => onReplace && onReplace(file)}
-                    >
-                      {getFileIcon(file.name)}
-                      <ListItemText>{file.name}</ListItemText>
-                    </ListItemButton>
-                  ))}
+                  {getSupplements(getFiles, getDoc, groupFiles, isEmbed).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file, true)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
+                  {getOtherFiles(getFiles, getDoc, groupFiles, isEmbed).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
                   {showUpload && (
                     <UploadButton onClick={onUpload} disabled={!showUpload}>
                       <UploadIcon /> Upload new...
