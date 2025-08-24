@@ -33,7 +33,8 @@ import { hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
-import { isDeleted, isMoved } from '../../lib/track-changes-utils'
+import { isMoved } from '../../lib/filtered-document'
+import { isDeleted } from '../../lib/track-changes-utils'
 import { Option } from './type-selector/TypeSelector'
 
 export const shouldSkipNode = (node: Node): boolean => {

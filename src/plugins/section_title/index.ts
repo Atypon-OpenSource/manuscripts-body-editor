@@ -19,7 +19,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isMoved } from '../../lib/track-changes-utils'
+import { isMoved } from '../../lib/filtered-document'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
