@@ -112,7 +112,10 @@ export default () =>
               )
             } else if (node.type === node.type.schema.nodes.trans_abstract) {
               decorations.push(
-                Decoration.widget(pos + 1, placeholderWidget('Type new abstract title here'))
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Type new abstract title here')
+                )
               )
             } else {
               decorations.push(
