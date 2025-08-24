@@ -106,6 +106,7 @@ import {
   isNodeOfType,
   nearestAncestor,
 } from './lib/helpers'
+import { templateAllows } from './lib/template'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
@@ -213,6 +214,10 @@ export const blockActive =
 export const canInsert =
   (type: ManuscriptNodeType) => (state: ManuscriptEditorState) => {
     const { $from, $to } = state.selection
+
+    if (!templateAllows(state, type)) {
+      return false
+    }
 
     // disable block comment insertion just for title node, LEAN-2746
     if (
@@ -525,6 +530,9 @@ export const insertAttachment = (
 export const insertBlock =
   (nodeType: ManuscriptNodeType) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch) => {
+    if (!canInsert(nodeType)(state)) {
+      return false
+    }
     const position = findBlockInsertPosition(state)
     if (position === null) {
       return false
@@ -1707,7 +1715,8 @@ export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.affiliations ||
   type === schema.nodes.contributors ||
   type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image
+  type === schema.nodes.hero_image ||
+  type === schema.nodes.trans_abstract
 
 export const addNodeComment = (
   node: ManuscriptNode,
