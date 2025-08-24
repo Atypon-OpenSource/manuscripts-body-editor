@@ -1707,7 +1707,8 @@ export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.affiliations ||
   type === schema.nodes.contributors ||
   type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image
+  type === schema.nodes.hero_image ||
+  type === schema.nodes.trans_abstract
 
 export const addNodeComment = (
   node: ManuscriptNode,
