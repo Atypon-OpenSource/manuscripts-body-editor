@@ -69,6 +69,9 @@ const getParagraphPlaceholderText = (
   if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
     return 'Type new footnote here'
   }
+  if (parent.type === schema.nodes.trans_abstract) {
+    return 'Type here'
+  }
 }
 
 /**
