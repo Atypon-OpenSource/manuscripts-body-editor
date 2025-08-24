@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  CHANGE_OPERATION,
   CHANGE_STATUS,
   TrackedAttrs,
   TrackedChange,
@@ -121,8 +122,6 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
         from: $pos.before(depth),
         to: $pos.after(depth),
       }
-    } else {
-      break
     }
   }
   if (current) {
@@ -185,13 +184,24 @@ const buildGroupOfChangesDecoration = (
   doc: ManuscriptNode,
   changes: TrackedChange[]
 ) => {
-  const from = changes[0].from,
-    to = changes[changes.length - 1].to
-  const decoration = Decoration.inline(from, to, {
-    class: 'selected-suggestion',
-  })
+  const decorations = []
+  if (changes[0].dataTracked.operation === CHANGE_OPERATION.structure) {
+    changes.map((c) =>
+      decorations.push(
+        Decoration.node(c.from, c.to, { class: 'selected-suggestion' })
+      )
+    )
+  } else {
+    const from = changes[0].from,
+      to = changes[changes.length - 1].to
+    decorations.push(
+      Decoration.inline(from, to, {
+        class: 'selected-suggestion',
+      })
+    )
+  }
   return {
-    decorations: DecorationSet.create(doc, [decoration]),
+    decorations: DecorationSet.create(doc, decorations),
     suggestion: changes[0].dataTracked,
   }
 }
