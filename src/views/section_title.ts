@@ -69,6 +69,11 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
         )
         // the first level is hidden
         // other levels are shifted by 1
+      } else if ($pos.node($pos.depth).type === schema.nodes.trans_abstract) {
+        this.contentDOM.setAttribute(
+          'data-placeholder',
+          `Type new abstract title here`
+        )
       } else {
         this.contentDOM.setAttribute('data-placeholder', `Type heading here`)
       }
