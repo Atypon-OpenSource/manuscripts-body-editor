@@ -32,26 +32,8 @@
   -webkit-appearance: none;
 }
 
-.ProseMirror
-  > div.body
-  section:not(.toc)
-  .block-section_title
-  h1.empty-node[data-placeholder]::before {
-  content: attr(data-section-number) '. ' attr(data-placeholder);
-}
-
 .ProseMirror > div.body section:not(.toc) .block-section_title h1::before {
   content: attr(data-section-number) '. ';
-}
-
-.ProseMirror
-  > div.body
-  .block-box_element
-  .box-element
-  section:not(.toc)
-  .block-section_title
-  h1.empty-node[data-placeholder]::before {
-  content: attr(data-placeholder);
 }
 
 .ProseMirror
