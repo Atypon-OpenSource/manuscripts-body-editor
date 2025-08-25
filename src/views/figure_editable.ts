@@ -43,6 +43,18 @@ export class FigureEditableView extends FigureView {
     this.upload = this.upload.bind(this)
     this.createDOM()
     this.updateContents()
+    const domElement = this.dom as HTMLElement & {
+      __figureView?: FigureEditableView
+    }
+    domElement.__figureView = this
+  }
+
+  public update(newNode: ManuscriptNode): boolean {
+    const handledBySuper = super.update(newNode)
+    if (handledBySuper) {
+      this.addTools()
+    }
+    return handledBySuper
   }
 
   private clearTargetClass(
@@ -227,16 +239,22 @@ export class FigureEditableView extends FigureView {
     this.addTools()
   }
 
-  protected addTools() {
+  public addTools() {
     this.manageReactTools()
+
+    const existingDragHandlers =
+      this.container.querySelectorAll('.drag-handler')
+    existingDragHandlers.forEach((handler) => handler.remove())
+
     const $pos = this.view.state.doc.resolve(this.getPos())
 
     const parent = $pos.parent
-    // Create drag handle for for figure elements ( not simple image)
+    // Create drag handle for figure elements with multiple figures (not simple image)
     if (
       this.props.getCapabilities()?.editArticle &&
       parent.type === schema.nodes.figure_element &&
-      !isDeleted(this.node)
+      !isDeleted(this.node) &&
+      this.countFigures() > 1
     ) {
       const dragHandle = document.createElement('div')
       dragHandle.className = 'drag-handler'
