@@ -22,7 +22,7 @@ import {
 } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
-import { getDocWithoutMovedContent } from '../lib/filtered-document'
+import { isMoved } from '../lib/filtered-document'
 import { isInit } from '../lib/plugins'
 
 /**
@@ -42,13 +42,13 @@ export default () => {
       }
       const ids = new Set<string>()
       const tr = newState.tr
-      const doc = getDocWithoutMovedContent(newState.doc)
-      doc.descendants((node, pos, parent) => {
+      newState.doc.descendants((node, pos, parent) => {
         if (
           !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent)
+          isManuscriptNode(parent) ||
+          isMoved(node)
         ) {
           return
         }
