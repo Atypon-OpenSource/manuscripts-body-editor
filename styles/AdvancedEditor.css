@@ -1717,6 +1717,9 @@ th:hover > .table-context-menu-button,
   margin: 4px 0 0 0;
 }
 
+.prosemirror-dropcursor-block {
+  background-color: transparent !important;
+}
 .ProseMirror .add-button {
   border: 0px;
   z-index: 1;
@@ -1792,7 +1795,7 @@ th:hover > .table-context-menu-button,
 }
 .ProseMirror .block-trans_abstract section.block.trans-abstract {
   padding: 0 !important;
-} 
+}
 .ProseMirror .abstracts.empty-node .add-translation-container {
   display: none;
 }

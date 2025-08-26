@@ -36,7 +36,12 @@ import { EditorView } from 'prosemirror-view'
 import { Dispatch } from '../../commands'
 import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { filterBlockNodes } from '../../lib/utils'
+import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { Option } from './type-selector/TypeSelector'
+
+export const shouldSkipNode = (node: Node): boolean => {
+  return isMoved(node) || isDeleted(node)
+}
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
@@ -335,36 +340,65 @@ export const indentSection =
     const parentSection = $from.node(parentSectionDepth)
     const startIndex = $from.index(parentSectionDepth)
 
-    const previousSection =
-      startIndex > 0 ? parentSection.child(startIndex - 1) : null
-    const isValidContainer = previousSection?.type === nodes.section
+    // Check if there's a valid previous section to indent into
+    // Look backwards through siblings to find a valid (non-deleted, non-moved) section
+    let previousSection: Node | null = null
+    for (let i = startIndex - 1; i >= 0; i--) {
+      const candidate = parentSection.child(i)
+      if (candidate.type === nodes.section && !shouldSkipNode(candidate)) {
+        previousSection = candidate
+        break
+      }
+    }
 
     let anchor
-    if (!previousSection || !isValidContainer) {
+    if (!previousSection) {
       // No valid previous section, creating new parent section
       const emptyTitle = nodes.section_title.create()
       const newParentSectionContent = Fragment.fromArray([emptyTitle, section])
       const newParentSection = nodes.section.create({}, newParentSectionContent)
 
-      tr.replaceWith(beforeSection, afterSection, newParentSection)
+      tr.insert(beforeSection, newParentSection)
+
+      // Delete the original section (now at shifted position)
+      const newBeforeSection = beforeSection + newParentSection.nodeSize
+      const newAfterSection = afterSection + newParentSection.nodeSize
+
+      tr.delete(newBeforeSection, newAfterSection)
 
       anchor = beforeSection + 1
     } else {
       // Moving section into previous section as subsection
-      const newPreviousSection = previousSection.copy(
-        previousSection.content.append(Fragment.from(section))
-      )
+      // Find the actual position of the previous section by walking through the document
+      let beforePreviousSection: number | null = null
 
-      const beforePreviousSection = beforeSection - previousSection.nodeSize
+      $from.doc.descendants((node, pos) => {
+        if (node === previousSection) {
+          beforePreviousSection = pos
+          return false // stop iteration
+        }
+      })
 
-      tr.replaceWith(beforePreviousSection, afterSection, newPreviousSection)
+      if (beforePreviousSection === null) {
+        return false
+      }
 
-      anchor = beforePreviousSection + 1
+      const insertPos = beforePreviousSection + previousSection.nodeSize - 1
+      tr.insert(insertPos, section)
+
+      // Delete the original section (positions have shifted due to insert)
+      const newBeforeSection = beforeSection + section.nodeSize
+      const newAfterSection = afterSection + section.nodeSize
+      tr.delete(newBeforeSection, newAfterSection)
+
+      anchor = insertPos + 1
     }
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
+
+    dispatch(tr)
     view && view.focus()
   }
 
@@ -390,13 +424,17 @@ export const indentParagraph =
       sectionContent
     )
 
-    // Replace original paragraph and moved nodes with the new section
-    tr.replaceWith(beforeParagraph, sectionEnd, newSection)
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
+
+    tr.delete(beforeParagraph, sectionEnd)
+    tr.insert(beforeParagraph, newSection)
 
     // Set selection inside the title of the new section
-    tr.setSelection(TextSelection.create(tr.doc, beforeParagraph + 2))
+    tr.setSelection(
+      TextSelection.create(tr.doc, beforeParagraph + newSection.nodeSize - 2)
+    )
 
-    dispatch(skipTracking(tr))
+    dispatch(tr)
     view?.focus()
   }
 
@@ -404,10 +442,8 @@ export const unindentSection =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
     const {
       selection: { $from },
-      schema,
       tr,
     } = state
-    const { nodes } = schema
     const sectionDepth = $from.depth - 1
     const section = $from.node(sectionDepth)
     const beforeSection = $from.before(sectionDepth)
@@ -419,40 +455,34 @@ export const unindentSection =
 
     const parentSectionDepth = $from.depth - 2
     const parentSection = $from.node(parentSectionDepth)
-    const startIndex = $from.index(parentSectionDepth)
     const endIndex = $from.indexAfter(parentSectionDepth)
-    const beforeParentSection = $from.before(parentSectionDepth)
     const afterParentSection = $from.after(parentSectionDepth)
 
-    const items = []
+    const hasFollowingSiblings = endIndex < parentSection.childCount
 
-    let offset = 0
+    let extendedSection = section
 
-    if (startIndex > 0) {
-      const precedingSection = parentSection.cut(0, beforeSectionOffset)
-      items.push(precedingSection)
-      offset += precedingSection.nodeSize
+    if (hasFollowingSiblings) {
+      // If there are following siblings, we need to extend the section
+      const siblingsContent = parentSection.content.cut(afterSectionOffset)
+      extendedSection = section.copy(section.content.append(siblingsContent))
     }
 
-    items.push(section)
+    // Insert the unindented section at the parent level
+    tr.insert(afterParentSection, Fragment.from(extendedSection))
 
-    if (endIndex < parentSection.childCount) {
-      const fragment = Fragment.from(nodes.section_title.create()).append(
-        parentSection.content.cut(afterSectionOffset)
-      )
+    // Delete the original section (positions inside parent haven't changed)
+    tr.delete(beforeSection, beforeSection + extendedSection.nodeSize)
 
-      items.push(parentSection.copy(fragment))
-    }
-
-    tr.replaceWith(beforeParentSection, afterParentSection, items)
-
-    const anchor = beforeParentSection + offset + 2
+    const anchor = afterParentSection + 2
 
     tr.setSelection(
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
+
+    dispatch(tr)
     view && view.focus()
   }
 
@@ -491,10 +521,12 @@ export const unindentParagraph =
     tr.insert(paragraphPos + 2, newSection)
 
     tr.setSelection(
-      TextSelection.create(tr.doc, tr.mapping.map(paragraphPos) + 4)
+      TextSelection.create(tr.doc, paragraphPos + newSection.nodeSize)
     )
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
+
+    dispatch(tr)
     view?.focus()
   }
 
