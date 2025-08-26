@@ -16,10 +16,13 @@
 
 import { schema } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
 
 import { addBtnIcon } from '../icons'
 import { createNodeView } from './creators'
+import { FigureEditableView } from './figure_editable'
 import { ImageElementView } from './image_element'
+
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
   private addFigureBtn: HTMLButtonElement
@@ -121,10 +124,24 @@ export class FigureElementView extends ImageElementView {
       requestAnimationFrame(() => {
         this.updateButtonPosition() // Reposition after DOM update
         this.updateAddButtonState() // Update button state after DOM update
+        this.updateChildDragHandlers()
       })
     }
 
     return handledBySuper
+  }
+
+  private updateChildDragHandlers() {
+    const dragHandlers = this.container.querySelectorAll('.drag-handler')
+    dragHandlers.forEach((handler) => handler.remove())
+
+    const figureElements = this.container.querySelectorAll('figure')
+    figureElements.forEach((figureElement) => {
+      const figureView = (
+        figureElement as HTMLElement & { __figureView?: FigureEditableView }
+      ).__figureView
+      figureView?.addTools()
+    })
   }
 
   public updateContents() {
@@ -157,7 +174,8 @@ export class FigureElementView extends ImageElementView {
     const figureNode = state.schema.nodes.figure.create()
 
     tr.insert(finalInsertPos, figureNode)
-    this.view.dispatch(tr)
+    tr.setSelection(TextSelection.create(tr.doc, finalInsertPos + 1))
+    this.view.dispatch(tr.scrollIntoView())
   }
 
   public destroy() {
