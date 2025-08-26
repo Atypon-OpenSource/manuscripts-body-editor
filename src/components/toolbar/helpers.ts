@@ -15,7 +15,6 @@
  */
 import {
   setAction,
-  skipTracking,
   TrackChangesAction,
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
@@ -34,9 +33,9 @@ import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
+import { isMoved } from '../../lib/filtered-document'
 import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { filterBlockNodes } from '../../lib/utils'
-import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { Option } from './type-selector/TypeSelector'
 
 export const shouldSkipNode = (node: Node): boolean => {
