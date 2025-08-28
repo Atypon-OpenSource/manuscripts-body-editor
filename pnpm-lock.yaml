@@ -29,6 +29,9 @@ importers:
       '@citation-js/plugin-ris':
         specifier: 0.7.18
         version: 0.7.18(@citation-js/core@0.7.18)
+      '@cospired/i18n-iso-languages':
+        specifier: ^4.2.0
+        version: 4.2.0
       '@iarna/word-count':
         specifier: 1.1.2
         version: 1.1.2
@@ -36,14 +39,14 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.2.1
-        version: 3.2.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.3.0
+        version: 3.3.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.0.10
-        version: 2.0.10
+        specifier: 2.0.12
+        version: 2.0.12
       '@manuscripts/transform':
-        specifier: 4.2.14-LEAN-4774.0
-        version: 4.2.14-LEAN-4774.0(prosemirror-state@1.4.3)
+        specifier: 4.2.14
+        version: 4.2.14(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -975,6 +978,10 @@ packages:
     peerDependencies:
       '@citation-js/core': ^0.7.0
 
+  '@cospired/i18n-iso-languages@4.2.0':
+    resolution: {integrity: sha512-vy8cq1176MTxVwB1X9niQjcIYOH29F8Huxtx8hLmT5Uz3l1ztGDGri8KN/4zE7LV2mCT7JrcAoNV/I9yb+lNUw==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
   '@csstools/color-helpers@5.0.2':
     resolution: {integrity: sha512-JqWH1vsgdGcw2RR6VliXXdA0/59LttzlU8UlRT/iUUsEeWfYq8I+K0yhihEUTTHLRm1EXvpsCx3083EU15ecsA==}
     engines: {node: '>=18'}
@@ -1279,15 +1286,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.2.1':
-    resolution: {integrity: sha512-GERHDCCxZY0AKq7VJMz1xYM10PbN3o9iZAHRHw4IuSrcIGWjSR7BexTl7Fb4MepkHEXJtzwupe5Wbr9k0VfMxw==}
+  '@manuscripts/style-guide@3.3.0':
+    resolution: {integrity: sha512-kUXC89CwPeQojNdWm0lnufe6LVE3KtOHC2hqEf0QzvatgPiVtqujDIYlnhcDbr/cEADHmfDb4F0EpMPoWqoj9Q==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.0.10':
-    resolution: {integrity: sha512-rtZWsKvdsvVuQCL1tIcqzoyud3AJ1R4vWJt7vTfzQWnskUoVYPd8oQaSEelpg6oOK9V5uPzIR+sRjqabwlnGrA==}
+  '@manuscripts/track-changes-plugin@2.0.12':
+    resolution: {integrity: sha512-dDvDmnKv4+ohK4zHiOyxraS5BwADqWe5dQbLutDd+SK8Ef1BdsuhYIPviR3I4ISneOVmCNtIDxaFgEn2WWTGxw==}
 
-  '@manuscripts/transform@4.2.14-LEAN-4774.0':
-    resolution: {integrity: sha512-83wqbvg1Yp5SDGEjt0nDbmg627VX1vQDTIaMjaDZ3RPIHJLn4B321Wd4T6sWoGAF7oN3K3SOqcEeMJ4Cq38Iog==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.2.14-LEAN-4774.0.tgz}
+  '@manuscripts/transform@4.2.14':
+    resolution: {integrity: sha512-6ccoosWgrLleq+hiTiE5tD1OP0i1AFYEyiaNXrSYN8SRjje+pCitSVReGzOVV9pv6zZ7UeSEm2jGiLCIUcFEOg==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -5825,6 +5832,8 @@ snapshots:
       '@citation-js/date': 0.5.1
       '@citation-js/name': 0.4.2
 
+  '@cospired/i18n-iso-languages@4.2.0': {}
+
   '@csstools/color-helpers@5.0.2': {}
 
   '@csstools/css-calc@2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
@@ -6274,7 +6283,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.2.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.3.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
@@ -6306,7 +6315,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.0.10':
+  '@manuscripts/track-changes-plugin@2.0.12':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6318,7 +6327,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.2.14-LEAN-4774.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.2.14(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63

@@ -17,6 +17,7 @@ import { ManuscriptNodeView, Nodes } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
 import { NodeViewCreator } from '../types'
+import abstracts from '../views/abstracts'
 import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
@@ -60,6 +61,7 @@ import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
+import transAbstract from '../views/translated_abstract_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (
@@ -116,6 +118,7 @@ export default (
     long_desc: accessibilityElement(props, dispatch),
     alt_text: accessibilityElement(props, dispatch),
     hero_image: heroImage(props, dispatch),
-    trans_abstract: empty('trans_abstract'),
+    abstracts: abstracts(props),
+    trans_abstract: transAbstract(props),
   }
 }

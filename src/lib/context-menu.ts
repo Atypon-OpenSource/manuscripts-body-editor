@@ -41,6 +41,7 @@ import {
 } from '../commands'
 import { PopperManager } from './popper'
 import { createPositionOptions } from './position-menu'
+import { templateAllows } from './template'
 import {
   getMatchingChild,
   isChildOfNodeTypes,
@@ -523,10 +524,16 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
+      if (!templateAllows(this.view.state, nodes[node])) {
+        return
+      }
       canInsertAt(nodes[node], pos) && insertable.add(node)
     }
 
-    if (canInsertAt(nodes.section, endPos)) {
+    if (
+      canInsertAt(nodes.section, endPos) &&
+      templateAllows(this.view.state, nodes.section)
+    ) {
       insertable.add('subsection')
     }
     checkNode('section', insertPos)
