@@ -253,6 +253,13 @@ export const canInsert =
     ) {
       return false
     }
+    // Prevent inserting a hero_image if it already exists
+    if (
+      type === schema.nodes.hero_image &&
+      getChildOfType(state.doc, schema.nodes.hero_image, true)
+    ) {
+      return false
+    }
 
     const initDepth =
       findParentNodeOfType(schema.nodes.box_element)(state.selection)?.depth ||
@@ -1191,20 +1198,11 @@ export const insertKeywords = (
     return false
   }
   // determine the position to insert the keywords node
-  const supplements = findChildrenByType(
-    state.doc,
-    state.schema.nodes.supplements
-  )[0]
   const abstracts = findChildrenByType(
     state.doc,
     state.schema.nodes.abstracts
   )[0]
-  let pos
-  if (supplements) {
-    pos = supplements.pos + supplements.node.nodeSize
-  } else {
-    pos = abstracts.pos
-  }
+  const pos = abstracts.pos
   const keywords = schema.nodes.keywords.createAndFill({}, [
     schema.nodes.section_title.create({}, schema.text('Keywords')),
     schema.nodes.keywords_element.create({}, [
@@ -1949,12 +1947,8 @@ const createHeroImage = (attrs?: Attrs) =>
 export const insertHeroImage =
   () =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    if (getChildOfType(state.doc, schema.nodes.hero_image, true)) {
-      return false
-    }
-    const backmatter = findBackmatter(state.doc)
-
-    const position = backmatter.pos + backmatter.node.content.size + 1
+    const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+    const position = comments.pos
     view?.focus()
     createBlock(schema.nodes.hero_image, position, state, dispatch)
 

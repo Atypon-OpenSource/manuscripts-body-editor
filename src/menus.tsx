@@ -310,7 +310,9 @@ export const getEditorMenus = (
       {
         id: 'insert-hero-image',
         label: 'Hero Image',
-        isEnabled: isEditAllowed(state) && isCommandValid(insertHeroImage()),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.hero_image)),
         run: doCommand(insertHeroImage()),
         isHidden: !templateAllows(state, schema.nodes.hero_image),
       },
