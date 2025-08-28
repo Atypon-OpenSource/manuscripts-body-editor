@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
+import { isMoved } from '../lib/filtered-document'
 import { isInit } from '../lib/plugins'
 
 /**
@@ -46,7 +47,8 @@ export default () => {
           !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent)
+          isManuscriptNode(parent) ||
+          isMoved(node)
         ) {
           return
         }

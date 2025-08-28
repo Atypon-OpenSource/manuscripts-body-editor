@@ -1071,7 +1071,7 @@ figure.block:has(.equation.selected-suggestion) {
   [data-track-op='node_split'][data-track-status='pending']
   .block,
 .tracking-visible
-  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block,
 .block:has(
     figure.selected-suggestion,
@@ -1086,7 +1086,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion),
 .tracking-visible
-  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
@@ -1724,6 +1724,9 @@ th:hover > .table-context-menu-button,
   margin: 4px 0 0 0;
 }
 
+.prosemirror-dropcursor-block {
+  background-color: transparent !important;
+}
 .ProseMirror .add-button {
   border: 0px;
   z-index: 1;
@@ -1799,7 +1802,7 @@ th:hover > .table-context-menu-button,
 }
 .ProseMirror .block-trans_abstract section.block.trans-abstract {
   padding: 0 !important;
-} 
+}
 .ProseMirror .abstracts.empty-node .add-translation-container {
   display: none;
 }

@@ -39,11 +39,11 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.2.4
-        version: 3.2.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.3.0
+        version: 3.3.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.0.10
-        version: 2.0.10
+        specifier: 2.0.12
+        version: 2.0.12
       '@manuscripts/transform':
         specifier: 4.2.15-LEAN-4665.0
         version: 4.2.15-LEAN-4665.0(prosemirror-state@1.4.3)
@@ -1286,12 +1286,12 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.2.4':
-    resolution: {integrity: sha512-LqosakOlzNJMzcMoY8rjnS7hn3nGgap0+B5mk2oTuiw/aWFHFSzyYC8NL84UhBag5SxOP2EQKkm5l5M2ILpUUg==}
+  '@manuscripts/style-guide@3.3.0':
+    resolution: {integrity: sha512-kUXC89CwPeQojNdWm0lnufe6LVE3KtOHC2hqEf0QzvatgPiVtqujDIYlnhcDbr/cEADHmfDb4F0EpMPoWqoj9Q==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.0.10':
-    resolution: {integrity: sha512-rtZWsKvdsvVuQCL1tIcqzoyud3AJ1R4vWJt7vTfzQWnskUoVYPd8oQaSEelpg6oOK9V5uPzIR+sRjqabwlnGrA==}
+  '@manuscripts/track-changes-plugin@2.0.12':
+    resolution: {integrity: sha512-dDvDmnKv4+ohK4zHiOyxraS5BwADqWe5dQbLutDd+SK8Ef1BdsuhYIPviR3I4ISneOVmCNtIDxaFgEn2WWTGxw==}
 
   '@manuscripts/transform@4.2.15-LEAN-4665.0':
     resolution: {integrity: sha512-PhkE0YkXm/Zo7n1oHoaEH76rtbbX6taTQSYz62Z00GOC3DFH9mtLypidPDNu+fcG0BZGXcP3PhzaOdWZFV1hLQ==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.2.15-LEAN-4665.0.tgz}
@@ -6283,7 +6283,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.2.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.3.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
@@ -6315,7 +6315,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.0.10':
+  '@manuscripts/track-changes-plugin@2.0.12':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
