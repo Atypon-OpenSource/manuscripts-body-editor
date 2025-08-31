@@ -26,6 +26,7 @@ export class SubtitlesView
 {
   public createElement = () => {
     this.contentDOM = document.createElement('div')
+    this.contentDOM.classList.add('block')
     this.dom.appendChild(this.contentDOM)
   }
 }

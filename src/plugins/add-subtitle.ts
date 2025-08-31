@@ -15,7 +15,7 @@
  */
 
 import { ManuscriptEditorView, schema } from '@manuscripts/transform'
-import { Plugin } from 'prosemirror-state'
+import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -40,20 +40,20 @@ export default () =>
       decorations: (state) => {
         let titleHasContent = false
         let titlePos = -1
-        let hasSubtitle = false
+        let hasSubtitles = false
 
         state.doc.descendants((node, pos) => {
           if (node.type === schema.nodes.title && node.textContent.trim()) {
             titleHasContent = true
             titlePos = pos
-          } else if (node.type === schema.nodes.subtitle) {
-            hasSubtitle = true
-            return false // Stop early if subtitle found
+          } else if (node.type === schema.nodes.subtitles) {
+            hasSubtitles = true
+            return false // Stop early if subtitles found
           }
         })
 
-        // Show button only if title has content and no subtitle exists
-        if (titleHasContent && !hasSubtitle) {
+        // Show button only if title has content and no subtitles exist
+        if (titleHasContent && !hasSubtitles) {
           const titleNode = state.doc.nodeAt(titlePos)
           if (titleNode) {
             const titleEndPos = titlePos + titleNode.nodeSize
@@ -65,10 +65,11 @@ export default () =>
                     { id: uuidv4() },
                     [schema.nodes.subtitle.create({ id: uuidv4() })]
                   )
+                  const tr = view.state.tr.insert(titleEndPos, subtitlesNode)
+                  const subtitlePos = titleEndPos + 1
+                  tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
 
-                  view.dispatch(
-                    view.state.tr.insert(titleEndPos, subtitlesNode)
-                  )
+                  view.dispatch(tr)
                   view.focus()
                 })
               }),
