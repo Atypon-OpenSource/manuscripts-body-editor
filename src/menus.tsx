@@ -177,8 +177,9 @@ export const getEditorMenus = (
           {
             id: 'insert-abstract-types',
             label: 'Abstract Types',
-            isEnabled: !!allAbstractsCategories.length,
+            isEnabled: true,
             submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
+            isHidden: !allAbstractsCategories.length,
           },
           {
             id: 'insert-contributors',
@@ -213,9 +214,11 @@ export const getEditorMenus = (
       {
         id: 'back-matter',
         label: 'Author Notes',
-        isEnabled: !!categories.length,
+        isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
-        isHidden: !templateAllows(state, schema.nodes.author_notes),
+        isHidden:
+          !templateAllows(state, schema.nodes.author_notes) ||
+          !categories.length,
       },
       {
         id: 'insert-section',
