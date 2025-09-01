@@ -237,7 +237,7 @@ export class ContextMenu {
 
   public showEditMenu = (target: Element) => {
     const menu = document.createElement('div')
-    menu.className = 'menu edit-menu'
+    menu.className = 'menu'
 
     const $pos = this.resolvePos()
     const isBox = isBoxElementSectionTitle($pos, this.node)
