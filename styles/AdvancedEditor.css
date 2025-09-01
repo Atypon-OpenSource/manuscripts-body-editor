@@ -1423,6 +1423,11 @@ th:hover > .table-context-menu-button,
   opacity: 1;
 }
 
+.ProseMirror .block-container:hover .section-category-button.disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 .section-category.menu .menu-item.selected:after {
   top: 10.5px;
   right: 19px;
