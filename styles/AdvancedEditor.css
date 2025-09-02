@@ -1804,3 +1804,7 @@ th:hover > .table-context-menu-button,
 .ProseMirror .abstracts.empty-node .add-translation-container {
   display: none;
 }
+
+.ProseMirror a.link:empty::before {
+  content: "\00a0";
+}
