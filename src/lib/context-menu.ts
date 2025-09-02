@@ -27,6 +27,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -570,6 +571,21 @@ export class ContextMenu {
           )
         )
 
+        break
+      }
+
+      case 'subtitles': {
+        const pos = this.getPos()
+        const tr = this.view.state.tr
+
+        tr.delete(pos, pos + this.node.nodeSize)
+
+        // For subtitles, set selection to title end
+        const titleNode = findChildrenByType(tr.doc, schema.nodes.title)[0]
+        const titleEndPos = titleNode.pos + titleNode.node.nodeSize - 1
+        tr.setSelection(TextSelection.create(tr.doc, titleEndPos))
+
+        this.view.dispatch(tr)
         break
       }
 

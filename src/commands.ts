@@ -1699,6 +1699,7 @@ const getParentNode = (selection: Selection) => {
 // TODO:: remove this check when we allow all type of block node to have comment
 export const isCommentingAllowed = (type: NodeType) =>
   type === schema.nodes.title ||
+  type === schema.nodes.subtitles ||
   type === schema.nodes.section ||
   type === schema.nodes.citation ||
   type === schema.nodes.bibliography_item ||
@@ -1960,3 +1961,23 @@ export const insertHeroImage =
 
     return true
   }
+
+export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
+  const { selection } = state
+
+  if (!isTextSelection(selection)) {
+    return false
+  }
+
+  // Check where the cursor is positioned
+  const cursorParent = selection.$from.node()
+
+  if (
+    cursorParent.type === state.schema.nodes.subtitle ||
+    cursorParent.type === state.schema.nodes.subtitles
+  ) {
+    return true // Prevent Enter in subtitle area
+  }
+
+  return false
+}

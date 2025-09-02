@@ -40,6 +40,7 @@ import {
   autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
+  ignoreEnterInSubtitles,
   ignoreMetaNodeBackspaceCommand,
   insertBlock,
   insertBreak,
@@ -77,6 +78,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt--': toggleMark(schema.marks.subscript),
   'Ctrl->': wrapIn(schema.nodes.blockquote),
   Enter: chainCommands(
+    ignoreEnterInSubtitles,
     autoComplete,
     addToStart,
     newlineInCode,

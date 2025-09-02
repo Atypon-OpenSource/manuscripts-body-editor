@@ -19,6 +19,7 @@ import {
   AltTitlesSectionNode,
   ManuscriptEditorView,
   schema,
+  SubtitlesNode,
   TitleNode,
 } from '@manuscripts/transform'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
@@ -30,6 +31,7 @@ import { createToggleButton } from '../lib/utils'
 export interface PluginState {
   collapsed: boolean
   title: [TitleNode, number] | undefined
+  subtitles: [SubtitlesNode, number] | undefined
   runningTitle: [AltTitleNode, number] | undefined
   shortTitle: [AltTitleNode, number] | undefined
   altTitlesSection: [AltTitlesSectionNode, number] | undefined
@@ -37,6 +39,7 @@ export interface PluginState {
 
 function getTitlesData(doc: ProseMirrorNode) {
   let title: [TitleNode, number] | undefined
+  let subtitles: [SubtitlesNode, number] | undefined
   let runningTitle: [AltTitleNode, number] | undefined
   let shortTitle: [AltTitleNode, number] | undefined
   let altTitlesSection: [AltTitlesSectionNode, number] | undefined
@@ -48,6 +51,9 @@ function getTitlesData(doc: ProseMirrorNode) {
     if (node.type === schema.nodes.title) {
       // if title is empty we don't allow to edit alt titles
       title = [node as TitleNode, pos]
+    }
+    if (node.type === schema.nodes.subtitles) {
+      subtitles = [node as SubtitlesNode, pos]
     }
     if (node.type === schema.nodes.alt_titles) {
       altTitlesSection = [node as AltTitlesSectionNode, pos]
@@ -61,7 +67,7 @@ function getTitlesData(doc: ProseMirrorNode) {
       }
     }
   })
-  return { title, runningTitle, shortTitle, altTitlesSection }
+  return { title, subtitles, runningTitle, shortTitle, altTitlesSection }
 }
 
 function selectionInAltTitles(from: number, to: number, state: PluginState) {
@@ -120,7 +126,7 @@ export default () => {
         return null
       }
 
-      const { title, runningTitle, shortTitle, altTitlesSection } =
+      const { title, subtitles, runningTitle, shortTitle, altTitlesSection } =
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         altTitlesKey.getState(newState)!
 
@@ -131,7 +137,8 @@ export default () => {
       }
 
       if (!altTitlesSection) {
-        const titleEnd = title[0].nodeSize + title[1]
+        const prev = subtitles || title
+        const titleEnd = prev[0].nodeSize + prev[1]
         const section = schema.nodes.alt_titles.create({}, [
           schema.nodes.alt_title.create({
             type: 'running',
