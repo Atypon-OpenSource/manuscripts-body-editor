@@ -122,17 +122,32 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
-    const iframe = document.createElement('iframe')
-    Object.assign(iframe, {
-      src: this.getPDFUrl(file),
-      className: 'attachment-iframe',
+    const object = document.createElement('object')
+    Object.assign(object, {
+      data: this.getPDFUrl(file),
+      type: 'application/pdf',
+      className: 'attachment-pdf',
       height: '400px',
       width: '100%',
     })
-    iframe.style.border = 'none'
-    iframe.sandbox.add('allow-same-origin', 'allow-scripts')
+    object.style.border = 'none'
 
-    content.appendChild(iframe)
+    // Fallback content if PDF can't be displayed
+    const fallback = document.createElement('div')
+    fallback.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: #666;">
+        <p>PDF Preview</p>
+        <p style="font-size: 12px;">${file.name}</p>
+        <a href="${this.getPDFUrl(
+          file
+        )}" target="_blank" style="text-decoration: none;">
+          Open PDF in new tab
+        </a>
+      </div>
+    `
+    object.appendChild(fallback)
+
+    content.appendChild(object)
     return content
   }
 
