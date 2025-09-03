@@ -147,34 +147,16 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   }
 
   private getPDFUrl(file: ExtendedFileAttachment): string {
-    if (
-      this.props.fileManagement &&
-      typeof this.props.fileManagement.previewLink === 'function'
-    ) {
+    // Use fileManagement.previewLink if available
+    if (this.props.fileManagement?.previewLink) {
       const previewUrl = this.props.fileManagement.previewLink(file)
       if (previewUrl) {
         return previewUrl
       }
     }
 
-    // Fallback: if file has a direct link, use it
-    if (file.link) {
-      return file.link
-    }
-
-    // Final fallback: construct the URL manually using the file ID
-    if (file.id) {
-      // Extract the UUID from the file ID (remove "attachment:" prefix if present)
-      const fileId = file.id.startsWith('attachment:')
-        ? file.id.replace('attachment:', '')
-        : file.id
-
-      const encodedFileName = encodeURIComponent(file.name || 'document.pdf')
-
-      return `/lw/attachment/${fileId}/${encodedFileName}`
-    }
-
-    return '#'
+    // Fallback to file.link or file.id
+    return file.link || file.id || '#'
   }
 
   /**
