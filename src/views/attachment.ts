@@ -27,7 +27,6 @@ interface ExtendedFileAttachment extends FileAttachment {
   type?: string
 }
 
-const PDF_EXTENSION = '.pdf'
 export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   private container: HTMLElement
 
@@ -45,15 +44,12 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     this.container.classList.remove('attachment-hidden')
 
     const file = this.getFileFromAttachment()
-
     if (!file) {
       this.container.classList.add('attachment-hidden')
       return
     }
 
-    const isPDF = this.isPDF(file)
-
-    if (isPDF) {
+    if (this.isPDF(file)) {
       this.createPDFPreview(file)
     } else {
       this.container.classList.add('attachment-hidden')
@@ -63,8 +59,6 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   private createContainer() {
     this.container = document.createElement('div')
     this.container.classList.add('attachment-item')
-
-    // Add click handler to focus on main document in inspector
     this.container.addEventListener('click', (e) => {
       e.stopPropagation()
       this.setMainDocumentSelection()
@@ -73,8 +67,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   }
 
   private isPDF(file: ExtendedFileAttachment): boolean {
-    const isPDFByExtension = file.name?.toLowerCase().endsWith(PDF_EXTENSION)
-    return isPDFByExtension
+    return file.name?.toLowerCase().endsWith('.pdf') ?? false
   }
 
   private getFileFromAttachment(): ExtendedFileAttachment | null {
@@ -84,17 +77,16 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     }
 
     const files = this.props?.getFiles?.() || []
-    const foundFile = files.find((f: ExtendedFileAttachment) => f.id === href)
-    return foundFile || null
+    return files.find((f: ExtendedFileAttachment) => f.id === href) || null
   }
 
   private createPDFPreview(file: ExtendedFileAttachment) {
     this.container.setAttribute('data-pdf-preview', file.id)
 
     const header = this.createHeader(file)
-    this.container.appendChild(header)
-
     const content = this.createContent(file)
+
+    this.container.appendChild(header)
     this.container.appendChild(content)
   }
 
@@ -105,9 +97,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     const icon = this.createIcon()
     const name = this.createFileName(file.name)
 
-    header.appendChild(icon)
-    header.appendChild(name)
-
+    header.append(icon, name)
     return header
   }
 
@@ -120,10 +110,11 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
 
   private createFileName(fileName: string): HTMLElement {
     const name = document.createElement('span')
-    name.textContent = fileName
-    name.className = 'attachment-name'
-    name.title = fileName
-
+    Object.assign(name, {
+      textContent: fileName,
+      className: 'attachment-name',
+      title: fileName
+    })
     return name
   }
 
@@ -131,18 +122,17 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
-    // Use iframe for reliable PDF display across browsers
     const iframe = document.createElement('iframe')
-    iframe.src = this.getPDFUrl(file)
-    iframe.className = 'attachment-iframe'
-    iframe.height = '400px'
-    iframe.width = '100%'
+    Object.assign(iframe, {
+      src: this.getPDFUrl(file),
+      className: 'attachment-iframe',
+      height: '400px',
+      width: '100%',
+    })
     iframe.style.border = 'none'
-
     iframe.sandbox.add('allow-same-origin', 'allow-scripts')
 
     content.appendChild(iframe)
-
     return content
   }
 
@@ -159,15 +149,9 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     return file.link || file.id || '#'
   }
 
-  /**
-   * Dispatches event to focus on main document in inspector
-   * Changed event name to match what Inspector component listens for
-   */
   private setMainDocumentSelection() {
-    const event = new CustomEvent('focusOnMainDocumentInInspector', {
-      detail: {
-        action: 'open-main-document',
-      },
+    const event = new CustomEvent('selectMainDocument', {
+      detail: { action: 'select-main-document' },
       bubbles: true,
     })
     this.dom.dispatchEvent(event)
