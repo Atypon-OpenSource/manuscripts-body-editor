@@ -21,6 +21,7 @@ import {
   DraggableIcon,
   EditIcon,
   FileCorruptedIcon,
+  FileMainDocumentIcon,
   ImageDefaultIcon,
   ImageLeftIcon,
   ImageRightIcon,
@@ -57,3 +58,6 @@ export const fileCorruptedIcon = renderToStaticMarkup(
 )
 export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
 export const translateIcon = renderToStaticMarkup(createElement(TranslateIcon))
+export const fileMainDocumentIcon = renderToStaticMarkup(
+  createElement(FileMainDocumentIcon)
+)
