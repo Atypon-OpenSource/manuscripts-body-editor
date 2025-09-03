@@ -23,6 +23,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 const placeholderWidget =
@@ -68,6 +69,9 @@ const getParagraphPlaceholderText = (
   if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
     return 'Type new footnote here'
   }
+  if (parent.type === schema.nodes.trans_abstract) {
+    return 'Type here'
+  }
 }
 
 /**
@@ -96,6 +100,26 @@ export default () =>
                   Decoration.widget(pos + 1, placeholderWidget(text))
                 )
               }
+            } else if (node.type === node.type.schema.nodes.section_title) {
+              const $pos = state.doc.resolve(pos)
+
+              let placeholderText = 'Type heading here'
+              if (
+                findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)
+              ) {
+                placeholderText = 'Optional box title...'
+              }
+
+              decorations.push(
+                Decoration.widget(pos + 1, placeholderWidget(placeholderText))
+              )
+            } else if (node.type === node.type.schema.nodes.trans_abstract) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Type new abstract title here')
+                )
+              )
             } else {
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {

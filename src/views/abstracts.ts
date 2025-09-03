@@ -78,10 +78,8 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
 
     // Create empty section title
     const sectionTitle = schema.nodes.section_title.create()
-    // Create paragraph with placeholder
-    const paragraph = schema.nodes.paragraph.create({
-      placeholder: 'Type here',
-    })
+    // Create empty paragraph
+    const paragraph = schema.nodes.paragraph.create()
 
     // Create trans_abstract node with section title and paragraph
     const transAbstractNode = schema.nodes.trans_abstract.create(
