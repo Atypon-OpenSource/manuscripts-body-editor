@@ -113,7 +113,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     Object.assign(name, {
       textContent: fileName,
       className: 'attachment-name',
-      title: fileName
+      title: fileName,
     })
     return name
   }
