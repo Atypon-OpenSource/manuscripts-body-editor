@@ -34,7 +34,6 @@ export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
 
     this.container.appendChild(this.createPanel())
 
-    // Content area for individual attachments
     const content = document.createElement('div')
     content.className = 'attachments-content'
 

@@ -28,8 +28,6 @@ interface ExtendedFileAttachment extends FileAttachment {
 }
 
 const PDF_EXTENSION = '.pdf'
-const PDF_MIME_TYPE = 'application/pdf'
-
 export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   private container: HTMLElement
 
@@ -64,7 +62,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
 
   private createContainer() {
     this.container = document.createElement('div')
-    this.container.classList.add('block', 'attachment-item')
+    this.container.classList.add('attachment-item')
 
     // Add click handler to focus on main document in inspector
     this.container.addEventListener('click', (e) => {
@@ -76,8 +74,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
 
   private isPDF(file: ExtendedFileAttachment): boolean {
     const isPDFByExtension = file.name?.toLowerCase().endsWith(PDF_EXTENSION)
-    const isPDFByMimeType = file.type === PDF_MIME_TYPE
-    return isPDFByExtension || isPDFByMimeType
+    return isPDFByExtension
   }
 
   private getFileFromAttachment(): ExtendedFileAttachment | null {
@@ -134,31 +131,23 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
-    const iframeContainer = document.createElement('div')
-    iframeContainer.className = 'iframe-container'
+    const embed = document.createElement('embed')
+    embed.src = this.getPDFUrl(file)
+    embed.type = 'application/pdf'
+    embed.height = '400px'
+    embed.width = '100%'
 
-    const iframe = document.createElement('iframe')
-    iframe.className = 'attachment-iframe'
-    iframe.src = this.getPDFUrl(file)
-    iframe.title = `PDF Preview: ${file.name}`
-    iframe.sandbox.add('allow-same-origin', 'allow-scripts')
-
-    iframeContainer.appendChild(iframe)
-    content.appendChild(iframeContainer)
+    content.appendChild(embed)
 
     return content
   }
 
-  private getPDFUrl(file: ExtendedFileAttachment): string {
-    if (file.link && !file.link.includes('figure.png')) {
+  private getPDFUrl(file: ExtendedFileAttachment) {
+    if (file.link) {
       return file.link
     }
 
-    if (file.id && file.id.startsWith('attachment:')) {
-      const uuid = file.id.replace('attachment:', '')
-      return `/lw/attachment/${uuid}`
-    }
-
+    // Fallback to a placeholder if no link available
     return '#'
   }
 
