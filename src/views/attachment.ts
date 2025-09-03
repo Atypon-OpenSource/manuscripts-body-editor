@@ -142,12 +142,15 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     return content
   }
 
-  private getPDFUrl(file: ExtendedFileAttachment) {
+  private getPDFUrl(file: ExtendedFileAttachment): string {
     if (file.link) {
       return file.link
     }
 
-    // Fallback to a placeholder if no link available
+    if (file.id) {
+      return file.id
+    }
+
     return '#'
   }
 
