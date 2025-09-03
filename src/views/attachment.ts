@@ -17,9 +17,15 @@
 import { ManuscriptNode } from '@manuscripts/transform'
 
 import { fileMainDocumentIcon } from '../icons'
+import { FileAttachment } from '../lib/files'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+
+// Extended file type that includes properties from the article editor
+interface ExtendedFileAttachment extends FileAttachment {
+  type?: string
+}
 
 const PDF_EXTENSION = '.pdf'
 const PDF_MIME_TYPE = 'application/pdf'
@@ -59,26 +65,33 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
   private createContainer() {
     this.container = document.createElement('div')
     this.container.classList.add('block', 'attachment-item')
+
+    // Add click handler to focus on main document in inspector
+    this.container.addEventListener('click', (e) => {
+      e.stopPropagation()
+      this.setMainDocumentSelection()
+    })
     this.dom.appendChild(this.container)
   }
 
-  private isPDF(file: any): boolean {
+  private isPDF(file: ExtendedFileAttachment): boolean {
     const isPDFByExtension = file.name?.toLowerCase().endsWith(PDF_EXTENSION)
     const isPDFByMimeType = file.type === PDF_MIME_TYPE
     return isPDFByExtension || isPDFByMimeType
   }
 
-  private getFileFromAttachment(): any | null {
+  private getFileFromAttachment(): ExtendedFileAttachment | null {
     const { href } = this.node.attrs
     if (!href) {
       return null
     }
 
     const files = this.props?.getFiles?.() || []
-    return files.find((f: any) => f.id === href)
+    const foundFile = files.find((f: ExtendedFileAttachment) => f.id === href)
+    return foundFile || null
   }
 
-  private createPDFPreview(file: any) {
+  private createPDFPreview(file: ExtendedFileAttachment) {
     this.container.setAttribute('data-pdf-preview', file.id)
 
     const header = this.createHeader(file)
@@ -88,17 +101,15 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     this.container.appendChild(content)
   }
 
-  private createHeader(file: any): HTMLElement {
+  private createHeader(file: ExtendedFileAttachment): HTMLElement {
     const header = document.createElement('div')
     header.className = 'attachment-header'
 
     const icon = this.createIcon()
     const name = this.createFileName(file.name)
-    const badge = this.createPDFBadge()
 
     header.appendChild(icon)
     header.appendChild(name)
-    header.appendChild(badge)
 
     return header
   }
@@ -115,17 +126,11 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     name.textContent = fileName
     name.className = 'attachment-name'
     name.title = fileName
+
     return name
   }
 
-  private createPDFBadge(): HTMLElement {
-    const badge = document.createElement('span')
-    badge.textContent = 'PDF Preview'
-    badge.className = 'attachment-badge'
-    return badge
-  }
-
-  private createContent(file: any): HTMLElement {
+  private createContent(file: ExtendedFileAttachment): HTMLElement {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
@@ -144,7 +149,7 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     return content
   }
 
-  private getPDFUrl(file: any): string {
+  private getPDFUrl(file: ExtendedFileAttachment): string {
     if (file.link && !file.link.includes('figure.png')) {
       return file.link
     }
@@ -155,6 +160,19 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     }
 
     return '#'
+  }
+
+  /**
+   * Dispatches event to focus on main document in inspector
+   */
+  private setMainDocumentSelection() {
+    const event = new CustomEvent('selectMainDocument', {
+      detail: {
+        action: 'select-main-document',
+      },
+      bubbles: true,
+    })
+    this.dom.dispatchEvent(event)
   }
 }
 
