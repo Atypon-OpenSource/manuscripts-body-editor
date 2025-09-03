@@ -131,24 +131,47 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
-    const embed = document.createElement('embed')
-    embed.src = this.getPDFUrl(file)
-    embed.type = 'application/pdf'
-    embed.height = '400px'
-    embed.width = '100%'
+    // Use iframe for reliable PDF display across browsers
+    const iframe = document.createElement('iframe')
+    iframe.src = this.getPDFUrl(file)
+    iframe.className = 'attachment-iframe'
+    iframe.height = '400px'
+    iframe.width = '100%'
+    iframe.style.border = 'none'
 
-    content.appendChild(embed)
+    iframe.sandbox.add('allow-same-origin', 'allow-scripts')
+
+    content.appendChild(iframe)
 
     return content
   }
 
   private getPDFUrl(file: ExtendedFileAttachment): string {
+    if (
+      this.props.fileManagement &&
+      typeof this.props.fileManagement.previewLink === 'function'
+    ) {
+      const previewUrl = this.props.fileManagement.previewLink(file)
+      if (previewUrl) {
+        return previewUrl
+      }
+    }
+
+    // Fallback: if file has a direct link, use it
     if (file.link) {
       return file.link
     }
 
+    // Final fallback: construct the URL manually using the file ID
     if (file.id) {
-      return file.id
+      // Extract the UUID from the file ID (remove "attachment:" prefix if present)
+      const fileId = file.id.startsWith('attachment:')
+        ? file.id.replace('attachment:', '')
+        : file.id
+
+      const encodedFileName = encodeURIComponent(file.name || 'document.pdf')
+
+      return `/lw/attachment/${fileId}/${encodedFileName}`
     }
 
     return '#'
@@ -156,11 +179,12 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
 
   /**
    * Dispatches event to focus on main document in inspector
+   * Changed event name to match what Inspector component listens for
    */
   private setMainDocumentSelection() {
-    const event = new CustomEvent('selectMainDocument', {
+    const event = new CustomEvent('focusOnMainDocumentInInspector', {
       detail: {
-        action: 'select-main-document',
+        action: 'open-main-document',
       },
       bubbles: true,
     })
