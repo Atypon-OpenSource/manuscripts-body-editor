@@ -15,7 +15,6 @@
  */
 
 import { ManuscriptNode } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
 
 import { fileMainDocumentIcon } from '../icons'
 import { FileAttachment } from '../lib/files'
@@ -59,7 +58,6 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     this.container.addEventListener('click', (e) => {
       e.stopPropagation()
       this.setMainDocumentSelection()
-      this.navigateToNode()
     })
     this.dom.appendChild(this.container)
   }
@@ -168,19 +166,6 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
       bubbles: true,
     })
     this.dom.dispatchEvent(event)
-  }
-
-  private navigateToNode() {
-    if (!this.view) {
-      return
-    }
-
-    const tr = this.view.state.tr
-    const selection = NodeSelection.create(this.view.state.doc, this.getPos())
-    tr.setSelection(selection)
-    tr.scrollIntoView()
-    this.view.focus()
-    this.view.dispatch(tr)
   }
 }
 
