@@ -75,7 +75,8 @@
     "react-is": "18.3.1",
     "react-router-dom": "6.30.0",
     "react-select": "5.10.1",
-    "styled-components": "5.3.11"
+    "styled-components": "5.3.11",
+    "transform": "link:../../../Library/pnpm/global/5/node_modules/@manuscripts/transform"
   },
   "devDependencies": {
     "@babel/core": "7.23.7",
