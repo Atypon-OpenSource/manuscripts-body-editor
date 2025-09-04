@@ -22,6 +22,8 @@ import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
 import alt_titles_section from '../views/alt_titles_section'
+import attachment from '../views/attachment'
+import attachments from '../views/attachments'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
 import awards from '../views/awards'
@@ -120,5 +122,7 @@ export default (
     hero_image: heroImage(props, dispatch),
     abstracts: abstracts(props),
     trans_abstract: transAbstract(props),
+    attachment: attachment(props, dispatch),
+    attachments: attachments(props, dispatch),
   }
 }
