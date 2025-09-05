@@ -17,15 +17,17 @@
 import { ContextMenu } from '@manuscripts/style-guide'
 import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
+import { deleteIcon, linkIcon } from '../icons'
 import {
-  ExtLinkEditor,
-  ExtLinkEditorProps,
-} from '../components/views/ExtLinkEditor'
+  addInteractionHandlers,
+  createMediaPlaceholder,
+  MediaType,
+} from '../lib/media'
 import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView, { createSubViewAsync } from './ReactSubView'
+import ReactSubView from './ReactSubView'
 
 export enum figurePositions {
   left = 'half-left',
@@ -42,6 +44,21 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   private isEditingExtLink = false
 
   public ignoreMutation = () => true
+
+  upload = async (file: File) => {
+    const result = await this.props.fileManagement.upload(file)
+    if (!result) {
+      return
+    }
+    this.setIsEditingExtLink(false)
+    this.setExtLink({ extLink: result.id })
+    this.updateContents()
+  }
+
+  public initialise() {
+    super.initialise()
+    this.upload = this.upload.bind(this)
+  }
 
   public createDOM() {
     super.createDOM()
@@ -71,10 +88,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public updateContents() {
     super.updateContents()
     this.addTools()
-
-    if (this.node.type === schema.nodes.image_element) {
-      this.addExternalLinkedFileEditor()
-    }
+    this.addExternalLinkedFileEditor()
   }
 
   protected addTools() {
@@ -232,34 +246,115 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.figurePosition = position
   }
 
+  // external link editor
+  private removeExtLink = () => {
+    this.setExtLink({ extLink: '' })
+  }
+
+  private setExtLink = (newAttrs: { extLink: string }) => {
+    this.setIsEditingExtLink(false)
+    const { tr } = this.view.state
+    const pos = this.getPos()
+    tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      ...newAttrs,
+    })
+
+    this.view.dispatch(tr)
+  }
+
+  private setIsEditingExtLink = (val: boolean) => {
+    this.isEditingExtLink = val
+  }
+
+  private createDnDPlaceholder() {
+    const can = this.props.getCapabilities()
+    const label = document.createElement('div')
+    label.classList.add('accessibility_element_label')
+    label.innerText = 'Link'
+    const container = document.createElement('div')
+    container.classList.add('ext-link-editor-placeholder-container')
+
+    const placeholder = createMediaPlaceholder(MediaType.ExternalLink)
+
+    const closeButton = document.createElement('button')
+    closeButton.classList.add('close-button')
+    closeButton.setAttribute('aria-label', 'Close')
+    closeButton.addEventListener('click', () => {
+      this.setIsEditingExtLink(false)
+      this.updateContents()
+    })
+
+    container.append(placeholder, closeButton)
+    this.extLinkEditorContainer.append(label, container)
+    if (can.uploadFile) {
+      addInteractionHandlers(placeholder, this.upload, '*/*')
+    }
+  }
+
+  private createAddLinkButton() {
+    const button = document.createElement('div')
+    button.innerHTML = linkIcon
+    const buttonText = document.createElement('span')
+    buttonText.textContent = 'Add link'
+    button.appendChild(buttonText)
+    button.setAttribute('aria-label', 'Add linked file')
+    button.classList.add('icon-button')
+    button.addEventListener('click', () => {
+      this.setIsEditingExtLink(true)
+      this.updateContents()
+    })
+    this.extLinkEditorContainer.appendChild(button)
+  }
+
+  private createLinkedFile() {
+    const extLink = this.node.attrs.extLink
+    const files = this.props.getFiles()
+    const file = extLink ? files.find((f) => f.id === extLink) : undefined
+
+    const fileName = file ? `${file.name.trim()}` : 'File does not exist.'
+    const div = document.createElement('div')
+    div.classList.add('linked-file-info')
+    div.innerHTML = `<p>${linkIcon} <span>${fileName}</span></p>`
+
+    const removeButton = document.createElement('button')
+    removeButton.classList.add('icon-button', 'remove-button')
+    removeButton.setAttribute('aria-label', 'Remove link')
+    removeButton.innerHTML = deleteIcon
+    removeButton.addEventListener('click', () => {
+      this.isEditingExtLink = false
+      this.removeExtLink()
+    })
+
+    div.appendChild(removeButton)
+    this.extLinkEditorContainer.appendChild(div)
+  }
+
   private addExternalLinkedFileEditor() {
-    if (this.props.dispatch && this.props.theme) {
-      const componentProps: ExtLinkEditorProps = {
-        node: this.node,
-        nodePos: this.getPos(),
-        view: this.view,
-        editorProps: this.props,
-        isEditing: this.isEditingExtLink,
-        setIsEditing: (val) => {
-          this.isEditingExtLink = val
-          this.updateContents()
-        },
+    if (this.node.type === schema.nodes.image_element) {
+      this.extLinkEditorContainer = this.container.querySelector(
+        '.ext-link-editor-container'
+      ) as HTMLDivElement
+      if (this.extLinkEditorContainer) {
+        this.extLinkEditorContainer.innerHTML = ''
+      } else {
+        this.extLinkEditorContainer = document.createElement('div')
+        this.extLinkEditorContainer.classList.add('ext-link-editor-container')
+      }
+      // add link button
+      if (!this.isEditingExtLink && !this.node.attrs.extLink) {
+        this.createAddLinkButton()
+      }
+      //dnd placeholder
+      if (this.isEditingExtLink && !this.node.attrs.extLink) {
+        this.createDnDPlaceholder()
+      }
+      // linked file exists
+      if (this.node.attrs.extLink) {
+        this.createLinkedFile()
       }
 
-      return createSubViewAsync(
-        this.props,
-        ExtLinkEditor,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['ext-link-editor-container']
-      ).then((elem) => {
-        this.extLinkEditorContainer?.remove()
-        this.extLinkEditorContainer = elem
-        this.subcontainer?.appendChild(this.extLinkEditorContainer)
-        return
-      })
+      this.subcontainer.appendChild(this.extLinkEditorContainer)
     }
   }
 }

@@ -26,6 +26,7 @@ import {
   createMediaPlaceholder,
   createReactTools,
   createUnsupportedFormat,
+  MediaType,
 } from '../lib/media'
 import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
@@ -349,7 +350,7 @@ export class FigureEditableView extends FigureView {
   }
 
   protected createPlaceholder = () => {
-    return createMediaPlaceholder('figure')
+    return createMediaPlaceholder(MediaType.Figure)
   }
 }
 

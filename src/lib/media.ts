@@ -60,8 +60,20 @@ export const createUnsupportedFormat = (
   return element
 }
 
+export enum MediaType {
+  Media = 'media',
+  Figure = 'figure',
+  ExternalLink = 'external_link',
+}
+
+const MediaLabels: Record<MediaType, string> = {
+  [MediaType.Media]: 'media',
+  [MediaType.Figure]: 'figure',
+  [MediaType.ExternalLink]: 'a file to link',
+}
+
 export const createMediaPlaceholder = (
-  mediaType: 'media' | 'figure' = 'media',
+  mediaType: MediaType = MediaType.Media,
   view?: ManuscriptEditorView,
   getPos?: () => number
 ): HTMLElement => {
@@ -71,16 +83,19 @@ export const createMediaPlaceholder = (
   const instructions = document.createElement('div')
   instructions.classList.add('instructions')
 
-  const uploadText = mediaType === 'media' ? 'media' : 'image'
-
   instructions.innerHTML = `
     <div class="placeholder-content">
-      <p>Drag or click here to upload ${uploadText} <br>
-      or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>'Other files'</a> |
-      <a data-action='open-supplement-files'>'Supplements'</a>
+      <p>Drag or click here to upload ${MediaLabels[mediaType]} <br>
       ${
-        mediaType === 'media' && view && getPos
+        mediaType === MediaType.ExternalLink
+          ? ` or drag items here from the file <a data-action='open-other-files'>'Other files'</a> in the inspector.</p>`
+          : `or drag items here from the file inspector tabs <br>
+      <a data-action='open-other-files'>'Other files'</a> |
+      <a data-action='open-supplement-files'>'Supplements'</a>`
+      }
+
+      ${
+        mediaType === MediaType.Media && view && getPos
           ? "| <a data-action='add-external-link'>'External link'</a>"
           : ''
       }
@@ -88,7 +103,7 @@ export const createMediaPlaceholder = (
     </div>
   `
 
-  if (mediaType === 'media' && view && getPos) {
+  if (mediaType === MediaType.Media && view && getPos) {
     const embedLink = instructions.querySelector(
       "[data-action='add-external-link']"
     )
