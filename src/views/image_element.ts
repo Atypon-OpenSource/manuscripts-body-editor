@@ -18,7 +18,11 @@ import { ContextMenu } from '@manuscripts/style-guide'
 import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
 import { deleteIcon, linkIcon } from '../icons'
-import { addInteractionHandlers, createMediaPlaceholder } from '../lib/media'
+import {
+  addInteractionHandlers,
+  createMediaPlaceholder,
+  MediaType,
+} from '../lib/media'
 import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -264,18 +268,14 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   }
 
   private createDnDPlaceholder() {
+    const can = this.props.getCapabilities()
     const label = document.createElement('div')
     label.classList.add('accessibility_element_label')
     label.innerText = 'Link'
     const container = document.createElement('div')
     container.classList.add('ext-link-editor-placeholder-container')
 
-    const placeholder = createMediaPlaceholder('figure')
-    const instructions = placeholder.querySelector(
-      '.instructions'
-    ) as HTMLElement
-    instructions.innerHTML = `<p>Drag or click here to upload a file to link<br />
-          or drag items here from the file <a data-action='open-other-files'>'Other files'</a> in the inspector.</p>`
+    const placeholder = createMediaPlaceholder(MediaType.ExternalLink)
 
     const closeButton = document.createElement('button')
     closeButton.classList.add('close-button')
@@ -287,8 +287,9 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
 
     container.append(placeholder, closeButton)
     this.extLinkEditorContainer.append(label, container)
-
-    addInteractionHandlers(placeholder, this.upload, '*/*')
+    if (can.uploadFile) {
+      addInteractionHandlers(placeholder, this.upload, '*/*')
+    }
   }
 
   private createAddLinkButton() {
