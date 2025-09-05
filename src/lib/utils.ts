@@ -109,6 +109,9 @@ export const isChildOfNodeTypes = (
   pos: number,
   parentNodeTypes: NodeType[]
 ) => {
+  if (pos > doc.content.size) {
+    return false
+  }
   const resolvedPos = doc.resolve(pos)
   // Iterate through the parent nodes
   for (let depth = resolvedPos.depth; depth >= 0; depth--) {

@@ -19,6 +19,7 @@ import { NodeSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { affiliationsKey } from '../affiliations'
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
@@ -26,7 +27,7 @@ import { ValidatorContext, validators } from './validators'
 
 export type Inconsistency = {
   type: 'warning'
-  category: 'missing-reference' | 'empty-content'
+  category: 'missing-reference' | 'not-used' | 'empty-content'
   severity: 'error' | 'warning'
   message: string
   nodeDescription: string
@@ -49,6 +50,7 @@ export const createDecoration = (
   if (selectedPos === pos) {
     classNames.push('selected-suggestion')
   }
+
   return Decoration.node(pos, pos + node.nodeSize, {
     class: classNames.join(' '),
     'data-inconsistency-type': 'warning',
@@ -72,9 +74,11 @@ export const buildPluginState = (
 
   const context: ValidatorContext = {
     pluginStates: {
+      affiliations: affiliationsKey.getState(state)?.indexedAffiliationIds,
       bibliography: getBibliographyPluginState(state)?.bibliographyItems,
       objects: objectsKey.getState(state),
       footnotes: footnotesKey.getState(state)?.footnotesElementIDs,
+      footnotesElements: footnotesKey.getState(state)?.footnotesElements,
     },
     showDecorations,
     selectedPos,
