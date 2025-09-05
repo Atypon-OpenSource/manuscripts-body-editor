@@ -1257,7 +1257,6 @@ figure.block:has(.equation.selected-suggestion) {
 
 .affiliation .affiliation-label {
   font-weight: bold;
-  /* margin-right: 4px; */
 }
 
 .ProseMirror .doi-container {

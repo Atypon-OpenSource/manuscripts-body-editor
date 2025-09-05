@@ -164,9 +164,9 @@ const validateCitation: NodeValidator = (node, pos, context) => {
 const validateInlineFootnote: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
   if (context.pluginStates.footnotes) {
-    const isInFootnote = node.attrs.rids.every((rid: string) => {
-      return context.pluginStates.footnotes?.get(rid)
-    })
+    const isInFootnote = node.attrs.rids.every((rid: string) =>
+      context.pluginStates.footnotes?.get(rid)
+    )
 
     if (!isInFootnote) {
       const inconsistency = createWarning(
