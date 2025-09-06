@@ -13,29 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {
+  skipTracking,
+  TrackChangesAction,
+} from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
-import { Plugin } from 'prosemirror-state'
+import { NodeSelection, Plugin } from 'prosemirror-state'
 
 /**
- * This plugin make sure unselected link without link get deleted
+ * This plugin make sure unselected link with empty href get deleted
  */
 export default () =>
   new Plugin({
     appendTransaction(transactions, oldState, newState) {
-      if (!transactions.some((tr) => tr.selectionSet)) {
+      if (
+        !transactions.some(
+          (tr) =>
+            oldState.selection instanceof NodeSelection &&
+            oldState.selection.node.type === schema.nodes.link &&
+            (tr.getMeta(TrackChangesAction.setChangeStatuses) ||
+              (tr.getMeta('pointer') && tr.selectionSet))
+        )
+      ) {
         return null
       }
-
-      const node = newState.doc.nodeAt(oldState.selection.from)
-      if (node && node.type === schema.nodes.link) {
-        if (!node.content.size || !node.attrs.href) {
-          return newState.tr.delete(
-            oldState.selection.from,
-            oldState.selection.to
-          )
-        }
+      const {
+        $from: { pos },
+        node,
+      } = oldState.selection as NodeSelection
+      if (!node.content.size || !node.attrs.href) {
+        const tr = newState.tr.setMeta('clear-empty-link', true)
+        tr.delete(pos, pos + node.nodeSize)
+        return skipTracking(tr.insert(pos, node.content))
       }
-
       return null
     },
   })
