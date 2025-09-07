@@ -26,6 +26,10 @@ import { Plugin, TextSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+const placeholderMap: Record<string, string> = {
+  subtitle: 'Type subtitle here...',
+}
+
 const placeholderWidget =
   (placeholder: string) =>
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
@@ -121,9 +125,11 @@ export default () =>
                 )
               )
             } else {
+              const placeholder = placeholderMap[node.type.name]
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
                   class: 'empty-node',
+                  ...(placeholder && { 'data-placeholder': placeholder }),
                 })
               )
             }
