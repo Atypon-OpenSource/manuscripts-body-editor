@@ -118,22 +118,29 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
-    const object = document.createElement('object')
-    Object.assign(object, {
-      data: this.getPDFUrl(file),
+    const embed = document.createElement('embed')
+    Object.assign(embed, {
+      src: this.getPDFUrl(file),
       type: 'application/pdf',
       className: 'attachment-pdf',
       height: '400px',
       width: '100%',
     })
-    object.style.border = 'none'
+    embed.style.border = 'none'
 
-    content.appendChild(object)
+    content.appendChild(embed)
     return content
   }
 
   private getPDFUrl(file: ExtendedFileAttachment) {
-    return file.link || file.id || '#'
+    const baseUrl = file.link || file.id || '#'
+
+    if (baseUrl && baseUrl !== '#') {
+      const separator = baseUrl.includes('?') ? '&' : '?'
+      return `${baseUrl}${separator}inline=true`
+    }
+
+    return baseUrl
   }
 
   private setMainDocumentSelection() {
