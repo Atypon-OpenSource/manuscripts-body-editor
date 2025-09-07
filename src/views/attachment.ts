@@ -62,11 +62,11 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     this.dom.appendChild(this.container)
   }
 
-  private isPDF(file: ExtendedFileAttachment): boolean {
+  private isPDF(file: ExtendedFileAttachment) {
     return file.name?.toLowerCase().endsWith('.pdf') ?? false
   }
 
-  private getFileFromAttachment(): ExtendedFileAttachment | null {
+  private getFileFromAttachment() {
     const { href } = this.node.attrs
     if (!href) {
       return null
@@ -86,7 +86,7 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     this.container.appendChild(content)
   }
 
-  private createHeader(file: ExtendedFileAttachment): HTMLElement {
+  private createHeader(file: ExtendedFileAttachment) {
     const header = document.createElement('div')
     header.className = 'attachment-header'
 
@@ -97,14 +97,14 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     return header
   }
 
-  private createIcon(): HTMLElement {
+  private createIcon() {
     const icon = document.createElement('span')
     icon.className = 'attachment-icon'
     icon.innerHTML = fileMainDocumentIcon
     return icon
   }
 
-  private createFileName(fileName: string): HTMLElement {
+  private createFileName(fileName: string) {
     const name = document.createElement('span')
     Object.assign(name, {
       textContent: fileName,
@@ -114,7 +114,7 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     return name
   }
 
-  private createContent(file: ExtendedFileAttachment): HTMLElement {
+  private createContent(file: ExtendedFileAttachment) {
     const content = document.createElement('div')
     content.className = 'attachment-content'
 
@@ -132,7 +132,7 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
     return content
   }
 
-  private getPDFUrl(file: ExtendedFileAttachment): string {
+  private getPDFUrl(file: ExtendedFileAttachment) {
     return file.link || file.id || '#'
   }
 
