@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
+import { AttachmentNode } from '@manuscripts/transform'
 
 import { fileMainDocumentIcon } from '../icons'
 import { FileAttachment } from '../lib/files'
@@ -27,7 +27,7 @@ interface ExtendedFileAttachment extends FileAttachment {
   type?: string
 }
 
-export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
+export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
   private container: HTMLElement
 
   public createElement = () => {
@@ -128,44 +128,25 @@ export class AttachmentView extends BlockView<Trackable<ManuscriptNode>> {
     })
     object.style.border = 'none'
 
-    // Fallback content if PDF can't be displayed
-    const fallback = document.createElement('div')
-    fallback.innerHTML = `
-      <div style="text-align: center; padding: 20px; color: #666;">
-        <p>PDF Preview</p>
-        <p style="font-size: 12px;">${file.name}</p>
-        <a href="${this.getPDFUrl(
-          file
-        )}" target="_blank" style="text-decoration: none;">
-          Open PDF in new tab
-        </a>
-      </div>
-    `
-    object.appendChild(fallback)
-
     content.appendChild(object)
     return content
   }
 
   private getPDFUrl(file: ExtendedFileAttachment): string {
-    // Use fileManagement.previewLink if available
-    if (this.props.fileManagement?.previewLink) {
-      const previewUrl = this.props.fileManagement.previewLink(file)
-      if (previewUrl) {
-        return previewUrl
-      }
-    }
-
-    // Fallback to file.link or file.id
     return file.link || file.id || '#'
   }
 
   private setMainDocumentSelection() {
-    const event = new CustomEvent('selectMainDocument', {
-      detail: { action: 'select-main-document' },
-      bubbles: true,
-    })
-    this.dom.dispatchEvent(event)
+    if (this.props.onEditorClick) {
+      const event = {
+        target: { dataset: { action: 'select-main-document' } },
+        stopPropagation: () => {
+          // Prevent event bubbling - no-op
+        },
+      } as unknown as MouseEvent
+
+      this.props.onEditorClick(this.getPos(), this.node, this.getPos(), event)
+    }
   }
 }
 
