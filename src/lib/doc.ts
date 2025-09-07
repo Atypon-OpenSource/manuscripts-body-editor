@@ -60,8 +60,8 @@ export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
   if (supplements) {
     return supplements
   }
-  const abstracts = findAbstractsNode(doc)
-  const pos = abstracts.pos - 1
+  const backmatter = findBackmatter(doc)
+  const pos = backmatter.pos + backmatter.node.content.size + 1
   const node = schema.nodes.supplements.createAndFill() as SupplementsNode
   tr.insert(pos, node)
   return {

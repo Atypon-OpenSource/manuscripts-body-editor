@@ -297,6 +297,21 @@
   content: 'Caption Title...';
 }
 
+.ProseMirror .block-box_element .caption-title.empty-node::before {
+  content: none;
+}
+
+.ProseMirror .block-box_element label.caption-title.placeholder.empty-node {
+  display: inline-flex;
+}
+
+.ProseMirror .block-box_element .caption-title.empty-node::after {
+  content: 'Caption Title...';
+  color: #999;
+  font-style: italic;
+  pointer-events: none;
+} 
+
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
 }
