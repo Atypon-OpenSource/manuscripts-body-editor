@@ -566,6 +566,22 @@
   color: #c9c9c9;
   margin: 0;
 }
+
+.ProseMirror .add-subtitle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: var(--body-side-margin);
+}
+
+.ProseMirror .add-subtitle-text {
+  margin-left: 8px;
+}
+
+.ProseMirror .add-subtitle svg rect {
+  fill: #6E6E6E !important;
+}
+
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
@@ -589,6 +605,9 @@
 
 .ProseMirror .empty-node[data-placeholder]::before {
   content: attr(data-placeholder); /* TODO: innerHTML? */
+  color: #c9c9c9;
+  position: absolute;
+  pointer-events: none;
 }
 
 .ProseMirror table {
@@ -697,6 +716,9 @@
 .ProseMirror .block-section_title .block-gutter,
 .ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
+}
+.ProseMirror .block-subtitles .block-gutter {
+  margin-top: 4px;
 }
 
 .ProseMirror
@@ -1100,6 +1122,14 @@
   line-height: 1.43;
   padding-left: var(--body-side-margin);
   padding-right: var(--body-side-margin);
+}
+.manuscript-subtitle {
+  font-family: Lato;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  align-items: center;
 }
 .highlight {
   background-color: #ffeebf !important;

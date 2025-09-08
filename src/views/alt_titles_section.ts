@@ -15,6 +15,8 @@
  */
 
 import { AltTitlesSectionNode } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
+import { findChildrenByType } from 'prosemirror-utils'
 
 import { arrowDown } from '../icons'
 import { altTitlesKey } from '../plugins/alt-titles'
@@ -53,6 +55,20 @@ export class AltTitleSectionView extends BlockView<
       const tr = this.view.state.tr.setMeta(altTitlesKey, {
         collapsed: true,
       })
+      const titleNode = findChildrenByType(
+        this.view.state.doc,
+        this.view.state.schema.nodes.title
+      )[0]
+      const subtitleNode = findChildrenByType(
+        this.view.state.doc,
+        this.view.state.schema.nodes.subtitle
+      )[0]
+
+      const prev = subtitleNode || titleNode
+      if (prev) {
+        const titleEndPos = prev.pos + prev.node.nodeSize
+        tr.setSelection(TextSelection.create(tr.doc, titleEndPos))
+      }
       this.view.dispatch(tr)
     })
     closingPanel.appendChild(button)
