@@ -1150,6 +1150,15 @@ s[data-track-status='pending'][data-track-op='insert'] {
   color: var(--inserted-pending-color);
 }
 
+b[data-track-status='pending'][data-track-op='delete'],
+i[data-track-status='pending'][data-track-op='delete'],
+sup[data-track-status='pending'][data-track-op='delete'],
+sub[data-track-status='pending'][data-track-op='delete'],
+s[data-track-status='pending'][data-track-op='delete'] {
+  background: var(--deleted-pending-bg-color);
+  color: var(--deleted-color);
+}
+
 /* Needed for the snapshot comparison */
 .tracking-visible
   .block-list
