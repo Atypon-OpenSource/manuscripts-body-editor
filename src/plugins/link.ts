@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  CHANGE_STATUS,
   skipTracking,
   TrackChangesAction,
 } from '@manuscripts/track-changes-plugin'
@@ -31,7 +32,8 @@ export default () =>
           (tr) =>
             oldState.selection instanceof NodeSelection &&
             oldState.selection.node.type === schema.nodes.link &&
-            (tr.getMeta(TrackChangesAction.setChangeStatuses) ||
+            (tr.getMeta(TrackChangesAction.setChangeStatuses)?.status ===
+              CHANGE_STATUS.accepted ||
               (tr.getMeta('pointer') && tr.selectionSet))
         )
       ) {
