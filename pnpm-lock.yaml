@@ -42,11 +42,11 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.0.12
-        version: 2.0.12
+        specifier: 2.0.13
+        version: 2.0.13
       '@manuscripts/transform':
-        specifier: 4.2.15
-        version: 4.2.15(prosemirror-state@1.4.3)
+        specifier: 4.2.17
+        version: 4.2.17(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1290,11 +1290,11 @@ packages:
     resolution: {integrity: sha512-kUXC89CwPeQojNdWm0lnufe6LVE3KtOHC2hqEf0QzvatgPiVtqujDIYlnhcDbr/cEADHmfDb4F0EpMPoWqoj9Q==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.0.12':
-    resolution: {integrity: sha512-dDvDmnKv4+ohK4zHiOyxraS5BwADqWe5dQbLutDd+SK8Ef1BdsuhYIPviR3I4ISneOVmCNtIDxaFgEn2WWTGxw==}
+  '@manuscripts/track-changes-plugin@2.0.13':
+    resolution: {integrity: sha512-LAsnWmgYkIG93x4hjwiAn0vSujI6mWKZ4qCHsGp8MLtGtaNSj4h+/5tNbyylwM2rbNEquTF7/s6Pykf0/lG6QA==}
 
-  '@manuscripts/transform@4.2.15':
-    resolution: {integrity: sha512-/DBUmB3oc/hH7rbMi78eZ0WtyzwuS8DQeZYkFXlVwN0K5XWg2H9ltcOhPHxhQiNeu0kBdnIiS31PmdtOV0SnPA==}
+  '@manuscripts/transform@4.2.17':
+    resolution: {integrity: sha512-aIrQ181olrW+4SUrXBVWx/WHPBcjsfh41gO/PKQ5M1U6WU4G3MoO/C25RuEWabd2XLwD959CYbou217fwuTbGw==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6315,7 +6315,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.0.12':
+  '@manuscripts/track-changes-plugin@2.0.13':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6327,7 +6327,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.2.15(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.2.17(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63

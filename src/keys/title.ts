@@ -196,9 +196,10 @@ const protectTitles: EditorAction = (
     return false
   }
 
-  // preventing deletion of alt_titles with backspace
+  // preventing deletion of alt_titles and subtitles with backspace
   if (
-    $cursor.parent.type === schema.nodes.alt_title &&
+    ($cursor.parent.type === schema.nodes.alt_title ||
+      $cursor.parent.type === schema.nodes.subtitle) &&
     $cursor.pos === $cursor.before() + 1
   ) {
     return true
