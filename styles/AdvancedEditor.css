@@ -1863,3 +1863,7 @@ th:hover > .table-context-menu-button,
 .block-attachments:has(.attachment-item:empty), .block-attachments.empty-node {
   display: none !important;
 }
+
+.ProseMirror a.link:empty::before {
+  content: "\00a0";
+}
