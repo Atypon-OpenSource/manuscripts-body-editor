@@ -17,7 +17,6 @@
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
-  ManuscriptAttrs,
   Model,
   schema,
   SectionCategory,
@@ -31,7 +30,7 @@ import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
-  MANUSCRIPT: ManuscriptAttrs
+  MANUSCRIPT: any
   MODEL: Model
   USER: UserProfile
   DOC: ActualManuscriptNode
