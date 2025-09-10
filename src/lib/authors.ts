@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { BibliographicName } from '@manuscripts/json-schema'
-import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
+import {
+  AffiliationNode,
+  BibliographicName,
+  ContributorNode,
+} from '@manuscripts/transform'
 
 import { TrackableAttributes } from '../types'
 
