@@ -36,14 +36,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.3.1-LEAN-4873.1
-        version: 3.3.1-LEAN-4873.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.3.1-LEAN-4873.2
+        version: 3.3.1-LEAN-4873.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
         specifier: 2.0.13
         version: 2.0.13
       '@manuscripts/transform':
-        specifier: 4.2.18-LEAN-4873.1
-        version: 4.2.18-LEAN-4873.1(prosemirror-state@1.4.3)
+        specifier: 4.2.18-LEAN-4873.4
+        version: 4.2.18-LEAN-4873.4(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1280,15 +1280,15 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.3.1-LEAN-4873.1':
-    resolution: {integrity: sha512-nrga6uuYKY3N0zKZl0Ix/RQdhpVS/ohJzMw4iXPU7S6rSVgoMc0q32fyBcfttlKmcBoUeBpBV1tWuLbRXbgZCQ==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/style-guide/-/@manuscripts/style-guide-3.3.1-LEAN-4873.1.tgz}
+  '@manuscripts/style-guide@3.3.1-LEAN-4873.2':
+    resolution: {integrity: sha512-rk0Syi57ughtCWVAG2Ha+YIP4r0/K+xaxAPcE2GpeaRQ/O4P0zTxPYBQLROkH0E/CdLuGirNMCzL6Bt7Q8vjXA==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/style-guide/-/@manuscripts/style-guide-3.3.1-LEAN-4873.2.tgz}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.0.13':
     resolution: {integrity: sha512-LAsnWmgYkIG93x4hjwiAn0vSujI6mWKZ4qCHsGp8MLtGtaNSj4h+/5tNbyylwM2rbNEquTF7/s6Pykf0/lG6QA==}
 
-  '@manuscripts/transform@4.2.18-LEAN-4873.1':
-    resolution: {integrity: sha512-RgVIL/qmulcQ/44VTJ0CeKZ4dBwpDsEKHNxQLY6wuxnxcXia26SDUqDkdKlH7ZrtrdWtYYp/Psg266GLtAMH1w==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.2.18-LEAN-4873.1.tgz}
+  '@manuscripts/transform@4.2.18-LEAN-4873.4':
+    resolution: {integrity: sha512-Z6xlkADqh5aQiJylpigvNG/GTjmICZ+tTG6jYO696CqtCJfTAa/Dg+x6Yc8epGTcbrPMhk/0FLSjxJu4vGnQzA==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/transform/-/@manuscripts/transform-4.2.18-LEAN-4873.4.tgz}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6258,10 +6258,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.3.1-LEAN-4873.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.3.1-LEAN-4873.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@manuscripts/transform': 4.2.18-LEAN-4873.1(prosemirror-state@1.4.3)
+      '@manuscripts/transform': 4.2.18-LEAN-4873.4(prosemirror-state@1.4.3)
       date-fns: 2.30.0
       formik: 2.4.6(react@18.3.1)
       lodash: 4.17.21
@@ -6302,7 +6302,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.2.18-LEAN-4873.1(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.2.18-LEAN-4873.4(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
