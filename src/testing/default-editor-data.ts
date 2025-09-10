@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
+  ManuscriptAttrs,
+  Model,
   schema,
   SectionCategory,
+  UserProfile,
 } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { DefaultTheme } from 'styled-components'
@@ -29,7 +31,7 @@ import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
-  MANUSCRIPT: Manuscript
+  MANUSCRIPT: ManuscriptAttrs
   MODEL: Model
   USER: UserProfile
   DOC: ActualManuscriptNode

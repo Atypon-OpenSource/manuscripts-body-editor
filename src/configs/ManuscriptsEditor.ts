@@ -16,13 +16,13 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { UserProfile } from '@manuscripts/json-schema'
 import { Capabilities } from '@manuscripts/style-guide'
 import {
   ManuscriptNode,
   ManuscriptNodeType,
   schema,
   SectionCategory,
+  UserProfile,
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'

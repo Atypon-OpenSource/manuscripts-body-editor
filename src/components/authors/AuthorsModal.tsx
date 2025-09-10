@@ -15,10 +15,6 @@
  */
 
 import {
-  BibliographicName,
-  buildBibliographicName,
-} from '@manuscripts/json-schema'
-import {
   AddIcon,
   AddInstitutionIcon,
   AddRoleIcon,
@@ -34,7 +30,11 @@ import {
   SidebarContent,
   StyledModal,
 } from '@manuscripts/style-guide'
-import { generateNodeID, schema } from '@manuscripts/transform'
+import {
+  BibliographicName,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
 import React, {
   useCallback,
@@ -297,7 +297,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     [authors, dispatchAuthors, onSaveAuthor]
   )
   const createNewAuthor = () => {
-    const name = buildBibliographicName({ given: '', family: '' })
+    const name = {
+      _id: generateNodeID(schema.nodes.contributor),
+      objectType: 'MPBibliographicName',
+      given: '',
+      family: '',
+    }
     const author = createEmptyAuthor(name, authors.length)
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])
