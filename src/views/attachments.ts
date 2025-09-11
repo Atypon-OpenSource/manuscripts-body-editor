@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { FigureElementNode } from '@manuscripts/transform'
+import { ManuscriptNode } from '@manuscripts/transform'
 
 import { arrowUp } from '../icons'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
+export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
   private container: HTMLElement
   private collapsed = false
 
@@ -29,16 +29,16 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
 
   public createElement = () => {
     this.container = document.createElement('div')
-    this.container.classList.add('block', 'hero-image-container')
+    this.container.classList.add('block', 'attachments-container')
     this.dom.appendChild(this.container)
 
     this.container.appendChild(this.createPanel())
 
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block', 'hero-image-figure')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
+    const content = document.createElement('div')
+    content.className = 'attachments-content'
 
-    this.container.appendChild(this.contentDOM)
+    this.container.appendChild(content)
+    this.contentDOM = content
   }
 
   createPanel() {
@@ -46,27 +46,27 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     panel.classList.add('panel-header')
 
     const label = document.createElement('span')
-    label.textContent = 'Hero image'
+    label.textContent = 'Main Document'
     label.contentEditable = 'false'
 
-    const heroImageToggleBtn = document.createElement('button')
-    heroImageToggleBtn.classList.add('toggle-btn', 'button-reset')
+    const toggleBtn = document.createElement('button')
+    toggleBtn.classList.add('toggle-btn', 'button-reset')
 
-    heroImageToggleBtn.innerHTML = arrowUp
-    heroImageToggleBtn.classList.toggle('collapsed', this.collapsed)
+    toggleBtn.innerHTML = arrowUp
+    toggleBtn.classList.toggle('collapsed', this.collapsed)
 
-    heroImageToggleBtn.onclick = () => {
+    toggleBtn.onclick = () => {
       this.collapsed = !this.collapsed
       if (this.contentDOM) {
         this.contentDOM.style.display = this.collapsed ? 'none' : ''
       }
-      heroImageToggleBtn.classList.toggle('collapsed', this.collapsed)
+      toggleBtn.classList.toggle('collapsed', this.collapsed)
     }
 
     panel.appendChild(label)
-    panel.appendChild(heroImageToggleBtn)
+    panel.appendChild(toggleBtn)
     return panel
   }
 }
 
-export default createNodeView(HeroImageView)
+export default createNodeView(AttachmentsView)

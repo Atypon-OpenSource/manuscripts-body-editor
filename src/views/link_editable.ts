@@ -69,10 +69,6 @@ export class LinkEditableView extends LinkView {
   }
 
   public deselectNode = () => {
-    const attrs = this.node.attrs
-    if (!this.node.content.size || !attrs.href) {
-      this.removeLink()
-    }
     this.closeForm()
   }
 
