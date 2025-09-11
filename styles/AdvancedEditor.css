@@ -1599,6 +1599,9 @@ th:hover > .table-context-menu-button,
   font-weight: 400;
   font-size: 16px;
 }
+.ProseMirror .ext-link-editor-container .linked-file-info .icon-button {
+  margin-right: 8px;
+}
 
 .ProseMirror .accessibility_element_label {
   color: var(--label-color);
