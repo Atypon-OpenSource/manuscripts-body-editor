@@ -22,6 +22,8 @@ import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
 import alt_title from '../views/alt_title'
 import alt_titles_section from '../views/alt_titles_section'
+import attachment from '../views/attachment'
+import attachments from '../views/attachments'
 import authorNotes from '../views/author_notes'
 import award from '../views/award'
 import awards from '../views/awards'
@@ -57,6 +59,8 @@ import quoteImage from '../views/quote_image_editable'
 import section from '../views/section'
 import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
+import subtitle from '../views/subtitle_editable'
+import subtitles from '../views/subtitles_editable'
 import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
@@ -70,8 +74,8 @@ export default (
 ): Partial<Record<Nodes, NodeViewCreator<ManuscriptNodeView>>> => {
   return {
     title: title(props, dispatch),
-    subtitle: empty('subtitle'),
-    subtitles: empty('subtitles'),
+    subtitles: subtitles(props, dispatch),
+    subtitle: subtitle(props, dispatch),
     alt_title: alt_title(props),
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
@@ -120,5 +124,7 @@ export default (
     hero_image: heroImage(props, dispatch),
     abstracts: abstracts(props),
     trans_abstract: transAbstract(props),
+    attachment: attachment(props, dispatch),
+    attachments: attachments(props, dispatch),
   }
 }

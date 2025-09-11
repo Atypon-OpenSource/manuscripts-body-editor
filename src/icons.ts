@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  AddAuthorIcon,
   AlertIcon,
   ArrowDownCircleIcon,
   ArrowUpIcon,
@@ -21,6 +22,7 @@ import {
   DraggableIcon,
   EditIcon,
   FileCorruptedIcon,
+  FileMainDocumentIcon,
   ImageDefaultIcon,
   ImageLeftIcon,
   ImageRightIcon,
@@ -36,6 +38,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 const renderIcon = (c: React.FC) => renderToStaticMarkup(createElement(c))
 
+export const addAuthorIcon = renderIcon(AddAuthorIcon)
 export const arrowDown = renderIcon(ArrowDownCircleIcon)
 export const arrowUp = renderIcon(ArrowUpIcon)
 export const alertIcon = renderIcon(AlertIcon)
@@ -59,3 +62,6 @@ export const fileCorruptedIcon = renderToStaticMarkup(
 export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
 export const translateIcon = renderToStaticMarkup(createElement(TranslateIcon))
 export const linkIcon = renderToStaticMarkup(createElement(LinkIcon))
+export const fileMainDocumentIcon = renderToStaticMarkup(
+  createElement(FileMainDocumentIcon)
+)
