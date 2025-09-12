@@ -110,6 +110,7 @@ import { templateAllows } from './lib/template'
 import { isDeleted } from './lib/track-changes-utils'
 import {
   findParentNodeWithId,
+  getAbsolutInsertPos,
   getChildOfType,
   getInsertPos,
   getLastTitleNode,
@@ -1139,20 +1140,7 @@ export const insertAffiliation = (
   if (getChildOfType(state.doc, schema.nodes.affiliations, true)) {
     return false
   }
-  // Find the title node
-  const title = getLastTitleNode(state)
-  let pos = title.pos + title.node.nodeSize
-
-  // Find the contributors node
-  const contributors = findChildrenByType(
-    state.doc,
-    state.schema.nodes.contributors
-  )[0]
-
-  // update the pos if the contributors node exists
-  if (contributors) {
-    pos = contributors.pos + contributors.node.nodeSize
-  }
+  const pos = getAbsolutInsertPos(schema.nodes.affiliations, state.doc)
 
   const affiliations = state.schema.nodes.affiliations.create({
     id: '',
@@ -1197,12 +1185,7 @@ export const insertKeywords = (
   if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
     return false
   }
-  // determine the position to insert the keywords node
-  const abstracts = findChildrenByType(
-    state.doc,
-    state.schema.nodes.abstracts
-  )[0]
-  const pos = abstracts.pos
+  const pos = getAbsolutInsertPos(schema.nodes.keywords, state.doc)
   const keywords = schema.nodes.keywords.createAndFill({}, [
     schema.nodes.section_title.create({}, schema.text('Keywords')),
     schema.nodes.keywords_element.create({}, [
@@ -1948,8 +1931,7 @@ const createHeroImage = (attrs?: Attrs) =>
 export const insertHeroImage =
   () =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
-    const position = comments.pos
+    const position = getAbsolutInsertPos(schema.nodes.hero_image, state.doc)
     view?.focus()
     createBlock(schema.nodes.hero_image, position, state, dispatch)
 

@@ -252,6 +252,20 @@ export const getInsertPos = (
   return insertPos
 }
 
+export const getAbsolutInsertPos = (
+  type: ManuscriptNodeType,
+  doc: ManuscriptNode
+) => {
+  let insertPos = 0
+  Fragment.from(doc).descendants((node, pos) => {
+    if (insertPos) {
+      return false
+    }
+    insertPos = getInsertPos(type, node, pos)
+  })
+  return insertPos
+}
+
 export const filterBlockNodes = (
   fragment: Fragment,
   predicate: (node: ProseMirrorNode) => boolean
