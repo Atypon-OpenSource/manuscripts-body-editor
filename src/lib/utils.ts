@@ -252,16 +252,25 @@ export const getInsertPos = (
   return insertPos
 }
 
-export const getAbsolutInsertPos = (
+export const getAbsoluteInsertPos = (
   type: ManuscriptNodeType,
   doc: ManuscriptNode
 ) => {
   let insertPos = 0
+
+  const getInsertPos = (parent: ManuscriptNode, pos: number) => {
+    parent.forEach((child, offset, index) => {
+      if (parent.canReplaceWith(index, index, type)) {
+        insertPos = pos + offset
+      }
+    })
+  }
+
   Fragment.from(doc).descendants((node, pos) => {
     if (insertPos) {
       return false
     }
-    insertPos = getInsertPos(type, node, pos)
+    getInsertPos(node, pos)
   })
   return insertPos
 }
