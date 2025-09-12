@@ -30,6 +30,7 @@ import {
   createReactTools,
   createUnsupportedFormat,
   FileHandlers,
+  MediaType,
 } from '../lib/media'
 import { getOEmbedHTML } from '../lib/oembed'
 import { allowedHref } from '../lib/url'
@@ -189,7 +190,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     let object: HTMLElement
 
     if (!href) {
-      object = createMediaPlaceholder('media', this.view, this.getPos)
+      object = createMediaPlaceholder(MediaType.Media, this.view, this.getPos)
     } else if (this.isUploadedFile()) {
       const files = this.props.getFiles()
       const file = files.find((f) => f.id === href)
@@ -208,12 +209,12 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
               this.props.getCapabilities().editArticle
             )
       } else {
-        object = createMediaPlaceholder('media', this.view, this.getPos)
+        object = createMediaPlaceholder(MediaType.Media, this.view, this.getPos)
       }
     } else if (this.isEmbedLink()) {
       object = await this.createEmbedPreview()
     } else {
-      object = createMediaPlaceholder('media', this.view, this.getPos)
+      object = createMediaPlaceholder(MediaType.Media, this.view, this.getPos)
     }
 
     const can = this.props.getCapabilities()
