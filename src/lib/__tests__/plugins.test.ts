@@ -33,12 +33,12 @@ import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
-  objectType: objectTypes.UserProfile,
+  objectType: 'MPUserProfile',
   createdAt: 0,
   updatedAt: 0,
   bibliographicName: {
     _id: 'MPBibliographicName:1',
-    objectType: objectTypes.BibliographicName,
+    objectType: 'MPBibliographicName',
   },
   userID: 'User|test@example.com',
 }
