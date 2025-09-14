@@ -30,7 +30,7 @@ import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
-  MANUSCRIPT: any
+  MANUSCRIPT: any // eslint-disable-line @typescript-eslint/no-explicit-any
   MODEL: Model
   USER: UserProfile
   DOC: ActualManuscriptNode

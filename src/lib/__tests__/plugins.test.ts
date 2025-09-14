@@ -16,7 +16,6 @@
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
-  objectTypes,
   schema,
   SectionCategory,
   UserProfile,
