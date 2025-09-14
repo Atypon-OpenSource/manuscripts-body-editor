@@ -56,6 +56,7 @@ import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { templateAllows } from './lib/template'
 import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
@@ -178,30 +179,35 @@ export const getEditorMenus = (
             label: 'Abstract Types',
             isEnabled: true,
             submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
+            isHidden: !allAbstractsCategories.length,
           },
           {
             id: 'insert-contributors',
             label: 'Authors',
             isEnabled: isCommandValid(insertContributors),
             run: doCommand(insertContributors),
+            isHidden: !templateAllows(state, schema.nodes.contributors),
           },
           {
             id: 'insert-contributors',
             label: 'Affiliations',
             isEnabled: isCommandValid(insertAffiliation),
             run: doCommand(insertAffiliation),
+            isHidden: !templateAllows(state, schema.nodes.affiliations),
           },
           {
             id: 'insert-awards',
             label: 'Funder Information',
             isEnabled: isCommandValid(insertAward),
             run: doCommand(insertAward),
+            isHidden: !templateAllows(state, schema.nodes.awards),
           },
           {
             id: 'insert-keywords',
             label: 'Keywords',
             isEnabled: isCommandValid(insertKeywords),
             run: doCommand(insertKeywords),
+            isHidden: !templateAllows(state, schema.nodes.keywords),
           },
         ],
       },
@@ -210,6 +216,9 @@ export const getEditorMenus = (
         label: 'Author Notes',
         isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
+        isHidden:
+          !templateAllows(state, schema.nodes.author_notes) ||
+          !categories.length,
       },
       {
         id: 'insert-section',
@@ -220,6 +229,7 @@ export const getEditorMenus = (
         },
         isEnabled: isEditAllowed(state) && isCommandValid(insertSection()),
         run: doCommand(insertSection()),
+        isHidden: !templateAllows(state, schema.nodes.section),
       },
       {
         id: 'insert-subsection',
@@ -230,6 +240,7 @@ export const getEditorMenus = (
         },
         isEnabled: isEditAllowed(state) && isCommandValid(insertSection(true)),
         run: doCommand(insertSection(true)),
+        isHidden: !templateAllows(state, schema.nodes.section),
       },
       {
         id: 'insert-paragraph',
@@ -238,6 +249,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.paragraph)),
         run: doCommand(insertBlock(schema.nodes.paragraph)),
+        isHidden: !templateAllows(state, schema.nodes.paragraph),
       },
       {
         role: 'separator',
@@ -249,6 +261,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.blockquote_element)),
         run: doCommand(insertBlock(schema.nodes.blockquote_element)),
+        isHidden: !templateAllows(state, schema.nodes.blockquote_element),
       },
       {
         id: 'insert-pullquote',
@@ -257,6 +270,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.pullquote_element)),
         run: doCommand(insertBlock(schema.nodes.pullquote_element)),
+        isHidden: !templateAllows(state, schema.nodes.pullquote_element),
       },
       {
         role: 'separator',
@@ -272,6 +286,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.box_element)),
         run: doCommand(insertBoxElement),
+        isHidden: !templateAllows(state, schema.nodes.box_element),
       },
       {
         id: 'insert-figure-element',
@@ -284,6 +299,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.figure_element)),
         run: doCommand(insertBlock(schema.nodes.figure_element)),
+        isHidden: !templateAllows(state, schema.nodes.figure_element),
       },
       {
         id: 'insert-image-element',
@@ -292,12 +308,16 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.image_element)),
         run: doCommand(insertBlock(schema.nodes.image_element)),
+        isHidden: !templateAllows(state, schema.nodes.image_element),
       },
       {
         id: 'insert-hero-image',
         label: 'Hero Image',
-        isEnabled: isEditAllowed(state) && isCommandValid(insertHeroImage()),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.hero_image)),
         run: doCommand(insertHeroImage()),
+        isHidden: !templateAllows(state, schema.nodes.hero_image),
       },
       {
         id: 'insert-table-element',
@@ -310,6 +330,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.table_element)),
         run: () => openInsertTableDialog(editor.state, editor.dispatch),
+        isHidden: !templateAllows(state, schema.nodes.table_element),
       },
       {
         role: 'separator',
@@ -321,6 +342,7 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
         run: doCommand(insertEmbed),
+        isHidden: !templateAllows(state, schema.nodes.embed),
       },
       {
         id: 'insert-link',
@@ -333,6 +355,7 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.link)),
         run: doCommand(insertLink),
+        isHidden: !templateAllows(state, schema.nodes.link),
       },
       {
         role: 'separator',
@@ -348,6 +371,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.equation_element)),
         run: doCommand(insertBlock(schema.nodes.equation_element)),
+        isHidden: !templateAllows(state, schema.nodes.equation_element),
       },
       {
         id: 'insert-inline-equation',
@@ -360,6 +384,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.inline_equation)),
         run: doCommand(insertInlineEquation),
+        isHidden: !templateAllows(state, schema.nodes.inline_equation),
       },
       {
         role: 'separator',
@@ -375,6 +400,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.citation)),
         run: doCommand(insertInlineCitation),
+        isHidden: !templateAllows(state, schema.nodes.citation),
       },
       {
         id: 'insert-cross-reference',
@@ -387,6 +413,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.cross_reference)),
         run: doCommand(insertCrossReference),
+        isHidden: !templateAllows(state, schema.nodes.cross_reference),
       },
       {
         id: 'insert-footnote',
@@ -399,6 +426,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.inline_footnote)),
         run: doCommand(insertInlineFootnote),
+        isHidden: !templateAllows(state, schema.nodes.inline_footnote),
       },
       {
         id: 'insert-special-character',
@@ -406,12 +434,14 @@ export const getEditorMenus = (
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.text)),
         run: () => openInsertSpecialCharacterDialog(editor.view),
+        isHidden: !templateAllows(state, schema.nodes.text),
       },
       {
         id: 'insert-comment',
         label: 'Comment',
         isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
         run: doCommand(addInlineComment),
+        isHidden: !templateAllows(state, schema.nodes.comment),
       },
     ],
   }

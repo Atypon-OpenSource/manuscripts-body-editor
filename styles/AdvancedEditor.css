@@ -32,26 +32,8 @@
   -webkit-appearance: none;
 }
 
-.ProseMirror
-  > div.body
-  section:not(.toc)
-  .block-section_title
-  h1.empty-node[data-placeholder]::before {
-  content: attr(data-section-number) '. ' attr(data-placeholder);
-}
-
 .ProseMirror > div.body section:not(.toc) .block-section_title h1::before {
   content: attr(data-section-number) '. ';
-}
-
-.ProseMirror
-  > div.body
-  .block-box_element
-  .box-element
-  section:not(.toc)
-  .block-section_title
-  h1.empty-node[data-placeholder]::before {
-  content: attr(data-placeholder);
 }
 
 .ProseMirror
@@ -184,24 +166,12 @@
   margin-bottom: 30px;
 }
 
-.ProseMirror .block-figure_element .add-figure-button {
+.ProseMirror .block-figure_element .add-button {
   border: 0px;
   left: 53px;
   width: 25px;
-  z-index: 1;
   height: 25px;
-  cursor: pointer;
   position: absolute;
-  border-radius: 50%;
-  background-color: #6e6e6e;
-}
-
-.ProseMirror .block-figure_element .add-figure-button.disabled {
-  background-color: #e2e2e2 !important;
-}
-
-.ProseMirror .block-figure_element .add-figure-button svg path {
-  fill: #ffffff !important;
 }
 
 .ProseMirror .figure-block:hover .options-button {
@@ -284,6 +254,11 @@
   white-space: normal;
   font-size: 14px;
 }
+
+.ProseMirror .figure.placeholder p {
+  margin: 0;
+}
+
 .ProseMirror .block-embed .media-preview .placeholder {
   padding: 16px 32px;
 }
@@ -548,6 +523,13 @@ ProseMirror .block-embed .position-menu {
   left: unset;
   float: right;
   display: block;
+}
+
+.block-subtitles .comment-marker {
+  top: 0;
+  left: -10px;
+  float: right;
+  position: relative;
 }
 
 .block > div.comment-marker,
@@ -993,7 +975,7 @@ figure .selected-suggestion {
   background-color: transparent !important;
 }
 
-.selected-suggestion[data-track-status='pending'] .block:not(.box-element),
+.selected-suggestion[data-track-status='pending'] .block:not(.box-element):not(.trans-abstract),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -1004,7 +986,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending']
-  .block:not(.box-element),
+  .block:not(.box-element):not(.trans-abstract),
 .tracking-visible
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
@@ -1014,7 +996,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
-  .block:not(.box-element),
+  .block:not(.box-element):not(.trans-abstract),
 .tracking-visible
   .selected-suggestion
   [data-track-status='pending'][data-track-op='insert']
@@ -1042,7 +1024,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element),
+  .block:not(.box-element):not(.trans-abstract),
 .tracking-visible
   .ProseMirror
   .figure-block
@@ -1060,7 +1042,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element) {
+.block:not(.box-element):not(.trans-abstract) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -1068,7 +1050,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 /* Updated Block */
-.tracking-visible .ProseMirror [data-track-op='set_attrs'] .block,
+.tracking-visible .ProseMirror [data-track-op='set_attrs'] .block:not(.trans-abstract),
 .tracking-visible .block:has(figure[data-track-op='set_attrs']),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
@@ -1076,7 +1058,7 @@ figure.block:has(.equation.selected-suggestion) {
   [data-track-op='node_split'][data-track-status='pending']
   .block,
 .tracking-visible
-  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block,
 .block:has(
     figure.selected-suggestion,
@@ -1085,14 +1067,13 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
-.tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block,
-.tracking-visible .selected-suggestion [data-track-op='set_attrs'] .block,
+.tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block:not(.trans-abstract),
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion),
 .tracking-visible
-  .selected-suggestion[data-track-op='move'][data-track-status='pending']
+  .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
@@ -1436,6 +1417,11 @@ th:hover > .table-context-menu-button,
   opacity: 1;
 }
 
+.ProseMirror .block-container:hover .section-category-button.disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 .section-category.menu .menu-item.selected:after {
   top: 10.5px;
   right: 19px;
@@ -1572,6 +1558,56 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .ext-link-editor-container {
   position: static;
+  width: 100%;
+}
+.ProseMirror .ext-link-editor-placeholder-container {
+  font-size: 0;
+}
+.ProseMirror .ext-link-editor-placeholder-container {
+  position: relative;
+  font-size: initial;
+}
+
+.ProseMirror .ext-link-editor-placeholder-container .placeholder {
+  position: relative;
+  box-sizing: content-box;
+  max-width: 100%;
+  min-height: 0;
+  padding: 16px 0;
+}
+
+.ProseMirror .ext-link-editor-container .close-button {
+  border: 1px solid #f2f2f2;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
+  
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+.ProseMirror .ext-link-editor-container .linked-file-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background-color: #f2f2f2;
+  color: #353535;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+}
+.ProseMirror .ext-link-editor-container .linked-file-info p {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+
+  font-family: Lato, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+}
+.ProseMirror .ext-link-editor-container .linked-file-info .icon-button {
+  margin-right: 8px;
 }
 
 .ProseMirror .accessibility_element_label {
@@ -1626,10 +1662,14 @@ th:hover > .table-context-menu-button,
   left: 93%;
 }
 
-.hero-image-container {
+.block-hero_image {
+  margin-bottom: 30px;
+}
+
+.hero-image-container, .attachments-container {
   border: 1px solid #c9c9c9;
   border-radius: 4px;
-  background: white;
+  background: #ffffff;
   padding: 0 !important;
 }
 
@@ -1640,7 +1680,7 @@ th:hover > .table-context-menu-button,
   margin: 0 35pt 32px 35pt;
 }
 
-.hero-image-panel {
+.panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1659,11 +1699,14 @@ th:hover > .table-context-menu-button,
 .hero-image-container .position-menu {
   display: none !important;
 }
-.hero-image-toggle-btn svg {
+.toggle-btn {
+  cursor: pointer;
+}
+.toggle-btn svg {
   width: 16px;
   height: 9px;
 }
-.hero-image-toggle-btn.collapsed svg {
+.toggle-btn.collapsed svg {
   transform: rotate(180deg);
 }
 
@@ -1728,4 +1771,216 @@ th:hover > .table-context-menu-button,
   font-size: 12px;
   color: #666;
   margin: 4px 0 0 0;
+}
+
+.prosemirror-dropcursor-block {
+  background-color: transparent !important;
+}
+.ProseMirror .add-button {
+  border: 0px;
+  z-index: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #6e6e6e;
+}
+
+.ProseMirror .add-button.disabled {
+  background-color: #e2e2e2 !important;
+}
+
+.ProseMirror .add-button svg path {
+  fill: #ffffff !important;
+}
+
+/*  Abstract translations */
+.ProseMirror .abstracts {
+  position: relative;
+}
+
+.ProseMirror .abstracts .add-translation-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  padding: 6px 12px;
+  position: absolute;
+  right: 50px;
+  z-index: 5;
+  cursor: pointer;
+}
+.ProseMirror .abstracts .add-translation-text {
+  font-size: 14px;
+  color:#353535
+}
+.ProseMirror .abstracts .add-translation-container .add-button {
+  margin: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ProseMirror .abstracts .add-translation-container .add-button svg {
+  width: 10px;
+  height: 8px;
+}
+.ProseMirror .block-trans_abstract .language-selector-btn {
+  position: absolute;
+  z-index: 9;
+  top: 40px;
+  border: 0px;
+  background: transparent;
+  right: 60px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #6E6E6E;
+  cursor: pointer;
+}
+.abstracts-language-dropdown {
+  right: -142px !important;
+  top: -86px !important;
+}
+
+.ProseMirror .block-trans_abstract p.empty-node[data-placeholder]  {
+  font-style: italic;
+  color: #c9c9c9;
+  margin: 0;
+}
+.ProseMirror .block-trans_abstract section.block.trans-abstract {
+  padding: 0 !important;
+}
+.ProseMirror .abstracts.empty-node .add-translation-container {
+  display: none;
+}
+
+.ProseMirror .icon-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #353535;
+  font-size: 16px;
+  line-height: 24px;
+  padding: 0;
+
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  outline: none;
+  transition: border 0.1s, color 0.1s, background-color 0.1s, color 0.1s,
+    filter 0.1s;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.ProseMirror .icon-button path,
+.ProseMirror .icon-button rect {
+  fill: #353535 !important;
+}
+.ProseMirror .icon-button:hover path,
+.ProseMirror .icon-button:hover rect {
+  fill: #1a9bc7 !important;
+}
+
+.ProseMirror .close-button {
+  cursor: pointer;
+  box-shadow: none;
+  text-indent: -99999px;
+  z-index: 2;
+
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
+.ProseMirror .close-button::before,
+.ProseMirror .close-button::after {
+  background-color: #6e6e6e;
+  border-radius: 2px;
+  content: ' ';
+  display: block;
+  height: 14px;
+  transform: rotate(-45deg);
+  width: 2px;
+  position: absolute;
+  top: calc(50% - 7px);
+  left: calc(50% - 1px);
+}
+.ProseMirror .close-button::after {
+  transform: rotate(45deg);
+}
+
+/* Attachment styles */
+.attachments-container .attachment-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 15px !important;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+ .attachments-container .attachment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.attachments-container .attachment-item .attachment-icon {
+  margin-right: 12px;
+}
+
+.attachments-container .attachment-item .attachment-name {
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.attachments-container .attachment-item .attachment-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.attachments-container .attachment-item .attachment-badge.pdf {
+  background: #28a745;
+  color: white;
+}
+
+.attachments-container .attachment-item .attachment-badge.file {
+  background: #6c757d;
+  color: white;
+}
+
+.attachments-container .attachment-item .attachment-content {
+  text-align: center;
+  margin: 20px;
+}
+
+.attachments-container .attachment-item .attachment-iframe {
+  width: 100%;
+  height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+
+.block-attachments:has(.attachment-item:empty), .block-attachments.empty-node {
+  display: none !important;
+}
+
+.ProseMirror a.link:empty::before {
+  content: "\00a0";
 }

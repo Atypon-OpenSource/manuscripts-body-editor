@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import {
+  setAction,
+  TrackChangesAction,
+  TrackedAttrs,
+} from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isSectionNodeType,
@@ -25,12 +29,18 @@ import {
 } from '@manuscripts/transform'
 import { Fragment, Node } from 'prosemirror-model'
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state'
-import { hasParentNodeOfType } from 'prosemirror-utils'
+import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
-import { isDeleted } from '../../lib/track-changes-utils'
+import { isMoved } from '../../lib/filtered-document'
+import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
+import { filterBlockNodes } from '../../lib/utils'
 import { Option } from './type-selector/TypeSelector'
+
+export const shouldSkipNode = (node: Node): boolean => {
+  return isMoved(node) || isDeleted(node)
+}
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
@@ -54,35 +64,45 @@ export const findSelectedOption = (options: Option[]): Option | undefined => {
 }
 
 // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
-const getDeepestSubsection = (subsection: Node) => {
+const getDeepestSubsectionPosition = (subsection: Node, position: number) => {
   while (subsection.lastChild && isSectionNodeType(subsection.lastChild.type)) {
+    if (isDeleted(subsection.lastChild)) {
+      return (
+        position +
+        jumpToPreviousValidNode(
+          subsection.nodeSize - subsection.lastChild.nodeSize - 2,
+          subsection
+        ) +
+        1
+      )
+    }
+    position += subsection.nodeSize - subsection.lastChild.nodeSize
     subsection = subsection.lastChild
   }
-  return subsection
+  return position + subsection.content.size
 }
 
-// Helper function to replace the deepest subsection with a new subsection
-const replaceDeepestSubsection = (
-  parentNode: Node,
-  newSubsection: Node
-): Node => {
-  if (!parentNode.lastChild || !isSectionNodeType(parentNode.lastChild.type)) {
-    return newSubsection // Replace the deepest subsection when found
+const getInsertDataTracked = (node: Node) => {
+  const dataTracked = node.attrs.dataTracked as TrackedAttrs[] | null
+  const change = dataTracked?.find((c) => c.operation === 'insert')
+  return change ? [change] : null
+}
+
+/** Look at current position if node is deleted move to the previous sibling and
+ * check if it's deleted until we find a valid node */
+const jumpToPreviousValidNode = (beforeSection: number, doc: Node) => {
+  const $beforeSection = doc.resolve(beforeSection)
+  let pos = beforeSection
+  for (let i = $beforeSection.index() - 1; i >= 0; i--) {
+    pos = $beforeSection.posAtIndex(i)
+    const node = doc.resolve(pos + 1).node()
+    if (!(isDeleted(node) && node.type === schema.nodes.section) && i >= 0) {
+      pos = $beforeSection.posAtIndex(i + 1)
+      break
+    }
   }
 
-  const lastSubsectionIndex = parentNode.content.childCount - 1
-  const lastSubsection = parentNode.content.child(lastSubsectionIndex)
-
-  // Recursively replace the deepest subsection
-  const updatedSubsection = replaceDeepestSubsection(
-    lastSubsection,
-    newSubsection
-  )
-
-  // Replace the last subsection in the parent with the updated version
-  return parentNode.copy(
-    parentNode.content.replaceChild(lastSubsectionIndex, updatedSubsection)
-  )
+  return pos
 }
 
 export const demoteSectionToParagraph = (
@@ -105,20 +125,19 @@ export const demoteSectionToParagraph = (
 
   const sectionDepth = $from.depth - 1
   const section = $from.node(sectionDepth)
-  const beforeSection = $from.before(sectionDepth)
-  const afterSection = $from.after(sectionDepth)
-
+  let beforeSection = $from.before(sectionDepth)
+  beforeSection = jumpToPreviousValidNode(beforeSection, doc)
   const $beforeSection = doc.resolve(beforeSection)
   const previousNode = $beforeSection.nodeBefore
   const paragraph = nodes.paragraph.create(
     {
       id: generateNodeID(nodes.paragraph),
+      dataTracked: getInsertDataTracked(section),
     },
     sectionTitle.content
   )
 
   let anchor
-  let fragment
 
   const sectionContent = section.content.cut(afterSectionTitleOffset)
 
@@ -127,48 +146,36 @@ export const demoteSectionToParagraph = (
       previousNode.lastChild && isSectionNodeType(previousNode.lastChild.type)
 
     if (hasSubsections) {
-      const deepestSubsection = getDeepestSubsection(previousNode.lastChild)
-
-      const updatedDeepestSubsection = deepestSubsection.copy(
-        deepestSubsection.content
-          .append(Fragment.from(paragraph)) // Append the paragraph
-          .append(sectionContent) // Append the remaining content
-      )
-
-      const updatedPreviousNode = replaceDeepestSubsection(
+      beforeSection = getDeepestSubsectionPosition(
         previousNode,
-        updatedDeepestSubsection
+        beforeSection - previousNode.nodeSize
       )
-      fragment = updatedPreviousNode.content
     } else {
-      // If no subsections exist, just append to the main section
-      fragment = Fragment.from(previousNode.content)
-        .append(Fragment.from(paragraph))
-        .append(sectionContent)
+      beforeSection = beforeSection - 1
     }
-
-    tr.replaceWith(
-      beforeSection - previousNode.nodeSize,
-      afterSection,
-      previousNode.copy(fragment)
-    )
-
-    anchor = beforeSection
+    anchor = beforeSection + 1
   } else {
-    tr.replaceWith(
-      beforeSection,
-      afterSection,
-      Fragment.from(paragraph).append(sectionContent)
-    )
-
     anchor = beforeSection + 1
   }
 
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + paragraph.content.size)
+  const content = filterBlockNodes(
+    Fragment.from(paragraph).append(sectionContent),
+    (node) => !isShadowDelete(node)
   )
+  tr.insert(beforeSection, content)
 
-  dispatch(skipTracking(tr))
+  const afterSection = tr.mapping.map($from.after(sectionDepth))
+  tr.delete(afterSection - section.nodeSize, afterSection)
+
+  tr.setSelection(TextSelection.create(tr.doc, anchor))
+
+  dispatch(
+    setAction(
+      tr,
+      TrackChangesAction.structuralChangeAction,
+      'convert-to-paragraph'
+    )
+  )
   view && view.focus()
 }
 
@@ -194,23 +201,20 @@ export const promoteParagraphToSection = (
   const parentSection = $from.node(sectionDepth)
   const startIndex = $from.index(sectionDepth)
   const endIndex = $from.indexAfter(sectionDepth)
-  const beforeParentSection = $from.before(sectionDepth)
-  const afterParentSection = $from.after(sectionDepth)
-
+  let afterParentSection = $from.after(sectionDepth)
   const items: Node[] = []
-  let offset = 0
 
   if (startIndex > 0) {
     // add the original section with content up to the paragraph
     const precedingSection = parentSection.cut(0, beforeParagraphOffset)
     items.push(precedingSection)
-    offset += precedingSection.nodeSize
   }
 
-  const textContent = paragraph.textContent
-
+  const textContent = findChildrenByType(paragraph, schema.nodes.text).map(
+    ({ node }) => node
+  )
   const sectionTitle: SectionTitleNode = textContent
-    ? nodes.section_title.create({}, schema.text(textContent))
+    ? nodes.section_title.create({}, Fragment.from(textContent))
     : nodes.section_title.create()
 
   let sectionContent = Fragment.from(sectionTitle)
@@ -223,25 +227,48 @@ export const promoteParagraphToSection = (
   }
 
   if (parentSection.type.name === 'body') {
-    const newSection = nodes.section.create({}, sectionContent)
-    items[0] = nodes.body.create(
-      {},
-      items[0]
-        ? items[0].content.append(Fragment.from(newSection))
-        : Fragment.from(newSection)
+    sectionContent = Fragment.from(sectionTitle)
+    afterParentSection = beforeParagraph + paragraph.nodeSize
+    // get position before first section in body, starting from the selection node index
+    parentSection.forEach((node, offset, index) => {
+      if (
+        node.type !== nodes.section &&
+        index > tr.doc.resolve(beforeParagraph).index()
+      ) {
+        const pos = $from.start($from.depth - 1)
+        afterParentSection = pos + offset + node.nodeSize
+        sectionContent = sectionContent.append(Fragment.from(node))
+      }
+    })
+    items[0] = nodes.section.create(
+      { dataTracked: getInsertDataTracked(paragraph) },
+      sectionContent
     )
   } else {
-    items.push(parentSection.copy(sectionContent))
+    items.push(
+      parentSection.type.create(
+        { dataTracked: getInsertDataTracked(paragraph) },
+        sectionContent
+      )
+    )
   }
-
-  tr.replaceWith(beforeParentSection, afterParentSection, items)
-  const anchor = beforeParentSection + offset + 2
-
-  tr.setSelection(
-    TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
+  const content = filterBlockNodes(
+    Fragment.from(items[items.length - 1]),
+    (node) => !isShadowDelete(node)
   )
+  tr.insert(afterParentSection, content)
+  tr.delete(beforeParagraph, afterParentSection - 1)
 
-  dispatch(skipTracking(tr))
+  const anchor = tr.mapping.map(afterParentSection) - content.size + 2
+  tr.setSelection(TextSelection.create(tr.doc, anchor))
+
+  dispatch(
+    setAction(
+      tr,
+      TrackChangesAction.structuralChangeAction,
+      'convert-to-section'
+    )
+  )
   view && view.focus()
 }
 
@@ -312,36 +339,65 @@ export const indentSection =
     const parentSection = $from.node(parentSectionDepth)
     const startIndex = $from.index(parentSectionDepth)
 
-    const previousSection =
-      startIndex > 0 ? parentSection.child(startIndex - 1) : null
-    const isValidContainer = previousSection?.type === nodes.section
+    // Check if there's a valid previous section to indent into
+    // Look backwards through siblings to find a valid (non-deleted, non-moved) section
+    let previousSection: Node | null = null
+    for (let i = startIndex - 1; i >= 0; i--) {
+      const candidate = parentSection.child(i)
+      if (candidate.type === nodes.section && !shouldSkipNode(candidate)) {
+        previousSection = candidate
+        break
+      }
+    }
 
     let anchor
-    if (!previousSection || !isValidContainer) {
+    if (!previousSection) {
       // No valid previous section, creating new parent section
       const emptyTitle = nodes.section_title.create()
       const newParentSectionContent = Fragment.fromArray([emptyTitle, section])
       const newParentSection = nodes.section.create({}, newParentSectionContent)
 
-      tr.replaceWith(beforeSection, afterSection, newParentSection)
+      tr.insert(beforeSection, newParentSection)
+
+      // Delete the original section (now at shifted position)
+      const newBeforeSection = beforeSection + newParentSection.nodeSize
+      const newAfterSection = afterSection + newParentSection.nodeSize
+
+      tr.delete(newBeforeSection, newAfterSection)
 
       anchor = beforeSection + 1
     } else {
       // Moving section into previous section as subsection
-      const newPreviousSection = previousSection.copy(
-        previousSection.content.append(Fragment.from(section))
-      )
+      // Find the actual position of the previous section by walking through the document
+      let beforePreviousSection: number | null = null
 
-      const beforePreviousSection = beforeSection - previousSection.nodeSize
+      $from.doc.descendants((node, pos) => {
+        if (node === previousSection) {
+          beforePreviousSection = pos
+          return false // stop iteration
+        }
+      })
 
-      tr.replaceWith(beforePreviousSection, afterSection, newPreviousSection)
+      if (beforePreviousSection === null) {
+        return false
+      }
 
-      anchor = beforePreviousSection + 1
+      const insertPos = beforePreviousSection + previousSection.nodeSize - 1
+      tr.insert(insertPos, section)
+
+      // Delete the original section (positions have shifted due to insert)
+      const newBeforeSection = beforeSection + section.nodeSize
+      const newAfterSection = afterSection + section.nodeSize
+      tr.delete(newBeforeSection, newAfterSection)
+
+      anchor = insertPos + 1
     }
 
     tr.setSelection(TextSelection.create(tr.doc, anchor))
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
+
+    dispatch(tr)
     view && view.focus()
   }
 
@@ -367,13 +423,17 @@ export const indentParagraph =
       sectionContent
     )
 
-    // Replace original paragraph and moved nodes with the new section
-    tr.replaceWith(beforeParagraph, sectionEnd, newSection)
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'indent' })
+
+    tr.delete(beforeParagraph, sectionEnd)
+    tr.insert(beforeParagraph, newSection)
 
     // Set selection inside the title of the new section
-    tr.setSelection(TextSelection.create(tr.doc, beforeParagraph + 2))
+    tr.setSelection(
+      TextSelection.create(tr.doc, beforeParagraph + newSection.nodeSize - 2)
+    )
 
-    dispatch(skipTracking(tr))
+    dispatch(tr)
     view?.focus()
   }
 
@@ -381,10 +441,8 @@ export const unindentSection =
   () => (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
     const {
       selection: { $from },
-      schema,
       tr,
     } = state
-    const { nodes } = schema
     const sectionDepth = $from.depth - 1
     const section = $from.node(sectionDepth)
     const beforeSection = $from.before(sectionDepth)
@@ -396,40 +454,34 @@ export const unindentSection =
 
     const parentSectionDepth = $from.depth - 2
     const parentSection = $from.node(parentSectionDepth)
-    const startIndex = $from.index(parentSectionDepth)
     const endIndex = $from.indexAfter(parentSectionDepth)
-    const beforeParentSection = $from.before(parentSectionDepth)
     const afterParentSection = $from.after(parentSectionDepth)
 
-    const items = []
+    const hasFollowingSiblings = endIndex < parentSection.childCount
 
-    let offset = 0
+    let extendedSection = section
 
-    if (startIndex > 0) {
-      const precedingSection = parentSection.cut(0, beforeSectionOffset)
-      items.push(precedingSection)
-      offset += precedingSection.nodeSize
+    if (hasFollowingSiblings) {
+      // If there are following siblings, we need to extend the section
+      const siblingsContent = parentSection.content.cut(afterSectionOffset)
+      extendedSection = section.copy(section.content.append(siblingsContent))
     }
 
-    items.push(section)
+    // Insert the unindented section at the parent level
+    tr.insert(afterParentSection, Fragment.from(extendedSection))
 
-    if (endIndex < parentSection.childCount) {
-      const fragment = Fragment.from(nodes.section_title.create()).append(
-        parentSection.content.cut(afterSectionOffset)
-      )
+    // Delete the original section (positions inside parent haven't changed)
+    tr.delete(beforeSection, beforeSection + extendedSection.nodeSize)
 
-      items.push(parentSection.copy(fragment))
-    }
-
-    tr.replaceWith(beforeParentSection, afterParentSection, items)
-
-    const anchor = beforeParentSection + offset + 2
+    const anchor = afterParentSection + 2
 
     tr.setSelection(
       TextSelection.create(tr.doc, anchor, anchor + sectionTitle.content.size)
     )
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
+
+    dispatch(tr)
     view && view.focus()
   }
 
@@ -468,10 +520,12 @@ export const unindentParagraph =
     tr.insert(paragraphPos + 2, newSection)
 
     tr.setSelection(
-      TextSelection.create(tr.doc, tr.mapping.map(paragraphPos) + 4)
+      TextSelection.create(tr.doc, paragraphPos + newSection.nodeSize)
     )
 
-    dispatch(skipTracking(tr))
+    setAction(tr, TrackChangesAction.indentationAction, { action: 'unindent' })
+
+    dispatch(tr)
     view?.focus()
   }
 

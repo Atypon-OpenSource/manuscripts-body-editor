@@ -85,7 +85,8 @@ function createButton(
   currentCategory: SectionCategory | undefined,
   categories: SectionCategory[],
   usedCategoryIDs: Set<string>,
-  canEdit = true
+  canEdit = true,
+  disabled: boolean
 ) {
   const handleSelect = (category: SectionCategory) => {
     const tr = view.state.tr
@@ -100,7 +101,9 @@ function createButton(
   if (currentCategory) {
     button.classList.add('assigned')
   }
-  if (canEdit) {
+  if (disabled) {
+    button.classList.add('disabled')
+  } else if (canEdit) {
     button.addEventListener('mousedown', () => {
       popper.destroy()
       const menu = createMenu(
@@ -162,7 +165,8 @@ export function buildPluginState(
             category,
             groupCategories,
             usedCategoryIDs,
-            can?.editArticle
+            can?.editArticle,
+            categories.size === 0
           )
         )
       )

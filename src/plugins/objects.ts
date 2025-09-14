@@ -23,6 +23,8 @@ import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { getDocWithoutMovedContent } from '../lib/filtered-document'
+
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 /**
@@ -34,14 +36,18 @@ export default () => {
 
     state: {
       init: (config, state) => {
-        return buildTargets(Fragment.from(state.doc.content))
+        // Build targets from filtered document to exclude moved nodes
+        const filteredDoc = getDocWithoutMovedContent(state.doc)
+        return buildTargets(Fragment.from(filteredDoc.content))
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
         // TODO: map decorations?
         // TODO: use setMeta to update labels
 
-        return buildTargets(Fragment.from(tr.doc.content))
+        // Build targets from filtered document to exclude moved nodes
+        const filteredDoc = getDocWithoutMovedContent(tr.doc)
+        return buildTargets(Fragment.from(filteredDoc.content))
       },
     },
     props: {

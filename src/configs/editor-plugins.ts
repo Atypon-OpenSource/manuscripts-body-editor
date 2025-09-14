@@ -28,6 +28,7 @@ import { tableEditing } from 'prosemirror-tables'
 
 import keys from '../keys'
 import accessibility_element from '../plugins/accessibility_element'
+import add_subtitle from '../plugins/add-subtitle'
 import affiliations from '../plugins/affiliations'
 import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
@@ -38,6 +39,7 @@ import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
 import footnotes from '../plugins/footnotes'
+import link from '../plugins/link'
 import lock_body from '../plugins/lock-body'
 import move_node from '../plugins/move-node'
 import objects from '../plugins/objects'
@@ -79,6 +81,7 @@ export default (props: EditorProps) => {
     comments(),
     paragraphs(),
     placeholder(),
+    add_subtitle(),
     tableEditing(),
     selected_suggestion(),
     footnotes(props),
@@ -86,13 +89,14 @@ export default (props: EditorProps) => {
     doi(),
     section_category(props),
     cross_references(),
-    detect_inconsistency(),
+    detect_inconsistency(props),
     search_replace(),
     lock_body(),
     alt_titles(),
     accessibility_element(),
     prevent_empty(),
     move_node(),
+    link(),
   ]
 
   if (props.collabProvider) {
