@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ObjectTypes, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   schema,
   SectionCategory,
+  UserProfile,
 } from '@manuscripts/transform'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
@@ -32,12 +32,12 @@ import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
-  objectType: ObjectTypes.UserProfile,
+  objectType: 'MPUserProfile',
   createdAt: 0,
   updatedAt: 0,
   bibliographicName: {
     _id: 'MPBibliographicName:1',
-    objectType: ObjectTypes.BibliographicName,
+    objectType: 'MPBibliographicName',
   },
   userID: 'User|test@example.com',
 }

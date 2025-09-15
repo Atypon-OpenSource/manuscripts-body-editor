@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BibliographicName } from '@manuscripts/json-schema'
+import { BibliographicName } from '@manuscripts/transform'
 
 import {
   AffiliationAttrs,
