@@ -39,6 +39,7 @@ import {
   ManuscriptResolvedPos,
   ManuscriptTextSelection,
   ManuscriptTransaction,
+  objectTypes,
   schema,
   SectionCategory,
   SectionNode,
@@ -1727,8 +1728,8 @@ export const addNodeComment = (
 
   const props = getEditorProps(state)
   const contribution = {
-    _id: generateNodeID(schema.nodes.comment),
-    objectType: 'MPContribution',
+    _id: generateNodeID(objectTypes.Contribution),
+    objectType: objectTypes.Contribution,
     profileID: props.userID,
     timestamp: Date.now(),
   }
@@ -1775,8 +1776,8 @@ export const addInlineComment = (
 
   const props = getEditorProps(state)
   const contribution = {
-    _id: generateNodeID(schema.nodes.comment),
-    objectType: 'MPContribution',
+    _id: generateNodeID(objectTypes.Contribution),
+    objectType: objectTypes.Contribution,
     profileID: props.userID,
     timestamp: Date.now(),
   }
