@@ -252,7 +252,7 @@ export const getInsertPos = (
   return insertPos
 }
 
-export const getAbsoluteInsertPos = (
+export const findInsertionPosition = (
   type: ManuscriptNodeType,
   doc: ManuscriptNode
 ) => {
