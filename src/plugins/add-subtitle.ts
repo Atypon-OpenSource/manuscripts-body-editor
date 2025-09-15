@@ -20,6 +20,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
 import { addAuthorIcon } from '../icons'
+import { findInsertionPosition } from '../lib/utils'
 
 const createAddSubtitleButton = (handler: () => void) => {
   const button = document.createElement('span')
@@ -65,8 +66,12 @@ export default () =>
                     { id: uuidv4() },
                     [schema.nodes.subtitle.create({ id: uuidv4() })]
                   )
-                  const tr = view.state.tr.insert(titleEndPos, subtitlesNode)
-                  const subtitlePos = titleEndPos + 1
+                  const pos = findInsertionPosition(
+                    schema.nodes.subtitle,
+                    state.doc
+                  )
+                  const tr = view.state.tr.insert(pos, subtitlesNode)
+                  const subtitlePos = pos + 1
                   tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
 
                   view.dispatch(tr)
