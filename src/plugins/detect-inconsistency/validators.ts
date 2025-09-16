@@ -234,7 +234,7 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
 
   if (unused) {
     const isTableFootnote = isChildOfNodeTypes(context.props.doc, pos, [
-      schema.nodes.table_element_footer,
+      schema.nodes.table_element,
     ])
 
     const inconsistency = createWarning(
