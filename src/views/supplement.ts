@@ -23,6 +23,7 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
+  private supplementInfoEl: HTMLDivElement
   public ignoreMutation = () => true
 
   public initialise() {
@@ -50,9 +51,9 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   }
 
   private addFileInfo() {
-    const fileInfoContainer = document.createElement('div')
-    fileInfoContainer.classList.add('supplement-file-info')
-    fileInfoContainer.contentEditable = 'false'
+    this.supplementInfoEl = document.createElement('div')
+    this.supplementInfoEl.classList.add('supplement-file-info')
+    this.supplementInfoEl.contentEditable = 'false'
 
     // Get the file from the file management system
     const files = this.props.getFiles()
@@ -67,30 +68,26 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
         iconElement.innerHTML = renderToStaticMarkup(icon)
       }
 
-      fileInfoContainer.appendChild(iconElement)
+      this.supplementInfoEl.appendChild(iconElement)
 
       // Add file name
       const fileName = document.createElement('span')
       fileName.classList.add('supplement-file-name')
       fileName.textContent = file.name
-      fileInfoContainer.appendChild(fileName)
+      this.supplementInfoEl.appendChild(fileName)
     } else {
       // Show placeholder if file not found
       const placeholder = document.createElement('span')
       placeholder.textContent = 'File not found'
-      fileInfoContainer.appendChild(placeholder)
+      this.supplementInfoEl.appendChild(placeholder)
     }
 
     // Add file info to the supplement-item
-    this.dom.appendChild(fileInfoContainer)
+    this.dom.appendChild(this.supplementInfoEl)
   }
 
   private refreshFileInfo() {
-    // Remove old container if it exists
-    const oldInfo = this.dom.querySelector('.supplement-file-info')
-    if (oldInfo) {
-      oldInfo.remove()
-    }
+    this.supplementInfoEl.remove()
 
     // Rebuild with the latest attrs
     this.addFileInfo()
