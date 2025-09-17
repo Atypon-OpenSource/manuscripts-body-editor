@@ -26,7 +26,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { createToggleButton } from '../lib/utils'
+import { createToggleButton, findInsertionPosition } from '../lib/utils'
 
 export interface PluginState {
   collapsed: boolean
@@ -126,7 +126,7 @@ export default () => {
         return null
       }
 
-      const { title, subtitles, runningTitle, shortTitle, altTitlesSection } =
+      const { title, runningTitle, shortTitle, altTitlesSection } =
         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         altTitlesKey.getState(newState)!
 
@@ -137,15 +137,14 @@ export default () => {
       }
 
       if (!altTitlesSection) {
-        const prev = subtitles || title
-        const titleEnd = prev[0].nodeSize + prev[1]
+        const pos = findInsertionPosition(schema.nodes.alt_titles, tr.doc)
         const section = schema.nodes.alt_titles.create({}, [
           schema.nodes.alt_title.create({
             type: 'running',
           }),
           schema.nodes.alt_title.create({ type: 'short' }),
         ])
-        tr.insert(titleEnd, section)
+        tr.insert(pos, section)
       } else {
         const endPos = altTitlesSection[1] + altTitlesSection[0].nodeSize - 1
         if (!runningTitle) {

@@ -33,6 +33,7 @@ import {
   addTrackChangesAttributes,
   isDeleted,
 } from '../lib/track-changes-utils'
+import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
   findChildByID,
@@ -356,26 +357,22 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const { view } = this
     const { dispatch } = view
     const affiliationsNodeType = schema.nodes.affiliations
-    const contributorsNodeType = schema.nodes.contributors
-    const affiliationNodeType = schema.nodes.affiliation
 
     let affiliations = findChildByType(view, affiliationsNodeType)
 
     if (!affiliations) {
-      const contributors = findChildByType(view, contributorsNodeType)
-
-      if (contributors) {
-        const { tr } = this.view.state
-        const affiliationsNode = affiliationsNodeType.create()
-        const insertPos = contributors.pos + contributors.node.nodeSize
-        dispatch(tr.insert(insertPos, affiliationsNode))
-        affiliations = findChildByType(view, affiliationsNodeType)
-      }
+      const { tr } = this.view.state
+      const insertPos = findInsertionPosition(
+        schema.nodes.affiliations,
+        view.state.doc
+      )
+      dispatch(tr.insert(insertPos, schema.nodes.affiliations.create()))
+      affiliations = findChildByType(view, affiliationsNodeType)
     }
 
     if (affiliations) {
       const { tr } = this.view.state
-      const affiliationNode = affiliationNodeType.create(attrs)
+      const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
   }
