@@ -67,7 +67,7 @@ export default () =>
                     [schema.nodes.subtitle.create({ id: uuidv4() })]
                   )
                   const pos = findInsertionPosition(
-                    schema.nodes.subtitle,
+                    schema.nodes.subtitles,
                     state.doc
                   )
                   const tr = view.state.tr.insert(pos, subtitlesNode)
