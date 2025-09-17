@@ -146,16 +146,16 @@ export default () => {
         ])
         tr.insert(pos, section)
       } else {
-        const pos = findInsertionPosition(schema.nodes.alt_titles, tr.doc)
+        const endPos = altTitlesSection[1] + altTitlesSection[0].nodeSize - 1
         if (!runningTitle) {
           const title = schema.nodes.alt_title.create({
             type: 'running',
           })
-          tr.insert(pos, title)
+          tr.insert(endPos, title)
         }
         if (!shortTitle) {
           const title = schema.nodes.alt_title.create({ type: 'short' })
-          const newPos = tr.mapping.map(pos)
+          const newPos = tr.mapping.map(endPos)
           tr.insert(newPos, title)
         }
       }
