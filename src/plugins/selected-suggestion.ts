@@ -30,8 +30,8 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
-import { getSelectionChangeGroup } from '../selection'
 import { isTracked } from '../lib/track-changes-utils'
+import { getSelectionChangeGroup } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
