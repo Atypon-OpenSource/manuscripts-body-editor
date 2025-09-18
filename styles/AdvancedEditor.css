@@ -1157,6 +1157,7 @@ b[data-track-status='pending'][data-track-op='insert'],
 i[data-track-status='pending'][data-track-op='insert'],
 sup[data-track-status='pending'][data-track-op='insert'],
 sub[data-track-status='pending'][data-track-op='insert'],
+u[data-track-status='pending'][data-track-op='insert'],
 s[data-track-status='pending'][data-track-op='insert'] {
   background: var(--inserted-pending-bg-color);
   color: var(--inserted-pending-color);
@@ -1166,6 +1167,7 @@ b[data-track-status='pending'][data-track-op='delete'],
 i[data-track-status='pending'][data-track-op='delete'],
 sup[data-track-status='pending'][data-track-op='delete'],
 sub[data-track-status='pending'][data-track-op='delete'],
+u[data-track-status='pending'][data-track-op='delete'],
 s[data-track-status='pending'][data-track-op='delete'] {
   background: var(--deleted-pending-bg-color);
   color: var(--deleted-color);
@@ -1604,7 +1606,7 @@ th:hover > .table-context-menu-button,
   border: 1px solid #f2f2f2;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.12);
   background-color: #ffffff;
-  
+
   position: absolute;
   top: -8px;
   right: -8px;
@@ -1690,7 +1692,8 @@ th:hover > .table-context-menu-button,
   margin-bottom: 30px;
 }
 
-.hero-image-container, .attachments-container {
+.hero-image-container,
+.attachments-container {
   border: 1px solid #c9c9c9;
   border-radius: 4px;
   background: #ffffff;
@@ -1952,7 +1955,7 @@ th:hover > .table-context-menu-button,
   cursor: pointer;
 }
 
- .attachments-container .attachment-header {
+.attachments-container .attachment-header {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
@@ -2000,11 +2003,11 @@ th:hover > .table-context-menu-button,
   margin-bottom: 12px;
 }
 
-
-.block-attachments:has(.attachment-item:empty), .block-attachments.empty-node {
+.block-attachments:has(.attachment-item:empty),
+.block-attachments.empty-node {
   display: none !important;
 }
 
 .ProseMirror a.link:empty::before {
-  content: "\00a0";
+  content: '\00a0';
 }

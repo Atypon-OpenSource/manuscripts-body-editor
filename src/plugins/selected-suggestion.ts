@@ -31,6 +31,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
 import { getSelectionChangeGroup } from '../selection'
+import { isTracked } from '../lib/track-changes-utils'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
@@ -82,14 +83,18 @@ export default () => {
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
   const changes = getSelectionChangeGroup(state)
-  if (changes) {
+  if (changes.length) {
     return buildGroupOfChangesDecoration(state.doc, changes)
   }
-  const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
+  const $pos =
+    isTextSelection(selection) && selection.$cursor
+      ? selection.$cursor
+      : selection.$to
   if (!$pos) {
     return EMPTY
   }
   const effective = getEffectiveSelection($pos)
+
   if (!effective) {
     return EMPTY
   }
@@ -164,12 +169,22 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
 
 const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
   const node = selection.node
-  const suggestion = getTrackedMark(node)?.attrs.dataTracked
+  let suggestion = getTrackedMark(node)?.attrs.dataTracked as TrackedAttrs
+
+  if (!suggestion) {
+    for (const mark of node.marks) {
+      if (isTracked(mark)) {
+        suggestion = mark.attrs.dataTracked[0] as TrackedAttrs
+      }
+    }
+  }
+
   if (!suggestion) {
     return EMPTY
   }
   const from = selection.from
   const to = selection.to
+
   const decoration = Decoration.inline(from, to, {
     nodeName: 'span',
     class: 'selected-suggestion',

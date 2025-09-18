@@ -94,10 +94,14 @@ export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
         selection instanceof InlineNodesSelection) &&
       selection.$from
   if ($pos) {
-    return trackChangesPluginKey
-      .getState(state)
-      ?.changeSet.groupChanges.find((c) => isPositionAtRange(c, $pos.pos))
+    return (
+      trackChangesPluginKey
+        .getState(state)
+        ?.changeSet.groupChanges.find((c) => isPositionAtRange(c, $pos.pos)) ||
+      []
+    )
   }
+  return []
 }
 
 // check if position is at the range of group changes
