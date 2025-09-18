@@ -19,6 +19,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
+import { isMoved } from '../../lib/filtered-document'
 import { checkForCompletion } from './autocompletion'
 
 type NumberingArray = number[]
@@ -33,6 +34,11 @@ const calculateSectionLevels = (
   numbering: NumberingArray = [0]
 ) => {
   node.forEach((childNode, offset) => {
+    // Skip moved nodes (move-deleted-node elements) to fix numbering
+    if (isMoved(childNode)) {
+      return
+    }
+
     if (
       childNode.type === schema.nodes.section ||
       childNode.type === schema.nodes.box_element

@@ -25,6 +25,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import {
+  Fragment,
   Node as ProseMirrorNode,
   NodeType,
   ResolvedPos,
@@ -108,6 +109,9 @@ export const isChildOfNodeTypes = (
   pos: number,
   parentNodeTypes: NodeType[]
 ) => {
+  if (pos > doc.content.size) {
+    return false
+  }
   const resolvedPos = doc.resolve(pos)
   // Iterate through the parent nodes
   for (let depth = resolvedPos.depth; depth >= 0; depth--) {
@@ -251,6 +255,28 @@ export const getInsertPos = (
   return insertPos
 }
 
+export const filterBlockNodes = (
+  fragment: Fragment,
+  predicate: (node: ProseMirrorNode) => boolean
+) => {
+  const updatedNodes: ProseMirrorNode[] = []
+
+  fragment.forEach((child) => {
+    if (!child.isBlock) {
+      updatedNodes.push(child)
+      return
+    }
+
+    const newContent = child.content.size
+      ? filterBlockNodes(child.content, predicate)
+      : child.content
+    if (predicate(child)) {
+      updatedNodes.push(child.type.create(child.attrs, newContent, child.marks))
+    }
+  })
+
+  return Fragment.fromArray(updatedNodes)
+}
 export const getLastTitleNode = (state: ManuscriptEditorState) => {
   const altTitleNode = findChildrenByType(
     state.doc,
