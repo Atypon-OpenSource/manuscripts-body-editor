@@ -975,7 +975,8 @@ figure .selected-suggestion {
   background-color: transparent !important;
 }
 
-.selected-suggestion[data-track-status='pending'] .block:not(.box-element):not(.trans-abstract),
+.selected-suggestion[data-track-status='pending']
+  .block:not(.box-element):not(.trans-abstract),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -1042,7 +1043,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-.block:not(.box-element):not(.trans-abstract) {
+  .block:not(.box-element):not(.trans-abstract) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -1050,7 +1051,10 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 /* Updated Block */
-.tracking-visible .ProseMirror [data-track-op='set_attrs'] .block:not(.trans-abstract),
+.tracking-visible
+  .ProseMirror
+  [data-track-op='set_attrs']
+  .block:not(.trans-abstract),
 .tracking-visible .block:has(figure[data-track-op='set_attrs']),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
@@ -1067,7 +1071,9 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
 }
 
-.tracking-visible .selected-suggestion[data-track-op='set_attrs'] .block:not(.trans-abstract),
+.tracking-visible
+  .selected-suggestion[data-track-op='set_attrs']
+  .block:not(.trans-abstract),
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
@@ -1145,6 +1151,26 @@ figure.block:has(.equation.selected-suggestion) {
   background: var(--updated-bg-color);
   color: var(--common-color);
   border-color: var(--updated-border-color);
+}
+
+b[data-track-status='pending'][data-track-op='insert'],
+i[data-track-status='pending'][data-track-op='insert'],
+sup[data-track-status='pending'][data-track-op='insert'],
+sub[data-track-status='pending'][data-track-op='insert'],
+u[data-track-status='pending'][data-track-op='insert'],
+s[data-track-status='pending'][data-track-op='insert'] {
+  background: var(--inserted-pending-bg-color);
+  color: var(--inserted-pending-color);
+}
+
+b[data-track-status='pending'][data-track-op='delete'],
+i[data-track-status='pending'][data-track-op='delete'],
+sup[data-track-status='pending'][data-track-op='delete'],
+sub[data-track-status='pending'][data-track-op='delete'],
+u[data-track-status='pending'][data-track-op='delete'],
+s[data-track-status='pending'][data-track-op='delete'] {
+  background: var(--deleted-pending-bg-color);
+  color: var(--deleted-color);
 }
 
 /* Needed for the snapshot comparison */
@@ -1582,7 +1608,7 @@ th:hover > .table-context-menu-button,
   border: 1px solid #f2f2f2;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.12);
   background-color: #ffffff;
-  
+
   position: absolute;
   top: -8px;
   right: -8px;
@@ -1668,7 +1694,8 @@ th:hover > .table-context-menu-button,
   margin-bottom: 30px;
 }
 
-.hero-image-container, .attachments-container {
+.hero-image-container,
+.attachments-container {
   border: 1px solid #c9c9c9;
   border-radius: 4px;
   background: #ffffff;
@@ -1812,7 +1839,7 @@ th:hover > .table-context-menu-button,
 }
 .ProseMirror .abstracts .add-translation-text {
   font-size: 14px;
-  color:#353535
+  color: #353535;
 }
 .ProseMirror .abstracts .add-translation-container .add-button {
   margin: 0;
@@ -1838,7 +1865,7 @@ th:hover > .table-context-menu-button,
   display: flex;
   align-items: center;
   font-size: 14px;
-  color: #6E6E6E;
+  color: #6e6e6e;
   cursor: pointer;
 }
 .abstracts-language-dropdown {
@@ -1846,7 +1873,7 @@ th:hover > .table-context-menu-button,
   top: -86px !important;
 }
 
-.ProseMirror .block-trans_abstract p.empty-node[data-placeholder]  {
+.ProseMirror .block-trans_abstract p.empty-node[data-placeholder] {
   font-style: italic;
   color: #c9c9c9;
   margin: 0;
@@ -1930,7 +1957,7 @@ th:hover > .table-context-menu-button,
   cursor: pointer;
 }
 
- .attachments-container .attachment-header {
+.attachments-container .attachment-header {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
@@ -1978,11 +2005,11 @@ th:hover > .table-context-menu-button,
   margin-bottom: 12px;
 }
 
-
-.block-attachments:has(.attachment-item:empty), .block-attachments.empty-node {
+.block-attachments:has(.attachment-item:empty),
+.block-attachments.empty-node {
   display: none !important;
 }
 
 .ProseMirror a.link:empty::before {
-  content: "\00a0";
+  content: '\00a0';
 }

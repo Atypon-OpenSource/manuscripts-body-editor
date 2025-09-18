@@ -176,9 +176,21 @@ export const markActive =
   (state: ManuscriptEditorState): boolean => {
     const { from, $from, to, empty } = state.selection
 
+    let hasMark = false
+
+    state.doc.nodesBetween(from, to, (node) => {
+      if (node.isText) {
+        node.marks.forEach((m) => {
+          if (m.type === type && !isDeleted(m)) {
+            hasMark = true
+          }
+        })
+      }
+    })
+
     return empty
       ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
-      : state.doc.rangeHasMark(from, to, type)
+      : state.doc.rangeHasMark(from, to, type) && hasMark
   }
 
 export const isNodeSelection = (
