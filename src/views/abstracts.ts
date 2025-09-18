@@ -15,9 +15,7 @@
  */
 
 import { ManuscriptNode } from '@manuscripts/transform'
-import { TextSelection } from 'prosemirror-state'
 
-import { addBtnIcon } from '../icons'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -38,69 +36,6 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
   public createElement() {
     this.contentDOM = document.createElement(this.elementType)
     this.dom.appendChild(this.contentDOM)
-    this.addTranslationBtn()
-  }
-
-  private addTranslationBtn() {
-    if (this.props.getCapabilities()?.editArticle) {
-      const btnContainer = document.createElement('div')
-      btnContainer.classList.add('add-translation-container')
-      btnContainer.addEventListener('click', () => this.addTranslation())
-
-      const addTranslationBtn = Object.assign(
-        document.createElement('button'),
-        {
-          className: 'add-button',
-          innerHTML: addBtnIcon,
-          title: 'Add Translation',
-        }
-      )
-
-      // Create text element
-      const textElement = document.createElement('span')
-      textElement.textContent = 'Add translation'
-      textElement.classList.add('add-translation-text')
-
-      // Add button and text to container
-      btnContainer.appendChild(addTranslationBtn)
-      btnContainer.appendChild(textElement)
-
-      this.dom.prepend(btnContainer)
-    }
-  }
-
-  private addTranslation = () => {
-    const { state } = this.view
-    const { schema } = state
-
-    // Get document's primary language or default to English
-    const documentLanguage = state.doc.attrs.primaryLanguageCode || 'en'
-
-    // Create empty section title
-    const sectionTitle = schema.nodes.section_title.create()
-    // Create empty paragraph
-    const paragraph = schema.nodes.paragraph.create()
-
-    // Create trans_abstract node with section title and paragraph
-    const transAbstractNode = schema.nodes.trans_abstract.create(
-      {
-        lang: documentLanguage, // Use document's primary language
-      },
-      [sectionTitle, paragraph]
-    )
-
-    // Insert the node at the end of the abstracts container
-    const tr = state.tr.insert(
-      this.getPos() + this.node.nodeSize - 1,
-      transAbstractNode
-    )
-
-    // Set the selection inside the section title
-    const titlePos = this.getPos() + this.node.nodeSize
-    const selection = TextSelection.create(tr.doc, titlePos)
-
-    tr.setSelection(selection).scrollIntoView()
-    this.view.dispatch(tr)
   }
 
   public updateContents() {
