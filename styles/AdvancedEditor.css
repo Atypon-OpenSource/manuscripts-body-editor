@@ -1808,6 +1808,24 @@ th:hover > .table-context-menu-button,
   z-index: 5;
   cursor: pointer;
 }
+
+/* Add translation button for individual sections within abstracts */
+.ProseMirror .abstracts section[data-category] {
+  position: relative;
+}
+
+.ProseMirror .abstracts section[data-category] .add-translation-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  padding: 6px 12px;
+  position: absolute;
+  right: 50px;
+  top: 0;
+  z-index: 5;
+  cursor: pointer;
+}
 .ProseMirror .abstracts .add-translation-text {
   font-size: 14px;
   color:#353535
