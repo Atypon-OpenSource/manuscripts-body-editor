@@ -1288,11 +1288,13 @@ s[data-track-status='pending'][data-track-op='delete'] {
   line-height: 1.2;
   cursor: default;
   user-select: none;
+  display: flex;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
 .affiliation .affiliation-label {
   font-weight: bold;
-  margin-right: 4px;
 }
 
 .ProseMirror .doi-container {
