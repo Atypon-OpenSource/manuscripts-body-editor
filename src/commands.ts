@@ -93,7 +93,7 @@ import {
   insertAttachmentsNode,
   insertAwardsNode,
   insertFootnotesSection,
-  insertSupplementsNode,
+  upsertSupplementsSection,
 } from './lib/doc'
 import { FileAttachment } from './lib/files'
 import {
@@ -487,17 +487,24 @@ export const insertSupplement = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const supplement = schema.nodes.supplement.createAndFill({
-    id: generateNodeID(schema.nodes.supplement),
-    href: file.id,
-  }) as SupplementNode
+  const supplement = schema.nodes.supplement.createAndFill(
+    {
+      id: generateNodeID(schema.nodes.supplement),
+      href: file.id,
+    },
+    [
+      schema.nodes.figcaption.create({}, [
+        schema.nodes.caption_title.create(),
+        schema.nodes.caption.create(),
+      ]),
+    ]
+  ) as SupplementNode
 
   const tr = state.tr
-  const supplements = insertSupplementsNode(tr)
-  const pos = supplements.pos + supplements.node.nodeSize - 1
-  tr.insert(pos, supplement)
+  upsertSupplementsSection(tr, supplement)
+
   if (dispatch) {
-    dispatch(skipTracking(tr))
+    dispatch(tr)
   }
   return true
 }
