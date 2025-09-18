@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SectionNode, schema } from '@manuscripts/transform'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+import { schema, SectionNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionTitleKey } from '../plugins/section_title'
 import { addBtnIcon } from '../icons'
+import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
@@ -68,10 +68,17 @@ export class SectionView extends BlockView<SectionNode> {
 
     // Only show button for sections within abstracts AND with abstract-related categories
     const $pos = this.view.state.doc.resolve(this.getPos())
-    const isInAbstracts = findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)
+    const isInAbstracts = findParentNodeOfTypeClosestToPos(
+      $pos,
+      schema.nodes.abstracts
+    )
     const isAbstractCategory = this.isAbstractCategory(this.node.attrs.category)
-    
-    if (isInAbstracts && isAbstractCategory && this.props.getCapabilities()?.editArticle) {
+
+    if (
+      isInAbstracts &&
+      isAbstractCategory &&
+      this.props.getCapabilities()?.editArticle
+    ) {
       this.createAddTranslationButton()
     }
   }
@@ -82,37 +89,36 @@ export class SectionView extends BlockView<SectionNode> {
     if (!sectionCategories) {
       return false
     }
-    
+
     // Get the category object
     const categoryObj = sectionCategories.get(category)
     if (!categoryObj) {
       return false
     }
-    
+
     // Check if the category belongs to abstracts or abstracts-graphic groups
-    return categoryObj.group === 'abstracts' || categoryObj.group === 'abstracts-graphic'
+    return (
+      categoryObj.group === 'abstracts' ||
+      categoryObj.group === 'abstracts-graphic'
+    )
   }
 
   private createAddTranslationButton() {
     const btnContainer = document.createElement('div')
     btnContainer.classList.add('add-translation-container')
-  
+
     btnContainer.addEventListener('mousedown', (event) => {
       event.preventDefault()
       event.stopPropagation()
       this.addTranslation()
-
     })
 
-    const addTranslationBtn = Object.assign(
-      document.createElement('button'),
-      {
-        className: 'add-button',
-        innerHTML: addBtnIcon,
-        title: 'Add Translation',
-        type: 'button', // Explicitly set button type
-      }
-    )
+    const addTranslationBtn = Object.assign(document.createElement('button'), {
+      className: 'add-button',
+      innerHTML: addBtnIcon,
+      title: 'Add Translation',
+      type: 'button', // Explicitly set button type
+    })
 
     // Create text element
     const textElement = document.createElement('span')
@@ -129,7 +135,9 @@ export class SectionView extends BlockView<SectionNode> {
 
   private cleanupAddTranslationButton() {
     if (this.addTranslationButton) {
-      const container = this.addTranslationButton.closest('.add-translation-container')
+      const container = this.addTranslationButton.closest(
+        '.add-translation-container'
+      )
       if (container) {
         container.remove()
       }
@@ -164,7 +172,7 @@ export class SectionView extends BlockView<SectionNode> {
       this.view.state.doc.resolve(this.getPos()),
       schema.nodes.abstracts
     )
-    
+
     if (abstracts) {
       const tr = state.tr.insert(
         abstracts.pos + abstracts.node.nodeSize - 1,

@@ -38,7 +38,6 @@ export class AbstractsView extends BaseNodeView<ManuscriptNode> {
     this.dom.appendChild(this.contentDOM)
   }
 
-
   public updateContents() {
     super.updateContents()
   }
