@@ -25,13 +25,17 @@ import { Decoration } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
 import { allowedHref } from '../../lib/url'
+import { isChildOfNodeTypes } from '../../lib/utils'
+import { FootnotesElementState } from '../footnotes'
 import { createDecoration, Inconsistency } from './detect-inconsistency-utils'
 
 export type ValidatorContext = {
   pluginStates: {
+    affiliations: Map<string, number> | undefined
     bibliography: Map<string, BibliographyItemAttrs> | undefined
     objects: Map<string, Target> | undefined
     footnotes: Map<string, string> | undefined
+    footnotesElements: Map<string, FootnotesElementState> | undefined
   }
   showDecorations: boolean
   selectedPos: number | null
@@ -53,9 +57,10 @@ const createWarning = (
   node: ManuscriptNode,
   pos: number,
   category: Inconsistency['category'],
-  severity: Inconsistency['severity']
+  severity: Inconsistency['severity'],
+  customNodeDescription?: string
 ): Inconsistency => {
-  const nodeDescription = getNodeDescription(node)
+  const nodeDescription = customNodeDescription || getNodeDescription(node)
   const message = (() => {
     switch (node.type) {
       case schema.nodes.figure_element:
@@ -65,10 +70,14 @@ const createWarning = (
         return 'Has no link or uploaded file'
       case schema.nodes.link:
         return 'Url is empty'
+      case schema.nodes.footnote:
+        return 'Is not used'
+      case schema.nodes.affiliation:
+        return 'Is not corresponding to any Author'
       default:
         return category === 'empty-content'
-          ? `Is empty`
-          : `Has no linked reference`
+          ? 'Is empty'
+          : 'Has no linked reference'
     }
   })()
 
@@ -154,7 +163,6 @@ const validateCitation: NodeValidator = (node, pos, context) => {
 
 const validateInlineFootnote: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
-
   if (context.pluginStates.footnotes) {
     const isInFootnote = node.attrs.rids.every((rid: string) =>
       context.pluginStates.footnotes?.get(rid)
@@ -215,6 +223,57 @@ const validateLink: NodeValidator = (node, pos) => {
   return inconsistencies
 }
 
+const validateFootnote: NodeValidator = (node, pos, context) => {
+  const inconsistencies: Inconsistency[] = []
+  const id = context.pluginStates.footnotes?.get(node.attrs.id)
+  const footnoteState = id
+    ? context.pluginStates.footnotesElements?.get(id)
+    : undefined
+
+  const unused = footnoteState?.unusedFootnoteIDs?.has(node.attrs.id)
+
+  if (unused) {
+    const isTableFootnote = isChildOfNodeTypes(context.props.doc, pos, [
+      schema.nodes.table_element,
+    ])
+
+    const inconsistency = createWarning(
+      node,
+      pos,
+      'not-used',
+      'warning',
+      isTableFootnote ? 'table_footnote' : undefined
+    )
+    inconsistencies.push(inconsistency)
+  }
+
+  return inconsistencies
+}
+
+const validateAffiliation: NodeValidator = (node, pos, context) => {
+  const inconsistencies: Inconsistency[] = []
+  const unused = !context.pluginStates.affiliations?.get(node.attrs.id)
+
+  if (unused) {
+    // Use the start position of the parent 'affiliations' node instead of the individual
+    // 'affiliation' node position because the DOM for individual affiliation nodes is
+    // rendered manually inside AffiliationsView. ProseMirror decorations only apply to
+    // nodes that it directly renders in the document DOM, so to ensure the warning
+    // decoration appears (or can be scrolled to), we must attach it to the parent node.
+    const $pos = context.props.doc.resolve(pos)
+    const affiliationsNodePos = $pos.before($pos.depth)
+    const inconsistency = createWarning(
+      node,
+      affiliationsNodePos,
+      'not-used',
+      'warning'
+    )
+    inconsistencies.push(inconsistency)
+  }
+
+  return inconsistencies
+}
+
 export const validators: Record<string, NodeValidator> = {
   [schema.nodes.title.name]: validateTitle,
   [schema.nodes.cross_reference.name]: validateCrossReference,
@@ -223,4 +282,6 @@ export const validators: Record<string, NodeValidator> = {
   [schema.nodes.figure.name]: validateFigure,
   [schema.nodes.embed.name]: validateMedia,
   [schema.nodes.link.name]: validateLink,
+  [schema.nodes.footnote.name]: validateFootnote,
+  [schema.nodes.affiliation.name]: validateAffiliation,
 }
