@@ -26,13 +26,16 @@ import { affiliationsKey } from './affiliations'
 export default () => {
   return new Plugin<null>({
     appendTransaction(transactions, oldState, newState) {
+      if (!transactions.some((tr) => tr.docChanged)) {
+        return null
+      }
+
       const affs = affiliationsKey.getState(newState)
 
       if (!affs) {
         return null
       }
 
-      // Don't remove if contributors or affiliations node is selected
       const { selection } = newState
       if (
         selection instanceof NodeSelection &&
@@ -46,7 +49,7 @@ export default () => {
       const tr = newState.tr
       let found = false
 
-      newState.doc.descendants((node, pos) => {
+      newState.doc.forEach((node, pos) => {
         // Remove empty contributors nodes
         if (
           node.type === schema.nodes.contributors &&
