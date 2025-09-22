@@ -37,7 +37,7 @@ export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
 )
 
-type Selection = {
+type EffectiveSelection = {
   node: ManuscriptNode
   from: number
   to: number
@@ -116,6 +116,7 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
   let current
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
+    // @TODO - abstract reference processing to tc-plugin
     if (
       node.attrs.dataTracked &&
       !node.attrs.dataTracked?.find(
@@ -133,7 +134,9 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
     return current
   }
   const parent = $pos.parent
-  const child = parent.childBefore($pos.parentOffset)
+  // if selection is longer than a text node by a single char, still select the previous node
+  // @TODO - define how selection should behave when multiple text nodes are selected at once - which tracked-changes should be highlighted? (maybe multiple highlights)
+  const child = parent.childBefore(Math.max($pos.parentOffset - 1, 0))
   const node = child.node
   if (node) {
     const from = $pos.start() + child.offset
@@ -146,7 +149,10 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
   }
 }
 
-const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
+const buildNodeDecoration = (
+  doc: ManuscriptNode,
+  selection: EffectiveSelection
+) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
   if (!suggestion?.status || suggestion.status === CHANGE_STATUS.rejected) {
@@ -167,7 +173,10 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   }
 }
 
-const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
+const buildTextDecoration = (
+  doc: ManuscriptNode,
+  selection: EffectiveSelection
+) => {
   const node = selection.node
   let suggestion = getTrackedMark(node)?.attrs.dataTracked as TrackedAttrs
 
