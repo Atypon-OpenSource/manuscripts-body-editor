@@ -255,6 +255,22 @@ export const getInsertPos = (
   return insertPos
 }
 
+// this will look just at parent node children
+export const findInsertionPosition = (
+  type: ManuscriptNodeType,
+  doc: ManuscriptNode
+) => {
+  let insertPos = 0
+
+  doc.forEach((child, offset, index) => {
+    if (doc.canReplaceWith(index, index, type)) {
+      insertPos = offset
+    }
+  })
+
+  return insertPos
+}
+
 export const filterBlockNodes = (
   fragment: Fragment,
   predicate: (node: ProseMirrorNode) => boolean
