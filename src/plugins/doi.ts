@@ -22,15 +22,19 @@ export default () => {
   return new Plugin({
     state: {
       init(_, { doc }) {
-        if (doc.attrs.doi) {
-          const decorations = createDecoration(doc)
+        const doi = getDOIFromDocument(doc)
+        if (doi) {
+          const decorations = createDecoration(doc, doi)
           return DecorationSet.create(doc, decorations)
         }
       },
       apply(tr, oldDecorationSet, oldState, newState) {
-        if (tr.docChanged && newState.doc.attrs.doi) {
-          const decorations = createDecoration(newState.doc)
-          return DecorationSet.create(newState.doc, decorations)
+        if (tr.docChanged) {
+          const doi = getDOIFromDocument(newState.doc)
+          if (doi) {
+            const decorations = createDecoration(newState.doc, doi)
+            return DecorationSet.create(newState.doc, decorations)
+          }
         }
         return oldDecorationSet
       },
@@ -55,11 +59,28 @@ function getPosition(doc: Node) {
   return position
 }
 
-function createDecoration(doc: Node) {
+function getDOIFromDocument(doc: Node): string | null {
+  // First check if the current document has a DOI
+  if (doc.attrs.doi) {
+    return doc.attrs.doi
+  }
+
+  // If viewing a snapshot without DOI, try to get DOI from the original document
+  // This handles the case where snapshots were created before DOI was set
+  // We'll check if there's a stored original document with DOI
+  const originalDoc = (window as any).__originalManuscriptDoc
+  if (originalDoc && originalDoc.attrs && originalDoc.attrs.doi) {
+    return originalDoc.attrs.doi
+  }
+
+  return null
+}
+
+function createDecoration(doc: Node, doi: string) {
   const decoration = Decoration.widget(getPosition(doc), () => {
     const doiContainer = document.createElement('div')
     doiContainer.classList.add('doi-container', 'block')
-    doiContainer.innerHTML = `<p>DOI: https://doi.org/${doc.attrs.doi}</p>`
+    doiContainer.innerHTML = `<p>DOI test2: https://doi.org/${doi}</p>`
     return doiContainer
   })
   return [decoration]
