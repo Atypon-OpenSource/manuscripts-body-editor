@@ -27,17 +27,14 @@ export default () => {
           const decorations = createDecoration(doc)
           return DecorationSet.create(doc, decorations)
         }
-        return DecorationSet.empty
       },
       apply(tr, oldDecorationSet, oldState, newState) {
-        if (tr.docChanged) {
-          console.log('DOI from newState.doc.attrs:', newState.doc.attrs.doi)
-          console.log('DOI from oldState.doc.attrs:', oldState.doc.attrs.doi)
+        console.log('DOI from newState.doc.attrs:', newState.doc.attrs.doi)
+        console.log('DOI from oldState.doc.attrs:', oldState.doc.attrs.doi)
 
-          if (newState.doc.attrs.doi) {
-            const decorations = createDecoration(newState.doc)
-            return DecorationSet.create(newState.doc, decorations)
-          }
+        if (tr.docChanged && newState.doc.attrs.doi) {
+          const decorations = createDecoration(newState.doc)
+          return DecorationSet.create(newState.doc, decorations)
         }
         return oldDecorationSet
       },
