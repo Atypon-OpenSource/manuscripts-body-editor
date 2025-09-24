@@ -42,7 +42,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
 
   public updateContents() {
     super.updateContents()
-    this.updateLanguageAttributes()
+    this.updateAttributes()
     this.handleLanguageSelector()
   }
 
@@ -51,9 +51,12 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
     super.destroy()
   }
 
-  private updateLanguageAttributes() {
+  private updateAttributes() {
     if (this.contentDOM && this.node.attrs.lang) {
       this.contentDOM.lang = this.node.attrs.lang
+    }
+    if (this.dom && this.node.attrs.category) {
+      this.dom.setAttribute('data-category', this.node.attrs.category)
     }
   }
 
