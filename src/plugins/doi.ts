@@ -68,7 +68,9 @@ function getDOIFromDocument(doc: Node): string | null {
   // If viewing a snapshot without DOI, try to get DOI from the original document
   // This handles the case where snapshots were created before DOI was set
   // We'll check if there's a stored original document with DOI
-  const originalDoc = (window as any).__originalManuscriptDoc
+  const originalDoc = (
+    window as { __originalManuscriptDoc?: { attrs?: { doi?: string } } }
+  ).__originalManuscriptDoc
   if (originalDoc && originalDoc.attrs && originalDoc.attrs.doi) {
     return originalDoc.attrs.doi
   }
