@@ -2013,3 +2013,10 @@ th:hover > .table-context-menu-button,
 .ProseMirror a.link:empty::before {
   content: '\00a0';
 }
+
+/* Hide consecutive separators and separators at the beginning/end of menus */
+.menu-separator + .menu-separator,
+.menu-separator:first-child,
+.menu-separator:last-child {
+  display: none !important;
+}
