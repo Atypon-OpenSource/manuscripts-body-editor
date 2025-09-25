@@ -1064,11 +1064,17 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block,
-.block:has(
+.block:not(.supplements-content):has(
     figure.selected-suggestion,
     [data-track-op='move'][data-track-status='pending']
   ) {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
+}
+
+.supplements-content.block:has(
+    [data-track-op='move'][data-track-status='pending']
+  ) {
+  border-left: 3px solid var(--updated-border-color) !important;
 }
 
 .tracking-visible
@@ -1690,7 +1696,7 @@ th:hover > .table-context-menu-button,
   left: 93%;
 }
 
-.block-hero_image {
+.block-hero_image, .block-supplements {
   margin-bottom: 30px;
 }
 
@@ -1700,6 +1706,7 @@ th:hover > .table-context-menu-button,
   border-radius: 4px;
   background: #ffffff;
   padding: 0 !important;
+  width: 100%;
 }
 
 .ProseMirror div.backmatter:has(+ .block-container.block-hero_image)::after {

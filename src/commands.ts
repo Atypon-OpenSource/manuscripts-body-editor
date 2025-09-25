@@ -496,8 +496,7 @@ export const insertTable = (
 
 export const insertSupplement = (
   file: FileAttachment,
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch
+  view: ManuscriptEditorView
 ) => {
   const supplement = schema.nodes.supplement.createAndFill(
     {
@@ -512,12 +511,12 @@ export const insertSupplement = (
     ]
   ) as SupplementNode
 
-  const tr = state.tr
+  const tr = view.state.tr
   upsertSupplementsSection(tr, supplement)
 
-  if (dispatch) {
-    dispatch(tr)
-  }
+  view.focus()
+  view.dispatch(tr.scrollIntoView())
+
   return true
 }
 
