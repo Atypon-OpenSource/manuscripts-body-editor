@@ -1134,3 +1134,162 @@
 .highlight {
   background-color: #ffeebf !important;
 }
+
+.ProseMirror .supplement-item {
+  position: relative;
+  padding: 12px 24px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.ProseMirror .supplement-item:last-child {
+  border-bottom: none;
+}
+
+.ProseMirror .supplement-item figcaption {
+  text-align: left;
+  margin-top: 0;
+}
+
+.ProseMirror .supplement-item .caption-title.empty-node::before {
+  content: 'Insert caption title...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-item .caption-description.empty-node::before {
+  content: 'Insert caption...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-file-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  gap: 4px;
+}
+
+.ProseMirror .supplement-file-icon {
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 16px;
+}
+
+.ProseMirror .supplement-file-name {
+  font-size: 14px;
+}
+
+
+.ProseMirror .supplements-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  position: absolute;
+  top: 16px;
+  right: 65px;
+  z-index: 10;
+}
+
+
+.ProseMirror .supplements-toggle-btn svg {
+  width: 16px;
+  height: 9px;
+}
+
+.ProseMirror .supplements-toggle-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+
+
+.ProseMirror .supplements-content {
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  background: white;
+  padding: 0 !important;
+  width: 100%;
+}
+
+/* Make section title look like a horizontal panel header */
+.ProseMirror .supplements-content .block-section_title {
+  border-top: 1px solid #c9c9c9;
+  border-bottom: 1px solid #c9c9c9;
+  display: block !important;
+}
+
+.ProseMirror .supplements-content .block-section_title .block-gutter {
+  display: none;
+}
+
+.ProseMirror .supplements-content .block-section_title .action-gutter {
+  display: none;
+}
+
+.ProseMirror .supplements-content .block-section_title h1 {
+  background-color: #f2f2f2;
+  padding: 8px 12px !important;
+  font-size: 14px;
+  display: flex;
+  margin-top: -1px;
+  color: #6e6e6e !important;
+}
+
+.ProseMirror .supplements-content .block-section_title h1.empty-node span {
+  color: #6e6e6e !important;
+  font-style: normal;
+}
+
+/* Horizontal line before supplements block */
+.ProseMirror div.backmatter:has(+ .block-container.block-supplements)::after {
+  content: '';
+  display: block;
+  border-bottom: 1px solid #e2e2e2;
+  margin: 0 35pt 32px 35pt;
+}
+
+.ProseMirror .supplement-item.drop-target-above,
+.ProseMirror .supplement-item.drop-target-below {
+  border: 2px dotted #20aedf !important;
+}
+
+.ProseMirror .supplement-item.dragging {
+  background-color: #F2F2F2 !important;
+  opacity: 0.3;
+  z-index: 1000;
+}
+
+.ProseMirror .supplement-item:hover {
+  background-color: #F2F2F2 !important;
+  cursor: move;
+}
+
+.ProseMirror .supplement-item:hover figcaption {
+  background-color: #F2F2F2 !important;
+}
+
+.ProseMirror .supplement-item .drag-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.ProseMirror .supplement-item:hover .drag-icon {
+  opacity: 1;
+}
+
+.ProseMirror .supplement-item .drag-icon:active {
+  cursor: grabbing;
+}

@@ -19,6 +19,7 @@ import {
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
+  SupplementNode,
   SupplementsNode,
 } from '@manuscripts/transform'
 import { findChildren, findChildrenByType } from 'prosemirror-utils'
@@ -41,14 +42,26 @@ export const insertAwardsNode = (tr: ManuscriptTransaction) => {
   }
 }
 
-export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
+export const upsertSupplementsSection = (
+  tr: ManuscriptTransaction,
+  supplement: SupplementNode
+) => {
   const doc = tr.doc
   const supplements = findChildrenByType(doc, schema.nodes.supplements)[0]
   if (supplements) {
-    return supplements
+    // Section exists -> insert inside it
+    const pos = supplements.pos + supplements.node.nodeSize - 1
+    tr.insert(pos, supplement)
+    return { node: supplements.node, pos }
   }
+
+  // Section missing -> create new with supplement inside
   const pos = findInsertionPosition(schema.nodes.supplements, doc)
-  const node = schema.nodes.supplements.createAndFill() as SupplementsNode
+  const node = schema.nodes.supplements.createAndFill(
+    { id: generateNodeID(schema.nodes.supplements) },
+    [supplement]
+  ) as SupplementsNode
+
   tr.insert(pos, node)
   return {
     node,
