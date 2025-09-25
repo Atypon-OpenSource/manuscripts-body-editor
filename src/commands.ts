@@ -113,6 +113,7 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
+  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1112,60 +1113,34 @@ export const insertGraphicalAbstract =
     return true
   }
 
-export const canInsertNode = (
-  state: ManuscriptEditorState,
-  nodeType: ManuscriptNodeType
-) => {
-  const nodes = findChildrenByType(state.doc, nodeType, true)
-
-  const node = nodes[0]?.node
-  if (!node) {
-    return true
-  }
-  return node?.childCount === 0
-}
-
 export const insertContributors = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  if (!canInsertNode(state, schema.nodes.contributors)) {
+  const tr = state.tr
+
+  let contributors = findChildrenByType(state.doc, schema.nodes.contributors)[0]
+
+  if (contributors?.node.childCount) {
     return false
   }
-
-  const existingContributors = findChildrenByType(
-    state.doc,
-    schema.nodes.contributors,
-    true
-  )
-  if (!existingContributors.length) {
-    const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
-    const contributors = state.schema.nodes.contributors.create({
+  if (!contributors) {
+    const title = getLastTitleNode(state)
+    const pos = title.pos + title.node.nodeSize
+    const contributorsNode = state.schema.nodes.contributors.create({
       id: '',
     })
+    tr.insert(pos, contributorsNode)
+    contributors = { node: contributorsNode, pos }
+  }
 
-    const tr = state.tr.insert(pos, contributors)
-
-    if (dispatch) {
-      const selection = NodeSelection.create(tr.doc, pos)
-      if (view) {
-        view.focus()
-      }
-      dispatch(tr.setSelection(selection).scrollIntoView())
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, contributors.pos)
+    if (view) {
+      view.focus()
     }
-  } else {
-    // Contributors node already exists, select it to open the modal
-    const contributorsNode = existingContributors[0]
-    const pos = contributorsNode.pos
-
-    if (dispatch) {
-      const selection = NodeSelection.create(state.doc, pos)
-      if (view) {
-        view.focus()
-      }
-      dispatch(state.tr.setSelection(selection).scrollIntoView())
-    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
 }
@@ -1175,43 +1150,30 @@ export const insertAffiliation = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  if (!canInsertNode(state, schema.nodes.affiliations)) {
+  const tr = state.tr
+
+  let affiliations = findChildrenByType(state.doc, schema.nodes.affiliations)[0]
+
+  if (affiliations?.node.childCount) {
     return false
   }
-
-  const existingAffiliations = findChildrenByType(
-    state.doc,
-    schema.nodes.affiliations,
-    true
-  )
-  if (!existingAffiliations.length) {
-    const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
-    const affiliations = state.schema.nodes.affiliations.create({
+  if (!affiliations) {
+    const title = getLastTitleNode(state)
+    const pos = title.pos + title.node.nodeSize
+    const affiliationsNode = state.schema.nodes.affiliations.create({
       id: '',
     })
-
-    const tr = state.tr.insert(pos, affiliations)
-    if (dispatch) {
-      const selection = NodeSelection.create(tr.doc, pos)
-      if (view) {
-        view.focus()
-      }
-      dispatch(tr.setSelection(selection).scrollIntoView())
-    }
-  } else {
-    // Affiliations node already exists, select it to open the modal
-    const affiliationsNode = existingAffiliations[0]
-    const pos = affiliationsNode.pos
-
-    if (dispatch) {
-      const selection = NodeSelection.create(state.doc, pos)
-      if (view) {
-        view.focus()
-      }
-      dispatch(state.tr.setSelection(selection).scrollIntoView())
-    }
+    tr.insert(pos, affiliationsNode)
+    affiliations = { node: affiliationsNode, pos }
   }
 
+  if (dispatch) {
+    const selection = NodeSelection.create(tr.doc, affiliations.pos)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+  }
   return true
 }
 
