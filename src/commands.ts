@@ -1100,13 +1100,25 @@ export const insertGraphicalAbstract =
     return true
   }
 
+export const canInsertNode = (
+  state: ManuscriptEditorState,
+  nodeType: ManuscriptNodeType
+) => {
+  const nodes = findChildrenByType(state.doc, nodeType, true)
+
+  const node = nodes[0]?.node
+  if (!node) {
+    return true
+  }
+  return node?.childCount === 0
+}
+
 export const insertContributors = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // Check if another contributors node already exists
-  if (getChildOfType(state.doc, schema.nodes.contributors, true)) {
+  if (!canInsertNode(state, schema.nodes.contributors)) {
     return false
   }
 
@@ -1135,8 +1147,7 @@ export const insertAffiliation = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // Check if another contributors node already exists
-  if (getChildOfType(state.doc, schema.nodes.affiliations, true)) {
+  if (!canInsertNode(state, schema.nodes.affiliations)) {
     return false
   }
   // Find the title node
