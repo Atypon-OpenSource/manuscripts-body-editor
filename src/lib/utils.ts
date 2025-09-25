@@ -109,6 +109,9 @@ export const isChildOfNodeTypes = (
   pos: number,
   parentNodeTypes: NodeType[]
 ) => {
+  if (pos > doc.content.size) {
+    return false
+  }
   const resolvedPos = doc.resolve(pos)
   // Iterate through the parent nodes
   for (let depth = resolvedPos.depth; depth >= 0; depth--) {
@@ -246,6 +249,22 @@ export const getInsertPos = (
   parent.forEach((child, offset, index) => {
     if (parent.canReplaceWith(index, index, type)) {
       insertPos = pos + offset
+    }
+  })
+
+  return insertPos
+}
+
+// this will look just at parent node children
+export const findInsertionPosition = (
+  type: ManuscriptNodeType,
+  doc: ManuscriptNode
+) => {
+  let insertPos = 0
+
+  doc.forEach((child, offset, index) => {
+    if (doc.canReplaceWith(index, index, type)) {
+      insertPos = offset
     }
   })
 

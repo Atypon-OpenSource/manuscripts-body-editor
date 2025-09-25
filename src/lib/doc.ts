@@ -24,28 +24,15 @@ import {
 } from '@manuscripts/transform'
 import { findChildren, findChildrenByType } from 'prosemirror-utils'
 
+import { findInsertionPosition } from './utils'
+
 export const insertAwardsNode = (tr: ManuscriptTransaction) => {
   const doc = tr.doc
   const awards = findChildrenByType(doc, schema.nodes.awards)[0]
   if (awards) {
     return awards
   }
-
-  // Find position to insert the awards node
-  const positions: number[] = []
-  const possibleNodesTypes = [
-    'doi',
-    'keywords',
-    'supplements',
-    'abstracts',
-    'body',
-  ]
-  doc.descendants((node, pos) => {
-    if (possibleNodesTypes.includes(node.type.name)) {
-      positions.push(pos)
-    }
-  })
-  const pos = positions.length === 0 ? 0 : Math.min(...positions)
+  const pos = findInsertionPosition(schema.nodes.awards, doc)
   // const node = schema.nodes.awards.create() as AwardsNode
   const node = schema.nodes.awards.createAndFill() as AwardsNode
   tr.insert(pos, node)
@@ -69,12 +56,12 @@ export const upsertSupplementsSection = (
   }
 
   // Section missing -> create new with supplement inside
-  const backmatter = findBackmatter(doc)
-  const pos = backmatter.pos + backmatter.node.content.size + 1
+  const pos = findInsertionPosition(schema.nodes.supplements, doc)
   const node = schema.nodes.supplements.createAndFill(
     { id: generateNodeID(schema.nodes.supplements) },
     [supplement]
   ) as SupplementsNode
+
   tr.insert(pos, node)
   return {
     node,
@@ -90,8 +77,7 @@ export const insertAttachmentsNode = (tr: ManuscriptTransaction) => {
       pos: attachmentsNodes[0].pos,
     }
   }
-  const comments = findChildrenByType(tr.doc, schema.nodes.comments)[0]
-  const pos = comments.pos + comments.node.content.size
+  const pos = findInsertionPosition(schema.nodes.attachments, tr.doc)
   const node = schema.nodes.attachments.create({
     id: generateNodeID(schema.nodes.attachments),
   })

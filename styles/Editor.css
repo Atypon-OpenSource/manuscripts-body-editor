@@ -1214,6 +1214,7 @@
   border-radius: 4px;
   background: white;
   padding: 0 !important;
+  width: 100%;
 }
 
 /* Make section title look like a horizontal panel header */
@@ -1237,12 +1238,12 @@
   font-size: 14px;
   display: flex;
   margin-top: -1px;
+  color: #6e6e6e !important;
 }
 
 .ProseMirror .supplements-content .block-section_title h1.empty-node span {
   color: #6e6e6e !important;
   font-style: normal;
-  font-weight: bold;
 }
 
 /* Horizontal line before supplements block */
