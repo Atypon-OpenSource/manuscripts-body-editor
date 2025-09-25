@@ -1251,3 +1251,45 @@
   border-bottom: 1px solid #e2e2e2;
   margin: 0 35pt 32px 35pt;
 }
+
+.ProseMirror .supplement-item.drop-target-above,
+.ProseMirror .supplement-item.drop-target-below {
+  border: 2px dotted #20aedf !important;
+}
+
+.ProseMirror .supplement-item.dragging {
+  background-color: #F2F2F2 !important;
+  opacity: 0.3;
+  z-index: 1000;
+}
+
+.ProseMirror .supplement-item:hover {
+  background-color: #F2F2F2 !important;
+  cursor: move;
+}
+
+.ProseMirror .supplement-item:hover figcaption {
+  background-color: #F2F2F2 !important;
+}
+
+.ProseMirror .supplement-item .drag-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.ProseMirror .supplement-item:hover .drag-icon {
+  opacity: 1;
+}
+
+.ProseMirror .supplement-item .drag-icon:active {
+  cursor: grabbing;
+}

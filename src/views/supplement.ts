@@ -18,17 +18,23 @@ import { getFileIcon } from '@manuscripts/style-guide'
 import { SupplementNode } from '@manuscripts/transform'
 import { renderToStaticMarkup } from 'react-dom/server'
 
+import { draggableIcon } from '../icons'
+import { findNodeByID } from '../lib/doc'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
+  private static currentDragSupplementId: string | null = null
+  private dragIcon: HTMLDivElement | undefined
+
   public ignoreMutation = () => true
 
   public initialise() {
     this.createElement()
     this.updateContents()
+    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -37,17 +43,131 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.dom.classList.add('block')
     this.dom.setAttribute('id', this.node.attrs.id)
     this.dom.setAttribute('href', this.node.attrs.href)
+    this.dom.draggable = true
 
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('supplement-caption')
     this.dom.appendChild(this.contentDOM)
 
     this.addFileInfo()
+    this.addDragIcon()
   }
 
   public updateContents() {
     super.updateContents()
     this.refreshFileInfo()
+  }
+
+  private getDropSide(element: Element, clientY: number): 'before' | 'after' {
+    const { top, bottom } = element.getBoundingClientRect()
+    const middleY = (top + bottom) / 2
+    return clientY > middleY ? 'after' : 'before'
+  }
+
+  private noActualMove(
+    currentPos: number,
+    nodeSize: number,
+    targetPos: number
+  ): boolean {
+    // No-move if dropping at the node’s start or end position
+    return targetPos === currentPos || targetPos === currentPos + nodeSize
+  }
+
+  private handleDragStart() {
+    const supplementId = this.node.attrs.id
+    SupplementView.currentDragSupplementId = supplementId
+    this.dom.classList.add('dragging')
+  }
+
+  private setupDragAndDrop() {
+    const clearDropClasses = () => {
+      this.dom.classList.remove('drop-target-above', 'drop-target-below')
+    }
+
+    this.dom.addEventListener('dragstart', () => {
+      if (this.node.attrs.id) {
+        this.handleDragStart()
+      }
+    })
+
+    this.dom.addEventListener('dragend', () => {
+      SupplementView.currentDragSupplementId = null
+      this.dom.classList.remove('dragging')
+      clearDropClasses()
+    })
+
+    this.dom.addEventListener('dragover', (e) => {
+      if (SupplementView.currentDragSupplementId) {
+        e.preventDefault()
+        e.stopPropagation()
+        const side = this.getDropSide(this.dom, e.clientY)
+        clearDropClasses()
+        this.dom.classList.add(
+          side === 'before' ? 'drop-target-above' : 'drop-target-below'
+        )
+      }
+    })
+
+    this.dom.addEventListener('dragleave', (e) => {
+      if (!this.dom.contains(e.relatedTarget as Node)) {
+        clearDropClasses()
+      }
+    })
+
+    this.dom.addEventListener('drop', (e) => {
+      if (!SupplementView.currentDragSupplementId) {
+        return
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+
+      const supplementId = SupplementView.currentDragSupplementId
+      if (!supplementId) {
+        return
+      }
+      const { state } = this.view
+      const supplement = findNodeByID(state.doc, supplementId)
+      if (!supplement) {
+        return
+      }
+
+      const toPos = this.getPos()
+
+      const side = this.getDropSide(this.dom, e.clientY)
+      const targetPos = side === 'before' ? toPos : toPos + this.node.nodeSize
+
+      // Check if this would be a no actual position change
+      if (
+        this.noActualMove(supplement.pos, supplement.node.nodeSize, targetPos)
+      ) {
+        clearDropClasses()
+        return
+      }
+      this.moveSupplement(
+        supplement.pos,
+        supplement.node as SupplementNode,
+        targetPos
+      )
+      clearDropClasses()
+    })
+  }
+
+  private moveSupplement(
+    fromPos: number,
+    fromNode: SupplementNode,
+    targetPos: number
+  ) {
+    const { state } = this.view
+    const { tr } = state
+
+    tr.insert(targetPos, fromNode)
+
+    const mappedFrom = tr.mapping.map(fromPos, -1)
+
+    tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
+
+    this.view.dispatch(tr)
   }
 
   private addFileInfo() {
@@ -91,6 +211,25 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
 
     // Rebuild with the latest attrs
     this.addFileInfo()
+  }
+
+  private addDragIcon() {
+    if (this.dragIcon) {
+      this.dragIcon.remove()
+      this.dragIcon = undefined
+    }
+
+    const dragIcon = document.createElement('div')
+    dragIcon.className = 'drag-icon'
+    dragIcon.innerHTML = draggableIcon
+    dragIcon.draggable = false
+
+    dragIcon.addEventListener('mousedown', (e) => {
+      e.stopPropagation()
+    })
+
+    this.dragIcon = dragIcon
+    this.dom.appendChild(dragIcon)
   }
 }
 
