@@ -1254,13 +1254,6 @@
   margin: 0 35pt 32px 35pt;
 }
 
-/* Space between supplements and hero image block */
-.ProseMirror
-  .block-container.block-supplements
-  + .block-container.block-hero_image {
-  margin-top: 2em;
-}
-
 .ProseMirror .supplement-item.drop-target-above,
 .ProseMirror .supplement-item.drop-target-below {
   border: 2px dotted #20aedf !important;
