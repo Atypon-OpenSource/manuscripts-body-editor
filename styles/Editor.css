@@ -1137,9 +1137,7 @@
 
 .ProseMirror .supplement-item {
   position: relative;
-  padding: 12px 20px;
-  margin-left: 4px;
-  margin-right: 4px;
+  padding: 12px 24px;
   border-bottom: 1px solid #e2e2e2;
 }
 

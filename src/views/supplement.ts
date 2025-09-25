@@ -27,7 +27,6 @@ import { createNodeView } from './creators'
 export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
   private static currentDragSupplementId: string | null = null
-  private dragAndDropInitialized = false
   private dragIcon: HTMLDivElement | undefined
 
   public ignoreMutation = () => true
@@ -35,6 +34,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public initialise() {
     this.createElement()
     this.updateContents()
+    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -56,11 +56,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public updateContents() {
     super.updateContents()
     this.refreshFileInfo()
-
-    if (!this.dragAndDropInitialized) {
-      this.setupDragAndDrop()
-      this.dragAndDropInitialized = true
-    }
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {

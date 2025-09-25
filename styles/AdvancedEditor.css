@@ -1088,10 +1088,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible figure.block:has(.equation.set_attrs.selected-suggestion),
 .tracking-visible
   .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
-  .block,
-  .tracking-visible .block:has(
-    .supplement-item.selected-suggestion:is([data-track-op='move'])
-  )  {
+  .block {
   box-shadow: inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
