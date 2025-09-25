@@ -61,6 +61,7 @@ export const upsertSupplementsSection = (
     { id: generateNodeID(schema.nodes.supplements) },
     [supplement]
   ) as SupplementsNode
+
   tr.insert(pos, node)
   return {
     node,
