@@ -109,10 +109,10 @@ import {
 import { templateAllows } from './lib/template'
 import { isDeleted } from './lib/track-changes-utils'
 import {
+  findInsertionPosition,
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
-  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -176,9 +176,21 @@ export const markActive =
   (state: ManuscriptEditorState): boolean => {
     const { from, $from, to, empty } = state.selection
 
+    let hasMark = false
+
+    state.doc.nodesBetween(from, to, (node) => {
+      if (node.isText) {
+        node.marks.forEach((m) => {
+          if (m.type === type && !isDeleted(m)) {
+            hasMark = true
+          }
+        })
+      }
+    })
+
     return empty
       ? Boolean(type.isInSet(state.storedMarks || $from.marks()))
-      : state.doc.rangeHasMark(from, to, type)
+      : state.doc.rangeHasMark(from, to, type) && hasMark
   }
 
 export const isNodeSelection = (
@@ -1122,23 +1134,39 @@ export const insertContributors = (
     return false
   }
 
-  // Find the title node
-  const title = getLastTitleNode(state)
-  const pos = title.pos + title.node.nodeSize
-  const contributors = state.schema.nodes.contributors.create({
-    id: '',
-  })
+  const existingContributors = findChildrenByType(
+    state.doc,
+    schema.nodes.contributors,
+    true
+  )
+  if (!existingContributors.length) {
+    const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
+    const contributors = state.schema.nodes.contributors.create({
+      id: '',
+    })
 
-  const tr = state.tr.insert(pos, contributors)
+    const tr = state.tr.insert(pos, contributors)
 
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    if (view) {
-      view.focus()
+    if (dispatch) {
+      const selection = NodeSelection.create(tr.doc, pos)
+      if (view) {
+        view.focus()
+      }
+      dispatch(tr.setSelection(selection).scrollIntoView())
     }
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
+  } else {
+    // Contributors node already exists, select it to open the modal
+    const contributorsNode = existingContributors[0]
+    const pos = contributorsNode.pos
 
+    if (dispatch) {
+      const selection = NodeSelection.create(state.doc, pos)
+      if (view) {
+        view.focus()
+      }
+      dispatch(state.tr.setSelection(selection).scrollIntoView())
+    }
+  }
   return true
 }
 
@@ -1150,32 +1178,38 @@ export const insertAffiliation = (
   if (!canInsertNode(state, schema.nodes.affiliations)) {
     return false
   }
-  // Find the title node
-  const title = getLastTitleNode(state)
-  let pos = title.pos + title.node.nodeSize
 
-  // Find the contributors node
-  const contributors = findChildrenByType(
+  const existingAffiliations = findChildrenByType(
     state.doc,
-    state.schema.nodes.contributors
-  )[0]
+    schema.nodes.affiliations,
+    true
+  )
+  if (!existingAffiliations.length) {
+    const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
+    const affiliations = state.schema.nodes.affiliations.create({
+      id: '',
+    })
 
-  // update the pos if the contributors node exists
-  if (contributors) {
-    pos = contributors.pos + contributors.node.nodeSize
-  }
-
-  const affiliations = state.schema.nodes.affiliations.create({
-    id: '',
-  })
-
-  const tr = state.tr.insert(pos, affiliations)
-  if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
-    if (view) {
-      view.focus()
+    const tr = state.tr.insert(pos, affiliations)
+    if (dispatch) {
+      const selection = NodeSelection.create(tr.doc, pos)
+      if (view) {
+        view.focus()
+      }
+      dispatch(tr.setSelection(selection).scrollIntoView())
     }
-    dispatch(tr.setSelection(selection).scrollIntoView())
+  } else {
+    // Affiliations node already exists, select it to open the modal
+    const affiliationsNode = existingAffiliations[0]
+    const pos = affiliationsNode.pos
+
+    if (dispatch) {
+      const selection = NodeSelection.create(state.doc, pos)
+      if (view) {
+        view.focus()
+      }
+      dispatch(state.tr.setSelection(selection).scrollIntoView())
+    }
   }
 
   return true
@@ -1208,12 +1242,7 @@ export const insertKeywords = (
   if (getChildOfType(state.doc, schema.nodes.keywords, true)) {
     return false
   }
-  // determine the position to insert the keywords node
-  const abstracts = findChildrenByType(
-    state.doc,
-    state.schema.nodes.abstracts
-  )[0]
-  const pos = abstracts.pos
+  const pos = findInsertionPosition(schema.nodes.keywords, state.doc)
   const keywords = schema.nodes.keywords.createAndFill({}, [
     schema.nodes.section_title.create({}, schema.text('Keywords')),
     schema.nodes.keywords_element.create({}, [
@@ -1959,8 +1988,7 @@ const createHeroImage = (attrs?: Attrs) =>
 export const insertHeroImage =
   () =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
-    const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
-    const position = comments.pos
+    const position = findInsertionPosition(schema.nodes.hero_image, state.doc)
     view?.focus()
     createBlock(schema.nodes.hero_image, position, state, dispatch)
 
