@@ -41,6 +41,7 @@ import {
   blockActive,
   canInsert,
   Dispatch,
+  hasPendingComments,
   insertBlock,
   insertInlineCitation,
   insertList,
@@ -171,7 +172,9 @@ export const toolbar: ToolbarConfig = {
     comment: {
       title: 'Insert comment',
       content: <AddCommentIcon />,
-      isEnabled: isEnabled(canInsert(schema.nodes.highlight_marker)), // TODO: check both ends of selection
+      isEnabled: (state) =>
+        isEnabled(canInsert(schema.nodes.highlight_marker))(state) &&
+        !hasPendingComments(state),
       run: addInlineComment,
     },
   },

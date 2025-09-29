@@ -23,6 +23,7 @@ import {
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
+import { hasPendingComments } from '../commands'
 import {
   CitationEditor,
   CitationEditorProps,
@@ -103,11 +104,13 @@ export class CitationEditableView extends CitationView {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
+    const hasPending = hasPendingComments(this.view.state)
     const actions = [
       {
         label: 'Comment',
         action: () => handleComment(this.node, this.view),
         icon: 'AddComment',
+        disabled: hasPending,
       },
     ]
 
@@ -116,6 +119,7 @@ export class CitationEditableView extends CitationView {
         label: 'Edit',
         action: () => this.handleEdit(),
         icon: 'Edit',
+        disabled: false,
       })
     }
     const componentProps: ContextMenuProps = {

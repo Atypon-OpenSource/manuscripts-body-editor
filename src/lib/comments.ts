@@ -21,7 +21,7 @@ import {
 import { NodeWithPos } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
-import { addNodeComment } from '../commands'
+import { addNodeComment, hasPendingComments } from '../commands'
 
 export type CommentAttrs = CommentNode['attrs']
 export type HighlightMarkerAttrs = HighlightMarkerNode['attrs']
@@ -118,6 +118,11 @@ const getMarkerID = (id: string) => {
 
 export const handleComment = (node: ManuscriptNode, view: EditorView): void => {
   const { state } = view
+
+  // Check if there are pending comments before adding a new one
+  if (hasPendingComments(state)) {
+    return
+  }
 
   addNodeComment(node, state, view.dispatch)
 }

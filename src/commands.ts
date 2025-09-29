@@ -1742,6 +1742,14 @@ export const addNodeComment = (
   return false
 }
 
+export const hasPendingComments = (state: ManuscriptEditorState) => {
+  const comments = findChildrenByType(state.doc, schema.nodes.comment)
+  return comments.some((comment) => {
+    const attrs = comment.node.attrs as CommentAttrs
+    return attrs.contents === ''
+  })
+}
+
 export const addInlineComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch

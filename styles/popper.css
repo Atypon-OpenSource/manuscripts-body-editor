@@ -177,6 +177,9 @@
   top: -12px;
   right: unset;
 }
+.tools-panel.context-menu button:disabled {
+  border: 0 !important;
+}
 .popper .footnote-context-menu {
   top: 0;
 }
