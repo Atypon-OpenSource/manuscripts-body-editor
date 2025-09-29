@@ -20,11 +20,16 @@ import {
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
-import { Attrs, Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
+import {
+  Attrs,
+  Fragment,
+  Mark,
+  Node as ProsemirrorNode,
+} from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-export function isDeleted(node: ProsemirrorNode) {
+export function isDeleted(node: ProsemirrorNode | Mark) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(({ operation }) => operation === 'delete')
@@ -88,7 +93,7 @@ export function getChangeClasses(dataTracked?: TrackedAttrs[]) {
   return classes
 }
 
-export function isTracked(node: ProsemirrorNode) {
+export function isTracked(node: ProsemirrorNode | Mark) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(
