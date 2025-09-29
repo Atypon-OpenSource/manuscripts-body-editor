@@ -113,6 +113,7 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
+  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1117,26 +1118,30 @@ export const insertContributors = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // Check if another contributors node already exists
-  if (getChildOfType(state.doc, schema.nodes.contributors, true)) {
+  const tr = state.tr
+
+  let contributors = findChildrenByType(state.doc, schema.nodes.contributors)[0]
+
+  if (contributors?.node.childCount) {
     return false
   }
-
-  const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
-  const contributors = state.schema.nodes.contributors.create({
-    id: '',
-  })
-
-  const tr = state.tr.insert(pos, contributors)
+  if (!contributors) {
+    const title = getLastTitleNode(state)
+    const pos = title.pos + title.node.nodeSize
+    const contributorsNode = state.schema.nodes.contributors.create({
+      id: '',
+    })
+    tr.insert(pos, contributorsNode)
+    contributors = { node: contributorsNode, pos }
+  }
 
   if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
+    const selection = NodeSelection.create(tr.doc, contributors.pos)
     if (view) {
       view.focus()
     }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
-
   return true
 }
 
@@ -1145,25 +1150,30 @@ export const insertAffiliation = (
   dispatch?: Dispatch,
   view?: EditorView
 ) => {
-  // Check if another contributors node already exists
-  if (getChildOfType(state.doc, schema.nodes.affiliations, true)) {
+  const tr = state.tr
+
+  let affiliations = findChildrenByType(state.doc, schema.nodes.affiliations)[0]
+
+  if (affiliations?.node.childCount) {
     return false
   }
-  const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
+  if (!affiliations) {
+    const title = getLastTitleNode(state)
+    const pos = title.pos + title.node.nodeSize
+    const affiliationsNode = state.schema.nodes.affiliations.create({
+      id: '',
+    })
+    tr.insert(pos, affiliationsNode)
+    affiliations = { node: affiliationsNode, pos }
+  }
 
-  const affiliations = state.schema.nodes.affiliations.create({
-    id: '',
-  })
-
-  const tr = state.tr.insert(pos, affiliations)
   if (dispatch) {
-    const selection = NodeSelection.create(tr.doc, pos)
+    const selection = NodeSelection.create(tr.doc, affiliations.pos)
     if (view) {
       view.focus()
     }
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
-
   return true
 }
 
