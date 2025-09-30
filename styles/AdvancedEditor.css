@@ -1753,7 +1753,8 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-image_element .block:focus-visible,
 .ProseMirror .block-figure_element .block:focus-visible,
-.ProseMirror .block-embed .block:focus-visible {
+.ProseMirror .block-embed .block:focus-visible,
+.ProseMirror .supplement-caption:focus-visible {
   outline: none;
 }
 

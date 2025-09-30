@@ -47,6 +47,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
 
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('supplement-caption')
+    this.contentDOM.contentEditable = 'true'
     this.dom.appendChild(this.contentDOM)
 
     this.addFileInfo()
