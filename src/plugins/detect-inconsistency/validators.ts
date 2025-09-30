@@ -97,7 +97,7 @@ const validateTitle: NodeValidator = (node, pos, context) => {
   const isEmpty = node.content.size === 0
 
   if (isEmpty) {
-    const inconsistency = createWarning(node, pos, 'empty-content', 'warning')
+    const inconsistency = createWarning(node, pos, 'empty-content', 'error')
     inconsistencies.push(inconsistency)
 
     if (context.showDecorations) {
@@ -117,12 +117,7 @@ const validateCrossReference: NodeValidator = (node, pos, context) => {
   )
 
   if (!isInFigures) {
-    const inconsistency = createWarning(
-      node,
-      pos,
-      'missing-reference',
-      'warning'
-    )
+    const inconsistency = createWarning(node, pos, 'missing-reference', 'error')
     inconsistencies.push(inconsistency)
 
     if (context.showDecorations) {
@@ -146,7 +141,7 @@ const validateCitation: NodeValidator = (node, pos, context) => {
         node,
         pos,
         'missing-reference',
-        'warning'
+        'error'
       )
       inconsistencies.push(inconsistency)
 
@@ -173,7 +168,7 @@ const validateInlineFootnote: NodeValidator = (node, pos, context) => {
         node,
         pos,
         'missing-reference',
-        'warning'
+        'error'
       )
       inconsistencies.push(inconsistency)
 
