@@ -272,7 +272,7 @@ export const findInsertionPosition = (
     insertPos === 0 &&
     doc.canReplaceWith(doc.childCount, doc.childCount, type)
   ) {
-    insertPos = doc.nodeSize - 2
+    insertPos = doc.content.size
   }
   return insertPos
 }
