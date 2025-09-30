@@ -22,6 +22,7 @@ import {
   AffiliationsModal,
   AffiliationsModalProps,
 } from '../components/affiliations/AffiliationsModal'
+import { alertIcon } from '../icons'
 import {
   AffiliationAttrs,
   affiliationName,
@@ -67,6 +68,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   public updateContents() {
     super.updateContents()
     const affs = affiliationsKey.getState(this.view.state)
+
     if (!affs) {
       return
     }
@@ -101,12 +103,14 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     element.id = attrs.id
     addTrackChangesAttributes(attrs, element)
 
+    const marker = document.createElement('span')
     if (index) {
-      const label = document.createElement('span')
-      label.classList.add('affiliation-label')
-      label.innerHTML = String(index)
-      element.appendChild(label)
+      marker.classList.add('affiliation-label')
+      marker.innerText = String(index)
+    } else {
+      marker.innerHTML = alertIcon
     }
+    element.appendChild(marker)
 
     const name = document.createElement('span')
     name.classList.add('affiliation-name')
