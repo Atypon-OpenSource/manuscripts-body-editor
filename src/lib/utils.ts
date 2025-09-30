@@ -267,7 +267,13 @@ export const findInsertionPosition = (
       insertPos = offset
     }
   })
-
+  // this will test if we can insert target type as last child in parent node
+  if (
+    insertPos === 0 &&
+    doc.canReplaceWith(doc.childCount, doc.childCount, type)
+  ) {
+    insertPos = doc.nodeSize - 2
+  }
   return insertPos
 }
 
