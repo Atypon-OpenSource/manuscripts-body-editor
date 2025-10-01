@@ -32,6 +32,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { Language } from '../components/LanguageDropdown/languages'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
@@ -44,12 +45,6 @@ import views from './editor-views'
 export type CSLProps = {
   style?: string
   locale?: string
-}
-
-export interface Language {
-  code: string
-  name: string
-  nativeName: string
 }
 
 export interface EditorProps {

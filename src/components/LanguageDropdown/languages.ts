@@ -13,6 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+export interface Language {
+  code: string
+  name: string
+  nativeName: string
+}
+
 export const ENGLISH_FALLBACK = {
   code: 'en',
   name: 'English',

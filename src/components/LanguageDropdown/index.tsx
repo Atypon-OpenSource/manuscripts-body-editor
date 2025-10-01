@@ -23,8 +23,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { Language } from '../../configs/ManuscriptsEditor'
-import { getSelectedLanguageName } from './languages'
+import { getSelectedLanguageName, Language } from './languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -65,13 +64,8 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   onCloseParent,
   languages,
 }) => {
-  const [allLanguages, setAllLanguages] = useState<Language[]>([])
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setAllLanguages(languages)
-  }, [languages])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -106,7 +100,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   }
 
   const getDisplayName = (languageCode: string) => {
-    return getSelectedLanguageName(languageCode, allLanguages)
+    return getSelectedLanguageName(languageCode, languages)
   }
 
   return (
@@ -127,7 +121,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       {isOpen && (
         <DropdownMenu direction="right" width={231} height={400} top={18}>
           {!showButton && <DropdownTitle>Choose language</DropdownTitle>}
-          {allLanguages.map((language) => (
+          {languages.map((language) => (
             <LanguageOptionItem
               key={language.code}
               language={language}
