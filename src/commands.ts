@@ -1743,11 +1743,21 @@ export const addNodeComment = (
 }
 
 export const hasPendingComments = (state: ManuscriptEditorState) => {
-  const comments = findChildrenByType(state.doc, schema.nodes.comment)
-  return comments.some((comment) => {
-    const attrs = comment.node.attrs as CommentAttrs
-    return attrs.contents === ''
-  })
+  const commentsContainer = findChildrenByType(
+    state.doc,
+    schema.nodes.comments,
+    false
+  )[0]
+  if (!commentsContainer) {
+    return false
+  }
+  // Find all comment nodes within the comments container and check if any have empty contents
+  return findChildrenByType(commentsContainer.node, schema.nodes.comment).some(
+    (comment) => {
+      const attrs = comment.node.attrs as CommentAttrs
+      return attrs.contents === ''
+    }
+  )
 }
 
 export const addInlineComment = (
@@ -1783,7 +1793,11 @@ export const addInlineComment = (
     },
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
-  const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+  const comments = findChildrenByType(
+    state.doc,
+    schema.nodes.comments,
+    false
+  )[0]
   if (comments) {
     const pos = comments.pos + 1
 

@@ -173,7 +173,7 @@ export const toolbar: ToolbarConfig = {
       title: 'Insert comment',
       content: <AddCommentIcon />,
       isEnabled: (state) =>
-        isEnabled(canInsert(schema.nodes.highlight_marker))(state) &&
+        isEnabled(canInsert(schema.nodes.highlight_marker))(state) && // TODO: check both ends of selection
         !hasPendingComments(state),
       run: addInlineComment,
     },

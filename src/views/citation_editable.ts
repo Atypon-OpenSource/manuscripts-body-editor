@@ -105,26 +105,24 @@ export class CitationEditableView extends CitationView {
 
     const can = this.props.getCapabilities()
     const hasPending = hasPendingComments(this.view.state)
-    const actions = [
-      {
-        label: 'Comment',
-        action: () => handleComment(this.node, this.view),
-        icon: 'AddComment',
-        disabled: hasPending,
-      },
-    ]
+    const componentProps: ContextMenuProps = {
+      actions: [],
+    }
 
     if (can.editArticle) {
-      actions.unshift({
+      componentProps.actions.push({
         label: 'Edit',
         action: () => this.handleEdit(),
         icon: 'Edit',
-        disabled: false,
       })
     }
-    const componentProps: ContextMenuProps = {
-      actions,
-    }
+
+    componentProps.actions.push({
+      label: 'Comment',
+      action: () => handleComment(this.node, this.view),
+      icon: 'AddComment',
+      disabled: hasPending,
+    })
     this.contextMenu = ReactSubView(
       this.props,
       ContextMenu,
