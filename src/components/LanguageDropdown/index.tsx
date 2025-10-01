@@ -23,12 +23,8 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  getSelectedLanguageName,
-  LanguageOption,
-  loadAllLanguages,
-  sortLanguagesByCommonality,
-} from './languages'
+import { Language } from '../../configs/ManuscriptsEditor'
+import { getSelectedLanguageName } from './languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -38,10 +34,11 @@ interface LanguageDropdownProps {
   buttonLabel?: string
   selectedLanguageDisplay?: string
   onCloseParent?: () => void
+  languages: Language[]
 }
 
 const LanguageOptionItem: React.FC<{
-  language: LanguageOption
+  language: Language
   isSelected: boolean
   onSelect: (event: React.MouseEvent, languageCode: string) => void
 }> = ({ language, isSelected, onSelect }) => (
@@ -66,26 +63,15 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   showButton = false,
   selectedLanguageDisplay,
   onCloseParent,
+  languages,
 }) => {
-  const [allLanguages, setAllLanguages] = useState<LanguageOption[]>([])
+  const [allLanguages, setAllLanguages] = useState<Language[]>([])
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Initialize language data and load all languages
   useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const languages = await loadAllLanguages()
-        const sortedLanguages = sortLanguagesByCommonality(languages)
-        setAllLanguages(sortedLanguages)
-      } catch (error) {
-        console.error('Failed to load language data:', error)
-        setAllLanguages([])
-      }
-    }
-
-    loadLanguages()
-  }, [])
+    setAllLanguages(languages)
+  }, [languages])
 
   // Close dropdown when clicking outside
   useEffect(() => {

@@ -45,6 +45,13 @@ export type CSLProps = {
   style?: string
   locale?: string
 }
+
+export interface Language {
+  code: string
+  name: string
+  nativeName: string
+}
+
 export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
@@ -62,6 +69,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
+  languages: Language[]
   sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
