@@ -407,6 +407,9 @@ ProseMirror .block-embed .position-menu {
 .ProseMirror .block-contributors {
   grid-template-columns: 52px auto 65px;
 }
+.ProseMirror .block-contributors.empty-node, .ProseMirror .block-affiliations.empty-node {
+  display: none !important;
+}
 .ProseMirror .block-affiliations {
   grid-template-columns: 52px auto 100px;
 }
@@ -2012,11 +2015,4 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror a.link:empty::before {
   content: '\00a0';
-}
-
-/* Hide consecutive separators and separators at the beginning/end of menus */
-.menu-separator + .menu-separator,
-.menu-separator:first-child,
-.menu-separator:last-child {
-  display: none !important;
 }

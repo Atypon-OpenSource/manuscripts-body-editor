@@ -261,7 +261,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.blockquote_element)),
         run: doCommand(insertBlock(schema.nodes.blockquote_element)),
-        isHidden: !templateAllows(state, schema.nodes.blockquote_element),
+        isHidden: templateAllows(state, schema.nodes.blockquote_element),
       },
       {
         id: 'insert-pullquote',
@@ -270,7 +270,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.pullquote_element)),
         run: doCommand(insertBlock(schema.nodes.pullquote_element)),
-        isHidden: !templateAllows(state, schema.nodes.pullquote_element),
+        isHidden: templateAllows(state, schema.nodes.pullquote_element),
       },
       {
         role: 'separator',
@@ -330,7 +330,7 @@ export const getEditorMenus = (
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.table_element)),
         run: () => openInsertTableDialog(editor.state, editor.dispatch),
-        isHidden: !templateAllows(state, schema.nodes.table_element),
+        isHidden: templateAllows(state, schema.nodes.table_element),
       },
       {
         role: 'separator',
