@@ -43,14 +43,10 @@ export const TEST_DATA: TestData = {
     containerID: 'test-manuscript-1-containerID',
     _id: 'test-manuscript-1-id',
     objectType: 'MPManuscript',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
   },
   MODEL: {
     _id: 'test-model-1-id',
     objectType: 'MPSection',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
     prototype: 'test-model-1-prototype',
   },
   USER: {
