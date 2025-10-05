@@ -33,7 +33,7 @@ type TestData = {
   MODEL: any // eslint-disable-line @typescript-eslint/no-explicit-any
   USER: UserProfile
   DOC: ActualManuscriptNode
-  MODEL_MAP: Map<string, any>
+  MODEL_MAP: Map<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const theme: DefaultTheme = {}
