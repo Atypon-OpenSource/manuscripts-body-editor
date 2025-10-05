@@ -840,7 +840,9 @@ span.comment-marker {
 
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
-  ):not(figure):not(figure .equation):not(.inconsistency-highlight),
+  ):not(figure):not(figure .equation):not(.inconsistency-highlight):not(
+    .supplement-item:is([data-track-op='move'])
+  ),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
   border-style: solid !important;
@@ -1067,11 +1069,17 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block,
-.block:has(
+.block:not(.supplements-content):has(
     figure.selected-suggestion,
     [data-track-op='move'][data-track-status='pending']
   ) {
   box-shadow: inset 3px 0 0 var(--updated-border-color);
+}
+
+.supplements-content.block:has(
+    [data-track-op='move'][data-track-status='pending']
+  ) {
+  border-left: 3px solid var(--updated-border-color) !important;
 }
 
 .tracking-visible
@@ -1693,7 +1701,7 @@ th:hover > .table-context-menu-button,
   left: 93%;
 }
 
-.block-hero_image {
+.block-hero_image, .block-supplements {
   margin-bottom: 30px;
 }
 
@@ -1703,6 +1711,7 @@ th:hover > .table-context-menu-button,
   border-radius: 4px;
   background: #ffffff;
   padding: 0 !important;
+  width: 100%;
 }
 
 .ProseMirror div.backmatter:has(+ .block-container.block-hero_image)::after {
@@ -1744,7 +1753,8 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-image_element .block:focus-visible,
 .ProseMirror .block-figure_element .block:focus-visible,
-.ProseMirror .block-embed .block:focus-visible {
+.ProseMirror .block-embed .block:focus-visible,
+.ProseMirror .supplement-caption:focus-visible {
   outline: none;
 }
 
