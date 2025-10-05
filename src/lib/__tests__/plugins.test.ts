@@ -34,7 +34,7 @@ const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
   objectType: 'MPUserProfile',
   bibliographicName: {
-    _id: 'MPBibliographicName:1'
+    _id: 'MPBibliographicName:1',
   },
   userID: 'User|test@example.com',
 }

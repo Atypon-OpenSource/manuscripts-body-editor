@@ -31,7 +31,7 @@ describe('authorComparator', () => {
         id: 'MPContributor:x',
         priority: 1,
         bibliographicName: {
-          _id: 'MPBibliographicName:x-name'
+          _id: 'MPBibliographicName:x-name',
         },
         role: 'author',
         affiliations: [],
@@ -49,7 +49,7 @@ describe('authorComparator', () => {
         id: 'MPContributor:y',
         priority: 0,
         bibliographicName: {
-          _id: 'MPBibliographicName:y-name'
+          _id: 'MPBibliographicName:y-name',
         },
         role: 'author',
         affiliations: [],
