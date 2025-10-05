@@ -17,7 +17,6 @@
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
-  Model,
   schema,
   SectionCategory,
   UserProfile,
@@ -31,10 +30,10 @@ import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
   MANUSCRIPT: any // eslint-disable-line @typescript-eslint/no-explicit-any
-  MODEL: Model
+  MODEL: any // eslint-disable-line @typescript-eslint/no-explicit-any
   USER: UserProfile
   DOC: ActualManuscriptNode
-  MODEL_MAP: Map<string, Model>
+  MODEL_MAP: Map<string, any>
 }
 
 const theme: DefaultTheme = {}
@@ -57,16 +56,13 @@ export const TEST_DATA: TestData = {
   USER: {
     _id: 'test-user-profile-1-id',
     objectType: 'MPUserProfile',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
     bibliographicName: {
       _id: 'test-user-profile-bibliographicName-1',
-      objectType: 'MPBibliographicName',
     },
     userID: 'test-user-profile-1-user-id',
   },
   DOC: schema.nodeFromJSON(emptyEditorDocJson) as ActualManuscriptNode,
-  MODEL_MAP: new Map<string, Model>(),
+  MODEL_MAP: new Map<string, any>(), // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const defaultEditorProps: EditorProps = {
