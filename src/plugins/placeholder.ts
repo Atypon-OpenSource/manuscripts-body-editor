@@ -114,6 +114,12 @@ export default () =>
                 placeholderText = 'Optional box title...'
               }
 
+              if (
+                findParentNodeOfTypeClosestToPos($pos, schema.nodes.supplements)
+              ) {
+                placeholderText = 'Supplements'
+              }
+
               decorations.push(
                 Decoration.widget(pos + 1, placeholderWidget(placeholderText))
               )
