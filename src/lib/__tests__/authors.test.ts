@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BibliographicName } from '@manuscripts/json-schema'
+import { BibliographicName } from '@manuscripts/transform'
 
 import {
   AffiliationAttrs,
@@ -32,7 +32,6 @@ describe('authorComparator', () => {
         priority: 1,
         bibliographicName: {
           _id: 'MPBibliographicName:x-name',
-          objectType: 'MPBibliographicName',
         },
         role: 'author',
         affiliations: [],
@@ -51,7 +50,6 @@ describe('authorComparator', () => {
         priority: 0,
         bibliographicName: {
           _id: 'MPBibliographicName:y-name',
-          objectType: 'MPBibliographicName',
         },
         role: 'author',
         affiliations: [],
@@ -70,7 +68,6 @@ describe('authorComparator', () => {
         priority: 2,
         bibliographicName: {
           _id: 'MPBibliographicName:z-name',
-          objectType: 'MPBibliographicName',
         },
         role: 'author',
         affiliations: [],
@@ -98,7 +95,6 @@ describe('initials', () => {
   it('initials exist when "given" is present with more than one given name', () => {
     const name: BibliographicName = {
       _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
       given: 'Derek Gilbert',
       family: 'Dilbert',
     }
@@ -108,7 +104,6 @@ describe('initials', () => {
   it('initials empty when no given name is present', () => {
     const name: BibliographicName = {
       _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
       family: 'Dilbert',
     }
     expect(initials(name)).toEqual('')
@@ -117,7 +112,6 @@ describe('initials', () => {
   it('initials empty when given name is empty string', () => {
     const name: BibliographicName = {
       _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
       family: 'Dilbert',
       given: '',
     }
@@ -127,7 +121,6 @@ describe('initials', () => {
   it('ignore extra white space', () => {
     const name: BibliographicName = {
       _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
       given: 'Derek ',
       family: 'Dilbert',
     }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   schema,
   SectionCategory,
+  UserProfile,
 } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
 import { DefaultTheme } from 'styled-components'
@@ -29,11 +29,11 @@ import { PopperManager } from '../lib/popper'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
-  MANUSCRIPT: Manuscript
-  MODEL: Model
+  MANUSCRIPT: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  MODEL: any // eslint-disable-line @typescript-eslint/no-explicit-any
   USER: UserProfile
   DOC: ActualManuscriptNode
-  MODEL_MAP: Map<string, Model>
+  MODEL_MAP: Map<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const theme: DefaultTheme = {}
@@ -43,29 +43,22 @@ export const TEST_DATA: TestData = {
     containerID: 'test-manuscript-1-containerID',
     _id: 'test-manuscript-1-id',
     objectType: 'MPManuscript',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
   },
   MODEL: {
     _id: 'test-model-1-id',
     objectType: 'MPSection',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
     prototype: 'test-model-1-prototype',
   },
   USER: {
     _id: 'test-user-profile-1-id',
     objectType: 'MPUserProfile',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
     bibliographicName: {
       _id: 'test-user-profile-bibliographicName-1',
-      objectType: 'MPBibliographicName',
     },
     userID: 'test-user-profile-1-user-id',
   },
   DOC: schema.nodeFromJSON(emptyEditorDocJson) as ActualManuscriptNode,
-  MODEL_MAP: new Map<string, Model>(),
+  MODEL_MAP: new Map<string, any>(), // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const defaultEditorProps: EditorProps = {

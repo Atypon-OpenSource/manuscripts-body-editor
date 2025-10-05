@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
+
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import {
+  generateNodeID,
+  ManuscriptEditorView,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React, {
   ChangeEvent,
@@ -157,12 +162,15 @@ export const AddKeywordInline: React.FC<{
   }
 
   const handleAddKeyword = () => {
-    const keyword: Build<Keyword> = buildKeyword(newKeyword)
     if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
-      const keywordNode = node.type.schema.nodes.keyword.create(
+      const keyword = {
+        id: generateNodeID(schema.nodes.keyword),
+        name: newKeyword,
+      }
+      const keywordNode = schema.nodes.keyword.create(
         {
-          id: keyword._id,
+          id: keyword.id,
           contents: keyword.name,
           comments: [],
         },

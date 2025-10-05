@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
@@ -1735,7 +1734,11 @@ export const addNodeComment = (
   }
 
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
+  const contribution = {
+    _id: generateNodeID(schema.nodes.contribution),
+    profileID: props.userID,
+    timestamp: Date.now(),
+  }
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
@@ -1778,7 +1781,11 @@ export const addInlineComment = (
   }
 
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
+  const contribution = {
+    _id: `MPContribution:${generateNodeID()}`,
+    profileID: props.userID,
+    timestamp: Date.now(),
+  }
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
