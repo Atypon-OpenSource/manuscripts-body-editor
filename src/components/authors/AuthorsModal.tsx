@@ -33,7 +33,6 @@ import {
 import {
   BibliographicName,
   generateNodeID,
-  objectTypes,
   schema,
 } from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
@@ -299,8 +298,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   )
   const createNewAuthor = () => {
     const name = {
-      _id: generateNodeID(objectTypes.BibliographicName),
-      objectType: objectTypes.BibliographicName,
+      _id: generateNodeID(schema.nodes.contributor),
       given: '',
       family: '',
     }

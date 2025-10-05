@@ -19,6 +19,7 @@ import {
   generateNodeID,
   ManuscriptEditorView,
   ManuscriptNode,
+  schema,
 } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React, {
@@ -164,10 +165,10 @@ export const AddKeywordInline: React.FC<{
     if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
       const keyword = {
-        id: generateNodeID(node.type.schema.nodes.keyword),
+        id: generateNodeID(schema.nodes.keyword),
         name: newKeyword,
       }
-      const keywordNode = node.type.schema.nodes.keyword.create(
+      const keywordNode = schema.nodes.keyword.create(
         {
           id: keyword.id,
           contents: keyword.name,
