@@ -17,7 +17,6 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import { UserProfile } from '@manuscripts/json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
 import {
   ManuscriptNode,
   ManuscriptNodeType,
@@ -32,6 +31,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { Capabilities } from '../lib/capabilities'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
