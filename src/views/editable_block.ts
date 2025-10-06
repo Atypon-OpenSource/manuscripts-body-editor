@@ -46,6 +46,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       if (
         nodeType === schema.nodes.hero_image ||
         nodeType === schema.nodes.subtitles ||
+        nodeType === schema.nodes.supplements ||
         hasParent($pos, [
           schema.nodes.keywords,
           schema.nodes.bibliography_section,

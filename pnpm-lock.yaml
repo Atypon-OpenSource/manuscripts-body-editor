@@ -36,14 +36,14 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.3.3
-        version: 3.3.3(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.3.4
+        version: 3.3.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
         specifier: 2.1.0
         version: 2.1.0
       '@manuscripts/transform':
-        specifier: 4.3.5
-        version: 4.3.5(prosemirror-state@1.4.3)
+        specifier: 4.3.6
+        version: 4.3.6(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1279,15 +1279,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.3.3':
-    resolution: {integrity: sha512-OWjjVWKCwQMgtfuXx3uzVbBqxhhd4mWP5n4cukZjD4+Y9QryGlJ8dsMakCbzGiWJjskj2O925AUSx5zHtc966w==}
+  '@manuscripts/style-guide@3.3.4':
+    resolution: {integrity: sha512-m8z6+UaBEj2uH/K3oFdbx4vayjetg5YQ4uT5gharvDZcmnY5tJzRiYmGMPgyCYZYOdWDn+Ax1wyHXx0Ew+Ijgw==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.1.0':
     resolution: {integrity: sha512-3I1JxQzObT/MvmEM4uqc81iYYJOxFPtGqhoM1jo3eTbTOfwCENPp0Xz0D9EzfBD/p4tqAxd9ubHK7JnZwzoQgA==}
 
-  '@manuscripts/transform@4.3.5':
-    resolution: {integrity: sha512-Dsx2cUvRfjOvYuUOGAR/dTbB6wVkLMMYrzey/lao2XmhzwP4qNkvX9UI2I+8AAFrf8S5qIbvljNAB0rZ1ABf4Q==}
+  '@manuscripts/transform@4.3.6':
+    resolution: {integrity: sha512-9P6k0n838njGY2yfmHMvbMVBmA/Bnso7vFKZjPVde7ezQFiCfgwPJ9xd7kTJsDYiMA620+wichKt4uVPN1xx/Q==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6274,7 +6274,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.3.3(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.3.4(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
@@ -6318,7 +6318,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.5(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.6(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
