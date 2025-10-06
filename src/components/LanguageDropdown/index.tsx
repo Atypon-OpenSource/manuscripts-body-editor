@@ -23,12 +23,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  getSelectedLanguageName,
-  LanguageOption,
-  loadAllLanguages,
-  sortLanguagesByCommonality,
-} from './languages'
+import { getSelectedLanguageName, Language } from './languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -38,10 +33,11 @@ interface LanguageDropdownProps {
   buttonLabel?: string
   selectedLanguageDisplay?: string
   onCloseParent?: () => void
+  languages: Language[]
 }
 
 const LanguageOptionItem: React.FC<{
-  language: LanguageOption
+  language: Language
   isSelected: boolean
   onSelect: (event: React.MouseEvent, languageCode: string) => void
 }> = ({ language, isSelected, onSelect }) => (
@@ -66,26 +62,10 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   showButton = false,
   selectedLanguageDisplay,
   onCloseParent,
+  languages,
 }) => {
-  const [allLanguages, setAllLanguages] = useState<LanguageOption[]>([])
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Initialize language data and load all languages
-  useEffect(() => {
-    const loadLanguages = async () => {
-      try {
-        const languages = await loadAllLanguages()
-        const sortedLanguages = sortLanguagesByCommonality(languages)
-        setAllLanguages(sortedLanguages)
-      } catch (error) {
-        console.error('Failed to load language data:', error)
-        setAllLanguages([])
-      }
-    }
-
-    loadLanguages()
-  }, [])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -120,7 +100,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   }
 
   const getDisplayName = (languageCode: string) => {
-    return getSelectedLanguageName(languageCode, allLanguages)
+    return getSelectedLanguageName(languageCode, languages)
   }
 
   return (
@@ -141,7 +121,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       {isOpen && (
         <DropdownMenu direction="right" width={231} height={400} top={18}>
           {!showButton && <DropdownTitle>Choose language</DropdownTitle>}
-          {allLanguages.map((language) => (
+          {languages.map((language) => (
             <LanguageOptionItem
               key={language.code}
               language={language}

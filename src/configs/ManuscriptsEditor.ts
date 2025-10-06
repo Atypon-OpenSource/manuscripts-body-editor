@@ -32,6 +32,7 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { Language } from '../components/LanguageDropdown/languages'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
@@ -45,6 +46,7 @@ export type CSLProps = {
   style?: string
   locale?: string
 }
+
 export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
@@ -62,6 +64,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
+  languages: Language[]
   sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
