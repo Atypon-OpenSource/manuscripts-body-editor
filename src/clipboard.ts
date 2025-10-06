@@ -22,7 +22,7 @@ import { parseCssListStyleType } from './lib/lists'
 // to avoid having a conflict with manuscripts-transform
 const nodes = [
   {
-    tag: 'p',
+    tag: 'p, div',
     node: 'paragraph',
   },
   {
