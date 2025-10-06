@@ -28,6 +28,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
     schema.nodes.bibliography_section,
     schema.nodes.footnotes_section,
     schema.nodes.graphical_abstract_section,
+    schema.nodes.supplements,
   ]
 
   public createElement = () => {
