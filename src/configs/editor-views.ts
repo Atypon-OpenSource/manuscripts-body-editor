@@ -61,6 +61,8 @@ import sectionLabel from '../views/section_label'
 import sectionTitle from '../views/section_title_editable'
 import subtitle from '../views/subtitle_editable'
 import subtitles from '../views/subtitles_editable'
+import supplement from '../views/supplement_editable'
+import supplements from '../views/supplements_editable'
 import tableCell from '../views/table_cell'
 import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
@@ -115,7 +117,8 @@ export default (
     table_header: tableCell(props),
     table_element_footer: tableElementFooter(props),
     comments: empty('comments'),
-    supplements: empty('supplements'),
+    supplements: supplements(props, dispatch),
+    supplement: supplement(props, dispatch),
     author_notes: authorNotes(props, dispatch),
     awards: awards(props, dispatch),
     award: award(props, dispatch),

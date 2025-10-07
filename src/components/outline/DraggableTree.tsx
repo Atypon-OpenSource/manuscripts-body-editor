@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import {
-  Capabilities,
   TriangleCollapsedIcon,
   TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
@@ -32,6 +31,7 @@ import { Fragment } from 'prosemirror-model'
 import React, { MouseEvent, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
+import { Capabilities } from '../../lib/capabilities'
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted } from '../../lib/track-changes-utils'
@@ -66,6 +66,7 @@ const excludedTypes = [
   schema.nodes.trans_abstract,
   schema.nodes.subtitles,
   schema.nodes.subtitle,
+  schema.nodes.supplements,
 ]
 
 const childrenExcludedTypes = [
