@@ -216,21 +216,16 @@ export class InlineFootnoteView
     const footnote = createFootnote()
     const rids = this.node.attrs.rids
     tr.setNodeAttribute(pos, 'rids', [...rids, footnote.attrs.id])
-    let elementPos: number
-    let elementNodeSize: number
+    let fnPos: number
     if (fn) {
-      const mappedPos = tr.mapping.map(fn.element[1])
-      elementPos = mappedPos
-      elementNodeSize = fn.element[0].nodeSize
+      fnPos = fn.element[1] + fn.element[0].nodeSize - 1
     } else {
-      const [elementNode, elementPosRaw] = insertFootnotesElement(tr, [
+      const [elementNode, elementPos] = insertFootnotesElement(tr, [
         container.node,
         container.pos,
       ])
-      elementPos = elementPosRaw
-      elementNodeSize = elementNode.nodeSize
+      fnPos = elementPos + elementNode.nodeSize - 1
     }
-    const fnPos = elementPos + elementNodeSize - 1
     tr.insert(fnPos, footnote)
     const selection = TextSelection.create(tr.doc, fnPos + 2)
     tr.setSelection(selection).scrollIntoView()
