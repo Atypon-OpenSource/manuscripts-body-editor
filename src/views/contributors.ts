@@ -18,6 +18,7 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
+import { hasPendingComments } from '../commands'
 import {
   AuthorsModal,
   AuthorsModalProps,
@@ -188,6 +189,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public authorContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
+    const hasPending = hasPendingComments(this.view.state)
     const componentProps: ContextMenuProps = {
       actions: [],
     }
@@ -196,6 +198,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         label: 'Comment',
         action: () => handleComment(this.node, this.view),
         icon: 'AddComment',
+        disabled: hasPending,
       })
       componentProps.actions.push({
         label: 'New Author',

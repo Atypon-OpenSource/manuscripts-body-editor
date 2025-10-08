@@ -29,6 +29,7 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
+  hasPendingComments,
   insertAbstractSection,
   insertAffiliation,
   insertAward,
@@ -439,7 +440,10 @@ export const getEditorMenus = (
       {
         id: 'insert-comment',
         label: 'Comment',
-        isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(addInlineComment) &&
+          !hasPendingComments(state),
         run: doCommand(addInlineComment),
         isHidden: !templateAllows(state, schema.nodes.comment),
       },

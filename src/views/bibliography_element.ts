@@ -23,6 +23,7 @@ import {
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
+import { hasPendingComments } from '../commands'
 import {
   ReferencesEditor,
   ReferencesEditorProps,
@@ -90,6 +91,7 @@ export class BibliographyElementBlockView extends BlockView<
     const can = this.props.getCapabilities()
     const item = findNodeByID(this.view.state.doc, element.id)?.node
 
+    const hasPending = hasPendingComments(this.view.state)
     const componentProps: ContextMenuProps = {
       actions: [],
     }
@@ -104,6 +106,7 @@ export class BibliographyElementBlockView extends BlockView<
       label: 'Comment',
       action: () => handleComment(item, this.view),
       icon: 'AddComment',
+      disabled: hasPending,
     })
 
     this.contextMenu = ReactSubView(

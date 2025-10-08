@@ -36,6 +36,7 @@ import {
   addNodeComment,
   createBlock,
   findPosBeforeFirstSubsection,
+  hasPendingComments,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
   isCommentingAllowed,
@@ -324,14 +325,19 @@ export class ContextMenu {
 
     const commentTarget = this.getCommentTarget()
     if (isCommentingAllowed(commentTarget.type)) {
+      const hasPending = hasPendingComments(this.view.state)
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          section.appendChild(
-            this.createMenuItem('Comment', () => {
+          const commentItem = this.createMenuItem('Comment', () => {
+            if (!hasPending) {
               addNodeComment(commentTarget, this.view.state, this.view.dispatch)
               popper.destroy()
-            })
-          )
+            }
+          })
+          if (hasPending) {
+            commentItem.classList.add('disabled')
+          }
+          section.appendChild(commentItem)
         })
       )
     }

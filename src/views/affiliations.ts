@@ -18,6 +18,7 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { AffiliationNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
+import { hasPendingComments } from '../commands'
 import {
   AffiliationsModal,
   AffiliationsModalProps,
@@ -223,6 +224,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
   public showGroupContextMenu = (): HTMLElement | undefined => {
     const can = this.props.getCapabilities()
+    const hasPending = hasPendingComments(this.view.state)
     const componentProps: ContextMenuProps = {
       actions: [],
     }
@@ -232,6 +234,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
         label: 'Comment',
         action: () => handleComment(this.node, this.view),
         icon: 'AddComment',
+        disabled: hasPending,
       })
       componentProps.actions.push({
         label: 'New Affiliation',
