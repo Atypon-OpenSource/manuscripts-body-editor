@@ -27,7 +27,7 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     email: author.email || '',
     isCorresponding: author.isCorresponding || false,
     ORCIDIdentifier: author.ORCIDIdentifier || '',
-    priority: author.priority || 0,
+    priority: author.priority,
     isJointContributor: author.isJointContributor || false,
     userID: author.userID || '',
     invitationID: author.invitationID || '',

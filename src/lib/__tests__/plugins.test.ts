@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { ObjectTypes, UserProfile } from '@manuscripts/json-schema'
-import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   schema,
@@ -26,6 +25,7 @@ import { EditorView } from 'prosemirror-view'
 
 import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { defaultCapabilities } from '../../testing/default-capabilities'
 import sectionCategories from '../../testing/section-categories.json'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
@@ -61,7 +61,7 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
     //@ts-ignore
     upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
   },
-  getCapabilities: () => getAllPermitted(),
+  getCapabilities: () => defaultCapabilities,
   cslProps: {
     style: '',
     locale: '',

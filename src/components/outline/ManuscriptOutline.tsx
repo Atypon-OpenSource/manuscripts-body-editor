@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Capabilities } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useEffect, useState } from 'react'
 
+import { Capabilities } from '../../lib/capabilities'
 import { useDebounce } from '../hooks/use-debounce'
 import { buildTree, DraggableTree, TreeItem } from './DraggableTree'
 
