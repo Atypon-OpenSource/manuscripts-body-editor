@@ -38,7 +38,6 @@ import {
   findPosBeforeFirstSubsection,
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
-  isCommentingAllowed,
 } from '../commands'
 import { PopperManager } from './popper'
 import { createPositionOptions } from './position-menu'
@@ -323,18 +322,16 @@ export class ContextMenu {
     }
 
     const commentTarget = this.getCommentTarget()
-    if (isCommentingAllowed(commentTarget.type)) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          section.appendChild(
-            this.createMenuItem('Comment', () => {
-              addNodeComment(commentTarget, this.view.state, this.view.dispatch)
-              popper.destroy()
-            })
-          )
-        })
-      )
-    }
+    menu.appendChild(
+      this.createMenuSection((section: HTMLElement) => {
+        section.appendChild(
+          this.createMenuItem('Comment', () => {
+            addNodeComment(commentTarget, this.view.state, this.view.dispatch)
+            popper.destroy()
+          })
+        )
+      })
+    )
 
     if (type === schema.nodes.table_element) {
       const items: Node[] = []
