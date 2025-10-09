@@ -1299,7 +1299,7 @@ function toggleOffList(
         ) {
           return true
         }
-        if (node.type.name === 'paragraph') {
+        if (node.type === schema.nodes.paragraph) {
           tr.insert(tr.mapping.map(rootList.pos), node)
           return false
         }
