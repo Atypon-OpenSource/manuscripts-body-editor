@@ -2044,3 +2044,7 @@ th:hover > .table-context-menu-button,
 .ProseMirror a.link:empty::before {
   content: '\00a0';
 }
+.block-pullquote_element .tools-panel {
+  top: 35px;
+  right: 26px;
+}
