@@ -306,7 +306,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.handleEdit('', true)
     }
   }
-  // we clear selection to toggle on/off selection between affiliations and document, so we can reopen model
+  // we clear selection to toggle on/off selection between affiliations and document, so we can reopen modal
   clearSelection = () => {
     const { state, dispatch } = this.view
     dispatch(state.tr.setSelection(Selection.atStart(state.doc)))
