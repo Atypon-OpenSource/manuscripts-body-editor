@@ -32,10 +32,11 @@ import {
   splitCell,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
-import React, { useState } from 'react'
+import React, { Dispatch, useState } from 'react'
 import styled from 'styled-components'
 
 import { addColumns, addHeaderRow, addRows } from '../../commands'
+import { getEditorProps } from '../../plugins/editor-props'
 
 /**
  * Return the number of selected rows/columns
@@ -109,6 +110,18 @@ export const ContextMenu: React.FC<{
   const columns = count.columns > 1 ? `${count.columns} columns` : `column`
   const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
+  const showWarringForTCPlugin = (
+    action: Dispatch<() => Command>,
+    command: () => Command
+  ) => {
+    const props = getEditorProps(view.state)
+    if (!props.getCapabilities().editWithoutTracking) {
+      action(command)
+    } else {
+      runCommand(command(), true)
+    }
+  }
+
   return (
     <MenuDropdownList className={'table-ctx'}>
       <ActionButton
@@ -120,10 +133,18 @@ export const ContextMenu: React.FC<{
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
         <PlusIcon /> Insert {rows} below
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
+      <ActionButton
+        onClick={() =>
+          showWarringForTCPlugin(setColumnAction, () => addColumns('left'))
+        }
+      >
         <PlusIcon /> Insert {columns} to the left
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumns('right'))}>
+      <ActionButton
+        onClick={() =>
+          showWarringForTCPlugin(setColumnAction, () => addColumns('right'))
+        }
+      >
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
@@ -134,11 +155,19 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert header row {headerPosition}
       </ActionButton>
       <Separator />
-      <ActionButton onClick={() => setRowDeleteAction(() => deleteRow)}>
+      <ActionButton
+        onClick={() =>
+          showWarringForTCPlugin(setRowDeleteAction, () => deleteRow)
+        }
+      >
         <GrayDeleteIcon /> Delete
         {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
+      <ActionButton
+        onClick={() =>
+          showWarringForTCPlugin(setColumnAction, () => deleteColumn)
+        }
+      >
         <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
