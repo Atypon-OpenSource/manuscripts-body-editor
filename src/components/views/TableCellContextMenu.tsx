@@ -110,7 +110,7 @@ export const ContextMenu: React.FC<{
   const columns = count.columns > 1 ? `${count.columns} columns` : `column`
   const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
 
-  const showWarringForTCPlugin = (
+  const showWarningForTCPlugin = (
     action: Dispatch<() => Command>,
     command: () => Command
   ) => {
@@ -135,14 +135,14 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       <ActionButton
         onClick={() =>
-          showWarringForTCPlugin(setColumnAction, () => addColumns('left'))
+          showWarningForTCPlugin(setColumnAction, () => addColumns('left'))
         }
       >
         <PlusIcon /> Insert {columns} to the left
       </ActionButton>
       <ActionButton
         onClick={() =>
-          showWarringForTCPlugin(setColumnAction, () => addColumns('right'))
+          showWarningForTCPlugin(setColumnAction, () => addColumns('right'))
         }
       >
         <PlusIcon /> Insert {columns} to the right
@@ -157,7 +157,7 @@ export const ContextMenu: React.FC<{
       <Separator />
       <ActionButton
         onClick={() =>
-          showWarringForTCPlugin(setRowDeleteAction, () => deleteRow)
+          showWarningForTCPlugin(setRowDeleteAction, () => deleteRow)
         }
       >
         <GrayDeleteIcon /> Delete
@@ -165,7 +165,7 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       <ActionButton
         onClick={() =>
-          showWarringForTCPlugin(setColumnAction, () => deleteColumn)
+          showWarningForTCPlugin(setColumnAction, () => deleteColumn)
         }
       >
         <GrayDeleteIcon /> Delete {columns}
