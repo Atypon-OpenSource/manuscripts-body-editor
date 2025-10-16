@@ -63,6 +63,7 @@ export interface AffiliationsModalProps {
   onSaveAffiliation: (affiliation: AffiliationAttrs) => void
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
+  clearSelection: () => void
   addNewAffiliation?: boolean
 }
 
@@ -80,6 +81,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onSaveAffiliation,
   onDeleteAffiliation,
   onUpdateAuthors,
+  clearSelection,
   addNewAffiliation = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
@@ -157,6 +159,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     } else {
       setIsOpen(false)
     }
+    clearSelection()
   }
 
   const handleSelect = (affiliation: AffiliationAttrs) => {

@@ -39,8 +39,8 @@ importers:
         specifier: 3.3.5
         version: 3.3.5(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 2.1.1-LEAN-3826.0
+        version: 2.1.1-LEAN-3826.0
       '@manuscripts/transform':
         specifier: 4.3.7
         version: 4.3.7(prosemirror-state@1.4.3)
@@ -1283,8 +1283,8 @@ packages:
     resolution: {integrity: sha512-39Q0myAegcXGBciiCFFBPZTmebpLe1V62YCF0TjlZDdblYqRcW1dVVsvrGXML87+nUUK6j0JidYrUGCkVH8bVg==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.1.0':
-    resolution: {integrity: sha512-3I1JxQzObT/MvmEM4uqc81iYYJOxFPtGqhoM1jo3eTbTOfwCENPp0Xz0D9EzfBD/p4tqAxd9ubHK7JnZwzoQgA==}
+  '@manuscripts/track-changes-plugin@2.1.1-LEAN-3826.0':
+    resolution: {integrity: sha512-R9wk1ku6I4mDmaBVwLMvEclGIlx8UVWRmqy5fqlG3JlmGX0RcWYW0nlrXNU3mqgFTnIOqF6mWwR2Vwdls5dMIg==, tarball: https://us-west4-npm.pkg.dev/atypon-artifact/lwf-virtual-npm-repo/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.1.1-LEAN-3826.0.tgz}
 
   '@manuscripts/transform@4.3.7':
     resolution: {integrity: sha512-1FDpk5Z0MKJlYfPJri6JGpIMWx8rrWFFXC6Dmv5Ij0oyGmMh0CfSEL9498cEvI/dbt25Tp1vnLkt789Ug9uBaA==}
@@ -6306,7 +6306,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.1.0':
+  '@manuscripts/track-changes-plugin@2.1.1-LEAN-3826.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1

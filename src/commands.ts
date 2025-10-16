@@ -49,7 +49,6 @@ import {
   Attrs,
   Fragment,
   NodeRange,
-  NodeType,
   ResolvedPos,
   Slice,
 } from 'prosemirror-model'
@@ -112,7 +111,6 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
-  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1131,8 +1129,7 @@ export const insertContributors = (
     return false
   }
   if (!contributors) {
-    const title = getLastTitleNode(state)
-    const pos = title.pos + title.node.nodeSize
+    const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
     const contributorsNode = state.schema.nodes.contributors.create({
       id: '',
     })
@@ -1163,8 +1160,7 @@ export const insertAffiliation = (
     return false
   }
   if (!affiliations) {
-    const title = getLastTitleNode(state)
-    const pos = title.pos + title.node.nodeSize
+    const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
     const affiliationsNode = state.schema.nodes.affiliations.create({
       id: '',
     })
@@ -1698,38 +1694,11 @@ const getParentNode = (selection: Selection) => {
   return node
 }
 
-// TODO:: remove this check when we allow all type of block node to have comment
-export const isCommentingAllowed = (type: NodeType) =>
-  type === schema.nodes.title ||
-  type === schema.nodes.subtitles ||
-  type === schema.nodes.section ||
-  type === schema.nodes.citation ||
-  type === schema.nodes.bibliography_item ||
-  type === schema.nodes.footnotes_section ||
-  type === schema.nodes.bibliography_section ||
-  type === schema.nodes.box_element ||
-  type === schema.nodes.graphical_abstract_section ||
-  type === schema.nodes.keyword_group ||
-  type === schema.nodes.paragraph ||
-  type === schema.nodes.figure_element ||
-  type === schema.nodes.list ||
-  type === schema.nodes.table_element ||
-  type === schema.nodes.embed ||
-  type === schema.nodes.affiliations ||
-  type === schema.nodes.contributors ||
-  type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image ||
-  type === schema.nodes.trans_abstract
-
 export const addNodeComment = (
   node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (!isCommentingAllowed(node.type)) {
-    return false
-  }
-
   const props = getEditorProps(state)
   const contribution = buildContribution(props.userID)
   const attrs = {
@@ -1760,7 +1729,7 @@ export const addInlineComment = (
 ): boolean => {
   const selection = state.selection
   const node = getParentNode(selection)
-  if (!node || !isCommentingAllowed(node.type)) {
+  if (!node) {
     return false
   }
   let from = selection.from
