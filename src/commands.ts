@@ -1274,7 +1274,7 @@ function toggleOffList(
   } = state
 
   let rootList = findRootList($from)
-  rootList.pos--
+  rootList && rootList.pos--
 
   if (
     state.selection instanceof NodeSelection &&
