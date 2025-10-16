@@ -16,7 +16,7 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { AffiliationNode, schema } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
+import { NodeSelection, Selection } from 'prosemirror-state'
 
 import {
   AffiliationsModal,
@@ -206,6 +206,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       onDeleteAffiliation: this.handleDeleteAffiliation,
       onUpdateAuthors: this.handleUpdateAuthors,
       addNewAffiliation: addNew,
+      clearSelection: this.clearSelection,
     }
 
     this.popper?.remove()
@@ -304,6 +305,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     if (!isDeleted(this.node) && !selectedMarker) {
       this.handleEdit('', true)
     }
+  }
+  // we clear selection to toggle on/off selection between affiliations and document, so we can reopen modal
+  clearSelection = () => {
+    const { state, dispatch } = this.view
+    dispatch(state.tr.setSelection(Selection.atStart(state.doc)))
   }
 
   handleUpdateAuthors = (authors: ContributorAttrs[]) => {
