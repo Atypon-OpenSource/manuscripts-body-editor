@@ -68,7 +68,6 @@ import {
 } from 'prosemirror-tables'
 import {
   findWrapping,
-  liftTarget,
   ReplaceAroundStep,
   ReplaceStep,
 } from 'prosemirror-transform'
@@ -1271,6 +1270,7 @@ function toggleOffList(
   } = state
 
   let rootList = findRootList($from)
+  rootList && rootList.pos--
 
   if (
     state.selection instanceof NodeSelection &&
@@ -1295,19 +1295,15 @@ function toggleOffList(
         ) {
           return true
         }
-        const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
-        const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
-        const nodeRange = $fromPos.blockRange($toPos)
-        if (!nodeRange) {
-          return
-        }
-
-        const targetLiftDepth = liftTarget(nodeRange)
-        if (targetLiftDepth || targetLiftDepth === 0) {
-          tr.lift(nodeRange, targetLiftDepth)
-          return false // do not descend as the content of this node will be lifted already anyway
+        if (node.type === schema.nodes.paragraph) {
+          tr.insert(tr.mapping.map(rootList.pos), node)
+          return false
         }
       }
+    )
+    tr.delete(
+      tr.mapping.map(rootList.pos),
+      tr.mapping.map(rootList.pos + rootList.node.nodeSize)
     )
     dispatch(tr)
     return true
