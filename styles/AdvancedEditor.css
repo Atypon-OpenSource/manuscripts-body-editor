@@ -121,6 +121,7 @@
   box-sizing: border-box;
   justify-self: center;
   position: relative;
+  outline: none !important;
 }
 .ProseMirror .figure-block-group {
   width: 100%;
@@ -132,6 +133,7 @@
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+  outline: none !important;
 }
 
 .ProseMirror .figure-block-group .figure-block {
@@ -227,6 +229,7 @@
 
 .ProseMirror .figure-block figure {
   padding-bottom: 20px;
+  outline: none !important;
 }
 
 .ProseMirror .figure-block > figcaption {
