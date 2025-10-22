@@ -31,7 +31,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     this.container = document.createElement('div')
     this.container.classList.add('block', 'hero-image-container')
     this.dom.appendChild(this.container)
-
+    this.dom.setAttribute('contentEditable', 'false')
     this.container.appendChild(this.createPanel())
 
     this.contentDOM = document.createElement('figure')
@@ -47,7 +47,6 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
 
     const label = document.createElement('span')
     label.textContent = 'Hero image'
-    label.contentEditable = 'false'
 
     const heroImageToggleBtn = document.createElement('button')
     heroImageToggleBtn.classList.add('toggle-btn', 'button-reset')

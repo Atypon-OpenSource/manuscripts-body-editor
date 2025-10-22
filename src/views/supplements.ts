@@ -43,7 +43,7 @@ export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
 
     this.dom.appendChild(this.toggleButton)
     this.dom.setAttribute('id', this.node.attrs.id)
-
+    this.dom.setAttribute('contentEditable', 'false')
     this.dom.appendChild(this.contentDOM)
   }
 

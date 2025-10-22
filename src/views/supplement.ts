@@ -43,6 +43,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.dom.classList.add('block')
     this.dom.setAttribute('id', this.node.attrs.id)
     this.dom.setAttribute('href', this.node.attrs.href)
+    this.dom.setAttribute('contentEditable', 'false')
     this.dom.draggable = true
 
     this.contentDOM = document.createElement('div')
@@ -173,7 +174,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private addFileInfo() {
     this.supplementInfoEl = document.createElement('div')
     this.supplementInfoEl.classList.add('supplement-file-info')
-    this.supplementInfoEl.contentEditable = 'false'
 
     // Get the file from the file management system
     const files = this.props.getFiles()

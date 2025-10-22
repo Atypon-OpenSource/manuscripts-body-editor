@@ -31,7 +31,7 @@ export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
     this.container = document.createElement('div')
     this.container.classList.add('block', 'attachments-container')
     this.dom.appendChild(this.container)
-
+    this.dom.setAttribute('contentEditable', 'false')
     this.container.appendChild(this.createPanel())
 
     const content = document.createElement('div')
@@ -47,7 +47,6 @@ export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
 
     const label = document.createElement('span')
     label.textContent = 'Main Document'
-    label.contentEditable = 'false'
 
     const toggleBtn = document.createElement('button')
     toggleBtn.classList.add('toggle-btn', 'button-reset')
