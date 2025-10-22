@@ -43,7 +43,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.dom.classList.add('block')
     this.dom.setAttribute('id', this.node.attrs.id)
     this.dom.setAttribute('href', this.node.attrs.href)
-    this.dom.setAttribute('contentEditable', 'false')
     this.dom.draggable = true
 
     this.contentDOM = document.createElement('div')

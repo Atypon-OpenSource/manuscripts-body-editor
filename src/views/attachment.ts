@@ -59,7 +59,6 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
       e.stopPropagation()
       this.setMainDocumentSelection()
     })
-    this.dom.setAttribute('contentEditable', 'false')
     this.dom.appendChild(this.container)
   }
 
