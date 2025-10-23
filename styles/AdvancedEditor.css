@@ -1702,7 +1702,7 @@ th:hover > .table-context-menu-button,
 }
 
 .block-hero_image, .block-supplements {
-  margin-bottom: 30px;
+  padding-bottom: 30px;
 }
 
 .hero-image-container,

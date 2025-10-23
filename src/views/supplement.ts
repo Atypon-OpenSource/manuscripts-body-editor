@@ -173,7 +173,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private addFileInfo() {
     this.supplementInfoEl = document.createElement('div')
     this.supplementInfoEl.classList.add('supplement-file-info')
-    this.supplementInfoEl.contentEditable = 'false'
 
     // Get the file from the file management system
     const files = this.props.getFiles()
