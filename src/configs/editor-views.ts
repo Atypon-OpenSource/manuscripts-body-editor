@@ -30,6 +30,8 @@ import awards from '../views/awards'
 import bibliographyElement from '../views/bibliography_element'
 import blockquoteElement from '../views/blockquote_element_editable'
 import boxElement from '../views/box_element'
+import caption from '../views/caption'
+import captionTitle from '../views/caption_title'
 import citation from '../views/citation_editable'
 import contributors from '../views/contributors'
 import crossReference from '../views/cross_reference_editable'
@@ -84,6 +86,8 @@ export default (
     blockquote_element: blockquoteElement(props),
     quote_image: quoteImage(props, dispatch),
     box_element: boxElement(props),
+    caption_title: captionTitle(props),
+    caption: caption(props),
     citation: citation(props, dispatch),
     cross_reference: crossReference(props, dispatch),
     contributors: contributors(props, dispatch),

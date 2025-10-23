@@ -76,7 +76,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.subcontainer.classList.add('figure-block-group')
 
     this.contentDOM = document.createElement('div')
-    this.contentDOM.setAttribute('contenteditable', 'true')
+    this.contentDOM.setAttribute('contenteditable', 'false')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.contentDOM.classList.add('figure-block')
 
