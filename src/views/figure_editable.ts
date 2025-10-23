@@ -15,7 +15,6 @@
  */
 
 import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { draggableIcon } from '../icons'
@@ -331,7 +330,6 @@ export class FigureEditableView extends FigureView {
       ...this.node.attrs,
       src: src,
     })
-    tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
   }
 
