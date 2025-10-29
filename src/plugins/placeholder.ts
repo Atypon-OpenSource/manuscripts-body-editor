@@ -45,6 +45,15 @@ const placeholderWidget =
     return element
   }
 
+const backmatterWidget = (direction: 'top' | 'bottom') => {
+  const element = document.createElement('div')
+  element.className = 'backmatter-border-placeholder'
+  const line = document.createElement('div')
+  line.className = direction
+  element.appendChild(line)
+  return element
+}
+
 const getParagraphPlaceholderText = (
   parent: ManuscriptNode | null,
   node: ManuscriptNode
@@ -137,6 +146,24 @@ export default () =>
                   class: 'empty-node',
                   ...(placeholder && { 'data-placeholder': placeholder }),
                 })
+              )
+            }
+          } else if (node.type === schema.nodes.backmatter) {
+            decorations.push(
+              Decoration.widget(pos + 1, backmatterWidget('top'))
+            )
+            const nextNode = parent && parent.nodeAt(pos + node.nodeSize)
+            if (
+              nextNode &&
+              (nextNode.type === schema.nodes.supplements ||
+                nextNode.type === schema.nodes.hero_image ||
+                nextNode.type === schema.nodes.attachments)
+            ) {
+              decorations.push(
+                Decoration.widget(
+                  pos + node.nodeSize - 1,
+                  backmatterWidget('bottom')
+                )
               )
             }
           }
