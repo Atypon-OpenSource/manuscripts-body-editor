@@ -287,14 +287,21 @@
 
 .ProseMirror .caption-description {
   margin: 0;
+  outline: none !important
 }
 
 .ProseMirror .suppress-title .caption-description {
   display: inline;
+  outline: none !important;
+}
+.ProseMirror .caption-title {
+  outline: none !important;
 }
 
 .ProseMirror .caption-title.empty-node::before {
   content: 'Caption Title...';
+  color: #000;
+  cursor: text;
 }
 
 .ProseMirror .block-box_element .caption-title.empty-node::before {
@@ -314,6 +321,8 @@
 
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
+  color: #000;
+  cursor: text;
 }
 
 .ProseMirror .block-table_element .caption-description.empty-node::before {
