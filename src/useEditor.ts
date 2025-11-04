@@ -42,6 +42,9 @@ import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
 
+// Meta key to forbid debounce - used when comments are explicitly saved
+export const FORBID_DEBOUNCE_META_KEY = 'forbidDebounce'
+
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
 
@@ -123,12 +126,18 @@ export const useEditor = (externalProps: ExternalProps) => {
         }
       }
 
+      // Check for forbidDebounce meta key (set when comments are explicitly saved)
+      const forbidDebounce = tr.getMeta(FORBID_DEBOUNCE_META_KEY)
+
       debounce(
         () => {
           setState(nextState)
         },
         250,
-        !tr.isGeneric || !tr.docChanged || !tr.getMeta(searchReplaceKey)
+        !tr.isGeneric ||
+          !tr.docChanged ||
+          !tr.getMeta(searchReplaceKey) ||
+          forbidDebounce
       )
 
       return nextState
