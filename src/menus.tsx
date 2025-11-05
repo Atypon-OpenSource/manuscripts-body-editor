@@ -170,6 +170,16 @@ export const getEditorMenus = (
     isEnabled: true,
     submenu: [
       {
+        id: 'insert-comment',
+        label: 'Comment',
+        isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
+        run: doCommand(addInlineComment),
+        isHidden: !templateAllows(state, schema.nodes.comment),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'front-matter',
         label: 'Article Metadata',
         isEnabled: true,
@@ -255,6 +265,25 @@ export const getEditorMenus = (
         role: 'separator',
       },
       {
+        id: 'insert-bullet-list',
+        label: 'Bullet List',
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.list)),
+        run: doCommand(insertList(schema.nodes.list, 'bullet')),
+        isHidden: !templateAllows(state, schema.nodes.list),
+      },
+      {
+        id: 'insert-order-list',
+        label: 'Ordered List',
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.list)),
+        run: doCommand(insertList(schema.nodes.list, 'order')),
+        isHidden: !templateAllows(state, schema.nodes.list),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'insert-blockquote',
         label: 'Block Quote',
         isEnabled:
@@ -276,19 +305,6 @@ export const getEditorMenus = (
         role: 'separator',
       },
       {
-        id: 'insert-boxed-text',
-        label: 'Boxed Text',
-        shortcut: {
-          mac: 'Option+CommandOrControl+B',
-          pc: 'CommandOrControl+Option+B',
-        },
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.box_element)),
-        run: doCommand(insertBoxElement),
-        isHidden: !templateAllows(state, schema.nodes.box_element),
-      },
-      {
         id: 'insert-figure-element',
         label: 'Figure Panel',
         shortcut: {
@@ -303,21 +319,12 @@ export const getEditorMenus = (
       },
       {
         id: 'insert-image-element',
-        label: 'Simple Image',
+        label: 'Image',
         isEnabled:
           isEditAllowed(state) &&
           isCommandValid(canInsert(schema.nodes.image_element)),
         run: doCommand(insertBlock(schema.nodes.image_element)),
         isHidden: !templateAllows(state, schema.nodes.image_element),
-      },
-      {
-        id: 'insert-hero-image',
-        label: 'Hero Image',
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.hero_image)),
-        run: doCommand(insertHeroImage()),
-        isHidden: !templateAllows(state, schema.nodes.hero_image),
       },
       {
         id: 'insert-table-element',
@@ -333,11 +340,24 @@ export const getEditorMenus = (
         isHidden: !templateAllows(state, schema.nodes.table_element),
       },
       {
+        id: 'insert-boxed-text',
+        label: 'Boxed Text',
+        shortcut: {
+          mac: 'Option+CommandOrControl+B',
+          pc: 'CommandOrControl+Option+B',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.box_element)),
+        run: doCommand(insertBoxElement),
+        isHidden: !templateAllows(state, schema.nodes.box_element),
+      },
+      {
         role: 'separator',
       },
       {
         id: 'insert-embed-media',
-        label: 'Embedded Media',
+        label: 'Media',
         isActive: blockActive(schema.nodes.embed)(state),
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
@@ -437,11 +457,13 @@ export const getEditorMenus = (
         isHidden: !templateAllows(state, schema.nodes.text),
       },
       {
-        id: 'insert-comment',
-        label: 'Comment',
-        isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
-        run: doCommand(addInlineComment),
-        isHidden: !templateAllows(state, schema.nodes.comment),
+        id: 'insert-hero-image',
+        label: 'Hero Image',
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.hero_image)),
+        run: doCommand(insertHeroImage()),
+        isHidden: !templateAllows(state, schema.nodes.hero_image),
       },
     ],
   }
