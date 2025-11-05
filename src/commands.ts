@@ -1699,7 +1699,15 @@ export const addNodeComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  const props = getEditorProps(state)
+  let currentState = state
+  if (dispatch) {
+    const clearTr = state.tr
+    clearTr.setMeta('skipCollabSync', true)
+    currentState = state.apply(clearTr)
+    dispatch(skipTracking(clearTr))
+  }
+
+  const props = getEditorProps(currentState)
   const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
@@ -1708,15 +1716,18 @@ export const addNodeComment = (
     contributions: [contribution],
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
-  const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+  const comments = findChildrenByType(
+    currentState.doc,
+    schema.nodes.comments
+  )[0]
   if (comments) {
     const pos = comments.pos + 1
-
-    const tr = state.tr.insert(pos, comment)
+    const tr = currentState.tr.insert(pos, comment)
     const key = getCommentKey(attrs, undefined, node)
     setCommentSelection(tr, key, attrs.id, true)
+    tr.setMeta('skipCollabSync', true)
     if (dispatch) {
-      dispatch(tr)
+      dispatch(skipTracking(tr))
     }
     return true
   }
@@ -1727,7 +1738,16 @@ export const addInlineComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ): boolean => {
-  const selection = state.selection
+  let currentState = state
+  if (dispatch) {
+    const clearTr = state.tr
+    // clearCommentSelection(clearTr)
+    clearTr.setMeta('skipCollabSync', true)
+    currentState = state.apply(clearTr)
+    dispatch(skipTracking(clearTr))
+  }
+
+  const selection = currentState.selection
   const node = getParentNode(selection)
   if (!node) {
     return false
@@ -1736,31 +1756,32 @@ export const addInlineComment = (
   let to = selection.to
 
   if (from === to) {
-    // Use the current cursor position to determine the boundaries of the intended word
-    const result = findWordBoundaries(state, from)
+    const result = findWordBoundaries(currentState, from)
     from = result.from
     to = result.to
   }
 
-  const props = getEditorProps(state)
+  const props = getEditorProps(currentState)
   const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
     contributions: [contribution],
-    originalText: selectedText() || state.doc.textBetween(from, to),
+    originalText: selectedText() || currentState.doc.textBetween(from, to),
     selector: {
       from,
       to,
     },
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
-  const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
+  const comments = findChildrenByType(
+    currentState.doc,
+    schema.nodes.comments
+  )[0]
   if (comments) {
     const pos = comments.pos + 1
-
-    const tr = state.tr.insert(pos, comment)
+    const tr = currentState.tr.insert(pos, comment)
 
     const start = schema.nodes.highlight_marker.create({
       id: comment.attrs.id,
@@ -1777,8 +1798,9 @@ export const addInlineComment = (
     const range = getCommentRange(attrs)
     const key = getCommentKey(attrs, range, node)
     setCommentSelection(tr, key, attrs.id, true)
+    tr.setMeta('skipCollabSync', true)
     if (dispatch) {
-      dispatch(tr)
+      dispatch(skipTracking(tr))
     }
     return true
   }
