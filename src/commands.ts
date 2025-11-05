@@ -1727,7 +1727,7 @@ export const addNodeComment = (
     setCommentSelection(tr, key, attrs.id, true)
     tr.setMeta('skipCollabSync', true)
     if (dispatch) {
-      dispatch(skipTracking(tr))
+      dispatch(tr)
     }
     return true
   }
@@ -1800,7 +1800,7 @@ export const addInlineComment = (
     setCommentSelection(tr, key, attrs.id, true)
     tr.setMeta('skipCollabSync', true)
     if (dispatch) {
-      dispatch(skipTracking(tr))
+      dispatch(tr)
     }
     return true
   }
