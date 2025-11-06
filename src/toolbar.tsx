@@ -16,13 +16,20 @@
 
 import {
   AddCommentIcon,
+  ToolbarBlockquoteIcon,
   ToolbarBoldIcon,
+  ToolbarBoxedTextIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
+  ToolbarImageIcon,
   ToolbarIndentIcon,
   ToolbarItalicIcon,
+  ToolbarLinkIcon,
+  ToolbarMediaIcon,
   ToolbarOrderedListIcon,
+  ToolbarPullquoteIcon,
+  ToolbarSpecialCharactersIcon,
   ToolbarSubscriptIcon,
   ToolbarSuperscriptIcon,
   ToolbarTableIcon,
@@ -42,7 +49,9 @@ import {
   canInsert,
   Dispatch,
   insertBlock,
+  insertEmbed,
   insertInlineCitation,
+  insertLink,
   insertList,
   markActive,
 } from './commands'
@@ -51,6 +60,7 @@ import {
   isIndentationAllowed,
 } from './components/toolbar/helpers'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
+import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
 import { isEditAllowed } from './lib/utils'
 
 export interface ToolbarButtonConfig {
@@ -162,17 +172,31 @@ export const toolbar: ToolbarConfig = {
     },
   },
   inline: {
+    comment: {
+      title: 'Insert comment',
+      content: <AddCommentIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.highlight_marker)), // TODO: check both ends of selection
+      run: addInlineComment,
+    },
     citation: {
       title: 'Insert citation',
       content: <ToolbarCitationIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.citation)),
       run: insertInlineCitation,
     },
-    comment: {
-      title: 'Insert comment',
-      content: <AddCommentIcon />,
-      isEnabled: isEnabled(canInsert(schema.nodes.highlight_marker)), // TODO: check both ends of selection
-      run: addInlineComment,
+  },
+  quote: {
+    blockquote: {
+      title: 'Insert blockquote',
+      content: <ToolbarBlockquoteIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.blockquote_element)),
+      run: insertBlock(schema.nodes.blockquote_element),
+    },
+    pullquote: {
+      title: 'Insert pullquote',
+      content: <ToolbarPullquoteIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.pullquote_element)),
+      run: insertBlock(schema.nodes.pullquote_element),
     },
   },
   element: {
@@ -182,17 +206,53 @@ export const toolbar: ToolbarConfig = {
       isEnabled: isEnabled(canInsert(schema.nodes.figure_element)),
       run: insertBlock(schema.nodes.figure_element),
     },
+    image_element: {
+      title: 'Insert image',
+      content: <ToolbarImageIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.image_element)),
+      run: insertBlock(schema.nodes.image_element),
+    },
     table_element: {
       title: 'Insert table',
       content: <ToolbarTableIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.table_element)),
       run: openInsertTableDialog,
     },
+    box_element: {
+      title: 'Insert boxed text',
+      content: <ToolbarBoxedTextIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.box_element)),
+      run: insertBlock(schema.nodes.box_element),
+    },
     equation_element: {
       title: 'Insert equation',
       content: <ToolbarEquationIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.equation_element)),
       run: insertBlock(schema.nodes.equation_element),
+    },
+  },
+  media: {
+    embed: {
+      title: 'Insert media',
+      content: <ToolbarMediaIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.embed)),
+      run: insertEmbed,
+    },
+    link: {
+      title: 'Insert link',
+      content: <ToolbarLinkIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.link)),
+      run: insertLink,
+    },
+  },
+  special: {
+    special_characters: {
+      title: 'Insert special characters',
+      content: <ToolbarSpecialCharactersIcon />,
+      isEnabled: isEnabled(canInsert(schema.nodes.text)),
+      run: (state: EditorState, dispatch: Dispatch, view?: EditorView) => {
+        openInsertSpecialCharacterDialog(view)
+      },
     },
   },
 }
