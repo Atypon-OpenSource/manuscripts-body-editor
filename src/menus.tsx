@@ -29,6 +29,7 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
+  copySelection,
   insertAbstractSection,
   insertAffiliation,
   insertAward,
@@ -48,6 +49,7 @@ import {
   insertList,
   insertSection,
   markActive,
+  paste,
 } from './commands'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
@@ -118,6 +120,30 @@ export const getEditorMenus = (
         },
         isEnabled: isCommandValid(redo),
         run: doCommand(redo),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'edit-copy',
+        role: 'copy',
+        label: 'Copy',
+        isEnabled: isEditAllowed(state) && isCommandValid(copySelection),
+        run: doCommand(copySelection),
+      },
+      {
+        id: 'edit-paste',
+        role: 'paste',
+        label: 'Paste',
+        isEnabled: isEditAllowed(state) && isCommandValid(paste('html')),
+        run: doCommand(paste('html')),
+      },
+      {
+        id: 'edit-paste-text',
+        role: 'paste-text',
+        label: 'Paste without formatting',
+        isEnabled: isEditAllowed(state) && isCommandValid(paste('text')),
+        run: doCommand(paste('text')),
       },
       {
         role: 'separator',
