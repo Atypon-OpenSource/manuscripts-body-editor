@@ -67,6 +67,11 @@ export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
     panel.appendChild(toggleBtn)
     return panel
   }
+
+  public gutterButtons(): HTMLElement[] {
+    // this to avoid issue of LEAN-4986
+    return [document.createElement('div')]
+  }
 }
 
 export default createNodeView(AttachmentsView)
