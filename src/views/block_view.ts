@@ -90,7 +90,8 @@ export default class BlockView<BlockNode extends ManuscriptNode>
   }
 
   public gutterButtons(): HTMLElement[] {
-    return []
+    // this to avoid issue of LEAN-4986, as with empty gutter text cursor will sink if that view was empty and has contenteditable as false
+    return [document.createElement('div')]
   }
 
   public actionGutterButtons(): HTMLElement[] {
