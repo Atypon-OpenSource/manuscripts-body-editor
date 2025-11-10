@@ -15,6 +15,7 @@
  */
 
 import {
+  skipTracking,
   trackChangesPluginKey,
   TrackChangesStatus,
 } from '@manuscripts/track-changes-plugin'
@@ -113,11 +114,29 @@ export const useEditor = (externalProps: ExternalProps) => {
       ) {
         const sendable = sendableSteps(nextState)
 
+        function repeat(val: string | number, n: number) {
+          let result = []
+          for (let i = 0; i < n; i++) result.push(val)
+          return result
+        }
+
         if (sendable) {
           collabProvider.sendSteps(
             sendable.version,
             sendable.steps,
             sendable.clientID,
+            () => {
+              // once authority confirms receival of steps without conflicts, we need to move our version locally to
+              // otherwise it will sync too but it will do so through a conflict
+              if (view.current && sendable) {
+                const tr = receiveTransaction(
+                  view.current.state,
+                  sendable.steps,
+                  repeat(sendable.clientID, sendable.steps.length)
+                )
+                view.current.dispatch(skipTracking(tr))
+              }
+            },
             false
           )
         }
