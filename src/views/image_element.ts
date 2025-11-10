@@ -62,13 +62,11 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
 
   public createDOM() {
     super.createDOM()
-    this.dom.setAttribute('contenteditable', 'false')
   }
 
   public createElement() {
     this.container = document.createElement('div')
     this.container.classList.add('block')
-    this.container.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
 
     // figure group
@@ -76,7 +74,6 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.subcontainer.classList.add('figure-block-group')
 
     this.contentDOM = document.createElement('div')
-    this.contentDOM.setAttribute('contenteditable', 'false')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.contentDOM.classList.add('figure-block')
 
@@ -339,6 +336,7 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
         this.extLinkEditorContainer.innerHTML = ''
       } else {
         this.extLinkEditorContainer = document.createElement('div')
+        this.extLinkEditorContainer.contentEditable = 'false'
         this.extLinkEditorContainer.classList.add('ext-link-editor-container')
       }
       // add link button

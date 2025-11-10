@@ -30,6 +30,7 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     this.dom = document.createElement('div')
     this.dom.classList.add('accessibility_element')
     const label = document.createElement('label')
+    label.contentEditable = 'false'
     label.className = 'accessibility_element_label'
     label.innerText =
       this.node.type === schema.nodes.long_desc
