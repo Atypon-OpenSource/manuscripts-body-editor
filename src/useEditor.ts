@@ -43,6 +43,14 @@ import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
 
+function repeat(val: string | number, n: number) {
+  const result = []
+  for (let i = 0; i < n; i++) {
+    result.push(val)
+  }
+  return result
+}
+
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
 
@@ -113,14 +121,6 @@ export const useEditor = (externalProps: ExternalProps) => {
         !props.isComparingMode
       ) {
         const sendable = sendableSteps(nextState)
-
-        function repeat(val: string | number, n: number) {
-          const result = []
-          for (let i = 0; i < n; i++) {
-            result.push(val)
-          }
-          return result
-        }
 
         if (sendable) {
           collabProvider.sendSteps(
