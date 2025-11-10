@@ -16,19 +16,19 @@
 
 import {
   AddCommentIcon,
-  ToolbarBlockquoteIcon,
+  FileImageIcon,
+  LinkIcon,
+  OutlineBlockQuoteIcon,
+  OutlineEmbedIcon,
+  OutlinePullQuoteIcon,
   ToolbarBoldIcon,
   ToolbarBoxedTextIcon,
   ToolbarCitationIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
-  ToolbarImageIcon,
   ToolbarIndentIcon,
   ToolbarItalicIcon,
-  ToolbarLinkIcon,
-  ToolbarMediaIcon,
   ToolbarOrderedListIcon,
-  ToolbarPullquoteIcon,
   ToolbarSpecialCharactersIcon,
   ToolbarSubscriptIcon,
   ToolbarSuperscriptIcon,
@@ -188,13 +188,13 @@ export const toolbar: ToolbarConfig = {
   quote: {
     blockquote: {
       title: 'Insert blockquote',
-      content: <ToolbarBlockquoteIcon />,
+      content: <OutlineBlockQuoteIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.blockquote_element)),
       run: insertBlock(schema.nodes.blockquote_element),
     },
     pullquote: {
       title: 'Insert pullquote',
-      content: <ToolbarPullquoteIcon />,
+      content: <OutlinePullQuoteIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.pullquote_element)),
       run: insertBlock(schema.nodes.pullquote_element),
     },
@@ -208,7 +208,7 @@ export const toolbar: ToolbarConfig = {
     },
     image_element: {
       title: 'Insert image',
-      content: <ToolbarImageIcon />,
+      content: <FileImageIcon width="19" height="16" />,
       isEnabled: isEnabled(canInsert(schema.nodes.image_element)),
       run: insertBlock(schema.nodes.image_element),
     },
@@ -234,13 +234,13 @@ export const toolbar: ToolbarConfig = {
   media: {
     embed: {
       title: 'Insert media',
-      content: <ToolbarMediaIcon />,
+      content: <OutlineEmbedIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.embed)),
       run: insertEmbed,
     },
     link: {
       title: 'Insert link',
-      content: <ToolbarLinkIcon />,
+      content: <LinkIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.link)),
       run: insertLink,
     },
