@@ -115,8 +115,10 @@ export const useEditor = (externalProps: ExternalProps) => {
         const sendable = sendableSteps(nextState)
 
         function repeat(val: string | number, n: number) {
-          let result = []
-          for (let i = 0; i < n; i++) result.push(val)
+          const result = []
+          for (let i = 0; i < n; i++) {
+            result.push(val)
+          }
           return result
         }
 
