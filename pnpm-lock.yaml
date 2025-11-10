@@ -39,11 +39,11 @@ importers:
         specifier: 3.3.5
         version: 3.3.5(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.1.1
-        version: 2.1.1
+        specifier: 2.2.0
+        version: 2.2.0
       '@manuscripts/transform':
-        specifier: 4.3.8
-        version: 4.3.8(prosemirror-state@1.4.3)
+        specifier: 4.3.9
+        version: 4.3.9(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1283,11 +1283,11 @@ packages:
     resolution: {integrity: sha512-39Q0myAegcXGBciiCFFBPZTmebpLe1V62YCF0TjlZDdblYqRcW1dVVsvrGXML87+nUUK6j0JidYrUGCkVH8bVg==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.1.1':
-    resolution: {integrity: sha512-1dW+wevsmPHT+8PBoSpvZ28KzEHkFjom3v7Wq6qYvTJjL+GQw+00ixrsd3eGDagWJqCS8juvEG4OvpY8yDI/Eg==}
+  '@manuscripts/track-changes-plugin@2.2.0':
+    resolution: {integrity: sha512-19uGxLQvMuEAoPwnouHFzhowWB/0W1xWDXUYwcpj6QM/2/d6jV7dWxZA32W8dNKj4bGEfKtymrYZn3/g40Fkew==}
 
-  '@manuscripts/transform@4.3.8':
-    resolution: {integrity: sha512-zpILuNQ7+PzxXiYEi3vpSjdYQcB6W+TLkJ2GLSytOccnm4MjGtDrM8EJLTj9EHANO+8AvJwOV6v7oU+SndNkHA==}
+  '@manuscripts/transform@4.3.9':
+    resolution: {integrity: sha512-WSMbnEPbZPBJxRQcpS53NRxztCA4kijW4guTOb9vG1j/Q4mBV4NI3FBbK96/H1ppcScOPsa7XiUYmYOssJMKjQ==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6306,7 +6306,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.1.1':
+  '@manuscripts/track-changes-plugin@2.2.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6318,7 +6318,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.8(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.9(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63

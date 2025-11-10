@@ -685,6 +685,10 @@
   padding: 0 !important;
 }
 
+.ProseMirror .action-gutter:empty {
+  display: none;
+}
+
 .ProseMirror .action-gutter {
   position: relative;
   display: flex;
@@ -1251,14 +1255,6 @@
 .ProseMirror .supplements-content .block-section_title h1.empty-node span {
   color: #6e6e6e !important;
   font-style: normal;
-}
-
-/* Horizontal line before supplements block */
-.ProseMirror div.backmatter:has(+ .block-container.block-supplements)::after {
-  content: '';
-  display: block;
-  border-bottom: 1px solid #e2e2e2;
-  margin: 0 35pt 32px 35pt;
 }
 
 .ProseMirror .supplement-item.drop-target-above,
