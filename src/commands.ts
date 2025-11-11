@@ -1947,3 +1947,63 @@ export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
 
   return false
 }
+
+export const copySelection = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  const { selection } = state
+  const clipboard = navigator?.clipboard
+
+  if (selection.content().size && clipboard) {
+    view &&
+      (async () => {
+        try {
+          const { dom, text } = view.serializeForClipboard(selection.content())
+          await clipboard.write([
+            new ClipboardItem({
+              'text/plain': new Blob([text], { type: 'text/plain' }),
+              'text/html': new Blob([dom.innerHTML], { type: 'text/html' }),
+            }),
+          ])
+        } catch (e) {
+          console.error('clipboard writer error:', e)
+        }
+      })()
+    return true
+  }
+
+  return false
+}
+
+export const paste =
+  (format: 'html' | 'text') =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const clipboard = navigator?.clipboard
+
+    if (clipboard) {
+      view &&
+        (async () => {
+          try {
+            const items = await clipboard.read()
+            const htmlItem = await items.find(({ types }) =>
+              types.includes('text/html')
+            )
+            if (format === 'html' && htmlItem) {
+              const htmlBlob = await htmlItem.getType('text/html')
+              const html = await htmlBlob.text()
+              view.pasteHTML(html)
+            } else {
+              const text = await clipboard.readText()
+              view.pasteText(text)
+            }
+          } catch (e) {
+            console.error('clipboard reader error:', e)
+          }
+        })()
+      return true
+    }
+
+    return false
+  }
