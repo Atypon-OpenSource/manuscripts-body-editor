@@ -15,7 +15,6 @@
  */
 
 import {
-  skipTracking,
   trackChangesPluginKey,
   TrackChangesStatus,
 } from '@manuscripts/track-changes-plugin'
@@ -43,14 +42,6 @@ import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
 
-function repeat(val: string | number, n: number) {
-  const result = []
-  for (let i = 0; i < n; i++) {
-    result.push(val)
-  }
-  return result
-}
-
 export const useEditor = (externalProps: ExternalProps) => {
   const view = useRef<EditorView>()
 
@@ -72,34 +63,39 @@ export const useEditor = (externalProps: ExternalProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.doc, props.isComparingMode])
 
-  // Receiving steps from backend
-  if (collabProvider && !props.isComparingMode) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    collabProvider.onNewSteps(async () => {
-      if (state && view.current) {
-        const localVersion = getVersion(view.current.state)
+  useEffect(() => {
+    // Receiving steps from backend
+    if (collabProvider && !props.isComparingMode) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      collabProvider.onNewSteps(async () => {
+        if (state && view.current) {
+          const localVersion = getVersion(view.current.state)
 
-        const since = await collabProvider.stepsSince(localVersion)
+          const since = await collabProvider.stepsSince(localVersion)
 
-        if (since && since.version <= localVersion) {
-          return
-        }
+          if (since && since.version <= localVersion) {
+            return
+          }
 
-        if (since?.steps.length && since.clientIDs.length) {
-          view.current.dispatch(
-            receiveTransaction(
-              // has to be called for the collab to increment version and drop buffered steps
-              view.current.state,
-              since?.steps,
-              since.clientIDs
+          if (since?.steps.length && since.clientIDs.length) {
+            view.current.dispatch(
+              receiveTransaction(
+                // has to be called for the collab to increment version and drop buffered steps
+                view.current.state,
+                since?.steps,
+                since.clientIDs
+              )
             )
-          )
-        } else {
-          console.warn('Inconsistent new steps event from the authority.')
+          } else {
+            console.warn('Inconsistent new steps event from the authority.')
+          }
         }
-      }
-    })
-  }
+      })
+    }
+    return () => {
+      collabProvider?.unsubscribe()
+    }
+  }, [collabProvider, props.isComparingMode, !!view.current])
 
   const debounce = useDoWithDebounce()
 
@@ -127,23 +123,10 @@ export const useEditor = (externalProps: ExternalProps) => {
             sendable.version,
             sendable.steps,
             sendable.clientID,
-            () => {
-              // once authority confirms receival of steps without conflicts, we need to move our version locally to
-              // otherwise it will sync too but it will do so through a conflict
-              if (view.current && sendable) {
-                const tr = receiveTransaction(
-                  view.current.state,
-                  sendable.steps,
-                  repeat(sendable.clientID, sendable.steps.length)
-                )
-                view.current.dispatch(skipTracking(tr))
-              }
-            },
             false
           )
         }
       }
-
       debounce(
         () => {
           setState(nextState)

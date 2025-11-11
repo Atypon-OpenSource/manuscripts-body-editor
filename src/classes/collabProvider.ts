@@ -23,9 +23,9 @@ export abstract class CollabProvider {
     version: number,
     steps: readonly Step[],
     clientID: string | number,
-    onSuccess: () => void,
     flush?: boolean
   ): Promise<void>
+  abstract unsubscribe: () => void
   abstract onNewSteps(listener: CollabProvider['newStepsListener']): void
   abstract stepsSince(version: number): Promise<
     | {
