@@ -95,7 +95,7 @@ export const useEditor = (externalProps: ExternalProps) => {
     return () => {
       collabProvider?.unsubscribe()
     }
-  }, [collabProvider, props.isComparingMode, !!view.current])
+  }, [collabProvider, props.isComparingMode, !!view.current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const debounce = useDoWithDebounce()
 
