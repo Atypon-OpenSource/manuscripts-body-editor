@@ -69,14 +69,21 @@ export const useEditor = (externalProps: ExternalProps) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       collabProvider.onNewSteps(async () => {
         if (state && view.current) {
-          const localVersion = getVersion(view.current.state)
-
-          const since = await collabProvider.stepsSince(localVersion)
+          let localVersion = getVersion(view.current.state)
+          const since = await collabProvider.stepsSince(
+            getVersion(view.current.state)
+          )
 
           if (since && since.version <= localVersion) {
             return
           }
-
+          /*
+          Check if we already requested and applied steps for this version before. Duplicate request for the same version can happen 
+          when websocket signals that there are new steps at about the same time when we send some new steps and get 409 as a response
+          due to conflict with the very same steps in authority. It would result in double request and application of the same steps and
+          forever desync (until page reload that is)
+          */
+          localVersion = getVersion(view.current.state)
           if (since?.steps.length && since.clientIDs.length) {
             view.current.dispatch(
               receiveTransaction(
