@@ -165,7 +165,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onDelete,
 }) => {
   const [confirm, setConfirm] = useState(false)
-  const valuesRef = useRef<BibliographyItemAttrs>()
+  const valuesRef = useRef<BibliographyItemAttrs | undefined>(undefined)
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
   const selectionRef = useRef<HTMLDivElement | null>(null)
@@ -214,7 +214,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggers, items])
 
-  const actionsRef = useRef<ReferenceFormActions>()
+  const actionsRef = useRef<ReferenceFormActions | undefined>(undefined)
 
   const reset = () => {
     actionsRef.current?.reset()

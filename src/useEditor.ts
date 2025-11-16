@@ -43,7 +43,7 @@ import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
 
 export const useEditor = (externalProps: ExternalProps) => {
-  const view = useRef<EditorView>()
+  const view = useRef<EditorView | undefined>(undefined)
 
   const props = { ...externalProps, popper: new PopperManager() }
 
