@@ -49,6 +49,7 @@ import {
   canInsert,
   Dispatch,
   insertBlock,
+  insertBoxElement,
   insertEmbed,
   insertInlineCitation,
   insertLink,
@@ -222,7 +223,7 @@ export const toolbar: ToolbarConfig = {
       title: 'Insert boxed text',
       content: <ToolbarBoxedTextIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.box_element)),
-      run: insertBlock(schema.nodes.box_element),
+      run: insertBoxElement,
     },
     equation_element: {
       title: 'Insert equation',
