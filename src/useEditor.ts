@@ -140,11 +140,16 @@ export const useEditor = (externalProps: ExternalProps) => {
 
   const onRender = useCallback(
     (el: HTMLDivElement | null) => {
+      if (view.current) {
+        view.current.destroy()
+        view.current = undefined
+      }
+
       if (!el) {
         return
       }
-      const freshState = createEditorState(props)
 
+      const freshState = createEditorState(props)
       view.current = createEditorView(props, el, freshState || state, dispatch)
       setState(view.current.state)
     },

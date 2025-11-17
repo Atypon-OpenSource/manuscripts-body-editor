@@ -68,8 +68,8 @@ export default (props: EditorProps) => {
         props.isViewingMode || props.isComparingMode
           ? TrackChangesStatus.viewSnapshots
           : props.getCapabilities().editWithoutTracking
-          ? TrackChangesStatus.disabled
-          : TrackChangesStatus.enabled,
+            ? TrackChangesStatus.disabled
+            : TrackChangesStatus.enabled,
     }),
     section_title(),
     table_editing_fix(),

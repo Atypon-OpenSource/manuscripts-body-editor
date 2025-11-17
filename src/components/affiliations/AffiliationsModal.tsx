@@ -141,7 +141,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
@@ -167,7 +167,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
