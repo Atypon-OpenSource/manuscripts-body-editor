@@ -226,8 +226,8 @@ export class FigureEditableView extends FigureView {
     const img = link
       ? this.createImg(link)
       : file
-      ? this.createUnsupportedFormat(file.name)
-      : this.createPlaceholder()
+        ? this.createUnsupportedFormat(file.name)
+        : this.createPlaceholder()
 
     if (can.uploadFile && !isDeleted(this.node)) {
       addInteractionHandlers(img, this.upload, 'image/*')
