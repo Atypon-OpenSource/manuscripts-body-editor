@@ -36,8 +36,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.3.6
-        version: 3.3.6(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
+        specifier: 3.3.7
+        version: 3.3.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)
       '@manuscripts/track-changes-plugin':
         specifier: 2.2.1
         version: 2.2.1
@@ -1317,8 +1317,8 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.3.6':
-    resolution: {integrity: sha512-FQ6NOGiPtTI9qgCajWRqNkVNtkJtGgLUg4hYGdVkOKasuKaO8Q81pTsXHrtxRJWtWSwVqAXUhSl/eXjMhr4IUA==}
+  '@manuscripts/style-guide@3.3.7':
+    resolution: {integrity: sha512-etI8nF5eUNP1V4yDPuaSPAmqvCXbceOEsyoX+ZSjBf2cE2ByEsf8hBQub4SeUHkwrPYAYoa76zgHZJ4cbz3V3Q==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.2.1':
@@ -6413,7 +6413,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.3.6(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
+  '@manuscripts/style-guide@3.3.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@18.3.21)':
     dependencies:
       '@headlessui/react': 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@manuscripts/json-schema': 2.2.12
