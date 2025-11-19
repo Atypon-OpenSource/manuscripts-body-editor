@@ -59,6 +59,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       const button = document.createElement('a')
       button.classList.add('add-block', contextMenuBtnClass)
       button.classList.add('add-block-after')
+      button.setAttribute('role', 'button')
       button.setAttribute('aria-label', `Add an element below`)
       button.setAttribute('data-balloon-pos', 'down-left')
       button.addEventListener('mousedown', (event) => {
@@ -78,6 +79,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
 
       const button = document.createElement('a')
       button.classList.add('edit-block', contextMenuBtnClass)
+      button.setAttribute('role', 'button')
       button.setAttribute('aria-label', 'Open menu')
       button.setAttribute('data-balloon-pos', 'down-left')
       button.addEventListener('mousedown', (event) => {

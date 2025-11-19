@@ -66,7 +66,7 @@ import { useEditor } from './useEditor'
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
 ): MenuSpec[] => {
-  const { isCommandValid, state } = editor
+  const { isCommandValid, state, view } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
   const props = getEditorProps(state)
 
@@ -479,7 +479,7 @@ export const getEditorMenus = (
         label: 'Special Characters',
         isEnabled:
           isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.text)),
-        run: () => openInsertSpecialCharacterDialog(editor.view),
+        run: () => openInsertSpecialCharacterDialog(view),
         isHidden: !templateAllows(state, schema.nodes.text),
       },
       {
