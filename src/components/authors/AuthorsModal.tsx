@@ -103,9 +103,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const [showCreditDrawer, setShowCreditDrawer] = useState(false)
 
-  const valuesRef = useRef<ContributorAttrs | undefined>(undefined)
-  const actionsRef = useRef<FormActions | undefined>(undefined)
-  const authorFormRef = useRef<HTMLFormElement | null>(null)
+  const valuesRef = useRef<ContributorAttrs>(undefined)
+  const actionsRef = useRef<FormActions>(undefined)
+  const authorFormRef = useRef<HTMLFormElement>(null)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)

@@ -67,7 +67,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
   onCancelAward,
 }) => {
   const [isOpen, setOpen] = useState(true)
-  const valuesRef = useRef<AwardAttrs | undefined>(undefined)
+  const valuesRef = useRef<AwardAttrs>(null)
 
   const handleSave = () => {
     const updatedValues = valuesRef.current
