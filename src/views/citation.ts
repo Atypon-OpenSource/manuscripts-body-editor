@@ -52,8 +52,8 @@ export class CitationView
       text === '(n.d.)'
         ? 'Missing citation data'
         : text && text !== '[NO_PRINTED_FORM]'
-        ? text
-        : ' ',
+          ? text
+          : ' ',
       {
         ALLOWED_TAGS: ['i', 'b', 'span', 'sup', 'sub', '#text'],
       }
