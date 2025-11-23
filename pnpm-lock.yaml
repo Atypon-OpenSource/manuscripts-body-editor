@@ -42,8 +42,8 @@ importers:
         specifier: 2.2.1
         version: 2.2.1
       '@manuscripts/transform':
-        specifier: 4.3.10
-        version: 4.3.10(prosemirror-state@1.4.3)
+        specifier: 4.3.11
+        version: 4.3.11(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1324,8 +1324,8 @@ packages:
   '@manuscripts/track-changes-plugin@2.2.1':
     resolution: {integrity: sha512-ghuU8YF6wE2SwJ6Fji8WnHVmVdhZplJ9Z2+xNjsZy8diO689j7tBvZj4X0ErsLdo72xLtlN6NytIiAh4XnSMBw==}
 
-  '@manuscripts/transform@4.3.10':
-    resolution: {integrity: sha512-VQszO8NkvWqgwN2VX0dTgZ4dqm/FYGbDUB5/1LYEqsdZUyZOYaPDv4unfC+OqVYQXfusub8dZj+wESepgtxurA==}
+  '@manuscripts/transform@4.3.11':
+    resolution: {integrity: sha512-pvm7GGv7F3OofSKQA9cEXow/DSDO6QGHqvxkhfr0bzgj1Zpx1XfS+1pJvffOV+zEulAdT3RUmre3gOx3glJJdg==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6457,7 +6457,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.10(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.11(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
