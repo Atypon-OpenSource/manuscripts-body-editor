@@ -105,21 +105,59 @@ export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
 }
 
 export const transformPastedHTML = (html: string) => {
-  // add figure which is table_element node in DOM
-  if (html.includes('table')) {
-    const doc = new DOMParser().parseFromString(html, 'text/html')
-    doc.querySelectorAll('table').forEach((table) => {
-      if (table.parentElement?.tagName !== 'figure') {
-        const tableElement = document.createElement('figure')
-        tableElement.className = 'table'
-        table.removeAttribute('data-pm-slice')
-        table.parentElement?.insertBefore(tableElement, table)
-        tableElement.append(table)
-      }
-    })
-    return doc.body.innerHTML
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  wrapHeadingWithSection(doc)
+  wrapTableWithFigure(doc)
+  return doc.body.innerHTML
+}
+
+const wrapHeadingWithSection = (doc: Document) => {
+  if (!doc.body.querySelector('h1, h2, h3, h4, h5, h6')) {
+    return doc
   }
-  return html
+
+  const getHeadingLevel = (element: Element) => {
+    const level = element.tagName.match(/^H(\d)$/)
+    return level ? parseInt(level[1]) : -1
+  }
+
+  const root = document.createElement('div')
+  const elements = Array.from(doc.body.children)
+  const stack = [{ level: 0, element: root as Element }]
+
+  for (const element of elements) {
+    const headingLevel = getHeadingLevel(element)
+    if (headingLevel > 0) {
+      while (
+        stack.length > 1 &&
+        stack[stack.length - 1].level >= headingLevel
+      ) {
+        stack.pop()
+      }
+      const section = document.createElement('section')
+      section.appendChild(element.cloneNode(true))
+
+      stack[stack.length - 1].element.appendChild(section)
+      stack.push({ level: headingLevel, element: section })
+    } else {
+      stack[stack.length - 1].element.appendChild(element.cloneNode(true))
+    }
+  }
+
+  doc.body.innerHTML = root.innerHTML
+}
+
+const wrapTableWithFigure = (doc: Document) => {
+  // add figure which is table_element node in DOM
+  doc.body.querySelectorAll('table').forEach((table) => {
+    if (table.parentElement?.tagName !== 'figure') {
+      const tableElement = document.createElement('figure')
+      tableElement.className = 'table'
+      table.removeAttribute('data-pm-slice')
+      table.parentElement?.insertBefore(tableElement, table)
+      tableElement.append(table)
+    }
+  })
 }
 
 export const handlePaste = (
