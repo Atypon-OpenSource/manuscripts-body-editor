@@ -87,8 +87,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
   const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
-  const valuesRef = useRef<AffiliationAttrs>()
-  const actionsRef = useRef<FormActions>()
+  const valuesRef = useRef<AffiliationAttrs>(undefined)
+  const actionsRef = useRef<FormActions>(undefined)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
