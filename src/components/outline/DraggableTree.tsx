@@ -178,7 +178,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     const text = nodeTitle(node)
     let sectionNumber =
       node.type.name === 'section' && sectionTitleState
-        ? sectionTitleState.get(node.attrs.id) ?? ''
+        ? (sectionTitleState.get(node.attrs.id) ?? '')
         : ''
     sectionNumber = sectionNumber ? `${sectionNumber}.` : ''
 

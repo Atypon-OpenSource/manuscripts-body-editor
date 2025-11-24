@@ -157,19 +157,22 @@ export function sanitizeAttrsChange<T extends ProsemirrorNode>(
   newAttr: T['attrs'],
   currentAttrs: T['attrs']
 ) {
-  return Object.keys(newAttr).reduce((acc, attr) => {
-    const key = attr as keyof T['attrs']
-    if (
-      !currentAttrs[key] &&
-      currentAttrs[key] !== 0 &&
-      !newAttr[key] &&
-      newAttr[key] !== 0
-    ) {
+  return Object.keys(newAttr).reduce(
+    (acc, attr) => {
+      const key = attr as keyof T['attrs']
+      if (
+        !currentAttrs[key] &&
+        currentAttrs[key] !== 0 &&
+        !newAttr[key] &&
+        newAttr[key] !== 0
+      ) {
+        return acc
+      }
+      acc[key] = newAttr[key]
       return acc
-    }
-    acc[key] = newAttr[key]
-    return acc
-  }, {} as T['attrs'])
+    },
+    {} as T['attrs']
+  )
 }
 
 const classNames = new Map([
