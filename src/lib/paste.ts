@@ -113,7 +113,7 @@ export const transformPastedHTML = (html: string) => {
 
 const wrapHeadingWithSection = (doc: Document) => {
   if (!doc.body.querySelector('h1, h2, h3, h4, h5, h6')) {
-    return doc
+    return
   }
 
   const getHeadingLevel = (element: Element) => {
@@ -121,7 +121,7 @@ const wrapHeadingWithSection = (doc: Document) => {
     return level ? parseInt(level[1]) : -1
   }
 
-  const root = document.createElement('div')
+  const root = doc.createElement('div')
   const elements = Array.from(doc.body.children)
   const stack = [{ level: 0, element: root as Element }]
 
@@ -134,7 +134,7 @@ const wrapHeadingWithSection = (doc: Document) => {
       ) {
         stack.pop()
       }
-      const section = document.createElement('section')
+      const section = doc.createElement('section')
       section.appendChild(element.cloneNode(true))
 
       stack[stack.length - 1].element.appendChild(section)
@@ -150,8 +150,8 @@ const wrapHeadingWithSection = (doc: Document) => {
 const wrapTableWithFigure = (doc: Document) => {
   // add figure which is table_element node in DOM
   doc.body.querySelectorAll('table').forEach((table) => {
-    if (table.parentElement?.tagName !== 'figure') {
-      const tableElement = document.createElement('figure')
+    if (table.parentElement?.tagName !== 'FIGURE') {
+      const tableElement = doc.createElement('figure')
       tableElement.className = 'table'
       table.removeAttribute('data-pm-slice')
       table.parentElement?.insertBefore(tableElement, table)
