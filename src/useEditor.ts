@@ -74,9 +74,6 @@ export const useEditor = (externalProps: ExternalProps) => {
             getVersion(view.current.state)
           )
 
-          if (since && since.version <= localVersion) {
-            return
-          }
           /*
           Check if we already requested and applied steps for this version before. Duplicate request for the same version can happen 
           when websocket signals that there are new steps at about the same time when we send some new steps and get 409 as a response
@@ -84,6 +81,10 @@ export const useEditor = (externalProps: ExternalProps) => {
           forever desync (until page reload that is)
           */
           localVersion = getVersion(view.current.state)
+          if (since && since.version <= localVersion) {
+            return
+          }
+
           if (since?.steps.length && since.clientIDs.length) {
             view.current.dispatch(
               receiveTransaction(
