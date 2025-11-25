@@ -43,7 +43,7 @@ import { useDoWithDebounce } from './lib/use-do-with-debounce'
 import { searchReplaceKey } from './plugins/search-replace'
 
 export const useEditor = (externalProps: ExternalProps) => {
-  const view = useRef<EditorView>()
+  const view = useRef<EditorView>(undefined)
 
   const props = { ...externalProps, popper: new PopperManager() }
 
@@ -152,11 +152,16 @@ export const useEditor = (externalProps: ExternalProps) => {
 
   const onRender = useCallback(
     (el: HTMLDivElement | null) => {
+      if (view.current) {
+        view.current.destroy()
+        view.current = undefined
+      }
+
       if (!el) {
         return
       }
-      const freshState = createEditorState(props)
 
+      const freshState = createEditorState(props)
       view.current = createEditorView(props, el, freshState || state, dispatch)
       setState(view.current.state)
     },
