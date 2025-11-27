@@ -22,10 +22,11 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Fragment, Slice } from 'prosemirror-model'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
 import { allowedHref } from './url'
+import { getDeepestSubsectionPosition } from '../components/toolbar/helpers'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -186,20 +187,44 @@ export const handlePaste = (
     return true
   }
 
-  const parent = findParentNode((node) => node.type === schema.nodes.section)(
-    tr.selection
-  )
+  // TODO:: all the cases below should be removed when figuring out issue of open slice sides from track-changes plugin
+
+  const parent = findParentNode(
+    (node) =>
+      node.type === schema.nodes.section || node.type === schema.nodes.body
+  )(selection)
   if (slice.content.firstChild?.type === schema.nodes.section && parent) {
     const $pos = tr.doc.resolve(parent.start)
-    const insertPos = $pos.after($pos.depth)
+    const insertPos = $pos.end()
     tr.insert(insertPos, slice.content)
     dispatch(
-      tr.setSelection(TextSelection.create(tr.doc, insertPos)).scrollIntoView()
+      tr.setSelection(NodeSelection.create(tr.doc, insertPos)).scrollIntoView()
+    )
+    return true
+  }
+  if (
+    (slice.content.firstChild?.type === schema.nodes.body ||
+      slice.content.lastChild?.type === schema.nodes.backmatter) &&
+    parent
+  ) {
+    const $pos = tr.doc.resolve(
+      getDeepestSubsectionPosition(parent.node, parent.pos)
+    )
+    const insertPos = $pos.end()
+    tr.insert(
+      insertPos,
+      slice.content.firstChild!.content.append(slice.content.lastChild!.content)
+    )
+    dispatch(
+      tr
+        .setSelection(
+          NodeSelection.create(tr.doc, tr.doc.resolve(insertPos).after())
+        )
+        .scrollIntoView()
     )
     return true
   }
 
-  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     isElement(slice) &&
@@ -224,7 +249,6 @@ export const handlePaste = (
     return true
   }
 
-  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     selection.$from.depth === slice.openStart &&
