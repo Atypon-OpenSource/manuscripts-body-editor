@@ -64,7 +64,10 @@ export const findSelectedOption = (options: Option[]): Option | undefined => {
 }
 
 // Helper function to find the deepest subsection (the last subsection that doesn't have subsections itself)
-const getDeepestSubsectionPosition = (subsection: Node, position: number) => {
+export const getDeepestSubsectionPosition = (
+  subsection: Node,
+  position: number
+) => {
   while (subsection.lastChild && isSectionNodeType(subsection.lastChild.type)) {
     if (isDeleted(subsection.lastChild)) {
       return (

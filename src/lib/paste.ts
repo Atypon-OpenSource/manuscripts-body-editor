@@ -22,10 +22,11 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Fragment, Slice } from 'prosemirror-model'
-import { TextSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
 import { allowedHref } from './url'
+import { getDeepestSubsectionPosition } from '../components/toolbar/helpers'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -105,21 +106,59 @@ export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
 }
 
 export const transformPastedHTML = (html: string) => {
-  // add figure which is table_element node in DOM
-  if (html.includes('table')) {
-    const doc = new DOMParser().parseFromString(html, 'text/html')
-    doc.querySelectorAll('table').forEach((table) => {
-      if (table.parentElement?.tagName !== 'figure') {
-        const tableElement = document.createElement('figure')
-        tableElement.className = 'table'
-        table.removeAttribute('data-pm-slice')
-        table.parentElement?.insertBefore(tableElement, table)
-        tableElement.append(table)
-      }
-    })
-    return doc.body.innerHTML
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  wrapHeadingWithSection(doc)
+  wrapTableWithFigure(doc)
+  return doc.body.innerHTML
+}
+
+const wrapHeadingWithSection = (doc: Document) => {
+  if (!doc.body.querySelector('h1, h2, h3, h4, h5, h6')) {
+    return
   }
-  return html
+
+  const getHeadingLevel = (element: Element) => {
+    const level = element.tagName.match(/^H(\d)$/)
+    return level ? parseInt(level[1]) : -1
+  }
+
+  const root = doc.createElement('div')
+  const elements = Array.from(doc.body.children)
+  const stack = [{ level: 0, element: root as Element }]
+
+  for (const element of elements) {
+    const headingLevel = getHeadingLevel(element)
+    if (headingLevel > 0) {
+      while (
+        stack.length > 1 &&
+        stack[stack.length - 1].level >= headingLevel
+      ) {
+        stack.pop()
+      }
+      const section = doc.createElement('section')
+      section.appendChild(element.cloneNode(true))
+
+      stack[stack.length - 1].element.appendChild(section)
+      stack.push({ level: headingLevel, element: section })
+    } else {
+      stack[stack.length - 1].element.appendChild(element.cloneNode(true))
+    }
+  }
+
+  doc.body.innerHTML = root.innerHTML
+}
+
+const wrapTableWithFigure = (doc: Document) => {
+  // add figure which is table_element node in DOM
+  doc.body.querySelectorAll('table').forEach((table) => {
+    if (table.parentElement?.tagName !== 'FIGURE') {
+      const tableElement = doc.createElement('figure')
+      tableElement.className = 'table'
+      table.removeAttribute('data-pm-slice')
+      table.parentElement?.insertBefore(tableElement, table)
+      tableElement.append(table)
+    }
+  })
 }
 
 export const handlePaste = (
@@ -148,20 +187,44 @@ export const handlePaste = (
     return true
   }
 
-  const parent = findParentNode((node) => node.type === schema.nodes.section)(
-    tr.selection
-  )
+  // TODO:: all the cases below should be removed when figuring out issue of open slice sides from track-changes plugin
+
+  const parent = findParentNode(
+    (node) =>
+      node.type === schema.nodes.section || node.type === schema.nodes.body
+  )(selection)
   if (slice.content.firstChild?.type === schema.nodes.section && parent) {
     const $pos = tr.doc.resolve(parent.start)
-    const insertPos = $pos.after($pos.depth)
+    const insertPos = $pos.end()
     tr.insert(insertPos, slice.content)
     dispatch(
-      tr.setSelection(TextSelection.create(tr.doc, insertPos)).scrollIntoView()
+      tr.setSelection(NodeSelection.create(tr.doc, insertPos)).scrollIntoView()
+    )
+    return true
+  }
+  if (
+    (slice.content.firstChild?.type === schema.nodes.body ||
+      slice.content.lastChild?.type === schema.nodes.backmatter) &&
+    parent
+  ) {
+    const $pos = tr.doc.resolve(
+      getDeepestSubsectionPosition(parent.node, parent.pos)
+    )
+    const insertPos = $pos.end()
+    tr.insert(
+      insertPos,
+      slice.content.firstChild!.content.append(slice.content.lastChild!.content)
+    )
+    dispatch(
+      tr
+        .setSelection(
+          NodeSelection.create(tr.doc, tr.doc.resolve(insertPos).after())
+        )
+        .scrollIntoView()
     )
     return true
   }
 
-  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     isElement(slice) &&
@@ -186,7 +249,6 @@ export const handlePaste = (
     return true
   }
 
-  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
     selection.$from.depth === slice.openStart &&
