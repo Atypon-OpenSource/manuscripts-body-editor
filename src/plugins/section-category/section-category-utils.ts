@@ -98,6 +98,7 @@ function createButton(
   const button = document.createElement('button')
   button.innerHTML = sectionCategoryIcon
   button.classList.add('section-category-button')
+  button.setAttribute('aria-label', 'Section categories menu')
   if (currentCategory) {
     button.classList.add('assigned')
   }

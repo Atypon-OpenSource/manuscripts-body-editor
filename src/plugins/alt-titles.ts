@@ -195,7 +195,7 @@ export default () => {
                     collapsed: false,
                   })
                   view.dispatch(skipTracking(tr))
-                })
+                }, 'alternative titles')
               },
               {
                 side: -1,
