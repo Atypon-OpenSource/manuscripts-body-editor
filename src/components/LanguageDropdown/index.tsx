@@ -259,7 +259,7 @@ const LanguageButton = styled.div`
   }
 
   &:focus-visible {
-    outline: 2px solid #3dadff;
+    outline: 2px solid ${(props) => props.theme.colors.outline.focus};
     outline-offset: -2px;
     background: ${(props) => props.theme.colors.background.fifth};
   }
@@ -328,7 +328,7 @@ const StyledLanguageOption = styled.div`
   }
 
   &:focus-visible {
-    outline: 2px solid #3dadff;
+    outline: 2px solid ${(props) => props.theme.colors.outline.focus};
     outline-offset: -2px;
     background: ${(props) => props.theme.colors.background.fifth};
   }
