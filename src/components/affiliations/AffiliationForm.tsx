@@ -20,6 +20,7 @@ import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import { Label } from '../references/ReferenceForm/styled-components'
 
 const Row = styled.div`
   display: flex;
@@ -108,11 +109,16 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="institution">
               {(props: FieldProps) => (
-                <AffiliationsTextField
-                  id="institution"
-                  placeholder="Institution Name"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="institution" className="sr-only">
+                    Institution Name
+                  </Label>
+                  <AffiliationsTextField
+                    id="institution"
+                    placeholder="Institution Name"
+                    {...props.field}
+                  />
+                </>
               )}
             </Field>
           </Row>
@@ -120,22 +126,32 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Row>
             <Field name="department">
               {(props: FieldProps) => (
-                <DepartmentTextField
-                  id="department"
-                  placeholder="Department"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="department" className="sr-only">
+                    Department
+                  </Label>
+                  <DepartmentTextField
+                    id="department"
+                    placeholder="Department"
+                    {...props.field}
+                  />
+                </>
               )}
             </Field>
           </Row>
           <Row>
             <Field name="addressLine1">
               {(props: FieldProps) => (
-                <AffiliationsTextField
-                  id="addressLine1"
-                  placeholder="Street Address"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="addressLine1" className="sr-only">
+                    Street Address
+                  </Label>
+                  <AffiliationsTextField
+                    id="addressLine1"
+                    placeholder="Street Address"
+                    {...props.field}
+                  />
+                </>
               )}
             </Field>
           </Row>
@@ -145,37 +161,53 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 <MarginRightTextField
                   id="city"
                   placeholder="City"
+                  aria-label="City"
                   {...props.field}
                 />
               )}
             </Field>
             <Field name="county">
               {(props: FieldProps) => (
-                <AffiliationsTextField
-                  id="county"
-                  placeholder="State / Province"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="county" className="sr-only">
+                    State / Province
+                  </Label>
+                  <AffiliationsTextField
+                    id="county"
+                    placeholder="State / Province"
+                    {...props.field}
+                  />
+                </>
               )}
             </Field>
           </Row>
           <Row>
             <Field name="postCode">
               {(props: FieldProps) => (
-                <MarginRightTextField
-                  id="postCode"
-                  placeholder="Postal Code"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="postCode" className="sr-only">
+                    Postal Code
+                  </Label>
+                  <MarginRightTextField
+                    id="postCode"
+                    placeholder="Postal Code"
+                    {...props.field}
+                  />
+                </>
               )}
             </Field>
             <Field name="country">
               {({ field }: FieldProps) => (
-                <AffiliationsTextField
-                  id="country"
-                  placeholder="Country"
-                  {...field}
-                />
+                <>
+                  <Label htmlFor="country" className="sr-only">
+                    Country
+                  </Label>
+                  <AffiliationsTextField
+                    id="country"
+                    placeholder="Country"
+                    {...field}
+                  />
+                </>
               )}
             </Field>
           </Row>
