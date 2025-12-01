@@ -193,7 +193,11 @@ export const handlePaste = (
     (node) =>
       node.type === schema.nodes.section || node.type === schema.nodes.body
   )(selection)
-  if (slice.content.firstChild?.type === schema.nodes.section && parent) {
+  if (
+    (slice.content.firstChild?.type === schema.nodes.section ||
+      slice.content.lastChild?.type === schema.nodes.section) &&
+    parent
+  ) {
     const $pos = tr.doc.resolve(parent.start)
     const insertPos = $pos.end()
     tr.insert(insertPos, slice.content)
