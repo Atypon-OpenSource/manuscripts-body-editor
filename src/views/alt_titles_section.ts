@@ -49,6 +49,7 @@ export class AltTitleSectionView extends BlockView<
     closingPanel.classList.add('alt-titles-closing-panel')
     const button = document.createElement('button')
     button.classList.add('alt-titles-closing-button', 'button-reset')
+    button.setAttribute('aria-label', 'Collapse alternative titles')
 
     button.innerHTML = arrowDown
     button.addEventListener('click', () => {
