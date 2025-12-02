@@ -1943,12 +1943,11 @@ th:hover > .table-context-menu-button,
   white-space: nowrap;
 }
 
-.ProseMirror .icon-button path,
-.ProseMirror .icon-button rect {
-  fill: #353535 !important;
+.link-icon path:not(.link-icon-path ) {
+  fill: white !important;
 }
-.ProseMirror .icon-button:hover path,
-.ProseMirror .icon-button:hover rect {
+
+.link-icon:hover .link-icon-path {
   fill: #1a9bc7 !important;
 }
 
