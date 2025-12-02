@@ -65,7 +65,10 @@ const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
             container.className =
               'accessibility_element_expander_button_container'
             container.appendChild(
-              createToggleButton(() => handleExpandButtonClick(view, node))
+              createToggleButton(
+                () => handleExpandButtonClick(view, node),
+                'additional info'
+              )
             )
             return container
           },
