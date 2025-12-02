@@ -124,7 +124,12 @@ const wrapHeadingWithSection = (doc: Document) => {
   }
 
   const root = doc.createElement('div')
-  const elements = Array.from(doc.body.children)
+  const google_doc_document = doc.body.querySelector(
+    'b[id^="docs-internal-guid"]'
+  )
+  const elements = Array.from(
+    google_doc_document?.children || doc.body.children
+  )
   const stack = [{ level: 0, element: root as Element }]
 
   for (const element of elements) {
