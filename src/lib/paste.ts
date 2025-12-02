@@ -109,6 +109,7 @@ export const transformPastedHTML = (html: string) => {
   const doc = new DOMParser().parseFromString(html, 'text/html')
   wrapHeadingWithSection(doc)
   wrapTableWithFigure(doc)
+  console.log(doc.body.innerHTML)
   return doc.body.innerHTML
 }
 
