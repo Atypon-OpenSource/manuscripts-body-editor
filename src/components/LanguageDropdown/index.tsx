@@ -39,21 +39,36 @@ interface LanguageDropdownProps {
 const LanguageOptionItem: React.FC<{
   language: Language
   isSelected: boolean
-  onSelect: (event: React.MouseEvent, languageCode: string) => void
-}> = ({ language, isSelected, onSelect }) => (
-  <StyledLanguageOption
-    key={language.code}
-    onClick={(event) => onSelect(event, language.code)}
-  >
-    {language.name}
-    {language.nativeName && ` (${language.nativeName})`}
-    {isSelected && (
-      <TickIconWrapper>
-        <TickIcon />
-      </TickIconWrapper>
-    )}
-  </StyledLanguageOption>
-)
+  onSelect: (
+    event: React.MouseEvent | React.KeyboardEvent,
+    languageCode: string
+  ) => void
+}> = ({ language, isSelected, onSelect }) => {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      onSelect(event, language.code)
+    }
+  }
+
+  return (
+    <StyledLanguageOption
+      key={language.code}
+      onClick={(event) => onSelect(event, language.code)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="submenuitem"
+    >
+      {language.name}
+      {language.nativeName && ` (${language.nativeName})`}
+      {isSelected && (
+        <TickIconWrapper>
+          <TickIcon />
+        </TickIconWrapper>
+      )}
+    </StyledLanguageOption>
+  )
+}
 
 const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   onLanguageSelect,
@@ -66,6 +81,8 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownMenuRef = useRef<HTMLDivElement>(null)
+  const languageButtonRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -89,12 +106,63 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
     }
   }, [isOpen, onClose, onCloseParent])
 
-  const toggleDropdown = (event: React.MouseEvent) => {
+  // Focus first option when dropdown opens
+  useEffect(() => {
+    if (isOpen && dropdownMenuRef.current) {
+      const firstOption = dropdownMenuRef.current.querySelector<HTMLElement>(
+        '[role="submenuitem"]'
+      )
+      firstOption?.focus()
+    }
+  }, [isOpen])
+
+  const toggleDropdown = (event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation()
     setIsOpen(!isOpen)
   }
 
-  const handleSelect = (event: React.MouseEvent, languageCode: string) => {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === 'ArrowRight') {
+      event.preventDefault()
+      toggleDropdown(event)
+    }
+  }
+
+  const handleMenuKeyDown = (event: React.KeyboardEvent) => {
+    if (!dropdownMenuRef.current) return
+
+    const menuItems = Array.from(
+      dropdownMenuRef.current.querySelectorAll<HTMLElement>(
+        '[role="submenuitem"]'
+      )
+    )
+
+    if (menuItems.length === 0) return
+
+    const currentIndex = menuItems.findIndex(
+      (item) => item === document.activeElement
+    )
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      const nextIndex = (currentIndex + 1) % menuItems.length
+      menuItems[nextIndex]?.focus()
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      const prevIndex =
+        currentIndex <= 0 ? menuItems.length - 1 : currentIndex - 1
+      menuItems[prevIndex]?.focus()
+    } else if (event.key === 'Escape' || event.key === 'ArrowLeft') {
+      event.preventDefault()
+      setIsOpen(false)
+      setTimeout(() => languageButtonRef.current?.focus(), 0)
+    }
+  }
+
+  const handleSelect = (
+    event: React.MouseEvent | React.KeyboardEvent,
+    languageCode: string
+  ) => {
     event.stopPropagation()
     onLanguageSelect(languageCode)
   }
@@ -106,7 +174,13 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   return (
     <DropdownContainer ref={dropdownRef}>
       {showButton && (
-        <LanguageButton onClick={toggleDropdown}>
+        <LanguageButton
+          ref={languageButtonRef}
+          onClick={toggleDropdown}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          role="menuitem"
+        >
           <ButtonContent>
             <ButtonLabel>
               Document language <TriangleCollapsedIcon />
@@ -119,7 +193,15 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       )}
 
       {isOpen && (
-        <DropdownMenu direction="right" width={231} height={400} top={18}>
+        <DropdownMenu
+          ref={dropdownMenuRef}
+          direction="right"
+          width={231}
+          height={400}
+          top={18}
+          onKeyDown={handleMenuKeyDown}
+          role="menu"
+        >
           {!showButton && <DropdownTitle>Choose language</DropdownTitle>}
           {languages.map((language) => (
             <LanguageOptionItem
@@ -173,6 +255,12 @@ const LanguageButton = styled.div`
   width: 100%;
 
   &:hover {
+    background: ${(props) => props.theme.colors.background.fifth};
+  }
+
+  &:focus-visible {
+    outline: 2px solid #3dadff;
+    outline-offset: -2px;
     background: ${(props) => props.theme.colors.background.fifth};
   }
 `
@@ -237,6 +325,12 @@ const StyledLanguageOption = styled.div`
 
   &:hover {
     background-color: #f2fbfc;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #3dadff;
+    outline-offset: -2px;
+    background: ${(props) => props.theme.colors.background.fifth};
   }
 `
 

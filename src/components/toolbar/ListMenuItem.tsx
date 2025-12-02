@@ -33,7 +33,7 @@ export const ListMenuItem: React.FC<MenuComponentProps> = ({
   const styles = menu.submenu.map((m) => (m as Menu).id)
   return (
     <SubmenuContainer>
-      <SubmenuLabel menu={menu} handleClick={handleClick} />
+      <SubmenuLabel menu={menu} handleClick={handleClick} closeAll={() => handleClick([])} />
       {menu.isOpen && (
         <NestedSubmenusContainer>
           <ListStyles styles={styles} onClick={(s, i) => handleClick([i])} />
