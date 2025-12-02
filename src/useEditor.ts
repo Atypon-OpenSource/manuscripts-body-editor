@@ -63,34 +63,47 @@ export const useEditor = (externalProps: ExternalProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.doc, props.isComparingMode])
 
-  // Receiving steps from backend
-  if (collabProvider && !props.isComparingMode) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    collabProvider.onNewSteps(async () => {
-      if (state && view.current) {
-        const localVersion = getVersion(view.current.state)
-
-        const since = await collabProvider.stepsSince(localVersion)
-
-        if (since && since.version <= localVersion) {
-          return
-        }
-
-        if (since?.steps.length && since.clientIDs.length) {
-          view.current.dispatch(
-            receiveTransaction(
-              // has to be called for the collab to increment version and drop buffered steps
-              view.current.state,
-              since?.steps,
-              since.clientIDs
-            )
+  useEffect(() => {
+    // Receiving steps from backend
+    if (collabProvider && !props.isComparingMode) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      collabProvider.onNewSteps(async () => {
+        if (state && view.current) {
+          let localVersion = getVersion(view.current.state)
+          const since = await collabProvider.stepsSince(
+            getVersion(view.current.state)
           )
-        } else {
-          console.warn('Inconsistent new steps event from the authority.')
+
+          /*
+          Check if we already requested and applied steps for this version before. Duplicate request for the same version can happen 
+          when websocket signals that there are new steps at about the same time when we send some new steps and get 409 as a response
+          due to conflict with the very same steps in authority. It would result in double request and application of the same steps and
+          forever desync (until page reload that is)
+          */
+          localVersion = getVersion(view.current.state)
+          if (since && since.version <= localVersion) {
+            return
+          }
+
+          if (since?.steps.length && since.clientIDs.length) {
+            view.current.dispatch(
+              receiveTransaction(
+                // has to be called for the collab to increment version and drop buffered steps
+                view.current.state,
+                since?.steps,
+                since.clientIDs
+              )
+            )
+          } else {
+            console.warn('Inconsistent new steps event from the authority.')
+          }
         }
-      }
-    })
-  }
+      })
+    }
+    return () => {
+      collabProvider?.unsubscribe()
+    }
+  }, [collabProvider, props.isComparingMode, !!view.current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const debounce = useDoWithDebounce()
 
@@ -122,7 +135,6 @@ export const useEditor = (externalProps: ExternalProps) => {
           )
         }
       }
-
       debounce(
         () => {
           setState(nextState)
