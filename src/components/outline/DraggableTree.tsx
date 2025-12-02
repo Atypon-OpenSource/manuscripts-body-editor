@@ -315,7 +315,10 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
           onContextMenu={handleContextMenu}
         >
           {items.length ? (
-            <OutlineItemArrow onClick={toggleOpen}>
+            <OutlineItemArrow
+              aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${node.type.name}`}
+              onClick={toggleOpen}
+            >
               {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}
             </OutlineItemArrow>
           ) : (
