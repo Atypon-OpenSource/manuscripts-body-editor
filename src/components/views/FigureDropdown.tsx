@@ -14,35 +14,44 @@
  * limitations under the License.
  */
 import {
-  AddIcon,
-  AttachIcon,
-  Capabilities,
   DotsIcon,
   DropdownList,
   getFileIcon,
   IconButton,
   IconTextButton,
-  isImageFile,
-  RoundIconButton,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
-import React, { SyntheticEvent } from 'react'
+import { FigureNode } from '@manuscripts/transform'
+import { Node as ManuscriptNode } from 'prosemirror-model'
+import React, { SyntheticEvent, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { FileAttachment, ManuscriptFiles } from '../../lib/files'
+import { Capabilities } from '../../lib/capabilities'
+import {
+  FileAttachment,
+  ManuscriptFiles,
+  memoGroupFiles,
+} from '../../lib/files'
+import { getMediaTypeInfo } from '../../lib/get-media-type'
+import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 export interface FigureDropdownProps {
   can: Capabilities
-  files: ManuscriptFiles
+  getFiles: () => FileAttachment[]
 }
 
 export interface FigureOptionsProps extends FigureDropdownProps {
   onDownload?: () => void
   onUpload?: () => void
   onDetach?: () => void
-  onReplace?: (file: FileAttachment) => void
+  onReplace?: (file: FileAttachment, isSupplement?: boolean) => void
+  onReplaceEmbed?: () => void
+  getDoc: () => ManuscriptNode
+  onDelete?: () => void
+  isEmbed: boolean
+  hasSiblings: () => boolean
 }
 
 export interface FigureElementOptionsProps extends FigureDropdownProps {
@@ -51,89 +60,80 @@ export interface FigureElementOptionsProps extends FigureDropdownProps {
   hasUploadedImage: boolean
 }
 
-export const FigureElementOptions: React.FC<FigureElementOptionsProps> = ({
-  can,
-  files,
-  onAdd,
-  onUpload,
-  hasUploadedImage,
-}) => {
-  const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-
-  const supplements = files.supplements
-    .map((s) => s.file)
-    .filter((f) => isImageFile(f.name))
-
-  const others = files.others.filter((f) => isImageFile(f.name))
-
-  return (
-    <FilesDropdownWrapper onClick={toggleOpen} ref={wrapperRef}>
-      <FilesButton disabled={hasUploadedImage}>
-        <AttachIcon />
-      </FilesButton>
-      {isOpen && (
-        <DropdownList
-          direction={'left'}
-          width={208}
-          height={187}
-          onClick={toggleOpen}
-          top={7}
-        >
-          <NestedDropdown
-            disabled={!can.replaceFile || supplements.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Supplements'}
-            list={
-              <>
-                {supplements.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <NestedDropdown
-            disabled={!can.replaceFile || others.length < 1}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Other files'}
-            list={
-              <>
-                {others.map((file) => (
-                  <ListItemButton key={file.id} onClick={() => onAdd(file)}>
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-              </>
-            }
-          />
-          <UploadButton onClick={onUpload} disabled={!can.uploadFile}>
-            <AddIcon /> New file...
-          </UploadButton>
-        </DropdownList>
-      )}
-    </FilesDropdownWrapper>
-  )
+function getSupplements(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean
+) {
+  return groupFiles(getDoc(), getFiles())
+    .supplements.map((s) => s.file)
+    .filter((f) => {
+      const mediaInfo = getMediaTypeInfo(f.name)
+      return isEmbed
+        ? mediaInfo.isVideo || mediaInfo.isAudio
+        : mediaInfo.isImage
+    })
 }
 
-export const FigureOptions: React.FC<FigureOptionsProps> = ({
+function getOtherFiles(
+  getFiles: () => FileAttachment[],
+  getDoc: () => ManuscriptNode,
+  groupFiles: (doc: ManuscriptNode, files: FileAttachment[]) => ManuscriptFiles,
+  isEmbed: boolean
+) {
+  return groupFiles(getDoc(), getFiles()).others.filter((f) => {
+    const mediaInfo = getMediaTypeInfo(f.name)
+    return isEmbed ? mediaInfo.isVideo || mediaInfo.isAudio : mediaInfo.isImage
+  })
+}
+
+type WrappedProps = FigureOptionsProps & ReactViewComponentProps<FigureNode>
+
+export const FigureOptions: React.FC<WrappedProps> = ({
   can,
-  files,
+  getDoc,
+  getFiles,
   onDownload,
   onUpload,
   onDetach,
   onReplace,
+  onReplaceEmbed,
+  onDelete,
+  isEmbed,
+  hasSiblings,
+  container,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
-
-  const otherFiles = files.others.filter((f) => isImageFile(f.name))
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
   const showDetach = onDetach && can.detachFile
-  const showReplace = onReplace && can.replaceFile
+  const showReplace =
+    (onReplace && can.replaceFile) || (onReplaceEmbed && can.editArticle)
+  const replaceBtnText = onDownload ? 'Replace' : 'Choose file'
+  const showDelete = () => {
+    if (!hasSiblings()) {
+      return false
+    }
+    if (onDelete && can.detachFile) {
+      return true
+    }
+    return false
+  }
+
+  useEffect(() => {
+    const activeClass = 'figure-dropdown-active'
+    if (isOpen) {
+      container.classList.add(activeClass)
+    } else {
+      container.classList.remove(activeClass)
+    }
+  }, [isOpen, container.classList])
+
+  const isEmbedMode = !!onReplaceEmbed
+
+  const groupFiles = memoGroupFiles()
 
   return (
     <DropdownWrapper ref={wrapperRef}>
@@ -142,35 +142,65 @@ export const FigureOptions: React.FC<FigureOptionsProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList direction={'right'} width={128} top={5}>
-          <ListItemButton onClick={onDownload} disabled={!showDownload}>
-            Download
-          </ListItemButton>
-          <NestedDropdown
-            disabled={!showReplace}
-            parentToggleOpen={toggleOpen}
-            buttonText={'Replace'}
-            moveLeft
-            list={
-              <>
-                {otherFiles.map((file, index) => (
-                  <ListItemButton
-                    key={file.id}
-                    id={index.toString()}
-                    onClick={() => onReplace && onReplace(file)}
-                  >
-                    {getFileIcon(file.name)}
-                    <ListItemText>{file.name}</ListItemText>
-                  </ListItemButton>
-                ))}
-                <UploadButton onClick={onUpload} disabled={!showUpload}>
-                  <UploadIcon /> Upload new...
-                </UploadButton>
-              </>
-            }
-          />
-          <ListItemButton onClick={onDetach} disabled={!showDetach}>
-            Detach
-          </ListItemButton>
+          {showReplace && isEmbedMode && (
+            <ListItemButton onClick={() => onReplaceEmbed && onReplaceEmbed()}>
+              Edit Link
+            </ListItemButton>
+          )}
+          {showReplace && !isEmbedMode && (
+            <NestedDropdown
+              disabled={!showReplace}
+              parentToggleOpen={toggleOpen}
+              buttonText={replaceBtnText}
+              moveLeft
+              list={
+                <>
+                  {getSupplements(getFiles, getDoc, groupFiles, isEmbed).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file, true)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
+                  {getOtherFiles(getFiles, getDoc, groupFiles, isEmbed).map(
+                    (file, index) => (
+                      <ListItemButton
+                        key={file.id}
+                        id={index.toString()}
+                        onClick={() => onReplace && onReplace(file)}
+                      >
+                        {getFileIcon(file.name)}
+                        <ListItemText>{file.name}</ListItemText>
+                      </ListItemButton>
+                    )
+                  )}
+                  {showUpload && (
+                    <UploadButton onClick={onUpload} disabled={!showUpload}>
+                      <UploadIcon /> Upload new...
+                    </UploadButton>
+                  )}
+                </>
+              }
+            />
+          )}
+          {showDownload && (
+            <ListItemButton onClick={onDownload} disabled={!showDownload}>
+              Download
+            </ListItemButton>
+          )}
+          {showDetach && (
+            <ListItemButton onClick={onDetach} disabled={!showDetach}>
+              Detach
+            </ListItemButton>
+          )}
+          {showDelete() && (
+            <ListItemButton onClick={onDelete}>Delete</ListItemButton>
+          )}
         </OptionsDropdownList>
       )}
     </DropdownWrapper>
@@ -189,7 +219,8 @@ const NestedDropdown: React.FC<{
   return (
     <DropdownWrapper ref={wrapperRef}>
       <NestedListButton onClick={toggleOpen} disabled={disabled}>
-        {buttonText} <TriangleCollapsedIcon />
+        <div>{buttonText}</div>
+        <TriangleCollapsedIcon />
       </NestedListButton>
       {isOpen && (
         <NestedListDropdownList
@@ -222,10 +253,7 @@ const OptionsButton = styled(IconButton)`
   height: ${(props) => props.theme.grid.unit * 6}px;
   margin: ${(props) => props.theme.grid.unit}px;
   visibility: hidden;
-  background: white;
-  position: absolute;
-  top: -4px;
-  right: 4%;
+  background: #ffffff;
 
   &:hover {
     background: #f2fbfc !important;
@@ -257,8 +285,8 @@ const ListItemButton = styled(IconTextButton)`
   }
 
   &:is([disabled]) {
-    background: white !important;
-    color: #353535 !important;
+    background: #ffffff;
+    color: #353535;
     opacity: 0.4;
   }
 `
@@ -270,31 +298,14 @@ const ListItemText = styled.div`
   text-align: start;
 `
 
-const FilesButton = styled(RoundIconButton)`
-  path {
-    stroke: #6e6e6e;
-  }
-
-  &:active,
-  &:focus {
-    path {
-      stroke: #1a9bc7;
-    }
-  }
-`
-
-const FilesDropdownWrapper = styled.div`
-  position: absolute;
-  top: 8px;
-  left: 70px;
-  z-index: 1;
-`
-
 const NestedListButton = styled(ListItemButton)`
   width: 100%;
   &:active,
   &:focus {
     background: #f2fbfc;
+  }
+  svg {
+    margin-right: 0;
   }
 `
 

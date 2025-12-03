@@ -22,6 +22,7 @@ import {
 } from '@manuscripts/transform'
 import { NodeSelection, TextSelection } from 'prosemirror-state'
 
+import { insertFootnotesElement } from '../commands'
 import {
   FootnotesSelector,
   FootnotesSelectorProps,
@@ -81,7 +82,7 @@ export class InlineFootnoteView
         this.node,
         this.getPos,
         this.view,
-        'context-menu'
+        ['context-menu']
       ),
       'right-start',
       false
@@ -129,22 +130,14 @@ export class InlineFootnoteView
     const pos = this.getPos()
     const container = findFootnotesContainerNode(state.doc, pos)
     const fn = getFootnotesElementState(state, container.node.attrs.id)
-    if (!fn) {
-      return []
-    }
 
-    const rids = this.node.attrs.rids
-
-    const footnotes = fn.footnotes
-      .map((n) => n[0])
-      .filter(
-        (n) => fn.unusedFootnoteIDs.has(n.attrs.id) || rids.includes(n.attrs.id)
-      )
+    const footnotes = fn ? fn.footnotes.map((n) => n[0]) : []
+    const labels = fn ? fn.labels : new Map<string, string>()
 
     const props: FootnotesSelectorProps = {
       footnotes,
       inlineFootnote: this.node,
-      labels: fn.labels,
+      labels,
       onCancel: this.handleCancel,
       onAdd: this.handleAdd,
       onInsert: this.handleInsert,
@@ -157,7 +150,7 @@ export class InlineFootnoteView
       this.node,
       this.getPos,
       this.view,
-      'footnote-editor'
+      ['footnote-editor']
     )
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
@@ -167,10 +160,11 @@ export class InlineFootnoteView
     const state = this.view.state
     const fn = getFootnotesElementState(state, this.node.attrs.id)
     if (!fn) {
+      this.dom.innerText = '?'
       return
     }
 
-    this.dom.innerText = fn.labels.get(this.node.attrs.id) || ''
+    this.dom.innerText = fn.labels.get(this.node.attrs.id) || '?'
   }
 
   public initialise = () => {
@@ -218,14 +212,20 @@ export class InlineFootnoteView
     const pos = this.getPos()
     const container = findFootnotesContainerNode(state.doc, pos)
     const fn = getFootnotesElementState(state, container.node.attrs.id)
-    if (!fn) {
-      return
-    }
     const tr = this.view.state.tr
     const footnote = createFootnote()
     const rids = this.node.attrs.rids
     tr.setNodeAttribute(pos, 'rids', [...rids, footnote.attrs.id])
-    const fnPos = fn.element[1] + fn.element[0].nodeSize - 1
+    let fnPos: number
+    if (fn) {
+      fnPos = fn.element[1] + fn.element[0].nodeSize - 1
+    } else {
+      const [elementNode, elementPos] = insertFootnotesElement(tr, [
+        container.node,
+        container.pos,
+      ])
+      fnPos = elementPos + elementNode.nodeSize - 1
+    }
     tr.insert(fnPos, footnote)
     const selection = TextSelection.create(tr.doc, fnPos + 2)
     tr.setSelection(selection).scrollIntoView()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import {
-  getGroupCateogries,
+  getGroupCategories,
   isSectionNode,
   schema,
   SectionCategory,
@@ -40,7 +40,7 @@ function createMenuItem(
   isDisabled = false,
   isSelected = false
 ) {
-  const item = document.createElement('button')
+  const item = document.createElement('div')
   item.className = `menu-item ${isDisabled ? 'disabled' : ''} ${
     isSelected ? 'selected' : ''
   }`
@@ -85,7 +85,8 @@ function createButton(
   currentCategory: SectionCategory | undefined,
   categories: SectionCategory[],
   usedCategoryIDs: Set<string>,
-  canEdit = true
+  canEdit = true,
+  disabled: boolean
 ) {
   const handleSelect = (category: SectionCategory) => {
     const tr = view.state.tr
@@ -97,10 +98,13 @@ function createButton(
   const button = document.createElement('button')
   button.innerHTML = sectionCategoryIcon
   button.classList.add('section-category-button')
+  button.setAttribute('aria-label', 'Section categories menu')
   if (currentCategory) {
     button.classList.add('assigned')
   }
-  if (canEdit) {
+  if (disabled) {
+    button.classList.add('disabled')
+  } else if (canEdit) {
     button.addEventListener('mousedown', () => {
       popper.destroy()
       const menu = createMenu(
@@ -145,18 +149,15 @@ export function buildPluginState(
   const usedCategoryIDs = getUsedSectionCategoryIDs(state)
 
   state.doc.descendants((node, pos) => {
-    if (
-      node.type === schema.nodes.abstracts ||
-      node.type === schema.nodes.box_element
-    ) {
+    if (node.type === schema.nodes.box_element) {
       return false
     }
     if (isSectionNode(node)) {
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
-      const group = isInBackmatter($pos) ? 'backmatter' : 'body'
-      const groupCategories = getGroupCateogries(categories, group)
+      const group = getGroup($pos)
+      const groupCategories = getGroupCategories(categories, group)
       decorations.push(
         Decoration.widget(pos + 1, (view) =>
           createButton(
@@ -165,7 +166,8 @@ export function buildPluginState(
             category,
             groupCategories,
             usedCategoryIDs,
-            can?.editArticle
+            can?.editArticle,
+            categories.size === 0
           )
         )
       )
@@ -185,6 +187,12 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
   return used
 }
 
-const isInBackmatter = ($pos: ResolvedPos) => {
-  return !!findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)
+const getGroup = ($pos: ResolvedPos) => {
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)) {
+    return 'abstracts'
+  }
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)) {
+    return 'backmatter'
+  }
+  return 'body'
 }

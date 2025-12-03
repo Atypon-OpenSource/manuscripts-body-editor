@@ -22,16 +22,16 @@ import {
 } from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
-import { Selection, TextSelection, Transaction } from 'prosemirror-state'
+import { Selection, TextSelection } from 'prosemirror-state'
 
 import {
+  autoComplete,
+  Dispatch,
   isAtEndOfTextBlock,
   isAtStartOfTextBlock,
   isTextSelection,
 } from '../commands'
 import { EditorAction } from '../types'
-
-type Dispatch = (transaction: Transaction) => void
 
 const insertParagraph = (
   dispatch: Dispatch,
@@ -128,7 +128,7 @@ const exitBlock =
     return true
   }
 
-const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
+const leaveTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state
 
   if (!isTextSelection(selection)) {
@@ -141,8 +141,18 @@ const leaveSectionTitle: EditorAction = (state, dispatch, view) => {
     return false
   }
 
-  if ($cursor.parent.type !== $cursor.parent.type.schema.nodes.section_title) {
+  const titleTypes = [
+    schema.nodes.alt_title,
+    schema.nodes.section_title,
+    schema.nodes.title,
+  ]
+
+  if (!titleTypes.includes($cursor.parent.type)) {
     return false
+  }
+
+  if ($cursor.parent.type === schema.nodes.alt_title) {
+    return true
   }
 
   if (isInGraphicalAbstractSection($cursor)) {
@@ -169,7 +179,7 @@ const leaveFigcaption: EditorAction = (state) => {
 }
 
 // ignore backspace at the start of section titles
-const protectSectionTitle: EditorAction = (
+const protectTitles: EditorAction = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
   view?: ManuscriptEditorView
@@ -184,6 +194,15 @@ const protectSectionTitle: EditorAction = (
 
   if (!$cursor) {
     return false
+  }
+
+  // preventing deletion of alt_titles and subtitles with backspace
+  if (
+    ($cursor.parent.type === schema.nodes.alt_title ||
+      $cursor.parent.type === schema.nodes.subtitle) &&
+    $cursor.pos === $cursor.before() + 1
+  ) {
+    return true
   }
 
   return (
@@ -246,11 +265,11 @@ const keepCaption = (state: ManuscriptEditorState) => {
 
 const titleKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
-    protectSectionTitle,
+    protectTitles,
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(leaveSectionTitle, leaveFigcaption),
+  Enter: chainCommands(autoComplete, leaveTitle, leaveFigcaption),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),

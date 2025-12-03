@@ -40,7 +40,7 @@ export const OutlineItem = styled.div<{
       ? props.theme.font.size.large
       : props.theme.font.size.medium};
   line-height: 30px;
-  margin-left: -${(props) => props.theme.grid.unit * 5}px;
+  margin-left: -${(props) => props.theme.grid.unit * 10}px;
   margin-right: -${(props) => props.theme.grid.unit * 5}px;
   overflow-x: hidden;
   padding-right: ${(props) => props.theme.grid.unit * 5}px;
@@ -123,6 +123,12 @@ export const Outline = styled.div`
 
   & .subtree.collapsed {
     display: none;
+  }
+
+  & .hero-image {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #ddd;
   }
 `
 

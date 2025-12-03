@@ -19,6 +19,7 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { DOMSerializer } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { CellSelection } from 'prosemirror-tables'
+import { ViewMutationRecord } from 'prosemirror-view'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
@@ -30,7 +31,7 @@ import ReactSubView from './ReactSubView'
 export class TableCellView extends BlockView<ManuscriptNode> {
   public contentDOM: HTMLElement
 
-  public ignoreMutation(mutation: MutationRecord) {
+  public ignoreMutation(mutation: ViewMutationRecord) {
     return mutation.type === 'attributes' && mutation.attributeName === 'class'
   }
 
@@ -104,7 +105,7 @@ export class TableCellView extends BlockView<ManuscriptNode> {
           this.view.state.selection.$from.node(),
           this.getPos,
           this.view,
-          'table-cell-context-menu'
+          ['table-cell-context-menu']
         )
         contextMenuButton.classList.toggle('open-context-menu')
 

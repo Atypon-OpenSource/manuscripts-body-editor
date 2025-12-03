@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+import {
+  CHANGE_OPERATION,
+  trackChangesPluginKey,
+  TrackedChange,
+} from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
-import { Selection } from 'prosemirror-state'
+import { NodeSelection, Selection } from 'prosemirror-state'
 import { Mappable } from 'prosemirror-transform'
 
 import { isTextSelection } from './commands'
 
-/**
- * Selecting multiple nodes without moving selection cursor
- */
-
 interface NodesSelectionJSON {
-  type: 'inlineNodes'
+  type: 'inlineNodes' | 'nodes'
   startNode: ResolvedPos
   endNode: ResolvedPos
 }
-export class NodesSelection extends Selection {
+
+/**
+ * Selecting multiple inline nodes without moving selection cursor
+ */
+export class InlineNodesSelection extends Selection {
   public $startNode: ResolvedPos
   public $endNode: ResolvedPos
 
@@ -63,19 +67,46 @@ export class NodesSelection extends Selection {
   }
 }
 
+export class NodesSelection extends NodeSelection {
+  public $startNode: ResolvedPos
+  public $endNode: ResolvedPos
+
+  constructor($from: ResolvedPos, $to: ResolvedPos) {
+    super($from)
+    this.$startNode = $from
+    this.$endNode = $to
+  }
+
+  toJSON(): NodesSelectionJSON {
+    return {
+      type: 'nodes',
+      startNode: this.$startNode,
+      endNode: this.$endNode,
+    }
+  }
+}
+
 export const getSelectionChangeGroup = (state: ManuscriptEditorState) => {
   const selection = state.selection
   const $pos = isTextSelection(selection)
     ? selection.$cursor
-    : selection instanceof NodesSelection && selection.$from
+    : (selection instanceof NodesSelection ||
+        selection instanceof InlineNodesSelection) &&
+      selection.$from
   if ($pos) {
-    return trackChangesPluginKey
-      .getState(state)
-      ?.changeSet.groupChanges.find(
-        (changes) =>
-          changes.length > 1 &&
-          $pos.pos >= changes[0].from &&
-          $pos.pos <= changes[changes.length - 1].to
-      )
+    return (
+      trackChangesPluginKey
+        .getState(state)
+        ?.changeSet.groupChanges.find((c) => isPositionAtRange(c, $pos.pos)) ||
+      []
+    )
   }
+  return []
 }
+
+// check if position is at the range of group changes
+const isPositionAtRange = (changes: TrackedChange[], pos: number) =>
+  (changes.length > 1 ||
+    changes[0].dataTracked.operation === CHANGE_OPERATION.structure) &&
+  pos >= changes[0].from &&
+  pos <= changes[changes.length - 1].to

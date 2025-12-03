@@ -16,29 +16,27 @@
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
+import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
-import { Dispatch } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
   setNodeAttrs: (nextAttrs: Partial<NodeT['attrs']>) => void
-  contentDOM?: HTMLElement | null
   viewProps: {
     view: ManuscriptEditorView
     getPos: () => number
     node: ManuscriptNode | Trackable<ManuscriptNode>
   }
-  dispatch: Dispatch
+  container: HTMLDivElement
 }
 /*
   This is to render components that affect the Prosemirror Document indirectly. Such as dropdown buttons, inputs, advanced UX elements etc.
   MAKE SURE dispatch IS PASSED TO YOUR VIEW
 */
-
 function createSubView<T extends Trackable<ManuscriptNode>>(
   props: EditorProps,
   Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -46,13 +44,38 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   node: T,
   getPos: () => number,
   view: ManuscriptEditorView,
-  classNames = ''
+  classNames: string[] = []
 ): HTMLDivElement {
   const container = document.createElement('div')
+  const Wrapped = createView<T>(
+    props,
+    Component,
+    componentProps,
+    node,
+    getPos,
+    view,
+    classNames,
+    container
+  )
+  const root = createRoot(container)
+  root.render(<Wrapped />)
+  return container
+}
+
+function createView<T extends Trackable<ManuscriptNode>>(
+  props: EditorProps,
+  Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  componentProps: object,
+  node: T,
+  getPos: () => number,
+  view: ManuscriptEditorView,
+  classNames: string[] = [],
+  container: HTMLDivElement
+) {
   container.classList.add('tools-panel')
-  if (classNames) {
-    container.classList.add(classNames)
-    container.setAttribute('data-cy', classNames)
+  if (classNames.length) {
+    container.classList.add(...classNames)
+    container.setAttribute('data-cy', classNames[0])
   }
   container.setAttribute('contenteditable', 'false')
 
@@ -74,17 +97,51 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
           nodeAttrs={node.attrs}
           setNodeAttrs={setNodeAttrs}
           viewProps={{ node, view, getPos }}
+          container={container}
           {...props}
           {...componentProps}
         />
       </ThemeProvider>
     )
   }
+  return Wrapped
+}
+
+/**
+ * Due to async rendering in React, inline or persistent elements may flicker during rerendering.
+ * To prevent that this wrapper allows to replace element with its new version only when it's already rendered.
+ */
+export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
+  props: EditorProps,
+  Component: React.FC<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  componentProps: object,
+  node: T,
+  getPos: () => number,
+  view: ManuscriptEditorView,
+  classNames: string[] = []
+) {
+  const container = document.createElement('div')
+  const Wrapped = createView<T>(
+    props,
+    Component,
+    componentProps,
+    node,
+    getPos,
+    view,
+    classNames,
+    container
+  )
+
   const root = createRoot(container)
-
-  root.render(<Wrapped />)
-
-  return container
+  const res = new Promise<HTMLDivElement>((resolve) => {
+    queueMicrotask(() => {
+      flushSync(() => {
+        root.render(<Wrapped />)
+      })
+      resolve(container)
+    })
+  })
+  return res
 }
 
 export default createSubView

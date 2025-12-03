@@ -1,3 +1,6 @@
+:root {
+  --body-side-margin: 65px;
+}
 .ProseMirror.manuscript-editor {
   font-size: 16px;
   line-height: 1.5;
@@ -70,18 +73,15 @@
   content: '— ';
 }
 
+.ProseMirror .block-container > .block.pullquote {
+  padding: 0 0 7px 48px;
+}
 .ProseMirror .pullquote {
-  padding: 32px 0 32px 32px !important;
-  border-top: 5px solid #e2e2e2;
-  border-bottom: 5px solid #e2e2e2;
-}
+  column-gap: 30px;
 
-.ProseMirror .pullquote p {
-  font-style: italic;
-  line-height: 1.2;
-  font-size: 32px;
+  line-height: 2;
+  font-size: 16px;
 }
-
 .ProseMirror .pullquote p i {
   font-style: normal;
 }
@@ -89,17 +89,28 @@
 .ProseMirror .pullquote p:first-of-type {
   margin-top: 0;
 }
-
-.ProseMirror .pullquote p:first-of-type:before {
-  content: open-quote;
-  display: block;
-  font-size: 2em;
-  margin-right: 8px;
-  color: #777;
+.ProseMirror .pullquote p:last-of-type::after,
+.ProseMirror .pullquote p:first-of-type::before {
+  font-family: 'PT Serif', serif;
+  content: '“';
+  font-size: 30px;
   line-height: 0;
+  color: #6e6e6e;
+  top: 0.3em;
   position: relative;
-  top: 0.5em;
-  left: -0.5em;
+}
+.ProseMirror .pullquote p:first-of-type::before {
+  margin-left: -16px;
+  left: -0.1em;
+  top: 0.35em;
+}
+.ProseMirror .pullquote p:last-of-type::after {
+  content: '”';
+  margin-left: 8px;
+}
+
+.ProseMirror .pullquote p .placeholder-text ~ .ProseMirror-trailingBreak {
+  display: none;
 }
 
 .ProseMirror .pullquote p:last-of-type {
@@ -107,14 +118,89 @@
 }
 
 .ProseMirror .pullquote footer {
-  margin-top: 24px;
-  margin-left: 8px;
-  font-size: 18px;
+  padding-left: 1em;
   color: #777;
+  position: relative;
 }
-
 .ProseMirror .pullquote footer:before {
   content: '— ';
+  margin-left: -1em;
+}
+
+.ProseMirror .pullquote footer.empty-node .ProseMirror-trailingBreak {
+  display: none;
+}
+.ProseMirror .pullquote .figure-image,
+.ProseMirror .pullquote .figure,
+.ProseMirror .pullquote .figure.placeholder {
+  max-width: 146px;
+  min-width: 146px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+}
+.ProseMirror .pullquote-figure {
+  position: relative;
+  float: left;
+  text-decoration: inherit;
+  margin: 10px 30px 0 0;
+}
+.ProseMirror .pullquote .figure.placeholder {
+  box-sizing: border-box;
+  border: 1px dashed #e2e2e2;
+  padding: 16px;
+  text-decoration: inherit;
+  max-width: 146px;
+}
+.ProseMirror .pullquote figure {
+  margin: 0;
+}
+.ProseMirror .pullquote footer.empty-node:after,
+.ProseMirror .pullquote .placeholder-text {
+  background: #ddf3fa;
+  color: #6e6e6e;
+}
+
+.ProseMirror .pullquote .figure.placeholder svg path {
+  fill: #c9c9c9;
+}
+.ProseMirror .pullquote .figure.placeholder svg {
+  height: 23px;
+  width: 25.4px;
+  margin-bottom: 4px;
+  margin-top: 29px;
+}
+.ProseMirror .pullquote .figure div {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.71;
+  text-decoration: inherit;
+}
+.ProseMirror .pullquote figure:not(.deleted) .figure div {
+  color: #6e6e6e;
+  text-decoration: none;
+}
+.ProseMirror .figure-remove-button svg {
+  width: 15px;
+  height: 15px;
+  transform: rotate(45deg);
+}
+.ProseMirror .figure-remove-button {
+  position: absolute;
+  top: 0;
+  transform: translate(40%, -40%);
+  right: 0;
+  line-height: 0;
+  background: #fff;
+  border-radius: 50%;
+  padding: 0.22em;
+  border: 1px solid #f2f2f2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 2;
+}
+.tracking-visible .ProseMirror .pullquote figure.inserted {
+  text-decoration: none;
 }
 
 .ProseMirror img {
@@ -136,13 +222,13 @@
 .ProseMirror tr th {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  background: #E2E2E2;
+  background: #e2e2e2;
   text-align: left;
   font-weight: bold;
 }
 
 .ProseMirror tr th:not(:last-child) {
-  border-right: 1px solid #C9C9C9;
+  border-right: 1px solid #c9c9c9;
 }
 
 .ProseMirror tr td {
@@ -191,117 +277,6 @@
   background-color: #bce7f6;
 }
 
-.ProseMirror .figure-block {
-  border: 1px solid transparent;
-  border-radius: 4px;
-  display: grid;
-  gap: 20px 40px;
-  margin: 16px 0 0;
-  box-sizing: border-box;
-  justify-self: center;
-  position: relative;
-}
-
-.ProseMirror .figure-block:hover .options-button {
-  visibility: visible;
-}
-
-.ProseMirror .block:focus-within .figure-block,
-.ProseMirror .block:hover .figure-block {
-  border-color: #e2e2e2;
-}
-
-.ProseMirror .figure-block[data-alignment='left'] {
-  justify-self: flex-start;
-}
-
-.ProseMirror .figure-block[data-alignment='right'] {
-  justify-self: flex-end;
-}
-
-.ProseMirror .figure-block .expanded-listing .executable-attachments {
-  display: block;
-}
-
-.ProseMirror .figure-block figure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.ProseMirror .figure-block > .listing {
-  /*grid-row: listing;*/
-  grid-column-start: 1;
-  grid-column-end: -1;
-  /*margin-top: 0;*/
-  padding: 0;
-  min-height: 0;
-  overflow: visible;
-  width: 100%;
-}
-
-.ProseMirror .figure-block > figcaption {
-  /*grid-row: caption;*/
-  grid-column-start: 1;
-  grid-column-end: -1;
-  margin-top: 0;
-}
-
-.ProseMirror .figure-caption {
-  display: none;
-}
-
-.ProseMirror .figure.placeholder {
-  align-items: center;
-  border-radius: 16px;
-  border: 1px dashed #e2e2e2;
-  color: #6e6e6e;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  padding: 64px 32px;
-  min-height: 100px;
-  white-space: normal;
-}
-
-.ProseMirror .figure.placeholder.over {
-  border-color: #bce7f6;
-}
-
-.ProseMirror .figure-image {
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.ProseMirror .figure-embed {
-  width: 640px;
-  max-width: 90%;
-  position: relative;
-  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
-}
-
-.ProseMirror .figure-embed .figure-embed-object {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: none;
-}
-
-.ProseMirror figcaption {
-  background: white;
-  font-size: 14px;
-  margin-top: 1em;
-  text-align: center;
-  word-wrap: break-word;
-}
-
-.ProseMirror .block-table_element figcaption {
-  text-align: left;
-}
-
 .ProseMirror .block-table_element .block-gutter {
   padding-top: 1em;
 }
@@ -312,18 +287,42 @@
 
 .ProseMirror .caption-description {
   margin: 0;
+  outline: none !important
 }
 
 .ProseMirror .suppress-title .caption-description {
   display: inline;
+  outline: none !important;
+}
+.ProseMirror .caption-title {
+  outline: none !important;
 }
 
 .ProseMirror .caption-title.empty-node::before {
   content: 'Caption Title...';
+  color: #000;
+  cursor: text;
 }
+
+.ProseMirror .block-box_element .caption-title.empty-node::before {
+  content: none;
+}
+
+.ProseMirror .block-box_element label.caption-title.placeholder.empty-node {
+  display: inline-flex;
+}
+
+.ProseMirror .block-box_element .caption-title.empty-node::after {
+  content: 'Caption Title...';
+  color: #999;
+  font-style: italic;
+  pointer-events: none;
+} 
 
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
+  color: #000;
+  cursor: text;
 }
 
 .ProseMirror .block-table_element .caption-description.empty-node::before {
@@ -348,8 +347,16 @@
 
 .ProseMirror .figure-label {
   font-weight: bold;
+  font-size: 14px;
   margin-right: 5px;
   white-space: nowrap;
+}
+
+.block-image_element .figure-label {
+  display: block;
+  text-align: center;
+  grid-column-start: 1;
+  grid-column-end: -1;
 }
 
 .ProseMirror .executable-container {
@@ -568,9 +575,33 @@
   color: #c9c9c9;
   margin: 0;
 }
+
+.ProseMirror .add-subtitle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: var(--body-side-margin);
+}
+
+.ProseMirror .add-subtitle-text {
+  margin-left: 8px;
+}
+
+.ProseMirror .add-subtitle svg rect {
+  fill: #6E6E6E !important;
+}
+
 .ProseMirror .empty-node:hover::before {
   color: #6e6e6e;
 }
+
+.ProseMirror h1.empty-node::before {
+  color: #6e6e6e;
+  font-family: 'PT Sans', sans-serif;
+  font-style: italic;
+  line-height: 32px;
+}
+
 .ProseMirror .empty-node .article-titles::before {
   position: absolute;
   color: #c9c9c9;
@@ -583,6 +614,9 @@
 
 .ProseMirror .empty-node[data-placeholder]::before {
   content: attr(data-placeholder); /* TODO: innerHTML? */
+  color: #c9c9c9;
+  position: absolute;
+  pointer-events: none;
 }
 
 .ProseMirror table {
@@ -613,16 +647,22 @@
 .ProseMirror .block-container.block-affiliations {
   grid-template-columns: 52px auto 100px !important;
 }
-.ProseMirror .block-container.block-section {
+.ProseMirror .block-container.block-section,
+.ProseMirror .block-container.block-graphical_abstract_section {
   position: relative;
   display: grid;
   grid-template-columns: auto;
 }
-.ProseMirror .block-container.block-section section {
+.ProseMirror .block-container.block-section section,
+.ProseMirror .block-container.block-graphical_abstract_section section {
   position: relative;
 }
 
-.ProseMirror .block-container:not(.block-section):hover {
+.ProseMirror
+  .block-container:not(
+    .block-section,
+    .block-graphical_abstract_section
+  ):hover {
   z-index: 2;
 }
 
@@ -631,7 +671,8 @@
   z-index: 1;
   padding: 0 12px;
 }
-.ProseMirror .block-container.block-figure_element > .block {
+.ProseMirror .block-container.block-figure_element > .block,
+.ProseMirror .block-container.block-embed > .block {
   display: grid;
 }
 
@@ -642,6 +683,10 @@
 
 .ProseMirror .block-container > .block.fit-to-page .figure-block {
   padding: 0 !important;
+}
+
+.ProseMirror .action-gutter:empty {
+  display: none;
 }
 
 .ProseMirror .action-gutter {
@@ -670,6 +715,8 @@
   cursor: ns-resize;
   opacity: 0;
   transition: 0.2s all;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .ProseMirror .action-gutter {
@@ -683,21 +730,32 @@
 .ProseMirror .block-paragraph .block-gutter {
   margin-top: 16px;
 }
+.ProseMirror .block-subtitles .block-gutter {
+  margin-top: 4px;
+}
 
 .ProseMirror
-  .block-container:not(.block-section, .block-box_element):hover
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):hover
   .block-gutter {
   opacity: 1;
   z-index: 2;
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
-  .block-container:not(.block-section, .block-box_element):hover
-    .action-gutter {
-    pointer-events: visible;
-    opacity: 1;
-    z-index: 2;
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):hover
+  .action-gutter {
+  pointer-events: visible;
+  opacity: 1;
 }
+
 .ProseMirror .block-box_element:hover > .block-gutter {
   opacity: 1;
   z-index: 2;
@@ -786,7 +844,6 @@
 .ProseMirror pre {
   cursor: pointer;
   display: block;
-  /*min-height: 34px;*/
   padding: 5px;
   width: auto;
   min-width: 200px;
@@ -874,7 +931,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /*z-index: 2;*/
   cursor: pointer;
   background-size: contain;
   background-position: center center;
@@ -997,6 +1053,12 @@
   border-color: transparent;
 }
 
+.ProseMirror .footnote-marker:empty {
+  vertical-align: baseline;
+  min-height: 18px;
+  min-width: 5px;
+}
+
 .ProseMirror .footnote .footnote-marker {
   color: inherit;
   cursor: default;
@@ -1004,6 +1066,7 @@
 }
 .ProseMirror .footnote {
   display: flex;
+  min-height: 35px;
   align-items: center;
   position: relative;
   border: 1px solid transparent;
@@ -1011,14 +1074,13 @@
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }
-.ProseMirror .footnote.footnote-selected .delete-icon {
-  visibility: visible;
-}
 .ProseMirror .footnote .scroll-icon {
   cursor: pointer;
   visibility: hidden;
   margin-left: -20px;
   transition: 0.2s all;
+}
+.footnote-context-menu [data-tooltip-id='Scroll'] svg {
   transform: rotate(180deg);
 }
 .ProseMirror .footnote:hover .scroll-icon {
@@ -1035,7 +1097,7 @@
 .ProseMirror .footnote-marker-selected:not(.selected-suggestion) {
   text-decoration: underline;
   background-color: #f2fbfc;
-  border-color:  #0d79d0;
+  border-color: #0d79d0;
 }
 .ProseMirror .table-footer p {
   margin-bottom: 0;
@@ -1056,7 +1118,8 @@
   display: none;
 }
 
-.ProseMirror .graphical-abstract .block-figure_element .block-gutter {
+.ProseMirror .graphical-abstract .block-figure_element .block-gutter,
+.ProseMirror .graphical-abstract .block-embed .block-gutter {
   visibility: hidden;
 }
 
@@ -1070,8 +1133,168 @@
   font-size: 28px;
   font-weight: 700;
   line-height: 1.43;
-  padding-left: 65px;
+  padding-left: var(--body-side-margin);
+  padding-right: var(--body-side-margin);
+}
+.manuscript-subtitle {
+  font-family: Lato;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  align-items: center;
 }
 .highlight {
   background-color: #ffeebf !important;
+}
+
+.ProseMirror .supplement-item {
+  position: relative;
+  padding: 12px 24px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.ProseMirror .supplement-item:last-child {
+  border-bottom: none;
+}
+
+.ProseMirror .supplement-item figcaption {
+  text-align: left;
+  margin-top: 0;
+}
+
+.ProseMirror .supplement-item .caption-title.empty-node::before {
+  content: 'Insert caption title...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-item .caption-description.empty-node::before {
+  content: 'Insert caption...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-file-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  gap: 4px;
+}
+
+.ProseMirror .supplement-file-icon {
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 16px;
+}
+
+.ProseMirror .supplement-file-name {
+  font-size: 14px;
+}
+
+
+.ProseMirror .supplements-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  position: absolute;
+  top: 16px;
+  right: 65px;
+  z-index: 10;
+}
+
+
+.ProseMirror .supplements-toggle-btn svg {
+  width: 16px;
+  height: 9px;
+}
+
+.ProseMirror .supplements-toggle-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+
+
+.ProseMirror .supplements-content {
+  border: 1px solid #c9c9c9;
+  border-radius: 4px;
+  background: white;
+  padding: 0 !important;
+  width: 100%;
+}
+
+/* Make section title look like a horizontal panel header */
+.ProseMirror .supplements-content .block-section_title {
+  border-top: 1px solid #c9c9c9;
+  border-bottom: 1px solid #c9c9c9;
+  display: block !important;
+}
+
+.ProseMirror .supplements-content .block-section_title .block-gutter {
+  display: none;
+}
+
+.ProseMirror .supplements-content .block-section_title .action-gutter {
+  display: none;
+}
+
+.ProseMirror .supplements-content .block-section_title h1 {
+  background-color: #f2f2f2;
+  padding: 8px 12px !important;
+  font-size: 14px;
+  display: flex;
+  margin-top: -1px;
+  color: #6e6e6e !important;
+}
+
+.ProseMirror .supplements-content .block-section_title h1.empty-node span {
+  color: #6e6e6e !important;
+  font-style: normal;
+}
+
+.ProseMirror .supplement-item.drop-target-above,
+.ProseMirror .supplement-item.drop-target-below {
+  border: 2px dotted #20aedf !important;
+}
+
+.ProseMirror .supplement-item.dragging {
+  background-color: #F2F2F2 !important;
+  opacity: 0.3;
+  z-index: 1000;
+}
+
+.ProseMirror .supplement-item:hover {
+  background-color: #F2F2F2 !important;
+  cursor: move;
+}
+
+.ProseMirror .supplement-item:hover figcaption {
+  background-color: #F2F2F2 !important;
+}
+
+.ProseMirror .supplement-item .drag-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.ProseMirror .supplement-item:hover .drag-icon {
+  opacity: 1;
+}
+
+.ProseMirror .supplement-item .drag-icon:active {
+  cursor: grabbing;
 }

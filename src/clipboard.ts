@@ -15,12 +15,31 @@
  */
 import { schema } from '@manuscripts/transform'
 import { DOMParser } from 'prosemirror-model'
+
+import { parseCssListStyleType } from './lib/lists'
+
 // we can override other node rules for clipboard here
 // to avoid having a conflict with manuscripts-transform
 const nodes = [
   {
-    tag: 'p',
+    tag: 'p, div',
     node: 'paragraph',
+  },
+  {
+    tag: 'ul, ol',
+    node: 'list',
+    getAttrs: (list: HTMLElement) => {
+      let type = list.style.listStyleType
+      if (!type) {
+        const item = list.firstElementChild as HTMLElement
+        if (item) {
+          type = item.style.listStyleType
+        }
+      }
+      return {
+        listStyleType: parseCssListStyleType(type),
+      }
+    },
   },
   // this is to avoid adding a new line, as it won't appear in google doc
   {

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { generateID, ObjectTypes } from '@manuscripts/json-schema'
 import {
   ButtonGroup,
   Category,
@@ -25,13 +24,19 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
 import React, { useMemo, useReducer, useState } from 'react'
 import styled from 'styled-components'
 
 import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
-import { BibliographyItemAttrs } from '../../lib/references'
+import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
+import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
 import { ReferencesModal } from './ReferencesModal'
@@ -109,14 +114,18 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
 }) => {
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
-
   const handleSave = (item: BibliographyItemAttrs) => {
-    onSave(item)
+    const cleanedItem = cleanItemValues(item)
+    onSave(cleanedItem)
     dispatchItems({
       type: 'update',
-      items: [item],
+      items: [cleanedItem],
     })
+    if (!rids.includes(item.id)) {
+      handleCite([item])
+    }
   }
+
   const handleDelete = (item: BibliographyItemAttrs) => {
     onDelete(item)
     dispatchItems({
@@ -152,28 +161,67 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   })
 
   const [searching, setSearching] = useState(false)
+  const [importing, setImporting] = useState(false)
 
   const handleAdd = () => {
     setSearching(false)
     const item: BibliographyItemAttrs = {
-      id: generateID(ObjectTypes.BibliographyItem),
+      id: generateNodeID(schema.nodes.bibliography_item),
       type: 'article-journal',
     }
-    handleSave(item)
-    handleCite([item])
+    dispatchItems({
+      type: 'update',
+      items: [item, ...items],
+    })
     setEditingForm({ show: true, item: item })
+  }
+
+  const handleImport = () => {
+    setSearching(false)
+    setImporting(true)
+  }
+  const handleSaveImport = (data: BibliographyItemAttrs[]) => {
+    data.forEach((item) => {
+      const newItem = { ...item }
+      newItem.id = generateNodeID(schema.nodes.bibliography_item)
+      handleSave(newItem)
+      handleCite([newItem])
+    })
   }
 
   const cited = useMemo(() => {
     return rids.flatMap((rid) => items.filter((i) => i.id === rid))
   }, [rids, items])
 
+  if (editingForm.show) {
+    return (
+      <ReferencesModal
+        isOpen={editingForm.show}
+        onCancel={() => setEditingForm({ show: false })}
+        items={items}
+        citationCounts={citationCounts}
+        item={editingForm.item}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
+    )
+  }
+
+  if (importing) {
+    return (
+      <ImportBibliographyModal
+        onCancel={() => setImporting(false)}
+        onSave={handleSaveImport}
+      />
+    )
+  }
   if (searching) {
     return (
       <ReferenceSearch
         sources={sources}
         items={items}
         onAdd={handleAdd}
+        onImport={handleImport}
         onCite={(items) => {
           setSearching(false)
           handleCite(items)
@@ -189,12 +237,12 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         sources={sources}
         items={items}
         onAdd={handleAdd}
+        onImport={handleImport}
         onCite={handleCite}
         onCancel={onCancel}
       />
     )
   }
-
   return (
     <>
       <Dialog
@@ -240,15 +288,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
           </CitedItem>
         ))}
       </CitedItems>
-      <ReferencesModal
-        isOpen={editingForm.show}
-        onCancel={() => setEditingForm({ show: false })}
-        items={items}
-        citationCounts={citationCounts}
-        item={editingForm.item}
-        onSave={handleSave}
-        onDelete={handleDelete}
-      />
       <Actions>
         <IconTextButton />
         <ButtonGroup>

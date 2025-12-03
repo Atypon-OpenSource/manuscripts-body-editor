@@ -16,7 +16,7 @@
 
 import { MenuSpec } from '@manuscripts/style-guide'
 import {
-  getGroupCateogries,
+  getGroupCategories,
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
@@ -25,10 +25,12 @@ import { redo, undo } from 'prosemirror-history'
 import { Command } from 'prosemirror-state'
 
 import {
+  activateSearchReplace,
   addInlineComment,
   blockActive,
   canInsert,
-  insertAbstract,
+  copySelection,
+  insertAbstractSection,
   insertAffiliation,
   insertAward,
   insertBackmatterSection,
@@ -36,7 +38,9 @@ import {
   insertBoxElement,
   insertContributors,
   insertCrossReference,
+  insertEmbed,
   insertGraphicalAbstract,
+  insertHeroImage,
   insertInlineCitation,
   insertInlineEquation,
   insertInlineFootnote,
@@ -45,21 +49,24 @@ import {
   insertList,
   insertSection,
   markActive,
+  paste,
 } from './commands'
-import { openEmbedDialog } from './components/toolbar/InsertEmbedDialog'
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
+import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
 } from './lib/hierarchy'
+import { templateAllows } from './lib/template'
+import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
 ): MenuSpec[] => {
-  const { isCommandValid, state } = editor
+  const { isCommandValid, state, view } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
   const props = getEditorProps(state)
 
@@ -73,7 +80,20 @@ export const getEditorMenus = (
     }
   }
 
-  const categories = getGroupCateogries(props.sectionCategories, 'backmatter')
+  const insertAbstractsSectionMenu = (category: SectionCategory) => {
+    const command =
+      category.group === 'abstracts-graphic'
+        ? insertGraphicalAbstract(category)
+        : insertAbstractSection(category)
+
+    return {
+      id: `insert-${category.id}`,
+      label: category.titles[0],
+      isEnabled: isCommandValid(command),
+      run: doCommand(command),
+    }
+  }
+
   const edit: MenuSpec = {
     id: 'edit',
     label: 'Edit',
@@ -105,6 +125,30 @@ export const getEditorMenus = (
         role: 'separator',
       },
       {
+        id: 'edit-copy',
+        role: 'copy',
+        label: 'Copy',
+        isEnabled: isEditAllowed(state) && isCommandValid(copySelection),
+        run: doCommand(copySelection),
+      },
+      {
+        id: 'edit-paste',
+        role: 'paste',
+        label: 'Paste',
+        isEnabled: isEditAllowed(state) && isCommandValid(paste('html')),
+        run: doCommand(paste('html')),
+      },
+      {
+        id: 'edit-paste-text',
+        role: 'paste-text',
+        label: 'Paste without formatting',
+        isEnabled: isEditAllowed(state) && isCommandValid(paste('text')),
+        run: doCommand(paste('text')),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'edit-delete',
         role: 'delete',
         label: (() => {
@@ -112,56 +156,94 @@ export const getEditorMenus = (
 
           return `Delete ${nodeName}`
         })(),
-        isEnabled: isCommandValid(deleteClosestParentElement),
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(deleteClosestParentElement),
         run: doCommand(deleteClosestParentElement),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'find-replace',
+        role: 'find-replace',
+        label: 'Find and replace',
+        shortcut: {
+          mac: 'CommandOrControl+Shift+H',
+          pc: 'CommandOrControl+Shift+H',
+        },
+        isEnabled: isCommandValid(activateSearchReplace),
+        run: doCommand(activateSearchReplace),
       },
     ],
   }
+
+  const categories = getGroupCategories(props.sectionCategories, 'backmatter')
+  const abstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts'
+  )
+  const graphicalAbstractsCategories = getGroupCategories(
+    props.sectionCategories,
+    'abstracts-graphic'
+  )
+  const allAbstractsCategories = [
+    ...abstractsCategories,
+    ...graphicalAbstractsCategories,
+  ]
   const insert: MenuSpec = {
     id: 'insert',
     label: 'Insert',
     isEnabled: true,
     submenu: [
       {
+        id: 'insert-comment',
+        label: 'Comment',
+        isEnabled: isEditAllowed(state) && isCommandValid(addInlineComment),
+        run: doCommand(addInlineComment),
+        isHidden: !templateAllows(state, schema.nodes.comment),
+      },
+      {
+        role: 'separator',
+      },
+      {
         id: 'front-matter',
         label: 'Article Metadata',
         isEnabled: true,
         submenu: [
           {
-            id: 'insert-abstract',
-            label: 'Abstract',
-            isEnabled: isCommandValid(insertAbstract),
-            run: doCommand(insertAbstract),
-          },
-          {
-            id: 'insert-graphical-abstract',
-            label: 'Graphical Abstract',
-            isEnabled: isCommandValid(insertGraphicalAbstract),
-            run: doCommand(insertGraphicalAbstract),
+            id: 'insert-abstract-types',
+            label: 'Abstract Types',
+            isEnabled: true,
+            submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
+            isHidden: !allAbstractsCategories.length,
           },
           {
             id: 'insert-contributors',
             label: 'Authors',
             isEnabled: isCommandValid(insertContributors),
             run: doCommand(insertContributors),
+            isHidden: !templateAllows(state, schema.nodes.contributors),
           },
           {
             id: 'insert-contributors',
             label: 'Affiliations',
             isEnabled: isCommandValid(insertAffiliation),
             run: doCommand(insertAffiliation),
+            isHidden: !templateAllows(state, schema.nodes.affiliations),
           },
           {
             id: 'insert-awards',
             label: 'Funder Information',
             isEnabled: isCommandValid(insertAward),
             run: doCommand(insertAward),
+            isHidden: !templateAllows(state, schema.nodes.awards),
           },
           {
             id: 'insert-keywords',
             label: 'Keywords',
             isEnabled: isCommandValid(insertKeywords),
             run: doCommand(insertKeywords),
+            isHidden: !templateAllows(state, schema.nodes.keywords),
           },
         ],
       },
@@ -170,6 +252,9 @@ export const getEditorMenus = (
         label: 'Author Notes',
         isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
+        isHidden:
+          !templateAllows(state, schema.nodes.author_notes) ||
+          !categories.length,
       },
       {
         id: 'insert-section',
@@ -178,8 +263,9 @@ export const getEditorMenus = (
           mac: 'CommandOrControl+Enter',
           pc: 'CommandOrControl+Enter',
         },
-        isEnabled: isCommandValid(insertSection()),
+        isEnabled: isEditAllowed(state) && isCommandValid(insertSection()),
         run: doCommand(insertSection()),
+        isHidden: !templateAllows(state, schema.nodes.section),
       },
       {
         id: 'insert-subsection',
@@ -188,14 +274,37 @@ export const getEditorMenus = (
           mac: 'Shift+CommandOrControl+Enter',
           pc: 'Shift+CommandOrControl+Enter',
         },
-        isEnabled: isCommandValid(insertSection(true)),
+        isEnabled: isEditAllowed(state) && isCommandValid(insertSection(true)),
         run: doCommand(insertSection(true)),
+        isHidden: !templateAllows(state, schema.nodes.section),
       },
       {
         id: 'insert-paragraph',
         label: 'Paragraph',
-        isEnabled: isCommandValid(canInsert(schema.nodes.paragraph)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.paragraph)),
         run: doCommand(insertBlock(schema.nodes.paragraph)),
+        isHidden: !templateAllows(state, schema.nodes.paragraph),
+      },
+      {
+        role: 'separator',
+      },
+      {
+        id: 'insert-bullet-list',
+        label: 'Bullet List',
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.list)),
+        run: doCommand(insertList(schema.nodes.list, 'bullet')),
+        isHidden: !templateAllows(state, schema.nodes.list),
+      },
+      {
+        id: 'insert-order-list',
+        label: 'Ordered List',
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.list)),
+        run: doCommand(insertList(schema.nodes.list, 'order')),
+        isHidden: !templateAllows(state, schema.nodes.list),
       },
       {
         role: 'separator',
@@ -203,27 +312,23 @@ export const getEditorMenus = (
       {
         id: 'insert-blockquote',
         label: 'Block Quote',
-        isEnabled: isCommandValid(canInsert(schema.nodes.blockquote_element)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.blockquote_element)),
         run: doCommand(insertBlock(schema.nodes.blockquote_element)),
+        isHidden: !templateAllows(state, schema.nodes.blockquote_element),
       },
       {
         id: 'insert-pullquote',
         label: 'Pull Quote',
-        isEnabled: isCommandValid(canInsert(schema.nodes.pullquote_element)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.pullquote_element)),
         run: doCommand(insertBlock(schema.nodes.pullquote_element)),
+        isHidden: !templateAllows(state, schema.nodes.pullquote_element),
       },
       {
         role: 'separator',
-      },
-      {
-        id: 'insert-boxed-text',
-        label: 'Boxed Text',
-        shortcut: {
-          mac: 'Option+CommandOrControl+B',
-          pc: 'CommandOrControl+Option+B',
-        },
-        isEnabled: isCommandValid(insertBoxElement),
-        run: doCommand(insertBoxElement),
       },
       {
         id: 'insert-figure-element',
@@ -232,8 +337,20 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+P',
           pc: 'CommandOrControl+Option+P',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.figure_element)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.figure_element)),
         run: doCommand(insertBlock(schema.nodes.figure_element)),
+        isHidden: !templateAllows(state, schema.nodes.figure_element),
+      },
+      {
+        id: 'insert-image-element',
+        label: 'Image',
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.image_element)),
+        run: doCommand(insertBlock(schema.nodes.image_element)),
+        isHidden: !templateAllows(state, schema.nodes.image_element),
       },
       {
         id: 'insert-table-element',
@@ -242,18 +359,36 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+T',
           pc: 'CommandOrControl+Option+T',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.table_element)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.table_element)),
         run: () => openInsertTableDialog(editor.state, editor.dispatch),
+        isHidden: !templateAllows(state, schema.nodes.table_element),
+      },
+      {
+        id: 'insert-boxed-text',
+        label: 'Boxed Text',
+        shortcut: {
+          mac: 'Option+CommandOrControl+B',
+          pc: 'CommandOrControl+Option+B',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.box_element)),
+        run: doCommand(insertBoxElement),
+        isHidden: !templateAllows(state, schema.nodes.box_element),
       },
       {
         role: 'separator',
       },
       {
         id: 'insert-embed-media',
-        label: 'Embedded Media',
+        label: 'Media',
         isActive: blockActive(schema.nodes.embed)(state),
-        isEnabled: isCommandValid(canInsert(schema.nodes.embed)),
-        run: () => openEmbedDialog(editor.view),
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.embed)),
+        run: doCommand(insertEmbed),
+        isHidden: !templateAllows(state, schema.nodes.embed),
       },
       {
         id: 'insert-link',
@@ -263,8 +398,10 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+H',
         },
         isActive: blockActive(schema.nodes.link)(state),
-        isEnabled: isCommandValid(canInsert(schema.nodes.link)),
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.link)),
         run: doCommand(insertLink),
+        isHidden: !templateAllows(state, schema.nodes.link),
       },
       {
         role: 'separator',
@@ -276,8 +413,11 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+E',
           pc: 'CommandOrControl+Option+E',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.equation_element)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.equation_element)),
         run: doCommand(insertBlock(schema.nodes.equation_element)),
+        isHidden: !templateAllows(state, schema.nodes.equation_element),
       },
       {
         id: 'insert-inline-equation',
@@ -286,8 +426,11 @@ export const getEditorMenus = (
           mac: 'Shift+Option+CommandOrControl+E',
           pc: 'Shift+CommandOrControl+Option+E',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.inline_equation)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.inline_equation)),
         run: doCommand(insertInlineEquation),
+        isHidden: !templateAllows(state, schema.nodes.inline_equation),
       },
       {
         role: 'separator',
@@ -299,8 +442,11 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+C',
           pc: 'CommandOrControl+Option+C',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.citation)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.citation)),
         run: doCommand(insertInlineCitation),
+        isHidden: !templateAllows(state, schema.nodes.citation),
       },
       {
         id: 'insert-cross-reference',
@@ -309,8 +455,11 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+R',
           pc: 'CommandOrControl+Option+R',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.cross_reference)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.cross_reference)),
         run: doCommand(insertCrossReference),
+        isHidden: !templateAllows(state, schema.nodes.cross_reference),
       },
       {
         id: 'insert-footnote',
@@ -319,21 +468,35 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+F',
           pc: 'CommandOrControl+Option+F',
         },
-        isEnabled: isCommandValid(canInsert(schema.nodes.inline_footnote)),
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.inline_footnote)),
         run: doCommand(insertInlineFootnote),
+        isHidden: !templateAllows(state, schema.nodes.inline_footnote),
       },
       {
-        id: 'insert-comment',
-        label: 'Comment',
-        isEnabled: isCommandValid(addInlineComment),
-        run: doCommand(addInlineComment),
+        id: 'insert-special-character',
+        label: 'Special Characters',
+        isEnabled:
+          isEditAllowed(state) && isCommandValid(canInsert(schema.nodes.text)),
+        run: () => openInsertSpecialCharacterDialog(view),
+        isHidden: !templateAllows(state, schema.nodes.text),
+      },
+      {
+        id: 'insert-hero-image',
+        label: 'Hero Image',
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.hero_image)),
+        run: doCommand(insertHeroImage()),
+        isHidden: !templateAllows(state, schema.nodes.hero_image),
       },
     ],
   }
   const format: MenuSpec = {
     id: 'format',
     label: 'Format',
-    isEnabled: true,
+    isEnabled: isEditAllowed(state),
     submenu: [
       {
         id: 'format-bold',

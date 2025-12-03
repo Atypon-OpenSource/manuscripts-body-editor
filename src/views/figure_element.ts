@@ -14,139 +14,177 @@
  * limitations under the License.
  */
 
-import { FigureElementNode, FigureNode, schema } from '@manuscripts/transform'
+import { schema } from '@manuscripts/transform'
+import { Node } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
 
-import {
-  FigureElementOptions,
-  FigureElementOptionsProps,
-} from '../components/views/FigureDropdown'
-import { FileAttachment, groupFiles } from '../lib/files'
-import { getMatchingChild } from '../lib/utils'
-import { Trackable } from '../types'
-import BlockView from './block_view'
+import { addBtnIcon } from '../icons'
 import { createNodeView } from './creators'
-import { figureUploader } from './figure_uploader'
-import ReactSubView from './ReactSubView'
+import { FigureEditableView } from './figure_editable'
+import { ImageElementView } from './image_element'
 
-export class FigureElementView extends BlockView<Trackable<FigureElementNode>> {
-  private container: HTMLElement
-  private reactTools: HTMLElement
-
+export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
+  private addFigureBtn: HTMLButtonElement
+  private resizeObserver: ResizeObserver | null = null
 
   public createElement = () => {
-    this.container = document.createElement('div')
-    this.container.classList.add('block')
-    this.dom.appendChild(this.container)
+    super.createElement()
+    this.addFigureElementButtons()
+  }
 
-    // figure group
-    this.contentDOM = document.createElement('figure')
-    this.contentDOM.classList.add('figure-block')
-    this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.container.appendChild(this.contentDOM)
+  public initialise() {
+    super.initialise()
+    this.setupResizeObserver()
+  }
+
+  private setupResizeObserver() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+    }
+
+    this.resizeObserver = new ResizeObserver(() => {
+      // Reposition button when figure dimensions change
+      requestAnimationFrame(() => this.updateButtonPosition())
+    })
+
+    // Observe all current figures
+    this.container.querySelectorAll('figure').forEach((figure) => {
+      this.resizeObserver?.observe(figure)
+    })
+  }
+
+  private addFigureElementButtons() {
+    if (this.props.getCapabilities()?.editArticle) {
+      this.addFigureBtn = Object.assign(document.createElement('button'), {
+        className: 'add-button',
+        innerHTML: addBtnIcon,
+        title: 'Add figure',
+      })
+      this.addFigureBtn.addEventListener('click', () => this.addFigure())
+      this.container.prepend(this.addFigureBtn)
+    }
+  }
+
+  private updateButtonPosition() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    const figures = this.container.querySelectorAll('figure')
+    const lastFigure = figures[figures.length - 1] as HTMLElement
+
+    if (!lastFigure) {
+      return // No figures found
+    }
+
+    const lastFigureRect = lastFigure.getBoundingClientRect()
+    const containerRect = this.container.getBoundingClientRect()
+
+    // Calculate position relative to container
+    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    this.addFigureBtn.style.top = `${relativeTop}px`
+  }
+
+  private updateAddButtonState() {
+    if (!this.addFigureBtn) {
+      return
+    }
+
+    // Check if there's already an empty figure placeholder
+    let hasEmptyFigure = false
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        // Check if this figure is empty (no src or empty src)
+        const src = node.attrs.src || ''
+        if (src.trim().length === 0) {
+          hasEmptyFigure = true
+        }
+      }
+    })
+
+    // Disable button if there's already an empty figure
+    if (hasEmptyFigure) {
+      this.addFigureBtn.classList.add('disabled')
+      this.addFigureBtn.disabled = true
+    } else {
+      this.addFigureBtn.classList.remove('disabled')
+      this.addFigureBtn.disabled = false
+    }
+  }
+
+  /**
+   * Updates button position and re-observes figures.
+   */
+  public update(node: Node): boolean {
+    const handledBySuper = super.update(node)
+
+    if (handledBySuper) {
+      this.setupResizeObserver() // Re-observe figures after node update
+      requestAnimationFrame(() => {
+        this.updateButtonPosition() // Reposition after DOM update
+        this.updateAddButtonState() // Update button state after DOM update
+        this.updateChildDragHandlers()
+      })
+    }
+
+    return handledBySuper
+  }
+
+  private updateChildDragHandlers() {
+    const dragHandlers = this.container.querySelectorAll('.drag-handler')
+    dragHandlers.forEach((handler) => handler.remove())
+
+    const figureElements = this.container.querySelectorAll('figure')
+    figureElements.forEach((figureElement) => {
+      const figureView = (
+        figureElement as HTMLElement & { __figureView?: FigureEditableView }
+      ).__figureView
+      figureView?.addTools()
+    })
   }
 
   public updateContents() {
     super.updateContents()
-    if (!this.contentDOM) {
-      throw new Error('No contentDOM')
-    }
-
-    const can = this.props.getCapabilities()
-
-    let handleUpload = () => {
-      //noop
-    }
-    const hasUploadedImage = !!getMatchingChild(
-      this.node,
-      (node) => node.type === schema.nodes.figure && node.attrs.src
-    )
-
-    const handleAdd = async (file: FileAttachment) => {
-      const {
-        state: { tr, schema, selection },
-        dispatch,
-      } = this.view
-
-      const src = file.id
-      const figure = getMatchingChild(
-        this.node,
-        (node) => node.type === schema.nodes.figure
-      )
-
-      if (figure?.attrs.src) {
-        // If there is already a figure inside, we then create a new one. This is product logic.
-        const figure = schema.nodes.figure.createAndFill(
-          {
-            src,
-          },
-          []
-        ) as FigureNode
-
-        let position = 0
-        this.node.forEach((node, pos) => {
-          if (node.type === schema.nodes.figure) {
-            position = pos + node.nodeSize
-          }
-        })
-
-        dispatch(tr.insert(this.getPos() + position + 1, figure))
-      } else if (figure) {
-        tr.setNodeMarkup(this.getPos() + 1, undefined, {
-          ...figure.attrs,
-          src,
-        }).setSelection(selection.map(tr.doc, tr.mapping))
-
-        dispatch(tr)
-      }
-
-      this.deleteSupplementNode(file)
-    }
-
-    if (can.uploadFile) {
-      const upload = async (file: File) => {
-        const result = await this.props.fileManagement.upload(file)
-        await handleAdd(result)
-      }
-
-      handleUpload = figureUploader(upload)
-    }
-
-    if (this.props.dispatch && this.props.theme) {
-      const files = this.props.getFiles()
-      const doc = this.view.state.doc
-      const componentProps: FigureElementOptionsProps = {
-        can: can,
-        files: groupFiles(doc, files),
-        onUpload: handleUpload,
-        onAdd: handleAdd,
-        hasUploadedImage: hasUploadedImage,
-      }
-      this.reactTools?.remove()
-      this.reactTools = ReactSubView(
-        this.props,
-        FigureElementOptions,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view
-      )
-      this.dom.insertBefore(this.reactTools, this.dom.firstChild)
-    }
+    requestAnimationFrame(() => {
+      this.updateButtonPosition()
+      this.updateAddButtonState()
+    })
   }
 
-  private deleteSupplementNode(file: FileAttachment) {
-    const tr = this.view.state.tr
+  private addFigure = () => {
+    const { state } = this.view
+    const { tr } = state
+    const figureElementPos = this.getPos()
 
-    this.view.state.doc.descendants((node, pos) => {
-      if (
-        node.type === schema.nodes.supplement &&
-        node.attrs.href === file.id
-      ) {
-        tr.delete(pos, pos + node.nodeSize)
+    let insertPos = figureElementPos + 1
+    let lastFigureEndPos = insertPos
+    let hasFigures = false
+
+    this.node.forEach((node) => {
+      if (node.type === schema.nodes.figure) {
+        lastFigureEndPos = insertPos + node.nodeSize
+        hasFigures = true
       }
+      insertPos += node.nodeSize
     })
-    this.view.dispatch(tr)
+
+    const finalInsertPos = hasFigures ? lastFigureEndPos : figureElementPos + 1
+
+    const figureNode = state.schema.nodes.figure.create()
+
+    tr.insert(finalInsertPos, figureNode)
+    tr.setSelection(TextSelection.create(tr.doc, finalInsertPos + 1))
+    this.view.dispatch(tr.scrollIntoView())
+  }
+
+  public destroy() {
+    // Disconnect ResizeObserver on destroy
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
+    super.destroy()
   }
 }
 

@@ -15,14 +15,31 @@
  */
 
 import {
+  BibliographyItemAttrs,
+  BibliographyItemType,
   isElementNodeType,
   isSectionNodeType,
+  ManuscriptEditorState,
   ManuscriptNode,
   ManuscriptNodeType,
+  schema,
 } from '@manuscripts/transform'
-import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model'
+import {
+  Fragment,
+  Node as ProseMirrorNode,
+  NodeType,
+  ResolvedPos,
+} from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
-import { findParentNode } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNode,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
+
+import { fieldConfigMap } from '../components/references/ReferenceForm/config'
+import { arrowDown } from '../icons'
+import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
   node: ManuscriptNode,
@@ -92,6 +109,9 @@ export const isChildOfNodeTypes = (
   pos: number,
   parentNodeTypes: NodeType[]
 ) => {
+  if (pos > doc.content.size) {
+    return false
+  }
   const resolvedPos = doc.resolve(pos)
   // Iterate through the parent nodes
   for (let depth = resolvedPos.depth; depth >= 0; depth--) {
@@ -103,12 +123,6 @@ export const isChildOfNodeTypes = (
   return false
 }
 
-/**
- * Check if selection is inside the given node
- * @param state - the editor state
- * @param targetNode - the node to check if the selection is inside
- * @return boolean
- */
 export const isSelectionInNode = (
   state: EditorState,
   targetNode: ProseMirrorNode
@@ -124,9 +138,177 @@ export const isSelectionInNode = (
   return false
 }
 
+export const isSelectionInBody = (state: EditorState): boolean => {
+  return isSelectionInNodeByType(state, 'body')
+}
+
+const isSelectionInNodeByType = (
+  state: EditorState,
+  nodeType: string
+): boolean => {
+  const { $from } = state.selection
+
+  for (let depth = $from.depth; depth >= 0; depth--) {
+    if ($from.node(depth).type.name === nodeType) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export const createHeader = (typeName: string, text: string) => {
   const header = document.createElement('h1')
   header.classList.add(`title-${typeName}`, 'authors-info-header')
   header.textContent = text
   return header
+}
+
+export const isNotNull = <T>(a: T | null): a is T => a !== null
+
+export const hasParent = (
+  $pos: ResolvedPos,
+  type: ManuscriptNodeType | ManuscriptNodeType[]
+) => {
+  if (Array.isArray(type)) {
+    return type.some(
+      (nodeType) => !!findParentNodeOfTypeClosestToPos($pos, nodeType)
+    )
+  }
+  return !!findParentNodeOfTypeClosestToPos($pos, type)
+}
+
+// It will check if the field should be rendered based on selected item type
+// and field name
+export const shouldRenderField = (
+  field: string,
+  type: BibliographyItemType
+): boolean => {
+  return fieldConfigMap[type]?.has(field) ?? false
+}
+
+// It will clean unnecessary fields from the item
+// id and type will be kept
+export const cleanItemValues = (item: BibliographyItemAttrs) => {
+  const type = item.type as BibliographyItemType
+  const cleanedItem: BibliographyItemAttrs = { ...item }
+
+  for (const key of Object.keys(item) as (keyof BibliographyItemAttrs)[]) {
+    if (!shouldRenderField(key, type)) {
+      switch (key) {
+        case 'id':
+        case 'type':
+          break
+        case 'author':
+        case 'editor':
+        case 'issued':
+        case 'accessed':
+        case 'event-date':
+          cleanedItem[key] = undefined
+          break
+        default:
+          cleanedItem[key] = ''
+      }
+    }
+  }
+  return cleanedItem
+}
+
+export const isBodyLocked = (state: EditorState) => {
+  const props = getEditorProps(state)
+  return (
+    !!findChildrenByType(state.doc, schema.nodes.attachment).length &&
+    props.lockBody
+  )
+}
+
+// It checks if the selection is inside a body node and if the body is locked
+// the body is locked if feature lockBody is set true and there is an attachment node in document
+export const isEditAllowed = (state: EditorState) => {
+  return !(isBodyLocked(state) && isSelectionInBody(state))
+}
+
+export const createToggleButton = (listener: () => void, what: string) => {
+  const altTitlesButton = document.createElement('button')
+  altTitlesButton.classList.add('toggle-button-open', 'button-reset')
+  altTitlesButton.setAttribute('aria-label', `Expand ${what}`)
+  altTitlesButton.innerHTML = arrowDown
+  altTitlesButton.addEventListener('click', (e) => {
+    e.preventDefault()
+    listener()
+  })
+  return altTitlesButton
+}
+
+export const getInsertPos = (
+  type: ManuscriptNodeType,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  let insertPos = pos + parent.nodeSize - 1
+
+  parent.forEach((child, offset, index) => {
+    if (parent.canReplaceWith(index, index, type)) {
+      insertPos = pos + offset
+    }
+  })
+
+  return insertPos
+}
+
+// this will look just at parent node children
+export const findInsertionPosition = (
+  type: ManuscriptNodeType,
+  doc: ManuscriptNode
+) => {
+  let insertPos = 0
+
+  doc.forEach((child, offset, index) => {
+    if (doc.canReplaceWith(index, index, type)) {
+      insertPos = offset
+    }
+  })
+  // this will test if we can insert target type as last child in parent node
+  if (
+    insertPos === 0 &&
+    doc.canReplaceWith(doc.childCount, doc.childCount, type)
+  ) {
+    insertPos = doc.content.size
+  }
+  return insertPos
+}
+
+export const filterBlockNodes = (
+  fragment: Fragment,
+  predicate: (node: ProseMirrorNode) => boolean
+) => {
+  const updatedNodes: ProseMirrorNode[] = []
+
+  fragment.forEach((child) => {
+    if (!child.isBlock) {
+      updatedNodes.push(child)
+      return
+    }
+
+    const newContent = child.content.size
+      ? filterBlockNodes(child.content, predicate)
+      : child.content
+    if (predicate(child)) {
+      updatedNodes.push(child.type.create(child.attrs, newContent, child.marks))
+    }
+  })
+
+  return Fragment.fromArray(updatedNodes)
+}
+export const getLastTitleNode = (state: ManuscriptEditorState) => {
+  const altTitleNode = findChildrenByType(
+    state.doc,
+    state.schema.nodes.alt_titles
+  )[0]
+  if (altTitleNode) {
+    return altTitleNode
+  }
+
+  const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
+  return titleNode
 }

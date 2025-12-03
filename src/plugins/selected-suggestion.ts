@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  CHANGE_OPERATION,
   CHANGE_STATUS,
   TrackedAttrs,
   TrackedChange,
@@ -29,13 +30,14 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
+import { isTracked } from '../lib/track-changes-utils'
 import { getSelectionChangeGroup } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(
   'selected-suggestion'
 )
 
-type Selection = {
+type EffectiveSelection = {
   node: ManuscriptNode
   from: number
   to: number
@@ -81,14 +83,18 @@ export default () => {
 const buildPluginState = (state: ManuscriptEditorState): PluginState => {
   const selection = state.selection
   const changes = getSelectionChangeGroup(state)
-  if (changes) {
+  if (changes.length) {
     return buildGroupOfChangesDecoration(state.doc, changes)
   }
-  const $pos = isTextSelection(selection) ? selection.$cursor : selection.$to
+  const $pos =
+    isTextSelection(selection) && selection.$cursor
+      ? selection.$cursor
+      : selection.$to
   if (!$pos) {
     return EMPTY
   }
   const effective = getEffectiveSelection($pos)
+
   if (!effective) {
     return EMPTY
   }
@@ -110,6 +116,7 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
   let current
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth)
+    // @TODO - abstract reference processing to tc-plugin
     if (
       node.attrs.dataTracked &&
       !node.attrs.dataTracked?.find(
@@ -121,15 +128,15 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
         from: $pos.before(depth),
         to: $pos.after(depth),
       }
-    } else {
-      break
     }
   }
   if (current) {
     return current
   }
   const parent = $pos.parent
-  const child = parent.childBefore($pos.parentOffset)
+  // if selection is longer than a text node by a single char, still select the previous node
+  // @TODO - define how selection should behave when multiple text nodes are selected at once - which tracked-changes should be highlighted? (maybe multiple highlights)
+  const child = parent.childBefore(Math.max($pos.parentOffset - 1, 0))
   const node = child.node
   if (node) {
     const from = $pos.start() + child.offset
@@ -142,7 +149,10 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
   }
 }
 
-const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
+const buildNodeDecoration = (
+  doc: ManuscriptNode,
+  selection: EffectiveSelection
+) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
   if (!suggestion?.status || suggestion.status === CHANGE_STATUS.rejected) {
@@ -163,14 +173,27 @@ const buildNodeDecoration = (doc: ManuscriptNode, selection: Selection) => {
   }
 }
 
-const buildTextDecoration = (doc: ManuscriptNode, selection: Selection) => {
+const buildTextDecoration = (
+  doc: ManuscriptNode,
+  selection: EffectiveSelection
+) => {
   const node = selection.node
-  const suggestion = getTrackedMark(node)?.attrs.dataTracked
+  let suggestion = getTrackedMark(node)?.attrs.dataTracked as TrackedAttrs
+
+  if (!suggestion) {
+    for (const mark of node.marks) {
+      if (isTracked(mark)) {
+        suggestion = mark.attrs.dataTracked[0] as TrackedAttrs
+      }
+    }
+  }
+
   if (!suggestion) {
     return EMPTY
   }
   const from = selection.from
   const to = selection.to
+
   const decoration = Decoration.inline(from, to, {
     nodeName: 'span',
     class: 'selected-suggestion',
@@ -185,13 +208,24 @@ const buildGroupOfChangesDecoration = (
   doc: ManuscriptNode,
   changes: TrackedChange[]
 ) => {
-  const from = changes[0].from,
-    to = changes[changes.length - 1].to
-  const decoration = Decoration.inline(from, to, {
-    class: 'selected-suggestion',
-  })
+  const decorations = []
+  if (changes[0].dataTracked.operation === CHANGE_OPERATION.structure) {
+    changes.map((c) =>
+      decorations.push(
+        Decoration.node(c.from, c.to, { class: 'selected-suggestion' })
+      )
+    )
+  } else {
+    const from = changes[0].from,
+      to = changes[changes.length - 1].to
+    decorations.push(
+      Decoration.inline(from, to, {
+        class: 'selected-suggestion',
+      })
+    )
+  }
   return {
-    decorations: DecorationSet.create(doc, [decoration]),
+    decorations: DecorationSet.create(doc, decorations),
     suggestion: changes[0].dataTracked,
   }
 }

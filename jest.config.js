@@ -15,6 +15,7 @@
  */
 module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
   moduleNameMapper: {
     '^.+\\.css$': '<rootDir>/src/__mocks__/styleMock.ts',
   },
@@ -27,7 +28,7 @@ module.exports = {
     '^.+\\.(j|t)sx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(lodash-es|@manuscripts|dnd-core|react-dnd|@react-dnd|react-dnd-html5-backend)/)',
+    '<rootDir>/node_modules/.pnpm/(?!(lodash-es|@manuscripts|dnd-core|react-dnd|@react-dnd|react-dnd-html5-backend).+/)',
   ],
   snapshotFormat: {
     printBasicPrototype: true,

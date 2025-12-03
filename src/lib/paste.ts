@@ -15,6 +15,8 @@
  */
 
 import {
+  generateNodeID,
+  isElementNodeType,
   ManuscriptEditorView,
   ManuscriptSlice,
   schema,
@@ -22,6 +24,8 @@ import {
 import { Fragment, Slice } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
+
+import { allowedHref } from './url'
 
 const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   const firstChild = slice.content.firstChild
@@ -36,14 +40,37 @@ const removeFirstParagraphIfEmpty = (slice: ManuscriptSlice) => {
   }
 }
 
-// remove `id` from pasted content
-const removeIDs = (slice: ManuscriptSlice) => {
+const updateInlineFootnoteToNewRids = (
+  slice: Slice,
+  footnotesIdsMap: Map<string, string>
+) => {
   slice.content.descendants((node) => {
-    if (node.attrs.id) {
+    if (node.type === schema.nodes.inline_footnote) {
       // @ts-ignore
-      node.attrs.id = null
+      node.attrs.rids = node.attrs.rids.map((rid) => footnotesIdsMap.get(rid))
     }
   })
+}
+
+// remove `id` from pasted content
+const removeIDs = (slice: ManuscriptSlice) => {
+  const footnotesIdsMap = new Map()
+  slice.content.descendants((node) => {
+    let id = null
+    if (node.type === schema.nodes.footnote) {
+      // will keep id for footnote to not lose connection with inline_footnote
+      const newId = generateNodeID(node.type)
+      footnotesIdsMap.set(node.attrs.id, newId)
+      id = newId
+    }
+
+    if (node.attrs.id) {
+      // @ts-ignore
+      node.attrs.id = id
+    }
+  })
+
+  updateInlineFootnoteToNewRids(slice, footnotesIdsMap)
 }
 
 const wrapInSection = (slice: ManuscriptSlice) => {
@@ -55,12 +82,24 @@ const wrapInSection = (slice: ManuscriptSlice) => {
   }
 }
 
+const closeAtomSlice = (slice: ManuscriptSlice) => {
+  // close slice to prevent drop of node https://github.com/ProseMirror/prosemirror-transform/blob/137ff74738bd1b50d49416cd6cfdbbf52cb059ef/src/replace.ts#L231
+  if (slice.content.firstChild?.isAtom) {
+    // @ts-ignore
+    slice.openStart = 0
+    // @ts-ignore
+    slice.openEnd = 0
+  }
+}
+
 export const transformPasted = (slice: ManuscriptSlice): ManuscriptSlice => {
   wrapInSection(slice)
 
   removeFirstParagraphIfEmpty(slice)
 
   removeIDs(slice)
+
+  closeAtomSlice(slice)
 
   return slice
 }
@@ -100,6 +139,15 @@ export const handlePaste = (
   tr.setMeta('uiEvent', 'paste')
   tr.setMeta('paste', true)
 
+  const clipboardData = event.clipboardData
+
+  const text = clipboardData?.getData('text/plain')
+  if (text && allowedHref(text)) {
+    const link = schema.nodes.link.create({ href: text }, schema.text(text))
+    dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
+    return true
+  }
+
   const parent = findParentNode((node) => node.type === schema.nodes.section)(
     tr.selection
   )
@@ -113,8 +161,35 @@ export const handlePaste = (
     return true
   }
 
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
   if (
     selection instanceof TextSelection &&
+    isElement(slice) &&
+    slice.openStart !== 1 &&
+    slice.openEnd !== 1 &&
+    selection.$anchor.parentOffset > 0 &&
+    selection.$head.parentOffset > 0 &&
+    selection.$from.node().type === schema.nodes.paragraph
+  ) {
+    const { $from, $to } = selection
+    const side = (
+      !$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to
+    ).pos
+    // will use closed sides for elements(list) as in prosemirror-transform Fitter will
+    // join content in the element with side we need to insert depending on the schema,
+    // so for list first list item will be joined and that will make it hard for us
+    // to tracked and required changes in the schema
+    tr.replace(side, side, new Slice(slice.content, 0, 0))
+    dispatch(
+      tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
+    )
+    return true
+  }
+
+  // That should be removed when figuring out issue of open slice sides from track-changes plugin
+  if (
+    selection instanceof TextSelection &&
+    selection.$from.depth === slice.openStart &&
     selection.$anchor.parentOffset === 0 &&
     selection.$head.parentOffset === 0 &&
     selection.$from.node().type === schema.nodes.paragraph
@@ -123,7 +198,11 @@ export const handlePaste = (
     const side =
       (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to)
         .pos - 1
-    tr.replace(side, side, slice)
+    if (isElement(slice) && slice.openStart !== 1 && slice.openEnd !== 1) {
+      tr.replace(side, side, new Slice(slice.content, 0, 0))
+    } else {
+      tr.replace(side, side, slice)
+    }
     dispatch(
       tr.setSelection(TextSelection.create(tr.doc, side + 1)).scrollIntoView()
     )
@@ -131,4 +210,16 @@ export const handlePaste = (
   }
 
   return false
+}
+
+const isElement = (slice: Slice) => {
+  const { firstChild, lastChild } = slice.content
+  return (
+    (firstChild &&
+      isElementNodeType(firstChild.type) &&
+      firstChild.type !== schema.nodes.paragraph) ||
+    (lastChild &&
+      isElementNodeType(lastChild.type) &&
+      lastChild.type !== schema.nodes.paragraph)
+  )
 }

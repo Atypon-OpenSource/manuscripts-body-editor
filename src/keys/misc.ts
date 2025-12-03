@@ -19,6 +19,7 @@ import {
   chainCommands,
   createParagraphNear,
   exitCode,
+  joinBackward,
   joinDown,
   joinUp,
   lift,
@@ -33,10 +34,13 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
+  activateSearch,
+  activateSearchReplace,
   addToStart,
   autoComplete,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
+  ignoreEnterInSubtitles,
   ignoreMetaNodeBackspaceCommand,
   insertBlock,
   insertBreak,
@@ -47,12 +51,14 @@ import {
   selectAllIsolating,
 } from '../commands'
 import { EditorAction } from '../types'
+import { skipCommandTracking } from './list'
 
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
     undoInputRule,
     ignoreAtomBlockNodeBackward,
-    ignoreMetaNodeBackspaceCommand
+    ignoreMetaNodeBackspaceCommand,
+    skipCommandTracking(joinBackward)
   ),
   Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
@@ -72,6 +78,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt--': toggleMark(schema.marks.subscript),
   'Ctrl->': wrapIn(schema.nodes.blockquote),
   Enter: chainCommands(
+    ignoreEnterInSubtitles,
     autoComplete,
     addToStart,
     newlineInCode,
@@ -93,6 +100,10 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-c': insertInlineCitation,
   'Mod-Alt-r': insertCrossReference,
   'Shift-Mod-Alt-e': insertInlineEquation,
+  'Shift-Ctrl-h': activateSearchReplace,
+  'Shift-Mod-h': activateSearchReplace,
+  'Mod-f': activateSearch,
+  'Ctrl-f': activateSearch,
 }
 
 export default customKeymap

@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-import {
-  BibliographicDate,
-  buildBibliographicDate,
-  buildBibliographicName,
-  generateID,
-  ObjectTypes,
-} from '@manuscripts/json-schema'
-import { fixCSLData } from '@manuscripts/library'
+import { generateNodeID, schema } from '@manuscripts/transform'
 
 import {
   BibliographyItemSearch,
   BibliographyItemSource,
 } from '../components/references/BibliographyItemSource'
-import { BibliographyItemAttrs } from './references'
+
+type CrossrefItem = {
+  [key: string]: unknown
+}
 
 type CrossrefResponse = {
   message: {
-    items: CSL.Data[]
+    items: CrossrefItem[]
     'total-results': number
   }
 }
@@ -63,30 +59,32 @@ const searchAsync = async (
     throw new Error('There was a problem searching for this query.')
   }
   const data = (await response.json()) as CrossrefResponse
-  const items = data.message.items
+  const items = data.message.items.map(fixItem)
   const total = data.message['total-results']
 
   return {
-    items: items.map((i) => parseCSLData(fixCSLData(i))),
+    items,
     total,
   }
 }
-
-const parseCSLData = (data: CSL.Data): BibliographyItemAttrs => ({
-  id: generateID(ObjectTypes.BibliographyItem),
-  type: data.type,
-  author: data.author?.map(buildBibliographicName),
-  issued: buildBibliographicDate(data.issued as BibliographicDate),
-  containerTitle: data['container-title'],
-  doi: data.DOI,
-  volume: data.volume ? String(data.volume) : undefined,
-  issue: data.issue ? String(data.issue) : undefined,
-  page: data.page,
-  title: data.title,
-})
 
 export const Crossref: BibliographyItemSource = {
   id: 'crossref',
   label: 'External sources',
   search,
+}
+
+const fixItem = (item: CrossrefItem): CSL.Data => {
+  for (const key in item) {
+    if (key === 'author' || key === 'editor') {
+      continue
+    }
+    const value = item[key]
+    if (Array.isArray(value)) {
+      const [data] = item[key] as string[]
+      item[key] = data || undefined
+    }
+  }
+  item.id = generateNodeID(schema.nodes.bibliography_item)
+  return item as CSL.Data
 }

@@ -40,7 +40,11 @@ interface AuthorListProps {
   authors: ContributorAttrs[]
   onSelect: (item: ContributorAttrs) => void
   onDelete: () => void
-  moveAuthor: (index: number, target: number) => void
+  moveAuthor: (
+    from: ContributorAttrs,
+    to: ContributorAttrs,
+    shift: number
+  ) => void
   lastSavedAuthor: string | null
 }
 
@@ -53,7 +57,7 @@ export const AuthorList: React.FC<AuthorListProps> = ({
   lastSavedAuthor,
 }) => {
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={HTML5Backend} context={window}>
       <AuthorListTitle>Existing Authors</AuthorListTitle>
       <AuthorListContainer data-cy="authors-list">
         {authors.map((a) => {

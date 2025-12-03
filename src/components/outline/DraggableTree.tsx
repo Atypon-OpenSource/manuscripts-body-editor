@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import {
-  Capabilities,
   TriangleCollapsedIcon,
   TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
 import {
   isElementNodeType,
+  isHeroImageNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -31,10 +31,13 @@ import { Fragment } from 'prosemirror-model'
 import React, { MouseEvent, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
+import { Capabilities } from '../../lib/capabilities'
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
 import { isDeleted } from '../../lib/track-changes-utils'
+import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
+import { PluginState, sectionTitleKey } from '../../plugins/section_title'
 import {
   Outline,
   OutlineItem,
@@ -56,7 +59,14 @@ const excludedTypes = [
   schema.nodes.contributors,
   schema.nodes.author_notes,
   schema.nodes.title,
-  schema.nodes.image_element,
+  schema.nodes.alt_titles,
+  schema.nodes.alt_title,
+  schema.nodes.alt_text,
+  schema.nodes.long_desc,
+  schema.nodes.trans_abstract,
+  schema.nodes.subtitles,
+  schema.nodes.subtitle,
+  schema.nodes.supplements,
 ]
 
 const childrenExcludedTypes = [
@@ -120,7 +130,8 @@ export const buildTree: TreeBuilder = ({
       if (
         isManuscriptNode(node) ||
         ((!childNode.isAtom || isElementNodeType(childNode.type)) &&
-          childNode.attrs.id)
+          childNode.attrs.id &&
+          !isDeleted(childNode))
       ) {
         items.push(
           buildTree({
@@ -153,19 +164,36 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [dropSide, setDropSide] = useState<DropSide>()
   const [isOpen, setOpen] = useState(depth === 0)
   const ref = useRef<HTMLDivElement>(null)
+  // Disable drag-and-drop functionality when the body is locked
+  const disableDragAndDrop = view
+    ? isBodyLocked(view.state) || !can?.editArticle
+    : true
 
   const { node, items, parent } = tree
+  const sectionTitleState: PluginState | undefined = view
+    ? sectionTitleKey.getState(view.state)
+    : undefined
 
   const itemText = (node: ManuscriptNode) => {
     const text = nodeTitle(node)
+    let sectionNumber =
+      node.type.name === 'section' && sectionTitleState
+        ? (sectionTitleState.get(node.attrs.id) ?? '')
+        : ''
+    sectionNumber = sectionNumber ? `${sectionNumber}.` : ''
 
     if (text) {
-      return text.trim()
+      return `${sectionNumber}${sectionNumber ? ' ' : ''}${text.trim()}`
     }
 
     const placeholder = nodeTitlePlaceholder(node.type)
 
-    return <OutlineItemPlaceholder>{placeholder}</OutlineItemPlaceholder>
+    return (
+      <OutlineItemPlaceholder>
+        {sectionNumber && `${sectionNumber} `}
+        {placeholder}
+      </OutlineItemPlaceholder>
+    )
   }
 
   const toggleOpen = () => {
@@ -176,7 +204,8 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     type: 'outline',
     item: tree,
     canDrag: () => {
-      return depth !== 0
+      // Prevent dragging if the node is deleted, the body is locked, or editing is not allowed
+      return depth !== 0 && !disableDragAndDrop && !isDeleted(node)
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -186,6 +215,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const [{ isOver }, dropRef] = useDrop({
     accept: 'outline',
     canDrop(item: TreeItem, monitor) {
+      if (disableDragAndDrop) {
+        return false
+      }
       if (isAbstractOrBackmatter(item) || isAbstractOrBackmatter(tree)) {
         return false
       }
@@ -214,14 +246,14 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       return tree.parent.canReplace(index, index, Fragment.from(item.node))
     },
     hover(item, monitor) {
-      if (!ref.current || !monitor.canDrop()) {
+      if (disableDragAndDrop || !ref.current || !monitor.canDrop()) {
         return
       }
       const side = getDropSide(ref.current, monitor)
       setDropSide(side)
     },
     drop(item: TreeItem, monitor) {
-      if (!ref.current || !view) {
+      if (disableDragAndDrop || !ref.current || !view) {
         return
       }
       const side = getDropSide(ref.current, monitor)
@@ -231,7 +263,6 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
       const node = item.node.type.schema.nodes[item.node.type.name].create(
         {
           ...item.node.attrs,
-          id: '',
         },
         item.node.content
       )
@@ -247,8 +278,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   })
 
   const isDeletedItem = isDeleted(node)
+  const isHeroImage = isHeroImageNode(node)
 
-  const isTop = isManuscriptNode(parent)
+  const isTop = isManuscriptNode(parent) && !isHeroImage
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
@@ -269,16 +301,24 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   const dragClass = isDragging ? 'dragging' : ''
   const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
+  const deletedClass = isDeletedItem ? 'deleted' : ''
+  const heroImageClass = isHeroImage ? 'hero-image' : ''
 
   return (
     <Outline
       ref={ref}
-      className={`${dragClass} ${dropClass} ${isDeletedItem && 'deleted'}`}
+      className={`${dragClass} ${dropClass} ${deletedClass} ${heroImageClass}`}
     >
       {!isTop && node.type.name != 'manuscript' && (
-        <OutlineItem depth={depth} onContextMenu={handleContextMenu}>
+        <OutlineItem
+          depth={isHeroImage ? 1 : depth}
+          onContextMenu={handleContextMenu}
+        >
           {items.length ? (
-            <OutlineItemArrow onClick={toggleOpen}>
+            <OutlineItemArrow
+              aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${node.type.name}`}
+              onClick={toggleOpen}
+            >
               {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}
             </OutlineItemArrow>
           ) : (

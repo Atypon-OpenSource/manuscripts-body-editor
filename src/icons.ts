@@ -14,19 +14,54 @@
  * limitations under the License.
  */
 import {
+  AddAuthorIcon,
   AlertIcon,
+  ArrowDownCircleIcon,
+  ArrowUpIcon,
   DeleteIcon,
+  DraggableIcon,
   EditIcon,
+  FileCorruptedIcon,
+  FileMainDocumentIcon,
+  ImageDefaultIcon,
+  ImageLeftIcon,
+  ImageRightIcon,
+  LinkIcon,
+  LockIcon,
+  PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
+  TranslateIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 const renderIcon = (c: React.FC) => renderToStaticMarkup(createElement(c))
 
+export const addAuthorIcon = renderIcon(AddAuthorIcon)
+export const arrowDown = renderIcon(ArrowDownCircleIcon)
+export const arrowUp = renderIcon(ArrowUpIcon)
 export const alertIcon = renderIcon(AlertIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderToStaticMarkup(createElement(EditIcon))
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
 export const scrollIcon = renderToStaticMarkup(createElement(ScrollIcon))
+export const lockIcon = renderToStaticMarkup(createElement(LockIcon))
+export const plusIcon = renderIcon(PlusIcon)
+export const addBtnIcon = renderToStaticMarkup(createElement(PlusIcon))
+export const imageRightIcon = renderToStaticMarkup(
+  createElement(ImageRightIcon)
+)
+export const imageLeftIcon = renderToStaticMarkup(createElement(ImageLeftIcon))
+export const imageDefaultIcon = renderToStaticMarkup(
+  createElement(ImageDefaultIcon)
+)
+export const fileCorruptedIcon = renderToStaticMarkup(
+  createElement(FileCorruptedIcon)
+)
+export const draggableIcon = renderToStaticMarkup(createElement(DraggableIcon))
+export const translateIcon = renderToStaticMarkup(createElement(TranslateIcon))
+export const linkIcon = renderToStaticMarkup(createElement(LinkIcon))
+export const fileMainDocumentIcon = renderToStaticMarkup(
+  createElement(FileMainDocumentIcon)
+)

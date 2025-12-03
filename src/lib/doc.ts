@@ -15,12 +15,16 @@
  */
 import {
   AwardsNode,
+  generateNodeID,
   ManuscriptNode,
   ManuscriptTransaction,
   schema,
+  SupplementNode,
   SupplementsNode,
 } from '@manuscripts/transform'
 import { findChildren, findChildrenByType } from 'prosemirror-utils'
+
+import { findInsertionPosition } from './utils'
 
 export const insertAwardsNode = (tr: ManuscriptTransaction) => {
   const doc = tr.doc
@@ -28,22 +32,7 @@ export const insertAwardsNode = (tr: ManuscriptTransaction) => {
   if (awards) {
     return awards
   }
-
-  // Find position to insert the awards node
-  const positions: number[] = []
-  const possibleNodesTypes = [
-    'doi',
-    'keywords',
-    'supplements',
-    'abstracts',
-    'body',
-  ]
-  doc.descendants((node, pos) => {
-    if (possibleNodesTypes.includes(node.type.name)) {
-      positions.push(pos)
-    }
-  })
-  const pos = positions.length === 0 ? 0 : Math.min(...positions)
+  const pos = findInsertionPosition(schema.nodes.awards, doc)
   // const node = schema.nodes.awards.create() as AwardsNode
   const node = schema.nodes.awards.createAndFill() as AwardsNode
   tr.insert(pos, node)
@@ -53,20 +42,47 @@ export const insertAwardsNode = (tr: ManuscriptTransaction) => {
   }
 }
 
-export const insertSupplementsNode = (tr: ManuscriptTransaction) => {
+export const upsertSupplementsSection = (
+  tr: ManuscriptTransaction,
+  supplement: SupplementNode
+) => {
   const doc = tr.doc
   const supplements = findChildrenByType(doc, schema.nodes.supplements)[0]
   if (supplements) {
-    return supplements
+    // Section exists -> insert inside it
+    const pos = supplements.pos + supplements.node.nodeSize - 1
+    tr.insert(pos, supplement)
+    return { node: supplements.node, pos }
   }
-  const abstracts = findAbstractsNode(doc)
-  const pos = abstracts.pos - 1
-  const node = schema.nodes.supplements.createAndFill() as SupplementsNode
+
+  // Section missing -> create new with supplement inside
+  const pos = findInsertionPosition(schema.nodes.supplements, doc)
+  const node = schema.nodes.supplements.createAndFill(
+    { id: generateNodeID(schema.nodes.supplements) },
+    [supplement]
+  ) as SupplementsNode
+
   tr.insert(pos, node)
   return {
     node,
     pos,
   }
+}
+
+export const insertAttachmentsNode = (tr: ManuscriptTransaction) => {
+  const attachmentsNodes = findChildrenByType(tr.doc, schema.nodes.attachments)
+  if (attachmentsNodes.length) {
+    return {
+      node: attachmentsNodes[0].node,
+      pos: attachmentsNodes[0].pos,
+    }
+  }
+  const pos = findInsertionPosition(schema.nodes.attachments, tr.doc)
+  const node = schema.nodes.attachments.create({
+    id: generateNodeID(schema.nodes.attachments),
+  })
+  tr.insert(pos, node)
+  return { node, pos }
 }
 
 export const insertFootnotesSection = (tr: ManuscriptTransaction) => {
@@ -75,8 +91,25 @@ export const insertFootnotesSection = (tr: ManuscriptTransaction) => {
   if (section) {
     return section
   }
-  const backmatter = findBackmatter(doc)
-  const pos = backmatter.pos + 1
+
+  const backmatter = findChildrenByType(doc, schema.nodes.backmatter, true)
+
+  const backmatterNode = backmatter[0].node
+  const backmatterPos = backmatter[0].pos
+
+  // Find the last child node in the backmatter (references section)
+  const lastChild =
+    backmatterNode.content.childCount > 0
+      ? backmatterNode.content.child(backmatterNode.content.childCount - 1)
+      : null
+
+  const insertPos =
+    lastChild && lastChild.type === schema.nodes.bibliography_section
+      ? backmatterPos + backmatterNode.content.size - lastChild.nodeSize // Insert before last child (refernces section)
+      : backmatterPos + backmatterNode.content.size // Insert at the end of backmatter
+
+  const pos = tr.mapping.map(insertPos)
+
   const node = schema.nodes.footnotes_section.create({}, [
     schema.nodes.section_title.create({}, schema.text('Footnotes')),
   ])
@@ -104,6 +137,10 @@ export const findBackmatter = (doc: ManuscriptNode) => {
 
 export const findBibliographySection = (doc: ManuscriptNode) => {
   return findChildrenByType(doc, schema.nodes.bibliography_section)[0]
+}
+
+export const findFootnotesSection = (doc: ManuscriptNode) => {
+  return findChildrenByType(doc, schema.nodes.footnotes_section)[0]
 }
 
 export const findGraphicalAbstractFigureElement = (doc: ManuscriptNode) => {

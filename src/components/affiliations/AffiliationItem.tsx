@@ -105,6 +105,7 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
   }
   return (
     <AffiliationContainer
+      data-cy="affiliation-item"
       onClick={onClick}
       className={isSelected ? 'active' : ''}
       ref={ref}
@@ -114,7 +115,9 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
         style={{ minWidth: 24, minHeight: 24 }}
       />
       <AffiliationBox>
-        <AffiliationName>{affiliation.institution}</AffiliationName>
+        <AffiliationName data-cy="affiliation-name">
+          {affiliation.institution}
+        </AffiliationName>
         <AffiliationDetails>
           {affiliation.city && (
             <>

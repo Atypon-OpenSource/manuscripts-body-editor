@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  ManuscriptNode,
-  ManuscriptNodeType,
-  schema,
-} from '@manuscripts/transform'
-import { ResolvedPos } from 'prosemirror-model'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
 
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
+import { hasParent, isNotNull } from '../lib/utils'
 import BlockView from './block_view'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
-
-const isNotNull = <T>(a: T | null): a is T => a !== null
-
-const hasParent = ($pos: ResolvedPos, type: ManuscriptNodeType) => {
-  return !!findParentNodeOfTypeClosestToPos($pos, type)
-}
 
 export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
   Base: T
@@ -53,25 +42,31 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       }
 
       const $pos = this.view.state.doc.resolve(this.getPos())
-      if (hasParent($pos, schema.nodes.keywords)) {
+      const nodeType = this.node.type
+      if (
+        nodeType === schema.nodes.hero_image ||
+        nodeType === schema.nodes.subtitles ||
+        nodeType === schema.nodes.supplements ||
+        hasParent($pos, [
+          schema.nodes.keywords,
+          schema.nodes.bibliography_section,
+          schema.nodes.footnotes_section,
+        ])
+      ) {
         return null
       }
 
-      const after = !hasParent($pos, schema.nodes.bibliography_section)
-
       const button = document.createElement('a')
       button.classList.add('add-block', contextMenuBtnClass)
-      button.classList.add(after ? 'add-block-after' : 'add-block-before')
-      button.setAttribute(
-        'aria-label',
-        `Add an element ${after ? 'below' : 'above'}`
-      )
+      button.classList.add('add-block-after')
+      button.setAttribute('role', 'button')
+      button.setAttribute('aria-label', `Add an element below`)
       button.setAttribute('data-balloon-pos', 'down-left')
       button.addEventListener('mousedown', (event) => {
         event.preventDefault()
 
         const menu = this.createMenu()
-        menu.showAddMenu(event.currentTarget as Element, after)
+        menu.showAddMenu(event.currentTarget as Element)
       })
 
       return button
@@ -84,6 +79,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
 
       const button = document.createElement('a')
       button.classList.add('edit-block', contextMenuBtnClass)
+      button.setAttribute('role', 'button')
       button.setAttribute('aria-label', 'Open menu')
       button.setAttribute('data-balloon-pos', 'down-left')
       button.addEventListener('mousedown', (event) => {
@@ -97,9 +93,7 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
     }
 
     public createMenu = () => {
-      return new ContextMenu(this.node, this.view, this.getPos, {
-        addComment: true,
-      })
+      return new ContextMenu(this.node, this.view, this.getPos)
     }
   }
 }

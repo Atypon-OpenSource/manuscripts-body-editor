@@ -41,9 +41,10 @@ import {
 } from './configs/ManuscriptsEditor'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
+import { searchReplaceKey } from './plugins/search-replace'
 
 export const useEditor = (externalProps: ExternalProps) => {
-  const view = useRef<EditorView>()
+  const view = useRef<EditorView>(undefined)
 
   const props = { ...externalProps, popper: new PopperManager() }
 
@@ -53,20 +54,34 @@ export const useEditor = (externalProps: ExternalProps) => {
   const location = useLocation()
   const { collabProvider } = props
 
-  // Receiving steps from backend
-  if (collabProvider) {
-    collabProvider.onNewSteps(async (steps?: Step[], clientIDs?: number[]) => {
-      if (state && view.current) {
-        if (steps && steps.length > 0 && clientIDs) {
-          view.current.dispatch(
-            receiveTransaction(view.current.state, steps, clientIDs)
+  // Update editor state when document changes (e.g., when switching to comparison mode)
+  useEffect(() => {
+    if (view.current && props.isComparingMode) {
+      const newState = createEditorState(props)
+      setState(newState)
+      view.current.updateState(newState)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.doc, props.isComparingMode])
+
+  useEffect(() => {
+    // Receiving steps from backend
+    if (collabProvider && !props.isComparingMode) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      collabProvider.onNewSteps(async () => {
+        if (state && view.current) {
+          let localVersion = getVersion(view.current.state)
+          const since = await collabProvider.stepsSince(
+            getVersion(view.current.state)
           )
-        } else {
-          // Since we moved the broadcast to the worker, we need the following logic to act as a fallback for local development
-          const localVersion = getVersion(view.current.state)
 
-          const since = await collabProvider.stepsSince(localVersion)
-
+          /*
+          Check if we already requested and applied steps for this version before. Duplicate request for the same version can happen 
+          when websocket signals that there are new steps at about the same time when we send some new steps and get 409 as a response
+          due to conflict with the very same steps in authority. It would result in double request and application of the same steps and
+          forever desync (until page reload that is)
+          */
+          localVersion = getVersion(view.current.state)
           if (since && since.version <= localVersion) {
             return
           }
@@ -74,18 +89,22 @@ export const useEditor = (externalProps: ExternalProps) => {
           if (since?.steps.length && since.clientIDs.length) {
             view.current.dispatch(
               receiveTransaction(
+                // has to be called for the collab to increment version and drop buffered steps
                 view.current.state,
-                since.steps,
+                since?.steps,
                 since.clientIDs
               )
             )
           } else {
-            console.log('Inconsistent new steps from the authority.')
+            console.warn('Inconsistent new steps event from the authority.')
           }
         }
-      }
-    })
-  }
+      })
+    }
+    return () => {
+      collabProvider?.unsubscribe()
+    }
+  }, [collabProvider, props.isComparingMode, !!view.current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const debounce = useDoWithDebounce()
 
@@ -102,7 +121,9 @@ export const useEditor = (externalProps: ExternalProps) => {
 
       if (
         collabProvider &&
-        (!trackState || trackState.status !== TrackChangesStatus.viewSnapshots)
+        (!trackState ||
+          trackState.status !== TrackChangesStatus.viewSnapshots) &&
+        !props.isComparingMode
       ) {
         const sendable = sendableSteps(nextState)
 
@@ -115,13 +136,12 @@ export const useEditor = (externalProps: ExternalProps) => {
           )
         }
       }
-
       debounce(
         () => {
           setState(nextState)
         },
         250,
-        !tr.isGeneric || !tr.docChanged
+        !tr.isGeneric || !tr.docChanged || !tr.getMeta(searchReplaceKey)
       )
 
       return nextState
@@ -129,18 +149,25 @@ export const useEditor = (externalProps: ExternalProps) => {
     [] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  const onRender = useCallback((el: HTMLDivElement | null) => {
-    if (!el) {
-      return
-    }
-    view.current = createEditorView(
-      props,
-      el,
-      view.current?.state || state,
-      dispatch
-    )
-    setState(view.current.state)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const isViewingMode = props.isViewingMode
+
+  const onRender = useCallback(
+    (el: HTMLDivElement | null) => {
+      if (view.current) {
+        view.current.destroy()
+        view.current = undefined
+      }
+
+      if (!el) {
+        return
+      }
+
+      const freshState = createEditorState(props)
+      view.current = createEditorView(props, el, freshState || state, dispatch)
+      setState(view.current.state)
+    },
+    [isViewingMode] // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   const isCommandValid = useCallback(
     (command: Command): boolean => command(state),

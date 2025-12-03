@@ -15,7 +15,11 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import {
+  BibliographyItemAttrs,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 
@@ -29,7 +33,6 @@ import {
 } from '../components/references/CitationViewer'
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
-import { BibliographyItemAttrs } from '../lib/references'
 import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
@@ -65,7 +68,10 @@ export class CitationEditableView extends CitationView {
   }
 
   public handleClick = (event: MouseEvent) => {
-    if (!this.can.seeReferencesButtons) {
+    if (
+      !this.can.seeReferencesButtons ||
+      this.dom.classList.contains('inconsistency-highlight')
+    ) {
       this.showPopper()
     } else if (!isDeleted(this.node) && event.button === 0) {
       const attrs = this.node.attrs
@@ -76,7 +82,11 @@ export class CitationEditableView extends CitationView {
   }
   public selectNode = () => {
     this.dom.classList.add('ProseMirror-selectednode')
-    if (this.can.seeReferencesButtons && !isDeleted(this.node)) {
+    if (
+      this.can.seeReferencesButtons &&
+      !isDeleted(this.node) &&
+      !this.dom.classList.contains('inconsistency-highlight')
+    ) {
       const attrs = this.node.attrs
       if (!attrs.rids.length) {
         this.showPopper()
@@ -118,7 +128,7 @@ export class CitationEditableView extends CitationView {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
   }
@@ -159,7 +169,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     } else {
       const componentProps: CitationViewerProps = {
@@ -173,7 +183,7 @@ export class CitationEditableView extends CitationView {
         this.node,
         this.getPos,
         this.view,
-        'citation-editor'
+        ['citation-editor']
       )
     }
     this.props.popper.show(this.dom, this.editor, 'auto')
@@ -246,10 +256,7 @@ export class CitationEditableView extends CitationView {
 
     const tr = this.view.state.tr
     const pos = this.getPos()
-    tr.setNodeMarkup(pos, undefined, {
-      ...attrs,
-      rids,
-    })
+    tr.setNodeAttribute(pos, 'rids', rids)
 
     this.view.dispatch(tr)
     this.handleCancel()

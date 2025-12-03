@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs, metadata } from '../../lib/references'
+import { metadata } from '../../lib/references'
 
 export const Metadata = styled.div`
   color: ${(props) => props.theme.colors.text.secondary};
@@ -34,7 +35,9 @@ export const ReferenceLine: React.FC<{
   item: BibliographyItemAttrs
 }> = ({ item }) => (
   <MetadataContainer>
-    <div data-cy={'reference-title'}>{item.title || 'Untitled'}</div>
+    <div data-cy={'reference-title'}>
+      {item.title || item.literal || 'Untitled'}
+    </div>
     <Metadata>{metadata(item)}</Metadata>
   </MetadataContainer>
 )

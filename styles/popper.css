@@ -1,7 +1,5 @@
 .popper {
   color: #353535;
-  font-family: 'PT Sans', sans-serif;
-  /* min-width: 100px; */
   position: absolute;
   width: auto;
   z-index: 10;
@@ -104,10 +102,8 @@
 .popper .menu {
   background: #fff;
   border: 1px solid #e2e2e2;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
-  font-size: 14px;
-  overflow: hidden;
 }
 
 .popper .menu .menu-section {
@@ -119,15 +115,44 @@
 }
 
 .popper .menu-item {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
   cursor: pointer;
-  padding: 8px 16px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px 16px 6px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
 }
-.popper .menu-item[disabled] {
-  cursor: default;
+.popper .menu.edit-menu .menu-section {
+  padding: 0;
+  border-bottom: none;
+}
+.popper .menu.edit-menu .menu-item {
+  padding: 16px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+
+.popper .section-category .menu-item {
+  padding-right: 40px;
+}
+
+.popper .menu-item[disabled],
+.popper .menu-item.disabled {
   opacity: 0.4;
+  cursor: not-allowed;
   pointer-events: none;
 }
 
+.popper .menu-item.selected,
 .popper .menu-item:hover {
   background: #f5fbfc;
 }
@@ -150,6 +175,14 @@
 .popper .context-menu {
   width: auto;
   top: -12px;
+  right: unset;
+}
+.popper .footnote-context-menu {
+  top: 0;
+}
+
+.popper .position-menu {
+  top: -15px;
 }
 
 .popper .conflict-dropdown {
@@ -245,4 +278,23 @@
   background: #fff;
   width: 368px;
   z-index: 10;
+}
+
+.popper .menu .context-submenu {
+  position: relative;
+}
+.popper .menu .context-submenu-trigger {
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popper .menu .context-submenu .menu-section {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 25px;
+}
+.popper .menu .context-submenu .menu-section.show {
+  display: block;
 }

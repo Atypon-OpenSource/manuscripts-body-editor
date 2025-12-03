@@ -1,0 +1,109 @@
+/*!
+ * © 2025 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { DeleteIcon } from '@manuscripts/style-guide'
+import { Field, FieldProps } from 'formik'
+import React, { useState } from 'react'
+
+import {
+  DropdownIndicator,
+  FieldLabel,
+  NameField,
+  NameFieldContainer,
+  PersonForm,
+  RemoveButton,
+  Section,
+  Title,
+  ToggleButton,
+} from './styled-components'
+
+export type PersonDropDownProps = {
+  person: CSL.Person
+  isNew: boolean
+  index: number
+  remove: (index: number) => void
+  onChange: (e: React.ChangeEvent) => void
+  type: 'author' | 'editor'
+}
+
+export const PersonDropDown = (props: PersonDropDownProps) => {
+  const { person, isNew, index, remove, onChange, type } = props
+
+  const [isOpen, setIsOpen] = useState(isNew)
+  const fullName = [person.given, person.family].join(' ').trim()
+  const title = fullName.length > 0 ? fullName : `Edit ${type} name`
+  const prefix = `${type}.${index}`
+
+  return (
+    <Section>
+      <Title>
+        <ToggleButton
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          isOpen={isOpen}
+        >
+          <DropdownIndicator />
+          {title}
+        </ToggleButton>
+        <RemoveButton
+          type="button"
+          aria-label="Delete this editor"
+          onClick={() => remove(index)}
+        >
+          <DeleteIcon />
+        </RemoveButton>
+      </Title>
+      {isOpen && (
+        <PersonForm>
+          <Field
+            name={`${prefix}.given`}
+            value={person.given}
+            onChange={onChange}
+          >
+            {({ field }: FieldProps) => (
+              <NameFieldContainer>
+                <NameField
+                  {...field}
+                  id={field.name}
+                  placeholder={'Given'}
+                  autoFocus={true}
+                />
+                <FieldLabel htmlFor={field.name}>Given</FieldLabel>
+              </NameFieldContainer>
+            )}
+          </Field>
+
+          <Field
+            name={`${prefix}.family`}
+            value={person.family}
+            onChange={onChange}
+          >
+            {({ field }: FieldProps) => (
+              <NameFieldContainer>
+                <NameField
+                  {...field}
+                  id={field.name}
+                  placeholder={'Family'}
+                  autoFocus={true}
+                />
+                <FieldLabel htmlFor={field.name}>Family</FieldLabel>
+              </NameFieldContainer>
+            )}
+          </Field>
+        </PersonForm>
+      )}
+    </Section>
+  )
+}

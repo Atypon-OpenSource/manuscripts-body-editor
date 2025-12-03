@@ -32,10 +32,11 @@ import {
   splitCell,
 } from 'prosemirror-tables'
 import { EditorView } from 'prosemirror-view'
-import React, { useState } from 'react'
+import React, { Dispatch, useState } from 'react'
 import styled from 'styled-components'
 
 import { addColumns, addHeaderRow, addRows } from '../../commands'
+import { getEditorProps } from '../../plugins/editor-props'
 
 /**
  * Return the number of selected rows/columns
@@ -70,7 +71,7 @@ const isHeaderCellSelected = (state: EditorState) => {
   )
 }
 
-const ColumnChangeWarningDialog: React.FC<{
+const TableChangeWarningDialog: React.FC<{
   isOpen: boolean
   primaryAction: () => void
   secondaryAction: () => void
@@ -79,16 +80,10 @@ const ColumnChangeWarningDialog: React.FC<{
     isOpen={isOpen}
     category={Category.confirmation}
     header={"This change can't be tracked"}
-    message="This column action won't be marked as chnage. Do you want to continue?"
+    message={"This action won't be marked as change. Do you want to continue?"}
     actions={{
-      primary: {
-        action: primaryAction,
-        title: 'Ok',
-      },
-      secondary: {
-        action: secondaryAction,
-        title: 'Cancel',
-      },
+      primary: { action: primaryAction, title: 'Ok' },
+      secondary: { action: secondaryAction, title: 'Cancel' },
     }}
   />
 )
@@ -105,6 +100,7 @@ export const ContextMenu: React.FC<{
     close()
   }
 
+  const [rowDeleteAction, setRowDeleteAction] = useState<Command>()
   const [columnAction, setColumnAction] = useState<Command>()
 
   const isCellSelectionMerged = mergeCells(view.state)
@@ -113,6 +109,18 @@ export const ContextMenu: React.FC<{
   const rows = count.rows > 1 ? `${count.rows} rows` : `row`
   const columns = count.columns > 1 ? `${count.columns} columns` : `column`
   const headerPosition = isHeaderCellSelected(view.state) ? 'below' : 'above'
+
+  const showWarningForTCPlugin = (
+    action: Dispatch<() => Command>,
+    command: () => Command
+  ) => {
+    const props = getEditorProps(view.state)
+    if (!props.getCapabilities().editWithoutTracking) {
+      action(command)
+    } else {
+      runCommand(command(), true)
+    }
+  }
 
   return (
     <MenuDropdownList className={'table-ctx'}>
@@ -125,10 +133,18 @@ export const ContextMenu: React.FC<{
       <ActionButton onClick={() => runCommand(addRows('bottom'))}>
         <PlusIcon /> Insert {rows} below
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumns('left'))}>
+      <ActionButton
+        onClick={() =>
+          showWarningForTCPlugin(setColumnAction, () => addColumns('left'))
+        }
+      >
         <PlusIcon /> Insert {columns} to the left
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => addColumns('right'))}>
+      <ActionButton
+        onClick={() =>
+          showWarningForTCPlugin(setColumnAction, () => addColumns('right'))
+        }
+      >
         <PlusIcon /> Insert {columns} to the right
       </ActionButton>
       <Separator />
@@ -139,14 +155,21 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert header row {headerPosition}
       </ActionButton>
       <Separator />
-      <ActionButton onClick={() => runCommand(deleteRow)}>
+      <ActionButton
+        onClick={() =>
+          showWarningForTCPlugin(setRowDeleteAction, () => deleteRow)
+        }
+      >
         <GrayDeleteIcon /> Delete
         {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
-      <ActionButton onClick={() => setColumnAction(() => deleteColumn)}>
+      <ActionButton
+        onClick={() =>
+          showWarningForTCPlugin(setColumnAction, () => deleteColumn)
+        }
+      >
         <GrayDeleteIcon /> Delete {columns}
       </ActionButton>
-
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
         <ActionButton onClick={() => runCommand(mergeCells, true)}>
@@ -158,8 +181,17 @@ export const ContextMenu: React.FC<{
           Split cells
         </ActionButton>
       )}
-
-      <ColumnChangeWarningDialog
+      <TableChangeWarningDialog
+        isOpen={!!rowDeleteAction}
+        primaryAction={() => {
+          if (rowDeleteAction) {
+            runCommand(rowDeleteAction, true)
+            setRowDeleteAction(undefined)
+          }
+        }}
+        secondaryAction={() => setRowDeleteAction(undefined)}
+      />
+      <TableChangeWarningDialog
         isOpen={!!columnAction}
         primaryAction={() => {
           if (columnAction) {
@@ -187,6 +219,11 @@ const ActionButton = styled(IconTextButton)`
 
   :hover {
     background: #f2fbfc;
+  }
+  :disabled {
+    color: #353535;
+    background-color: #ffffff;
+    opacity: 0.4;
   }
 `
 

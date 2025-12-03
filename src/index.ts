@@ -17,7 +17,8 @@
 export * from './commands'
 export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
-export { LevelSelector } from './components/toolbar/LevelSelector'
+export { TypeSelector } from './components/toolbar/type-selector/TypeSelector'
+export { default as LanguageDropdown } from './components/LanguageDropdown'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'
 export * from './menus'
@@ -25,10 +26,13 @@ export { ChangeReceiver } from './types'
 export { CollabProvider } from './classes/collabProvider'
 export { PopperManager } from './lib/popper'
 export * from './toolbar'
+export * from './lib/capabilities'
 export * from './lib/comments'
 export * from './lib/files'
 export * from './lib/footnotes'
+export * from './lib/template'
 export * from './lib/doc'
+export * from './lib/media'
 export * from './plugins/comments'
 export { selectedSuggestionKey } from './plugins/selected-suggestion'
 export * from './selection'
@@ -36,13 +40,21 @@ export * from './lib/utils'
 export * from './lib/track-changes-utils'
 export * from './useEditor'
 export * from './lib/math'
+export * from './lib/get-media-type'
 export { objectsKey as objectsPluginKey } from './plugins/objects'
 export { footnotesKey as footnotesPluginKey } from './plugins/footnotes'
 export { bibliographyKey as bibliographyPluginKey } from './plugins/bibliography'
-export { metadata, BibliographyItemAttrs } from './lib/references'
+export {
+  searchReplaceKey as searchReplacePluginKey,
+  SearchReplacePluginState,
+} from './plugins/search-replace'
+export { detectInconsistencyKey as detectInconsistencyPluginKey } from './plugins/detect-inconsistency'
+export { getNewMatch, getClosestMatch } from './plugins/search-replace/lib'
+export { metadata, bibliographyItemTypes } from './lib/references'
 export {
   authorLabel,
   affiliationLabel,
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
+export type { Inconsistency } from './plugins/detect-inconsistency'

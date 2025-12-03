@@ -17,12 +17,18 @@
 import {
   isFootnoteNode,
   isGeneralTableFootnoteNode,
+  isPullquoteElement,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
+
+const placeholderMap: Record<string, string> = {
+  subtitle: 'Type subtitle here...',
+}
 
 const placeholderWidget =
   (placeholder: string) =>
@@ -39,8 +45,35 @@ const placeholderWidget =
     return element
   }
 
-const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
-  if (!parent || parent.textContent.length) {
+const backmatterWidget = (direction: 'top' | 'bottom') => {
+  const element = document.createElement('div')
+  element.className = 'backmatter-border-placeholder'
+  const line = document.createElement('div')
+  line.className = direction
+  element.appendChild(line)
+  return element
+}
+
+const getParagraphPlaceholderText = (
+  parent: ManuscriptNode | null,
+  node: ManuscriptNode
+) => {
+  if (!parent) {
+    return
+  }
+  if (isPullquoteElement(parent) && !node.textContent.length) {
+    let otherParagraphHasContent = false
+    parent.descendants((child) => {
+      if (child !== node && child.type === child.type.schema.nodes.paragraph) {
+        otherParagraphHasContent = true
+      }
+    })
+    if (otherParagraphHasContent) {
+      return
+    }
+    return 'Insert pull quote here'
+  }
+  if (parent.textContent.length) {
     return
   }
   if (parent.type === schema.nodes.body) {
@@ -48,6 +81,9 @@ const getParagraphPlaceholderText = (parent: ManuscriptNode | null) => {
   }
   if (isFootnoteNode(parent) || isGeneralTableFootnoteNode(parent)) {
     return 'Type new footnote here'
+  }
+  if (parent.type === schema.nodes.trans_abstract) {
+    return 'Type here'
   }
 }
 
@@ -62,18 +98,72 @@ export default () =>
 
         state.doc.descendants((node, pos, parent) => {
           if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
+            if (node.type === node.type.schema.nodes.attribution) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Insert reference here')
+                )
+              )
+            }
             if (node.type === node.type.schema.nodes.paragraph) {
-              const text = getParagraphPlaceholderText(parent)
+              const text = getParagraphPlaceholderText(parent, node)
               if (text) {
                 decorations.push(
                   Decoration.widget(pos + 1, placeholderWidget(text))
                 )
               }
+            } else if (node.type === node.type.schema.nodes.section_title) {
+              const $pos = state.doc.resolve(pos)
+
+              let placeholderText = 'Type heading here'
+              if (
+                findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)
+              ) {
+                placeholderText = 'Optional box title...'
+              }
+
+              if (
+                findParentNodeOfTypeClosestToPos($pos, schema.nodes.supplements)
+              ) {
+                placeholderText = 'Supplements'
+              }
+
+              decorations.push(
+                Decoration.widget(pos + 1, placeholderWidget(placeholderText))
+              )
+            } else if (node.type === node.type.schema.nodes.trans_abstract) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Type new abstract title here')
+                )
+              )
             } else {
+              const placeholder = placeholderMap[node.type.name]
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
                   class: 'empty-node',
+                  ...(placeholder && { 'data-placeholder': placeholder }),
                 })
+              )
+            }
+          } else if (node.type === schema.nodes.backmatter) {
+            decorations.push(
+              Decoration.widget(pos + 1, backmatterWidget('top'))
+            )
+            const nextNode = parent && parent.nodeAt(pos + node.nodeSize)
+            if (
+              nextNode &&
+              (nextNode.type === schema.nodes.supplements ||
+                nextNode.type === schema.nodes.hero_image ||
+                nextNode.type === schema.nodes.attachments)
+            ) {
+              decorations.push(
+                Decoration.widget(
+                  pos + node.nodeSize - 1,
+                  backmatterWidget('bottom')
+                )
               )
             }
           }

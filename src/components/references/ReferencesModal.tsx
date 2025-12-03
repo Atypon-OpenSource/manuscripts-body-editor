@@ -30,12 +30,15 @@ import {
   Tooltip,
   useScrollDetection,
 } from '@manuscripts/style-guide'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { BibliographyItemAttrs } from '../../lib/references'
-import { ReferenceForm, ReferenceFormActions } from './ReferenceForm'
+import {
+  ReferenceForm,
+  ReferenceFormActions,
+} from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
 
 const ReferencesModalContainer = styled(ModalContainer)`
@@ -116,15 +119,30 @@ const normalize = (item: BibliographyItemAttrs) => ({
   id: item.id,
   type: item.type,
   author: item.author || [],
+  editor: item.editor || [],
   issued: item.issued,
-  containerTitle: item.containerTitle || '',
-  doi: item.doi || '',
+  ['container-title']: item['container-title'] || '',
+  ['collection-title']: item['collection-title'] || '',
+  DOI: item.DOI || '',
+  URL: item.URL || '',
   volume: item.volume || '',
   issue: item.issue || '',
   supplement: item.supplement || '',
+  edition: item.edition || '',
   page: item.page || '',
+  ['number-of-pages']: item['number-of-pages'] || '',
   title: item.title || '',
   literal: item.literal || '',
+  std: item.std || '',
+  publisher: item.publisher || '',
+  ['publisher-place']: item['publisher-place'] || '',
+  event: item.event || '',
+  ['event-place']: item['event-place'] || '',
+  ['event-date']: item['event-date'],
+  institution: item.institution || '',
+  locator: item.locator || '',
+  accessed: item.accessed,
+  comment: item.comment || '',
 })
 
 export interface ReferencesModalProps {
@@ -147,10 +165,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onDelete,
 }) => {
   const [confirm, setConfirm] = useState(false)
-  const valuesRef = useRef<BibliographyItemAttrs>()
+  const valuesRef = useRef<BibliographyItemAttrs>(undefined)
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
-  const selectionRef = useRef<HTMLDivElement | null>(null)
+  const selectionRef = useRef<HTMLDivElement>(null)
   const isSelected = (item: BibliographyItemAttrs) => {
     return item.id === selection?.id
   }
@@ -196,7 +214,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggers, items])
 
-  const actionsRef = useRef<ReferenceFormActions>()
+  const actionsRef = useRef<ReferenceFormActions>(undefined)
 
   const reset = () => {
     actionsRef.current?.reset()
@@ -226,6 +244,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     if (currentCitationCount === undefined) {
       citationCounts.set(item.id, 1) // update the citation count in the Map
     }
+
     onSave(item)
     setSelection(item)
     setConfirm(false)
@@ -251,7 +270,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const handleChange = (values: BibliographyItemAttrs) => {
     valuesRef.current = values
   }
-
   if (items.length <= 0) {
     return <></>
   }

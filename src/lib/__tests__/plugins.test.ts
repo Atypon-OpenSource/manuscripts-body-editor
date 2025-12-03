@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { ObjectTypes, UserProfile } from '@manuscripts/json-schema'
-import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   schema,
@@ -26,6 +25,7 @@ import { EditorView } from 'prosemirror-view'
 
 import plugins from '../../configs/editor-plugins'
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { defaultCapabilities } from '../../testing/default-capabilities'
 import sectionCategories from '../../testing/section-categories.json'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
@@ -61,7 +61,7 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
     //@ts-ignore
     upload: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
   },
-  getCapabilities: () => getAllPermitted(),
+  getCapabilities: () => defaultCapabilities,
   cslProps: {
     style: '',
     locale: '',
@@ -157,7 +157,7 @@ describe('editor view', () => {
     )
 
     const figureElement = sectionWithFigure.content.child(1)
-    expect(figureElement.childCount).toBe(3)
+    expect(figureElement.childCount).toBe(5)
     expect(figureElement.type).toBe(schema.nodes.figure_element)
     expect(figureElement.content.child(0).type).toBe(schema.nodes.figure)
     expect(figureElement.content.child(1).type).toBe(schema.nodes.figcaption)
@@ -170,7 +170,7 @@ describe('editor view', () => {
     )
 
     const tableElement = sectionWithTable.content.child(1)
-    expect(tableElement.childCount).toBe(3)
+    expect(tableElement.childCount).toBe(5)
     expect(tableElement.type).toBe(tableElement.type.schema.nodes.table_element)
     expect(tableElement.content.child(0).type).toBe(
       tableElement.type.schema.nodes.figcaption

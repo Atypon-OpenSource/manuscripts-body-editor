@@ -45,7 +45,8 @@ export class LinkEditableView extends LinkView {
     const attrs = this.node.attrs
     const href = attrs.href
     const title = attrs.title
-
+    // This to prevent joining other inline nodes to link LEAN-4374
+    this.dom.setAttribute('contenteditable', 'false')
     this.dom.setAttribute('href', allowedHref(href) ? href : '')
     this.dom.setAttribute('target', '_blank')
     this.dom.setAttribute('title', title || '')
@@ -68,10 +69,6 @@ export class LinkEditableView extends LinkView {
   }
 
   public deselectNode = () => {
-    const attrs = this.node.attrs
-    if (!this.node.content.size || !attrs.href) {
-      this.removeLink()
-    }
     this.closeForm()
   }
 
@@ -102,7 +99,7 @@ export class LinkEditableView extends LinkView {
       this.node,
       this.getPos,
       this.view,
-      'link-editor'
+      ['link-editor']
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')

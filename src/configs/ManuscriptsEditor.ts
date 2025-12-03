@@ -17,8 +17,12 @@
 import 'prosemirror-view/style/prosemirror.css'
 
 import { UserProfile } from '@manuscripts/json-schema'
-import { Capabilities } from '@manuscripts/style-guide'
-import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
+import {
+  ManuscriptNode,
+  ManuscriptNodeType,
+  schema,
+  SectionCategory,
+} from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { Location, NavigateFunction } from 'react-router-dom'
@@ -27,6 +31,8 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
+import { Language } from '../components/LanguageDropdown/languages'
+import { Capabilities } from '../lib/capabilities'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
 import { handleScrollToSelectedTarget } from '../lib/helpers'
@@ -58,11 +64,22 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
+  languages: Language[]
   sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
   location: Location
+  isComparingMode?: boolean
   dispatch?: Dispatch
+  onEditorClick: (
+    pos: number,
+    node: ManuscriptNode,
+    nodePos: number,
+    event: MouseEvent
+  ) => void
+  lockBody: boolean
+  isViewingMode?: boolean
+  hiddenNodeTypes?: ManuscriptNodeType[] | undefined
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
@@ -99,6 +116,7 @@ export const createEditorView = (
     handleScrollToSelection: handleScrollToSelectedTarget,
     transformCopied,
     handleClickOn: (view, pos, node, nodePos, event) => {
+      props.onEditorClick(pos, node, nodePos, event)
       // This to prevent changing editor selection when clicking on table cell context menu button
       if (
         event?.target &&

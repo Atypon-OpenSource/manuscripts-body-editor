@@ -20,14 +20,29 @@ import {
   TrackedAttrs,
 } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
-import { Attrs, Fragment, Node as ProsemirrorNode } from 'prosemirror-model'
+import {
+  Attrs,
+  Fragment,
+  Mark,
+  Node as ProsemirrorNode,
+} from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-export function isDeleted(node: ProsemirrorNode) {
+export function isDeleted(node: ProsemirrorNode | Mark) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(({ operation }) => operation === 'delete')
+  }
+  return false
+}
+
+export function isShadowDelete(node: ProsemirrorNode) {
+  if (node.attrs.dataTracked) {
+    const changes = node.attrs.dataTracked as TrackedAttrs[]
+    return changes.some(
+      ({ operation, moveNodeId }) => operation === 'delete' && moveNodeId
+    )
   }
   return false
 }
@@ -78,7 +93,7 @@ export function getChangeClasses(dataTracked?: TrackedAttrs[]) {
   return classes
 }
 
-export function isTracked(node: ProsemirrorNode) {
+export function isTracked(node: ProsemirrorNode | Mark) {
   if (node.attrs.dataTracked) {
     const changes = node.attrs.dataTracked as TrackedAttrs[]
     return changes.some(
@@ -142,14 +157,22 @@ export function sanitizeAttrsChange<T extends ProsemirrorNode>(
   newAttr: T['attrs'],
   currentAttrs: T['attrs']
 ) {
-  return Object.keys(newAttr).reduce((acc, attr) => {
-    const key = attr as keyof T['attrs']
-    if (!currentAttrs[key] && currentAttrs[key] !== 0 && !newAttr[key]) {
+  return Object.keys(newAttr).reduce(
+    (acc, attr) => {
+      const key = attr as keyof T['attrs']
+      if (
+        !currentAttrs[key] &&
+        currentAttrs[key] !== 0 &&
+        !newAttr[key] &&
+        newAttr[key] !== 0
+      ) {
+        return acc
+      }
+      acc[key] = newAttr[key]
       return acc
-    }
-    acc[key] = newAttr[key]
-    return acc
-  }, {} as T['attrs'])
+    },
+    {} as T['attrs']
+  )
 }
 
 const classNames = new Map([

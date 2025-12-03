@@ -17,6 +17,7 @@
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import {
   BibliographyElementNode,
+  BibliographyItemAttrs,
   BibliographyItemNode,
   schema,
 } from '@manuscripts/transform'
@@ -29,8 +30,10 @@ import {
 import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
-import { BibliographyItemAttrs } from '../lib/references'
-import { addTrackChangesAttributes } from '../lib/track-changes-utils'
+import {
+  addTrackChangesAttributes,
+  addTrackChangesClassNames,
+} from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
@@ -69,14 +72,13 @@ export class BibliographyElementBlockView extends BlockView<
       this.node,
       this.getPos,
       this.view,
-      'references-editor'
+      ['references-editor']
     )
 
     this.props.popper.show(this.dom, this.editor, 'right')
   }
 
   public stopEvent = () => true
-
   public ignoreMutation = () => true
 
   private handleEdit(citationID: string) {
@@ -111,7 +113,7 @@ export class BibliographyElementBlockView extends BlockView<
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
@@ -168,22 +170,54 @@ export class BibliographyElementBlockView extends BlockView<
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
 
-    const [meta, bibliography] = bib.provider.makeBibliography()
+    const [meta, bibliography] = bib.engine.makeBibliography()
 
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
+      const node = nodes.get(id) as BibliographyItemNode
+      const isUnstructured = node.attrs.type === 'literal'
+
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = fragment
+
+      if (isUnstructured) {
+        const cslLeftMarginDiv = tempDiv.querySelector('.csl-left-margin')
+        let cslRightInlineDiv = tempDiv.querySelector('.csl-right-inline')
+        const cslEntry = tempDiv.querySelector('.csl-entry')
+
+        if (cslRightInlineDiv) {
+          // Overwrite existing inline content
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+        } else if (cslLeftMarginDiv) {
+          // Right inline missing, but left margin present — add right inline after it
+          cslRightInlineDiv = document.createElement('div')
+          cslRightInlineDiv.classList.add('csl-right-inline')
+          cslRightInlineDiv.textContent = node.attrs.literal ?? ''
+          cslLeftMarginDiv.after(cslRightInlineDiv)
+        } else if (cslEntry) {
+          // No left/right structure — overwrite the entry element content
+          cslEntry.textContent = node.attrs.literal ?? ''
+        }
+      }
+
       const element = sanitize(
-        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${fragment}</div></div>`
+        `<div id="${id}" class="bib-item"><div class="csl-bib-body">${tempDiv.innerHTML}</div></div>`
       ).firstElementChild as HTMLElement
 
-      const node = nodes.get(id) as BibliographyItemNode
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
       addTrackChangesAttributes(node.attrs, element)
+      addTrackChangesClassNames(node.attrs, element)
 
       wrapper.append(element)
+    }
+
+    if (!bibliography.length) {
+      this.dom.classList.add('empty-node')
+    } else {
+      this.dom.classList.remove('empty-node')
     }
 
     const oldContent = this.container.querySelector('.contents')

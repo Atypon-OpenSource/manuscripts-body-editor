@@ -33,6 +33,7 @@ import {
   addTrackChangesAttributes,
   isDeleted,
 } from '../lib/track-changes-utils'
+import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
   findChildByID,
@@ -57,6 +58,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public stopEvent = () => true
 
   public updateContents() {
+    super.updateContents()
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
       return
@@ -99,9 +101,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
-      if (author.role !== 'author') {
-        return
-      }
       const jointAuthors = this.isJointFirstAuthor(authors, i)
       wrapper.appendChild(this.buildAuthor(author, jointAuthors))
       if (i !== authors.length - 1) {
@@ -208,19 +207,17 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-
-      this.contextMenu = ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        'context-menu'
-      )
-      return this.contextMenu
     }
-    return undefined
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    return this.contextMenu
   }
 
   public actionGutterButtons = (): HTMLElement[] => {
@@ -296,7 +293,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.node,
       this.getPos,
       this.view,
-      'context-menu'
+      ['context-menu']
     )
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
@@ -360,26 +357,22 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const { view } = this
     const { dispatch } = view
     const affiliationsNodeType = schema.nodes.affiliations
-    const contributorsNodeType = schema.nodes.contributors
-    const affiliationNodeType = schema.nodes.affiliation
 
     let affiliations = findChildByType(view, affiliationsNodeType)
 
     if (!affiliations) {
-      const contributors = findChildByType(view, contributorsNodeType)
-
-      if (contributors) {
-        const { tr } = this.view.state
-        const affiliationsNode = affiliationsNodeType.create()
-        const insertPos = contributors.pos + contributors.node.nodeSize
-        dispatch(tr.insert(insertPos, affiliationsNode))
-        affiliations = findChildByType(view, affiliationsNodeType)
-      }
+      const { tr } = this.view.state
+      const insertPos = findInsertionPosition(
+        schema.nodes.affiliations,
+        view.state.doc
+      )
+      dispatch(tr.insert(insertPos, schema.nodes.affiliations.create()))
+      affiliations = findChildByType(view, affiliationsNodeType)
     }
 
     if (affiliations) {
       const { tr } = this.view.state
-      const affiliationNode = affiliationNodeType.create(attrs)
+      const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
   }

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import { TriangleCollapsedIcon } from '@manuscripts/style-guide'
 import {
-  getListType,
-  isInBibliographySection,
+  isInGraphicalAbstractSection,
   isSectionTitleNode,
+  ListNode,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -26,7 +27,10 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
+import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
+import React, { createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 import {
   addNodeComment,
@@ -36,7 +40,13 @@ import {
   insertInlineTableFootnote,
 } from '../commands'
 import { PopperManager } from './popper'
-import { isChildOfNodeTypes, isSelectionInNode } from './utils'
+import { createPositionOptions } from './position-menu'
+import { templateAllows } from './template'
+import {
+  getMatchingChild,
+  isChildOfNodeTypes,
+  isSelectionInNode,
+} from './utils'
 
 const popper = new PopperManager()
 
@@ -44,6 +54,7 @@ const readonlyTypes = [
   schema.nodes.keywords,
   schema.nodes.bibliography_element,
   schema.nodes.bibliography_section,
+  schema.nodes.footnotes_section,
 ]
 
 const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
@@ -59,10 +70,6 @@ export const sectionLevel = (depth: number) => {
   }
 }
 
-interface Actions {
-  addComment?: boolean
-}
-
 type InsertableNodes = Nodes | 'subsection'
 
 const hasAny = <T>(set: Set<T>, ...items: T[]) => {
@@ -70,35 +77,30 @@ const hasAny = <T>(set: Set<T>, ...items: T[]) => {
 }
 
 export const contextMenuBtnClass = 'btn-context-menu'
+const contextSubmenuBtnClass = 'context-submenu-trigger'
+
 export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
-  private readonly actions: Actions
 
   public constructor(
     node: ManuscriptNode,
     view: ManuscriptEditorView,
-    getPos: () => number,
-    actions: Actions = {}
+    getPos: () => number
   ) {
     this.node = node
     this.view = view
     this.getPos = getPos
-    this.actions = actions
   }
 
-  public showAddMenu = (target: Element, after: boolean) => {
+  public showAddMenu = (target: Element) => {
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
-    // we don`t want to add section after 'REFERENCES'
-    if (isInBibliographySection($pos)) {
-      after = false
-    }
-    const insertPos = after ? $pos.after($pos.depth) : $pos.before($pos.depth)
+    const insertPos = $pos.after($pos.depth)
     const endPos = $pos.end()
-    const types = this.insertableTypes(after, insertPos, endPos)
+    const types = this.insertableTypes(insertPos, endPos)
 
     const insertNode = (
       type: ManuscriptNodeType,
@@ -108,7 +110,7 @@ export class ContextMenu {
       const { state, dispatch } = this.view
 
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
 
       createBlock(type, pos, state, dispatch, attrs)
@@ -128,7 +130,7 @@ export class ContextMenu {
               schema.nodes.backmatter,
             ])
           ) {
-            const labelPosition = after ? 'After' : 'Before'
+            const labelPosition = 'After'
             const level = sectionLevel($pos.depth - 1)
             const label = `New ${level} ${labelPosition} ${itemTitle}`
 
@@ -241,22 +243,49 @@ export class ContextMenu {
     const isBox = isBoxElementSectionTitle($pos, this.node)
     const type = isBox ? schema.nodes.box_element : this.node.type
 
+    if (
+      type === schema.nodes.figure_element ||
+      type === schema.nodes.image_element
+    ) {
+      const figure = getMatchingChild(
+        this.node,
+        (node) => node.type === schema.nodes.figure
+      )
+
+      if (figure) {
+        const attrType = figure.attrs.type
+        const submenuOptions = createPositionOptions(
+          schema.nodes.figure,
+          figure,
+          attrType,
+          this.view
+        )
+        const submenuLabel = 'Position'
+        const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+        menu.appendChild(submenu)
+      }
+    }
+
     if (type === schema.nodes.list) {
       menu.appendChild(
         this.createMenuSection((section: HTMLElement) => {
-          const attrs = this.node.attrs
-          const listType = getListType(attrs.listStyleType).style
-          if (listType === 'none' || listType === 'disc') {
+          const list = this.node as ListNode
+          const type = list.attrs.listStyleType
+          if (type === 'simple' || type === 'bullet') {
             section.appendChild(
               this.createMenuItem('Change to Numbered List', () => {
-                this.changeNodeType(null, 'order')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'order')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
           } else {
             section.appendChild(
               this.createMenuItem('Change to Bulleted list', () => {
-                this.changeNodeType(null, 'bullet')
+                const tr = this.view.state.tr
+                tr.setNodeAttribute(this.getPos(), 'listStyleType', 'bullet')
+                this.view.dispatch(tr)
                 popper.destroy()
               })
             )
@@ -265,20 +294,44 @@ export class ContextMenu {
       )
     }
 
-    const { addComment } = this.actions
-    if (addComment) {
-      menu.appendChild(
-        this.createMenuSection((section: HTMLElement) => {
-          section.appendChild(
-            this.createMenuItem('Comment', () => {
-              const target = this.getCommentTarget()
-              addNodeComment(target, this.view.state, this.view.dispatch)
-              popper.destroy()
-            })
-          )
-        })
-      )
+    if (type === schema.nodes.pullquote_element) {
+      const figure = findChildrenByType(this.node, schema.nodes.quote_image)
+      if (!figure.length) {
+        menu.appendChild(
+          this.createMenuItem('Add Image', () => {
+            const tr = this.view.state.tr
+            tr.insert(this.getPos() + 1, schema.nodes.quote_image.create())
+            this.view.dispatch(tr)
+            popper.destroy()
+          })
+        )
+      } else {
+        const found = figure[0]
+        menu.appendChild(
+          this.createMenuItem('Remove Image', () => {
+            const tr = this.view.state.tr
+            tr.delete(
+              this.getPos() + 1 + found.pos,
+              this.getPos() + 1 + found.pos + found.node.nodeSize
+            )
+            this.view.dispatch(tr)
+            popper.destroy()
+          })
+        )
+      }
     }
+
+    const commentTarget = this.getCommentTarget()
+    menu.appendChild(
+      this.createMenuSection((section: HTMLElement) => {
+        section.appendChild(
+          this.createMenuItem('Comment', () => {
+            addNodeComment(commentTarget, this.view.state, this.view.dispatch)
+            popper.destroy()
+          })
+        )
+      })
+    )
 
     if (type === schema.nodes.table_element) {
       const items: Node[] = []
@@ -306,6 +359,10 @@ export class ContextMenu {
     }
 
     if (
+      !(
+        type === schema.nodes.figure_element &&
+        isInGraphicalAbstractSection($pos)
+      ) &&
       !readonlyTypes.includes(type) &&
       !readonlyTypes.includes($pos.parent.type)
     ) {
@@ -325,33 +382,123 @@ export class ContextMenu {
       )
     }
 
+    if (type === schema.nodes.box_element) {
+      const tr = this.view.state.tr
+      const boxElementNode = $pos.node($pos.depth - 1)
+      const boxStartPos = $pos.start($pos.depth - 1)
+
+      const figcaptions = findChildrenByType(
+        boxElementNode,
+        schema.nodes.figcaption
+      )
+      const hasLabel = figcaptions.length > 0
+
+      menu.insertBefore(
+        this.createMenuItem(hasLabel ? 'Delete Label' : 'Add Label', () => {
+          if (hasLabel) {
+            const figcaptionNode = figcaptions[0].node
+            const figcaptionPos = boxStartPos + figcaptions[0].pos
+
+            tr.delete(figcaptionPos, figcaptionPos + figcaptionNode.nodeSize)
+          } else {
+            const newFigcaption = schema.nodes.figcaption.create({}, [
+              schema.nodes.caption_title.create(),
+            ])
+
+            tr.insert(boxStartPos, newFigcaption)
+          }
+
+          this.view.dispatch(tr)
+          popper.destroy()
+        }),
+
+        menu.firstChild
+      )
+    }
+
     popper.show(target, menu, 'right', true)
 
     this.addPopperEventListeners()
   }
 
-  private createMenuItem = (contents: string, handler: EventListener) => {
+  private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
-    item.textContent = contents
+    const textNode = document.createTextNode(contents)
+    item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
+    item.prepend(textNode)
+    item.classList.add(contextSubmenuBtnClass)
+
+    item.addEventListener('mousedown', this.toggleSubmenu)
+
+    return item
+  }
+
+  private createMenuItem = (
+    contents: string,
+    handler: EventListener,
+    IconComponent: React.FC | string | null = null,
+    selected = false
+  ) => {
+    const item = document.createElement('div')
+    item.className = 'menu-item'
+    selected && item.classList.add('selected')
+    if (IconComponent) {
+      if (typeof IconComponent === 'string') {
+        item.innerHTML = IconComponent
+      } else {
+        item.innerHTML = renderToStaticMarkup(createElement(IconComponent))
+      }
+    }
+    const textNode = document.createTextNode(contents)
+    item.appendChild(textNode)
+
     item.addEventListener('mousedown', (event) => {
       event.preventDefault()
       handler(event)
     })
+
     return item
   }
 
   private createMenuSection = (
-    createMenuItems: (section: HTMLElement) => void
+    createMenuItems: (section: HTMLElement) => void,
+    isSubmenu = false
   ) => {
     const section = document.createElement('div')
     section.className = 'menu-section'
+    isSubmenu && section.classList.add('menu')
     createMenuItems(section)
     return section
   }
 
+  private createSubmenu = (
+    submenuLabel: string,
+    items: {
+      title: string
+      action: () => void
+      IconComponent: React.FC | string | null
+      iconName: string
+      selected: boolean
+    }[]
+  ) => {
+    const submenu = document.createElement('div')
+    submenu.classList.add('context-submenu')
+    submenu.append(
+      this.createSubmenuTrigger(submenuLabel),
+      this.createMenuSection((section: HTMLElement) => {
+        items.forEach(({ title, action, IconComponent, selected }) => {
+          section.appendChild(
+            this.createMenuItem(title, action, IconComponent, selected)
+          )
+        })
+      }, true)
+    )
+
+    return submenu
+  }
+
   private insertableTypes = (
-    after: boolean,
     insertPos: number,
     endPos: number
   ): Set<InsertableNodes> => {
@@ -363,7 +510,7 @@ export class ContextMenu {
 
     const getPos = (pos?: number) => {
       if (pos === undefined) {
-        pos = after ? this.getPos() + this.node.nodeSize : this.getPos()
+        pos = this.getPos() + this.node.nodeSize
       }
       return pos
     }
@@ -375,10 +522,16 @@ export class ContextMenu {
     }
 
     const checkNode = (node: Nodes, pos?: number) => {
+      if (!templateAllows(this.view.state, nodes[node])) {
+        return
+      }
       canInsertAt(nodes[node], pos) && insertable.add(node)
     }
 
-    if (canInsertAt(nodes.section, endPos)) {
+    if (
+      canInsertAt(nodes.section, endPos) &&
+      templateAllows(this.view.state, nodes.section)
+    ) {
       insertable.add('subsection')
     }
     checkNode('section', insertPos)
@@ -391,19 +544,6 @@ export class ContextMenu {
     checkNode('pullquote_element')
 
     return insertable
-  }
-
-  private changeNodeType = (
-    nodeType: ManuscriptNodeType | null,
-    listType: string
-  ) => {
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(this.getPos(), nodeType, {
-        id: this.node.attrs.id,
-        listStyleType: listType,
-      })
-    )
-    popper.destroy()
   }
 
   private deleteNode = (nodeType: ManuscriptNodeType) => {
@@ -431,6 +571,21 @@ export class ContextMenu {
         break
       }
 
+      case 'subtitles': {
+        const pos = this.getPos()
+        const tr = this.view.state.tr
+
+        tr.delete(pos, pos + this.node.nodeSize)
+
+        // For subtitles, set selection to title end
+        const titleNode = findChildrenByType(tr.doc, schema.nodes.title)[0]
+        const titleEndPos = titleNode.pos + titleNode.node.nodeSize - 1
+        tr.setSelection(TextSelection.create(tr.doc, titleEndPos))
+
+        this.view.dispatch(tr)
+        break
+      }
+
       default: {
         const pos = this.getPos()
 
@@ -449,7 +604,10 @@ export class ContextMenu {
     const mouseListener: EventListener = (event) => {
       const target = event.target as HTMLElement
       // if target is one of btn-context-menu buttons, do not destroy popper
-      if (target.classList.contains(contextMenuBtnClass)) {
+      if (
+        target.classList.contains(contextMenuBtnClass) ||
+        target.classList.contains(contextSubmenuBtnClass)
+      ) {
         return
       }
       window.requestAnimationFrame(() => {
@@ -484,5 +642,10 @@ export class ContextMenu {
       return parent
     }
     return this.node
+  }
+
+  private toggleSubmenu = (ev: MouseEvent) => {
+    const submenu = (ev.target as HTMLElement).nextElementSibling
+    submenu?.classList.toggle('show')
   }
 }

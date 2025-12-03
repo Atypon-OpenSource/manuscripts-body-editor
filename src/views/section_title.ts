@@ -17,7 +17,6 @@
 import { schema, SectionTitleNode } from '@manuscripts/transform'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { sectionLevel } from '../lib/context-menu'
 import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -25,13 +24,21 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
 
+  public protectedSectionTitles = [
+    schema.nodes.bibliography_section,
+    schema.nodes.footnotes_section,
+    schema.nodes.graphical_abstract_section,
+    schema.nodes.supplements,
+  ]
+
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block'
     this.dom.appendChild(this.contentDOM)
 
     const $pos = this.view.state.doc.resolve(this.getPos())
-    if ($pos.parent.type === schema.nodes.bibliography_section) {
+
+    if (this.protectedSectionTitles.includes($pos.parent.type)) {
       this.contentDOM.setAttribute('contenteditable', 'false')
     }
   }
@@ -55,20 +62,6 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
       this.contentDOM.classList.remove('empty-node')
     } else {
       this.contentDOM.classList.add('empty-node')
-
-      if ($pos.node($pos.depth - 1).type === schema.nodes.box_element) {
-        this.contentDOM.setAttribute(
-          'data-placeholder',
-          `Optional box title...`
-        )
-        // the first level is hidden
-        // other levels are shifted by 1
-      } else {
-        this.contentDOM.setAttribute(
-          'data-placeholder',
-          `${sectionLevel(level)} heading`
-        )
-      }
     }
     if (sectionTitleState && sectionNumber) {
       this.contentDOM.dataset.sectionNumber = sectionNumber
