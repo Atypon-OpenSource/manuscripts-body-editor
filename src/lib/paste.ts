@@ -204,11 +204,18 @@ export const handlePaste = (
       slice.content.lastChild?.type === schema.nodes.section) &&
     parent
   ) {
-    const $pos = tr.doc.resolve(parent.start)
+    const $pos = tr.doc.resolve(
+      getDeepestSubsectionPosition(parent.node, parent.pos)
+    )
     const insertPos = $pos.end()
     tr.insert(insertPos, slice.content)
     dispatch(
-      tr.setSelection(NodeSelection.create(tr.doc, insertPos)).scrollIntoView()
+      tr
+        .setSelection(
+          //@ts-ignore
+          NodeSelection.create(tr.doc, tr.steps[0]['to'] || insertPos)
+        )
+        .scrollIntoView()
     )
     return true
   }
