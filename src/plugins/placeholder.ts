@@ -35,6 +35,7 @@ const placeholderWidget =
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
     const element = document.createElement('span')
     element.className = 'placeholder-text'
+    element.setAttribute('aria-hidden', 'true')
     element.textContent = placeholder
     element.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
