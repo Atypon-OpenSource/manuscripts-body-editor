@@ -34,6 +34,7 @@ interface LanguageDropdownProps {
   selectedLanguageDisplay?: string
   onCloseParent?: () => void
   languages: Language[]
+  menuItemRef?: (el: HTMLDivElement | null) => void
 }
 
 const LanguageOptionItem: React.FC<{
@@ -78,11 +79,12 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   selectedLanguageDisplay,
   onCloseParent,
   languages,
+  menuItemRef,
 }) => {
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const dropdownMenuRef = useRef<HTMLDivElement>(null)
-  const languageButtonRef = useRef<HTMLDivElement>(null)
+  const languageButtonRef = useRef<HTMLDivElement | null>(null)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -175,7 +177,10 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
     <DropdownContainer ref={dropdownRef}>
       {showButton && (
         <LanguageButton
-          ref={languageButtonRef}
+          ref={(el) => {
+            languageButtonRef.current = el
+            menuItemRef?.(el)
+          }}
           onClick={toggleDropdown}
           onKeyDown={handleKeyDown}
           tabIndex={0}
