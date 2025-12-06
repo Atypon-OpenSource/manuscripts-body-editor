@@ -50,6 +50,12 @@ export const OutlineItem = styled.div<{
   &:hover {
     background: ${(props) => props.theme.colors.background.fifth};
   }
+
+  &:focus-visible {
+    background: ${(props) => props.theme.colors.background.fifth};
+    outline: 2px solid #bce7f6;
+    outline-offset: -2px;
+  }
 `
 
 export const OutlineItemArrow = styled.button`

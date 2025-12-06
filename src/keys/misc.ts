@@ -38,6 +38,7 @@ import {
   activateSearchReplace,
   addToStart,
   autoComplete,
+  exitEditorToContainer,
   ignoreAtomBlockNodeBackward,
   ignoreAtomBlockNodeForward,
   ignoreEnterInSubtitles,
@@ -62,6 +63,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   ),
   Delete: ignoreAtomBlockNodeForward,
   Tab: goToNextCell(1),
+  Escape: exitEditorToContainer,
   'Mod-z': undo,
   'Mod-y': redo, // Mac
   'Shift-Mod-z': redo, // PC

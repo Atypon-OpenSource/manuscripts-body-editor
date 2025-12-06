@@ -1948,6 +1948,17 @@ export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
   return false
 }
 
+// Command to exit editor and focus container
+export const exitEditorToContainer: EditorAction = () => {
+  const editorContainer = document.getElementById('editor')
+  if (editorContainer) {
+    editorContainer.focus()
+    return true
+  }
+
+  return false
+}
+
 export const copySelection = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
