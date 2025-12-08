@@ -36,11 +36,11 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.3.10
-        version: 3.3.10(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.3.11
+        version: 3.3.11(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.2
-        version: 2.2.2
+        specifier: 2.2.3
+        version: 2.2.3
       '@manuscripts/transform':
         specifier: 4.3.12
         version: 4.3.12(prosemirror-state@1.4.3)
@@ -120,8 +120,8 @@ importers:
         specifier: 1.2.2
         version: 1.2.2(prosemirror-model@1.25.0)(prosemirror-state@1.4.3)
       prosemirror-view:
-        specifier: 1.40.0
-        version: 1.40.0
+        specifier: 1.41.0
+        version: 1.41.0
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1317,12 +1317,12 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.3.10':
-    resolution: {integrity: sha512-2pEmMkcVV+7Wnf50OgjDkf7Z2DKvvmrV79na7RQlrsNFY0dpSpnFdBiJO7mkIiQt7UhlUBiz8ieG3SeHyCVtpQ==}
+  '@manuscripts/style-guide@3.3.11':
+    resolution: {integrity: sha512-JPJgE1EPwEFW01JrcgiJQQ/ipYVdhepY+wr0+a30ewusxGUoClBVTxib5G+GWY1jh+RQBKA/j+7iPC8qSsKI8w==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.2':
-    resolution: {integrity: sha512-QvxAwUYPJCL8/uSo85Ara37i1YxJueh1fU2kMZoV6MqlRQ2imb/cVNfXv2SwsGBxSJm/yXRD+NCBiLMiLJMktQ==}
+  '@manuscripts/track-changes-plugin@2.2.3':
+    resolution: {integrity: sha512-hWmN0bmkASKXg6G0J68RsUgDsCxxba3Oz3QkaIkaxbsTEkXnylDLk/+kTKmnMmnYDixIAVHV6QiSPD+4ZE2nJA==}
 
   '@manuscripts/transform@4.3.12':
     resolution: {integrity: sha512-2QuWbABOy9hk1ocf9DmxEyGYSZZRHblUHU3pnUTEj6P0bTtwl+fU5bnCqFEWq+uRdCWie2HZwzZRU7dUF5/XwA==}
@@ -4042,8 +4042,8 @@ packages:
       prosemirror-model: ^1.19.2
       prosemirror-state: ^1.4.3
 
-  prosemirror-view@1.40.0:
-    resolution: {integrity: sha512-2G3svX0Cr1sJjkD/DYWSe3cfV5VPVTBOxI9XQEGWJDFEpsZb/gh4MV29ctv+OJx2RFX4BLt09i+6zaGM/ldkCw==}
+  prosemirror-view@1.41.0:
+    resolution: {integrity: sha512-FatMIIl0vRHMcNc3sPy3cMw5MMyWuO1nWQxqvYpJvXAruucGvmQ2tyyjT2/Lbok77T9a/qZqBVCq4sj43V2ihw==}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -6392,7 +6392,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.3.10(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.3.11(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6404,7 +6404,7 @@ snapshots:
       prosemirror-keymap: 1.2.3
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
       react: 19.2.0
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)(react@19.2.0)
       react-dnd-html5-backend: 16.0.1
@@ -6422,7 +6422,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.2':
+  '@manuscripts/track-changes-plugin@2.2.3':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6430,7 +6430,7 @@ snapshots:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6646,14 +6646,14 @@ snapshots:
       prosemirror-inputrules: 1.5.0
       prosemirror-keymap: 1.2.3
       prosemirror-model: 1.25.2
-      prosemirror-paste-rules: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
+      prosemirror-paste-rules: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0)
       prosemirror-schema-list: 1.5.1
       prosemirror-state: 1.4.3
-      prosemirror-suggest: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
+      prosemirror-suggest: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0)
       prosemirror-tables: 1.7.1
-      prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
+      prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0)
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   '@remirror/types@2.0.0':
     dependencies:
@@ -9859,20 +9859,20 @@ snapshots:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-gapcursor@1.3.2:
     dependencies:
       prosemirror-keymap: 1.2.3
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-history@1.4.1:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
       rope-sequence: 1.3.4
 
   prosemirror-inputrules@1.5.0:
@@ -9893,7 +9893,7 @@ snapshots:
     dependencies:
       orderedmap: 2.1.1
 
-  prosemirror-paste-rules@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
+  prosemirror-paste-rules@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0):
     dependencies:
       '@babel/runtime': 7.28.2
       '@remirror/core-constants': 3.0.0
@@ -9901,7 +9901,7 @@ snapshots:
       escape-string-regexp: 4.0.0
       prosemirror-model: 1.25.2
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-schema-basic@1.2.4:
     dependencies:
@@ -9917,9 +9917,9 @@ snapshots:
     dependencies:
       prosemirror-model: 1.25.0
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
-  prosemirror-suggest@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
+  prosemirror-suggest@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0):
     dependencies:
       '@babel/runtime': 7.28.2
       '@remirror/core-constants': 3.0.0
@@ -9928,7 +9928,7 @@ snapshots:
       escape-string-regexp: 4.0.0
       prosemirror-model: 1.25.2
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-tables@1.7.1:
     dependencies:
@@ -9936,7 +9936,7 @@ snapshots:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-test-builder@1.1.1:
     dependencies:
@@ -9944,13 +9944,13 @@ snapshots:
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.1
 
-  prosemirror-trailing-node@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
+  prosemirror-trailing-node@3.0.0(prosemirror-model@1.25.2)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0):
     dependencies:
       '@remirror/core-constants': 3.0.0
       escape-string-regexp: 4.0.0
       prosemirror-model: 1.25.2
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
 
   prosemirror-transform@1.10.4:
     dependencies:
@@ -9961,7 +9961,7 @@ snapshots:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
 
-  prosemirror-view@1.40.0:
+  prosemirror-view@1.41.0:
     dependencies:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
