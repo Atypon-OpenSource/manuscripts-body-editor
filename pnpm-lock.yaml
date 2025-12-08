@@ -36,11 +36,11 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.3.11-LEAN-5184.0
-        version: 3.3.11-LEAN-5184.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.3.11
+        version: 3.3.11(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.2
-        version: 2.2.2
+        specifier: 2.2.3
+        version: 2.2.3
       '@manuscripts/transform':
         specifier: 4.3.12
         version: 4.3.12(prosemirror-state@1.4.3)
@@ -1317,12 +1317,12 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.3.11-LEAN-5184.0':
-    resolution: {integrity: sha512-B4NhEeHboGP4RxrtEb7x4l2QpIy4i9MXfd39SN7lpjqIOahHwuN9Ut0dDbIBrmKYyvbKufbUyYgm73dljI0G8Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.3.11-LEAN-5184.0.tgz}
+  '@manuscripts/style-guide@3.3.11':
+    resolution: {integrity: sha512-JPJgE1EPwEFW01JrcgiJQQ/ipYVdhepY+wr0+a30ewusxGUoClBVTxib5G+GWY1jh+RQBKA/j+7iPC8qSsKI8w==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.2':
-    resolution: {integrity: sha512-QvxAwUYPJCL8/uSo85Ara37i1YxJueh1fU2kMZoV6MqlRQ2imb/cVNfXv2SwsGBxSJm/yXRD+NCBiLMiLJMktQ==}
+  '@manuscripts/track-changes-plugin@2.2.3':
+    resolution: {integrity: sha512-hWmN0bmkASKXg6G0J68RsUgDsCxxba3Oz3QkaIkaxbsTEkXnylDLk/+kTKmnMmnYDixIAVHV6QiSPD+4ZE2nJA==}
 
   '@manuscripts/transform@4.3.12':
     resolution: {integrity: sha512-2QuWbABOy9hk1ocf9DmxEyGYSZZRHblUHU3pnUTEj6P0bTtwl+fU5bnCqFEWq+uRdCWie2HZwzZRU7dUF5/XwA==}
@@ -4042,9 +4042,6 @@ packages:
       prosemirror-model: ^1.19.2
       prosemirror-state: ^1.4.3
 
-  prosemirror-view@1.40.0:
-    resolution: {integrity: sha512-2G3svX0Cr1sJjkD/DYWSe3cfV5VPVTBOxI9XQEGWJDFEpsZb/gh4MV29ctv+OJx2RFX4BLt09i+6zaGM/ldkCw==}
-
   prosemirror-view@1.41.0:
     resolution: {integrity: sha512-FatMIIl0vRHMcNc3sPy3cMw5MMyWuO1nWQxqvYpJvXAruucGvmQ2tyyjT2/Lbok77T9a/qZqBVCq4sj43V2ihw==}
 
@@ -6395,7 +6392,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.3.11-LEAN-5184.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.3.11(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6425,7 +6422,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.2':
+  '@manuscripts/track-changes-plugin@2.2.3':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6433,7 +6430,7 @@ snapshots:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.0
+      prosemirror-view: 1.41.0
     transitivePeerDependencies:
       - supports-color
 
@@ -9963,12 +9960,6 @@ snapshots:
     dependencies:
       prosemirror-model: 1.25.0
       prosemirror-state: 1.4.3
-
-  prosemirror-view@1.40.0:
-    dependencies:
-      prosemirror-model: 1.25.0
-      prosemirror-state: 1.4.3
-      prosemirror-transform: 1.10.4
 
   prosemirror-view@1.41.0:
     dependencies:
