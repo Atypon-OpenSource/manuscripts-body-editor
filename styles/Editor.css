@@ -162,9 +162,16 @@
 .ProseMirror .pullquote figure {
   margin: 0;
 }
-.ProseMirror .pullquote footer.empty-node:after,
+.ProseMirror .pullquote footer.empty-node:after {
+  background: #ddf3fa;
+  color: #6e6e6e;
+}
+
 .ProseMirror .pullquote .placeholder-text {
   background: #ddf3fa;
+}
+
+.ProseMirror .pullquote .placeholder-text::before {
   color: #6e6e6e;
 }
 
@@ -579,8 +586,13 @@
 
 .ProseMirror .placeholder-text {
   font-style: italic;
-  color: #c9c9c9;
   margin: 0;
+  cursor: text;
+}
+
+.ProseMirror .placeholder-text::before {
+  content: attr(data-placeholder);
+  color: #c9c9c9;
 }
 
 .ProseMirror .add-subtitle {
