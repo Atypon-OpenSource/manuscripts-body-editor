@@ -19,8 +19,14 @@ import styled from 'styled-components'
 import { Option } from './TypeSelector'
 
 export const StyledSelect = styled(Select<Option, false>)`
-  & > div:hover {
+  .type-selector__control:hover {
     border-color: ${(props) => props.theme.colors.border.secondary};
+  }
+
+  .type-selector__control:focus-visible {
+    border-color: ${(props) => props.theme.colors.outline.focus} !important;
+    box-shadow: 0 0 0 1px ${(props) => props.theme.colors.outline.focus} !important;
+    outline: none;
   }
 `
 
