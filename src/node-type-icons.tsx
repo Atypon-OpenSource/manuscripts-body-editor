@@ -16,6 +16,7 @@
 
 import {
   FileDocumentIcon,
+  SupplementsIcon,
   FileImageIcon,
   OutlineBlockQuoteIcon,
   OutlineEmbedIcon,
@@ -39,7 +40,7 @@ const OutlineImageIcon: React.FC = () => (
   <FileImageIcon width="11" height="14" />
 )
 const OutlineSupplementsIcon: React.FC = () => (
-  <FileImageIcon width="11" height="14" />
+  <SupplementsIcon width="11" height="14" />
 )
 
 const OutlineMainDocumentIcon: React.FC = () => (

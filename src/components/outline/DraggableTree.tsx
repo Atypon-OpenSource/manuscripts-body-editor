@@ -20,6 +20,7 @@ import {
 import {
   isAttachmentsNode,
   isBibliographySectionNode,
+  isSupplementsNode,
   isElementNodeType,
   isHeroImageNode,
   ManuscriptEditorView,
@@ -280,7 +281,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   const isDeletedItem = isDeleted(node)
   const isHeroImage = isHeroImageNode(node)
-  const isSupplements = node.type === schema.nodes.supplements
+  const isSupplements = isSupplementsNode(node)
   const isMainDocument = isAttachmentsNode(node)
 
   const isTop =
