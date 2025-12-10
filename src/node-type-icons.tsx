@@ -15,6 +15,7 @@
  */
 
 import {
+  FileDocumentIcon,
   FileImageIcon,
   OutlineBlockQuoteIcon,
   OutlineEmbedIcon,
@@ -37,6 +38,13 @@ const { nodes } = schema
 const OutlineImageIcon: React.FC = () => (
   <FileImageIcon width="11" height="14" />
 )
+const OutlineSupplementsIcon: React.FC = () => (
+  <FileImageIcon width="11" height="14" />
+)
+
+const OutlineMainDocumentIcon: React.FC = () => (
+  <FileDocumentIcon width="11" height="14" />
+)
 const icons: Map<
   ManuscriptNodeType,
   React.FunctionComponent<React.SVGAttributes<SVGElement>>
@@ -55,6 +63,8 @@ const icons: Map<
   [nodes.footnotes_section, OutlineSectionIcon],
   [nodes.image_element, OutlineImageIcon],
   [nodes.hero_image, OutlineImageIcon],
+  [nodes.supplements, OutlineSupplementsIcon],
+  [nodes.attachments, OutlineMainDocumentIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType, listType?: string) => {

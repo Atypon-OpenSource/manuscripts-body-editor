@@ -18,6 +18,8 @@ import {
   TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
 import {
+  isAttachmentsNode,
+  isBibliographySectionNode,
   isElementNodeType,
   isHeroImageNode,
   ManuscriptEditorView,
@@ -66,7 +68,6 @@ const excludedTypes = [
   schema.nodes.trans_abstract,
   schema.nodes.subtitles,
   schema.nodes.subtitle,
-  schema.nodes.supplements,
 ]
 
 const childrenExcludedTypes = [
@@ -279,8 +280,14 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   const isDeletedItem = isDeleted(node)
   const isHeroImage = isHeroImageNode(node)
+  const isSupplements = node.type === schema.nodes.supplements
+  const isMainDocument = isAttachmentsNode(node)
 
-  const isTop = isManuscriptNode(parent) && !isHeroImage
+  const isTop =
+    isManuscriptNode(parent) &&
+    !isHeroImage &&
+    !isSupplements &&
+    !isMainDocument
 
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
@@ -299,19 +306,22 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
 
   dragRef(dropRef(ref))
 
-  const dragClass = isDragging ? 'dragging' : ''
-  const dropClass = isOver && dropSide ? `drop-${dropSide}` : ''
-  const deletedClass = isDeletedItem ? 'deleted' : ''
-  const heroImageClass = isHeroImage ? 'hero-image' : ''
-
+  const classNames = [
+    isDragging && 'dragging',
+    isOver && dropSide && `drop-${dropSide}`,
+    isDeletedItem && 'deleted',
+    isHeroImage && 'hero-image',
+    isSupplements && 'supplements',
+    isBibliographySectionNode(node) && 'references',
+    isMainDocument && 'main-document',
+  ]
+    .filter(Boolean)
+    .join(' ') // .filter(Boolean) removes all falsy values (false, '', null, etc.)
   return (
-    <Outline
-      ref={ref}
-      className={`${dragClass} ${dropClass} ${deletedClass} ${heroImageClass}`}
-    >
+    <Outline ref={ref} className={classNames}>
       {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem
-          depth={isHeroImage ? 1 : depth}
+          depth={isHeroImage || isSupplements || isMainDocument ? 1 : depth}
           onContextMenu={handleContextMenu}
         >
           {items.length ? (
