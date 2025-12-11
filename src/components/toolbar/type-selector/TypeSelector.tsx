@@ -33,7 +33,7 @@ import {
   promoteParagraphToSection,
   titleCase,
 } from '../helpers'
-import { OptionComponent } from './OptionComponent'
+import { CustomControl, OptionComponent } from './OptionComponent'
 import { customStyles, StyledSelect } from './styles'
 
 export interface Option {
@@ -144,12 +144,14 @@ export const TypeSelector: React.FC<{
       }
       options={options}
       components={{
+        Control: CustomControl,
         Option: OptionComponent,
       }}
       classNamePrefix="type-selector"
       styles={customStyles}
       isDisabled={options.length <= 1 || !isInBody || !isEditAllowed(state)}
       isSearchable={false}
+      tabIndex={-1}
     />
   )
 }
