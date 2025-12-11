@@ -64,5 +64,26 @@ export const CustomControl = (props: ControlProps<Option, false>) => {
     }
   }, [])
 
-  return <components.Control {...props} innerRef={controlRef} />
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const { selectProps } = props
+      if (selectProps.menuIsOpen) {
+        selectProps.onMenuClose?.()
+      } else {
+        selectProps.onMenuOpen?.()
+      }
+    }
+  }
+
+  return (
+    <components.Control
+      {...props}
+      innerRef={controlRef}
+      innerProps={{
+        ...props.innerProps,
+        onKeyDown: handleKeyDown,
+      }}
+    />
+  )
 }

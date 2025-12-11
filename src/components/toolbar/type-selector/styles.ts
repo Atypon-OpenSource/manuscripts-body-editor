@@ -27,6 +27,10 @@ export const StyledSelect = styled(Select<Option, false>)`
     border-color: ${(props) => props.theme.colors.outline.focus} !important;
     box-shadow: 0 0 0 1px ${(props) => props.theme.colors.outline.focus} !important;
     outline: none;
+
+    .type-selector__dropdown-indicator {
+      color: #6e6e6e;
+    }
   }
 `
 
