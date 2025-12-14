@@ -29,6 +29,7 @@ import {
   NodeSelection,
   Transaction,
 } from 'prosemirror-state'
+import { Step } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
