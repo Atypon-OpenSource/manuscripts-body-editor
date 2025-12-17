@@ -46,7 +46,7 @@ export class AttachmentsView extends BlockView<Trackable<ManuscriptNode>> {
     panel.classList.add('panel-header')
 
     const label = document.createElement('span')
-    label.textContent = 'Main Document'
+    label.textContent = 'Main document'
     label.contentEditable = 'false'
 
     const toggleBtn = document.createElement('button')
