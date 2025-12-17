@@ -294,10 +294,11 @@
   font-weight: bold;
 }
 
-.ProseMirror .element-label, .caption-title, .caption-description {
+.ProseMirror .element-label, caption {
   font-size: 14px;
   outline: none;
   margin: 0;
+  display: inline;
 }
 
 .ProseMirror .element-label {

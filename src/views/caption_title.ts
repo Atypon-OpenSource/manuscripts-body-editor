@@ -24,7 +24,7 @@ export class CaptionTitleView extends BaseNodeView<CaptionTitleNode> {
     this.createDOM()
   }
   protected createDOM() {
-    this.dom = document.createElement('label')
+    this.dom = document.createElement('caption')
     this.dom.className = 'caption-title placeholder'
     this.dom.contentEditable = 'true'
     this.contentDOM = this.dom

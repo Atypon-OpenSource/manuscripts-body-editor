@@ -27,7 +27,7 @@ export class CaptionView
     this.createDOM()
   }
   protected createDOM() {
-    this.dom = document.createElement('p')
+    this.dom = document.createElement('caption')
     this.dom.className = 'caption-description placeholder'
     this.dom.contentEditable = 'true'
     this.contentDOM = this.dom

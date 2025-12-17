@@ -17,6 +17,7 @@
 import {
   buildTargets,
   isInGraphicalAbstractSection,
+  ManuscriptNode,
   schema,
   Target,
 } from '@manuscripts/transform'
@@ -25,7 +26,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getDocWithoutMovedContent } from '../lib/filtered-document'
-import { findChildrenByType } from 'prosemirror-utils'
+import { findChildren } from 'prosemirror-utils'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
@@ -69,20 +70,13 @@ export default () => {
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'element-label'
-                labelNode.textContent = target.label + ':'
-                const caption = findChildrenByType(
+                const { labelPos, label } = getLabelDecorationData(
+                  target,
+                  state.doc,
                   node,
-                  schema.nodes.caption_title,
-                  false
-                )[0]
-                const $pos = state.doc.resolve(pos + (caption?.pos || 1) + 1)
-                let labelPos = $pos.pos
-                if (node.type === schema.nodes.equation_element) {
-                  labelPos = $pos.end()
-                  labelNode.textContent = target.label
-                } else if (!$pos.nodeBefore) {
-                  labelPos -= 1
-                }
+                  pos
+                )
+                labelNode.textContent = label
                 decorations.push(
                   Decoration.widget(labelPos, labelNode, {
                     side: -1,
@@ -97,4 +91,31 @@ export default () => {
       },
     },
   })
+}
+
+const getLabelDecorationData = (
+  target: Target,
+  doc: ManuscriptNode,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  const caption = findChildren(
+    parent,
+    (node) =>
+      node.type === schema.nodes.caption ||
+      node.type === schema.nodes.caption_title,
+    false
+  )[0]
+
+  const $pos = doc.resolve(pos + (caption?.pos || 1) + 1)
+  let labelPos = $pos.pos,
+    label = target.label + ':'
+  if (!caption) {
+    labelPos = $pos.end()
+    label = target.label
+  } else if (!$pos.nodeBefore) {
+    labelPos -= 1
+  }
+
+  return { labelPos, label }
 }
