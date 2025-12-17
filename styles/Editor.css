@@ -305,6 +305,11 @@
   margin-right: 5px;
 }
 
+.ProseMirror .block-equation_element .element-label {
+  display: block;
+  text-align: center;
+}
+
 .ProseMirror .caption-title.empty-node::before {
   content: 'Caption Title...';
   color: #000;
