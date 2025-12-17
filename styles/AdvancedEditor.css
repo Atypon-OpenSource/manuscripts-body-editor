@@ -152,6 +152,10 @@
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 }
 
+.ProseMirror .figure-block {
+  text-align: center;
+}
+
 .ProseMirror .figure-block-group .figure-block {
   border: none;
   border-radius: 0;
@@ -246,16 +250,6 @@
   padding-bottom: 20px;
 }
 
-.ProseMirror .figure-block > figcaption {
-  grid-column-start: 1;
-  grid-column-end: -1;
-  margin-top: 30px;
-}
-
-.ProseMirror .figure-caption {
-  display: none;
-}
-
 .ProseMirror .figure.placeholder {
   align-items: center;
   border-radius: 16px;
@@ -311,22 +305,6 @@
   border: none;
 }
 
-.ProseMirror figcaption {
-  background: white;
-  font-size: 14px;
-  margin-top: 1em;
-  text-align: center;
-  word-wrap: break-word;
-}
-
-.ProseMirror .block-table_element figcaption {
-  text-align: left;
-}
-
-.ProseMirror .figure-block > figcaption .figure-label {
-  display: initial !important;
-}
-
 .ProseMirror .figure-block[id^='MPTable'] {
   border-collapse: collapse;
   empty-cells: show;
@@ -351,15 +329,10 @@
   border-top-color: #000 !important;
   border-top-style: none !important;
   border-top-width: 1pt !important;
-
+  /**/
   border-bottom-color: #000 !important;
   border-bottom-style: none !important;
   border-bottom-width: 1pt !important;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] > figcaption {
-  grid-row: 2 !important;
-  text-align: center !important;
 }
 
 .ProseMirror .block-figure_element .position-menu,
@@ -431,9 +404,11 @@ ProseMirror .block-embed .position-menu {
   grid-template-columns: 52px auto 100px;
 }
 .ProseMirror .block-container.block-box_element > .block.box-element {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto;
+  margin: 0 54px;
+}
+
+.ProseMirror .block-container.block-box_element > .block.box-element > .block-section > section {
+  margin: 0 -54px;
 }
 
 .ProseMirror .box-element .block-container .block {
@@ -443,20 +418,18 @@ ProseMirror .block-embed .position-menu {
   border-right: 2px solid #e2e2e2;
 }
 
-.ProseMirror .box-element::after,
-.box-element > .block-section::before {
-  content: ' ';
-  margin-left: 52px;
-  margin-right: 52px;
-  border-top: 2px solid #e2e2e2;
-  height: 0;
+.ProseMirror .box-element > .block-container > section > :is(.comment-marker:first-child ~ .block-container:nth-child(2)),
+.ProseMirror .box-element > .block-container > section > .block-container:first-child {
+  padding-top: 6px;
 }
 
-.box-element > figcaption {
-  margin-left: 54px;
-  margin-right: 54px;
-  padding-bottom: 6px;
-  text-align: left;
+.ProseMirror .box-element > .block-container > section > :is(.comment-marker:first-child ~ .block-container:nth-child(2)) > .block,
+.ProseMirror .box-element > .block-container > section > .block-container:first-child > .block {
+  border-top: 2px solid #e2e2e2;
+}
+
+.ProseMirror .box-element > .block-container > section .block-container:last-child > .block {
+  border-bottom: 2px solid #e2e2e2;
 }
 
 .ProseMirror
@@ -477,9 +450,7 @@ ProseMirror .block-embed .position-menu {
   > h1.empty-node[data-placeholder]::before {
   font-size: 16pt;
 }
-.box-element section figcaption {
-  background: var(--box-element-bg-color);
-}
+
 .unsupported-format-label {
   font-size: 140%;
   line-height: 1.3;
@@ -1755,8 +1726,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-image_element .block:focus-visible,
 .ProseMirror .block-figure_element .block:focus-visible,
-.ProseMirror .block-embed .block:focus-visible,
-.ProseMirror .supplement-caption:focus-visible {
+.ProseMirror .block-embed .block:focus-visible {
   outline: none;
 }
 

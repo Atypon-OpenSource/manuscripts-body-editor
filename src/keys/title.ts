@@ -170,14 +170,6 @@ const leaveTitle: EditorAction = (state, dispatch, view) => {
   return true
 }
 
-const leaveFigcaption: EditorAction = (state) => {
-  const {
-    selection: { $anchor },
-  } = state
-
-  return $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title
-}
-
 // ignore backspace at the start of section titles
 const protectTitles: EditorAction = (
   state: ManuscriptEditorState,
@@ -269,7 +261,7 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(autoComplete, leaveTitle, leaveFigcaption),
+  Enter: chainCommands(autoComplete, leaveTitle),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),

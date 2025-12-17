@@ -17,6 +17,7 @@
 import {
   buildTargets,
   isInGraphicalAbstractSection,
+  schema,
   Target,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
@@ -24,6 +25,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getDocWithoutMovedContent } from '../lib/filtered-document'
+import { findChildrenByType } from 'prosemirror-utils'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
@@ -66,30 +68,27 @@ export default () => {
 
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
-                labelNode.className = 'figure-label'
-
-                if (node.type.name === 'image_element') {
+                labelNode.className = 'element-label'
+                labelNode.textContent = target.label + ':'
+                const caption = findChildrenByType(
+                  node,
+                  schema.nodes.caption_title,
+                  false
+                )[0]
+                const $pos = state.doc.resolve(pos + (caption?.pos || 1) + 1)
+                let labelPos = $pos.pos
+                if (node.type === schema.nodes.equation_element) {
+                  labelPos = $pos.end()
                   labelNode.textContent = target.label
-                  decorations.push(
-                    Decoration.widget(
-                      pos + (node.firstChild?.nodeSize || 0) + 1,
-                      labelNode
-                    )
-                  )
-                } else {
-                  labelNode.textContent = target.label + ':'
-
-                  node.forEach((child, offset) => {
-                    if (child.type.name === 'figcaption') {
-                      decorations.push(
-                        Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                          side: -1,
-                          key: `figure-label-${id}-${target.label}`,
-                        })
-                      )
-                    }
-                  })
+                } else if (!$pos.nodeBefore) {
+                  labelPos -= 1
                 }
+                decorations.push(
+                  Decoration.widget(labelPos, labelNode, {
+                    side: -1,
+                    key: `element-label-${id}-${target.label}`,
+                  })
+                )
               }
             }
           })
