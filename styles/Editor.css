@@ -290,11 +290,11 @@
 
 /* Caption and Element Label */
 
-.ProseMirror .caption-title:not(.empty-node), .element-label {
+.ProseMirror .caption-title:not(.empty-node), .ProseMirror .element-label {
   font-weight: bold;
 }
 
-.ProseMirror .element-label, caption {
+.ProseMirror .element-label, .ProseMirror .caption-description, .ProseMirror .caption-title {
   font-size: 14px;
   outline: none;
   margin: 0;
