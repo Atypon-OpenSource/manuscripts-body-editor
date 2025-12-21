@@ -297,6 +297,24 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     menu.showEditMenu(e.currentTarget as HTMLAnchorElement)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      e.stopPropagation()
+
+      if (items.length > 0) {
+        // Has children: expand/collapse
+        toggleOpen()
+      } else {
+        // No children: navigate to the link
+        const link = (e.currentTarget as HTMLElement).querySelector('a')
+        if (link) {
+          link.click()
+        }
+      }
+    }
+  }
+
   dragRef(dropRef(ref))
 
   const dragClass = isDragging ? 'dragging' : ''
@@ -313,11 +331,15 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
         <OutlineItem
           depth={isHeroImage ? 1 : depth}
           onContextMenu={handleContextMenu}
+          onKeyDown={handleKeyDown}
+          tabIndex={-1}
+          data-outline-item
         >
           {items.length ? (
             <OutlineItemArrow
               aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${node.type.name}`}
               onClick={toggleOpen}
+              tabIndex={-1}
             >
               {isOpen ? <TriangleExpandedIcon /> : <TriangleCollapsedIcon />}
             </OutlineItemArrow>
@@ -325,7 +347,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
             <OutlineItemNoArrow />
           )}
 
-          <OutlineItemLink to={`#${node.attrs.id}`}>
+          <OutlineItemLink to={`#${node.attrs.id}`} tabIndex={-1}>
             <OutlineItemIcon>{nodeTypeIcon(node.type)}</OutlineItemIcon>
             <OutlineItemLinkText className={`outline-text-${node.type.name}`}>
               {itemText(node)}
