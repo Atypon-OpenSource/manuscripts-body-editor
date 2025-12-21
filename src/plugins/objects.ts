@@ -17,6 +17,8 @@
 import {
   buildTargets,
   isInGraphicalAbstractSection,
+  ManuscriptNode,
+  schema,
   Target,
 } from '@manuscripts/transform'
 import { Fragment } from 'prosemirror-model'
@@ -24,6 +26,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { getDocWithoutMovedContent } from '../lib/filtered-document'
+import { findChildren } from 'prosemirror-utils'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
@@ -66,30 +69,20 @@ export default () => {
 
               if (target && !isInGraphicalAbstract) {
                 const labelNode = document.createElement('span')
-                labelNode.className = 'figure-label'
-
-                if (node.type.name === 'image_element') {
-                  labelNode.textContent = target.label
-                  decorations.push(
-                    Decoration.widget(
-                      pos + (node.firstChild?.nodeSize || 0) + 1,
-                      labelNode
-                    )
-                  )
-                } else {
-                  labelNode.textContent = target.label + ':'
-
-                  node.forEach((child, offset) => {
-                    if (child.type.name === 'figcaption') {
-                      decorations.push(
-                        Decoration.widget(pos + 1 + offset + 1, labelNode, {
-                          side: -1,
-                          key: `figure-label-${id}-${target.label}`,
-                        })
-                      )
-                    }
+                labelNode.className = 'element-label'
+                const { labelPos, label } = getLabelDecorationData(
+                  target,
+                  state.doc,
+                  node,
+                  pos
+                )
+                labelNode.textContent = label
+                decorations.push(
+                  Decoration.widget(labelPos, labelNode, {
+                    side: -1,
+                    key: `element-label-${id}-${target.label}`,
                   })
-                }
+                )
               }
             }
           })
@@ -98,4 +91,31 @@ export default () => {
       },
     },
   })
+}
+
+const getLabelDecorationData = (
+  target: Target,
+  doc: ManuscriptNode,
+  parent: ManuscriptNode,
+  pos: number
+) => {
+  const caption = findChildren(
+    parent,
+    (node) =>
+      node.type === schema.nodes.caption ||
+      node.type === schema.nodes.caption_title,
+    false
+  )[0]
+
+  const $pos = doc.resolve(pos + (caption?.pos || 1) + 1)
+  let labelPos = $pos.pos,
+    label = target.label + ':'
+  if (!caption) {
+    labelPos = $pos.end()
+    label = target.label
+  } else if (!$pos.nodeBefore) {
+    labelPos -= 1
+  }
+
+  return { labelPos, label }
 }
