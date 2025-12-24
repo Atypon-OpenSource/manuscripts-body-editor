@@ -17,7 +17,6 @@ import {
   AffiliationIcon,
   CrclTickAnimation,
   DeleteIcon,
-  Tooltip,
 } from '@manuscripts/style-guide'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
@@ -143,12 +142,9 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
       {isSelected && (
         <RemoveButton
           onClick={() => onDelete()}
-          data-tooltip-id={'delete-button-tooltip'}
+          data-tooltip-content="Delete"
         >
           <DeleteIcon fill={'#6E6E6E'} />
-          <Tooltip id={'delete-button-tooltip'} place="bottom">
-            {'Delete'}
-          </Tooltip>
         </RemoveButton>
       )}
     </AffiliationContainer>
