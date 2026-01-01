@@ -63,6 +63,7 @@ export interface AffiliationsModalProps {
   onSaveAffiliation: (affiliation: AffiliationAttrs) => void
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
+  clearSelection: () => void
   addNewAffiliation?: boolean
 }
 
@@ -80,13 +81,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onSaveAffiliation,
   onDeleteAffiliation,
   onUpdateAuthors,
+  clearSelection,
   addNewAffiliation = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
   const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
-  const valuesRef = useRef<AffiliationAttrs>()
-  const actionsRef = useRef<FormActions>()
+  const valuesRef = useRef<AffiliationAttrs>(undefined)
+  const actionsRef = useRef<FormActions>(undefined)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
@@ -139,7 +141,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
@@ -157,6 +159,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     } else {
       setIsOpen(false)
     }
+    clearSelection()
   }
 
   const handleSelect = (affiliation: AffiliationAttrs) => {
@@ -164,7 +167,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),

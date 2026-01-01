@@ -15,7 +15,6 @@
  */
 
 import { ManuscriptNode, schema } from '@manuscripts/transform'
-import { NodeSelection } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
 import { draggableIcon } from '../icons'
@@ -227,8 +226,8 @@ export class FigureEditableView extends FigureView {
     const img = link
       ? this.createImg(link)
       : file
-      ? this.createUnsupportedFormat(file.name)
-      : this.createPlaceholder()
+        ? this.createUnsupportedFormat(file.name)
+        : this.createPlaceholder()
 
     if (can.uploadFile && !isDeleted(this.node)) {
       addInteractionHandlers(img, this.upload, 'image/*')
@@ -331,7 +330,6 @@ export class FigureEditableView extends FigureView {
       ...this.node.attrs,
       src: src,
     })
-    tr.setSelection(NodeSelection.create(tr.doc, pos))
     this.view.dispatch(tr)
   }
 
@@ -346,6 +344,7 @@ export class FigureEditableView extends FigureView {
     const img = document.createElement('img')
     img.classList.add('figure-image')
     img.src = src
+    img.alt='figure image'
     return img
   }
 

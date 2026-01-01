@@ -48,7 +48,6 @@ import {
   Attrs,
   Fragment,
   NodeRange,
-  NodeType,
   ResolvedPos,
   Slice,
 } from 'prosemirror-model'
@@ -68,7 +67,6 @@ import {
 } from 'prosemirror-tables'
 import {
   findWrapping,
-  liftTarget,
   ReplaceAroundStep,
   ReplaceStep,
 } from 'prosemirror-transform'
@@ -112,7 +110,6 @@ import {
   findParentNodeWithId,
   getChildOfType,
   getInsertPos,
-  getLastTitleNode,
   isBodyLocked,
 } from './lib/utils'
 import { expandAccessibilitySection } from './plugins/accessibility_element'
@@ -1131,8 +1128,7 @@ export const insertContributors = (
     return false
   }
   if (!contributors) {
-    const title = getLastTitleNode(state)
-    const pos = title.pos + title.node.nodeSize
+    const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
     const contributorsNode = state.schema.nodes.contributors.create({
       id: '',
     })
@@ -1163,8 +1159,7 @@ export const insertAffiliation = (
     return false
   }
   if (!affiliations) {
-    const title = getLastTitleNode(state)
-    const pos = title.pos + title.node.nodeSize
+    const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
     const affiliationsNode = state.schema.nodes.affiliations.create({
       id: '',
     })
@@ -1274,6 +1269,7 @@ function toggleOffList(
   } = state
 
   let rootList = findRootList($from)
+  rootList && rootList.pos--
 
   if (
     state.selection instanceof NodeSelection &&
@@ -1298,19 +1294,15 @@ function toggleOffList(
         ) {
           return true
         }
-        const $fromPos = tr.doc.resolve(tr.mapping.map(pos))
-        const $toPos = tr.doc.resolve(tr.mapping.map(pos + node.nodeSize - 1))
-        const nodeRange = $fromPos.blockRange($toPos)
-        if (!nodeRange) {
-          return
-        }
-
-        const targetLiftDepth = liftTarget(nodeRange)
-        if (targetLiftDepth || targetLiftDepth === 0) {
-          tr.lift(nodeRange, targetLiftDepth)
-          return false // do not descend as the content of this node will be lifted already anyway
+        if (node.type === schema.nodes.paragraph) {
+          tr.insert(tr.mapping.map(rootList.pos), node)
+          return false
         }
       }
+    )
+    tr.delete(
+      tr.mapping.map(rootList.pos),
+      tr.mapping.map(rootList.pos + rootList.node.nodeSize)
     )
     dispatch(tr)
     return true
@@ -1701,38 +1693,11 @@ const getParentNode = (selection: Selection) => {
   return node
 }
 
-// TODO:: remove this check when we allow all type of block node to have comment
-export const isCommentingAllowed = (type: NodeType) =>
-  type === schema.nodes.title ||
-  type === schema.nodes.subtitles ||
-  type === schema.nodes.section ||
-  type === schema.nodes.citation ||
-  type === schema.nodes.bibliography_item ||
-  type === schema.nodes.footnotes_section ||
-  type === schema.nodes.bibliography_section ||
-  type === schema.nodes.box_element ||
-  type === schema.nodes.graphical_abstract_section ||
-  type === schema.nodes.keyword_group ||
-  type === schema.nodes.paragraph ||
-  type === schema.nodes.figure_element ||
-  type === schema.nodes.list ||
-  type === schema.nodes.table_element ||
-  type === schema.nodes.embed ||
-  type === schema.nodes.affiliations ||
-  type === schema.nodes.contributors ||
-  type === schema.nodes.image_element ||
-  type === schema.nodes.hero_image ||
-  type === schema.nodes.trans_abstract
-
 export const addNodeComment = (
   node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  if (!isCommentingAllowed(node.type)) {
-    return false
-  }
-
   const props = getEditorProps(state)
   const contribution = {
     _id: generateNodeID(schema.nodes.contribution),
@@ -1767,7 +1732,7 @@ export const addInlineComment = (
 ): boolean => {
   const selection = state.selection
   const node = getParentNode(selection)
-  if (!node || !isCommentingAllowed(node.type)) {
+  if (!node) {
     return false
   }
   let from = selection.from
@@ -1989,3 +1954,74 @@ export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
 
   return false
 }
+
+// Command to exit editor and focus container
+export const exitEditorToContainer: EditorAction = () => {
+  const editorContainer = document.getElementById('editor')
+  if (editorContainer) {
+    editorContainer.focus()
+    return true
+  }
+
+  return false
+}
+
+export const copySelection = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: EditorView
+) => {
+  const { selection } = state
+  const clipboard = navigator?.clipboard
+
+  if (selection.content().size && clipboard) {
+    view &&
+      (async () => {
+        try {
+          const { dom, text } = view.serializeForClipboard(selection.content())
+          await clipboard.write([
+            new ClipboardItem({
+              'text/plain': new Blob([text], { type: 'text/plain' }),
+              'text/html': new Blob([dom.innerHTML], { type: 'text/html' }),
+            }),
+          ])
+        } catch (e) {
+          console.error('clipboard writer error:', e)
+        }
+      })()
+    return true
+  }
+
+  return false
+}
+
+export const paste =
+  (format: 'html' | 'text') =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const clipboard = navigator?.clipboard
+
+    if (clipboard) {
+      view &&
+        (async () => {
+          try {
+            const items = await clipboard.read()
+            const htmlItem = await items.find(({ types }) =>
+              types.includes('text/html')
+            )
+            if (format === 'html' && htmlItem) {
+              const htmlBlob = await htmlItem.getType('text/html')
+              const html = await htmlBlob.text()
+              view.pasteHTML(html)
+            } else {
+              const text = await clipboard.readText()
+              view.pasteText(text)
+            }
+          } catch (e) {
+            console.error('clipboard reader error:', e)
+          }
+        })()
+      return true
+    }
+
+    return false
+  }

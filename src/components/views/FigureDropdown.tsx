@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import {
-  Capabilities,
   DotsIcon,
   DropdownList,
   getFileIcon,
@@ -29,6 +28,7 @@ import { Node as ManuscriptNode } from 'prosemirror-model'
 import React, { SyntheticEvent, useEffect } from 'react'
 import styled from 'styled-components'
 
+import { Capabilities } from '../../lib/capabilities'
 import {
   FileAttachment,
   ManuscriptFiles,

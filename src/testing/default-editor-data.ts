@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { getAllPermitted } from '@manuscripts/style-guide'
 import {
   ActualManuscriptNode,
   schema,
@@ -26,6 +25,7 @@ import { DefaultTheme } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
+import { defaultCapabilities } from './default-capabilities'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
 type TestData = {
@@ -84,7 +84,7 @@ export const defaultEditorProps: EditorProps = {
     download: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
   },
   getCapabilities: () => ({
-    ...getAllPermitted(),
+    ...defaultCapabilities,
     editWithoutTracking: true,
   }),
   cslProps: {

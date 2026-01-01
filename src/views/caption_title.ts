@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PrimaryButton } from '@manuscripts/style-guide'
-import React from 'react'
-import styled from 'styled-components'
 
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 16px 32px;
-  height: 40px;
-  box-shadow: 0px -2px 12px 0px rgba(216, 216, 216, 0.26);
-  border-radius: 0px 0px 8px 8px;
-  position: relative;
-  z-index: 3;
-`
+import { CaptionTitleNode } from '@manuscripts/transform'
 
-const FormFooter = ({ onCancel }: { onCancel: () => void }) => {
-  return (
-    <Footer>
-      <PrimaryButton onClick={onCancel}>Close</PrimaryButton>
-    </Footer>
-  )
+import { BaseNodeView } from './base_node_view'
+import { createNodeView } from './creators'
+
+export class CaptionTitleView extends BaseNodeView<CaptionTitleNode> {
+  public initialise = () => {
+    this.createDOM()
+  }
+  protected createDOM() {
+    this.dom = document.createElement('label')
+    this.dom.className = 'caption-title placeholder'
+    this.dom.contentEditable = 'true'
+    this.contentDOM = this.dom
+  }
 }
-
-export default FormFooter
+export default createNodeView(CaptionTitleView)
