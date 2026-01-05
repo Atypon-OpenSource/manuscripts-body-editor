@@ -291,6 +291,11 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     !isSupplements &&
     !isMainDocument
 
+  // Hide attachments node from outline when it's empty
+  if (isMainDocument && node.childCount === 0) {
+    return null
+  }
+
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()

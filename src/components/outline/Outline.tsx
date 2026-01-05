@@ -132,8 +132,8 @@ export const Outline = styled.div`
   }
 
   & div:has(.supplements, .hero-image, .main-document) .references {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
     border-bottom: 1px dashed #ddd;
   }
 `
