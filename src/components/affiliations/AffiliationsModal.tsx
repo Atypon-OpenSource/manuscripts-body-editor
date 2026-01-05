@@ -70,7 +70,7 @@ export interface AffiliationsModalProps {
 function makeAuthorItems(authors: ContributorAttrs[]) {
   return authors.map((author) => ({
     id: author.id,
-    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
+    label: `${author.given} ${author.family}`,
   }))
 }
 
@@ -125,7 +125,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const currentAffiliation = selection
     const affiliatedAuthorIds = authors
-      .filter((author) => author.affiliations?.includes(currentAffiliation.id))
+      .filter((author) => author.affiliationIDs?.includes(currentAffiliation.id))
       .map((author) => author.id)
     setSelectedAuthorIds(affiliatedAuthorIds)
     setAffiliationAuthorMap((prevMap) => {
@@ -185,7 +185,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       }
     } else {
       const affiliatedAuthorIds = authors
-        .filter((author) => author.affiliations?.includes(affiliation.id))
+        .filter((author) => author.affiliationIDs?.includes(affiliation.id))
         .map((author) => author.id)
       setNewAffiliation(false)
       setSelection(affiliation)
@@ -219,8 +219,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       const updatedAuthors = authors.map((author) => ({
         ...author,
         affiliations: selectedAuthorIds.includes(author.id)
-          ? [...new Set([...(author.affiliations || []), affiliation.id])]
-          : (author.affiliations || []).filter((id) => id !== affiliation.id),
+          ? [...new Set([...(author.affiliationIDs || []), affiliation.id])]
+          : (author.affiliationIDs || []).filter((id) => id !== affiliation.id),
       }))
 
       dispatchAuthors({
@@ -286,7 +286,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     const updatedAuthors = authors.map((author) => ({
       ...author,
-      affiliations: (author.affiliations || []).filter(
+      affiliations: (author.affiliationIDs || []).filter(
         (id) => id !== selection.id
       ),
     }))
@@ -338,7 +338,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       return {
         id: authorId,
         label: author
-          ? `${author.bibliographicName.given} ${author.bibliographicName.family}`
+          ? `${author.given} ${author.family}`
           : '',
       }
     })
@@ -390,7 +390,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       const affiliatedAuthorIds = authors
         .filter((author) =>
-          author.affiliations?.some((aff) => aff === pendingSelection.id)
+          author.affiliationIDs.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
 
@@ -429,7 +429,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(false)
       const affiliatedAuthorIds = authors
         .filter((author) =>
-          author.affiliations?.some((aff) => aff === pendingSelection.id)
+          author.affiliationIDs?.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
       setSelectedAuthorIds(affiliatedAuthorIds)

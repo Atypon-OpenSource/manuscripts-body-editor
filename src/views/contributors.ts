@@ -133,7 +133,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     const noteText: string[] = []
     if (affs) {
-      attrs.affiliations.map((a) => {
+      attrs.affiliationIDs?.map((a) => {
         const index = affs.get(a)
         if (index) {
           noteText.push(index.toString())
