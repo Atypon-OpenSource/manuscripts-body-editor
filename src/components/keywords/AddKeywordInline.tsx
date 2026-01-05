@@ -164,17 +164,11 @@ export const AddKeywordInline: React.FC<{
   const handleAddKeyword = () => {
     if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
-      const keyword = {
-        id: generateNodeID(schema.nodes.keyword),
-        name: newKeyword,
-      }
       const keywordNode = schema.nodes.keyword.create(
         {
-          id: keyword.id,
-          contents: keyword.name,
-          comments: [],
+          id: generateNodeID(schema.nodes.keyword),
         },
-        node.type.schema.text(keyword.name)
+        node.type.schema.text(newKeyword)
       )
       const nodePosition = getPos() + node.nodeSize - 1
       view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
