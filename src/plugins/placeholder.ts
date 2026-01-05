@@ -35,7 +35,8 @@ const placeholderWidget =
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
     const element = document.createElement('span')
     element.className = 'placeholder-text'
-    element.textContent = placeholder
+    element.setAttribute('aria-hidden', 'true')
+    element.dataset.placeholder = placeholder
     element.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
       const pos = getPos() as number
@@ -44,6 +45,15 @@ const placeholderWidget =
     })
     return element
   }
+
+const backmatterWidget = (direction: 'top' | 'bottom') => {
+  const element = document.createElement('div')
+  element.className = 'backmatter-border-placeholder'
+  const line = document.createElement('div')
+  line.className = direction
+  element.appendChild(line)
+  return element
+}
 
 const getParagraphPlaceholderText = (
   parent: ManuscriptNode | null,
@@ -108,10 +118,23 @@ export default () =>
               const $pos = state.doc.resolve(pos)
 
               let placeholderText = 'Type heading here'
-              if (
-                findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)
-              ) {
-                placeholderText = 'Optional box title...'
+
+              const boxElement = findParentNodeOfTypeClosestToPos(
+                $pos,
+                schema.nodes.box_element
+              )
+
+              if (boxElement) {
+                const section = findParentNodeOfTypeClosestToPos(
+                  $pos,
+                  schema.nodes.section
+                )
+
+                // If the section is a direct child of the box_element,
+                // it's the top-level section and should have the box placeholder
+                if (section && section.depth === boxElement.depth + 1) {
+                  placeholderText = 'Optional box title...'
+                }
               }
 
               if (
@@ -137,6 +160,24 @@ export default () =>
                   class: 'empty-node',
                   ...(placeholder && { 'data-placeholder': placeholder }),
                 })
+              )
+            }
+          } else if (node.type === schema.nodes.backmatter) {
+            decorations.push(
+              Decoration.widget(pos + 1, backmatterWidget('top'))
+            )
+            const nextNode = parent && parent.nodeAt(pos + node.nodeSize)
+            if (
+              nextNode &&
+              (nextNode.type === schema.nodes.supplements ||
+                nextNode.type === schema.nodes.hero_image ||
+                nextNode.type === schema.nodes.attachments)
+            ) {
+              decorations.push(
+                Decoration.widget(
+                  pos + node.nodeSize - 1,
+                  backmatterWidget('bottom')
+                )
               )
             }
           }

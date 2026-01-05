@@ -87,8 +87,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
   const [showingDeleteDialog, setShowDeleteDialog] = useState(false)
-  const valuesRef = useRef<AffiliationAttrs>()
-  const actionsRef = useRef<FormActions>()
+  const valuesRef = useRef<AffiliationAttrs>(undefined)
+  const actionsRef = useRef<FormActions>(undefined)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
     $authors.sort(authorComparator)
@@ -141,7 +141,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),
@@ -167,7 +167,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     const hasAffiliationChanges =
       selection && !isEqual(values, checkID(selection, 'affiliation'))
     const originalAuthors = selection
-      ? affiliationAuthorMap.get(selection.id) ?? []
+      ? (affiliationAuthorMap.get(selection.id) ?? [])
       : []
     const hasAuthorChanges = !isEqual(
       originalAuthors.sort(),

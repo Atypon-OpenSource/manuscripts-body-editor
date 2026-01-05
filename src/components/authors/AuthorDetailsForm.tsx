@@ -28,6 +28,7 @@ import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import { Label } from '../references/ReferenceForm/styled-components'
 
 export const LabelText = styled.div`
   font: ${(props) => props.theme.font.weight.normal}
@@ -128,30 +129,45 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               <TextFieldGroupContainer>
                 <Field name={'prefix'}>
                   {(props: FieldProps) => (
-                    <TextField
-                      id={'prefix'}
-                      placeholder={'Prefix'}
-                      {...props.field}
-                    />
+                    <>
+                      <Label htmlFor="prefix" className="sr-only">
+                        Prefix
+                      </Label>
+                      <TextField
+                        id={'prefix'}
+                        placeholder={'Prefix'}
+                        {...props.field}
+                      />
+                    </>
                   )}
                 </Field>
                 <Field name={'bibliographicName.given'}>
                   {(props: FieldProps) => (
-                    <TextField
-                      id={'given-name'}
-                      placeholder={'Given name'}
-                      {...props.field}
-                    />
+                    <>
+                      <Label htmlFor="given-name" className="sr-only">
+                        Given name
+                      </Label>
+                      <TextField
+                        id={'given-name'}
+                        placeholder={'Given name'}
+                        {...props.field}
+                      />
+                    </>
                   )}
                 </Field>
 
                 <Field name={'bibliographicName.family'}>
                   {(props: FieldProps) => (
-                    <TextField
-                      id={'family-name'}
-                      placeholder={'Family name'}
-                      {...props.field}
-                    />
+                    <>
+                      <Label htmlFor="family-name" className="sr-only">
+                        Family name
+                      </Label>
+                      <TextField
+                        id={'family-name'}
+                        placeholder={'Family name'}
+                        {...props.field}
+                      />
+                    </>
                   )}
                 </Field>
               </TextFieldGroupContainer>
@@ -162,23 +178,33 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     ? '*Email address (required)'
                     : 'Email address'
                   return (
-                    <TextFieldWithError
-                      id={'email'}
-                      type="email"
-                      required={isEmailRequired}
-                      placeholder={placeholder}
-                      {...props.field}
-                    />
+                    <>
+                      <Label htmlFor="email" className="sr-only">
+                        Email address
+                      </Label>
+                      <TextFieldWithError
+                        id={'email'}
+                        type="email"
+                        required={isEmailRequired}
+                        placeholder={placeholder}
+                        {...props.field}
+                      />
+                    </>
                   )
                 }}
               </Field>
               <Field name={'role'}>
                 {(props: FieldProps) => (
-                  <TextField
-                    id={'role'}
-                    placeholder={'Job Title'}
-                    {...props.field}
-                  />
+                  <>
+                    <Label htmlFor="role" className="sr-only">
+                      Job Title
+                    </Label>
+                    <TextField
+                      id={'role'}
+                      placeholder={'Job Title'}
+                      {...props.field}
+                    />
+                  </>
                 )}
               </Field>
               <CheckboxContainer>
@@ -201,13 +227,18 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   <LabelText>ORCID</LabelText>
                   <Field name={'ORCIDIdentifier'} type={'text'}>
                     {(props: FieldProps) => (
-                      <TextField
-                        id={'orcid'}
-                        placeholder={'https://orcid.org/...'}
-                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
-                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                        {...props.field}
-                      />
+                      <>
+                        <Label htmlFor="orcid" className="sr-only">
+                          ORCID
+                        </Label>
+                        <TextField
+                          id={'orcid'}
+                          placeholder={'https://orcid.org/...'}
+                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
+                          title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                          {...props.field}
+                        />
+                      </>
                     )}
                   </Field>
                 </TextFieldLabel>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { PrimaryButton } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -27,22 +28,11 @@ const Footer = styled.div`
   position: relative;
   z-index: 3;
 `
-const RemoveButton = styled.button`
-  background-color: #0d79d0;
-  color: ${(props) => props.theme.colors.text.onDark};
-  padding: 8px 32px;
-  border-radius: 4px;
-  border: 1px solid #0d79d0;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.background.hover};
-  }
-  cursor: pointer;
-`
 
 const FormFooter = ({ onCancel }: { onCancel: () => void }) => {
   return (
     <Footer>
-      <RemoveButton onClick={onCancel}>Close</RemoveButton>
+      <PrimaryButton onClick={onCancel}>Close</PrimaryButton>
     </Footer>
   )
 }

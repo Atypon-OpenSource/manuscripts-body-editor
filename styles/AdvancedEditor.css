@@ -71,17 +71,38 @@
   font-size: 13.5pt;
 }
 
-.ProseMirror div.backmatter:not(.empty-node)::before,
 .ProseMirror div.abstracts:not(.empty-node)::after {
   content: '';
   border-bottom: 1px dashed #c9c9c9;
   display: block;
   margin: 11pt 49pt;
 }
+
 .ProseMirror div.backmatter .block-section_title h1 {
   font-size: 13.5pt;
   color: #6e6e6e;
 }
+
+.ProseMirror .backmatter .backmatter-border-placeholder {
+  width: 100%;
+  height: 49pt;
+  display: flex;
+  align-items: center;
+}
+
+.ProseMirror .backmatter .backmatter-border-placeholder div {
+  flex: 1;
+  margin: 0 52px;
+}
+
+.ProseMirror .backmatter .backmatter-border-placeholder .top {
+  border-top: 1px dashed #c9c9c9;
+}
+
+.ProseMirror .backmatter .backmatter-border-placeholder .bottom {
+  border-bottom: 1px solid #e2e2e2;
+}
+
 .completion-bearer {
   pointer-events: none;
 }
@@ -111,8 +132,6 @@
   border: 1px solid #f2f2f2;
   border-radius: 4px;
 
-  padding: 8px;
-  gap: 8px !important;
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
@@ -128,7 +147,6 @@
   border-radius: 4px;
   position: relative;
   padding: 8px;
-  gap: 8px !important;
 
   grid-template-columns: repeat(3, auto) !important;
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
@@ -138,7 +156,6 @@
   border: none;
   border-radius: 0;
   position: static;
-  padding: 0;
   margin: 0 !important;
   grid-template-columns: auto;
   grid-template-rows: auto;
@@ -651,11 +668,6 @@ span.comment-marker {
 
 .ProseMirror .bibliography:has(.empty-node) {
   display: none;
-}
-
-.ProseMirror
-  div.backmatter:has(:only-child.bibliography > .empty-node)::before {
-  border-bottom: none;
 }
 
 .ProseMirror .keywords h1 {
@@ -1595,10 +1607,6 @@ th:hover > .table-context-menu-button,
   display: block;
 }
 
-.ProseMirror .ext-link-editor-container {
-  position: static;
-  width: 100%;
-}
 .ProseMirror .ext-link-editor-placeholder-container {
   font-size: 0;
 }
@@ -1714,13 +1722,6 @@ th:hover > .table-context-menu-button,
   width: 100%;
 }
 
-.ProseMirror div.backmatter:has(+ .block-container.block-hero_image)::after {
-  content: '';
-  display: block;
-  border-bottom: 1px solid #e2e2e2;
-  margin: 0 35pt 32px 35pt;
-}
-
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -1735,6 +1736,7 @@ th:hover > .table-context-menu-button,
 
 .hero-image-container .figure-block {
   border: none !important;
+  padding: 8px;
 }
 
 .hero-image-container .position-menu {
@@ -2047,4 +2049,15 @@ th:hover > .table-context-menu-button,
 .block-pullquote_element .tools-panel {
   top: 35px;
   right: 26px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

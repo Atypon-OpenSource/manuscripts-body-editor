@@ -55,9 +55,9 @@ const generateCharacters = (start: number, end: number) =>
     .filter((c) => !reservedCharacters.has(c))
     .map((c) => String.fromCharCode(c))
 
-const InsertSpecialCharacterDialog: React.FC<{ view: EditorView }> = ({
-  view,
-}) => {
+const InsertSpecialCharacterDialog: React.FC<{
+  view: EditorView
+}> = ({ view }) => {
   const [isOpen, setOpen] = useState(true)
   const [range, setRange] = useState(unicodeRanges[0].value)
 
