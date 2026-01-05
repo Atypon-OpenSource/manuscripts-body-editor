@@ -37,31 +37,12 @@ export type NodeViewCreator<T extends ManuscriptNodeView> = (
   decorations: readonly Decoration[]
 ) => T
 
-export interface ChangeReceiverCommand {
-  childSections?: ManuscriptNode[]
-}
-
-export type ChangeReceiver = (
-  op: string,
-  id?: string,
-  data?: ManuscriptNode | null,
-  command?: ChangeReceiverCommand
-) => void
-
-export interface SyncError {
-  _id: string
-}
-
 export type TrackableAttributes<T extends ManuscriptNode> = T['attrs'] & {
   dataTracked?: TrackedAttrs[]
 }
 
 export type Trackable<T extends ManuscriptNode> = Omit<T, 'attrs'> & {
   attrs: TrackableAttributes<T>
-}
-
-export type WidgetDecoration = Decoration & {
-  type: { toDOM: () => HTMLElement; spec: Decoration['spec'] }
 }
 
 export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> &

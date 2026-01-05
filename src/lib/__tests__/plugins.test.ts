@@ -32,11 +32,7 @@ import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
-  objectType: 'MPUserProfile',
-  bibliographicName: {
-    _id: 'MPBibliographicName:1',
-  },
-  userID: 'User|test@example.com',
+  userID: 'MPUser:1',
 }
 
 const history = createMemoryHistory()
