@@ -35,7 +35,8 @@ const placeholderWidget =
   (view: ManuscriptEditorView, getPos: () => number | undefined) => {
     const element = document.createElement('span')
     element.className = 'placeholder-text'
-    element.textContent = placeholder
+    element.setAttribute('aria-hidden', 'true')
+    element.dataset.placeholder = placeholder
     element.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
       const pos = getPos() as number
@@ -117,10 +118,23 @@ export default () =>
               const $pos = state.doc.resolve(pos)
 
               let placeholderText = 'Type heading here'
-              if (
-                findParentNodeOfTypeClosestToPos($pos, schema.nodes.box_element)
-              ) {
-                placeholderText = 'Optional box title...'
+
+              const boxElement = findParentNodeOfTypeClosestToPos(
+                $pos,
+                schema.nodes.box_element
+              )
+
+              if (boxElement) {
+                const section = findParentNodeOfTypeClosestToPos(
+                  $pos,
+                  schema.nodes.section
+                )
+
+                // If the section is a direct child of the box_element,
+                // it's the top-level section and should have the box placeholder
+                if (section && section.depth === boxElement.depth + 1) {
+                  placeholderText = 'Optional box title...'
+                }
               }
 
               if (
