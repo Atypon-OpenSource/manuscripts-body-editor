@@ -41,6 +41,7 @@ import { isDeleted } from '../../lib/track-changes-utils'
 import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { PluginState, sectionTitleKey } from '../../plugins/section_title'
+import { FileAttachment } from '../../lib/files'
 import {
   Outline,
   OutlineItem,
@@ -115,6 +116,23 @@ const isManuscriptNode = (node: ManuscriptNode | undefined) => {
   return node?.type === schema.nodes.manuscript
 }
 
+type EditorPropsWithFiles = ManuscriptEditorView['props'] & {
+  getFiles?: () => FileAttachment[]
+}
+
+const isPdfFile = (file?: FileAttachment) => {
+  if (!file?.name) {
+    return false
+  }
+  const name = file.name.toLowerCase()
+  return name.endsWith('.pdf')
+}
+
+const getEditorFiles = (view?: ManuscriptEditorView) => {
+  const props = view?.props as EditorPropsWithFiles | undefined
+  return props?.getFiles?.()
+}
+
 export const buildTree: TreeBuilder = ({
   node,
   pos,
@@ -156,6 +174,7 @@ export interface DraggableTreeProps {
   tree: TreeItem
   view?: ManuscriptEditorView
   can?: Capabilities
+  getFiles?: () => FileAttachment[]
 }
 
 export const DraggableTree: React.FC<DraggableTreeProps> = ({
@@ -163,6 +182,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   view,
   depth,
   can,
+  getFiles,
 }) => {
   const [dropSide, setDropSide] = useState<DropSide>()
   const [isOpen, setOpen] = useState(depth === 0)
@@ -284,6 +304,9 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   const isHeroImage = isHeroImageNode(node)
   const isSupplements = isSupplementsNode(node)
   const isMainDocument = isAttachmentsNode(node)
+  const editorFiles = isMainDocument
+    ? (getFiles?.() ?? getEditorFiles(view))
+    : undefined
 
   const isTop =
     isManuscriptNode(parent) &&
@@ -294,6 +317,28 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
   // Hide attachments node from outline when it's empty
   if (isMainDocument && node.childCount === 0) {
     return null
+  }
+
+  if (isMainDocument) {
+    const attachmentIds = new Set<string>()
+    node.forEach((childNode) => {
+      const href = childNode.attrs?.href
+      if (href) {
+        attachmentIds.add(href.replace(/^attachment:/, ''))
+      }
+    })
+
+    const mainDocumentFile =
+      editorFiles?.find((file) => {
+        const fileId = file.id?.replace(/^attachment:/, '')
+        return !!fileId && attachmentIds.has(fileId)
+      }) ?? editorFiles?.find((file) => isPdfFile(file))
+    const isMainDocumentPDF = isPdfFile(mainDocumentFile)
+
+    // Hide main document in outline if it is not a PDF
+    if (!isMainDocumentPDF) {
+      return null
+    }
   }
 
   const handleContextMenu = (e: MouseEvent) => {
@@ -382,6 +427,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
               view={view}
               depth={!tree.parent ? depth : depth + 1}
               can={can}
+              getFiles={getFiles}
             />
           ))}
         </div>
