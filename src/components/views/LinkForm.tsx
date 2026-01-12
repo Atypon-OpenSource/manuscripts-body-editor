@@ -15,6 +15,12 @@
  */
 
 import {
+  FormActionsBar,
+  FormContainer,
+  FormField,
+  FormRow,
+  FormSection,
+  Label,
   PrimaryButton,
   SecondaryButton,
   TextField,
@@ -24,42 +30,11 @@ import styled from 'styled-components'
 
 import { allowedHref } from '../../lib/url'
 
-const Form = styled.form`
-  padding: 16px;
-`
-
-const Actions = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-`
-
-const ActionGroup = styled.span`
-  display: flex;
-  align-items: center;
-
-  button:not(:last-of-type) {
-    margin-right: 4px;
-  }
-`
-
-const Field = styled.div`
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-`
-
 export const FieldHeading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  display: flex;
-  align-items: center;
-  color: ${(props) => props.theme.colors.text.tertiary};
-  font-size: ${(props) => props.theme.font.size.normal};
 `
 
 export const Open = styled.a`
@@ -108,16 +83,17 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   )
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Field>
+    <form onSubmit={handleSubmit}>
+      <FormContainer>
+        <FormSection>
+          <FormRow>
+            <FormField>
         <FieldHeading>
           <Label>URL</Label>
-
           {href && allowedHref(href) && (
             <Open href={href} target={'_blank'} rel={'noopener'} />
           )}
         </FieldHeading>
-
         <TextField
           type={'url'}
           name={'href'}
@@ -127,13 +103,14 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           required={true}
           onChange={(e) => setHref(e.target.value)}
         />
-      </Field>
+            </FormField>
+          </FormRow>
 
-      <Field>
+          <FormRow>
+            <FormField>
         <FieldHeading>
           <Label>Text</Label>
         </FieldHeading>
-
         <TextField
           type={'text'}
           name={'text'}
@@ -142,13 +119,14 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           required={true}
           onChange={(e) => setText(e.target.value)}
         />
-      </Field>
+            </FormField>
+          </FormRow>
 
-      <Field>
+          <FormRow>
+            <FormField>
         <FieldHeading>
           <Label>Title (optional)</Label>
         </FieldHeading>
-
         <TextField
           type={'text'}
           name={'title'}
@@ -157,22 +135,22 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           required={false}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </Field>
+            </FormField>
+          </FormRow>
+        </FormSection>
 
-      <Actions>
-        <ActionGroup>
+        <FormSection>
+          <FormActionsBar>
           <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
             Remove Link
           </SecondaryButton>
-        </ActionGroup>
-
-        <ActionGroup>
           <SecondaryButton type={'button'} onClick={onCancel}>
             Cancel
           </SecondaryButton>
           <PrimaryButton type={'submit'}>Save</PrimaryButton>
-        </ActionGroup>
-      </Actions>
-    </Form>
+          </FormActionsBar>
+        </FormSection>
+      </FormContainer>
+    </form>
   )
 }

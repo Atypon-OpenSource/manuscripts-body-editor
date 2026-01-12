@@ -15,6 +15,12 @@
  */
 
 import {
+  FormActionsBar,
+  FormContainer,
+  FormField,
+  FormRow,
+  FormSection,
+  Label,
   PrimaryButton,
   SecondaryButton,
   TextArea,
@@ -109,57 +115,71 @@ export const ImportBibliographyForm = ({
 
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-      <DropContainer
-        onDrop={handleDrop}
-        onDragOver={(e) => {
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        active={dragging}
-      >
-        <input
-          id="file"
-          name="file"
-          type="file"
-          onChange={handleFileChange}
-          style={{ display: 'none' }}
-        />
-        <Label htmlFor="file">
-          Drag & Drop or Click here to upload a file.
-        </Label>
-      </DropContainer>
+      <FormContainer>
+        <FormSection>
+          <DropContainer
+            onDrop={handleDrop}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setDragging(true)
+            }}
+            onDragLeave={() => setDragging(false)}
+            active={dragging}
+          >
+            <input
+              id="file"
+              name="file"
+              type="file"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            <Label htmlFor="file">
+              Drag & Drop or Click here to upload a file.
+            </Label>
+          </DropContainer>
 
-      <LabelContainer>
-        <Label>
-          Alternatively, you can directly Copy&Paste below, the text of the
-          bibliography items.
-        </Label>
-      </LabelContainer>
-      <TextArea
-        name="content"
-        rows={6}
-        value={formik.values.content}
-        onChange={formik.handleChange}
-      ></TextArea>
+          <FormRow>
+            <FormField>
+              <Label htmlFor="content">
+                Alternatively, you can directly Copy&Paste below, the text of
+                the bibliography items.
+              </Label>
+              <TextArea
+                id="content"
+                name="content"
+                rows={6}
+                value={formik.values.content}
+                onChange={formik.handleChange}
+              ></TextArea>
+            </FormField>
+          </FormRow>
 
-      <Preview>
-        {formik.values.err}
-        {formik.values.data.map((item: BibliographyItemAttrs) => (
-          <ReferenceLine item={item} key={item.id} />
-        ))}
-      </Preview>
-      <ButtonContainer>
-        <SecondaryButton type="reset">Cancel</SecondaryButton>
-        <PrimaryButton
-          type="submit"
-          disabled={
-            !formik.dirty || formik.isSubmitting || !formik.values.data.length
-          }
-        >
-          Save
-        </PrimaryButton>
-      </ButtonContainer>
+          <FormRow>
+            <Preview>
+              {formik.values.err}
+              {formik.values.data.map((item: BibliographyItemAttrs) => (
+                <ReferenceLine item={item} key={item.id} />
+              ))}
+            </Preview>
+          </FormRow>
+        </FormSection>
+
+        <FormSection>
+          <FormActionsBar>
+            <SecondaryButton type="reset">Cancel</SecondaryButton>
+            <PrimaryButton
+              type="submit"
+              disabled={
+                !formik.dirty ||
+                formik.isSubmitting ||
+                !formik.values.data.length
+              }
+            >
+              Save
+            </PrimaryButton>
+          </FormActionsBar>
+        </FormSection>
+      </FormContainer>
     </form>
   )
 }
@@ -171,28 +191,6 @@ const Preview = styled.div`
   min-height: 50px;
   margin-top: ${(props) => 4 * props.theme.grid.unit}px;
   margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  font-size: ${(props) => props.theme.font.size.normal};
-  line-height: ${(props) => props.theme.font.lineHeight.large};
-  font-family: ${(props) => props.theme.font.family.Lato};
-  display: block;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
-  gap: ${(props) => 2 * props.theme.grid.unit}px;
 `
 
 const activeBoxStyle = css`
