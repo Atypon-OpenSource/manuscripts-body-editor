@@ -16,10 +16,7 @@
 
 import {
   FormActionsBar,
-  FormContainer,
-  FormField,
   FormRow,
-  FormSection,
   Label,
   PrimaryButton,
   SecondaryButton,
@@ -115,10 +112,9 @@ export const ImportBibliographyForm = ({
 
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-      <FormContainer>
-        <FormSection>
+      <FormRow>
           <DropContainer
-            onDrop={handleDrop}
+          onDrop={handleDrop}
             onDragOver={(e) => {
               e.preventDefault()
               setDragging(true)
@@ -137,49 +133,39 @@ export const ImportBibliographyForm = ({
               Drag & Drop or Click here to upload a file.
             </Label>
           </DropContainer>
-
+      </FormRow>
           <FormRow>
-            <FormField>
-              <Label htmlFor="content">
-                Alternatively, you can directly Copy&Paste below, the text of
-                the bibliography items.
-              </Label>
-              <TextArea
-                id="content"
-                name="content"
-                rows={6}
-                value={formik.values.content}
-                onChange={formik.handleChange}
-              ></TextArea>
-            </FormField>
-          </FormRow>
+        <Label htmlFor="content">
+          Alternatively, you can directly Copy&Paste below, the text of the
+          bibliography items.
+        </Label>
+        <TextArea
+          id="content"
+          name="content"
+          rows={6}
+          value={formik.values.content}
+          onChange={formik.handleChange}
+        ></TextArea>
+      </FormRow>
 
-          <FormRow>
-            <Preview>
-              {formik.values.err}
-              {formik.values.data.map((item: BibliographyItemAttrs) => (
-                <ReferenceLine item={item} key={item.id} />
-              ))}
-            </Preview>
-          </FormRow>
-        </FormSection>
+      <Preview>
+        {formik.values.err}
+        {formik.values.data.map((item: BibliographyItemAttrs) => (
+          <ReferenceLine item={item} key={item.id} />
+        ))}
+      </Preview>
 
-        <FormSection>
-          <FormActionsBar>
-            <SecondaryButton type="reset">Cancel</SecondaryButton>
-            <PrimaryButton
-              type="submit"
-              disabled={
-                !formik.dirty ||
-                formik.isSubmitting ||
-                !formik.values.data.length
-              }
-            >
-              Save
-            </PrimaryButton>
-          </FormActionsBar>
-        </FormSection>
-      </FormContainer>
+      <FormActionsBar>
+        <SecondaryButton type="reset">Cancel</SecondaryButton>
+        <PrimaryButton
+          type="submit"
+          disabled={
+            !formik.dirty || formik.isSubmitting || !formik.values.data.length
+          }
+        >
+          Save
+        </PrimaryButton>
+      </FormActionsBar>
     </form>
   )
 }

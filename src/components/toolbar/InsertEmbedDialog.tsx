@@ -24,6 +24,7 @@ import {
   SecondaryButton,
   StyledModal,
   TextArea,
+  Label,
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
@@ -36,11 +37,9 @@ import { allowedHref } from '../../lib/url'
 import { useDoWithDebounce } from '../../lib/use-do-with-debounce'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
-import { FieldHeading, Open } from '../views/LinkForm'
+import { Open } from '../views/LinkForm'
 
-const Label = styled.label`
-  padding-bottom: 4px;
-`
+
 
 const HeaderContainer = styled(PrimaryBoldHeading)`
   font-size: ${(props) => props.theme.font.size.large};
@@ -111,8 +110,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <FieldHeading>
-              <Label htmlFor={'embed-link'}>Media link</Label>
+            <Label htmlFor={'embed-link'}>Media link</Label>
               {url && allowedHref(url) && (
                 <Open
                   id={'media-link'}
@@ -121,7 +119,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
                   rel={'noopener'}
                 />
               )}
-            </FieldHeading>
+
             <TextArea
               id={'embed-link'}
               rows={2}

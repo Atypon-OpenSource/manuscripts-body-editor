@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TextArea, TextField } from '@manuscripts/style-guide'
+import {
+  FormLabel,
+  FormRow,
+  Label,
+  TextArea,
+  TextField,
+} from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-import { Label } from '../references/ReferenceForm/styled-components'
 
-const Row = styled.div`
-  display: flex;
-`
 
 const AffiliationsTextField = styled(TextField)`
   border-radius: 0;
@@ -55,18 +57,7 @@ const DepartmentTextField = styled(TextArea)`
   }
 `
 
-const FormLabel = styled.legend`
-  &:not(:first-child) {
-    margin-top: 24px;
-  }
-  margin-bottom: 12px;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.xlarge} /
-    ${(props) => props.theme.font.lineHeight.large}
-    ${(props) => props.theme.font.family.sans};
-  letter-spacing: -0.4px;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
+
 
 const MarginRightTextField = styled(AffiliationsTextField)`
   margin-right: 4px;
@@ -106,7 +97,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
       {() => (
         <ChangeHandlingForm onChange={onChange} id="affiliation-form">
           <FormLabel>Institution*</FormLabel>
-          <Row>
+          <FormRow>
             <Field name="institution">
               {(props: FieldProps) => (
                 <>
@@ -121,14 +112,14 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
-          </Row>
+          </FormRow>
           <FormLabel>Details</FormLabel>
-          <Row>
+          <FormRow>
             <Field name="department">
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="department" className="sr-only">
-                    Department
+                    Departmen
                   </Label>
                   <DepartmentTextField
                     id="department"
@@ -138,8 +129,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <Field name="addressLine1">
               {(props: FieldProps) => (
                 <>
@@ -154,8 +145,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <Field name="city">
               {(props: FieldProps) => (
                 <MarginRightTextField
@@ -180,8 +171,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
-          </Row>
-          <Row>
+          </FormRow>
+          <FormRow>
             <Field name="postCode">
               {(props: FieldProps) => (
                 <>
@@ -210,7 +201,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
-          </Row>
+          </FormRow>
         </ChangeHandlingForm>
       )}
     </Formik>

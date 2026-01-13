@@ -15,17 +15,14 @@
  */
 
 import {
-  FormActionsBar,
-  FormContainer,
-  FormField,
-  FormRow,
-  FormSection,
-  Label,
   MultiValueInput,
   PrimaryButton,
   SearchIcon,
   SecondaryButton,
   TextField,
+  FormRow,
+  Label,
+  FormActionsBar,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { useEffect, useRef, useState } from 'react'
@@ -143,97 +140,87 @@ export const AwardForm = ({
       {(formik) => {
         return (
           <ChangeHandlingForm onChange={onChange}>
-            <FormContainer>
-              <FormSection>
-                <FormRow>
-                  <Field type="hidden" name="id" />
-                  <FormField>
-                    <Label htmlFor={'source'}>Funder name</Label>
-                    <SearchContainer>
-                      <SearchIconContainer>
-                        <SearchIcon />
-                      </SearchIconContainer>
-                      <Field name="source">
-                        {(props: FieldProps) => (
-                          <StyledTextField
-                            id="source"
-                            placeholder="Search for funder..."
-                            onChange={(e) => {
-                              props.field.onChange(e)
-                              handleFunderSearch(e)
-                            }}
-                            value={props.field.value || ''}
-                          />
-                        )}
-                      </Field>
-                      {isLoading && <LoadingText>Loading...</LoadingText>}
-                      {funders.length > 0 && (
-                        <SearchResults>
-                          {funders.map((funder) => (
-                            <SearchResultItem
-                              key={funder.value}
-                              onClick={() => {
-                                formik.setFieldValue('source', funder.value)
-                                setFunders([])
-                              }}
-                            >
-                              {funder.label}
-                            </SearchResultItem>
-                          ))}
-                        </SearchResults>
-                      )}
-                    </SearchContainer>
-                    {formik.errors.source && formik.touched.source && (
-                      <ErrorText>{formik.errors.source}</ErrorText>
-                    )}
-                  </FormField>
-                </FormRow>
+            <Field type="hidden" name="id" />
 
-                <FormRow>
-                  <FormField>
-                    <Label htmlFor={'code'}>Grant number</Label>
-                    <MultiValueInput
-                      id="code"
-                      inputType="text"
-                      placeholder="Enter grant number and press enter"
-                      initialValues={values.code ? values.code.split(';') : []}
-                      onChange={(newValues) => {
-                        formik.setFieldValue('code', newValues.join(';'))
+            <FormRow>
+              <Label htmlFor={'source'}>Funder name</Label>
+              <SearchContainer>
+                <SearchIconContainer>
+                  <SearchIcon />
+                </SearchIconContainer>
+                <Field name="source">
+                  {(props: FieldProps) => (
+                    <StyledTextField
+                      id="source"
+                      placeholder="Search for funder..."
+                      onChange={(e) => {
+                        props.field.onChange(e)
+                        handleFunderSearch(e)
                       }}
+                      value={props.field.value || ''}
                     />
-                  </FormField>
-                </FormRow>
+                  )}
+                </Field>
 
-                <FormRow>
-                  <FormField>
-                    <Label htmlFor={'recipient'}>Recipient name</Label>
-                    <Field name="recipient">
-                      {(props: FieldProps) => (
-                        <TextField
-                          id="recipient"
-                          placeholder="Enter full name"
-                          {...props.field}
-                        />
-                      )}
-                    </Field>
-                  </FormField>
-                </FormRow>
-              </FormSection>
+                {isLoading && <LoadingText>Loading...</LoadingText>}
+                {funders.length > 0 && (
+                  <SearchResults>
+                    {funders.map((funder) => (
+                      <SearchResultItem
+                        key={funder.value}
+                        onClick={() => {
+                          formik.setFieldValue('source', funder.value)
+                          setFunders([])
+                        }}
+                      >
+                        {funder.label}
+                      </SearchResultItem>
+                    ))}
+                  </SearchResults>
+                )}
+              </SearchContainer>
+              {formik.errors.source && formik.touched.source && (
+                <ErrorText>{formik.errors.source}</ErrorText>
+              )}
+            </FormRow>
 
-              <FormSection>
-                <FormActionsBar>
-                  <SecondaryButton onClick={handleCancel}>
-                    Cancel
-                  </SecondaryButton>
-                  <PrimaryButton
-                    type="submit"
-                    disabled={!formik.dirty || formik.isSubmitting}
-                  >
-                    {primaryButtonText}
-                  </PrimaryButton>
-                </FormActionsBar>
-              </FormSection>
-            </FormContainer>
+            <FormRow>
+              <Label htmlFor={'code'}>Grant number</Label>
+              <MultiValueInput
+                id="code"
+                inputType="text"
+                placeholder="Enter grant number and press enter"
+                initialValues={values.code ? values.code.split(';') : []}
+                onChange={(newValues) => {
+                  formik.setFieldValue('code', newValues.join(';'))
+                }}
+              />
+            </FormRow>
+
+            <FormRow>
+              <Label htmlFor={'recipient'}>Recipient name</Label>
+              <Field name="recipient">
+                {(props: FieldProps) => (
+                  <TextField
+                    id="recipient"
+                    placeholder="Enter full name"
+                    {...props.field}
+                  />
+                )}
+              </Field>
+            </FormRow>
+
+            <FormRow>
+              <FormActionsBar>
+                <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+                <PrimaryButton
+                  type="submit"
+                  disabled={!formik.dirty || formik.isSubmitting}
+                >
+                  {primaryButtonText}
+                </PrimaryButton>
+              </FormActionsBar>
+            </FormRow>
           </ChangeHandlingForm>
         )
       }}

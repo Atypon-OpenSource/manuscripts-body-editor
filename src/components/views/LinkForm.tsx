@@ -15,11 +15,8 @@
  */
 
 import {
-  FormActionsBar,
   FormContainer,
-  FormField,
   FormRow,
-  FormSection,
   Label,
   PrimaryButton,
   SecondaryButton,
@@ -30,11 +27,20 @@ import styled from 'styled-components'
 
 import { allowedHref } from '../../lib/url'
 
-export const FieldHeading = styled.div`
+const Actions = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
+  margin-top: 16px;
+`
+
+const ActionGroup = styled.span`
+  display: flex;
+  align-items: center;
+
+  button:not(:last-of-type) {
+    margin-right: 4px;
+  }
 `
 
 export const Open = styled.a`
@@ -85,17 +91,15 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   return (
     <form onSubmit={handleSubmit}>
       <FormContainer>
-        <FormSection>
-          <FormRow>
-            <FormField>
-        <FieldHeading>
+        <FormRow>
           <Label>URL</Label>
+
           {href && allowedHref(href) && (
             <Open href={href} target={'_blank'} rel={'noopener'} />
           )}
-        </FieldHeading>
-        <TextField
-          type={'url'}
+
+          <TextField
+            type={'url'}
           name={'href'}
           value={href}
           autoComplete={'off'}
@@ -103,53 +107,48 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           required={true}
           onChange={(e) => setHref(e.target.value)}
         />
-            </FormField>
-          </FormRow>
+        </FormRow>
 
-          <FormRow>
-            <FormField>
-        <FieldHeading>
+        <FormRow>
           <Label>Text</Label>
-        </FieldHeading>
-        <TextField
-          type={'text'}
+
+          <TextField
+            type={'text'}
           name={'text'}
           value={text}
           autoComplete={'off'}
           required={true}
           onChange={(e) => setText(e.target.value)}
         />
-            </FormField>
-          </FormRow>
+        </FormRow>
 
-          <FormRow>
-            <FormField>
-        <FieldHeading>
+        <FormRow>
           <Label>Title (optional)</Label>
-        </FieldHeading>
-        <TextField
-          type={'text'}
+
+          <TextField
+            type={'text'}
           name={'title'}
           value={title}
           autoComplete={'off'}
           required={false}
           onChange={(e) => setTitle(e.target.value)}
         />
-            </FormField>
-          </FormRow>
-        </FormSection>
+        </FormRow>
 
-        <FormSection>
-          <FormActionsBar>
-          <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
-            Remove Link
+        <Actions>
+          <ActionGroup>
+            <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
+              Remove Link
           </SecondaryButton>
-          <SecondaryButton type={'button'} onClick={onCancel}>
-            Cancel
+          </ActionGroup>
+
+          <ActionGroup>
+            <SecondaryButton type={'button'} onClick={onCancel}>
+              Cancel
           </SecondaryButton>
           <PrimaryButton type={'submit'}>Save</PrimaryButton>
-          </FormActionsBar>
-        </FormSection>
+          </ActionGroup>
+        </Actions>
       </FormContainer>
     </form>
   )
