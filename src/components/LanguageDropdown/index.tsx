@@ -23,7 +23,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { getSelectedLanguageName, Language } from './languages'
+import { getLanguageLabel, Language } from './languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -170,7 +170,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   }
 
   const getDisplayName = (languageCode: string) => {
-    return getSelectedLanguageName(languageCode, languages)
+    return getLanguageLabel(languageCode, languages)
   }
 
   return (

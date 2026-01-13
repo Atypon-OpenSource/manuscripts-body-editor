@@ -26,23 +26,15 @@ export const ENGLISH_FALLBACK = {
   nativeName: 'English',
 }
 
-export const getSelectedLanguageName = (
-  selectedLanguage: string,
-  allLanguages: Array<{ code: string; name: string; nativeName?: string }>
-) => {
-  if (!allLanguages.length) {
+export const getLanguageLabel = (code: string, languages: Language[]) => {
+  if (!languages.length) {
     return 'English (Default)'
   }
 
   const language =
-    allLanguages.find((lang) => lang.code === selectedLanguage) ||
-    ENGLISH_FALLBACK
+    languages.find((lang) => lang.code === code) || ENGLISH_FALLBACK
 
   return language.nativeName && language.nativeName !== language.name
     ? `${language.name} (${language.nativeName})`
     : language.name
-}
-
-export const getLanguageDisplayName = (languageCode: string): string => {
-  return languageCode.toUpperCase()
 }

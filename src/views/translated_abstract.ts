@@ -17,7 +17,7 @@
 import { TransAbstractNode } from '@manuscripts/transform'
 
 import LanguageDropdown from '../components/LanguageDropdown'
-import { getSelectedLanguageName } from '../components/LanguageDropdown/languages'
+import { getLanguageLabel } from '../components/LanguageDropdown/languages'
 import { translateIcon } from '../icons'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -74,7 +74,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
     this.languageButton.classList.add('language-selector-btn')
     this.languageButton.setAttribute('data-cy', 'language-selector-btn')
 
-    this.updateButtonContent()
+    this.updateButtonContent(this.node.attrs.lang || 'en')
     this.languageButton.addEventListener('click', this.handleButtonClick)
     this.dom.prepend(this.languageButton)
   }
@@ -87,16 +87,13 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
     }
   }
 
-  private updateButtonContent(languageCode = this.node.attrs.lang || 'en') {
+  private updateButtonContent(code: string) {
     if (!this.languageButton) {
       return
     }
 
-    const languageName = getSelectedLanguageName(
-      languageCode,
-      this.props.languages || []
-    )
-    this.languageButton.innerHTML = `${languageName} ${translateIcon}`
+    const label = getLanguageLabel(code, this.props.languages)
+    this.languageButton.innerHTML = `<span>${label}</span> ${translateIcon}`
   }
 
   private handleButtonClick = (e: MouseEvent) => {
