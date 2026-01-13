@@ -119,7 +119,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="department" className="sr-only">
-                    Departmen
+                    Department
                   </Label>
                   <DepartmentTextField
                     id="department"
