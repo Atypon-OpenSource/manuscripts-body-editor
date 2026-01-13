@@ -131,10 +131,10 @@ export const Outline = styled.div`
     display: none;
   }
 
-  & .hero-image {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px dashed #ddd;
+  & div:has(.supplements, .hero-image, .main-document) .references {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #ddd;
   }
 `
 
