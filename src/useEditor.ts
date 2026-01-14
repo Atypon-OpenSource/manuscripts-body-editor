@@ -18,6 +18,7 @@ import {
   trackChangesPluginKey,
   TrackChangesStatus,
 } from '@manuscripts/track-changes-plugin'
+import { schema } from '@manuscripts/transform'
 import {
   getVersion,
   receiveTransaction,
@@ -29,6 +30,7 @@ import {
   NodeSelection,
   Transaction,
 } from 'prosemirror-state'
+import { Step } from 'prosemirror-transform'
 import { EditorView } from 'prosemirror-view'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -66,39 +68,67 @@ export const useEditor = (externalProps: ExternalProps) => {
   useEffect(() => {
     // Receiving steps from backend
     if (collabProvider && !props.isComparingMode) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      collabProvider.onNewSteps(async () => {
-        if (state && view.current) {
-          let localVersion = getVersion(view.current.state)
-          const since = await collabProvider.stepsSince(
-            getVersion(view.current.state)
-          )
+      collabProvider.onNewSteps(
+        async (broadcastedSteps?, broadcastedClientIDs?) => {
+          if (state && view.current) {
+            let steps: Step[]
+            let clientIDs: number[]
+            let version: number
 
-          /*
+            const localVersion = getVersion(view.current.state)
+            const remoteVersion = collabProvider.currentVersion
+
+            // Check for version gap: if we need more steps than we received,
+            // we're missing some and need to fetch all via HTTP
+            const stepsNeeded = remoteVersion - localVersion
+            const stepsReceived = broadcastedSteps?.length ?? 0
+            const hasVersionGap = stepsNeeded > stepsReceived
+
+            if (
+              broadcastedSteps?.length &&
+              broadcastedClientIDs?.length &&
+              !hasVersionGap
+            ) {
+              // Use the broadcasted steps directly - no extra HTTP request needed
+              steps = broadcastedSteps.map((s) => Step.fromJSON(schema, s))
+              clientIDs = broadcastedClientIDs
+              version = remoteVersion
+            } else {
+              // Fallback to fetching: version gap, conflict recovery, or reconnection
+              const since = await collabProvider.stepsSince(localVersion)
+              if (!since) {
+                return
+              }
+              steps = since.steps
+              clientIDs = since.clientIDs
+              version = since.version
+            }
+
+            /*
           Check if we already requested and applied steps for this version before. Duplicate request for the same version can happen 
           when websocket signals that there are new steps at about the same time when we send some new steps and get 409 as a response
           due to conflict with the very same steps in authority. It would result in double request and application of the same steps and
           forever desync (until page reload that is)
           */
-          localVersion = getVersion(view.current.state)
-          if (since && since.version <= localVersion) {
-            return
-          }
+            if (version <= getVersion(view.current.state)) {
+              return
+            }
 
-          if (since?.steps.length && since.clientIDs.length) {
-            view.current.dispatch(
-              receiveTransaction(
-                // has to be called for the collab to increment version and drop buffered steps
-                view.current.state,
-                since?.steps,
-                since.clientIDs
+            if (steps.length && clientIDs.length) {
+              view.current.dispatch(
+                receiveTransaction(
+                  // has to be called for the collab to increment version and drop buffered steps
+                  view.current.state,
+                  steps,
+                  clientIDs
+                )
               )
-            )
-          } else {
-            console.warn('Inconsistent new steps event from the authority.')
+            } else {
+              console.warn('Inconsistent new steps event from the authority.')
+            }
           }
         }
-      })
+      )
     }
     return () => {
       collabProvider?.unsubscribe()
