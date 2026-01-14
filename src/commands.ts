@@ -1387,6 +1387,48 @@ export const insertTOCSection = () => {
   return false
 }
 
+export const insertTransAbstract = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  category?: string
+) => {
+  if (!templateAllows(state, schema.nodes.trans_abstract)) {
+    return false
+  }
+  if (!dispatch) {
+    return true
+  }
+
+  // Get document's primary language or default to English
+  const lang = state.doc.attrs.primaryLanguageCode || 'en'
+
+  // Create empty section title
+  const title = schema.nodes.section_title.create()
+  // Create empty paragraph
+  const paragraph = schema.nodes.paragraph.create()
+
+  // Create trans_abstract node with section title and paragraph
+  // Pass the current section's category to the trans_abstract
+  const node = schema.nodes.trans_abstract.create(
+    {
+      lang,
+      category,
+    },
+    [title, paragraph]
+  )
+
+  // Insert the node at the end of the abstracts container
+  const abstracts = findAbstractsNode(state.doc)
+  const pos = abstracts.pos + abstracts.node.nodeSize - 1
+  const tr = state.tr.insert(pos, node)
+
+  const selection = TextSelection.create(tr.doc, pos + 1)
+  tr.setSelection(selection).scrollIntoView()
+
+  dispatch(tr)
+  return true
+}
+
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
   if (!$pos.parent.type.spec.isolating) {
