@@ -22,7 +22,7 @@ import {
 } from '@manuscripts/transform'
 import { chainCommands } from 'prosemirror-commands'
 import { Fragment, ResolvedPos, Slice } from 'prosemirror-model'
-import { Selection, TextSelection } from 'prosemirror-state'
+import { TextSelection } from 'prosemirror-state'
 
 import {
   autoComplete,
@@ -59,74 +59,6 @@ const insertParagraph = (
 
   dispatch(tr)
 }
-
-const enterNextBlock = (
-  dispatch: Dispatch,
-  state: ManuscriptEditorState,
-  $anchor: ResolvedPos,
-  create?: boolean
-) => {
-  const {
-    schema: { nodes },
-    tr,
-  } = state
-
-  const pos = $anchor.after($anchor.depth - 1)
-
-  let selection = Selection.findFrom(tr.doc.resolve(pos), 1, true)
-
-  if (!selection && create) {
-    tr.insert(pos, nodes.paragraph.create())
-    selection = Selection.findFrom(tr.doc.resolve(pos), 1, true)
-  }
-
-  if (!selection) {
-    return false
-  }
-
-  tr.setSelection(selection).scrollIntoView()
-
-  dispatch(tr)
-
-  return true
-}
-
-const enterPreviousBlock = (
-  dispatch: Dispatch,
-  state: ManuscriptEditorState,
-  $anchor: ResolvedPos
-) => {
-  const { tr } = state
-
-  const offset = $anchor.nodeBefore ? $anchor.nodeBefore.nodeSize : 0
-  const $pos = tr.doc.resolve($anchor.pos - offset - 1)
-  const previous = Selection.findFrom($pos, -1, true)
-
-  if (!previous) {
-    return false
-  }
-
-  tr.setSelection(TextSelection.create(tr.doc, previous.from)).scrollIntoView()
-
-  dispatch(tr)
-
-  return true
-}
-
-const exitBlock =
-  (direction: number): EditorAction =>
-  (state, dispatch) => {
-    const {
-      selection: { $anchor },
-    } = state
-
-    if (dispatch) {
-      return direction === 1
-        ? enterNextBlock(dispatch, state, $anchor)
-        : enterPreviousBlock(dispatch, state, $anchor)
-    }
-    return true
-  }
 
 const leaveTitle: EditorAction = (state, dispatch, view) => {
   const { selection } = state
@@ -270,9 +202,7 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectCaption
   ),
   Enter: chainCommands(autoComplete, leaveTitle, leaveFigcaption),
-  Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
-  'Shift-Tab': exitBlock(-1),
 }
 
 export default titleKeymap

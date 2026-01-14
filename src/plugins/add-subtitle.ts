@@ -27,9 +27,18 @@ const createAddSubtitleButton = (handler: () => void) => {
   button.className = 'add-subtitle'
   button.innerHTML = `${addAuthorIcon} <span class="add-subtitle-text">Add subtitle</span>`
 
-  button.addEventListener('mousedown', (e) => {
-    e.preventDefault()
+  button.tabIndex = 0
+  const activate = (event: MouseEvent | KeyboardEvent) => {
+    event.preventDefault()
     handler()
+  }
+  button.addEventListener('mousedown', (e) => {
+    activate(e)
+  })
+  button.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      activate(e)
+    }
   })
 
   return button

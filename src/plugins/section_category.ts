@@ -70,9 +70,17 @@ const createMenuItem = (
     item.classList.add('disabled')
   }
   item.textContent = contents
+  item.setAttribute('tabindex', '0')
   item.addEventListener('mousedown', (event) => {
     handler(event)
     props.popper.destroy()
+  })
+  item.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handler(event)
+      props.popper.destroy()
+    }
   })
   return item
 }
@@ -86,6 +94,8 @@ const createMenu = (
 ) => {
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
+  const menuItems: HTMLElement[] = []
+
   categories.forEach((category) => {
     const item = createMenuItem(
       props,
@@ -94,8 +104,38 @@ const createMenu = (
       category.isUnique && usedCategoryIDs.has(category.id),
       currentCategory === category
     )
+    menuItems.push(item)
     menu.appendChild(item)
   })
+
+  // Arrow key navigation for menu items
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (menuItems.length === 0) {
+        return
+      }
+      const currentIndex = menuItems.findIndex(
+        (item) => item === document.activeElement
+      )
+      if (currentIndex === -1) {
+        menuItems[0]?.focus()
+        return
+      }
+      const length = menuItems.length
+      const nextIndex =
+        event.key === 'ArrowDown'
+          ? (currentIndex + 1) % length
+          : (currentIndex - 1 + length) % length
+      menuItems[nextIndex]?.focus()
+    }
+  })
+
+  // Focus the first menu item when menu opens
+  window.requestAnimationFrame(() => {
+    menuItems[0]?.focus()
+  })
+
   return menu
 }
 
@@ -114,6 +154,17 @@ const createButton = (
     tr.setNodeAttribute(pos, 'category', category.id)
     view.dispatch(tr)
   }
+  const openMenu = () => {
+    const menu = createMenu(
+      props,
+      currentCategory,
+      categories,
+      usedCategoryIDs,
+      handleSelect
+    )
+
+    props.popper.show(button, menu, 'bottom-end', false)
+  }
   const button = document.createElement('button')
   button.innerHTML = sectionCategoryIcon
   button.classList.add('section-category-button')
@@ -125,15 +176,15 @@ const createButton = (
   if (disabled) {
     button.classList.add('disabled')
   } else if (canEdit) {
-    button.addEventListener('mousedown', () => {
-      const menu = createMenu(
-        props,
-        currentCategory,
-        categories,
-        usedCategoryIDs,
-        handleSelect
-      )
-      props.popper.show(button, menu, 'bottom-end', false)
+    button.addEventListener('click', openMenu)
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        openMenu()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        props.popper.destroy()
+      }
     })
   }
 
@@ -154,36 +205,39 @@ const buildPluginState = (
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (isSectionNode(node)) {
-      const categoryID = node.attrs.category
-      const category = categories.get(categoryID)
+    if (node.type === schema.nodes.section_title) {
       const $pos = state.doc.resolve(pos)
-      const group = getGroup($pos)
-      const groupCategories = getGroupCategories(categories, group)
+      const parentSection = $pos.parent
 
-      const numOptions = groupCategories.length
+      if (isSectionNode(parentSection)) {
+        const categoryID = parentSection.attrs.category
+        const category = categories.get(categoryID)
+        const group = getGroup($pos)
+        const groupCategories = getGroupCategories(categories, group)
+        const numOptions = groupCategories.length
 
-      const shouldShow = !!category || (canEdit && numOptions >= 2)
+        const shouldShow = !!category || (canEdit && numOptions >= 2)
 
-      if (shouldShow) {
-        const isEditable = canEdit && numOptions >= 2
+        if (shouldShow) {
+          const isEditable = canEdit && numOptions >= 2
 
-        decorations.push(
-          Decoration.widget(pos + 1, (view) =>
-            createButton(
-              props,
-              view,
-              pos,
-              category,
-              groupCategories,
-              usedCategoryIDs,
-              isEditable,
-              categories.size === 0
+          decorations.push(
+            Decoration.widget(pos + 1, (view) =>
+              createButton(
+                props,
+                view,
+                pos,
+                category,
+                groupCategories,
+                usedCategoryIDs,
+                isEditable,
+                categories.size === 0
+              )
             )
           )
-        )
+        }
+        return false
       }
-      return false
     }
   })
 

@@ -195,6 +195,11 @@ export default () => {
                     collapsed: false,
                   })
                   view.dispatch(skipTracking(tr))
+                  // Focus alt title after expand
+                  const altTitle = view.dom.querySelector(
+                    '.alt-title-text'
+                  ) as HTMLElement
+                  altTitle?.focus()
                 }, 'alternative titles')
               },
               {

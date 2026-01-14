@@ -15,6 +15,7 @@
  */
 
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -39,6 +40,42 @@ export class AltTitleView
     this.dom.setAttribute('data-type', this.node.attrs.type)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('alt-title-text')
+
+    this.contentDOM.setAttribute(
+      'tabindex',
+      this.node.attrs.type === 'running' ? '0' : '-1'
+    )
+
+    // Keyboard navigation
+    this.contentDOM.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        // Place cursor at the start of this alt title's content
+        const pos = this.getPos()
+        if (typeof pos === 'number') {
+          const cursorPos = pos + 1
+          const tr = this.view.state.tr.setSelection(
+            TextSelection.create(this.view.state.doc, cursorPos)
+          )
+          this.view.dispatch(tr)
+          this.view.focus()
+        }
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault()
+
+        const allAltTitles = Array.from(
+          this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
+        )
+
+        const currentIndex = allAltTitles.indexOf(this.contentDOM)
+        const nextIndex =
+          e.key === 'ArrowDown'
+            ? (currentIndex + 1) % allAltTitles.length
+            : (currentIndex - 1 + allAltTitles.length) % allAltTitles.length
+
+        allAltTitles[nextIndex]?.focus()
+      }
+    })
 
     this.dom.appendChild(label)
     this.dom.appendChild(this.contentDOM)
