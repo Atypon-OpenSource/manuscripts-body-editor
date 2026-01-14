@@ -1426,6 +1426,7 @@ export const insertTransAbstract = (
   tr.setSelection(selection).scrollIntoView()
 
   dispatch(tr)
+  return true
 }
 
 // Copied from prosemirror-commands
