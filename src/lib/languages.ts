@@ -20,20 +20,17 @@ export interface Language {
   nativeName: string
 }
 
-export const ENGLISH_FALLBACK = {
+const ENGLISH = {
   code: 'en',
   name: 'English',
   nativeName: 'English',
 }
 
-export const getLanguageLabel = (code: string, languages: Language[]) => {
-  if (!languages.length) {
-    return 'English (Default)'
-  }
+export const getLanguage = (code: string, languages: Language[]) => {
+  return languages.find((l) => l.code === code) || ENGLISH
+}
 
-  const language =
-    languages.find((lang) => lang.code === code) || ENGLISH_FALLBACK
-
+export const getLanguageLabel = (language: Language) => {
   return language.nativeName && language.nativeName !== language.name
     ? `${language.name} (${language.nativeName})`
     : language.name

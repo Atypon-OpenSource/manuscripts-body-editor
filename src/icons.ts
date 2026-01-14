@@ -31,6 +31,7 @@ import {
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
+  TickIcon,
   TranslateIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
@@ -56,3 +57,4 @@ export const draggableIcon = renderIcon(DraggableIcon)
 export const translateIcon = renderIcon(TranslateIcon)
 export const linkIcon = renderIcon(LinkIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
+export const tickIcon = renderIcon(TickIcon)

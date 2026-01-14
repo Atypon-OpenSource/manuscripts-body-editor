@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import { schema, SectionNode } from '@manuscripts/transform'
+import { SectionNode } from '@manuscripts/transform'
 
-import { addAuthorIcon } from '../icons'
 import { sectionTitleKey } from '../plugins/section_title'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import { insertTransAbstract } from '../commands'
-import { hasParent } from '../lib/utils'
 
 export class SectionView extends BlockView<SectionNode> {
   public elementType = 'section'
-  private addTranslationButton?: HTMLElement
 
   public initialise() {
     this.createDOM()
@@ -42,7 +38,6 @@ export class SectionView extends BlockView<SectionNode> {
     super.updateContents()
     this.dom.setAttribute('data-category', this.node.attrs.category)
     this.handleSectionNumbering()
-    this.handleAddTranslationButton()
   }
 
   // handle sections numbering after track-changes process
@@ -61,43 +56,6 @@ export class SectionView extends BlockView<SectionNode> {
     })
   }
 
-  // Handle Add Translation button for abstract sections
-  private handleAddTranslationButton() {
-    this.addTranslationButton?.remove()
-    this.addTranslationButton = undefined
-
-    const can = this.props.getCapabilities()
-    if (!can.editArticle) {
-      return
-    }
-
-    // Only show button for sections within abstracts
-    const state = this.view.state
-    const $pos = state.doc.resolve(this.getPos())
-    if (hasParent($pos, schema.nodes.abstracts) && insertTransAbstract(state)) {
-      this.addTranslationButton = this.createAddTranslationButton()
-      this.dom.append(this.addTranslationButton)
-    }
-  }
-
-  private createAddTranslationButton() {
-    const button = document.createElement('button')
-    button.className = 'add-trans-abstract'
-    button.title = 'Add translation'
-    button.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
-
-    button.addEventListener('mousedown', (event) => {
-      event.preventDefault()
-      event.stopPropagation()
-      insertTransAbstract(
-        this.view.state,
-        this.view.dispatch,
-        this.node.attrs.category
-      )
-    })
-
-    return button
-  }
 
   public destroy() {
     super.destroy()

@@ -83,7 +83,10 @@ export class PopperManager {
       }
       // add EventListener for checking if click was done outside of editor
       // only if popper has class 'context-menu'
-      if (contents.classList.contains('context-menu')) {
+      if (
+        contents.classList.contains('context-menu') ||
+        contents.classList.contains('language')
+      ) {
         window.addEventListener('click', this.handleDocumentClick)
       }
     })
