@@ -29,7 +29,6 @@ import { tableEditing } from 'prosemirror-tables'
 import keys from '../keys'
 import accessibility_element from '../plugins/accessibility_element'
 import add_subtitle from '../plugins/add-subtitle'
-import add_translation from '../plugins/add-translation'
 import affiliations from '../plugins/affiliations'
 import alt_titles from '../plugins/alt-titles'
 import bibliography from '../plugins/bibliography'
@@ -53,6 +52,7 @@ import section_title from '../plugins/section_title'
 import section_category from '../plugins/section-category'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
+import translations from '../plugins/translations'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -83,7 +83,7 @@ export default (props: EditorProps) => {
     paragraphs(),
     placeholder(),
     add_subtitle(),
-    add_translation(props),
+    translations(props),
     tableEditing(),
     selected_suggestion(),
     footnotes(props),
