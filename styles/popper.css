@@ -153,8 +153,10 @@
 }
 
 .popper .menu-item.selected,
-.popper .menu-item:hover {
+.popper .menu-item:hover,
+.popper .menu-item:focus-visible {
   background: #f5fbfc;
+  outline: none;
 }
 
 .popper .citation-editor,

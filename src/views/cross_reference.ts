@@ -61,6 +61,14 @@ export class CrossReferenceView
   public createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.className = 'cross-reference'
+    this.dom.tabIndex = 0
+
+    this.dom.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        this.handleClick()
+      }
+    })
   }
 }
 

@@ -45,9 +45,17 @@ function createMenuItem(
     isSelected ? 'selected' : ''
   }`
   item.textContent = contents
+  item.setAttribute('tabindex', '0')
   item.addEventListener('mousedown', (event) => {
     handler(event)
     popper.destroy()
+  })
+  item.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handler(event)
+      popper.destroy()
+    }
   })
   return item
 }
@@ -60,6 +68,8 @@ function createMenu(
 ) {
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
+  const menuItems: HTMLElement[] = []
+
   categories.forEach((category) => {
     const item = createMenuItem(
       category.titles[0],
@@ -67,13 +77,42 @@ function createMenu(
       category.isUnique && usedCategoryIDs.has(category.id),
       currentCategory === category
     )
+    menuItems.push(item)
     menu.appendChild(item)
+  })
+
+  // Arrow key navigation for menu items
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (menuItems.length === 0) {
+        return
+      }
+      const currentIndex = menuItems.findIndex(
+        (item) => item === document.activeElement
+      )
+      if (currentIndex === -1) {
+        menuItems[0]?.focus()
+        return
+      }
+      const length = menuItems.length
+      const nextIndex =
+        event.key === 'ArrowDown'
+          ? (currentIndex + 1) % length
+          : (currentIndex - 1 + length) % length
+      menuItems[nextIndex]?.focus()
+    }
   })
 
   document.addEventListener('mousedown', (event) => {
     if (!menu.contains(event.target as Node)) {
       popper.destroy()
     }
+  })
+
+  // Focus the first menu item when menu opens
+  window.requestAnimationFrame(() => {
+    menuItems[0]?.focus()
   })
 
   return menu
@@ -93,6 +132,20 @@ function createButton(
     tr.setNodeAttribute(pos, 'category', category.id)
     view.dispatch(tr)
   }
+  const openMenu = () => {
+    popper.destroy()
+
+    const menu = createMenu(
+      currentCategory,
+      categories,
+      usedCategoryIDs,
+      handleSelect
+    )
+
+    popper.show(button, menu, 'bottom-end', false, [
+      { name: 'offset', options: { offset: [0, -10] } },
+    ])
+  }
   const arrow = document.createElement('div')
   arrow.className = 'section-category popper-arrow'
   const button = document.createElement('button')
@@ -105,17 +158,15 @@ function createButton(
   if (disabled) {
     button.classList.add('disabled')
   } else if (canEdit) {
-    button.addEventListener('mousedown', () => {
-      popper.destroy()
-      const menu = createMenu(
-        currentCategory,
-        categories,
-        usedCategoryIDs,
-        handleSelect
-      )
-      popper.show(button, menu, 'bottom-end', false, [
-        { name: 'offset', options: { offset: [0, -10] } },
-      ])
+    button.addEventListener('click', openMenu)
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        openMenu()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        popper.destroy()
+      }
     })
   } else {
     button.addEventListener('mouseenter', () => {
@@ -152,26 +203,30 @@ export function buildPluginState(
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (isSectionNode(node)) {
-      const categoryID = node.attrs.category
-      const category = categories.get(categoryID)
+    if (node.type === schema.nodes.section_title) {
       const $pos = state.doc.resolve(pos)
-      const group = getGroup($pos)
-      const groupCategories = getGroupCategories(categories, group)
-      decorations.push(
-        Decoration.widget(pos + 1, (view) =>
-          createButton(
-            view,
-            pos,
-            category,
-            groupCategories,
-            usedCategoryIDs,
-            can?.editArticle,
-            categories.size === 0
+      const parentSection = $pos.parent
+
+      if (isSectionNode(parentSection)) {
+        const categoryID = parentSection.attrs.category
+        const category = categories.get(categoryID)
+        const group = getGroup($pos)
+        const groupCategories = getGroupCategories(categories, group)
+        decorations.push(
+          Decoration.widget(pos + 1, (view) =>
+            createButton(
+              view,
+              pos,
+              category,
+              groupCategories,
+              usedCategoryIDs,
+              can?.editArticle,
+              categories.size === 0
+            )
           )
         )
-      )
-      return false
+        return false
+      }
     }
   })
 
