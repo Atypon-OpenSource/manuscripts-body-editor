@@ -186,16 +186,6 @@ const buildPluginState = (
   return { decorations: DecorationSet.create(state.doc, decorations) }
 }
 
-const getGroup = ($pos: ResolvedPos) => {
-  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)) {
-    return 'abstracts'
-  }
-  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)) {
-    return 'backmatter'
-  }
-  return 'body'
-}
-
 const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
   const sections = findChildrenByType(state.doc, schema.nodes.section)
   const used = new Set<string>()
@@ -205,4 +195,15 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
     }
   })
   return used
+}
+
+
+const getGroup = ($pos: ResolvedPos) => {
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)) {
+    return 'abstracts'
+  }
+  if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.backmatter)) {
+    return 'backmatter'
+  }
+  return 'body'
 }
