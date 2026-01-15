@@ -40,11 +40,7 @@ export class AltTitleView
     this.dom.setAttribute('data-type', this.node.attrs.type)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('alt-title-text')
-
-    this.contentDOM.setAttribute(
-      'tabindex',
-      this.node.attrs.type === 'running' ? '0' : '-1'
-    )
+    this.contentDOM.tabIndex = this.node.attrs.type === 'running' ? 0 : -1
 
     // Keyboard navigation
     this.contentDOM.addEventListener('keydown', (e) => {
