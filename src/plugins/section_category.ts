@@ -109,7 +109,7 @@ const createMenu = (
   })
 
   // Arrow key navigation for menu items
-  window.addEventListener('keydown', (event) => {
+  const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       if (menuItems.length === 0) {
@@ -122,14 +122,14 @@ const createMenu = (
         menuItems[0]?.focus()
         return
       }
-      const length = menuItems.length
       const nextIndex =
         event.key === 'ArrowDown'
-          ? (currentIndex + 1) % length
-          : (currentIndex - 1 + length) % length
+          ? (currentIndex + 1) % menuItems.length
+          : (currentIndex - 1 + menuItems.length) % menuItems.length
       menuItems[nextIndex]?.focus()
     }
-  })
+  }
+  document.addEventListener('keydown', handleKeydown)
 
   // Focus the first menu item when menu opens
   window.requestAnimationFrame(() => {
