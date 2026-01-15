@@ -1453,7 +1453,7 @@ th:hover > .table-context-menu-button,
   position: absolute;
   right: 0;
   top: 14px;
-  line-height: 1.6;
+  line-height: 0;
   background: unset;
   border: none;
   opacity: 0;
