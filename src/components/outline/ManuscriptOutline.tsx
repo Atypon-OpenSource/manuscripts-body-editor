@@ -18,6 +18,7 @@ import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Capabilities } from '../../lib/capabilities'
+import { FileAttachment } from '../../lib/files'
 import { useDebounce } from '../hooks/use-debounce'
 import { buildTree, DraggableTree, TreeItem } from './DraggableTree'
 
@@ -25,6 +26,7 @@ export interface ManuscriptOutlineProps {
   doc: ManuscriptNode | null
   can?: Capabilities
   view?: ManuscriptEditorView
+  getFiles?: () => FileAttachment[]
 }
 
 export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
@@ -32,6 +34,7 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
     tree: TreeItem
     view?: ManuscriptEditorView
     can?: Capabilities
+    getFiles?: () => FileAttachment[]
   }>()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -47,11 +50,11 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
         index: 0,
       })
 
-      setValues({ tree, view, can: props.can })
+      setValues({ tree, view, can: props.can, getFiles: props.getFiles })
     } else {
       setValues(undefined)
     }
-  }, [debouncedProps, props.can])
+  }, [debouncedProps, props.can, props.getFiles])
 
   // Get all visible outline items (excluding those in collapsed subtrees)
   const getOutlineItems = useCallback(() => {
