@@ -15,6 +15,9 @@
  */
 
 import {
+  FormContainer,
+  FormRow,
+  Label,
   PrimaryButton,
   SecondaryButton,
   TextField,
@@ -23,10 +26,6 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { allowedHref } from '../../lib/url'
-
-const Form = styled.form`
-  padding: 16px;
-`
 
 const Actions = styled.div`
   display: flex;
@@ -42,24 +41,6 @@ const ActionGroup = styled.span`
   button:not(:last-of-type) {
     margin-right: 4px;
   }
-`
-
-const Field = styled.div`
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-`
-
-export const FieldHeading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  display: flex;
-  align-items: center;
-  color: ${(props) => props.theme.colors.text.tertiary};
-  font-size: ${(props) => props.theme.font.size.normal};
 `
 
 export const Open = styled.a`
@@ -108,18 +89,17 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   )
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Field>
-        <FieldHeading>
+    <form onSubmit={handleSubmit}>
+      <FormContainer>
+        <FormRow>
           <Label>URL</Label>
 
           {href && allowedHref(href) && (
             <Open href={href} target={'_blank'} rel={'noopener'} />
           )}
-        </FieldHeading>
 
-        <TextField
-          type={'url'}
+          <TextField
+            type={'url'}
           name={'href'}
           value={href}
           autoComplete={'off'}
@@ -127,52 +107,49 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           required={true}
           onChange={(e) => setHref(e.target.value)}
         />
-      </Field>
+        </FormRow>
 
-      <Field>
-        <FieldHeading>
+        <FormRow>
           <Label>Text</Label>
-        </FieldHeading>
 
-        <TextField
-          type={'text'}
+          <TextField
+            type={'text'}
           name={'text'}
           value={text}
           autoComplete={'off'}
           required={true}
           onChange={(e) => setText(e.target.value)}
         />
-      </Field>
+        </FormRow>
 
-      <Field>
-        <FieldHeading>
+        <FormRow>
           <Label>Title (optional)</Label>
-        </FieldHeading>
 
-        <TextField
-          type={'text'}
+          <TextField
+            type={'text'}
           name={'title'}
           value={title}
           autoComplete={'off'}
           required={false}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </Field>
+        </FormRow>
 
-      <Actions>
-        <ActionGroup>
-          <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
-            Remove Link
+        <Actions>
+          <ActionGroup>
+            <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
+              Remove Link
           </SecondaryButton>
-        </ActionGroup>
+          </ActionGroup>
 
-        <ActionGroup>
-          <SecondaryButton type={'button'} onClick={onCancel}>
-            Cancel
+          <ActionGroup>
+            <SecondaryButton type={'button'} onClick={onCancel}>
+              Cancel
           </SecondaryButton>
           <PrimaryButton type={'submit'}>Save</PrimaryButton>
-        </ActionGroup>
-      </Actions>
-    </Form>
+          </ActionGroup>
+        </Actions>
+      </FormContainer>
+    </form>
   )
 }

@@ -20,6 +20,10 @@ import {
   TextField,
   TextFieldGroupContainer,
   TextFieldLabel,
+  Label,
+  FormRow,
+  FormLabel,
+  LabelText,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
@@ -28,18 +32,6 @@ import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-import { Label } from '../references/ReferenceForm/styled-components'
-
-export const LabelText = styled.div`
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.normal} / 1
-    ${(props) => props.theme.font.family.sans};
-  letter-spacing: -0.2px;
-  color: ${(props) => props.theme.colors.text.primary};
-  &::before {
-    margin-right: 8px !important;
-  }
-`
 
 export const Fieldset = styled.fieldset`
   padding: 0;
@@ -127,8 +119,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           >
             <Fieldset>
               <TextFieldGroupContainer>
+                <FormRow>
                 <Field name={'prefix'}>
-                  {(props: FieldProps) => (
+                    {(props: FieldProps) => (
                     <>
                       <Label htmlFor="prefix" className="sr-only">
                         Prefix
@@ -141,8 +134,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     </>
                   )}
                 </Field>
-                <Field name={'bibliographicName.given'}>
-                  {(props: FieldProps) => (
+                </FormRow>
+                <FormRow>
+                  <Field name={'bibliographicName.given'}>
+                    {(props: FieldProps) => (
                     <>
                       <Label htmlFor="given-name" className="sr-only">
                         Given name
@@ -155,9 +150,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     </>
                   )}
                 </Field>
-
-                <Field name={'bibliographicName.family'}>
-                  {(props: FieldProps) => (
+                </FormRow>
+                <FormRow>
+                  <Field name={'bibliographicName.family'}>
+                    {(props: FieldProps) => (
                     <>
                       <Label htmlFor="family-name" className="sr-only">
                         Family name
@@ -170,10 +166,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     </>
                   )}
                 </Field>
+                </FormRow>
               </TextFieldGroupContainer>
-
+              <FormRow>
               <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => {
+                  {(props: FieldProps) => {
                   const placeholder = isEmailRequired
                     ? '*Email address (required)'
                     : 'Email address'
@@ -193,8 +190,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   )
                 }}
               </Field>
-              <Field name={'role'}>
-                {(props: FieldProps) => (
+              </FormRow>
+              <FormRow>
+                <Field name={'role'}>
+                  {(props: FieldProps) => (
                   <>
                     <Label htmlFor="role" className="sr-only">
                       Job Title
@@ -207,6 +206,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </>
                 )}
               </Field>
+              </FormRow>
               <CheckboxContainer>
                 <CheckboxLabel>
                   <Field name={'isCorresponding'}>
@@ -224,7 +224,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
 
               <OrcidContainer>
                 <TextFieldLabel>
-                  <LabelText>ORCID</LabelText>
+                  <FormLabel>ORCID</FormLabel>
                   <Field name={'ORCIDIdentifier'} type={'text'}>
                     {(props: FieldProps) => (
                       <>

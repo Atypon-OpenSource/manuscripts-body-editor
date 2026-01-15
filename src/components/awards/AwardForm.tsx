@@ -20,6 +20,9 @@ import {
   SearchIcon,
   SecondaryButton,
   TextField,
+  FormRow,
+  Label,
+  FormActionsBar,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { useEffect, useRef, useState } from 'react'
@@ -138,109 +141,92 @@ export const AwardForm = ({
         return (
           <ChangeHandlingForm onChange={onChange}>
             <Field type="hidden" name="id" />
-            <LabelContainer>
+
+            <FormRow>
               <Label htmlFor={'source'}>Funder name</Label>
-            </LabelContainer>
-            <SearchContainer>
-              <SearchIconContainer>
-                <SearchIcon />
-              </SearchIconContainer>
-              <Field name="source">
+              <SearchContainer>
+                <SearchIconContainer>
+                  <SearchIcon />
+                </SearchIconContainer>
+                <Field name="source">
+                  {(props: FieldProps) => (
+                    <StyledTextField
+                      id="source"
+                      placeholder="Search for funder..."
+                      onChange={(e) => {
+                        props.field.onChange(e)
+                        handleFunderSearch(e)
+                      }}
+                      value={props.field.value || ''}
+                    />
+                  )}
+                </Field>
+
+                {isLoading && <LoadingText>Loading...</LoadingText>}
+                {funders.length > 0 && (
+                  <SearchResults>
+                    {funders.map((funder) => (
+                      <SearchResultItem
+                        key={funder.value}
+                        onClick={() => {
+                          formik.setFieldValue('source', funder.value)
+                          setFunders([])
+                        }}
+                      >
+                        {funder.label}
+                      </SearchResultItem>
+                    ))}
+                  </SearchResults>
+                )}
+              </SearchContainer>
+              {formik.errors.source && formik.touched.source && (
+                <ErrorText>{formik.errors.source}</ErrorText>
+              )}
+            </FormRow>
+
+            <FormRow>
+              <Label htmlFor={'code'}>Grant number</Label>
+              <MultiValueInput
+                id="code"
+                inputType="text"
+                placeholder="Enter grant number and press enter"
+                initialValues={values.code ? values.code.split(';') : []}
+                onChange={(newValues) => {
+                  formik.setFieldValue('code', newValues.join(';'))
+                }}
+              />
+            </FormRow>
+
+            <FormRow>
+              <Label htmlFor={'recipient'}>Recipient name</Label>
+              <Field name="recipient">
                 {(props: FieldProps) => (
-                  <StyledTextField
-                    id="source"
-                    placeholder="Search for funder..."
-                    onChange={(e) => {
-                      props.field.onChange(e)
-                      handleFunderSearch(e)
-                    }}
-                    value={props.field.value || ''}
-                    autoFocus={true}
+                  <TextField
+                    id="recipient"
+                    placeholder="Enter full name"
+                    {...props.field}
                   />
                 )}
               </Field>
-              {isLoading && <LoadingText>Loading...</LoadingText>}
-              {funders.length > 0 && (
-                <SearchResults>
-                  {funders.map((funder) => (
-                    <SearchResultItem
-                      key={funder.value}
-                      onClick={() => {
-                        formik.setFieldValue('source', funder.value)
-                        setFunders([])
-                      }}
-                    >
-                      {funder.label}
-                    </SearchResultItem>
-                  ))}
-                </SearchResults>
-              )}
-            </SearchContainer>
-            {formik.errors.source && formik.touched.source && (
-              <ErrorText>{formik.errors.source}</ErrorText>
-            )}
-            <LabelContainer>
-              <Label htmlFor={'code'}>Grant number</Label>
-            </LabelContainer>
-            <MultiValueInput
-              id="code"
-              inputType="text"
-              placeholder="Enter grant number and press enter"
-              initialValues={values.code ? values.code.split(';') : []}
-              onChange={(newValues) => {
-                formik.setFieldValue('code', newValues.join(';'))
-              }}
-            />
-            <LabelContainer>
-              <Label htmlFor={'recipient'}>Recipient name</Label>
-            </LabelContainer>
-            <Field name="recipient">
-              {(props: FieldProps) => (
-                <TextField
-                  id="recipient"
-                  placeholder="Enter full name"
-                  {...props.field}
-                />
-              )}
-            </Field>
+            </FormRow>
 
-            <ButtonContainer>
-              <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
-              <PrimaryButton
-                type="submit"
-                disabled={!formik.dirty || formik.isSubmitting}
-              >
-                {primaryButtonText}
-              </PrimaryButton>
-            </ButtonContainer>
+            <FormRow>
+              <FormActionsBar>
+                <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
+                <PrimaryButton
+                  type="submit"
+                  disabled={!formik.dirty || formik.isSubmitting}
+                >
+                  {primaryButtonText}
+                </PrimaryButton>
+              </FormActionsBar>
+            </FormRow>
           </ChangeHandlingForm>
         )
       }}
     </Formik>
   )
 }
-
-const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.large};
-  display: block;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-  gap: 8px;
-`
 
 const SearchContainer = styled.div`
   position: relative;

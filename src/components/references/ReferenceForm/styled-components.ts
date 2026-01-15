@@ -22,19 +22,6 @@ import {
 import { Field } from 'formik'
 import styled from 'styled-components'
 
-export const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-export const Label = styled.label`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  display: flex;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
 
 export const FieldLabel = styled.label`
   font-family: ${(props) => props.theme.font.family.sans};
@@ -112,9 +99,7 @@ export const Actions = styled.div`
   }
 `
 
-export const FormField = styled.div`
-  padding: ${(props) => props.theme.grid.unit * 3}px;
-`
+
 
 export const ReferenceTextField = styled(TextField)`
   padding: ${(props) => props.theme.grid.unit * 2}px
