@@ -82,7 +82,7 @@ function createMenu(
   })
 
   // Arrow key navigation for menu items
-  window.addEventListener('keydown', (event) => {
+  const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       if (menuItems.length === 0) {
@@ -95,17 +95,18 @@ function createMenu(
         menuItems[0]?.focus()
         return
       }
-      const length = menuItems.length
       const nextIndex =
         event.key === 'ArrowDown'
-          ? (currentIndex + 1) % length
-          : (currentIndex - 1 + length) % length
+          ? (currentIndex + 1) % menuItems.length
+          : (currentIndex - 1 + menuItems.length) % menuItems.length
       menuItems[nextIndex]?.focus()
     }
-  })
+  }
+  document.addEventListener('keydown', handleKeydown)
 
   document.addEventListener('mousedown', (event) => {
     if (!menu.contains(event.target as Node)) {
+      document.removeEventListener('keydown', handleKeydown)
       popper.destroy()
     }
   })
