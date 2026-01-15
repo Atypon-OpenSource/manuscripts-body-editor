@@ -54,8 +54,8 @@ const createMenuItem = (
   props: EditorProps,
   contents: string,
   handler: EventListener,
-  isSelected: boolean,
-  isDisabled: boolean
+  isDisabled: boolean,
+  isSelected: boolean
 ) => {
   const item = document.createElement('div')
   item.classList.add('menu-item')
@@ -196,7 +196,6 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
   })
   return used
 }
-
 
 const getGroup = ($pos: ResolvedPos) => {
   if (findParentNodeOfTypeClosestToPos($pos, schema.nodes.abstracts)) {
