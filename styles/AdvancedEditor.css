@@ -33,9 +33,9 @@
 }
 
 .button-reset:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror > div.body section:not(.toc) .block-section_title h1::before {
@@ -754,8 +754,8 @@ span.comment-marker {
 }
 
 .keywords .keyword:focus-visible .delete-keyword {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .keywords .deleted .delete-keyword {
@@ -868,9 +868,9 @@ span.comment-marker {
   border-color: var(--common-color);
 }
 .footnote-marker:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .inconsistency-highlight {
@@ -1296,9 +1296,9 @@ s[data-track-status='pending'][data-track-op='delete'] {
   cursor: pointer !important;
 }
 .contributor:not(:disabled):focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 .contributors-legend {
   margin: 16px 0 0 0;
@@ -1361,8 +1361,8 @@ s[data-track-status='pending'][data-track-op='delete'] {
 }
 
 .alt-title-text:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .manuscript-alt-title {
@@ -1464,9 +1464,9 @@ th:hover > .table-context-menu-button,
 }
 
 .section-category-button:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .section-category-button svg {
@@ -1702,8 +1702,8 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .accessibility_element_input:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .ProseMirror .accessibility_element_input {
@@ -1917,8 +1917,8 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .block-figure_element .add-button:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .ProseMirror .abstracts .add-translation-container .add-button svg {
@@ -1982,9 +1982,9 @@ th:hover > .table-context-menu-button,
 }
 
 .add-translation-container:focus-within {
-  outline: 4px solid #3DADFF;
+  outline: 4px solid var(--focus-outline-color);
   outline-offset: -2px;
-  border-radius: 3px;
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .icon-button {
