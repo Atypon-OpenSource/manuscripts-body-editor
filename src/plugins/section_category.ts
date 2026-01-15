@@ -36,6 +36,70 @@ export interface PluginState {
   decorations: DecorationSet
 }
 
+export default (props: EditorProps) =>
+  new Plugin<PluginState>({
+    key: sectionCategoryKey,
+    state: {
+      init: (_, state) => buildPluginState(state, props),
+      apply: (tr, value, oldState, newState) =>
+        buildPluginState(newState, props),
+    },
+    props: {
+      decorations: (state) =>
+        sectionCategoryKey.getState(state)?.decorations || DecorationSet.empty,
+    },
+  })
+
+const buildPluginState = (
+  state: EditorState,
+  props: EditorProps
+): PluginState => {
+  const decorations: Decoration[] = []
+  const can = props.getCapabilities()
+  const categories = props.sectionCategories
+  const usedCategoryIDs = getUsedSectionCategoryIDs(state)
+  const canEdit = !!can?.editArticle
+
+  state.doc.descendants((node, pos) => {
+    if (node.type === schema.nodes.box_element) {
+      return false
+    }
+    if (isSectionNode(node)) {
+      const categoryID = node.attrs.category
+      const category = categories.get(categoryID)
+      const $pos = state.doc.resolve(pos)
+      const group = getGroup($pos)
+      const groupCategories = getGroupCategories(categories, group)
+
+      const numOptions = groupCategories.length
+
+      const shouldShow = !!category || (canEdit && numOptions >= 2)
+
+      if (shouldShow) {
+        const isEditable = canEdit && numOptions >= 2
+
+        decorations.push(
+          Decoration.widget(pos + 1, (view) =>
+            createButton(
+              props,
+              view,
+              pos,
+              category,
+              groupCategories,
+              usedCategoryIDs,
+              isEditable,
+              categories.size === 0
+            )
+          )
+        )
+      }
+      return false
+    }
+  })
+
+  return { decorations: DecorationSet.create(state.doc, decorations) }
+}
+
 const createMenuItem = (
   props: EditorProps,
   contents: string,
@@ -142,67 +206,3 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
   })
   return used
 }
-
-const buildPluginState = (
-  state: EditorState,
-  props: EditorProps
-): PluginState => {
-  const decorations: Decoration[] = []
-  const can = props.getCapabilities()
-  const categories = props.sectionCategories
-  const usedCategoryIDs = getUsedSectionCategoryIDs(state)
-  const canEdit = !!can?.editArticle
-
-  state.doc.descendants((node, pos) => {
-    if (node.type === schema.nodes.box_element) {
-      return false
-    }
-    if (isSectionNode(node)) {
-      const categoryID = node.attrs.category
-      const category = categories.get(categoryID)
-      const $pos = state.doc.resolve(pos)
-      const group = getGroup($pos)
-      const groupCategories = getGroupCategories(categories, group)
-
-      const numOptions = groupCategories.length
-
-      const shouldShow = !!category || (canEdit && numOptions >= 2)
-
-      if (shouldShow) {
-        const isEditable = canEdit && numOptions >= 2
-
-        decorations.push(
-          Decoration.widget(pos + 1, (view) =>
-            createButton(
-              props,
-              view,
-              pos,
-              category,
-              groupCategories,
-              usedCategoryIDs,
-              isEditable,
-              categories.size === 0
-            )
-          )
-        )
-      }
-      return false
-    }
-  })
-
-  return { decorations: DecorationSet.create(state.doc, decorations) }
-}
-
-export default (props: EditorProps) =>
-  new Plugin<PluginState>({
-    key: sectionCategoryKey,
-    state: {
-      init: (_, state) => buildPluginState(state, props),
-      apply: (tr, value, oldState, newState) =>
-        buildPluginState(newState, props),
-    },
-    props: {
-      decorations: (state) =>
-        sectionCategoryKey.getState(state)?.decorations || DecorationSet.empty,
-    },
-  })
