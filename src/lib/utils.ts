@@ -233,9 +233,17 @@ export const createToggleButton = (listener: () => void, what: string) => {
   altTitlesButton.classList.add('toggle-button-open', 'button-reset')
   altTitlesButton.setAttribute('aria-label', `Expand ${what}`)
   altTitlesButton.innerHTML = arrowDown
-  altTitlesButton.addEventListener('click', (e) => {
+  const activate = (e: MouseEvent | KeyboardEvent) => {
     e.preventDefault()
     listener()
+  }
+  altTitlesButton.addEventListener('click', (e) => {
+    activate(e)
+  })
+  altTitlesButton.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      activate(e)
+    }
   })
   return altTitlesButton
 }

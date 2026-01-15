@@ -28,7 +28,16 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
 ) => {
   return class extends Base {
     public gutterButtons() {
-      return [this.createAddButton(), this.createEditButton()].filter(isNotNull)
+      const buttons = [this.createAddButton(), this.createEditButton()].filter(
+        isNotNull
+      )
+      // roving tabindex: first existing button is tabbable
+      buttons.forEach((btn) => (btn.tabIndex = -1))
+      if (buttons.length > 0) {
+        buttons[0].tabIndex = 0
+      }
+
+      return buttons
     }
 
     public actionGutterButtons() {
@@ -62,11 +71,26 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       button.setAttribute('role', 'button')
       button.setAttribute('aria-label', `Add an element below`)
       button.setAttribute('data-balloon-pos', 'down-left')
-      button.addEventListener('mousedown', (event) => {
+      const handleClick = (event: Event) => {
         event.preventDefault()
 
         const menu = this.createMenu()
         menu.showAddMenu(event.currentTarget as Element)
+      }
+
+      button.addEventListener('mousedown', handleClick)
+      button.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          handleClick(event)
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault()
+          const parent = button.parentElement
+          const editButton = parent?.querySelector('.edit-block') as HTMLElement
+          if (editButton) {
+            editButton.focus()
+          }
+        }
       })
 
       return button
@@ -82,11 +106,26 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       button.setAttribute('role', 'button')
       button.setAttribute('aria-label', 'Open menu')
       button.setAttribute('data-balloon-pos', 'down-left')
-      button.addEventListener('mousedown', (event) => {
+      const handleClick = (event: Event) => {
         event.preventDefault()
 
         const menu = this.createMenu()
         menu.showEditMenu(event.currentTarget as Element)
+      }
+
+      button.addEventListener('mousedown', handleClick)
+      button.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          handleClick(event)
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault()
+          const parent = button.parentElement
+          const addButton = parent?.querySelector('.add-block') as HTMLElement
+          if (addButton) {
+            addButton.focus()
+          }
+        }
       })
 
       return button

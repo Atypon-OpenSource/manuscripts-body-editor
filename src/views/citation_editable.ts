@@ -54,6 +54,12 @@ export class CitationEditableView extends CitationView {
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
+    this.dom.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        this.handleClick()
+      }
+    })
   }
 
   // we added this to stop select events in case th e user clicks on the comment,
@@ -67,13 +73,13 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public handleClick = (event: MouseEvent) => {
+  public handleClick = () => {
     if (
       !this.can.seeReferencesButtons ||
       this.dom.classList.contains('inconsistency-highlight')
     ) {
       this.showPopper()
-    } else if (!isDeleted(this.node) && event.button === 0) {
+    } else if (!isDeleted(this.node)) {
       const attrs = this.node.attrs
       if (attrs.rids.length) {
         this.showContextMenu()

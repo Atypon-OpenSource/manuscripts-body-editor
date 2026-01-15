@@ -96,13 +96,42 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const can = this.props.getCapabilities()
     if (can.editMetadata) {
       wrapper.addEventListener('click', this.handleClick)
+      wrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          this.handleClick(e)
+        }
+      })
     }
+
+    wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
+      const target = event.target as Element
+      if (!target.classList.contains('contributor')) {
+        return
+      }
+
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+
+        const contributors = Array.from(
+          wrapper.querySelectorAll('.contributor')
+        ) as HTMLElement[]
+
+        const currentIndex = contributors.indexOf(target as HTMLElement)
+        const nextIndex =
+          event.key === 'ArrowRight'
+            ? (currentIndex + 1) % contributors.length
+            : (currentIndex - 1 + contributors.length) % contributors.length
+
+        contributors[nextIndex]?.focus()
+      }
+    })
 
     const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
       const jointAuthors = this.isJointFirstAuthor(authors, i)
-      wrapper.appendChild(this.buildAuthor(author, jointAuthors))
+      wrapper.appendChild(this.buildAuthor(author, jointAuthors, i))
       if (i !== authors.length - 1) {
         const separator = document.createElement('span')
         separator.classList.add('separator')
@@ -114,7 +143,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.container.appendChild(wrapper)
   }
 
-  buildAuthor = (attrs: ContributorAttrs, isJointFirstAuthor: boolean) => {
+  buildAuthor = (
+    attrs: ContributorAttrs,
+    isJointFirstAuthor: boolean,
+    index: number
+  ) => {
     const state = this.view.state
     const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
 
@@ -122,6 +155,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
+    container.tabIndex = index === 0 ? 0 : -1
 
     addTrackChangesAttributes(attrs, container)
 
