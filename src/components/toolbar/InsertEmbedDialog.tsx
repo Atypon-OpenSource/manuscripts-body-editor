@@ -25,6 +25,7 @@ import {
   StyledModal,
   TextArea,
   Label,
+  FormRow,
 } from '@manuscripts/style-guide'
 import { ManuscriptEditorState } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
@@ -110,7 +111,8 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <Label htmlFor={'embed-link'}>Media link</Label>
+            <FormRow>
+              <Label htmlFor={'embed-link'}>Media link</Label>
               {url && allowedHref(url) && (
                 <Open
                   id={'media-link'}
@@ -120,16 +122,17 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
                 />
               )}
 
-            <TextArea
-              id={'embed-link'}
-              rows={2}
-              cols={2}
-              defaultValue={url}
-              autoFocus={true}
-              required={true}
-              placeholder={'https://youtube.com/...'}
-              onChange={(e) => setUrl(e.target.value.trim())}
-            />
+              <TextArea
+                id={'embed-link'}
+                rows={2}
+                cols={2}
+                defaultValue={url}
+                autoFocus={true}
+                required={true}
+                placeholder={'https://youtube.com/...'}
+                onChange={(e) => setUrl(e.target.value.trim())}
+              />
+            </FormRow>
           </Container>
           {url && allowedHref(url) && (
             <Container>
