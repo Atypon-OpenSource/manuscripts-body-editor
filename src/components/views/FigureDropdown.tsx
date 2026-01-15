@@ -40,7 +40,7 @@ import { ReactViewComponentProps } from '../../views/ReactSubView'
 // Custom hook for figure dropdown keyboard navigation
 function useDropdownKeyboardNav(
   isOpen: boolean,
-  containerRef: React.RefObject<HTMLDivElement>,
+  containerRef: React.RefObject<HTMLDivElement | null>,
   onEscape: () => void,
   onArrowLeft?: () => void
 ) {
