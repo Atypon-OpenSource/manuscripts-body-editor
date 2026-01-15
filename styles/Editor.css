@@ -1,11 +1,14 @@
 :root {
   --body-side-margin: 65px;
+  --focus-outline-color: #3DADFF;
+  --focus-outline-offset: 2px;
+  --focus-outline-radius: 3px;
 }
 
 /* Focus styling for editor container when accessed via Escape key */
 #editor:focus {
-  outline: 2px solid #3dadff !important;
-  outline-offset: 2px;
+  outline: 2px solid var(--focus-outline-color) !important;
+  outline-offset: var(--focus-outline-offset);
 }
 
 .ProseMirror.manuscript-editor {
@@ -281,9 +284,9 @@
 }
 .ProseMirror .citation:focus-visible,
 .ProseMirror .cross-reference:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .cross-reference {
@@ -609,9 +612,9 @@
 }
 
 .ProseMirror .add-subtitle:focus-visible {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .add-subtitle-text {
@@ -792,9 +795,9 @@
 }
 
 .block-gutter:focus-within {
-  outline: 4px solid #3DADFF;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
