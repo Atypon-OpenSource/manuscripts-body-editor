@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { TriangleCollapsedIcon } from '@manuscripts/style-guide'
+import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+  TriangleCollapsedIcon,
+} from '@manuscripts/style-guide'
 import {
   isInGraphicalAbstractSection,
   isSectionTitleNode,
@@ -84,6 +88,7 @@ export class ContextMenu {
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
   private menuItems: HTMLElement[] = []
+  private cleanupFunctions: Array<() => void> = []
 
   public constructor(
     node: ManuscriptNode,
@@ -457,16 +462,13 @@ export class ContextMenu {
     const textNode = document.createTextNode(contents)
     item.appendChild(textNode)
 
+    // Use makeKeyboardActivatable instead of separate event listeners
+    const cleanup = makeKeyboardActivatable(item, handler)
+    this.cleanupFunctions.push(cleanup)
+    
     item.addEventListener('mousedown', (event) => {
       event.preventDefault()
       handler(event)
-    })
-
-    item.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        handler(event)
-      }
     })
 
     this.menuItems.push(item)
@@ -625,48 +627,33 @@ export class ContextMenu {
       }
       window.requestAnimationFrame(() => {
         window.removeEventListener('mousedown', mouseListener)
+        this.destroy()
         popper.destroy()
       })
     }
 
-    const keyListener: EventListener = (event) => {
-      const keyEvent = event as KeyboardEvent
-      const key = keyEvent.key
-
-      if (key === 'Escape') {
-        window.removeEventListener('keydown', keyListener)
+    // Use addArrowKeyNavigation utility instead of manual navigation
+    const cleanup = addArrowKeyNavigation(document.body, {
+      selector: '.menu-item',
+      direction: 'vertical',
+      loop: true,
+      focusFirstOnMount: true,
+      onEscape: () => {
+        this.destroy()
         popper.destroy()
-        return
-      }
-
-      if (key === 'ArrowDown' || key === 'ArrowUp') {
-        keyEvent.preventDefault()
-        if (this.menuItems.length === 0) {
-          return
-        }
-        const currentIndex = this.menuItems.findIndex(
-          (item) => item === document.activeElement
-        )
-        if (currentIndex === -1) {
-          return
-        }
-
-        const nextIndex =
-          key === 'ArrowDown'
-            ? (currentIndex + 1) % this.menuItems.length
-            : (currentIndex - 1 + this.menuItems.length) % this.menuItems.length
-
-        this.menuItems[nextIndex]?.focus()
-      }
-    }
+      },
+    })
+    this.cleanupFunctions.push(cleanup)
 
     window.addEventListener('mousedown', mouseListener)
-    window.addEventListener('keydown', keyListener)
-
-    // Focus the first menu item when the menu opens
-    window.requestAnimationFrame(() => {
-      this.menuItems[0]?.focus()
+    this.cleanupFunctions.push(() => {
+      window.removeEventListener('mousedown', mouseListener)
     })
+  }
+
+  private destroy() {
+    this.cleanupFunctions.forEach((fn) => fn())
+    this.cleanupFunctions = []
   }
 
   private trimTitle = (title: string, max: number) => {

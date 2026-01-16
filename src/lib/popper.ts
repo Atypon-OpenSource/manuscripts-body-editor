@@ -48,9 +48,9 @@ export class PopperManager {
         e.stopPropagation()
       })
 
-      // Add keyboard handler for closing on Escape and Tab
+      // Add keyboard handler for closing on Escape only (NOT Tab - WCAG compliance)
       container.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' || e.key === 'Tab') {
+        if (e.key === 'Escape') {
           e.preventDefault()
           e.stopPropagation()
           this.destroy()

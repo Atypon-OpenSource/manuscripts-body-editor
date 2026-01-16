@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
   BibliographyItemType,
@@ -233,18 +234,10 @@ export const createToggleButton = (listener: () => void, what: string) => {
   altTitlesButton.classList.add('toggle-button-open', 'button-reset')
   altTitlesButton.setAttribute('aria-label', `Expand ${what}`)
   altTitlesButton.innerHTML = arrowDown
-  const activate = (e: MouseEvent | KeyboardEvent) => {
-    e.preventDefault()
-    listener()
-  }
-  altTitlesButton.addEventListener('click', (e) => {
-    activate(e)
-  })
-  altTitlesButton.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      activate(e)
-    }
-  })
+  
+  // Use makeKeyboardActivatable instead of separate event listeners
+  makeKeyboardActivatable(altTitlesButton, listener)
+  
   return altTitlesButton
 }
 

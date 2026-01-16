@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+} from '@manuscripts/style-guide'
+import {
   getGroupCategories,
   isSectionNode,
   schema,
@@ -34,6 +38,9 @@ import { PluginState } from './index'
 
 const popper = new PopperManager()
 
+// WeakMap to store cleanup functions for menus
+const cleanupMap = new WeakMap<HTMLElement, () => void>()
+
 function createMenuItem(
   contents: string,
   handler: EventListener,
@@ -45,18 +52,20 @@ function createMenuItem(
     isSelected ? 'selected' : ''
   }`
   item.textContent = contents
-  item.setAttribute('tabindex', '0')
-  item.addEventListener('mousedown', (event) => {
-    handler(event)
-    popper.destroy()
-  })
-  item.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
+  item.setAttribute('tabindex', isDisabled ? '-1' : '0')
+  
+  if (!isDisabled) {
+    item.addEventListener('mousedown', (event) => {
       handler(event)
       popper.destroy()
-    }
-  })
+    })
+    // Use makeKeyboardActivatable for keyboard support
+    makeKeyboardActivatable(item, (event) => {
+      handler(event)
+      popper.destroy()
+    })
+  }
+  
   return item
 }
 
@@ -68,7 +77,6 @@ function createMenu(
 ) {
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
-  const menuItems: HTMLElement[] = []
 
   categories.forEach((category) => {
     const item = createMenuItem(
@@ -77,44 +85,29 @@ function createMenu(
       category.isUnique && usedCategoryIDs.has(category.id),
       currentCategory === category
     )
-    menuItems.push(item)
     menu.appendChild(item)
   })
 
-  // Arrow key navigation for menu items
-  const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (menuItems.length === 0) {
-        return
-      }
-      const currentIndex = menuItems.findIndex(
-        (item) => item === document.activeElement
-      )
-      if (currentIndex === -1) {
-        menuItems[0]?.focus()
-        return
-      }
-      const nextIndex =
-        event.key === 'ArrowDown'
-          ? (currentIndex + 1) % menuItems.length
-          : (currentIndex - 1 + menuItems.length) % menuItems.length
-      menuItems[nextIndex]?.focus()
-    }
-  }
-  document.addEventListener('keydown', handleKeydown)
+  // Use addArrowKeyNavigation utility instead of manual navigation
+  const cleanup = addArrowKeyNavigation(menu, {
+    selector: '.menu-item:not(.disabled)',
+    direction: 'vertical',
+    loop: true,
+    focusFirstOnMount: true,
+  })
 
-  document.addEventListener('mousedown', (event) => {
+  // Store cleanup function
+  cleanupMap.set(menu, cleanup)
+
+  // Clean up on mousedown outside
+  const handleMousedown = (event: MouseEvent) => {
     if (!menu.contains(event.target as Node)) {
-      document.removeEventListener('keydown', handleKeydown)
+      document.removeEventListener('mousedown', handleMousedown)
+      cleanup()
       popper.destroy()
     }
-  })
-
-  // Focus the first menu item when menu opens
-  window.requestAnimationFrame(() => {
-    menuItems[0]?.focus()
-  })
+  }
+  document.addEventListener('mousedown', handleMousedown)
 
   return menu
 }
@@ -213,11 +206,13 @@ export function buildPluginState(
         const category = categories.get(categoryID)
         const group = getGroup($pos)
         const groupCategories = getGroupCategories(categories, group)
+        // Fix position bug: Pass parent section position, not section_title position
+        const sectionPos = $pos.before($pos.depth)
         decorations.push(
           Decoration.widget(pos + 1, (view) =>
             createButton(
               view,
-              pos,
+              sectionPos,
               category,
               groupCategories,
               usedCategoryIDs,
