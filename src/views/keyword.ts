@@ -60,7 +60,8 @@ export class KeywordView
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
     
-    // Fix roving tabindex: Use position-based check
+    // Fix roving tabindex: Use position-based check (only first keyword is focusable with Tab key,
+    // others are reached via arrow keys)
     this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
     
     // Use makeKeyboardActivatable for keyboard support

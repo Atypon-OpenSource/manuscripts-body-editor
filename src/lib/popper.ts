@@ -48,7 +48,8 @@ export class PopperManager {
         e.stopPropagation()
       })
 
-      // Add keyboard handler for closing on Escape only (NOT Tab - WCAG compliance)
+      // WCAG compliance: Tab key must remain available for standard keyboard navigation
+      // between focusable elements. Only Escape closes the popper.
       container.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           // Only prevent default if we're actually handling the Escape

@@ -211,7 +211,9 @@ export function buildPluginState(
         const category = categories.get(categoryID)
         const group = getGroup($pos)
         const groupCategories = getGroupCategories(categories, group)
-        // Fix position bug: Pass parent section position, not section_title position
+        // Fix position bug: Pass parent section position (not section_title position).
+        // Previous code passed section_title position, causing setNodeAttribute to fail
+        // because section_title doesn't have a category attribute - only section does.
         const sectionPos = $pos.before($pos.depth)
         decorations.push(
           Decoration.widget(pos + 1, (view) =>
