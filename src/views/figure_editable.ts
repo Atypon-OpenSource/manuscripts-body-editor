@@ -344,7 +344,7 @@ export class FigureEditableView extends FigureView {
     const img = document.createElement('img')
     img.classList.add('figure-image')
     img.src = src
-    img.alt='figure image'
+    img.alt = 'figure image'
     return img
   }
 

@@ -18,7 +18,9 @@ import { ManuscriptEditorView } from '@manuscripts/transform'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-export const persistentCursor = new PluginKey<{on: boolean}>('persistent-cursor')
+export const persistentCursor = new PluginKey<{ on: boolean }>(
+  'persistent-cursor'
+)
 
 /**
  * This plugin creates a fake text cursor when the editor is out of focus for better UX.
@@ -34,21 +36,20 @@ export default () => {
           return tr.getMeta(persistentCursor)
         }
         return value
-      }
+      },
     },
     props: {
       decorations(state) {
-        const selection = state.selection;
+        const selection = state.selection
         if (this.getState(state)?.on && selection.from === selection.to) {
-          
-          const decorations =  [Decoration.widget(selection.to,
-                        (view: ManuscriptEditorView) => {
-                          const cursor = document.createElement("span")
-                          cursor.classList.add("cursor-placeholder")
-                          return cursor
-                        },)]
+          const decorations = [
+            Decoration.widget(selection.to, (view: ManuscriptEditorView) => {
+              const cursor = document.createElement('span')
+              cursor.classList.add('cursor-placeholder')
+              return cursor
+            }),
+          ]
           return DecorationSet.create(state.doc, decorations)
-          
         }
         return DecorationSet.empty
       },
@@ -60,7 +61,7 @@ export default () => {
         blur(view, event) {
           const newTr = view.state.tr.setMeta(persistentCursor, { on: true })
           view.dispatch(newTr)
-          // create decoration for fake cursor    
+          // create decoration for fake cursor
         },
       },
     },

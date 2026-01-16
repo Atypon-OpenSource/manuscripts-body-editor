@@ -98,7 +98,7 @@ export default (props: EditorProps) => {
     prevent_empty(),
     move_node(),
     link(),
-    persistent_cursor()
+    persistent_cursor(),
   ]
 
   if (props.collabProvider) {
