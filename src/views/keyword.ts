@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import { KeywordNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -42,12 +43,14 @@ export class KeywordView
   implements ManuscriptNodeView
 {
   private dialog: HTMLElement
+  private cleanup?: () => void
 
   private isFirstKeyword(): boolean {
     const pos = this.getPos()
     const parent = this.view.state.doc.resolve(pos).parent
     return parent.firstChild === this.node
   }
+
   public initialise = () => {
     this.createDOM()
     this.updateContents()
@@ -56,13 +59,15 @@ export class KeywordView
   public createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
+    
+    // Fix roving tabindex: Use position-based check
     this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
-    this.dom.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        this.showConfirmationDialog()
-      }
+    
+    // Use makeKeyboardActivatable for keyboard support
+    this.cleanup = makeKeyboardActivatable(this.dom, () => {
+      this.showConfirmationDialog()
     })
+    
     this.contentDOM = document.createElement('span')
   }
 
@@ -115,6 +120,11 @@ export class KeywordView
     if (this.dialog) {
       this.dom.appendChild(this.dialog)
     }
+  }
+
+  public destroy() {
+    this.cleanup?.()
+    super.destroy()
   }
 }
 

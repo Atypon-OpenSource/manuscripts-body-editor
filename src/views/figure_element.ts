@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
@@ -27,6 +28,7 @@ export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
   private addFigureBtn: HTMLButtonElement
   private resizeObserver: ResizeObserver | null = null
+  private cleanup?: () => void
 
   public createElement = () => {
     super.createElement()
@@ -62,12 +64,10 @@ export class FigureElementView extends ImageElementView {
         title: 'Add figure',
       })
       this.addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.addFigureBtn.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          this.addFigure()
-        }
-      })
+      // Use makeKeyboardActivatable for keyboard support
+      this.cleanup = makeKeyboardActivatable(this.addFigureBtn, () =>
+        this.addFigure()
+      )
       this.addFigureBtn.tabIndex = 0
       this.container.prepend(this.addFigureBtn)
     }
@@ -186,6 +186,8 @@ export class FigureElementView extends ImageElementView {
   }
 
   public destroy() {
+    // Cleanup keyboard handler
+    this.cleanup?.()
     // Disconnect ResizeObserver on destroy
     if (this.resizeObserver) {
       this.resizeObserver.disconnect()

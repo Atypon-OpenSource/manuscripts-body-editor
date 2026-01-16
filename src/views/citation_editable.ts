@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+  makeKeyboardActivatable,
+} from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
   ManuscriptNode,
@@ -50,16 +54,13 @@ export class CitationEditableView extends CitationView {
   private editor: HTMLElement
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
+  private cleanup?: () => void
 
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
-    this.dom.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.handleClick()
-      }
-    })
+    // Use makeKeyboardActivatable for keyboard support
+    this.cleanup = makeKeyboardActivatable(this.dom, () => this.handleClick())
   }
 
   // we added this to stop select events in case th e user clicks on the comment,
@@ -101,6 +102,7 @@ export class CitationEditableView extends CitationView {
   }
 
   public destroy = () => {
+    this.cleanup?.()
     this.editor?.remove()
     this.props.popper.destroy()
   }

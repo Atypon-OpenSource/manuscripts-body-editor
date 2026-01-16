@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+  makeKeyboardActivatable,
+} from '@manuscripts/style-guide'
 import {
   FootnoteNode,
   InlineFootnoteNode,
@@ -43,6 +47,7 @@ export class InlineFootnoteView
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
+  private cleanup?: () => void
 
   showContextMenu = () => {
     this.props.popper.destroy()
@@ -172,13 +177,15 @@ export class InlineFootnoteView
     this.dom.classList.add('footnote-marker')
     this.dom.tabIndex = 0
     this.dom.addEventListener('click', this.handleClick)
-    this.dom.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.handleClick()
-      }
-    })
+    // Use makeKeyboardActivatable for keyboard support
+    this.cleanup = makeKeyboardActivatable(this.dom, () => this.handleClick())
     this.updateContents()
+  }
+
+  public destroy() {
+    this.cleanup?.()
+    this.props.popper.destroy()
+    super.destroy()
   }
 
   selectNode = () => {
