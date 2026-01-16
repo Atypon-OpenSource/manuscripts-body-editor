@@ -626,7 +626,6 @@ export class ContextMenu {
         return
       }
       window.requestAnimationFrame(() => {
-        window.removeEventListener('mousedown', mouseListener)
         this.destroy()
         popper.destroy()
       })

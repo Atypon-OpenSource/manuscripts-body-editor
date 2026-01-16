@@ -103,7 +103,12 @@ function createMenu(
   const handleMousedown = (event: MouseEvent) => {
     if (!menu.contains(event.target as Node)) {
       document.removeEventListener('mousedown', handleMousedown)
-      cleanup()
+      // Get cleanup from map and call it
+      const cleanup = cleanupMap.get(menu)
+      if (cleanup) {
+        cleanup()
+        cleanupMap.delete(menu)
+      }
       popper.destroy()
     }
   }
