@@ -45,6 +45,7 @@ import move_node from '../plugins/move-node'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
+import persistent_cursor from '../plugins/persistent-cursor'
 import placeholder from '../plugins/placeholder'
 import prevent_empty from '../plugins/prevent-empty'
 import search_replace from '../plugins/search-replace'
@@ -97,6 +98,7 @@ export default (props: EditorProps) => {
     prevent_empty(),
     move_node(),
     link(),
+    persistent_cursor()
   ]
 
   if (props.collabProvider) {
