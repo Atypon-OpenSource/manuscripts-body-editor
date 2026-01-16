@@ -1,6 +1,13 @@
 :root {
   --body-side-margin: 65px;
 }
+
+/* Focus styling for editor container when accessed via Escape key */
+#editor:focus {
+  outline: 2px solid #3dadff !important;
+  outline-offset: 2px;
+}
+
 .ProseMirror.manuscript-editor {
   font-size: 16px;
   line-height: 1.5;
@@ -949,10 +956,6 @@
 
 .ProseMirror .sync-warning-button:focus {
   filter: brightness(80%);
-}
-
-.ProseMirror [tabindex]:focus {
-  outline: none;
 }
 
 .ProseMirror .manuscript-toc {

@@ -15,9 +15,10 @@
  */
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Capabilities } from '../../lib/capabilities'
+import { FileAttachment } from '../../lib/files'
 import { useDebounce } from '../hooks/use-debounce'
 import { buildTree, DraggableTree, TreeItem } from './DraggableTree'
 
@@ -25,6 +26,7 @@ export interface ManuscriptOutlineProps {
   doc: ManuscriptNode | null
   can?: Capabilities
   view?: ManuscriptEditorView
+  getFiles?: () => FileAttachment[]
 }
 
 export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
@@ -32,7 +34,9 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
     tree: TreeItem
     view?: ManuscriptEditorView
     can?: Capabilities
+    getFiles?: () => FileAttachment[]
   }>()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const debouncedProps = useDebounce(props, 500)
 
@@ -46,10 +50,78 @@ export const ManuscriptOutline: React.FC<ManuscriptOutlineProps> = (props) => {
         index: 0,
       })
 
-      setValues({ tree, view, can: props.can })
+      setValues({ tree, view, can: props.can, getFiles: props.getFiles })
     } else {
       setValues(undefined)
     }
-  }, [debouncedProps, props.can])
-  return values && values.view ? <DraggableTree {...values} depth={0} /> : null
+  }, [debouncedProps, props.can, props.getFiles])
+
+  // Get all visible outline items (excluding those in collapsed subtrees)
+  const getOutlineItems = useCallback(() => {
+    if (!containerRef.current) return []
+    const allItems = Array.from(
+      containerRef.current.querySelectorAll<HTMLElement>('[data-outline-item]')
+    )
+
+    // Filter out items that are inside a collapsed subtree
+    return allItems.filter((item) => {
+      let parent = item.parentElement
+      while (parent && parent !== containerRef.current) {
+        if (
+          parent.classList.contains('subtree') &&
+          parent.classList.contains('collapsed')
+        ) {
+          return false
+        }
+        parent = parent.parentElement
+      }
+      return true
+    })
+  }, [])
+
+  // Set roving tabindex: only first item is tabbable
+  useEffect(() => {
+    const items = getOutlineItems()
+    items.forEach((item, index) => {
+      item.tabIndex = index === 0 ? 0 : -1
+    })
+  }, [getOutlineItems, values])
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+        return
+      }
+
+      const target = event.target as HTMLElement
+      // Only handle if an outline item is focused
+      if (!target.hasAttribute('data-outline-item')) {
+        return
+      }
+
+      const items = getOutlineItems()
+      const currentIndex = items.indexOf(target)
+
+      if (currentIndex === -1) return
+
+      event.preventDefault()
+
+      let nextIndex: number
+      if (event.key === 'ArrowDown') {
+        nextIndex = (currentIndex + 1) % items.length
+      } else {
+        nextIndex = (currentIndex - 1 + items.length) % items.length
+      }
+
+      const nextItem = items[nextIndex]
+      nextItem?.focus()
+    },
+    [getOutlineItems]
+  )
+
+  return values && values.view ? (
+    <div ref={containerRef} onKeyDown={handleKeyDown}>
+      <DraggableTree {...values} depth={0} />
+    </div>
+  ) : null
 }
