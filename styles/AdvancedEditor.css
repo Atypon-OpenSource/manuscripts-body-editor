@@ -402,13 +402,6 @@ ProseMirror .block-embed .position-menu {
 .ProseMirror .block-affiliations {
   grid-template-columns: 52px auto 100px;
 }
-.ProseMirror .block-container.block-box_element > .block.box-element {
-  margin: 0 54px;
-}
-
-.ProseMirror .block-container.block-box_element > .block.box-element > .block-section > section {
-  margin: 0 -54px;
-}
 
 .ProseMirror .box-element .block-container .block {
   background: var(--box-element-bg-color);
@@ -417,18 +410,25 @@ ProseMirror .block-embed .position-menu {
   border-right: 2px solid #e2e2e2;
 }
 
-.ProseMirror .box-element > .block-container > section > :is(.comment-marker:first-child ~ .block-container:nth-child(2)),
-.ProseMirror .box-element > .block-container > section > .block-container:first-child {
+.ProseMirror .box-element > .block-section::before,
+.ProseMirror .box-element > .block-section::after {
+  content: ' ';
+  margin-left: 52px;
+  margin-right: 52px;
+  border-bottom: 2px solid #e2e2e2;
+  height: 0;
+}
+
+.ProseMirror .box-element > .block-section {
   padding-top: 6px;
 }
 
-.ProseMirror .box-element > .block-container > section > :is(.comment-marker:first-child ~ .block-container:nth-child(2)) > .block,
-.ProseMirror .box-element > .block-container > section > .block-container:first-child > .block {
-  border-top: 2px solid #e2e2e2;
+.ProseMirror .box-element > .element-label {
+  margin-left: 52px;
 }
 
-.ProseMirror .box-element > .block-container > section .block-container:last-child > .block {
-  border-bottom: 2px solid #e2e2e2;
+.ProseMirror .box-element > .caption-title {
+  margin-right: 52px;
 }
 
 .ProseMirror

@@ -16,7 +16,6 @@
 
 import {
   buildTargets,
-  isInGraphicalAbstractSection,
   ManuscriptNode,
   schema,
   Target,
