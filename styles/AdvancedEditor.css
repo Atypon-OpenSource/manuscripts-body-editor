@@ -415,7 +415,7 @@ ProseMirror .block-embed .position-menu {
   content: ' ';
   margin-left: 52px;
   margin-right: 52px;
-  border-bottom: 2px solid #e2e2e2;
+  border-top: 2px solid #e2e2e2;
   height: 0;
 }
 
