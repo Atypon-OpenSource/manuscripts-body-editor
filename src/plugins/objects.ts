@@ -63,11 +63,8 @@ export default () => {
             const { id } = node.attrs
             if (id) {
               const target = targets.get(id)
-              const resolvedPos = state.doc.resolve(pos)
-              const isInGraphicalAbstract =
-                isInGraphicalAbstractSection(resolvedPos)
 
-              if (target && !isInGraphicalAbstract) {
+              if (target) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'element-label'
                 const { labelPos, label } = getLabelDecorationData(
@@ -93,6 +90,12 @@ export default () => {
   })
 }
 
+/**
+ * this function return:
+ * - `label` with colon if block element have a caption or caption_title
+ * - position of the decoration will be before a caption or caption_title,
+ *   or if we don't have at all caption will be at the end of node
+ */
 const getLabelDecorationData = (
   target: Target,
   doc: ManuscriptNode,
@@ -114,6 +117,8 @@ const getLabelDecorationData = (
     labelPos = $pos.end()
     label = target.label
   } else if (!$pos.nodeBefore) {
+    // this for the case of table as caption will be first element
+    // that will make sure it stays before caption
     labelPos -= 1
   }
 
