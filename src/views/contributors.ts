@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addArrowKeyNavigation,
+  ContextMenu,
+  ContextMenuProps,
+} from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -53,6 +57,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   inner: HTMLElement
   popper?: HTMLElement
   version: string
+  keyboardCleanup?: () => void
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -104,27 +109,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       })
     }
 
-    wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
-      const target = event.target as Element
-      if (!target.classList.contains('contributor')) {
-        return
-      }
-
-      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-        event.preventDefault()
-
-        const contributors = Array.from(
-          wrapper.querySelectorAll('.contributor')
-        ) as HTMLElement[]
-
-        const currentIndex = contributors.indexOf(target as HTMLElement)
-        const nextIndex =
-          event.key === 'ArrowRight'
-            ? (currentIndex + 1) % contributors.length
-            : (currentIndex - 1 + contributors.length) % contributors.length
-
-        contributors[nextIndex]?.focus()
-      }
+    // Add keyboard navigation using style-guide utility
+    this.keyboardCleanup = addArrowKeyNavigation(wrapper, {
+      selector: '.contributor',
+      direction: 'horizontal',
+      loop: true,
     })
 
     const authors = affs.contributors
@@ -409,6 +398,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
+  }
+
+  public destroy() {
+    this.keyboardCleanup?.()
+    super.destroy()
   }
 }
 

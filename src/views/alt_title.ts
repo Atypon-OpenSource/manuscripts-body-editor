@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+} from '@manuscripts/style-guide'
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -25,6 +29,8 @@ export class AltTitleView
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
+  private enterCleanup?: () => void
+  private arrowCleanup?: () => void
 
   public initialise = () => {
     this.createDOM()
@@ -40,12 +46,20 @@ export class AltTitleView
     this.dom.setAttribute('data-type', this.node.attrs.type)
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('alt-title-text')
-    this.contentDOM.tabIndex = this.node.attrs.type === 'running' ? 0 : -1
 
-    // Keyboard navigation
-    this.contentDOM.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
+    // Fix tabIndex bug: Use position-based check, not attribute-based
+    const isFirst = () => {
+      const pos = this.getPos()
+      if (typeof pos !== 'number') return false
+      const parent = this.view.state.doc.resolve(pos).parent
+      return parent.firstChild === this.node
+    }
+    this.contentDOM.tabIndex = isFirst() ? 0 : -1
+
+    // Add Enter key handler using style-guide utility
+    this.enterCleanup = makeKeyboardActivatable(
+      this.contentDOM,
+      () => {
         // Place cursor at the start of this alt title's content
         const pos = this.getPos()
         if (typeof pos === 'number') {
@@ -56,26 +70,26 @@ export class AltTitleView
           this.view.dispatch(tr)
           this.view.focus()
         }
-      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault()
+      },
+      { keys: ['Enter'] }
+    )
 
-        const allAltTitles = Array.from(
-          this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
-        )
-
-        const currentIndex = allAltTitles.indexOf(this.contentDOM)
-        const nextIndex =
-          e.key === 'ArrowDown'
-            ? (currentIndex + 1) % allAltTitles.length
-            : (currentIndex - 1 + allAltTitles.length) % allAltTitles.length
-
-        allAltTitles[nextIndex]?.focus()
-      }
+    // Add arrow key navigation using style-guide utility
+    this.arrowCleanup = addArrowKeyNavigation(this.view.dom, {
+      selector: '.alt-title-text',
+      direction: 'vertical',
+      loop: true,
     })
 
     this.dom.appendChild(label)
     this.dom.appendChild(this.contentDOM)
     this.updateContents()
+  }
+
+  public destroy() {
+    this.enterCleanup?.()
+    this.arrowCleanup?.()
+    super.destroy()
   }
 }
 

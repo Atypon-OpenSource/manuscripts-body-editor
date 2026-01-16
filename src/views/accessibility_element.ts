@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+} from '@manuscripts/style-guide'
 import { LongDescNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -20,6 +24,8 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
   public contentDOM: HTMLElement
+  private enterCleanup?: () => void
+  private arrowCleanup?: () => void
 
   public initialise() {
     this.createDOM()
@@ -45,11 +51,18 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     this.contentDOM.className = 'accessibility_element_input'
     this.contentDOM.setAttribute('contenteditable', 'true')
 
-    this.contentDOM.tabIndex = this.node.type === schema.nodes.alt_text ? 0 : -1
+    // Fix tabIndex bug: Use position-based check, not type-based
+    const isFirst = () => {
+      const pos = this.getPos()
+      const parent = this.view.state.doc.resolve(pos).parent
+      return parent.firstChild === this.node
+    }
+    this.contentDOM.tabIndex = isFirst() ? 0 : -1
 
-    this.contentDOM.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
+    // Add Enter key handler using style-guide utility
+    this.enterCleanup = makeKeyboardActivatable(
+      this.contentDOM,
+      () => {
         // Place cursor at the start of the input
         const pos = this.getPos()
         const tr = this.view.state.tr.setSelection(
@@ -57,27 +70,25 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
         )
         this.view.dispatch(tr)
         this.view.focus()
-      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-        event.preventDefault()
+      },
+      { keys: ['Enter'] }
+    )
 
-        const parentEl = this.dom.parentElement
-        if (!parentEl) {
-          return
-        }
+    // Add arrow key navigation using style-guide utility
+    const parent = this.dom.parentElement
+    if (parent) {
+      this.arrowCleanup = addArrowKeyNavigation(parent, {
+        selector: '.accessibility_element_input',
+        direction: 'vertical',
+        loop: true,
+      })
+    }
+  }
 
-        const allInputs = Array.from(
-          parentEl.querySelectorAll('.accessibility_element_input')
-        ) as HTMLElement[]
-
-        const currentIndex = allInputs.indexOf(this.contentDOM)
-        const nextIndex =
-          event.key === 'ArrowDown'
-            ? (currentIndex + 1) % allInputs.length
-            : (currentIndex - 1 + allInputs.length) % allInputs.length
-
-        allInputs[nextIndex]?.focus()
-      }
-    })
+  public destroy() {
+    this.enterCleanup?.()
+    this.arrowCleanup?.()
+    super.destroy()
   }
 }
 
