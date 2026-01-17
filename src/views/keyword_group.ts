@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { addArrowKeyNavigation } from '@manuscripts/style-guide'
 import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
@@ -25,7 +24,6 @@ import ReactSubView from './ReactSubView'
 export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   private element: HTMLElement
   private addingTools: HTMLDivElement
-  private keyboardCleanup?: () => void
 
   public ignoreMutation = () => true
 
@@ -41,11 +39,12 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
 
     this.element.appendChild(this.contentDOM)
 
-    // Add keyboard navigation using style-guide utility
-    this.keyboardCleanup = addArrowKeyNavigation(this.element, {
-      selector: '.keyword, .keyword-add',
-      direction: 'horizontal',
-      loop: true,
+    this.setupKeyboardNavigation(this.element, {
+      navigation: {
+        selector: '.keyword, .keyword-add',
+        direction: 'horizontal',
+        loop: true,
+      }
     })
 
     if (this.props.getCapabilities().editArticle) {
@@ -66,7 +65,6 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   }
 
   public destroy() {
-    this.keyboardCleanup?.()
     super.destroy()
   }
 }

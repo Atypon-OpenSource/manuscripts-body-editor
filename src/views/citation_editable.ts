@@ -17,7 +17,6 @@
 import {
   ContextMenu,
   ContextMenuProps,
-  makeKeyboardActivatable,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
@@ -54,13 +53,13 @@ export class CitationEditableView extends CitationView {
   private editor: HTMLElement
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
-  private cleanup?: () => void
 
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
-    // Use makeKeyboardActivatable for keyboard support
-    this.cleanup = makeKeyboardActivatable(this.dom, () => this.handleClick())
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.handleClick() }
+    })
   }
 
   // we added this to stop select events in case th e user clicks on the comment,
@@ -101,10 +100,9 @@ export class CitationEditableView extends CitationView {
     }
   }
 
-  public destroy = () => {
-    this.cleanup?.()
+  public destroy() {
     this.editor?.remove()
-    this.props.popper.destroy()
+    super.destroy()
   }
 
   public showContextMenu = () => {

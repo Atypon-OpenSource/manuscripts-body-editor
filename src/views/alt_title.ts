@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-import {
-  addArrowKeyNavigation,
-  makeKeyboardActivatable,
-} from '@manuscripts/style-guide'
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -29,8 +25,6 @@ export class AltTitleView
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
-  private enterCleanup?: () => void
-  private arrowCleanup?: () => void
 
   public initialise = () => {
     this.createDOM()
@@ -56,29 +50,26 @@ export class AltTitleView
     }
     this.contentDOM.tabIndex = isFirst() ? 0 : -1
 
-    // Add Enter key handler using style-guide utility
-    this.enterCleanup = makeKeyboardActivatable(
-      this.contentDOM,
-      () => {
-        // Place cursor at the start of this alt title's content
-        const pos = this.getPos()
-        if (typeof pos === 'number') {
-          const cursorPos = pos + 1
-          const tr = this.view.state.tr.setSelection(
-            TextSelection.create(this.view.state.doc, cursorPos)
-          )
-          this.view.dispatch(tr)
-          this.view.focus()
-        }
+    this.setupKeyboardNavigation(this.view.dom, {
+      activation: {
+        element: this.contentDOM,
+        handler: () => {
+          const pos = this.getPos()
+          if (typeof pos === 'number') {
+            const tr = this.view.state.tr.setSelection(
+              TextSelection.create(this.view.state.doc, pos + 1)
+            )
+            this.view.dispatch(tr)
+            this.view.focus()
+          }
+        },
+        keys: ['Enter'],
       },
-      { keys: ['Enter'] }
-    )
-
-    // Add arrow key navigation using style-guide utility
-    this.arrowCleanup = addArrowKeyNavigation(this.view.dom, {
-      selector: '.alt-title-text',
-      direction: 'vertical',
-      loop: true,
+      navigation: {
+        selector: '.alt-title-text',
+        direction: 'vertical',
+        loop: true,
+      },
     })
 
     this.dom.appendChild(label)
@@ -87,8 +78,6 @@ export class AltTitleView
   }
 
   public destroy() {
-    this.enterCleanup?.()
-    this.arrowCleanup?.()
     super.destroy()
   }
 }

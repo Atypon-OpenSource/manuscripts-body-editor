@@ -22,11 +22,16 @@ import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
 } from '../lib/track-changes-utils'
+import {
+  KeyboardNavigationManager,
+  type KeyboardNavigationManagerOptions,
+} from '../utils/keyboard-navigation-manager'
 
 export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
   public dom: HTMLElement
   public contentDOM?: HTMLElement
   public elementType = 'div'
+  protected keyboard?: KeyboardNavigationManager
 
   public constructor(
     public readonly props: EditorProps,
@@ -79,7 +84,15 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
     this.props.popper.destroy()
   }
 
+  protected setupKeyboardNavigation(
+    container: HTMLElement,
+    options: KeyboardNavigationManagerOptions
+  ) {
+    this.keyboard = new KeyboardNavigationManager(container, options)
+  }
+
   public destroy() {
+    this.keyboard?.cleanup()
     this.props.popper.destroy()
   }
 }
