@@ -42,7 +42,7 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     this.setupKeyboardNavigation(this.element, {
       navigation: {
         selector: '.keyword, .keyword-add',
-        direction: 'horizontal',
+        direction: 'both',
         loop: true,
       }
     })
