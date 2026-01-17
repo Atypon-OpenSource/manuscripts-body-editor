@@ -15,7 +15,6 @@
  */
 
 import {
-  addArrowKeyNavigation,
   ContextMenu,
   ContextMenuProps,
 } from '@manuscripts/style-guide'
@@ -57,7 +56,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   inner: HTMLElement
   popper?: HTMLElement
   version: string
-  keyboardCleanup?: () => void
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -109,11 +107,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       })
     }
 
-    // Add keyboard navigation using style-guide utility
-    this.keyboardCleanup = addArrowKeyNavigation(wrapper, {
-      selector: '.contributor',
-      direction: 'horizontal',
-      loop: true,
+    this.setupKeyboardNavigation(wrapper, {
+      navigation: {
+        selector: '.contributor',
+        direction: 'horizontal',
+        loop: true,
+      }
     })
 
     const authors = affs.contributors
@@ -401,7 +400,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   public destroy() {
-    this.keyboardCleanup?.()
     super.destroy()
   }
 }

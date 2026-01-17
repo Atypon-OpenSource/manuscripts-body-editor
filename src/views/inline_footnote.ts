@@ -17,7 +17,6 @@
 import {
   ContextMenu,
   ContextMenuProps,
-  makeKeyboardActivatable,
 } from '@manuscripts/style-guide'
 import {
   FootnoteNode,
@@ -47,7 +46,6 @@ export class InlineFootnoteView
   implements ManuscriptNodeView
 {
   protected popperContainer: HTMLDivElement
-  private cleanup?: () => void
 
   showContextMenu = () => {
     this.props.popper.destroy()
@@ -177,13 +175,13 @@ export class InlineFootnoteView
     this.dom.classList.add('footnote-marker')
     this.dom.tabIndex = 0
     this.dom.addEventListener('click', this.handleClick)
-    // Use makeKeyboardActivatable for keyboard support
-    this.cleanup = makeKeyboardActivatable(this.dom, () => this.handleClick())
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.handleClick() }
+    })
     this.updateContents()
   }
 
   public destroy() {
-    this.cleanup?.()
     this.props.popper.destroy()
     super.destroy()
   }

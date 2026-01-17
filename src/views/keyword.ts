@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import { KeywordNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -43,7 +42,6 @@ export class KeywordView
   implements ManuscriptNodeView
 {
   private dialog: HTMLElement
-  private cleanup?: () => void
 
   private isFirstKeyword(): boolean {
     const pos = this.getPos()
@@ -64,9 +62,8 @@ export class KeywordView
     // others are reached via arrow keys)
     this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
     
-    // Use makeKeyboardActivatable for keyboard support
-    this.cleanup = makeKeyboardActivatable(this.dom, () => {
-      this.showConfirmationDialog()
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.showConfirmationDialog() }
     })
     
     this.contentDOM = document.createElement('span')
@@ -124,7 +121,6 @@ export class KeywordView
   }
 
   public destroy() {
-    this.cleanup?.()
     super.destroy()
   }
 }

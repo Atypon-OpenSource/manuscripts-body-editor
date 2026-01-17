@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import {
   CrossReferenceNode,
   ManuscriptNodeView,
@@ -30,8 +29,6 @@ export class CrossReferenceView
   extends BaseNodeView<Trackable<CrossReferenceNode>>
   implements ManuscriptNodeView
 {
-  private cleanup?: () => void
-
   public handleClick = () => {
     const rids = this.node.attrs.rids
     if (!rids.length) {
@@ -66,12 +63,12 @@ export class CrossReferenceView
     this.dom.className = 'cross-reference'
     this.dom.tabIndex = 0
 
-    // Use makeKeyboardActivatable for keyboard support
-    this.cleanup = makeKeyboardActivatable(this.dom, () => this.handleClick())
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.handleClick() }
+    })
   }
 
   public destroy() {
-    this.cleanup?.()
     super.destroy()
   }
 }

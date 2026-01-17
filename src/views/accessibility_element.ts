@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  addArrowKeyNavigation,
-  makeKeyboardActivatable,
-} from '@manuscripts/style-guide'
 import { LongDescNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
@@ -24,8 +20,6 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
   public contentDOM: HTMLElement
-  private enterCleanup?: () => void
-  private arrowCleanup?: () => void
 
   public initialise() {
     this.createDOM()
@@ -59,35 +53,31 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     }
     this.contentDOM.tabIndex = isFirst() ? 0 : -1
 
-    // Add Enter key handler using style-guide utility
-    this.enterCleanup = makeKeyboardActivatable(
-      this.contentDOM,
-      () => {
-        // Place cursor at the start of the input
-        const pos = this.getPos()
-        const tr = this.view.state.tr.setSelection(
-          TextSelection.create(this.view.state.doc, pos + 1)
-        )
-        this.view.dispatch(tr)
-        this.view.focus()
-      },
-      { keys: ['Enter'] }
-    )
-
-    // Add arrow key navigation using style-guide utility
     const parent = this.dom.parentElement
     if (parent) {
-      this.arrowCleanup = addArrowKeyNavigation(parent, {
-        selector: '.accessibility_element_input',
-        direction: 'vertical',
-        loop: true,
+      this.setupKeyboardNavigation(parent, {
+        activation: {
+          element: this.contentDOM,
+          handler: () => {
+            const pos = this.getPos()
+            const tr = this.view.state.tr.setSelection(
+              TextSelection.create(this.view.state.doc, pos + 1)
+            )
+            this.view.dispatch(tr)
+            this.view.focus()
+          },
+          keys: ['Enter'],
+        },
+        navigation: {
+          selector: '.accessibility_element_input',
+          direction: 'vertical',
+          loop: true,
+        },
       })
     }
   }
 
   public destroy() {
-    this.enterCleanup?.()
-    this.arrowCleanup?.()
     super.destroy()
   }
 }
