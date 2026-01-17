@@ -62,11 +62,8 @@ export class FigureElementView extends ImageElementView {
         title: 'Add figure',
       })
       this.addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.addFigureBtn.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          this.addFigure()
-        }
+      this.setupKeyboardNavigation(this.addFigureBtn, {
+        activation: { handler: () => this.addFigure() }
       })
       this.addFigureBtn.tabIndex = 0
       this.container.prepend(this.addFigureBtn)
@@ -186,7 +183,6 @@ export class FigureElementView extends ImageElementView {
   }
 
   public destroy() {
-    // Disconnect ResizeObserver on destroy
     if (this.resizeObserver) {
       this.resizeObserver.disconnect()
       this.resizeObserver = null

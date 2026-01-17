@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+} from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
   ManuscriptNode,
@@ -54,11 +57,8 @@ export class CitationEditableView extends CitationView {
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
-    this.dom.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.handleClick()
-      }
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.handleClick() }
     })
   }
 
@@ -100,9 +100,9 @@ export class CitationEditableView extends CitationView {
     }
   }
 
-  public destroy = () => {
+  public destroy() {
     this.editor?.remove()
-    this.props.popper.destroy()
+    super.destroy()
   }
 
   public showContextMenu = () => {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, schema } from '@manuscripts/transform'
 import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
@@ -26,20 +27,10 @@ const createAddSubtitleButton = (handler: () => void) => {
   const button = document.createElement('span')
   button.className = 'add-subtitle'
   button.innerHTML = `${addAuthorIcon} <span class="add-subtitle-text">Add subtitle</span>`
-
   button.tabIndex = 0
-  const activate = (event: MouseEvent | KeyboardEvent) => {
-    event.preventDefault()
-    handler()
-  }
-  button.addEventListener('mousedown', (e) => {
-    activate(e)
-  })
-  button.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      activate(e)
-    }
-  })
+  
+  // Use makeKeyboardActivatable instead of separate event listeners
+  makeKeyboardActivatable(button, handler)
 
   return button
 }

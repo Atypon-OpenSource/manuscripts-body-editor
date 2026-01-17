@@ -63,12 +63,13 @@ export class CrossReferenceView
     this.dom.className = 'cross-reference'
     this.dom.tabIndex = 0
 
-    this.dom.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.handleClick()
-      }
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.handleClick() }
     })
+  }
+
+  public destroy() {
+    super.destroy()
   }
 }
 

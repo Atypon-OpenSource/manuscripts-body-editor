@@ -48,6 +48,7 @@ export class KeywordView
     const parent = this.view.state.doc.resolve(pos).parent
     return parent.firstChild === this.node
   }
+
   public initialise = () => {
     this.createDOM()
     this.updateContents()
@@ -56,13 +57,15 @@ export class KeywordView
   public createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
+    
+    // Fix roving tabindex: Use position-based check (only first keyword is focusable with Tab key,
+    // others are reached via arrow keys)
     this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
-    this.dom.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        this.showConfirmationDialog()
-      }
+    
+    this.setupKeyboardNavigation(this.dom, {
+      activation: { handler: () => this.showConfirmationDialog() }
     })
+    
     this.contentDOM = document.createElement('span')
   }
 
@@ -115,6 +118,10 @@ export class KeywordView
     if (this.dialog) {
       this.dom.appendChild(this.dialog)
     }
+  }
+
+  public destroy() {
+    super.destroy()
   }
 }
 

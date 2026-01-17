@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
-import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
+import {
+  Category,
+  Dialog,
+  makeKeyboardActivatable,
+  PlusIcon,
+} from '@manuscripts/style-guide'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React, {
@@ -101,6 +106,7 @@ export const AddKeywordInline: React.FC<{
   getUpdatedNode: () => ManuscriptNode
 }> = ({ viewProps, getUpdatedNode }) => {
   const nodeRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const [newKeyword, setNewKeyword] = useState<string>('')
   const [isAddingNewKeyword, setIsAddingNewKeyword] = useState<boolean>(false)
   const [isExistingKeywordError, setIsExistingKeywordError] =
@@ -146,6 +152,15 @@ export const AddKeywordInline: React.FC<{
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [handleClickOutside, isAddingNewKeyword])
+
+  // Add keyboard activation for the button
+  useEffect(() => {
+    if (!buttonRef.current) return
+
+    return makeKeyboardActivatable(buttonRef.current, () => {
+      setIsAddingNewKeyword(true)
+    })
+  }, [])
 
   const isValidNewKeyword = () => {
     return newKeyword.trim().length > 0
@@ -250,16 +265,11 @@ export const AddKeywordInline: React.FC<{
     <AddNewKeyword ref={nodeRef}>
       {!isAddingNewKeyword && (
         <NewKeywordButton
+          ref={buttonRef}
           tabIndex={-1}
           className="keyword-add"
           onClick={() => {
             setIsAddingNewKeyword(true)
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              setIsAddingNewKeyword(true)
-            }
           }}
         >
           New keyword...

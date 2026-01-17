@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { makeKeyboardActivatable } from '@manuscripts/style-guide'
 import { AltTitlesSectionNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
@@ -79,17 +80,9 @@ export class AltTitleSectionView extends BlockView<
       toggleButton?.focus()
     }
 
-    button.addEventListener('click', (e) => {
-      e.preventDefault()
-      handleCollapse()
-    })
+    // Use makeKeyboardActivatable instead of separate click and keydown listeners
+    makeKeyboardActivatable(button, handleCollapse)
 
-    button.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        handleCollapse()
-      }
-    })
     closingPanel.appendChild(button)
     return closingPanel
   }

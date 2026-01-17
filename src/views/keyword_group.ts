@@ -39,29 +39,11 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
 
     this.element.appendChild(this.contentDOM)
 
-    this.element.addEventListener('keydown', (event: KeyboardEvent) => {
-      const target = event.target as Element
-      if (
-        !target.classList.contains('keyword') &&
-        !target.classList.contains('keyword-add')
-      ) {
-        return
-      }
-
-      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-        event.preventDefault()
-
-        const keywords = Array.from(
-          this.element.querySelectorAll('.keyword, .keyword-add')
-        ) as HTMLElement[]
-
-        const currentIndex = keywords.indexOf(target as HTMLElement)
-        const nextIndex =
-          event.key === 'ArrowRight'
-            ? (currentIndex + 1) % keywords.length
-            : (currentIndex - 1 + keywords.length) % keywords.length
-
-        keywords[nextIndex]?.focus()
+    this.setupKeyboardNavigation(this.element, {
+      navigation: {
+        selector: '.keyword, .keyword-add',
+        direction: 'both',
+        loop: true,
       }
     })
 
@@ -80,6 +62,10 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     if (this.addingTools) {
       this.element.appendChild(this.addingTools)
     }
+  }
+
+  public destroy() {
+    super.destroy()
   }
 }
 

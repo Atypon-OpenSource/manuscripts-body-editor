@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  addArrowKeyNavigation,
   DotsIcon,
   DropdownList,
   getFileIcon,
@@ -37,7 +38,7 @@ import {
 import { getMediaTypeInfo } from '../../lib/get-media-type'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
-// Custom hook for figure dropdown keyboard navigation
+// Custom hook for figure dropdown keyboard navigation using style-guide utilities
 function useDropdownKeyboardNav(
   isOpen: boolean,
   containerRef: React.RefObject<HTMLDivElement | null>,
@@ -45,54 +46,22 @@ function useDropdownKeyboardNav(
   onArrowLeft?: () => void
 ) {
   useEffect(() => {
-    const container = containerRef.current
-    if (!isOpen || !container) {
-      return
-    }
+    if (!isOpen || !containerRef.current) return
 
-    const buttons = Array.from(
-      container.querySelectorAll('button:not([disabled])')
-    ) as HTMLElement[]
-
-    if (buttons.length === 0) {
-      return
-    }
-
-    // Add keyboard navigation
-    const handledKeys = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'Escape', 'Enter']
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement
-      const currentIndex = buttons.indexOf(target)
-      if (currentIndex === -1 || !handledKeys.includes(event.key)) {
-        return
-      }
-
-      event.preventDefault()
-      if (event.key === 'ArrowDown') {
-        const nextIndex = (currentIndex + 1) % buttons.length
-        buttons[nextIndex]?.focus()
-      } else if (event.key === 'ArrowUp') {
-        const prevIndex = (currentIndex - 1 + buttons.length) % buttons.length
-        buttons[prevIndex]?.focus()
-      } else if (event.key === 'ArrowLeft' && onArrowLeft) {
-        onArrowLeft()
-      } else if (event.key === 'Escape') {
-        onEscape()
-      } else if (event.key === 'Enter') {
-        target.click()
-      }
-    }
-
-    container.addEventListener('keydown', handleKeyDown)
-
-    // Focus first button when dropdown opens
-    window.requestAnimationFrame(() => {
-      buttons[0]?.focus()
+    const cleanup = addArrowKeyNavigation(containerRef.current, {
+      selector: 'button:not([disabled])',
+      direction: 'vertical',
+      loop: true,
+      focusFirstOnMount: true,
+      onEscape: onEscape,
+      additionalKeys: onArrowLeft
+        ? {
+            ArrowLeft: () => onArrowLeft(),
+          }
+        : undefined,
     })
 
-    return () => {
-      container.removeEventListener('keydown', handleKeyDown)
-    }
+    return cleanup
   }, [isOpen, containerRef, onEscape, onArrowLeft])
 }
 

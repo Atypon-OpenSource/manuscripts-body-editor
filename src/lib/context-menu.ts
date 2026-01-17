@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { TriangleCollapsedIcon } from '@manuscripts/style-guide'
+import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+  TriangleCollapsedIcon,
+} from '@manuscripts/style-guide'
 import {
   isInGraphicalAbstractSection,
   isSectionTitleNode,
@@ -83,7 +87,6 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
-  private menuItems: HTMLElement[] = []
 
   public constructor(
     node: ManuscriptNode,
@@ -96,7 +99,6 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element) => {
-    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
@@ -238,7 +240,6 @@ export class ContextMenu {
   }
 
   public showEditMenu = (target: Element) => {
-    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
 
@@ -427,12 +428,18 @@ export class ContextMenu {
   private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.setAttribute('tabindex', '0')
     const textNode = document.createTextNode(contents)
     item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
     item.prepend(textNode)
     item.classList.add(contextSubmenuBtnClass)
 
     item.addEventListener('mousedown', this.toggleSubmenu)
+    
+    // Add keyboard activation for submenu trigger
+    makeKeyboardActivatable(item, (event) => {
+      this.toggleSubmenu(event as MouseEvent)
+    })
 
     return item
   }
@@ -445,7 +452,6 @@ export class ContextMenu {
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
-    item.setAttribute('tabindex', '0')
     selected && item.classList.add('selected')
     if (IconComponent) {
       if (typeof IconComponent === 'string') {
@@ -461,15 +467,6 @@ export class ContextMenu {
       event.preventDefault()
       handler(event)
     })
-
-    item.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        handler(event)
-      }
-    })
-
-    this.menuItems.push(item)
 
     return item
   }
@@ -630,42 +627,25 @@ export class ContextMenu {
     }
 
     const keyListener: EventListener = (event) => {
-      const keyEvent = event as KeyboardEvent
-      const key = keyEvent.key
-
-      if (key === 'Escape') {
+      if ((event as KeyboardEvent).key === 'Escape') {
         window.removeEventListener('keydown', keyListener)
         popper.destroy()
-        return
-      }
-
-      if (key === 'ArrowDown' || key === 'ArrowUp') {
-        keyEvent.preventDefault()
-        if (this.menuItems.length === 0) {
-          return
-        }
-        const currentIndex = this.menuItems.findIndex(
-          (item) => item === document.activeElement
-        )
-        if (currentIndex === -1) {
-          return
-        }
-
-        const nextIndex =
-          key === 'ArrowDown'
-            ? (currentIndex + 1) % this.menuItems.length
-            : (currentIndex - 1 + this.menuItems.length) % this.menuItems.length
-
-        this.menuItems[nextIndex]?.focus()
       }
     }
 
     window.addEventListener('mousedown', mouseListener)
     window.addEventListener('keydown', keyListener)
 
-    // Focus the first menu item when the menu opens
-    window.requestAnimationFrame(() => {
-      this.menuItems[0]?.focus()
+    // Add keyboard navigation for menu items (including submenu triggers)
+    const cleanup = addArrowKeyNavigation(document.body, {
+      selector: '.menu > .menu-section > .menu-item',
+      direction: 'vertical',
+      loop: true,
+      focusFirstOnMount: true,
+      onEscape: () => {
+        cleanup()
+        popper.destroy()
+      },
     })
   }
 

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  ContextMenu,
+  ContextMenuProps,
+} from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -104,26 +107,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       })
     }
 
-    wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
-      const target = event.target as Element
-      if (!target.classList.contains('contributor')) {
-        return
-      }
-
-      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-        event.preventDefault()
-
-        const contributors = Array.from(
-          wrapper.querySelectorAll('.contributor')
-        ) as HTMLElement[]
-
-        const currentIndex = contributors.indexOf(target as HTMLElement)
-        const nextIndex =
-          event.key === 'ArrowRight'
-            ? (currentIndex + 1) % contributors.length
-            : (currentIndex - 1 + contributors.length) % contributors.length
-
-        contributors[nextIndex]?.focus()
+    this.setupKeyboardNavigation(wrapper, {
+      navigation: {
+        selector: '.contributor',
+        direction: 'horizontal',
+        loop: true,
       }
     })
 
@@ -409,6 +397,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
+  }
+
+  public destroy() {
+    super.destroy()
   }
 }
 
