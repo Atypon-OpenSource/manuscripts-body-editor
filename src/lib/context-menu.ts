@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { TriangleCollapsedIcon } from '@manuscripts/style-guide'
-import { addArrowKeyNavigation } from '@manuscripts/style-guide'
+import {
+  addArrowKeyNavigation,
+  makeKeyboardActivatable,
+  TriangleCollapsedIcon,
+} from '@manuscripts/style-guide'
 import {
   isInGraphicalAbstractSection,
   isSectionTitleNode,
@@ -425,12 +428,18 @@ export class ContextMenu {
   private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.setAttribute('tabindex', '0')
     const textNode = document.createTextNode(contents)
     item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
     item.prepend(textNode)
     item.classList.add(contextSubmenuBtnClass)
 
     item.addEventListener('mousedown', this.toggleSubmenu)
+    
+    // Add keyboard activation for submenu trigger
+    makeKeyboardActivatable(item, (event) => {
+      this.toggleSubmenu(event as MouseEvent)
+    })
 
     return item
   }
@@ -627,9 +636,9 @@ export class ContextMenu {
     window.addEventListener('mousedown', mouseListener)
     window.addEventListener('keydown', keyListener)
 
-    // Add keyboard navigation for menu items
+    // Add keyboard navigation for menu items (including submenu triggers)
     const cleanup = addArrowKeyNavigation(document.body, {
-      selector: '.menu > .menu-section > .menu-item:not(.context-submenu-trigger)',
+      selector: '.menu > .menu-section > .menu-item',
       direction: 'vertical',
       loop: true,
       focusFirstOnMount: true,
