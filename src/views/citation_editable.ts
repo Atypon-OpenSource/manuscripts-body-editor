@@ -100,7 +100,7 @@ export class CitationEditableView extends CitationView {
     }
   }
 
-  public destroy = () => {
+  public destroy() {
     this.editor?.remove()
     super.destroy()
   }
