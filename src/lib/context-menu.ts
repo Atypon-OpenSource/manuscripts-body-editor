@@ -387,25 +387,31 @@ export class ContextMenu {
       const boxElementNode = $pos.node($pos.depth - 1)
       const boxStartPos = $pos.start($pos.depth - 1)
 
-      const figcaptions = findChildrenByType(
+      const captionTitle = findChildrenByType(
         boxElementNode,
-        schema.nodes.figcaption
-      )
-      const hasLabel = figcaptions.length > 0
+        schema.nodes.caption_title,
+        false
+      )[0]
+      const caption = findChildrenByType(
+        boxElementNode,
+        schema.nodes.caption,
+        false
+      )[0]
+      const hasLabel = captionTitle
 
       menu.insertBefore(
         this.createMenuItem(hasLabel ? 'Delete Label' : 'Add Label', () => {
           if (hasLabel) {
-            const figcaptionNode = figcaptions[0].node
-            const figcaptionPos = boxStartPos + figcaptions[0].pos
+            const captionNode = captionTitle.node
+            const captionPos = boxStartPos + captionTitle.pos
 
-            tr.delete(figcaptionPos, figcaptionPos + figcaptionNode.nodeSize)
+            tr.delete(
+              captionPos,
+              captionPos + captionNode.nodeSize + (caption?.node.nodeSize || 0)
+            )
           } else {
-            const newFigcaption = schema.nodes.figcaption.create({}, [
-              schema.nodes.caption_title.create(),
-            ])
-
-            tr.insert(boxStartPos, newFigcaption)
+            const captionTitle = schema.nodes.caption_title.create()
+            tr.insert(boxStartPos, captionTitle)
           }
 
           this.view.dispatch(tr)

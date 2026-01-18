@@ -265,21 +265,10 @@
                   }
                 },
                 {
-                  "type": "figcaption",
-                  "content": [
-                    {
-                      "type": "caption_title",
-                      "attrs": {
-                        "placeholder": "Title..."
-                      }
-                    },
-                    {
-                      "type": "caption",
-                      "attrs": {
-                        "placeholder": "Caption..."
-                      }
-                    }
-                  ]
+                  "type": "caption",
+                  "attrs": {
+                    "placeholder": "Caption..."
+                  }
                 },
                 {
                   "type": "alt_text"
@@ -327,21 +316,10 @@
               },
               "content": [
                 {
-                  "type": "figcaption",
-                  "content": [
-                    {
-                      "type": "caption_title",
-                      "attrs": {
-                        "placeholder": "Title..."
-                      }
-                    },
-                    {
-                      "type": "caption",
-                      "attrs": {
-                        "placeholder": "Caption..."
-                      }
-                    }
-                  ]
+                  "type": "caption_title",
+                  "attrs": {
+                    "placeholder": "Title..."
+                  }
                 },
                 {
                   "type": "table",
