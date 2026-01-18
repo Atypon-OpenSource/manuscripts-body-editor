@@ -66,13 +66,22 @@ export default () => {
               if (target) {
                 const labelNode = document.createElement('span')
                 labelNode.className = 'element-label'
-                const { labelPos, label } = getLabelDecorationData(
+                const caption = findChildren(
+                  node,
+                  (node) =>
+                    node.type === schema.nodes.caption ||
+                    node.type === schema.nodes.caption_title,
+                  false
+                )[0]
+                const labelPos = getDecorationPos(
                   target,
                   state.doc,
-                  node,
-                  pos
+                  pos,
+                  caption
                 )
-                labelNode.textContent = label
+                labelNode.textContent = caption
+                  ? target.label + ':'
+                  : target.label
                 decorations.push(
                   Decoration.widget(labelPos, labelNode, {
                     side: -1,
@@ -90,36 +99,24 @@ export default () => {
 }
 
 /**
- * this function return:
- * - `label` with colon if block element have a caption or caption_title
- * - position of the decoration will be before a caption or caption_title,
- *   or if we don't have at all caption will be at the end of node
+ *  position of the decoration will be before a caption or caption_title,
+ *  or if we don't have at all caption will be at the end of node
  */
-const getLabelDecorationData = (
+const getDecorationPos = (
   target: Target,
   doc: ManuscriptNode,
-  parent: ManuscriptNode,
-  pos: number
+  pos: number,
+  caption?: { node: ManuscriptNode; pos: number }
 ) => {
-  const caption = findChildren(
-    parent,
-    (node) =>
-      node.type === schema.nodes.caption ||
-      node.type === schema.nodes.caption_title,
-    false
-  )[0]
-
   const $pos = doc.resolve(pos + (caption?.pos || 1) + 1)
-  let labelPos = $pos.pos,
-    label = target.label + ':'
+  let targetPos = $pos.pos
   if (!caption) {
-    labelPos = $pos.end()
-    label = target.label
+    targetPos = $pos.end()
   } else if (!$pos.nodeBefore) {
     // this for the case of table as caption will be first element
     // that will make sure it stays before caption
-    labelPos -= 1
+    targetPos -= 1
   }
 
-  return { labelPos, label }
+  return targetPos
 }
