@@ -35,6 +35,7 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { getMediaTypeInfo } from '../../lib/get-media-type'
+import { focusNextElement } from '../../lib/navigation-utils'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 // Custom hook for figure dropdown keyboard navigation
@@ -69,11 +70,9 @@ function useDropdownKeyboardNav(
 
       event.preventDefault()
       if (event.key === 'ArrowDown') {
-        const nextIndex = (currentIndex + 1) % buttons.length
-        buttons[nextIndex]?.focus()
+        focusNextElement(buttons, currentIndex, 'forward')
       } else if (event.key === 'ArrowUp') {
-        const prevIndex = (currentIndex - 1 + buttons.length) % buttons.length
-        buttons[prevIndex]?.focus()
+        focusNextElement(buttons, currentIndex, 'backward')
       } else if (event.key === 'ArrowLeft' && onArrowLeft) {
         onArrowLeft()
       } else if (event.key === 'Escape') {

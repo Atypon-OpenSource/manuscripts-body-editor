@@ -16,6 +16,7 @@
 import { LongDescNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
+import { focusNextElement } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
@@ -70,12 +71,8 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
         ) as HTMLElement[]
 
         const currentIndex = allInputs.indexOf(this.contentDOM)
-        const nextIndex =
-          event.key === 'ArrowDown'
-            ? (currentIndex + 1) % allInputs.length
-            : (currentIndex - 1 + allInputs.length) % allInputs.length
-
-        allInputs[nextIndex]?.focus()
+        const direction = event.key === 'ArrowDown' ? 'forward' : 'backward'
+        focusNextElement(allInputs, currentIndex, direction)
       }
     })
   }

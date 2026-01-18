@@ -17,6 +17,7 @@
 import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
+import { focusNextElement } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
@@ -56,12 +57,8 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
         ) as HTMLElement[]
 
         const currentIndex = keywords.indexOf(target as HTMLElement)
-        const nextIndex =
-          event.key === 'ArrowRight'
-            ? (currentIndex + 1) % keywords.length
-            : (currentIndex - 1 + keywords.length) % keywords.length
-
-        keywords[nextIndex]?.focus()
+        const direction = event.key === 'ArrowRight' ? 'forward' : 'backward'
+        focusNextElement(keywords, currentIndex, direction)
       }
     })
 
