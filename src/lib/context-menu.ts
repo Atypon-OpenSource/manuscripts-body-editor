@@ -28,6 +28,8 @@ import {
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
+
+import { focusNextElement } from './navigation-utils'
 import { findChildrenByType } from 'prosemirror-utils'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -651,12 +653,8 @@ export class ContextMenu {
           return
         }
 
-        const nextIndex =
-          key === 'ArrowDown'
-            ? (currentIndex + 1) % this.menuItems.length
-            : (currentIndex - 1 + this.menuItems.length) % this.menuItems.length
-
-        this.menuItems[nextIndex]?.focus()
+        const direction = key === 'ArrowDown' ? 'forward' : 'backward'
+        focusNextElement(this.menuItems, currentIndex, direction)
       }
     }
 

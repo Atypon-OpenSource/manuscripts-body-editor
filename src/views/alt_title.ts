@@ -17,6 +17,7 @@
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
+import { focusNextElement } from '../lib/navigation-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -64,12 +65,8 @@ export class AltTitleView
         )
 
         const currentIndex = allAltTitles.indexOf(this.contentDOM)
-        const nextIndex =
-          e.key === 'ArrowDown'
-            ? (currentIndex + 1) % allAltTitles.length
-            : (currentIndex - 1 + allAltTitles.length) % allAltTitles.length
-
-        allAltTitles[nextIndex]?.focus()
+        const direction = e.key === 'ArrowDown' ? 'forward' : 'backward'
+        focusNextElement(allAltTitles, currentIndex, direction)
       }
     })
 

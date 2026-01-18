@@ -29,6 +29,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
+import { focusNextElement } from '../lib/navigation-utils'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -118,12 +119,8 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         ) as HTMLElement[]
 
         const currentIndex = contributors.indexOf(target as HTMLElement)
-        const nextIndex =
-          event.key === 'ArrowRight'
-            ? (currentIndex + 1) % contributors.length
-            : (currentIndex - 1 + contributors.length) % contributors.length
-
-        contributors[nextIndex]?.focus()
+        const direction = event.key === 'ArrowRight' ? 'forward' : 'backward'
+        focusNextElement(contributors, currentIndex, direction)
       }
     })
 

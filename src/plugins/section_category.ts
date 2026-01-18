@@ -29,6 +29,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { sectionCategoryIcon } from '../icons'
+import { focusNextElement } from '../lib/navigation-utils'
 
 export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 
@@ -122,11 +123,8 @@ const createMenu = (
         menuItems[0]?.focus()
         return
       }
-      const nextIndex =
-        event.key === 'ArrowDown'
-          ? (currentIndex + 1) % menuItems.length
-          : (currentIndex - 1 + menuItems.length) % menuItems.length
-      menuItems[nextIndex]?.focus()
+      const direction = event.key === 'ArrowDown' ? 'forward' : 'backward'
+      focusNextElement(menuItems, currentIndex, direction)
     }
   }
   document.addEventListener('keydown', handleKeydown)
