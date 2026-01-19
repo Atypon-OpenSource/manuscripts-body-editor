@@ -29,6 +29,7 @@ import {
   Tooltip,
   Label,
   FormRow,
+  YearField,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
@@ -48,7 +49,6 @@ import {
   FormFields,
   ReferenceTextArea,
   ReferenceTextField,
-  YearField,
 } from './styled-components'
 
 const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(

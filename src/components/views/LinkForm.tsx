@@ -123,7 +123,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
         </FormRow>
 
         <FormRow>
-          <Label>Title (optional)</Label>
+          <Label>Title</Label>
 
           <TextField
             type={'text'}
@@ -137,7 +137,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
         <Actions>
           <ActionGroup>
-            <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
+            <SecondaryButton type={'button'}  onClick={onRemove}>
               Remove Link
           </SecondaryButton>
           </ActionGroup>

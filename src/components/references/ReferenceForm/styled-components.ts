@@ -19,9 +19,7 @@ import {
   TextArea,
   TextField,
 } from '@manuscripts/style-guide'
-import { Field } from 'formik'
 import styled from 'styled-components'
-
 
 export const FieldLabel = styled.label`
   font-family: ${(props) => props.theme.font.family.sans};
@@ -60,16 +58,6 @@ export const NameField = styled.input`
   &:hover::placeholder {
     color: ${(props) => props.theme.colors.text.secondary};
   }
-`
-
-export const YearField = styled(Field)`
-  font-family: ${(props) => props.theme.font.family.sans};
-  padding: ${(props) => props.theme.grid.unit * 2}px
-    ${(props) => props.theme.grid.unit * 3}px;
-  font-size: ${(props) => props.theme.font.size.medium};
-  color: ${(props) => props.theme.colors.text.primary};
-  border-radius: ${(props) => props.theme.grid.radius.small};
-  border: solid 1px ${(props) => props.theme.colors.text.muted};
 `
 
 export const Button = styled(IconButton).attrs({

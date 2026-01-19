@@ -111,7 +111,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <FormRow>
+            <FormRow direction={'row'}>
               <Label htmlFor={'embed-link'}>Media link</Label>
               {url && allowedHref(url) && (
                 <Open
@@ -136,7 +136,9 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
           </Container>
           {url && allowedHref(url) && (
             <Container>
+              <FormRow>
               <Label>Preview</Label>
+              </FormRow>
               {(oembedHTML && (
                 <PreviewContainer
                   dangerouslySetInnerHTML={{ __html: oembedHTML }}
