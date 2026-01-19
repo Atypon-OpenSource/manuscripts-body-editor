@@ -41,8 +41,12 @@ export default (props: EditorProps) =>
     key: sectionCategoryKey,
     state: {
       init: (_, state) => buildPluginState(state, props),
-      apply: (tr, value, oldState, newState) =>
-        buildPluginState(newState, props),
+      apply: (tr, value, oldState, newState) => {
+        if (!tr.docChanged) {
+          return value
+        }
+        return buildPluginState(newState, props)
+      }
     },
     props: {
       decorations: (state) =>
