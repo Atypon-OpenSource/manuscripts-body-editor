@@ -156,14 +156,12 @@ export const ReferenceForm: React.FC<{
                 <DeleteButton
                   defaultColor
                   disabled={!showDelete}
-                  data-tooltip-id={showDelete ? '' : 'delete-button-tooltip'}
+                  data-tooltip-content="Unable to delete because the item is used in the document"
+                  data-tooltip-hidden={showDelete}
                   onClick={() => setShowDeleteDialog(true)}
                 >
                   <DeleteIcon />
                 </DeleteButton>
-                <Tooltip id="delete-button-tooltip" place="bottom">
-                  Unable to delete because the item is used in the document
-                </Tooltip>
               </ButtonGroup>
               <ButtonGroup>
                 <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
