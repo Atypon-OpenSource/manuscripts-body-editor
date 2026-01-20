@@ -15,6 +15,7 @@
  */
 
 import {
+  DeleteIcon,
   FormContainer,
   FormRow,
   Label,
@@ -40,6 +41,17 @@ const ActionGroup = styled.span`
 
   button:not(:last-of-type) {
     margin-right: 4px;
+  }
+`
+
+const RemoveButton = styled(SecondaryButton)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+
+  svg .icon_element {
+    fill: #6e6e6e;
   }
 `
 
@@ -91,7 +103,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   return (
     <form onSubmit={handleSubmit}>
       <FormContainer>
-        <FormRow>
+        <FormRow direction={'row'}>
           <Label>URL</Label>
 
           {href && allowedHref(href) && (
@@ -137,9 +149,10 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
         <Actions>
           <ActionGroup>
-            <SecondaryButton type={'button'}  onClick={onRemove}>
-              Remove Link
-          </SecondaryButton>
+            <RemoveButton type={'button'} onClick={onRemove}>
+              <DeleteIcon />
+              <span>Remove Link</span>
+            </RemoveButton>
           </ActionGroup>
 
           <ActionGroup>

@@ -18,15 +18,20 @@ import {
   CheckboxField,
   CheckboxLabel,
   TextField,
-  TextFieldGroupContainer,
-  TextFieldLabel,
+  InputErrorText,
   Label,
   FormRow,
-  FormLabel,
   LabelText,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
-import { Field, FieldProps, Formik, FormikProps } from 'formik'
+import {
+  Field,
+  FieldProps,
+  Formik,
+  FormikProps,
+  getIn,
+  FormikErrors,
+} from 'formik'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
@@ -102,6 +107,19 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     }
   }
 
+  const validateAuthor = (values: ContributorAttrs) => {
+    const errors: FormikErrors<ContributorAttrs> = {}
+    if (isEmailRequired && !values.email) {
+      errors.email = 'Email address is required'
+    } else if (
+      values.email &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)
+    ) {
+      errors.email = 'Invalid email address'
+    }
+    return errors
+  }
+
   return (
     <Formik<ContributorAttrs>
       initialValues={values}
@@ -109,103 +127,86 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       enableReinitialize={true}
       validateOnChange={true}
       innerRef={formRef}
+      validate={validateAuthor}
     >
-      {() => {
+      {(formik) => {
         return (
           <ChangeHandlingForm
             onChange={onChange}
             id="author-details-form"
             formRef={authorFormRef}
+            noValidate
           >
             <Fieldset>
-              <TextFieldGroupContainer>
-                <FormRow>
-                <Field name={'prefix'}>
-                    {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="prefix" className="sr-only">
-                        Prefix
-                      </Label>
-                      <TextField
-                        id={'prefix'}
-                        placeholder={'Prefix'}
-                        {...props.field}
-                      />
-                    </>
-                  )}
-                </Field>
-                </FormRow>
-                <FormRow>
-                  <Field name={'bibliographicName.given'}>
-                    {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="given-name" className="sr-only">
-                        Given name
-                      </Label>
-                      <TextField
-                        id={'given-name'}
-                        placeholder={'Given name'}
-                        {...props.field}
-                      />
-                    </>
-                  )}
-                </Field>
-                </FormRow>
-                <FormRow>
-                  <Field name={'bibliographicName.family'}>
-                    {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="family-name" className="sr-only">
-                        Family name
-                      </Label>
-                      <TextField
-                        id={'family-name'}
-                        placeholder={'Family name'}
-                        {...props.field}
-                      />
-                    </>
-                  )}
-                </Field>
-                </FormRow>
-              </TextFieldGroupContainer>
               <FormRow>
-              <Field name={'email'} type={'email'}>
-                  {(props: FieldProps) => {
-                  const placeholder = isEmailRequired
-                    ? '*Email address (required)'
-                    : 'Email address'
-                  return (
+                <Field name={'prefix'}>
+                  {(props: FieldProps) => (
                     <>
-                      <Label htmlFor="email" className="sr-only">
-                        Email address
-                      </Label>
-                      <TextFieldWithError
-                        id={'email'}
-                        type="email"
-                        required={isEmailRequired}
-                        placeholder={placeholder}
-                        {...props.field}
-                      />
+                      <Label htmlFor="prefix">Prefix</Label>
+                      <TextField id={'prefix'} {...props.field} />
                     </>
-                  )
-                }}
-              </Field>
+                  )}
+                </Field>
+              </FormRow>
+              <FormRow>
+                <Field name={'bibliographicName.given'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <Label htmlFor="given-name">Given name</Label>
+                      <TextField id={'given-name'} {...props.field} />
+                    </>
+                  )}
+                </Field>
+              </FormRow>
+              <FormRow>
+                <Field name={'bibliographicName.family'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <Label htmlFor="family-name">Family name</Label>
+                      <TextField id={'family-name'} {...props.field} />
+                    </>
+                  )}
+                </Field>
+              </FormRow>
+              <FormRow>
+                <Field name={'email'} type={'email'}>
+                  {(props: FieldProps) => {
+                    const hasError =
+                      getIn(formik.touched, 'email') &&
+                      getIn(formik.errors, 'email')
+                    return (
+                      <>
+                        <Label htmlFor="email">
+                          {isEmailRequired
+                            ? 'Email address (required)'
+                            : 'Email address'}
+                        </Label>
+                        <TextFieldWithError
+                          id={'email'}
+                          type="email"
+                          required={isEmailRequired}
+                          {...props.field}
+                          error={hasError}
+                        />
+                        {hasError && (
+                          <InputErrorText>
+                            {getIn(formik.errors, 'email')}
+                          </InputErrorText>
+                        )}
+                      </>
+                    )
+                  }}
+                </Field>
               </FormRow>
               <FormRow>
                 <Field name={'role'}>
                   {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="role" className="sr-only">
-                      Job Title
-                    </Label>
-                    <TextField
-                      id={'role'}
-                      placeholder={'Job Title'}
-                      {...props.field}
-                    />
-                  </>
-                )}
-              </Field>
+                    <>
+                      <Label htmlFor="role">Job Title</Label>
+                      <TextField id={'role'} {...props.field} />
+                    </>
+                  )}
+                </Field>
               </FormRow>
               <CheckboxContainer>
                 <CheckboxLabel>
@@ -223,25 +224,20 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </CheckboxContainer>
 
               <OrcidContainer>
-                <TextFieldLabel>
-                  <FormLabel>ORCID</FormLabel>
+                <FormRow>
+                  <Label htmlFor="orcid">ORCID</Label>
                   <Field name={'ORCIDIdentifier'} type={'text'}>
                     {(props: FieldProps) => (
-                      <>
-                        <Label htmlFor="orcid" className="sr-only">
-                          ORCID
-                        </Label>
-                        <TextField
-                          id={'orcid'}
-                          placeholder={'https://orcid.org/...'}
-                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
-                          title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                          {...props.field}
-                        />
-                      </>
+                      <TextField
+                        id={'orcid'}
+                        placeholder={'https://orcid.org/...'}
+                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
+                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                        {...props.field}
+                      />
                     )}
                   </Field>
-                </TextFieldLabel>
+                </FormRow>
               </OrcidContainer>
             </Fieldset>
           </ChangeHandlingForm>

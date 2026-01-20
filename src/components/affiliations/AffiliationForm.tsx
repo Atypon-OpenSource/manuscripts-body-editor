@@ -16,11 +16,12 @@
 import {
   FormLabel,
   FormRow,
+  InputErrorText,
   Label,
   TextArea,
   TextField,
 } from '@manuscripts/style-guide'
-import { Field, FieldProps, Formik, FormikProps } from 'formik'
+import { Field, FieldProps, Formik, FormikProps, FormikErrors } from 'formik'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
@@ -87,30 +88,50 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
     }
   }
   const formRef = useRef<FormikProps<AffiliationAttrs>>(null)
+  const validateAffiliation = (values: AffiliationAttrs) => {
+    const errors: FormikErrors<AffiliationAttrs> = {}
+    if (!values.institution?.trim()) {
+      errors.institution = 'Institution Name is required'
+    }
+    return errors
+  }
+
   return (
     <Formik<AffiliationAttrs>
       initialValues={values}
       onSubmit={onSave}
       innerRef={formRef}
       enableReinitialize={true}
+      validate={validateAffiliation}
     >
-      {() => (
-        <ChangeHandlingForm onChange={onChange} id="affiliation-form">
+      {(formik) => (
+        <ChangeHandlingForm
+          onChange={onChange}
+          id="affiliation-form"
+          noValidate
+        >
           <FormLabel>Institution*</FormLabel>
           <FormRow>
             <Field name="institution">
-              {(props: FieldProps) => (
-                <>
-                  <Label htmlFor="institution" className="sr-only">
-                    Institution Name
-                  </Label>
-                  <AffiliationsTextField
-                    id="institution"
-                    placeholder="Institution Name"
-                    {...props.field}
-                  />
-                </>
-              )}
+              {(props: FieldProps) => {
+                const hasError =
+                  formik.touched.institution && formik.errors.institution
+                return (
+                  <>
+                    <Label htmlFor="institution">Institution Name</Label>
+                    <AffiliationsTextField
+                      id="institution"
+                      {...props.field}
+                      error={hasError}
+                    />
+                    {hasError && (
+                      <InputErrorText>
+                        {formik.errors.institution as string}
+                      </InputErrorText>
+                    )}
+                  </>
+                )
+              }}
             </Field>
           </FormRow>
           <FormLabel>Details</FormLabel>
@@ -118,14 +139,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="department">
               {(props: FieldProps) => (
                 <>
-                  <Label htmlFor="department" className="sr-only">
-                    Department
-                  </Label>
-                  <DepartmentTextField
-                    id="department"
-                    placeholder="Department"
-                    {...props.field}
-                  />
+                  <Label htmlFor="department">Department</Label>
+                  <DepartmentTextField id="department" {...props.field} />
                 </>
               )}
             </Field>
@@ -134,14 +149,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="addressLine1">
               {(props: FieldProps) => (
                 <>
-                  <Label htmlFor="addressLine1" className="sr-only">
-                    Street Address
-                  </Label>
-                  <AffiliationsTextField
-                    id="addressLine1"
-                    placeholder="Street Address"
-                    {...props.field}
-                  />
+                  <Label htmlFor="addressLine1">Street Address</Label>
+                  <AffiliationsTextField id="addressLine1" {...props.field} />
                 </>
               )}
             </Field>
@@ -149,25 +158,17 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <FormRow>
             <Field name="city">
               {(props: FieldProps) => (
-                <MarginRightTextField
-                  id="city"
-                  placeholder="City"
-                  aria-label="City"
-                  {...props.field}
-                />
+                <>
+                  <Label htmlFor="city">City</Label>
+                  <MarginRightTextField id="city" {...props.field} />
+                </>
               )}
             </Field>
             <Field name="county">
               {(props: FieldProps) => (
                 <>
-                  <Label htmlFor="county" className="sr-only">
-                    State / Province
-                  </Label>
-                  <AffiliationsTextField
-                    id="county"
-                    placeholder="State / Province"
-                    {...props.field}
-                  />
+                  <Label htmlFor="county">State / Province</Label>
+                  <AffiliationsTextField id="county" {...props.field} />
                 </>
               )}
             </Field>
@@ -176,28 +177,16 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="postCode">
               {(props: FieldProps) => (
                 <>
-                  <Label htmlFor="postCode" className="sr-only">
-                    Postal Code
-                  </Label>
-                  <MarginRightTextField
-                    id="postCode"
-                    placeholder="Postal Code"
-                    {...props.field}
-                  />
+                  <Label htmlFor="postCode">Postal Code</Label>
+                  <MarginRightTextField id="postCode" {...props.field} />
                 </>
               )}
             </Field>
             <Field name="country">
               {({ field }: FieldProps) => (
                 <>
-                  <Label htmlFor="country" className="sr-only">
-                    Country
-                  </Label>
-                  <AffiliationsTextField
-                    id="country"
-                    placeholder="Country"
-                    {...field}
-                  />
+                  <Label htmlFor="country">Country</Label>
+                  <AffiliationsTextField id="country" {...field} />
                 </>
               )}
             </Field>
