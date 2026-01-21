@@ -21,6 +21,7 @@ import {
   DeleteKeywordDialog,
   DeleteKeywordDialogProps,
 } from '../components/keywords/DeleteKeywordDialog'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -57,12 +58,10 @@ export class KeywordView
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
     this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
-    this.dom.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        this.showConfirmationDialog()
-      }
-    })
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.showConfirmationDialog())
+    )
     this.contentDOM = document.createElement('span')
   }
 

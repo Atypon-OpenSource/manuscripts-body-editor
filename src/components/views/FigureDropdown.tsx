@@ -35,7 +35,10 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { getMediaTypeInfo } from '../../lib/get-media-type'
-import { focusNextElement } from '../../lib/navigation-utils'
+import {
+  handleArrowNavigation,
+  handleEnterKey,
+} from '../../lib/navigation-utils'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 // Custom hook for figure dropdown keyboard navigation
@@ -60,25 +63,24 @@ function useDropdownKeyboardNav(
     }
 
     // Add keyboard navigation
-    const handledKeys = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'Escape', 'Enter']
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement
-      const currentIndex = buttons.indexOf(target)
-      if (currentIndex === -1 || !handledKeys.includes(event.key)) {
-        return
-      }
+      // Handle arrow navigation (ArrowDown/ArrowUp)
+      handleArrowNavigation(event, buttons, target, {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
+      })
 
-      event.preventDefault()
-      if (event.key === 'ArrowDown') {
-        focusNextElement(buttons, currentIndex, 'forward')
-      } else if (event.key === 'ArrowUp') {
-        focusNextElement(buttons, currentIndex, 'backward')
-      } else if (event.key === 'ArrowLeft' && onArrowLeft) {
+      // Handle Enter key
+      handleEnterKey(() => target.click())(event)
+
+      // Handle other keys
+      if (event.key === 'ArrowLeft' && onArrowLeft) {
+        event.preventDefault()
         onArrowLeft()
       } else if (event.key === 'Escape') {
+        event.preventDefault()
         onEscape()
-      } else if (event.key === 'Enter') {
-        target.click()
       }
     }
 

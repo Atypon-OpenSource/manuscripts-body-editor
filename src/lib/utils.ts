@@ -39,6 +39,7 @@ import {
 
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
+import { handleEnterKey } from './navigation-utils'
 import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
@@ -240,11 +241,7 @@ export const createToggleButton = (listener: () => void, what: string) => {
   altTitlesButton.addEventListener('click', (e) => {
     activate(e)
   })
-  altTitlesButton.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      activate(e)
-    }
-  })
+  altTitlesButton.addEventListener('keydown', handleEnterKey(activate))
   return altTitlesButton
 }
 

@@ -33,6 +33,7 @@ import {
 } from '../components/references/CitationViewer'
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
@@ -54,12 +55,10 @@ export class CitationEditableView extends CitationView {
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
-    this.dom.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.handleClick()
-      }
-    })
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.handleClick())
+    )
   }
 
   // we added this to stop select events in case th e user clicks on the comment,

@@ -19,6 +19,7 @@ import { Node } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
 import { addAuthorIcon } from '../icons'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { createNodeView } from './creators'
 import { FigureEditableView } from './figure_editable'
 import { ImageElementView } from './image_element'
@@ -62,12 +63,10 @@ export class FigureElementView extends ImageElementView {
         title: 'Add figure',
       })
       this.addFigureBtn.addEventListener('click', () => this.addFigure())
-      this.addFigureBtn.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          this.addFigure()
-        }
-      })
+      this.addFigureBtn.addEventListener(
+        'keydown',
+        handleEnterKey(() => this.addFigure())
+      )
       this.addFigureBtn.tabIndex = 0
       this.container.prepend(this.addFigureBtn)
     }

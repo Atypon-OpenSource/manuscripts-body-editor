@@ -29,7 +29,7 @@ import {
 import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
-import { focusNextElement } from './navigation-utils'
+import { handleArrowNavigation, handleEnterKey } from './navigation-utils'
 import { findChildrenByType } from 'prosemirror-utils'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -464,12 +464,7 @@ export class ContextMenu {
       handler(event)
     })
 
-    item.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        handler(event)
-      }
-    })
+    item.addEventListener('keydown', handleEnterKey(handler))
 
     this.menuItems.push(item)
 
@@ -641,21 +636,16 @@ export class ContextMenu {
         return
       }
 
-      if (key === 'ArrowDown' || key === 'ArrowUp') {
-        keyEvent.preventDefault()
-        if (this.menuItems.length === 0) {
-          return
+      // Handle arrow navigation (ArrowDown/ArrowUp)
+      handleArrowNavigation(
+        keyEvent,
+        this.menuItems,
+        document.activeElement as HTMLElement,
+        {
+          forward: 'ArrowDown',
+          backward: 'ArrowUp',
         }
-        const currentIndex = this.menuItems.findIndex(
-          (item) => item === document.activeElement
-        )
-        if (currentIndex === -1) {
-          return
-        }
-
-        const direction = key === 'ArrowDown' ? 'forward' : 'backward'
-        focusNextElement(this.menuItems, currentIndex, direction)
-      }
+      )
     }
 
     window.addEventListener('mousedown', mouseListener)

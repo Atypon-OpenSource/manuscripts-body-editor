@@ -31,3 +31,45 @@ export function focusNextElement(
   nextElement?.focus()
 }
 
+/**
+ * Creates a keydown handler that triggers an action when Enter key is pressed.
+ * Automatically prevents default behavior.
+ */
+export function handleEnterKey(action: (event: KeyboardEvent) => void) {
+  return (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      action(event)
+    }
+  }
+}
+
+// Handles arrow key navigation between elements.
+export function handleArrowNavigation(
+  event: KeyboardEvent,
+  elements: HTMLElement[],
+  currentElement: HTMLElement,
+  keys: {
+    forward: 'ArrowDown' | 'ArrowRight'
+    backward: 'ArrowUp' | 'ArrowLeft'
+  }
+): void {
+  const { forward, backward } = keys
+  if (event.key !== forward && event.key !== backward) {
+    return
+  }
+
+  event.preventDefault()
+  if (elements.length === 0) {
+    return
+  }
+  const currentIndex = elements.indexOf(currentElement)
+  if (currentIndex === -1) {
+    // Focus first element when current element not found
+    elements[0]?.focus()
+    return
+  }
+
+  const direction = event.key === forward ? 'forward' : 'backward'
+  focusNextElement(elements, currentIndex, direction)
+}
