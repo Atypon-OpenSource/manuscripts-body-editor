@@ -85,7 +85,8 @@ export class PopperManager {
       // only if popper has class 'context-menu'
       if (
         contents.classList.contains('context-menu') ||
-        contents.classList.contains('language')
+        contents.classList.contains('language') ||
+        contents.classList.contains('section-category')
       ) {
         window.addEventListener('click', this.handleDocumentClick)
       }
