@@ -17,7 +17,7 @@
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { focusNextElement } from '../lib/navigation-utils'
+import { handleArrowNavigation } from '../lib/navigation-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -44,35 +44,36 @@ export class AltTitleView
     this.contentDOM.tabIndex = this.node.attrs.type === 'running' ? 0 : -1
 
     // Keyboard navigation
-    this.contentDOM.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        // Place cursor at the start of this alt title's content
-        const pos = this.getPos()
-        if (typeof pos === 'number') {
-          const cursorPos = pos + 1
-          const tr = this.view.state.tr.setSelection(
-            TextSelection.create(this.view.state.doc, cursorPos)
-          )
-          this.view.dispatch(tr)
-          this.view.focus()
-        }
-      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault()
-
-        const allAltTitles = Array.from(
-          this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
-        )
-
-        const currentIndex = allAltTitles.indexOf(this.contentDOM)
-        const direction = e.key === 'ArrowDown' ? 'forward' : 'backward'
-        focusNextElement(allAltTitles, currentIndex, direction)
-      }
-    })
+    this.contentDOM.addEventListener('keydown', this.handleKeydown)
 
     this.dom.appendChild(label)
     this.dom.appendChild(this.contentDOM)
     this.updateContents()
+  }
+
+  private handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      // Place cursor at the start of this alt title's content
+      const pos = this.getPos()
+      if (typeof pos === 'number') {
+        const cursorPos = pos + 1
+        const tr = this.view.state.tr.setSelection(
+          TextSelection.create(this.view.state.doc, cursorPos)
+        )
+        this.view.dispatch(tr)
+        this.view.focus()
+      }
+    } else {
+      const allAltTitles = Array.from(
+        this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
+      )
+
+      handleArrowNavigation(e, allAltTitles, this.contentDOM, {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
+      })
+    }
   }
 }
 

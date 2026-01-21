@@ -29,7 +29,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { sectionCategoryIcon } from '../icons'
-import { focusNextElement } from '../lib/navigation-utils'
+import { handleArrowNavigation, handleEnterKey } from '../lib/navigation-utils'
 
 export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 
@@ -76,13 +76,13 @@ const createMenuItem = (
     handler(event)
     props.popper.destroy()
   })
-  item.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
+  item.addEventListener(
+    'keydown',
+    handleEnterKey((event) => {
       handler(event)
       props.popper.destroy()
-    }
-  })
+    })
+  )
   return item
 }
 
@@ -111,21 +111,16 @@ const createMenu = (
 
   // Arrow key navigation for menu items
   const handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (menuItems.length === 0) {
-        return
+    // Handle arrow navigation (ArrowDown/ArrowUp)
+    handleArrowNavigation(
+      event,
+      menuItems,
+      document.activeElement as HTMLElement,
+      {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
       }
-      const currentIndex = menuItems.findIndex(
-        (item) => item === document.activeElement
-      )
-      if (currentIndex === -1) {
-        menuItems[0]?.focus()
-        return
-      }
-      const direction = event.key === 'ArrowDown' ? 'forward' : 'backward'
-      focusNextElement(menuItems, currentIndex, direction)
-    }
+    )
   }
   document.addEventListener('keydown', handleKeydown)
 

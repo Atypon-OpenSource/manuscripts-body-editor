@@ -23,6 +23,7 @@ import { altTitlesKey } from '../plugins/alt-titles'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 export class AltTitleSectionView extends BlockView<
   Trackable<AltTitlesSectionNode>
@@ -84,12 +85,10 @@ export class AltTitleSectionView extends BlockView<
       handleCollapse()
     })
 
-    button.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        handleCollapse()
-      }
-    })
+    button.addEventListener(
+      'keydown',
+      handleEnterKey(() => handleCollapse())
+    )
     closingPanel.appendChild(button)
     return closingPanel
   }

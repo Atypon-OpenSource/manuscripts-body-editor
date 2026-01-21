@@ -29,7 +29,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
-import { focusNextElement } from '../lib/navigation-utils'
+import { handleArrowNavigation } from '../lib/navigation-utils'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -97,32 +97,27 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const can = this.props.getCapabilities()
     if (can.editMetadata) {
       wrapper.addEventListener('click', this.handleClick)
-      wrapper.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault()
-          this.handleClick(e)
+      wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
+        const target = event.target as Element
+        if (!target.classList.contains('contributor')) {
+          return
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault()
+          this.handleClick(event)
+        } else {
+          const contributors = Array.from(
+            wrapper.querySelectorAll('.contributor')
+          ) as HTMLElement[]
+
+          handleArrowNavigation(event, contributors, target as HTMLElement, {
+            forward: 'ArrowRight',
+            backward: 'ArrowLeft',
+          })
         }
       })
     }
-
-    wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
-      const target = event.target as Element
-      if (!target.classList.contains('contributor')) {
-        return
-      }
-
-      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-        event.preventDefault()
-
-        const contributors = Array.from(
-          wrapper.querySelectorAll('.contributor')
-        ) as HTMLElement[]
-
-        const currentIndex = contributors.indexOf(target as HTMLElement)
-        const direction = event.key === 'ArrowRight' ? 'forward' : 'backward'
-        focusNextElement(contributors, currentIndex, direction)
-      }
-    })
 
     const authors = affs.contributors
 
