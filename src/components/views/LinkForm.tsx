@@ -22,6 +22,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   TextField,
+  InputErrorText,
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -91,34 +92,52 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   const [href, setHref] = useState(value.href)
   const [text, setText] = useState(value.text)
   const [title, setTitle] = useState(value.title || '')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const validate = useCallback(() => {
+    const newErrors: Record<string, string> = {}
+    if (!href) {
+      newErrors.href = 'URL is required'
+    } else if (!allowedHref(href)) {
+      newErrors.href = 'Please enter a valid URL'
+    }
+    if (!text) {
+      newErrors.text = 'Text is required'
+    }
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }, [href, text])
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      onSave({ href, text, title })
+      if (validate()) {
+        onSave({ href, text, title })
+      }
     },
-    [href, text, title, onSave]
+    [href, text, title, onSave, validate]
   )
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} noValidate={true}>
       <FormContainer>
-        <FormRow direction={'row'}>
-          <Label>URL</Label>
+        <FormRow>
+          <Label>URL*</Label>
+
+          <TextField
+            type={'text'}
+            name={'href'}
+            value={href}
+            autoComplete={'off'}
+            error={!!errors.href}
+            onChange={(e) => setHref(e.target.value)}
+          />
+
+          {errors.href && <InputErrorText>{errors.href}</InputErrorText>}
 
           {href && allowedHref(href) && (
             <Open href={href} target={'_blank'} rel={'noopener'} />
           )}
-
-          <TextField
-            type={'url'}
-          name={'href'}
-          value={href}
-          autoComplete={'off'}
-          autoFocus={true}
-          required={true}
-          onChange={(e) => setHref(e.target.value)}
-        />
         </FormRow>
 
         <FormRow>
@@ -126,12 +145,13 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
           <TextField
             type={'text'}
-          name={'text'}
-          value={text}
-          autoComplete={'off'}
-          required={true}
-          onChange={(e) => setText(e.target.value)}
-        />
+            name={'text'}
+            value={text}
+            autoComplete={'off'}
+            error={!!errors.text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          {errors.text && <InputErrorText>{errors.text}</InputErrorText>}
         </FormRow>
 
         <FormRow>
@@ -139,12 +159,12 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
           <TextField
             type={'text'}
-          name={'title'}
-          value={title}
-          autoComplete={'off'}
-          required={false}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+            name={'title'}
+            value={title}
+            autoComplete={'off'}
+            required={false}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </FormRow>
 
         <Actions>

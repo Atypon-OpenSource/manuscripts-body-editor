@@ -84,9 +84,9 @@ export const Section = styled.section`
   overflow: hidden;
 `
 
-export const PersonForm = styled(Section)`
-  margin: ${(props) => props.theme.grid.unit * 3}px;
-  padding: ${(props) => props.theme.grid.unit * 4}px;
+export const PersonForm = styled.div`
+  padding: ${(props) => props.theme.grid.unit * 4}px
+    ${(props) => props.theme.grid.unit * 4}px;
 
   & > div:last-child {
     margin-bottom: 0;
