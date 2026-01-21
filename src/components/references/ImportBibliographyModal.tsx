@@ -17,7 +17,8 @@ import {
   CloseButton,
   ModalContainer,
   ModalHeader,
-  StyledModal, Tooltip,
+  StyledModal,
+  Tooltip,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useState } from 'react'
@@ -100,24 +101,45 @@ export const ImportBibliographyModal: React.FC<
             <SpanWithExample
               data-tooltip-id="import-example-tooltip"
               data-tooltip-content={exampleBibtex}
-              data-tool
             >
               BibTex
             </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="import-example-tooltip" data-tooltip-content={examplePubmed}>
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={examplePubmed}
+            >
               PubMed
             </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="import-example-tooltip" data-tooltip-content={exampleRis}>RIS</SpanWithExample>
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleRis}
+            >
+              RIS
+            </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="import-example-tooltip" data-tooltip-content={exampleEnw}>ENW</SpanWithExample>{' '}
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleEnw}
+            >
+              ENW
+            </SpanWithExample>{' '}
             and{' '}
-            <SpanWithExample data-tooltip-id="import-example-tooltip" data-tooltip-content={exampleDoi}>DOI</SpanWithExample>{' '}
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleDoi}
+            >
+              DOI
+            </SpanWithExample>{' '}
             formats are supported
           </p>
           <ImportBibliographyForm onCancel={handleCancel} onSave={handleSave} />
-          <Example id="import-example-tooltip" place="bottom" render={(s) => (<pre>{s.content}</pre>)} />
+          <Example
+            id="import-example-tooltip"
+            place="bottom"
+            render={(s) => <pre>{s.content}</pre>}
+          />
         </ModalBody>
       </ModalContainer>
     </StyledModal>
