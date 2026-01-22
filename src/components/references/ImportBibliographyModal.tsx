@@ -103,7 +103,6 @@ export const ImportBibliographyModal: React.FC<
             <SpanWithExample
               data-tooltip-id="import-example-tooltip"
               data-tooltip-content={exampleBibtex}
-              data-tool
             >
               BibTex
             </SpanWithExample>

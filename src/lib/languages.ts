@@ -20,29 +20,18 @@ export interface Language {
   nativeName: string
 }
 
-export const ENGLISH_FALLBACK = {
+const ENGLISH = {
   code: 'en',
   name: 'English',
   nativeName: 'English',
 }
 
-export const getSelectedLanguageName = (
-  selectedLanguage: string,
-  allLanguages: Array<{ code: string; name: string; nativeName?: string }>
-) => {
-  if (!allLanguages.length) {
-    return 'English (Default)'
-  }
+export const getLanguage = (code: string, languages: Language[]) => {
+  return languages.find((l) => l.code === code) || ENGLISH
+}
 
-  const language =
-    allLanguages.find((lang) => lang.code === selectedLanguage) ||
-    ENGLISH_FALLBACK
-
+export const getLanguageLabel = (language: Language) => {
   return language.nativeName && language.nativeName !== language.name
     ? `${language.name} (${language.nativeName})`
     : language.name
-}
-
-export const getLanguageDisplayName = (languageCode: string): string => {
-  return languageCode.toUpperCase()
 }

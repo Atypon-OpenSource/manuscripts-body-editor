@@ -46,7 +46,7 @@ export default (props: EditorProps) =>
           return value
         }
         return buildPluginState(newState, props)
-      }
+      },
     },
     props: {
       decorations: (state) =>
