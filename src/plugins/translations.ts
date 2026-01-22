@@ -23,6 +23,7 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
 import { templateAllows } from '../lib/template'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 const createMenuItem = (
   props: EditorProps,
@@ -96,11 +97,12 @@ export default (props: EditorProps) =>
               widgets.push(
                 Decoration.widget(pos + 1, (view) => {
                   const $span = document.createElement('span')
+                  $span.tabIndex = 0
                   $span.className = 'add-trans-abstract'
                   $span.title = 'Add translation'
                   $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
 
-                  $span.addEventListener('mousedown', (event) => {
+                  const handleActivate = (event: Event) => {
                     event.preventDefault()
                     event.stopPropagation()
                     if (isGraphical && category) {
@@ -116,7 +118,13 @@ export default (props: EditorProps) =>
                         pos + node.nodeSize
                       )
                     }
-                  })
+                  }
+
+                  $span.addEventListener('mousedown', handleActivate)
+                  $span.addEventListener(
+                    'keydown',
+                    handleEnterKey(handleActivate)
+                  )
                   return $span
                 })
               )
