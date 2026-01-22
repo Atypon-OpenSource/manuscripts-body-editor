@@ -198,39 +198,36 @@ const buildPluginState = (
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (node.type === schema.nodes.section_title) {
+    if (isSectionNode(node)) {
+      const categoryID = node.attrs.category
+      const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
-      const parentSection = $pos.parent
+      const group = getGroup($pos)
+      const groupCategories = getGroupCategories(categories, group)
 
-      if (isSectionNode(parentSection)) {
-        const categoryID = parentSection.attrs.category
-        const category = categories.get(categoryID)
-        const group = getGroup($pos)
-        const groupCategories = getGroupCategories(categories, group)
-        const numOptions = groupCategories.length
+      const numOptions = groupCategories.length
 
-        const shouldShow = !!category || (canEdit && numOptions >= 2)
+      const shouldShow = !!category || (canEdit && numOptions >= 2)
 
-        if (shouldShow) {
-          const isEditable = canEdit && numOptions >= 2
+      if (shouldShow) {
+        const isEditable = canEdit && numOptions >= 2
 
-          decorations.push(
-            Decoration.widget(pos + 1, (view) =>
-              createButton(
-                props,
-                view,
-                pos,
-                category,
-                groupCategories,
-                usedCategoryIDs,
-                isEditable,
-                categories.size === 0
-              )
+        decorations.push(
+          Decoration.widget(pos + 1, (view) =>
+            createButton(
+              props,
+              view,
+              pos,
+              category,
+              groupCategories,
+              usedCategoryIDs,
+              isEditable,
+              categories.size === 0
             )
           )
-        }
-        return false
+        )
       }
+      return false
     }
   })
 

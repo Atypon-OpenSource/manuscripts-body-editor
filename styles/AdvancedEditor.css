@@ -1866,6 +1866,8 @@ th:hover > .table-context-menu-button,
 .ProseMirror .block-figure_element .add-button {
   left: 53px;
   position: absolute;
+  width: 25px;
+  height: 25px;
 }
 
 .ProseMirror .add-button svg rect {
@@ -1921,10 +1923,6 @@ th:hover > .table-context-menu-button,
   outline-offset: var(--focus-outline-offset);
 }
 
-.ProseMirror .abstracts .add-translation-container .add-button svg {
-  width: 10px;
-  height: 8px;
-}
 .ProseMirror .block-trans_abstract .language-selector-btn {
   display: flex;
   position: absolute;
@@ -1971,7 +1969,7 @@ th:hover > .table-context-menu-button,
   display: none;
 }
 
-.add-translation-container:focus-within {
+.add-trans-abstract:focus-visible {
   outline: 4px solid var(--focus-outline-color);
   outline-offset: -2px;
   border-radius: var(--focus-outline-radius);
