@@ -124,11 +124,6 @@ const createMenu = (
   }
   document.addEventListener('keydown', handleKeydown)
 
-  // Focus the first menu item when menu opens
-  window.requestAnimationFrame(() => {
-    menuItems[0]?.focus()
-  })
-
   return menu
 }
 
@@ -171,12 +166,11 @@ const createButton = (
   } else if (canEdit) {
     button.addEventListener('click', openMenu)
     button.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        openMenu()
-      } else if (e.key === 'Escape') {
+      if (e.key === 'Escape') {
         e.preventDefault()
         props.popper.destroy()
+      } else {
+        handleEnterKey(() => openMenu())(e)
       }
     })
   }
