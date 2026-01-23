@@ -23,21 +23,27 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
 import { templateAllows } from '../lib/template'
-import { handleEnterKey } from '../lib/navigation-utils'
+import { handleArrowNavigation, handleEnterKey } from '../lib/navigation-utils'
 
 const createMenuItem = (
   props: EditorProps,
   contents: string,
   handler: EventListener,
-  isSelected = false
+  isSelected = false,
+  tabIndex: number
 ) => {
   const item = document.createElement('div')
   item.className = `menu-item ${isSelected ? 'selected' : ''}`
   item.textContent = contents
-  item.addEventListener('mousedown', (event) => {
+  item.tabIndex = tabIndex
+
+  const handleActivate = (event: Event) => {
     handler(event)
     props.popper.destroy()
-  })
+  }
+
+  item.addEventListener('mousedown', handleActivate)
+  item.addEventListener('keydown', handleEnterKey(handleActivate))
   return item
 }
 
@@ -48,15 +54,31 @@ const createLanguageMenu = (
 ) => {
   const menu = document.createElement('div')
   menu.className = 'language menu'
-  props.languages.forEach((language) => {
+  const menuItems: HTMLElement[] = []
+
+  props.languages.forEach((language, index) => {
     const item = createMenuItem(
       props,
       getLanguageLabel(language),
-      () => onSelect(language.code),
-      selectedCode === language.code
+      () => {
+        onSelect(language.code)
+      },
+      selectedCode === language.code,
+      index === 0 ? 0 : -1
     )
+    menuItems.push(item)
     menu.appendChild(item)
   })
+
+  // Arrow key navigation for menu items
+  const handleKeydown = (event: KeyboardEvent) => {
+    handleArrowNavigation(event, menuItems, event.target as HTMLElement, {
+      forward: 'ArrowDown',
+      backward: 'ArrowUp',
+    })
+  }
+  document.addEventListener('keydown', handleKeydown)
+
   return menu
 }
 
@@ -148,6 +170,7 @@ export default (props: EditorProps) =>
                 $btn.className = 'language-selector-btn'
                 $btn.setAttribute('data-cy', 'language-selector-btn')
                 $btn.contentEditable = 'false'
+                $btn.tabIndex = canEdit ? 0 : -1
 
                 const code = node.attrs.lang || 'en'
                 const lang = getLanguage(code, props.languages)
@@ -155,7 +178,7 @@ export default (props: EditorProps) =>
                 $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
 
                 if (canEdit) {
-                  $btn.addEventListener('mousedown', (event) => {
+                  const handleOpenMenu = (event: Event) => {
                     event.preventDefault()
                     event.stopPropagation()
 
@@ -173,7 +196,19 @@ export default (props: EditorProps) =>
                     const menu = createLanguageMenu(props, code, handleSelect)
 
                     props.popper.show($btn, menu, 'bottom-end', false)
-                  })
+                  }
+
+                  const handleKeydown = (e: KeyboardEvent) => {
+                    if (e.key === 'Escape') {
+                      e.preventDefault()
+                      props.popper.destroy()
+                    } else {
+                      handleEnterKey(handleOpenMenu)(e)
+                    }
+                  }
+
+                  $btn.addEventListener('mousedown', handleOpenMenu)
+                  $btn.addEventListener('keydown', handleKeydown)
                 }
 
                 return $btn

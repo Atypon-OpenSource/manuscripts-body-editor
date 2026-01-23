@@ -1989,6 +1989,12 @@ th:hover > .table-context-menu-button,
   border-radius: var(--focus-outline-radius);
 }
 
+.language-selector-btn:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: 4px;
+  border-radius: var(--focus-outline-radius);
+}
+
 .ProseMirror .icon-button {
   display: flex;
   align-items: center;
