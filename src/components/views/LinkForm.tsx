@@ -94,24 +94,46 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   const [title, setTitle] = useState(value.title || '')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const validate = useCallback(() => {
+  const validate = useCallback((currentHref: string, currentText: string) => {
     const newErrors: Record<string, string> = {}
-    if (!href) {
+    if (!currentHref) {
       newErrors.href = 'URL is required'
-    } else if (!allowedHref(href)) {
+    } else if (!allowedHref(currentHref)) {
       newErrors.href = 'Please enter a valid URL'
     }
-    if (!text) {
+    if (!currentText) {
       newErrors.text = 'Text is required'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
-  }, [href, text])
+  }, [])
+
+  const handleHrefChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value
+      setHref(newValue)
+      if (errors.href) {
+        validate(newValue, text)
+      }
+    },
+    [errors.href, text, validate]
+  )
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value
+      setText(newValue)
+      if (errors.text) {
+        validate(href, newValue)
+      }
+    },
+    [errors.text, href, validate]
+  )
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      if (validate()) {
+      if (validate(href, text)) {
         onSave({ href, text, title })
       }
     },
@@ -122,7 +144,12 @@ export const LinkForm: React.FC<LinkFormProps> = ({
     <form onSubmit={handleSubmit} noValidate={true}>
       <FormContainer>
         <FormRow>
-          <Label>URL*</Label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Label>URL*</Label>
+            {href && allowedHref(href) && (
+              <Open href={href} target={'_blank'} rel={'noopener'} />
+            )}
+          </div>
 
           <TextField
             type={'text'}
@@ -130,14 +157,10 @@ export const LinkForm: React.FC<LinkFormProps> = ({
             value={href}
             autoComplete={'off'}
             error={!!errors.href}
-            onChange={(e) => setHref(e.target.value)}
+            onChange={handleHrefChange}
           />
 
           {errors.href && <InputErrorText>{errors.href}</InputErrorText>}
-
-          {href && allowedHref(href) && (
-            <Open href={href} target={'_blank'} rel={'noopener'} />
-          )}
         </FormRow>
 
         <FormRow>
@@ -149,7 +172,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
             value={text}
             autoComplete={'off'}
             error={!!errors.text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleTextChange}
           />
           {errors.text && <InputErrorText>{errors.text}</InputErrorText>}
         </FormRow>
