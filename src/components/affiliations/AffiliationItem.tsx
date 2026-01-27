@@ -140,10 +140,7 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
         />
       )}
       {isSelected && (
-        <RemoveButton
-          onClick={() => onDelete()}
-          data-tooltip-content="Delete"
-        >
+        <RemoveButton onClick={() => onDelete()} data-tooltip-content="Delete">
           <DeleteIcon fill={'#6E6E6E'} />
         </RemoveButton>
       )}

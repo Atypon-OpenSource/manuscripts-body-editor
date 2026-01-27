@@ -56,7 +56,6 @@ export class SectionView extends BlockView<SectionNode> {
     })
   }
 
-
   public destroy() {
     super.destroy()
   }
