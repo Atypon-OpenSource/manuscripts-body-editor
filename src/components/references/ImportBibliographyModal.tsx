@@ -38,9 +38,11 @@ const exampleBibtex = `@book{abramowitz+stegun,
  address   = "New York City",
  edition   = "ninth Dover printing, tenth GPO printing"
 }`
+
 const examplePubmed = `Example Identifiers:
 pmid:17170128
 PMC1852221`
+
 const exampleRis = `TY  - JOUR
 AU  - Shannon, Claude E.
 PY  - 1948
@@ -51,6 +53,7 @@ SP  - 379
 EP  - 423
 VL  - 27
 ER  - `
+
 const exampleEnw = `%0 Journal Article
 %D 2018
 %@ 0903-4641
@@ -66,6 +69,7 @@ const exampleEnw = `%0 Journal Article
 %U https://onlinelibrary.wiley.com/doi/abs/10.1111/apm.12778
 %V 126
 %X Lorem ipsum dolor sit amet`
+
 const exampleDoi = `Example DOI Identifiers:
 10.1080/15588742.2015.1017684
 http://dx.doi.org/10.1080/15588742.2015.1017684`
@@ -94,47 +98,48 @@ export const ImportBibliographyModal: React.FC<
         <ModalBody>
           <ModalTitle>Import Bibliography</ModalTitle>
           <p>
-            <SpanWithExample data-tooltip-id="example_bibtex">
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleBibtex}
+            >
               BibTex
             </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="example_pubmed">
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={examplePubmed}
+            >
               PubMed
             </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="example_ris">RIS</SpanWithExample>
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleRis}
+            >
+              RIS
+            </SpanWithExample>
             ,{' '}
-            <SpanWithExample data-tooltip-id="example_enw">ENW</SpanWithExample>{' '}
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleEnw}
+            >
+              ENW
+            </SpanWithExample>{' '}
             and{' '}
-            <SpanWithExample data-tooltip-id="example_doi">DOI</SpanWithExample>{' '}
+            <SpanWithExample
+              data-tooltip-id="import-example-tooltip"
+              data-tooltip-content={exampleDoi}
+            >
+              DOI
+            </SpanWithExample>{' '}
             formats are supported
           </p>
           <ImportBibliographyForm onCancel={handleCancel} onSave={handleSave} />
-          <Example id="example_bibtex" place="bottom">
-            <div>
-              <pre>{exampleBibtex}</pre>
-            </div>
-          </Example>
-          <Example id="example_pubmed" place="bottom">
-            <div>
-              <pre>{examplePubmed}</pre>
-            </div>
-          </Example>
-          <Example id="example_ris" place="bottom">
-            <div>
-              <pre>{exampleRis}</pre>
-            </div>
-          </Example>
-          <Example id="example_enw" place="bottom">
-            <div>
-              <pre>{exampleEnw}</pre>
-            </div>
-          </Example>
-          <Example id="example_doi" place="bottom">
-            <div>
-              <pre>{exampleDoi}</pre>
-            </div>
-          </Example>
+          <Example
+            id="import-example-tooltip"
+            place="bottom"
+            render={(s) => <pre>{s.content}</pre>}
+          />
         </ModalBody>
       </ModalContainer>
     </StyledModal>

@@ -252,9 +252,7 @@ export const getEditorMenus = (
         label: 'Author Notes',
         isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
-        isHidden:
-          !templateAllows(state, schema.nodes.author_notes) ||
-          !categories.length,
+        isHidden: !categories.length,
       },
       {
         id: 'insert-section',
