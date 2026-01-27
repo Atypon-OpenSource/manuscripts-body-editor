@@ -65,7 +65,6 @@ export class PopperManager {
           Escape: closeAndRestoreFocus,
           Tab: closeAndRestoreFocus,
         },
-        attachToDocument: false,
       })
 
       if (showArrow) {

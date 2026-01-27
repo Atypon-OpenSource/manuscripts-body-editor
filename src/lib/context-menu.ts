@@ -642,7 +642,6 @@ export class ContextMenu {
             },
             getCurrentElement: () => document.activeElement as HTMLElement,
           },
-          attachToDocument: false,
         })
       }
 

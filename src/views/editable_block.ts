@@ -94,7 +94,6 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
             }
           },
         },
-        attachToDocument: false,
       })
 
       return button
@@ -130,7 +129,6 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
             }
           },
         },
-        attachToDocument: false,
       })
 
       return button

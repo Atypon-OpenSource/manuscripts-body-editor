@@ -115,7 +115,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
             this.handleClick(e)
           },
         },
-        attachToDocument: false,
       })
     }
 

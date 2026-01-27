@@ -98,19 +98,12 @@ export type KeyboardInteractionOptions = {
   navigation?: NavigationConfig
   /** Optional custom key handlers */
   additionalKeys?: KeyHandlers
-  /** Whether to attach listener to document (default) or container element */
-  attachToDocument?: boolean
 }
 
 export function createKeyboardInteraction(
   options: KeyboardInteractionOptions
 ): () => void {
-  const {
-    container,
-    additionalKeys,
-    navigation,
-    attachToDocument = true,
-  } = options
+  const { container, additionalKeys, navigation } = options
 
   const handleKeydown: EventListener = (event) => {
     const e = event as KeyboardEvent
@@ -145,10 +138,9 @@ export function createKeyboardInteraction(
     handleArrowNavigation(e, list, currentElement, arrowKeys)
   }
 
-  const target = attachToDocument ? document : container
-  target.addEventListener('keydown', handleKeydown)
+  container.addEventListener('keydown', handleKeydown)
 
   return () => {
-    target.removeEventListener('keydown', handleKeydown)
+    container.removeEventListener('keydown', handleKeydown)
   }
 }

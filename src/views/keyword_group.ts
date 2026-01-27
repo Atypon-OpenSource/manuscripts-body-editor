@@ -50,7 +50,6 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
           ),
         arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
       },
-      attachToDocument: false,
     })
 
     if (this.props.getCapabilities().editArticle) {

@@ -74,7 +74,6 @@ function useDropdownKeyboardNav(
         Escape: () => onEscape(),
         ...(onArrowLeft ? { ArrowLeft: () => onArrowLeft() } : {}),
       },
-      attachToDocument: false,
     })
 
     // Focus first button when dropdown opens
