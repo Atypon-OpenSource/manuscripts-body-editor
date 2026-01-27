@@ -20,6 +20,7 @@ import {
   Target,
 } from '@manuscripts/transform'
 
+import { handleEnterKey } from '../lib/navigation-utils'
 import { objectsKey } from '../plugins/objects'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -61,6 +62,12 @@ export class CrossReferenceView
   public createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.className = 'cross-reference'
+    this.dom.tabIndex = 0
+
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.handleClick())
+    )
   }
 }
 

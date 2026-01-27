@@ -28,6 +28,8 @@ import {
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
+
+import { handleEnterKey, createKeyboardInteraction } from './navigation-utils'
 import { findChildrenByType } from 'prosemirror-utils'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -83,6 +85,7 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
+  private menuItems: HTMLElement[] = []
 
   public constructor(
     node: ManuscriptNode,
@@ -95,6 +98,7 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
@@ -236,6 +240,7 @@ export class ContextMenu {
   }
 
   public showEditMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
 
@@ -442,6 +447,7 @@ export class ContextMenu {
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.setAttribute('tabindex', '0')
     selected && item.classList.add('selected')
     if (IconComponent) {
       if (typeof IconComponent === 'string') {
@@ -457,6 +463,10 @@ export class ContextMenu {
       event.preventDefault()
       handler(event)
     })
+
+    item.addEventListener('keydown', handleEnterKey(handler))
+
+    this.menuItems.push(item)
 
     return item
   }
@@ -616,15 +626,28 @@ export class ContextMenu {
       })
     }
 
-    const keyListener: EventListener = (event) => {
-      if ((event as KeyboardEvent).key === 'Escape') {
-        window.removeEventListener('keydown', keyListener)
-        popper.destroy()
-      }
-    }
-
     window.addEventListener('mousedown', mouseListener)
-    window.addEventListener('keydown', keyListener)
+
+    window.requestAnimationFrame(() => {
+      const popperContainer = popper.getContainer()
+      if (popperContainer) {
+        // Attach navigation listener to container - automatically removed when container is removed
+        createKeyboardInteraction({
+          container: popperContainer,
+          navigation: {
+            getItems: () => this.menuItems,
+            arrowKeys: {
+              forward: 'ArrowDown',
+              backward: 'ArrowUp',
+            },
+            getCurrentElement: () => document.activeElement as HTMLElement,
+          },
+        })
+      }
+
+      // Focus the first menu item when the menu opens
+      this.menuItems[0]?.focus()
+    })
   }
 
   private trimTitle = (title: string, max: number) => {
