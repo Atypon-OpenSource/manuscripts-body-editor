@@ -234,7 +234,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                         <TextField
                           id={'orcid'}
                           placeholder={'https://orcid.org/...'}
-                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
+                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]"
                           title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
                           {...props.field}
                         />
