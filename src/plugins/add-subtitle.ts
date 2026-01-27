@@ -19,6 +19,7 @@ import { Plugin, TextSelection } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
+import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon } from '../icons'
 import { findInsertionPosition } from '../lib/utils'
 
@@ -35,10 +36,15 @@ const createAddSubtitleButton = (handler: () => void) => {
   return button
 }
 
-export default () =>
+export default (props: EditorProps) =>
   new Plugin<null>({
     props: {
       decorations: (state) => {
+        const can = props.getCapabilities()
+        if (!can.editArticle) {
+          return DecorationSet.empty
+        }
+
         let titleHasContent = false
         let titlePos = -1
         let hasSubtitles = false
