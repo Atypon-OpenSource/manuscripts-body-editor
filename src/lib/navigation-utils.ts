@@ -73,3 +73,82 @@ export function handleArrowNavigation(
   const direction = event.key === forward ? 'forward' : 'backward'
   focusNextElement(elements, currentIndex, direction)
 }
+
+type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight'
+type SupportedKey = ArrowKey | 'Enter' | 'Escape' | 'Tab'
+
+type KeyHandlers = Partial<Record<SupportedKey, (event: KeyboardEvent) => void>>
+
+type NavigationConfig = {
+  /** Array of focusable items within the container */
+  getItems: () => HTMLElement[]
+  /** Arrow key configuration for navigation */
+  arrowKeys: {
+    forward: 'ArrowDown' | 'ArrowRight'
+    backward: 'ArrowUp' | 'ArrowLeft'
+  }
+  /** Optional override for the current focused element */
+  getCurrentElement?: (event: KeyboardEvent) => HTMLElement | null
+}
+
+export type KeyboardInteractionOptions = {
+  /** The container element (menu, dropdown, list, etc.) or window/document */
+  container: HTMLElement | Window | Document
+  /** Optional keyboard navigation capability (within items) */
+  navigation?: NavigationConfig
+  /** Optional custom key handlers */
+  additionalKeys?: KeyHandlers
+  /** Whether to attach listener to document (default) or container element */
+  attachToDocument?: boolean
+}
+
+export function createKeyboardInteraction(
+  options: KeyboardInteractionOptions
+): () => void {
+  const {
+    container,
+    additionalKeys,
+    navigation,
+    attachToDocument = true,
+  } = options
+
+  const handleKeydown: EventListener = (event) => {
+    const e = event as KeyboardEvent
+
+    const key = e.key as SupportedKey
+    const handler = additionalKeys?.[key]
+
+    if (handler) {
+      e.preventDefault()
+      handler(e)
+      return
+    }
+
+    // Handle navigation
+    if (!navigation) {
+      return
+    }
+    const { getItems, arrowKeys, getCurrentElement } = navigation
+
+    const currentElement = getCurrentElement
+      ? getCurrentElement(e)
+      : (e.target as HTMLElement)
+
+    if (!currentElement) {
+      return
+    }
+
+    const list = getItems()
+    if (!list.length) {
+      return
+    }
+    handleArrowNavigation(e, list, currentElement, arrowKeys)
+  }
+
+  const target = attachToDocument ? document : container
+  target.addEventListener('keydown', handleKeydown)
+
+  return () => {
+    target.removeEventListener('keydown', handleKeydown)
+  }
+}

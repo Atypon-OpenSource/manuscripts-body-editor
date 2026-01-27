@@ -29,7 +29,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
-import { handleArrowNavigation } from '../lib/navigation-utils'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -57,6 +57,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public ignoreMutation = () => true
   public stopEvent = () => true
+  private removeKeydownListener?: () => void
 
   public updateContents() {
     super.updateContents()
@@ -97,25 +98,24 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const can = this.props.getCapabilities()
     if (can.editMetadata) {
       wrapper.addEventListener('click', this.handleClick)
-      wrapper.addEventListener('keydown', (event: KeyboardEvent) => {
-        const target = event.target as Element
-        if (!target.classList.contains('contributor')) {
-          return
-        }
 
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          this.handleClick(event)
-        } else {
-          const contributors = Array.from(
-            wrapper.querySelectorAll('.contributor')
-          ) as HTMLElement[]
-
-          handleArrowNavigation(event, contributors, target as HTMLElement, {
-            forward: 'ArrowRight',
-            backward: 'ArrowLeft',
-          })
-        }
+      this.removeKeydownListener = createKeyboardInteraction({
+        container: wrapper,
+        navigation: {
+          getItems: () => {
+            return Array.from(
+              wrapper.querySelectorAll<HTMLElement>('.contributor')
+            )
+          },
+          arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
+        },
+        additionalKeys: {
+          Enter: (e) => {
+            e.preventDefault()
+            this.handleClick(e)
+          },
+        },
+        attachToDocument: false,
       })
     }
 
@@ -401,6 +401,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
+  }
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 

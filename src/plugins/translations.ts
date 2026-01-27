@@ -23,7 +23,10 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
 import { templateAllows } from '../lib/template'
-import { handleArrowNavigation, handleEnterKey } from '../lib/navigation-utils'
+import {
+  handleEnterKey,
+  createKeyboardInteraction,
+} from '../lib/navigation-utils'
 
 const createMenuItem = (
   props: EditorProps,
@@ -37,31 +40,44 @@ const createMenuItem = (
   item.textContent = contents
   item.tabIndex = tabIndex
 
-  const handleActivate = (event: Event) => {
-    handler(event)
-    props.popper.destroy()
-  }
-
-  item.addEventListener('mousedown', handleActivate)
-  item.addEventListener('keydown', handleEnterKey(handleActivate))
+  item.addEventListener('mousedown', handler)
+  item.addEventListener('keydown', handleEnterKey(handler))
   return item
 }
-
+interface MenuInstance {
+  menu: HTMLElement
+  destroy: () => void
+}
 const createLanguageMenu = (
   props: EditorProps,
   selectedCode: string,
   onSelect: (code: string) => void
-) => {
+): MenuInstance => {
   const menu = document.createElement('div')
   menu.className = 'language menu'
   const menuItems: HTMLElement[] = []
 
+  const removeKeydownListener = createKeyboardInteraction({
+    container: menu,
+    navigation: {
+      getItems: () => menuItems,
+      arrowKeys: {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
+      },
+    },
+  })
+  const destroy = () => {
+    removeKeydownListener()
+    props.popper.destroy()
+  }
   props.languages.forEach((language, index) => {
     const item = createMenuItem(
       props,
       getLanguageLabel(language),
       () => {
         onSelect(language.code)
+        destroy()
       },
       selectedCode === language.code,
       index === 0 ? 0 : -1
@@ -70,16 +86,7 @@ const createLanguageMenu = (
     menu.appendChild(item)
   })
 
-  // Arrow key navigation for menu items
-  const handleKeydown = (event: KeyboardEvent) => {
-    handleArrowNavigation(event, menuItems, event.target as HTMLElement, {
-      forward: 'ArrowDown',
-      backward: 'ArrowUp',
-    })
-  }
-  document.addEventListener('keydown', handleKeydown)
-
-  return menu
+  return { menu, destroy }
 }
 
 export default (props: EditorProps) =>
@@ -178,6 +185,7 @@ export default (props: EditorProps) =>
                 $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
 
                 if (canEdit) {
+                  let menuInstance: MenuInstance | null = null
                   const handleOpenMenu = (event: Event) => {
                     event.preventDefault()
                     event.stopPropagation()
@@ -193,22 +201,30 @@ export default (props: EditorProps) =>
                       view.dispatch(tr)
                     }
 
-                    const menu = createLanguageMenu(props, code, handleSelect)
+                    menuInstance = createLanguageMenu(props, code, handleSelect)
 
-                    props.popper.show($btn, menu, 'bottom-end', false)
+                    props.popper.show(
+                      $btn,
+                      menuInstance.menu,
+                      'bottom-end',
+                      false
+                    )
                   }
 
-                  const handleKeydown = (e: KeyboardEvent) => {
-                    if (e.key === 'Escape') {
-                      e.preventDefault()
-                      props.popper.destroy()
-                    } else {
-                      handleEnterKey(handleOpenMenu)(e)
-                    }
-                  }
+                  createKeyboardInteraction({
+                    container: $btn,
+                    additionalKeys: {
+                      Enter: handleOpenMenu,
+                      Escape: (e) => {
+                        e.preventDefault()
+                        menuInstance?.destroy()
+                        menuInstance = null
+                      },
+                    },
+                    attachToDocument: false,
+                  })
 
                   $btn.addEventListener('mousedown', handleOpenMenu)
-                  $btn.addEventListener('keydown', handleKeydown)
                 }
 
                 return $btn

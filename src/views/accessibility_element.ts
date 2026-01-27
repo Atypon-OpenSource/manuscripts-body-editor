@@ -16,11 +16,12 @@
 import { LongDescNode, schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { handleArrowNavigation } from '../lib/navigation-utils'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
   public contentDOM: HTMLElement
+  private removeKeydownListener?: () => void
 
   public initialise() {
     this.createDOM()
@@ -48,34 +49,38 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
 
     this.contentDOM.tabIndex = this.node.type === schema.nodes.alt_text ? 0 : -1
 
-    this.contentDOM.addEventListener('keydown', this.handleKeydown)
+    this.removeKeydownListener = createKeyboardInteraction({
+      container: this.contentDOM,
+      navigation: {
+        getItems: () => {
+          const parentEl = this.dom.parentElement
+          if (!parentEl) {
+            return []
+          }
+          return Array.from(
+            parentEl.querySelectorAll('.accessibility_element_input')
+          ) as HTMLElement[]
+        },
+        arrowKeys: { forward: 'ArrowDown', backward: 'ArrowUp' },
+        getCurrentElement: () => this.contentDOM,
+      },
+      additionalKeys: {
+        Enter: (e) => {
+          e.preventDefault()
+          const pos = this.getPos()
+          const tr = this.view.state.tr.setSelection(
+            TextSelection.create(this.view.state.doc, pos + 1)
+          )
+          this.view.dispatch(tr)
+          this.view.focus()
+        },
+      },
+      attachToDocument: false,
+    })
   }
-  private handleKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      // Place cursor at the start of the input
-      const pos = this.getPos()
-      const tr = this.view.state.tr.setSelection(
-        TextSelection.create(this.view.state.doc, pos + 1)
-      )
-      this.view.dispatch(tr)
-      this.view.focus()
-    } else {
-      // Handle arrow navigation (ArrowUp/ArrowDown)
-      const parentEl = this.dom.parentElement
-      if (!parentEl) {
-        return
-      }
-
-      const allInputs = Array.from(
-        parentEl.querySelectorAll('.accessibility_element_input')
-      ) as HTMLElement[]
-
-      handleArrowNavigation(event, allInputs, this.contentDOM, {
-        forward: 'ArrowDown',
-        backward: 'ArrowUp',
-      })
-    }
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 

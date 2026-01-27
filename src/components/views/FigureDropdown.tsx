@@ -35,10 +35,7 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { getMediaTypeInfo } from '../../lib/get-media-type'
-import {
-  handleArrowNavigation,
-  handleEnterKey,
-} from '../../lib/navigation-utils'
+import { createKeyboardInteraction } from '../../lib/navigation-utils'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
 
 // Custom hook for figure dropdown keyboard navigation
@@ -62,29 +59,23 @@ function useDropdownKeyboardNav(
       return
     }
 
-    // Add keyboard navigation
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement
-      // Handle arrow navigation (ArrowDown/ArrowUp)
-      handleArrowNavigation(event, buttons, target, {
-        forward: 'ArrowDown',
-        backward: 'ArrowUp',
-      })
-
-      // Handle Enter key
-      handleEnterKey(() => target.click())(event)
-
-      // Handle other keys
-      if (event.key === 'ArrowLeft' && onArrowLeft) {
-        event.preventDefault()
-        onArrowLeft()
-      } else if (event.key === 'Escape') {
-        event.preventDefault()
-        onEscape()
-      }
-    }
-
-    container.addEventListener('keydown', handleKeyDown)
+    const removeKeydownListener = createKeyboardInteraction({
+      container: container,
+      navigation: {
+        getItems: () =>
+          Array.from(container.querySelectorAll('button:not([disabled])')),
+        arrowKeys: {
+          forward: 'ArrowDown',
+          backward: 'ArrowUp',
+        },
+      },
+      additionalKeys: {
+        Enter: (e) => (e.target as HTMLElement).click(),
+        Escape: () => onEscape(),
+        ...(onArrowLeft ? { ArrowLeft: () => onArrowLeft() } : {}),
+      },
+      attachToDocument: false,
+    })
 
     // Focus first button when dropdown opens
     window.requestAnimationFrame(() => {
@@ -92,7 +83,7 @@ function useDropdownKeyboardNav(
     })
 
     return () => {
-      container.removeEventListener('keydown', handleKeyDown)
+      removeKeydownListener()
     }
   }, [isOpen, containerRef, onEscape, onArrowLeft])
 }

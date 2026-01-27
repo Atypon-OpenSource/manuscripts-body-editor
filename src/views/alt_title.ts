@@ -17,7 +17,7 @@
 import { AltTitleNode, ManuscriptNodeView } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { handleArrowNavigation } from '../lib/navigation-utils'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
@@ -26,6 +26,7 @@ export class AltTitleView
   implements ManuscriptNodeView
 {
   public contentDOM: HTMLElement
+  private removeKeydownListener?: () => void
 
   public initialise = () => {
     this.createDOM()
@@ -43,37 +44,42 @@ export class AltTitleView
     this.contentDOM.classList.add('alt-title-text')
     this.contentDOM.tabIndex = this.node.attrs.type === 'running' ? 0 : -1
 
-    // Keyboard navigation
-    this.contentDOM.addEventListener('keydown', this.handleKeydown)
+    this.removeKeydownListener = createKeyboardInteraction({
+      container: this.contentDOM,
+      navigation: {
+        getItems: () => {
+          const allAltTitles = Array.from(
+            this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
+          )
+          return allAltTitles
+        },
+        arrowKeys: { forward: 'ArrowDown', backward: 'ArrowUp' },
+        getCurrentElement: () => this.contentDOM,
+      },
+      additionalKeys: {
+        Enter: (e) => {
+          e.preventDefault()
+          const pos = this.getPos()
+          if (typeof pos === 'number') {
+            const tr = this.view.state.tr.setSelection(
+              TextSelection.create(this.view.state.doc, pos + 1)
+            )
+            this.view.dispatch(tr)
+            this.view.focus()
+          }
+        },
+      },
+      attachToDocument: false,
+    })
 
     this.dom.appendChild(label)
     this.dom.appendChild(this.contentDOM)
     this.updateContents()
   }
 
-  private handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      // Place cursor at the start of this alt title's content
-      const pos = this.getPos()
-      if (typeof pos === 'number') {
-        const cursorPos = pos + 1
-        const tr = this.view.state.tr.setSelection(
-          TextSelection.create(this.view.state.doc, cursorPos)
-        )
-        this.view.dispatch(tr)
-        this.view.focus()
-      }
-    } else {
-      const allAltTitles = Array.from(
-        this.view.dom.querySelectorAll<HTMLElement>('.alt-title-text')
-      )
-
-      handleArrowNavigation(e, allAltTitles, this.contentDOM, {
-        forward: 'ArrowDown',
-        backward: 'ArrowUp',
-      })
-    }
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 
