@@ -57,7 +57,7 @@ const createLanguageMenu = (
   const menuItems: HTMLElement[] = []
 
   const removeKeydownListener = createKeyboardInteraction({
-    container: menu,
+    container: document,
     navigation: {
       getItems: () => menuItems,
       arrowKeys: {
@@ -183,7 +183,6 @@ export default (props: EditorProps) =>
                         menuInstance = null
                       },
                     },
-                    attachToDocument: false,
                   })
 
                   $btn.addEventListener('mousedown', handleOpenMenu)

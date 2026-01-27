@@ -69,7 +69,6 @@ export class AltTitleView
           }
         },
       },
-      attachToDocument: false,
     })
 
     this.dom.appendChild(label)

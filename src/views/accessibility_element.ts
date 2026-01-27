@@ -75,7 +75,6 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
           this.view.focus()
         },
       },
-      attachToDocument: false,
     })
   }
   public destroy() {

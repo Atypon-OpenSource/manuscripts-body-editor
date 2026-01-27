@@ -97,7 +97,7 @@ const createMenu = (
   const menuItems: HTMLElement[] = []
 
   const removeKeydownListener = createKeyboardInteraction({
-    container: menu,
+    container: document,
     navigation: {
       getItems: () => menuItems,
       arrowKeys: {
@@ -180,7 +180,6 @@ const createButton = (
           menuInstance = null
         },
       },
-      attachToDocument: false,
     })
   }
 
