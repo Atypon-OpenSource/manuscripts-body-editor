@@ -17,7 +17,7 @@
 import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
-import { handleArrowNavigation } from '../lib/navigation-utils'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
@@ -25,6 +25,7 @@ import ReactSubView from './ReactSubView'
 export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   private element: HTMLElement
   private addingTools: HTMLDivElement
+  private removeKeydownListener?: () => void
 
   public ignoreMutation = () => true
 
@@ -40,7 +41,17 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
 
     this.element.appendChild(this.contentDOM)
 
-    this.element.addEventListener('keydown', this.handleKeydown)
+    this.removeKeydownListener = createKeyboardInteraction({
+      container: this.element,
+      navigation: {
+        getItems: () =>
+          Array.from(
+            this.element.querySelectorAll<HTMLElement>('.keyword, .keyword-add')
+          ),
+        arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
+      },
+      attachToDocument: false,
+    })
 
     if (this.props.getCapabilities().editArticle) {
       this.addingTools = ReactSubView(
@@ -59,24 +70,9 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     }
   }
 
-  private handleKeydown = (event: KeyboardEvent) => {
-    const target = event.target as Element
-    if (
-      !target.classList.contains('keyword') &&
-      !target.classList.contains('keyword-add')
-    ) {
-      return
-    }
-
-    // Handle arrow navigation (ArrowLeft/ArrowRight)
-    const keywords = Array.from(
-      this.element.querySelectorAll('.keyword, .keyword-add')
-    ) as HTMLElement[]
-
-    handleArrowNavigation(event, keywords, target as HTMLElement, {
-      forward: 'ArrowRight',
-      backward: 'ArrowLeft',
-    })
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 

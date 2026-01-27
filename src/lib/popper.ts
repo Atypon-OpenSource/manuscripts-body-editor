@@ -20,11 +20,13 @@ import {
   Placement,
   StrictModifiers,
 } from '@popperjs/core'
+import { createKeyboardInteraction } from './navigation-utils'
 
 export class PopperManager {
   private activePopper?: Instance
   private handleDocumentClick?: (e: Event) => void
   private triggerElement?: Element
+  private container?: HTMLElement
 
   public show(
     target: Element,
@@ -43,25 +45,27 @@ export class PopperManager {
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
       container.className = 'popper'
+      this.container = container
 
       container.addEventListener('click', (e) => {
         e.stopPropagation()
       })
 
-      // Add keyboard handler for closing on Escape and Tab
-      container.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' || e.key === 'Tab') {
-          e.preventDefault()
-          e.stopPropagation()
-          this.destroy()
-          // Return focus to the trigger element
-          if (
-            this.triggerElement &&
-            this.triggerElement instanceof HTMLElement
-          ) {
-            this.triggerElement.focus()
-          }
+      const closeAndRestoreFocus = (e: KeyboardEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        this.destroy()
+        if (this.triggerElement instanceof HTMLElement) {
+          this.triggerElement.focus()
         }
+      }
+      createKeyboardInteraction({
+        container,
+        additionalKeys: {
+          Escape: closeAndRestoreFocus,
+          Tab: closeAndRestoreFocus,
+        },
+        attachToDocument: false,
       })
 
       if (showArrow) {
@@ -125,7 +129,12 @@ export class PopperManager {
       }
 
       delete this.activePopper
+      delete this.container
     }
+  }
+
+  public getContainer(): HTMLElement | undefined {
+    return this.container
   }
 
   public update() {

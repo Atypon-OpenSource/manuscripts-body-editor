@@ -29,7 +29,10 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { sectionCategoryIcon } from '../icons'
-import { handleArrowNavigation, handleEnterKey } from '../lib/navigation-utils'
+import {
+  handleEnterKey,
+  createKeyboardInteraction,
+} from '../lib/navigation-utils'
 
 export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 
@@ -72,18 +75,14 @@ const createMenuItem = (
   }
   item.textContent = contents
   item.setAttribute('tabindex', '0')
-  item.addEventListener('mousedown', (event) => {
-    handler(event)
-    props.popper.destroy()
-  })
-  item.addEventListener(
-    'keydown',
-    handleEnterKey((event) => {
-      handler(event)
-      props.popper.destroy()
-    })
-  )
+  item.addEventListener('mousedown', handler)
+  item.addEventListener('keydown', handleEnterKey(handler))
   return item
+}
+
+interface MenuInstance {
+  menu: HTMLElement
+  destroy: () => void
 }
 
 const createMenu = (
@@ -92,16 +91,35 @@ const createMenu = (
   categories: SectionCategory[],
   usedCategoryIDs: Set<string>,
   onSelect: (category: SectionCategory) => void
-) => {
+): MenuInstance => {
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
   const menuItems: HTMLElement[] = []
 
+  const removeKeydownListener = createKeyboardInteraction({
+    container: menu,
+    navigation: {
+      getItems: () => menuItems,
+      arrowKeys: {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
+      },
+      getCurrentElement: () => document.activeElement as HTMLElement,
+    },
+  })
+
+  const destroy = () => {
+    removeKeydownListener()
+    props.popper.destroy()
+  }
   categories.forEach((category) => {
     const item = createMenuItem(
       props,
       category.titles[0],
-      () => onSelect(category),
+      () => {
+        onSelect(category)
+        destroy()
+      },
       category.isUnique && usedCategoryIDs.has(category.id),
       currentCategory === category
     )
@@ -109,22 +127,7 @@ const createMenu = (
     menu.appendChild(item)
   })
 
-  // Arrow key navigation for menu items
-  const handleKeydown = (event: KeyboardEvent) => {
-    // Handle arrow navigation (ArrowDown/ArrowUp)
-    handleArrowNavigation(
-      event,
-      menuItems,
-      document.activeElement as HTMLElement,
-      {
-        forward: 'ArrowDown',
-        backward: 'ArrowUp',
-      }
-    )
-  }
-  document.addEventListener('keydown', handleKeydown)
-
-  return menu
+  return { menu, destroy }
 }
 
 const createButton = (
@@ -137,13 +140,15 @@ const createButton = (
   canEdit = true,
   disabled: boolean
 ) => {
+  let menuInstance: MenuInstance | null = null
+
   const handleSelect = (category: SectionCategory) => {
     const tr = view.state.tr
     tr.setNodeAttribute(pos, 'category', category.id)
     view.dispatch(tr)
   }
   const openMenu = () => {
-    const menu = createMenu(
+    menuInstance = createMenu(
       props,
       currentCategory,
       categories,
@@ -151,7 +156,7 @@ const createButton = (
       handleSelect
     )
 
-    props.popper.show(button, menu, 'bottom-end', false)
+    props.popper.show(button, menuInstance.menu, 'bottom-end', false)
   }
   const button = document.createElement('button')
   button.innerHTML = sectionCategoryIcon
@@ -165,13 +170,17 @@ const createButton = (
     button.classList.add('disabled')
   } else if (canEdit) {
     button.addEventListener('click', openMenu)
-    button.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        props.popper.destroy()
-      } else {
-        handleEnterKey(() => openMenu())(e)
-      }
+    createKeyboardInteraction({
+      container: button,
+      additionalKeys: {
+        Enter: openMenu,
+        Escape: (e) => {
+          e.preventDefault()
+          menuInstance?.destroy()
+          menuInstance = null
+        },
+      },
+      attachToDocument: false,
     })
   }
 

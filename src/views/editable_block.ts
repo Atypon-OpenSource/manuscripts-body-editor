@@ -19,6 +19,7 @@ import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { ContextMenu, contextMenuBtnClass } from '../lib/context-menu'
 import { hasParent, isNotNull } from '../lib/utils'
 import BlockView from './block_view'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
@@ -79,18 +80,21 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       }
 
       button.addEventListener('mousedown', handleClick)
-      button.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          handleClick(event)
-        } else if (event.key === 'ArrowRight') {
-          event.preventDefault()
-          const parent = button.parentElement
-          const editButton = parent?.querySelector('.edit-block') as HTMLElement
-          if (editButton) {
-            editButton.focus()
-          }
-        }
+      createKeyboardInteraction({
+        container: button,
+        additionalKeys: {
+          Enter: handleClick,
+          ArrowRight: () => {
+            const parent = button.parentElement
+            const editButton = parent?.querySelector(
+              '.edit-block'
+            ) as HTMLElement
+            if (editButton) {
+              editButton.focus()
+            }
+          },
+        },
+        attachToDocument: false,
       })
 
       return button
@@ -114,18 +118,19 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
       }
 
       button.addEventListener('mousedown', handleClick)
-      button.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault()
-          handleClick(event)
-        } else if (event.key === 'ArrowLeft') {
-          event.preventDefault()
-          const parent = button.parentElement
-          const addButton = parent?.querySelector('.add-block') as HTMLElement
-          if (addButton) {
-            addButton.focus()
-          }
-        }
+      createKeyboardInteraction({
+        container: button,
+        additionalKeys: {
+          Enter: handleClick,
+          ArrowLeft: () => {
+            const parent = button.parentElement
+            const addButton = parent?.querySelector('.add-block') as HTMLElement
+            if (addButton) {
+              addButton.focus()
+            }
+          },
+        },
+        attachToDocument: false,
       })
 
       return button
