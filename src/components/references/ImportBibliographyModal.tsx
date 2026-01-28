@@ -15,8 +15,10 @@
  */
 import {
   CloseButton,
+  ModalCardBody,
   ModalContainer,
   ModalHeader,
+  ModalTitle,
   StyledModal,
   Tooltip,
 } from '@manuscripts/style-guide'
@@ -95,7 +97,7 @@ export const ImportBibliographyModal: React.FC<
         <ModalHeader>
           <CloseButton onClick={onCancel} data-cy="modal-close-button" />
         </ModalHeader>
-        <ModalBody>
+        <ModalCardBody width={640}>
           <ModalTitle>Import Bibliography</ModalTitle>
           <p>
             <SpanWithExample
@@ -140,27 +142,12 @@ export const ImportBibliographyModal: React.FC<
             place="bottom"
             render={(s) => <pre>{s.content}</pre>}
           />
-        </ModalBody>
+        </ModalCardBody>
       </ModalContainer>
     </StyledModal>
   )
 }
 
-const ModalBody = styled.div`
-  box-sizing: border-box;
-  padding: ${(props) => 6 * props.theme.grid.unit}px;
-  background-color: ${(props) => props.theme.colors.background.primary};
-  width: 640px;
-  max-width: 60vw;
-  max-height: 80vh;
-`
-const ModalTitle = styled.h2`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  font-weight: ${(props) => props.theme.font.weight.bold};
-  color: ${(props) => props.theme.colors.text.primary};
-  margin: 0;
-`
 const SpanWithExample = styled.span`
   text-decoration: underline dotted;
   text-underline-offset: 4px;

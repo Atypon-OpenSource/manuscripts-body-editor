@@ -15,18 +15,19 @@
  */
 
 import {
+  DeleteIcon,
+  FormContainer,
+  FormRow,
+  Label,
   PrimaryButton,
   SecondaryButton,
   TextField,
+  InputErrorText,
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { allowedHref } from '../../lib/url'
-
-const Form = styled.form`
-  padding: 16px;
-`
 
 const Actions = styled.div`
   display: flex;
@@ -44,22 +45,15 @@ const ActionGroup = styled.span`
   }
 `
 
-const Field = styled.div`
-  margin-bottom: ${(props) => props.theme.grid.unit * 4}px;
-`
-
-export const FieldHeading = styled.div`
+const RemoveButton = styled(SecondaryButton)`
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  display: flex;
   align-items: center;
-  color: ${(props) => props.theme.colors.text.tertiary};
-  font-size: ${(props) => props.theme.font.size.normal};
+  gap: 8px;
+
+  svg .icon_element {
+    fill: #6e6e6e;
+  }
 `
 
 export const Open = styled.a`
@@ -98,81 +92,120 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   const [href, setHref] = useState(value.href)
   const [text, setText] = useState(value.text)
   const [title, setTitle] = useState(value.title || '')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const validate = useCallback((currentHref: string, currentText: string) => {
+    const newErrors: Record<string, string> = {}
+    if (!currentHref) {
+      newErrors.href = 'URL is required'
+    } else if (!allowedHref(currentHref)) {
+      newErrors.href = 'Please enter a valid URL'
+    }
+    if (!currentText) {
+      newErrors.text = 'Text is required'
+    }
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }, [])
+
+  const handleHrefChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value
+      setHref(newValue)
+      if (errors.href) {
+        validate(newValue, text)
+      }
+    },
+    [errors.href, text, validate]
+  )
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value
+      setText(newValue)
+      if (errors.text) {
+        validate(href, newValue)
+      }
+    },
+    [errors.text, href, validate]
+  )
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      onSave({ href, text, title })
+      if (validate(href, text)) {
+        onSave({ href, text, title })
+      }
     },
-    [href, text, title, onSave]
+    [href, text, title, onSave, validate]
   )
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Field>
-        <FieldHeading>
-          <Label>URL</Label>
+    <form onSubmit={handleSubmit} noValidate={true}>
+      <FormContainer>
+        <FormRow>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Label>URL*</Label>
+            {href && allowedHref(href) && (
+              <Open href={href} target={'_blank'} rel={'noopener'} />
+            )}
+          </div>
 
-          {href && allowedHref(href) && (
-            <Open href={href} target={'_blank'} rel={'noopener'} />
-          )}
-        </FieldHeading>
+          <TextField
+            type={'text'}
+            name={'href'}
+            value={href}
+            autoComplete={'off'}
+            error={!!errors.href}
+            onChange={handleHrefChange}
+          />
 
-        <TextField
-          type={'url'}
-          name={'href'}
-          value={href}
-          autoComplete={'off'}
-          autoFocus={true}
-          required={true}
-          onChange={(e) => setHref(e.target.value)}
-        />
-      </Field>
+          {errors.href && <InputErrorText>{errors.href}</InputErrorText>}
+        </FormRow>
 
-      <Field>
-        <FieldHeading>
+        <FormRow>
           <Label>Text</Label>
-        </FieldHeading>
 
-        <TextField
-          type={'text'}
-          name={'text'}
-          value={text}
-          autoComplete={'off'}
-          required={true}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </Field>
+          <TextField
+            type={'text'}
+            name={'text'}
+            value={text}
+            autoComplete={'off'}
+            error={!!errors.text}
+            onChange={handleTextChange}
+          />
+          {errors.text && <InputErrorText>{errors.text}</InputErrorText>}
+        </FormRow>
 
-      <Field>
-        <FieldHeading>
-          <Label>Title (optional)</Label>
-        </FieldHeading>
+        <FormRow>
+          <Label>Title</Label>
 
-        <TextField
-          type={'text'}
-          name={'title'}
-          value={title}
-          autoComplete={'off'}
-          required={false}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </Field>
+          <TextField
+            type={'text'}
+            name={'title'}
+            value={title}
+            autoComplete={'off'}
+            required={false}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </FormRow>
 
-      <Actions>
-        <ActionGroup>
-          <SecondaryButton type={'button'} mini={true} onClick={onRemove}>
-            Remove Link
-          </SecondaryButton>
-        </ActionGroup>
+        <Actions>
+          <ActionGroup>
+            <RemoveButton type={'button'} onClick={onRemove}>
+              <DeleteIcon />
+              <span>Remove Link</span>
+            </RemoveButton>
+          </ActionGroup>
 
-        <ActionGroup>
-          <SecondaryButton type={'button'} onClick={onCancel}>
-            Cancel
+          <ActionGroup>
+            <SecondaryButton type={'button'} onClick={onCancel}>
+              Cancel
           </SecondaryButton>
           <PrimaryButton type={'submit'}>Save</PrimaryButton>
-        </ActionGroup>
-      </Actions>
-    </Form>
+          </ActionGroup>
+        </Actions>
+      </FormContainer>
+    </form>
   )
 }

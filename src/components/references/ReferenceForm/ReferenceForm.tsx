@@ -26,6 +26,9 @@ import {
   PrimaryButton,
   SecondaryButton,
   SelectField,
+  Label,
+  FormRow,
+  YearField,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
@@ -42,13 +45,9 @@ import {
   Actions,
   Button,
   DeleteButton,
-  FormField,
   FormFields,
-  Label,
-  LabelContainer,
   ReferenceTextArea,
   ReferenceTextField,
-  YearField,
 } from './styled-components'
 
 const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
@@ -175,10 +174,8 @@ export const ReferenceForm: React.FC<{
             </Actions>
 
             <FormFields ref={fieldsRef}>
-              <FormField>
-                <LabelContainer>
+              <FormRow>
                   <Label htmlFor={'citation-item-type'}>Type</Label>
-                </LabelContainer>
 
                 <Field
                   id={'citation-item-type'}
@@ -186,55 +183,49 @@ export const ReferenceForm: React.FC<{
                   component={SelectField}
                   options={bibliographyItemTypeOptions}
                 />
-              </FormField>
+              </FormRow>
 
               {shouldRenderField(
                 'title',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label>Title</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label>Title</Label>
 
                   <Field name={'title'}>
                     {(props: FieldProps) => (
                       <ReferenceTextArea id={'title'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'literal',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label>Text</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label>Text</Label>
 
                   <Field name={'literal'}>
                     {(props: FieldProps) => (
                       <ReferenceTextArea id={'literal'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
               {shouldRenderField(
                 'std',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'std'}>Standard</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'std'}>Standard</Label>
                   <Field name={'std'}>
                     {(props: FieldProps) => (
                       <ReferenceTextArea id={'std'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
@@ -244,24 +235,26 @@ export const ReferenceForm: React.FC<{
                 <FieldArray
                   name={'author'}
                   render={({ push, remove }) => (
-                    <FormField>
-                      <LabelContainer>
-                        <Label>Authors</Label>
+                    <FormRow
+                      direction="row"
+                      justify="space-between"
+                      align="center"
+                    >
+                      <Label>Authors</Label>
 
-                        <Button
-                          onClick={() => {
-                            setNewAuthorIndex(formik.values.author?.length)
-                            push({
-                              given: '',
-                              family: '',
-                            })
-                          }}
-                        >
-                          <AddAuthorIcon height={17} width={17} />
-                        </Button>
-                      </LabelContainer>
+                      <Button
+                        onClick={() => {
+                          setNewAuthorIndex(formik.values.author?.length)
+                          push({
+                            given: '',
+                            family: '',
+                          })
+                        }}
+                      >
+                        <AddAuthorIcon height={17} width={17} />
+                      </Button>
 
-                      <div>
+                      <div style={{ width: '100%' }}>
                         {formik.values.author?.map((author, index) => (
                           <PersonDropDown
                             key={index}
@@ -274,7 +267,7 @@ export const ReferenceForm: React.FC<{
                           />
                         ))}
                       </div>
-                    </FormField>
+                    </FormRow>
                   )}
                 />
               )}
@@ -286,9 +279,8 @@ export const ReferenceForm: React.FC<{
                 <FieldArray
                   name={'editor'}
                   render={({ push, remove }) => (
-                    <FormField>
-                      <LabelContainer>
-                        <Label>Editors</Label>
+                    <FormRow>
+                      <Label>Editors</Label>
 
                         <Button
                           onClick={() => {
@@ -301,7 +293,6 @@ export const ReferenceForm: React.FC<{
                         >
                           <AddAuthorIcon height={17} width={17} />
                         </Button>
-                      </LabelContainer>
 
                       <div>
                         {formik.values.editor?.map((editor, index) => (
@@ -316,7 +307,7 @@ export const ReferenceForm: React.FC<{
                           />
                         ))}
                       </div>
-                    </FormField>
+                    </FormRow>
                   )}
                 />
               )}
@@ -325,12 +316,11 @@ export const ReferenceForm: React.FC<{
                 'issued',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={"issued['date-parts'][0][0]"}>
+                <FormRow>
+                  <Label htmlFor={"issued['date-parts'][0][0]"}>
                       Issued (Year)
                     </Label>
-                  </LabelContainer>
+               
 
                   <YearField
                     name={"issued['date-parts'][0][0]"}
@@ -356,17 +346,15 @@ export const ReferenceForm: React.FC<{
                       }
                     }}
                   />
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'container-title',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'container-title'}>Container Title</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'container-title'}>Container Title</Label>
 
                   <Field name={'container-title'}>
                     {(props: FieldProps) => (
@@ -376,16 +364,14 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
               {shouldRenderField(
                 'collection-title',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'collection-title'}>Collection Title</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'collection-title'}>Collection Title</Label>
 
                   <Field name={'collection-title'}>
                     {(props: FieldProps) => (
@@ -395,51 +381,45 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'volume',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'volume'}>Volume</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'volume'}>Volume</Label>
 
                   <Field name={'volume'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'volume'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'issue',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'issue'}>Issue</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'issue'}>Issue</Label>
 
                   <Field name={'issue'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'issue'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'supplement',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'supplement'}>Supplement</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'supplement'}>Supplement</Label>
 
                   <Field name={'supplement'}>
                     {(props: FieldProps) => (
@@ -450,36 +430,30 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'edition',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'edition'}>Edition</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'edition'}>Edition</Label>
 
                   <Field name={'edition'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'edition'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'publisher-place',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'publisher-place'}>
-                      Publisher Location
-                    </Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'publisher-place'}>Publisher Location</Label>
 
                   <Field name={'publisher-place'}>
                     {(props: FieldProps) => (
@@ -489,69 +463,62 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'publisher',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'publisher'}>Publisher</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'publisher'}>Publisher</Label>
 
                   <Field name={'publisher'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id="publisher" {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
               {shouldRenderField(
                 'event',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'event'}>Event</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'event'}>Event</Label>
 
                   <Field name={'event'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'event'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'event-place',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'event-place'}>Event Place</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'event-place'}>Event Place</Label>
 
                   <Field name={'event-place'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'event-place'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'event-date',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={"event-date['date-parts'][0][0]"}>
+                <FormRow>
+                  <Label htmlFor={"event-date['date-parts'][0][0]"}>
                       Event date (Year)
                     </Label>
-                  </LabelContainer>
+                 
 
                   <YearField
                     name={"event-date['date-parts'][0][0]"}
@@ -578,51 +545,46 @@ export const ReferenceForm: React.FC<{
                       }
                     }}
                   />
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'institution',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'institution'}>Institution</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'institution'}>Institution</Label>
 
                   <Field name={'institution'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'institution'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'page',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'page'}>Page</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'page'}>Page</Label>
 
                   <Field name={'page'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'page'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'number-of-pages',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'number-of-pages'}>Number of pages</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'number-of-pages'}>Number of pages</Label>
+
                   <Field name={'umber-of-pages'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField
@@ -631,33 +593,31 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'locator',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'locator'}>Locator</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'locator'}>Locator</Label>
+
                   <Field name={'locator'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'locator'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'DOI',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'DOI'}>DOI</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'DOI'}>DOI</Label>
+
                   <Field name={'DOI'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField
@@ -667,35 +627,33 @@ export const ReferenceForm: React.FC<{
                       />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'URL',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={'URL'}>URL</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label htmlFor={'URL'}>URL</Label>
+
                   <Field name={'URL'}>
                     {(props: FieldProps) => (
                       <ReferenceTextField id={'URL'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
 
               {shouldRenderField(
                 'accessed',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label htmlFor={"accessed['date-parts'][0][0]"}>
+                <FormRow>
+                  <Label htmlFor={"accessed['date-parts'][0][0]"}>
                       Accessed (Year)
                     </Label>
-                  </LabelContainer>
+
                   <YearField
                     name={"accessed['date-parts'][0][0]"}
                     type={'number'}
@@ -721,23 +679,21 @@ export const ReferenceForm: React.FC<{
                       }
                     }}
                   />
-                </FormField>
+                </FormRow>
               )}
               {shouldRenderField(
                 'comment',
                 formik.values.type as BibliographyItemType
               ) && (
-                <FormField>
-                  <LabelContainer>
-                    <Label>Comment</Label>
-                  </LabelContainer>
+                <FormRow>
+                  <Label>Comment</Label>
 
                   <Field name={'comment'}>
                     {(props: FieldProps) => (
                       <ReferenceTextArea id={'comment'} {...props.field} />
                     )}
                   </Field>
-                </FormField>
+                </FormRow>
               )}
             </FormFields>
           </ChangeHandlingForm>
