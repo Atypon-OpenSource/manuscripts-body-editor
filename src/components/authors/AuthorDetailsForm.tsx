@@ -228,13 +228,18 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   <Label htmlFor="orcid">ORCID</Label>
                   <Field name={'ORCIDIdentifier'} type={'text'}>
                     {(props: FieldProps) => (
-                      <TextField
-                        id={'orcid'}
-                        placeholder={'https://orcid.org/...'}
-                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{4}"
-                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                        {...props.field}
-                      />
+                      <>
+                        <Label htmlFor="orcid" className="sr-only">
+                          ORCID
+                        </Label>
+                        <TextField
+                          id={'orcid'}
+                          placeholder={'https://orcid.org/...'}
+                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]"
+                          title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                          {...props.field}
+                        />
+                      </>
                     )}
                   </Field>
                 </FormRow>
