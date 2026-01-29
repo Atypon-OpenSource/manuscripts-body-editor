@@ -1390,7 +1390,8 @@ export const insertTOCSection = () => {
 export const insertTransAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  category?: string
+  category?: string,
+  insertAfterPos?: number
 ) => {
   if (!templateAllows(state, schema.nodes.trans_abstract)) {
     return false
@@ -1417,9 +1418,12 @@ export const insertTransAbstract = (
     [title, paragraph]
   )
 
-  // Insert the node at the end of the abstracts container
   const abstracts = findAbstractsNode(state.doc)
-  const pos = abstracts.pos + abstracts.node.nodeSize - 1
+
+  const pos =
+    insertAfterPos != null
+      ? insertAfterPos
+      : abstracts.pos + abstracts.node.nodeSize - 1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)

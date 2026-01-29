@@ -22,6 +22,7 @@ import { insertTransAbstract } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
+import { templateAllows } from '../lib/template'
 
 const createMenuItem = (
   props: EditorProps,
@@ -63,17 +64,20 @@ export default (props: EditorProps) =>
     props: {
       decorations: (state) => {
         const can = props.getCapabilities()
-
-        const canEdit = can.editArticle && insertTransAbstract(state)
+        const canEdit =
+          can.editArticle &&
+          templateAllows(state, schema.nodes.trans_abstract) &&
+          insertTransAbstract(state)
 
         const widgets: Decoration[] = []
 
         state.doc.descendants((node, pos, parent) => {
-          if (
-            node.type === schema.nodes.section &&
-            parent?.type === schema.nodes.abstracts &&
-            canEdit
-          ) {
+          const isAbstractSection =
+            (node.type === schema.nodes.section ||
+              node.type === schema.nodes.graphical_abstract_section) &&
+            parent?.type === schema.nodes.abstracts
+
+          if (isAbstractSection && canEdit) {
             widgets.push(
               Decoration.widget(pos + 1, (view) => {
                 const $span = document.createElement('span')
@@ -87,7 +91,8 @@ export default (props: EditorProps) =>
                   insertTransAbstract(
                     view.state,
                     view.dispatch,
-                    node.attrs.category
+                    node.attrs.category,
+                    pos + node.nodeSize
                   )
                 })
                 return $span
