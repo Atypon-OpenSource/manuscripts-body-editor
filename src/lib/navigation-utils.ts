@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+import {
+  ManuscriptEditorState,
+  ManuscriptEditorView,
+} from '@manuscripts/transform'
+import { EditorView } from 'prosemirror-view'
+
+import { Dispatch } from '../commands'
+import { findParentNodeWithIdValue } from './utils'
+
 /**
  * TODO: Reuse this utility in other areas related to navigation implemented in LEAN-5090
  * (e.g., inspector components, toolbar and other components with similar navigation patterns)
@@ -143,4 +152,65 @@ export function createKeyboardInteraction(
   return () => {
     container.removeEventListener('keydown', handleKeydown)
   }
+}
+
+export const focusNearestElement = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  view?: ManuscriptEditorView
+) => {
+  if (!view) {
+    return false
+  }
+  // Only intercept when editor text is the current focus context
+  const active = document.activeElement
+  if (!active || !active.classList.contains('manuscript-editor')) {
+    return false // let browser handle Tab
+  }
+
+  const { from } = view.state.selection
+  const coords = view.coordsAtPos(from)
+  const container = getCursorContainer(view)
+  const target = findNearestTabbable(container, coords.top)
+
+  if (!target) {
+    return false
+  }
+  target.focus()
+  return true
+}
+
+export function getCursorContainer(view: EditorView): HTMLElement {
+  const scoped = findParentNodeWithIdValue(view.state.selection)
+  if (scoped) {
+    const dom = view.nodeDOM(scoped.pos)
+    if (dom instanceof HTMLElement) {
+      return dom
+    }
+  }
+
+  return view.dom as HTMLElement
+}
+
+export function findNearestTabbable(
+  container: HTMLElement,
+  verticalPosition: number
+): HTMLElement | null {
+  const tabbables = container.querySelectorAll<HTMLElement>(
+    'a[href], button, [tabindex]:not([tabindex="-1"])'
+  )
+
+  let target: HTMLElement | null = null
+  let minDistance: number | null = null
+
+  tabbables.forEach((el) => {
+    const rect = el.getBoundingClientRect()
+    const distance = Math.abs(rect.top - verticalPosition)
+    if (minDistance === null || distance < minDistance) {
+      minDistance = distance
+      target = el
+    }
+  })
+
+  return target
 }
