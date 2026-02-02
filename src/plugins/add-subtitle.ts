@@ -20,6 +20,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
 import { addAuthorIcon } from '../icons'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { findInsertionPosition } from '../lib/utils'
 
 const createAddSubtitleButton = (handler: () => void) => {
@@ -27,10 +28,15 @@ const createAddSubtitleButton = (handler: () => void) => {
   button.className = 'add-subtitle'
   button.innerHTML = `${addAuthorIcon} <span class="add-subtitle-text">Add subtitle</span>`
 
-  button.addEventListener('mousedown', (e) => {
-    e.preventDefault()
+  button.tabIndex = 0
+  const activate = (event: MouseEvent | KeyboardEvent) => {
+    event.preventDefault()
     handler()
+  }
+  button.addEventListener('mousedown', (e) => {
+    activate(e)
   })
+  button.addEventListener('keydown', handleEnterKey(activate))
 
   return button
 }
