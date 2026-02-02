@@ -161,10 +161,12 @@ export const demoteSectionToParagraph = (
     anchor = beforeSection + 1
   }
 
+  // TC plugins is the one who has to drop shadow content and not body-editor has to do that
   const content = filterBlockNodes(
     Fragment.from(paragraph).append(sectionContent),
     (node) => !isShadowDelete(node)
   )
+  // @TODO WIP ----> check what steps this results in - does it produce replace around step?
   tr.insert(beforeSection, content)
 
   const afterSection = tr.mapping.map($from.after(sectionDepth))
