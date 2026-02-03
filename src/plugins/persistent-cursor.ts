@@ -41,6 +41,10 @@ export default () => {
     props: {
       decorations(state) {
         // @ts-ignore
+        console.log('window.Cypress')
+        // @ts-ignore
+        console.log(window.Cypress)
+        // @ts-ignore
         if (window.Cypress) return null
         // this plugin is incompatible with current implementation of our tests in cypress,
         // which relies on browser native Selection.AddRange and Range APIs
