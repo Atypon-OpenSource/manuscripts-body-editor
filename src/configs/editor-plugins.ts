@@ -105,8 +105,11 @@ export default (props: EditorProps) => {
   // @ts-ignore
   if (!window.Cypress) {
     allPlugins.push(persistent_cursor())
+    // this is a temporal workaround until cypress tests are switched to working with prosemirrors selection instead of browsers direct selection
+    // this plugin is incompatible with current implementation of our tests in cypress,
+    // which relies on browser native Selection.AddRange and Range APIs
   } else {
-    console.log('skipping cursor faking in cypress')
+    console.warn('Skipping cursor imitation plugin for automated testing runs.')
   }
   if (props.collabProvider) {
     allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
