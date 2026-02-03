@@ -18,7 +18,7 @@ import { schema } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { insertTransAbstract } from '../commands'
+import { insertTransAbstract, insertTransGraphicalAbstract } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
@@ -64,10 +64,13 @@ export default (props: EditorProps) =>
     props: {
       decorations: (state) => {
         const can = props.getCapabilities()
-        const canEdit =
+        const canEditTransAbstract =
           can.editArticle &&
           templateAllows(state, schema.nodes.trans_abstract) &&
           insertTransAbstract(state)
+        const canEditTransGraphicalAbstract =
+          can.editArticle &&
+          templateAllows(state, schema.nodes.trans_graphical_abstract)
 
         const widgets: Decoration[] = []
 
@@ -77,30 +80,60 @@ export default (props: EditorProps) =>
               node.type === schema.nodes.graphical_abstract_section) &&
             parent?.type === schema.nodes.abstracts
 
-          if (isAbstractSection && canEdit) {
-            widgets.push(
-              Decoration.widget(pos + 1, (view) => {
-                const $span = document.createElement('span')
-                $span.className = 'add-trans-abstract'
-                $span.title = 'Add translation'
-                $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
+          // Show "Add translation" for abstract sections
+          if (isAbstractSection) {
+            const isGraphical =
+              node.type === schema.nodes.graphical_abstract_section
+            const category = props.sectionCategories.get(node.attrs.category)
 
-                $span.addEventListener('mousedown', (event) => {
-                  event.preventDefault()
-                  event.stopPropagation()
-                  insertTransAbstract(
-                    view.state,
-                    view.dispatch,
-                    node.attrs.category,
-                    pos + node.nodeSize
-                  )
+            const canEdit = isGraphical
+              ? canEditTransGraphicalAbstract &&
+                category &&
+                insertTransGraphicalAbstract(category)(state)
+              : canEditTransAbstract
+
+            if (canEdit) {
+              widgets.push(
+                Decoration.widget(pos + 1, (view) => {
+                  const $span = document.createElement('span')
+                  $span.className = 'add-trans-abstract'
+                  $span.title = 'Add translation'
+                  $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
+
+                  $span.addEventListener('mousedown', (event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    if (isGraphical && category) {
+                      insertTransGraphicalAbstract(
+                        category,
+                        pos + node.nodeSize
+                      )(view.state, view.dispatch, view)
+                    } else {
+                      insertTransAbstract(
+                        view.state,
+                        view.dispatch,
+                        node.attrs.category,
+                        pos + node.nodeSize
+                      )
+                    }
+                  })
+                  return $span
                 })
-                return $span
-              })
-            )
+              )
+            }
           }
 
-          if (node.type === schema.nodes.trans_abstract) {
+          // Language selector for trans_abstract and trans_graphical_abstract nodes
+          const isTransNode =
+            node.type === schema.nodes.trans_abstract ||
+            node.type === schema.nodes.trans_graphical_abstract
+
+          if (isTransNode) {
+            const canEdit =
+              node.type === schema.nodes.trans_abstract
+                ? canEditTransAbstract
+                : canEditTransGraphicalAbstract
+
             widgets.push(
               Decoration.widget(pos + 1, (view) => {
                 const $btn = document.createElement('span')
