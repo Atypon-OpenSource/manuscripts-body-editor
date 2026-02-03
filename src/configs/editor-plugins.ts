@@ -100,9 +100,14 @@ export default (props: EditorProps) => {
     prevent_empty(),
     move_node(),
     link(),
-    persistent_cursor(),
   ]
 
+  // @ts-ignore
+  if (!window.Cypress) {
+    allPlugins.push(persistent_cursor())
+  } else {
+    console.log('skipping cursor faking in cypress')
+  }
   if (props.collabProvider) {
     allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
   }
