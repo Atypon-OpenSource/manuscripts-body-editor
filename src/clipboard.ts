@@ -19,7 +19,7 @@ import { DOMParser } from 'prosemirror-model'
 import { parseCssListStyleType } from './lib/lists'
 
 // we can override other node rules for clipboard here
-// to avoid having a conflict with manuscripts-transform
+// to avoid having a conflict with mankkkuscripts-transform
 const nodes = [
   {
     tag: 'p, div',
