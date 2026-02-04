@@ -49,9 +49,10 @@ import placeholder from '../plugins/placeholder'
 import prevent_empty from '../plugins/prevent-empty'
 import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
-import section_category from '../plugins/section-category'
+import section_category from '../plugins/section_category'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
+import translations from '../plugins/translations'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -68,8 +69,8 @@ export default (props: EditorProps) => {
         props.isViewingMode || props.isComparingMode
           ? TrackChangesStatus.viewSnapshots
           : props.getCapabilities().editWithoutTracking
-          ? TrackChangesStatus.disabled
-          : TrackChangesStatus.enabled,
+            ? TrackChangesStatus.disabled
+            : TrackChangesStatus.enabled,
     }),
     section_title(),
     table_editing_fix(),
@@ -82,6 +83,7 @@ export default (props: EditorProps) => {
     paragraphs(),
     placeholder(),
     add_subtitle(),
+    translations(props),
     tableEditing(),
     selected_suggestion(),
     footnotes(props),

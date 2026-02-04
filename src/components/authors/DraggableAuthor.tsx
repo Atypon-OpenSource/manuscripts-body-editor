@@ -20,7 +20,6 @@ import {
   CrclTickAnimation,
   DeleteIcon,
   DraggableIcon,
-  Tooltip,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -221,12 +220,9 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
         {isSelected && (
           <RemoveButton
             onClick={() => onDelete()}
-            data-tooltip-id={'delete-button-tooltip'}
+            data-tooltip-content="Delete"
           >
             <DeleteIcon fill={'#6E6E6E'} />
-            <Tooltip id={'delete-button-tooltip'} place="bottom">
-              {'Delete'}
-            </Tooltip>
           </RemoveButton>
         )}
       </AuthorContainer>

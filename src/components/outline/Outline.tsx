@@ -50,6 +50,12 @@ export const OutlineItem = styled.div<{
   &:hover {
     background: ${(props) => props.theme.colors.background.fifth};
   }
+
+  &:focus-visible {
+    background: ${(props) => props.theme.colors.background.fifth};
+    outline: 2px solid #bce7f6;
+    outline-offset: -2px;
+  }
 `
 
 export const OutlineItemArrow = styled.button`
@@ -125,10 +131,10 @@ export const Outline = styled.div`
     display: none;
   }
 
-  & .hero-image {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px dashed #ddd;
+  & div:has(.supplements, .hero-image, .main-document) .references {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #ddd;
   }
 `
 

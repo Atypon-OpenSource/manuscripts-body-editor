@@ -84,6 +84,7 @@ export const buildPluginState = (
     selectedPos,
     decorations,
     props,
+    doc: state.doc,
   }
 
   state.doc.descendants((node, pos) => {

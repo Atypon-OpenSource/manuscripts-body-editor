@@ -27,7 +27,6 @@ import {
   ScrollableModalContent,
   SidebarContent,
   StyledModal,
-  Tooltip,
   useScrollDetection,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
@@ -165,10 +164,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onDelete,
 }) => {
   const [confirm, setConfirm] = useState(false)
-  const valuesRef = useRef<BibliographyItemAttrs>()
+  const valuesRef = useRef<BibliographyItemAttrs>(undefined)
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
-  const selectionRef = useRef<HTMLDivElement | null>(null)
+  const selectionRef = useRef<HTMLDivElement>(null)
   const isSelected = (item: BibliographyItemAttrs) => {
     return item.id === selection?.id
   }
@@ -214,7 +213,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggers, items])
 
-  const actionsRef = useRef<ReferenceFormActions>()
+  const actionsRef = useRef<ReferenceFormActions>(undefined)
 
   const reset = () => {
     actionsRef.current?.reset()
@@ -314,7 +313,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                     <IconContainer>
                       <CitationCountIcon />
                       {(citationCounts.get(item.id) || 0) > 0 ? (
-                        <CitationCount data-tooltip-id="citation-count-tooltip">
+                        <CitationCount data-tooltip-content="Number of times used in the document">
                           {citationCounts.get(item.id)}
                         </CitationCount>
                       ) : (
@@ -325,9 +324,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                   </ReferenceButton>
                 ))}
               </ReferencesInnerWrapper>
-              <Tooltip id="citation-count-tooltip" place="bottom">
-                Number of times used in the document
-              </Tooltip>
             </ReferencesSidebarContent>
           </ReferencesSidebar>
           <ScrollableModalContent>
