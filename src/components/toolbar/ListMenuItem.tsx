@@ -83,7 +83,7 @@ export const ListMenuItem: React.FC<MenuComponentProps> = ({
 
   return (
     <SubmenuContainer>
-      <SubmenuLabel menu={menu} handleClick={handleClick} closeAll={close} />
+      <SubmenuLabel menu={menu} handleClick={handleClick} close={close} />
       {menu.isOpen && (
         <NestedSubmenusContainer onKeyDown={handleKeyDown}>
           <ListStyles
