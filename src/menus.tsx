@@ -656,5 +656,5 @@ export const getEditorMenus = (
     ],
   }
 
-  return [edit, insert, format, metadata]
+  return [edit, insert, metadata, format]
 }
