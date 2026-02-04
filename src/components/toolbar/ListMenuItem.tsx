@@ -26,7 +26,7 @@ import styled from 'styled-components'
 export const ListMenuItem: React.FC<MenuComponentProps> = ({
   menu,
   handleClick,
-  closeAll,
+  close,
 }) => {
   const styleRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -44,7 +44,7 @@ export const ListMenuItem: React.FC<MenuComponentProps> = ({
 
   const handleStyleClick = (s: string, i: number) => {
     handleClick([i])
-    closeAll()
+    close()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -71,7 +71,7 @@ export const ListMenuItem: React.FC<MenuComponentProps> = ({
         items[(currentIndex - 1 + items.length) % items.length]?.focus()
         break
       case 'Escape':
-        closeAll()
+        close()
         break
       case 'Enter': {
         const el = document.activeElement as HTMLElement
@@ -83,7 +83,7 @@ export const ListMenuItem: React.FC<MenuComponentProps> = ({
 
   return (
     <SubmenuContainer>
-      <SubmenuLabel menu={menu} handleClick={handleClick} closeAll={closeAll} />
+      <SubmenuLabel menu={menu} handleClick={handleClick} closeAll={close} />
       {menu.isOpen && (
         <NestedSubmenusContainer onKeyDown={handleKeyDown}>
           <ListStyles
