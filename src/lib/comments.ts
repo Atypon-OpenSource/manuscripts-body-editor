@@ -96,6 +96,7 @@ export const createCommentMarker = (
   element.id = getMarkerID(key)
   element.dataset.key = key
   element.classList.add('comment-marker')
+  element.tabIndex = 0
 
   if (count && count > 1) {
     element.dataset.count = String(count)

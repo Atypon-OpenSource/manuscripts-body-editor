@@ -532,6 +532,12 @@ ProseMirror .block-embed .position-menu {
   position: relative;
 }
 
+.comment-marker:focus-visible svg {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
+}
+
 .comment-marker:has(+ .block-contributors),
 .comment-marker:has(+ .block-affiliations),
 .comment-marker:has(+ .block-hero_image) {
@@ -540,7 +546,6 @@ ProseMirror .block-embed .position-menu {
   right: 60px;
   left: unset;
   float: right;
-  display: block;
 }
 
 .block-subtitles .comment-marker {

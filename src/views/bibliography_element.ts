@@ -28,6 +28,7 @@ import {
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
 import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 import {
@@ -118,15 +119,19 @@ export class BibliographyElementBlockView extends BlockView<
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
+  private handleCommentMarkerInteraction = (marker: HTMLElement) => {
+    const key = marker.dataset.key as CommentKey
+    const tr = this.view.state.tr
+    setCommentSelection(tr, key, undefined, false)
+    this.view.dispatch(tr)
+  }
+
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     // Handle click on comment marker
     const marker = element.closest('.comment-marker') as HTMLElement
     if (marker) {
-      const key = marker.dataset.key as CommentKey
-      const tr = this.view.state.tr
-      setCommentSelection(tr, key, undefined, false)
-      this.view.dispatch(tr)
+      this.handleCommentMarkerInteraction(marker)
       return
     }
 
@@ -144,6 +149,16 @@ export class BibliographyElementBlockView extends BlockView<
         view.dispatch(tr)
       }
     }
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    handleEnterKey(() => {
+      const target = document.activeElement as HTMLElement
+      const marker = target?.closest('.comment-marker') as HTMLElement
+      if (marker) {
+        this.handleCommentMarkerInteraction(marker)
+      }
+    })(event)
   }
 
   public updateContents() {
@@ -169,6 +184,7 @@ export class BibliographyElementBlockView extends BlockView<
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
+    wrapper.addEventListener('keydown', this.handleKeyDown)
 
     const [meta, bibliography] = bib.engine.makeBibliography()
 
