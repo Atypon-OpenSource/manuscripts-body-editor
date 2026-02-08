@@ -26,6 +26,7 @@ import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '../lib/track-changes-utils'
 
 //todo fix
 const deleteIcon =
@@ -47,7 +48,13 @@ export class KeywordView
   private isFirstKeyword(): boolean {
     const pos = this.getPos()
     const parent = this.view.state.doc.resolve(pos).parent
-    return parent.firstChild === this.node
+    for (let i = 0; i < parent.childCount; i++) {
+      const child = parent.child(i)
+      if (!isDeleted(child)) {
+        return child === this.node
+      }
+    }
+    return false
   }
   public initialise = () => {
     this.createDOM()

@@ -46,7 +46,9 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
       navigation: {
         getItems: () =>
           Array.from(
-            this.element.querySelectorAll<HTMLElement>('.keyword, .keyword-add')
+            this.element.querySelectorAll<HTMLElement>(
+              '.keyword:not(.deleted), .keyword-add'
+            )
           ),
         arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
       },
