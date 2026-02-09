@@ -985,7 +985,7 @@ figure .selected-suggestion {
 }
 
 .selected-suggestion[data-track-status='pending']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -996,7 +996,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
@@ -1006,7 +1006,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .selected-suggestion
   [data-track-status='pending'][data-track-op='insert']
@@ -1034,7 +1034,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .ProseMirror
   .figure-block
@@ -1052,7 +1052,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element):not(.trans-abstract) {
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -1063,7 +1063,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='set_attrs']
-  .block:not(.trans-abstract),
+  .block:not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible .block:has(figure[data-track-op='set_attrs']),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
@@ -1088,7 +1088,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-op='set_attrs']
-  .block:not(.trans-abstract),
+  .block:not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
@@ -1871,7 +1871,8 @@ th:hover > .table-context-menu-button,
   color: #353535;
 }
 
-.ProseMirror .block-trans_abstract .language-selector-btn {
+.ProseMirror .block-trans_abstract .language-selector-btn,
+.ProseMirror .block-trans_graphical_abstract .language-selector-btn {
   display: flex;
   position: absolute;
   top: 14px;
@@ -1911,6 +1912,15 @@ th:hover > .table-context-menu-button,
   margin: 0;
 }
 .ProseMirror .block-trans_abstract section.block.trans-abstract {
+  padding: 0 !important;
+}
+
+.ProseMirror .block-trans_graphical_abstract p.empty-node[data-placeholder] {
+  font-style: italic;
+  color: #c9c9c9;
+  margin: 0;
+}
+.ProseMirror .block-trans_graphical_abstract section.block.trans-graphical-abstract {
   padding: 0 !important;
 }
 .ProseMirror .abstracts.empty-node .add-translation-container {
