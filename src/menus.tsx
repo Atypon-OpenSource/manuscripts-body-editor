@@ -594,6 +594,10 @@ export const getEditorMenus = (
     (s) => s.id === ABSTRACT_GRAPHICAL_ID
   )
 
+  const abstractsSubmenuList = allAbstractsCategories.filter(
+    (c) => c.id !== ABSTRACT_ID && c.id !== ABSTRACT_GRAPHICAL_ID
+  )
+
   const metadata: MenuSpec = {
     id: 'insert-metadata',
     label: 'Metadata',
@@ -602,7 +606,7 @@ export const getEditorMenus = (
       {
         id: 'insert-abstract',
         label: 'Abstract',
-        isEnabled: true,
+        isEnabled: isCommandValid(insertAbstractSection(abstractSection)),
         run: doCommand(insertAbstractSection(abstractSection)),
         isHidden:
           !abstractSection || !templateAllows(state, schema.nodes.abstracts),
@@ -610,7 +614,9 @@ export const getEditorMenus = (
       {
         id: 'insert-graphical-abstract',
         label: 'Graphical Abstract',
-        isEnabled: true,
+        isEnabled: isCommandValid(
+          insertAbstractSection(graphicalAbstractSection)
+        ),
         run: doCommand(insertAbstractSection(graphicalAbstractSection)),
         isHidden:
           !graphicalAbstractSection ||
@@ -619,14 +625,12 @@ export const getEditorMenus = (
       {
         id: 'insert-abstract-types',
         label: 'Other Abstract Types',
-        isEnabled: true,
-        submenu: allAbstractsCategories
-          .filter((c) => c.id !== ABSTRACT_ID && c.id !== ABSTRACT_GRAPHICAL_ID)
-          .map(insertAbstractsSectionMenu),
+        isEnabled: !!abstractsSubmenuList.length,
+        submenu: abstractsSubmenuList.map(insertAbstractsSectionMenu),
         isHidden: !allAbstractsCategories.length,
       },
       {
-        id: 'insert-contributors',
+        id: 'insert-authors',
         label: 'Authors',
         isEnabled: isCommandValid(insertContributors),
         run: doCommand(insertContributors),
