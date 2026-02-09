@@ -162,6 +162,10 @@
   text-decoration: inherit;
   max-width: 146px;
 }
+.ProseMirror .figure.placeholder:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  border-radius: var(--focus-outline-radius);
+}
 .ProseMirror .pullquote figure {
   margin: 0;
 }

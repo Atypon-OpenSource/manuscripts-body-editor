@@ -1803,6 +1803,12 @@ th:hover > .table-context-menu-button,
   text-align: center;
 }
 
+.ProseMirror .placeholder-content a:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
+}
+
 .ProseMirror .block-embed .placeholder .placeholder-divider {
   font-weight: bold;
   color: #666;

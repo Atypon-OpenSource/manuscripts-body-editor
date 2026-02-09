@@ -272,7 +272,12 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     const container = document.createElement('div')
     container.classList.add('ext-link-editor-placeholder-container')
 
-    const placeholder = createMediaPlaceholder(MediaType.ExternalLink)
+    const placeholder = createMediaPlaceholder(
+      MediaType.ExternalLink,
+      this.view,
+      this.getPos,
+      this.props
+    )
 
     const closeButton = document.createElement('button')
     closeButton.classList.add('close-button')
