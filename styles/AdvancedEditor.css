@@ -2070,3 +2070,13 @@ th:hover > .table-context-menu-button,
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+.cursor-placeholder {
+  display: inline-flex;
+  position: relative;
+  pointer-events: none;
+  height: 1.2em;
+  margin-bottom: -0.2em;
+  margin-right: -1px;
+  border-left: 1px solid black;
+}
