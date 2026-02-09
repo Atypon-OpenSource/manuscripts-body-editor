@@ -360,6 +360,14 @@
   text-align: center !important;
 }
 
+.position-menu-button:focus-visible {
+  outline: none;
+}
+.position-menu-button:focus-visible svg {
+  outline: 4px solid var(--focus-outline-color);
+  border-radius: var(--focus-outline-radius);
+}
+
 .ProseMirror .block-figure_element .position-menu,
 .ProseMirror .block-image_element .position-menu,
 ProseMirror .block-embed .position-menu {
