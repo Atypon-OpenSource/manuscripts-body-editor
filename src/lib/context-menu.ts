@@ -263,7 +263,8 @@ export class ContextMenu {
           schema.nodes.figure,
           figure,
           attrType,
-          this.view
+          this.view,
+          () => popper.destroy()
         )
         const submenuLabel = 'Position'
         const submenu = this.createSubmenu(submenuLabel, submenuOptions)
@@ -429,13 +430,21 @@ export class ContextMenu {
   private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.tabIndex = 0
     const textNode = document.createTextNode(contents)
     item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
     item.prepend(textNode)
     item.classList.add(contextSubmenuBtnClass)
 
     item.addEventListener('mousedown', this.toggleSubmenu)
+    item.addEventListener(
+      'keydown',
+      handleEnterKey((e) => {
+        this.toggleSubmenu(e)
+      })
+    )
 
+    this.menuItems.push(item)
     return item
   }
 
@@ -635,12 +644,44 @@ export class ContextMenu {
         createKeyboardInteraction({
           container: popperContainer,
           navigation: {
-            getItems: () => this.menuItems,
+            getItems: () => {
+              // Filter to only include visible menu items (If item is inside a submenu, only include it if submenu is open)
+              return this.menuItems.filter((item) => {
+                const menuSection = item.closest('.menu-section')
+                if (menuSection && menuSection.classList.contains('menu')) {
+                  return menuSection.classList.contains('show')
+                }
+                return true
+              })
+            },
             arrowKeys: {
               forward: 'ArrowDown',
               backward: 'ArrowUp',
             },
             getCurrentElement: () => document.activeElement as HTMLElement,
+          },
+          additionalKeys: {
+            ArrowRight: (event: KeyboardEvent) => {
+              const target = event.target as HTMLElement
+              if (target.classList.contains(contextSubmenuBtnClass)) {
+                this.toggleSubmenu(event)
+              }
+            },
+            ArrowLeft: (event: KeyboardEvent) => {
+              const target = event.target as HTMLElement
+              // Close submenu if we're inside one and focus back to the trigger
+              const submenu = target.closest('.context-submenu')
+              if (submenu) {
+                const trigger = submenu.querySelector(
+                  `.${contextSubmenuBtnClass}`
+                ) as HTMLElement
+                if (trigger) {
+                  const submenuContent = trigger.nextElementSibling
+                  submenuContent?.classList.toggle('show')
+                  trigger.focus()
+                }
+              }
+            },
           },
         })
       }
@@ -667,7 +708,7 @@ export class ContextMenu {
     return this.node
   }
 
-  private toggleSubmenu = (ev: MouseEvent) => {
+  private toggleSubmenu = (ev: Event) => {
     const submenu = (ev.target as HTMLElement).nextElementSibling
     submenu?.classList.toggle('show')
   }
