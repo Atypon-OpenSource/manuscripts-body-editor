@@ -126,6 +126,20 @@ export class BibliographyElementBlockView extends BlockView<
     this.view.dispatch(tr)
   }
 
+  private handleBibItemInteraction = (item: HTMLElement) => {
+    if (!this.props.getCapabilities().seeReferencesButtons) {
+      return
+    }
+
+    this.showContextMenu(item)
+    const node = findChildByID(this.view, item.id)
+    if (node) {
+      const tr = this.view.state.tr
+      tr.setSelection(NodeSelection.create(this.view.state.doc, node.pos))
+      this.view.dispatch(tr)
+    }
+  }
+
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     // Handle click on comment marker
@@ -135,28 +149,27 @@ export class BibliographyElementBlockView extends BlockView<
       return
     }
 
-    if (this.props.getCapabilities().seeReferencesButtons) {
-      const item = element.closest('.bib-item')
-      if (item) {
-        this.showContextMenu(item as HTMLElement)
-        const node = findChildByID(this.view, item.id)
-        if (!node) {
-          return
-        }
-        const view = this.view
-        const tr = view.state.tr
-        tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
-        view.dispatch(tr)
-      }
+    // Handle click on bib-item
+    const item = element.closest('.bib-item')
+    if (item) {
+      this.handleBibItemInteraction(item as HTMLElement)
     }
   }
 
   private handleKeyDown = (event: KeyboardEvent) => {
     handleEnterKey(() => {
       const target = document.activeElement as HTMLElement
+      // Handle Enter on comment marker
       const marker = target?.closest('.comment-marker') as HTMLElement
       if (marker) {
         this.handleCommentMarkerInteraction(marker)
+        return
+      }
+
+      // Handle Enter on bib-item
+      const bibItem = target?.closest('.bib-item') as HTMLElement
+      if (bibItem) {
+        this.handleBibItemInteraction(bibItem)
       }
     })(event)
   }
@@ -220,6 +233,8 @@ export class BibliographyElementBlockView extends BlockView<
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${tempDiv.innerHTML}</div></div>`
       ).firstElementChild as HTMLElement
+
+      element.tabIndex = 0
 
       const comment = createCommentMarker('div', id)
       element.prepend(comment)

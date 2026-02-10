@@ -1136,6 +1136,11 @@
   position: relative;
   border: 1px solid transparent;
 }
+.ProseMirror .footnote:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
+}
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;
 }

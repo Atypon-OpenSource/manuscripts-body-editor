@@ -648,6 +648,11 @@ span.comment-marker {
   margin-bottom: 12px;
   min-height: 80px;
 }
+.bib-item:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
+}
 
 .bibliography-double-button {
   display: inline-flex;
