@@ -229,14 +229,17 @@ export const isEditAllowed = (state: EditorState) => {
   return !(isBodyLocked(state) && isSelectionInBody(state))
 }
 
-export const createToggleButton = (listener: () => void, what: string) => {
+export const createToggleButton = (
+  listener: (event: MouseEvent | KeyboardEvent) => void,
+  what: string
+) => {
   const altTitlesButton = document.createElement('button')
   altTitlesButton.classList.add('toggle-button-open', 'button-reset')
   altTitlesButton.setAttribute('aria-label', `Expand ${what}`)
   altTitlesButton.innerHTML = arrowDown
   const activate = (e: MouseEvent | KeyboardEvent) => {
     e.preventDefault()
-    listener()
+    listener(e)
   }
   altTitlesButton.addEventListener('click', (e) => {
     activate(e)

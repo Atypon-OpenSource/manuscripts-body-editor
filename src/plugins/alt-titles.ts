@@ -190,16 +190,19 @@ export default () => {
             Decoration.widget(
               titleEnd - 1,
               (view: ManuscriptEditorView) => {
-                return createToggleButton(() => {
+                return createToggleButton((e) => {
                   const tr = view.state.tr.setMeta(altTitlesKey, {
                     collapsed: false,
                   })
                   view.dispatch(skipTracking(tr))
-                  // Focus alt title after expand
-                  const altTitle = view.dom.querySelector(
-                    '.alt-title-text'
-                  ) as HTMLElement
-                  altTitle?.focus()
+                  // Only auto-focus first alt title on keyboard interaction, not mouse clicks
+                  const isKeyboardEvent = e.type === 'keydown'
+                  if (isKeyboardEvent) {
+                    const altTitle = view.dom.querySelector(
+                      '.alt-title-text'
+                    ) as HTMLElement
+                    altTitle?.focus()
+                  }
                 }, 'alternative titles')
               },
               {
