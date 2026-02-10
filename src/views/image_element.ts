@@ -23,6 +23,7 @@ import {
   createMediaPlaceholder,
   MediaType,
 } from '../lib/media'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { createPositionMenuWrapper } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -282,10 +283,12 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     const closeButton = document.createElement('button')
     closeButton.classList.add('close-button')
     closeButton.setAttribute('aria-label', 'Close')
-    closeButton.addEventListener('click', () => {
+    const handleClose = () => {
       this.setIsEditingExtLink(false)
       this.updateContents()
-    })
+    }
+    closeButton.addEventListener('click', handleClose)
+    closeButton.addEventListener('keydown', handleEnterKey(handleClose))
 
     container.append(placeholder, closeButton)
     this.extLinkEditorContainer.append(label, container)
@@ -302,10 +305,13 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     button.appendChild(buttonText)
     button.setAttribute('aria-label', 'Add linked file')
     button.classList.add('icon-button')
-    button.addEventListener('click', () => {
+    button.tabIndex = 0
+    const handleAdd = () => {
       this.setIsEditingExtLink(true)
       this.updateContents()
-    })
+    }
+    button.addEventListener('click', handleAdd)
+    button.addEventListener('keydown', handleEnterKey(handleAdd))
     this.extLinkEditorContainer.appendChild(button)
   }
 
@@ -323,10 +329,12 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     removeButton.classList.add('icon-button', 'remove-button')
     removeButton.setAttribute('aria-label', 'Remove link')
     removeButton.innerHTML = deleteIcon
-    removeButton.addEventListener('click', () => {
+    const handleRemove = () => {
       this.isEditingExtLink = false
       this.removeExtLink()
-    })
+    }
+    removeButton.addEventListener('click', handleRemove)
+    removeButton.addEventListener('keydown', handleEnterKey(handleRemove))
 
     div.appendChild(removeButton)
     this.extLinkEditorContainer.appendChild(div)

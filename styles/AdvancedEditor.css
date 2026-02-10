@@ -1655,6 +1655,14 @@ th:hover > .table-context-menu-button,
   display: block;
 }
 
+
+.ProseMirror .ext-link-editor-container .close-button:focus-visible,
+.ProseMirror .ext-link-editor-container .remove-button:focus-visible,
+.ProseMirror .ext-link-editor-container .icon-button:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+}
+
 .ProseMirror .ext-link-editor-placeholder-container {
   font-size: 0;
 }
