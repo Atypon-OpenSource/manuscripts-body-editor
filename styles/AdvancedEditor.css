@@ -189,8 +189,14 @@
   margin-bottom: 30px;
 }
 
-.ProseMirror .figure-block:hover .options-button {
+.ProseMirror .figure-block:hover .options-button,
+.ProseMirror .block:focus-within .figure-block .options-button {
   visibility: visible;
+}
+
+.ProseMirror .options-button:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .ProseMirror .media-preview:hover .options-button {
