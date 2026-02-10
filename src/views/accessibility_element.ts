@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { LongDescNode, schema } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -43,6 +44,40 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     super.createElement()
     this.contentDOM.className = 'accessibility_element_input'
     this.contentDOM.setAttribute('contenteditable', 'true')
+
+    this.contentDOM.tabIndex = this.node.type === schema.nodes.alt_text ? 0 : -1
+
+    this.contentDOM.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        // Place cursor at the start of the input
+        const pos = this.getPos()
+        const tr = this.view.state.tr.setSelection(
+          TextSelection.create(this.view.state.doc, pos + 1)
+        )
+        this.view.dispatch(tr)
+        this.view.focus()
+      } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        event.preventDefault()
+
+        const parentEl = this.dom.parentElement
+        if (!parentEl) {
+          return
+        }
+
+        const allInputs = Array.from(
+          parentEl.querySelectorAll('.accessibility_element_input')
+        ) as HTMLElement[]
+
+        const currentIndex = allInputs.indexOf(this.contentDOM)
+        const nextIndex =
+          event.key === 'ArrowDown'
+            ? (currentIndex + 1) % allInputs.length
+            : (currentIndex - 1 + allInputs.length) % allInputs.length
+
+        allInputs[nextIndex]?.focus()
+      }
+    })
   }
 }
 

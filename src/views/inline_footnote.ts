@@ -170,7 +170,14 @@ export class InlineFootnoteView
   public initialise = () => {
     this.dom = this.createDOM()
     this.dom.classList.add('footnote-marker')
+    this.dom.tabIndex = 0
     this.dom.addEventListener('click', this.handleClick)
+    this.dom.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        this.handleClick()
+      }
+    })
     this.updateContents()
   }
 

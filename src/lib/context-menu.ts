@@ -83,6 +83,7 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
+  private menuItems: HTMLElement[] = []
 
   public constructor(
     node: ManuscriptNode,
@@ -95,6 +96,7 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
@@ -236,6 +238,7 @@ export class ContextMenu {
   }
 
   public showEditMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
 
@@ -442,6 +445,7 @@ export class ContextMenu {
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.setAttribute('tabindex', '0')
     selected && item.classList.add('selected')
     if (IconComponent) {
       if (typeof IconComponent === 'string') {
@@ -457,6 +461,15 @@ export class ContextMenu {
       event.preventDefault()
       handler(event)
     })
+
+    item.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        handler(event)
+      }
+    })
+
+    this.menuItems.push(item)
 
     return item
   }
@@ -617,14 +630,43 @@ export class ContextMenu {
     }
 
     const keyListener: EventListener = (event) => {
-      if ((event as KeyboardEvent).key === 'Escape') {
+      const keyEvent = event as KeyboardEvent
+      const key = keyEvent.key
+
+      if (key === 'Escape') {
         window.removeEventListener('keydown', keyListener)
         popper.destroy()
+        return
+      }
+
+      if (key === 'ArrowDown' || key === 'ArrowUp') {
+        keyEvent.preventDefault()
+        if (this.menuItems.length === 0) {
+          return
+        }
+        const currentIndex = this.menuItems.findIndex(
+          (item) => item === document.activeElement
+        )
+        if (currentIndex === -1) {
+          return
+        }
+
+        const nextIndex =
+          key === 'ArrowDown'
+            ? (currentIndex + 1) % this.menuItems.length
+            : (currentIndex - 1 + this.menuItems.length) % this.menuItems.length
+
+        this.menuItems[nextIndex]?.focus()
       }
     }
 
     window.addEventListener('mousedown', mouseListener)
     window.addEventListener('keydown', keyListener)
+
+    // Focus the first menu item when the menu opens
+    window.requestAnimationFrame(() => {
+      this.menuItems[0]?.focus()
+    })
   }
 
   private trimTitle = (title: string, max: number) => {
