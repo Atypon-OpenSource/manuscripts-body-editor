@@ -39,8 +39,16 @@ const handleExpandButtonClick = (view: EditorView, node: ManuscriptNode) => {
   const tr = view.state.tr
   toggleAccessibilitySection(tr, node)
   view.dispatch(tr)
-}
 
+  // Focus first accessibility element input after expanding
+  const parentElement = view.dom.querySelector(`[id="${node.attrs.id}"]`)
+  if (parentElement) {
+    const firstInput = parentElement.querySelector(
+      '.accessibility_element_input'
+    ) as HTMLElement
+    firstInput?.focus()
+  }
+}
 const isSelectionWithin = (
   node: ManuscriptNode,
   pos: number,
