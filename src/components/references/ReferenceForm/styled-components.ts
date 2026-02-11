@@ -21,71 +21,7 @@ import {
   TextArea,
   TextField,
 } from '@manuscripts/style-guide'
-import { Field } from 'formik'
 import styled from 'styled-components'
-
-export const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-export const Label = styled.label`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  display: flex;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-export const FieldLabel = styled.label`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  color: ${(props) => props.theme.colors.text.muted};
-  padding-right: ${(props) => props.theme.grid.unit * 3}px;
-`
-
-export const NameFieldContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: ${(props) => props.theme.colors.background.primary};
-  :not(:last-child) {
-    border-bottom: 1px solid ${(props) => props.theme.colors.text.muted};
-  }
-`
-
-export const NameField = styled.input`
-  font-size: ${(props) => props.theme.font.size.normal};
-  padding: ${(props) => props.theme.grid.unit * 2}px
-    ${(props) => props.theme.grid.unit * 4}px;
-  box-sizing: border-box;
-  border: none;
-  background-color: transparent;
-  width: 50%;
-
-  &:focus {
-    outline: none;
-  }
-
-  &::placeholder {
-    color: ${(props) => props.theme.colors.text.muted};
-  }
-
-  &:hover::placeholder {
-    color: ${(props) => props.theme.colors.text.secondary};
-  }
-`
-
-export const YearField = styled(Field)`
-  font-family: ${(props) => props.theme.font.family.sans};
-  padding: ${(props) => props.theme.grid.unit * 2}px
-    ${(props) => props.theme.grid.unit * 3}px;
-  font-size: ${(props) => props.theme.font.size.medium};
-  color: ${(props) => props.theme.colors.text.primary};
-  border-radius: ${(props) => props.theme.grid.radius.small};
-  border: solid 1px ${(props) => props.theme.colors.text.muted};
-`
 
 export const Button = styled(IconButton).attrs({
   defaultColor: true,
@@ -114,9 +50,7 @@ export const Actions = styled.div`
   }
 `
 
-export const FormField = styled.div`
-  padding: ${(props) => props.theme.grid.unit * 3}px;
-`
+
 
 export const ReferenceTextField = styled(TextField)`
   padding: ${(props) => props.theme.grid.unit * 2}px
@@ -152,8 +86,13 @@ export const Section = styled.section`
   overflow: hidden;
 `
 
-export const PersonForm = styled(Section)`
-  margin: ${(props) => props.theme.grid.unit * 3}px;
+export const PersonForm = styled.div`
+  padding: ${(props) => props.theme.grid.unit * 4}px
+    ${(props) => props.theme.grid.unit * 4}px;
+
+  & > div:last-child {
+    margin-bottom: 0;
+  }
 `
 
 export const Title = styled.h4<{

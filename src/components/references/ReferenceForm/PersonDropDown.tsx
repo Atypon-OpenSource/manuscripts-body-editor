@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DeleteIcon } from '@manuscripts/style-guide'
-import { Field, FieldProps } from 'formik'
+import { DeleteIcon, FormRow, Label, TextField } from '@manuscripts/style-guide'
+import { Field } from 'formik'
 import React, { useState } from 'react'
 
 import {
   DropdownIndicator,
-  FieldLabel,
-  NameField,
-  NameFieldContainer,
   PersonForm,
   RemoveButton,
   Section,
@@ -58,7 +55,6 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
           {title}
         </ToggleButton>
         <RemoveButton
-          size={13}
           type="button"
           aria-label="Delete this editor"
           onClick={() => remove(index)}
@@ -68,40 +64,27 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
       </Title>
       {isOpen && (
         <PersonForm>
-          <Field
-            name={`${prefix}.given`}
-            value={person.given}
-            onChange={onChange}
-          >
-            {({ field }: FieldProps) => (
-              <NameFieldContainer>
-                <NameField
-                  {...field}
-                  id={field.name}
-                  placeholder={'Given'}
-                  autoFocus={true}
-                />
-                <FieldLabel htmlFor={field.name}>Given</FieldLabel>
-              </NameFieldContainer>
-            )}
-          </Field>
+          <FormRow>
+            <Label htmlFor={`${prefix}.given`}>Given Name</Label>
+            <Field
+              name={`${prefix}.given`}
+              id={`${prefix}.given`}
+              value={person.given}
+              onChange={onChange}
+              component={TextField}
+            />
+          </FormRow>
 
-          <Field
-            name={`${prefix}.family`}
-            value={person.family}
-            onChange={onChange}
-          >
-            {({ field }: FieldProps) => (
-              <NameFieldContainer>
-                <NameField
-                  {...field}
-                  id={field.name}
-                  placeholder={'Family'}
-                />
-                <FieldLabel htmlFor={field.name}>Family</FieldLabel>
-              </NameFieldContainer>
-            )}
-          </Field>
+          <FormRow>
+            <Label htmlFor={`${prefix}.family`}>Family Name</Label>
+            <Field
+              name={`${prefix}.family`}
+              id={`${prefix}.family`}
+              value={person.family}
+              onChange={onChange}
+              component={TextField}
+            />
+          </FormRow>
         </PersonForm>
       )}
     </Section>

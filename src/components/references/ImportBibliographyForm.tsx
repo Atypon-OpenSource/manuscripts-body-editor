@@ -15,7 +15,9 @@
  */
 
 import {
-  outlineStyle,
+  FormActionsBar,
+  FormRow,
+  Label,
   PrimaryButton,
   SecondaryButton,
   TextArea,
@@ -23,14 +25,7 @@ import {
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { useFormik } from 'formik'
 import { debounce } from 'lodash'
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  KeyboardEvent,
-  useRef,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { importBibliographyItems } from '../../lib/references'
@@ -46,7 +41,7 @@ export const ImportBibliographyForm = ({
   onSave,
 }: ImportBibFormProps) => {
   const [dragging, setDragging] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const formik = useFormik({
     initialValues: {
       content: '',
@@ -115,51 +110,43 @@ export const ImportBibliographyForm = ({
     reader.readAsText(file)
   }
 
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      fileInputRef?.current?.click()
-    }
-  }
-
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-      <DropContainer
-        tabIndex={0}
-        onDrop={handleDrop}
-        onDragOver={(e) => {
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onKeyDown={handleOnKeyDown}
-        active={dragging}
-      >
-        <input
-          id="file"
-          name="file"
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          style={{ display: 'none' }}
-        />
-        <Label htmlFor="file">
-          Drag & Drop or Click here to upload a file.
-        </Label>
-      </DropContainer>
-
-      <LabelContainer>
-        <Label>
+      <FormRow>
+          <DropContainer
+          onDrop={handleDrop}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setDragging(true)
+            }}
+            onDragLeave={() => setDragging(false)}
+            active={dragging}
+          >
+            <input
+              id="file"
+              name="file"
+              type="file"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            <Label htmlFor="file">
+              Drag & Drop or Click here to upload a file.
+            </Label>
+          </DropContainer>
+      </FormRow>
+          <FormRow>
+        <Label htmlFor="content">
           Alternatively, you can directly Copy&Paste below, the text of the
           bibliography items.
         </Label>
-      </LabelContainer>
-      <TextArea
-        name="content"
-        rows={6}
-        value={formik.values.content}
-        onChange={formik.handleChange}
-      ></TextArea>
+        <TextArea
+          id="content"
+          name="content"
+          rows={6}
+          value={formik.values.content}
+          onChange={formik.handleChange}
+        ></TextArea>
+      </FormRow>
 
       <Preview>
         {formik.values.err}
@@ -167,7 +154,8 @@ export const ImportBibliographyForm = ({
           <ReferenceLine item={item} key={item.id} />
         ))}
       </Preview>
-      <ButtonContainer>
+
+      <FormActionsBar>
         <SecondaryButton type="reset">Cancel</SecondaryButton>
         <PrimaryButton
           type="submit"
@@ -177,7 +165,7 @@ export const ImportBibliographyForm = ({
         >
           Save
         </PrimaryButton>
-      </ButtonContainer>
+      </FormActionsBar>
     </form>
   )
 }
@@ -189,28 +177,6 @@ const Preview = styled.div`
   min-height: 50px;
   margin-top: ${(props) => 4 * props.theme.grid.unit}px;
   margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-const LabelContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
-  margin-bottom: ${(props) => props.theme.grid.unit}px;
-`
-
-const Label = styled.label`
-  font-size: ${(props) => props.theme.font.size.normal};
-  line-height: ${(props) => props.theme.font.lineHeight.large};
-  font-family: ${(props) => props.theme.font.family.Lato};
-  display: block;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${(props) => 4 * props.theme.grid.unit}px;
-  gap: ${(props) => 2 * props.theme.grid.unit}px;
 `
 
 const activeBoxStyle = css`
@@ -242,6 +208,4 @@ const DropContainer = styled.div<{ active: boolean }>`
     font-family: ${(props) => props.theme.font.family.Lato};
     color: ${(props) => props.theme.colors.text.onLight};
   }
-
-  ${outlineStyle}
 `
