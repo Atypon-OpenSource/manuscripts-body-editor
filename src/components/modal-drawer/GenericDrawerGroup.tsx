@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { DrawerProps, SelectedItemsBox } from '@manuscripts/style-guide'
+import {
+  DrawerProps,
+  outlineStyle,
+  SelectedItemsBox,
+} from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -122,6 +126,7 @@ export const AssignButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
+  ${outlineStyle}
 `
 export const DrawerSectionHeader = styled.div`
   display: flex;

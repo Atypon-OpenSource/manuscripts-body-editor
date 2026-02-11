@@ -16,6 +16,8 @@
 import {
   ArrowDownIcon,
   IconButton,
+  outlineStyle,
+  SecondaryIconButton,
   TextArea,
   TextField,
 } from '@manuscripts/style-guide'
@@ -187,7 +189,7 @@ export const ToggleButton = styled.button<{
   text-align: left;
   font-family: ${(props) => props.theme.font.family.sans};
   font-size: 1rem;
-  padding: 0.6em 0.5em;
+  margin: 0.6em;
 
   outline: none;
 
@@ -198,12 +200,21 @@ export const ToggleButton = styled.button<{
   svg {
     transform: ${(props) => (props.isOpen ? 'rotateX(180deg)' : 'initial')};
   }
+  ${outlineStyle}
 `
 
-export const RemoveButton = styled.button`
+export const RemoveButton = styled(SecondaryIconButton)`
   border: none;
   background: transparent;
   padding: 0;
-
   outline: none;
+  svg {
+    path[fill='white'] {
+      fill: white;
+    }
+    rect[fill],
+    path:not([fill='white']) {
+      fill: #f35143;
+    }
+  }
 `

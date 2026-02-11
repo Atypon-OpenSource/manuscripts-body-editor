@@ -22,6 +22,9 @@ import {
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
+  withFocusScope,
+  withListNavigation,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
 import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
@@ -43,10 +46,10 @@ const Actions = styled(ButtonGroup)`
   padding: ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const Container = styled.div`
+const Container = withFocusScope(styled.div`
   flex: 1;
   font-family: ${(props) => props.theme.font.family.sans};
-`
+`)
 
 const AddNewFootnote = styled(ButtonGroup)`
   button {
@@ -222,18 +225,18 @@ const Separator = styled.div`
   border-bottom: 1px solid #e2e2e2;
   margin: 4px 0;
 `
-const NotesListContainer = styled.div`
+const NotesListContainer = withListNavigation(styled.div`
   padding: ${(props) => props.theme.grid.unit * 6}px
     ${(props) => props.theme.grid.unit * 5}px;
   flex: 1;
   overflow-y: auto;
-`
+`)
 
-const FootnoteItemContainer = styled.div`
+const FootnoteItemContainer = withNavigableListItem(styled.div`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 2}px 0;
   display: flex;
-`
+`)
 const StatusIcon = styled.div`
   flex-shrink: 1;
   margin-right: ${(props) => props.theme.grid.unit * 3}px;

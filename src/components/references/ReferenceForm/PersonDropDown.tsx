@@ -58,6 +58,7 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
           {title}
         </ToggleButton>
         <RemoveButton
+          size={13}
           type="button"
           aria-label="Delete this editor"
           onClick={() => remove(index)}
@@ -96,7 +97,6 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
                   {...field}
                   id={field.name}
                   placeholder={'Family'}
-                  autoFocus={true}
                 />
                 <FieldLabel htmlFor={field.name}>Family</FieldLabel>
               </NameFieldContainer>

@@ -21,6 +21,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   UploadIcon,
+  withFocusScope,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { debounce } from 'lodash'
@@ -47,10 +48,10 @@ const Actions = styled(ButtonGroup)`
   padding: ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const Container = styled.div`
+const Container = withFocusScope(styled.div`
   flex: 1;
   font-family: ${(props) => props.theme.font.family.sans};
-`
+`)
 
 const AddReferenceActions = styled(ButtonGroup)`
   button {
