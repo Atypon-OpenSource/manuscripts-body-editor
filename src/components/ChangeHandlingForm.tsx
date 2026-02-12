@@ -17,7 +17,8 @@ import { Form, useFormikContext } from 'formik'
 import React, { MutableRefObject, PropsWithChildren, useEffect } from 'react'
 import styled from 'styled-components'
 
-export interface ChangeHandlingFormProps<Values> {
+export interface ChangeHandlingFormProps<Values>
+  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onChange'> {
   onChange: (values: Values) => void
   id?: string
   formRef?: MutableRefObject<HTMLFormElement | null>
@@ -27,18 +28,19 @@ export const ChangeHandlingForm = <Values,>(
   props: PropsWithChildren<ChangeHandlingFormProps<Values>>
 ) => {
   const { values } = useFormikContext<Values>()
+  const { onChange, id, formRef, children, ...formProps } = props
 
   useEffect(() => {
     // you might modify this to fit your use case
     // like adding a `const prevValues = usePrevious(values)` above and checking for equality
     // or debounce this whole function but make sure not to use stale values
-    props.onChange?.(values)
+    onChange?.(values)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.onChange, values])
+  }, [onChange, values])
 
   return (
-    <FlexForm id={props.id} ref={props.formRef}>
-      {props.children}
+    <FlexForm id={id} ref={formRef} {...formProps}>
+      {children}
     </FlexForm>
   )
 }

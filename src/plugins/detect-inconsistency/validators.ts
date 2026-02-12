@@ -41,6 +41,7 @@ export type ValidatorContext = {
   selectedPos: number | null
   decorations: Decoration[]
   props: EditorProps
+  doc: ManuscriptNode
 }
 
 export type NodeValidator = (
@@ -228,7 +229,7 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
   const unused = footnoteState?.unusedFootnoteIDs?.has(node.attrs.id)
 
   if (unused) {
-    const isTableFootnote = isChildOfNodeTypes(context.props.doc, pos, [
+    const isTableFootnote = isChildOfNodeTypes(context.doc, pos, [
       schema.nodes.table_element,
     ])
 
@@ -255,7 +256,7 @@ const validateAffiliation: NodeValidator = (node, pos, context) => {
     // rendered manually inside AffiliationsView. ProseMirror decorations only apply to
     // nodes that it directly renders in the document DOM, so to ensure the warning
     // decoration appears (or can be scrolled to), we must attach it to the parent node.
-    const $pos = context.props.doc.resolve(pos)
+    const $pos = context.doc.resolve(pos)
     const affiliationsNodePos = $pos.before($pos.depth)
     const inconsistency = createWarning(
       node,

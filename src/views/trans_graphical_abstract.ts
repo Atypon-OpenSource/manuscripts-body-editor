@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { TransAbstractNode } from '@manuscripts/transform'
+import { TransGraphicalAbstractNode } from '@manuscripts/transform'
 
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
-export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
+export class TransGraphicalAbstractView extends BlockView<
+  Trackable<TransGraphicalAbstractNode>
+> {
   public elementType = 'section'
 
   public createDOM() {
@@ -31,7 +33,7 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
   public createElement() {
     super.createElement()
     if (this.contentDOM) {
-      this.contentDOM.classList.add('trans-abstract')
+      this.contentDOM.classList.add('trans-graphical-abstract')
     }
   }
 
@@ -50,4 +52,4 @@ export class TransAbstractView extends BlockView<Trackable<TransAbstractNode>> {
   }
 }
 
-export default createNodeView(TransAbstractView)
+export default createNodeView(TransGraphicalAbstractView)

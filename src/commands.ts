@@ -43,6 +43,7 @@ import {
   SectionCategory,
   SectionNode,
   SupplementNode,
+  TransGraphicalAbstractNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -1385,6 +1386,94 @@ export const insertBibliographySection = () => {
 export const insertTOCSection = () => {
   return false
 }
+
+export const insertTransAbstract = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch,
+  category?: string,
+  insertAfterPos?: number
+) => {
+  if (!templateAllows(state, schema.nodes.trans_abstract)) {
+    return false
+  }
+  if (!dispatch) {
+    return true
+  }
+
+  // Get document's primary language or default to English
+  const lang = state.doc.attrs.primaryLanguageCode || 'en'
+
+  // Create empty section title
+  const title = schema.nodes.section_title.create()
+  // Create empty paragraph
+  const paragraph = schema.nodes.paragraph.create()
+
+  // Create trans_abstract node with section title and paragraph
+  // Pass the current section's category to the trans_abstract
+  const node = schema.nodes.trans_abstract.create(
+    {
+      lang,
+      category,
+    },
+    [title, paragraph]
+  )
+
+  const abstracts = findAbstractsNode(state.doc)
+
+  const pos =
+    insertAfterPos != null
+      ? insertAfterPos
+      : abstracts.pos + abstracts.node.nodeSize - 1
+  const tr = state.tr.insert(pos, node)
+
+  const selection = TextSelection.create(tr.doc, pos + 1)
+  tr.setSelection(selection).scrollIntoView()
+
+  dispatch(tr)
+  return true
+}
+
+export const insertTransGraphicalAbstract =
+  (category: SectionCategory, insertAfterPos?: number) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (!templateAllows(state, schema.nodes.trans_graphical_abstract)) {
+      return false
+    }
+    if (!dispatch) {
+      return true
+    }
+
+    const lang = state.doc.attrs.primaryLanguageCode || 'en'
+
+    const abstracts = findAbstractsNode(state.doc)
+    const pos =
+      insertAfterPos != null
+        ? insertAfterPos
+        : abstracts.pos + abstracts.node.content.size + 1
+
+    const node = schema.nodes.trans_graphical_abstract.createAndFill(
+      {
+        lang,
+        category: category.id,
+      },
+      [
+        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        createAndFillFigureElement(state),
+      ]
+    ) as TransGraphicalAbstractNode
+
+    const tr = state.tr.insert(pos, node)
+    if (node.lastChild) {
+      expandAccessibilitySection(tr, node.lastChild)
+    }
+
+    const selection = TextSelection.create(tr.doc, pos + 1)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+    return true
+  }
 
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {

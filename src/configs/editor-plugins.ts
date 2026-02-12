@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2026 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,13 +45,15 @@ import move_node from '../plugins/move-node'
 import objects from '../plugins/objects'
 import paragraphs from '../plugins/paragraphs'
 import persist from '../plugins/persist'
+import persistent_cursor from '../plugins/persistent-cursor'
 import placeholder from '../plugins/placeholder'
 import prevent_empty from '../plugins/prevent-empty'
 import search_replace from '../plugins/search-replace'
 import section_title from '../plugins/section_title'
-import section_category from '../plugins/section-category'
+import section_category from '../plugins/section_category'
 import selected_suggestion from '../plugins/selected-suggestion'
 import table_editing_fix from '../plugins/tables-cursor-fix'
+import translations from '../plugins/translations'
 import rules from '../rules'
 import { EditorProps } from './ManuscriptsEditor'
 
@@ -82,6 +84,7 @@ export default (props: EditorProps) => {
     paragraphs(),
     placeholder(),
     add_subtitle(),
+    translations(props),
     tableEditing(),
     selected_suggestion(),
     footnotes(props),
@@ -99,6 +102,15 @@ export default (props: EditorProps) => {
     link(),
   ]
 
+  // @ts-ignore
+  if (!window.Cypress) {
+    allPlugins.push(persistent_cursor())
+    // this is a temporal workaround until cypress tests are switched to working with prosemirrors selection instead of browsers direct selection
+    // this plugin is incompatible with current implementation of our tests in cypress,
+    // which relies on browser native Selection.AddRange and Range APIs
+  } else {
+    console.warn('Skipping cursor imitation plugin for automated testing runs.')
+  }
   if (props.collabProvider) {
     allPlugins.push(collab({ version: props.collabProvider.currentVersion }))
   }

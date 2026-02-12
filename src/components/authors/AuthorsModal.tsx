@@ -29,6 +29,7 @@ import {
   ScrollableModalContent,
   SidebarContent,
   StyledModal,
+  FormLabel,
 } from '@manuscripts/style-guide'
 import {
   generateNodeID,
@@ -560,15 +561,6 @@ const ActionTitle = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 2}px;
 `
 
-const FormLabel = styled.legend`
-  margin-bottom: 12px;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.xlarge} /
-    ${(props) => props.theme.font.lineHeight.large}
-    ${(props) => props.theme.font.family.sans};
-  letter-spacing: -0.4px;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
 
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;

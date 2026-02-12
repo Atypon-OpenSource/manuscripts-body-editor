@@ -183,14 +183,6 @@
   margin-bottom: 30px;
 }
 
-.ProseMirror .block-figure_element .add-button {
-  border: 0px;
-  left: 53px;
-  width: 25px;
-  height: 25px;
-  position: absolute;
-}
-
 .ProseMirror .figure-block:hover .options-button {
   visibility: visible;
 }
@@ -993,7 +985,7 @@ figure .selected-suggestion {
 }
 
 .selected-suggestion[data-track-status='pending']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
@@ -1004,7 +996,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
@@ -1014,7 +1006,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-status='pending'][data-track-op='insert']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .selected-suggestion
   [data-track-status='pending'][data-track-op='insert']
@@ -1042,7 +1034,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element):not(.trans-abstract),
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .ProseMirror
   .figure-block
@@ -1060,7 +1052,7 @@ figure.block:has(.equation.selected-suggestion) {
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
-  .block:not(.box-element):not(.trans-abstract) {
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract) {
   box-shadow: inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
@@ -1071,7 +1063,7 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .ProseMirror
   [data-track-op='set_attrs']
-  .block:not(.trans-abstract),
+  .block:not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible .block:has(figure[data-track-op='set_attrs']),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
@@ -1096,7 +1088,7 @@ figure.block:has(.equation.selected-suggestion) {
 
 .tracking-visible
   .selected-suggestion[data-track-op='set_attrs']
-  .block:not(.trans-abstract),
+  .block:not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .block:has(figure.selected-suggestion[data-track-op='set_attrs']),
 .tracking-visible .selected-suggestion[data-track-op='node_split'] .block,
@@ -1820,45 +1812,37 @@ th:hover > .table-context-menu-button,
 .prosemirror-dropcursor-block {
   background-color: transparent !important;
 }
+
 .ProseMirror .add-button {
-  border: 0px;
+  border: 0;
   z-index: 1;
   cursor: pointer;
   border-radius: 50%;
-  background-color: #6e6e6e;
+  background: unset;
+  padding: 0;
 }
 
-.ProseMirror .add-button.disabled {
-  background-color: #e2e2e2 !important;
+.ProseMirror .block-figure_element .add-button {
+  left: 53px;
+  position: absolute;
 }
 
-.ProseMirror .add-button svg path {
-  fill: #ffffff !important;
+.ProseMirror .add-button svg rect {
+  fill: #6E6E6E !important;
+}
+
+.ProseMirror .add-button.disabled svg rect {
+  fill: #e2e2e2 !important;
 }
 
 /*  Abstract translations */
-.ProseMirror .abstracts {
-  position: relative;
-}
-
-.ProseMirror .abstracts .add-translation-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0;
-  padding: 6px 12px;
-  position: absolute;
-  right: 50px;
-  z-index: 5;
-  cursor: pointer;
-}
 
 /* Add translation button for individual sections within abstracts */
 .ProseMirror .abstracts section[data-category] {
   position: relative;
 }
 
-.ProseMirror .abstracts section[data-category] .add-translation-container {
+.ProseMirror .add-trans-abstract {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1869,41 +1853,57 @@ th:hover > .table-context-menu-button,
   top: 0;
   z-index: 5;
   cursor: pointer;
+  background: unset;
+  border: none;
 }
-.ProseMirror .abstracts .add-translation-text {
+
+.ProseMirror .add-trans-abstract svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ProseMirror .add-trans-abstract svg rect {
+  fill: #6E6E6E !important;
+}
+
+.ProseMirror .add-trans-abstract-text {
   font-size: 14px;
   color: #353535;
 }
-.ProseMirror .abstracts .add-translation-container .add-button {
-  margin: 0;
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.ProseMirror .abstracts .add-translation-container .add-button svg {
-  width: 10px;
-  height: 8px;
-}
-.ProseMirror .block-trans_abstract .language-selector-btn {
-  position: absolute;
-  z-index: 9;
-  top: 40px;
-  border: 0px;
-  background: transparent;
-  right: 60px;
+.ProseMirror .block-trans_abstract .language-selector-btn,
+.ProseMirror .block-trans_graphical_abstract .language-selector-btn {
   display: flex;
-  align-items: center;
+  position: absolute;
+  top: 14px;
+  right: 50px;
+  line-height: 1.6;
+  background: unset;
+  border: none;
+  padding: 0;
+  margin: 0 6px;
+  cursor: pointer;
+  z-index: 10;
+  align-items: end;
+  gap: 8px;
   font-size: 14px;
   color: #6e6e6e;
-  cursor: pointer;
 }
-.abstracts-language-dropdown {
-  right: -142px !important;
-  top: -86px !important;
+
+.language.menu .menu-item {
+  margin-right: 25px
+}
+
+.language.menu .menu-item.selected:after {
+  top: 10px;
+  right: 19px;
+  position: absolute;
+  content: '';
+  height: 10px;
+  width: 5px;
+  border-bottom: 2px solid #36b260;
+  border-right: 2px solid #36b260;
+  transform: rotate(45deg);
 }
 
 .ProseMirror .block-trans_abstract p.empty-node[data-placeholder] {
@@ -1912,6 +1912,15 @@ th:hover > .table-context-menu-button,
   margin: 0;
 }
 .ProseMirror .block-trans_abstract section.block.trans-abstract {
+  padding: 0 !important;
+}
+
+.ProseMirror .block-trans_graphical_abstract p.empty-node[data-placeholder] {
+  font-style: italic;
+  color: #c9c9c9;
+  margin: 0;
+}
+.ProseMirror .block-trans_graphical_abstract section.block.trans-graphical-abstract {
   padding: 0 !important;
 }
 .ProseMirror .abstracts.empty-node .add-translation-container {
@@ -2060,4 +2069,14 @@ th:hover > .table-context-menu-button,
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.cursor-placeholder {
+  display: inline-flex;
+  position: relative;
+  pointer-events: none;
+  height: 1.2em;
+  margin-bottom: -0.2em;
+  margin-right: -1px;
+  border-left: 1px solid black;
 }
