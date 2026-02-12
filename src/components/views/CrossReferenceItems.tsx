@@ -19,7 +19,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   TextArea,
-  withFocusScope,
+  withFocusTrap,
   withListNavigation,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
@@ -27,7 +27,7 @@ import { Target } from '@manuscripts/transform'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-const Container = withFocusScope(styled.div`
+const Container = withFocusTrap(styled.div`
   padding: ${(props) => props.theme.grid.unit * 3}px
     ${(props) => props.theme.grid.unit * 4}px;
   display: flex;

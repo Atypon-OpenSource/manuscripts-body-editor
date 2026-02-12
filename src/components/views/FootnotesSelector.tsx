@@ -22,7 +22,7 @@ import {
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
-  withFocusScope,
+  withFocusTrap,
   withListNavigation,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
@@ -46,7 +46,7 @@ const Actions = styled(ButtonGroup)`
   padding: ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const Container = withFocusScope(styled.div`
+const Container = withFocusTrap(styled.div`
   flex: 1;
   font-family: ${(props) => props.theme.font.family.sans};
 `)

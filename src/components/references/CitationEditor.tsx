@@ -22,7 +22,7 @@ import {
   IconButton,
   PrimaryButton,
   SecondaryButton,
-  withFocusScope,
+  withFocusTrap,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
@@ -41,7 +41,7 @@ import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
 import { ReferencesModal } from './ReferencesModal'
 
-const Container = withFocusScope(styled.div``)
+const Container = withFocusTrap(styled.div``)
 
 const CitedItemActions = styled.div`
   display: flex;
