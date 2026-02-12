@@ -53,6 +53,7 @@ import {
 } from '../commands'
 import { EditorAction } from '../types'
 import { skipCommandTracking } from './list'
+import { focusNearestElement } from '../lib/navigation-utils'
 
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
@@ -62,7 +63,7 @@ const customKeymap: { [key: string]: EditorAction } = {
     skipCommandTracking(joinBackward)
   ),
   Delete: ignoreAtomBlockNodeForward,
-  Tab: goToNextCell(1),
+  Tab: chainCommands(goToNextCell(1), focusNearestElement),
   Escape: exitEditorToContainer,
   'Mod-z': undo,
   'Mod-y': redo, // Mac
