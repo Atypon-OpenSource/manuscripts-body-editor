@@ -55,13 +55,10 @@ export default () => {
       },
       handleDOMEvents: {
         focus(view, event) {
-          const newTr = view.state.tr.setMeta(persistentCursor, { on: false })
-          view.dispatch(newTr)
-        },
-        blur(view, event) {
-          const newTr = view.state.tr.setMeta(persistentCursor, { on: true })
-          view.dispatch(newTr)
-          // create decoration for fake cursor
+          if (this.getState(view.state)?.on) {
+            const newTr = view.state.tr.setMeta(persistentCursor, { on: false })
+            view.dispatch(newTr)
+          }
         },
       },
     },
