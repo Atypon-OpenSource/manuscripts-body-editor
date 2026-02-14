@@ -89,7 +89,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
 
   useEffect(() => {
     if (selectedAffiliations && formRef.current) {
-      formRef.current.setFieldValue('affiliations', selectedAffiliations)
+      formRef.current.setFieldValue('affiliationIDs', selectedAffiliations)
     }
   }, [selectedAffiliations])
 
@@ -149,7 +149,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </FormRow>
               <FormRow>
-                <Field name={'bibliographicName.given'}>
+                <Field name={'given'}>
                   {(props: FieldProps) => (
                     <>
                       <Label htmlFor="given-name">Given name</Label>
@@ -159,7 +159,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </FormRow>
               <FormRow>
-                <Field name={'bibliographicName.family'}>
+                <Field name={'family'}>
                   {(props: FieldProps) => (
                     <>
                       <Label htmlFor="family-name">Family name</Label>
@@ -226,7 +226,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               <OrcidContainer>
                 <FormRow>
                   <Label htmlFor="orcid">ORCID</Label>
-                  <Field name={'ORCIDIdentifier'} type={'text'}>
+                  <Field name={'ORCID'} type={'text'}>
                     {(props: FieldProps) => (
                       <>
                         <Label htmlFor="orcid" className="sr-only">
