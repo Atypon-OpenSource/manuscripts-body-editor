@@ -28,7 +28,6 @@ import {
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
 import React, { useMemo, useRef } from 'react'
 import styled, { useTheme } from 'styled-components'
-import { debounce } from 'lodash'
 
 import { AwardAttrs } from '../../views/award'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
@@ -42,6 +41,7 @@ import {
   SingleValue,
 } from 'react-select'
 import AsyncCreatableSelect from 'react-select/async-creatable'
+import useDebounced from '../hooks/use-debounce'
 
 export interface AwardFormProps {
   values: AwardAttrs
@@ -101,7 +101,11 @@ export const AwardForm = ({
 
   const themes = useTheme() as Theme
   const customStyles = useMemo(() => getCustomStyles(themes), [themes])
-  const handleOnLoadFunders = debounce(loadOptions, 300)
+
+  const handleOnLoadFunders = useDebounced(
+    async (inputValue: string) => loadOptions(inputValue),
+    300
+  )
 
   const handleCancel = () => {
     formRef.current?.resetForm()

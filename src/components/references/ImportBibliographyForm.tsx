@@ -130,6 +130,7 @@ export const ImportBibliographyForm = ({
       <FormRow>
         <DropContainer
           tabIndex={0}
+          role="button"
           onDrop={handleDrop}
             onDragOver={(e) => {
               e.preventDefault()

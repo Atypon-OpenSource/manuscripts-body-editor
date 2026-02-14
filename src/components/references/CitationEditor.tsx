@@ -81,7 +81,7 @@ const EditReferenceButton = styled(ActionButton)`
 const Actions = styled(ButtonGroup)`
   margin: ${(props) => props.theme.grid.unit * 4}px;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
 `
 export interface CitationEditorProps {
