@@ -43,13 +43,20 @@ const Container = styled.div`
   align-items: center;
   padding-bottom: 16px;
 `
-const OptionWrapper = styled.div<{ focused?: boolean }>`
+const OptionWrapper = styled.div<{ focused?: boolean; selected?: boolean }>`
   padding-left: ${(props) => props.theme.grid.unit * 4}px;
   padding-top: ${(props) => props.theme.grid.unit * 2}px;
   padding-bottom: ${(props) => props.theme.grid.unit * 2}px;
 
-  background-color: ${(props) =>
-    props.focused ? props.theme.colors.background.fifth : 'transparent'};
+  background-color: ${(props) => {
+    if (props.selected) {
+      return props.theme.colors.background.selected
+    }
+    if (props.focused) {
+      return props.theme.colors.background.fifth
+    }
+    return 'transparent'
+  }};
 
   &:hover {
     background-color: ${(props) => props.theme.colors.background.fifth};
@@ -88,9 +95,17 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
   const OptionComponent: React.FC<OptionProps<OptionType, false>> = ({
     innerProps,
     data,
+    innerRef,
+    isFocused,
+    isSelected,
   }) => {
     return (
-      <OptionWrapper {...innerProps} ref={null}>
+      <OptionWrapper
+        {...innerProps}
+        ref={innerRef}
+        focused={isFocused}
+        selected={isSelected}
+      >
         {data.label}
       </OptionWrapper>
     )

@@ -152,6 +152,7 @@ export class InlineFootnoteView
       this.view,
       ['footnote-editor']
     )
+    this.popperContainer.setAttribute('tabindex', '0')
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 

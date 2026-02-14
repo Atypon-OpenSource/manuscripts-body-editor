@@ -34,6 +34,12 @@ export class InlineEquationEditableView extends InlineEquationView {
       mode: 'stex',
       placeholder,
       autofocus: true,
+      extraKeys: {
+        Esc: () => {
+          this.props.popper.destroy()
+          this.view.focus()
+        },
+      },
     })
 
     input.on('changes', async () => {

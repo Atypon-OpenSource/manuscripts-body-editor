@@ -243,6 +243,7 @@
 
 .popper .cross-reference-editor {
   position: relative;
+  outline: none;
 }
 
 .popper .cross-reference-editor,
@@ -270,6 +271,7 @@
   box-shadow: 0 4px 9px 0 rgba(84, 83, 83, 0.3);
   height: auto;
   width: 600px;
+  outline: none;
 }
 
 .popper .track-attrs-popper {
