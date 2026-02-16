@@ -92,7 +92,6 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Shift-Mod-Enter': insertSection(true),
   'Mod-Enter': chainCommands(exitCode, insertSection()),
   'Shift-Enter': chainCommands(exitCode, insertBreak),
-  'Ctrl-Enter': chainCommands(exitCode, insertBreak), // mac-only?
   // 'Shift-Ctrl-0': setBlockType(schema.nodes.paragraph),
   // 'Shift-Ctrl-\\': setBlockType(schema.nodes.listing_element),
   'Shift-Tab': goToNextCell(-1),
@@ -106,6 +105,7 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-c': insertInlineCitation,
   'Mod-Alt-r': insertCrossReference,
   'Shift-Mod-Alt-e': insertInlineEquation,
+  'Shift-Mod-e': insertInlineEquation, // PC
 }
 
 export default customKeymap
