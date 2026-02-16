@@ -43,7 +43,10 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { addTrackChangesAttributes } from '@manuscripts/track-changes-plugin'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
