@@ -23,7 +23,6 @@ import { createNodeView } from './creators'
 export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
-  private isProtected = false
   private element: HTMLElement
 
   public protectedSectionTitles = [
@@ -42,7 +41,6 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
 
     if (this.protectedSectionTitles.includes($pos.parent.type)) {
       this.element.setAttribute('contenteditable', 'false')
-      this.isProtected = true
       this.renderContent()
     } else {
       this.contentDOM = this.element
@@ -56,7 +54,7 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   public updateContents() {
     super.updateContents()
 
-    if (this.isProtected) {
+    if (!this.element.isContentEditable) {
       this.renderContent()
     }
 
