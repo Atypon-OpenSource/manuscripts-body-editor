@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
+import { isDeleted, isDeletedText } from '@manuscripts/track-changes-plugin'
 import { Node as ProseMirrorNode } from 'prosemirror-model'
-
-import { isDeleted, isDeletedText } from '../../lib/track-changes-utils'
 
 export function getNewMatch(
   side: 'left' | 'right',

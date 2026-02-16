@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 import {
+  Include,
+  isDeleted,
+  isValid,
   setAction,
   TrackChangesAction,
   TrackedAttrs,
@@ -33,14 +36,8 @@ import { findChildrenByType, hasParentNodeOfType } from 'prosemirror-utils'
 import { EditorView } from 'prosemirror-view'
 
 import { Dispatch } from '../../commands'
-import { isMoved } from '../../lib/filtered-document'
-import { isDeleted, isShadowDelete } from '../../lib/track-changes-utils'
 import { filterBlockNodes } from '../../lib/utils'
 import { Option } from './type-selector/TypeSelector'
-
-export const shouldSkipNode = (node: Node): boolean => {
-  return isMoved(node) || isDeleted(node)
-}
 
 export const optionName = (nodeType: ManuscriptNodeType) => {
   switch (nodeType) {
@@ -163,8 +160,7 @@ export const demoteSectionToParagraph = (
 
   // TC plugins is the one who has to drop shadow content and not body-editor has to do that
   const content = filterBlockNodes(
-    Fragment.from(paragraph).append(sectionContent),
-    (node) => !isShadowDelete(node)
+    Fragment.from(paragraph).append(sectionContent)
   )
   // @TODO WIP ----> check what steps this results in - does it produce replace around step?
   tr.insert(beforeSection, content)
@@ -257,10 +253,7 @@ export const promoteParagraphToSection = (
       )
     )
   }
-  const content = filterBlockNodes(
-    Fragment.from(items[items.length - 1]),
-    (node) => !isShadowDelete(node)
-  )
+  const content = filterBlockNodes(Fragment.from(items[items.length - 1]))
   tr.insert(afterParentSection, content)
   tr.delete(beforeParagraph, afterParentSection - 1)
 
@@ -349,7 +342,7 @@ export const indentSection =
     let previousSection: Node | null = null
     for (let i = startIndex - 1; i >= 0; i--) {
       const candidate = parentSection.child(i)
-      if (candidate.type === nodes.section && !shouldSkipNode(candidate)) {
+      if (candidate.type === nodes.section && !isValid(candidate)) {
         previousSection = candidate
         break
       }

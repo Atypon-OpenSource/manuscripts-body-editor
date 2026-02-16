@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { clear, Include, skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isHighlightMarkerNode,
@@ -21,8 +21,6 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
-
-import { isMoved } from '../lib/filtered-document'
 import { isInit } from '../lib/plugins'
 
 /**
@@ -42,13 +40,12 @@ export default () => {
       }
       const ids = new Set<string>()
       const tr = newState.tr
-      newState.doc.descendants((node, pos, parent) => {
+      clear(newState.doc).descendants((node, pos, parent) => {
         if (
           !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||
           isManuscriptNode(node) ||
-          isManuscriptNode(parent) ||
-          isMoved(node)
+          isManuscriptNode(parent)
         ) {
           return
         }
