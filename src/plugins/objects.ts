@@ -22,7 +22,7 @@ import {
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { clear, Include } from '@manuscripts/track-changes-plugin'
+import { clear } from '@manuscripts/track-changes-plugin'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 

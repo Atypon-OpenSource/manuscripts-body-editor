@@ -15,21 +15,10 @@
  */
 
 import { EditAttrsTrackingIcon } from '@manuscripts/style-guide'
-import {
-  CHANGE_OPERATION,
-  TrackedAttrs,
-} from '@manuscripts/track-changes-plugin'
-import { schema } from '@manuscripts/transform'
-import {
-  Attrs,
-  Fragment,
-  Mark,
-  Node as ProsemirrorNode,
-} from 'prosemirror-model'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
+import { Node as ProsemirrorNode } from 'prosemirror-model'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-
-
 
 export function isHidden(node: ProsemirrorNode) {
   return isDeleted(node)

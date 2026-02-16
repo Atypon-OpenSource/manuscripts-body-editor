@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { clear, Include, skipTracking } from '@manuscripts/track-changes-plugin'
+import { clear, skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   isHighlightMarkerNode,
