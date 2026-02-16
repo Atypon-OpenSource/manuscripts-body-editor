@@ -422,7 +422,7 @@ export const getEditorMenus = (
         label: 'Inline Equation',
         shortcut: {
           mac: 'Shift+Option+CommandOrControl+E',
-          pc: 'Shift+CommandOrControl+Option+E',
+          pc: 'Shift+CommandOrControl+E',
         },
         isEnabled:
           isEditAllowed(state) &&
