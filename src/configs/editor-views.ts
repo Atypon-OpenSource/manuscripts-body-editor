@@ -70,6 +70,7 @@ import tableElement from '../views/table_element_editable'
 import tableElementFooter from '../views/table_element_footer'
 import title from '../views/title_editable'
 import transAbstract from '../views/translated_abstract_editable'
+import transGraphicalAbstract from '../views/trans_graphical_abstract_editable'
 import { EditorProps } from './ManuscriptsEditor'
 
 export default (
@@ -131,6 +132,7 @@ export default (
     hero_image: heroImage(props, dispatch),
     abstracts: abstracts(props),
     trans_abstract: transAbstract(props),
+    trans_graphical_abstract: transGraphicalAbstract(props),
     attachment: attachment(props, dispatch),
     attachments: attachments(props, dispatch),
   }

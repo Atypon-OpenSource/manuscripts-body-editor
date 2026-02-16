@@ -44,6 +44,7 @@ import {
   SectionCategory,
   SectionNode,
   SupplementNode,
+  TransGraphicalAbstractNode,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -1393,7 +1394,8 @@ export const insertTOCSection = () => {
 export const insertTransAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  category?: string
+  category?: string,
+  insertAfterPos?: number
 ) => {
   if (!templateAllows(state, schema.nodes.trans_abstract)) {
     return false
@@ -1420,9 +1422,12 @@ export const insertTransAbstract = (
     [title, paragraph]
   )
 
-  // Insert the node at the end of the abstracts container
   const abstracts = findAbstractsNode(state.doc)
-  const pos = abstracts.pos + abstracts.node.nodeSize - 1
+
+  const pos =
+    insertAfterPos != null
+      ? insertAfterPos
+      : abstracts.pos + abstracts.node.nodeSize - 1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1431,6 +1436,48 @@ export const insertTransAbstract = (
   dispatch(tr)
   return true
 }
+
+export const insertTransGraphicalAbstract =
+  (category: SectionCategory, insertAfterPos?: number) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (!templateAllows(state, schema.nodes.trans_graphical_abstract)) {
+      return false
+    }
+    if (!dispatch) {
+      return true
+    }
+
+    const lang = state.doc.attrs.primaryLanguageCode || 'en'
+
+    const abstracts = findAbstractsNode(state.doc)
+    const pos =
+      insertAfterPos != null
+        ? insertAfterPos
+        : abstracts.pos + abstracts.node.content.size + 1
+
+    const node = schema.nodes.trans_graphical_abstract.createAndFill(
+      {
+        lang,
+        category: category.id,
+      },
+      [
+        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        createAndFillFigureElement(state),
+      ]
+    ) as TransGraphicalAbstractNode
+
+    const tr = state.tr.insert(pos, node)
+    if (node.lastChild) {
+      expandAccessibilitySection(tr, node.lastChild)
+    }
+
+    const selection = TextSelection.create(tr.doc, pos + 1)
+    if (view) {
+      view.focus()
+    }
+    dispatch(tr.setSelection(selection).scrollIntoView())
+    return true
+  }
 
 // Copied from prosemirror-commands
 const findCutBefore = ($pos: ResolvedPos) => {
