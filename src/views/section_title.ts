@@ -23,6 +23,7 @@ import { createNodeView } from './creators'
 export class SectionTitleView extends BlockView<SectionTitleNode> {
   public contentDOM: HTMLElement
   public elementType = 'h1'
+  private element: HTMLElement
 
   public protectedSectionTitles = [
     schema.nodes.bibliography_section,
@@ -33,19 +34,31 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
   ]
 
   public createElement = () => {
-    this.contentDOM = document.createElement(this.elementType)
-    this.contentDOM.className = 'block'
-    this.dom.appendChild(this.contentDOM)
+    this.element = document.createElement(this.elementType)
+    this.element.className = 'block'
+    this.dom.appendChild(this.element)
 
     const $pos = this.view.state.doc.resolve(this.getPos())
 
     if (this.protectedSectionTitles.includes($pos.parent.type)) {
-      this.contentDOM.setAttribute('contenteditable', 'false')
+      this.element.setAttribute('contenteditable', 'false')
+      this.renderContent()
+    } else {
+      this.contentDOM = this.element
     }
+  }
+
+  private renderContent() {
+    this.element.textContent = this.node.textContent
   }
 
   public updateContents() {
     super.updateContents()
+
+    if (!this.element.isContentEditable) {
+      this.renderContent()
+    }
+
     const $pos = this.view.state.doc.resolve(this.getPos())
     const sectionTitleState = sectionTitleKey.getState(this.view.state)
     const parentSection = findParentNodeOfTypeClosestToPos(
@@ -60,13 +73,13 @@ export class SectionTitleView extends BlockView<SectionTitleNode> {
     }
 
     if (this.node.childCount) {
-      this.contentDOM.classList.remove('empty-node')
+      this.element.classList.remove('empty-node')
     } else {
-      this.contentDOM.classList.add('empty-node')
+      this.element.classList.add('empty-node')
     }
     if (sectionTitleState && sectionNumber) {
-      this.contentDOM.dataset.sectionNumber = sectionNumber
-      this.contentDOM.dataset.titleLevel = level.toString()
+      this.element.dataset.sectionNumber = sectionNumber
+      this.element.dataset.titleLevel = level.toString()
     }
   }
 }
