@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
@@ -1789,12 +1788,12 @@ export const addNodeComment = (
   dispatch?: Dispatch
 ) => {
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
-    contributions: [contribution],
+    userID: props.userID,
+    timestamp: Date.now(),
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
@@ -1832,12 +1831,12 @@ export const addInlineComment = (
   }
 
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
-    contributions: [contribution],
+    userID: props.userID,
+    timestamp: Date.now(),
     originalText: selectedText() || state.doc.textBetween(from, to),
     selector: {
       from,
