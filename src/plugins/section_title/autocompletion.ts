@@ -17,8 +17,8 @@ import { ManuscriptNode, schema, SectionCategory } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
-import { getActualTextContent } from '../../lib/track-changes-utils'
 import { getEditorProps } from '../editor-props'
+import { getActualTextContent } from '@manuscripts/track-changes-plugin'
 
 function cursorAtTheEndOfText(
   state: EditorState,

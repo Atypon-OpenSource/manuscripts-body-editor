@@ -280,7 +280,7 @@ export const findInsertionPosition = (
 
 export const filterBlockNodes = (
   fragment: Fragment,
-  predicate: (node: ProseMirrorNode) => boolean
+  predicate?: (node: ProseMirrorNode) => boolean
 ) => {
   const updatedNodes: ProseMirrorNode[] = []
 
@@ -293,7 +293,7 @@ export const filterBlockNodes = (
     const newContent = child.content.size
       ? filterBlockNodes(child.content, predicate)
       : child.content
-    if (predicate(child)) {
+    if (!predicate || predicate(child)) {
       updatedNodes.push(child.type.create(child.attrs, newContent, child.marks))
     }
   })

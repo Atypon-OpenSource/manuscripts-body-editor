@@ -32,7 +32,7 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../lib/authors'
-import { isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export interface PluginState {
   version: string

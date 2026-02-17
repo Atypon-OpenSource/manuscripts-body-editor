@@ -33,12 +33,12 @@ import {
 } from '../components/references/CitationViewer'
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
-import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 const createBibliographySection = (node: ManuscriptNode) =>
   schema.nodes.bibliography_section.createAndFill({}, [
