@@ -18,6 +18,7 @@ import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
@@ -68,6 +69,32 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
 
     if (this.addingTools) {
       this.element.appendChild(this.addingTools)
+    }
+  }
+
+  public updateContents() {
+    super.updateContents()
+    this.setKeywordsTabIndices()
+  }
+
+  private setKeywordsTabIndices() {
+    const container = this.contentDOM
+    if (!container) {
+      return
+    }
+    let firstFocusableFound = false
+    for (let i = 0; i < this.node.childCount; i++) {
+      const child = this.node.child(i)
+      const keyword = container.children[i] as HTMLElement | undefined
+      if (!keyword) {
+        continue
+      }
+      if (!isDeleted(child) && !firstFocusableFound) {
+        keyword.tabIndex = 0
+        firstFocusableFound = true
+      } else {
+        keyword.tabIndex = -1
+      }
     }
   }
 
