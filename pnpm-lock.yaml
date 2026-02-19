@@ -36,11 +36,11 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.4.1
-        version: 3.4.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.4.2
+        version: 3.4.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.3
-        version: 2.2.3
+        specifier: 2.2.6
+        version: 2.2.6
       '@manuscripts/transform':
         specifier: 4.3.18
         version: 4.3.18(prosemirror-state@1.4.3)
@@ -1317,12 +1317,12 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.4.1':
-    resolution: {integrity: sha512-qAdZmpOz72FTIihVaeAnn0wYcOA5AJROlghUqrYLfPcqjaSFEFvJAIO5WyzaVQ9scXzVPfU/25/iufkNFrtYcQ==}
+  '@manuscripts/style-guide@3.4.2':
+    resolution: {integrity: sha512-DZszxbK0Tbfh9+Y9ADdNms2ypWa4Xelq+UT6q1Zjpy5YKBDQ5VcSASowunULBWG+GDA5gjPmxcIyrqXDzSh5NA==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.3':
-    resolution: {integrity: sha512-hWmN0bmkASKXg6G0J68RsUgDsCxxba3Oz3QkaIkaxbsTEkXnylDLk/+kTKmnMmnYDixIAVHV6QiSPD+4ZE2nJA==}
+  '@manuscripts/track-changes-plugin@2.2.6':
+    resolution: {integrity: sha512-PrQSqdaxGtTX7hk1wtizRS1sxHNryP5QOioYM7H1yuEFPb9xTcHldCqUV09rx+nx+U9zVUKsDs78wV6v8l5bzg==}
 
   '@manuscripts/transform@4.3.18':
     resolution: {integrity: sha512-ySo8w+2c5Ecme2SOvKw5nF9hA9nSbs4Nvaqwqpr28JD/5+Q7echrz63YyHoRa80Tl1bAGppSAyaYyhlVnJoV8Q==}
@@ -6392,7 +6392,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.4.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.4.2(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6422,7 +6422,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.3':
+  '@manuscripts/track-changes-plugin@2.2.6':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
