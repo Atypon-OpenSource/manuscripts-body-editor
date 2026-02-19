@@ -645,7 +645,16 @@ export class ContextMenu {
           container: popperContainer,
           navigation: {
             getItems: () => {
-              // Filter to only include visible menu items (If item is inside a submenu, only include it if submenu is open)
+              const activeElement = document.activeElement as HTMLElement
+              const openSubmenu = activeElement?.closest(
+                '.menu-section.menu.show'
+              )
+              // only return submenu items
+              if (openSubmenu) {
+                return this.menuItems.filter((item) =>
+                  openSubmenu.contains(item)
+                )
+              }
               return this.menuItems.filter((item) => {
                 const menuSection = item.closest('.menu-section')
                 if (menuSection && menuSection.classList.contains('menu')) {
@@ -665,6 +674,13 @@ export class ContextMenu {
               const target = event.target as HTMLElement
               if (target.classList.contains(contextSubmenuBtnClass)) {
                 this.toggleSubmenu(event)
+                const submenuContent = target.nextElementSibling
+                if (submenuContent?.classList.contains('show')) {
+                  const firstItem = submenuContent.querySelector(
+                    '.menu-item'
+                  ) as HTMLElement
+                  firstItem?.focus()
+                }
               }
             },
             ArrowLeft: (event: KeyboardEvent) => {
