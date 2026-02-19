@@ -308,7 +308,7 @@ const NestedDropdown: React.FC<{
         onClick={toggleOpen}
         disabled={disabled}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === 'ArrowRight') {
+          if (e.key === 'ArrowRight') {
             e.preventDefault()
             toggleOpen()
           }
