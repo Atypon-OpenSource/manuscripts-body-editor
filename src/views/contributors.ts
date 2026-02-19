@@ -29,6 +29,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import {
   addTrackChangesAttributes,
   isDeleted,
@@ -56,6 +57,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public ignoreMutation = () => true
   public stopEvent = () => true
+  private removeKeydownListener?: () => void
 
   public updateContents() {
     super.updateContents()
@@ -96,13 +98,31 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const can = this.props.getCapabilities()
     if (can.editMetadata) {
       wrapper.addEventListener('click', this.handleClick)
+
+      this.removeKeydownListener = createKeyboardInteraction({
+        container: wrapper,
+        navigation: {
+          getItems: () => {
+            return Array.from(
+              wrapper.querySelectorAll<HTMLElement>('.contributor')
+            )
+          },
+          arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
+        },
+        additionalKeys: {
+          Enter: (e) => {
+            e.preventDefault()
+            this.handleClick(e)
+          },
+        },
+      })
     }
 
     const authors = affs.contributors
 
     authors.sort(authorComparator).forEach((author, i) => {
       const jointAuthors = this.isJointFirstAuthor(authors, i)
-      wrapper.appendChild(this.buildAuthor(author, jointAuthors))
+      wrapper.appendChild(this.buildAuthor(author, jointAuthors, i))
       if (i !== authors.length - 1) {
         const separator = document.createElement('span')
         separator.classList.add('separator')
@@ -114,7 +134,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.container.appendChild(wrapper)
   }
 
-  buildAuthor = (attrs: ContributorAttrs, isJointFirstAuthor: boolean) => {
+  buildAuthor = (
+    attrs: ContributorAttrs,
+    isJointFirstAuthor: boolean,
+    index: number
+  ) => {
     const state = this.view.state
     const affs = affiliationsKey.getState(state)?.indexedAffiliationIds
 
@@ -122,6 +146,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.classList.add('contributor')
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
+    container.tabIndex = index === 0 ? 0 : -1
 
     addTrackChangesAttributes(attrs, container)
 
@@ -375,6 +400,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       const affiliationNode = schema.nodes.affiliation.create(attrs)
       dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
     }
+  }
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 

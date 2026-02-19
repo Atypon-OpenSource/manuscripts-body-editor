@@ -28,6 +28,8 @@ import {
 } from '@manuscripts/transform'
 import { Attrs, ResolvedPos } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
+
+import { handleEnterKey, createKeyboardInteraction } from './navigation-utils'
 import { findChildrenByType } from 'prosemirror-utils'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -83,6 +85,7 @@ export class ContextMenu {
   private readonly node: ManuscriptNode
   private readonly view: ManuscriptEditorView
   private readonly getPos: () => number
+  private menuItems: HTMLElement[] = []
 
   public constructor(
     node: ManuscriptNode,
@@ -95,6 +98,7 @@ export class ContextMenu {
   }
 
   public showAddMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
     const $pos = this.resolvePos()
@@ -236,6 +240,7 @@ export class ContextMenu {
   }
 
   public showEditMenu = (target: Element) => {
+    this.menuItems = []
     const menu = document.createElement('div')
     menu.className = 'menu'
 
@@ -258,7 +263,8 @@ export class ContextMenu {
           schema.nodes.figure,
           figure,
           attrType,
-          this.view
+          this.view,
+          () => popper.destroy()
         )
         const submenuLabel = 'Position'
         const submenu = this.createSubmenu(submenuLabel, submenuOptions)
@@ -424,13 +430,21 @@ export class ContextMenu {
   private createSubmenuTrigger = (contents: string) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.tabIndex = 0
     const textNode = document.createTextNode(contents)
     item.innerHTML = renderToStaticMarkup(createElement(TriangleCollapsedIcon))
     item.prepend(textNode)
     item.classList.add(contextSubmenuBtnClass)
 
     item.addEventListener('mousedown', this.toggleSubmenu)
+    item.addEventListener(
+      'keydown',
+      handleEnterKey((e) => {
+        this.toggleSubmenu(e)
+      })
+    )
 
+    this.menuItems.push(item)
     return item
   }
 
@@ -442,6 +456,7 @@ export class ContextMenu {
   ) => {
     const item = document.createElement('div')
     item.className = 'menu-item'
+    item.setAttribute('tabindex', '0')
     selected && item.classList.add('selected')
     if (IconComponent) {
       if (typeof IconComponent === 'string') {
@@ -457,6 +472,10 @@ export class ContextMenu {
       event.preventDefault()
       handler(event)
     })
+
+    item.addEventListener('keydown', handleEnterKey(handler))
+
+    this.menuItems.push(item)
 
     return item
   }
@@ -616,15 +635,76 @@ export class ContextMenu {
       })
     }
 
-    const keyListener: EventListener = (event) => {
-      if ((event as KeyboardEvent).key === 'Escape') {
-        window.removeEventListener('keydown', keyListener)
-        popper.destroy()
-      }
-    }
-
     window.addEventListener('mousedown', mouseListener)
-    window.addEventListener('keydown', keyListener)
+
+    window.requestAnimationFrame(() => {
+      const popperContainer = popper.getContainer()
+      if (popperContainer) {
+        // Attach navigation listener to container - automatically removed when container is removed
+        createKeyboardInteraction({
+          container: popperContainer,
+          navigation: {
+            getItems: () => {
+              const activeElement = document.activeElement as HTMLElement
+              const openSubmenu = activeElement?.closest(
+                '.menu-section.menu.show'
+              )
+              // only return submenu items
+              if (openSubmenu) {
+                return this.menuItems.filter((item) =>
+                  openSubmenu.contains(item)
+                )
+              }
+              return this.menuItems.filter((item) => {
+                const menuSection = item.closest('.menu-section')
+                if (menuSection && menuSection.classList.contains('menu')) {
+                  return menuSection.classList.contains('show')
+                }
+                return true
+              })
+            },
+            arrowKeys: {
+              forward: 'ArrowDown',
+              backward: 'ArrowUp',
+            },
+            getCurrentElement: () => document.activeElement as HTMLElement,
+          },
+          additionalKeys: {
+            ArrowRight: (event: KeyboardEvent) => {
+              const target = event.target as HTMLElement
+              if (target.classList.contains(contextSubmenuBtnClass)) {
+                this.toggleSubmenu(event)
+                const submenuContent = target.nextElementSibling
+                if (submenuContent?.classList.contains('show')) {
+                  const firstItem = submenuContent.querySelector(
+                    '.menu-item'
+                  ) as HTMLElement
+                  firstItem?.focus()
+                }
+              }
+            },
+            ArrowLeft: (event: KeyboardEvent) => {
+              const target = event.target as HTMLElement
+              // Close submenu if we're inside one and focus back to the trigger
+              const submenu = target.closest('.context-submenu')
+              if (submenu) {
+                const trigger = submenu.querySelector(
+                  `.${contextSubmenuBtnClass}`
+                ) as HTMLElement
+                if (trigger) {
+                  const submenuContent = trigger.nextElementSibling
+                  submenuContent?.classList.toggle('show')
+                  trigger.focus()
+                }
+              }
+            },
+          },
+        })
+      }
+
+      // Focus the first menu item when the menu opens
+      this.menuItems[0]?.focus()
+    })
   }
 
   private trimTitle = (title: string, max: number) => {
@@ -644,7 +724,7 @@ export class ContextMenu {
     return this.node
   }
 
-  private toggleSubmenu = (ev: MouseEvent) => {
+  private toggleSubmenu = (ev: Event) => {
     const submenu = (ev.target as HTMLElement).nextElementSibling
     submenu?.classList.toggle('show')
   }

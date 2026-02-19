@@ -17,6 +17,8 @@
 import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
+import { createKeyboardInteraction } from '../lib/navigation-utils'
+import { isDeleted } from '../lib/track-changes-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
@@ -24,6 +26,7 @@ import ReactSubView from './ReactSubView'
 export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   private element: HTMLElement
   private addingTools: HTMLDivElement
+  private removeKeydownListener?: () => void
 
   public ignoreMutation = () => true
 
@@ -38,6 +41,20 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     this.contentDOM.setAttribute('contenteditable', 'false')
 
     this.element.appendChild(this.contentDOM)
+
+    this.removeKeydownListener = createKeyboardInteraction({
+      container: this.element,
+      navigation: {
+        getItems: () =>
+          Array.from(
+            this.element.querySelectorAll<HTMLElement>(
+              '.keyword:not(.deleted), .keyword-add'
+            )
+          ),
+        arrowKeys: { forward: 'ArrowRight', backward: 'ArrowLeft' },
+      },
+    })
+
     if (this.props.getCapabilities().editArticle) {
       this.addingTools = ReactSubView(
         this.props,
@@ -53,6 +70,37 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     if (this.addingTools) {
       this.element.appendChild(this.addingTools)
     }
+  }
+
+  public updateContents() {
+    super.updateContents()
+    this.setKeywordsTabIndices()
+  }
+
+  private setKeywordsTabIndices() {
+    const container = this.contentDOM
+    if (!container) {
+      return
+    }
+    let firstFocusableFound = false
+    for (let i = 0; i < this.node.childCount; i++) {
+      const child = this.node.child(i)
+      const keyword = container.children[i] as HTMLElement | undefined
+      if (!keyword) {
+        continue
+      }
+      if (!isDeleted(child) && !firstFocusableFound) {
+        keyword.tabIndex = 0
+        firstFocusableFound = true
+      } else {
+        keyword.tabIndex = -1
+      }
+    }
+  }
+
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 

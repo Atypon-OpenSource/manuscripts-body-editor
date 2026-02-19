@@ -28,6 +28,7 @@ import {
   ReferencesEditorProps,
 } from '../components/references/ReferencesEditor'
 import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 import {
@@ -118,32 +119,59 @@ export class BibliographyElementBlockView extends BlockView<
     this.props.popper.show(element, this.contextMenu, 'right-start')
   }
 
+  private handleCommentMarkerInteraction = (marker: HTMLElement) => {
+    const key = marker.dataset.key as CommentKey
+    const tr = this.view.state.tr
+    setCommentSelection(tr, key, undefined, false)
+    this.view.dispatch(tr)
+  }
+
+  private handleBibItemInteraction = (item: HTMLElement) => {
+    if (!this.props.getCapabilities().seeReferencesButtons) {
+      return
+    }
+
+    this.showContextMenu(item)
+    const node = findChildByID(this.view, item.id)
+    if (node) {
+      const tr = this.view.state.tr
+      tr.setSelection(NodeSelection.create(this.view.state.doc, node.pos))
+      this.view.dispatch(tr)
+    }
+  }
+
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     // Handle click on comment marker
     const marker = element.closest('.comment-marker') as HTMLElement
     if (marker) {
-      const key = marker.dataset.key as CommentKey
-      const tr = this.view.state.tr
-      setCommentSelection(tr, key, undefined, false)
-      this.view.dispatch(tr)
+      this.handleCommentMarkerInteraction(marker)
       return
     }
 
-    if (this.props.getCapabilities().seeReferencesButtons) {
-      const item = element.closest('.bib-item')
-      if (item) {
-        this.showContextMenu(item as HTMLElement)
-        const node = findChildByID(this.view, item.id)
-        if (!node) {
-          return
-        }
-        const view = this.view
-        const tr = view.state.tr
-        tr.setSelection(NodeSelection.create(view.state.doc, node.pos))
-        view.dispatch(tr)
-      }
+    // Handle click on bib-item
+    const item = element.closest('.bib-item')
+    if (item) {
+      this.handleBibItemInteraction(item as HTMLElement)
     }
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    handleEnterKey(() => {
+      const target = document.activeElement as HTMLElement
+      // Handle Enter on comment marker
+      const marker = target?.closest('.comment-marker') as HTMLElement
+      if (marker) {
+        this.handleCommentMarkerInteraction(marker)
+        return
+      }
+
+      // Handle Enter on bib-item
+      const bibItem = target?.closest('.bib-item') as HTMLElement
+      if (bibItem) {
+        this.handleBibItemInteraction(bibItem)
+      }
+    })(event)
   }
 
   public updateContents() {
@@ -169,6 +197,7 @@ export class BibliographyElementBlockView extends BlockView<
     const wrapper = document.createElement('div')
     wrapper.classList.add('contents')
     wrapper.addEventListener('click', this.handleClick)
+    wrapper.addEventListener('keydown', this.handleKeyDown)
 
     const [meta, bibliography] = bib.engine.makeBibliography()
 
@@ -204,6 +233,8 @@ export class BibliographyElementBlockView extends BlockView<
       const element = sanitize(
         `<div id="${id}" class="bib-item"><div class="csl-bib-body">${tempDiv.innerHTML}</div></div>`
       ).firstElementChild as HTMLElement
+
+      element.tabIndex = 0
 
       const comment = createCommentMarker('div', id)
       element.prepend(comment)

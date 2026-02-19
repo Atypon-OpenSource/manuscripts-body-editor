@@ -25,7 +25,7 @@ import {
 } from '@manuscripts/style-guide'
 import { FigureNode } from '@manuscripts/transform'
 import { Node as ManuscriptNode } from 'prosemirror-model'
-import React, { SyntheticEvent, useEffect } from 'react'
+import React, { SyntheticEvent, useCallback, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { Capabilities } from '../../lib/capabilities'
@@ -35,7 +35,57 @@ import {
   memoGroupFiles,
 } from '../../lib/files'
 import { getMediaTypeInfo } from '../../lib/get-media-type'
+import { createKeyboardInteraction } from '../../lib/navigation-utils'
 import { ReactViewComponentProps } from '../../views/ReactSubView'
+
+// Custom hook for figure dropdown keyboard navigation
+function useDropdownKeyboardNav(
+  isOpen: boolean,
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  onEscape: () => void,
+  onArrowLeft?: () => void
+) {
+  useEffect(() => {
+    const container = containerRef.current
+    if (!isOpen || !container) {
+      return
+    }
+
+    const buttons = Array.from(
+      container.querySelectorAll('button:not([disabled])')
+    ) as HTMLElement[]
+
+    if (buttons.length === 0) {
+      return
+    }
+
+    const removeKeydownListener = createKeyboardInteraction({
+      container: container,
+      navigation: {
+        getItems: () =>
+          Array.from(container.querySelectorAll('button:not([disabled])')),
+        arrowKeys: {
+          forward: 'ArrowDown',
+          backward: 'ArrowUp',
+        },
+      },
+      additionalKeys: {
+        Enter: (e) => (e.target as HTMLElement).click(),
+        Escape: () => onEscape(),
+        ...(onArrowLeft ? { ArrowLeft: () => onArrowLeft() } : {}),
+      },
+    })
+
+    // Focus first button when dropdown opens
+    window.requestAnimationFrame(() => {
+      buttons[0]?.focus()
+    })
+
+    return () => {
+      removeKeydownListener()
+    }
+  }, [isOpen, containerRef, onEscape, onArrowLeft])
+}
 
 export interface FigureDropdownProps {
   can: Capabilities
@@ -105,6 +155,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
   container,
 }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const showDownload = onDownload && can.downloadFiles
   const showUpload = onUpload && can.uploadFile
@@ -131,17 +182,33 @@ export const FigureOptions: React.FC<WrappedProps> = ({
     }
   }, [isOpen, container.classList])
 
+  useDropdownKeyboardNav(isOpen, dropdownRef, toggleOpen)
+
   const isEmbedMode = !!onReplaceEmbed
 
   const groupFiles = memoGroupFiles()
 
   return (
     <DropdownWrapper ref={wrapperRef}>
-      <OptionsButton className={'options-button'} onClick={toggleOpen}>
+      <OptionsButton
+        className={'options-button'}
+        onClick={toggleOpen}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            toggleOpen()
+          }
+        }}
+      >
         <DotsIcon />
       </OptionsButton>
       {isOpen && (
-        <OptionsDropdownList direction={'right'} width={128} top={5}>
+        <OptionsDropdownList
+          direction={'right'}
+          width={128}
+          top={5}
+          ref={dropdownRef}
+        >
           {showReplace && isEmbedMode && (
             <ListItemButton onClick={() => onReplaceEmbed && onReplaceEmbed()}>
               Edit Link
@@ -215,10 +282,38 @@ const NestedDropdown: React.FC<{
   moveLeft?: boolean
 }> = ({ parentToggleOpen, buttonText, disabled, list, moveLeft }) => {
   const { isOpen, toggleOpen, wrapperRef } = useDropdown()
+  const nestedListRef = useRef<HTMLDivElement>(null)
+
+  // Handle ArrowLeft to close nested dropdown and focus parent
+  const handleArrowLeft = useCallback(() => {
+    toggleOpen()
+    const parentButton = wrapperRef.current?.querySelector(
+      '.nested-list-button'
+    ) as HTMLElement
+    parentButton?.focus()
+  }, [toggleOpen, wrapperRef])
+
+  // For nested dropdown: Escape and ArrowLeft both close nested menu and return to parent
+  useDropdownKeyboardNav(
+    isOpen,
+    nestedListRef,
+    handleArrowLeft,
+    handleArrowLeft
+  )
 
   return (
     <DropdownWrapper ref={wrapperRef}>
-      <NestedListButton onClick={toggleOpen} disabled={disabled}>
+      <NestedListButton
+        className="nested-list-button"
+        onClick={toggleOpen}
+        disabled={disabled}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowRight') {
+            e.preventDefault()
+            toggleOpen()
+          }
+        }}
+      >
         <div>{buttonText}</div>
         <TriangleCollapsedIcon />
       </NestedListButton>
@@ -227,6 +322,7 @@ const NestedDropdown: React.FC<{
           direction={'right'}
           moveLeft={moveLeft}
           width={192}
+          ref={nestedListRef}
           onClick={(e) => {
             toggleOpen()
             parentToggleOpen(e)
@@ -280,7 +376,8 @@ const ListItemButton = styled(IconTextButton)`
   justify-content: space-between;
   align-items: center;
 
-  :hover {
+  :hover,
+  :focus-visible {
     background: #f2fbfc;
   }
 
@@ -301,7 +398,8 @@ const ListItemText = styled.div`
 const NestedListButton = styled(ListItemButton)`
   width: 100%;
   &:active,
-  &:focus {
+  &:focus,
+  &:focus-visible {
     background: #f2fbfc;
   }
   svg {
@@ -318,4 +416,8 @@ const UploadButton = styled(IconTextButton)`
   border-top: 1px solid #f2f2f2;
   padding: ${(props) => props.theme.grid.unit * 4}px;
   justify-content: flex-start;
+
+  &:focus-visible {
+    background: #f2fbfc;
+  }
 `

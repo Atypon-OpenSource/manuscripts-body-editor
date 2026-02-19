@@ -120,6 +120,7 @@ import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
+import { persistentCursor } from './plugins/persistent-cursor'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -2041,10 +2042,12 @@ export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
 }
 
 // Command to exit editor and focus container
-export const exitEditorToContainer: EditorAction = () => {
+export const exitEditorToContainer: EditorAction = (state, dispatch, view) => {
   const editorContainer = document.getElementById('editor')
-  if (editorContainer) {
+  if (editorContainer && dispatch && view) {
     editorContainer.focus()
+    const tr = view.state.tr.setMeta(persistentCursor, { on: true })
+    view.dispatch(tr)
     return true
   }
 

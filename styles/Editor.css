@@ -1,11 +1,14 @@
 :root {
   --body-side-margin: 65px;
+  --focus-outline-color: #3DADFF;
+  --focus-outline-offset: 2px;
+  --focus-outline-radius: 3px;
 }
 
 /* Focus styling for editor container when accessed via Escape key */
 #editor:focus {
-  outline: 2px solid #3dadff !important;
-  outline-offset: 2px;
+  outline: 2px solid var(--focus-outline-color) !important;
+  outline-offset: var(--focus-outline-offset);
 }
 
 .ProseMirror.manuscript-editor {
@@ -159,6 +162,10 @@
   text-decoration: inherit;
   max-width: 146px;
 }
+.ProseMirror .figure.placeholder:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  border-radius: var(--focus-outline-radius);
+}
 .ProseMirror .pullquote figure {
   margin: 0;
 }
@@ -278,6 +285,12 @@
   color: #353535;
   padding: 0 2px;
   cursor: pointer;
+}
+.ProseMirror .citation:focus-visible,
+.ProseMirror .cross-reference:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .cross-reference {
@@ -599,7 +612,13 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  padding-left: var(--body-side-margin);
+  margin-left: var(--body-side-margin);
+}
+
+.ProseMirror .add-subtitle:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror .add-subtitle-text {
@@ -736,6 +755,9 @@
   transition: 0.2s all;
   display: flex;
   justify-content: flex-end;
+  width: fit-content;
+  height: fit-content;
+  margin-left: auto;
 }
 
 .ProseMirror .action-gutter {
@@ -759,9 +781,27 @@
     .block-box_element,
     .block-graphical_abstract_section
   ):hover
+  .block-gutter,
+.ProseMirror
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):focus-within
   .block-gutter {
   opacity: 1;
   z-index: 2;
+}
+
+.block-gutter .add-block:focus-visible,
+.block-gutter .edit-block:focus-visible {
+  outline: none;
+}
+
+.block-gutter:focus-within {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 
 .ProseMirror:not(.ProseMirror-focused.popper-open)
@@ -770,12 +810,20 @@
     .block-box_element,
     .block-graphical_abstract_section
   ):hover
+  .action-gutter,
+.ProseMirror:not(.ProseMirror-focused.popper-open)
+  .block-container:not(
+    .block-section,
+    .block-box_element,
+    .block-graphical_abstract_section
+  ):focus-within
   .action-gutter {
   pointer-events: visible;
   opacity: 1;
 }
 
-.ProseMirror .block-box_element:hover > .block-gutter {
+.ProseMirror .block-box_element:hover > .block-gutter,
+.ProseMirror .block-box_element:focus-within > .block-gutter {
   opacity: 1;
   z-index: 2;
 }
@@ -961,7 +1009,8 @@
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAABLUlEQVRYR+2VsUoEMRCG/8nG4jw4BF9BsNLKJGxzL3E+g2Bjqe8ggj6Eha0PoGCVm92ttPAtBCsVlh1Zq/W4M2tOPJRsmWRmvnwzYQkr/mjF9ZEAkoFkYCkDzrkDACNmPot9ztEA1to9EbkDsK6Uypl5GgMRDWCMGQO4bosS0aQoitsE8H8NiAgRkXRvGJqBeTHzDAWH0Fp7DOAIwEs3gYgMiWgDQC0iz0T0OrO/JSKnVVWdfNWaIIAx5tPNv9tnrfWm9/5pUVwfgEMA50RUdpM0TTNQSm23ayLyRkSPM/trWZZdMPPVUgYWBYdmoK+poIEE8CcMANgvy/Kmb9+756JnIM/znbqu79tkWutd7/3DrwK0xZxzEwADZr6MKf7xJ40N/Km4BJAMJAPJwDufn30jVGW7WQAAAABJRU5ErkJggg==');
 }
 
-.ProseMirror .add-block:hover {
+.ProseMirror .add-block:hover,
+.ProseMirror .add-block:focus-visible {
   /* GutterAddIconHighlight */
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAABQElEQVRYR+2TsUoDURBF712SIgpBsDNJJ1iIVkE3jT8RfyCyBmws9R9E0D4mNha2foCClZtopYU/sLtlwMoEs29kU2Ul8cUXISjvlQ/uzJ0zd4g5P865P6wBS8ASmIlAoeHXhchHnntqes7GBkrNdjlW6h7AAjOshDXXNzFhbuCisxOLumFSwWE13Nu+swb+LwERIUkZnbCkycA4zThC2hCutNpHjOVQIO+jBQguArIkxIDgm4j0vjRYheAkqleOv1uN3kDjITX5T/fsML8ceOvdSTqtgUKrc4A4PhPyMVVEkANkbfhH9gG8pglJVsDzyHOvZyIwSazLwLSktASsgb9BAM5u6G3dTrv3dFhNVACKl08bavDxnMidTHYzqJVfTEoZhzBpVmz6VSjkgn33yqT58IJNhb+lswYsAUvAEvgEb+GZIzw23E0AAAAASUVORK5CYII=');
 }
@@ -971,7 +1020,8 @@
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAAYElEQVRIS2NkoBJgpJI5DCPVIAsLC89///7NAoUjExNT2okTJ7bjClO8YWRmZvb4////MiDNjIyMT06dOiU7sAZRzWukpDH6pCOqeW001sCROxprFGZaqiXIwZfXhraLAIz+YBsOHHIxAAAAAElFTkSuQmCC');
 }
 
-.ProseMirror .edit-block:hover {
+.ProseMirror .edit-block:hover,
+.ProseMirror .edit-block:focus-visible {
   /* GutterIconHighlight */
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAaCAYAAAC6nQw6AAAAX0lEQVRIS2NkoBJgpJI5DCPVIJm5xz3//2OcBQpHRqb/aU+SLbfjClO8YSQ9+8Tj/wz/ZcAGMTA+eZpqITuwBlHNa6SkMfqkI6p5bTTWwJE7GmsUZlqqJcjBl9eGtosAsyRaG0sNHWYAAAAASUVORK5CYII=');
 }
@@ -1085,6 +1135,11 @@
   align-items: center;
   position: relative;
   border: 1px solid transparent;
+}
+.ProseMirror .footnote:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
 }
 .ProseMirror .footnote .delete-icon {
   visibility: hidden;

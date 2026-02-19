@@ -39,6 +39,7 @@ import {
 
 import { fieldConfigMap } from '../components/references/ReferenceForm/config'
 import { arrowDown } from '../icons'
+import { handleEnterKey } from './navigation-utils'
 import { getEditorProps } from '../plugins/editor-props'
 
 export function* iterateChildren(
@@ -228,15 +229,22 @@ export const isEditAllowed = (state: EditorState) => {
   return !(isBodyLocked(state) && isSelectionInBody(state))
 }
 
-export const createToggleButton = (listener: () => void, what: string) => {
+export const createToggleButton = (
+  listener: (event: MouseEvent | KeyboardEvent) => void,
+  what: string
+) => {
   const altTitlesButton = document.createElement('button')
   altTitlesButton.classList.add('toggle-button-open', 'button-reset')
   altTitlesButton.setAttribute('aria-label', `Expand ${what}`)
   altTitlesButton.innerHTML = arrowDown
-  altTitlesButton.addEventListener('click', (e) => {
+  const activate = (e: MouseEvent | KeyboardEvent) => {
     e.preventDefault()
-    listener()
+    listener(e)
+  }
+  altTitlesButton.addEventListener('click', (e) => {
+    activate(e)
   })
+  altTitlesButton.addEventListener('keydown', handleEnterKey(activate))
   return altTitlesButton
 }
 

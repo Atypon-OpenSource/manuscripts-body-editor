@@ -21,10 +21,12 @@ import {
   DeleteKeywordDialog,
   DeleteKeywordDialogProps,
 } from '../components/keywords/DeleteKeywordDialog'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '../lib/track-changes-utils'
 
 //todo fix
 const deleteIcon =
@@ -43,6 +45,17 @@ export class KeywordView
 {
   private dialog: HTMLElement
 
+  private isFirstKeyword(): boolean {
+    const pos = this.getPos()
+    const parent = this.view.state.doc.resolve(pos).parent
+    for (let i = 0; i < parent.childCount; i++) {
+      const child = parent.child(i)
+      if (!isDeleted(child)) {
+        return child === this.node
+      }
+    }
+    return false
+  }
   public initialise = () => {
     this.createDOM()
     this.updateContents()
@@ -51,6 +64,11 @@ export class KeywordView
   public createDOM = () => {
     this.dom = document.createElement('span')
     this.dom.classList.add('keyword')
+    this.dom.tabIndex = this.isFirstKeyword() ? 0 : -1
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.showConfirmationDialog())
+    )
     this.contentDOM = document.createElement('span')
   }
 

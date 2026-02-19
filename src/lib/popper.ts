@@ -20,10 +20,13 @@ import {
   Placement,
   StrictModifiers,
 } from '@popperjs/core'
+import { createKeyboardInteraction } from './navigation-utils'
 
 export class PopperManager {
   private activePopper?: Instance
   private handleDocumentClick?: (e: Event) => void
+  private triggerElement?: Element
+  private container?: HTMLElement
 
   public show(
     target: Element,
@@ -36,12 +39,32 @@ export class PopperManager {
     // checking activePopper is in destroy() method
     this.destroy()
 
+    // Store the trigger element to return focus later
+    this.triggerElement = target
+
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
       container.className = 'popper'
+      this.container = container
 
       container.addEventListener('click', (e) => {
         e.stopPropagation()
+      })
+
+      const closeAndRestoreFocus = (e: KeyboardEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        this.destroy()
+        if (this.triggerElement instanceof HTMLElement) {
+          this.triggerElement.focus()
+        }
+      }
+      createKeyboardInteraction({
+        container,
+        additionalKeys: {
+          Escape: closeAndRestoreFocus,
+          Tab: closeAndRestoreFocus,
+        },
       })
 
       if (showArrow) {
@@ -105,7 +128,12 @@ export class PopperManager {
       }
 
       delete this.activePopper
+      delete this.container
     }
+  }
+
+  public getContainer(): HTMLElement | undefined {
+    return this.container
   }
 
   public update() {
@@ -117,7 +145,11 @@ export class PopperManager {
   public isActive = () => !!this.activePopper
 
   private focusInput(container: HTMLDivElement) {
-    const element = container.querySelector('input') as HTMLDivElement | null
+    const input = container.querySelector('input') as HTMLElement | null
+    const button = container.querySelector(
+      'button:not([disabled])'
+    ) as HTMLElement | null
+    const element = input || button
 
     if (element) {
       element.focus()

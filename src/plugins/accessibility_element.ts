@@ -35,12 +35,27 @@ export const accessibilityElementKey = new PluginKey<PluginState>(
 
 const nodeTypes = [schema.nodes.alt_text, schema.nodes.long_desc]
 
-const handleExpandButtonClick = (view: EditorView, node: ManuscriptNode) => {
+const handleExpandButtonClick = (
+  view: EditorView,
+  node: ManuscriptNode,
+  event: MouseEvent | KeyboardEvent
+) => {
   const tr = view.state.tr
   toggleAccessibilitySection(tr, node)
   view.dispatch(tr)
-}
 
+  // Only auto-focus first accessibility element on keyboard interaction, not mouse clicks
+  const isKeyboardEvent = event.type === 'keydown'
+  if (isKeyboardEvent) {
+    const parentElement = view.dom.querySelector(`[id="${node.attrs.id}"]`)
+    if (parentElement) {
+      const firstInput = parentElement.querySelector(
+        '.accessibility_element_input'
+      ) as HTMLElement
+      firstInput?.focus()
+    }
+  }
+}
 const isSelectionWithin = (
   node: ManuscriptNode,
   pos: number,
@@ -66,7 +81,7 @@ const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
               'accessibility_element_expander_button_container'
             container.appendChild(
               createToggleButton(
-                () => handleExpandButtonClick(view, node),
+                (e) => handleExpandButtonClick(view, node, e),
                 'additional info'
               )
             )

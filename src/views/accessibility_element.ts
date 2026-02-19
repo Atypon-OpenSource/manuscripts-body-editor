@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 import { LongDescNode, schema } from '@manuscripts/transform'
+import { TextSelection } from 'prosemirror-state'
 
+import { createKeyboardInteraction } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
   public contentDOM: HTMLElement
+  private removeKeydownListener?: () => void
 
   public initialise() {
     this.createDOM()
@@ -43,6 +46,40 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
     super.createElement()
     this.contentDOM.className = 'accessibility_element_input'
     this.contentDOM.setAttribute('contenteditable', 'true')
+
+    this.contentDOM.tabIndex = this.node.type === schema.nodes.alt_text ? 0 : -1
+
+    this.removeKeydownListener = createKeyboardInteraction({
+      container: this.contentDOM,
+      navigation: {
+        getItems: () => {
+          const parentEl = this.dom.parentElement
+          if (!parentEl) {
+            return []
+          }
+          return Array.from(
+            parentEl.querySelectorAll('.accessibility_element_input')
+          ) as HTMLElement[]
+        },
+        arrowKeys: { forward: 'ArrowDown', backward: 'ArrowUp' },
+        getCurrentElement: () => this.contentDOM,
+      },
+      additionalKeys: {
+        Enter: (e) => {
+          e.preventDefault()
+          const pos = this.getPos()
+          const tr = this.view.state.tr.setSelection(
+            TextSelection.create(this.view.state.doc, pos + 1)
+          )
+          this.view.dispatch(tr)
+          this.view.focus()
+        },
+      },
+    })
+  }
+  public destroy() {
+    this.removeKeydownListener?.()
+    super.destroy()
   }
 }
 
