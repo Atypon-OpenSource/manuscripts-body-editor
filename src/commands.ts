@@ -992,8 +992,11 @@ export const insertSection =
   }
 
 export const insertAbstractSection =
-  (category: SectionCategory) =>
+  (category?: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (!category) {
+      return false
+    }
     const abstracts = findAbstractsNode(state.doc)
     const sections = findChildrenByType(abstracts.node, schema.nodes.section)
     // Check if the section already exists
