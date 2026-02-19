@@ -18,6 +18,7 @@ import {
   FormActionsBar,
   FormRow,
   Label,
+  outlineStyle,
   PrimaryButton,
   SecondaryButton,
   TextArea,
@@ -25,7 +26,14 @@ import {
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { useFormik } from 'formik'
 import { debounce } from 'lodash'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import styled, { css } from 'styled-components'
 
 import { importBibliographyItems } from '../../lib/references'
@@ -41,7 +49,7 @@ export const ImportBibliographyForm = ({
   onSave,
 }: ImportBibFormProps) => {
   const [dragging, setDragging] = useState(false)
-
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const formik = useFormik({
     initialValues: {
       content: '',
@@ -110,22 +118,33 @@ export const ImportBibliographyForm = ({
     reader.readAsText(file)
   }
 
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      fileInputRef?.current?.click()
+    }
+  }
+
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
       <FormRow>
-          <DropContainer
+        <DropContainer
+          tabIndex={0}
+          role="button"
           onDrop={handleDrop}
             onDragOver={(e) => {
               e.preventDefault()
               setDragging(true)
             }}
-            onDragLeave={() => setDragging(false)}
+          onDragLeave={() => setDragging(false)}
+          onKeyDown={handleOnKeyDown}
             active={dragging}
           >
             <input
               id="file"
               name="file"
               type="file"
+            ref={fileInputRef}
               onChange={handleFileChange}
               style={{ display: 'none' }}
             />
@@ -208,4 +227,6 @@ const DropContainer = styled.div<{ active: boolean }>`
     font-family: ${(props) => props.theme.font.family.Lato};
     color: ${(props) => props.theme.colors.text.onLight};
   }
+
+  ${outlineStyle}
 `

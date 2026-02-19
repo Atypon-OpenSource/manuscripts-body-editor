@@ -117,7 +117,9 @@ export class PopperManager {
   public isActive = () => !!this.activePopper
 
   private focusInput(container: HTMLDivElement) {
-    const element = container.querySelector('input') as HTMLDivElement | null
+    const element = container.querySelector(
+      'input, [tabindex]:not([tabindex="-1"])'
+    ) as HTMLDivElement | null
 
     if (element) {
       element.focus()

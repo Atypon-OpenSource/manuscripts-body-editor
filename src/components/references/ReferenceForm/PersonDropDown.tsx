@@ -55,6 +55,7 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
           {title}
         </ToggleButton>
         <RemoveButton
+          size={13}
           type="button"
           aria-label="Delete this editor"
           onClick={() => remove(index)}

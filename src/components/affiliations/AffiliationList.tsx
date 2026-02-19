@@ -19,19 +19,17 @@ import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
 import { AffiliationItem } from './AffiliationItem'
+import { withListNavigation } from '@manuscripts/style-guide'
 
-const AffiliationListContainer = styled.div`
+const AffiliationListContainer = withListNavigation(styled.div`
   flex: 1;
   overflow-y: visible;
-  margin-left: 16px;
-`
+`)
 const AffiliationListTitle = styled.h2`
   color: #6e6e6e;
   font-size: 18px;
   font-weight: 400;
   line-height: 24px;
-  margin-left: 14px;
-  margin-top: 20px;
 `
 
 interface AffiliationListProps {

@@ -20,9 +20,9 @@ import {
   Dialog,
   EditIcon,
   IconButton,
-  IconTextButton,
   PrimaryButton,
   SecondaryButton,
+  withFocusTrap,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
@@ -40,6 +40,8 @@ import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { ReferenceSearch } from './ReferenceSearch'
 import { ReferencesModal } from './ReferencesModal'
+
+const Container = withFocusTrap(styled.div``)
 
 const CitedItemActions = styled.div`
   display: flex;
@@ -76,10 +78,10 @@ const EditReferenceButton = styled(ActionButton)`
   margin-right: ${(props) => props.theme.grid.unit * 3}px;
 `
 
-const Actions = styled.div`
+const Actions = styled(ButtonGroup)`
   margin: ${(props) => props.theme.grid.unit * 4}px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 `
 export interface CitationEditorProps {
@@ -244,7 +246,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     )
   }
   return (
-    <>
+    <Container>
       <Dialog
         isOpen={deleteDialog.show}
         category={Category.confirmation}
@@ -289,14 +291,11 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         ))}
       </CitedItems>
       <Actions>
-        <IconTextButton />
-        <ButtonGroup>
           <SecondaryButton onClick={onCancel}>Done</SecondaryButton>
           <PrimaryButton disabled={!canEdit} onClick={() => setSearching(true)}>
             Add Citation
           </PrimaryButton>
-        </ButtonGroup>
       </Actions>
-    </>
+    </Container>
   )
 }

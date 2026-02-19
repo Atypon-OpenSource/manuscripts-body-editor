@@ -22,15 +22,26 @@ import {
   TextField,
   FormRow,
   Label,
-  FormActionsBar,
+  Theme,
+  ButtonGroup,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps } from 'formik'
-import React, { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
+import React, { useMemo, useRef } from 'react'
+import styled, { useTheme } from 'styled-components'
 
 import { AwardAttrs } from '../../views/award'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-import { useDebounce } from '../hooks/use-debounce'
+import {
+  ControlProps,
+  OptionProps,
+  components,
+  StylesConfig,
+  InputActionMeta,
+  InputProps,
+  SingleValue,
+} from 'react-select'
+import AsyncCreatableSelect from 'react-select/async-creatable'
+import useDebounced from '../hooks/use-debounce'
 
 export interface AwardFormProps {
   values: AwardAttrs
@@ -55,66 +66,56 @@ interface FunderOption {
   label: string
 }
 
+const loadOptions = async (inputValue: string): Promise<FunderOption[]> => {
+  try {
+    const formattedQuery = inputValue.replace(/\s+/g, '+')
+    const response = await fetch(
+      `https://api.crossref.org/funders?query=${encodeURIComponent(formattedQuery)}`
+    )
+    if (!response.ok) {
+      console.log(`HTTP error! status: ${response.status}`)
+      return []
+    }
+    const data = await response.json()
+    const funderOptions: FunderOption[] = data.message.items.map(
+      (funder: Funder) => ({
+        value: funder.name,
+        label: funder.name,
+      })
+    )
+    return funderOptions.sort((a, b) => a.label.localeCompare(b.label))
+  } catch (e) {
+    console.error('Error fetching funders:', e)
+    return []
+  }
+}
+
 export const AwardForm = ({
   values,
   onSave,
   onCancel,
   onChange,
 }: AwardFormProps) => {
-  const [funders, setFunders] = useState<FunderOption[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const formRef = useRef<FormikProps<AwardAttrs>>(null)
   const primaryButtonText = values.source ? 'Update funder' : 'Add funder'
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+  const themes = useTheme() as Theme
+  const customStyles = useMemo(() => getCustomStyles(themes), [themes])
 
-  useEffect(() => {
-    const searchFunders = async () => {
-      const query = debouncedSearchQuery
-      if (!query) {
-        setFunders([])
-        return
-      }
-
-      setIsLoading(true)
-      try {
-        const formattedQuery = query.replace(/\s+/g, '+')
-        const response = await fetch(
-          `https://api.crossref.org/funders?query=${encodeURIComponent(
-            formattedQuery
-          )}`
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        const funderOptions: FunderOption[] = data.message.items.map(
-          (funder: Funder) => ({
-            value: funder.name,
-            label: funder.name,
-          })
-        )
-        funderOptions.sort((a, b) => a.label.localeCompare(b.label))
-        setFunders(funderOptions)
-      } catch (error) {
-        console.error('Error fetching funders:', error)
-        setFunders([])
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    searchFunders()
-  }, [debouncedSearchQuery])
-
-  const handleFunderSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value)
-  }
+  const handleOnLoadFunders = useDebounced(
+    async (inputValue: string) => loadOptions(inputValue),
+    300
+  )
 
   const handleCancel = () => {
     formRef.current?.resetForm()
     onCancel()
+  }
+
+  const handleInputChange = (value: string, action: InputActionMeta) => {
+    if (action.action === 'input-change') {
+      formRef.current?.setFieldValue('source', value)
+    }
   }
 
   const validate = (values: AwardAttrs) => {
@@ -144,41 +145,30 @@ export const AwardForm = ({
 
             <FormRow>
               <Label htmlFor={'source'}>Funder name</Label>
-              <SearchContainer>
-                <SearchIconContainer>
-                  <SearchIcon />
-                </SearchIconContainer>
-                <Field name="source">
-                  {(props: FieldProps) => (
-                    <StyledTextField
-                      id="source"
-                      placeholder="Search for funder..."
-                      onChange={(e) => {
-                        props.field.onChange(e)
-                        handleFunderSearch(e)
-                      }}
-                      value={props.field.value || ''}
-                    />
-                  )}
-                </Field>
-
-                {isLoading && <LoadingText>Loading...</LoadingText>}
-                {funders.length > 0 && (
-                  <SearchResults>
-                    {funders.map((funder) => (
-                      <SearchResultItem
-                        key={funder.value}
-                        onClick={() => {
-                          formik.setFieldValue('source', funder.value)
-                          setFunders([])
-                        }}
-                      >
-                        {funder.label}
-                      </SearchResultItem>
-                    ))}
-                  </SearchResults>
+              <Field name="source">
+                {(props: FieldProps) => (
+                  <AsyncCreatableSelect<FunderOption>
+                    loadOptions={handleOnLoadFunders}
+                    onInputChange={handleInputChange}
+                    onChange={(option: SingleValue<FunderOption>) =>
+                      option &&
+                      formRef.current?.setFieldValue('source', option.value)
+                    }
+                    inputValue={props.field.value}
+                    value={null}
+                    isValidNewOption={() => false}
+                    components={{
+                      Input,
+                      Control,
+                      Option,
+                      DropdownIndicator: null,
+                      IndicatorSeparator: null,
+                    }}
+                    styles={customStyles}
+                    placeholder="Search for funder..."
+                  />
                 )}
-              </SearchContainer>
+              </Field>
               {formik.errors.source && formik.touched.source && (
                 <ErrorText>{formik.errors.source}</ErrorText>
               )}
@@ -211,7 +201,7 @@ export const AwardForm = ({
             </FormRow>
 
             <FormRow>
-              <FormActionsBar>
+              <FormActions>
                 <SecondaryButton onClick={handleCancel}>Cancel</SecondaryButton>
                 <PrimaryButton
                   type="submit"
@@ -219,7 +209,7 @@ export const AwardForm = ({
                 >
                   {primaryButtonText}
                 </PrimaryButton>
-              </FormActionsBar>
+              </FormActions>
             </FormRow>
           </ChangeHandlingForm>
         )
@@ -227,69 +217,116 @@ export const AwardForm = ({
     </Formik>
   )
 }
+// TODO:: All that react-select component and styles should be in style-guide with a standard select component
 
-const SearchContainer = styled.div`
-  position: relative;
-  width: 100%;
-`
-
-const SearchIconContainer = styled.span`
+const SearchIconContainer = styled.span<{ isFocused: boolean }>`
   display: flex;
-  left: ${(props) => props.theme.grid.unit * 4}px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
+  align-items: center;
+  padding-left: ${(props) => props.theme.grid.unit * 4}px;
+  padding-right: ${(props) => props.theme.grid.unit * 2}px;
 
   path {
-    stroke: ${(props) => props.theme.colors.text.primary};
+    stroke: ${(props) =>
+      props.isFocused
+        ? props.theme.colors.brand.medium
+        : props.theme.colors.text.primary};
   }
+`
 
-  ${SearchContainer}:hover &,
-  ${SearchContainer}:focus-within & {
-    path {
-      stroke: ${(props) => props.theme.colors.brand.medium};
+const OptionWrapper = styled.div<{ focused?: boolean; selected?: boolean }>`
+  padding-left: ${(props) => props.theme.grid.unit * 4}px;
+  padding-top: ${(props) => props.theme.grid.unit * 2}px;
+  padding-bottom: ${(props) => props.theme.grid.unit * 2}px;
+
+  background-color: ${(props) => {
+    if (props.selected) {
+      return props.theme.colors.background.selected
     }
-  }
-`
+    if (props.focused) {
+      return props.theme.colors.background.fifth
+    }
+    return 'transparent'
+  }};
 
-const StyledTextField = styled(TextField)`
-  padding-left: ${(props) => props.theme.grid.unit * 11}px;
-  &:hover,
-  &:focus {
-    background-color: ${(props) => props.theme.colors.background.fifth};
-  }
-`
-
-const SearchResults = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid ${(props) => props.theme.colors.border.secondary};
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-`
-
-const SearchResultItem = styled.div`
-  padding: 8px 12px;
-  cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.background.fifth};
   }
 `
 
-const LoadingText = styled.div`
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${(props) => props.theme.colors.text.secondary};
-  font-size: ${(props) => props.theme.font.size.small};
+const Option: React.FC<OptionProps<FunderOption, false>> = ({
+  innerProps,
+  innerRef,
+  data,
+  isFocused,
+  isSelected,
+}) => {
+  return (
+    <OptionWrapper
+      {...innerProps}
+      ref={innerRef}
+      focused={isFocused}
+      selected={isSelected}
+    >
+      {data.label}
+    </OptionWrapper>
+  )
+}
+
+const Control = ({ children, ...props }: ControlProps<FunderOption, false>) => {
+  return (
+    <components.Control {...props}>
+      <SearchIconContainer isFocused={props.isFocused}>
+        <SearchIcon />
+      </SearchIconContainer>
+      {children}
+    </components.Control>
+  )
+}
+// this to prevent clearing text input from selected option ISSUE:
+// https://github.com/JedWatson/react-select/issues/2296
+const Input = (props: InputProps<FunderOption, false>) => (
+  <components.Input {...props} isHidden={false} />
+)
+
+const getCustomStyles = (theme: Theme): StylesConfig<FunderOption, false> => ({
+  control: (provided, state) => ({
+    ...provided,
+    minHeight: '40px',
+    borderRadius: '4px',
+    border: `${state.isFocused ? '2px' : '1px'} solid ${state.isFocused ? theme.colors.brand.default : theme.colors.border.secondary}`,
+    backgroundColor:
+      state.isFocused || state.menuIsOpen
+        ? theme.colors.background.fifth
+        : theme.colors.background.primary,
+    boxShadow: 'none',
+    cursor: 'text',
+    transition: 'background-color 0.2s',
+    '&:hover': {
+      backgroundColor: theme.colors.background.fifth,
+    },
+  }),
+  input: (provided) => ({
+    ...provided,
+    margin: 0,
+    padding: 0,
+    color: theme.colors.text.primary,
+    fontSize: theme.font.size.normal,
+    fontFamily: theme.font.family.sans,
+  }),
+  placeholder: (provided, state) => ({
+    ...provided,
+    margin: 0,
+    fontStyle: 'italic',
+    color: state.isFocused ? '#c9c9c9' : theme.colors.text.secondary,
+    fontSize: theme.font.size.medium,
+    fontFamily: theme.font.family.sans,
+    fontWeight: theme.font.weight.normal,
+    lineHeight: theme.font.lineHeight.large,
+  }),
+})
+
+const FormActions = styled(ButtonGroup)`
+  margin: ${(props) => props.theme.grid.unit * 2}px;
 `
 
 const ErrorText = styled.div`

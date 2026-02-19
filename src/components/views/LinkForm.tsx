@@ -23,6 +23,7 @@ import {
   SecondaryButton,
   TextField,
   InputErrorText,
+  withFocusTrap,
 } from '@manuscripts/style-guide'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -59,6 +60,7 @@ const RemoveButton = styled(SecondaryButton)`
 export const Open = styled.a`
   display: inline-block;
   margin-left: ${(props) => props.theme.grid.unit * 2}px;
+  margin-top: 4px;
   text-transform: uppercase;
   color: inherit;
   font-size: ${(props) => props.theme.font.size.small};
@@ -68,7 +70,14 @@ export const Open = styled.a`
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
     margin-left: 4px;
   }
+
+  &&:not([disabled]):focus-visible {
+    outline: 2px solid ${(props) => props.theme.colors.outline.focus};
+    outline-offset: 3px;
+  }
 `
+
+const Form = withFocusTrap(styled.form``)
 
 export interface LinkValue {
   text: string
@@ -141,7 +150,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
   )
 
   return (
-    <form onSubmit={handleSubmit} noValidate={true}>
+    <Form onSubmit={handleSubmit} noValidate={true}>
       <FormContainer>
         <FormRow>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -206,6 +215,6 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           </ActionGroup>
         </Actions>
       </FormContainer>
-    </form>
+    </Form>
   )
 }
