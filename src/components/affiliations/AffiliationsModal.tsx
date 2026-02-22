@@ -218,7 +218,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       const updatedAuthors = authors.map((author) => ({
         ...author,
-        affiliations: selectedAuthorIds.includes(author.id)
+        affiliationIDs: selectedAuthorIds.includes(author.id)
           ? [...new Set([...(author.affiliationIDs || []), affiliation.id])]
           : (author.affiliationIDs || []).filter((id) => id !== affiliation.id),
       }))
@@ -286,7 +286,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     const updatedAuthors = authors.map((author) => ({
       ...author,
-      affiliations: (author.affiliationIDs || []).filter(
+      affiliationIDs: (author.affiliationIDs || []).filter(
         (id) => id !== selection.id
       ),
     }))
