@@ -83,7 +83,7 @@ export default (props: EditorProps) => {
     comments(),
     paragraphs(),
     placeholder(),
-    add_subtitle(),
+    add_subtitle(props),
     translations(props),
     tableEditing(),
     selected_suggestion(),
