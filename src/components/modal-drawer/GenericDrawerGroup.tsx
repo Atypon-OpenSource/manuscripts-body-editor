@@ -101,9 +101,11 @@ export function DrawerGroup<T extends Base>({
 
 const DrawerSectionTitle = styled.h3`
   margin: 0;
-  font-weight: ${(props) => props.theme.font.weight.normal};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-family: ${(props) => props.theme.font.family.sans};
+  padding-bottom: 12px;
+  font: ${(props) => props.theme.font.weight.normal}
+    ${(props) => props.theme.font.size.xlarge} /
+    ${(props) => props.theme.font.lineHeight.large}
+    ${(props) => props.theme.font.family.sans};
   color: ${(props) => props.theme.colors.text.secondary};
 `
 export const AssignButton = styled.button`

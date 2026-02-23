@@ -15,31 +15,16 @@
  */
 import {
   CloseButton,
+  ModalCardBody,
   ModalContainer,
   ModalHeader,
+  ModalTitle,
   StyledModal,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
-import styled from 'styled-components'
 
 import { AwardAttrs } from '../../views/award'
 import { AwardForm } from './AwardForm'
-
-const ModalBody = styled.div`
-  box-sizing: border-box;
-  padding: ${(props) => 6 * props.theme.grid.unit}px;
-  background-color: ${(props) => props.theme.colors.background.primary};
-  width: 480px;
-  max-width: 60vw;
-  max-height: 80vh;
-`
-const ModalTitle = styled.h2`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.medium};
-  font-weight: ${(props) => props.theme.font.weight.bold};
-  color: ${(props) => props.theme.colors.text.primary};
-  margin: 0;
-`
 
 const normalizeData = (award: AwardAttrs) => ({
   id: award.id || '',
@@ -98,7 +83,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
         <ModalHeader>
           <CloseButton onClick={handleCancel} data-cy="modal-close-button" />
         </ModalHeader>
-        <ModalBody>
+        <ModalCardBody width={480}>
           <ModalTitle>Add Funder information</ModalTitle>
           <AwardForm
             values={normalizedValues}
@@ -106,7 +91,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
             onCancel={handleCancel}
             onChange={handleChange}
           />
-        </ModalBody>
+        </ModalCardBody>
       </ModalContainer>
     </StyledModal>
   )

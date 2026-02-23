@@ -61,6 +61,7 @@ const icons: Map<
   [nodes.section, OutlineSectionIcon],
   [nodes.table_element, OutlineTableIcon],
   [nodes.graphical_abstract_section, OutlineSectionIcon],
+  [nodes.trans_graphical_abstract, OutlineSectionIcon],
   [nodes.footnotes_section, OutlineSectionIcon],
   [nodes.image_element, OutlineImageIcon],
   [nodes.hero_image, OutlineImageIcon],

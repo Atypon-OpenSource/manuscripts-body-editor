@@ -20,48 +20,75 @@ import {
   SectionCategory,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { EditorState } from 'prosemirror-state'
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import {
   findChildrenByType,
   findParentNodeOfTypeClosestToPos,
 } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { sectionCategoryIcon } from '../../icons'
-import { PopperManager } from '../../lib/popper'
-import { PluginState } from './index'
+import { EditorProps } from '../configs/ManuscriptsEditor'
+import { sectionCategoryIcon } from '../icons'
 
-const popper = new PopperManager()
+export const sectionCategoryKey = new PluginKey<PluginState>('section-category')
 
-function createMenuItem(
+export interface PluginState {
+  decorations: DecorationSet
+}
+
+export default (props: EditorProps) =>
+  new Plugin<PluginState>({
+    key: sectionCategoryKey,
+    state: {
+      init: (_, state) => buildPluginState(state, props),
+      apply: (tr, value, oldState, newState) => {
+        if (!tr.docChanged) {
+          return value
+        }
+        return buildPluginState(newState, props)
+      },
+    },
+    props: {
+      decorations: (state) =>
+        sectionCategoryKey.getState(state)?.decorations || DecorationSet.empty,
+    },
+  })
+
+const createMenuItem = (
+  props: EditorProps,
   contents: string,
   handler: EventListener,
-  isDisabled = false,
-  isSelected = false
-) {
+  isDisabled: boolean,
+  isSelected: boolean
+) => {
   const item = document.createElement('div')
-  item.className = `menu-item ${isDisabled ? 'disabled' : ''} ${
-    isSelected ? 'selected' : ''
-  }`
+  item.classList.add('menu-item')
+  if (isSelected) {
+    item.classList.add('selected')
+  }
+  if (isDisabled) {
+    item.classList.add('disabled')
+  }
   item.textContent = contents
   item.addEventListener('mousedown', (event) => {
     handler(event)
-    popper.destroy()
+    props.popper.destroy()
   })
   return item
 }
 
-function createMenu(
+const createMenu = (
+  props: EditorProps,
   currentCategory: SectionCategory | undefined,
   categories: SectionCategory[],
   usedCategoryIDs: Set<string>,
   onSelect: (category: SectionCategory) => void
-) {
+) => {
   const menu = document.createElement('div')
   menu.className = 'section-category menu'
   categories.forEach((category) => {
     const item = createMenuItem(
+      props,
       category.titles[0],
       () => onSelect(category),
       category.isUnique && usedCategoryIDs.has(category.id),
@@ -69,17 +96,11 @@ function createMenu(
     )
     menu.appendChild(item)
   })
-
-  document.addEventListener('mousedown', (event) => {
-    if (!menu.contains(event.target as Node)) {
-      popper.destroy()
-    }
-  })
-
   return menu
 }
 
-function createButton(
+const createButton = (
+  props: EditorProps,
   view: EditorView,
   pos: number,
   currentCategory: SectionCategory | undefined,
@@ -87,66 +108,47 @@ function createButton(
   usedCategoryIDs: Set<string>,
   canEdit = true,
   disabled: boolean
-) {
+) => {
   const handleSelect = (category: SectionCategory) => {
     const tr = view.state.tr
     tr.setNodeAttribute(pos, 'category', category.id)
     view.dispatch(tr)
   }
-  const arrow = document.createElement('div')
-  arrow.className = 'section-category popper-arrow'
   const button = document.createElement('button')
   button.innerHTML = sectionCategoryIcon
   button.classList.add('section-category-button')
   button.setAttribute('aria-label', 'Section categories menu')
   if (currentCategory) {
+    button.setAttribute('data-tooltip-content', currentCategory.titles[0])
     button.classList.add('assigned')
   }
   if (disabled) {
     button.classList.add('disabled')
   } else if (canEdit) {
     button.addEventListener('mousedown', () => {
-      popper.destroy()
       const menu = createMenu(
+        props,
         currentCategory,
         categories,
         usedCategoryIDs,
         handleSelect
       )
-      popper.show(button, menu, 'bottom-end', false, [
-        { name: 'offset', options: { offset: [0, -10] } },
-      ])
-    })
-  } else {
-    button.addEventListener('mouseenter', () => {
-      const tooltip = document.createElement('div')
-      tooltip.className = 'section-category tooltip'
-      tooltip.textContent = 'Category:'
-      const span = document.createElement('span')
-      span.textContent = currentCategory?.titles[0] || ''
-      tooltip.appendChild(span)
-      tooltip.appendChild(arrow)
-      popper.show(button, tooltip, 'left', false, [
-        { name: 'offset', options: { offset: [0, 10] } },
-        { name: 'arrow', options: { element: arrow } },
-      ])
-    })
-    button.addEventListener('mouseleave', () => {
-      popper.destroy()
+      props.popper.show(button, menu, 'bottom-end', false)
     })
   }
 
   return button
 }
 
-export function buildPluginState(
+const buildPluginState = (
   state: EditorState,
   props: EditorProps
-): PluginState {
+): PluginState => {
   const decorations: Decoration[] = []
   const can = props.getCapabilities()
   const categories = props.sectionCategories
   const usedCategoryIDs = getUsedSectionCategoryIDs(state)
+  const canEdit = !!can?.editArticle
 
   state.doc.descendants((node, pos) => {
     if (node.type === schema.nodes.box_element) {
@@ -158,19 +160,29 @@ export function buildPluginState(
       const $pos = state.doc.resolve(pos)
       const group = getGroup($pos)
       const groupCategories = getGroupCategories(categories, group)
-      decorations.push(
-        Decoration.widget(pos + 1, (view) =>
-          createButton(
-            view,
-            pos,
-            category,
-            groupCategories,
-            usedCategoryIDs,
-            can?.editArticle,
-            categories.size === 0
+
+      const numOptions = groupCategories.length
+
+      const shouldShow = !!category || (canEdit && numOptions >= 2)
+
+      if (shouldShow) {
+        const isEditable = canEdit && numOptions >= 2
+
+        decorations.push(
+          Decoration.widget(pos + 1, (view) =>
+            createButton(
+              props,
+              view,
+              pos,
+              category,
+              groupCategories,
+              usedCategoryIDs,
+              isEditable,
+              categories.size === 0
+            )
           )
         )
-      )
+      }
       return false
     }
   })
@@ -182,7 +194,9 @@ const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
   const sections = findChildrenByType(state.doc, schema.nodes.section)
   const used = new Set<string>()
   sections.forEach(({ node }) => {
-    node.attrs.category && used.add(node.attrs.category)
+    if (node.attrs.category) {
+      used.add(node.attrs.category)
+    }
   })
   return used
 }

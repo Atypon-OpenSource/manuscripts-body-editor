@@ -19,11 +19,12 @@ import {
   Drawer,
   DrawerItemsList,
   DrawerProps,
+  LabelText,
 } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
-import { CheckboxContainer, LabelText } from './AuthorDetailsForm'
+import { CheckboxContainer } from './AuthorDetailsForm'
 
 interface CreditDrawerProps {
   items: { id: string; vocabTerm: string }[]

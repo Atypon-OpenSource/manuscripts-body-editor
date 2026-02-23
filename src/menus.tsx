@@ -203,58 +203,11 @@ export const getEditorMenus = (
         isHidden: !templateAllows(state, schema.nodes.comment),
       },
       {
-        role: 'separator',
-      },
-      {
-        id: 'front-matter',
-        label: 'Article Metadata',
-        isEnabled: true,
-        submenu: [
-          {
-            id: 'insert-abstract-types',
-            label: 'Abstract Types',
-            isEnabled: true,
-            submenu: allAbstractsCategories.map(insertAbstractsSectionMenu),
-            isHidden: !allAbstractsCategories.length,
-          },
-          {
-            id: 'insert-contributors',
-            label: 'Authors',
-            isEnabled: isCommandValid(insertContributors),
-            run: doCommand(insertContributors),
-            isHidden: !templateAllows(state, schema.nodes.contributors),
-          },
-          {
-            id: 'insert-contributors',
-            label: 'Affiliations',
-            isEnabled: isCommandValid(insertAffiliation),
-            run: doCommand(insertAffiliation),
-            isHidden: !templateAllows(state, schema.nodes.affiliations),
-          },
-          {
-            id: 'insert-awards',
-            label: 'Funder Information',
-            isEnabled: isCommandValid(insertAward),
-            run: doCommand(insertAward),
-            isHidden: !templateAllows(state, schema.nodes.awards),
-          },
-          {
-            id: 'insert-keywords',
-            label: 'Keywords',
-            isEnabled: isCommandValid(insertKeywords),
-            run: doCommand(insertKeywords),
-            isHidden: !templateAllows(state, schema.nodes.keywords),
-          },
-        ],
-      },
-      {
         id: 'back-matter',
         label: 'Author Notes',
         isEnabled: true,
         submenu: categories.map(insertBackmatterSectionMenu),
-        isHidden:
-          !templateAllows(state, schema.nodes.author_notes) ||
-          !categories.length,
+        isHidden: !categories.length,
       },
       {
         id: 'insert-section',
@@ -424,7 +377,7 @@ export const getEditorMenus = (
         label: 'Inline Equation',
         shortcut: {
           mac: 'Shift+Option+CommandOrControl+E',
-          pc: 'Shift+CommandOrControl+Option+E',
+          pc: 'Shift+CommandOrControl+E',
         },
         isEnabled:
           isEditAllowed(state) &&
@@ -631,5 +584,81 @@ export const getEditorMenus = (
     ],
   }
 
-  return [edit, insert, format]
+  const ABSTRACT_ID = 'abstract'
+
+  const abstractSection = allAbstractsCategories.find(
+    (s) => s.id === ABSTRACT_ID
+  )
+  const ABSTRACT_GRAPHICAL_ID = 'abstract-graphical'
+  const graphicalAbstractSection = allAbstractsCategories.find(
+    (s) => s.id === ABSTRACT_GRAPHICAL_ID
+  )
+
+  const abstractsSubmenuList = allAbstractsCategories.filter(
+    (c) => c.id !== ABSTRACT_ID && c.id !== ABSTRACT_GRAPHICAL_ID
+  )
+
+  const metadata: MenuSpec = {
+    id: 'insert-metadata',
+    label: 'Metadata',
+    isEnabled: true,
+    submenu: [
+      {
+        id: 'insert-abstract',
+        label: 'Abstract',
+        isEnabled: isCommandValid(insertAbstractSection(abstractSection)),
+        run: doCommand(insertAbstractSection(abstractSection)),
+        isHidden:
+          !abstractSection || !templateAllows(state, schema.nodes.abstracts),
+      },
+      {
+        id: 'insert-graphical-abstract',
+        label: 'Graphical Abstract',
+        isEnabled: isCommandValid(
+          insertAbstractSection(graphicalAbstractSection)
+        ),
+        run: doCommand(insertAbstractSection(graphicalAbstractSection)),
+        isHidden:
+          !graphicalAbstractSection ||
+          !templateAllows(state, schema.nodes.graphical_abstract_section),
+      },
+      {
+        id: 'insert-abstract-types',
+        label: 'Other Abstract Types',
+        isEnabled: !!abstractsSubmenuList.length,
+        submenu: abstractsSubmenuList.map(insertAbstractsSectionMenu),
+        isHidden: !allAbstractsCategories.length,
+      },
+      {
+        id: 'insert-authors',
+        label: 'Authors',
+        isEnabled: isCommandValid(insertContributors),
+        run: doCommand(insertContributors),
+        isHidden: !templateAllows(state, schema.nodes.contributors),
+      },
+      {
+        id: 'insert-contributors',
+        label: 'Affiliations',
+        isEnabled: isCommandValid(insertAffiliation),
+        run: doCommand(insertAffiliation),
+        isHidden: !templateAllows(state, schema.nodes.affiliations),
+      },
+      {
+        id: 'insert-awards',
+        label: 'Funder Information',
+        isEnabled: isCommandValid(insertAward),
+        run: doCommand(insertAward),
+        isHidden: !templateAllows(state, schema.nodes.awards),
+      },
+      {
+        id: 'insert-keywords',
+        label: 'Keywords',
+        isEnabled: isCommandValid(insertKeywords),
+        run: doCommand(insertKeywords),
+        isHidden: !templateAllows(state, schema.nodes.keywords),
+      },
+    ],
+  }
+
+  return [edit, insert, metadata, format]
 }
