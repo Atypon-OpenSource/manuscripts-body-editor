@@ -18,6 +18,7 @@ import {
   AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
+  outlineStyle,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -580,9 +581,15 @@ function createEmptyAffiliation(priority: number): AffiliationAttrs {
 }
 
 const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
+  padding: 8px;
 `
-const AddAffiliationButton = styled.div`
+const AddAffiliationButton = styled.button`
+  background: none;
+  border: none;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  width: 100%;
   display: flex;
   align-items: center;
   padding: 12px 8px 12px 12px;
@@ -593,6 +600,7 @@ const AddAffiliationButton = styled.div`
     border-left: 0;
     border-right: 0;
   }
+  ${outlineStyle}
 `
 
 const ActionTitle = styled.div`

@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import { AddedIcon, AddIcon, SecondaryButton } from '@manuscripts/style-guide'
+import {
+  AddedIcon,
+  AddIcon,
+  SecondaryButton,
+  withListNavigation,
+  withNavigableListItem,
+} from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import React from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 import { ReferenceLine } from './ReferenceLine'
@@ -42,13 +48,15 @@ const MoreButton = styled(SecondaryButton)`
   color: ${(props) => props.theme.colors.button.default.color.default};
 `
 
-export const ReferenceSearchResultsContainer = styled.div`
-  padding: 0 ${(props) => props.theme.grid.unit * 4}px;
+export const ReferenceSearchResultsContainer = withListNavigation(styled.div`
+  padding: ${(props) => props.theme.grid.unit * 2}px
+    ${(props) => props.theme.grid.unit * 4}px;
   flex: 1;
   overflow-y: auto;
-`
+  outline: none;
+`)
 
-export const ReferenceSearchResult = styled.div`
+export const ReferenceSearchResult = withNavigableListItem(styled.div`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 2}px 0;
   display: flex;
@@ -56,7 +64,7 @@ export const ReferenceSearchResult = styled.div`
   &:not(:last-of-type) {
     border-bottom: 1px solid #f6f6f6;
   }
-`
+`)
 
 export const ReferenceSearchResults: React.FC<{
   items: BibliographyItemAttrs[]
@@ -64,8 +72,21 @@ export const ReferenceSearchResults: React.FC<{
   isSelected: (item: BibliographyItemAttrs) => boolean
   onSelect: (item: BibliographyItemAttrs) => void
   onShowMore: () => void
-}> = ({ items, total, isSelected, onSelect, onShowMore }) => (
-  <ReferenceSearchResultsContainer>
+}> = ({ items, total, isSelected, onSelect, onShowMore }) => {
+  const list = useRef<HTMLElement>(null)
+  const onExpandReferenceList = () => {
+    const element = list.current
+    if (element) {
+      // this to not lose focus after we expand list
+      element.setAttribute('tabindex', '0')
+      element.focus()
+      element.setAttribute('tabindex', '-1')
+    }
+    onShowMore()
+  }
+
+  return (
+    <ReferenceSearchResultsContainer ref={list}>
     {items.map((item) => (
       <ReferenceSearchResult
         onClick={() => onSelect(item)}
@@ -82,10 +103,11 @@ export const ReferenceSearchResults: React.FC<{
         <ReferenceLine item={item} />
       </ReferenceSearchResult>
     ))}
-    {items.length < 25 && total > items.length ? (
-      <MoreButton onClick={onShowMore} data-cy={'more-button'}>
+      {items.length < 25 && total > items.length ? (
+        <MoreButton onClick={onExpandReferenceList} data-cy={'more-button'}>
         Show more
       </MoreButton>
     ) : undefined}
-  </ReferenceSearchResultsContainer>
-)
+    </ReferenceSearchResultsContainer>
+  )
+}

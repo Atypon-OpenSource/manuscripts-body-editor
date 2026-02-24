@@ -21,11 +21,13 @@ import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { DraggableAuthor } from './DraggableAuthor'
+import { withListNavigation } from '@manuscripts/style-guide'
 
-const AuthorListContainer = styled.div`
+const AuthorListContainer = withListNavigation(styled.div`
   flex: 1;
   overflow-y: visible;
-`
+  padding: 0 6px;
+`)
 const AuthorListTitle = styled.h2`
   color: #6e6e6e;
   font-size: 18px;
