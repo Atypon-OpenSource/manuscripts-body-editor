@@ -150,6 +150,7 @@ export const AwardForm = ({
                   <AsyncCreatableSelect<FunderOption>
                     loadOptions={handleOnLoadFunders}
                     onInputChange={handleInputChange}
+                    autoFocus={true}
                     onChange={(option: SingleValue<FunderOption>) =>
                       option &&
                       formRef.current?.setFieldValue('source', option.value)
