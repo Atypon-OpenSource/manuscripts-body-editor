@@ -440,7 +440,15 @@ export class ContextMenu {
     item.addEventListener(
       'keydown',
       handleEnterKey((e) => {
+        const target = e.target as HTMLElement
         this.toggleSubmenu(e)
+        const submenuContent = target.nextElementSibling
+        if (submenuContent?.classList.contains('show')) {
+          const firstItem = submenuContent.querySelector(
+            '.menu-item'
+          ) as HTMLElement
+          firstItem?.focus()
+        }
       })
     )
 
