@@ -261,14 +261,19 @@ const protectCaption: EditorAction = (
   return false
 }
 
-const keepCaption = (state: ManuscriptEditorState) => {
+const keepCaption = (state: ManuscriptEditorState, dispatch?: Dispatch) => {
   const {
     selection: { $anchor },
   } = state
-  return (
+  if (
+    dispatch &&
     $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title &&
-    $anchor.parent.content.size === 0
-  )
+    $anchor.parent.content.size === 1
+  ) {
+    dispatch(state.tr.delete($anchor.pos, $anchor.pos + 1))
+    return true
+  }
+  return false
 }
 
 const titleKeymap: { [key: string]: EditorAction } = {
