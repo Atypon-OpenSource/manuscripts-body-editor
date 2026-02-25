@@ -308,6 +308,14 @@
   display: inline;
 }
 
+.ProseMirror .element-label + .caption-description > p:first-child {
+  display: inline;
+}
+
+.ProseMirror .caption-description > p {
+  margin: 0;
+}
+
 .ProseMirror .element-label {
   margin-right: 5px;
 }
@@ -323,14 +331,10 @@
   cursor: text;
 }
 
-.ProseMirror .caption-description.empty-node::before {
+.ProseMirror .caption-description > p.empty-node::before {
   content: 'Caption...';
   color: #000;
   cursor: text;
-}
-
-.ProseMirror .block-table_element .caption-description.empty-node::before {
-  content: 'Table caption';
 }
 
 .ProseMirror .block-table_element .caption-title.empty-node::before {
@@ -1137,6 +1141,22 @@
 
 .ProseMirror .supplement-item:last-child {
   border-bottom: none;
+}
+
+.ProseMirror .supplement-item .caption-title.empty-node::before {
+  content: 'Insert caption title...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-item .caption-description > p.empty-node::before {
+  content: 'Insert caption...';
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-item .caption-description > p {
+  text-align: start;
 }
 
 .ProseMirror .supplement-file-info {

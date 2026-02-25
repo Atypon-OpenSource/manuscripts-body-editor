@@ -438,7 +438,7 @@ export const insertFigure = (
 
   const element = state.schema.nodes.figure_element.createAndFill({}, [
     figure,
-    schema.nodes.caption.create(),
+    schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
   ]) as FigureElementNode
   const tr = state.tr.insert(position, element)
   dispatch(tr)
@@ -1726,7 +1726,7 @@ const createAndFillFigureElement = (attrs?: Attrs) =>
     },
     [
       schema.nodes.figure.create(),
-      schema.nodes.caption.create(),
+      schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
       schema.nodes.listing.create(),
@@ -1735,7 +1735,7 @@ const createAndFillFigureElement = (attrs?: Attrs) =>
 
 const createAndFillCaption = () => [
     schema.nodes.caption_title.create(),
-    schema.nodes.caption.create(),
+  schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
 ]
 
 const createImageElement = (attrs?: Attrs) =>
@@ -1746,7 +1746,7 @@ const createImageElement = (attrs?: Attrs) =>
     },
     [
       schema.nodes.figure.create(),
-      schema.nodes.caption.create(),
+      schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]

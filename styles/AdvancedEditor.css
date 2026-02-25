@@ -152,6 +152,10 @@
   grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
 }
 
+.ProseMirror .figure-block {
+  text-align: center;
+}
+
 .ProseMirror .figure-block-group .figure-block {
   border: none;
   border-radius: 0;
