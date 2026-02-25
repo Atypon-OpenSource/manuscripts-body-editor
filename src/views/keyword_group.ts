@@ -85,7 +85,9 @@ export class KeywordGroupView extends BlockView<KeywordGroupNode> {
     let firstFocusableFound = false
     for (let i = 0; i < this.node.childCount; i++) {
       const child = this.node.child(i)
-      const keyword = container.children[i] as HTMLElement | undefined
+      const keyword = container.querySelector<HTMLElement>(
+        `.keyword[id="${child.attrs.id}"]`
+      ) as HTMLElement | undefined
       if (!keyword) {
         continue
       }
