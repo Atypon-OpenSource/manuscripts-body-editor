@@ -160,7 +160,7 @@ describe('editor view', () => {
     expect(figureElement.childCount).toBe(5)
     expect(figureElement.type).toBe(schema.nodes.figure_element)
     expect(figureElement.content.child(0).type).toBe(schema.nodes.figure)
-    expect(figureElement.content.child(1).type).toBe(schema.nodes.figcaption)
+    expect(figureElement.content.child(1).type).toBe(schema.nodes.caption)
 
     const sectionWithTable = view.state.doc.child(2).child(8)
     expect(sectionWithTable.attrs.id).toBe('section-with-table')
@@ -173,7 +173,7 @@ describe('editor view', () => {
     expect(tableElement.childCount).toBe(5)
     expect(tableElement.type).toBe(tableElement.type.schema.nodes.table_element)
     expect(tableElement.content.child(0).type).toBe(
-      tableElement.type.schema.nodes.figcaption
+      tableElement.type.schema.nodes.caption_title
     )
     expect(tableElement.content.child(1).type).toBe(
       tableElement.type.schema.nodes.table

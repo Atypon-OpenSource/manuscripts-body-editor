@@ -170,12 +170,15 @@ const leaveTitle: EditorAction = (state, dispatch, view) => {
   return true
 }
 
-const leaveFigcaption: EditorAction = (state) => {
+const leaveCaption: EditorAction = (state) => {
   const {
     selection: { $anchor },
   } = state
-
-  return $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title
+  return (
+    $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title ||
+    $anchor.node($anchor.depth - 1)?.type ===
+      $anchor.parent.type.schema.nodes.caption
+  )
 }
 
 // ignore backspace at the start of section titles
@@ -232,18 +235,23 @@ const protectCaption: EditorAction = (
   const {
     selection: { $anchor },
   } = state
+  let nodeType = undefined
 
   if (
-    dispatch &&
-    ($anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title ||
-      $anchor.parent.type === $anchor.parent.type.schema.nodes.caption) &&
+    $anchor.node($anchor.depth - 1)?.type ===
+      $anchor.parent.type.schema.nodes.caption &&
+    $anchor.node($anchor.depth).content.size === 1
+  ) {
+    nodeType = $anchor.node($anchor.depth - 1).type
+  } else if (
+    $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title &&
     $anchor.parent.content.size === 1
   ) {
-    const slice = new Slice(
-      Fragment.from([state.schema.nodes.caption_title.create()]),
-      1,
-      1
-    )
+    nodeType = $anchor.parent.type
+  }
+
+  if (dispatch && nodeType) {
+    const slice = new Slice(Fragment.from([nodeType.create()]), 1, 1)
     const tr = state.tr.replace($anchor.pos - 1, $anchor.pos, slice)
     dispatch(tr)
 
@@ -253,14 +261,19 @@ const protectCaption: EditorAction = (
   return false
 }
 
-const keepCaption = (state: ManuscriptEditorState) => {
+const keepCaption = (state: ManuscriptEditorState, dispatch?: Dispatch) => {
   const {
     selection: { $anchor },
   } = state
-  return (
+  if (
+    dispatch &&
     $anchor.parent.type === $anchor.parent.type.schema.nodes.caption_title &&
-    $anchor.parent.content.size === 0
-  )
+    $anchor.parent.content.size === 1
+  ) {
+    dispatch(state.tr.delete($anchor.pos, $anchor.pos + 1))
+    return true
+  }
+  return false
 }
 
 const titleKeymap: { [key: string]: EditorAction } = {
@@ -269,7 +282,7 @@ const titleKeymap: { [key: string]: EditorAction } = {
     protectReferencesTitle,
     protectCaption
   ),
-  Enter: chainCommands(autoComplete, leaveTitle, leaveFigcaption),
+  Enter: chainCommands(autoComplete, leaveTitle, leaveCaption),
   Tab: exitBlock(1),
   Delete: chainCommands(keepCaption, protectReferencesTitle),
   'Shift-Tab': exitBlock(-1),
