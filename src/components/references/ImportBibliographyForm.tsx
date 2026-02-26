@@ -113,28 +113,28 @@ export const ImportBibliographyForm = ({
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
       <FormRow>
-          <DropContainer
+        <DropContainer
           onDrop={handleDrop}
-            onDragOver={(e) => {
-              e.preventDefault()
-              setDragging(true)
-            }}
-            onDragLeave={() => setDragging(false)}
-            active={dragging}
-          >
-            <input
-              id="file"
-              name="file"
-              type="file"
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-            <Label htmlFor="file">
-              Drag & Drop or Click here to upload a file.
-            </Label>
-          </DropContainer>
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragging(true)
+          }}
+          onDragLeave={() => setDragging(false)}
+          active={dragging}
+        >
+          <input
+            id="file"
+            name="file"
+            type="file"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+          <Label htmlFor="file">
+            Drag & Drop or Click here to upload a file.
+          </Label>
+        </DropContainer>
       </FormRow>
-          <FormRow>
+      <FormRow>
         <Label htmlFor="content">
           Alternatively, you can directly Copy&Paste below, the text of the
           bibliography items.

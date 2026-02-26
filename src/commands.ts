@@ -1076,8 +1076,11 @@ const findSelectedList = (selection: Selection) =>
   findParentNodeOfType([schema.nodes.list])(selection)
 
 export const insertGraphicalAbstract =
-  (category: SectionCategory) =>
+  (category?: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (!category) {
+      return false
+    }
     const abstracts = findAbstractsNode(state.doc)
     const sections = findChildrenByType(
       abstracts.node,
