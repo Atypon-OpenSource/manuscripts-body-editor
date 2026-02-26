@@ -39,8 +39,8 @@ importers:
         specifier: 3.4.5-LEAN-4873.0
         version: 3.4.5-LEAN-4873.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.6
-        version: 2.2.6
+        specifier: 2.2.7-LEAN-4873.0
+        version: 2.2.7-LEAN-4873.0
       '@manuscripts/transform':
         specifier: 4.3.19-LEAN-4873.2
         version: 4.3.19-LEAN-4873.2(prosemirror-state@1.4.3)
@@ -1318,8 +1318,8 @@ packages:
     resolution: {integrity: sha512-+TdlbT1DXSsgTKP+95C+nPJxJvuqMrlTkosq0H8bTe55BTilrXbDOFBFajYR7/0OgWICsbSVlP6F5TLRRLJIMg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.4.5-LEAN-4873.0.tgz}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.6':
-    resolution: {integrity: sha512-PrQSqdaxGtTX7hk1wtizRS1sxHNryP5QOioYM7H1yuEFPb9xTcHldCqUV09rx+nx+U9zVUKsDs78wV6v8l5bzg==}
+  '@manuscripts/track-changes-plugin@2.2.7-LEAN-4873.0':
+    resolution: {integrity: sha512-gnPDYTfs4tTFoFaAMigKAaz8zfXJZOGDNMdfKoNZnCkjGyLeWLWhRHLNu+TNdPCiniMh0acF9OtgAWFX86nU2w==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.2.7-LEAN-4873.0.tgz}
 
   '@manuscripts/transform@4.3.19-LEAN-4873.2':
     resolution: {integrity: sha512-4ZFKGRPCtxd1Zpoppj3ip8LwKONZ8uVNzLveAehHfiU8vgHEK2Uts8I/6dDdYBDSyiU/VZUUYH9fYzQCIxM4jA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.19-LEAN-4873.2.tgz}
@@ -6418,7 +6418,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.6':
+  '@manuscripts/track-changes-plugin@2.2.7-LEAN-4873.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
