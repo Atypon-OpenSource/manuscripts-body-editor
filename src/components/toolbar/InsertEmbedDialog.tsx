@@ -40,8 +40,6 @@ import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 import { Open } from '../views/LinkForm'
 
-
-
 const HeaderContainer = styled(PrimaryBoldHeading)`
   font-size: ${(props) => props.theme.font.size.large};
 `
@@ -137,7 +135,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
           {url && allowedHref(url) && (
             <Container>
               <FormRow>
-              <Label>Preview</Label>
+                <Label>Preview</Label>
               </FormRow>
               {(oembedHTML && (
                 <PreviewContainer
