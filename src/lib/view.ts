@@ -24,6 +24,7 @@ import { NodeSelection } from 'prosemirror-state'
 import * as utils from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
+import { sanitizeAttrsChange } from '@manuscripts/track-changes-plugin'
 
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
