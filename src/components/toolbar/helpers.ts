@@ -340,7 +340,7 @@ export const indentSection =
     let previousSection: Node | null = null
     for (let i = startIndex - 1; i >= 0; i--) {
       const candidate = parentSection.child(i)
-      if (candidate.type === nodes.section && !isValid(candidate)) {
+      if (candidate.type === nodes.section && isValid(candidate)) {
         previousSection = candidate
         break
       }
