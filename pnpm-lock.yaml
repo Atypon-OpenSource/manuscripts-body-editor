@@ -39,11 +39,11 @@ importers:
         specifier: 3.4.6
         version: 3.4.6(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.7
-        version: 2.2.7
+        specifier: 2.2.9-LEAN-5361-1.1
+        version: 2.2.9-LEAN-5361-1.1
       '@manuscripts/transform':
-        specifier: 4.3.20
-        version: 4.3.20(prosemirror-state@1.4.3)
+        specifier: 4.3.21-LEAN-5361-1.0
+        version: 4.3.21-LEAN-5361-1.0(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1336,11 +1336,11 @@ packages:
     resolution: {integrity: sha512-yAl+Wgf8hxhYSbxYQU9Wv+tOh1yx1KYMrP5bW7VvDgN1WD71yzP3DKHMf2uXPeIvOMzshPpn+z3w7KOBXi+hxg==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.7':
-    resolution: {integrity: sha512-LpGJYV2F9j8egBM7iMW7SKtFDQRXq8x7158nFPyQ/AvxsEIm8A9OfiZy1pmoOjVVZacnboiZJTsfpdHOti8fbQ==}
+  '@manuscripts/track-changes-plugin@2.2.9-LEAN-5361-1.1':
+    resolution: {integrity: sha512-VS6pwY4wU9lxlDUx+R/XgBiz2Ymwy9LjKKuwVo2xNUaRbVZwAqBCvoC1BTBjrPpJPBfAPnsElS5Y30ZCKnZVGw==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.2.9-LEAN-5361-1.1.tgz}
 
-  '@manuscripts/transform@4.3.20':
-    resolution: {integrity: sha512-+FixeLg9dXGuHz/Cp9SqCIRpZpABPhQRklvHa4u2OhhCiWBfdg71ma1mh/m4pU3V63o2zTmlBltepIknQxAZNg==}
+  '@manuscripts/transform@4.3.21-LEAN-5361-1.0':
+    resolution: {integrity: sha512-eFwWKvXRoEp5plTd/QtYSuXk4cKc9CBYo0+iCGKi0+dMOE+YormktO5p8qeBIECpHRGBegcVWxuxKmgKYRxF2Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.21-LEAN-5361-1.0.tgz}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6466,7 +6466,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.7':
+  '@manuscripts/track-changes-plugin@2.2.9-LEAN-5361-1.1':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6478,7 +6478,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.20(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.21-LEAN-5361-1.0(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
