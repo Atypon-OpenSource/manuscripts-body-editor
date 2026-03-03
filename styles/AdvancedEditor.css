@@ -97,6 +97,7 @@
 
 .ProseMirror .backmatter .backmatter-border-placeholder .top {
   border-top: 1px dashed #c9c9c9;
+  margin: 11pt 49pt;
 }
 
 .ProseMirror .backmatter .backmatter-border-placeholder .bottom {
