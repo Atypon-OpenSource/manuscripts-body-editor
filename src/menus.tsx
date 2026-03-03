@@ -377,7 +377,7 @@ export const getEditorMenus = (
         label: 'Inline Equation',
         shortcut: {
           mac: 'Shift+Option+CommandOrControl+E',
-          pc: 'Shift+CommandOrControl+Option+E',
+          pc: 'Shift+CommandOrControl+E',
         },
         isEnabled:
           isEditAllowed(state) &&
@@ -615,9 +615,9 @@ export const getEditorMenus = (
         id: 'insert-graphical-abstract',
         label: 'Graphical Abstract',
         isEnabled: isCommandValid(
-          insertAbstractSection(graphicalAbstractSection)
+          insertGraphicalAbstract(graphicalAbstractSection)
         ),
-        run: doCommand(insertAbstractSection(graphicalAbstractSection)),
+        run: doCommand(insertGraphicalAbstract(graphicalAbstractSection)),
         isHidden:
           !graphicalAbstractSection ||
           !templateAllows(state, schema.nodes.graphical_abstract_section),

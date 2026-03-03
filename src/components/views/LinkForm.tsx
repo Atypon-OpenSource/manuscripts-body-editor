@@ -201,8 +201,8 @@ export const LinkForm: React.FC<LinkFormProps> = ({
           <ActionGroup>
             <SecondaryButton type={'button'} onClick={onCancel}>
               Cancel
-          </SecondaryButton>
-          <PrimaryButton type={'submit'}>Save</PrimaryButton>
+            </SecondaryButton>
+            <PrimaryButton type={'submit'}>Save</PrimaryButton>
           </ActionGroup>
         </Actions>
       </FormContainer>
