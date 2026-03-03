@@ -19,8 +19,8 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { isMoved } from '../../lib/filtered-document'
 import { checkForCompletion } from './autocompletion'
+import { clear } from '@manuscripts/track-changes-plugin'
 
 type NumberingArray = number[]
 export type PluginState = Map<string, string>
@@ -33,12 +33,7 @@ const calculateSectionLevels = (
   sectionNumberMap: Map<string, string>,
   numbering: NumberingArray = [0]
 ) => {
-  node.forEach((childNode, offset) => {
-    // Skip moved nodes (move-deleted-node elements) to fix numbering
-    if (isMoved(childNode)) {
-      return
-    }
-
+  clear(node).forEach((childNode, offset) => {
     if (
       childNode.type === schema.nodes.section ||
       childNode.type === schema.nodes.box_element

@@ -27,9 +27,9 @@ import {
   createUnsupportedFormat,
   MediaType,
 } from '../lib/media'
-import { isDeleted } from '../lib/track-changes-utils'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement | null = null

@@ -15,6 +15,7 @@
  */
 import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 import React, {
@@ -25,8 +26,6 @@ import React, {
   useState,
 } from 'react'
 import styled from 'styled-components'
-
-import { isDeleted } from '../../lib/track-changes-utils'
 
 const AddNewKeyword = styled.div`
   position: relative;

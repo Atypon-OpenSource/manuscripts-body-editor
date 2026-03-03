@@ -37,7 +37,6 @@ import { useDrag, useDrop } from 'react-dnd'
 import { Capabilities } from '../../lib/capabilities'
 import { ContextMenu } from '../../lib/context-menu'
 import { DropSide, getDropSide } from '../../lib/dnd'
-import { isDeleted } from '../../lib/track-changes-utils'
 import { isBodyLocked } from '../../lib/utils'
 import { nodeTypeIcon } from '../../node-type-icons'
 import { PluginState, sectionTitleKey } from '../../plugins/section_title'
@@ -52,6 +51,7 @@ import {
   OutlineItemNoArrow,
   OutlineItemPlaceholder,
 } from './Outline'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 const excludedTypes = [
   schema.nodes.table,

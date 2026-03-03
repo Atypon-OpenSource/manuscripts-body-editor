@@ -29,10 +29,6 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
 import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
@@ -47,6 +43,10 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { plusIcon } from '../icons'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
   isDeleted,
-} from '../lib/track-changes-utils'
+} from '@manuscripts/track-changes-plugin'
+import { plusIcon } from '../icons'
 import { createEditableNodeView } from './creators'
 import { FigureEditableView } from './figure_editable'
 

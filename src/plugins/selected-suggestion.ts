@@ -16,6 +16,7 @@
 import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
+  isTracked,
   TrackedAttrs,
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
@@ -30,7 +31,6 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
-import { isTracked } from '../lib/track-changes-utils'
 import { getSelectionChangeGroup } from '../selection'
 
 export const selectedSuggestionKey = new PluginKey<PluginState>(

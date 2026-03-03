@@ -15,7 +15,9 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
+
 import { isEqual } from 'lodash'
 import { NodeSelection, Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
@@ -26,7 +28,6 @@ import {
 } from '../components/views/DeleteFootnoteDialog'
 import { alertIcon } from '../icons'
 import { getFootnotesElementState } from '../lib/footnotes'
-import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'

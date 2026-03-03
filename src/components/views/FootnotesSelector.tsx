@@ -23,11 +23,10 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-
-import { isDeleted } from '../../lib/track-changes-utils'
 
 const NotesContainer = styled.div`
   height: 90vh;

@@ -24,7 +24,6 @@ import React from 'react'
 import { OnChangeValue } from 'react-select'
 
 import { findClosestParentElement } from '../../../lib/hierarchy'
-import { isDeleted } from '../../../lib/track-changes-utils'
 import { isEditAllowed } from '../../../lib/utils'
 import {
   demoteSectionToParagraph,
@@ -35,6 +34,7 @@ import {
 } from '../helpers'
 import { CustomControl, OptionComponent } from './OptionComponent'
 import { customStyles, StyledSelect } from './styles'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export interface Option {
   action?: (

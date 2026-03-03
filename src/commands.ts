@@ -15,7 +15,7 @@
  */
 
 import { buildContribution } from '@manuscripts/json-schema'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -106,7 +106,6 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { templateAllows } from './lib/template'
-import { isDeleted } from './lib/track-changes-utils'
 import {
   findInsertionPosition,
   findParentNodeWithId,

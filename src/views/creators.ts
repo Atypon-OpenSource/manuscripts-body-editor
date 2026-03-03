@@ -18,9 +18,9 @@ import { ManuscriptNode } from '@manuscripts/transform'
 
 import { Dispatch } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { NodeViewCreator } from '../types'
 import { BaseNodeView } from './base_node_view'
+import { addTrackChangesAttributes } from '@manuscripts/track-changes-plugin'
 
 export const createEditableNodeView =
   <T extends BaseNodeView<ManuscriptNode>>(
