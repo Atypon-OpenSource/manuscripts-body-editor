@@ -161,7 +161,6 @@ export const demoteSectionToParagraph = (
   const content = filterBlockNodes(
     Fragment.from(paragraph).append(sectionContent)
   )
-  // @TODO WIP ----> check what steps this results in - does it produce replace around step?
   tr.insert(beforeSection, content)
 
   const afterSection = tr.mapping.map($from.after(sectionDepth))
