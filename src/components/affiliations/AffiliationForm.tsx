@@ -123,12 +123,14 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 </>
               )}
             </Field>
+          </FormRow>
+          <FormRow>
             <Field name="county">
               {(props: FieldProps) => (
-                <>
-                  <Label htmlFor="county">State / Province</Label>
-                  <TextField id="county" {...props.field} />
-                </>
+                  <>
+                    <Label htmlFor="county">State / Province</Label>
+                    <TextField id="county" {...props.field} />
+                  </>
               )}
             </Field>
           </FormRow>
