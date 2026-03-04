@@ -36,6 +36,7 @@ export class CitationView
   public createDOM() {
     this.dom = document.createElement('span')
     this.dom.classList.add('citation')
+    this.dom.tabIndex = 0
   }
 
   public updateContents() {
