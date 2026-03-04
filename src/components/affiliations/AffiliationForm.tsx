@@ -28,7 +28,6 @@ import styled from 'styled-components'
 import { AffiliationAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
-
 const AffiliationsTextField = styled(TextField)`
   border-radius: 0;
   background: transparent;
@@ -57,8 +56,6 @@ const DepartmentTextField = styled(TextArea)`
     background: transparent;
   }
 `
-
-
 
 const MarginRightTextField = styled(AffiliationsTextField)`
   margin-right: 4px;
