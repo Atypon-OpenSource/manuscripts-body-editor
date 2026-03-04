@@ -36,14 +36,14 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.4.7
-        version: 3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.4.8-LEAN-5413.0
+        version: 3.4.8-LEAN-5413.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.2.9
         version: 2.2.9
       '@manuscripts/transform':
-        specifier: 4.3.21
-        version: 4.3.21(prosemirror-state@1.4.3)
+        specifier: 4.3.22
+        version: 4.3.22(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1332,15 +1332,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.4.7':
-    resolution: {integrity: sha512-ILqQcaURepcEkZMmJQJmreVX5LKGN62uVGddteBhiVBGJbPVPwMlUTandYmpYw7dz6WdPYytP4aw7XAGW2pqww==}
+  '@manuscripts/style-guide@3.4.8-LEAN-5413.0':
+    resolution: {integrity: sha512-VD2gPLwL+zO/4NyCObZ8JDbLAiT3ysjrVkuf37DcRMyvBbr8rN3+ZY1MaodJBVpBk/1Jpa7Iz08zCArHWdky0Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.4.8-LEAN-5413.0.tgz}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.2.9':
     resolution: {integrity: sha512-rXJ+HEKf9dDR1v9JkKrvtpWYcS1FqobBropKfsBl26dkm0mKyc1PM7qrSrEPNyoIRgYL/XAyfOfufOvpH0B5tQ==}
 
-  '@manuscripts/transform@4.3.21':
-    resolution: {integrity: sha512-RcCiHkEyG1yqaqDQP7tE9NIWBVxmAjM84qvWY1j7tpXV3ftR7dTnXoMt3fl9FaaqYZVJg99JL8fGjqDanJSLSw==}
+  '@manuscripts/transform@4.3.22':
+    resolution: {integrity: sha512-Yaa7+v2cRf4q/SjVS1Up0k8EFAhEr/Q/n6Hn0kWfkuIacv4EeJzjyG05wMSUJ1YY3LHBHu7kwp6q7JbHgJ7zjw==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6435,7 +6435,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.4.8-LEAN-5413.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6478,7 +6478,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.21(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.22(prosemirror-state@1.4.3)':
     dependencies:
       '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
