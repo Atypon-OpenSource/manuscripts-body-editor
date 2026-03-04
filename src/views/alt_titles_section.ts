@@ -23,6 +23,7 @@ import { altTitlesKey } from '../plugins/alt-titles'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 export class AltTitleSectionView extends BlockView<
   Trackable<AltTitlesSectionNode>
@@ -52,7 +53,7 @@ export class AltTitleSectionView extends BlockView<
     button.setAttribute('aria-label', 'Collapse alternative titles')
 
     button.innerHTML = arrowDown
-    button.addEventListener('click', () => {
+    const handleCollapse = () => {
       const tr = this.view.state.tr.setMeta(altTitlesKey, {
         collapsed: true,
       })
@@ -71,7 +72,23 @@ export class AltTitleSectionView extends BlockView<
         tr.setSelection(TextSelection.create(tr.doc, titleEndPos))
       }
       this.view.dispatch(tr)
+
+      // Focus the toggle button after collapse
+      const toggleButton = this.view.dom.querySelector(
+        '.toggle-button-open'
+      ) as HTMLElement
+      toggleButton?.focus()
+    }
+
+    button.addEventListener('click', (e) => {
+      e.preventDefault()
+      handleCollapse()
     })
+
+    button.addEventListener(
+      'keydown',
+      handleEnterKey(() => handleCollapse())
+    )
     closingPanel.appendChild(button)
     return closingPanel
   }

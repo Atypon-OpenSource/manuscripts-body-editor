@@ -561,7 +561,6 @@ const ActionTitle = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 2}px;
 `
 
-
 const AuthorForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
