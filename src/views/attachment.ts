@@ -152,7 +152,7 @@ export class AttachmentView extends BlockView<Trackable<AttachmentNode>> {
         },
       } as unknown as MouseEvent
 
-      this.props.onEditorClick(this.getPos(), this.node, this.getPos(), event)
+      this.props.onEditorClick(event)
     }
   }
 }
