@@ -252,7 +252,8 @@ export const AddKeywordInline: React.FC<{
         <NewKeywordButton
           tabIndex={-1}
           className="keyword-add"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault()
             setIsAddingNewKeyword(true)
           }}
           onKeyDown={(e) => {
