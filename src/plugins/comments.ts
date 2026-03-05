@@ -23,6 +23,8 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { findChildrenByType, NodeWithPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
+import { handleEnterKey } from '../lib/navigation-utils'
+
 import {
   Comment,
   CommentAttrs,
@@ -46,6 +48,29 @@ export interface PluginState {
   comments: Map<string, Comment>
   commentsByKey: Map<CommentKey, Comment[]>
   selection?: CommentSelection
+}
+
+const handleCommentMarkerInteraction = (
+  view: EditorView,
+  target: HTMLElement | null
+) => {
+  const state = view.state
+  const com = commentsKey.getState(state)
+  const marker = target?.closest('[data-key]') as HTMLElement
+
+  // Don't dispatch a transaction if both empty
+  if (!marker && !com?.selection) {
+    return false
+  }
+
+  const tr = state.tr
+  if (marker) {
+    const key = marker.dataset.key as CommentKey
+    setCommentSelection(tr, key, undefined, false)
+  } else {
+    clearCommentSelection(tr)
+  }
+  view.dispatch(tr)
 }
 
 /**
@@ -72,22 +97,16 @@ export default () => {
     props: {
       decorations: (state) => commentsKey.getState(state)?.decorations,
       handleClick: (view: EditorView, pos: number, e: MouseEvent) => {
-        const state = view.state
-        const com = commentsKey.getState(state)
         const target = e.target as HTMLElement
-        const marker = target.closest('[data-key]') as HTMLElement
-        //don't dispatch a transaction if both empty
-        if (!marker && !com?.selection) {
-          return
-        }
-        const tr = state.tr
-        if (marker) {
-          const key = marker.dataset.key as CommentKey
-          setCommentSelection(tr, key, undefined, false)
-        } else {
-          clearCommentSelection(tr)
-        }
-        view.dispatch(tr)
+        return handleCommentMarkerInteraction(view, target)
+      },
+      handleDOMEvents: {
+        keydown: (view: EditorView, e: KeyboardEvent) => {
+          return handleEnterKey(() => {
+            const target = document.activeElement as HTMLElement
+            handleCommentMarkerInteraction(view, target)
+          })(e)
+        },
       },
     },
   })
