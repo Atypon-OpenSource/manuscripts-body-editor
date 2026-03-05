@@ -15,10 +15,6 @@
  */
 
 import {
-  BibliographicName,
-  buildBibliographicName,
-} from '@manuscripts/json-schema'
-import {
   AddIcon,
   AddInstitutionIcon,
   AddRoleIcon,
@@ -35,7 +31,10 @@ import {
   StyledModal,
   FormLabel,
 } from '@manuscripts/style-guide'
-import { generateNodeID, schema } from '@manuscripts/transform'
+import {
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
 import React, {
   useCallback,
@@ -134,7 +133,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   useEffect(() => {
     const currentAuthor = selection
     const relevantAffiliations = affiliations.filter((item) =>
-      currentAuthor?.affiliations?.includes(item.id)
+      currentAuthor?.affiliationIDs?.includes(item.id)
     )
     setSelectedAffiliations(relevantAffiliations)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,7 +173,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
   const updateAffiliationSelection = (author: ContributorAttrs) => {
     const relevantAffiliations = affiliations.filter((item) =>
-      author.affiliations?.includes(item.id)
+      author.affiliationIDs?.includes(item.id)
     )
     setSelectedAffiliations(relevantAffiliations)
   }
@@ -222,7 +221,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const cancel = () => {
     resetAuthor()
     if (nextAuthor) {
-      const nextAuthorAffiliations = nextAuthor.affiliations || []
+      const nextAuthorAffiliations = nextAuthor.affiliationIDs || []
       setSelectedAffiliations(
         affiliations.filter((item) => nextAuthorAffiliations.includes(item.id))
       )
@@ -298,8 +297,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     [authors, dispatchAuthors, onSaveAuthor]
   )
   const createNewAuthor = () => {
-    const name = buildBibliographicName({ given: '', family: '' })
-    const author = createEmptyAuthor(name, authors.length)
+    const author = createEmptyAuthor(authors.length)
     setIsSwitchingAuthor(!!selection)
     setSelectedAffiliations([])
     setSelectedCreditRoles([])
@@ -343,7 +341,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const resetAuthor = () => {
     actionsRef.current?.reset()
-    const selectedAffs = selection?.affiliations || []
+    const selectedAffs = selection?.affiliationIDs || []
     setSelectedAffiliations(
       affiliations.filter((item) => selectedAffs.includes(item.id))
     )
@@ -372,8 +370,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
     valuesRef.current = { ...updatedValues, priority: values.priority }
 
-    const { given, family } = values.bibliographicName
-    const { email, isCorresponding } = values
+    const { given, family, email, isCorresponding } = values
     const isNameFilled = given?.length || family?.length
 
     if (hasChanges && isNameFilled) {
@@ -528,23 +525,21 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 }
 
 function createEmptyAuthor(
-  name: BibliographicName,
   priority: number
 ): ContributorAttrs {
   return {
     id: generateNodeID(schema.nodes.contributor),
     role: '',
-    affiliations: [],
-    bibliographicName: name,
+    affiliationIDs: [],
+    given: '',
+    family: '',
     email: '',
     isCorresponding: false,
-    ORCIDIdentifier: '',
+    ORCID: '',
     priority,
     isJointContributor: false,
-    userID: '',
-    invitationID: '',
-    corresp: [],
-    footnote: [],
+    correspIDs: [],
+    footnoteIDs: [],
     prefix: '',
   }
 }

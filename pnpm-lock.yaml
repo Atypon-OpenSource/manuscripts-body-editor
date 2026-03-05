@@ -36,14 +36,14 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.4.7
-        version: 3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.4.8-LEAN-4873.0
+        version: 3.4.8-LEAN-4873.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.2.9
-        version: 2.2.9
+        specifier: 2.2.7-LEAN-4873.0
+        version: 2.2.7-LEAN-4873.0
       '@manuscripts/transform':
-        specifier: 4.3.21
-        version: 4.3.21(prosemirror-state@1.4.3)
+        specifier: 4.3.23-LEAN-4873.1
+        version: 4.3.23-LEAN-4873.1(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -53,9 +53,6 @@ importers:
       codemirror:
         specifier: 5.65.19
         version: 5.65.19
-      csl-json:
-        specifier: 0.1.0
-        version: 0.1.0
       dompurify:
         specifier: 3.2.5
         version: 3.2.5
@@ -1332,15 +1329,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.4.7':
-    resolution: {integrity: sha512-ILqQcaURepcEkZMmJQJmreVX5LKGN62uVGddteBhiVBGJbPVPwMlUTandYmpYw7dz6WdPYytP4aw7XAGW2pqww==}
+  '@manuscripts/style-guide@3.4.8-LEAN-4873.0':
+    resolution: {integrity: sha512-iaslslelo1mlP68taMWLuyjIeBvxuVESeZm6gtt7RTRu3oiOYEtk2XTWP/lErWuwTb0eE+SeK5LkFz1/Yn5mfA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.4.8-LEAN-4873.0.tgz}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.2.9':
-    resolution: {integrity: sha512-rXJ+HEKf9dDR1v9JkKrvtpWYcS1FqobBropKfsBl26dkm0mKyc1PM7qrSrEPNyoIRgYL/XAyfOfufOvpH0B5tQ==}
+  '@manuscripts/track-changes-plugin@2.2.7-LEAN-4873.0':
+    resolution: {integrity: sha512-gnPDYTfs4tTFoFaAMigKAaz8zfXJZOGDNMdfKoNZnCkjGyLeWLWhRHLNu+TNdPCiniMh0acF9OtgAWFX86nU2w==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.2.7-LEAN-4873.0.tgz}
 
-  '@manuscripts/transform@4.3.21':
-    resolution: {integrity: sha512-RcCiHkEyG1yqaqDQP7tE9NIWBVxmAjM84qvWY1j7tpXV3ftR7dTnXoMt3fl9FaaqYZVJg99JL8fGjqDanJSLSw==}
+  '@manuscripts/transform@4.3.23-LEAN-4873.1':
+    resolution: {integrity: sha512-f9EeQQFAWwtjcDNf4VajuVsLmWngjegg0BFoSO12fubSkEa6r1lnDJ/umy1kKhjrlbavRtLT0GAydcSnTW9NzQ==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.23-LEAN-4873.1.tgz}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -1876,8 +1873,8 @@ packages:
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
 
-  ajv@8.17.1:
-    resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+  ajv@8.18.0:
+    resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -2683,8 +2680,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-uri@3.0.6:
-    resolution: {integrity: sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==}
+  fast-uri@3.1.0:
+    resolution: {integrity: sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA==}
 
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
@@ -6431,14 +6428,13 @@ snapshots:
 
   '@manuscripts/json-schema@2.2.12':
     dependencies:
-      ajv: 8.17.1
+      ajv: 8.18.0
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.4.8-LEAN-4873.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@manuscripts/json-schema': 2.2.12
       date-fns: 2.30.0
       formik: 2.4.6(react@19.2.0)
       lodash: 4.17.21
@@ -6466,7 +6462,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.2.9':
+  '@manuscripts/track-changes-plugin@2.2.7-LEAN-4873.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6478,9 +6474,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.21(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.23-LEAN-4873.1(prosemirror-state@1.4.3)':
     dependencies:
-      '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
       jszip: 3.10.1
       lodash: 4.17.21
@@ -7123,10 +7118,10 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
-  ajv@8.17.1:
+  ajv@8.18.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.0.6
+      fast-uri: 3.1.0
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -8202,7 +8197,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-uri@3.0.6: {}
+  fast-uri@3.1.0: {}
 
   fastq@1.19.1:
     dependencies:
