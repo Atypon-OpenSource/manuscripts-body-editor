@@ -54,6 +54,12 @@ const NewKeywordButton = styled.button`
   margin: 0;
   padding: 0;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 4px solid ${(props) => props.theme.colors.outline.focus};
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
 `
 
 const CreateKeywordButtonWrapper = styled.div`
@@ -244,8 +250,16 @@ export const AddKeywordInline: React.FC<{
     <AddNewKeyword ref={nodeRef}>
       {!isAddingNewKeyword && (
         <NewKeywordButton
+          tabIndex={-1}
+          className="keyword-add"
           onClick={() => {
             setIsAddingNewKeyword(true)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              setIsAddingNewKeyword(true)
+            }
           }}
         >
           New keyword...
