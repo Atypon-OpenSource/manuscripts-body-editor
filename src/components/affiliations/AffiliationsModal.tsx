@@ -548,7 +548,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                 <FormPlaceholder
                   type="affiliation"
                   title="Affiliation Details"
-                  message="Select an affiliation from the list to display it's details here."
+                  message="Select an affiliation from the list to display its details here."
                   placeholderIcon={<AffiliationPlaceholderIcon />}
                 />
               )}
