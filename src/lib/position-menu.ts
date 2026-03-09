@@ -25,6 +25,7 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
 import { figurePositions } from '../views/image_element'
 import ReactSubView from '../views/ReactSubView'
+import { handleEnterKey } from './navigation-utils'
 import { updateNodeAttrs } from './view'
 
 export interface PopperMenuPositionOption {
@@ -174,7 +175,9 @@ export const createPositionMenuWrapper = (
     positionMenuButton.innerHTML = icon
   }
   if (can.editArticle) {
+    positionMenuButton.tabIndex = 0
     positionMenuButton.addEventListener('click', onClick)
+    positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
   }
   positionMenuWrapper.appendChild(positionMenuButton)
   return positionMenuWrapper

@@ -175,7 +175,7 @@ export const ReferenceForm: React.FC<{
 
             <FormFields ref={fieldsRef}>
               <FormRow>
-                  <Label htmlFor={'citation-item-type'}>Type</Label>
+                <Label htmlFor={'citation-item-type'}>Type</Label>
 
                 <Field
                   id={'citation-item-type'}
@@ -282,17 +282,17 @@ export const ReferenceForm: React.FC<{
                     <FormRow>
                       <Label>Editors</Label>
 
-                        <Button
-                          onClick={() => {
-                            setNewEditorIndex(formik.values.editor?.length)
-                            push({
-                              given: '',
-                              family: '',
-                            })
-                          }}
-                        >
-                          <AddAuthorIcon height={17} width={17} />
-                        </Button>
+                      <Button
+                        onClick={() => {
+                          setNewEditorIndex(formik.values.editor?.length)
+                          push({
+                            given: '',
+                            family: '',
+                          })
+                        }}
+                      >
+                        <AddAuthorIcon height={17} width={17} />
+                      </Button>
 
                       <div>
                         {formik.values.editor?.map((editor, index) => (
@@ -318,9 +318,8 @@ export const ReferenceForm: React.FC<{
               ) && (
                 <FormRow>
                   <Label htmlFor={"issued['date-parts'][0][0]"}>
-                      Issued (Year)
-                    </Label>
-               
+                    Issued (Year)
+                  </Label>
 
                   <YearField
                     name={"issued['date-parts'][0][0]"}
@@ -516,9 +515,8 @@ export const ReferenceForm: React.FC<{
               ) && (
                 <FormRow>
                   <Label htmlFor={"event-date['date-parts'][0][0]"}>
-                      Event date (Year)
-                    </Label>
-                 
+                    Event date (Year)
+                  </Label>
 
                   <YearField
                     name={"event-date['date-parts'][0][0]"}
@@ -651,8 +649,8 @@ export const ReferenceForm: React.FC<{
               ) && (
                 <FormRow>
                   <Label htmlFor={"accessed['date-parts'][0][0]"}>
-                      Accessed (Year)
-                    </Label>
+                    Accessed (Year)
+                  </Label>
 
                   <YearField
                     name={"accessed['date-parts'][0][0]"}

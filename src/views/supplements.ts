@@ -17,6 +17,7 @@
 import { SupplementsNode } from '@manuscripts/transform'
 
 import { arrowUp } from '../icons'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -31,11 +32,14 @@ export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
     this.toggleButton = document.createElement('button')
     this.toggleButton.classList.add('supplements-toggle-btn', 'button-reset')
     this.toggleButton.innerHTML = arrowUp
-    this.toggleButton.onclick = () => {
+    const handleToggle = () => {
       this.collapsed = !this.collapsed
       this.toggleContent()
       this.toggleButton?.classList.toggle('collapsed', this.collapsed)
     }
+
+    this.toggleButton.onclick = handleToggle
+    this.toggleButton.addEventListener('keydown', handleEnterKey(handleToggle))
 
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('supplements-content')
