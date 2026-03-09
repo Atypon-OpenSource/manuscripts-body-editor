@@ -490,68 +490,70 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
               />
             </StyledSidebarContent>
           </ModalSidebar>
-          <ScrollableModalContent data-cy="affiliations-modal-content">
-            {selection ? (
-              <AffiliationForms>
-                <ModalFormActions
-                  type={'affiliation'}
-                  form={'affiliation-form'}
-                  onDelete={handleDeleteAffiliation}
-                  showingDeleteDialog={showingDeleteDialog}
-                  showDeleteDialog={handleShowDeleteDialog}
-                  newEntity={newAffiliation}
-                  isDisableSave={isDisableSave}
+          <DrawerRelativeParent>
+            <ScrollableModalContent data-cy="affiliations-modal-content">
+              {selection ? (
+                <AffiliationForms>
+                  <ModalFormActions
+                    type={'affiliation'}
+                    form={'affiliation-form'}
+                    onDelete={handleDeleteAffiliation}
+                    showingDeleteDialog={showingDeleteDialog}
+                    showDeleteDialog={handleShowDeleteDialog}
+                    newEntity={newAffiliation}
+                    isDisableSave={isDisableSave}
+                  />
+                  <AffiliationForm
+                    values={checkID(selection, 'affiliation')}
+                    onSave={() => handleSaveAffiliation(valuesRef.current)}
+                    onChange={handleAffiliationChange}
+                    actionsRef={actionsRef}
+                  ></AffiliationForm>
+                  <ConfirmationDialog
+                    isOpen={showRequiredFieldConfirmationDialog}
+                    onPrimary={() =>
+                      setShowRequiredFieldConfirmationDialog(false)
+                    }
+                    onSecondary={handleConfirmationCancel}
+                    type={DialogType.REQUIRED}
+                    entityType="affiliation"
+                  />
+                  <ConfirmationDialog
+                    isOpen={showConfirmationDialog}
+                    onPrimary={handleConfirmationSave}
+                    onSecondary={handleConfirmationCancel}
+                    type={DialogType.SAVE}
+                    entityType="affiliation"
+                  />
+                  <DrawerGroup<{ id: string; label: string }>
+                    Drawer={GenericDrawer}
+                    removeItem={(id) => {
+                      setSelectedAuthorIds((prev) =>
+                        prev.filter((authorId) => authorId !== id)
+                      )
+                    }}
+                    selectedItems={selectedAuthors}
+                    onSelect={selectAuthor}
+                    items={makeAuthorItems(authors)}
+                    showDrawer={showAuthorDrawer}
+                    setShowDrawer={setShowAuthorDrawer}
+                    title="Authors"
+                    cy="affiliations"
+                    labelField="label"
+                    buttonText="Affiliate Authors"
+                    Icon={<AddUserIcon width={16} height={16} />}
+                  />
+                </AffiliationForms>
+              ) : (
+                <FormPlaceholder
+                  type="affiliation"
+                  title="Affiliation Details"
+                  message="Select an affiliation from the list to display its details here."
+                  placeholderIcon={<AffiliationPlaceholderIcon />}
                 />
-                <AffiliationForm
-                  values={checkID(selection, 'affiliation')}
-                  onSave={() => handleSaveAffiliation(valuesRef.current)}
-                  onChange={handleAffiliationChange}
-                  actionsRef={actionsRef}
-                ></AffiliationForm>
-                <ConfirmationDialog
-                  isOpen={showRequiredFieldConfirmationDialog}
-                  onPrimary={() =>
-                    setShowRequiredFieldConfirmationDialog(false)
-                  }
-                  onSecondary={handleConfirmationCancel}
-                  type={DialogType.REQUIRED}
-                  entityType="affiliation"
-                />
-                <ConfirmationDialog
-                  isOpen={showConfirmationDialog}
-                  onPrimary={handleConfirmationSave}
-                  onSecondary={handleConfirmationCancel}
-                  type={DialogType.SAVE}
-                  entityType="affiliation"
-                />
-                <DrawerGroup<{ id: string; label: string }>
-                  Drawer={GenericDrawer}
-                  removeItem={(id) => {
-                    setSelectedAuthorIds((prev) =>
-                      prev.filter((authorId) => authorId !== id)
-                    )
-                  }}
-                  selectedItems={selectedAuthors}
-                  onSelect={selectAuthor}
-                  items={makeAuthorItems(authors)}
-                  showDrawer={showAuthorDrawer}
-                  setShowDrawer={setShowAuthorDrawer}
-                  title="Authors"
-                  cy="affiliations"
-                  labelField="label"
-                  buttonText="Affiliate Authors"
-                  Icon={<AddUserIcon width={16} height={16} />}
-                />
-              </AffiliationForms>
-            ) : (
-              <FormPlaceholder
-                type="affiliation"
-                title="Affiliation Details"
-                message="Select an affiliation from the list to display it's details here."
-                placeholderIcon={<AffiliationPlaceholderIcon />}
-              />
-            )}
-          </ScrollableModalContent>
+              )}
+            </ScrollableModalContent>
+          </DrawerRelativeParent>
         </StyledModalBody>
         <FormFooter onCancel={handleClose} />
       </ModalContainer>
@@ -601,8 +603,11 @@ const ActionTitle = styled.div`
 const AffiliationForms = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 3}px;
   padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  position: relative;
   margin-top: 20px;
+`
+
+const DrawerRelativeParent = styled.div`
+  position: relative;
 `
 
 const StyledModalBody = styled(ModalBody)`
