@@ -36,8 +36,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.4.7
-        version: 3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.4.5-LEAN-5220.1
+        version: 3.4.5-LEAN-5220.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.2.12
         version: 2.2.12
@@ -1139,12 +1139,6 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@floating-ui/react@0.27.18':
-    resolution: {integrity: sha512-xJWJxvmy3a05j643gQt+pRbht5XnTlGpsEsAPnMi5F5YTOEEJymA90uZKBD8OvIv5XvZ1qi4GcccSlqT3Bq44Q==}
-    peerDependencies:
-      react: '>=17.0.0'
-      react-dom: '>=17.0.0'
-
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
@@ -1332,8 +1326,8 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.4.7':
-    resolution: {integrity: sha512-ILqQcaURepcEkZMmJQJmreVX5LKGN62uVGddteBhiVBGJbPVPwMlUTandYmpYw7dz6WdPYytP4aw7XAGW2pqww==}
+  '@manuscripts/style-guide@3.4.5-LEAN-5220.1':
+    resolution: {integrity: sha512-51v3b2k/T/RJmj6gU81NoIBNkxobsNJyZgQJZ7YZ6vBv5xHcSq2jH3BD//ODQeVt7F7Cwu2iKRkYUmPDHQT05w==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.2.12':
@@ -2246,9 +2240,6 @@ packages:
   date-fns@2.30.0:
     resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
     engines: {node: '>=0.11'}
-
-  date-fns@3.6.0:
-    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -4072,12 +4063,6 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
-
-  react-datepicker@7.6.0:
-    resolution: {integrity: sha512-9cQH6Z/qa4LrGhzdc3XoHbhrxNcMi9MKjZmYgF/1MNNaJwvdSjv3Xd+jjvrEEbKEf71ZgCA3n7fQbdwd70qCRw==}
-    peerDependencies:
-      react: ^16.9.0 || ^17 || ^18 || ^19 || ^19.0.0-rc
-      react-dom: ^16.9.0 || ^17 || ^18 || ^19 || ^19.0.0-rc
 
   react-dnd-html5-backend@16.0.1:
     resolution: {integrity: sha512-Wu3dw5aDJmOGw8WjH1I1/yTH+vlXEL4vmjk5p+MHxP8HuHJS1lAGeIdG/hze1AvNeXWo/JgULV87LyQOr+r5jw==}
@@ -6101,7 +6086,7 @@ snapshots:
 
   '@floating-ui/core@1.7.0':
     dependencies:
-      '@floating-ui/utils': 0.2.9
+      '@floating-ui/utils': 0.2.10
 
   '@floating-ui/core@1.7.4':
     dependencies:
@@ -6124,14 +6109,6 @@ snapshots:
       react-dom: 19.2.0(react@19.2.0)
 
   '@floating-ui/react@0.26.28(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      '@floating-ui/react-dom': 2.1.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@floating-ui/utils': 0.2.10
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      tabbable: 6.2.0
-
-  '@floating-ui/react@0.27.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@floating-ui/react-dom': 2.1.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@floating-ui/utils': 0.2.10
@@ -6435,7 +6412,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.4.5-LEAN-5220.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6449,7 +6426,6 @@ snapshots:
       prosemirror-state: 1.4.3
       prosemirror-view: 1.41.0
       react: 19.2.0
-      react-datepicker: 7.6.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)(react@19.2.0)
       react-dnd-html5-backend: 16.0.1
       react-dom: 19.2.0(react@19.2.0)
@@ -7568,8 +7544,6 @@ snapshots:
   date-fns@2.30.0:
     dependencies:
       '@babel/runtime': 7.28.2
-
-  date-fns@3.6.0: {}
 
   debug@3.2.7:
     dependencies:
@@ -10018,14 +9992,6 @@ snapshots:
   pure-rand@7.0.1: {}
 
   queue-microtask@1.2.3: {}
-
-  react-datepicker@7.6.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
-    dependencies:
-      '@floating-ui/react': 0.27.18(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      clsx: 2.1.1
-      date-fns: 3.6.0
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
 
   react-dnd-html5-backend@16.0.1:
     dependencies:
