@@ -23,8 +23,6 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { findChildrenByType, NodeWithPos } from 'prosemirror-utils'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { handleEnterKey } from '../lib/navigation-utils'
-
 import {
   Comment,
   CommentAttrs,
@@ -102,10 +100,17 @@ export default () => {
       },
       handleDOMEvents: {
         keydown: (view: EditorView, e: KeyboardEvent) => {
-          return handleEnterKey(() => {
-            const target = document.activeElement as HTMLElement
-            handleCommentMarkerInteraction(view, target)
-          })(e)
+          if (e.key !== 'Enter') {
+            return false
+          }
+          const target = document.activeElement as HTMLElement
+          const marker = target?.closest('[data-key]') as HTMLElement | null
+          if (!marker) {
+            return false
+          }
+          e.preventDefault()
+          handleCommentMarkerInteraction(view, target)
+          return true
         },
       },
     },
