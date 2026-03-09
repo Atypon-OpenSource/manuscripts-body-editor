@@ -74,6 +74,7 @@
     "react-is": "19.2.0",
     "react-router-dom": "6.30.0",
     "react-select": "5.10.1",
+    "style-guide": "link:../../../Library/pnpm/global/5/node_modules/@manuscripts/style-guide",
     "styled-components": "5.3.11"
   },
   "devDependencies": {
