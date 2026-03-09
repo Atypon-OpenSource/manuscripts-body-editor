@@ -22,15 +22,14 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
-
-import { AwardAttrs } from '../../views/award'
-import { AwardForm } from './AwardForm'
-import { EditorView } from 'prosemirror-view'
-import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
 import { schema } from '@manuscripts/transform'
-import { insertAwardsNode } from '../../lib/doc'
-import { NodeSelection } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+
+import ReactSubView from '../../views/ReactSubView'
+import { AwardAttrs } from '../../views/award'
+import { getEditorProps } from '../../plugins/editor-props'
+import { AwardForm } from './AwardForm'
+import { insertAward } from '../../commands'
 
 const normalizeData = (award: AwardAttrs) => ({
   id: award.id || '',
@@ -104,23 +103,14 @@ export const openInsertAwardModal = (view?: EditorView) => {
 
   const { state, dispatch } = view
   const props = getEditorProps(state)
-  const insertAward = (attrs: AwardAttrs) => {
-    const award = schema.nodes.award.create(attrs)
-    const tr = state.tr
-    const awards = insertAwardsNode(tr)
-    const pos = awards.pos + awards.node.nodeSize - 1
-    tr.insert(pos, award)
-    const selection = NodeSelection.create(tr.doc, pos)
-    view.focus()
-    if (dispatch) {
-      dispatch(tr.setSelection(selection).scrollIntoView())
-    }
+  const onSaveAward = (attrs: AwardAttrs) => {
+    insertAward(attrs)(state, dispatch, view)
   }
   const initialData = schema.nodes.award.create().attrs
   const dialog = ReactSubView(
     props,
     AwardModal,
-    { initialData, onSaveAward: insertAward },
+    { initialData, onSaveAward },
     state.doc,
     () => 0,
     view

@@ -32,6 +32,7 @@ import {
   copySelection,
   insertAbstractSection,
   insertAffiliation,
+  insertAward,
   insertBackmatterSection,
   insertBlock,
   insertBoxElement,
@@ -646,7 +647,7 @@ export const getEditorMenus = (
       {
         id: 'insert-awards',
         label: 'Funder Information',
-        isEnabled: isEditAllowed(state),
+        isEnabled: isEditAllowed(state) && isCommandValid(insertAward()),
         run: () => openInsertAwardModal(view),
         isHidden: !templateAllows(state, schema.nodes.awards),
       },

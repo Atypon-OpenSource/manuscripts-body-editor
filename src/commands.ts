@@ -18,6 +18,7 @@ import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
+  AwardNode,
   BoxElementNode,
   FigureElementNode,
   FigureNode,
@@ -89,6 +90,7 @@ import {
   findBody,
   findFootnotesSection,
   insertAttachmentsNode,
+  insertAwardsNode,
   insertFootnotesSection,
   upsertSupplementsSection,
 } from './lib/doc'
@@ -119,6 +121,7 @@ import { searchReplaceKey } from './plugins/search-replace'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 import { persistentCursor } from './plugins/persistent-cursor'
+import { AwardAttrs } from './views/award'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -1183,6 +1186,22 @@ export const insertAffiliation = (
   }
   return true
 }
+
+export const insertAward =
+  (attrs?: AwardAttrs) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const award = schema.nodes.award.create(attrs) as AwardNode
+    const tr = state.tr
+    const awards = insertAwardsNode(tr)
+    const pos = awards.pos + awards.node.nodeSize - 1
+    tr.insert(pos, award)
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (dispatch && view) {
+      dispatch(tr.setSelection(selection).scrollIntoView())
+      view.focus()
+    }
+    return true
+  }
 
 export const insertKeywords = (
   state: ManuscriptEditorState,
