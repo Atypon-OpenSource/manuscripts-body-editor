@@ -23,40 +23,70 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
 import { templateAllows } from '../lib/template'
+import {
+  handleEnterKey,
+  createKeyboardInteraction,
+} from '../lib/navigation-utils'
 
 const createMenuItem = (
   props: EditorProps,
   contents: string,
   handler: EventListener,
-  isSelected = false
+  isSelected = false,
+  tabIndex: number
 ) => {
   const item = document.createElement('div')
   item.className = `menu-item ${isSelected ? 'selected' : ''}`
   item.textContent = contents
-  item.addEventListener('mousedown', (event) => {
-    handler(event)
-    props.popper.destroy()
-  })
+  item.tabIndex = tabIndex
+
+  item.addEventListener('mousedown', handler)
+  item.addEventListener('keydown', handleEnterKey(handler))
   return item
 }
-
+interface MenuInstance {
+  menu: HTMLElement
+  destroy: () => void
+}
 const createLanguageMenu = (
   props: EditorProps,
   selectedCode: string,
   onSelect: (code: string) => void
-) => {
+): MenuInstance => {
   const menu = document.createElement('div')
   menu.className = 'language menu'
-  props.languages.forEach((language) => {
+  const menuItems: HTMLElement[] = []
+
+  const removeKeydownListener = createKeyboardInteraction({
+    container: document,
+    navigation: {
+      getItems: () => menuItems,
+      arrowKeys: {
+        forward: 'ArrowDown',
+        backward: 'ArrowUp',
+      },
+    },
+  })
+  const destroy = () => {
+    removeKeydownListener()
+    props.popper.destroy()
+  }
+  props.languages.forEach((language, index) => {
     const item = createMenuItem(
       props,
       getLanguageLabel(language),
-      () => onSelect(language.code),
-      selectedCode === language.code
+      () => {
+        onSelect(language.code)
+        destroy()
+      },
+      selectedCode === language.code,
+      index === 0 ? 0 : -1
     )
+    menuItems.push(item)
     menu.appendChild(item)
   })
-  return menu
+
+  return { menu, destroy }
 }
 
 export default (props: EditorProps) =>
@@ -96,11 +126,12 @@ export default (props: EditorProps) =>
               widgets.push(
                 Decoration.widget(pos + 1, (view) => {
                   const $span = document.createElement('span')
+                  $span.tabIndex = 0
                   $span.className = 'add-trans-abstract'
                   $span.title = 'Add translation'
                   $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
 
-                  $span.addEventListener('mousedown', (event) => {
+                  const handleActivate = (event: Event) => {
                     event.preventDefault()
                     event.stopPropagation()
                     if (isGraphical && category) {
@@ -116,7 +147,13 @@ export default (props: EditorProps) =>
                         pos + node.nodeSize
                       )
                     }
-                  })
+                  }
+
+                  $span.addEventListener('mousedown', handleActivate)
+                  $span.addEventListener(
+                    'keydown',
+                    handleEnterKey(handleActivate)
+                  )
                   return $span
                 })
               )
@@ -140,6 +177,7 @@ export default (props: EditorProps) =>
                 $btn.className = 'language-selector-btn'
                 $btn.setAttribute('data-cy', 'language-selector-btn')
                 $btn.contentEditable = 'false'
+                $btn.tabIndex = canEdit ? 0 : -1
 
                 const code = node.attrs.lang || 'en'
                 const lang = getLanguage(code, props.languages)
@@ -147,7 +185,8 @@ export default (props: EditorProps) =>
                 $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
 
                 if (canEdit) {
-                  $btn.addEventListener('mousedown', (event) => {
+                  let menuInstance: MenuInstance | null = null
+                  const handleOpenMenu = (event: Event) => {
                     event.preventDefault()
                     event.stopPropagation()
 
@@ -162,10 +201,29 @@ export default (props: EditorProps) =>
                       view.dispatch(tr)
                     }
 
-                    const menu = createLanguageMenu(props, code, handleSelect)
+                    menuInstance = createLanguageMenu(props, code, handleSelect)
 
-                    props.popper.show($btn, menu, 'bottom-end', false)
+                    props.popper.show(
+                      $btn,
+                      menuInstance.menu,
+                      'bottom-end',
+                      false
+                    )
+                  }
+
+                  createKeyboardInteraction({
+                    container: $btn,
+                    additionalKeys: {
+                      Enter: handleOpenMenu,
+                      Escape: (e) => {
+                        e.preventDefault()
+                        menuInstance?.destroy()
+                        menuInstance = null
+                      },
+                    },
                   })
+
+                  $btn.addEventListener('mousedown', handleOpenMenu)
                 }
 
                 return $btn
