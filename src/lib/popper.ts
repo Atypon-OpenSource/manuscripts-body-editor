@@ -59,11 +59,14 @@ export class PopperManager {
           this.triggerElement.focus()
         }
       }
+      const isMenu =
+        contents.classList.contains('context-menu') ||
+        contents.classList.contains('menu')
       createKeyboardInteraction({
         container,
         additionalKeys: {
           Escape: closeAndRestoreFocus,
-          Tab: closeAndRestoreFocus,
+          Tab: isMenu ? closeAndRestoreFocus : undefined,
         },
       })
 
