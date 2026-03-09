@@ -27,6 +27,7 @@ import {
   FootnotesSelector,
   FootnotesSelectorProps,
 } from '../components/views/FootnotesSelector'
+import { handleEnterKey } from '../lib/navigation-utils'
 import {
   createFootnote,
   findFootnotesContainerNode,
@@ -171,7 +172,12 @@ export class InlineFootnoteView
   public initialise = () => {
     this.dom = this.createDOM()
     this.dom.classList.add('footnote-marker')
+    this.dom.tabIndex = 0
     this.dom.addEventListener('click', this.handleClick)
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.handleClick())
+    )
     this.updateContents()
   }
 

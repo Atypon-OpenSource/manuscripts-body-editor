@@ -34,8 +34,6 @@ import { undoInputRule } from 'prosemirror-inputrules'
 import { goToNextCell } from 'prosemirror-tables'
 
 import {
-  activateSearch,
-  activateSearchReplace,
   addToStart,
   autoComplete,
   exitEditorToContainer,
@@ -44,15 +42,19 @@ import {
   ignoreEnterInSubtitles,
   ignoreMetaNodeBackspaceCommand,
   insertBlock,
+  insertBoxElement,
   insertBreak,
   insertCrossReference,
+  insertInlineFootnote,
   insertInlineCitation,
   insertInlineEquation,
+  insertLink,
   insertSection,
   selectAllIsolating,
 } from '../commands'
 import { EditorAction } from '../types'
 import { skipCommandTracking } from './list'
+import { focusNearestElement } from '../lib/navigation-utils'
 
 const customKeymap: { [key: string]: EditorAction } = {
   Backspace: chainCommands(
@@ -62,7 +64,7 @@ const customKeymap: { [key: string]: EditorAction } = {
     skipCommandTracking(joinBackward)
   ),
   Delete: ignoreAtomBlockNodeForward,
-  Tab: goToNextCell(1),
+  Tab: chainCommands(goToNextCell(1), focusNearestElement),
   Escape: exitEditorToContainer,
   'Mod-z': undo,
   'Mod-y': redo, // Mac
@@ -91,7 +93,6 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Shift-Mod-Enter': insertSection(true),
   'Mod-Enter': chainCommands(exitCode, insertSection()),
   'Shift-Enter': chainCommands(exitCode, insertBreak),
-  'Ctrl-Enter': chainCommands(exitCode, insertBreak), // mac-only?
   // 'Shift-Ctrl-0': setBlockType(schema.nodes.paragraph),
   // 'Shift-Ctrl-\\': setBlockType(schema.nodes.listing_element),
   'Shift-Tab': goToNextCell(-1),
@@ -99,13 +100,13 @@ const customKeymap: { [key: string]: EditorAction } = {
   'Mod-Alt-t': insertBlock(schema.nodes.table_element),
   'Mod-Alt-l': insertBlock(schema.nodes.listing_element),
   'Mod-Alt-e': insertBlock(schema.nodes.equation_element),
+  'Mod-Alt-b': insertBoxElement,
+  'Mod-Alt-h': insertLink,
+  'Mod-Alt-f': insertInlineFootnote,
   'Mod-Alt-c': insertInlineCitation,
   'Mod-Alt-r': insertCrossReference,
   'Shift-Mod-Alt-e': insertInlineEquation,
-  'Shift-Ctrl-h': activateSearchReplace,
-  'Shift-Mod-h': activateSearchReplace,
-  'Mod-f': activateSearch,
-  'Ctrl-f': activateSearch,
+  'Shift-Mod-e': insertInlineEquation, // PC
 }
 
 export default customKeymap

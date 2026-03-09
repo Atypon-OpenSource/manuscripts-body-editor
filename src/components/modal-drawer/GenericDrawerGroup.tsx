@@ -86,7 +86,7 @@ export function DrawerGroup<T extends Base>({
             label: String((i as T)[labelField as keyof T] ?? ''),
           }))}
           onRemove={removeItem}
-          placeholder={`No ${title}s assigned`}
+          placeholder={`No ${title.endsWith('s') ? title : title + 's'} assigned`}
         />
       </DrawerSection>
       {showDrawer && (

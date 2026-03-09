@@ -153,7 +153,7 @@ export const ImportBibliographyForm = ({
             </Label>
           </DropContainer>
       </FormRow>
-          <FormRow>
+      <FormRow>
         <Label htmlFor="content">
           Alternatively, you can directly Copy&Paste below, the text of the
           bibliography items.
