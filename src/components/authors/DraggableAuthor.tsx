@@ -20,6 +20,8 @@ import {
   CrclTickAnimation,
   DeleteIcon,
   DraggableIcon,
+  SecondaryIconButton,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
@@ -28,7 +30,7 @@ import styled from 'styled-components'
 import { authorLabel, ContributorAttrs } from '../../lib/authors'
 import { DropSide, getDropSide } from '../../lib/dnd'
 
-const AuthorContainer = styled.div`
+const AuthorContainer = withNavigableListItem(styled.div`
   padding: ${(props) => props.theme.grid.unit * 2}px 0
     ${(props) => props.theme.grid.unit * 2}px;
   display: flex;
@@ -62,7 +64,7 @@ const AuthorContainer = styled.div`
     cursor: grabbing;
     border-bottom-color: ${(props) => props.theme.colors.brand.dark};
   }
-`
+`)
 
 const AvatarContainer = styled.div`
   display: inline-flex;
@@ -101,15 +103,11 @@ const DragHandle = styled(DraggableIcon)`
   margin-left: -4px;
   margin-right: -12px;
 `
-const RemoveButton = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 8px;
+const RemoveButton = styled(SecondaryIconButton)`
   svg {
-    cursor: pointer;
-  }
-  .icon_element {
-    fill: #6e6e6e;
+    path[fill='white'] {
+      fill: white;
+    }
   }
 `
 const StyledCrclTickAnimation = styled(CrclTickAnimation)`
@@ -219,6 +217,7 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
         <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
         {isSelected && (
           <RemoveButton
+            size={13}
             onClick={() => onDelete()}
             data-tooltip-content="Delete"
           >

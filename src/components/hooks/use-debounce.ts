@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const useDebounce = <T>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState(value)
@@ -30,4 +30,27 @@ export const useDebounce = <T>(value: T, delay: number): T => {
   }, [value, delay])
 
   return debouncedValue
+}
+
+export default function useDebounced<Input, Output>(
+  fn: (arg: Input) => Promise<Output>,
+  delay: number
+): (arg: Input) => Promise<Output> {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  return useCallback(
+    (arg: Input) => {
+      const timeout = timeoutRef.current
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+
+      return new Promise((resolve) => {
+        timeoutRef.current = setTimeout(async () => {
+          resolve(await fn(arg))
+        }, delay)
+      })
+    },
+    [fn, delay]
+  )
 }

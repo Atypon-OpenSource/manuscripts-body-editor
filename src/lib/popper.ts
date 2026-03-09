@@ -59,11 +59,14 @@ export class PopperManager {
           this.triggerElement.focus()
         }
       }
+      const isMenu =
+        contents.classList.contains('context-menu') ||
+        contents.classList.contains('menu')
       createKeyboardInteraction({
         container,
         additionalKeys: {
           Escape: closeAndRestoreFocus,
-          Tab: closeAndRestoreFocus,
+          Tab: isMenu ? closeAndRestoreFocus : undefined,
         },
       })
 
@@ -145,11 +148,9 @@ export class PopperManager {
   public isActive = () => !!this.activePopper
 
   private focusInput(container: HTMLDivElement) {
-    const input = container.querySelector('input') as HTMLElement | null
-    const button = container.querySelector(
-      'button:not([disabled])'
-    ) as HTMLElement | null
-    const element = input || button
+    const element = container.querySelector(
+      'button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+    ) as HTMLDivElement | null
 
     if (element) {
       element.focus()
