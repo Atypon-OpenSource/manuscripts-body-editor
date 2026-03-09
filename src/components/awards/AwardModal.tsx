@@ -25,6 +25,12 @@ import React, { useRef, useState } from 'react'
 
 import { AwardAttrs } from '../../views/award'
 import { AwardForm } from './AwardForm'
+import { EditorView } from 'prosemirror-view'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import { schema } from '@manuscripts/transform'
+import { insertAwardsNode } from '../../lib/doc'
+import { NodeSelection } from 'prosemirror-state'
 
 const normalizeData = (award: AwardAttrs) => ({
   id: award.id || '',
@@ -43,13 +49,11 @@ export interface AwardFormData {
 export interface AwardModalProps {
   initialData: AwardAttrs
   onSaveAward: (data: AwardFormData) => void
-  onCancelAward?: () => void
 }
 
 export const AwardModal: React.FC<AwardModalProps> = ({
   initialData,
   onSaveAward,
-  onCancelAward,
 }) => {
   const [isOpen, setOpen] = useState(true)
   const valuesRef = useRef<AwardAttrs>(undefined)
@@ -60,10 +64,6 @@ export const AwardModal: React.FC<AwardModalProps> = ({
       onSaveAward(updatedValues)
       handleClose()
     }
-  }
-  const handleCancel = () => {
-    onCancelAward && onCancelAward()
-    handleClose()
   }
   const handleClose = () => setOpen(false)
   const handleChange = (values: AwardAttrs) => (valuesRef.current = values)
@@ -76,23 +76,55 @@ export const AwardModal: React.FC<AwardModalProps> = ({
   return (
     <StyledModal
       isOpen={isOpen}
-      onRequestClose={handleCancel}
+      onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
     >
       <ModalContainer data-cy="award-modal">
         <ModalHeader>
-          <CloseButton onClick={handleCancel} data-cy="modal-close-button" />
+          <CloseButton onClick={handleClose} data-cy="modal-close-button" />
         </ModalHeader>
         <ModalCardBody width={480}>
           <ModalTitle>Add Funder information</ModalTitle>
           <AwardForm
             values={normalizedValues}
             onSave={handleSave}
-            onCancel={handleCancel}
+            onCancel={handleClose}
             onChange={handleChange}
           />
         </ModalCardBody>
       </ModalContainer>
     </StyledModal>
   )
+}
+
+export const openInsertAwardModal = (view?: EditorView) => {
+  if (!view) {
+    return
+  }
+
+  const { state, dispatch } = view
+  const props = getEditorProps(state)
+  const insertAward = (attrs: AwardAttrs) => {
+    const award = schema.nodes.award.create(attrs)
+    const tr = state.tr
+    const awards = insertAwardsNode(tr)
+    const pos = awards.pos + awards.node.nodeSize - 1
+    tr.insert(pos, award)
+    const selection = NodeSelection.create(tr.doc, pos)
+    view.focus()
+    if (dispatch) {
+      dispatch(tr.setSelection(selection).scrollIntoView())
+    }
+  }
+  const initialData = schema.nodes.award.create().attrs
+  const dialog = ReactSubView(
+    props,
+    AwardModal,
+    { initialData, onSaveAward: insertAward },
+    state.doc,
+    () => 0,
+    view
+  )
+
+  document.body.appendChild(dialog)
 }

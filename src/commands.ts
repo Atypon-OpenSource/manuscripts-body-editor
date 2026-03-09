@@ -18,7 +18,6 @@ import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
-  AwardNode,
   BoxElementNode,
   FigureElementNode,
   FigureNode,
@@ -90,7 +89,6 @@ import {
   findBody,
   findFootnotesSection,
   insertAttachmentsNode,
-  insertAwardsNode,
   insertFootnotesSection,
   upsertSupplementsSection,
 } from './lib/doc'
@@ -1181,24 +1179,6 @@ export const insertAffiliation = (
     if (view) {
       view.focus()
     }
-    dispatch(tr.setSelection(selection).scrollIntoView())
-  }
-  return true
-}
-
-export const insertAward = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  view?: EditorView
-) => {
-  const award = schema.nodes.award.create() as AwardNode
-  const tr = state.tr
-  const awards = insertAwardsNode(tr)
-  const pos = awards.pos + awards.node.nodeSize - 1
-  tr.insert(pos, award)
-  const selection = NodeSelection.create(tr.doc, pos)
-  view && view.focus()
-  if (dispatch) {
     dispatch(tr.setSelection(selection).scrollIntoView())
   }
   return true
