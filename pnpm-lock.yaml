@@ -6096,7 +6096,7 @@ snapshots:
 
   '@floating-ui/core@1.7.0':
     dependencies:
-      '@floating-ui/utils': 0.2.9
+      '@floating-ui/utils': 0.2.10
 
   '@floating-ui/core@1.7.4':
     dependencies:
