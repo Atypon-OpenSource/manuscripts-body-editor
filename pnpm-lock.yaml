@@ -36,8 +36,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.4.7
-        version: 3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.4.8-LEAN-5336.0
+        version: 3.4.8-LEAN-5336.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.2.12
         version: 2.2.12
@@ -143,6 +143,9 @@ importers:
       react-select:
         specifier: 5.10.1
         version: 5.10.1(@types/react@19.2.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      style-guide:
+        specifier: link:../../../Library/pnpm/global/5/node_modules/@manuscripts/style-guide
+        version: link:../../../Library/pnpm/global/5/node_modules/@manuscripts/style-guide
       styled-components:
         specifier: 5.3.11
         version: 5.3.11(@babel/core@7.23.7)(react-dom@19.2.0(react@19.2.0))(react-is@19.2.0)(react@19.2.0)
@@ -1332,8 +1335,8 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.4.7':
-    resolution: {integrity: sha512-ILqQcaURepcEkZMmJQJmreVX5LKGN62uVGddteBhiVBGJbPVPwMlUTandYmpYw7dz6WdPYytP4aw7XAGW2pqww==}
+  '@manuscripts/style-guide@3.4.8-LEAN-5336.0':
+    resolution: {integrity: sha512-Fgjyd/IeQgeEH1bTRmmi6gaSMAB4sAoYKHcqYbynCXOdQ+4NWEF0s1osHl5+e6l2wIi457q/6h+zvFRbXvbbaQ==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.2.12':
@@ -6101,7 +6104,7 @@ snapshots:
 
   '@floating-ui/core@1.7.0':
     dependencies:
-      '@floating-ui/utils': 0.2.9
+      '@floating-ui/utils': 0.2.10
 
   '@floating-ui/core@1.7.4':
     dependencies:
@@ -6435,7 +6438,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.4.7(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.4.8-LEAN-5336.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
