@@ -14,59 +14,18 @@
  * limitations under the License.
  */
 
-import { Manuscript, Model, UserProfile } from '@manuscripts/json-schema'
 import {
   ActualManuscriptNode,
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
 import { createBrowserHistory } from 'history'
-import { DefaultTheme } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { PopperManager } from '../lib/popper'
 import { defaultCapabilities } from './default-capabilities'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
-type TestData = {
-  MANUSCRIPT: Manuscript
-  MODEL: Model
-  USER: UserProfile
-  DOC: ActualManuscriptNode
-  MODEL_MAP: Map<string, Model>
-}
-
-const theme: DefaultTheme = {}
-
-export const TEST_DATA: TestData = {
-  MANUSCRIPT: {
-    containerID: 'test-manuscript-1-containerID',
-    _id: 'test-manuscript-1-id',
-    objectType: 'MPManuscript',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
-  },
-  MODEL: {
-    _id: 'test-model-1-id',
-    objectType: 'MPSection',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
-    prototype: 'test-model-1-prototype',
-  },
-  USER: {
-    _id: 'test-user-profile-1-id',
-    objectType: 'MPUserProfile',
-    createdAt: 1618400000,
-    updatedAt: 1618407000,
-    bibliographicName: {
-      _id: 'test-user-profile-bibliographicName-1',
-      objectType: 'MPBibliographicName',
-    },
-    userID: 'test-user-profile-1-user-id',
-  },
-  DOC: schema.nodeFromJSON(emptyEditorDocJson) as ActualManuscriptNode,
-  MODEL_MAP: new Map<string, Model>(),
-}
 
 export const defaultEditorProps: EditorProps = {
   attributes: {
@@ -76,14 +35,17 @@ export const defaultEditorProps: EditorProps = {
     spellcheck: 'true',
     tabindex: '2',
   },
-  doc: TEST_DATA.DOC,
+  doc: schema.nodeFromJSON(emptyEditorDocJson) as ActualManuscriptNode,
   locale: 'en-GB',
   popper: new PopperManager(),
   projectID: 'test-project-id',
-  getCurrentUser: () => TEST_DATA.USER,
+  getCurrentUser: () => ({
+    _id: 'test-user-profile-1-id',
+    userID: '',
+  }),
   // @ts-ignore
   history: createBrowserHistory(),
-  theme,
+  theme: {},
   getFiles: () => [],
   fileManagement: {
     // @ts-ignore

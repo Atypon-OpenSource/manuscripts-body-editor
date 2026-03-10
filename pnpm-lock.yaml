@@ -32,18 +32,15 @@ importers:
       '@iarna/word-count':
         specifier: 1.1.2
         version: 1.1.2
-      '@manuscripts/json-schema':
-        specifier: 2.2.12
-        version: 2.2.12
       '@manuscripts/style-guide':
-        specifier: 3.5.0
-        version: 3.5.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.1
+        version: 3.5.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.3.1
-        version: 2.3.1
+        specifier: 2.3.2
+        version: 2.3.2
       '@manuscripts/transform':
-        specifier: 4.3.22
-        version: 4.3.22(prosemirror-state@1.4.3)
+        specifier: 4.3.23
+        version: 4.3.23(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -53,9 +50,6 @@ importers:
       codemirror:
         specifier: 5.65.19
         version: 5.65.19
-      csl-json:
-        specifier: 0.1.0
-        version: 0.1.0
       dompurify:
         specifier: 3.2.5
         version: 3.2.5
@@ -1332,15 +1326,15 @@ packages:
   '@manuscripts/json-schema@2.2.12':
     resolution: {integrity: sha512-MCz11Dhc1kric1oU9cnYHboPgEwwccWfuuU1XhAEilDIFe8KszAeQk5i4GBGlGLddp/Gvkr6N1gtzLl36mTE7A==}
 
-  '@manuscripts/style-guide@3.5.0':
-    resolution: {integrity: sha512-CKJs9P5d+xaBfBa9JYSXfIefSEXk3PwgvLR4aWaZ8xuWFY2RjNgVeIzDFWQbGZlqoA0URsePwieqlOIKfQdupw==}
+  '@manuscripts/style-guide@3.5.1':
+    resolution: {integrity: sha512-vCc77JE19UUSCtZfiHBCfv1B9iH/qCD47EL8hZolreUqctXfY23eRgmoKUflPne1TURQjjuvMGNCgDjKYMCY7w==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.3.1':
-    resolution: {integrity: sha512-cAjsBjnzkaaoRBpybuc20EShh2nsCeQoCmE4NyG0FCG+E1ZL/eJdTBJudZvJG089OIFymaj8Au837NvCBG19eA==}
+  '@manuscripts/track-changes-plugin@2.3.2':
+    resolution: {integrity: sha512-V9prMqsF6hTRpspwTT3DAM1agjapR1SWju5xPSRXlkogQI4IIM6DWQdYDr+F3nFnz2fr7cEYf4Nf3rFlIBv6og==}
 
-  '@manuscripts/transform@4.3.22':
-    resolution: {integrity: sha512-Yaa7+v2cRf4q/SjVS1Up0k8EFAhEr/Q/n6Hn0kWfkuIacv4EeJzjyG05wMSUJ1YY3LHBHu7kwp6q7JbHgJ7zjw==}
+  '@manuscripts/transform@4.3.23':
+    resolution: {integrity: sha512-DATzZJO0Q5oiCoZug7+gTa6XYgHAceeVyBajbti91BxghXoMQd2AQLI8u+82bOUlU0Wy0dOhSadqSH7WO+dnvA==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6435,7 +6429,7 @@ snapshots:
       deepmerge: 4.3.1
       uuid: 9.0.1
 
-  '@manuscripts/style-guide@3.5.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@manuscripts/json-schema': 2.2.12
@@ -6466,7 +6460,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.3.1':
+  '@manuscripts/track-changes-plugin@2.3.2':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6478,9 +6472,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.22(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.23(prosemirror-state@1.4.3)':
     dependencies:
-      '@manuscripts/json-schema': 2.2.12
       citeproc: 2.4.63
       jszip: 3.10.1
       lodash: 4.17.21
