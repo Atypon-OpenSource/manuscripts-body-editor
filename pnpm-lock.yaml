@@ -36,11 +36,11 @@ importers:
         specifier: 3.5.1
         version: 3.5.1(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.3.2
-        version: 2.3.2
+        specifier: 2.3.3
+        version: 2.3.3
       '@manuscripts/transform':
-        specifier: 4.3.23
-        version: 4.3.23(prosemirror-state@1.4.3)
+        specifier: 4.3.24
+        version: 4.3.24(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1330,11 +1330,11 @@ packages:
     resolution: {integrity: sha512-vCc77JE19UUSCtZfiHBCfv1B9iH/qCD47EL8hZolreUqctXfY23eRgmoKUflPne1TURQjjuvMGNCgDjKYMCY7w==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.3.2':
-    resolution: {integrity: sha512-V9prMqsF6hTRpspwTT3DAM1agjapR1SWju5xPSRXlkogQI4IIM6DWQdYDr+F3nFnz2fr7cEYf4Nf3rFlIBv6og==}
+  '@manuscripts/track-changes-plugin@2.3.3':
+    resolution: {integrity: sha512-cHa44W+j8FcY7h3EbKxflukEkgpKBGs0yalTRU+XSLWLsHuwtxV/FO9VLRSGDznJqBtNV2LDUlnpXXrysIffYA==}
 
-  '@manuscripts/transform@4.3.23':
-    resolution: {integrity: sha512-DATzZJO0Q5oiCoZug7+gTa6XYgHAceeVyBajbti91BxghXoMQd2AQLI8u+82bOUlU0Wy0dOhSadqSH7WO+dnvA==}
+  '@manuscripts/transform@4.3.24':
+    resolution: {integrity: sha512-ULqoR56XflWGjVTMTYzzlBCywa3ivZWqAtfd50l3w9L3wcjwF0zzldMHpxXmdRmlTAXgwCWtAG8FZXqkmQOTHg==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6460,7 +6460,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.3.2':
+  '@manuscripts/track-changes-plugin@2.3.3':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6472,7 +6472,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.23(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.24(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
