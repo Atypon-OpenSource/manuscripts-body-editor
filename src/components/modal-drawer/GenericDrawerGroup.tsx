@@ -64,27 +64,22 @@ export function DrawerGroup<T extends Base>({
 }: DrawerGroupProps<T>) {
   return (
     <>
-      <DrawerSection>
-        <DrawerSectionHeader>
-          <DrawerSectionTitle>{title}</DrawerSectionTitle>
-          <AssignButton
-            onClick={() => setShowDrawer(true)}
-            data-cy={cy + 'assign-button'}
-          >
-            {Icon}
-            {buttonText}
-          </AssignButton>
-        </DrawerSectionHeader>
-        <SelectedItemsBox
+      <AssignButton
+          onClick={() => setShowDrawer(true)}
+          data-cy={cy + 'assign-button'}
+      >
+        {Icon}
+        {buttonText}
+      </AssignButton>
+      <SelectedItemsBox
           data-cy={cy + '-selected-items'}
           items={selectedItems.map((i) => ({
             id: String(i.id),
             label: String((i as T)[labelField as keyof T] ?? ''),
           }))}
           onRemove={removeItem}
-          placeholder={`No ${title.endsWith('s') ? title : title + 's'} assigned`}
-        />
-      </DrawerSection>
+          placeholder={`No ${title} assigned`}
+      />
       {showDrawer && (
         <Drawer
           items={items}
@@ -99,15 +94,6 @@ export function DrawerGroup<T extends Base>({
   )
 }
 
-const DrawerSectionTitle = styled.h3`
-  margin: 0;
-  padding-bottom: 12px;
-  font: ${(props) => props.theme.font.weight.normal}
-    ${(props) => props.theme.font.size.xlarge} /
-    ${(props) => props.theme.font.lineHeight.large}
-    ${(props) => props.theme.font.family.sans};
-  color: ${(props) => props.theme.colors.text.secondary};
-`
 export const AssignButton = styled.button`
   color: ${(props) => props.theme.colors.brand.default};
   background: none;
@@ -120,20 +106,8 @@ export const AssignButton = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: ${(props) => props.theme.grid.unit * 2}px;
+  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
   &:hover {
     opacity: 0.8;
   }
-`
-export const DrawerSectionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
-`
-export const DrawerSection = styled.div`
-  margin-top: ${(props) => props.theme.grid.unit * 4}px;
-  padding-top: ${(props) => props.theme.grid.unit * 4}px;
-  border-top: 1px solid ${(props) => props.theme.colors.border.tertiary};
 `

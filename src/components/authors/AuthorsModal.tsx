@@ -33,7 +33,7 @@ import {
   ScrollableModalContent,
   SidebarContent,
   StyledModal,
-  FormLabel,
+  InspectorTabs, InspectorTabPanel, InspectorTabList, InspectorTab, InspectorTabPanels,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import { cloneDeep, isEqual, omit } from 'lodash'
@@ -431,95 +431,107 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               />
             </StyledSidebarContent>
           </ModalSidebar>
-          <DrawerRelativeParent>
-            <ScrollableModalContent data-cy="author-modal-content">
-              {selection ? (
-                <AuthorForms>
+          <ScrollableModalContent data-cy="author-modal-content">
+            {selection ? (
+                <>
+                  <AuthorTabs>
+                    <ModalFormActions
+                        form={'author-details-form'}
+                        type="author"
+                        onDelete={deleteAuthor}
+                        showingDeleteDialog={showingDeleteDialog}
+                        showDeleteDialog={() =>
+                            setShowDeleteDialog((prev) => !prev)
+                        }
+                        newEntity={
+                            newAuthor ||
+                            (isCreatingNewAuthor &&
+                                !showConfirmationDialog &&
+                                !showRequiredFieldConfirmationDialog)
+                        }
+                        isDisableSave={isDisableSave}
+                    />
+                    <InspectorTabList>
+                      <InspectorTab>Details</InspectorTab>
+                      <InspectorTab>Affiliations</InspectorTab>
+                      <InspectorTab>Contributions (CRediT)</InspectorTab>
+                    </InspectorTabList>
+                    <InspectorTabPanels>
+                      <AuthorTabPanel>
+                        <AuthorDetailsForm
+                            values={normalizeAuthor(selection)}
+                            onChange={changeAuthor}
+                            onSave={saveAuthor}
+                            actionsRef={actionsRef}
+                            isEmailRequired={isEmailRequired}
+                            selectedAffiliations={selectedAffiliations.map((a) => a.id)}
+                            authorFormRef={authorFormRef}
+                            selectedCreditRoles={selectedCreditRoles}
+                        />
+                      </AuthorTabPanel>
+                      <AuthorTabPanel>
+                        <DrawerGroup<AffiliationAttrs>
+                            Drawer={AffiliationsDrawer}
+                            removeItem={removeAffiliation}
+                            selectedItems={selectedAffiliations}
+                            onSelect={selectAffiliation}
+                            items={affiliations}
+                            showDrawer={showAffiliationDrawer}
+                            setShowDrawer={setShowAffiliationDrawer}
+                            title="Affiliations"
+                            buttonText="Assign Institutions"
+                            cy="affiliations"
+                            labelField="institution"
+                            Icon={<AddInstitutionIcon width={16} height={16} />}
+                        />
+                      </AuthorTabPanel>
+                      <AuthorTabPanel>
+                        <DrawerGroup<{ id: string; vocabTerm: string }>
+                            Drawer={CreditDrawer}
+                            removeItem={removeCreditRole}
+                            selectedItems={selectedCreditRoles.map((r) => ({
+                              id: r.vocabTerm,
+                              ...r,
+                            }))}
+                            onSelect={selectCreditRole}
+                            items={vocabTermItems}
+                            showDrawer={showCreditDrawer}
+                            setShowDrawer={setShowCreditDrawer}
+                            title="Contributions (CRediT)"
+                            buttonText="Assign Roles"
+                            cy="credit-taxnonomy"
+                            labelField="vocabTerm"
+                            Icon={<AddRoleIcon width={16} height={16} />}
+                        />
+                      </AuthorTabPanel>
+                    </InspectorTabPanels>
+                  </AuthorTabs>
                   <ConfirmationDialog
-                    isOpen={showRequiredFieldConfirmationDialog}
-                    onPrimary={() =>
-                      setShowRequiredFieldConfirmationDialog(false)
-                    }
-                    onSecondary={cancel}
-                    type={DialogType.REQUIRED}
-                    entityType="author"
+                      isOpen={showRequiredFieldConfirmationDialog}
+                      onPrimary={() =>
+                          setShowRequiredFieldConfirmationDialog(false)
+                      }
+                      onSecondary={cancel}
+                      type={DialogType.REQUIRED}
+                      entityType="author"
                   />
                   <ConfirmationDialog
-                    isOpen={showConfirmationDialog}
-                    onPrimary={save}
-                    onSecondary={cancel}
-                    type={DialogType.SAVE}
-                    entityType="author"
+                      isOpen={showConfirmationDialog}
+                      onPrimary={save}
+                      onSecondary={cancel}
+                      type={DialogType.SAVE}
+                      entityType="author"
                   />
-                  <ModalFormActions
-                    form={'author-details-form'}
-                    type="author"
-                    onDelete={deleteAuthor}
-                    showingDeleteDialog={showingDeleteDialog}
-                    showDeleteDialog={() =>
-                      setShowDeleteDialog((prev) => !prev)
-                    }
-                    newEntity={
-                      newAuthor ||
-                      (isCreatingNewAuthor &&
-                        !showConfirmationDialog &&
-                        !showRequiredFieldConfirmationDialog)
-                    }
-                    isDisableSave={isDisableSave}
-                  />
-                  <FormLabel>Details</FormLabel>
-                  <AuthorDetailsForm
-                    values={normalizeAuthor(selection)}
-                    onChange={changeAuthor}
-                    onSave={saveAuthor}
-                    actionsRef={actionsRef}
-                    isEmailRequired={isEmailRequired}
-                    selectedAffiliations={selectedAffiliations.map((a) => a.id)}
-                    authorFormRef={authorFormRef}
-                    selectedCreditRoles={selectedCreditRoles}
-                  />
-                  <DrawerGroup<AffiliationAttrs>
-                    Drawer={AffiliationsDrawer}
-                    removeItem={removeAffiliation}
-                    selectedItems={selectedAffiliations}
-                    onSelect={selectAffiliation}
-                    items={affiliations}
-                    showDrawer={showAffiliationDrawer}
-                    setShowDrawer={setShowAffiliationDrawer}
-                    title="Affiliations"
-                    buttonText="Assign Institutions"
-                    cy="affiliations"
-                    labelField="institution"
-                    Icon={<AddInstitutionIcon width={16} height={16} />}
-                  />
-                  <DrawerGroup<{ id: string; vocabTerm: string }>
-                    Drawer={CreditDrawer}
-                    removeItem={removeCreditRole}
-                    selectedItems={selectedCreditRoles.map((r) => ({
-                      id: r.vocabTerm,
-                      ...r,
-                    }))}
-                    onSelect={selectCreditRole}
-                    items={vocabTermItems}
-                    showDrawer={showCreditDrawer}
-                    setShowDrawer={setShowCreditDrawer}
-                    title="Contributions (Credit)"
-                    buttonText="Assign Credit Roles"
-                    cy="credit-taxnonomy"
-                    labelField="vocabTerm"
-                    Icon={<AddRoleIcon width={16} height={16} />}
-                  />
-                </AuthorForms>
-              ) : (
+                </>
+            ) : (
                 <FormPlaceholder
-                  type="author"
-                  title="Author Details"
-                  message="Select an author from the list to display their details here."
-                  placeholderIcon={<AuthorPlaceholderIcon />}
+                    type="author"
+                    title="Author Details"
+                    message="Select an author from the list to display their details here."
+                    placeholderIcon={<AuthorPlaceholderIcon />}
                 />
-              )}
-            </ScrollableModalContent>
-          </DrawerRelativeParent>
+            )}
+          </ScrollableModalContent>
         </StyledModalBody>
         <FormFooter onCancel={close} />
       </ModalContainer>
@@ -566,10 +578,11 @@ const ActionTitle = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 2}px;
 `
 
-const AuthorForms = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 3}px;
-  padding-right: ${(props) => props.theme.grid.unit * 3}px;
-  margin-top: 20px;
+const AuthorTabs = styled(InspectorTabs)`
+  position: relative;
+`
+const AuthorTabPanel = styled(InspectorTabPanel).attrs({ unmount: false })`
+  margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
 const StyledSidebarContent = styled(SidebarContent)`
@@ -583,7 +596,4 @@ const StyledModalBody = styled(ModalBody)`
 
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 16px;
-`
-const DrawerRelativeParent = styled.div`
-  position: relative;
 `
