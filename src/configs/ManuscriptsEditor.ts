@@ -71,9 +71,7 @@ export interface EditorProps {
   location: Location
   isComparingMode?: boolean
   dispatch?: Dispatch
-  onEditorClick: (
-    event: Event
-  ) => void
+  onEditorClick: (event: Event) => void
   lockBody: boolean
   isViewingMode?: boolean
   hiddenNodeTypes?: ManuscriptNodeType[] | undefined

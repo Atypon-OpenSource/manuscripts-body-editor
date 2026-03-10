@@ -137,7 +137,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             formRef={authorFormRef}
             noValidate
           >
-            <Fieldset>
               <FormRow>
                 <Field name={'prefix'}>
                   {(props: FieldProps) => (
@@ -168,6 +167,16 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   )}
                 </Field>
               </FormRow>
+            <FormRow>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                    <>
+                      <Label htmlFor="role">Job Title</Label>
+                      <TextField id={'role'} {...props.field} />
+                    </>
+                )}
+              </Field>
+            </FormRow>
               <FormRow>
                 <Field name={'email'} type={'email'}>
                   {(props: FieldProps) => {
@@ -178,7 +187,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                       <>
                         <Label htmlFor="email">
                           {isEmailRequired
-                            ? 'Email address (required)'
+                            ? 'Email address*'
                             : 'Email address'}
                         </Label>
                         <TextFieldWithError
@@ -198,31 +207,20 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   }}
                 </Field>
               </FormRow>
-              <FormRow>
-                <Field name={'role'}>
+            <CheckboxContainer>
+              <CheckboxLabel>
+                <Field name={'isCorresponding'}>
                   {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="role">Job Title</Label>
-                      <TextField id={'role'} {...props.field} />
-                    </>
+                      <CheckboxField
+                          id={'isCorresponding'}
+                          checked={props.field.value}
+                          {...props.field}
+                      />
                   )}
                 </Field>
-              </FormRow>
-              <CheckboxContainer>
-                <CheckboxLabel>
-                  <Field name={'isCorresponding'}>
-                    {(props: FieldProps) => (
-                      <CheckboxField
-                        id={'isCorresponding'}
-                        checked={props.field.value}
-                        {...props.field}
-                      />
-                    )}
-                  </Field>
-                  <LabelText>Corresponding Author</LabelText>
-                </CheckboxLabel>
-              </CheckboxContainer>
-
+                <LabelText>Corresponding Author</LabelText>
+              </CheckboxLabel>
+            </CheckboxContainer>
               <OrcidContainer>
                 <FormRow>
                   <Label htmlFor="orcid">ORCID</Label>
@@ -244,7 +242,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   </Field>
                 </FormRow>
               </OrcidContainer>
-            </Fieldset>
           </ChangeHandlingForm>
         )
       }}
