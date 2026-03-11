@@ -14,55 +14,16 @@
  * limitations under the License.
  */
 import {
-  FormLabel,
   FormRow,
   InputErrorText,
   Label,
-  TextArea,
   TextField,
 } from '@manuscripts/style-guide'
 import { Field, FieldProps, Formik, FormikProps, FormikErrors } from 'formik'
 import React, { useRef } from 'react'
-import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-
-
-const AffiliationsTextField = styled(TextField)`
-  border-radius: 0;
-  background: transparent;
-  margin-bottom: 4px;
-  border-radius: ${(props) => props.theme.grid.radius.default};
-  &[aria-invalid] {
-    background: ${(props) => props.theme.colors.background.warning};
-  }
-
-  &[aria-invalid]:focus {
-    background: transparent;
-  }
-`
-
-const DepartmentTextField = styled(TextArea)`
-  border-radius: 0;
-  background: transparent;
-  margin-bottom: 4px;
-  min-height: 60px;
-  border-radius: ${(props) => props.theme.grid.radius.default};
-  &[aria-invalid] {
-    background: ${(props) => props.theme.colors.background.warning};
-  }
-
-  &[aria-invalid]:focus {
-    background: transparent;
-  }
-`
-
-
-
-const MarginRightTextField = styled(AffiliationsTextField)`
-  margin-right: 4px;
-`
 
 export interface FormActions {
   reset: () => void
@@ -110,7 +71,6 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           id="affiliation-form"
           noValidate
         >
-          <FormLabel>Institution*</FormLabel>
           <FormRow>
             <Field name="institution">
               {(props: FieldProps) => {
@@ -118,8 +78,8 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                   formik.touched.institution && formik.errors.institution
                 return (
                   <>
-                    <Label htmlFor="institution">Institution Name</Label>
-                    <AffiliationsTextField
+                    <Label htmlFor="institution">Institution Name*</Label>
+                    <TextField
                       id="institution"
                       {...props.field}
                       error={hasError}
@@ -134,13 +94,12 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               }}
             </Field>
           </FormRow>
-          <FormLabel>Details</FormLabel>
           <FormRow>
             <Field name="department">
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="department">Department</Label>
-                  <DepartmentTextField id="department" {...props.field} />
+                  <TextField id="department" {...props.field} />
                 </>
               )}
             </Field>
@@ -150,7 +109,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="addressLine1">Street Address</Label>
-                  <AffiliationsTextField id="addressLine1" {...props.field} />
+                  <TextField id="addressLine1" {...props.field} />
                 </>
               )}
             </Field>
@@ -160,16 +119,18 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="city">City</Label>
-                  <MarginRightTextField id="city" {...props.field} />
+                  <TextField id="city" {...props.field} />
                 </>
               )}
             </Field>
+          </FormRow>
+          <FormRow>
             <Field name="county">
               {(props: FieldProps) => (
-                <>
-                  <Label htmlFor="county">State / Province</Label>
-                  <AffiliationsTextField id="county" {...props.field} />
-                </>
+                  <>
+                    <Label htmlFor="county">State / Province</Label>
+                    <TextField id="county" {...props.field} />
+                  </>
               )}
             </Field>
           </FormRow>
@@ -178,16 +139,18 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               {(props: FieldProps) => (
                 <>
                   <Label htmlFor="postCode">Postal Code</Label>
-                  <MarginRightTextField id="postCode" {...props.field} />
+                  <TextField id="postCode" {...props.field} />
                 </>
               )}
             </Field>
+          </FormRow>
+          <FormRow>
             <Field name="country">
               {({ field }: FieldProps) => (
-                <>
-                  <Label htmlFor="country">Country</Label>
-                  <AffiliationsTextField id="country" {...field} />
-                </>
+                  <>
+                    <Label htmlFor="country">Country</Label>
+                    <TextField id="country" {...field} />
+                  </>
               )}
             </Field>
           </FormRow>

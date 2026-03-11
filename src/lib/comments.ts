@@ -59,9 +59,7 @@ export type CommentSelection = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isNodeComment = (c: any): c is NodeComment => !c.range
 
-export const isReply = (comment: Comment) => {
-  return comment.node.attrs.target.includes('MPCommentAnnotation')
-}
+export const isReply = (comment: Comment) => comment.node.attrs.target?.startsWith('MPComment')
 
 export const getCommentKey = (
   comment: CommentAttrs,
@@ -96,6 +94,7 @@ export const createCommentMarker = (
   element.id = getMarkerID(key)
   element.dataset.key = key
   element.classList.add('comment-marker')
+  element.tabIndex = 0
 
   if (count && count > 1) {
     element.dataset.count = String(count)
