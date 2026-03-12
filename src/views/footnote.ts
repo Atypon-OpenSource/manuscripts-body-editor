@@ -43,8 +43,11 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.tabIndex = 0
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
-    this.dom.addEventListener('mousedown', this.handleClick)
-    this.dom.addEventListener('keydown', handleEnterKey(this.handleClick))
+    this.dom.addEventListener('mousedown', (e) => this.handleClick(e, false))
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey((e) => this.handleClick(e, true))
+    )
     this.updateContents()
   }
 
@@ -77,7 +80,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     return { id, fn }
   }
 
-  showContextMenu(element: HTMLElement) {
+  showContextMenu(element: HTMLElement, autoFocus: boolean) {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
@@ -110,14 +113,21 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       this.view,
       ['context-menu', 'footnote-context-menu']
     )
-    this.props.popper.show(element, this.contextMenu, 'right-start')
+    this.props.popper.show(
+      element,
+      this.contextMenu,
+      'right-start',
+      false,
+      [],
+      autoFocus
+    )
   }
 
-  handleClick = (event: Event) => {
+  handleClick = (event: Event, fromKeyboard = false) => {
     const element = event.target as HTMLElement
     const item = element.closest('.footnote')
     if (item) {
-      this.showContextMenu(item as HTMLElement)
+      this.showContextMenu(item as HTMLElement, fromKeyboard)
     }
   }
 
