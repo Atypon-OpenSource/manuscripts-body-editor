@@ -39,7 +39,7 @@
     "@iarna/word-count": "1.1.2",
     "@manuscripts/style-guide": "3.5.2",
     "@manuscripts/track-changes-plugin": "2.3.5",
-    "@manuscripts/transform": "4.3.26",
+    "@manuscripts/transform": "4.3.27-LEAN-5066.1",
     "@popperjs/core": "2.11.8",
     "citeproc": "2.4.63",
     "codemirror": "5.65.19",
