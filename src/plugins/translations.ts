@@ -124,7 +124,9 @@ export default (props: EditorProps) =>
 
             if (canEdit) {
               widgets.push(
-                Decoration.widget(pos + 1, (view) => {
+                Decoration.widget(
+                  pos + 2,
+                  (view) => {
                   const $span = document.createElement('span')
                   $span.tabIndex = 0
                   $span.className = 'add-trans-abstract'
@@ -153,9 +155,11 @@ export default (props: EditorProps) =>
                   $span.addEventListener(
                     'keydown',
                     handleEnterKey(handleActivate)
-                  )
+                    )
                   return $span
-                })
+                  },
+                  { side: -1 }
+                )
               )
             }
           }
@@ -172,7 +176,9 @@ export default (props: EditorProps) =>
                 : canEditTransGraphicalAbstract
 
             widgets.push(
-              Decoration.widget(pos + 1, (view) => {
+              Decoration.widget(
+                pos + 2,
+                (view) => {
                 const $btn = document.createElement('span')
                 $btn.className = 'language-selector-btn'
                 $btn.setAttribute('data-cy', 'language-selector-btn')
@@ -221,13 +227,15 @@ export default (props: EditorProps) =>
                         menuInstance = null
                       },
                     },
-                  })
+                    })
 
                   $btn.addEventListener('mousedown', handleOpenMenu)
                 }
 
                 return $btn
-              })
+                },
+                { side: -1 }
+              )
             )
           }
         })
