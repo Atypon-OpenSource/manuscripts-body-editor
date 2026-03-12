@@ -54,10 +54,10 @@ export class CitationEditableView extends CitationView {
 
   createDOM() {
     super.createDOM()
-    this.dom.addEventListener('mouseup', this.handleClick)
+    this.dom.addEventListener('mouseup', () => this.handleClick(false))
     this.dom.addEventListener(
       'keydown',
-      handleEnterKey(() => this.handleClick())
+      handleEnterKey(() => this.handleClick(true))
     )
   }
 
@@ -72,7 +72,7 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public handleClick = () => {
+  public handleClick = (fromKeyboard = false) => {
     if (
       !this.can.seeReferencesButtons ||
       this.dom.classList.contains('inconsistency-highlight')
@@ -81,7 +81,7 @@ export class CitationEditableView extends CitationView {
     } else if (!isDeleted(this.node)) {
       const attrs = this.node.attrs
       if (attrs.rids.length) {
-        this.showContextMenu()
+        this.showContextMenu(fromKeyboard)
       }
     }
   }
@@ -104,7 +104,7 @@ export class CitationEditableView extends CitationView {
     this.props.popper.destroy()
   }
 
-  public showContextMenu = () => {
+  public showContextMenu = (autoFocus = false) => {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
@@ -135,7 +135,14 @@ export class CitationEditableView extends CitationView {
       this.view,
       ['context-menu']
     )
-    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
+    this.props.popper.show(
+      this.dom,
+      this.contextMenu,
+      'right-start',
+      false,
+      [],
+      autoFocus
+    )
   }
 
   public showPopper = () => {
