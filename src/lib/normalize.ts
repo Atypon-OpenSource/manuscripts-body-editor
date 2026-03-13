@@ -22,17 +22,16 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
     id: author.id,
     role: author.role || '',
-    affiliations: (author.affiliations || []).sort(),
-    bibliographicName: author.bibliographicName,
+    affiliationIDs: (author.affiliationIDs || []).sort(),
+    given: author.given || '',
+    family: author.family || '',
     email: author.email || '',
     isCorresponding: author.isCorresponding || false,
-    ORCIDIdentifier: author.ORCIDIdentifier || '',
+    ORCID: author.ORCID || '',
     priority: author.priority,
     isJointContributor: author.isJointContributor || false,
-    userID: author.userID || '',
-    invitationID: author.invitationID || '',
-    footnote: author.footnote || [],
-    corresp: author.corresp || [],
+    footnoteIDs: author.footnoteIDs || [],
+    correspIDs: author.correspIDs || [],
     prefix: author.prefix || '',
   }
 

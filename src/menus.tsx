@@ -62,6 +62,7 @@ import { templateAllows } from './lib/template'
 import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
+import { openInsertAwardModal } from './components/awards/AwardModal'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
@@ -646,8 +647,8 @@ export const getEditorMenus = (
       {
         id: 'insert-awards',
         label: 'Funder Information',
-        isEnabled: isCommandValid(insertAward),
-        run: doCommand(insertAward),
+        isEnabled: isEditAllowed(state) && isCommandValid(insertAward()),
+        run: () => openInsertAwardModal(view),
         isHidden: !templateAllows(state, schema.nodes.awards),
       },
       {
