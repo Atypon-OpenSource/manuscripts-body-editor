@@ -34,7 +34,7 @@ export class PopperManager {
     placement: Placement = 'bottom',
     showArrow = true,
     modifiers: Array<Partial<StrictModifiers>> = [],
-    autoFocus = false
+    autoFocus = true
   ) {
     // destroy any existing popper first
     // checking activePopper is in destroy() method
@@ -145,7 +145,7 @@ export class PopperManager {
 
   public isActive = () => !!this.activePopper
 
-  private focusInput(container: HTMLDivElement, autoFocus = false) {
+  private focusInput(container: HTMLDivElement, autoFocus = true) {
     const input = container.querySelector('input') as HTMLElement | null
     if (input) {
       input.focus()

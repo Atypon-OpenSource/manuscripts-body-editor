@@ -72,7 +72,7 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public handleClick = (fromKeyboard = false) => {
+  public handleClick = (fromKeyboard: boolean) => {
     if (
       !this.can.seeReferencesButtons ||
       this.dom.classList.contains('inconsistency-highlight')
@@ -104,7 +104,7 @@ export class CitationEditableView extends CitationView {
     this.props.popper.destroy()
   }
 
-  public showContextMenu = (autoFocus = false) => {
+  public showContextMenu = (autoFocus = true) => {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
