@@ -37,7 +37,7 @@
     "@citation-js/plugin-pubmed": "0.3.0",
     "@citation-js/plugin-ris": "0.7.18",
     "@iarna/word-count": "1.1.2",
-    "@manuscripts/style-guide": "3.5.2",
+    "@manuscripts/style-guide": "3.4.8-LEAN-5336.0",
     "@manuscripts/track-changes-plugin": "2.3.8",
     "@manuscripts/transform": "4.3.27",
     "@popperjs/core": "2.11.8",
@@ -72,7 +72,6 @@
     "react-is": "19.2.0",
     "react-router-dom": "6.30.0",
     "react-select": "5.10.1",
-    "style-guide": "link:../../../Library/pnpm/global/5/node_modules/@manuscripts/style-guide",
     "styled-components": "5.3.11"
   },
   "devDependencies": {
