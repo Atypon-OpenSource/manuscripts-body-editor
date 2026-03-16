@@ -564,6 +564,11 @@ ProseMirror .block-embed .position-menu {
   float: right;
 }
 
+.comment-marker:has(+ .block-hero_image),
+.comment-marker:has(+ .block-supplements) {
+  right: 50px;
+}
+
 .block-subtitles .comment-marker {
   top: 0;
   left: -10px;
