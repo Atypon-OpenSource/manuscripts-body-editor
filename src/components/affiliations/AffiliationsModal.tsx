@@ -498,7 +498,13 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={'affiliation'}
                   form={'affiliation-form'}
                   onDelete={handleDeleteAffiliation}
-                  showingDeleteDialog={showingDeleteDialog}
+                  showingDeleteDialog={
+                    showingDeleteDialog &&
+                    !(
+                      showConfirmationDialog ||
+                      showRequiredFieldConfirmationDialog
+                    )
+                  }
                   showDeleteDialog={handleShowDeleteDialog}
                   newEntity={newAffiliation}
                   isDisableSave={isDisableSave}
