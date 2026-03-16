@@ -89,7 +89,7 @@ export const getEditorMenus = (
 
     return {
       id: `insert-${category.id}`,
-      label: category.label || category.titles[0],
+      label: category.titles[0],
       isEnabled: isCommandValid(command),
       run: doCommand(command),
     }
