@@ -17,6 +17,7 @@
 import { FigureElementNode } from '@manuscripts/transform'
 
 import { arrowUp } from '../icons'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -55,13 +56,16 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     heroImageToggleBtn.innerHTML = arrowUp
     heroImageToggleBtn.classList.toggle('collapsed', this.collapsed)
 
-    heroImageToggleBtn.onclick = () => {
+    const handleToggle = () => {
       this.collapsed = !this.collapsed
       if (this.contentDOM) {
         this.contentDOM.style.display = this.collapsed ? 'none' : ''
       }
       heroImageToggleBtn.classList.toggle('collapsed', this.collapsed)
     }
+
+    heroImageToggleBtn.onclick = handleToggle
+    heroImageToggleBtn.addEventListener('keydown', handleEnterKey(handleToggle))
 
     panel.appendChild(label)
     panel.appendChild(heroImageToggleBtn)

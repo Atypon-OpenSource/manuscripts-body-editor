@@ -187,13 +187,13 @@ export const toolbar: ToolbarConfig = {
     },
   },
   quote: {
-    blockquote: {
+    blockquote_element: {
       title: 'Insert blockquote',
       content: <OutlineBlockQuoteIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.blockquote_element)),
       run: insertBlock(schema.nodes.blockquote_element),
     },
-    pullquote: {
+    pullquote_element: {
       title: 'Insert pullquote',
       content: <OutlinePullQuoteIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.pullquote_element)),
