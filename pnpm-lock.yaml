@@ -36,11 +36,11 @@ importers:
         specifier: 3.5.3-LEAN-5195.0
         version: 3.5.3-LEAN-5195.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.3.5
-        version: 2.3.5
+        specifier: 2.3.8
+        version: 2.3.8
       '@manuscripts/transform':
-        specifier: 4.3.26
-        version: 4.3.26(prosemirror-state@1.4.3)
+        specifier: 4.3.27
+        version: 4.3.27(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1327,11 +1327,11 @@ packages:
     resolution: {integrity: sha512-xsuS/aiJyjLs/p12WuY9/yROZYJxNUlMjKA39cA4g7BC5KudAIN8/YBlt2Mu8qSN4I1s5ZOeuX772njcVGwnWA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.3-LEAN-5195.0.tgz}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/track-changes-plugin@2.3.5':
-    resolution: {integrity: sha512-mIsyoBB8jcVcEoySDpBZUVwGw3Y6IaHke/d/14df2NoGOBhc5U/v9zwdHZqZ57C/WZR3dokSqiYFssVMnYaF0Q==}
+  '@manuscripts/track-changes-plugin@2.3.8':
+    resolution: {integrity: sha512-s12iID9o+j0/pcAXgbnMDLufhsxYpURhIHs6ynZtfFaOw/rsPDBxR0ISA7RB5e5GgopN5DLygFsxpaYJahallQ==}
 
-  '@manuscripts/transform@4.3.26':
-    resolution: {integrity: sha512-HfvVGALHqQdg3Fe+bm+gYWU3BdRzR4x8/gvo4+Z/lEJDzP1qNNUYqfUtfkyPaIx/vBdUtXu4XujmZXaxmAbhpw==}
+  '@manuscripts/transform@4.3.27':
+    resolution: {integrity: sha512-EbU/hvVQzXEAELwJGWdlpVrVKKERxgxhSCZxfbE+NCWrpX80yYxfYhYR/aBapCO2hCNqB9tTHvxc5ZP87Y3Tfw==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6437,7 +6437,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.3.5':
+  '@manuscripts/track-changes-plugin@2.3.8':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -6449,7 +6449,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.26(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.27(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
