@@ -16,6 +16,10 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { ContributorsNode, schema } from '@manuscripts/transform'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { NodeSelection } from 'prosemirror-state'
 
 import {
@@ -29,14 +33,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
-<<<<<<< HEAD
-=======
 import { createKeyboardInteraction } from '../lib/navigation-utils'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
->>>>>>> 42056f64f643f775736dea10111b052461fbf9b9
 import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
@@ -51,10 +48,7 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '@manuscripts/track-changes-plugin'
+
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
