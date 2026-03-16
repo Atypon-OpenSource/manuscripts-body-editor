@@ -157,8 +157,8 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         ? `<span class="name">${name} (${attrs.email})</span>`
         : `<span class="name">${name}</span>`
 
-    if (attrs.ORCIDIdentifier) {
-      container.innerHTML += `<a href="${attrs.ORCIDIdentifier}" target="_blank" class="orcid-link">${ORCIDIcon}</span>`
+    if (attrs.ORCID) {
+      container.innerHTML += `<a href="${attrs.ORCID}" target="_blank" class="orcid-link">${ORCIDIcon}</span>`
     }
 
     const noteText: string[] = []
