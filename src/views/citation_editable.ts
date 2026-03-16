@@ -33,6 +33,11 @@ import {
 } from '../components/references/CitationViewer'
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
+<<<<<<< HEAD
+=======
+import { handleEnterKey } from '../lib/navigation-utils'
+import { isDeleted } from '../lib/track-changes-utils'
+>>>>>>> 42056f64f643f775736dea10111b052461fbf9b9
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
@@ -54,6 +59,10 @@ export class CitationEditableView extends CitationView {
   createDOM() {
     super.createDOM()
     this.dom.addEventListener('mouseup', this.handleClick)
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.handleClick())
+    )
   }
 
   // we added this to stop select events in case th e user clicks on the comment,
@@ -67,13 +76,13 @@ export class CitationEditableView extends CitationView {
     )
   }
 
-  public handleClick = (event: MouseEvent) => {
+  public handleClick = () => {
     if (
       !this.can.seeReferencesButtons ||
       this.dom.classList.contains('inconsistency-highlight')
     ) {
       this.showPopper()
-    } else if (!isDeleted(this.node) && event.button === 0) {
+    } else if (!isDeleted(this.node)) {
       const attrs = this.node.attrs
       if (attrs.rids.length) {
         this.showContextMenu()

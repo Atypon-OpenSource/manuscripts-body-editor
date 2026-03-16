@@ -69,6 +69,7 @@ export class QuoteImageEditableView extends FigureEditableView {
   protected override createPlaceholder = () => {
     const element = document.createElement('div')
     element.classList.add('figure', 'placeholder')
+    element.tabIndex = 0
 
     const instructions = document.createElement('div')
     instructions.classList.add('instructions')

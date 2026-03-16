@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Build, buildKeyword, Keyword } from '@manuscripts/json-schema'
+
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
-import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
+import {
+  generateNodeID,
+  ManuscriptEditorView,
+  ManuscriptNode,
+  schema,
+} from '@manuscripts/transform'
+
 import { TextSelection } from 'prosemirror-state'
 import React, {
   ChangeEvent,
@@ -53,6 +59,12 @@ const NewKeywordButton = styled.button`
   margin: 0;
   padding: 0;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 4px solid ${(props) => props.theme.colors.outline.focus};
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
 `
 
 const CreateKeywordButtonWrapper = styled.div`
@@ -156,16 +168,13 @@ export const AddKeywordInline: React.FC<{
   }
 
   const handleAddKeyword = () => {
-    const keyword: Build<Keyword> = buildKeyword(newKeyword)
     if (!isExistingKeyword() && isValidNewKeyword()) {
       const node = getUpdatedNode()
-      const keywordNode = node.type.schema.nodes.keyword.create(
+      const keywordNode = schema.nodes.keyword.create(
         {
-          id: keyword._id,
-          contents: keyword.name,
-          comments: [],
+          id: generateNodeID(schema.nodes.keyword),
         },
-        node.type.schema.text(keyword.name)
+        node.type.schema.text(newKeyword)
       )
       const nodePosition = getPos() + node.nodeSize - 1
       view.dispatch(view.state.tr.insert(nodePosition, keywordNode))
@@ -243,8 +252,17 @@ export const AddKeywordInline: React.FC<{
     <AddNewKeyword ref={nodeRef}>
       {!isAddingNewKeyword && (
         <NewKeywordButton
-          onClick={() => {
+          tabIndex={-1}
+          className="keyword-add"
+          onClick={(e) => {
+            e.preventDefault()
             setIsAddingNewKeyword(true)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              setIsAddingNewKeyword(true)
+            }
           }}
         >
           New keyword...

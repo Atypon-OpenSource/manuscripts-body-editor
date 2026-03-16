@@ -81,7 +81,7 @@ export const buildPluginState = (
     .filter((contrib) => !deletedContribId.has(contrib.id))
     .sort(authorComparator)
     .forEach((attrs) => {
-      attrs.affiliations.forEach((aff) => {
+      attrs.affiliationIDs?.forEach((aff) => {
         iAffiliations.add(aff)
       })
     })
