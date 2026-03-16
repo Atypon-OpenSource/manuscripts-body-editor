@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { buildContribution } from '@manuscripts/json-schema'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
@@ -120,6 +119,8 @@ import { getEditorProps } from './plugins/editor-props'
 import { searchReplaceKey } from './plugins/search-replace'
 import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
+import { persistentCursor } from './plugins/persistent-cursor'
+import { AwardAttrs } from './views/award'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -1068,8 +1069,11 @@ const findSelectedList = (selection: Selection) =>
   findParentNodeOfType([schema.nodes.list])(selection)
 
 export const insertGraphicalAbstract =
-  (category: SectionCategory) =>
+  (category?: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    if (!category) {
+      return false
+    }
     const abstracts = findAbstractsNode(state.doc)
     const sections = findChildrenByType(
       abstracts.node,
@@ -1174,23 +1178,21 @@ export const insertAffiliation = (
   return true
 }
 
-export const insertAward = (
-  state: ManuscriptEditorState,
-  dispatch?: Dispatch,
-  view?: EditorView
-) => {
-  const award = schema.nodes.award.create() as AwardNode
-  const tr = state.tr
-  const awards = insertAwardsNode(tr)
-  const pos = awards.pos + awards.node.nodeSize - 1
-  tr.insert(pos, award)
-  const selection = NodeSelection.create(tr.doc, pos)
-  view && view.focus()
-  if (dispatch) {
-    dispatch(tr.setSelection(selection).scrollIntoView())
+export const insertAward =
+  (attrs?: AwardAttrs) =>
+  (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
+    const award = schema.nodes.award.create(attrs) as AwardNode
+    const tr = state.tr
+    const awards = insertAwardsNode(tr)
+    const pos = awards.pos + awards.node.nodeSize - 1
+    tr.insert(pos, award)
+    const selection = NodeSelection.create(tr.doc, pos)
+    if (dispatch && view) {
+      dispatch(tr.setSelection(selection).scrollIntoView())
+      view.focus()
+    }
+    return true
   }
-  return true
-}
 
 export const insertKeywords = (
   state: ManuscriptEditorState,
@@ -1784,12 +1786,12 @@ export const addNodeComment = (
   dispatch?: Dispatch
 ) => {
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
-    contributions: [contribution],
+    userID: props.userID,
+    timestamp: Date.now(),
   } as CommentAttrs
   const comment = schema.nodes.comment.create(attrs)
   const comments = findChildrenByType(state.doc, schema.nodes.comments)[0]
@@ -1827,12 +1829,12 @@ export const addInlineComment = (
   }
 
   const props = getEditorProps(state)
-  const contribution = buildContribution(props.userID)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
     contents: '',
     target: node.attrs.id,
-    contributions: [contribution],
+    userID: props.userID,
+    timestamp: Date.now(),
     originalText: selectedText() || state.doc.textBetween(from, to),
     selector: {
       from,
@@ -2033,10 +2035,12 @@ export const ignoreEnterInSubtitles = (state: ManuscriptEditorState) => {
 }
 
 // Command to exit editor and focus container
-export const exitEditorToContainer: EditorAction = () => {
+export const exitEditorToContainer: EditorAction = (state, dispatch, view) => {
   const editorContainer = document.getElementById('editor')
-  if (editorContainer) {
+  if (editorContainer && dispatch && view) {
     editorContainer.focus()
+    const tr = view.state.tr.setMeta(persistentCursor, { on: true })
+    view.dispatch(tr)
     return true
   }
 

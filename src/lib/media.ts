@@ -21,6 +21,7 @@ import {
 } from '@manuscripts/transform'
 
 import { openEmbedDialog } from '../components/toolbar/InsertEmbedDialog'
+import { handleEnterKey } from './navigation-utils'
 import {
   FigureOptions,
   FigureOptionsProps,
@@ -75,11 +76,12 @@ const MediaLabels: Record<MediaType, string> = {
 export const createMediaPlaceholder = (
   mediaType: MediaType = MediaType.Media,
   view?: ManuscriptEditorView,
-  getPos?: () => number
+  getPos?: () => number,
+  props?: EditorProps
 ): HTMLElement => {
   const element = document.createElement('div')
   element.classList.add('figure', 'placeholder')
-
+  element.tabIndex = 0
   const instructions = document.createElement('div')
   instructions.classList.add('instructions')
 
@@ -106,15 +108,39 @@ export const createMediaPlaceholder = (
   if (mediaType === MediaType.Media && view && getPos) {
     const embedLink = instructions.querySelector(
       "[data-action='add-external-link']"
-    )
+    ) as HTMLElement
+    embedLink.tabIndex = 0
     if (embedLink) {
       embedLink.addEventListener('click', (e) => {
         e.stopPropagation()
         e.preventDefault()
         openEmbedDialog(view, getPos())
       })
+      embedLink.addEventListener(
+        'keydown',
+        handleEnterKey((e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          openEmbedDialog(view, getPos())
+        })
+      )
     }
   }
+
+  const links = instructions.querySelectorAll<HTMLElement>(
+    `[data-action='open-other-files'], [data-action='open-supplement-files'] `
+  )
+  links.forEach((link) => {
+    link.tabIndex = 0
+    link.addEventListener(
+      'keydown',
+      handleEnterKey((event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        props?.onEditorClick(event)
+      })
+    )
+  })
 
   element.appendChild(instructions)
   return element
@@ -238,8 +264,7 @@ export const addInteractionHandlers = (
   uploadFn: (file: File) => Promise<void>,
   accept = '*/*'
 ): void => {
-  const handlePlaceholderClick = (event: Event) => {
-    const target = event.target as HTMLElement
+  const handlePlaceholderInteraction = (target: HTMLElement) => {
     if (target.dataset && target.dataset.action) {
       return
     }
@@ -255,7 +280,19 @@ export const addInteractionHandlers = (
     input.click()
   }
 
+  const handlePlaceholderClick = (event: Event) => {
+    const target = event.target as HTMLElement
+    handlePlaceholderInteraction(target)
+  }
+
   element.addEventListener('click', handlePlaceholderClick)
+  element.addEventListener(
+    'keydown',
+    handleEnterKey(() => {
+      const target = document.activeElement as HTMLElement
+      handlePlaceholderInteraction(target)
+    })
+  )
 
   element.addEventListener('mouseenter', () => {
     element.classList.toggle('over', true)

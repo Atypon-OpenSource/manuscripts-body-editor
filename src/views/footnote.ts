@@ -31,6 +31,7 @@ import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
@@ -39,9 +40,11 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('footnote')
+    this.dom.tabIndex = 0
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.dom.addEventListener('mousedown', this.handleClick)
+    this.dom.addEventListener('keydown', handleEnterKey(this.handleClick))
     this.updateContents()
   }
 

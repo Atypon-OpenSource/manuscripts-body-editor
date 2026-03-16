@@ -349,7 +349,12 @@ export class FigureEditableView extends FigureView {
   }
 
   protected createPlaceholder = () => {
-    return createMediaPlaceholder(MediaType.Figure)
+    return createMediaPlaceholder(
+      MediaType.Figure,
+      this.view,
+      this.getPos,
+      this.props
+    )
   }
 }
 
