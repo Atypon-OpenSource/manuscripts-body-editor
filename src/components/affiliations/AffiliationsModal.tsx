@@ -18,6 +18,11 @@ import {
   AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
+  InspectorTab,
+  InspectorTabList,
+  InspectorTabPanel,
+  InspectorTabPanels,
+  InspectorTabs,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -70,7 +75,7 @@ export interface AffiliationsModalProps {
 function makeAuthorItems(authors: ContributorAttrs[]) {
   return authors.map((author) => ({
     id: author.id,
-    label: `${author.bibliographicName.given} ${author.bibliographicName.family}`,
+    label: `${author.given} ${author.family}`,
   }))
 }
 
@@ -125,7 +130,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const currentAffiliation = selection
     const affiliatedAuthorIds = authors
-      .filter((author) => author.affiliations?.includes(currentAffiliation.id))
+      .filter((author) =>
+        author.affiliationIDs?.includes(currentAffiliation.id)
+      )
       .map((author) => author.id)
     setSelectedAuthorIds(affiliatedAuthorIds)
     setAffiliationAuthorMap((prevMap) => {
@@ -185,7 +192,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       }
     } else {
       const affiliatedAuthorIds = authors
-        .filter((author) => author.affiliations?.includes(affiliation.id))
+        .filter((author) => author.affiliationIDs?.includes(affiliation.id))
         .map((author) => author.id)
       setNewAffiliation(false)
       setSelection(affiliation)
@@ -218,9 +225,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       const updatedAuthors = authors.map((author) => ({
         ...author,
-        affiliations: selectedAuthorIds.includes(author.id)
-          ? [...new Set([...(author.affiliations || []), affiliation.id])]
-          : (author.affiliations || []).filter((id) => id !== affiliation.id),
+        affiliationIDs: selectedAuthorIds.includes(author.id)
+          ? [...new Set([...(author.affiliationIDs || []), affiliation.id])]
+          : (author.affiliationIDs || []).filter((id) => id !== affiliation.id),
       }))
 
       dispatchAuthors({
@@ -286,7 +293,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
     const updatedAuthors = authors.map((author) => ({
       ...author,
-      affiliations: (author.affiliations || []).filter(
+      affiliationIDs: (author.affiliationIDs || []).filter(
         (id) => id !== selection.id
       ),
     }))
@@ -337,9 +344,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       const author = authors.find((a) => a.id === authorId)
       return {
         id: authorId,
-        label: author
-          ? `${author.bibliographicName.given} ${author.bibliographicName.family}`
-          : '',
+        label: author ? `${author.given} ${author.family}` : '',
       }
     })
     .filter((author) => author.label)
@@ -390,7 +395,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
       const affiliatedAuthorIds = authors
         .filter((author) =>
-          author.affiliations?.some((aff) => aff === pendingSelection.id)
+          author.affiliationIDs.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
 
@@ -429,7 +434,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(false)
       const affiliatedAuthorIds = authors
         .filter((author) =>
-          author.affiliations?.some((aff) => aff === pendingSelection.id)
+          author.affiliationIDs?.some((aff) => aff === pendingSelection.id)
         )
         .map((author) => author.id)
       setSelectedAuthorIds(affiliatedAuthorIds)
@@ -492,22 +497,52 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
           </ModalSidebar>
           <ScrollableModalContent data-cy="affiliations-modal-content">
             {selection ? (
-              <AffiliationForms>
-                <ModalFormActions
-                  type={'affiliation'}
-                  form={'affiliation-form'}
-                  onDelete={handleDeleteAffiliation}
-                  showingDeleteDialog={showingDeleteDialog}
-                  showDeleteDialog={handleShowDeleteDialog}
-                  newEntity={newAffiliation}
-                  isDisableSave={isDisableSave}
-                />
-                <AffiliationForm
-                  values={checkID(selection, 'affiliation')}
-                  onSave={() => handleSaveAffiliation(valuesRef.current)}
-                  onChange={handleAffiliationChange}
-                  actionsRef={actionsRef}
-                ></AffiliationForm>
+              <>
+                <AffiliationTabs>
+                  <ModalFormActions
+                    type={'affiliation'}
+                    form={'affiliation-form'}
+                    onDelete={handleDeleteAffiliation}
+                    showingDeleteDialog={showingDeleteDialog}
+                    showDeleteDialog={handleShowDeleteDialog}
+                    newEntity={newAffiliation}
+                    isDisableSave={isDisableSave}
+                  />
+                  <InspectorTabList>
+                    <InspectorTab>Details</InspectorTab>
+                    <InspectorTab>Authors</InspectorTab>
+                  </InspectorTabList>
+                  <InspectorTabPanels>
+                    <AffiliationTabPanel>
+                      <AffiliationForm
+                        values={checkID(selection, 'affiliation')}
+                        onSave={() => handleSaveAffiliation(valuesRef.current)}
+                        onChange={handleAffiliationChange}
+                        actionsRef={actionsRef}
+                      />
+                    </AffiliationTabPanel>
+                    <AffiliationTabPanel>
+                      <DrawerGroup<{ id: string; label: string }>
+                        Drawer={GenericDrawer}
+                        removeItem={(id) => {
+                          setSelectedAuthorIds((prev) =>
+                            prev.filter((authorId) => authorId !== id)
+                          )
+                        }}
+                        selectedItems={selectedAuthors}
+                        onSelect={selectAuthor}
+                        items={makeAuthorItems(authors)}
+                        showDrawer={showAuthorDrawer}
+                        setShowDrawer={setShowAuthorDrawer}
+                        title="Authors"
+                        cy="affiliations"
+                        labelField="label"
+                        buttonText="Affiliate Authors"
+                        Icon={<AddUserIcon width={16} height={16} />}
+                      />
+                    </AffiliationTabPanel>
+                  </InspectorTabPanels>
+                </AffiliationTabs>
                 <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
                   onPrimary={() =>
@@ -524,25 +559,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   type={DialogType.SAVE}
                   entityType="affiliation"
                 />
-                <DrawerGroup<{ id: string; label: string }>
-                  Drawer={GenericDrawer}
-                  removeItem={(id) => {
-                    setSelectedAuthorIds((prev) =>
-                      prev.filter((authorId) => authorId !== id)
-                    )
-                  }}
-                  selectedItems={selectedAuthors}
-                  onSelect={selectAuthor}
-                  items={makeAuthorItems(authors)}
-                  showDrawer={showAuthorDrawer}
-                  setShowDrawer={setShowAuthorDrawer}
-                  title="Authors"
-                  cy="affiliations"
-                  labelField="label"
-                  buttonText="Affiliate Authors"
-                  Icon={<AddUserIcon width={16} height={16} />}
-                />
-              </AffiliationForms>
+              </>
             ) : (
               <FormPlaceholder
                 type="affiliation"
@@ -598,11 +615,12 @@ const AddAffiliationButton = styled.div`
 const ActionTitle = styled.div`
   padding-left: ${(props) => props.theme.grid.unit * 2}px;
 `
-const AffiliationForms = styled.div`
-  padding-left: ${(props) => props.theme.grid.unit * 3}px;
-  padding-right: ${(props) => props.theme.grid.unit * 3}px;
+
+const AffiliationTabs = styled(InspectorTabs)`
   position: relative;
-  margin-top: 20px;
+`
+const AffiliationTabPanel = styled(InspectorTabPanel).attrs({ unmount: false })`
+  margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
 const StyledModalBody = styled(ModalBody)`
