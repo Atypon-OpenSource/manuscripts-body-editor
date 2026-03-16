@@ -18,10 +18,10 @@ import { KeywordGroupNode } from '@manuscripts/transform'
 
 import { AddKeywordInline } from '../components/keywords/AddKeywordInline'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
-import { isDeleted } from '../lib/track-changes-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class KeywordGroupView extends BlockView<KeywordGroupNode> {
   private element: HTMLElement
