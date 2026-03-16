@@ -16,12 +16,12 @@
 
 import 'prosemirror-view/style/prosemirror.css'
 
-import { UserProfile } from '@manuscripts/json-schema'
 import {
   ManuscriptNode,
   ManuscriptNodeType,
   schema,
   SectionCategory,
+  UserProfile,
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -71,9 +71,7 @@ export interface EditorProps {
   location: Location
   isComparingMode?: boolean
   dispatch?: Dispatch
-  onEditorClick: (
-    event: Event
-  ) => void
+  onEditorClick: (event: Event) => void
   lockBody: boolean
   isViewingMode?: boolean
   hiddenNodeTypes?: ManuscriptNodeType[] | undefined

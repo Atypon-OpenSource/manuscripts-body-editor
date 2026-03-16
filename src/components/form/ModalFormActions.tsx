@@ -21,6 +21,9 @@ import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 
 const ActionsContainer = styled.div`
   display: flex;
+  position: absolute;
+  top: 5px;
+  right: 5px;
 `
 
 const StyledButtonGroup = styled(ButtonGroup)`

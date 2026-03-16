@@ -34,7 +34,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
   contextMenu: HTMLElement
-  newAward = false
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -72,15 +71,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     )
     this.contentDOM.appendChild(fragment)
     this.updateClasses()
-  }
-
-  public selectNode() {
-    super.selectNode()
-    // check if award is empty and open the modal for it...
-    if (!this.node.attrs.source) {
-      this.newAward = true
-      this.showAwardModal(this.node)
-    }
   }
 
   private createAwardFragment = (
@@ -154,7 +144,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     const componentProps: AwardModalProps = {
       initialData: award?.attrs || ({} as AwardAttrs),
       onSaveAward: this.handleSaveAward,
-      onCancelAward: this.handleCancelAward,
     }
     this.popperContainer = ReactSubView(
       this.props,
@@ -188,12 +177,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
   handleSaveAward = (award: AwardAttrs) => {
     updateNodeAttrs(this.view, schema.nodes.award, award)
-  }
-
-  handleCancelAward = () => {
-    if (this.newAward) {
-      this.handleDeleteAward()
-    }
   }
 
   handleDeleteAward = () => {
