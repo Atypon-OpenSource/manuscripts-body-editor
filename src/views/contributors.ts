@@ -15,11 +15,12 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
-import { ContributorsNode, schema } from '@manuscripts/transform'
 import {
   addTrackChangesAttributes,
   isDeleted,
 } from '@manuscripts/track-changes-plugin'
+import { ContributorsNode, schema } from '@manuscripts/transform'
+
 import { NodeSelection } from 'prosemirror-state'
 
 import {
@@ -34,6 +35,7 @@ import {
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
+
 import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
@@ -48,7 +50,6 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
@@ -159,7 +160,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     const noteText: string[] = []
     if (affs) {
-      attrs.affiliations.map((a) => {
+      attrs.affiliationIDs?.map((a) => {
         const index = affs.get(a)
         if (index) {
           noteText.push(index.toString())
