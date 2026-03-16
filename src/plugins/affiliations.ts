@@ -18,6 +18,7 @@
  * This plugin handles indexing of affiliations that are supposed to be index in accordance with their order in the document.
  * It also provides that information to components that display that indexing. Additionally it deletes affiliations that have been detached and not used anymore.
  */
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import {
   isAffiliationNode,
   isContributorNode,
@@ -32,7 +33,6 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../lib/authors'
-import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export interface PluginState {
   version: string
@@ -81,7 +81,7 @@ export const buildPluginState = (
     .filter((contrib) => !deletedContribId.has(contrib.id))
     .sort(authorComparator)
     .forEach((attrs) => {
-      attrs.affiliationIDs?.forEach((aff) => {
+      attrs.affiliations.forEach((aff) => {
         iAffiliations.add(aff)
       })
     })
