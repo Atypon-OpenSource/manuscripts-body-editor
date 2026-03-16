@@ -15,6 +15,7 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import {
   BibliographyItemAttrs,
   ManuscriptNode,
@@ -33,17 +34,12 @@ import {
 } from '../components/references/CitationViewer'
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
-<<<<<<< HEAD
-=======
 import { handleEnterKey } from '../lib/navigation-utils'
-import { isDeleted } from '../lib/track-changes-utils'
->>>>>>> 42056f64f643f775736dea10111b052461fbf9b9
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 const createBibliographySection = (node: ManuscriptNode) =>
   schema.nodes.bibliography_section.createAndFill({}, [
