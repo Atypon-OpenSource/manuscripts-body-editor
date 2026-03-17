@@ -155,11 +155,9 @@ export default (props: EditorProps) =>
                   $span.addEventListener(
                     'keydown',
                     handleEnterKey(handleActivate)
-                    )
+                  )
                   return $span
-                  },
-                  { side: -1 }
-                )
+                }, { key: `add-trans-${node.attrs.id || pos}`, side: -1 })
               )
             }
           }
@@ -227,15 +225,13 @@ export default (props: EditorProps) =>
                         menuInstance = null
                       },
                     },
-                    })
+                  })
 
                   $btn.addEventListener('mousedown', handleOpenMenu)
                 }
 
                 return $btn
-                },
-                { side: -1 }
-              )
+              }, { key: `lang-selector-${node.attrs.id}`, side: -1 })
             )
           }
         })
