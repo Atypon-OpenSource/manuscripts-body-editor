@@ -450,11 +450,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         isDisableSave={isDisableSave}
                     />
                     <InspectorTabList>
-                    <StyledInspectorTab>Details</StyledInspectorTab>
-                    <StyledInspectorTab>Affiliations</StyledInspectorTab>
-                    <StyledInspectorTab>
-                      Contributions (CRediT)
-                    </StyledInspectorTab>
+                      <InspectorTab>Details</InspectorTab>
+                      <InspectorTab>Affiliations</InspectorTab>
+                      <InspectorTab>Contributions (CRediT)</InspectorTab>
                     </InspectorTabList>
                     <InspectorTabPanels>
                       <AuthorTabPanel>
@@ -601,11 +599,4 @@ const StyledModalBody = styled(ModalBody)`
 
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 16px;
-`
-
-const StyledInspectorTab = styled(InspectorTab)`
-  &[data-headlessui-state~='selected'][data-headlessui-state~='focus'] {
-    outline: 2px solid ${(props) => props.theme.colors.outline.focus};
-    outline-offset: -2px;
-  }
 `
