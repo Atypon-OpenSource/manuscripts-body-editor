@@ -555,12 +555,18 @@ ProseMirror .block-embed .position-menu {
 
 .comment-marker:has(+ .block-contributors),
 .comment-marker:has(+ .block-affiliations),
-.comment-marker:has(+ .block-hero_image) {
+.comment-marker:has(+ .block-hero_image),
+.comment-marker:has(+ .block-supplements) {
   height: 0;
   top: 0;
   right: 60px;
   left: unset;
   float: right;
+}
+
+.comment-marker:has(+ .block-hero_image),
+.comment-marker:has(+ .block-supplements) {
+  right: 50px;
 }
 
 .block-subtitles .comment-marker {
