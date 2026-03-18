@@ -314,7 +314,7 @@
 
 .ProseMirror .caption-description {
   margin: 0;
-  outline: none !important
+  outline: none !important;
 }
 
 .ProseMirror .suppress-title .caption-description {
@@ -344,7 +344,7 @@
   color: #999;
   font-style: italic;
   pointer-events: none;
-} 
+}
 
 .ProseMirror .caption-description.empty-node::before {
   content: 'Caption...';
@@ -626,7 +626,7 @@
 }
 
 .ProseMirror .add-subtitle svg rect {
-  fill: #6E6E6E !important;
+  fill: #6e6e6e !important;
 }
 
 .ProseMirror .empty-node:hover::before {
@@ -682,6 +682,7 @@
 .ProseMirror .block-container.block-contributors {
   grid-template-columns: 52px auto 100px !important;
 }
+
 .ProseMirror .block-container.block-affiliations {
   grid-template-columns: 52px auto 100px !important;
 }
@@ -1263,7 +1264,6 @@
   font-size: 14px;
 }
 
-
 .ProseMirror .supplements-toggle-btn {
   background: none;
   border: none;
@@ -1279,7 +1279,6 @@
   z-index: 10;
 }
 
-
 .ProseMirror .supplements-toggle-btn svg {
   width: 16px;
   height: 9px;
@@ -1288,7 +1287,6 @@
 .ProseMirror .supplements-toggle-btn.collapsed svg {
   transform: rotate(180deg);
 }
-
 
 .ProseMirror .supplements-content {
   border: 1px solid #c9c9c9;
@@ -1333,18 +1331,18 @@
 }
 
 .ProseMirror .supplement-item.dragging {
-  background-color: #F2F2F2 !important;
+  background-color: #f2f2f2 !important;
   opacity: 0.3;
   z-index: 1000;
 }
 
 .ProseMirror .supplement-item:hover {
-  background-color: #F2F2F2 !important;
+  background-color: #f2f2f2 !important;
   cursor: move;
 }
 
 .ProseMirror .supplement-item:hover figcaption {
-  background-color: #F2F2F2 !important;
+  background-color: #f2f2f2 !important;
 }
 
 .ProseMirror .supplement-item .drag-icon {

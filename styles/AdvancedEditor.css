@@ -139,9 +139,10 @@
   border: 1px solid #f2f2f2;
   border-radius: 4px;
 
-
   grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+  grid-template-rows:
+    repeat(1, minmax(min-content, max-content))
+    [caption listing] auto !important;
 
   margin: 16px 0 0 !important;
   box-sizing: border-box;
@@ -156,7 +157,9 @@
   padding: 8px;
 
   grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows: repeat(1, minmax(min-content, max-content)) [caption listing] auto !important;
+  grid-template-rows:
+    repeat(1, minmax(min-content, max-content))
+    [caption listing] auto !important;
 }
 
 .ProseMirror .figure-block-group .figure-block {
@@ -414,7 +417,9 @@ ProseMirror .block-embed .position-menu {
 .ProseMirror .figure-block .figure.drop-target-above,
 .ProseMirror .figure-block .figure.drop-target-below {
   border: 2px dotted #20aedf !important;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
   position: relative;
 }
 
@@ -437,7 +442,8 @@ ProseMirror .block-embed .position-menu {
 .ProseMirror .block-contributors {
   grid-template-columns: 52px auto 65px;
 }
-.ProseMirror .block-contributors.empty-node, .ProseMirror .block-affiliations.empty-node {
+.ProseMirror .block-contributors.empty-node,
+.ProseMirror .block-affiliations.empty-node {
   display: none !important;
 }
 .ProseMirror .block-affiliations {
@@ -1039,7 +1045,9 @@ figure .selected-suggestion {
   .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .block:has(figure.selected-suggestion),
 figure.block:has(.equation.selected-suggestion) {
-  box-shadow: inset 6px 0 0 black, inset 9px 0 0 lightgray;
+  box-shadow:
+    inset 6px 0 0 black,
+    inset 9px 0 0 lightgray;
   --fade-color: none;
 }
 
@@ -1065,7 +1073,8 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .selected-suggestion[data-track-op='wrap_with_node'][data-track-status='pending']
   .block {
-  box-shadow: inset 6px 0 0 var(--inserted-pending-color),
+  box-shadow:
+    inset 6px 0 0 var(--inserted-pending-color),
     inset 9px 0 0 var(--inserted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--inserted-pending-bg-color);
@@ -1104,7 +1113,8 @@ figure.block:has(.equation.selected-suggestion) {
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
   .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract) {
-  box-shadow: inset 6px 0 0 var(--deleted-color),
+  box-shadow:
+    inset 6px 0 0 var(--deleted-color),
     inset 9px 0 0 var(--deleted-pending-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--deleted-pending-bg-color);
@@ -1147,7 +1157,8 @@ figure.block:has(.equation.selected-suggestion) {
 .tracking-visible
   .selected-suggestion:is([data-track-op='move'], [data-track-op='structure'])
   .block {
-  box-shadow: inset 6px 0 0 var(--updated-border-color),
+  box-shadow:
+    inset 6px 0 0 var(--updated-border-color),
     inset 9px 0 0 var(--updated-bg-color) !important;
   animation: fadeOutBackground 3s forwards;
   --fade-color: var(--updated-bg-color);
@@ -1348,6 +1359,16 @@ s[data-track-status='pending'][data-track-op='delete'] {
   margin: 0 1px;
   line-height: 1;
   vertical-align: top;
+}
+
+.contributor .orcid-link {
+  margin-left: 0.2em;
+  align-items: center;
+  display: inline-flex;
+}
+.contributor .orcid-link svg {
+  width: 0.875em;
+  height: 0.875em;
 }
 
 .block-affiliations {
@@ -1614,7 +1635,9 @@ th:hover > .table-context-menu-button,
   position: relative;
   pointer-events: none;
   user-select: none;
-  box-shadow: inset 49px 0 0 white, inset 53px 0 0 #6e6e6e;
+  box-shadow:
+    inset 49px 0 0 white,
+    inset 53px 0 0 #6e6e6e;
 }
 .ProseMirror .non-editable .body-overlay,
 .ProseMirror .non-editable .figure-overlay {
@@ -1781,7 +1804,8 @@ th:hover > .table-context-menu-button,
   left: 93%;
 }
 
-.block-hero_image, .block-supplements {
+.block-hero_image,
+.block-supplements {
   margin-bottom: 30px;
 }
 
@@ -1916,7 +1940,7 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .add-button svg rect {
-  fill: #6E6E6E !important;
+  fill: #6e6e6e !important;
 }
 
 .ProseMirror .add-button.disabled svg rect {
@@ -1947,7 +1971,7 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .add-trans-abstract svg rect {
-  fill: #6E6E6E !important;
+  fill: #6e6e6e !important;
 }
 
 .ProseMirror .add-trans-abstract-text {
@@ -1983,7 +2007,7 @@ th:hover > .table-context-menu-button,
 }
 
 .language.menu .menu-item {
-  margin-right: 25px
+  margin-right: 25px;
 }
 
 .language.menu .menu-item.selected:after {
@@ -2012,7 +2036,9 @@ th:hover > .table-context-menu-button,
   color: #c9c9c9;
   margin: 0;
 }
-.ProseMirror .block-trans_graphical_abstract section.block.trans-graphical-abstract {
+.ProseMirror
+  .block-trans_graphical_abstract
+  section.block.trans-graphical-abstract {
   padding: 0 !important;
 }
 .ProseMirror .abstracts.empty-node .add-translation-container {
@@ -2050,7 +2076,11 @@ th:hover > .table-context-menu-button,
   flex-shrink: 0;
   justify-content: center;
   outline: none;
-  transition: border 0.1s, color 0.1s, background-color 0.1s, color 0.1s,
+  transition:
+    border 0.1s,
+    color 0.1s,
+    background-color 0.1s,
+    color 0.1s,
     filter 0.1s;
   vertical-align: middle;
   white-space: nowrap;
