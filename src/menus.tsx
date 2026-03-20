@@ -75,7 +75,7 @@ export const getEditorMenus = (
     const command = insertBackmatterSection(category)
     return {
       id: `insert-${category.id}`,
-      label: category.titles[0],
+      label: category.label || category.titles[0],
       isEnabled: isCommandValid(command),
       run: doCommand(command),
     }
@@ -89,7 +89,7 @@ export const getEditorMenus = (
 
     return {
       id: `insert-${category.id}`,
-      label: category.titles[0],
+      label: category.label || category.titles[0],
       isEnabled: isCommandValid(command),
       run: doCommand(command),
     }

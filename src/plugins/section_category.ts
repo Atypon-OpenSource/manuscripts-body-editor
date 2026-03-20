@@ -115,7 +115,7 @@ const createMenu = (
   categories.forEach((category) => {
     const item = createMenuItem(
       props,
-      category.titles[0],
+      category.label || category.titles[0],
       () => {
         onSelect(category)
         destroy()
@@ -163,7 +163,7 @@ const createButton = (
   button.classList.add('section-category-button')
   button.setAttribute('aria-label', 'Section categories menu')
   if (currentCategory) {
-    button.setAttribute('data-tooltip-content', currentCategory.titles[0])
+    button.setAttribute('data-tooltip-content', currentCategory.label || currentCategory.titles[0])
     button.classList.add('assigned')
   }
   if (disabled) {

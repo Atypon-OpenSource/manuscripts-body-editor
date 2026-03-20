@@ -59,7 +59,10 @@ export const upsertSupplementsSection = (
   const pos = findInsertionPosition(schema.nodes.supplements, doc)
   const node = schema.nodes.supplements.createAndFill(
     { id: generateNodeID(schema.nodes.supplements) },
-    [supplement]
+    [
+      schema.nodes.section_title.create(undefined, schema.text('Supplements')),
+      supplement,
+    ]
   ) as SupplementsNode
 
   tr.insert(pos, node)
