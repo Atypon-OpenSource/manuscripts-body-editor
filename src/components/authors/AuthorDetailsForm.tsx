@@ -261,10 +261,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 placeholder="Enter degree and press enter"
                 initialValues={values.degrees}
                 onChange={(newValues) => {
-                  formik.setFieldValue(
-                    'degrees',
-                    values.degrees.concat(...newValues)
-                  )
+                  formik.setFieldValue('degrees', newValues)
                 }}
               />
             </FormRow>
