@@ -65,15 +65,7 @@ const TwoColumnContainer = styled(DrawerItemsList)`
   flex-flow: row wrap;
   padding: 0 ${(props) => props.theme.grid.unit * 4}px;
   position: relative;
-
-  &:after {
-    content: '';
-    display: block;
-    border-bottom: 1px solid #f0f0f0;
-    min-width: 100%;
-    padding-top: 16px;
-  }
 `
 const TwoColumnCheckbox = styled(CheckboxContainer)`
-  flex 1 0 50%;
+  flex: 1 0 50%;
 `

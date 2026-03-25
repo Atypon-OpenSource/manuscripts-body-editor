@@ -33,7 +33,10 @@ export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
   protected popperContainer: HTMLDivElement
   private dialog: HTMLElement
-  newAward = false
+  contextMenu: HTMLElement
+
+  public ignoreMutation = () => true
+  public stopEvent = () => true
 
   public updateContents() {
     super.updateContents()
@@ -66,21 +69,8 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
         recipient ? recipient : notAvailable
       )
     )
-    if (this.props.getCapabilities().editArticle) {
-      this.dom.addEventListener('mouseup', this.handleClick)
-    }
-
     this.contentDOM.appendChild(fragment)
     this.updateClasses()
-  }
-
-  public selectNode() {
-    super.selectNode()
-    // check if award is empty and open the modal for it...
-    if (!this.node.attrs.source) {
-      this.newAward = true
-      this.showAwardModal(this.node)
-    }
   }
 
   private createAwardFragment = (
@@ -105,17 +95,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     return awardFragment
   }
 
-  handleClick = () => {
-    if (isDeleted(this.node) || !this.props.getCapabilities().editArticle) {
-      return
-    }
-    this.showContextMenu()
-  }
-
-  showContextMenu = () => {
-    this.props.popper.destroy()
-    if (!this.contentDOM) {
-      return
+  public awardContextMenu = (): HTMLElement | undefined => {
+    const can = this.props.getCapabilities()
+    if (!can.editArticle || isDeleted(this.node)) {
+      return undefined
     }
     const componentProps: ContextMenuProps = {
       actions: [
@@ -137,20 +120,21 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
         },
       ],
     }
-    this.props.popper.show(
-      this.contentDOM,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu']
-      ),
-      'right-start',
-      false
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
     )
+    return this.contextMenu
+  }
+
+  public actionGutterButtons = (): HTMLElement[] => {
+    const contextMenu = this.awardContextMenu()
+    return contextMenu ? [contextMenu] : []
   }
 
   showAwardModal = (award: AwardNode) => {
@@ -160,7 +144,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     const componentProps: AwardModalProps = {
       initialData: award?.attrs || ({} as AwardAttrs),
       onSaveAward: this.handleSaveAward,
-      onCancelAward: this.handleCancelAward,
     }
     this.popperContainer = ReactSubView(
       this.props,
@@ -194,12 +177,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
 
   handleSaveAward = (award: AwardAttrs) => {
     updateNodeAttrs(this.view, schema.nodes.award, award)
-  }
-
-  handleCancelAward = () => {
-    if (this.newAward) {
-      this.handleDeleteAward()
-    }
   }
 
   handleDeleteAward = () => {

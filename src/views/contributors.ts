@@ -48,6 +48,7 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { ORCIDIcon } from '../icons'
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
@@ -156,9 +157,13 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
         ? `<span class="name">${name} (${attrs.email})</span>`
         : `<span class="name">${name}</span>`
 
+    if (attrs.ORCID) {
+      container.innerHTML += `<a href="${attrs.ORCID}" target="_blank" class="orcid-link">${ORCIDIcon}</span>`
+    }
+
     const noteText: string[] = []
     if (affs) {
-      attrs.affiliations.map((a) => {
+      attrs.affiliationIDs?.map((a) => {
         const index = affs.get(a)
         if (index) {
           noteText.push(index.toString())

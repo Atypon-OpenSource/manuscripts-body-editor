@@ -62,6 +62,7 @@ import { templateAllows } from './lib/template'
 import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
+import { openInsertAwardModal } from './components/awards/AwardModal'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
@@ -74,7 +75,7 @@ export const getEditorMenus = (
     const command = insertBackmatterSection(category)
     return {
       id: `insert-${category.id}`,
-      label: category.titles[0],
+      label: category.label || category.titles[0],
       isEnabled: isCommandValid(command),
       run: doCommand(command),
     }
@@ -88,7 +89,7 @@ export const getEditorMenus = (
 
     return {
       id: `insert-${category.id}`,
-      label: category.titles[0],
+      label: category.label || category.titles[0],
       isEnabled: isCommandValid(command),
       run: doCommand(command),
     }
@@ -646,8 +647,8 @@ export const getEditorMenus = (
       {
         id: 'insert-awards',
         label: 'Funder Information',
-        isEnabled: isCommandValid(insertAward),
-        run: doCommand(insertAward),
+        isEnabled: isEditAllowed(state) && isCommandValid(insertAward()),
+        run: () => openInsertAwardModal(view),
         isHidden: !templateAllows(state, schema.nodes.awards),
       },
       {

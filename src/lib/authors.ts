@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { BibliographicName } from '@manuscripts/json-schema'
-import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
+import {
+  AffiliationNode,
+  ContributorNode,
+} from '@manuscripts/transform'
 
 import { TrackableAttributes } from '../types'
 
@@ -46,20 +48,18 @@ export const affiliationName = (affiliation: AffiliationAttrs) => {
 }
 
 export const authorLabel = (author: ContributorAttrs) => {
-  const name = author.bibliographicName
-
   const parts = [
     author.prefix,
-    name.family ? initials(name) : name.given,
-    name.family,
-    name.suffix,
+    author.family ? initials(author) : author.given,
+    author.family,
+    author.suffix,
   ].filter(Boolean)
   return parts.length ? parts.join(' ') : 'Unknown Author'
 }
 
-export const initials = (name: BibliographicName): string =>
-  name.given
-    ? name.given
+export const initials = (contributor: ContributorAttrs): string =>
+    contributor.given
+    ? contributor.given
         .trim()
         .split(' ')
         .map((part) => part.substring(0, 1).toUpperCase() + '.')

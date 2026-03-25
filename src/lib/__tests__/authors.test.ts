@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { BibliographicName } from '@manuscripts/json-schema'
-
 import {
   AffiliationAttrs,
   affiliationLabel,
@@ -30,58 +28,40 @@ describe('authorComparator', () => {
       {
         id: 'MPContributor:x',
         priority: 1,
-        bibliographicName: {
-          _id: 'MPBibliographicName:x-name',
-          objectType: 'MPBibliographicName',
-        },
         role: 'author',
-        affiliations: [],
+        affiliationIDs: [],
         isCorresponding: false,
         isJointContributor: false,
-        ORCIDIdentifier: '',
+        ORCID: '',
         email: '',
-        userID: '',
-        invitationID: '',
-        corresp: [],
-        footnote: [],
+        correspIDs: [],
+        footnoteIDs: [],
         prefix: '',
       },
       {
         id: 'MPContributor:y',
         priority: 0,
-        bibliographicName: {
-          _id: 'MPBibliographicName:y-name',
-          objectType: 'MPBibliographicName',
-        },
         role: 'author',
-        affiliations: [],
+        affiliationIDs: [],
         isCorresponding: false,
         isJointContributor: false,
-        ORCIDIdentifier: '',
+        ORCID: '',
         email: '',
-        userID: '',
-        invitationID: '',
-        corresp: [],
-        footnote: [],
+        correspIDs: [],
+        footnoteIDs: [],
         prefix: '',
       },
       {
         id: 'MPContributor:z',
         priority: 2,
-        bibliographicName: {
-          _id: 'MPBibliographicName:z-name',
-          objectType: 'MPBibliographicName',
-        },
         role: 'author',
-        affiliations: [],
+        affiliationIDs: [],
         isCorresponding: false,
         isJointContributor: false,
-        ORCIDIdentifier: '',
+        ORCID: '',
         email: '',
-        userID: '',
-        invitationID: '',
-        corresp: [],
-        footnote: [],
+        correspIDs: [],
+        footnoteIDs: [],
         prefix: '',
       },
     ]
@@ -96,42 +76,34 @@ describe('authorComparator', () => {
 
 describe('initials', () => {
   it('initials exist when "given" is present with more than one given name', () => {
-    const name: BibliographicName = {
-      _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
+    const contributor = {
       given: 'Derek Gilbert',
       family: 'Dilbert',
-    }
-    expect(initials(name)).toEqual('D.G.')
+    } as ContributorAttrs
+    expect(initials(contributor)).toEqual('D.G.')
   })
 
   it('initials empty when no given name is present', () => {
-    const name: BibliographicName = {
-      _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
+    const contributor = {
       family: 'Dilbert',
-    }
-    expect(initials(name)).toEqual('')
+    } as ContributorAttrs
+    expect(initials(contributor)).toEqual('')
   })
 
   it('initials empty when given name is empty string', () => {
-    const name: BibliographicName = {
-      _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
+    const contributor = {
       family: 'Dilbert',
       given: '',
-    }
-    expect(initials(name)).toEqual('')
+    } as ContributorAttrs
+    expect(initials(contributor)).toEqual('')
   })
 
   it('ignore extra white space', () => {
-    const name: BibliographicName = {
-      _id: 'MPBibliographicName:X',
-      objectType: 'MPBibliographicName',
+    const contributor = {
       given: 'Derek ',
       family: 'Dilbert',
-    }
-    expect(initials(name)).toEqual('D.')
+    } as ContributorAttrs
+    expect(initials(contributor)).toEqual('D.')
   })
 })
 
