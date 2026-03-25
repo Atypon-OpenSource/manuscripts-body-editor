@@ -22,6 +22,7 @@ import {
   Label,
   FormRow,
   LabelText,
+  MultiValueInput,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
 import {
@@ -146,7 +147,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     </>
                   )}
                 </Field>
-              </FormRow>
+            </FormRow>
+            <FormRow>
+              <Field name={'suffix'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="suffix">Suffix</Label>
+                    <TextField id={'suffix'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
               <FormRow>
                 <Field name={'given'}>
                   {(props: FieldProps) => (
@@ -241,7 +252,22 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     )}
                   </Field>
                 </FormRow>
-              </OrcidContainer>
+            </OrcidContainer>
+            <FormRow>
+              <Label htmlFor={'degrees'}>Degrees</Label>
+              <MultiValueInput
+                id="degrees"
+                inputType="text"
+                placeholder="Enter degree and press enter"
+                initialValues={values.degrees}
+                onChange={(newValues) => {
+                  formik.setFieldValue(
+                    'degrees',
+                    values.degrees.concat(...newValues)
+                  )
+                }}
+              />
+            </FormRow>
           </ChangeHandlingForm>
         )
       }}
