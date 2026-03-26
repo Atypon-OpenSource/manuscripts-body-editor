@@ -137,111 +137,109 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             formRef={authorFormRef}
             noValidate
           >
-              <FormRow>
-                <Field name={'prefix'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="prefix">Prefix</Label>
-                      <TextField id={'prefix'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <FormRow>
-                <Field name={'given'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="given-name">Given name</Label>
-                      <TextField id={'given-name'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <FormRow>
-                <Field name={'family'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="family-name">Family name</Label>
-                      <TextField id={'family-name'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
             <FormRow>
-              <Field name={'role'}>
+              <Field name={'prefix'}>
                 {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="role">Job Title</Label>
-                      <TextField id={'role'} {...props.field} />
-                    </>
+                  <>
+                    <Label htmlFor="prefix">Prefix</Label>
+                    <TextField id={'prefix'} {...props.field} />
+                  </>
                 )}
               </Field>
             </FormRow>
-              <FormRow>
-                <Field name={'email'} type={'email'}>
-                  {(props: FieldProps) => {
-                    const hasError =
-                      getIn(formik.touched, 'email') &&
-                      getIn(formik.errors, 'email')
-                    return (
-                      <>
-                        <Label htmlFor="email">
-                          {isEmailRequired
-                            ? 'Email address*'
-                            : 'Email address'}
-                        </Label>
-                        <TextFieldWithError
-                          id={'email'}
-                          type="email"
-                          required={isEmailRequired}
-                          {...props.field}
-                          error={hasError}
-                        />
-                        {hasError && (
-                          <InputErrorText>
-                            {getIn(formik.errors, 'email')}
-                          </InputErrorText>
-                        )}
-                      </>
-                    )
-                  }}
-                </Field>
-              </FormRow>
+            <FormRow>
+              <Field name={'given'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="given-name">Given name</Label>
+                    <TextField id={'given-name'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'family'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="family-name">Family name</Label>
+                    <TextField id={'family-name'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="role">Job Title</Label>
+                    <TextField id={'role'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'email'} type={'email'}>
+                {(props: FieldProps) => {
+                  const hasError =
+                    getIn(formik.touched, 'email') &&
+                    getIn(formik.errors, 'email')
+                  return (
+                    <>
+                      <Label htmlFor="email">
+                        {isEmailRequired ? 'Email address*' : 'Email address'}
+                      </Label>
+                      <TextFieldWithError
+                        id={'email'}
+                        type="email"
+                        required={isEmailRequired}
+                        {...props.field}
+                        error={hasError}
+                      />
+                      {hasError && (
+                        <InputErrorText>
+                          {getIn(formik.errors, 'email')}
+                        </InputErrorText>
+                      )}
+                    </>
+                  )
+                }}
+              </Field>
+            </FormRow>
             <CheckboxContainer>
               <CheckboxLabel>
                 <Field name={'isCorresponding'}>
                   {(props: FieldProps) => (
-                      <CheckboxField
-                          id={'isCorresponding'}
-                          checked={props.field.value}
-                          {...props.field}
-                      />
+                    <CheckboxField
+                      id={'isCorresponding'}
+                      checked={props.field.value}
+                      {...props.field}
+                    />
                   )}
                 </Field>
                 <LabelText>Corresponding Author</LabelText>
               </CheckboxLabel>
             </CheckboxContainer>
-              <OrcidContainer>
-                <FormRow>
-                  <Label htmlFor="orcid">ORCID</Label>
-                  <Field name={'ORCID'} type={'text'}>
-                    {(props: FieldProps) => (
-                      <>
-                        <Label htmlFor="orcid" className="sr-only">
-                          ORCID
-                        </Label>
-                        <TextField
-                          id={'orcid'}
-                          placeholder={'https://orcid.org/...'}
-                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]"
-                          title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                          {...props.field}
-                        />
-                      </>
-                    )}
-                  </Field>
-                </FormRow>
-              </OrcidContainer>
+            <OrcidContainer>
+              <FormRow>
+                <Label htmlFor="orcid">ORCID</Label>
+                <Field name={'ORCID'} type={'text'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <Label htmlFor="orcid" className="sr-only">
+                        ORCID
+                      </Label>
+                      <TextField
+                        id={'orcid'}
+                        placeholder={'https://orcid.org/...'}
+                        pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]"
+                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                        {...props.field}
+                      />
+                    </>
+                  )}
+                </Field>
+              </FormRow>
+            </OrcidContainer>
           </ChangeHandlingForm>
         )
       }}

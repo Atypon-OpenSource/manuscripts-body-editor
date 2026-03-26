@@ -65,20 +65,20 @@ export function DrawerGroup<T extends Base>({
   return (
     <>
       <AssignButton
-          onClick={() => setShowDrawer(true)}
-          data-cy={cy + 'assign-button'}
+        onClick={() => setShowDrawer(true)}
+        data-cy={cy + 'assign-button'}
       >
         {Icon}
         {buttonText}
       </AssignButton>
       <SelectedItemsBox
-          data-cy={cy + '-selected-items'}
-          items={selectedItems.map((i) => ({
-            id: String(i.id),
-            label: String((i as T)[labelField as keyof T] ?? ''),
-          }))}
-          onRemove={removeItem}
-          placeholder={`No ${title} assigned`}
+        data-cy={cy + '-selected-items'}
+        items={selectedItems.map((i) => ({
+          id: String(i.id),
+          label: String((i as T)[labelField as keyof T] ?? ''),
+        }))}
+        onRemove={removeItem}
+        placeholder={`No ${title} assigned`}
       />
       {showDrawer && (
         <Drawer
