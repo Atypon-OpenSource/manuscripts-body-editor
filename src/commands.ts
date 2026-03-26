@@ -295,7 +295,10 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
     const node = $from.node(d)
 
     if (isElementNodeType(node.type)) {
-      return $from.after(d)
+      const parent = d > 0 ? $from.node(d - 1) : null
+      if (!parent || !isElementNodeType(parent.type)) {
+        return $from.after(d)
+      }
     }
   }
 
