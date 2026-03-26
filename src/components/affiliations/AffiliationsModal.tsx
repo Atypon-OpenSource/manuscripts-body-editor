@@ -60,6 +60,14 @@ import { GenericDrawer } from '../modal-drawer/GenericDrawer'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
+import { EditorView } from 'prosemirror-view'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import {
+  deleteNode,
+  findChildrenAttrsByType,
+  updateNodeAttrs,
+} from '../../lib/view'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs
@@ -68,7 +76,6 @@ export interface AffiliationsModalProps {
   onSaveAffiliation: (affiliation: AffiliationAttrs) => void
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
-  clearSelection: () => void
   addNewAffiliation?: boolean
 }
 
@@ -86,7 +93,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onSaveAffiliation,
   onDeleteAffiliation,
   onUpdateAuthors,
-  clearSelection,
   addNewAffiliation = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
@@ -164,7 +170,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     } else {
       setIsOpen(false)
     }
-    clearSelection()
   }
 
   const handleSelect = (affiliation: AffiliationAttrs) => {
@@ -631,3 +636,65 @@ const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
   margin-bottom: 16px;
 `
+
+export const openAffiliationsModal = (pos: number, view?: EditorView) => {
+  if (!view) {
+    return
+  }
+
+  const { state } = view
+  const props = getEditorProps(state)
+  const contributors: ContributorAttrs[] = findChildrenAttrsByType(
+    view,
+    schema.nodes.contributor
+  )
+  const componentProps: AffiliationsModalProps = {
+    affiliations: [],
+    authors: contributors,
+    onSaveAffiliation: (affiliation) =>
+      handleSaveAffiliation(view, affiliation, pos),
+    onDeleteAffiliation: (affiliation) =>
+      handleDeleteAffiliation(view, affiliation),
+    onUpdateAuthors: (authors) => handleUpdateAuthors(view, authors),
+    addNewAffiliation: true,
+  }
+
+  const dialog = ReactSubView(
+    props,
+    AffiliationsModal,
+    componentProps,
+    state.doc,
+    () => pos,
+    view
+  )
+  view.focus()
+  document.body.appendChild(dialog)
+}
+
+export const handleSaveAffiliation = (
+  view: EditorView,
+  affiliation: AffiliationAttrs,
+  affiliationsPos: number
+) => {
+  const update = updateNodeAttrs(view, schema.nodes.affiliation, affiliation)
+  if (!update) {
+    const node = schema.nodes.affiliation.create(affiliation)
+    view.dispatch(view.state.tr.insert(affiliationsPos + 1, node))
+  }
+}
+
+export const handleDeleteAffiliation = (
+  view: EditorView,
+  affiliation: AffiliationAttrs
+) => {
+  deleteNode(view, affiliation.id)
+}
+
+export const handleUpdateAuthors = (
+  view: EditorView,
+  authors: ContributorAttrs[]
+) => {
+  authors.forEach((author) => {
+    updateNodeAttrs(view, schema.nodes.contributor, author)
+  })
+}

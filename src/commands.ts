@@ -121,6 +121,8 @@ import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 import { persistentCursor } from './plugins/persistent-cursor'
 import { AwardAttrs } from './views/award'
+import { openAffiliationsModal } from './components/affiliations/AffiliationsModal'
+import { openAuthorsModal } from './components/authors/AuthorsModal'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -1147,10 +1149,8 @@ export const insertContributors = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, contributors.pos)
-    if (view) {
-      view.focus()
-    }
     dispatch(tr.setSelection(selection).scrollIntoView())
+    openAuthorsModal(contributors.pos, view)
   }
   return true
 }
@@ -1178,10 +1178,8 @@ export const insertAffiliation = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, affiliations.pos)
-    if (view) {
-      view.focus()
-    }
     dispatch(tr.setSelection(selection).scrollIntoView())
+    openAffiliationsModal(affiliations.pos, view)
   }
   return true
 }
