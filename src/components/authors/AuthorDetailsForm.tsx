@@ -36,11 +36,13 @@ import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
+import { normalizeAuthor } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ORCID_URL_REGEX =
   /^https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]\/?$/
+const ORCID_INPUT_PATTERN = ORCID_URL_REGEX.source.slice(1, -1)
 export interface FormActions {
   reset: () => void
 }
@@ -108,7 +110,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   return (
     <Formik<ContributorAttrs>
       initialValues={values}
-      onSubmit={onSave}
+      onSubmit={(submitted) => onSave(normalizeAuthor(submitted))}
       enableReinitialize={true}
       validateOnChange={true}
       innerRef={formRef}
@@ -116,8 +118,8 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     >
       {(formik) => {
         return (
-          <ChangeHandlingForm
-            onChange={onChange}
+          <ChangeHandlingForm<ContributorAttrs>
+            onChange={(next) => onChange(normalizeAuthor(next))}
             id="author-details-form"
             formRef={authorFormRef}
             noValidate
@@ -221,9 +223,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                         id={'orcid'}
                         type="url"
                         placeholder={'https://orcid.org/...'}
-                        pattern="https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]\/?"
-                        title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
                         {...props.field}
+                        pattern={ORCID_INPUT_PATTERN}
+                        title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
                         error={hasError}
                       />
                       {hasError && (
