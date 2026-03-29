@@ -294,9 +294,20 @@ const findBlockInsertPosition = (state: ManuscriptEditorState) => {
   for (let d = $from.depth; d >= 0; d--) {
     const node = $from.node(d)
 
-    if (isElementNodeType(node.type)) {
-      return $from.after(d)
+    if (!isElementNodeType(node.type)) {
+      continue
     }
+
+    if (
+      d > 0 &&
+      node.type === schema.nodes.paragraph &&
+      ($from.node(d - 1).type === schema.nodes.pullquote_element ||
+        $from.node(d - 1).type === schema.nodes.blockquote_element)
+    ) {
+      continue
+    }
+
+    return $from.after(d)
   }
 
   return null
