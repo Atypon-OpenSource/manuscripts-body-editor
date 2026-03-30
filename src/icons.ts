@@ -28,6 +28,7 @@ import {
   ImageRightIcon,
   LinkIcon,
   LockIcon,
+  ORCIDIcon as ORCID,
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
@@ -58,3 +59,4 @@ export const translateIcon = renderIcon(TranslateIcon)
 export const linkIcon = renderIcon(LinkIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
+export const ORCIDIcon = renderIcon(ORCID)
