@@ -148,6 +148,7 @@ export const AwardForm = ({
               <Field name="source">
                 {(props: FieldProps) => (
                   <AsyncCreatableSelect<FunderOption>
+                    inputId={'source'}
                     loadOptions={handleOnLoadFunders}
                     onInputChange={handleInputChange}
                     autoFocus={true}
