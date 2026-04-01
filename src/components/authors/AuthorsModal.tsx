@@ -196,6 +196,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setShowRequiredFieldConfirmationDialog(false)
       setLastSavedAuthor(null)
       setOpen(false)
+      setSelection(undefined)
     }
   }
 

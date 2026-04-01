@@ -169,6 +169,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setPendingAction('close')
     } else {
       setIsOpen(false)
+      setSelection(undefined)
     }
   }
 
