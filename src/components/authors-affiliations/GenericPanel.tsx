@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * Shared panel layout + selectable rows for Authors / Affiliations modal tabs.
- * Row visuals come from style-guide components historically named "Drawer*";
- * we wrap them here so callers use neutral names (ListItem, ListItems).
- */
 import {
   AddedIcon,
   AddIcon,
