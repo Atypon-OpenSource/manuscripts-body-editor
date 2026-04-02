@@ -214,15 +214,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   public createDOM = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('block-container', `block-${this.node.type.name}`)
-
-    // Clear the suppress-gutter class when the popper is not active (Keyboard navigation)
-    const clearSuppressGutter = () => {
-      if (!this.props.popper.isActive()) {
-        this.dom.classList.remove('suppress-gutter')
-      }
-    }
-    this.dom.addEventListener('mouseenter', clearSuppressGutter)
-    this.dom.addEventListener('focusin', clearSuppressGutter)
   }
 
   public authorContextMenu = (): HTMLElement | undefined => {
@@ -315,7 +306,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public showContextMenu = (element: Element) => {
     this.props.popper.destroy() // destroy the old context menu
-    this.dom.classList.add('suppress-gutter')
 
     const componentProps: ContextMenuProps = {
       actions: [
@@ -339,7 +329,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   handleEdit = (id: string, addNew?: boolean) => {
-    this.dom.classList.remove('suppress-gutter')
     this.props.popper.destroy()
 
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
