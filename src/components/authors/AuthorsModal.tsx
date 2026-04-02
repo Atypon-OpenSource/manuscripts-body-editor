@@ -26,6 +26,7 @@ import {
   ModalSidebar,
   ModalSidebarHeader,
   ModalSidebarTitle,
+  outlineStyle,
   ScrollableModalContent,
   SidebarContent,
   StyledModal,
@@ -557,7 +558,13 @@ function createEmptyAuthor(priority: number): ContributorAttrs {
   }
 }
 
-const AddAuthorButton = styled.div`
+const AddAuthorButton = styled.button`
+  background: none;
+  border: none;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  width: 100%;
   display: flex;
   align-items: center;
   padding: 12px 8px 12px 12px;
@@ -568,6 +575,7 @@ const AddAuthorButton = styled.div`
     border-left: 0;
     border-right: 0;
   }
+  ${outlineStyle}
 `
 
 const ActionTitle = styled.div`
@@ -577,12 +585,12 @@ const ActionTitle = styled.div`
 const AuthorTabs = styled(InspectorTabs)`
   position: relative;
 `
-const AuthorTabPanel = styled(InspectorTabPanel).attrs({ unmount: false })`
+const AuthorTabPanel = styled(InspectorTabPanel).attrs({ tabIndex: -1, unmount: false })`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
 const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
+  padding: 8px;
 `
 
 const StyledModalBody = styled(ModalBody)`
