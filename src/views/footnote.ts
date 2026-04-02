@@ -117,7 +117,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       element,
       this.contextMenu,
       'right-start',
-      false,
+      true,
       [],
       autoFocus
     )
