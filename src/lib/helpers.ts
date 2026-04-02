@@ -15,11 +15,13 @@
  */
 
 import {
+  isExecutableNodeType,
   ManuscriptEditorState,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
 import { Node, ResolvedPos } from 'prosemirror-model'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 
 export const isNodeOfType =
@@ -67,6 +69,32 @@ export const mergeSimilarItems =
       ]
     }, [])
   }
+
+export const selectionForOutlineNavigation = (
+  doc: Node,
+  pos: number
+): NodeSelection | TextSelection => {
+  const node = doc.nodeAt(pos)
+  if (!node || isExecutableNodeType(node.type)) {
+    return NodeSelection.create(doc, pos)
+  }
+
+  if (node.isTextblock) {
+    return TextSelection.create(doc, pos + 1)
+  }
+
+  let textPos: number | null = null
+  doc.nodesBetween(pos + 1, pos + node.nodeSize, (child, childPos) => {
+    if (child.isTextblock) {
+      textPos = childPos + 1
+      return false
+    }
+  })
+
+  return textPos !== null
+    ? TextSelection.create(doc, textPos)
+    : NodeSelection.create(doc, pos)
+}
 
 export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
   const selection = view.state.selection

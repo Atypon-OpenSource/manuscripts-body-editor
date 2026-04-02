@@ -130,7 +130,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const currentAffiliation = selection
     const affiliatedAuthorIds = authors
-      .filter((author) => author.affiliationIDs?.includes(currentAffiliation.id))
+      .filter((author) =>
+        author.affiliationIDs?.includes(currentAffiliation.id)
+      )
       .map((author) => author.id)
     setSelectedAuthorIds(affiliatedAuthorIds)
     setAffiliationAuthorMap((prevMap) => {
@@ -342,9 +344,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       const author = authors.find((a) => a.id === authorId)
       return {
         id: authorId,
-        label: author
-          ? `${author.given} ${author.family}`
-          : '',
+        label: author ? `${author.given} ${author.family}` : '',
       }
     })
     .filter((author) => author.label)
