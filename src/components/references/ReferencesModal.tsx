@@ -28,6 +28,8 @@ import {
   SidebarContent,
   StyledModal,
   useScrollDetection,
+  withListNavigation,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
@@ -52,11 +54,12 @@ const ReferencesSidebarContent = styled(SidebarContent)`
   overflow-y: auto;
 `
 
-const ReferencesInnerWrapper = styled.div`
+const ReferencesInnerWrapper = withListNavigation(styled.div`
   width: 100%;
-`
+  padding: 12px 0;
+`)
 
-const ReferenceButton = styled.div`
+const ReferenceButton = withNavigableListItem(styled.div`
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
@@ -83,7 +86,7 @@ const ReferenceButton = styled.div`
     padding: ${(props) => props.theme.grid.unit * 2}px;
     border-radius: 6px;
   }
-`
+`)
 
 const IconContainer = styled.div`
   padding-right: ${(props) => props.theme.grid.unit * 5}px;
