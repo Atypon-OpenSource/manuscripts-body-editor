@@ -26,7 +26,7 @@ import {
 import {
   Command,
   EditorState,
-  NodeSelection,
+  TextSelection,
   Transaction,
 } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -40,6 +40,7 @@ import {
 } from './configs/ManuscriptsEditor'
 import { PopperManager } from './lib/popper'
 import { useDoWithDebounce } from './lib/use-do-with-debounce'
+import { selectionForOutlineNavigation } from './lib/helpers'
 import { searchReplaceKey } from './plugins/search-replace'
 
 export const useEditor = (externalProps: ExternalProps) => {
@@ -192,14 +193,18 @@ export const useEditor = (externalProps: ExternalProps) => {
         return
       }
 
-      state.doc.descendants((node, pos) => {
+      const viewState = currentView.state
+      viewState.doc.descendants((node, pos) => {
         if (node.attrs.id === id) {
           currentView.focus()
 
-          const selection = NodeSelection.create(state.tr.doc, pos)
+          const selection = selectionForOutlineNavigation(viewState.doc, pos)
 
-          currentView.dispatch(state.tr.setSelection(selection))
-          const dom = currentView.domAtPos(pos + 1)
+          currentView.dispatch(viewState.tr.setSelection(selection))
+
+          const scrollPos =
+            selection instanceof TextSelection ? selection.from : pos + 1
+          const dom = currentView.domAtPos(scrollPos)
 
           if (dom.node instanceof Element) {
             dom.node.scrollIntoView({

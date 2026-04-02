@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  AffiliationNode,
-  ContributorNode,
-} from '@manuscripts/transform'
+import { AffiliationNode, ContributorNode } from '@manuscripts/transform'
 
 import { TrackableAttributes } from '../types'
 
@@ -58,7 +55,7 @@ export const authorLabel = (author: ContributorAttrs) => {
 }
 
 export const initials = (contributor: ContributorAttrs): string =>
-    contributor.given
+  contributor.given
     ? contributor.given
         .trim()
         .split(' ')
