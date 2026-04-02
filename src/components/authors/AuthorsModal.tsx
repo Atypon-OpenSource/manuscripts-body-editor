@@ -555,6 +555,7 @@ function createEmptyAuthor(
     prefix: '',
   }
 }
+
 const AddAuthorButton = styled.div`
   display: flex;
   align-items: center;
