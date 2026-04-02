@@ -15,7 +15,6 @@
  */
 import {
   AddIcon,
-  AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
   InspectorTab,
@@ -57,8 +56,7 @@ import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
-import { GenericDrawer } from '../modal-drawer/GenericDrawer'
-import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { AuthorsPanel } from '../authors/AuthorsPanel'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
 import { EditorView } from 'prosemirror-view'
@@ -78,6 +76,8 @@ export interface AffiliationsModalProps {
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
   addNewAffiliation?: boolean
+  onClose?: () => void
+  onOpenAuthorsModal?: () => void
 }
 
 function makeAuthorItems(authors: ContributorAttrs[]) {
@@ -95,6 +95,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onDeleteAffiliation,
   onUpdateAuthors,
   addNewAffiliation = false,
+  onClose,
+  onOpenAuthorsModal,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
@@ -105,6 +107,12 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     authorsReducer,
     $authors.sort(authorComparator)
   )
+  useEffect(() => {
+    dispatchAuthors({
+      type: 'set',
+      state: [...$authors].sort(authorComparator),
+    })
+  }, [$authors])
   const [affiliations, dispatchAffiliations] = useReducer(
     affiliationsReducer,
     $affiliations
@@ -117,7 +125,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setShowRequiredFieldConfirmationDialog,
   ] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
-  const [showAuthorDrawer, setShowAuthorDrawer] = useState(false)
   const [selectedAuthorIds, setSelectedAuthorIds] = useState<string[]>([])
   const [pendingSelection, setPendingSelection] =
     useState<AffiliationAttrs | null>(null)
@@ -130,6 +137,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [affiliationAuthorMap, setAffiliationAuthorMap] = useState<
     Map<string, string[]>
   >(new Map())
+
+  const prevIsOpenRef = useRef(isOpen)
+  useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      onClose?.()
+    }
+    prevIsOpenRef.current = isOpen
+  }, [isOpen, onClose])
 
   useEffect(() => {
     if (!selection) {
@@ -204,7 +219,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(false)
       setSelection(affiliation)
       setSelectedAuthorIds(affiliatedAuthorIds)
-      setShowAuthorDrawer(false)
       setAffiliationAuthorMap((prevMap) => {
         const newMap = new Map(prevMap)
         newMap.set(affiliation.id, affiliatedAuthorIds)
@@ -250,7 +264,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         return newMap
       })
 
-      setShowAuthorDrawer(false)
       setSavedAffiliationId(affiliation.id)
 
       setTimeout(() => {
@@ -375,7 +388,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setNewAffiliation(true)
     setSelection(emptyAffiliation)
     setSelectedAuthorIds([])
-    setShowAuthorDrawer(false)
   }
 
   useEffect(() => {
@@ -435,7 +447,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleConfirmationCancel = () => {
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
-    setShowAuthorDrawer(false)
     if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)
@@ -523,7 +534,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   />
                   <InspectorTabList>
                     <InspectorTab>Details</InspectorTab>
-                    <InspectorTab>Authors</InspectorTab>
+                    {onOpenAuthorsModal && <InspectorTab>Authors</InspectorTab>}
                   </InspectorTabList>
                   <InspectorTabPanels>
                     <AffiliationTabPanel>
@@ -534,26 +545,16 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                         actionsRef={actionsRef}
                       />
                     </AffiliationTabPanel>
-                    <AffiliationTabPanel>
-                      <DrawerGroup<{ id: string; label: string }>
-                        Drawer={GenericDrawer}
-                        removeItem={(id) => {
-                          setSelectedAuthorIds((prev) =>
-                            prev.filter((authorId) => authorId !== id)
-                          )
-                        }}
-                        selectedItems={selectedAuthors}
-                        onSelect={selectAuthor}
-                        items={makeAuthorItems(authors)}
-                        showDrawer={showAuthorDrawer}
-                        setShowDrawer={setShowAuthorDrawer}
-                        title="Authors"
-                        cy="affiliations"
-                        labelField="label"
-                        buttonText="Affiliate Authors"
-                        Icon={<AddUserIcon width={16} height={16} />}
-                      />
-                    </AffiliationTabPanel>
+                    {onOpenAuthorsModal && (
+                      <AffiliationTabPanel>
+                        <AuthorsPanel
+                          items={makeAuthorItems(authors)}
+                          selectedItems={selectedAuthors}
+                          onSelect={selectAuthor}
+                          onOpenAuthorsModal={onOpenAuthorsModal}
+                        />
+                      </AffiliationTabPanel>
+                    )}
                   </InspectorTabPanels>
                 </AffiliationTabs>
                 <ConfirmationDialog
