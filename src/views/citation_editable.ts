@@ -15,6 +15,7 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import {
   BibliographyItemAttrs,
   ManuscriptNode,
@@ -34,7 +35,6 @@ import {
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
 import { handleEnterKey } from '../lib/navigation-utils'
-import { isDeleted } from '../lib/track-changes-utils'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'

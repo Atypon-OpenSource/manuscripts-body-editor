@@ -21,7 +21,7 @@ import { EditorProps } from '../configs/ManuscriptsEditor'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
-} from '../lib/track-changes-utils'
+} from '@manuscripts/track-changes-plugin'
 
 export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
   public dom: HTMLElement
