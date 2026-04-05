@@ -15,7 +15,12 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { ContributorsNode, schema } from '@manuscripts/transform'
+
 import { NodeSelection } from 'prosemirror-state'
 
 import {
@@ -30,10 +35,7 @@ import {
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
+
 import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
