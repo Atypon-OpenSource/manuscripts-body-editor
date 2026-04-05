@@ -17,13 +17,15 @@ import {
   AffiliationIcon,
   CrclTickAnimation,
   DeleteIcon,
+  SecondaryIconButton,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
 import { AffiliationAttrs } from '../../lib/authors'
 
-const AffiliationContainer = styled.div`
+const AffiliationContainer = withNavigableListItem(styled.div`
   padding: ${(props) => props.theme.grid.unit * 2}px 0
     ${(props) => props.theme.grid.unit * 2}px;
   display: flex;
@@ -41,7 +43,7 @@ const AffiliationContainer = styled.div`
   &.active {
     border-color: ${(props) => props.theme.colors.border.primary};
   }
-`
+`)
 const AffiliationName = styled.div`
   margin-left: 12px;
   flex: 1;
@@ -68,15 +70,11 @@ const AffiliationBox = styled.div`
   margin-left: 4px;
 `
 
-const RemoveButton = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 8px;
+const RemoveButton = styled(SecondaryIconButton)`
   svg {
-    cursor: pointer;
-  }
-  .icon_element {
-    fill: #6e6e6e;
+    path[fill='white'] {
+      fill: white;
+    }
   }
 `
 
@@ -140,7 +138,11 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
         />
       )}
       {isSelected && (
-        <RemoveButton onClick={() => onDelete()} data-tooltip-content="Delete">
+        <RemoveButton
+          size={13}
+          onClick={() => onDelete()}
+          data-tooltip-content="Delete"
+        >
           <DeleteIcon fill={'#6E6E6E'} />
         </RemoveButton>
       )}

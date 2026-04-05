@@ -18,21 +18,24 @@ import { generateNodeID, Nodes, schema } from '@manuscripts/transform'
 
 import { ContributorAttrs } from './authors'
 
+const trim = (value: string | undefined) => (value ?? '').trim()
+
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
     id: author.id,
-    role: author.role || '',
+    role: trim(author.role),
     affiliationIDs: (author.affiliationIDs || []).sort(),
-    given: author.given || '',
-    family: author.family || '',
-    email: author.email || '',
+    given: trim(author.given),
+    family: trim(author.family),
+    email: trim(author.email),
     isCorresponding: author.isCorresponding || false,
-    ORCID: author.ORCID || '',
+    ORCID: trim(author.ORCID),
     priority: author.priority,
     isJointContributor: author.isJointContributor || false,
     footnoteIDs: author.footnoteIDs || [],
     correspIDs: author.correspIDs || [],
-    prefix: author.prefix || '',
+    prefix: trim(author.prefix),
+    suffix: trim(author.suffix),
   }
 
   if (author.creditRoles && Array.isArray(author.creditRoles)) {

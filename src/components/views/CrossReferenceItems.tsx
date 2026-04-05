@@ -19,19 +19,22 @@ import {
   PrimaryButton,
   SecondaryButton,
   TextArea,
+  withFocusTrap,
+  withListNavigation,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
 import { Target } from '@manuscripts/transform'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-const Container = styled.div`
+const Container = withFocusTrap(styled.div`
   padding: ${(props) => props.theme.grid.unit * 3}px
     ${(props) => props.theme.grid.unit * 4}px;
   display: flex;
   flex-direction: column;
   max-height: 60vh;
   overflow: hidden;
-`
+`)
 
 const Actions = styled.div`
   display: flex;
@@ -40,14 +43,15 @@ const Actions = styled.div`
   flex-shrink: 0;
 `
 
-const Items = styled.div`
+const Items = withListNavigation(styled.div`
   flex: 1;
   overflow-y: auto;
-  margin: ${(props) => props.theme.grid.unit * 4}px 0;
-`
+  padding: ${(props) => props.theme.grid.unit * 3}px;
+`)
 
-const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
-  position: relative;
+const CrossReferenceItem = withNavigableListItem(styled.div<{
+  isSelected: boolean
+}>`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 4}px;
   background-color: ${(props) =>
@@ -61,17 +65,12 @@ const CrossReferenceItem = styled.div<{ isSelected: boolean }>`
         ? props.theme.colors.brand.medium
         : props.theme.colors.border.secondary};
   border-width: 1px 0;
-  margin-top: -1px;
   z-index: ${(props) => (props.isSelected ? '1' : '0')};
-
-  &:first-child {
-    margin-top: 0;
-  }
 
   &:hover {
     background-color: ${(props) => props.theme.colors.background.selected};
   }
-`
+`)
 
 const Label = styled.span`
   color: ${(props) => props.theme.colors.text.primary};
@@ -153,7 +152,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
             <CrossReferenceItem
               key={target.id}
               isSelected={selectedItem === target.id}
-              onMouseDown={() => setSelectedItem(target.id)}
+              onClick={() => setSelectedItem(target.id)}
             >
               <DefaultLabelWrapper>
                 <Label>{target.label}</Label>
