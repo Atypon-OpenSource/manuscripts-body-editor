@@ -1138,7 +1138,7 @@ export const insertContributors = (
   if (!contributors) {
     const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
     const contributorsNode = state.schema.nodes.contributors.create({
-      id: '',
+      id: generateNodeID(schema.nodes.contributors),
     })
     tr.insert(pos, contributorsNode)
     contributors = { node: contributorsNode, pos }
@@ -1169,7 +1169,7 @@ export const insertAffiliation = (
   if (!affiliations) {
     const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
     const affiliationsNode = state.schema.nodes.affiliations.create({
-      id: '',
+      id: generateNodeID(schema.nodes.affiliations),
     })
     tr.insert(pos, affiliationsNode)
     affiliations = { node: affiliationsNode, pos }
