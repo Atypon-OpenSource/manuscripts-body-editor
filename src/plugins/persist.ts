@@ -44,8 +44,7 @@ export default () => {
         if (
           !(node.type.spec.attrs && 'id' in node.type.spec.attrs) ||
           isHighlightMarkerNode(node) ||
-          isManuscriptNode(node) ||
-          isManuscriptNode(parent)
+          isManuscriptNode(node)
         ) {
           return
         }
