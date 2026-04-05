@@ -609,7 +609,7 @@
 }
 
 .ProseMirror .add-subtitle {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   cursor: pointer;
   margin-left: var(--body-side-margin);
