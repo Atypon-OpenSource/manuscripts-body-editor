@@ -15,6 +15,7 @@
  */
 
 import {
+  IconTextButton,
   TriangleCollapsedIcon,
   TriangleExpandedIcon,
 } from '@manuscripts/style-guide'
@@ -29,19 +30,11 @@ import {
 import { ReferenceSearchResults } from './ReferenceSearchResults'
 import { ReferenceSearchResultsPlaceholder } from './ReferenceSearchResultsPlaceholder'
 
-const SearchSourceLabel = styled.div`
-  margin: 0 ${(props) => props.theme.grid.unit * 4}px
+const SearchSourceLabel = styled(IconTextButton)`
+  margin: ${(props) => props.theme.grid.unit * 2}px
+    ${(props) => props.theme.grid.unit * 4}px
     ${(props) => props.theme.grid.unit * 2}px;
   color: ${(props) => props.theme.colors.text.secondary};
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-
-  .icon {
-    margin-left: 8px;
-    margin-right: 13px;
-  }
 
   &:hover {
     color: ${(props) => props.theme.colors.text.muted};
