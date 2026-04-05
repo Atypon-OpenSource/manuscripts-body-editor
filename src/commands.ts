@@ -288,30 +288,19 @@ export const canInsert =
     return false
   }
 
-const findBlockInsertPosition = (state: ManuscriptEditorState) => {
-  const { $from } = state.selection
-
-  for (let d = $from.depth; d >= 0; d--) {
-    const node = $from.node(d)
-
-    if (!isElementNodeType(node.type)) {
-      continue
+  const findBlockInsertPosition = (state: ManuscriptEditorState) => {
+    const { $from } = state.selection
+  
+    for (let d = $from.depth; d >= 0; d--) {
+      const node = $from.node(d)
+  
+      if (isElementNodeType(node.type)) {
+        return $from.after(d)
+      }
     }
-
-    if (
-      d > 0 &&
-      node.type === schema.nodes.paragraph &&
-      ($from.node(d - 1).type === schema.nodes.pullquote_element ||
-        $from.node(d - 1).type === schema.nodes.blockquote_element)
-    ) {
-      continue
-    }
-
-    return $from.after(d)
+  
+    return null
   }
-
-  return null
-}
 
 export const createSelection = (
   nodeType: ManuscriptNodeType,
