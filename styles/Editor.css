@@ -805,14 +805,14 @@
   border-radius: var(--focus-outline-radius);
 }
 
-.ProseMirror:not(.ProseMirror-focused.popper-open)
+.ProseMirror:not(.popper-open)
   .block-container:not(
     .block-section,
     .block-box_element,
     .block-graphical_abstract_section
   ):hover
   .action-gutter,
-.ProseMirror:not(.ProseMirror-focused.popper-open)
+.ProseMirror:not(.popper-open)
   .block-container:not(
     .block-section,
     .block-box_element,
