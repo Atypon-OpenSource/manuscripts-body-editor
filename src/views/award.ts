@@ -22,12 +22,12 @@ import {
   DeleteAwardDialog,
   DeleteAwardDialogProps,
 } from '../components/awards/DeleteAwardDiaolog'
-import { isDeleted } from '../lib/track-changes-utils'
 import { updateNodeAttrs } from '../lib/view'
 import { Trackable, TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {

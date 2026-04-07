@@ -15,6 +15,10 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { AffiliationNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -32,10 +36,7 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
+
 import {
   findChildByID,
   findChildrenAttrsByType,

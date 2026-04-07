@@ -31,10 +31,7 @@ import { CommentKey, createCommentMarker, handleComment } from '../lib/comments'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
-import {
-  addTrackChangesAttributes,
-  addTrackChangesClassNames,
-} from '../lib/track-changes-utils'
+
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
@@ -43,6 +40,10 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import {
+  addTrackChangesAttributes,
+  addTrackChangesClassNames,
+} from '@manuscripts/track-changes-plugin'
 
 export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>

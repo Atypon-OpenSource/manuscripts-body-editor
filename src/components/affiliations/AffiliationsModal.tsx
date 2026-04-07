@@ -23,6 +23,7 @@ import {
   InspectorTabPanel,
   InspectorTabPanels,
   InspectorTabs,
+  outlineStyle,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -136,7 +137,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const currentAffiliation = selection
     const affiliatedAuthorIds = authors
-      .filter((author) => author.affiliationIDs?.includes(currentAffiliation.id))
+      .filter((author) =>
+        author.affiliationIDs?.includes(currentAffiliation.id)
+      )
       .map((author) => author.id)
     setSelectedAuthorIds(affiliatedAuthorIds)
     setAffiliationAuthorMap((prevMap) => {
@@ -348,9 +351,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       const author = authors.find((a) => a.id === authorId)
       return {
         id: authorId,
-        label: author
-          ? `${author.given} ${author.family}`
-          : '',
+        label: author ? `${author.given} ${author.family}` : '',
       }
     })
     .filter((author) => author.label)
@@ -509,7 +510,13 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     type={'affiliation'}
                     form={'affiliation-form'}
                     onDelete={handleDeleteAffiliation}
-                    showingDeleteDialog={showingDeleteDialog}
+                    showingDeleteDialog={
+                      showingDeleteDialog &&
+                      !(
+                        showConfirmationDialog ||
+                        showRequiredFieldConfirmationDialog
+                      )
+                    }
                     showDeleteDialog={handleShowDeleteDialog}
                     newEntity={newAffiliation}
                     isDisableSave={isDisableSave}
@@ -603,9 +610,15 @@ function createEmptyAffiliation(priority: number): AffiliationAttrs {
 }
 
 const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
+  padding: 8px;
 `
-const AddAffiliationButton = styled.div`
+const AddAffiliationButton = styled.button`
+  background: none;
+  border: none;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  width: 100%;
   display: flex;
   align-items: center;
   padding: 12px 8px 12px 12px;
@@ -616,6 +629,7 @@ const AddAffiliationButton = styled.div`
     border-left: 0;
     border-right: 0;
   }
+  ${outlineStyle}
 `
 
 const ActionTitle = styled.div`
@@ -625,7 +639,7 @@ const ActionTitle = styled.div`
 const AffiliationTabs = styled(InspectorTabs)`
   position: relative;
 `
-const AffiliationTabPanel = styled(InspectorTabPanel).attrs({ unmount: false })`
+const AffiliationTabPanel = styled(InspectorTabPanel).attrs({ tabIndex: -1, unmount: false })`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
