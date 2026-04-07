@@ -22,12 +22,14 @@ import {
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
+  withFocusTrap,
+  withListNavigation,
+  withNavigableListItem,
 } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-
-import { isDeleted } from '../../lib/track-changes-utils'
 
 const NotesContainer = styled.div`
   height: 90vh;
@@ -43,10 +45,10 @@ const Actions = styled(ButtonGroup)`
   padding: ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const Container = styled.div`
+const Container = withFocusTrap(styled.div`
   flex: 1;
   font-family: ${(props) => props.theme.font.family.sans};
-`
+`)
 
 const AddNewFootnote = styled(ButtonGroup)`
   button {
@@ -222,18 +224,18 @@ const Separator = styled.div`
   border-bottom: 1px solid #e2e2e2;
   margin: 4px 0;
 `
-const NotesListContainer = styled.div`
+const NotesListContainer = withListNavigation(styled.div`
   padding: ${(props) => props.theme.grid.unit * 6}px
     ${(props) => props.theme.grid.unit * 5}px;
   flex: 1;
   overflow-y: auto;
-`
+`)
 
-const FootnoteItemContainer = styled.div`
+const FootnoteItemContainer = withNavigableListItem(styled.div`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 2}px 0;
   display: flex;
-`
+`)
 const StatusIcon = styled.div`
   flex-shrink: 1;
   margin-right: ${(props) => props.theme.grid.unit * 3}px;

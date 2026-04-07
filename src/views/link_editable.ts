@@ -22,11 +22,11 @@ import {
   LinkFormProps,
   LinkValue,
 } from '../components/views/LinkForm'
-import { isDeleted } from '../lib/track-changes-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
 import ReactSubView from './ReactSubView'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class LinkEditableView extends LinkView {
   protected popperContainer: HTMLDivElement
