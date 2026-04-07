@@ -17,6 +17,7 @@ import {
   CHANGE_OPERATION,
   CHANGE_STATUS,
   isTracked,
+  trackChangesPluginKey,
   TrackedAttrs,
   TrackedChange,
 } from '@manuscripts/track-changes-plugin'
@@ -27,7 +28,7 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { Plugin, PluginKey, Transaction } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { isTextSelection } from '../commands'
@@ -42,13 +43,24 @@ type EffectiveSelection = {
   from: number
   to: number
 }
+
+type DecorationSource = {
+  decorations: Decoration[]
+  suggestions?: TrackedAttrs[]
+}
+
 export interface PluginState {
   decorations: DecorationSet
   suggestion?: TrackedAttrs
 }
 
-const EMPTY: PluginState = {
-  decorations: DecorationSet.empty,
+// const EMPTY: PluginState = {
+//   decorations: DecorationSet.empty,
+// }
+
+const EMPTY_DECOR = {
+  decorations: [],
+  suggestions: [],
 }
 
 /**
@@ -69,7 +81,7 @@ export default () => {
     key: selectedSuggestionKey,
     state: {
       init: (_, state) => buildPluginState(state),
-      apply: (tr, value, oldState, newState) => buildPluginState(newState),
+      apply: (tr, value, oldState, newState) => buildPluginState(newState, tr),
     },
     props: {
       decorations: (state) => {
@@ -80,28 +92,58 @@ export default () => {
   })
 }
 
-const buildPluginState = (state: ManuscriptEditorState): PluginState => {
+function addToDecorations(
+  source: DecorationSource,
+  addition: DecorationSource
+) {
+  source.decorations = [...source.decorations, ...addition.decorations]
+  if (addition.suggestions) {
+    source.suggestions = [
+      ...(source.suggestions || []),
+      ...addition.suggestions,
+    ]
+  }
+}
+
+const buildPluginState = (
+  state: ManuscriptEditorState,
+  tr?: Transaction
+): PluginState => {
+  const decorations = buildDecorationsForSelection(state)
+  const highlightDecorations = buildHighlightDecorations(state, tr)
+  addToDecorations(decorations, highlightDecorations)
+
+  return {
+    decorations: DecorationSet.create(state.doc, decorations.decorations),
+  }
+}
+
+function buildDecorationsForSelection(state: ManuscriptEditorState) {
   const selection = state.selection
   const changes = getSelectionChangeGroup(state)
   if (changes.length) {
-    return buildGroupOfChangesDecoration(state.doc, changes)
+    return buildGroupOfChangesDecoration(changes)
   }
+  /* the code below implies that we might not have any changes returned from getSelectionChangeGroup, but
+     still there can be some changes at the selection, which doesnt make any sense and shouldn't be possible as far as I can see
+     - most likely it has to be if (changes.length > 1) above and not if (changes.length) -  that would be consistent with the article-editors selection logic
+  */
   const $pos =
     isTextSelection(selection) && selection.$cursor
       ? selection.$cursor
       : selection.$to
   if (!$pos) {
-    return EMPTY
+    return EMPTY_DECOR
   }
   const effective = getEffectiveSelection($pos)
 
   if (!effective) {
-    return EMPTY
+    return EMPTY_DECOR
   }
   if (effective.node.isText) {
-    return buildTextDecoration(state.doc, effective)
+    return buildTextDecoration(effective)
   } else {
-    return buildNodeDecoration(state.doc, effective)
+    return buildNodeDecoration(effective)
   }
 }
 
@@ -150,13 +192,13 @@ const getEffectiveSelection = ($pos: ResolvedPos) => {
 }
 
 const buildNodeDecoration = (
-  doc: ManuscriptNode,
-  selection: EffectiveSelection
+  selection: EffectiveSelection,
+  className = 'selected-suggestion'
 ) => {
   const node = selection.node
   const suggestion = node.attrs.dataTracked?.[0]
   if (!suggestion?.status || suggestion.status === CHANGE_STATUS.rejected) {
-    return EMPTY
+    return EMPTY_DECOR
   }
   const from = selection.from
   const to = selection.to
@@ -165,17 +207,17 @@ const buildNodeDecoration = (
   const inline = node.type === schema.nodes.keyword || node.isInline
   const decorationType = inline ? Decoration.inline : Decoration.node
   const decoration = decorationType(from, to, {
-    class: 'selected-suggestion',
+    class: className,
   })
   return {
-    suggestion,
-    decorations: DecorationSet.create(doc, [decoration]),
+    suggestions: [suggestion],
+    decorations: [decoration],
   }
 }
 
 const buildTextDecoration = (
-  doc: ManuscriptNode,
-  selection: EffectiveSelection
+  selection: EffectiveSelection,
+  className = 'selected-suggestion'
 ) => {
   const node = selection.node
   let suggestion = getTrackedMark(node)?.attrs.dataTracked as TrackedAttrs
@@ -189,44 +231,43 @@ const buildTextDecoration = (
   }
 
   if (!suggestion) {
-    return EMPTY
+    return EMPTY_DECOR
   }
   const from = selection.from
   const to = selection.to
 
   const decoration = Decoration.inline(from, to, {
     nodeName: 'span',
-    class: 'selected-suggestion',
+    class: className,
   })
   return {
-    suggestion,
-    decorations: DecorationSet.create(doc, [decoration]),
+    suggestions: [suggestion],
+    decorations: [decoration],
   }
 }
 
 const buildGroupOfChangesDecoration = (
-  doc: ManuscriptNode,
-  changes: TrackedChange[]
+  changes: TrackedChange[],
+  className = 'selected-suggestion'
 ) => {
   const decorations = []
   if (changes[0].dataTracked.operation === CHANGE_OPERATION.structure) {
     changes.map((c) =>
-      decorations.push(
-        Decoration.node(c.from, c.to, { class: 'selected-suggestion' })
-      )
+      decorations.push(Decoration.node(c.from, c.to, { class: className }))
     )
   } else {
+    // interesting implication that if changes are grouped but not structural they can only be inlines
     const from = changes[0].from,
       to = changes[changes.length - 1].to
     decorations.push(
       Decoration.inline(from, to, {
-        class: 'selected-suggestion',
+        class: className,
       })
     )
   }
   return {
-    decorations: DecorationSet.create(doc, decorations),
-    suggestion: changes[0].dataTracked,
+    decorations: decorations,
+    suggestions: [changes[0].dataTracked],
   }
 }
 
@@ -240,4 +281,62 @@ const getTrackedMark = (node: ManuscriptNode) => {
       return mark
     }
   }
+}
+
+function buildHighlightDecorations(
+  state: ManuscriptEditorState,
+  tr?: Transaction
+) {
+  const decorations: DecorationSource = { suggestions: [], decorations: [] }
+  if (
+    tr &&
+    tr.getMeta('highlight-author') &&
+    typeof tr.getMeta('highlight-author') === 'string'
+  ) {
+    const authorId = tr.getMeta('highlight-author') as string
+    const className = 'highlighted-author-change'
+
+    trackChangesPluginKey
+      .getState(state)
+      ?.changeSet.groupChanges.forEach((group) => {
+        if (group[0].dataTracked.authorID !== authorId) {
+          return
+        }
+        if (group.length > 1) {
+          const groupDecoration = buildGroupOfChangesDecoration(
+            group,
+            className
+          )
+          addToDecorations(decorations, groupDecoration)
+          return
+        }
+
+        const from = group[0].from
+        const to = group[0].to
+        let node: ManuscriptNode | undefined
+        state.doc.nodesBetween(from, to, (n, pos) => {
+          if (pos == from) {
+            node = n
+          }
+          if (node) {
+            return false
+          }
+        })
+
+        if (node) {
+          if (node.isText) {
+            addToDecorations(
+              decorations,
+              buildTextDecoration({ from, to, node }, className)
+            )
+          } else {
+            addToDecorations(
+              decorations,
+              buildNodeDecoration({ from, to, node }, className)
+            )
+          }
+        }
+      })
+  }
+  return decorations
 }
