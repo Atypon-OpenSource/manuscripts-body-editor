@@ -65,6 +65,14 @@ import { AuthorList } from './AuthorList'
 import { CreditDrawer } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
+import { EditorView } from 'prosemirror-view'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import {
+  deleteNode,
+  findChildrenAttrsByType,
+  updateNodeAttrs,
+} from '../../lib/view'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -190,6 +198,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setShowRequiredFieldConfirmationDialog(false)
       setLastSavedAuthor(null)
       setOpen(false)
+      setSelection(undefined)
     }
   }
 
@@ -601,3 +610,55 @@ const StyledModalBody = styled(ModalBody)`
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 16px;
 `
+
+export const openAuthorsModal = (pos: number, view?: EditorView) => {
+  if (!view) {
+    return
+  }
+
+  const { state } = view
+  const props = getEditorProps(state)
+  const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
+    view,
+    schema.nodes.affiliation
+  )
+
+  const componentProps: AuthorsModalProps = {
+    authors: [],
+    affiliations,
+    onSaveAuthor: (contributor) =>
+      handleSaveContributor(view, contributor, pos),
+    onDeleteAuthor: (contributor) => handleDeleteContributor(view, contributor),
+    addNewAuthor: true,
+  }
+
+  const dialog = ReactSubView(
+    props,
+    AuthorsModal,
+    componentProps,
+    state.doc,
+    () => pos,
+    view
+  )
+  view.focus()
+  document.body.appendChild(dialog)
+}
+
+export const handleSaveContributor = (
+  view: EditorView,
+  contributor: ContributorAttrs,
+  contributorsPos: number
+) => {
+  const update = updateNodeAttrs(view, schema.nodes.contributor, contributor)
+  if (!update) {
+    const node = schema.nodes.contributor.create(contributor)
+    view.dispatch(view.state.tr.insert(contributorsPos + 1, node))
+  }
+}
+
+export const handleDeleteContributor = (
+  view: EditorView,
+  contributor: ContributorAttrs
+) => {
+  deleteNode(view, contributor.id)
+}
