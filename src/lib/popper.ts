@@ -33,7 +33,8 @@ export class PopperManager {
     contents: HTMLElement,
     placement: Placement = 'bottom',
     showArrow = true,
-    modifiers: Array<Partial<StrictModifiers>> = []
+    modifiers: Array<Partial<StrictModifiers>> = [],
+    autoFocus = true
   ) {
     // destroy any existing popper first
     // checking activePopper is in destroy() method
@@ -59,11 +60,14 @@ export class PopperManager {
           this.triggerElement.focus()
         }
       }
+      const isMenu =
+        contents.classList.contains('context-menu') ||
+        contents.classList.contains('menu')
       createKeyboardInteraction({
         container,
         additionalKeys: {
           Escape: closeAndRestoreFocus,
-          Tab: closeAndRestoreFocus,
+          Tab: isMenu ? closeAndRestoreFocus : undefined,
         },
       })
 
@@ -94,7 +98,7 @@ export class PopperManager {
         modifiers,
         onFirstUpdate: () => {
           this.addContainerClass(target)
-          this.focusInput(container)
+          this.focusInput(container, autoFocus)
         },
       })
 
@@ -144,15 +148,17 @@ export class PopperManager {
 
   public isActive = () => !!this.activePopper
 
-  private focusInput(container: HTMLDivElement) {
+  private focusInput(container: HTMLDivElement, autoFocus = true) {
     const input = container.querySelector('input') as HTMLElement | null
-    const button = container.querySelector(
-      'button:not([disabled])'
-    ) as HTMLElement | null
-    const element = input || button
-
-    if (element) {
-      element.focus()
+    if (input) {
+      input.focus()
+      return
+    }
+    if (autoFocus) {
+      const button = container.querySelector(
+        'button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) as HTMLElement | null
+      button?.focus()
     }
   }
 

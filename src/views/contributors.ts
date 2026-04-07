@@ -15,7 +15,12 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { ContributorsNode, schema } from '@manuscripts/transform'
+
 import { NodeSelection } from 'prosemirror-state'
 
 import {
@@ -30,10 +35,7 @@ import {
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
-import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
+
 import { findInsertionPosition } from '../lib/utils'
 import {
   deleteNode,
@@ -48,6 +50,7 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { ORCIDIcon } from '../icons'
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
@@ -155,6 +158,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       attrs.isCorresponding && attrs.email
         ? `<span class="name">${name} (${attrs.email})</span>`
         : `<span class="name">${name}</span>`
+
+    if (attrs.ORCID) {
+      container.innerHTML += `<a href="${attrs.ORCID}" target="_blank" class="orcid-link">${ORCIDIcon}</span>`
+    }
 
     const noteText: string[] = []
     if (affs) {
