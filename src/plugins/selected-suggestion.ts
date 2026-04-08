@@ -44,14 +44,11 @@ type EffectiveSelection = {
   to: number
 }
 
-type DecorationSource = {
-  decorations: Decoration[]
-  suggestions?: TrackedAttrs[]
-}
-
 export interface PluginState {
   decorations: DecorationSet
   suggestion?: TrackedAttrs
+  highlightedAuthorId?: string
+  highlightDecorations: DecorationSet
 }
 
 // const EMPTY: PluginState = {
@@ -59,8 +56,7 @@ export interface PluginState {
 // }
 
 const EMPTY_DECOR = {
-  decorations: [],
-  suggestions: [],
+  decorations: [] as Decoration[],
 }
 
 /**
@@ -81,7 +77,8 @@ export default () => {
     key: selectedSuggestionKey,
     state: {
       init: (_, state) => buildPluginState(state),
-      apply: (tr, value, oldState, newState) => buildPluginState(newState, tr),
+      apply: (tr, value, oldState, newState) =>
+        buildPluginState(newState, oldState, tr),
     },
     props: {
       decorations: (state) => {
@@ -92,33 +89,52 @@ export default () => {
   })
 }
 
-function addToDecorations(
-  source: DecorationSource,
-  addition: DecorationSource
-) {
-  source.decorations = [...source.decorations, ...addition.decorations]
-  if (addition.suggestions) {
-    source.suggestions = [
-      ...(source.suggestions || []),
-      ...addition.suggestions,
-    ]
-  }
-}
-
 const buildPluginState = (
   state: ManuscriptEditorState,
+  oldState?: ManuscriptEditorState,
   tr?: Transaction
 ): PluginState => {
-  const decorations = buildDecorationsForSelection(state)
-  const highlightDecorations = buildHighlightDecorations(state, tr)
-  addToDecorations(decorations, highlightDecorations)
-
-  return {
-    decorations: DecorationSet.create(state.doc, decorations.decorations),
+  const selectionDecor = buildDecorationsForSelection(state)
+  const newState: PluginState = {
+    decorations: DecorationSet.create(state.doc, selectionDecor.decorations),
+    highlightDecorations: DecorationSet.empty,
   }
+  if (selectionDecor.suggestion) {
+    newState.suggestion = selectionDecor.suggestion
+  }
+  const prevState = oldState && selectedSuggestionKey.getState(oldState)
+  if (prevState) {
+    newState.highlightDecorations = prevState.highlightDecorations
+    newState.highlightedAuthorId = prevState.highlightedAuthorId
+  }
+
+  if (
+    tr &&
+    tr.getMeta(selectedSuggestionKey) &&
+    typeof tr.getMeta(selectedSuggestionKey) === 'string'
+  ) {
+    const authorId = tr.getMeta(selectedSuggestionKey) as string
+    if (authorId) {
+      const highlightDecor = buildHighlightDecorations(state, authorId, tr)
+      newState.highlightDecorations = DecorationSet.create(
+        state.doc,
+        highlightDecor
+      )
+    } else {
+      console.log(
+        'evaded new decorations creation since the id received is the same as used to be'
+      )
+    }
+    newState.highlightedAuthorId = authorId
+  }
+
+  return newState
 }
 
-function buildDecorationsForSelection(state: ManuscriptEditorState) {
+function buildDecorationsForSelection(state: ManuscriptEditorState): {
+  decorations: Decoration[]
+  suggestion?: TrackedAttrs
+} {
   const selection = state.selection
   const changes = getSelectionChangeGroup(state)
   if (changes.length) {
@@ -210,7 +226,7 @@ const buildNodeDecoration = (
     class: className,
   })
   return {
-    suggestions: [suggestion],
+    suggestion: suggestion,
     decorations: [decoration],
   }
 }
@@ -241,7 +257,7 @@ const buildTextDecoration = (
     class: className,
   })
   return {
-    suggestions: [suggestion],
+    suggestion,
     decorations: [decoration],
   }
 }
@@ -267,7 +283,7 @@ const buildGroupOfChangesDecoration = (
   }
   return {
     decorations: decorations,
-    suggestions: [changes[0].dataTracked],
+    suggestion: changes[0].dataTracked,
   }
 }
 
@@ -285,58 +301,49 @@ const getTrackedMark = (node: ManuscriptNode) => {
 
 function buildHighlightDecorations(
   state: ManuscriptEditorState,
+  authorId: string,
   tr?: Transaction
 ) {
-  const decorations: DecorationSource = { suggestions: [], decorations: [] }
-  if (
-    tr &&
-    tr.getMeta('highlight-author') &&
-    typeof tr.getMeta('highlight-author') === 'string'
-  ) {
-    const authorId = tr.getMeta('highlight-author') as string
-    const className = 'highlighted-author-change'
+  const decorations: Decoration[] = []
 
-    trackChangesPluginKey
-      .getState(state)
-      ?.changeSet.groupChanges.forEach((group) => {
-        if (group[0].dataTracked.authorID !== authorId) {
-          return
+  const className = 'highlighted-author-change'
+
+  trackChangesPluginKey
+    .getState(state)
+    ?.changeSet.groupChanges.forEach((group) => {
+      if (group[0].dataTracked.authorID !== authorId) {
+        return
+      }
+      if (group.length > 1) {
+        const groupDecoration = buildGroupOfChangesDecoration(group, className)
+        decorations.push(...groupDecoration.decorations)
+        return
+      }
+
+      const from = group[0].from
+      const to = group[0].to
+      let node: ManuscriptNode | undefined
+      state.doc.nodesBetween(from, to, (n, pos) => {
+        if (pos == from) {
+          node = n
         }
-        if (group.length > 1) {
-          const groupDecoration = buildGroupOfChangesDecoration(
-            group,
-            className
-          )
-          addToDecorations(decorations, groupDecoration)
-          return
-        }
-
-        const from = group[0].from
-        const to = group[0].to
-        let node: ManuscriptNode | undefined
-        state.doc.nodesBetween(from, to, (n, pos) => {
-          if (pos == from) {
-            node = n
-          }
-          if (node) {
-            return false
-          }
-        })
-
         if (node) {
-          if (node.isText) {
-            addToDecorations(
-              decorations,
-              buildTextDecoration({ from, to, node }, className)
-            )
-          } else {
-            addToDecorations(
-              decorations,
-              buildNodeDecoration({ from, to, node }, className)
-            )
-          }
+          return false
         }
       })
-  }
+
+      if (node) {
+        if (node.isText) {
+          decorations.push(
+            ...buildTextDecoration({ from, to, node }, className).decorations
+          )
+        } else {
+          decorations.push(
+            ...buildNodeDecoration({ from, to, node }, className).decorations
+          )
+        }
+      }
+    })
+
   return decorations
 }

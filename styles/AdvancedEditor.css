@@ -1693,7 +1693,6 @@ th:hover > .table-context-menu-button,
   display: block;
 }
 
-
 .ProseMirror .ext-link-editor-container .close-button:focus-visible,
 .ProseMirror .ext-link-editor-container .remove-button:focus-visible,
 .ProseMirror .ext-link-editor-container .icon-button:focus-visible {
@@ -1762,7 +1761,7 @@ th:hover > .table-context-menu-button,
   cursor: pointer;
 }
 
-.ProseMirror .accessibility_element_input:focus{
+.ProseMirror .accessibility_element_input:focus {
   outline: none;
 }
 
@@ -2216,4 +2215,14 @@ th:hover > .table-context-menu-button,
   margin-bottom: -0.2em;
   margin-right: -1px;
   border-left: 1px solid black;
+}
+
+.highlighted-author-change {
+  border-bottom: 3px dotted #0d79d0;
+}
+
+.highlighted-author-change.block-container {
+  border-bottom: none;
+  border-left: 3px dotted #0d79d0;
+  margin-left: -3px;
 }
