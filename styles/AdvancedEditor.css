@@ -138,12 +138,6 @@
   width: 100%;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
-
-  grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows:
-    repeat(1, minmax(min-content, max-content))
-    [caption listing] auto !important;
-
   margin: 16px 0 0 !important;
   box-sizing: border-box;
   justify-self: center;
@@ -155,11 +149,6 @@
   border-radius: 4px;
   position: relative;
   padding: 8px;
-
-  grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows:
-    repeat(1, minmax(min-content, max-content))
-    [caption listing] auto !important;
 }
 
 .ProseMirror .figure-block-group .figure-block {
@@ -167,8 +156,6 @@
   border-radius: 0;
   position: static;
   margin: 0 !important;
-  grid-template-columns: auto;
-  grid-template-rows: auto;
 }
 
 .ProseMirror .figure-group {
@@ -180,7 +167,6 @@
 .ProseMirror .figure-block > figure {
   width: 100%;
   position: relative;
-  grid-column: 1/-1;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -242,8 +228,6 @@
 }
 
 .ProseMirror .figure-block > .listing {
-  grid-column-start: 1;
-  grid-column-end: -1;
   padding: 0;
   min-height: 0;
   overflow: visible;
@@ -255,8 +239,6 @@
 }
 
 .ProseMirror .figure-block > figcaption {
-  grid-column-start: 1;
-  grid-column-end: -1;
   margin-top: 30px;
 }
 
@@ -335,10 +317,11 @@
   display: initial !important;
 }
 
-.ProseMirror .figure-block[id^='MPTable'] {
+/* .ProseMirror .figure-block[id^='MPTable'] {
   border-collapse: collapse;
   empty-cells: show;
   display: grid;
+  background-color: lime;
 }
 
 .ProseMirror .figure-block[id^='MPTable'] tr:first-of-type > td {
@@ -368,7 +351,7 @@
 .ProseMirror .figure-block[id^='MPTable'] > figcaption {
   grid-row: 2 !important;
   text-align: center !important;
-}
+} */
 
 .position-menu-button:focus-visible {
   outline: none;
@@ -575,11 +558,6 @@ ProseMirror .block-embed .position-menu {
   right: 50px;
 }
 
-.comment-marker:has(+ .block-contributors),
-.comment-marker:has(+ .block-affiliations) {
-  right: 20px;
-}
-
 .block-subtitles .comment-marker {
   top: 0;
   left: -10px;
@@ -587,10 +565,15 @@ ProseMirror .block-embed .position-menu {
   position: relative;
 }
 
-.block > div.comment-marker,
-.figure-block > div.comment-marker {
+.block > div.comment-marker {
   top: -25px;
   left: 100%;
+}
+.figure-block > div.comment-marker {
+  position:absolute;
+  top: 1px;
+  left: unset;
+  right: -25px;
 }
 
 ul > .comment-marker,
@@ -600,10 +583,6 @@ ol > .comment-marker {
 
 li > .comment-marker {
   float: right;
-}
-
-.figure-block div.comment-marker {
-  grid-column: 3;
 }
 
 figure.block > .comment-marker {
@@ -1384,11 +1363,13 @@ s[data-track-status='pending'][data-track-op='delete'] {
   line-height: 1.2;
   cursor: default;
   user-select: none;
+  display: flex;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
 .affiliation .affiliation-label {
   font-weight: bold;
-  margin-right: 3.2px;
 }
 
 .ProseMirror .doi-container {
@@ -1452,7 +1433,7 @@ s[data-track-status='pending'][data-track-op='delete'] {
   border-bottom: 1px solid #e2e2e2;
   position: relative;
   padding-top: 0.2rem;
-  margin: 13px calc(var(--body-side-margin) - 12px);
+  margin: 1rem calc(var(--body-side-margin) - 12px) 0;
 }
 .alt-titles-closing-button {
   position: absolute;
@@ -1601,7 +1582,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-contributors .action-gutter,
 .ProseMirror .block-affiliations .action-gutter {
-  right: 20px;
+  right: 15px;
   pointer-events: none;
 }
 
@@ -1682,8 +1663,6 @@ th:hover > .table-context-menu-button,
 .ProseMirror .accessibility_element,
 .ProseMirror .ext-link-editor-container {
   margin-top: 12px;
-  grid-column-start: 1;
-  grid-column-end: -1;
   text-align: start;
   display: none;
 }
