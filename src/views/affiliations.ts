@@ -15,12 +15,19 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { AffiliationNode, schema } from '@manuscripts/transform'
-import { NodeSelection, Selection } from 'prosemirror-state'
+import { NodeSelection } from 'prosemirror-state'
 
 import {
   AffiliationsModal,
   AffiliationsModalProps,
+  handleDeleteAffiliation,
+  handleSaveAffiliation,
+  handleUpdateAuthors,
 } from '../components/affiliations/AffiliationsModal'
 import { alertIcon } from '../icons'
 import {
@@ -29,15 +36,10 @@ import {
   ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
+
 import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
-import {
-  deleteNode,
   findChildByID,
   findChildrenAttrsByType,
-  updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
@@ -159,30 +161,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     }
   }
 
-  insertAffiliationNode = (attrs: AffiliationAttrs) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const pos = this.getPos()
-    const tr = this.view.state.tr
-    const node = schema.nodes.affiliation.create(attrs)
-    this.view.dispatch(tr.insert(pos + 1, node))
-  }
-
-  handleSaveAffiliation = (affiliation: AffiliationAttrs) => {
-    const update = updateNodeAttrs(
-      this.view,
-      schema.nodes.affiliation,
-      affiliation
-    )
-
-    if (!update) {
-      this.insertAffiliationNode(affiliation)
-    }
-  }
-
-  handleDeleteAffiliation = (affiliation: AffiliationAttrs) => {
-    deleteNode(this.view, affiliation.id)
-  }
-
   handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
     const contributors: ContributorAttrs[] = findChildrenAttrsByType(
@@ -202,11 +180,12 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       affiliation,
       authors: contributors,
       affiliations,
-      onSaveAffiliation: this.handleSaveAffiliation,
-      onDeleteAffiliation: this.handleDeleteAffiliation,
-      onUpdateAuthors: this.handleUpdateAuthors,
+      onSaveAffiliation: (affiliation) =>
+        handleSaveAffiliation(this.view, affiliation, this.getPos()),
+      onDeleteAffiliation: (affiliation) =>
+        handleDeleteAffiliation(this.view, affiliation),
+      onUpdateAuthors: (authors) => handleUpdateAuthors(this.view, authors),
       addNewAffiliation: addNew,
-      clearSelection: this.clearSelection,
     }
 
     this.popper?.remove()
@@ -291,31 +270,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   public actionGutterButtons = (): HTMLElement[] => {
     const contextMenu = this.showGroupContextMenu()
     return contextMenu ? [contextMenu] : []
-  }
-
-  public selectNode = () => {
-    // Query the selected marker
-    const selectedMarker = document.querySelector(
-      '.comment-marker.selected-comment'
-    )
-
-    this.dom.classList.add('ProseMirror-selectednode')
-
-    // Open the modal if the node is not deleted and the comment marker is not selected
-    if (!isDeleted(this.node) && !selectedMarker) {
-      this.handleEdit('', true)
-    }
-  }
-  // we clear selection to toggle on/off selection between affiliations and document, so we can reopen modal
-  clearSelection = () => {
-    const { state, dispatch } = this.view
-    dispatch(state.tr.setSelection(Selection.atStart(state.doc)))
-  }
-
-  handleUpdateAuthors = (authors: ContributorAttrs[]) => {
-    authors.forEach((author) => {
-      updateNodeAttrs(this.view, schema.nodes.contributor, author)
-    })
   }
 }
 

@@ -26,7 +26,7 @@ import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-import { isDeleted } from '../lib/track-changes-utils'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 //todo fix
 const deleteIcon =

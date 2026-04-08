@@ -582,7 +582,7 @@
 }
 
 .ProseMirror .add-subtitle {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   cursor: pointer;
   margin-left: var(--body-side-margin);
@@ -778,14 +778,14 @@
   border-radius: var(--focus-outline-radius);
 }
 
-.ProseMirror:not(.ProseMirror-focused.popper-open)
+.ProseMirror:not(.popper-open)
   .block-container:not(
     .block-section,
     .block-box_element,
     .block-graphical_abstract_section
   ):hover
   .action-gutter,
-.ProseMirror:not(.ProseMirror-focused.popper-open)
+.ProseMirror:not(.popper-open)
   .block-container:not(
     .block-section,
     .block-box_element,

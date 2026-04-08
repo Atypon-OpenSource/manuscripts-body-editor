@@ -20,12 +20,11 @@ import {
   schema,
   Target,
 } from '@manuscripts/transform'
-import { Fragment } from 'prosemirror-model'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-import { getDocWithoutMovedContent } from '../lib/filtered-document'
 import { findChildren } from 'prosemirror-utils'
+import { clear } from '@manuscripts/track-changes-plugin'
 
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
@@ -39,8 +38,7 @@ export default () => {
     state: {
       init: (config, state) => {
         // Build targets from filtered document to exclude moved nodes
-        const filteredDoc = getDocWithoutMovedContent(state.doc)
-        return buildTargets(Fragment.from(filteredDoc.content))
+        return buildTargets(clear(state.doc).descendants) // @TODO - make sure binding works ok here - same problem as in transform
       },
       apply: (tr) => {
         // TODO: use decorations to track figure deletion?
@@ -48,8 +46,7 @@ export default () => {
         // TODO: use setMeta to update labels
 
         // Build targets from filtered document to exclude moved nodes
-        const filteredDoc = getDocWithoutMovedContent(tr.doc)
-        return buildTargets(Fragment.from(filteredDoc.content))
+        return buildTargets(clear(tr.doc).descendants)
       },
     },
     props: {
