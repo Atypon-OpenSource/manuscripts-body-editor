@@ -24,7 +24,11 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
+import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
+
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
 
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 import {
@@ -175,4 +179,34 @@ export const AuthorsAndAffiliationsModals: React.FC<
       )}
     </>
   )
+}
+
+export const openAuthorsAndAffiliationsModals = (
+  pos: number,
+  view: ManuscriptEditorView | EditorView | undefined,
+  initialModal: 'authors' | 'affiliations'
+) => {
+  if (!view) {
+    return
+  }
+
+  const { state } = view
+  const props = getEditorProps(state)
+  const componentProps: AuthorsAndAffiliationsModalsProps = {
+    initialModal,
+    view: view as ManuscriptEditorView,
+    addNewAuthor: initialModal === 'authors',
+    addNewAffiliation: initialModal === 'affiliations',
+  }
+
+  const dialog = ReactSubView(
+    props,
+    AuthorsAndAffiliationsModals,
+    componentProps,
+    state.doc,
+    () => pos,
+    view
+  )
+  view.focus()
+  document.body.appendChild(dialog)
 }
