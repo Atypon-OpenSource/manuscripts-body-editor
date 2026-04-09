@@ -61,7 +61,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   private removeKeydownListener?: () => void
 
   public updateContents() {
-    console.log('CONTRIBS CONTENT UPDATED')
     super.updateContents()
     const affs = affiliationsKey.getState(this.view.state)
     if (!affs) {
