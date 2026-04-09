@@ -45,10 +45,10 @@ type EffectiveSelection = {
 }
 
 export interface PluginState {
-  decorations: DecorationSet
+  decorations: Decoration[]
   suggestion?: TrackedAttrs
   highlightedAuthorId?: string
-  highlightDecorations: DecorationSet
+  highlightDecorations: Decoration[]
 }
 
 // const EMPTY: PluginState = {
@@ -82,8 +82,14 @@ export default () => {
     },
     props: {
       decorations: (state) => {
-        const suggestion = selectedSuggestionKey.getState(state)
-        return suggestion?.decorations || DecorationSet.empty
+        const s = selectedSuggestionKey.getState(state)
+        if (s) {
+          return DecorationSet.create(state.doc, [
+            ...s.decorations,
+            ...s.highlightDecorations,
+          ])
+        }
+        return DecorationSet.empty
       },
     },
   })
@@ -94,33 +100,30 @@ const buildPluginState = (
   oldState?: ManuscriptEditorState,
   tr?: Transaction
 ): PluginState => {
+  const prevState = oldState && selectedSuggestionKey.getState(oldState)
   const selectionDecor = buildDecorationsForSelection(state)
   const newState: PluginState = {
-    decorations: DecorationSet.create(state.doc, selectionDecor.decorations),
-    highlightDecorations: DecorationSet.empty,
+    decorations: selectionDecor.decorations,
+    highlightDecorations: prevState ? prevState.highlightDecorations : [],
+    highlightedAuthorId: prevState ? prevState.highlightedAuthorId : undefined,
   }
   if (selectionDecor.suggestion) {
     newState.suggestion = selectionDecor.suggestion
   }
-  const prevState = oldState && selectedSuggestionKey.getState(oldState)
-  if (prevState) {
-    newState.highlightDecorations = prevState.highlightDecorations
-    newState.highlightedAuthorId = prevState.highlightedAuthorId
-  }
 
-  if (
-    tr &&
-    tr.getMeta(selectedSuggestionKey) &&
-    typeof tr.getMeta(selectedSuggestionKey) === 'string'
-  ) {
+  console.log(typeof tr?.getMeta(selectedSuggestionKey))
+
+  if (tr && typeof tr.getMeta(selectedSuggestionKey) === 'string') {
+    console.log('here it is')
     const authorId = tr.getMeta(selectedSuggestionKey) as string
     if (authorId) {
-      const highlightDecor = buildHighlightDecorations(state, authorId, tr)
-      newState.highlightDecorations = DecorationSet.create(
-        state.doc,
-        highlightDecor
+      newState.highlightDecorations = buildHighlightDecorations(
+        state,
+        authorId,
+        tr
       )
     } else {
+      newState.highlightDecorations = []
       console.log(
         'evaded new decorations creation since the id received is the same as used to be'
       )
