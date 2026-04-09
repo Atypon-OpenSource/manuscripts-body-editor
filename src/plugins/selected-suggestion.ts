@@ -51,13 +51,10 @@ export interface PluginState {
   highlightDecorations: Decoration[]
 }
 
-// const EMPTY: PluginState = {
-//   decorations: DecorationSet.empty,
-// }
-
 const EMPTY_DECOR = {
   decorations: [] as Decoration[],
 }
+export const HIGHLIGHT_SELECTOR = 'highlighted-author-change'
 
 /**
  * This plugin is responsible for designating a single suggestion as
@@ -105,30 +102,28 @@ const buildPluginState = (
   const newState: PluginState = {
     decorations: selectionDecor.decorations,
     highlightDecorations: prevState ? prevState.highlightDecorations : [],
-    highlightedAuthorId: prevState ? prevState.highlightedAuthorId : undefined,
+    highlightedAuthorId: prevState ? prevState.highlightedAuthorId : '',
   }
   if (selectionDecor.suggestion) {
     newState.suggestion = selectionDecor.suggestion
   }
 
-  console.log(typeof tr?.getMeta(selectedSuggestionKey))
-
-  if (tr && typeof tr.getMeta(selectedSuggestionKey) === 'string') {
-    console.log('here it is')
-    const authorId = tr.getMeta(selectedSuggestionKey) as string
-    if (authorId) {
+  if (tr) {
+    const receivedAuthorId = tr.getMeta(selectedSuggestionKey)
+    if (typeof receivedAuthorId === 'string' && !receivedAuthorId) {
+      // received emty string - reset
+      newState.highlightDecorations = []
+      newState.highlightedAuthorId = ''
+    } else if (tr.docChanged || receivedAuthorId) {
+      let authorId =
+        tr.getMeta(selectedSuggestionKey) || newState.highlightedAuthorId || ''
       newState.highlightDecorations = buildHighlightDecorations(
         state,
         authorId,
         tr
       )
-    } else {
-      newState.highlightDecorations = []
-      console.log(
-        'evaded new decorations creation since the id received is the same as used to be'
-      )
+      newState.highlightedAuthorId = authorId
     }
-    newState.highlightedAuthorId = authorId
   }
 
   return newState
@@ -309,8 +304,6 @@ function buildHighlightDecorations(
 ) {
   const decorations: Decoration[] = []
 
-  const className = 'highlighted-author-change'
-
   trackChangesPluginKey
     .getState(state)
     ?.changeSet.groupChanges.forEach((group) => {
@@ -318,7 +311,10 @@ function buildHighlightDecorations(
         return
       }
       if (group.length > 1) {
-        const groupDecoration = buildGroupOfChangesDecoration(group, className)
+        const groupDecoration = buildGroupOfChangesDecoration(
+          group,
+          HIGHLIGHT_SELECTOR
+        )
         decorations.push(...groupDecoration.decorations)
         return
       }
@@ -338,11 +334,13 @@ function buildHighlightDecorations(
       if (node) {
         if (node.isText) {
           decorations.push(
-            ...buildTextDecoration({ from, to, node }, className).decorations
+            ...buildTextDecoration({ from, to, node }, HIGHLIGHT_SELECTOR)
+              .decorations
           )
         } else {
           decorations.push(
-            ...buildNodeDecoration({ from, to, node }, className).decorations
+            ...buildNodeDecoration({ from, to, node }, HIGHLIGHT_SELECTOR)
+              .decorations
           )
         }
       }

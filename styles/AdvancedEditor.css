@@ -1074,8 +1074,28 @@ del .highlighted-author-change,
 ins .highlighted-author-change {
   border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
+.keyword ins .highlighted-author-change,
+.keyword del .highlighted-author-change {
+  position: relative;
+  border-bottom: none;
+}
 
-/* Inserted Block Highlighted Autor */
+.keyword del .highlighted-author-change:after,
+.keyword ins .highlighted-author-change:after {
+  content: '';
+  position: absolute;
+  width: calc(100% + 16px);
+  bottom: -12px;
+  left: -8px;
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
+}
+/* Inserted Block Highlighted Author */
+
+.tracking-visible
+  .ProseMirror
+  .keywords.highlighted-author-change
+  [data-track-op='insert'][data-track-status='pending']
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
 .tracking-visible
   .ProseMirror
   [data-track-op='insert'][data-track-status='pending'].highlighted-author-change
@@ -1273,6 +1293,13 @@ ins .highlighted-author-change {
   text-decoration: line-through;
   color: var(--deleted-color);
   background-color: var(--deleted-pending-bg-color);
+}
+
+.tracking-visible
+  .contributor.highlighted-author-change[data-track-status='pending'],
+.tracking-visible
+  .affiliation.highlighted-author-change[data-track-status='pending'] {
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
 
 .tracking-visible
