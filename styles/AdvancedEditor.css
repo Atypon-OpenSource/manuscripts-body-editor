@@ -317,42 +317,6 @@
   display: initial !important;
 }
 
-/* .ProseMirror .figure-block[id^='MPTable'] {
-  border-collapse: collapse;
-  empty-cells: show;
-  display: grid;
-  background-color: lime;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] tr:first-of-type > td {
-  background-color: #eee !important;
-
-  border-top-color: #000 !important;
-  border-top-style: none !important;
-  border-top-width: 2pt !important;
-
-  border-bottom-color: #000 !important;
-  border-bottom-style: none !important;
-  border-bottom-width: 1pt !important;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] tr:last-of-type > td {
-  background-color: #eee !important;
-
-  border-top-color: #000 !important;
-  border-top-style: none !important;
-  border-top-width: 1pt !important;
-
-  border-bottom-color: #000 !important;
-  border-bottom-style: none !important;
-  border-bottom-width: 1pt !important;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] > figcaption {
-  grid-row: 2 !important;
-  text-align: center !important;
-} */
-
 .position-menu-button:focus-visible {
   outline: none;
 }
