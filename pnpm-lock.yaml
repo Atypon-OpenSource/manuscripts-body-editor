@@ -39,8 +39,8 @@ importers:
         specifier: 2.3.10-LEAN-5162.0
         version: 2.3.10-LEAN-5162.0
       '@manuscripts/transform':
-        specifier: 4.3.30-LEAN-5162.0
-        version: 4.3.30-LEAN-5162.0(prosemirror-state@1.4.3)
+        specifier: 4.3.30-LEAN-5162.2
+        version: 4.3.30-LEAN-5162.2(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1330,8 +1330,8 @@ packages:
   '@manuscripts/track-changes-plugin@2.3.10-LEAN-5162.0':
     resolution: {integrity: sha512-WXAcesQ+SSOsHZMIM0DLPfoq7dsVJnydWiDeoZXJD5P1rlrDopQ0qPs0OfHb+/itcxBHSFJ0MXP8TcqGzp+QYA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.3.10-LEAN-5162.0.tgz}
 
-  '@manuscripts/transform@4.3.30-LEAN-5162.0':
-    resolution: {integrity: sha512-qLO1q1pKEmqg8JU23gN6mybSbyRId9kd5LSm2IZqKFb8G+kfpcJw4sumqy+bWcSkjpxMEnjqjmAiV9R+3q+5rg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.30-LEAN-5162.0.tgz}
+  '@manuscripts/transform@4.3.30-LEAN-5162.2':
+    resolution: {integrity: sha512-fG8uWYAfSTrNkU/GFMLvmKAySxjns58QkCqNgrQOEb0ZX3B5Hd3dwZhP/npyfpECuKGIIyflufwJOhgBjJv7GA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.30-LEAN-5162.2.tgz}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6433,7 +6433,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.30-LEAN-5162.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.30-LEAN-5162.2(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
