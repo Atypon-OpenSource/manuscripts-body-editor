@@ -350,7 +350,7 @@ export const createBlock = (
     case schema.nodes.listing_element:
       node = schema.nodes.listing_element.create({}, [
         schema.nodes.listing.create(),
-        createAndFillFigcaptionElement(),
+        ...createAndFillCaption(),
       ])
       break
     case schema.nodes.equation_element:
@@ -440,10 +440,7 @@ export const insertFigure = (
 
   const element = state.schema.nodes.figure_element.createAndFill({}, [
     figure,
-    state.schema.nodes.figcaption.create({}, [
-      state.schema.nodes.caption_title.create(),
-      state.schema.nodes.caption.create(),
-    ]),
+    schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
   ]) as FigureElementNode
   const tr = state.tr.insert(position, element)
   dispatch(tr)
@@ -466,7 +463,7 @@ export const insertEmbed = (
       id: generateNodeID(schema.nodes.embed),
     },
     [
-      createAndFillFigcaptionElement(),
+      ...createAndFillCaption(),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]
@@ -504,12 +501,7 @@ export const insertSupplement = (
       id: generateNodeID(schema.nodes.supplement),
       href: file.id,
     },
-    [
-      schema.nodes.figcaption.create({}, [
-        schema.nodes.caption_title.create(),
-        schema.nodes.caption.create(),
-      ]),
-    ]
+    createAndFillCaption()
   ) as SupplementNode
 
   const tr = view.state.tr
@@ -913,9 +905,9 @@ export const insertBoxElement = (
     paragraph,
   ]) as ManuscriptNode
 
-  // Create the BoxElement node with a figcaption and the section
+  // Create the BoxElement node with a caption_title and the section
   const node = nodes.box_element.createAndFill({}, [
-    nodes.figcaption.create({}, [nodes.caption_title.create()]),
+    nodes.caption_title.create(),
     section,
   ]) as BoxElementNode
 
@@ -1716,7 +1708,7 @@ export const createAndFillTableElement = (
       id: generateNodeID(schema.nodes.table_element),
     },
     [
-      createAndFillFigcaptionElement(),
+      schema.nodes.caption_title.create(),
       schema.nodes.table.create({}, tableRows),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
@@ -1732,19 +1724,18 @@ const createAndFillFigureElement = (attrs?: Attrs) =>
       id: generateNodeID(schema.nodes.figure_element),
     },
     [
-      schema.nodes.figure.create({}, [schema.nodes.figcaption.create()]),
-      createAndFillFigcaptionElement(),
+      schema.nodes.figure.create(),
+      schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
       schema.nodes.listing.create(),
     ]
   )
 
-const createAndFillFigcaptionElement = () =>
-  schema.nodes.figcaption.create({}, [
+const createAndFillCaption = () => [
     schema.nodes.caption_title.create(),
-    schema.nodes.caption.create(),
-  ])
+  schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
+]
 
 const createImageElement = (attrs?: Attrs) =>
   schema.nodes.image_element.create(
@@ -1754,6 +1745,7 @@ const createImageElement = (attrs?: Attrs) =>
     },
     [
       schema.nodes.figure.create(),
+      schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]
@@ -1766,7 +1758,7 @@ const createEmbedElement = (attrs?: Attrs) =>
       id: generateNodeID(schema.nodes.embed),
     },
     [
-      createAndFillFigcaptionElement(),
+      ...createAndFillCaption(),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]
