@@ -117,6 +117,15 @@ const buildPluginState = (
     } else if (tr.docChanged || receivedAuthorId) {
       let authorId =
         tr.getMeta(selectedSuggestionKey) || newState.highlightedAuthorId || ''
+
+      const isFreshChangeSet = tr.getMeta('origin') === trackChangesPluginKey // required to recalc decors on fresh positions after tc plugin rebuilt the changeSet
+      if (isFreshChangeSet || receivedAuthorId) {
+        newState.highlightDecorations = buildHighlightDecorations(
+          state,
+          authorId,
+          tr
+        )
+      }
       newState.highlightDecorations = buildHighlightDecorations(
         state,
         authorId,
@@ -308,6 +317,14 @@ function buildHighlightDecorations(
     .getState(state)
     ?.changeSet.groupChanges.forEach((group) => {
       if (group[0].dataTracked.authorID !== authorId) {
+        return
+      }
+      const lastChange = group[group.length - 1]
+      if (
+        group[0].from < 0 ||
+        lastChange.to > state.doc.content.size ||
+        group[0].from > lastChange.to
+      ) {
         return
       }
       if (group.length > 1) {
