@@ -57,6 +57,7 @@ export interface FormActionsProps {
   showDeleteDialog: () => void
   newEntity: boolean
   isDisableSave: boolean
+  onSubmitForm?: () => void | Promise<void>
 }
 
 export const ModalFormActions: React.FC<FormActionsProps> = ({
@@ -67,7 +68,28 @@ export const ModalFormActions: React.FC<FormActionsProps> = ({
   showDeleteDialog,
   newEntity,
   isDisableSave,
+  onSubmitForm,
 }) => {
+  const saveButton = onSubmitForm ? (
+    <StyledIconButton
+      disabled={isDisableSave}
+      type="button"
+      onClick={() => {
+        if (!isDisableSave) {
+          void onSubmitForm()
+        }
+      }}
+    >
+      <PlusIcon />
+      {newEntity ? 'Save Details' : 'Update Details'}
+    </StyledIconButton>
+  ) : (
+    <StyledIconButton disabled={isDisableSave} type="submit" form={form}>
+      <PlusIcon />
+      {newEntity ? 'Save Details' : 'Update Details'}
+    </StyledIconButton>
+  )
+
   return (
     <ActionsContainer data-cy={`${type}-action`}>
       <ConfirmationDialog
@@ -80,12 +102,7 @@ export const ModalFormActions: React.FC<FormActionsProps> = ({
         type={DialogType.DELETE}
         entityType={type}
       />
-      <StyledButtonGroup>
-        <StyledIconButton disabled={isDisableSave} type="submit" form={form}>
-          <PlusIcon />
-          {newEntity ? 'Save Details' : 'Update Details'}
-        </StyledIconButton>
-      </StyledButtonGroup>
+      <StyledButtonGroup>{saveButton}</StyledButtonGroup>
     </ActionsContainer>
   )
 }

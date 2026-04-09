@@ -446,6 +446,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 <AuthorTabs>
                   <ModalFormActions
                     form={'author-details-form'}
+                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     type="author"
                     onDelete={deleteAuthor}
                     showingDeleteDialog={showingDeleteDialog}

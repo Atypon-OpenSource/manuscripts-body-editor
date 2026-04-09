@@ -520,6 +520,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   <ModalFormActions
                     type={'affiliation'}
                     form={'affiliation-form'}
+                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     onDelete={handleDeleteAffiliation}
                     showingDeleteDialog={
                       showingDeleteDialog &&
@@ -540,7 +541,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     <AffiliationTabPanel>
                       <AffiliationForm
                         values={checkID(selection, 'affiliation')}
-                        onSave={() => handleSaveAffiliation(valuesRef.current)}
+                        onSave={(attrs) => handleSaveAffiliation(attrs)}
                         onChange={handleAffiliationChange}
                         actionsRef={actionsRef}
                       />
