@@ -577,12 +577,12 @@ ProseMirror .block-embed .position-menu {
 
 .comment-marker:has(+ .block-contributors),
 .comment-marker:has(+ .block-affiliations) {
-  right: 20px;
+  right: 26px;
 }
 
 .block-subtitles .comment-marker {
-  top: 0;
-  left: -10px;
+  top: 0 !important;
+  left: 0 !important;
   float: right;
   position: relative;
 }
@@ -1281,6 +1281,7 @@ s[data-track-status='pending'][data-track-op='delete'] {
 .block-author_notes,
 .block-awards,
 .block-affiliations,
+.block-subtitles,
 .keywords {
   margin: 15px 0px;
 }
@@ -1601,7 +1602,6 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-contributors .action-gutter,
 .ProseMirror .block-affiliations .action-gutter {
-  right: 20px;
   pointer-events: none;
 }
 
