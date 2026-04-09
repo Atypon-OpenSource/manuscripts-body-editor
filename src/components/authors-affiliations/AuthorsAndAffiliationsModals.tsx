@@ -24,7 +24,6 @@ import {
   schema,
 } from '@manuscripts/transform'
 import { Attrs } from 'prosemirror-model'
-import { Selection } from 'prosemirror-state'
 import React, { useState } from 'react'
 
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
@@ -140,10 +139,6 @@ export const AuthorsAndAffiliationsModals: React.FC<
     onUpdateAuthors: (updated) =>
       updated.forEach((a) =>
         updateNodeAttrs(view, schema.nodes.contributor, a)
-      ),
-    clearSelection: () =>
-      view.dispatch(
-        view.state.tr.setSelection(Selection.atStart(view.state.doc))
       ),
   }
 
