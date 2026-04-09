@@ -1070,18 +1070,18 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset var(--tc-decor-width) 0 0 var(--inserted-pending-color);
 }
 
-del .highlighted-author-change,
-ins .highlighted-author-change {
+.tracking-visible del .highlighted-author-change,
+.tracking-visible ins .highlighted-author-change {
   border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
-.keyword ins .highlighted-author-change,
-.keyword del .highlighted-author-change {
+.tracking-visible .keyword ins .highlighted-author-change,
+.tracking-visible .keyword del .highlighted-author-change {
   position: relative;
   border-bottom: none;
 }
 
-.keyword del .highlighted-author-change:after,
-.keyword ins .highlighted-author-change:after {
+.tracking-visible .keyword del .highlighted-author-change:after,
+.tracking-visible .keyword ins .highlighted-author-change:after {
   content: '';
   position: absolute;
   width: calc(100% + 16px);
@@ -1220,7 +1220,7 @@ ins .highlighted-author-change {
   border-left: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
 
-.equation.highlighted-author-change {
+.tracking-visible .equation.highlighted-author-change {
   border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
 
