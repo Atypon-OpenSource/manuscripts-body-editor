@@ -11,6 +11,8 @@
   --highlight-bg-color: #ffeebf;
   --common-color: #353535;
   --box-element-bg-color: #fafafa;
+  --tc-decor-width: 3px;
+  --tc-highlight-author-color: #0d79d0;
 }
 
 * {
@@ -1065,7 +1067,53 @@ figure.block:has(.equation.selected-suggestion) {
   .ProseMirror
   [data-track-op='wrap_with_node'][data-track-status='pending']
   .block {
-  box-shadow: inset 3px 0 0 var(--inserted-pending-color);
+  box-shadow: inset var(--tc-decor-width) 0 0 var(--inserted-pending-color);
+}
+
+.tracking-visible del .highlighted-author-change,
+.tracking-visible ins .highlighted-author-change {
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
+}
+.tracking-visible .keyword ins .highlighted-author-change,
+.tracking-visible .keyword del .highlighted-author-change {
+  position: relative;
+  border-bottom: none;
+}
+
+.tracking-visible .keyword del .highlighted-author-change:after,
+.tracking-visible .keyword ins .highlighted-author-change:after {
+  content: '';
+  position: absolute;
+  width: calc(100% + 16px);
+  bottom: -12px;
+  left: -8px;
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
+}
+/* Inserted Block Highlighted Author */
+
+.tracking-visible
+  .ProseMirror
+  .keywords.highlighted-author-change
+  [data-track-op='insert'][data-track-status='pending']
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
+.tracking-visible
+  .ProseMirror
+  [data-track-op='insert'][data-track-status='pending'].highlighted-author-change
+  .block:not(.box-element):not(.trans-abstract):not(.trans-graphical-abstract),
+.tracking-visible
+  .ProseMirror
+  [data-track-op='wrap_with_node'][data-track-status='pending'].highlighted-author-change
+  .block {
+  box-shadow: none;
+  border-bottom: none;
+  border-left: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
+}
+
+.ProseMirror .highlighted-author-change > .block {
+  padding-left: calc(12px - var(--tc-decor-width));
+}
+.ProseMirror .highlighted-author-change > .block.pullquote {
+  padding-left: calc(48px - var(--tc-decor-width));
 }
 
 .tracking-visible
@@ -1105,7 +1153,7 @@ figure.block:has(.equation.selected-suggestion) {
   .figure-block
   figure[data-track-status='pending'].deleted
   img {
-  box-shadow: inset 3px 0 0 var(--deleted-color);
+  box-shadow: inset var(--tc-decor-width) 0 0 var(--deleted-color);
 }
 
 .tracking-visible
@@ -1113,7 +1161,7 @@ figure.block:has(.equation.selected-suggestion) {
   .figure-block
   figure[data-track-status='pending'].deleted
   img {
-  padding-left: 3px;
+  padding-left: var(--tc-decor-width);
 }
 
 .selected-suggestion[data-track-status='pending'][data-track-op='delete']
@@ -1143,13 +1191,43 @@ figure.block:has(.equation.selected-suggestion) {
     figure.selected-suggestion,
     [data-track-op='move'][data-track-status='pending']
   ) {
-  box-shadow: inset 3px 0 0 var(--updated-border-color);
+  box-shadow: inset var(--tc-decor-width) 0 0 var(--updated-border-color);
+}
+
+.tracking-visible
+  .ProseMirror
+  [data-track-op='set_attrs'].highlighted-author-change
+  .block:not(.trans-abstract):not(.trans-graphical-abstract),
+.tracking-visible
+  .block:has(figure[data-track-op='set_attrs'].highlighted-author-change),
+.tracking-visible
+  figure.block:has(.equation.set_attrs.highlighted-author-change),
+.tracking-visible
+  .ProseMirror
+  [data-track-op='node_split'][data-track-status='pending'].highlighted-author-change
+  .block,
+.tracking-visible
+  .selected-suggestion:is(
+    [data-track-op='move'].highlighted-author-change,
+    [data-track-op='structure'].highlighted-author-change
+  )
+  .block,
+.block:not(.supplements-content):has(
+    figure.selected-suggestion,
+    [data-track-op='move'][data-track-status='pending'].highlighted-author-change
+  ) {
+  box-shadow: none;
+  border-left: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
+}
+
+.tracking-visible .equation.highlighted-author-change {
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
 
 .supplements-content.block:has(
     [data-track-op='move'][data-track-status='pending']
   ) {
-  border-left: 3px solid var(--updated-border-color) !important;
+  border-left: var(--tc-decor-width) solid var(--updated-border-color) !important;
 }
 
 .tracking-visible
@@ -1215,6 +1293,13 @@ figure.block:has(.equation.selected-suggestion) {
   text-decoration: line-through;
   color: var(--deleted-color);
   background-color: var(--deleted-pending-bg-color);
+}
+
+.tracking-visible
+  .contributor.highlighted-author-change[data-track-status='pending'],
+.tracking-visible
+  .affiliation.highlighted-author-change[data-track-status='pending'] {
+  border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);
 }
 
 .tracking-visible
@@ -1693,7 +1778,6 @@ th:hover > .table-context-menu-button,
   display: block;
 }
 
-
 .ProseMirror .ext-link-editor-container .close-button:focus-visible,
 .ProseMirror .ext-link-editor-container .remove-button:focus-visible,
 .ProseMirror .ext-link-editor-container .icon-button:focus-visible {
@@ -1762,7 +1846,7 @@ th:hover > .table-context-menu-button,
   cursor: pointer;
 }
 
-.ProseMirror .accessibility_element_input:focus{
+.ProseMirror .accessibility_element_input:focus {
   outline: none;
 }
 

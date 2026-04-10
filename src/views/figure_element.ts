@@ -23,6 +23,7 @@ import { handleEnterKey } from '../lib/navigation-utils'
 import { createNodeView } from './creators'
 import { FigureEditableView } from './figure_editable'
 import { ImageElementView } from './image_element'
+import { Decoration, DecorationSource } from 'prosemirror-view'
 
 export class FigureElementView extends ImageElementView {
   public ignoreMutation = () => true
@@ -122,8 +123,12 @@ export class FigureElementView extends ImageElementView {
   /**
    * Updates button position and re-observes figures.
    */
-  public update(node: Node): boolean {
-    const handledBySuper = super.update(node)
+  public update(
+    node: Node,
+    decorations: readonly Decoration[],
+    innerDecorations: DecorationSource
+  ): boolean {
+    const handledBySuper = super.update(node, decorations, innerDecorations)
 
     if (handledBySuper) {
       this.setupResizeObserver() // Re-observe figures after node update

@@ -15,7 +15,7 @@
  */
 
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
-import { NodeView } from 'prosemirror-view'
+import { Decoration, DecorationSource, NodeView } from 'prosemirror-view'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import {
@@ -35,8 +35,11 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
     public readonly getPos: () => number
   ) {}
 
-  public update(newNode: ManuscriptNode) {
-    // if (!newNode.sameMarkup(this.node)) return false
+  public update(
+    newNode: ManuscriptNode,
+    decorations: readonly Decoration[],
+    innerDecorations: DecorationSource
+  ) {
     if (newNode.attrs.id !== this.node.attrs.id) {
       return false
     }
@@ -44,7 +47,7 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
       return false
     }
     this.node = newNode as Node
-    this.updateContents()
+    this.updateContents(decorations)
     this.props.popper.update()
     return true
   }
@@ -53,7 +56,7 @@ export class BaseNodeView<Node extends ManuscriptNode> implements NodeView {
     // extend this
   }
 
-  public updateContents() {
+  public updateContents(decorations?: readonly Decoration[]) {
     //this should be in initialize
     if (this.node.attrs.id) {
       this.dom.id = this.node.attrs.id

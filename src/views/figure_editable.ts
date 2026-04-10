@@ -30,6 +30,7 @@ import {
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
+import { Decoration, DecorationSource } from 'prosemirror-view'
 
 export class FigureEditableView extends FigureView {
   public reactTools: HTMLDivElement | null = null
@@ -49,8 +50,12 @@ export class FigureEditableView extends FigureView {
     domElement.__figureView = this
   }
 
-  public update(newNode: ManuscriptNode): boolean {
-    const handledBySuper = super.update(newNode)
+  public update(
+    newNode: ManuscriptNode,
+    decorations: readonly Decoration[],
+    innerDecorations: DecorationSource
+  ): boolean {
+    const handledBySuper = super.update(newNode, decorations, innerDecorations)
     if (handledBySuper) {
       this.addTools()
     }
