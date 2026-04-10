@@ -42,8 +42,8 @@ importers:
         specifier: link:../../../Library/pnpm/global/5/node_modules/@manuscripts/track-changes-plugin
         version: link:../../../Library/pnpm/global/5/node_modules/@manuscripts/track-changes-plugin
       '@manuscripts/transform':
-        specifier: 4.3.29
-        version: 4.3.29(prosemirror-state@1.4.3)
+        specifier: 4.3.32
+        version: 4.3.32(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -1330,8 +1330,8 @@ packages:
     resolution: {integrity: sha512-59dTwYcTj6A658gr/VHZlbE52Ltmln6GqZ3rmkt9rDhBxVq8pOuYuHQZdXQ1QwKfhD+8f1iYzDDIkXJjYkjZYg==}
     engines: {node: '>=20.16.0'}
 
-  '@manuscripts/transform@4.3.29':
-    resolution: {integrity: sha512-TPQCL3EHuj0lcThZlOPbV6upYkxSI74zkpXJH3ZDriqUtKQXwW2Sy3qrHyI4l/QOfCc5IeMctxnw7sWHvpxtbQ==}
+  '@manuscripts/transform@4.3.32':
+    resolution: {integrity: sha512-08tA3I9iPhq2tjbbvjAjIwi8W4vrCBcLmk3eztNXGGUSTYUpJyfN4UspJ7c3O3Tq7YCxk3ZhuDcio7H4xGBOyQ==}
     engines: {node: '>=20.16.0'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -6413,7 +6413,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/transform@4.3.29(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.32(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
