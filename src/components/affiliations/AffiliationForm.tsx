@@ -27,6 +27,7 @@ import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
 export interface FormActions {
   reset: () => void
+  submitForm: () => Promise<void> | void
 }
 export interface AffiliationFormProps {
   values: AffiliationAttrs
@@ -41,14 +42,14 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
   onChange,
   actionsRef,
 }) => {
-  if (actionsRef && !actionsRef.current) {
+  const formRef = useRef<FormikProps<AffiliationAttrs>>(null)
+
+  if (actionsRef) {
     actionsRef.current = {
-      reset: () => {
-        formRef.current?.resetForm()
-      },
+      reset: () => formRef.current?.resetForm(),
+      submitForm: () => formRef.current?.submitForm(),
     }
   }
-  const formRef = useRef<FormikProps<AffiliationAttrs>>(null)
   const validateAffiliation = (values: AffiliationAttrs) => {
     const errors: FormikErrors<AffiliationAttrs> = {}
     if (!values.institution?.trim()) {
@@ -60,7 +61,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
   return (
     <Formik<AffiliationAttrs>
       initialValues={values}
-      onSubmit={onSave}
+      onSubmit={(attrs) => onSave(attrs)}
       innerRef={formRef}
       enableReinitialize={true}
       validate={validateAffiliation}

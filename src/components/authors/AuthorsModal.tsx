@@ -16,7 +16,6 @@
 
 import {
   AddIcon,
-  AddInstitutionIcon,
   AddRoleIcon,
   AuthorPlaceholderIcon,
   CloseButton,
@@ -59,20 +58,12 @@ import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
-import { AffiliationsDrawer } from './AffiliationDrawer'
+import { AffiliationsPanel } from '../affiliations/AffiliationsPanel'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 import { CreditDrawer } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
-import { EditorView } from 'prosemirror-view'
-import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
-import {
-  deleteNode,
-  findChildrenAttrsByType,
-  updateNodeAttrs,
-} from '../../lib/view'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -85,6 +76,8 @@ export interface AuthorsModalProps {
   onSaveAuthor: (author: ContributorAttrs) => void
   onDeleteAuthor: (author: ContributorAttrs) => void
   addNewAuthor?: boolean
+  onOpenAffiliationsModal?: () => void
+  onClose?: () => void
 }
 
 export const AuthorsModal: React.FC<AuthorsModalProps> = ({
@@ -94,8 +87,17 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   onSaveAuthor,
   onDeleteAuthor,
   addNewAuthor = false,
+  onOpenAffiliationsModal,
+  onClose,
 }) => {
   const [isOpen, setOpen] = useState(true)
+  const prevIsOpenRef = useRef(true)
+  useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      onClose?.()
+    }
+    prevIsOpenRef.current = isOpen
+  }, [isOpen, onClose])
   const [isDisableSave, setDisableSave] = useState(true)
   const [isEmailRequired, setEmailRequired] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
@@ -131,11 +133,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [selection, setSelection] = useState(author)
 
   const {
-    showAffiliationDrawer,
-    setShowAffiliationDrawer,
     selectedAffiliations,
     setSelectedAffiliations,
-    removeAffiliation,
     selectAffiliation,
     affiliations,
   } = useManageAffiliations(selection, $affiliations)
@@ -171,11 +170,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       } else {
         updateAffiliationSelection(author)
         setSelection(author)
-        setShowAffiliationDrawer(false)
         setNewAuthor(false)
       }
     } else {
-      setShowAffiliationDrawer(false)
       updateAffiliationSelection(author)
       setSelection(author)
       setNewAuthor(false)
@@ -217,7 +214,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         setSelection(nextAuthor)
         setNextAuthor(null)
         setNewAuthor(false)
-        setShowAffiliationDrawer(false)
         updateAffiliationSelection(nextAuthor)
         setIsCreatingNewAuthor(false)
       } else if (isCreatingNewAuthor) {
@@ -251,7 +247,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     }
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
-    setShowAffiliationDrawer(false)
   }
 
   const saveAuthor = (values: ContributorAttrs | undefined) => {
@@ -272,7 +267,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelection(author)
     setShowConfirmationDialog(false)
     setNewAuthor(false)
-    setShowAffiliationDrawer(false)
     setIsCreatingNewAuthor(false)
     dispatchAuthors({
       type: 'update',
@@ -333,7 +327,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNextAuthor(null)
     } else {
       createNewAuthor()
-      setShowAffiliationDrawer(false)
     }
   }
 
@@ -445,6 +438,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 <AuthorTabs>
                   <ModalFormActions
                     form={'author-details-form'}
+                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     type="author"
                     onDelete={deleteAuthor}
                     showingDeleteDialog={showingDeleteDialog}
@@ -461,7 +455,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                   />
                   <InspectorTabList>
                     <InspectorTab>Details</InspectorTab>
-                    <InspectorTab>Affiliations</InspectorTab>
+                    {onOpenAffiliationsModal && (
+                      <InspectorTab>Affiliations</InspectorTab>
+                    )}
                     <InspectorTab>Contributions (CRediT)</InspectorTab>
                   </InspectorTabList>
                   <InspectorTabPanels>
@@ -479,22 +475,16 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         selectedCreditRoles={selectedCreditRoles}
                       />
                     </AuthorTabPanel>
-                    <AuthorTabPanel>
-                      <DrawerGroup<AffiliationAttrs>
-                        Drawer={AffiliationsDrawer}
-                        removeItem={removeAffiliation}
-                        selectedItems={selectedAffiliations}
-                        onSelect={selectAffiliation}
-                        items={affiliations}
-                        showDrawer={showAffiliationDrawer}
-                        setShowDrawer={setShowAffiliationDrawer}
-                        title="Affiliations"
-                        buttonText="Assign Institutions"
-                        cy="affiliations"
-                        labelField="institution"
-                        Icon={<AddInstitutionIcon width={16} height={16} />}
-                      />
-                    </AuthorTabPanel>
+                    {onOpenAffiliationsModal && (
+                      <AuthorTabPanel>
+                        <AffiliationsPanel
+                          items={affiliations}
+                          selectedItems={selectedAffiliations}
+                          onSelect={selectAffiliation}
+                          onOpenAffiliationsModal={onOpenAffiliationsModal}
+                        />
+                      </AuthorTabPanel>
+                    )}
                     <AuthorTabPanel>
                       <DrawerGroup<{ id: string; vocabTerm: string }>
                         Drawer={CreditDrawer}
@@ -610,55 +600,3 @@ const StyledModalBody = styled(ModalBody)`
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 16px;
 `
-
-export const openAuthorsModal = (pos: number, view?: EditorView) => {
-  if (!view) {
-    return
-  }
-
-  const { state } = view
-  const props = getEditorProps(state)
-  const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
-    view,
-    schema.nodes.affiliation
-  )
-
-  const componentProps: AuthorsModalProps = {
-    authors: [],
-    affiliations,
-    onSaveAuthor: (contributor) =>
-      handleSaveContributor(view, contributor, pos),
-    onDeleteAuthor: (contributor) => handleDeleteContributor(view, contributor),
-    addNewAuthor: true,
-  }
-
-  const dialog = ReactSubView(
-    props,
-    AuthorsModal,
-    componentProps,
-    state.doc,
-    () => pos,
-    view
-  )
-  view.focus()
-  document.body.appendChild(dialog)
-}
-
-export const handleSaveContributor = (
-  view: EditorView,
-  contributor: ContributorAttrs,
-  contributorsPos: number
-) => {
-  const update = updateNodeAttrs(view, schema.nodes.contributor, contributor)
-  if (!update) {
-    const node = schema.nodes.contributor.create(contributor)
-    view.dispatch(view.state.tr.insert(contributorsPos + 1, node))
-  }
-}
-
-export const handleDeleteContributor = (
-  view: EditorView,
-  contributor: ContributorAttrs
-) => {
-  deleteNode(view, contributor.id)
-}
