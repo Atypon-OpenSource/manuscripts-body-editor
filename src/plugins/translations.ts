@@ -127,37 +127,39 @@ export default (props: EditorProps) =>
                 Decoration.widget(
                   pos + 2,
                   (view) => {
-                  const $span = document.createElement('span')
-                  $span.tabIndex = 0
-                  $span.className = 'add-trans-abstract'
-                  $span.title = 'Add translation'
-                  $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
+                    const $span = document.createElement('span')
+                    $span.tabIndex = 0
+                    $span.className = 'add-trans-abstract'
+                    $span.title = 'Add translation'
+                    $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
 
-                  const handleActivate = (event: Event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    if (isGraphical && category) {
-                      insertTransGraphicalAbstract(
-                        category,
-                        pos + node.nodeSize
-                      )(view.state, view.dispatch, view)
-                    } else {
-                      insertTransAbstract(
-                        view.state,
-                        view.dispatch,
-                        node.attrs.category,
-                        pos + node.nodeSize
-                      )
+                    const handleActivate = (event: Event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      if (isGraphical && category) {
+                        insertTransGraphicalAbstract(
+                          category,
+                          pos + node.nodeSize
+                        )(view.state, view.dispatch, view)
+                      } else {
+                        insertTransAbstract(
+                          view.state,
+                          view.dispatch,
+                          node.attrs.category,
+                          pos + node.nodeSize
+                        )
+                      }
                     }
-                  }
 
-                  $span.addEventListener('mousedown', handleActivate)
-                  $span.addEventListener(
-                    'keydown',
-                    handleEnterKey(handleActivate)
-                  )
-                  return $span
-                }, { key: `add-trans-${node.attrs.id || pos}`, side: -1 })
+                    $span.addEventListener('mousedown', handleActivate)
+                    $span.addEventListener(
+                      'keydown',
+                      handleEnterKey(handleActivate)
+                    )
+                    return $span
+                  },
+                  { key: `add-trans-${node.attrs.id || pos}`, side: -1 }
+                )
               )
             }
           }
@@ -177,61 +179,67 @@ export default (props: EditorProps) =>
               Decoration.widget(
                 pos + 2,
                 (view) => {
-                const $btn = document.createElement('span')
-                $btn.className = 'language-selector-btn'
-                $btn.setAttribute('data-cy', 'language-selector-btn')
-                $btn.contentEditable = 'false'
-                $btn.tabIndex = canEdit ? 0 : -1
+                  const $btn = document.createElement('span')
+                  $btn.className = 'language-selector-btn'
+                  $btn.setAttribute('data-cy', 'language-selector-btn')
+                  $btn.contentEditable = 'false'
+                  $btn.tabIndex = canEdit ? 0 : -1
 
-                const code = node.attrs.lang || 'en'
-                const lang = getLanguage(code, props.languages)
-                const label = getLanguageLabel(lang)
-                $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
+                  const code = node.attrs.lang || 'en'
+                  const lang = getLanguage(code, props.languages)
+                  const label = getLanguageLabel(lang)
+                  $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
 
-                if (canEdit) {
-                  let menuInstance: MenuInstance | null = null
-                  const handleOpenMenu = (event: Event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
+                  if (canEdit) {
+                    let menuInstance: MenuInstance | null = null
+                    const handleOpenMenu = (event: Event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
 
-                    props.popper.destroy() // Ensure any existing popper is closed
+                      props.popper.destroy() // Ensure any existing popper is closed
 
-                    const handleSelect = (code: string) => {
-                      const tr = view.state.tr.setNodeAttribute(
-                        pos,
-                        'lang',
-                        code
+                      const handleSelect = (code: string) => {
+                        const tr = view.state.tr.setNodeAttribute(
+                          pos,
+                          'lang',
+                          code
+                        )
+                        view.dispatch(tr)
+                      }
+
+                      menuInstance = createLanguageMenu(
+                        props,
+                        code,
+                        handleSelect
                       )
-                      view.dispatch(tr)
+
+                      props.popper.show(
+                        $btn,
+                        menuInstance.menu,
+                        'bottom-end',
+                        false
+                      )
                     }
 
-                    menuInstance = createLanguageMenu(props, code, handleSelect)
+                    createKeyboardInteraction({
+                      container: $btn,
+                      additionalKeys: {
+                        Enter: handleOpenMenu,
+                        Escape: (e) => {
+                          e.preventDefault()
+                          menuInstance?.destroy()
+                          menuInstance = null
+                        },
+                      },
+                    })
 
-                    props.popper.show(
-                      $btn,
-                      menuInstance.menu,
-                      'bottom-end',
-                      false
-                    )
+                    $btn.addEventListener('mousedown', handleOpenMenu)
                   }
 
-                  createKeyboardInteraction({
-                    container: $btn,
-                    additionalKeys: {
-                      Enter: handleOpenMenu,
-                      Escape: (e) => {
-                        e.preventDefault()
-                        menuInstance?.destroy()
-                        menuInstance = null
-                      },
-                    },
-                  })
-
-                  $btn.addEventListener('mousedown', handleOpenMenu)
-                }
-
-                return $btn
-              }, { key: `lang-selector-${node.attrs.id}`, side: -1 })
+                  return $btn
+                },
+                { key: `lang-selector-${node.attrs.id}`, side: -1 }
+              )
             )
           }
         })
