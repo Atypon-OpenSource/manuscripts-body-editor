@@ -87,27 +87,27 @@ export const ReferenceSearchResults: React.FC<{
 
   return (
     <ReferenceSearchResultsContainer ref={list}>
-    {items.map((item) => (
-      <ReferenceSearchResult
-        onClick={() => onSelect(item)}
-        key={item.id}
-        data-cy={`${isSelected(item) ? 'selected-reference' : 'reference'}`}
-      >
-        <StatusIcon>
-          {isSelected(item) ? (
-            <AddedIcon width={24} height={24} />
-          ) : (
-            <AddIcon width={24} height={24} />
-          )}
-        </StatusIcon>
-        <ReferenceLine item={item} />
-      </ReferenceSearchResult>
-    ))}
+      {items.map((item) => (
+        <ReferenceSearchResult
+          onClick={() => onSelect(item)}
+          key={item.id}
+          data-cy={`${isSelected(item) ? 'selected-reference' : 'reference'}`}
+        >
+          <StatusIcon>
+            {isSelected(item) ? (
+              <AddedIcon width={24} height={24} />
+            ) : (
+              <AddIcon width={24} height={24} />
+            )}
+          </StatusIcon>
+          <ReferenceLine item={item} />
+        </ReferenceSearchResult>
+      ))}
       {items.length < 25 && total > items.length ? (
         <MoreButton onClick={onExpandReferenceList} data-cy={'more-button'}>
-        Show more
-      </MoreButton>
-    ) : undefined}
+          Show more
+        </MoreButton>
+      ) : undefined}
     </ReferenceSearchResultsContainer>
   )
 }
