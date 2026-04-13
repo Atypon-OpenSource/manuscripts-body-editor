@@ -37,10 +37,7 @@ import {
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 
-import {
-  findChildByID,
-  findChildrenAttrsByType,
-} from '../lib/view'
+import { findChildByID, findChildrenAttrsByType } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'

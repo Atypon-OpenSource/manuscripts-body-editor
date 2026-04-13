@@ -132,26 +132,26 @@ export const ImportBibliographyForm = ({
           tabIndex={0}
           role="button"
           onDrop={handleDrop}
-            onDragOver={(e) => {
-              e.preventDefault()
-              setDragging(true)
-            }}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragging(true)
+          }}
           onDragLeave={() => setDragging(false)}
           onKeyDown={handleOnKeyDown}
-            active={dragging}
-          >
-            <input
-              id="file"
-              name="file"
-              type="file"
+          active={dragging}
+        >
+          <input
+            id="file"
+            name="file"
+            type="file"
             ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-            <Label htmlFor="file">
-              Drag & Drop or Click here to upload a file.
-            </Label>
-          </DropContainer>
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+          <Label htmlFor="file">
+            Drag & Drop or Click here to upload a file.
+          </Label>
+        </DropContainer>
       </FormRow>
       <FormRow>
         <Label htmlFor="content">
