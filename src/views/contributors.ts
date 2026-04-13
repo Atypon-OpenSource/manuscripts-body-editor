@@ -15,12 +15,19 @@
  */
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import {
+  addTrackChangesAttributes,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import { ContributorsNode, schema } from '@manuscripts/transform'
+
 import { NodeSelection } from 'prosemirror-state'
 
 import {
   AuthorsModal,
   AuthorsModalProps,
+  handleDeleteContributor,
+  handleSaveContributor,
 } from '../components/authors/AuthorsModal'
 import {
   AffiliationAttrs,
@@ -30,17 +37,10 @@ import {
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
+
 import {
-  addTrackChangesAttributes,
-  isDeleted,
-} from '../lib/track-changes-utils'
-import { findInsertionPosition } from '../lib/utils'
-import {
-  deleteNode,
   findChildByID,
-  findChildByType,
   findChildrenAttrsByType,
-  updateNodeAttrs,
 } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
@@ -76,20 +76,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     this.buildAuthors(affs)
     this.createLegend()
     this.updateSelection()
-  }
-
-  public selectNode = () => {
-    // Query the selected marker
-    const selectedMarker = document.querySelector(
-      '.comment-marker.selected-comment'
-    )
-
-    this.dom.classList.add('ProseMirror-selectednode')
-
-    // Open the modal if the node is not deleted and the comment marker is not selected
-    if (!isDeleted(this.node) && !selectedMarker) {
-      this.handleEdit('', true)
-    }
   }
 
   buildAuthors = (affs: PluginState) => {
@@ -346,8 +332,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       author,
       authors: contributors,
       affiliations,
-      onSaveAuthor: this.handleSaveAuthor,
-      onDeleteAuthor: this.handleDeleteAuthor,
+      onSaveAuthor: (contributor) =>
+        handleSaveContributor(this.view, contributor, this.getPos()),
+      onDeleteAuthor: (contributor) =>
+        handleDeleteContributor(this.view, contributor),
       addNewAuthor: addNew,
     }
 
@@ -364,48 +352,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     this.container.appendChild(this.popper)
   }
-  handleSaveAuthor = (author: ContributorAttrs) => {
-    const update = updateNodeAttrs(this.view, schema.nodes.contributor, author)
-    if (!update) {
-      this.insertAuthorNode(author)
-    }
-  }
 
-  handleDeleteAuthor = (author: ContributorAttrs) => {
-    deleteNode(this.view, author.id)
-  }
-
-  insertAuthorNode = (attrs: ContributorAttrs) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parent = findChildByType(this.view, schema.nodes.contributors)!
-    const tr = this.view.state.tr
-    const node = schema.nodes.contributor.create(attrs)
-    this.view.dispatch(tr.insert(parent.pos + 1, node))
-  }
-
-  insertAffiliationNode = (attrs: AffiliationAttrs) => {
-    const { view } = this
-    const { dispatch } = view
-    const affiliationsNodeType = schema.nodes.affiliations
-
-    let affiliations = findChildByType(view, affiliationsNodeType)
-
-    if (!affiliations) {
-      const { tr } = this.view.state
-      const insertPos = findInsertionPosition(
-        schema.nodes.affiliations,
-        view.state.doc
-      )
-      dispatch(tr.insert(insertPos, schema.nodes.affiliations.create()))
-      affiliations = findChildByType(view, affiliationsNodeType)
-    }
-
-    if (affiliations) {
-      const { tr } = this.view.state
-      const affiliationNode = schema.nodes.affiliation.create(attrs)
-      dispatch(tr.insert(affiliations.pos + 1, affiliationNode))
-    }
-  }
   public destroy() {
     this.removeKeydownListener?.()
     super.destroy()

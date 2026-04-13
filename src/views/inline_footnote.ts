@@ -33,11 +33,11 @@ import {
   findFootnotesContainerNode,
   getFootnotesElementState,
 } from '../lib/footnotes'
-import { isDeleted, isPendingInsert } from '../lib/track-changes-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
+import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 
 export class InlineFootnoteView
   extends BaseNodeView<Trackable<InlineFootnoteNode>>
@@ -153,6 +153,7 @@ export class InlineFootnoteView
       this.view,
       ['footnote-editor']
     )
+    this.popperContainer.setAttribute('tabindex', '0')
     this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
   }
 

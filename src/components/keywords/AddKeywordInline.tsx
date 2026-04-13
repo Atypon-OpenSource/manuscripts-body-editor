@@ -15,12 +15,14 @@
  */
 
 import { Category, Dialog, PlusIcon } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
+
 import { TextSelection } from 'prosemirror-state'
 import React, {
   ChangeEvent,
@@ -30,8 +32,6 @@ import React, {
   useState,
 } from 'react'
 import styled from 'styled-components'
-
-import { isDeleted } from '../../lib/track-changes-utils'
 
 const AddNewKeyword = styled.div`
   position: relative;
