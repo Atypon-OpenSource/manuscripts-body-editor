@@ -168,10 +168,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <FormRow>
               <Field name={'role'}>
                 {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="role">Job Title</Label>
-                      <TextField id={'role'} {...props.field} />
-                    </>
+                  <>
+                    <Label htmlFor="role">Job Title</Label>
+                    <TextField id={'role'} {...props.field} />
+                  </>
                 )}
               </Field>
             </FormRow>
@@ -184,9 +184,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   return (
                     <>
                       <Label htmlFor="email">
-                        {isEmailRequired
-                          ? 'Email address*'
-                          : 'Email address'}
+                        {isEmailRequired ? 'Email address*' : 'Email address'}
                       </Label>
                       <TextFieldWithError
                         id={'email'}
@@ -210,11 +208,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 <CheckboxLabel>
                   <Field name={'isCorresponding'}>
                     {(props: FieldProps) => (
-                        <CheckboxField
-                            id={'isCorresponding'}
-                            checked={props.field.value}
-                            {...props.field}
-                        />
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        {...props.field}
+                      />
                     )}
                   </Field>
                   <LabelText>Corresponding Author</LabelText>
