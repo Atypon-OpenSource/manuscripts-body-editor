@@ -639,7 +639,10 @@ const ActionTitle = styled.div`
 const AffiliationTabs = styled(InspectorTabs)`
   position: relative;
 `
-const AffiliationTabPanel = styled(InspectorTabPanel).attrs({ tabIndex: -1, unmount: false })`
+const AffiliationTabPanel = styled(InspectorTabPanel).attrs({
+  tabIndex: -1,
+  unmount: false,
+})`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 

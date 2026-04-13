@@ -594,7 +594,10 @@ const ActionTitle = styled.div`
 const AuthorTabs = styled(InspectorTabs)`
   position: relative;
 `
-const AuthorTabPanel = styled(InspectorTabPanel).attrs({ tabIndex: -1, unmount: false })`
+const AuthorTabPanel = styled(InspectorTabPanel).attrs({
+  tabIndex: -1,
+  unmount: false,
+})`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
