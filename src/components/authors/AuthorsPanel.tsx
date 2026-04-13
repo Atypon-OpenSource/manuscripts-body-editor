@@ -55,7 +55,7 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
         </>
       }
     >
-      <ListItems>
+      <ListItems data-cy="authors-panel">
         {items.map((item) => (
           <ListItem
             key={item.id}

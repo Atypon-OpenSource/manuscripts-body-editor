@@ -61,7 +61,7 @@ export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
         </>
       }
     >
-      <ListItems>
+      <ListItems data-cy="affiliations-panel">
         {items.map((item) => (
           <ListItem
             key={item.id}
