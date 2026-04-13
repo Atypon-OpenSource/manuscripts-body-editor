@@ -522,6 +522,11 @@ ProseMirror .block-embed .position-menu {
   right: 50px;
 }
 
+.comment-marker:has(+ .block-contributors),
+.comment-marker:has(+ .block-affiliations) {
+  right: 20px;
+}
+
 .block-subtitles .comment-marker {
   top: 0;
   left: -10px;
@@ -1327,13 +1332,11 @@ s[data-track-status='pending'][data-track-op='delete'] {
   line-height: 1.2;
   cursor: default;
   user-select: none;
-  display: flex;
-  justify-content: flex-start;
-  gap: 4px;
 }
 
 .affiliation .affiliation-label {
   font-weight: bold;
+  margin-right: 3.2px;
 }
 
 .ProseMirror .doi-container {
@@ -1397,7 +1400,7 @@ s[data-track-status='pending'][data-track-op='delete'] {
   border-bottom: 1px solid #e2e2e2;
   position: relative;
   padding-top: 0.2rem;
-  margin: 1rem calc(var(--body-side-margin) - 12px) 0;
+  margin: 13px calc(var(--body-side-margin) - 12px);
 }
 .alt-titles-closing-button {
   position: absolute;
@@ -1546,7 +1549,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .block-contributors .action-gutter,
 .ProseMirror .block-affiliations .action-gutter {
-  right: 15px;
+  right: 20px;
   pointer-events: none;
 }
 
