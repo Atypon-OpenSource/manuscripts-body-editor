@@ -23,6 +23,7 @@ import {
   InspectorTabPanel,
   InspectorTabPanels,
   InspectorTabs,
+  outlineStyle,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -60,6 +61,14 @@ import { GenericDrawer } from '../modal-drawer/GenericDrawer'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
+import { EditorView } from 'prosemirror-view'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import {
+  deleteNode,
+  findChildrenAttrsByType,
+  updateNodeAttrs,
+} from '../../lib/view'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs
@@ -68,7 +77,6 @@ export interface AffiliationsModalProps {
   onSaveAffiliation: (affiliation: AffiliationAttrs) => void
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
-  clearSelection: () => void
   addNewAffiliation?: boolean
 }
 
@@ -86,7 +94,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onSaveAffiliation,
   onDeleteAffiliation,
   onUpdateAuthors,
-  clearSelection,
   addNewAffiliation = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
@@ -130,7 +137,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     }
     const currentAffiliation = selection
     const affiliatedAuthorIds = authors
-      .filter((author) => author.affiliationIDs?.includes(currentAffiliation.id))
+      .filter((author) =>
+        author.affiliationIDs?.includes(currentAffiliation.id)
+      )
       .map((author) => author.id)
     setSelectedAuthorIds(affiliatedAuthorIds)
     setAffiliationAuthorMap((prevMap) => {
@@ -163,8 +172,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setPendingAction('close')
     } else {
       setIsOpen(false)
+      setSelection(undefined)
     }
-    clearSelection()
   }
 
   const handleSelect = (affiliation: AffiliationAttrs) => {
@@ -342,9 +351,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       const author = authors.find((a) => a.id === authorId)
       return {
         id: authorId,
-        label: author
-          ? `${author.given} ${author.family}`
-          : '',
+        label: author ? `${author.given} ${author.family}` : '',
       }
     })
     .filter((author) => author.label)
@@ -503,7 +510,13 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                     type={'affiliation'}
                     form={'affiliation-form'}
                     onDelete={handleDeleteAffiliation}
-                    showingDeleteDialog={showingDeleteDialog}
+                    showingDeleteDialog={
+                      showingDeleteDialog &&
+                      !(
+                        showConfirmationDialog ||
+                        showRequiredFieldConfirmationDialog
+                      )
+                    }
                     showDeleteDialog={handleShowDeleteDialog}
                     newEntity={newAffiliation}
                     isDisableSave={isDisableSave}
@@ -597,9 +610,15 @@ function createEmptyAffiliation(priority: number): AffiliationAttrs {
 }
 
 const StyledSidebarContent = styled(SidebarContent)`
-  padding: 0;
+  padding: 8px;
 `
-const AddAffiliationButton = styled.div`
+const AddAffiliationButton = styled.button`
+  background: none;
+  border: none;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  width: 100%;
   display: flex;
   align-items: center;
   padding: 12px 8px 12px 12px;
@@ -610,6 +629,7 @@ const AddAffiliationButton = styled.div`
     border-left: 0;
     border-right: 0;
   }
+  ${outlineStyle}
 `
 
 const ActionTitle = styled.div`
@@ -619,7 +639,10 @@ const ActionTitle = styled.div`
 const AffiliationTabs = styled(InspectorTabs)`
   position: relative;
 `
-const AffiliationTabPanel = styled(InspectorTabPanel).attrs({ unmount: false })`
+const AffiliationTabPanel = styled(InspectorTabPanel).attrs({
+  tabIndex: -1,
+  unmount: false,
+})`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
@@ -631,3 +654,65 @@ const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
   margin-bottom: 16px;
 `
+
+export const openAffiliationsModal = (pos: number, view?: EditorView) => {
+  if (!view) {
+    return
+  }
+
+  const { state } = view
+  const props = getEditorProps(state)
+  const contributors: ContributorAttrs[] = findChildrenAttrsByType(
+    view,
+    schema.nodes.contributor
+  )
+  const componentProps: AffiliationsModalProps = {
+    affiliations: [],
+    authors: contributors,
+    onSaveAffiliation: (affiliation) =>
+      handleSaveAffiliation(view, affiliation, pos),
+    onDeleteAffiliation: (affiliation) =>
+      handleDeleteAffiliation(view, affiliation),
+    onUpdateAuthors: (authors) => handleUpdateAuthors(view, authors),
+    addNewAffiliation: true,
+  }
+
+  const dialog = ReactSubView(
+    props,
+    AffiliationsModal,
+    componentProps,
+    state.doc,
+    () => pos,
+    view
+  )
+  view.focus()
+  document.body.appendChild(dialog)
+}
+
+export const handleSaveAffiliation = (
+  view: EditorView,
+  affiliation: AffiliationAttrs,
+  affiliationsPos: number
+) => {
+  const update = updateNodeAttrs(view, schema.nodes.affiliation, affiliation)
+  if (!update) {
+    const node = schema.nodes.affiliation.create(affiliation)
+    view.dispatch(view.state.tr.insert(affiliationsPos + 1, node))
+  }
+}
+
+export const handleDeleteAffiliation = (
+  view: EditorView,
+  affiliation: AffiliationAttrs
+) => {
+  deleteNode(view, affiliation.id)
+}
+
+export const handleUpdateAuthors = (
+  view: EditorView,
+  authors: ContributorAttrs[]
+) => {
+  authors.forEach((author) => {
+    updateNodeAttrs(view, schema.nodes.contributor, author)
+  })
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { skipTracking } from '@manuscripts/track-changes-plugin'
+import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -105,7 +105,6 @@ import {
   nearestAncestor,
 } from './lib/helpers'
 import { templateAllows } from './lib/template'
-import { isDeleted } from './lib/track-changes-utils'
 import {
   findInsertionPosition,
   findParentNodeWithId,
@@ -121,6 +120,8 @@ import { checkForCompletion } from './plugins/section_title/autocompletion'
 import { EditorAction } from './types'
 import { persistentCursor } from './plugins/persistent-cursor'
 import { AwardAttrs } from './views/award'
+import { openAffiliationsModal } from './components/affiliations/AffiliationsModal'
+import { openAuthorsModal } from './components/authors/AuthorsModal'
 
 export type Dispatch = (tr: ManuscriptTransaction) => void
 
@@ -1139,7 +1140,7 @@ export const insertContributors = (
   if (!contributors) {
     const pos = findInsertionPosition(schema.nodes.contributors, state.doc)
     const contributorsNode = state.schema.nodes.contributors.create({
-      id: '',
+      id: generateNodeID(schema.nodes.contributors),
     })
     tr.insert(pos, contributorsNode)
     contributors = { node: contributorsNode, pos }
@@ -1147,10 +1148,8 @@ export const insertContributors = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, contributors.pos)
-    if (view) {
-      view.focus()
-    }
     dispatch(tr.setSelection(selection).scrollIntoView())
+    openAuthorsModal(contributors.pos, view)
   }
   return true
 }
@@ -1170,7 +1169,7 @@ export const insertAffiliation = (
   if (!affiliations) {
     const pos = findInsertionPosition(schema.nodes.affiliations, state.doc)
     const affiliationsNode = state.schema.nodes.affiliations.create({
-      id: '',
+      id: generateNodeID(schema.nodes.affiliations),
     })
     tr.insert(pos, affiliationsNode)
     affiliations = { node: affiliationsNode, pos }
@@ -1178,10 +1177,8 @@ export const insertAffiliation = (
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, affiliations.pos)
-    if (view) {
-      view.focus()
-    }
     dispatch(tr.setSelection(selection).scrollIntoView())
+    openAffiliationsModal(affiliations.pos, view)
   }
   return true
 }

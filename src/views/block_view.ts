@@ -16,8 +16,8 @@
 
 import { ManuscriptNode, ManuscriptNodeView } from '@manuscripts/transform'
 
-import { addTrackChangesAttributes } from '../lib/track-changes-utils'
 import { BaseNodeView } from './base_node_view'
+import { addTrackChangesAttributes } from '@manuscripts/track-changes-plugin'
 
 export default class BlockView<BlockNode extends ManuscriptNode>
   extends BaseNodeView<BlockNode>

@@ -36,30 +36,13 @@ import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
+import { normalizeAuthor } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 
-export const Fieldset = styled.fieldset`
-  padding: 0;
-  margin: 0;
-  border: none;
-`
-
-const OrcidContainer = styled.div`
-  margin: 16px 0 0;
-`
-
-const TextFieldWithError = styled(TextField)`
-  &:required::placeholder {
-    color: ${(props) => props.theme.colors.text.error};
-  }
-`
-
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 32px;
-`
-
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const ORCID_URL_REGEX =
+  /^https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]\/?$/
+const ORCID_INPUT_PATTERN = ORCID_URL_REGEX.source.slice(1, -1)
 export interface FormActions {
   reset: () => void
 }
@@ -109,13 +92,17 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
 
   const validateAuthor = (values: ContributorAttrs) => {
     const errors: FormikErrors<ContributorAttrs> = {}
-    if (isEmailRequired && !values.email) {
+    const email = values.email?.trim()
+    if (isEmailRequired && !email) {
       errors.email = 'Email address is required'
-    } else if (
-      values.email &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)
-    ) {
+    } else if (email && !EMAIL_REGEX.test(email)) {
       errors.email = 'Invalid email address'
+    }
+
+    const orcid = values.ORCID?.trim()
+    if (orcid && !ORCID_URL_REGEX.test(orcid)) {
+      errors.ORCID =
+        'Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx'
     }
     return errors
   }
@@ -123,7 +110,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   return (
     <Formik<ContributorAttrs>
       initialValues={values}
-      onSubmit={onSave}
+      onSubmit={(submitted) => onSave(normalizeAuthor(submitted))}
       enableReinitialize={true}
       validateOnChange={true}
       innerRef={formRef}
@@ -131,120 +118,145 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     >
       {(formik) => {
         return (
-          <ChangeHandlingForm
-            onChange={onChange}
+          <ChangeHandlingForm<ContributorAttrs>
+            onChange={(next) => onChange(normalizeAuthor(next))}
             id="author-details-form"
             formRef={authorFormRef}
             noValidate
           >
-              <FormRow>
-                <Field name={'prefix'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="prefix">Prefix</Label>
-                      <TextField id={'prefix'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <FormRow>
-                <Field name={'given'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="given-name">Given name</Label>
-                      <TextField id={'given-name'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <FormRow>
-                <Field name={'family'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="family-name">Family name</Label>
-                      <TextField id={'family-name'} {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
             <FormRow>
-              <Field name={'role'}>
+              <Field name={'prefix'}>
                 {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="role">Job Title</Label>
-                      <TextField id={'role'} {...props.field} />
-                    </>
+                  <>
+                    <Label htmlFor="prefix">Prefix</Label>
+                    <TextField id={'prefix'} {...props.field} />
+                  </>
                 )}
               </Field>
             </FormRow>
-              <FormRow>
-                <Field name={'email'} type={'email'}>
-                  {(props: FieldProps) => {
-                    const hasError =
-                      getIn(formik.touched, 'email') &&
-                      getIn(formik.errors, 'email')
-                    return (
-                      <>
-                        <Label htmlFor="email">
-                          {isEmailRequired
-                            ? 'Email address*'
-                            : 'Email address'}
-                        </Label>
-                        <TextFieldWithError
-                          id={'email'}
-                          type="email"
-                          required={isEmailRequired}
-                          {...props.field}
-                          error={hasError}
-                        />
-                        {hasError && (
-                          <InputErrorText>
-                            {getIn(formik.errors, 'email')}
-                          </InputErrorText>
-                        )}
-                      </>
-                    )
-                  }}
-                </Field>
-              </FormRow>
-            <CheckboxContainer>
-              <CheckboxLabel>
-                <Field name={'isCorresponding'}>
-                  {(props: FieldProps) => (
-                      <CheckboxField
-                          id={'isCorresponding'}
-                          checked={props.field.value}
-                          {...props.field}
+            <FormRow>
+              <Field name={'given'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="given-name">Given name</Label>
+                    <TextField id={'given-name'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'family'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="family-name">Family name</Label>
+                    <TextField id={'family-name'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                  <>
+                    <Label htmlFor="role">Job Title</Label>
+                    <TextField id={'role'} {...props.field} />
+                  </>
+                )}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'email'} type={'email'}>
+                {(props: FieldProps) => {
+                  const hasError =
+                    getIn(formik.touched, 'email') &&
+                    getIn(formik.errors, 'email')
+                  return (
+                    <>
+                      <Label htmlFor="email">
+                        {isEmailRequired ? 'Email address*' : 'Email address'}
+                      </Label>
+                      <TextFieldWithError
+                        id={'email'}
+                        type="email"
+                        required={isEmailRequired}
+                        {...props.field}
+                        error={hasError}
                       />
-                  )}
-                </Field>
-                <LabelText>Corresponding Author</LabelText>
-              </CheckboxLabel>
-            </CheckboxContainer>
-              <OrcidContainer>
-                <FormRow>
-                  <Label htmlFor="orcid">ORCID</Label>
-                  <Field name={'ORCID'} type={'text'}>
+                      {hasError && (
+                        <InputErrorText>
+                          {getIn(formik.errors, 'email')}
+                        </InputErrorText>
+                      )}
+                    </>
+                  )
+                }}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <CheckboxContainer data-cy="corresponding-author-container">
+                <CheckboxLabel>
+                  <Field name={'isCorresponding'}>
                     {(props: FieldProps) => (
-                      <>
-                        <Label htmlFor="orcid" className="sr-only">
-                          ORCID
-                        </Label>
-                        <TextField
-                          id={'orcid'}
-                          placeholder={'https://orcid.org/...'}
-                          pattern="https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]"
-                          title="Please enter a valid ORCID URL format: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                          {...props.field}
-                        />
-                      </>
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        {...props.field}
+                      />
                     )}
                   </Field>
-                </FormRow>
-              </OrcidContainer>
+                  <LabelText>Corresponding Author</LabelText>
+                </CheckboxLabel>
+              </CheckboxContainer>
+            </FormRow>
+            <FormRow>
+              <Field name={'ORCID'} type={'text'}>
+                {(props: FieldProps) => {
+                  const hasError =
+                    getIn(formik.touched, 'ORCID') &&
+                    getIn(formik.errors, 'ORCID')
+                  return (
+                    <>
+                      <Label htmlFor="orcid">ORCID</Label>
+                      <TextFieldWithError
+                        id={'orcid'}
+                        type="url"
+                        placeholder={'https://orcid.org/...'}
+                        {...props.field}
+                        pattern={ORCID_INPUT_PATTERN}
+                        title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                        error={hasError}
+                      />
+                      {hasError && (
+                        <InputErrorText>
+                          {getIn(formik.errors, 'ORCID')}
+                        </InputErrorText>
+                      )}
+                    </>
+                  )
+                }}
+              </Field>
+            </FormRow>
           </ChangeHandlingForm>
         )
       }}
     </Formik>
   )
 }
+
+export const Fieldset = styled.fieldset`
+  padding: 0;
+  margin: 0;
+  border: none;
+`
+
+const TextFieldWithError = styled(TextField)`
+  &:required::placeholder {
+    color: ${(props) => props.theme.colors.text.error};
+  }
+`
+
+export const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+`
