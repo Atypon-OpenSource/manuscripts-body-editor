@@ -128,10 +128,10 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <FormRow>
             <Field name="county">
               {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="county">State / Province</Label>
-                    <TextField id="county" {...props.field} />
-                  </>
+                <>
+                  <Label htmlFor="county">State / Province</Label>
+                  <TextField id="county" {...props.field} />
+                </>
               )}
             </Field>
           </FormRow>
@@ -148,10 +148,10 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <FormRow>
             <Field name="country">
               {({ field }: FieldProps) => (
-                  <>
-                    <Label htmlFor="country">Country</Label>
-                    <TextField id="country" {...field} />
-                  </>
+                <>
+                  <Label htmlFor="country">Country</Label>
+                  <TextField id="country" {...field} />
+                </>
               )}
             </Field>
           </FormRow>
