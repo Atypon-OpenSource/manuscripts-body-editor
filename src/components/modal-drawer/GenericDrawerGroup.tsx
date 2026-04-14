@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { DrawerProps, SelectedItemsBox } from '@manuscripts/style-guide'
+import {
+  DrawerProps,
+  outlineStyle,
+  SelectedItemsBox,
+} from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -65,20 +69,20 @@ export function DrawerGroup<T extends Base>({
   return (
     <>
       <AssignButton
-          onClick={() => setShowDrawer(true)}
-          data-cy={cy + 'assign-button'}
+        onClick={() => setShowDrawer(true)}
+        data-cy={cy + 'assign-button'}
       >
         {Icon}
         {buttonText}
       </AssignButton>
       <SelectedItemsBox
-          data-cy={cy + '-selected-items'}
-          items={selectedItems.map((i) => ({
-            id: String(i.id),
-            label: String((i as T)[labelField as keyof T] ?? ''),
-          }))}
-          onRemove={removeItem}
-          placeholder={`No ${title} assigned`}
+        data-cy={cy + '-selected-items'}
+        items={selectedItems.map((i) => ({
+          id: String(i.id),
+          label: String((i as T)[labelField as keyof T] ?? ''),
+        }))}
+        onRemove={removeItem}
+        placeholder={`No ${title} assigned`}
       />
       {showDrawer && (
         <Drawer
@@ -110,4 +114,5 @@ export const AssignButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
+  ${outlineStyle}
 `
