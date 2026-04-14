@@ -317,12 +317,11 @@ export const ReferenceForm: React.FC<{
                 formik.values.type as BibliographyItemType
               ) && (
                 <FormRow>
-                  <Label htmlFor={"issued['date-parts'][0][0]"}>
-                    Issued (Year)
-                  </Label>
+                  <Label htmlFor="issued-year-field">Issued (Year)</Label>
 
                   <YearField
                     name={"issued['date-parts'][0][0]"}
+                    id="issued-year-field"
                     type={'number'}
                     step={1}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
