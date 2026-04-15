@@ -59,7 +59,7 @@ import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
 import { AffiliationsPanel } from '../affiliations/AffiliationsPanel'
-import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
+import { AuthorDetailsForm, Fieldset, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
 import { CreditDrawer } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
@@ -461,6 +461,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     <InspectorTab>Contributions (CRediT)</InspectorTab>
                   </InspectorTabList>
                   <InspectorTabPanels>
+                    <Fieldset disabled={selection?.isAuthenticated}>
                     <AuthorTabPanel>
                       <AuthorDetailsForm
                         values={normalizeAuthor(selection)}
@@ -482,6 +483,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                           selectedItems={selectedAffiliations}
                           onSelect={selectAffiliation}
                           onOpenAffiliationsModal={onOpenAffiliationsModal}
+                            disableList={!!selection.isAuthenticated}
                         />
                       </AuthorTabPanel>
                     )}
@@ -504,6 +506,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         Icon={<AddRoleIcon width={16} height={16} />}
                       />
                     </AuthorTabPanel>
+                    </Fieldset>
                   </InspectorTabPanels>
                 </AuthorTabs>
                 <ConfirmationDialog

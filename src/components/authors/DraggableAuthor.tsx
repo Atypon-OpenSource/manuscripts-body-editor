@@ -218,6 +218,7 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
         {isSelected && (
           <RemoveButton
             size={13}
+            disabled={author.isAuthenticated}
             onClick={() => onDelete()}
             data-tooltip-content="Delete"
           >

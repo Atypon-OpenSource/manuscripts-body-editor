@@ -247,6 +247,7 @@ export const Fieldset = styled.fieldset`
   padding: 0;
   margin: 0;
   border: none;
+  outline: none;
 `
 
 const TextFieldWithError = styled(TextField)`
