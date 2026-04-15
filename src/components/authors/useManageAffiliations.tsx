@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 
 import { arrayReducer } from '../../lib/array-reducer'
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
@@ -26,8 +26,13 @@ export const useManageAffiliations = (
   selection: ContributorAttrs | undefined,
   $affiliations: AffiliationAttrs[]
 ) => {
-  const [affiliations] = useReducer(affiliationsReducer, $affiliations)
-  const [showAffiliationDrawer, setShowAffiliationDrawer] = useState(false)
+  const [affiliations, dispatchAffiliations] = useReducer(affiliationsReducer, [
+    ...$affiliations,
+  ])
+
+  useEffect(() => {
+    dispatchAffiliations({ type: 'set', state: [...$affiliations] })
+  }, [$affiliations])
   const [selectedAffiliations, setSelectedAffiliations] = useState<
     {
       id: string
@@ -63,8 +68,6 @@ export const useManageAffiliations = (
     )
   }
   return {
-    showAffiliationDrawer,
-    setShowAffiliationDrawer,
     selectedAffiliations,
     setSelectedAffiliations,
     removeAffiliation,
