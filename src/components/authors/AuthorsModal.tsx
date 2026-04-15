@@ -31,8 +31,6 @@ import {
   StyledModal,
   InspectorTabs,
   InspectorTabPanel,
-  InspectorTabList,
-  InspectorTab,
   InspectorTabPanels,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
@@ -56,8 +54,12 @@ import { normalizeAuthor } from '../../lib/normalize'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
-import { ModalFormActions } from '../form/ModalFormActions'
+import {
+  ModalFormActions,
+  ModalFormSaveButton,
+} from '../form/ModalFormActions'
 import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { AffiliationsPanel } from '../affiliations/AffiliationsPanel'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
@@ -437,29 +439,20 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               <>
                 <AuthorTabs>
                   <ModalFormActions
-                    form={'author-details-form'}
-                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     type="author"
                     onDelete={deleteAuthor}
                     showingDeleteDialog={showingDeleteDialog}
                     showDeleteDialog={() =>
                       setShowDeleteDialog((prev) => !prev)
                     }
-                    newEntity={
-                      newAuthor ||
-                      (isCreatingNewAuthor &&
-                        !showConfirmationDialog &&
-                        !showRequiredFieldConfirmationDialog)
-                    }
-                    isDisableSave={isDisableSave}
                   />
-                  <InspectorTabList>
-                    <InspectorTab>Details</InspectorTab>
-                    {onOpenAffiliationsModal && (
-                      <InspectorTab>Affiliations</InspectorTab>
-                    )}
-                    <InspectorTab>Contributions (CRediT)</InspectorTab>
-                  </InspectorTabList>
+                  <ModalTabs
+                    tabLabels={[
+                      'Author Details',
+                      ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
+                      'Contributions',
+                    ]}
+                  />
                   <InspectorTabPanels>
                     <AuthorTabPanel>
                       <AuthorDetailsForm
@@ -533,7 +526,24 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             )}
           </ScrollableModalContent>
         </StyledModalBody>
-        <FormFooter onCancel={close} />
+        <FormFooter
+          onCancel={close}
+          primaryAction={
+            selection ? (
+              <ModalFormSaveButton
+                form="author-details-form"
+                newEntity={
+                  newAuthor ||
+                  (isCreatingNewAuthor &&
+                    !showConfirmationDialog &&
+                    !showRequiredFieldConfirmationDialog)
+                }
+                isDisableSave={isDisableSave}
+                onSubmitForm={() => actionsRef.current?.submitForm?.()}
+              />
+            ) : undefined
+          }
+        />
       </ModalContainer>
     </StyledModal>
   )

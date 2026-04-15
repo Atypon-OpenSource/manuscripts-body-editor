@@ -17,8 +17,6 @@ import {
   AddIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
-  InspectorTab,
-  InspectorTabList,
   InspectorTabPanel,
   InspectorTabPanels,
   InspectorTabs,
@@ -55,7 +53,11 @@ import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
-import { ModalFormActions } from '../form/ModalFormActions'
+import {
+  ModalFormActions,
+  ModalFormSaveButton,
+} from '../form/ModalFormActions'
+import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { AuthorsPanel } from '../authors/AuthorsPanel'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
@@ -510,9 +512,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
               <>
                 <AffiliationTabs>
                   <ModalFormActions
-                    type={'affiliation'}
-                    form={'affiliation-form'}
-                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
+                    type="affiliation"
                     onDelete={handleDeleteAffiliation}
                     showingDeleteDialog={
                       showingDeleteDialog &&
@@ -522,13 +522,13 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                       )
                     }
                     showDeleteDialog={handleShowDeleteDialog}
-                    newEntity={newAffiliation}
-                    isDisableSave={isDisableSave}
                   />
-                  <InspectorTabList>
-                    <InspectorTab>Details</InspectorTab>
-                    {onOpenAuthorsModal && <InspectorTab>Authors</InspectorTab>}
-                  </InspectorTabList>
+                  <ModalTabs
+                    tabLabels={[
+                      'Details',
+                      ...(onOpenAuthorsModal ? ['Authors'] : []),
+                    ]}
+                  />
                   <InspectorTabPanels>
                     <AffiliationTabPanel>
                       <AffiliationForm
@@ -577,7 +577,19 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
             )}
           </ScrollableModalContent>
         </StyledModalBody>
-        <FormFooter onCancel={handleClose} />
+        <FormFooter
+          onCancel={handleClose}
+          primaryAction={
+            selection ? (
+              <ModalFormSaveButton
+                form="affiliation-form"
+                newEntity={newAffiliation}
+                isDisableSave={isDisableSave}
+                onSubmitForm={() => actionsRef.current?.submitForm?.()}
+              />
+            ) : undefined
+          }
+        />
       </ModalContainer>
     </StyledModal>
   )
