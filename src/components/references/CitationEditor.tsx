@@ -291,10 +291,10 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         ))}
       </CitedItems>
       <Actions>
-          <SecondaryButton onClick={onCancel}>Done</SecondaryButton>
-          <PrimaryButton disabled={!canEdit} onClick={() => setSearching(true)}>
-            Add Citation
-          </PrimaryButton>
+        <SecondaryButton onClick={onCancel}>Done</SecondaryButton>
+        <PrimaryButton disabled={!canEdit} onClick={() => setSearching(true)}>
+          Add Citation
+        </PrimaryButton>
       </Actions>
     </Container>
   )

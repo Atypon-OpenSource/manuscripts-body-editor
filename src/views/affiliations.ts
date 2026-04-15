@@ -23,24 +23,17 @@ import { AffiliationNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import {
-  AffiliationsModal,
-  AffiliationsModalProps,
-  handleDeleteAffiliation,
-  handleSaveAffiliation,
-  handleUpdateAuthors,
-} from '../components/affiliations/AffiliationsModal'
+  AuthorsAndAffiliationsModals,
+  AuthorsAndAffiliationsModalsProps,
+} from '../components/authors-affiliations/AuthorsAndAffiliationsModals'
 import { alertIcon } from '../icons'
 import {
   AffiliationAttrs,
   affiliationName,
-  ContributorAttrs,
 } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 
-import {
-  findChildByID,
-  findChildrenAttrsByType,
-} from '../lib/view'
+import { findChildByID, findChildrenAttrsByType } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
@@ -163,28 +156,16 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
   handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
-    const contributors: ContributorAttrs[] = findChildrenAttrsByType(
-      this.view,
-      schema.nodes.contributor
-    )
 
-    const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
+    const affiliations = findChildrenAttrsByType<AffiliationAttrs>(
       this.view,
       schema.nodes.affiliation
     )
-
-    const affiliation = id
-      ? affiliations.filter((a) => a.id === id)[0]
-      : undefined
-    const componentProps: AffiliationsModalProps = {
+    const affiliation = id ? affiliations.find((a) => a.id === id) : undefined
+    const componentProps: AuthorsAndAffiliationsModalsProps = {
+      initialModal: 'affiliations',
+      view: this.view,
       affiliation,
-      authors: contributors,
-      affiliations,
-      onSaveAffiliation: (affiliation) =>
-        handleSaveAffiliation(this.view, affiliation, this.getPos()),
-      onDeleteAffiliation: (affiliation) =>
-        handleDeleteAffiliation(this.view, affiliation),
-      onUpdateAuthors: (authors) => handleUpdateAuthors(this.view, authors),
       addNewAffiliation: addNew,
     }
 
@@ -192,7 +173,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
     this.popper = ReactSubView(
       this.props,
-      AffiliationsModal,
+      AuthorsAndAffiliationsModals,
       componentProps,
       this.node,
       this.getPos,

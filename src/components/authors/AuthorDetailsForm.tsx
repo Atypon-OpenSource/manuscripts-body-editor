@@ -45,6 +45,7 @@ const ORCID_URL_REGEX =
 const ORCID_INPUT_PATTERN = ORCID_URL_REGEX.source.slice(1, -1)
 export interface FormActions {
   reset: () => void
+  submitForm: () => Promise<void> | void
 }
 
 interface AuthorDetailsFormProps {
@@ -82,11 +83,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     }
   }, [selectedCreditRoles])
 
-  if (actionsRef && !actionsRef.current) {
+  if (actionsRef) {
     actionsRef.current = {
-      reset: () => {
-        formRef.current?.resetForm()
-      },
+      reset: () => formRef.current?.resetForm(),
+      submitForm: () => formRef.current?.submitForm(),
     }
   }
 
@@ -157,10 +157,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <FormRow>
               <Field name={'role'}>
                 {(props: FieldProps) => (
-                    <>
-                      <Label htmlFor="role">Job Title</Label>
-                      <TextField id={'role'} {...props.field} />
-                    </>
+                  <>
+                    <Label htmlFor="role">Job Title</Label>
+                    <TextField id={'role'} {...props.field} />
+                  </>
                 )}
               </Field>
             </FormRow>
@@ -173,9 +173,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   return (
                     <>
                       <Label htmlFor="email">
-                        {isEmailRequired
-                          ? 'Email address*'
-                          : 'Email address'}
+                        {isEmailRequired ? 'Email address*' : 'Email address'}
                       </Label>
                       <TextFieldWithError
                         id={'email'}
@@ -199,11 +197,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 <CheckboxLabel>
                   <Field name={'isCorresponding'}>
                     {(props: FieldProps) => (
-                        <CheckboxField
-                            id={'isCorresponding'}
-                            checked={props.field.value}
-                            {...props.field}
-                        />
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        {...props.field}
+                      />
                     )}
                   </Field>
                   <LabelText>Corresponding Author</LabelText>
