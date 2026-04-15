@@ -57,9 +57,10 @@ const EMPTY_DECOR = {
 export const HIGHLIGHT_SELECTOR = 'highlighted-author-change'
 
 /**
- * This plugin is responsible for designating a single suggestion as
- * "selected" based on the current
- * [editor selection]{@link ManuscriptEditorState#selection}.
+ * This plugin is responsible for:
+ * 1. designating a single suggestion as * "selected" based on the current
+ *    [editor selection]{@link ManuscriptEditorState#selection}.
+ * 2. Highlighting changes made by a selected author to distinguish them from the rest of changes  (highlightedAuthorId)
  *
  * The selected suggestion is wrapped with a "selected-suggestion"
  * decoration to apply different styling to it in the editor.
