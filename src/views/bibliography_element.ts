@@ -35,7 +35,7 @@ import { sanitize } from '../lib/dompurify'
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
-import { selectedSuggestionKey } from '../plugins/selected-suggestion'
+import { HIGHLIGHT_SELECTOR, selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -280,7 +280,9 @@ export class BibliographyElementBlockView extends BlockView<
   private updateSelections = () => {
     const state = this.view.state
     const com = commentsKey.getState(state)
-    const suggestion = selectedSuggestionKey.getState(state)?.suggestion
+    const pluginState = selectedSuggestionKey.getState(state)
+    const suggestion = pluginState?.suggestion
+    const highlightedAuthorId = pluginState?.highlightedAuthorId
 
     const items = this.container.querySelectorAll('.bib-item')
     items.forEach((e) => {
@@ -289,6 +291,12 @@ export class BibliographyElementBlockView extends BlockView<
         item.classList.add('selected-suggestion')
       } else {
         item.classList.remove('selected-suggestion')
+      }
+
+      if (highlightedAuthorId && item.dataset.trackAuthor === highlightedAuthorId) {
+        item.classList.add(HIGHLIGHT_SELECTOR)
+      } else {
+        item.classList.remove(HIGHLIGHT_SELECTOR)
       }
 
       const marker = item.querySelector('.comment-marker') as HTMLElement

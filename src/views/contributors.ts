@@ -32,7 +32,10 @@ import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
 import { findChildByID, findChildrenAttrsByType } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
-import { selectedSuggestionKey } from '../plugins/selected-suggestion'
+import {
+  HIGHLIGHT_SELECTOR,
+  selectedSuggestionKey,
+} from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -267,16 +270,21 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   private updateSelection = () => {
     const state = this.view.state
-    const selection = selectedSuggestionKey.getState(state)?.suggestion
-    this.container
-      .querySelectorAll('.selected-suggestion')
-      .forEach((e) => e.classList.remove('selected-suggestion'))
-    if (selection) {
-      const item = this.container.querySelector(
-        `[data-track-id="${selection.id}"]`
-      )
-      item?.classList.add('selected-suggestion')
-    }
+    const selectionState = selectedSuggestionKey.getState(state)
+    const selection = selectionState?.suggestion
+    this.container.querySelectorAll('.contributor').forEach((e) => {
+      e.classList.remove('selected-suggestion', HIGHLIGHT_SELECTOR)
+      if (selection && e.getAttribute('data-track-id') === selection.id) {
+        e.classList.add('selected-suggestion')
+      }
+      if (
+        selectionState?.highlightedAuthorId &&
+        e.getAttribute('data-track-author') ===
+          selectionState.highlightedAuthorId
+      ) {
+        e.classList.add(HIGHLIGHT_SELECTOR)
+      }
+    })
   }
 
   public showContextMenu = (element: Element) => {
