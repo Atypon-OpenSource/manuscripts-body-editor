@@ -1070,6 +1070,7 @@ figure.block:has(.equation.selected-suggestion) {
   box-shadow: inset var(--tc-decor-width) 0 0 var(--inserted-pending-color);
 }
 
+.bib-item.highlighted-author-change,
 .tracking-visible del .highlighted-author-change,
 .tracking-visible ins .highlighted-author-change {
   border-bottom: var(--tc-decor-width) dotted var(--tc-highlight-author-color);

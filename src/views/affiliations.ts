@@ -35,7 +35,7 @@ import { handleComment } from '../lib/comments'
 
 import { findChildByID, findChildrenAttrsByType } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
-import { selectedSuggestionKey } from '../plugins/selected-suggestion'
+import { HIGHLIGHT_SELECTOR, selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
@@ -143,15 +143,20 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   private updateSelection() {
     const state = this.view.state
     const selection = selectedSuggestionKey.getState(state)?.suggestion
-    this.container
-      .querySelectorAll('.selected-suggestion')
-      .forEach((e) => e.classList.remove('selected-suggestion'))
-    if (selection) {
-      const item = this.container.querySelector(
-        `[data-track-id="${selection.id}"]`
-      )
-      item?.classList.add('selected-suggestion')
-    }
+    const highlightedAuthorId = selectedSuggestionKey.getState(state)?.highlightedAuthorId
+
+    this.container.querySelectorAll('.affiliation').forEach(e => {
+      const item = e as HTMLElement      
+      item.classList.remove('selected-suggestion')
+      if (selection && item.dataset.trackId === selection.id) {
+        item.classList.add('selected-suggestion')
+      }
+      if (highlightedAuthorId && item.dataset.trackAuthor === highlightedAuthorId) {
+        item.classList.add(HIGHLIGHT_SELECTOR)
+      } else {
+        item.classList.remove(HIGHLIGHT_SELECTOR)
+      }
+    })
   }
 
   handleEdit = (id: string, addNew?: boolean) => {
