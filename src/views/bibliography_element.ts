@@ -280,8 +280,9 @@ export class BibliographyElementBlockView extends BlockView<
   private updateSelections = () => {
     const state = this.view.state
     const com = commentsKey.getState(state)
-    const suggestion = selectedSuggestionKey.getState(state)?.suggestion
-    const highlightedAuthorId = selectedSuggestionKey.getState(state)?.highlightedAuthorId
+    const pluginState = selectedSuggestionKey.getState(state)
+    const suggestion = pluginState?.suggestion
+    const highlightedAuthorId = pluginState?.highlightedAuthorId
 
     const items = this.container.querySelectorAll('.bib-item')
     items.forEach((e) => {

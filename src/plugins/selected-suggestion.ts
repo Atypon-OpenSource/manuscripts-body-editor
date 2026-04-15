@@ -112,7 +112,7 @@ const buildPluginState = (
   if (tr) {
     const receivedAuthorId = tr.getMeta(selectedSuggestionKey)
     if (typeof receivedAuthorId === 'string' && !receivedAuthorId) {
-      // received emty string - reset
+      // received empty string - reset
       newState.highlightDecorations = []
       newState.highlightedAuthorId = ''
     } else if (tr.docChanged || receivedAuthorId) {
@@ -127,11 +127,6 @@ const buildPluginState = (
           tr
         )
       }
-      newState.highlightDecorations = buildHighlightDecorations(
-        state,
-        authorId,
-        tr
-      )
       newState.highlightedAuthorId = authorId
     }
   }
