@@ -256,7 +256,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     if (!node || !pos) {
       return
     }
-    if (!isDeleted(node)) {
+    if (!isDeleted(node) && !(node.attrs as ContributorAttrs).isAuthenticated) {
       this.showContextMenu(author)
     }
     const view = this.view
