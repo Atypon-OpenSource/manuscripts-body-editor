@@ -17,12 +17,15 @@ import { PrimaryButton } from '@manuscripts/style-guide'
 import React from 'react'
 
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
+import styled from 'styled-components'
 
 export interface ModalFormSaveButtonProps {
   form: string
   newEntity: boolean
   isDisableSave: boolean
   onSubmitForm?: () => void | Promise<void>
+  createLabel?: string
+  updateLabel?: string
 }
 
 export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
@@ -30,9 +33,15 @@ export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
   newEntity,
   isDisableSave,
   onSubmitForm,
+  createLabel,
+  updateLabel,
 }) => {
+  const label = newEntity
+    ? (createLabel ?? 'Save Changes')
+    : (updateLabel ?? 'Update Changes')
+
   const saveButton = onSubmitForm ? (
-    <PrimaryButton
+    <StylePrimaryButton
       disabled={isDisableSave}
       type="button"
       onClick={() => {
@@ -41,12 +50,12 @@ export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
         }
       }}
     >
-      {newEntity ? 'Save Changes' : 'Update Changes'}
-    </PrimaryButton>
+      {label}
+    </StylePrimaryButton>
   ) : (
-    <PrimaryButton disabled={isDisableSave} type="submit" form={form}>
-      {newEntity ? 'Save Changes' : 'Update Changes'}
-    </PrimaryButton>
+    <StylePrimaryButton disabled={isDisableSave} type="submit" form={form}>
+      {label}
+    </StylePrimaryButton>
   )
 
   return saveButton
@@ -78,3 +87,7 @@ export const ModalFormActions: React.FC<ModalFormActionsProps> = ({
     />
   )
 }
+
+const StylePrimaryButton = styled(PrimaryButton)`
+  min-width: 145px;
+`

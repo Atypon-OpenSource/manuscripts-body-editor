@@ -23,7 +23,10 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
-import { upsertAuthor, upsertAffiliation } from '../../lib/authors-and-affiliations'
+import {
+  upsertAuthor,
+  upsertAffiliation,
+} from '../../lib/authors-and-affiliations'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 import {
@@ -109,6 +112,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
           <AffiliationsModal
             {...affiliationsProps}
             addNewAffiliation
+            isOverlay
             onClose={handleOverlayClose}
           />
         )}
@@ -126,6 +130,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
         <AuthorsModal
           {...authorsProps}
           addNewAuthor
+          isOverlay
           onClose={handleOverlayClose}
         />
       )}

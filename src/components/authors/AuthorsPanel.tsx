@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AuthorPlaceholderIcon } from '@manuscripts/style-guide'
+import { InfoCircleIcon } from '@manuscripts/style-guide'
 import React from 'react'
 
 import {
@@ -46,7 +46,7 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
       createDataCy="add-authors-link"
       emptyDataCy="authors-panel-empty"
       isEmpty={items.length === 0}
-      emptyIcon={<AuthorPlaceholderIcon />}
+      emptyIcon={<InfoCircleIcon />}
       emptyMessage={
         <>
           There are no authors attributed yet!

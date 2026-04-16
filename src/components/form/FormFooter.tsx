@@ -43,7 +43,9 @@ const FormFooter = ({
 }) => {
   return (
     <Footer>
-      <StyledIconTextButton color="secondary" onClick={onCancel}>Close</StyledIconTextButton>
+      <StyledIconTextButton color="secondary" onClick={onCancel}>
+        Close
+      </StyledIconTextButton>
       {primaryAction}
     </Footer>
   )

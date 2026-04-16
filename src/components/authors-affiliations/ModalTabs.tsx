@@ -14,30 +14,74 @@
  * limitations under the License.
  */
 
-import {
-  InspectorTab,
-  InspectorTabList,
-} from '@manuscripts/style-guide'
+import { InspectorTab, InspectorTabList } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
 export interface ModalTabsProps {
   tabLabels: string[]
+  tabErrorIndicators?: boolean[]
+  tabWarningIndicators?: boolean[]
 }
 
-export const ModalTabs: React.FC<ModalTabsProps> = ({ tabLabels }) => (
+export const ModalTabs: React.FC<ModalTabsProps> = ({
+  tabLabels,
+  tabErrorIndicators,
+  tabWarningIndicators,
+}) => (
   <StyledTabList>
-    {tabLabels.map((label) => (
-      <StyledTab key={label}>
-        {label}
-      </StyledTab>
-    ))}
+    {tabLabels.map((label, i) => {
+      const hasError = tabErrorIndicators?.[i]
+      const showWarning = tabWarningIndicators?.[i] && !hasError
+      return (
+        <StyledTab key={label}>
+          {label}
+          {(showWarning || hasError) && (
+            <TabIndicatorGroup role="presentation">
+              {showWarning ? <TabWarningDot aria-hidden /> : null}
+              {hasError ? <TabErrorDot aria-hidden /> : null}
+            </TabIndicatorGroup>
+          )}
+        </StyledTab>
+      )
+    })}
   </StyledTabList>
 )
+
+const TabIndicatorGroup = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  flex-shrink: 0;
+`
+
+const TabErrorDot = styled.span`
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cf1322;
+  flex-shrink: 0;
+  vertical-align: middle;
+`
+
+const TabWarningDot = styled.span`
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.colors.text.warning};
+  flex-shrink: 0;
+  vertical-align: middle;
+`
 
 const StyledTab = styled(InspectorTab)`
   border-radius: 14px;
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &[aria-selected='true'] {
     background: ${(props) => props.theme.colors.background.primary};

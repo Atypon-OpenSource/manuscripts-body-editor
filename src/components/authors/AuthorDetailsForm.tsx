@@ -21,7 +21,10 @@ import {
   InputErrorText,
   Label,
   FormRow,
+  FormGroup,
   LabelText,
+  RequiredIndicator,
+  FormSubtitle,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
 import {
@@ -31,6 +34,7 @@ import {
   FormikProps,
   getIn,
   FormikErrors,
+  useFormikContext,
 } from 'formik'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import styled from 'styled-components'
@@ -43,6 +47,71 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ORCID_URL_REGEX =
   /^https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[0-9Xx]\/?$/
 const ORCID_INPUT_PATTERN = ORCID_URL_REGEX.source.slice(1, -1)
+
+const NAME_PAIR_REQUIRED_MESSAGE = 'Please enter Given Name or Family Name'
+
+function isAuthorFieldChanged(
+  formik: FormikProps<ContributorAttrs>,
+  key: string
+): boolean {
+  if (key === 'degrees') {
+    const t = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
+    return (
+      t(getIn(formik.values, 'degrees')) !==
+      t(getIn(formik.initialValues, 'degrees'))
+    )
+  }
+  const v = normalizeAuthor(formik.values)
+  const i = normalizeAuthor(formik.initialValues)
+  const va = getIn(v, key as keyof ContributorAttrs)
+  const vb = getIn(i, key as keyof ContributorAttrs)
+  if (key === 'affiliationIDs' || key === 'creditRoles') {
+    return JSON.stringify(va ?? []) !== JSON.stringify(vb ?? [])
+  }
+  return va !== vb
+}
+
+function getShowNamePairError(
+  formik: FormikProps<ContributorAttrs>,
+  newEntity: boolean
+): boolean {
+  if (!getIn(formik.errors, 'given')) {
+    return false
+  }
+  if (newEntity) {
+    return Boolean(formik.touched.given || formik.touched.family)
+  }
+  return Boolean(formik.touched.given || formik.touched.family || formik.dirty)
+}
+
+export function authorDetailsTabShowsErrorIndicator(
+  formik: FormikProps<ContributorAttrs>,
+  newEntity: boolean
+): boolean {
+  if (getShowNamePairError(formik, newEntity)) {
+    return true
+  }
+  if (getIn(formik.touched, 'email') && getIn(formik.errors, 'email')) {
+    return true
+  }
+  if (getIn(formik.touched, 'ORCID') && getIn(formik.errors, 'ORCID')) {
+    return true
+  }
+  return false
+}
+
+const AuthorDetailsTabErrorBridge: React.FC<{
+  newEntity: boolean
+  onChange?: (hasError: boolean) => void
+}> = ({ newEntity, onChange }) => {
+  const formik = useFormikContext<ContributorAttrs>()
+  const hasError = authorDetailsTabShowsErrorIndicator(formik, newEntity)
+  useEffect(() => {
+    onChange?.(hasError)
+  }, [hasError, onChange])
+  return null
+}
+
 export interface FormActions {
   reset: () => void
   submitForm: () => Promise<void> | void
@@ -57,6 +126,9 @@ interface AuthorDetailsFormProps {
   isEmailRequired?: boolean
   selectedAffiliations?: string[]
   selectedCreditRoles: CreditRole[]
+  newEntity: boolean
+  onAuthorDetailsTabErrorChange?: (hasError: boolean) => void
+  unsavedContinueActive?: boolean
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -68,6 +140,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   selectedAffiliations,
   selectedCreditRoles,
   authorFormRef,
+  newEntity,
+  onAuthorDetailsTabErrorChange,
+  unsavedContinueActive = false,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
 
@@ -92,6 +167,13 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
 
   const validateAuthor = (values: ContributorAttrs) => {
     const errors: FormikErrors<ContributorAttrs> = {}
+    const given = values.given?.trim() ?? ''
+    const family = values.family?.trim() ?? ''
+    if (!given && !family) {
+      errors.given = NAME_PAIR_REQUIRED_MESSAGE
+      errors.family = NAME_PAIR_REQUIRED_MESSAGE
+    }
+
     const email = values.email?.trim()
     if (isEmailRequired && !email) {
       errors.email = 'Email address is required'
@@ -117,6 +199,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       validate={validateAuthor}
     >
       {(formik) => {
+        const showNamePairError = getShowNamePairError(formik, newEntity)
+        const showUnsavedDot = (key: string) =>
+          unsavedContinueActive && isAuthorFieldChanged(formik, key)
+
         return (
           <ChangeHandlingForm<ContributorAttrs>
             onChange={(next) => onChange(normalizeAuthor(next))}
@@ -124,45 +210,126 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             formRef={authorFormRef}
             noValidate
           >
+            <AuthorDetailsTabErrorBridge
+              newEntity={newEntity}
+              onChange={onAuthorDetailsTabErrorChange}
+            />
+            <FormSubtitle>Name</FormSubtitle>
+            <StyledFormGroup>
+              <FormRow>
+                <Field name={'prefix'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('prefix') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="prefix">Prefix</Label>
+                      </UnsavedLabelRow>
+                      <TextField
+                        id={'prefix'}
+                        {...props.field}
+                        placeholder="E.g. Doctor"
+                      />
+                    </>
+                  )}
+                </Field>
+              </FormRow>
+              <StyledFormRow>
+                <Field name={'given'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('given') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="given-name">
+                          Given name<RequiredIndicator>*</RequiredIndicator>
+                        </Label>
+                      </UnsavedLabelRow>
+                      <TextFieldWithError
+                        id={'given-name'}
+                        {...props.field}
+                        error={showNamePairError}
+                      />
+                      {showNamePairError && (
+                        <InputErrorText>
+                          {NAME_PAIR_REQUIRED_MESSAGE}
+                        </InputErrorText>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </StyledFormRow>
+            </StyledFormGroup>
+            <StyledFormGroup>
+              <StyledFormRow>
+                <Field name={'family'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('family') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="family-name">
+                          Family name<RequiredIndicator>*</RequiredIndicator>
+                        </Label>
+                      </UnsavedLabelRow>
+                      <TextFieldWithError
+                        id={'family-name'}
+                        {...props.field}
+                        error={showNamePairError}
+                      />
+                      {showNamePairError && (
+                        <InputErrorText>
+                          {NAME_PAIR_REQUIRED_MESSAGE}
+                        </InputErrorText>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </StyledFormRow>
+              <FormRow>
+                <Field name={'suffix'}>
+                  {(props: FieldProps) => (
+                    <>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('suffix') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="suffix">Suffix</Label>
+                      </UnsavedLabelRow>
+                      <TextField
+                        id={'suffix'}
+                        {...props.field}
+                        placeholder="E.g. Junior"
+                      />
+                    </>
+                  )}
+                </Field>
+              </FormRow>
+            </StyledFormGroup>
+            <FormSubtitle>Addition Information</FormSubtitle>
             <FormRow>
-              <Field name={'prefix'}>
-                {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="prefix">Prefix</Label>
-                    <TextField id={'prefix'} {...props.field} />
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name={'given'}>
-                {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="given-name">Given name</Label>
-                    <TextField id={'given-name'} {...props.field} />
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name={'family'}>
-                {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="family-name">Family name</Label>
-                    <TextField id={'family-name'} {...props.field} />
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name={'role'}>
-                {(props: FieldProps) => (
-                  <>
-                    <Label htmlFor="role">Job Title</Label>
-                    <TextField id={'role'} {...props.field} />
-                  </>
-                )}
-              </Field>
+              <CheckboxContainer data-cy="corresponding-author-container">
+                <CheckboxLabel>
+                  <Field name={'isCorresponding'}>
+                    {(props: FieldProps) => (
+                      <CheckboxField
+                        id={'isCorresponding'}
+                        checked={props.field.value}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('isCorresponding') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <LabelText>Corresponding Author</LabelText>
+                  </UnsavedLabelRow>
+                </CheckboxLabel>
+              </CheckboxContainer>
             </FormRow>
             <FormRow>
               <Field name={'email'} type={'email'}>
@@ -172,9 +339,23 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     getIn(formik.errors, 'email')
                   return (
                     <>
-                      <Label htmlFor="email">
-                        {isEmailRequired ? 'Email address*' : 'Email address'}
-                      </Label>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('email') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="email">
+                          {isEmailRequired ? (
+                            <>
+                              <LabelText>
+                                Email address
+                                <RequiredIndicator>*</RequiredIndicator>
+                              </LabelText>
+                            </>
+                          ) : (
+                            'Email address'
+                          )}
+                        </Label>
+                      </UnsavedLabelRow>
                       <TextFieldWithError
                         id={'email'}
                         type="email"
@@ -193,20 +374,19 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </Field>
             </FormRow>
             <FormRow>
-              <CheckboxContainer data-cy="corresponding-author-container">
-                <CheckboxLabel>
-                  <Field name={'isCorresponding'}>
-                    {(props: FieldProps) => (
-                      <CheckboxField
-                        id={'isCorresponding'}
-                        checked={props.field.value}
-                        {...props.field}
-                      />
-                    )}
-                  </Field>
-                  <LabelText>Corresponding Author</LabelText>
-                </CheckboxLabel>
-              </CheckboxContainer>
+              <Field name={'role'}>
+                {(props: FieldProps) => (
+                  <>
+                    <UnsavedLabelRow>
+                      {showUnsavedDot('role') ? (
+                        <FieldUnsavedDot aria-hidden />
+                      ) : null}
+                      <Label htmlFor="role">Job Title</Label>
+                    </UnsavedLabelRow>
+                    <TextField id={'role'} {...props.field} />
+                  </>
+                )}
+              </Field>
             </FormRow>
             <FormRow>
               <Field name={'ORCID'} type={'text'}>
@@ -216,7 +396,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     getIn(formik.errors, 'ORCID')
                   return (
                     <>
-                      <Label htmlFor="orcid">ORCID</Label>
+                      <UnsavedLabelRow>
+                        {showUnsavedDot('ORCID') ? (
+                          <FieldUnsavedDot aria-hidden />
+                        ) : null}
+                        <Label htmlFor="orcid">ORCID</Label>
+                      </UnsavedLabelRow>
                       <TextFieldWithError
                         id={'orcid'}
                         type="url"
@@ -234,6 +419,25 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     </>
                   )
                 }}
+              </Field>
+            </FormRow>
+            <FormRow>
+              <Field name={'degrees'}>
+                {(props: FieldProps) => (
+                  <>
+                    <UnsavedLabelRow>
+                      {showUnsavedDot('degrees') ? (
+                        <FieldUnsavedDot aria-hidden />
+                      ) : null}
+                      <Label htmlFor="degrees">Qualification</Label>
+                    </UnsavedLabelRow>
+                    <TextField
+                      id={'degrees'}
+                      {...props.field}
+                      placeholder="E.g. Bsc Computer Science"
+                    />
+                  </>
+                )}
               </Field>
             </FormRow>
           </ChangeHandlingForm>
@@ -255,8 +459,34 @@ const TextFieldWithError = styled(TextField)`
   }
 `
 
+const UnsavedLabelRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`
+
+const FieldUnsavedDot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.colors.text.warning};
+  flex-shrink: 0;
+`
+
 export const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 32px;
+`
+export const StyledFormGroup = styled(FormGroup)`
+  [name='prefix'] {
+    width: 180px;
+  }
+  [name='suffix'] {
+    width: 180px;
+  }
+`
+
+export const StyledFormRow = styled(FormRow)`
+  flex: 1;
 `

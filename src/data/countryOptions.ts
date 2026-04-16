@@ -1,5 +1,5 @@
 /*!
- * © 2025 Atypon Systems LLC
+ * © 2024 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-import { FlatCompat } from '@eslint/eslintrc'
-import js from '@eslint/js'
-import config from '@manuscripts/eslint-config'
-import { defineConfig } from 'eslint/config'
-import header from 'eslint-plugin-header'
+import type { OptionType } from '@manuscripts/style-guide'
 
-header.rules.header.meta.schema = false
+import raw from './country-options.json'
 
-const compat = new FlatCompat({
-  recommendedConfig: js.configs.recommended,
-})
+type CountryOptionRow = {
+  name: string
+  value: string
+}
 
-export default defineConfig([
-  {
-    ignores: ['src/data/country-options.json'],
-  },
-  ...compat.config(config),
-  ...compat.extends('plugin:diff/diff'),
-])
+export const COUNTRY_SELECT_OPTIONS: OptionType[] = (
+  raw as CountryOptionRow[]
+).map(({ name, value }) => ({ label: name, value }))
