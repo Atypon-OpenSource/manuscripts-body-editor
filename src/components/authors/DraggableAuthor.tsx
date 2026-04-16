@@ -20,7 +20,6 @@ import {
   CrclTickAnimation,
   DeleteIcon,
   DraggableIcon,
-  SecondaryIconButton,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
@@ -29,6 +28,7 @@ import styled from 'styled-components'
 
 import { authorLabel, ContributorAttrs } from '../../lib/authors'
 import { DropSide, getDropSide } from '../../lib/dnd'
+import { DeleteButton } from '../references/ReferenceForm/styled-components'
 
 const AuthorContainer = withNavigableListItem(styled.div`
   padding: ${(props) => props.theme.grid.unit * 2}px 0
@@ -103,11 +103,9 @@ const DragHandle = styled(DraggableIcon)`
   margin-left: -4px;
   margin-right: -12px;
 `
-const RemoveButton = styled(SecondaryIconButton)`
-  svg {
-    path[fill='white'] {
-      fill: white;
-    }
+const RemoveButton = styled(DeleteButton)`
+  .icon_element {
+    fill: ${(props) => (props.disabled && '#c9c9c9') || '#6E6E6E'} !important;
   }
 `
 const StyledCrclTickAnimation = styled(CrclTickAnimation)`

@@ -248,6 +248,21 @@ export const Fieldset = styled.fieldset`
   margin: 0;
   border: none;
   outline: none;
+
+  &[disabled] .multi-value-input {
+    background-color: #f5f5f5;
+    border-color: #e4e4e4;
+    color: #b3b3b3;
+    cursor: not-allowed;
+  }
+  &[disabled] .multi-value-input button,
+  &[disabled] .multi-value-input input {
+    display: none;
+  }
+  &[disabled] .chip {
+    background: #dddcdc;
+    color: #707070;
+  }
 `
 
 const TextFieldWithError = styled(TextField)`

@@ -18,6 +18,7 @@ import {
   DrawerProps,
   outlineStyle,
   SelectedItemsBox,
+  IconButton,
 } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
@@ -44,6 +45,7 @@ interface DrawerGroupProps<T extends Base> {
   cy: string
   buttonText: string
   Icon?: React.ReactNode
+  disabledSelectedItemsBox?: boolean
 }
 
 interface EmbeddedDrawerProps<T extends Base> {
@@ -65,6 +67,7 @@ export function DrawerGroup<T extends Base>({
   cy,
   Icon,
   buttonText,
+  disabledSelectedItemsBox,
 }: DrawerGroupProps<T>) {
   return (
     <>
@@ -83,6 +86,7 @@ export function DrawerGroup<T extends Base>({
         }))}
         onRemove={removeItem}
         placeholder={`No ${title} assigned`}
+        disabled={disabledSelectedItemsBox}
       />
       {showDrawer && (
         <Drawer
@@ -98,7 +102,7 @@ export function DrawerGroup<T extends Base>({
   )
 }
 
-export const AssignButton = styled.button`
+export const AssignButton = styled(IconButton)`
   color: ${(props) => props.theme.colors.brand.default};
   background: none;
   border: none;
@@ -107,10 +111,16 @@ export const AssignButton = styled.button`
   font: ${(props) => props.theme.font.weight.normal}
     ${(props) => props.theme.font.size.normal}
     ${(props) => props.theme.font.family.sans};
-  display: flex;
-  align-items: center;
   gap: 4px;
-  margin-bottom: ${(props) => props.theme.grid.unit * 2}px;
+  width: auto;
+  height: 24px;
+
+  &:disabled {
+    color: #c9c9c9 !important;
+    background-color: unset !important;
+    border: unset;
+  }
+
   &:hover {
     opacity: 0.8;
   }

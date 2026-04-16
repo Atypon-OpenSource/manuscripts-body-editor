@@ -504,6 +504,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         cy="credit-taxnonomy"
                         labelField="vocabTerm"
                         Icon={<AddRoleIcon width={16} height={16} />}
+                          disabledSelectedItemsBox={selection?.isAuthenticated}
                       />
                     </AuthorTabPanel>
                     </Fieldset>
