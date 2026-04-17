@@ -45,6 +45,7 @@ const ORCID_URL_REGEX =
 const ORCID_INPUT_PATTERN = ORCID_URL_REGEX.source.slice(1, -1)
 export interface FormActions {
   reset: () => void
+  submitForm: () => Promise<void> | void
 }
 
 interface AuthorDetailsFormProps {
@@ -82,11 +83,10 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     }
   }, [selectedCreditRoles])
 
-  if (actionsRef && !actionsRef.current) {
+  if (actionsRef) {
     actionsRef.current = {
-      reset: () => {
-        formRef.current?.resetForm()
-      },
+      reset: () => formRef.current?.resetForm(),
+      submitForm: () => formRef.current?.submitForm(),
     }
   }
 

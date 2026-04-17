@@ -75,8 +75,7 @@ export class FigureView
     this.container.contentEditable = 'false'
     this.dom.appendChild(this.container)
 
-    this.contentDOM = document.createElement('div') // TODO: figcaption?
-    this.contentDOM.className = 'figure-caption'
+    this.contentDOM = document.createElement('div')
     this.contentDOM.setAttribute('tabindex', '1337') // allow focus in this node
     this.dom.appendChild(this.contentDOM)
   }
