@@ -16,9 +16,25 @@
 
 import { generateNodeID, Nodes, schema } from '@manuscripts/transform'
 
-import { ContributorAttrs } from './authors'
+import { AffiliationAttrs, ContributorAttrs } from './authors'
 
 const trim = (value: string | undefined) => (value ?? '').trim()
+
+export const normalizeAffiliation = (
+  a: AffiliationAttrs
+): AffiliationAttrs => ({
+  ...a,
+  institution: trim(a.institution),
+  department: trim(a.department),
+  addressLine1: trim(a.addressLine1),
+  addressLine2: trim(a.addressLine2),
+  addressLine3: trim(a.addressLine3),
+  postCode: trim(a.postCode),
+  country: trim(a.country),
+  county: trim(a.county),
+  city: trim(a.city),
+  email: a.email ?? { href: '', text: '' },
+})
 
 export const normalizeAuthor = (author: ContributorAttrs) => {
   const basic: ContributorAttrs = {
@@ -36,10 +52,8 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     correspIDs: author.correspIDs || [],
     prefix: trim(author.prefix),
     suffix: trim(author.suffix),
-  }
-
-  if (author.creditRoles && Array.isArray(author.creditRoles)) {
-    basic.creditRoles = author.creditRoles
+    degrees: trim(author.degrees),
+    creditRoles: Array.isArray(author.creditRoles) ? author.creditRoles : [],
   }
 
   return basic

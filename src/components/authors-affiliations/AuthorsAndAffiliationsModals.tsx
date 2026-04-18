@@ -18,22 +18,19 @@
  * Coordinates the authors and affiliations modals, including opening one from
  * the other via an overlay (e.g. affiliations from the authors modal and vice versa).
  */
-import {
-  ManuscriptEditorView,
-  ManuscriptNodeType,
-  schema,
-} from '@manuscripts/transform'
-import { Attrs } from 'prosemirror-model'
+import { ManuscriptEditorView, schema } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 
-import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
-
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 import {
+  upsertAuthor,
+  upsertAffiliation,
+} from '../../lib/authors-and-affiliations'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import {
   deleteNode,
-  findChildByType,
   findChildrenAttrsByType,
   updateNodeAttrs,
 } from '../../lib/view'
@@ -51,48 +48,6 @@ export interface AuthorsAndAffiliationsModalsProps {
   addNewAuthor?: boolean
   addNewAffiliation?: boolean
 }
-
-function insertNode(
-  parentType: ManuscriptNodeType,
-  childType: ManuscriptNodeType
-) {
-  return (view: ManuscriptEditorView, attrs: Attrs) => {
-    const parent = findChildByType(view, parentType)
-    if (parent) {
-      view.dispatch(
-        view.state.tr.insert(parent.pos + 1, childType.create(attrs))
-      )
-    }
-  }
-}
-
-function upsertNode<T extends Attrs>(
-  nodeType: ManuscriptNodeType,
-  insertFn: (view: ManuscriptEditorView, attrs: T) => void
-) {
-  return (view: ManuscriptEditorView, attrs: T) => {
-    if (!updateNodeAttrs(view, nodeType, attrs)) {
-      insertFn(view, attrs)
-    }
-  }
-}
-
-const insertAuthorNode = insertNode(
-  schema.nodes.contributors,
-  schema.nodes.contributor
-)
-const insertAffiliationNode = insertNode(
-  schema.nodes.affiliations,
-  schema.nodes.affiliation
-)
-const upsertAuthor = upsertNode<ContributorAttrs>(
-  schema.nodes.contributor,
-  insertAuthorNode
-)
-const upsertAffiliation = upsertNode<AffiliationAttrs>(
-  schema.nodes.affiliation,
-  insertAffiliationNode
-)
 
 export const AuthorsAndAffiliationsModals: React.FC<
   AuthorsAndAffiliationsModalsProps
@@ -157,6 +112,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
           <AffiliationsModal
             {...affiliationsProps}
             addNewAffiliation
+            isOverlay
             onClose={handleOverlayClose}
           />
         )}
@@ -174,6 +130,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
         <AuthorsModal
           {...authorsProps}
           addNewAuthor
+          isOverlay
           onClose={handleOverlayClose}
         />
       )}
