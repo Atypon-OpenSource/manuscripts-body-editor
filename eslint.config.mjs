@@ -27,9 +27,6 @@ const compat = new FlatCompat({
 })
 
 export default defineConfig([
-  {
-    ignores: ['src/data/country-options.json'],
-  },
   ...compat.config(config),
   ...compat.extends('plugin:diff/diff'),
 ])
