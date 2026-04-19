@@ -24,24 +24,13 @@ import { ContributorsNode, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
 import {
-  AuthorsModal,
-  AuthorsModalProps,
-  handleDeleteContributor,
-  handleSaveContributor,
-} from '../components/authors/AuthorsModal'
-import {
-  AffiliationAttrs,
-  authorComparator,
-  authorLabel,
-  ContributorAttrs,
-} from '../lib/authors'
+  AuthorsAndAffiliationsModals,
+  AuthorsAndAffiliationsModalsProps,
+} from '../components/authors-affiliations/AuthorsAndAffiliationsModals'
+import { authorComparator, authorLabel, ContributorAttrs } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
-
-import {
-  findChildByID,
-  findChildrenAttrsByType,
-} from '../lib/view'
+import { findChildByID, findChildrenAttrsByType } from '../lib/view'
 import { affiliationsKey, PluginState } from '../plugins/affiliations'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
@@ -317,25 +306,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   handleEdit = (id: string, addNew?: boolean) => {
     this.props.popper.destroy()
 
-    const contributors: ContributorAttrs[] = findChildrenAttrsByType(
+    const contributors = findChildrenAttrsByType<ContributorAttrs>(
       this.view,
       schema.nodes.contributor
     )
-
-    const affiliations: AffiliationAttrs[] = findChildrenAttrsByType(
-      this.view,
-      schema.nodes.affiliation
-    )
-
     const author = id ? contributors.filter((a) => a.id === id)[0] : undefined
-    const componentProps: AuthorsModalProps = {
+    const componentProps: AuthorsAndAffiliationsModalsProps = {
+      initialModal: 'authors',
+      view: this.view,
       author,
-      authors: contributors,
-      affiliations,
-      onSaveAuthor: (contributor) =>
-        handleSaveContributor(this.view, contributor, this.getPos()),
-      onDeleteAuthor: (contributor) =>
-        handleDeleteContributor(this.view, contributor),
       addNewAuthor: addNew,
     }
 
@@ -343,7 +322,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
     this.popper = ReactSubView(
       this.props,
-      AuthorsModal,
+      AuthorsAndAffiliationsModals,
       componentProps,
       this.node,
       this.getPos,
