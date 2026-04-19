@@ -83,17 +83,25 @@ export const selectionForOutlineNavigation = (
     return TextSelection.create(doc, pos + 1)
   }
 
-  let textPos: number | null = null
-  doc.nodesBetween(pos + 1, pos + node.nodeSize, (child, childPos) => {
-    if (child.isTextblock) {
-      textPos = childPos + 1
-      return false
+  if (node.type === schema.nodes.section) {
+    let textPos: number | null = null
+    node.forEach((child, offset) => {
+      if (textPos !== null) {
+        return
+      }
+      if (
+        child.type === schema.nodes.section_title ||
+        child.type === schema.nodes.section_title_plain
+      ) {
+        textPos = pos + 1 + offset + 1
+      }
+    })
+    if (textPos !== null) {
+      return TextSelection.create(doc, textPos)
     }
-  })
+  }
 
-  return textPos !== null
-    ? TextSelection.create(doc, textPos)
-    : NodeSelection.create(doc, pos)
+  return NodeSelection.create(doc, pos)
 }
 
 export const handleScrollToSelectedTarget = (view: EditorView): boolean => {
