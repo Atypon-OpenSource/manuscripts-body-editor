@@ -15,7 +15,6 @@
  */
 import {
   AddIcon,
-  AddUserIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
   InspectorTab,
@@ -57,18 +56,9 @@ import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
 import { ModalFormActions } from '../form/ModalFormActions'
-import { GenericDrawer } from '../modal-drawer/GenericDrawer'
-import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { AuthorsPanel } from '../authors/AuthorsPanel'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
-import { EditorView } from 'prosemirror-view'
-import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
-import {
-  deleteNode,
-  findChildrenAttrsByType,
-  updateNodeAttrs,
-} from '../../lib/view'
 
 export interface AffiliationsModalProps {
   affiliation?: AffiliationAttrs
@@ -78,6 +68,8 @@ export interface AffiliationsModalProps {
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
   addNewAffiliation?: boolean
+  onClose?: () => void
+  onOpenAuthorsModal?: () => void
 }
 
 function makeAuthorItems(authors: ContributorAttrs[]) {
@@ -95,6 +87,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onDeleteAffiliation,
   onUpdateAuthors,
   addNewAffiliation = false,
+  onClose,
+  onOpenAuthorsModal,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
@@ -105,6 +99,12 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     authorsReducer,
     $authors.sort(authorComparator)
   )
+  useEffect(() => {
+    dispatchAuthors({
+      type: 'set',
+      state: [...$authors].sort(authorComparator),
+    })
+  }, [$authors])
   const [affiliations, dispatchAffiliations] = useReducer(
     affiliationsReducer,
     $affiliations
@@ -117,7 +117,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setShowRequiredFieldConfirmationDialog,
   ] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
-  const [showAuthorDrawer, setShowAuthorDrawer] = useState(false)
   const [selectedAuthorIds, setSelectedAuthorIds] = useState<string[]>([])
   const [pendingSelection, setPendingSelection] =
     useState<AffiliationAttrs | null>(null)
@@ -130,6 +129,14 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [affiliationAuthorMap, setAffiliationAuthorMap] = useState<
     Map<string, string[]>
   >(new Map())
+
+  const prevIsOpenRef = useRef(isOpen)
+  useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      onClose?.()
+    }
+    prevIsOpenRef.current = isOpen
+  }, [isOpen, onClose])
 
   useEffect(() => {
     if (!selection) {
@@ -204,7 +211,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setNewAffiliation(false)
       setSelection(affiliation)
       setSelectedAuthorIds(affiliatedAuthorIds)
-      setShowAuthorDrawer(false)
       setAffiliationAuthorMap((prevMap) => {
         const newMap = new Map(prevMap)
         newMap.set(affiliation.id, affiliatedAuthorIds)
@@ -250,7 +256,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         return newMap
       })
 
-      setShowAuthorDrawer(false)
       setSavedAffiliationId(affiliation.id)
 
       setTimeout(() => {
@@ -375,7 +380,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setNewAffiliation(true)
     setSelection(emptyAffiliation)
     setSelectedAuthorIds([])
-    setShowAuthorDrawer(false)
   }
 
   useEffect(() => {
@@ -435,7 +439,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const handleConfirmationCancel = () => {
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
-    setShowAuthorDrawer(false)
     if (pendingAction === 'select' && pendingSelection) {
       setSelection(pendingSelection)
       setNewAffiliation(false)
@@ -509,6 +512,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   <ModalFormActions
                     type={'affiliation'}
                     form={'affiliation-form'}
+                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     onDelete={handleDeleteAffiliation}
                     showingDeleteDialog={
                       showingDeleteDialog &&
@@ -523,37 +527,27 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                   />
                   <InspectorTabList>
                     <InspectorTab>Details</InspectorTab>
-                    <InspectorTab>Authors</InspectorTab>
+                    {onOpenAuthorsModal && <InspectorTab>Authors</InspectorTab>}
                   </InspectorTabList>
                   <InspectorTabPanels>
                     <AffiliationTabPanel>
                       <AffiliationForm
                         values={checkID(selection, 'affiliation')}
-                        onSave={() => handleSaveAffiliation(valuesRef.current)}
+                        onSave={(attrs) => handleSaveAffiliation(attrs)}
                         onChange={handleAffiliationChange}
                         actionsRef={actionsRef}
                       />
                     </AffiliationTabPanel>
-                    <AffiliationTabPanel>
-                      <DrawerGroup<{ id: string; label: string }>
-                        Drawer={GenericDrawer}
-                        removeItem={(id) => {
-                          setSelectedAuthorIds((prev) =>
-                            prev.filter((authorId) => authorId !== id)
-                          )
-                        }}
-                        selectedItems={selectedAuthors}
-                        onSelect={selectAuthor}
-                        items={makeAuthorItems(authors)}
-                        showDrawer={showAuthorDrawer}
-                        setShowDrawer={setShowAuthorDrawer}
-                        title="Authors"
-                        cy="affiliations"
-                        labelField="label"
-                        buttonText="Affiliate Authors"
-                        Icon={<AddUserIcon width={16} height={16} />}
-                      />
-                    </AffiliationTabPanel>
+                    {onOpenAuthorsModal && (
+                      <AffiliationTabPanel>
+                        <AuthorsPanel
+                          items={makeAuthorItems(authors)}
+                          selectedItems={selectedAuthors}
+                          onSelect={selectAuthor}
+                          onOpenAuthorsModal={onOpenAuthorsModal}
+                        />
+                      </AffiliationTabPanel>
+                    )}
                   </InspectorTabPanels>
                 </AffiliationTabs>
                 <ConfirmationDialog
@@ -654,65 +648,3 @@ const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
   margin-bottom: 16px;
 `
-
-export const openAffiliationsModal = (pos: number, view?: EditorView) => {
-  if (!view) {
-    return
-  }
-
-  const { state } = view
-  const props = getEditorProps(state)
-  const contributors: ContributorAttrs[] = findChildrenAttrsByType(
-    view,
-    schema.nodes.contributor
-  )
-  const componentProps: AffiliationsModalProps = {
-    affiliations: [],
-    authors: contributors,
-    onSaveAffiliation: (affiliation) =>
-      handleSaveAffiliation(view, affiliation, pos),
-    onDeleteAffiliation: (affiliation) =>
-      handleDeleteAffiliation(view, affiliation),
-    onUpdateAuthors: (authors) => handleUpdateAuthors(view, authors),
-    addNewAffiliation: true,
-  }
-
-  const dialog = ReactSubView(
-    props,
-    AffiliationsModal,
-    componentProps,
-    state.doc,
-    () => pos,
-    view
-  )
-  view.focus()
-  document.body.appendChild(dialog)
-}
-
-export const handleSaveAffiliation = (
-  view: EditorView,
-  affiliation: AffiliationAttrs,
-  affiliationsPos: number
-) => {
-  const update = updateNodeAttrs(view, schema.nodes.affiliation, affiliation)
-  if (!update) {
-    const node = schema.nodes.affiliation.create(affiliation)
-    view.dispatch(view.state.tr.insert(affiliationsPos + 1, node))
-  }
-}
-
-export const handleDeleteAffiliation = (
-  view: EditorView,
-  affiliation: AffiliationAttrs
-) => {
-  deleteNode(view, affiliation.id)
-}
-
-export const handleUpdateAuthors = (
-  view: EditorView,
-  authors: ContributorAttrs[]
-) => {
-  authors.forEach((author) => {
-    updateNodeAttrs(view, schema.nodes.contributor, author)
-  })
-}
