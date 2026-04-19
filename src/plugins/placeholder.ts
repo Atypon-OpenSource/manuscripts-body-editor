@@ -65,7 +65,7 @@ const getParagraphPlaceholderText = (
   if (isPullquoteElement(parent) && !node.textContent.length) {
     let otherParagraphHasContent = false
     parent.descendants((child) => {
-      if (child !== node && child.type === child.type.schema.nodes.paragraph) {
+      if (child !== node && child.type === child.type.schema.nodes.text_block) {
         otherParagraphHasContent = true
       }
     })
@@ -107,7 +107,10 @@ export default () =>
                 )
               )
             }
-            if (node.type === node.type.schema.nodes.paragraph) {
+            if (
+              node.type === node.type.schema.nodes.paragraph ||
+              node.type === node.type.schema.nodes.text_block
+            ) {
               const text = getParagraphPlaceholderText(parent, node)
               if (text) {
                 decorations.push(
