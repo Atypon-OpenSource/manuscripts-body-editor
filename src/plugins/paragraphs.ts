@@ -21,6 +21,22 @@ import { Plugin } from 'prosemirror-state'
  * This plugin enforces a rule that there can never be more than one adjacent empty paragraph.
  */
 export default () => {
+  const isTextBlock = (node: ManuscriptNode): boolean => {
+    return node.type === node.type.schema.nodes.text_block
+  }
+
+  const isTextBlockOrParagraph = (node: ManuscriptNode): boolean => {
+    return isParagraphNode(node) || isTextBlock(node)
+  }
+
+  const isTableCell = (node: ManuscriptNode): boolean => {
+    const { schema } = node.type
+    return (
+      node.type === schema.nodes.table_cell ||
+      node.type === schema.nodes.table_header
+    )
+  }
+
   return new Plugin<null>({
     appendTransaction: (transactions, oldState, newState) => {
       const positionsToJoin: number[] = []
@@ -36,14 +52,20 @@ export default () => {
         (node: ManuscriptNode, offset: number, index: number) => {
           const nodePos = pos + offset
 
+          // Skip joining for table cells - allow multiple adjacent empty paragraphs/text_blocks there
+          if (isTableCell(parent)) {
+            node.forEach(joinAdjacentParagraphs(node, nodePos + 1))
+            return
+          }
+
           if (
-            isParagraphNode(node) &&
+            isTextBlockOrParagraph(node) &&
             node.childCount === 0 &&
             index < parent.childCount - 1
           ) {
             const nextNode = parent.child(index + 1)
 
-            if (isParagraphNode(nextNode) && nextNode.childCount === 0) {
+            if (isTextBlockOrParagraph(nextNode) && nextNode.childCount === 0) {
               positionsToJoin.push(nodePos + node.nodeSize)
             }
           }
