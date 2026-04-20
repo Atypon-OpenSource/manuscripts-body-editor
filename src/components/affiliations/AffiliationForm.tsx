@@ -16,7 +16,6 @@
 import {
   FormGroup,
   FormRow,
-  FormSubtitle,
   InputErrorText,
   Label,
   RequiredIndicator,
@@ -145,7 +144,6 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
               newEntity={newEntity}
               onChange={onAffiliationDetailsTabErrorChange}
             />
-            <FormSubtitle>Institution</FormSubtitle>
             <FormRow>
               <Field name="institution">
                 {(props: FieldProps) => (
@@ -173,7 +171,6 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 )}
               </Field>
             </FormRow>
-            <FormSubtitle>Address Details</FormSubtitle>
             <FormRow>
               <Field name="department" type="textarea">
                 {(props: FieldProps) => (

@@ -24,7 +24,6 @@ import {
   FormGroup,
   LabelText,
   RequiredIndicator,
-  FormSubtitle,
   MultiValueInput,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
@@ -214,7 +213,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               newEntity={newEntity}
               onChange={onAuthorDetailsTabErrorChange}
             />
-            <FormSubtitle>Name</FormSubtitle>
             <StyledFormGroup>
               <FormRow>
                 <Field name={'prefix'}>
@@ -309,7 +307,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 </Field>
               </FormRow>
             </StyledFormGroup>
-            <FormSubtitle>Addition Information</FormSubtitle>
             <FormRow>
               <CheckboxContainer data-cy="corresponding-author-container">
                 <CheckboxLabel>
