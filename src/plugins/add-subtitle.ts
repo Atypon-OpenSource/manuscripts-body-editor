@@ -89,7 +89,9 @@ export default (props: EditorProps) =>
                   view.dispatch(tr)
                   view.focus()
                 })
-              }),
+                },
+                { side: -1 }
+              ),
             ])
           }
         }
