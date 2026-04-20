@@ -48,12 +48,11 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     ORCID: trim(author.ORCID),
     priority: author.priority,
     isJointContributor: author.isJointContributor || false,
-    degrees: author.degrees || [],
+    degrees: Array.isArray(author.degrees) ? author.degrees : [],
     footnoteIDs: author.footnoteIDs || [],
     correspIDs: author.correspIDs || [],
     prefix: trim(author.prefix),
     suffix: trim(author.suffix),
-    degrees: trim(author.degrees),
     creditRoles: Array.isArray(author.creditRoles) ? author.creditRoles : [],
   }
 

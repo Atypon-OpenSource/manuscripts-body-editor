@@ -615,8 +615,7 @@ function createEmptyAuthor(priority: number): ContributorAttrs {
     correspIDs: [],
     footnoteIDs: [],
     prefix: '',
-    suffix: '',
-    degrees: '',
+    creditRoles: [],
   }
 }
 
