@@ -423,23 +423,21 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               </Field>
             </FormRow>
             <FormRow>
-              <Field name={'degrees'}>
-                {(props: FieldProps) => (
-                  <>
-                    <UnsavedLabelRow>
-                      {showUnsavedDot('degrees') ? (
-                        <FieldUnsavedDot aria-hidden />
-                      ) : null}
-                      <Label htmlFor="degrees">Qualification</Label>
-                    </UnsavedLabelRow>
-                    <TextField
-                      id={'degrees'}
-                      {...props.field}
-                      placeholder="E.g. Bsc Computer Science"
-                    />
-                  </>
-                )}
-              </Field>
+              <UnsavedLabelRow>
+                {showUnsavedDot('degrees') ? (
+                  <FieldUnsavedDot aria-hidden />
+                ) : null}
+                <Label htmlFor="degrees">Qualification</Label>
+              </UnsavedLabelRow>
+              <MultiValueInput
+                id={'degrees'}
+                inputType="text"
+                placeholder="E.g. Bsc Computer Science"
+                initialValues={Array.isArray(formik.values.degrees) ? formik.values.degrees : []}
+                onChange={(values) => {
+                  formik.setFieldValue('degrees', values)
+                }}
+              />
             </FormRow>
           </ChangeHandlingForm>
         )
