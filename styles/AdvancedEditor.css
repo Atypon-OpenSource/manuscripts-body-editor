@@ -138,12 +138,6 @@
   width: 100%;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
-
-  grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows:
-    repeat(1, minmax(min-content, max-content))
-    [caption listing] auto !important;
-
   margin: 16px 0 0 !important;
   box-sizing: border-box;
   justify-self: center;
@@ -155,11 +149,6 @@
   border-radius: 4px;
   position: relative;
   padding: 8px;
-
-  grid-template-columns: repeat(3, auto) !important;
-  grid-template-rows:
-    repeat(1, minmax(min-content, max-content))
-    [caption listing] auto !important;
 }
 
 .ProseMirror .figure-block {
@@ -171,8 +160,6 @@
   border-radius: 0;
   position: static;
   margin: 0 !important;
-  grid-template-columns: auto;
-  grid-template-rows: auto;
 }
 
 .ProseMirror .figure-group {
@@ -184,7 +171,6 @@
 .ProseMirror .figure-block > figure {
   width: 100%;
   position: relative;
-  grid-column: 1/-1;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -246,8 +232,6 @@
 }
 
 .ProseMirror .figure-block > .listing {
-  grid-column-start: 1;
-  grid-column-end: -1;
   padding: 0;
   min-height: 0;
   overflow: visible;
@@ -311,36 +295,6 @@
   top: 0;
   left: 0;
   border: none;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] {
-  border-collapse: collapse;
-  empty-cells: show;
-  display: grid;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] tr:first-of-type > td {
-  background-color: #eee !important;
-
-  border-top-color: #000 !important;
-  border-top-style: none !important;
-  border-top-width: 2pt !important;
-
-  border-bottom-color: #000 !important;
-  border-bottom-style: none !important;
-  border-bottom-width: 1pt !important;
-}
-
-.ProseMirror .figure-block[id^='MPTable'] tr:last-of-type > td {
-  background-color: #eee !important;
-
-  border-top-color: #000 !important;
-  border-top-style: none !important;
-  border-top-width: 1pt !important;
-
-  border-bottom-color: #000 !important;
-  border-bottom-style: none !important;
-  border-bottom-width: 1pt !important;
 }
 
 .position-menu-button:focus-visible {
@@ -558,10 +512,15 @@ ProseMirror .block-embed .position-menu {
   position: relative;
 }
 
-.block > div.comment-marker,
-.figure-block > div.comment-marker {
+.block > div.comment-marker {
   top: -25px;
   left: 100%;
+}
+.figure-block > div.comment-marker {
+  position:absolute;
+  top: 1px;
+  left: unset;
+  right: -25px;
 }
 
 ul > .comment-marker,
@@ -571,10 +530,6 @@ ol > .comment-marker {
 
 li > .comment-marker {
   float: right;
-}
-
-.figure-block div.comment-marker {
-  grid-column: 3;
 }
 
 figure.block > .comment-marker {
@@ -1653,8 +1608,6 @@ th:hover > .table-context-menu-button,
 .ProseMirror .accessibility_element,
 .ProseMirror .ext-link-editor-container {
   margin-top: 12px;
-  grid-column-start: 1;
-  grid-column-end: -1;
   text-align: start;
   display: none;
 }
