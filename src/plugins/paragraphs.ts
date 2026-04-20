@@ -17,26 +17,26 @@
 import { isParagraphNode, ManuscriptNode } from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 
+const isTextBlock = (node: ManuscriptNode): boolean => {
+  return node.type === node.type.schema.nodes.text_block
+}
+
+const isTextBlockOrParagraph = (node: ManuscriptNode): boolean => {
+  return isParagraphNode(node) || isTextBlock(node)
+}
+
+const isTableCell = (node: ManuscriptNode): boolean => {
+  const { schema } = node.type
+  return (
+    node.type === schema.nodes.table_cell ||
+    node.type === schema.nodes.table_header
+  )
+}
+
 /**
  * This plugin enforces a rule that there can never be more than one adjacent empty paragraph.
  */
 export default () => {
-  const isTextBlock = (node: ManuscriptNode): boolean => {
-    return node.type === node.type.schema.nodes.text_block
-  }
-
-  const isTextBlockOrParagraph = (node: ManuscriptNode): boolean => {
-    return isParagraphNode(node) || isTextBlock(node)
-  }
-
-  const isTableCell = (node: ManuscriptNode): boolean => {
-    const { schema } = node.type
-    return (
-      node.type === schema.nodes.table_cell ||
-      node.type === schema.nodes.table_header
-    )
-  }
-
   return new Plugin<null>({
     appendTransaction: (transactions, oldState, newState) => {
       const positionsToJoin: number[] = []
