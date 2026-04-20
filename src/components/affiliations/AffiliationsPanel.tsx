@@ -27,7 +27,6 @@ import {
 export interface AffiliationsPanelProps {
   items: AffiliationAttrs[]
   selectedItems: { id: string }[]
-  disableList: boolean
   onSelect: (id: string) => void
   onOpenAffiliationsModal: () => void
 }
@@ -40,7 +39,6 @@ function affiliationSecondaryLine(item: AffiliationAttrs): string | undefined {
 export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
   items,
   selectedItems = [],
-  disableList,
   onSelect,
   onOpenAffiliationsModal,
 }) => {
@@ -63,7 +61,7 @@ export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
         </>
       }
     >
-      <ListItems disabled={disableList} data-cy="affiliations-panel">
+      <ListItems data-cy="affiliations-panel">
         {items.map((item) => (
           <ListItem
             key={item.id}

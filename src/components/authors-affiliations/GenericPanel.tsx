@@ -60,11 +60,6 @@ const PanelCreateButton = styled(IconButton)`
   width: auto;
   height: 24px;
   margin-left: auto;
-  &:disabled {
-    color: #c9c9c9 !important;
-    background-color: unset !important;
-    border: unset;
-  }
   svg {
     margin-right: 4px;
   }

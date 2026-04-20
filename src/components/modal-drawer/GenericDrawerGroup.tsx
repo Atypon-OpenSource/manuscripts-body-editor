@@ -45,7 +45,6 @@ interface DrawerGroupProps<T extends Base> {
   cy: string
   buttonText: string
   Icon?: React.ReactNode
-  disabledSelectedItemsBox?: boolean
 }
 
 interface EmbeddedDrawerProps<T extends Base> {
@@ -67,7 +66,6 @@ export function DrawerGroup<T extends Base>({
   cy,
   Icon,
   buttonText,
-  disabledSelectedItemsBox,
 }: DrawerGroupProps<T>) {
   return (
     <>
@@ -86,7 +84,6 @@ export function DrawerGroup<T extends Base>({
         }))}
         onRemove={removeItem}
         placeholder={`No ${title} assigned`}
-        disabled={disabledSelectedItemsBox}
       />
       {showDrawer && (
         <Drawer
