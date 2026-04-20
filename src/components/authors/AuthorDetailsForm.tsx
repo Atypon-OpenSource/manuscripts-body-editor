@@ -56,10 +56,9 @@ function isAuthorFieldChanged(
   key: string
 ): boolean {
   if (key === 'degrees') {
-    const t = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
     return (
-      t(getIn(formik.values, 'degrees')) !==
-      t(getIn(formik.initialValues, 'degrees'))
+      JSON.stringify(getIn(formik.values, 'degrees') ?? []) !==
+      JSON.stringify(getIn(formik.initialValues, 'degrees') ?? [])
     )
   }
   const v = normalizeAuthor(formik.values)
