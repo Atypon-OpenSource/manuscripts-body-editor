@@ -25,6 +25,7 @@ import {
   LabelText,
   RequiredIndicator,
   FormSubtitle,
+  MultiValueInput,
 } from '@manuscripts/style-guide'
 import { CreditRole } from '@manuscripts/transform'
 import {
