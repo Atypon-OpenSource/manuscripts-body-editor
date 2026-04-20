@@ -33,6 +33,7 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     isAuthenticated: author.isAuthenticated || false,
     priority: author.priority,
     isJointContributor: author.isJointContributor || false,
+    degrees: author.degrees || [],
     footnoteIDs: author.footnoteIDs || [],
     correspIDs: author.correspIDs || [],
     prefix: trim(author.prefix),
