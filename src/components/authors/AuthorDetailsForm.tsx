@@ -433,7 +433,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 id={'degrees'}
                 inputType="text"
                 placeholder="E.g. Bsc Computer Science"
-                initialValues={Array.isArray(formik.values.degrees) ? formik.values.degrees : []}
+                initialValues={
+                  Array.isArray(formik.values.degrees)
+                    ? formik.values.degrees
+                    : []
+                }
                 onChange={(values) => {
                   formik.setFieldValue('degrees', values)
                 }}
