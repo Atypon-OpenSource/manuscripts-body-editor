@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import 'regenerator-runtime/runtime'
-
 import { TextDecoder, TextEncoder } from 'util'
 import { v4 as uuid } from 'uuid'
+import { expect, vi } from 'vitest'
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+expect.addSnapshotSerializer(require('jest-prosemirror/serializer'))
 
 process.env.API_BASE_URL = 'https://127.0.0.1/'
 
@@ -33,7 +35,7 @@ Object.defineProperty(document, 'execCommand', {
 
 if (!window.URL.createObjectURL) {
   Object.defineProperty(window.URL, 'createObjectURL', {
-    value: jest.fn(() => 'blob:https://localhost/' + uuid()),
+    value: vi.fn(() => 'blob:https://localhost/' + uuid()),
   })
 }
 
