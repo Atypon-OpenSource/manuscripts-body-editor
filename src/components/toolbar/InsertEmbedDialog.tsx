@@ -92,8 +92,10 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   useEffect(
     () => {
       debounce(async () => {
+        if (url && allowedHref(url)) {
         const html = await getEditorProps(state).fetchOEmbedHtml(url, 368, 217)
         setOEmbedHTML(html)
+        }
       })
     },
     [url] // eslint-disable-line react-hooks/exhaustive-deps
