@@ -67,9 +67,8 @@ export interface AffiliationsModalProps {
   onDeleteAffiliation: (affiliation: AffiliationAttrs) => void
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
   addNewAffiliation?: boolean
-  isOverlay?: boolean
   onClose?: () => void
-  onOpenAuthorsModal?: () => void
+  openAuthorsModal?: () => void
 }
 
 const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
@@ -89,9 +88,8 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onDeleteAffiliation,
   onUpdateAuthors,
   addNewAffiliation = false,
-  isOverlay = false,
   onClose,
-  onOpenAuthorsModal,
+  openAuthorsModal,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
@@ -132,8 +130,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [affiliationAuthorMap, setAffiliationAuthorMap] = useState<
     Map<string, string[]>
   >(new Map())
-  const [affiliationDetailsTabHasError, setAffiliationDetailsTabHasError] =
-    useState(false)
+  const [affiliationTabHasError, setAffiliationTabHasError] = useState(false)
   const [
     affiliationDetailsUnsavedContinue,
     setAffiliationDetailsUnsavedContinue,
@@ -292,16 +289,11 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       setTimeout(() => {
         setSavedAffiliationId(undefined)
       }, 3200)
-
-      if (isOverlay) {
-        setIsOpen(false)
-      }
     },
     [
       authors,
       dispatchAffiliations,
       dispatchAuthors,
-      isOverlay,
       onSaveAffiliation,
       onUpdateAuthors,
       selectedAuthorIds,
@@ -480,10 +472,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer
-        data-cy="affiliations-modal"
-        data-metadata-modal-overlay={isOverlay ? 'true' : undefined}
-      >
+      <ModalContainer data-cy="affiliations-modal">
         <ModalHeader>
           <CloseButton
             onClick={() => handleClose()}
@@ -491,109 +480,83 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
           />
         </ModalHeader>
 
-        <StyledModalBody $isOverlay={isOverlay}>
-          {!isOverlay && (
-            <ModalSidebar>
-              <StyledModalSidebarHeader>
-                <ModalSidebarTitle>
-                  Institutional Affiliations
-                </ModalSidebarTitle>
-              </StyledModalSidebarHeader>
-              <StyledSidebarContent>
-                <AddAffiliationButton
-                  data-cy="add-affiliation-button"
-                  onClick={handleAddAffiliation}
-                  data-active={newAffiliation}
-                >
-                  <AddIcon width={18} height={18} />
-                  <ActionTitle>New Affiliation</ActionTitle>
-                </AddAffiliationButton>
-                <AffiliationList
-                  affiliation={selection}
-                  affiliations={affiliations}
-                  onSelect={handleSelect}
-                  onDelete={handleShowDeleteDialog}
-                  lastSavedAffiliationId={savedAffiliationId}
-                />
-              </StyledSidebarContent>
-            </ModalSidebar>
-          )}
+        <StyledModalBody>
+          <ModalSidebar>
+            <StyledModalSidebarHeader>
+              <ModalSidebarTitle>Institutional Affiliations</ModalSidebarTitle>
+            </StyledModalSidebarHeader>
+            <StyledSidebarContent>
+              <AddAffiliationButton
+                data-cy="add-affiliation-button"
+                onClick={handleAddAffiliation}
+                data-active={newAffiliation}
+              >
+                <AddIcon width={18} height={18} />
+                <ActionTitle>New Affiliation</ActionTitle>
+              </AddAffiliationButton>
+              <AffiliationList
+                affiliation={selection}
+                affiliations={affiliations}
+                onSelect={handleSelect}
+                onDelete={handleShowDeleteDialog}
+                lastSavedAffiliationId={savedAffiliationId}
+              />
+            </StyledSidebarContent>
+          </ModalSidebar>
           <StyledScrollableModalContent data-cy="affiliations-modal-content">
             {selection ? (
               <>
-                {isOverlay ? (
-                  <>
-                    <OverlayFormTitle>Create New Affiliation</OverlayFormTitle>
-                    <AffiliationForm
-                      values={checkID(selection, 'affiliation')}
-                      onSave={(attrs) => handleSaveAffiliation(attrs)}
-                      onChange={handleAffiliationChange}
-                      actionsRef={actionsRef}
-                      newEntity={newAffiliation}
-                      onAffiliationDetailsTabErrorChange={
-                        setAffiliationDetailsTabHasError
-                      }
-                      unsavedContinueActive={affiliationDetailsUnsavedContinue}
-                    />
-                  </>
-                ) : (
-                  <AffiliationTabs
-                    selectedIndex={affiliationTabIndex}
-                    onChange={setAffiliationTabIndex}
-                  >
-                    <ModalFormActions
-                      type="affiliation"
-                      onDelete={handleDeleteAffiliation}
-                      showingDeleteDialog={
-                        showingDeleteDialog &&
-                        !(
-                          showConfirmationDialog ||
-                          showRequiredFieldConfirmationDialog
-                        )
-                      }
-                      showDeleteDialog={handleShowDeleteDialog}
-                    />
-                    <ModalTabs
-                      tabLabels={['Affiliation Details', 'Authors']}
-                      tabErrorIndicators={[
-                        affiliationDetailsTabHasError,
-                        false,
-                      ]}
-                      tabWarningIndicators={[
-                        affiliationDetailsUnsavedContinue &&
-                          !affiliationDetailsTabHasError,
-                        false,
-                      ]}
-                    />
-                    <InspectorTabPanels>
+                <AffiliationTabs
+                  selectedIndex={affiliationTabIndex}
+                  onChange={setAffiliationTabIndex}
+                >
+                  <ModalFormActions
+                    type="affiliation"
+                    onDelete={handleDeleteAffiliation}
+                    showingDeleteDialog={
+                      showingDeleteDialog &&
+                      !(
+                        showConfirmationDialog ||
+                        showRequiredFieldConfirmationDialog
+                      )
+                    }
+                    showDeleteDialog={handleShowDeleteDialog}
+                  />
+                  <ModalTabs
+                    tabLabels={['Affiliation Details', 'Authors']}
+                    tabErrorIndicators={[affiliationTabHasError, false]}
+                    tabWarningIndicators={[
+                      affiliationDetailsUnsavedContinue &&
+                        !affiliationTabHasError,
+                      false,
+                    ]}
+                  />
+                  <InspectorTabPanels>
+                    <AffiliationTabPanel>
+                      <AffiliationForm
+                        values={checkID(selection, 'affiliation')}
+                        onSave={(attrs) => handleSaveAffiliation(attrs)}
+                        onChange={handleAffiliationChange}
+                        actionsRef={actionsRef}
+                        newEntity={newAffiliation}
+                        onAffiliationErrorChange={setAffiliationTabHasError}
+                        unsavedContinueActive={
+                          affiliationDetailsUnsavedContinue
+                        }
+                      />
+                    </AffiliationTabPanel>
+                    {openAuthorsModal && (
                       <AffiliationTabPanel>
-                        <AffiliationForm
-                          values={checkID(selection, 'affiliation')}
-                          onSave={(attrs) => handleSaveAffiliation(attrs)}
-                          onChange={handleAffiliationChange}
-                          actionsRef={actionsRef}
-                          newEntity={newAffiliation}
-                          onAffiliationDetailsTabErrorChange={
-                            setAffiliationDetailsTabHasError
-                          }
-                          unsavedContinueActive={
-                            affiliationDetailsUnsavedContinue
-                          }
+                        <AuthorsPanel
+                          items={makeAuthorItems(authors)}
+                          selectedItems={selectedAuthors}
+                          onSelect={selectAuthor}
+                          openAuthorsModal={openAuthorsModal}
                         />
                       </AffiliationTabPanel>
-                      {onOpenAuthorsModal && (
-                        <AffiliationTabPanel>
-                          <AuthorsPanel
-                            items={makeAuthorItems(authors)}
-                            selectedItems={selectedAuthors}
-                            onSelect={selectAuthor}
-                            onOpenAuthorsModal={onOpenAuthorsModal}
-                          />
-                        </AffiliationTabPanel>
-                      )}
-                    </InspectorTabPanels>
-                  </AffiliationTabs>
-                )}
+                    )}
+                  </InspectorTabPanels>
+                </AffiliationTabs>
                 <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
                   onPrimary={() =>
@@ -634,7 +597,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                 form="affiliation-form"
                 newEntity={newAffiliation}
                 isDisableSave={isDisableSave}
-                createLabel={isOverlay ? 'Create New Affiliation' : undefined}
                 onSubmitForm={() => actionsRef.current?.submitForm?.()}
               />
             ) : undefined
@@ -703,23 +665,15 @@ const AffiliationTabPanel = styled(InspectorTabPanel).attrs({
   height: calc(100% - 16px);
 `
 
-const StyledModalBody = styled(ModalBody)<{ $isOverlay?: boolean }>`
+const StyledModalBody = styled(ModalBody)`
   position: relative;
-  height: ${(p) => (p.$isOverlay ? 'calc(90vh - 350px)' : 'calc(90vh - 40px)')};
+  height: calc(90vh - 40px);
 `
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
   margin-bottom: 16px;
 `
 
-const OverlayFormTitle = styled.h2`
-  margin: 0 0 ${(props) => props.theme.grid.unit * 3}px;
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-weight: ${(props) => props.theme.font.weight.semibold};
-  line-height: ${(props) => props.theme.font.lineHeight.large};
-  color: ${(props) => props.theme.colors.text.primary};
-`
 const StyledScrollableModalContent = styled(ScrollableModalContent)`
   padding: 45px 16px 16px;
 `

@@ -25,64 +25,35 @@ import {
 import {
   Field,
   FieldProps,
-  Formik,
-  FormikProps,
   FormikErrors,
+  FormikProps,
+  FormikProvider,
   getIn,
-  useFormikContext,
+  useFormik,
 } from 'formik'
-import React, { MutableRefObject, useEffect, useRef } from 'react'
+import React, { MutableRefObject, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { COUNTRY_SELECT_OPTIONS } from '../../data/countryOptions'
 import { AffiliationAttrs } from '../../lib/authors'
 import { normalizeAffiliation } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
-
-export interface FormActions {
-  reset: () => void
-  submitForm: () => Promise<void> | void
-}
+import { isInstitutionError } from '../hooks/useAffiliationShowsErrorIndicator'
 
 function isAffiliationFieldChanged(
   formik: FormikProps<AffiliationAttrs>,
   key: keyof AffiliationAttrs | string
-): boolean {
+) {
   const v = normalizeAffiliation(formik.values)
   const i = normalizeAffiliation(formik.initialValues)
   return getIn(v, key) !== getIn(i, key)
 }
 
-function getShowInstitutionError(
-  formik: FormikProps<AffiliationAttrs>,
-  newEntity: boolean
-): boolean {
-  if (!getIn(formik.errors, 'institution')) {
-    return false
-  }
-  if (newEntity) {
-    return Boolean(formik.touched.institution || formik.dirty)
-  }
-  return Boolean(formik.touched.institution)
-}
+export { affiliationShowsErrorIndicator } from '../hooks/useAffiliationShowsErrorIndicator'
 
-export function affiliationDetailsTabShowsErrorIndicator(
-  formik: FormikProps<AffiliationAttrs>,
-  newEntity: boolean
-): boolean {
-  return getShowInstitutionError(formik, newEntity)
-}
-
-const AffiliationDetailsTabErrorBridge: React.FC<{
-  newEntity: boolean
-  onChange?: (hasError: boolean) => void
-}> = ({ newEntity, onChange }) => {
-  const formik = useFormikContext<AffiliationAttrs>()
-  const hasError = affiliationDetailsTabShowsErrorIndicator(formik, newEntity)
-  useEffect(() => {
-    onChange?.(hasError)
-  }, [hasError, onChange])
-  return null
+export interface FormActions {
+  reset: () => void
+  submitForm: () => Promise<void> | void
 }
 
 export interface AffiliationFormProps {
@@ -91,7 +62,7 @@ export interface AffiliationFormProps {
   onChange: (values: AffiliationAttrs) => void
   actionsRef?: MutableRefObject<FormActions | undefined>
   newEntity?: boolean
-  onAffiliationDetailsTabErrorChange?: (hasError: boolean) => void
+  onAffiliationErrorChange?: (hasError: boolean) => void
   unsavedContinueActive?: boolean
 }
 
@@ -101,17 +72,9 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
   onChange,
   actionsRef,
   newEntity = false,
-  onAffiliationDetailsTabErrorChange,
+  onAffiliationErrorChange,
   unsavedContinueActive = false,
 }) => {
-  const formRef = useRef<FormikProps<AffiliationAttrs>>(null)
-
-  if (actionsRef) {
-    actionsRef.current = {
-      reset: () => formRef.current?.resetForm(),
-      submitForm: () => formRef.current?.submitForm(),
-    }
-  }
   const validateAffiliation = (vals: AffiliationAttrs) => {
     const errors: FormikErrors<AffiliationAttrs> = {}
     if (!vals.institution?.trim()) {
@@ -120,157 +83,158 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
     return errors
   }
 
-  return (
-    <Formik<AffiliationAttrs>
-      initialValues={values}
-      onSubmit={(attrs) => onSave(attrs)}
-      innerRef={formRef}
-      enableReinitialize={true}
-      validate={validateAffiliation}
-      validateOnChange={true}
-    >
-      {(formik) => {
-        const showUnsavedDot = (key: keyof AffiliationAttrs | string) =>
-          unsavedContinueActive && isAffiliationFieldChanged(formik, key)
-        const showInstitutionError = getShowInstitutionError(formik, newEntity)
+  const formik = useFormik<AffiliationAttrs>({
+    initialValues: values,
+    onSubmit: (attrs) => onSave(attrs),
+    enableReinitialize: true,
+    validate: validateAffiliation,
+    validateOnChange: true,
+  })
 
-        return (
-          <ChangeHandlingForm
-            onChange={onChange}
-            id="affiliation-form"
-            noValidate
-          >
-            <AffiliationDetailsTabErrorBridge
-              newEntity={newEntity}
-              onChange={onAffiliationDetailsTabErrorChange}
-            />
-            <FormRow>
-              <Field name="institution">
-                {(props: FieldProps) => (
-                  <>
-                    <UnsavedLabelRow>
-                      {showUnsavedDot('institution') ? (
-                        <FieldUnsavedDot aria-hidden />
-                      ) : null}
-                      <Label htmlFor="institution">
-                        Institution Name
-                        <RequiredIndicator>*</RequiredIndicator>
-                      </Label>
-                    </UnsavedLabelRow>
-                    <TextField
-                      id="institution"
-                      {...props.field}
-                      error={showInstitutionError}
-                    />
-                    {showInstitutionError && (
-                      <InputErrorText>
-                        {formik.errors.institution as string}
-                      </InputErrorText>
-                    )}
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name="department" type="textarea">
-                {(props: FieldProps) => (
-                  <>
-                    <UnsavedLabelRow>
-                      {showUnsavedDot('department') ? (
-                        <FieldUnsavedDot aria-hidden />
-                      ) : null}
-                      <Label htmlFor="department">Department</Label>
-                    </UnsavedLabelRow>
-                    <TextField id="department" {...props.field} as="textarea" />
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name="addressLine1">
-                {(props: FieldProps) => (
-                  <>
-                    <UnsavedLabelRow>
-                      {showUnsavedDot('addressLine1') ? (
-                        <FieldUnsavedDot aria-hidden />
-                      ) : null}
-                      <Label htmlFor="addressLine1">Street Address</Label>
-                    </UnsavedLabelRow>
-                    <TextField id="addressLine1" {...props.field} />
-                  </>
-                )}
-              </Field>
-            </FormRow>
-            <StyledFormGroup>
-              <FormRow>
+  if (actionsRef) {
+    actionsRef.current = {
+      reset: () => formik.resetForm(),
+      submitForm: () => formik.submitForm(),
+    }
+  }
+
+  const showInstitutionError = isInstitutionError(formik, newEntity)
+
+  useEffect(() => {
+    onAffiliationErrorChange?.(showInstitutionError)
+  }, [showInstitutionError, onAffiliationErrorChange])
+
+  const showUnsavedDot = (key: keyof AffiliationAttrs | string) =>
+    unsavedContinueActive && isAffiliationFieldChanged(formik, key)
+
+  return (
+    <FormikProvider value={formik}>
+      <ChangeHandlingForm onChange={onChange} id="affiliation-form" noValidate>
+        <FormRow>
+          <Field name="institution">
+            {(props: FieldProps) => (
+              <>
                 <UnsavedLabelRow>
-                  {showUnsavedDot('country') ? (
+                  {showUnsavedDot('institution') ? (
                     <FieldUnsavedDot aria-hidden />
                   ) : null}
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="institution">
+                    Institution Name
+                    <RequiredIndicator>*</RequiredIndicator>
+                  </Label>
                 </UnsavedLabelRow>
-                <Field
-                  id="country"
-                  name="country"
-                  component={SelectField}
-                  options={COUNTRY_SELECT_OPTIONS}
-                  isSearchable={true}
-                  variant="large"
-                  listMaxHeight="140px"
+                <TextField
+                  id="institution"
+                  {...props.field}
+                  error={showInstitutionError}
                 />
-              </FormRow>
-              <FormRow>
-                <Field name="city">
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('city') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="city">City</Label>
-                      </UnsavedLabelRow>
-                      <TextField id="city" {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-            </StyledFormGroup>
-            <StyledFormGroup>
-              <FormRow>
-                <Field name="county">
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('county') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="county">State / Province</Label>
-                      </UnsavedLabelRow>
-                      <TextField id="county" {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <FormRow>
-                <Field name="postCode">
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('postCode') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="postCode">Postal Code</Label>
-                      </UnsavedLabelRow>
-                      <TextField id="postCode" {...props.field} />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-            </StyledFormGroup>
-          </ChangeHandlingForm>
-        )
-      }}
-    </Formik>
+                {showInstitutionError && (
+                  <InputErrorText>
+                    {formik.errors.institution as string}
+                  </InputErrorText>
+                )}
+              </>
+            )}
+          </Field>
+        </FormRow>
+        <FormRow>
+          <Field name="department" type="textarea">
+            {(props: FieldProps) => (
+              <>
+                <UnsavedLabelRow>
+                  {showUnsavedDot('department') ? (
+                    <FieldUnsavedDot aria-hidden />
+                  ) : null}
+                  <Label htmlFor="department">Department</Label>
+                </UnsavedLabelRow>
+                <TextField id="department" {...props.field} as="textarea" />
+              </>
+            )}
+          </Field>
+        </FormRow>
+        <FormRow>
+          <Field name="addressLine1">
+            {(props: FieldProps) => (
+              <>
+                <UnsavedLabelRow>
+                  {showUnsavedDot('addressLine1') ? (
+                    <FieldUnsavedDot aria-hidden />
+                  ) : null}
+                  <Label htmlFor="addressLine1">Street Address</Label>
+                </UnsavedLabelRow>
+                <TextField id="addressLine1" {...props.field} />
+              </>
+            )}
+          </Field>
+        </FormRow>
+        <StyledFormGroup>
+          <FormRow>
+            <UnsavedLabelRow>
+              {showUnsavedDot('country') ? (
+                <FieldUnsavedDot aria-hidden />
+              ) : null}
+              <Label htmlFor="country">Country</Label>
+            </UnsavedLabelRow>
+            <Field
+              id="country"
+              name="country"
+              component={SelectField}
+              options={COUNTRY_SELECT_OPTIONS}
+              isSearchable={true}
+              variant="large"
+              listMaxHeight="140px"
+            />
+          </FormRow>
+          <FormRow>
+            <Field name="city">
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('city') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="city">City</Label>
+                  </UnsavedLabelRow>
+                  <TextField id="city" {...props.field} />
+                </>
+              )}
+            </Field>
+          </FormRow>
+        </StyledFormGroup>
+        <StyledFormGroup>
+          <FormRow>
+            <Field name="county">
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('county') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="county">State / Province</Label>
+                  </UnsavedLabelRow>
+                  <TextField id="county" {...props.field} />
+                </>
+              )}
+            </Field>
+          </FormRow>
+          <FormRow>
+            <Field name="postCode">
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('postCode') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="postCode">Postal Code</Label>
+                  </UnsavedLabelRow>
+                  <TextField id="postCode" {...props.field} />
+                </>
+              )}
+            </Field>
+          </FormRow>
+        </StyledFormGroup>
+      </ChangeHandlingForm>
+    </FormikProvider>
   )
 }
 

@@ -38,7 +38,9 @@ import {
   AffiliationsModal,
   AffiliationsModalProps,
 } from '../affiliations/AffiliationsModal'
+import { CreateAffiliationModal } from '../affiliations/CreateAffiliationModal'
 import { AuthorsModal, AuthorsModalProps } from '../authors/AuthorsModal'
+import { CreateAuthorModal } from '../authors/CreateAuthorModal'
 
 export interface AuthorsAndAffiliationsModalsProps {
   initialModal: 'authors' | 'affiliations'
@@ -109,10 +111,9 @@ export const AuthorsAndAffiliationsModals: React.FC<
           onOpenAffiliationsModal={handleOpenOverlay}
         />
         {showOverlay && (
-          <AffiliationsModal
-            {...affiliationsProps}
-            addNewAffiliation
-            isOverlay
+          <CreateAffiliationModal
+            affiliationsCount={affiliations.length}
+            onSave={(a) => upsertAffiliation(view, a)}
             onClose={handleOverlayClose}
           />
         )}
@@ -124,13 +125,13 @@ export const AuthorsAndAffiliationsModals: React.FC<
     <>
       <AffiliationsModal
         {...affiliationsProps}
-        onOpenAuthorsModal={handleOpenOverlay}
+        openAuthorsModal={handleOpenOverlay}
       />
       {showOverlay && (
-        <AuthorsModal
-          {...authorsProps}
-          addNewAuthor
-          isOverlay
+        <CreateAuthorModal
+          authorsCount={authors.length}
+          affiliations={affiliations}
+          onSave={(a) => upsertAuthor(view, a)}
           onClose={handleOverlayClose}
         />
       )}

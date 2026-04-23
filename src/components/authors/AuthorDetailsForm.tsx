@@ -30,18 +30,22 @@ import { CreditRole } from '@manuscripts/transform'
 import {
   Field,
   FieldProps,
-  Formik,
-  FormikProps,
-  getIn,
   FormikErrors,
-  useFormikContext,
+  FormikProps,
+  FormikProvider,
+  getIn,
+  useFormik,
 } from 'formik'
-import React, { MutableRefObject, useEffect, useRef } from 'react'
+import React, { MutableRefObject, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { ContributorAttrs } from '../../lib/authors'
 import { normalizeAuthor } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import {
+  isNamePairError,
+  useAuthorShowsErrorIndicator,
+} from '../hooks/useAuthorShowsErrorIndicator'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ORCID_URL_REGEX =
@@ -53,7 +57,7 @@ const NAME_PAIR_REQUIRED_MESSAGE = 'Please enter Given Name or Family Name'
 function isAuthorFieldChanged(
   formik: FormikProps<ContributorAttrs>,
   key: string
-): boolean {
+) {
   if (key === 'degrees') {
     return (
       JSON.stringify(getIn(formik.values, 'degrees') ?? []) !==
@@ -70,57 +74,14 @@ function isAuthorFieldChanged(
   return va !== vb
 }
 
-function getShowNamePairError(
-  formik: FormikProps<ContributorAttrs>,
-  newEntity: boolean,
-  requiredContinueActive = false
-): boolean {
-  if (!getIn(formik.errors, 'given')) {
-    return false
-  }
-  if (requiredContinueActive) {
-    return true
-  }
-  if (newEntity) {
-    return Boolean(formik.touched.given || formik.touched.family)
-  }
-  return Boolean(formik.touched.given || formik.touched.family || formik.dirty)
-}
+export { authorShowsErrorIndicator as authorDetailsTabShowsErrorIndicator } from '../hooks/useAuthorShowsErrorIndicator'
 
-export function authorDetailsTabShowsErrorIndicator(
-  formik: FormikProps<ContributorAttrs>,
-  newEntity: boolean,
-  requiredContinueActive = false
-): boolean {
-  if (getShowNamePairError(formik, newEntity, requiredContinueActive)) {
-    return true
-  }
-  if (
-    (getIn(formik.touched, 'email') || requiredContinueActive) &&
-    getIn(formik.errors, 'email')
-  ) {
-    return true
-  }
-  if (getIn(formik.touched, 'ORCID') && getIn(formik.errors, 'ORCID')) {
-    return true
-  }
-  return false
-}
-
-const AuthorDetailsTabErrorBridge: React.FC<{
+const AuthorErrorEffect: React.FC<{
   newEntity: boolean
   requiredContinueActive: boolean
   onChange?: (hasError: boolean) => void
 }> = ({ newEntity, requiredContinueActive, onChange }) => {
-  const formik = useFormikContext<ContributorAttrs>()
-  const hasError = authorDetailsTabShowsErrorIndicator(
-    formik,
-    newEntity,
-    requiredContinueActive
-  )
-  useEffect(() => {
-    onChange?.(hasError)
-  }, [hasError, onChange])
+  useAuthorShowsErrorIndicator(newEntity, requiredContinueActive, onChange)
   return null
 }
 
@@ -158,27 +119,6 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   unsavedContinueActive = false,
   requiredContinueActive = false,
 }) => {
-  const formRef = useRef<FormikProps<ContributorAttrs>>(null)
-
-  useEffect(() => {
-    if (selectedAffiliations && formRef.current) {
-      formRef.current.setFieldValue('affiliationIDs', selectedAffiliations)
-    }
-  }, [selectedAffiliations])
-
-  useEffect(() => {
-    if (selectedCreditRoles && formRef.current) {
-      formRef.current.setFieldValue('creditRoles', selectedCreditRoles)
-    }
-  }, [selectedCreditRoles])
-
-  if (actionsRef) {
-    actionsRef.current = {
-      reset: () => formRef.current?.resetForm(),
-      submitForm: () => formRef.current?.submitForm(),
-    }
-  }
-
   const validateAuthor = (values: ContributorAttrs) => {
     const errors: FormikErrors<ContributorAttrs> = {}
     const given = values.given?.trim() ?? ''
@@ -203,267 +143,277 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
     return errors
   }
 
-  return (
-    <Formik<ContributorAttrs>
-      initialValues={values}
-      onSubmit={(submitted) => onSave(normalizeAuthor(submitted))}
-      enableReinitialize={true}
-      validateOnChange={true}
-      innerRef={formRef}
-      validate={validateAuthor}
-    >
-      {(formik) => {
-        const showNamePairError = getShowNamePairError(
-          formik,
-          newEntity,
-          requiredContinueActive
-        )
-        const showUnsavedDot = (key: string) =>
-          unsavedContinueActive && isAuthorFieldChanged(formik, key)
+  const formik = useFormik<ContributorAttrs>({
+    initialValues: values,
+    onSubmit: (submitted) => onSave(normalizeAuthor(submitted)),
+    enableReinitialize: true,
+    validateOnChange: true,
+    validate: validateAuthor,
+  })
 
-        return (
-          <ChangeHandlingForm<ContributorAttrs>
-            onChange={(next) => onChange(normalizeAuthor(next))}
-            id="author-details-form"
-            formRef={authorFormRef}
-            noValidate
-          >
-            <AuthorDetailsTabErrorBridge
-              newEntity={newEntity}
-              requiredContinueActive={requiredContinueActive}
-              onChange={onAuthorDetailsTabErrorChange}
-            />
-            <StyledFormGroup>
-              <FormRow>
-                <Field name={'prefix'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('prefix') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="prefix">Prefix</Label>
-                      </UnsavedLabelRow>
-                      <TextField
-                        id={'prefix'}
-                        {...props.field}
-                        placeholder="E.g. Doctor"
-                      />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-              <StyledFormRow>
-                <Field name={'given'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('given') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="given-name">
-                          Given name<RequiredIndicator>*</RequiredIndicator>
-                        </Label>
-                      </UnsavedLabelRow>
-                      <TextFieldWithError
-                        id={'given-name'}
-                        {...props.field}
-                        error={showNamePairError}
-                      />
-                      {showNamePairError && (
-                        <InputErrorText>
-                          {NAME_PAIR_REQUIRED_MESSAGE}
-                        </InputErrorText>
-                      )}
-                    </>
-                  )}
-                </Field>
-              </StyledFormRow>
-            </StyledFormGroup>
-            <StyledFormGroup>
-              <StyledFormRow>
-                <Field name={'family'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('family') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="family-name">
-                          Family name<RequiredIndicator>*</RequiredIndicator>
-                        </Label>
-                      </UnsavedLabelRow>
-                      <TextFieldWithError
-                        id={'family-name'}
-                        {...props.field}
-                        error={showNamePairError}
-                      />
-                      {showNamePairError && (
-                        <InputErrorText>
-                          {NAME_PAIR_REQUIRED_MESSAGE}
-                        </InputErrorText>
-                      )}
-                    </>
-                  )}
-                </Field>
-              </StyledFormRow>
-              <FormRow>
-                <Field name={'suffix'}>
-                  {(props: FieldProps) => (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('suffix') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="suffix">Suffix</Label>
-                      </UnsavedLabelRow>
-                      <TextField
-                        id={'suffix'}
-                        {...props.field}
-                        placeholder="E.g. Junior"
-                      />
-                    </>
-                  )}
-                </Field>
-              </FormRow>
-            </StyledFormGroup>
-            <FormRow>
-              <CheckboxContainer data-cy="corresponding-author-container">
-                <CheckboxLabel>
-                  <Field name={'isCorresponding'}>
-                    {(props: FieldProps) => (
-                      <CheckboxField
-                        id={'isCorresponding'}
-                        checked={props.field.value}
-                        {...props.field}
-                      />
-                    )}
-                  </Field>
+  useEffect(() => {
+    if (selectedAffiliations) {
+      formik.setFieldValue('affiliationIDs', selectedAffiliations)
+    }
+  }, [selectedAffiliations])
+
+  useEffect(() => {
+    if (selectedCreditRoles) {
+      formik.setFieldValue('creditRoles', selectedCreditRoles)
+    }
+  }, [selectedCreditRoles])
+
+  if (actionsRef) {
+    actionsRef.current = {
+      reset: () => formik.resetForm(),
+      submitForm: () => formik.submitForm(),
+    }
+  }
+
+  const showNamePairError = isNamePairError(
+    formik,
+    newEntity,
+    requiredContinueActive
+  )
+  const showUnsavedDot = (key: string) =>
+    unsavedContinueActive && isAuthorFieldChanged(formik, key)
+
+  return (
+    <FormikProvider value={formik}>
+      <AuthorErrorEffect
+        newEntity={newEntity}
+        requiredContinueActive={requiredContinueActive}
+        onChange={onAuthorDetailsTabErrorChange}
+      />
+      <ChangeHandlingForm<ContributorAttrs>
+        onChange={(next) => onChange(normalizeAuthor(next))}
+        id="author-details-form"
+        formRef={authorFormRef}
+        noValidate
+      >
+        <StyledFormGroup>
+          <FormRow>
+            <Field name={'prefix'}>
+              {(props: FieldProps) => (
+                <>
                   <UnsavedLabelRow>
-                    {showUnsavedDot('isCorresponding') ? (
+                    {showUnsavedDot('prefix') ? (
                       <FieldUnsavedDot aria-hidden />
                     ) : null}
-                    <LabelText>Corresponding Author</LabelText>
+                    <Label htmlFor="prefix">Prefix</Label>
                   </UnsavedLabelRow>
-                </CheckboxLabel>
-              </CheckboxContainer>
-            </FormRow>
-            <FormRow>
-              <Field name={'email'} type={'email'}>
-                {(props: FieldProps) => {
-                  const hasError =
-                    (getIn(formik.touched, 'email') ||
-                      requiredContinueActive) &&
-                    getIn(formik.errors, 'email')
-                  return (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('email') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="email">
-                          {isEmailRequired ? (
-                            <>
-                              <LabelText>
-                                Email address
-                                <RequiredIndicator>*</RequiredIndicator>
-                              </LabelText>
-                            </>
-                          ) : (
-                            'Email address'
-                          )}
-                        </Label>
-                      </UnsavedLabelRow>
-                      <TextFieldWithError
-                        id={'email'}
-                        type="email"
-                        required={isEmailRequired}
-                        {...props.field}
-                        error={hasError}
-                      />
-                      {hasError && (
-                        <InputErrorText>
-                          {getIn(formik.errors, 'email')}
-                        </InputErrorText>
-                      )}
-                    </>
-                  )
-                }}
-              </Field>
-            </FormRow>
-            <FormRow>
-              <Field name={'role'}>
+                  <TextField
+                    id={'prefix'}
+                    {...props.field}
+                    placeholder="E.g. Doctor"
+                  />
+                </>
+              )}
+            </Field>
+          </FormRow>
+          <StyledFormRow>
+            <Field name={'given'}>
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('given') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="given-name">
+                      Given name<RequiredIndicator>*</RequiredIndicator>
+                    </Label>
+                  </UnsavedLabelRow>
+                  <TextFieldWithError
+                    id={'given-name'}
+                    {...props.field}
+                    error={showNamePairError}
+                  />
+                  {showNamePairError && (
+                    <InputErrorText>
+                      {NAME_PAIR_REQUIRED_MESSAGE}
+                    </InputErrorText>
+                  )}
+                </>
+              )}
+            </Field>
+          </StyledFormRow>
+        </StyledFormGroup>
+        <StyledFormGroup>
+          <StyledFormRow>
+            <Field name={'family'}>
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('family') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="family-name">
+                      Family name<RequiredIndicator>*</RequiredIndicator>
+                    </Label>
+                  </UnsavedLabelRow>
+                  <TextFieldWithError
+                    id={'family-name'}
+                    {...props.field}
+                    error={showNamePairError}
+                  />
+                  {showNamePairError && (
+                    <InputErrorText>
+                      {NAME_PAIR_REQUIRED_MESSAGE}
+                    </InputErrorText>
+                  )}
+                </>
+              )}
+            </Field>
+          </StyledFormRow>
+          <FormRow>
+            <Field name={'suffix'}>
+              {(props: FieldProps) => (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('suffix') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="suffix">Suffix</Label>
+                  </UnsavedLabelRow>
+                  <TextField
+                    id={'suffix'}
+                    {...props.field}
+                    placeholder="E.g. Junior"
+                  />
+                </>
+              )}
+            </Field>
+          </FormRow>
+        </StyledFormGroup>
+        <FormRow>
+          <CheckboxContainer data-cy="corresponding-author-container">
+            <CheckboxLabel>
+              <Field name={'isCorresponding'}>
                 {(props: FieldProps) => (
-                  <>
-                    <UnsavedLabelRow>
-                      {showUnsavedDot('role') ? (
-                        <FieldUnsavedDot aria-hidden />
-                      ) : null}
-                      <Label htmlFor="role">Job Title</Label>
-                    </UnsavedLabelRow>
-                    <TextField id={'role'} {...props.field} />
-                  </>
+                  <CheckboxField
+                    id={'isCorresponding'}
+                    checked={props.field.value}
+                    {...props.field}
+                  />
                 )}
               </Field>
-            </FormRow>
-            <FormRow>
-              <Field name={'ORCID'} type={'text'}>
-                {(props: FieldProps) => {
-                  const hasError =
-                    getIn(formik.touched, 'ORCID') &&
-                    getIn(formik.errors, 'ORCID')
-                  return (
-                    <>
-                      <UnsavedLabelRow>
-                        {showUnsavedDot('ORCID') ? (
-                          <FieldUnsavedDot aria-hidden />
-                        ) : null}
-                        <Label htmlFor="orcid">ORCID</Label>
-                      </UnsavedLabelRow>
-                      <TextFieldWithError
-                        id={'orcid'}
-                        type="url"
-                        placeholder={'https://orcid.org/...'}
-                        {...props.field}
-                        pattern={ORCID_INPUT_PATTERN}
-                        title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                        error={hasError}
-                      />
-                      {hasError && (
-                        <InputErrorText>
-                          {getIn(formik.errors, 'ORCID')}
-                        </InputErrorText>
-                      )}
-                    </>
-                  )
-                }}
-              </Field>
-            </FormRow>
-            <FormRow>
               <UnsavedLabelRow>
-                {showUnsavedDot('degrees') ? (
+                {showUnsavedDot('isCorresponding') ? (
                   <FieldUnsavedDot aria-hidden />
                 ) : null}
-                <Label htmlFor="degrees">Qualification</Label>
+                <LabelText>Corresponding Author</LabelText>
               </UnsavedLabelRow>
-              <MultiValueInput
-                id={'degrees'}
-                inputType="text"
-                placeholder="E.g. Bsc Computer Science"
-                initialValues={
-                  Array.isArray(formik.values.degrees)
-                    ? formik.values.degrees
-                    : []
-                }
-                onChange={(values) => {
-                  formik.setFieldValue('degrees', values)
-                }}
-              />
-            </FormRow>
-          </ChangeHandlingForm>
-        )
-      }}
-    </Formik>
+            </CheckboxLabel>
+          </CheckboxContainer>
+        </FormRow>
+        <FormRow>
+          <Field name={'email'} type={'email'}>
+            {(props: FieldProps) => {
+              const hasError =
+                (getIn(formik.touched, 'email') || requiredContinueActive) &&
+                getIn(formik.errors, 'email')
+              return (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('email') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="email">
+                      {isEmailRequired ? (
+                        <>
+                          <LabelText>
+                            Email address
+                            <RequiredIndicator>*</RequiredIndicator>
+                          </LabelText>
+                        </>
+                      ) : (
+                        'Email address'
+                      )}
+                    </Label>
+                  </UnsavedLabelRow>
+                  <TextFieldWithError
+                    id={'email'}
+                    type="email"
+                    required={isEmailRequired}
+                    {...props.field}
+                    error={hasError}
+                  />
+                  {hasError && (
+                    <InputErrorText>
+                      {getIn(formik.errors, 'email')}
+                    </InputErrorText>
+                  )}
+                </>
+              )
+            }}
+          </Field>
+        </FormRow>
+        <FormRow>
+          <Field name={'role'}>
+            {(props: FieldProps) => (
+              <>
+                <UnsavedLabelRow>
+                  {showUnsavedDot('role') ? (
+                    <FieldUnsavedDot aria-hidden />
+                  ) : null}
+                  <Label htmlFor="role">Job Title</Label>
+                </UnsavedLabelRow>
+                <TextField id={'role'} {...props.field} />
+              </>
+            )}
+          </Field>
+        </FormRow>
+        <FormRow>
+          <Field name={'ORCID'} type={'text'}>
+            {(props: FieldProps) => {
+              const hasError =
+                getIn(formik.touched, 'ORCID') && getIn(formik.errors, 'ORCID')
+              return (
+                <>
+                  <UnsavedLabelRow>
+                    {showUnsavedDot('ORCID') ? (
+                      <FieldUnsavedDot aria-hidden />
+                    ) : null}
+                    <Label htmlFor="orcid">ORCID</Label>
+                  </UnsavedLabelRow>
+                  <TextFieldWithError
+                    id={'orcid'}
+                    type="url"
+                    placeholder={'https://orcid.org/...'}
+                    {...props.field}
+                    pattern={ORCID_INPUT_PATTERN}
+                    title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
+                    error={hasError}
+                  />
+                  {hasError && (
+                    <InputErrorText>
+                      {getIn(formik.errors, 'ORCID')}
+                    </InputErrorText>
+                  )}
+                </>
+              )
+            }}
+          </Field>
+        </FormRow>
+        <FormRow>
+          <UnsavedLabelRow>
+            {showUnsavedDot('degrees') ? <FieldUnsavedDot aria-hidden /> : null}
+            <Label htmlFor="degrees">Qualification</Label>
+          </UnsavedLabelRow>
+          <MultiValueInput
+            id={'degrees'}
+            inputType="text"
+            placeholder="E.g. Bsc Computer Science"
+            initialValues={
+              Array.isArray(formik.values.degrees) ? formik.values.degrees : []
+            }
+            onChange={(values) => {
+              formik.setFieldValue('degrees', values)
+            }}
+          />
+        </FormRow>
+      </ChangeHandlingForm>
+    </FormikProvider>
   )
 }
 

@@ -27,14 +27,14 @@ export interface AuthorsPanelProps {
   items: { id: string; label: string }[]
   selectedItems?: { id: string }[]
   onSelect: (id: string) => void
-  onOpenAuthorsModal: () => void
+  openAuthorsModal: () => void
 }
 
 export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
   items,
   selectedItems = [],
   onSelect,
-  onOpenAuthorsModal,
+  openAuthorsModal,
 }) => {
   const selectedIds = useListSelectedIds(selectedItems)
 
@@ -42,7 +42,7 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
     <GenericPanel
       title="Authors"
       createLabel="Add New Author"
-      onCreate={onOpenAuthorsModal}
+      onCreate={openAuthorsModal}
       createDataCy="add-authors-link"
       emptyDataCy="authors-panel-empty"
       isEmpty={items.length === 0}

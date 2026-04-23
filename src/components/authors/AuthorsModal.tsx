@@ -76,7 +76,6 @@ export interface AuthorsModalProps {
   onSaveAuthor: (author: ContributorAttrs) => void
   onDeleteAuthor: (author: ContributorAttrs) => void
   addNewAuthor?: boolean
-  isOverlay?: boolean
   onOpenAffiliationsModal?: () => void
   onClose?: () => void
 }
@@ -88,7 +87,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   onSaveAuthor,
   onDeleteAuthor,
   addNewAuthor = false,
-  isOverlay = false,
   onOpenAffiliationsModal,
   onClose,
 }) => {
@@ -119,8 +117,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
 
-  const [authorDetailsTabHasError, setAuthorDetailsTabHasError] =
-    useState(false)
+  const [authorHasError, setAuthorDetailsTabHasError] = useState(false)
   const [authorDetailsUnsavedContinue, setAuthorDetailsUnsavedContinue] =
     useState(false)
   const [authorDetailsRequiredContinue, setAuthorDetailsRequiredContinue] =
@@ -276,10 +273,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       type: 'update',
       items: [author],
     })
-
-    if (isOverlay) {
-      setOpen(false)
-    }
   }
 
   const moveAuthor = useCallback(
@@ -417,143 +410,113 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       onRequestClose={() => close()}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer
-        data-cy="authors-modal"
-        data-metadata-modal-overlay={isOverlay ? 'true' : undefined}
-      >
+      <ModalContainer data-cy="authors-modal">
         <ModalHeader>
           <CloseButton onClick={() => close()} data-cy="modal-close-button" />
         </ModalHeader>
-        <StyledModalBody $isOverlay={isOverlay}>
-          {!isOverlay && (
-            <ModalSidebar data-cy="authors-sidebar">
-              <StyledModalSidebarHeader>
-                <ModalSidebarTitle>Manage Authors</ModalSidebarTitle>
-              </StyledModalSidebarHeader>
-              <StyledSidebarContent>
-                <AddAuthorButton
-                  data-cy="add-author-button"
-                  onClick={addAuthor}
-                  data-active={isCreatingNewAuthor || newAuthor}
-                >
-                  <AddIcon width={18} height={18} />
-                  <ActionTitle>New Author</ActionTitle>
-                </AddAuthorButton>
-                <AuthorList
-                  author={selection}
-                  authors={authors}
-                  onSelect={selectAuthor}
-                  onDelete={() => setShowDeleteDialog((prev) => !prev)}
-                  moveAuthor={moveAuthor}
-                  lastSavedAuthor={lastSavedAuthor}
-                />
-              </StyledSidebarContent>
-            </ModalSidebar>
-          )}
+        <StyledModalBody>
+          <ModalSidebar data-cy="authors-sidebar">
+            <StyledModalSidebarHeader>
+              <ModalSidebarTitle>Manage Authors</ModalSidebarTitle>
+            </StyledModalSidebarHeader>
+            <StyledSidebarContent>
+              <AddAuthorButton
+                data-cy="add-author-button"
+                onClick={addAuthor}
+                data-active={isCreatingNewAuthor || newAuthor}
+              >
+                <AddIcon width={18} height={18} />
+                <ActionTitle>New Author</ActionTitle>
+              </AddAuthorButton>
+              <AuthorList
+                author={selection}
+                authors={authors}
+                onSelect={selectAuthor}
+                onDelete={() => setShowDeleteDialog((prev) => !prev)}
+                moveAuthor={moveAuthor}
+                lastSavedAuthor={lastSavedAuthor}
+              />
+            </StyledSidebarContent>
+          </ModalSidebar>
           <StyledScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <>
-                {isOverlay ? (
-                  <>
-                    <OverlayFormTitle>Create New Author</OverlayFormTitle>
-                    <AuthorDetailsForm
-                      values={normalizeAuthor(selection)}
-                      onChange={changeAuthor}
-                      onSave={saveAuthor}
-                      actionsRef={actionsRef}
-                      isEmailRequired={isEmailRequired}
-                      selectedAffiliations={selectedAffiliations.map(
-                        (a) => a.id
-                      )}
-                      authorFormRef={authorFormRef}
-                      selectedCreditRoles={selectedCreditRoles}
-                      newEntity={newEntity}
-                      onAuthorDetailsTabErrorChange={
-                        setAuthorDetailsTabHasError
-                      }
-                      unsavedContinueActive={authorDetailsUnsavedContinue}
-                      requiredContinueActive={authorDetailsRequiredContinue}
-                    />
-                  </>
-                ) : (
-                  <AuthorTabs
-                    selectedIndex={authorTabIndex}
-                    onChange={setAuthorTabIndex}
-                  >
-                    <ModalFormActions
-                      type="author"
-                      onDelete={deleteAuthor}
-                      showingDeleteDialog={showingDeleteDialog}
-                      showDeleteDialog={() =>
-                        setShowDeleteDialog((prev) => !prev)
-                      }
-                    />
-                    <ModalTabs
-                      tabLabels={[
-                        'Author Details',
-                        ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
-                        'Contributions',
-                      ]}
-                      tabErrorIndicators={[
-                        authorDetailsTabHasError,
-                        ...(onOpenAffiliationsModal ? [false] : []),
-                        false,
-                      ]}
-                      tabWarningIndicators={[
-                        authorDetailsUnsavedContinue &&
-                          !authorDetailsTabHasError,
-                        ...(onOpenAffiliationsModal ? [false] : []),
-                        false,
-                      ]}
-                    />
-                    <InspectorTabPanels>
+                <AuthorTabs
+                  selectedIndex={authorTabIndex}
+                  onChange={setAuthorTabIndex}
+                >
+                  <ModalFormActions
+                    type="author"
+                    onDelete={deleteAuthor}
+                    showingDeleteDialog={showingDeleteDialog}
+                    showDeleteDialog={() =>
+                      setShowDeleteDialog((prev) => !prev)
+                    }
+                  />
+                  <ModalTabs
+                    tabLabels={[
+                      'Author Details',
+                      ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
+                      'Contributions',
+                    ]}
+                    tabErrorIndicators={[
+                      authorHasError,
+                      ...(onOpenAffiliationsModal ? [false] : []),
+                      false,
+                    ]}
+                    tabWarningIndicators={[
+                      authorDetailsUnsavedContinue && !authorHasError,
+                      ...(onOpenAffiliationsModal ? [false] : []),
+                      false,
+                    ]}
+                  />
+                  <InspectorTabPanels>
+                    <AuthorTabPanel>
+                      <AuthorDetailsForm
+                        values={normalizeAuthor(selection)}
+                        onChange={changeAuthor}
+                        onSave={saveAuthor}
+                        actionsRef={actionsRef}
+                        isEmailRequired={isEmailRequired}
+                        selectedAffiliations={selectedAffiliations.map(
+                          (a) => a.id
+                        )}
+                        authorFormRef={authorFormRef}
+                        selectedCreditRoles={selectedCreditRoles}
+                        newEntity={newEntity}
+                        onAuthorDetailsTabErrorChange={
+                          setAuthorDetailsTabHasError
+                        }
+                        unsavedContinueActive={authorDetailsUnsavedContinue}
+                        requiredContinueActive={authorDetailsRequiredContinue}
+                      />
+                    </AuthorTabPanel>
+                    {onOpenAffiliationsModal && (
                       <AuthorTabPanel>
-                        <AuthorDetailsForm
-                          values={normalizeAuthor(selection)}
-                          onChange={changeAuthor}
-                          onSave={saveAuthor}
-                          actionsRef={actionsRef}
-                          isEmailRequired={isEmailRequired}
-                          selectedAffiliations={selectedAffiliations.map(
-                            (a) => a.id
-                          )}
-                          authorFormRef={authorFormRef}
-                          selectedCreditRoles={selectedCreditRoles}
-                          newEntity={newEntity}
-                          onAuthorDetailsTabErrorChange={
-                            setAuthorDetailsTabHasError
-                          }
-                          unsavedContinueActive={authorDetailsUnsavedContinue}
-                          requiredContinueActive={authorDetailsRequiredContinue}
+                        <AffiliationsPanel
+                          items={affiliations}
+                          selectedItems={selectedAffiliations}
+                          onSelect={selectAffiliation}
+                          onOpenAffiliationsModal={onOpenAffiliationsModal}
                         />
                       </AuthorTabPanel>
-                      {onOpenAffiliationsModal && (
-                        <AuthorTabPanel>
-                          <AffiliationsPanel
-                            items={affiliations}
-                            selectedItems={selectedAffiliations}
-                            onSelect={selectAffiliation}
-                            onOpenAffiliationsModal={onOpenAffiliationsModal}
-                          />
-                        </AuthorTabPanel>
-                      )}
-                      <AuthorTabPanel>
-                        <FormSubtitle>Contributions (CRediT)</FormSubtitle>
-                        <ContributionsDescriptionSubtitle>
-                          Select the roles this author contributed to according
-                          to the CRediT taxonomy
-                        </ContributionsDescriptionSubtitle>
-                        <CreditContributionsCheckboxes
-                          items={vocabTermItems}
-                          selectedItems={selectedCreditRoles.map((r) => ({
-                            id: r.vocabTerm,
-                          }))}
-                          onSelect={selectCreditRole}
-                        />
-                      </AuthorTabPanel>
-                    </InspectorTabPanels>
-                  </AuthorTabs>
-                )}
+                    )}
+                    <AuthorTabPanel>
+                      <FormSubtitle>Contributions (CRediT)</FormSubtitle>
+                      <ContributionsDescriptionSubtitle>
+                        Select the roles this author contributed to according to
+                        the CRediT taxonomy
+                      </ContributionsDescriptionSubtitle>
+                      <CreditContributionsCheckboxes
+                        items={vocabTermItems}
+                        selectedItems={selectedCreditRoles.map((r) => ({
+                          id: r.vocabTerm,
+                        }))}
+                        onSelect={selectCreditRole}
+                      />
+                    </AuthorTabPanel>
+                  </InspectorTabPanels>
+                </AuthorTabs>
                 <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
                   onPrimary={() => {
@@ -595,7 +558,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 form="author-details-form"
                 newEntity={newEntity}
                 isDisableSave={isDisableSave}
-                createLabel={isOverlay ? 'Create New Author' : undefined}
                 onSubmitForm={() => actionsRef.current?.submitForm?.()}
               />
             ) : undefined
@@ -670,23 +632,15 @@ const StyledSidebarContent = styled(SidebarContent)`
   padding: 8px;
 `
 
-const StyledModalBody = styled(ModalBody)<{ $isOverlay?: boolean }>`
+const StyledModalBody = styled(ModalBody)`
   position: relative;
-  height: ${(p) => (p.$isOverlay ? 'calc(90vh - 350px)' : 'calc(90vh - 40px)')};
+  height: calc(90vh - 40px);
 `
 
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-bottom: 12px;
 `
+
 const StyledScrollableModalContent = styled(ScrollableModalContent)`
   padding: 45px 16px 16px;
-`
-
-const OverlayFormTitle = styled.h2`
-  margin: 0 0 ${(props) => props.theme.grid.unit * 3}px;
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-weight: ${(props) => props.theme.font.weight.semibold};
-  line-height: ${(props) => props.theme.font.lineHeight.large};
-  color: ${(props) => props.theme.colors.text.primary};
 `
