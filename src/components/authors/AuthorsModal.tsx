@@ -123,6 +123,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     useState(false)
   const [authorDetailsUnsavedContinue, setAuthorDetailsUnsavedContinue] =
     useState(false)
+  const [authorDetailsRequiredContinue, setAuthorDetailsRequiredContinue] =
+    useState(false)
   const [authorTabIndex, setAuthorTabIndex] = useState(0)
 
   const valuesRef = useRef<ContributorAttrs>(undefined)
@@ -161,11 +163,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   useEffect(() => {
     if (!unSavedChanges) {
       setAuthorDetailsUnsavedContinue(false)
+      setAuthorDetailsRequiredContinue(false)
     }
   }, [unSavedChanges])
 
   useEffect(() => {
     setAuthorDetailsUnsavedContinue(false)
+    setAuthorDetailsRequiredContinue(false)
   }, [selection?.id])
 
   useEffect(() => {
@@ -468,6 +472,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         setAuthorDetailsTabHasError
                       }
                       unsavedContinueActive={authorDetailsUnsavedContinue}
+                      requiredContinueActive={authorDetailsRequiredContinue}
                     />
                   </>
                 ) : (
@@ -519,6 +524,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                             setAuthorDetailsTabHasError
                           }
                           unsavedContinueActive={authorDetailsUnsavedContinue}
+                          requiredContinueActive={authorDetailsRequiredContinue}
                         />
                       </AuthorTabPanel>
                       {onOpenAffiliationsModal && (
@@ -550,9 +556,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 )}
                 <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
-                  onPrimary={() =>
+                  onPrimary={() => {
                     setShowRequiredFieldConfirmationDialog(false)
-                  }
+                    setNextAuthor(null)
+                    setAuthorDetailsRequiredContinue(true)
+                  }}
                   onSecondary={cancel}
                   type={DialogType.REQUIRED}
                   entityType="author"

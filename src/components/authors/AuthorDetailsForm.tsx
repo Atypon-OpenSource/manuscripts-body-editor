@@ -72,10 +72,14 @@ function isAuthorFieldChanged(
 
 function getShowNamePairError(
   formik: FormikProps<ContributorAttrs>,
-  newEntity: boolean
+  newEntity: boolean,
+  requiredContinueActive = false
 ): boolean {
   if (!getIn(formik.errors, 'given')) {
     return false
+  }
+  if (requiredContinueActive) {
+    return true
   }
   if (newEntity) {
     return Boolean(formik.touched.given || formik.touched.family)
@@ -85,12 +89,16 @@ function getShowNamePairError(
 
 export function authorDetailsTabShowsErrorIndicator(
   formik: FormikProps<ContributorAttrs>,
-  newEntity: boolean
+  newEntity: boolean,
+  requiredContinueActive = false
 ): boolean {
-  if (getShowNamePairError(formik, newEntity)) {
+  if (getShowNamePairError(formik, newEntity, requiredContinueActive)) {
     return true
   }
-  if (getIn(formik.touched, 'email') && getIn(formik.errors, 'email')) {
+  if (
+    (getIn(formik.touched, 'email') || requiredContinueActive) &&
+    getIn(formik.errors, 'email')
+  ) {
     return true
   }
   if (getIn(formik.touched, 'ORCID') && getIn(formik.errors, 'ORCID')) {
@@ -101,10 +109,15 @@ export function authorDetailsTabShowsErrorIndicator(
 
 const AuthorDetailsTabErrorBridge: React.FC<{
   newEntity: boolean
+  requiredContinueActive: boolean
   onChange?: (hasError: boolean) => void
-}> = ({ newEntity, onChange }) => {
+}> = ({ newEntity, requiredContinueActive, onChange }) => {
   const formik = useFormikContext<ContributorAttrs>()
-  const hasError = authorDetailsTabShowsErrorIndicator(formik, newEntity)
+  const hasError = authorDetailsTabShowsErrorIndicator(
+    formik,
+    newEntity,
+    requiredContinueActive
+  )
   useEffect(() => {
     onChange?.(hasError)
   }, [hasError, onChange])
@@ -128,6 +141,7 @@ interface AuthorDetailsFormProps {
   newEntity: boolean
   onAuthorDetailsTabErrorChange?: (hasError: boolean) => void
   unsavedContinueActive?: boolean
+  requiredContinueActive?: boolean
 }
 
 export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
@@ -142,6 +156,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
   newEntity,
   onAuthorDetailsTabErrorChange,
   unsavedContinueActive = false,
+  requiredContinueActive = false,
 }) => {
   const formRef = useRef<FormikProps<ContributorAttrs>>(null)
 
@@ -198,7 +213,11 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
       validate={validateAuthor}
     >
       {(formik) => {
-        const showNamePairError = getShowNamePairError(formik, newEntity)
+        const showNamePairError = getShowNamePairError(
+          formik,
+          newEntity,
+          requiredContinueActive
+        )
         const showUnsavedDot = (key: string) =>
           unsavedContinueActive && isAuthorFieldChanged(formik, key)
 
@@ -211,6 +230,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           >
             <AuthorDetailsTabErrorBridge
               newEntity={newEntity}
+              requiredContinueActive={requiredContinueActive}
               onChange={onAuthorDetailsTabErrorChange}
             />
             <StyledFormGroup>
@@ -332,7 +352,8 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
               <Field name={'email'} type={'email'}>
                 {(props: FieldProps) => {
                   const hasError =
-                    getIn(formik.touched, 'email') &&
+                    (getIn(formik.touched, 'email') ||
+                      requiredContinueActive) &&
                     getIn(formik.errors, 'email')
                   return (
                     <>
