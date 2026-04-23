@@ -230,6 +230,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                       <Label htmlFor="orcid">ORCID</Label>
                       <TextFieldWithError
                         id={'orcid'}
+                        disabled={values.isAuthenticated}
                         type="url"
                         placeholder={'https://orcid.org/...'}
                         {...props.field}
