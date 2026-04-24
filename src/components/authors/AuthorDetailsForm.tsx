@@ -370,6 +370,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     id={'orcid'}
                     type="url"
                     placeholder={'https://orcid.org/...'}
+                    disabled={values.isAuthenticated}
                     {...props.field}
                     pattern={ORCID_INPUT_PATTERN}
                     title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
