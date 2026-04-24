@@ -30,6 +30,7 @@ export const normalizeAuthor = (author: ContributorAttrs) => {
     email: trim(author.email),
     isCorresponding: author.isCorresponding || false,
     ORCID: trim(author.ORCID),
+    isAuthenticated: author.isAuthenticated || false,
     priority: author.priority,
     isJointContributor: author.isJointContributor || false,
     degrees: author.degrees || [],
