@@ -157,9 +157,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
 
   useEffect(() => {
     setAffiliationDetailsUnsavedContinue(false)
-  }, [selection?.id])
-
-  useEffect(() => {
     if (selection?.id) {
       setAffiliationTabIndex(0)
     }

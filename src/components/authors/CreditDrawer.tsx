@@ -39,11 +39,10 @@ export const CreditContributionsCheckboxes: React.FC<
       role="group"
       aria-label="Contributions (CRediT)"
     >
-      {items.map((item, i) => (
+      {items.map((item) => (
         <TwoColumnCheckbox key={item.id}>
           <CheckboxLabel>
             <CheckboxField
-              id={'credit-role-' + i}
               name={item.id}
               checked={selectedIds.includes(item.id)}
               onChange={() => {

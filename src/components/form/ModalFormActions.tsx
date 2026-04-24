@@ -61,7 +61,7 @@ export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
   return saveButton
 }
 
-export interface ModalFormActionsProps {
+interface ModalFormActionsProps {
   type: string
   onDelete: () => void
   showingDeleteDialog: boolean

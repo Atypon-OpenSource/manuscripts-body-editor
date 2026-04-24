@@ -17,7 +17,6 @@ import {
   FormGroup,
   FormRow,
   InputErrorText,
-  Label,
   RequiredIndicator,
   SelectField,
   TextField,
@@ -34,10 +33,11 @@ import {
 import React, { MutableRefObject, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { COUNTRY_SELECT_OPTIONS } from '../../data/countryOptions'
+import { COUNTRY_SELECT_OPTIONS } from '@manuscripts/style-guide'
 import { AffiliationAttrs } from '../../lib/authors'
 import { normalizeAffiliation } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
+import { UnsavedLabel } from '../form/UnsavedLabel'
 import { isInstitutionError } from '../hooks/useAffiliationShowsErrorIndicator'
 
 function isAffiliationFieldChanged(
@@ -114,15 +114,13 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Field name="institution">
             {(props: FieldProps) => (
               <>
-                <UnsavedLabelRow>
-                  {showUnsavedDot('institution') ? (
-                    <FieldUnsavedDot aria-hidden />
-                  ) : null}
-                  <Label htmlFor="institution">
-                    Institution Name
-                    <RequiredIndicator>*</RequiredIndicator>
-                  </Label>
-                </UnsavedLabelRow>
+                <UnsavedLabel
+                  htmlFor="institution"
+                  showDot={showUnsavedDot('institution')}
+                >
+                  Institution Name
+                  <RequiredIndicator>*</RequiredIndicator>
+                </UnsavedLabel>
                 <TextField
                   id="institution"
                   {...props.field}
@@ -141,12 +139,12 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Field name="department" type="textarea">
             {(props: FieldProps) => (
               <>
-                <UnsavedLabelRow>
-                  {showUnsavedDot('department') ? (
-                    <FieldUnsavedDot aria-hidden />
-                  ) : null}
-                  <Label htmlFor="department">Department</Label>
-                </UnsavedLabelRow>
+                <UnsavedLabel
+                  htmlFor="department"
+                  showDot={showUnsavedDot('department')}
+                >
+                  Department
+                </UnsavedLabel>
                 <TextField id="department" {...props.field} as="textarea" />
               </>
             )}
@@ -156,12 +154,12 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
           <Field name="addressLine1">
             {(props: FieldProps) => (
               <>
-                <UnsavedLabelRow>
-                  {showUnsavedDot('addressLine1') ? (
-                    <FieldUnsavedDot aria-hidden />
-                  ) : null}
-                  <Label htmlFor="addressLine1">Street Address</Label>
-                </UnsavedLabelRow>
+                <UnsavedLabel
+                  htmlFor="addressLine1"
+                  showDot={showUnsavedDot('addressLine1')}
+                >
+                  Street Address
+                </UnsavedLabel>
                 <TextField id="addressLine1" {...props.field} />
               </>
             )}
@@ -169,12 +167,9 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
         </FormRow>
         <StyledFormGroup>
           <FormRow>
-            <UnsavedLabelRow>
-              {showUnsavedDot('country') ? (
-                <FieldUnsavedDot aria-hidden />
-              ) : null}
-              <Label htmlFor="country">Country</Label>
-            </UnsavedLabelRow>
+            <UnsavedLabel htmlFor="country" showDot={showUnsavedDot('country')}>
+              Country
+            </UnsavedLabel>
             <Field
               id="country"
               name="country"
@@ -189,12 +184,9 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="city">
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('city') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="city">City</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel htmlFor="city" showDot={showUnsavedDot('city')}>
+                    City
+                  </UnsavedLabel>
                   <TextField id="city" {...props.field} />
                 </>
               )}
@@ -206,12 +198,12 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="county">
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('county') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="county">State / Province</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="county"
+                    showDot={showUnsavedDot('county')}
+                  >
+                    State / Province
+                  </UnsavedLabel>
                   <TextField id="county" {...props.field} />
                 </>
               )}
@@ -221,12 +213,12 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
             <Field name="postCode">
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('postCode') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="postCode">Postal Code</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="postCode"
+                    showDot={showUnsavedDot('postCode')}
+                  >
+                    Postal Code
+                  </UnsavedLabel>
                   <TextField id="postCode" {...props.field} />
                 </>
               )}
@@ -237,20 +229,6 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
     </FormikProvider>
   )
 }
-
-const UnsavedLabelRow = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-`
-
-const FieldUnsavedDot = styled.span`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${(props) => props.theme.colors.text.warning};
-  flex-shrink: 0;
-`
 
 const StyledFormGroup = styled(FormGroup)`
   > div {

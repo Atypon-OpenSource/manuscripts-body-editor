@@ -19,7 +19,6 @@ import {
   CheckboxLabel,
   TextField,
   InputErrorText,
-  Label,
   FormRow,
   FormGroup,
   LabelText,
@@ -43,6 +42,11 @@ import { ContributorAttrs } from '../../lib/authors'
 import { normalizeAuthor } from '../../lib/normalize'
 import { ChangeHandlingForm } from '../ChangeHandlingForm'
 import {
+  UnsavedLabel,
+  UnsavedLabelRow,
+  FieldUnsavedDot,
+} from '../form/UnsavedLabel'
+import {
   isNamePairError,
   useAuthorShowsErrorIndicator,
 } from '../hooks/useAuthorShowsErrorIndicator'
@@ -58,18 +62,15 @@ function isAuthorFieldChanged(
   formik: FormikProps<ContributorAttrs>,
   key: string
 ) {
-  if (key === 'degrees') {
-    return (
-      JSON.stringify(getIn(formik.values, 'degrees') ?? []) !==
-      JSON.stringify(getIn(formik.initialValues, 'degrees') ?? [])
-    )
-  }
   const v = normalizeAuthor(formik.values)
   const i = normalizeAuthor(formik.initialValues)
   const va = getIn(v, key as keyof ContributorAttrs)
   const vb = getIn(i, key as keyof ContributorAttrs)
-  if (key === 'affiliationIDs' || key === 'creditRoles') {
-    return JSON.stringify(va ?? []) !== JSON.stringify(vb ?? [])
+  if (key === 'affiliationIDs' || key === 'creditRoles' || key === 'degrees') {
+    return (
+      va.length !== vb.length ||
+      (va as string[]).some((item, i) => item !== vb[i])
+    )
   }
   return va !== vb
 }
@@ -196,12 +197,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <Field name={'prefix'}>
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('prefix') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="prefix">Prefix</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="prefix"
+                    showDot={showUnsavedDot('prefix')}
+                  >
+                    Prefix
+                  </UnsavedLabel>
                   <TextField
                     id={'prefix'}
                     {...props.field}
@@ -215,14 +216,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <Field name={'given'}>
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('given') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="given-name">
-                      Given name<RequiredIndicator>*</RequiredIndicator>
-                    </Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="given-name"
+                    showDot={showUnsavedDot('given')}
+                  >
+                    Given name<RequiredIndicator>*</RequiredIndicator>
+                  </UnsavedLabel>
                   <TextFieldWithError
                     id={'given-name'}
                     {...props.field}
@@ -243,14 +242,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <Field name={'family'}>
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('family') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="family-name">
-                      Family name<RequiredIndicator>*</RequiredIndicator>
-                    </Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="family-name"
+                    showDot={showUnsavedDot('family')}
+                  >
+                    Family name<RequiredIndicator>*</RequiredIndicator>
+                  </UnsavedLabel>
                   <TextFieldWithError
                     id={'family-name'}
                     {...props.field}
@@ -269,12 +266,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             <Field name={'suffix'}>
               {(props: FieldProps) => (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('suffix') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="suffix">Suffix</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="suffix"
+                    showDot={showUnsavedDot('suffix')}
+                  >
+                    Suffix
+                  </UnsavedLabel>
                   <TextField
                     id={'suffix'}
                     {...props.field}
@@ -314,23 +311,19 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 getIn(formik.errors, 'email')
               return (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('email') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="email">
-                      {isEmailRequired ? (
-                        <>
-                          <LabelText>
-                            Email address
-                            <RequiredIndicator>*</RequiredIndicator>
-                          </LabelText>
-                        </>
-                      ) : (
-                        'Email address'
-                      )}
-                    </Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="email"
+                    showDot={showUnsavedDot('email')}
+                  >
+                    {isEmailRequired ? (
+                      <LabelText>
+                        Email address
+                        <RequiredIndicator>*</RequiredIndicator>
+                      </LabelText>
+                    ) : (
+                      'Email address'
+                    )}
+                  </UnsavedLabel>
                   <TextFieldWithError
                     id={'email'}
                     type="email"
@@ -352,12 +345,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           <Field name={'role'}>
             {(props: FieldProps) => (
               <>
-                <UnsavedLabelRow>
-                  {showUnsavedDot('role') ? (
-                    <FieldUnsavedDot aria-hidden />
-                  ) : null}
-                  <Label htmlFor="role">Job Title</Label>
-                </UnsavedLabelRow>
+                <UnsavedLabel htmlFor="role" showDot={showUnsavedDot('role')}>
+                  Job Title
+                </UnsavedLabel>
                 <TextField id={'role'} {...props.field} />
               </>
             )}
@@ -370,12 +360,12 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                 getIn(formik.touched, 'ORCID') && getIn(formik.errors, 'ORCID')
               return (
                 <>
-                  <UnsavedLabelRow>
-                    {showUnsavedDot('ORCID') ? (
-                      <FieldUnsavedDot aria-hidden />
-                    ) : null}
-                    <Label htmlFor="orcid">ORCID</Label>
-                  </UnsavedLabelRow>
+                  <UnsavedLabel
+                    htmlFor="orcid"
+                    showDot={showUnsavedDot('ORCID')}
+                  >
+                    ORCID
+                  </UnsavedLabel>
                   <TextFieldWithError
                     id={'orcid'}
                     type="url"
@@ -396,10 +386,9 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           </Field>
         </FormRow>
         <FormRow>
-          <UnsavedLabelRow>
-            {showUnsavedDot('degrees') ? <FieldUnsavedDot aria-hidden /> : null}
-            <Label htmlFor="degrees">Qualification</Label>
-          </UnsavedLabelRow>
+          <UnsavedLabel htmlFor="degrees" showDot={showUnsavedDot('degrees')}>
+            Qualification
+          </UnsavedLabel>
           <MultiValueInput
             id={'degrees'}
             inputType="text"
@@ -427,20 +416,6 @@ const TextFieldWithError = styled(TextField)`
   &:required::placeholder {
     color: ${(props) => props.theme.colors.text.error};
   }
-`
-
-const UnsavedLabelRow = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-`
-
-const FieldUnsavedDot = styled.span`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${(props) => props.theme.colors.text.warning};
-  flex-shrink: 0;
 `
 
 export const CheckboxContainer = styled.div`

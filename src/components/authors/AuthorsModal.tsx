@@ -167,9 +167,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   useEffect(() => {
     setAuthorDetailsUnsavedContinue(false)
     setAuthorDetailsRequiredContinue(false)
-  }, [selection?.id])
-
-  useEffect(() => {
     if (selection?.id) {
       setAuthorTabIndex(0)
     }
