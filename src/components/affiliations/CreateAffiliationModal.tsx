@@ -15,18 +15,21 @@
  */
 import {
   CloseButton,
-  ModalBody,
   ModalContainer,
   ModalHeader,
-  ScrollableModalContent,
   StyledModal,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
-import React, { useRef, useState } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { AffiliationAttrs } from '../../lib/authors'
 import { checkID } from '../../lib/normalize'
+import {
+  MODAL_ON_CLOSE_NOTIFY_DELAY_MS,
+  FormTitle,
+  StyledModalBody,
+  StyledScrollableModalContent,
+} from '../form/CreateModalStyles'
 import FormFooter from '../form/FormFooter'
 import { ModalFormSaveButton } from '../form/ModalFormActions'
 import { AffiliationForm, FormActions } from './AffiliationForm'
@@ -36,8 +39,6 @@ export interface CreateAffiliationModalProps {
   onSave: (affiliation: AffiliationAttrs) => void
   onClose: () => void
 }
-
-const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
 
 export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
   affiliationsCount,
@@ -49,8 +50,9 @@ export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
   const [isDisableSave, setIsDisableSave] = useState(true)
   const actionsRef = useRef<FormActions>(undefined)
 
+  // Wait for the close animation to finish before calling onClose.
   const prevIsOpenRef = useRef(true)
-  React.useEffect(() => {
+  useEffect(() => {
     if (prevIsOpenRef.current && !isOpen) {
       prevIsOpenRef.current = isOpen
       const id = window.setTimeout(() => {
@@ -61,7 +63,7 @@ export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
     prevIsOpenRef.current = isOpen
   }, [isOpen, onClose])
 
-  const selection = React.useMemo(
+  const selection = useMemo(
     () => ({
       id: generateNodeID(schema.nodes.affiliation),
       institution: '',
@@ -132,21 +134,3 @@ export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
     </StyledModal>
   )
 }
-
-const StyledModalBody = styled(ModalBody)`
-  position: relative;
-  height: calc(90vh - 250px);
-`
-
-const FormTitle = styled.h2`
-  margin: 0 0 ${(props) => props.theme.grid.unit * 3}px;
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: ${(props) => props.theme.font.size.large};
-  font-weight: ${(props) => props.theme.font.weight.semibold};
-  line-height: ${(props) => props.theme.font.lineHeight.large};
-  color: ${(props) => props.theme.colors.text.primary};
-`
-
-const StyledScrollableModalContent = styled(ScrollableModalContent)`
-  padding: 45px 16px 16px;
-`
