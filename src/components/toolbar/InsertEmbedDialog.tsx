@@ -33,7 +33,6 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { Dispatch, insertEmbed } from '../../commands'
-import { getOEmbedHTML } from '../../lib/oembed'
 import { allowedHref } from '../../lib/url'
 import { useDoWithDebounce } from '../../lib/use-do-with-debounce'
 import { getEditorProps } from '../../plugins/editor-props'
@@ -93,8 +92,10 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   useEffect(
     () => {
       debounce(async () => {
-        const html = await getOEmbedHTML(url, 368, 217)
+        if (url && allowedHref(url)) {
+        const html = await getEditorProps(state).fetchOEmbedHtml(url, 368, 217)
         setOEmbedHTML(html)
+        }
       })
     },
     [url] // eslint-disable-line react-hooks/exhaustive-deps
