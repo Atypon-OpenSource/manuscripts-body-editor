@@ -42,6 +42,12 @@ import { PopperManager } from '../lib/popper'
 import plugins from './editor-plugins'
 import views from './editor-views'
 
+export type FetchOEmbedHtml = (
+  url: string,
+  maxWidth: number,
+  maxHeight: number
+) => Promise<string | undefined>
+
 export type CSLProps = {
   style?: string
   locale?: string
@@ -75,6 +81,7 @@ export interface EditorProps {
   lockBody: boolean
   isViewingMode?: boolean
   hiddenNodeTypes?: ManuscriptNodeType[] | undefined
+  fetchOEmbedHtml: FetchOEmbedHtml
 }
 
 export type ExternalProps = Omit<EditorProps, 'popper' | 'dispatch'>
