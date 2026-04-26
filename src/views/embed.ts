@@ -32,7 +32,6 @@ import {
   FileHandlers,
   MediaType,
 } from '../lib/media'
-import { getOEmbedHTML } from '../lib/oembed'
 import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import BlockView from './block_view'
@@ -255,7 +254,11 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     container.classList.add('embed-preview')
 
     try {
-      const html = await getOEmbedHTML(this.node.attrs.href, 643, 363)
+      const html = await this.props.fetchOEmbedHtml(
+        this.node.attrs.href,
+        643,
+        363
+      )
       if (html) {
         container.innerHTML = html
       } else {
