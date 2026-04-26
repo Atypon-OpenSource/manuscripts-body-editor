@@ -92,6 +92,9 @@
   line-height: 2;
   font-size: 16px;
 }
+.ProseMirror .pullquote p {
+  display: flow-root;
+}
 .ProseMirror .pullquote p i {
   font-style: normal;
 }
@@ -128,6 +131,7 @@
 }
 
 .ProseMirror .pullquote footer {
+  display: flow-root;
   padding-left: 1em;
   color: #777;
   position: relative;
