@@ -16,9 +16,9 @@
 
 import {
   AddIcon,
-  AddRoleIcon,
   AuthorPlaceholderIcon,
   CloseButton,
+  FormSubtitle,
   ModalBody,
   ModalContainer,
   ModalHeader,
@@ -31,8 +31,6 @@ import {
   StyledModal,
   InspectorTabs,
   InspectorTabPanel,
-  InspectorTabList,
-  InspectorTab,
   InspectorTabPanels,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
@@ -56,14 +54,16 @@ import { normalizeAuthor } from '../../lib/normalize'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
-import { ModalFormActions } from '../form/ModalFormActions'
-import { DrawerGroup } from '../modal-drawer/GenericDrawerGroup'
+import { ModalFormActions, ModalFormSaveButton } from '../form/ModalFormActions'
+import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { AffiliationsPanel } from '../affiliations/AffiliationsPanel'
 import { AuthorDetailsForm, FormActions } from './AuthorDetailsForm'
 import { AuthorList } from './AuthorList'
-import { CreditDrawer } from './CreditDrawer'
+import { CreditContributionsCheckboxes } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
+
+const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -94,7 +94,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const prevIsOpenRef = useRef(true)
   useEffect(() => {
     if (prevIsOpenRef.current && !isOpen) {
-      onClose?.()
+      prevIsOpenRef.current = isOpen
+      const id = window.setTimeout(() => {
+        onClose?.()
+      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
+      return () => window.clearTimeout(id)
     }
     prevIsOpenRef.current = isOpen
   }, [isOpen, onClose])
@@ -113,7 +117,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   const [isSwitchingAuthor, setIsSwitchingAuthor] = useState(false)
   const [isCreatingNewAuthor, setIsCreatingNewAuthor] = useState(false)
 
-  const [showCreditDrawer, setShowCreditDrawer] = useState(false)
+  const [authorHasError, setAuthorDetailsTabHasError] = useState(false)
+  const [authorDetailsUnsavedContinue, setAuthorDetailsUnsavedContinue] =
+    useState(false)
+  const [authorDetailsRequiredContinue, setAuthorDetailsRequiredContinue] =
+    useState(false)
+  const [authorTabIndex, setAuthorTabIndex] = useState(0)
 
   const valuesRef = useRef<ContributorAttrs>(undefined)
   const actionsRef = useRef<FormActions>(undefined)
@@ -147,6 +156,21 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelectedAffiliations(relevantAffiliations)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (!unSavedChanges) {
+      setAuthorDetailsUnsavedContinue(false)
+      setAuthorDetailsRequiredContinue(false)
+    }
+  }, [unSavedChanges])
+
+  useEffect(() => {
+    setAuthorDetailsUnsavedContinue(false)
+    setAuthorDetailsRequiredContinue(false)
+    if (selection?.id) {
+      setAuthorTabIndex(0)
+    }
+  }, [selection?.id])
 
   const selectAuthor = (author: ContributorAttrs) => {
     if (author.id === selection?.id) {
@@ -196,32 +220,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setLastSavedAuthor(null)
       setOpen(false)
       setSelection(undefined)
-    }
-  }
-
-  const save = () => {
-    if (!authorFormRef.current?.checkValidity()) {
-      setShowConfirmationDialog(false)
-      setTimeout(() => {
-        authorFormRef.current?.reportValidity()
-      }, 830)
-    } else {
-      if (valuesRef.current && selection) {
-        saveAuthor(valuesRef.current)
-      }
-
-      if (nextAuthor) {
-        setSelection(nextAuthor)
-        setNextAuthor(null)
-        setNewAuthor(false)
-        updateAffiliationSelection(nextAuthor)
-        setIsCreatingNewAuthor(false)
-      } else if (isCreatingNewAuthor) {
-        createNewAuthor()
-        setIsCreatingNewAuthor(false)
-      }
-
-      setShowConfirmationDialog(false)
     }
   }
 
@@ -391,12 +389,17 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }
 
   const {
-    removeCreditRole,
     selectCreditRole,
     selectedCreditRoles,
     setSelectedCreditRoles,
     vocabTermItems,
   } = useManageCredit(selection)
+
+  const newEntity =
+    newAuthor ||
+    (isCreatingNewAuthor &&
+      !showConfirmationDialog &&
+      !showRequiredFieldConfirmationDialog)
 
   return (
     <StyledModal
@@ -411,7 +414,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
         <StyledModalBody>
           <ModalSidebar data-cy="authors-sidebar">
             <StyledModalSidebarHeader>
-              <ModalSidebarTitle>Authors</ModalSidebarTitle>
+              <ModalSidebarTitle>Manage Authors</ModalSidebarTitle>
             </StyledModalSidebarHeader>
             <StyledSidebarContent>
               <AddAuthorButton
@@ -432,34 +435,38 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
               />
             </StyledSidebarContent>
           </ModalSidebar>
-          <ScrollableModalContent data-cy="author-modal-content">
+          <StyledScrollableModalContent data-cy="author-modal-content">
             {selection ? (
               <>
-                <AuthorTabs>
+                <AuthorTabs
+                  selectedIndex={authorTabIndex}
+                  onChange={setAuthorTabIndex}
+                >
                   <ModalFormActions
-                    form={'author-details-form'}
-                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
                     type="author"
                     onDelete={deleteAuthor}
                     showingDeleteDialog={showingDeleteDialog}
                     showDeleteDialog={() =>
                       setShowDeleteDialog((prev) => !prev)
                     }
-                    newEntity={
-                      newAuthor ||
-                      (isCreatingNewAuthor &&
-                        !showConfirmationDialog &&
-                        !showRequiredFieldConfirmationDialog)
-                    }
-                    isDisableSave={isDisableSave}
                   />
-                  <InspectorTabList>
-                    <InspectorTab>Details</InspectorTab>
-                    {onOpenAffiliationsModal && (
-                      <InspectorTab>Affiliations</InspectorTab>
-                    )}
-                    <InspectorTab>Contributions (CRediT)</InspectorTab>
-                  </InspectorTabList>
+                  <ModalTabs
+                    tabLabels={[
+                      'Author Details',
+                      ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
+                      'Contributions',
+                    ]}
+                    tabErrorIndicators={[
+                      authorHasError,
+                      ...(onOpenAffiliationsModal ? [false] : []),
+                      false,
+                    ]}
+                    tabWarningIndicators={[
+                      authorDetailsUnsavedContinue && !authorHasError,
+                      ...(onOpenAffiliationsModal ? [false] : []),
+                      false,
+                    ]}
+                  />
                   <InspectorTabPanels>
                     <AuthorTabPanel>
                       <AuthorDetailsForm
@@ -473,6 +480,12 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         )}
                         authorFormRef={authorFormRef}
                         selectedCreditRoles={selectedCreditRoles}
+                        newEntity={newEntity}
+                        onAuthorDetailsTabErrorChange={
+                          setAuthorDetailsTabHasError
+                        }
+                        unsavedContinueActive={authorDetailsUnsavedContinue}
+                        requiredContinueActive={authorDetailsRequiredContinue}
                       />
                     </AuthorTabPanel>
                     {onOpenAffiliationsModal && (
@@ -486,38 +499,39 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       </AuthorTabPanel>
                     )}
                     <AuthorTabPanel>
-                      <DrawerGroup<{ id: string; vocabTerm: string }>
-                        Drawer={CreditDrawer}
-                        removeItem={removeCreditRole}
+                      <FormSubtitle>Contributions (CRediT)</FormSubtitle>
+                      <ContributionsDescriptionSubtitle>
+                        Select the roles this author contributed to according to
+                        the CRediT taxonomy
+                      </ContributionsDescriptionSubtitle>
+                      <CreditContributionsCheckboxes
+                        items={vocabTermItems}
                         selectedItems={selectedCreditRoles.map((r) => ({
                           id: r.vocabTerm,
-                          ...r,
                         }))}
                         onSelect={selectCreditRole}
-                        items={vocabTermItems}
-                        showDrawer={showCreditDrawer}
-                        setShowDrawer={setShowCreditDrawer}
-                        title="Contributions (CRediT)"
-                        buttonText="Assign Roles"
-                        cy="credit-taxnonomy"
-                        labelField="vocabTerm"
-                        Icon={<AddRoleIcon width={16} height={16} />}
                       />
                     </AuthorTabPanel>
                   </InspectorTabPanels>
                 </AuthorTabs>
                 <ConfirmationDialog
                   isOpen={showRequiredFieldConfirmationDialog}
-                  onPrimary={() =>
+                  onPrimary={() => {
                     setShowRequiredFieldConfirmationDialog(false)
-                  }
+                    setNextAuthor(null)
+                    setAuthorDetailsRequiredContinue(true)
+                  }}
                   onSecondary={cancel}
                   type={DialogType.REQUIRED}
                   entityType="author"
                 />
                 <ConfirmationDialog
                   isOpen={showConfirmationDialog}
-                  onPrimary={save}
+                  onPrimary={() => {
+                    setShowConfirmationDialog(false)
+                    setNextAuthor(null)
+                    setAuthorDetailsUnsavedContinue(true)
+                  }}
                   onSecondary={cancel}
                   type={DialogType.SAVE}
                   entityType="author"
@@ -531,9 +545,21 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                 placeholderIcon={<AuthorPlaceholderIcon />}
               />
             )}
-          </ScrollableModalContent>
+          </StyledScrollableModalContent>
         </StyledModalBody>
-        <FormFooter onCancel={close} />
+        <FormFooter
+          onCancel={close}
+          primaryAction={
+            selection ? (
+              <ModalFormSaveButton
+                form="author-details-form"
+                newEntity={newEntity}
+                isDisableSave={isDisableSave}
+                onSubmitForm={() => actionsRef.current?.submitForm?.()}
+              />
+            ) : undefined
+          }
+        />
       </ModalContainer>
     </StyledModal>
   )
@@ -556,6 +582,7 @@ function createEmptyAuthor(priority: number): ContributorAttrs {
     correspIDs: [],
     footnoteIDs: [],
     prefix: '',
+    creditRoles: [],
   }
 }
 
@@ -593,6 +620,11 @@ const AuthorTabPanel = styled(InspectorTabPanel).attrs({
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
 `
 
+const ContributionsDescriptionSubtitle = styled(FormSubtitle)`
+  font-size: ${(props) => props.theme.font.size.small};
+  line-height: ${(props) => props.theme.font.lineHeight.normal};
+`
+
 const StyledSidebarContent = styled(SidebarContent)`
   padding: 8px;
 `
@@ -603,5 +635,9 @@ const StyledModalBody = styled(ModalBody)`
 `
 
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+`
+
+const StyledScrollableModalContent = styled(ScrollableModalContent)`
+  padding: 45px 16px 16px;
 `

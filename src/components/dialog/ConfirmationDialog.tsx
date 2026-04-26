@@ -43,8 +43,8 @@ const getDialogConfig = (dialogType: DialogType, entityType: string) => {
         secondary: 'Would you like to save or discard your changes?',
       },
       buttons: {
-        primary: 'Save',
-        secondary: 'Discard',
+        primary: 'Continue editing',
+        secondary: 'Discard changes',
       },
     },
     [DialogType.DELETE]: {
@@ -123,6 +123,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         secondary: {
           action: onSecondary,
           title: config.buttons.secondary,
+          variant: type === DialogType.DELETE ? 'default' : 'textDanger',
         },
       }}
     />

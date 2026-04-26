@@ -13,65 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ButtonGroup, IconButton, PlusIcon } from '@manuscripts/style-guide'
+import { PrimaryButton } from '@manuscripts/style-guide'
 import React from 'react'
-import styled from 'styled-components'
 
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
+import styled from 'styled-components'
 
-const ActionsContainer = styled.div`
-  display: flex;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-`
-
-const StyledButtonGroup = styled(ButtonGroup)`
-  flex: 1;
-`
-
-const StyledIconButton = styled(IconButton)`
-  color: #0d79d0;
-  text-align: center;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1;
-  width: auto;
-  height: 24px;
-  &:disabled {
-    color: #c9c9c9 !important;
-    background-color: unset !important;
-    border: unset;
-  }
-  svg {
-    margin-right: 4px;
-  }
-`
-
-export interface FormActionsProps {
-  type: string
+export interface ModalFormSaveButtonProps {
   form: string
-  onDelete: () => void
-  showingDeleteDialog: boolean
-  showDeleteDialog: () => void
   newEntity: boolean
   isDisableSave: boolean
   onSubmitForm?: () => void | Promise<void>
+  createLabel?: string
+  updateLabel?: string
 }
 
-export const ModalFormActions: React.FC<FormActionsProps> = ({
-  type,
+export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
   form,
-  onDelete,
-  showingDeleteDialog,
-  showDeleteDialog,
   newEntity,
   isDisableSave,
   onSubmitForm,
+  createLabel,
+  updateLabel,
 }) => {
+  const label = newEntity
+    ? (createLabel ?? 'Save Changes')
+    : (updateLabel ?? 'Update Changes')
+
   const saveButton = onSubmitForm ? (
-    <StyledIconButton
+    <StylePrimaryButton
       disabled={isDisableSave}
       type="button"
       onClick={() => {
@@ -80,29 +50,44 @@ export const ModalFormActions: React.FC<FormActionsProps> = ({
         }
       }}
     >
-      <PlusIcon />
-      {newEntity ? 'Save Details' : 'Update Details'}
-    </StyledIconButton>
+      {label}
+    </StylePrimaryButton>
   ) : (
-    <StyledIconButton disabled={isDisableSave} type="submit" form={form}>
-      <PlusIcon />
-      {newEntity ? 'Save Details' : 'Update Details'}
-    </StyledIconButton>
+    <StylePrimaryButton disabled={isDisableSave} type="submit" form={form}>
+      {label}
+    </StylePrimaryButton>
   )
 
+  return saveButton
+}
+
+interface ModalFormActionsProps {
+  type: string
+  onDelete: () => void
+  showingDeleteDialog: boolean
+  showDeleteDialog: () => void
+}
+
+export const ModalFormActions: React.FC<ModalFormActionsProps> = ({
+  type,
+  onDelete,
+  showingDeleteDialog,
+  showDeleteDialog,
+}) => {
   return (
-    <ActionsContainer data-cy={`${type}-action`}>
-      <ConfirmationDialog
-        isOpen={showingDeleteDialog}
-        onPrimary={() => {
-          onDelete()
-          showDeleteDialog()
-        }}
-        onSecondary={showDeleteDialog}
-        type={DialogType.DELETE}
-        entityType={type}
-      />
-      <StyledButtonGroup>{saveButton}</StyledButtonGroup>
-    </ActionsContainer>
+    <ConfirmationDialog
+      isOpen={showingDeleteDialog}
+      onPrimary={() => {
+        onDelete()
+        showDeleteDialog()
+      }}
+      onSecondary={showDeleteDialog}
+      type={DialogType.DELETE}
+      entityType={type}
+    />
   )
 }
+
+const StylePrimaryButton = styled(PrimaryButton)`
+  min-width: 145px;
+`
