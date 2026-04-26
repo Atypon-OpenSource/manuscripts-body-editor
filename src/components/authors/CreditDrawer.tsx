@@ -16,9 +16,6 @@
 import {
   CheckboxField,
   CheckboxLabel,
-  Drawer,
-  DrawerItemsList,
-  DrawerProps,
   LabelText,
 } from '@manuscripts/style-guide'
 import React from 'react'
@@ -26,46 +23,49 @@ import styled from 'styled-components'
 
 import { CheckboxContainer } from './AuthorDetailsForm'
 
-interface CreditDrawerProps {
+export interface CreditContributionsCheckboxesProps {
   items: { id: string; vocabTerm: string }[]
-  selectedItems: {
-    id: string
-  }[]
+  selectedItems: { id: string }[]
   onSelect: (id: string) => void
 }
 
-export const CreditDrawer: React.FC<
-  CreditDrawerProps & Omit<DrawerProps, 'children'>
-> = ({ items, selectedItems = [], onSelect, ...drawerProps }) => {
+export const CreditContributionsCheckboxes: React.FC<
+  CreditContributionsCheckboxesProps
+> = ({ items, selectedItems = [], onSelect }) => {
+  const selectedIds = selectedItems.map((a) => a.id)
   return (
-    <Drawer {...drawerProps}>
-      <TwoColumnContainer>
-        {items.map((item, i) => (
-          <TwoColumnCheckbox key={item.id}>
-            <CheckboxLabel>
-              <CheckboxField
-                id={'credit-role-' + i}
-                name={item.id}
-                checked={selectedItems?.map((a) => a.id).includes(item.id)}
-                onChange={() => {
-                  onSelect(item.id)
-                }}
-              />
-              <LabelText>{item.vocabTerm}</LabelText>
-            </CheckboxLabel>
-          </TwoColumnCheckbox>
-        ))}
-      </TwoColumnContainer>
-    </Drawer>
+    <TwoColumnContainer
+      data-cy="credit-taxnonomy"
+      role="group"
+      aria-label="Contributions (CRediT)"
+    >
+      {items.map((item) => (
+        <TwoColumnCheckbox key={item.id}>
+          <CheckboxLabel>
+            <CheckboxField
+              name={item.id}
+              checked={selectedIds.includes(item.id)}
+              onChange={() => {
+                onSelect(item.id)
+              }}
+            />
+            <LabelText>{item.vocabTerm}</LabelText>
+          </CheckboxLabel>
+        </TwoColumnCheckbox>
+      ))}
+    </TwoColumnContainer>
   )
 }
 
-const TwoColumnContainer = styled(DrawerItemsList)`
+const TwoColumnContainer = styled.ul`
+  list-style: none;
+  padding: 0 ${(props) => props.theme.grid.unit * 4}px;
+  margin: 0;
   display: flex;
   flex-flow: row wrap;
-  padding: 0 ${(props) => props.theme.grid.unit * 4}px;
   position: relative;
 `
+
 const TwoColumnCheckbox = styled(CheckboxContainer)`
   flex: 1 0 50%;
 `

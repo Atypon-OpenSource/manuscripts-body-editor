@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AffiliationPlaceholderIcon } from '@manuscripts/style-guide'
+import { InfoCircleIcon } from '@manuscripts/style-guide'
 import React from 'react'
 
 import { AffiliationAttrs } from '../../lib/authors'
@@ -52,7 +52,7 @@ export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
       createDataCy="add-affiliations-link"
       emptyDataCy="affiliations-panel-empty"
       isEmpty={items.length === 0}
-      emptyIcon={<AffiliationPlaceholderIcon />}
+      emptyIcon={<InfoCircleIcon />}
       emptyMessage={
         <>
           There are no affiliations attributed yet!

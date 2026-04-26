@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PrimaryButton } from '@manuscripts/style-guide'
+import { IconTextButton } from '@manuscripts/style-guide'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -21,18 +21,32 @@ const Footer = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: ${(props) => props.theme.grid.unit * 6}px;
   padding: 16px 32px;
-  height: 40px;
+  min-height: 40px;
   box-shadow: 0px -2px 12px 0px rgba(216, 216, 216, 0.26);
   border-radius: 0px 0px 8px 8px;
   position: relative;
   z-index: 3;
 `
 
-const FormFooter = ({ onCancel }: { onCancel: () => void }) => {
+const StyledIconTextButton = styled(IconTextButton)`
+  color: ${(props) => props.theme.colors.brand.default};
+`
+
+const FormFooter = ({
+  onCancel,
+  primaryAction,
+}: {
+  onCancel: () => void
+  primaryAction?: React.ReactNode
+}) => {
   return (
     <Footer>
-      <PrimaryButton onClick={onCancel}>Close</PrimaryButton>
+      <StyledIconTextButton color="secondary" onClick={onCancel}>
+        Close
+      </StyledIconTextButton>
+      {primaryAction}
     </Footer>
   )
 }

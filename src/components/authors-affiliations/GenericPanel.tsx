@@ -76,8 +76,8 @@ const PanelEmpty = styled.div`
 `
 
 const PanelEmptyIcon = styled.div`
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
