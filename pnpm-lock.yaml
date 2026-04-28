@@ -33,8 +33,8 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.5.12-LEAN-5312.0
-        version: 3.5.12-LEAN-5312.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.12
+        version: 3.5.12(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.3.10
         version: 2.3.10
@@ -71,9 +71,6 @@ importers:
       mathjax:
         specifier: 3.2.2
         version: 3.2.2
-      oembed-providers:
-        specifier: 1.0.20250430
-        version: 1.0.20250430
       prosemirror-collab:
         specifier: 1.3.1
         version: 1.3.1
@@ -1323,8 +1320,8 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.5.12-LEAN-5312.0':
-    resolution: {integrity: sha512-1Ge+HI/aRdN/mHr7QluS1OKxdQCQH2O+NCxaRFHmcaPMco3QlbPp/2oM+Ph+7dm9WocKtgEyWqMBQ+0Rgc69nQ==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.12-LEAN-5312.0.tgz}
+  '@manuscripts/style-guide@3.5.12':
+    resolution: {integrity: sha512-RqbeF76JvU59vatPGxuo05o0O4eIJmhDovTB0jB4ON9S148cNWN3gLjW/ojXf5yoNvCrojLGjeN/Tw4ThIdveA==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.3.10':
@@ -3769,9 +3766,6 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
-
-  oembed-providers@1.0.20250430:
-    resolution: {integrity: sha512-uffgYYEiBAK8yvrhkd1og2s2CnywX26bicnQgsSq14Ox5Y7wZ8HQrOKdNg4QBoVojTaEnIRjGzn8Xpb/ynoI+g==}
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -6392,7 +6386,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.5.12-LEAN-5312.0(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.12(@babel/core@7.23.7)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       date-fns: 2.30.0
@@ -9647,8 +9641,6 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
-
-  oembed-providers@1.0.20250430: {}
 
   once@1.4.0:
     dependencies:

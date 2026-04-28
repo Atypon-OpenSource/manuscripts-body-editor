@@ -65,6 +65,7 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
       category,
     ])
   ),
+  fetchOEmbedHtml: async () => undefined,
 })
 
 describe('editor view', () => {

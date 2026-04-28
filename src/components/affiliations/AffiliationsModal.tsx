@@ -17,8 +17,6 @@ import {
   AddIcon,
   AffiliationPlaceholderIcon,
   CloseButton,
-  InspectorTab,
-  InspectorTabList,
   InspectorTabPanel,
   InspectorTabPanels,
   InspectorTabs,
@@ -55,7 +53,8 @@ import { affiliationsReducer } from '../authors/useManageAffiliations'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
 import { FormPlaceholder } from '../form/FormPlaceholder'
-import { ModalFormActions } from '../form/ModalFormActions'
+import { ModalFormActions, ModalFormSaveButton } from '../form/ModalFormActions'
+import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { AuthorsPanel } from '../authors/AuthorsPanel'
 import { AffiliationForm, FormActions } from './AffiliationForm'
 import { AffiliationList } from './AffiliationList'
@@ -69,8 +68,10 @@ export interface AffiliationsModalProps {
   onUpdateAuthors: (authors: ContributorAttrs[]) => void
   addNewAffiliation?: boolean
   onClose?: () => void
-  onOpenAuthorsModal?: () => void
+  openAuthorsModal?: () => void
 }
+
+const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
 
 function makeAuthorItems(authors: ContributorAttrs[]) {
   return authors.map((author) => ({
@@ -88,7 +89,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   onUpdateAuthors,
   addNewAffiliation = false,
   onClose,
-  onOpenAuthorsModal,
+  openAuthorsModal,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selection, setSelection] = useState(affiliation)
@@ -129,14 +130,37 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   const [affiliationAuthorMap, setAffiliationAuthorMap] = useState<
     Map<string, string[]>
   >(new Map())
+  const [affiliationTabHasError, setAffiliationTabHasError] = useState(false)
+  const [
+    affiliationDetailsUnsavedContinue,
+    setAffiliationDetailsUnsavedContinue,
+  ] = useState(false)
+  const [affiliationTabIndex, setAffiliationTabIndex] = useState(0)
 
-  const prevIsOpenRef = useRef(isOpen)
+  const prevIsOpenRef = useRef(true)
   useEffect(() => {
     if (prevIsOpenRef.current && !isOpen) {
-      onClose?.()
+      prevIsOpenRef.current = isOpen
+      const id = window.setTimeout(() => {
+        onClose?.()
+      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
+      return () => window.clearTimeout(id)
     }
     prevIsOpenRef.current = isOpen
   }, [isOpen, onClose])
+
+  useEffect(() => {
+    if (isDisableSave) {
+      setAffiliationDetailsUnsavedContinue(false)
+    }
+  }, [isDisableSave])
+
+  useEffect(() => {
+    setAffiliationDetailsUnsavedContinue(false)
+    if (selection?.id) {
+      setAffiliationTabIndex(0)
+    }
+  }, [selection?.id])
 
   useEffect(() => {
     if (!selection) {
@@ -255,6 +279,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         newMap.set(affiliation.id, selectedAuthorIds)
         return newMap
       })
+      setAffiliationDetailsUnsavedContinue(false)
 
       setSavedAffiliationId(affiliation.id)
 
@@ -390,82 +415,52 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addNewAffiliation])
 
-  const handleConfirmationSave = useCallback(() => {
-    handleSaveAffiliation(valuesRef.current)
+  const handleConfirmationCancel = () => {
+    const action = pendingAction
+    const pending = pendingSelection
+
     setShowConfirmationDialog(false)
     setShowRequiredFieldConfirmationDialog(false)
 
-    if (pendingAction === 'new') {
-      setNewAffiliation(true)
-      setSelection(affiliation)
-      setSelectedAuthorIds([])
-      setIsDisableSave(true)
-    } else if (pendingAction === 'select' && pendingSelection) {
-      setSelection(pendingSelection)
-      setNewAffiliation(false)
+    if (action === 'close') {
+      setIsOpen(false)
+      setSelection(undefined)
+      valuesRef.current = undefined
+      setPendingSelection(null)
+      setPendingAction(null)
+      return
+    }
 
+    if (action === 'select' && pending) {
+      setSelection(pending)
+      setNewAffiliation(false)
       const affiliatedAuthorIds = authors
         .filter((author) =>
-          author.affiliationIDs.some((aff) => aff === pendingSelection.id)
+          author.affiliationIDs?.some((aff) => aff === pending.id)
         )
         .map((author) => author.id)
-
       setSelectedAuthorIds(affiliatedAuthorIds)
-
-      valuesRef.current = checkID(pendingSelection, 'affiliation')
-      setIsDisableSave(true)
-
+      valuesRef.current = checkID(pending, 'affiliation')
       setAffiliationAuthorMap((prevMap) => {
         const newMap = new Map(prevMap)
-        newMap.set(pendingSelection.id, affiliatedAuthorIds)
+        newMap.set(pending.id, affiliatedAuthorIds)
         return newMap
       })
-    }
-
-    if (pendingAction === 'close') {
-      setIsOpen(false)
-    }
-
-    setPendingSelection(null)
-    setPendingAction(null)
-  }, [
-    authors,
-    affiliation,
-    pendingAction,
-    pendingSelection,
-    handleSaveAffiliation,
-  ])
-
-  const handleConfirmationCancel = () => {
-    setShowConfirmationDialog(false)
-    setShowRequiredFieldConfirmationDialog(false)
-    if (pendingAction === 'select' && pendingSelection) {
-      setSelection(pendingSelection)
-      setNewAffiliation(false)
-      const affiliatedAuthorIds = authors
-        .filter((author) =>
-          author.affiliationIDs?.some((aff) => aff === pendingSelection.id)
-        )
-        .map((author) => author.id)
-      setSelectedAuthorIds(affiliatedAuthorIds)
-    } else if (pendingAction === 'new') {
+    } else if (action === 'new') {
       setNewAffiliation(true)
       setSelection(affiliation)
       setSelectedAuthorIds([])
-    }
-
-    if (pendingSelection) {
-      valuesRef.current = checkID(pendingSelection, 'affiliation')
+      valuesRef.current = affiliation
+        ? checkID(affiliation, 'affiliation')
+        : undefined
+    } else if (pending) {
+      valuesRef.current = checkID(pending, 'affiliation')
     } else {
       valuesRef.current = undefined
     }
 
     setPendingSelection(null)
     setPendingAction(null)
-
-    if (pendingAction === 'close') {
-      setIsOpen(false)
-    }
   }
 
   return (
@@ -485,7 +480,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
         <StyledModalBody>
           <ModalSidebar>
             <StyledModalSidebarHeader>
-              <ModalSidebarTitle>Affiliations</ModalSidebarTitle>
+              <ModalSidebarTitle>Institutional Affiliations</ModalSidebarTitle>
             </StyledModalSidebarHeader>
             <StyledSidebarContent>
               <AddAffiliationButton
@@ -505,14 +500,15 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
               />
             </StyledSidebarContent>
           </ModalSidebar>
-          <ScrollableModalContent data-cy="affiliations-modal-content">
+          <StyledScrollableModalContent data-cy="affiliations-modal-content">
             {selection ? (
               <>
-                <AffiliationTabs>
+                <AffiliationTabs
+                  selectedIndex={affiliationTabIndex}
+                  onChange={setAffiliationTabIndex}
+                >
                   <ModalFormActions
-                    type={'affiliation'}
-                    form={'affiliation-form'}
-                    onSubmitForm={() => actionsRef.current?.submitForm?.()}
+                    type="affiliation"
                     onDelete={handleDeleteAffiliation}
                     showingDeleteDialog={
                       showingDeleteDialog &&
@@ -522,13 +518,16 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                       )
                     }
                     showDeleteDialog={handleShowDeleteDialog}
-                    newEntity={newAffiliation}
-                    isDisableSave={isDisableSave}
                   />
-                  <InspectorTabList>
-                    <InspectorTab>Details</InspectorTab>
-                    {onOpenAuthorsModal && <InspectorTab>Authors</InspectorTab>}
-                  </InspectorTabList>
+                  <ModalTabs
+                    tabLabels={['Affiliation Details', 'Authors']}
+                    tabErrorIndicators={[affiliationTabHasError, false]}
+                    tabWarningIndicators={[
+                      affiliationDetailsUnsavedContinue &&
+                        !affiliationTabHasError,
+                      false,
+                    ]}
+                  />
                   <InspectorTabPanels>
                     <AffiliationTabPanel>
                       <AffiliationForm
@@ -536,15 +535,20 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                         onSave={(attrs) => handleSaveAffiliation(attrs)}
                         onChange={handleAffiliationChange}
                         actionsRef={actionsRef}
+                        newEntity={newAffiliation}
+                        onAffiliationErrorChange={setAffiliationTabHasError}
+                        unsavedContinueActive={
+                          affiliationDetailsUnsavedContinue
+                        }
                       />
                     </AffiliationTabPanel>
-                    {onOpenAuthorsModal && (
+                    {openAuthorsModal && (
                       <AffiliationTabPanel>
                         <AuthorsPanel
                           items={makeAuthorItems(authors)}
                           selectedItems={selectedAuthors}
                           onSelect={selectAuthor}
-                          onOpenAuthorsModal={onOpenAuthorsModal}
+                          openAuthorsModal={openAuthorsModal}
                         />
                       </AffiliationTabPanel>
                     )}
@@ -561,7 +565,12 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                 />
                 <ConfirmationDialog
                   isOpen={showConfirmationDialog}
-                  onPrimary={handleConfirmationSave}
+                  onPrimary={() => {
+                    setShowConfirmationDialog(false)
+                    setPendingSelection(null)
+                    setPendingAction(null)
+                    setAffiliationDetailsUnsavedContinue(true)
+                  }}
                   onSecondary={handleConfirmationCancel}
                   type={DialogType.SAVE}
                   entityType="affiliation"
@@ -575,9 +584,21 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
                 placeholderIcon={<AffiliationPlaceholderIcon />}
               />
             )}
-          </ScrollableModalContent>
+          </StyledScrollableModalContent>
         </StyledModalBody>
-        <FormFooter onCancel={handleClose} />
+        <FormFooter
+          onCancel={handleClose}
+          primaryAction={
+            selection ? (
+              <ModalFormSaveButton
+                form="affiliation-form"
+                newEntity={newAffiliation}
+                isDisableSave={isDisableSave}
+                onSubmitForm={() => actionsRef.current?.submitForm?.()}
+              />
+            ) : undefined
+          }
+        />
       </ModalContainer>
     </StyledModal>
   )
@@ -638,6 +659,7 @@ const AffiliationTabPanel = styled(InspectorTabPanel).attrs({
   unmount: false,
 })`
   margin-top: ${(props) => props.theme.grid.unit * 4}px;
+  height: calc(100% - 16px);
 `
 
 const StyledModalBody = styled(ModalBody)`
@@ -647,4 +669,8 @@ const StyledModalBody = styled(ModalBody)`
 const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
   margin-top: 8px;
   margin-bottom: 16px;
+`
+
+const StyledScrollableModalContent = styled(ScrollableModalContent)`
+  padding: 45px 16px 16px;
 `
