@@ -1732,7 +1732,7 @@ const createAndFillFigureElement = (attrs?: Attrs) =>
   )
 
 const createAndFillCaption = () => [
-    schema.nodes.caption_title.create(),
+  schema.nodes.caption_title.create(),
   schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
 ]
 
