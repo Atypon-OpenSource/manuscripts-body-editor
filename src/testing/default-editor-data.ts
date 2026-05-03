@@ -69,4 +69,5 @@ export const defaultEditorProps: EditorProps = {
       category,
     ])
   ),
+  fetchOEmbedHtml: async () => undefined,
 }
