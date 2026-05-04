@@ -7,6 +7,9 @@
   "main": "dist/cjs",
   "module": "dist/es",
   "types": "dist/types",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "dist",
     "styles"
