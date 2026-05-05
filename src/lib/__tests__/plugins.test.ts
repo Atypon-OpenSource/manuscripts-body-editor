@@ -33,6 +33,7 @@ import jsonDoc from './__fixtures__/doc.json'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
   userID: 'MPUser:1',
+  connectID: 'connectID1'
 }
 
 const history = createMemoryHistory()
