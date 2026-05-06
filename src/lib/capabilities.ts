@@ -53,3 +53,20 @@ export enum Actions {
   setMainManuscript = 'set-main-manuscript',
   editWithoutTracking = 'edit-without-tracking',
 }
+
+export enum ManuscriptActions {
+  handleSuggestion = 'handleSuggestion',
+  rejectOwnSuggestion = 'rejectOwnSuggestion',
+  handleOwnComments = 'handleOwnComments',
+  handleOthersComments = 'handleOthersComments',
+  resolveOwnComment = 'resolveOwnComment',
+  resolveOthersComment = 'resolveOthersComment',
+  createComment = 'createComment',
+  canEditFiles = 'canEditFiles',
+  editArticle = 'editArticle',
+  formatArticle = 'formatArticle',
+  editMetadata = 'editMetadata',
+  editCitationsAndRefs = 'editCitationsAndRefs',
+  seeEditorToolbar = 'seeEditorToolbar',
+  seeReferencesButtons = 'seeReferencesButtons',
+}
