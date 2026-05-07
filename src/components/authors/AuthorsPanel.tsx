@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AuthorPlaceholderIcon } from '@manuscripts/style-guide'
+import { InfoCircleIcon } from '@manuscripts/style-guide'
 import React from 'react'
 
 import {
@@ -27,14 +27,14 @@ export interface AuthorsPanelProps {
   items: { id: string; label: string }[]
   selectedItems?: { id: string }[]
   onSelect: (id: string) => void
-  onOpenAuthorsModal: () => void
+  openAuthorsModal: () => void
 }
 
 export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
   items,
   selectedItems = [],
   onSelect,
-  onOpenAuthorsModal,
+  openAuthorsModal,
 }) => {
   const selectedIds = useListSelectedIds(selectedItems)
 
@@ -42,11 +42,11 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
     <GenericPanel
       title="Authors"
       createLabel="Add New Author"
-      onCreate={onOpenAuthorsModal}
+      onCreate={openAuthorsModal}
       createDataCy="add-authors-link"
       emptyDataCy="authors-panel-empty"
       isEmpty={items.length === 0}
-      emptyIcon={<AuthorPlaceholderIcon />}
+      emptyIcon={<InfoCircleIcon />}
       emptyMessage={
         <>
           There are no authors attributed yet!
