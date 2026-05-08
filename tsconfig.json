@@ -7,7 +7,7 @@
     "jsx": "react",
     "lib": ["es2020", "dom", "dom.iterable"],
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
@@ -17,9 +17,7 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "rootDir": "./src",
-    "target": "es2020",
-    "types": ["node", "jest", "codemirror", "csl", "lodash", "react", "react-dom", "react-router-dom", "styled-components"]
+    "target": "es2020"
   },
   "include": ["src"],
   "exclude": ["src/__mocks__"]
