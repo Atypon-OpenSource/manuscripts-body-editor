@@ -69,7 +69,7 @@ export const getEditorMenus = (
 ): MenuSpec[] => {
   const { isCommandValid, state, view } = editor
   const doCommand = (command: Command) => () => editor.doCommand(command)
-  const props = getEditorProps(state)
+  const props =    getEditorProps(state)
 
   const insertBackmatterSectionMenu = (category: SectionCategory) => {
     const command = insertBackmatterSection(category)
