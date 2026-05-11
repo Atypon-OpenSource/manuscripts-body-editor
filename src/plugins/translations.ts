@@ -125,7 +125,7 @@ export default (props: EditorProps) =>
             if (canEdit) {
               widgets.push(
                 Decoration.widget(
-                  pos + 2,
+                  pos + 1,
                   (view) => {
                     const $span = document.createElement('span')
                     $span.tabIndex = 0
@@ -158,7 +158,7 @@ export default (props: EditorProps) =>
                     )
                     return $span
                   },
-                  { key: `add-trans-${node.attrs.id || pos}`, side: -1 }
+                  { key: `add-trans-${node.attrs.id || pos}` }
                 )
               )
             }
@@ -177,7 +177,7 @@ export default (props: EditorProps) =>
 
             widgets.push(
               Decoration.widget(
-                pos + 2,
+                pos + 1,
                 (view) => {
                   const $btn = document.createElement('span')
                   $btn.className = 'language-selector-btn'
@@ -238,7 +238,7 @@ export default (props: EditorProps) =>
 
                   return $btn
                 },
-                { key: `lang-selector-${node.attrs.id}`, side: -1 }
+                { key: `lang-selector-${node.attrs.id}` }
               )
             )
           }
