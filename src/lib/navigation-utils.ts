@@ -19,9 +19,9 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
+import { findParentNode } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
-import { findParentNodeWithIdValue } from './utils'
 
 /**
  * TODO: Reuse this utility in other areas related to navigation implemented in LEAN-5090
@@ -181,7 +181,9 @@ export const focusNearestElement = (
 }
 
 export function getCursorContainer(view: EditorView): HTMLElement {
-  const scoped = findParentNodeWithIdValue(view.state.selection)
+  const scoped = findParentNode(
+    (node) => node.type !== node.type.schema.nodes.supplement && node.attrs.id
+  )(view.state.selection)
   if (scoped) {
     const dom = view.nodeDOM(scoped.pos)
     if (dom instanceof HTMLElement) {
